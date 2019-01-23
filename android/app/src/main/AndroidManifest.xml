@@ -163,9 +163,10 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- for fabric, dont edit it!!! -->
+        <!-- Replace '1111111111111111111111111111111111111111' for your fabric's apikey. -->
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="46d1549a5e420b878f27da4e6bf630dcad941b83" />
+            android:value="1111111111111111111111111111111111111111" />
 
         <activity
             android:name=".ActivityQrScan"
