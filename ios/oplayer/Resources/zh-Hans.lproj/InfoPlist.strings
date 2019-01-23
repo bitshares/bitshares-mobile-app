@@ -1,0 +1,19 @@
+/* InfoPlist.strings
+  oplayer
+
+  Created by Aonichan on 15/12/1. */
+
+"CFBundleDisplayName" = "BTS++";
+
+"NSCalendarsUsageDescription" = "添加行程提醒时，需要访问您的日历。";
+
+"NSCameraUsageDescription" = "拍摄照片时，需要访问您的相机。";
+
+"NSPhotoLibraryUsageDescription" = "选择照片时，需要访问您的相册。";
+
+"NSMicrophoneUsageDescription" = "使用语音输入时，需要访问您的麦克风。";
+
+"NSLocationAlwaysUsageDescription" = "使用路线图功能时，需要访问您的位置信息。";
+
+"NSLocationWhenInUseUsageDescription" = "使用路线图功能时，需要访问您的位置信息。";
+

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>8139DBF7-7189-4D43-907C-F547B998B1B5</string>
+	<key>IDESourceControlProjectName</key>
+	<string>oplayer</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>16c8bd75-6661-40c1-a8c7-6e8bfa433837</key>
+		<string>svn://sutian.com/12306</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Project/oplayer.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>16c8bd75-6661-40c1-a8c7-6e8bfa433837</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>16c8bd75-6661-40c1-a8c7-6e8bfa433837</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>16c8bd75-6661-40c1-a8c7-6e8bfa433837</string>
+			<key>IDESourceControlWCCName</key>
+			<string>12306</string>
+		</dict>
+	</array>
+</dict>
+</plist>

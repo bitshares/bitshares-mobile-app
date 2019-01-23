@@ -1,0 +1,29 @@
+//
+// Prefix header for all source files of the 'oplayer' target in the 'oplayer' project
+//
+
+#ifdef __OBJC__
+	#import <Foundation/Foundation.h>
+	#import <UIKit/UIKit.h>
+#endif
+
+//  release 模式去掉LOG
+#ifndef DEBUG
+    #define NSLog(...);
+#endif
+
+//  debug 模式去掉CLSLog
+#ifdef DEBUG
+#define CLSNSLog(...);
+#define CLSLog(...);
+#endif
+
+//  运行模式
+
+//  比特股正式网络
+#define GRAPHENE_BITSHARES_MAINNET  1
+
+//  比特股测试网络
+#define GRAPHENE_BITSHARES_TESTNET  0
+
+#import "CompileTimeMacro.h"

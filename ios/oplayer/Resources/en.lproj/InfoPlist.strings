@@ -1,0 +1,19 @@
+/* InfoPlist.strings
+  oplayer
+
+  Created by Aonichan on 15/12/1. */
+
+"CFBundleDisplayName" = "BTS++";
+
+"NSCalendarsUsageDescription" = "Add trip reminders, need to access your calendar.";
+
+"NSCameraUsageDescription" = "When taking pictures, need to access your camera.";
+
+"NSPhotoLibraryUsageDescription" = "When select a picture, need to access your albums.";
+
+"NSMicrophoneUsageDescription" = "When you use speech input, need to access your microphone.";
+
+"NSLocationAlwaysUsageDescription" = "When using the road map feature, need to access your location information.";
+
+"NSLocationWhenInUseUsageDescription" = "When using the road map feature, need to access your location information.";
+

@@ -1,0 +1,25 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "16c8bd75-6661-40c1-a8c7-6e8bfa433837",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+    "16c8bd75-6661-40c1-a8c7-6e8bfa433837" : {
+
+    }
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "16c8bd75-6661-40c1-a8c7-6e8bfa433837" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "8139DBF7-7189-4D43-907C-F547B998B1B5",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "16c8bd75-6661-40c1-a8c7-6e8bfa433837" : "12306\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "oplayer",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Project\/oplayer.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "svn:\/\/sutian.com\/12306",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "16c8bd75-6661-40c1-a8c7-6e8bfa433837"
+    }
+  ]
+}

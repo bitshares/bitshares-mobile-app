@@ -1,0 +1,17 @@
+{
+  "version": "0",
+  "force": "0",
+  "appURL": "http://ios.btspp.io",
+  "newVersionInfo": "",
+  "newVersionInfoEn": "",
+  "faucetURL": "",
+  "wssNodes": {
+    "default": [
+      "wss://btsapi.magicw.net/ws",
+      "wss://api.bts.mobi/ws",
+    ],
+    "cn": [],
+    "en": [],
+  },
+}
+
