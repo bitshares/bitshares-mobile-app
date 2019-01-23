@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ActivityTransferConfirm"
+    android:background="@color/theme01.appBackColor">
+
+
+    <LinearLayout
+        android:id="@+id/container_of_voting"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp"
+        android:orientation="vertical">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+
+            <LinearLayout
+                android:id="@+id/layout_back_from_transfer_confirmation"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_btn_back" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/nameCancel"
+                    android:textColor="#ffffff" />
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:text="@string/transferConfirmationPagePleaseConfirmTrading"
+                android:textColor="#ffffffff"
+                android:textSize="16dp" />
+
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/serviceMainPageTransfer"
+            android:textColor="@color/theme01.buyColor"
+            android:textSize="18dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/transferConfirmationPageFrom"
+                android:textColor="@color/theme01.textColorMain"
+                android:textSize="14dp" />
+
+            <TextView
+                android:id="@+id/txt_from"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text=""
+                android:textColor="@color/theme01.textColorMain"
+                android:textSize="14dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/transferConfirmationPageSendTo"
+                android:textColor="@color/theme01.textColorMain"
+                android:textSize="14dp" />
+
+            <TextView
+                android:id="@+id/txt_to"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text=""
+                android:textColor="@color/theme01.buyColor"
+                android:textSize="14dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/nameNumber"
+                android:textColor="@color/theme01.textColorMain"
+                android:textSize="14dp" />
+
+            <TextView
+                android:id="@+id/txt_amount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="0.0CNY"
+                android:textColor="@color/theme01.textColorMain"
+                android:textSize="14dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/transferConfirmationPageRemark"
+                android:textColor="@color/theme01.textColorMain"
+                android:textSize="14dp" />
+
+            <TextView
+                android:id="@+id/txt_memo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="1"
+                android:textColor="@color/theme01.textColorMain"
+                android:textSize="14dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/transferConfirmationPageFee"
+                android:textColor="@color/theme01.textColorMain"
+                android:textSize="14dp" />
+
+            <TextView
+                android:id="@+id/txt_fee"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="0.1094BTS"
+                android:textColor="@color/theme01.textColorMain"
+                android:textSize="14dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/submit_of_tc"
+            android:layout_width="match_parent"
+            android:layout_margin="10dp"
+            style="@style/kMainButtonStyle"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="@string/nameOk" />
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

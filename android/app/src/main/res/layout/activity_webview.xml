@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ActivityWebView"
+    android:background="@color/theme01.appBackColor">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp"
+        android:paddingTop="10dp"
+        android:orientation="vertical">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+
+            <LinearLayout
+                android:id="@+id/layout_back_from_faq"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_btn_back"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/nameBack"
+                    style="@style/kNavigationBarTextStyle"
+                    android:gravity="center_vertical"
+                    />
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/title_of_webview"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:text="@string/myPageQA"
+                style="@style/kNavigationBarTextStyle" />
+
+            <Button
+                android:id="@+id/button_refresh_of_webview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:background="#00000000"
+                style="@style/kNavigationBarTextStyle"
+                android:textAllCaps="false"
+                android:text="@string/nameRefresh"
+                android:layout_marginRight="10dp" />
+
+
+        </FrameLayout>
+
+        <WebView
+            android:id="@+id/web_view"
+            android:scrollbarSize="0dp"
+            android:paddingBottom="0dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:paddingTop="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FragmentAssets">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/label_total_title"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:text="总资产折合(__PLACEHOLDER__)"
+                android:textColor="@color/theme01.textColorMain"
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/label_total_value"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:text="@string/myAssetsPageEstimating"
+                android:textColor="@color/theme01.textColorMain"
+                android:textSize="15dp" />
+
+            <View android:layout_height="1dp" android:background="@color/theme01.textColorGray" android:layout_marginTop="10dp" android:layout_width="fill_parent"></View>
+        </LinearLayout>
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="6dp">
+
+            <LinearLayout
+                android:id="@+id/layout_my_assets_from_my_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+</FrameLayout>

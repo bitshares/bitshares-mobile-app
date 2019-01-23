@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#141e32</color>
+    <color name="colorPrimaryDark">#141e32</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="primary_material_dark">#141e32</color>
+    <color name="colorBackground">#141e32</color>
+    <color name="colorGreen">#2aa97e</color>
+    <color name="colorRed">#c07e83</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorNavBottomBackground">#172a41</color>
+
+    <color name="black_overlay">#66000000</color>
+
+
+    <!--静谧蓝-->
+    <color name="theme01.color01">#131f2f</color>
+    <!-- <color name="theme01.color02">#ffffff</color> -->
+    <color name="theme01.color03">#5988cf</color>
+    <!-- <color name="theme01.color04">#6b86a4</color> -->
+    <!-- <color name="theme01.color05">#3e526a</color> -->
+    <!-- <color name="theme01.color06">#fc6d5f</color> -->
+    <!-- <color name="theme01.color07">#1fbf88</color> -->
+    <!-- <color name="theme01.color08">#1b273a</color> -->
+    <color name="theme01.color09">#0b131d</color>
+
+    <!-- syalon added, 如何动态切换呢？？ -->
+    <color name="theme01.appBackColor">#131f30</color>
+    <color name="theme01.contentBackColor">#333333</color>
+    <color name="theme01.bottomLineColor">#1a273a</color>
+    <color name="theme01.buyColor">#03c087</color>
+    <color name="theme01.sellColor">#e76d42</color>
+    <color name="theme01.zeroColor">#8c9fad</color>
+    <color name="theme01.callOrderColor">#ffff00</color>
+    <color name="theme01.textColorPercent">#ffffff</color>
+    <color name="theme01.textColorHighlight">#5786d2</color>
+    <color name="theme01.textColorGray">#3d526b</color>
+    <color name="theme01.textColorNormal">#6d87a8</color>
+    <color name="theme01.textColorMain">#ffffff</color>
+    <color name="theme01.ma5Color">#f6dc93</color>
+    <color name="theme01.ma10Color">#61d1c0</color>
+    <color name="theme01.ma30Color">#cb92fe</color>
+
+    <color name="theme01.tintColor">#e76d42</color>
+
+    <color name="theme01.buyColor2">#122f38</color>
+    <color name="theme01.sellColor2">#282732</color>
+
+    <color name="theme01.tabBarColor">#172941</color>
+
+    <color name="theme01.mainButtonBackColor">#e76d42</color>
+    <color name="theme01.mainButtonTextColor">#ffffff</color>
+
+
+<!-- 
+    navigationBarBackColor: '131f30', # => done! 同 appBackColor
+    navigationBarTextColor: 'ffffff', # => done! 同 textColorMain
+    blockButtonBackColor: '607D8B',
+    blockButtonTextColor: WHITE_COLOR,
+    frameButtonBorderColor: '607D8B',
+    frameButtonTextColor: '607D8B',
+    iconColor: 'fe6c5a',
+    textColor01: '212121',
+    textColor02: '727272',
+    noticeColor: 'fe6c5a',
+    ticketColor: '8d9caa' -->
+
+    <!--珍珠白-->
+
+</resources>

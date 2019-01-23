@@ -1,0 +1,958 @@
+package bitshares
+
+import android.content.Context
+import android.os.Looper
+import com.btsplusplus.fowallet.NativeInterface
+import com.btsplusplus.fowallet.R
+import com.crashlytics.android.Crashlytics
+import com.fowallet.walletcore.bts.ChainObjectManager
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.InputStream
+import java.math.BigDecimal
+import java.math.BigInteger
+import java.net.HttpURLConnection
+import java.net.InetAddress
+import java.net.URL
+import java.net.URLEncoder
+import java.text.DecimalFormat
+import kotlin.math.max
+import kotlin.math.pow
+
+class OrgUtils {
+
+    companion object {
+
+        /**
+         * 初始化（启动时调用）
+         */
+        fun initDir(ctx: Context) {
+            _file_base_dir = ctx.filesDir.path
+            Crashlytics.setString("BaseDir", _file_base_dir)
+        }
+
+        /**
+         * 获取版本依赖文件的完整文件名（路径）       /AppCache/ver/#{curr_version}_filename
+         */
+        fun makeFullPathByVerStorage(): String {
+            //  TODO:未完成
+            return ""
+        }
+
+        /**
+         *  获取webserver导入目录
+         */
+        fun getAppDirWebServerImport(): String {
+            return makePathFromApplicationFilesDirectory("${kAppLocalFileNameBase}/${kAppLocalFileNameByAppStorage}/${kAppWebServerImportDir}/")
+        }
+
+        /**
+         * 获取app依赖文件的完整文件名（路径）      /AppCache/app/filename
+         */
+        fun makeFullPathByAppStorage(filename: String): String {
+            return makePathFromApplicationFilesDirectory("${kAppLocalFileNameBase}/${kAppLocalFileNameByAppStorage}/${filename}")
+        }
+
+        private var _file_base_dir: String? = null
+        private fun makePathFromApplicationFilesDirectory(filename: String): String {
+            return "${_file_base_dir!!}/${filename}"
+        }
+
+        /**
+         * (public) 写入文件
+         */
+        fun write_file(fullpath: String, data: ByteArray): Boolean {
+            try {
+                var file = File(fullpath)
+                if (!file.exists()) {
+                    file.mkdirs()
+                }
+                file.delete()
+                file.writeBytes(data)
+                return true
+            } catch (e: Exception) {
+                return false
+            }
+        }
+
+        /**
+         * (public) 读取文件，失败返回 null。
+         */
+        fun load_file(fullpath: String): ByteArray? {
+            try {
+                return File(fullpath).readBytes()
+            } catch (e: Exception) {
+                return null
+            }
+        }
+
+        fun write_file_from_json(fullpath: String, json: JSONObject): Boolean {
+            return write_file(fullpath, json.toString().utf8String())
+        }
+
+        fun load_file_as_json(fullpath: String): JSONObject? {
+            var data = load_file(fullpath)
+            if (data == null) {
+                return null
+            }
+            val str = data.utf8String()
+            try {
+                return JSONObject(str)
+            } catch (e: Exception) {
+                return null
+            }
+        }
+
+        /**
+         * 根据 get_full_accounts 接口返回的所有用户信息计算用户所有资产信息、挂单信息、抵押信息、债务信息等。
+         * 返回值 {validBalancesHash, limitValuesHash, callValuesHash, debtValuesHash}
+         */
+        fun calcUserAssetDetailInfos(full_account_data: JSONObject): JSONObject {
+            //  --- 整理资产 ---
+            //  a.计算所有资产的总挂单量信息
+            val limit_orders_values = JSONObject()
+            val limit_orders = full_account_data.optJSONArray("limit_orders")
+            if (limit_orders != null) {
+                for (order in limit_orders) {
+                    //  限价单卖 base 资产，卖的数量为 for_sale 字段。sell_price 只是价格信息。
+                    val sell_asset_id = order!!.getJSONObject("sell_price").getJSONObject("base").getString("asset_id")
+                    val sell_amount = BigInteger(order.getString("for_sale"))
+                    //  所有挂单累加
+                    var value = limit_orders_values.opt(sell_asset_id) as? BigInteger
+                    value = value?.add(sell_amount) ?: sell_amount
+                    limit_orders_values.put(sell_asset_id, value)
+                }
+            }
+            //  b.计算所有资产的总抵押量信息（目前抵押资产仅有BTS）和总债务信息（CNY、USD等）
+            val call_orders_values = JSONObject()
+            val debt_values = JSONObject()
+            val call_orders = full_account_data.optJSONArray("call_orders")
+            if (call_orders != null) {
+                for (order in call_orders) {
+                    val call_price = order!!.getJSONObject("call_price")
+                    //  a.计算抵押
+                    val asset_id = call_price.getJSONObject("base").getString("asset_id")
+                    val amount = BigInteger(order.getString("collateral"))
+                    //  所有抵押累加
+                    var value = call_orders_values.opt(asset_id) as? BigInteger
+                    value = value?.add(amount) ?: amount
+                    call_orders_values.put(asset_id, value)
+                    //  b.计算债务
+                    val debt_asset_id = call_price.getJSONObject("quote").getString("asset_id")
+                    val debt_amount = BigInteger(order.getString("debt"))
+                    //  所有债务累加
+                    var debt_value = debt_values.opt(debt_asset_id) as? BigInteger
+                    debt_value = debt_value?.add(debt_amount) ?: debt_amount
+                    debt_values.put(debt_asset_id, debt_value)
+                }
+            }
+            //  c.去掉余额为0的资产
+            val validBalancesHash = JSONObject()
+            for (balance in full_account_data.getJSONArray("balances")) {
+                if (balance!!.getString("balance").toLong() != 0L) {
+                    validBalancesHash.put(balance.getString("asset_type"), balance)
+                }
+            }
+            //  d.添加必须显示的资产（BTS、有挂单没余额、有抵押没余额、有债务没余额）
+            val core_asset = validBalancesHash.optJSONObject(BTS_NETWORK_CORE_ASSET_ID)
+            //  没余额，初始化默认值。
+            if (core_asset == null) {
+                validBalancesHash.put(BTS_NETWORK_CORE_ASSET_ID, jsonObjectfromKVS("asset_type", BTS_NETWORK_CORE_ASSET_ID, "balance", 0))
+            }
+            for (asset_id in limit_orders_values.keys()) {
+                val asset = validBalancesHash.optJSONObject(asset_id)
+                //  没余额，初始化默认值。
+                if (asset == null) {
+                    validBalancesHash.put(asset_id, jsonObjectfromKVS("asset_type", asset_id, "balance", 0))
+                }
+            }
+            for (asset_id in call_orders_values.keys()) {
+                val asset = validBalancesHash.optJSONObject(asset_id)
+                //  没余额，初始化默认值。
+                if (asset == null) {
+                    validBalancesHash.put(asset_id, jsonObjectfromKVS("asset_type", asset_id, "balance", 0))
+                }
+            }
+            for (asset_id in debt_values.keys()) {
+                val asset = validBalancesHash.optJSONObject(asset_id)
+                //  没余额，初始化默认值。
+                if (asset == null) {
+                    validBalancesHash.put(asset_id, jsonObjectfromKVS("asset_type", asset_id, "balance", 0))
+                }
+            }
+            //  返回
+            return jsonObjectfromKVS("validBalancesHash", validBalancesHash, "limitValuesHash", limit_orders_values, "callValuesHash", call_orders_values, "debtValuesHash", debt_values)
+        }
+
+        /**
+         * 计算抵押资产的强平触发价。
+         */
+        fun calcSettlementTriggerPrice(call_price: JSONObject, collateral_precision: Int, debt_precision: Int): BigDecimal {
+            val n_callprice_base = bigDecimalfromAmount(call_price.getJSONObject("base").getString("amount"), collateral_precision)
+            val n_callprice_quote = bigDecimalfromAmount(call_price.getJSONObject("quote").getString("amount"), debt_precision)
+            return n_callprice_quote.divide(n_callprice_base, debt_precision, BigDecimal.ROUND_UP)
+        }
+
+        /**
+         *  计算资产真实价格
+         */
+        fun calcAssetRealPrice(amount: Any, precision: Int): Double {
+            val d = amount.toString().toLong()
+            val fPrecision = Math.pow(10.0, precision.toDouble())
+            return d / fPrecision
+        }
+
+        /**
+         * 根据 price_item 计算价格。REMARK：price_item 包含 base 和 quote 对象，base 和 quote 包含 asset_id 和 amount 字段。
+         */
+        fun calcPriceFromPriceObject(price_item: JSONObject, base_id: String, base_precision: Int, quote_precision: Int, invert: Boolean = false, roundingMode: Int = BigDecimal.ROUND_HALF_UP, set_divide_precision: Boolean = true): BigDecimal {
+            val item01 = price_item.getJSONObject("base")
+            val item02 = price_item.getJSONObject("quote")
+            var base: JSONObject
+            var quote: JSONObject
+            if (item01.getString("asset_id") == base_id) {
+                base = item01
+                quote = item02
+            } else {
+                base = item02
+                quote = item01
+            }
+            val n_base = bigDecimalfromAmount(base.getString("amount"), base_precision)
+            val n_quote = bigDecimalfromAmount(quote.getString("amount"), quote_precision)
+            //  REMARK：12几乎是不可能达到的精度。
+            if (invert) {
+                if (set_divide_precision) {
+                    return n_base.divide(n_quote, base_precision, roundingMode)
+                } else {
+                    return n_base.divide(n_quote, 12, roundingMode)
+                }
+            } else {
+                if (set_divide_precision) {
+                    return n_quote.divide(n_base, quote_precision, roundingMode)
+                } else {
+                    return n_quote.divide(n_base, 12, roundingMode)
+                }
+            }
+        }
+
+        /**
+         * 格式化数字，可以指定是否用逗号分组。
+         */
+        fun formatFloatValue(value: Double, precision: Int, has_comma: Boolean = true): String {
+            val repeat_s = "#".repeat(max(precision, 1))
+            val decimalFormat = DecimalFormat(",###.${repeat_s}")
+            //  是否有逗号分组分隔符
+            decimalFormat.isGroupingUsed = has_comma
+            return decimalFormat.format(value)
+        }
+
+        fun formatAssetString(value: String, precision: Int, has_comma: Boolean = true): String {
+            val v = value.toDouble()
+            val p = 10.0f.pow(precision)
+            return formatFloatValue(v / p, precision, has_comma)
+        }
+
+        /**
+         *  (public) format 'ASSET' object to string, e.g.: 2323.32BTS
+         */
+        fun formatAssetAmountItem(asset_json: JSONObject): String {
+            val asset_id = asset_json.getString("asset_id")
+            val amount = asset_json.getString("amount")
+            val asset = ChainObjectManager.sharedChainObjectManager().getChainObjectByID(asset_id)
+            val num = formatAssetString(amount, asset.getInt("precision"))
+            return "${num}${asset.getString("symbol")}"
+        }
+
+        /**
+         * 异步等待，单位毫秒。
+         */
+        fun asyncWait(ms: Long): Promise {
+            val p = Promise()
+            android.os.Handler(Looper.getMainLooper()).postDelayed({ p.resolve(true) }, ms)
+            return p
+        }
+
+        /**
+         * 异步POST请求：表单参数。
+         */
+        fun asyncPost(url: String, args: JSONObject): Promise {
+            val p = Promise()
+            _asyncExecRequest(p, url, body = _makeKeyValueString(args), headers = JSONObject().apply {
+                put("Content-Type", "application/x-www-form-urlencoded")
+            })
+            return p
+        }
+
+        /**
+         * 异步POST请求：body参数
+         */
+        fun asyncPost_jsonBody(url: String, args: JSONObject): Promise {
+            val p = Promise()
+            _asyncExecRequest(p, url, body = args.toString(), headers = JSONObject().apply {
+                put("Content-Type", "application/json")
+            })
+            return p
+        }
+
+        /**
+         * 异步GET请求
+         */
+        fun asyncJsonGet(url: String, args: JSONObject? = null): Promise {
+            val p = Promise()
+            var finalurl = url
+            if (args != null) {
+                finalurl = "$url?${_makeKeyValueString(args)}"
+            }
+            _asyncExecRequest(p, finalurl, body = null)
+            return p
+        }
+
+        private fun _makeKeyValueString(args: JSONObject): String {
+            val list = mutableListOf<String>()
+            args.keys().forEach { key ->
+                list.add("$key=${URLEncoder.encode(args.getString(key))}")
+            }
+            return list.joinToString("&")
+        }
+
+        private fun _asyncExecRequest(p: Promise, url: String, body: String?, headers: JSONObject? = null) {
+            Thread(Runnable {
+                var input: InputStream? = null
+                var output: ByteArrayOutputStream? = null
+                try {
+                    //  open network connection
+                    val conn = URL(url).openConnection() as HttpURLConnection
+                    conn.connectTimeout = 10 * 1000
+                    conn.useCaches = false
+                    conn.doInput = true
+
+                    //  append headers
+                    headers?.let {
+                        it.keys().forEach { key ->
+                            conn.setRequestProperty(key, it.getString(key))
+                        }
+                    }
+
+                    //  write data if post
+                    if (body != null) {
+                        //  POST
+                        conn.requestMethod = "POST"
+                        conn.doOutput = true
+                        conn.outputStream.write(body.utf8String())
+                    } else {
+                        //  GET
+                        conn.requestMethod = "GET"
+                    }
+
+                    //  wait response
+                    val code = conn.responseCode
+                    if (code == 200 || code == 201) {
+                        //  read
+                        input = conn.inputStream
+                        output = ByteArrayOutputStream()
+                        val buff = ByteArray(256)
+                        while (true) {
+                            val n = input.read(buff)
+                            if (n < 0) {
+                                break
+                            }
+                            if (n > 0) {
+                                output.write(buff, 0, n)
+                            }
+                        }
+                        val resp = output.toByteArray().utf8String()
+                        //  return - ok
+                        try {
+                            p.resolve(JSONObject(resp))
+                        } catch (e: JSONException) {
+                            p.resolve(JSONArray(resp))
+                        }
+                    } else {
+                        //  return - error
+                        p.reject("error code: $code")
+                    }
+                } catch (e: Exception) {
+                    //  TODO:统计错误
+                    //  return - error
+                    p.reject("Exception: ${e.message}")
+                } finally {
+                    input?.close()
+                    output?.close()
+                }
+            }).start()
+        }
+
+        /**
+         * 异步获取 InetAddress
+         */
+        fun asyncGetLocalHostAddress(): Promise {
+            val p = Promise()
+            Thread(Runnable {
+                try {
+                    p.resolve(InetAddress.getLocalHost())
+                } catch (e: Exception) {
+                    p.resolve(null)
+                }
+            }).start()
+            return p
+        }
+
+        /**
+         * 根据私钥种子字符串生成 WIF 格式私钥。
+         */
+        fun genBtsWifPrivateKey(seed: ByteArray): String {
+            val prikey = NativeInterface.sharedNativeInterface().bts_gen_private_key_from_seed(seed)
+            return genBtsWifPrivateKeyByPrivateKey32(prikey!!)
+        }
+
+        /**
+         * 根据32字节原始私钥生成 WIF 格式私钥
+         */
+        fun genBtsWifPrivateKeyByPrivateKey32(private_key32: ByteArray): String {
+            return NativeInterface.sharedNativeInterface().bts_private_key_to_wif(private_key32)!!
+        }
+
+        /**
+         * 根据私钥种子字符串生成 BTS 地址字符串。
+         */
+        fun genBtsAddressFromPrivateKeySeed(seed: String): String? {
+            val prikey = NativeInterface.sharedNativeInterface().bts_gen_private_key_from_seed(seed.utf8String())
+            if (prikey == null) {
+                return null
+            }
+            return NativeInterface.sharedNativeInterface().bts_gen_address_from_private_key32(prikey)?.utf8String()
+        }
+
+        /**
+         * 根据 WIF格式私钥 字符串生成 BTS 地址字符串。
+         */
+        fun genBtsAddressFromWifPrivateKey(private_key_wif: String): String? {
+            val prikey = NativeInterface.sharedNativeInterface().bts_gen_private_key_from_wif_privatekey(private_key_wif.utf8String())
+            if (prikey == null) {
+                return null
+            }
+            return NativeInterface.sharedNativeInterface().bts_gen_address_from_private_key32(prikey)?.utf8String()
+        }
+
+        /**
+         * (public) 根据【失去】和【得到】的资产信息计算订单方向行为（买卖、价格、数量等）
+         */
+        fun calcOrderDirectionInfos(priority_hash_args: JSONObject?, pay_asset_info: JSONObject, receive_asset_info: JSONObject): JSONObject {
+            val chainMgr = ChainObjectManager.sharedChainObjectManager()
+
+            val priority_hash = priority_hash_args ?: chainMgr.genAssetBasePriorityHash()
+
+            val pay_asset = chainMgr.getChainObjectByID(pay_asset_info.getString("asset_id"))
+            val receive_asset = chainMgr.getChainObjectByID(receive_asset_info.getString("asset_id"))
+
+            //  计算base和quote资产：优先级高的资产作为 base
+            val symbol_pay = pay_asset.getString("symbol")
+            val symbol_receive = receive_asset.getString("symbol")
+
+            val pay_asset_priority = priority_hash.optInt(symbol_pay, 0)
+            val receive_asset_priority = priority_hash.optInt(symbol_receive, 0)
+
+            var base_asset: JSONObject
+            var quote_asset: JSONObject
+            val base_amount: String
+            val quote_amount: String
+            var issell: Boolean
+            if (pay_asset_priority > receive_asset_priority) {
+                //  pay 作为 base 资产。支出 base，则为买入行为。
+                issell = false
+                base_asset = pay_asset
+                quote_asset = receive_asset
+                base_amount = pay_asset_info.getString("amount")
+                quote_amount = receive_asset_info.getString("amount")
+            } else {
+                //  receive 作为 base 资产。获得 base，则为卖出行为。
+                issell = true
+                base_asset = receive_asset
+                quote_asset = pay_asset
+                base_amount = receive_asset_info.getString("amount")
+                quote_amount = pay_asset_info.getString("amount")
+            }
+
+            // price = base / quote
+            val base_precision = base_asset.getInt("precision")
+            val quote_precision = quote_asset.getInt("precision")
+            val base_precision_pow = 10.0f.pow(base_precision)
+            val quote_precision_pow = 10.0f.pow(quote_precision)
+
+            //  保留小数位数 买入行为：向上取整 卖出行为：向下取整
+            val price = (base_amount.toDouble() / base_precision_pow) / (quote_amount.toDouble() / quote_precision_pow)
+            val str_price = OrgUtils.formatFloatValue(price, base_precision)
+            val str_base = OrgUtils.formatAssetString(base_amount, base_precision)
+            val str_quote = OrgUtils.formatAssetString(quote_amount, quote_precision)
+
+            //  返回
+            val item = JSONObject()
+            item.put("issell", issell)
+            item.put("base", base_asset)
+            item.put("quote", quote_asset)
+            item.put("str_price", str_price)
+            item.put("str_base", str_base)
+            item.put("str_quote", str_quote)
+            return item
+        }
+
+        /**
+         *  提取OPDATA中所有的石墨烯ID信息。
+         */
+        fun extractObjectID(opcode: Int, opdata: JSONObject, container: JSONObject) {
+            val fee = opdata.optJSONObject("fee")
+            if (fee != null) {
+                container.put(fee.getString("asset_id"), true)
+            }
+            //  TODO:fowallet 账号明细 、提案列表、提案确认等界面关于 OP 的描述。如果需要添加新的OP支持，需要修改。
+            when (opcode) {
+                EBitsharesOperations.ebo_transfer.value -> {
+                    container.put(opdata.getString("from"), true)
+                    container.put(opdata.getString("to"), true)
+                    container.put(opdata.getJSONObject("amount").getString("asset_id"), true)
+                }
+                EBitsharesOperations.ebo_limit_order_create.value -> {
+                    container.put(opdata.getString("seller"), true)
+                    container.put(opdata.getJSONObject("amount_to_sell").getString("asset_id"), true)
+                    container.put(opdata.getJSONObject("min_to_receive").getString("asset_id"), true)
+                }
+                EBitsharesOperations.ebo_limit_order_cancel.value -> {
+                    container.put(opdata.getString("fee_paying_account"), true)
+                }
+                EBitsharesOperations.ebo_call_order_update.value -> {
+                    container.put(opdata.getString("funding_account"), true)
+                    container.put(opdata.getJSONObject("delta_collateral").getString("asset_id"), true)
+                    container.put(opdata.getJSONObject("delta_debt").getString("asset_id"), true)
+                }
+                EBitsharesOperations.ebo_fill_order.value -> {
+                    container.put(opdata.getString("account_id"), true)
+                    container.put(opdata.getJSONObject("pays").getString("asset_id"), true)
+                    container.put(opdata.getJSONObject("receives").getString("asset_id"), true)
+                }
+                EBitsharesOperations.ebo_account_create.value -> {
+                    container.put(opdata.getString("registrar"), true)
+                    container.put(opdata.getString("referrer"), true)
+                }
+                EBitsharesOperations.ebo_account_update.value -> {
+                    container.put(opdata.getString("account"), true)
+                }
+                EBitsharesOperations.ebo_account_whitelist.value -> {
+                    container.put(opdata.getString("authorizing_account"), true)
+                    container.put(opdata.getString("account_to_list"), true)
+                }
+                EBitsharesOperations.ebo_account_upgrade.value -> {
+                    container.put(opdata.getString("account_to_upgrade"), true)
+                }
+                EBitsharesOperations.ebo_account_transfer.value -> {
+                    container.put(opdata.getString("account_id"), true)
+                    container.put(opdata.getString("new_owner"), true)
+                }
+                EBitsharesOperations.ebo_asset_create.value -> {
+                    container.put(opdata.getString("issuer"), true)
+                }
+                EBitsharesOperations.ebo_asset_update.value -> {
+                    container.put(opdata.getString("issuer"), true)
+                    container.put(opdata.getString("asset_to_update"), true)
+                }
+                EBitsharesOperations.ebo_asset_update_bitasset.value -> {
+                    container.put(opdata.getString("issuer"), true)
+                    container.put(opdata.getString("asset_to_update"), true)
+                }
+                EBitsharesOperations.ebo_asset_update_feed_producers.value -> {
+                    container.put(opdata.getString("issuer"), true)
+                    container.put(opdata.getString("asset_to_update"), true)
+                }
+                EBitsharesOperations.ebo_asset_issue.value -> {
+                    container.put(opdata.getString("issuer"), true)
+                    container.put(opdata.getString("issue_to_account"), true)
+                    container.put(opdata.getJSONObject("asset_to_issue").getString("asset_id"), true)
+                }
+                EBitsharesOperations.ebo_asset_reserve.value -> {
+                    container.put(opdata.getString("payer"), true)
+                    container.put(opdata.getJSONObject("amount_to_reserve").getString("asset_id"), true)
+                }
+                EBitsharesOperations.ebo_asset_fund_fee_pool.value -> {
+                    container.put(opdata.getString("from_account"), true)
+                    container.put(opdata.getString("asset_id"), true)
+                }
+                EBitsharesOperations.ebo_asset_settle.value -> {
+                    container.put(opdata.getString("account"), true)
+                    container.put(opdata.getJSONObject("amount").getString("asset_id"), true)
+                }
+                EBitsharesOperations.ebo_asset_global_settle.value -> {
+                    container.put(opdata.getString("issuer"), true)
+                    container.put(opdata.getString("asset_to_settle"), true)
+                }
+                EBitsharesOperations.ebo_asset_publish_feed.value -> {
+                    container.put(opdata.getString("publisher"), true)
+                    container.put(opdata.getString("asset_id"), true)
+                }
+                EBitsharesOperations.ebo_witness_create.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_witness_update.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_proposal_create.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_proposal_update.value -> {
+                    container.put(opdata.getString("fee_paying_account"), true)
+                }
+                EBitsharesOperations.ebo_proposal_delete.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_withdraw_permission_create.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_withdraw_permission_update.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_withdraw_permission_claim.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_withdraw_permission_delete.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_committee_member_create.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_committee_member_update.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_committee_member_update_global_parameters.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_vesting_balance_create.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_vesting_balance_withdraw.value -> {
+                    container.put(opdata.getString("owner"), true)
+                    container.put(opdata.getJSONObject("amount").getString("asset_id"), true)
+                }
+                EBitsharesOperations.ebo_worker_create.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_custom.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_assert.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_balance_claim.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_override_transfer.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_transfer_to_blind.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_blind_transfer.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_transfer_from_blind.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_asset_settle_cancel.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_asset_claim_fees.value -> {
+                    //  TODO:
+                }
+                else -> {
+                }
+            }
+        }
+
+        /**
+         *  转换OP数据为UI显示数据。
+         */
+        fun processOpdata2UiData(opcode: Int, opdata: JSONObject, isproposal: Boolean, ctx: Context): JSONObject {
+            val chainMgr = ChainObjectManager.sharedChainObjectManager()
+
+            //  TODO:多语言
+            var name = "未知操作"
+            var desc = "未知的操作内容。"
+            var color = R.color.theme01_textColorMain
+
+            when (opcode) {
+                EBitsharesOperations.ebo_transfer.value -> {
+                    name = R.string.kOpType_transfer.xmlstring(ctx)
+                    val from = chainMgr.getChainObjectByID(opdata.getString("from")).getString("name")
+                    val to = chainMgr.getChainObjectByID(opdata.getString("to")).getString("name")
+                    val str_amount = formatAssetAmountItem(opdata.getJSONObject("amount"))
+                    desc = String.format(R.string.kOpDesc_transfer.xmlstring(ctx), from, str_amount, to)
+                }
+                EBitsharesOperations.ebo_limit_order_create.value -> {
+                    val user = chainMgr.getChainObjectByID(opdata.getString("seller")).getString("name")
+                    val info = OrgUtils.calcOrderDirectionInfos(null, opdata.getJSONObject("amount_to_sell"), opdata.getJSONObject("min_to_receive"))
+
+                    val base_symbol = info.getJSONObject("base").getString("symbol")
+                    val quote_symbol = info.getJSONObject("quote").getString("symbol")
+                    val str_price = info.getString("str_price")
+                    val str_quote = info.getString("str_quote")
+
+                    if (info.getBoolean("issell")) {
+                        name = R.string.kOpType_limit_order_create_sell.xmlstring(ctx)
+                        color = R.color.theme01_sellColor
+                        desc = String.format(R.string.kOpDesc_limit_order_create_sell.xmlstring(ctx), user, "${str_price}${base_symbol}/${quote_symbol}", "${str_quote}${quote_symbol}")
+                    } else {
+                        name = R.string.kOpType_limit_order_create_buy.xmlstring(ctx)
+                        color = R.color.theme01_buyColor
+                        desc = String.format(R.string.kOpDesc_limit_order_create_buy.xmlstring(ctx), user, "${str_price}${base_symbol}/${quote_symbol}", "${str_quote}${quote_symbol}")
+                    }
+                }
+                EBitsharesOperations.ebo_limit_order_cancel.value -> {
+                    name = R.string.kOpType_limit_order_cancel.xmlstring(ctx)
+                    val user = chainMgr.getChainObjectByID(opdata.getString("fee_paying_account")).getString("name")
+                    desc = String.format(R.string.kOpDesc_limit_order_cancel.xmlstring(ctx), user, opdata.getString("order"))
+                }
+                EBitsharesOperations.ebo_call_order_update.value -> {
+                    name = R.string.kOpType_call_order_update.xmlstring(ctx)
+                    val user = chainMgr.getChainObjectByID(opdata.getString("funding_account")).getString("name")
+                    //  REMARK：这2个字段可能为负数。
+                    val delta_collateral = opdata.getJSONObject("delta_collateral")
+                    val delta_debt = opdata.getJSONObject("delta_debt")
+                    val collateral_asset = chainMgr.getChainObjectByID(delta_collateral.getString("asset_id"))
+                    val debt_asset = chainMgr.getChainObjectByID(delta_debt.getString("asset_id"))
+                    val n_coll = OrgUtils.formatAssetString(delta_collateral.getString("amount"), collateral_asset.getInt("precision"))
+                    val n_debt = OrgUtils.formatAssetString(delta_debt.getString("amount"), debt_asset.getInt("precision"))
+                    val symbol_coll = collateral_asset.getString("symbol")
+                    val symbol_debt = debt_asset.getString("symbol")
+                    desc = String.format(R.string.kOpDesc_call_order_update.xmlstring(ctx), user, "${n_coll}${symbol_coll}", "${n_debt}${symbol_debt}")
+                }
+                EBitsharesOperations.ebo_fill_order.value -> {
+                    name = R.string.kOpType_fill_order.xmlstring(ctx)
+
+                    val user = chainMgr.getChainObjectByID(opdata.getString("account_id")).getString("name")
+                    val isCallOrder = opdata.getString("order_id").split(".")[1].toInt() == EBitsharesObjectType.ebot_call_order.value
+                    val info = OrgUtils.calcOrderDirectionInfos(null, opdata.getJSONObject("pays"), opdata.getJSONObject("receives"))
+
+                    val base_symbol = info.getJSONObject("base").getString("symbol")
+                    val quote_symbol = info.getJSONObject("quote").getString("symbol")
+                    val str_price = info.getString("str_price")
+                    val str_quote = info.getString("str_quote")
+
+                    if (info.getBoolean("issell")) {
+                        desc = String.format(R.string.kOpDesc_fill_order_sell.xmlstring(ctx), user, "${str_price}${base_symbol}/${quote_symbol}", "${str_quote}${quote_symbol}")
+                    } else {
+                        desc = String.format(R.string.kOpDesc_fill_order_buy.xmlstring(ctx), user, "${str_price}${base_symbol}/${quote_symbol}", "${str_quote}${quote_symbol}")
+                    }
+                    if (isCallOrder) {
+                        color = R.color.theme01_callOrderColor
+                    }
+                }
+                EBitsharesOperations.ebo_account_create.value -> {
+                    name = R.string.kOpType_account_create.xmlstring(ctx)
+                    val user = chainMgr.getChainObjectByID(opdata.getString("registrar")).getString("name")
+                    desc = String.format(R.string.kOpDesc_account_create.xmlstring(ctx), user, opdata.getString("name"))
+                }
+                EBitsharesOperations.ebo_account_update.value -> {
+                    name = R.string.kOpType_account_update.xmlstring(ctx)
+                    val user = chainMgr.getChainObjectByID(opdata.getString("account")).getString("name")
+                    desc = String.format(R.string.kOpDesc_account_update.xmlstring(ctx), user)
+                }
+                EBitsharesOperations.ebo_account_whitelist.value -> {
+                    name = R.string.kOpType_account_whitelist.xmlstring(ctx)
+                    desc = R.string.kOpDesc_account_whitelist.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_account_upgrade.value -> {
+                    name = R.string.kOpType_account_upgrade.xmlstring(ctx)
+                    val user = chainMgr.getChainObjectByID(opdata.getString("account_to_upgrade")).getString("name")
+                    if (opdata.optBoolean("upgrade_to_lifetime_member", false)) {
+                        desc = String.format(R.string.kOpDesc_account_upgrade_member.xmlstring(ctx), user)
+                    } else {
+                        desc = String.format(R.string.kOpDesc_account_upgrade.xmlstring(ctx), user)
+                    }
+                }
+                EBitsharesOperations.ebo_account_transfer.value -> {
+                    name = R.string.kOpType_account_transfer.xmlstring(ctx)
+                    desc = R.string.kOpDesc_account_transfer.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_asset_create.value -> {
+                    name = R.string.kOpType_asset_create.xmlstring(ctx)
+                    val user = chainMgr.getChainObjectByID(opdata.getString("issuer")).getString("name")
+                    desc = String.format(R.string.kOpDesc_asset_create.xmlstring(ctx), user, opdata.getString("symbol"))
+                }
+                EBitsharesOperations.ebo_asset_update.value -> {
+                    name = R.string.kOpType_asset_update.xmlstring(ctx)
+                    desc = R.string.kOpDesc_asset_update.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_asset_update_bitasset.value -> {
+                    name = R.string.kOpType_asset_update_bitasset.xmlstring(ctx)
+                    desc = R.string.kOpDesc_asset_update_bitasset.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_asset_update_feed_producers.value -> {
+                    name = R.string.kOpType_asset_update_feed_producers.xmlstring(ctx)
+                    desc = R.string.kOpDesc_asset_update_feed_producers.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_asset_issue.value -> {
+                    name = R.string.kOpType_asset_issue.xmlstring(ctx)
+                    desc = R.string.kOpDesc_asset_issue.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_asset_reserve.value -> {
+                    name = R.string.kOpType_asset_reserve.xmlstring(ctx)
+                    desc = R.string.kOpDesc_asset_reserve.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_asset_fund_fee_pool.value -> {
+                    name = R.string.kOpType_asset_fund_fee_pool.xmlstring(ctx)
+                    desc = R.string.kOpDesc_asset_fund_fee_pool.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_asset_settle.value -> {
+                    name = R.string.kOpType_asset_settle.xmlstring(ctx)
+                    desc = R.string.kOpDesc_asset_settle.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_asset_global_settle.value -> {
+                    name = R.string.kOpType_asset_global_settle.xmlstring(ctx)
+                    desc = R.string.kOpDesc_asset_global_settle.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_asset_publish_feed.value -> {
+                    name = R.string.kOpType_asset_publish_feed.xmlstring(ctx)
+                    desc = R.string.kOpDesc_asset_publish_feed.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_witness_create.value -> {
+                    name = R.string.kOpType_witness_create.xmlstring(ctx)
+                    desc = R.string.kOpDesc_witness_create.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_witness_update.value -> {
+                    name = R.string.kOpType_witness_update.xmlstring(ctx)
+                    desc = R.string.kOpDesc_witness_update.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_proposal_create.value -> {
+                    name = R.string.kOpType_proposal_create.xmlstring(ctx)
+                    desc = R.string.kOpDesc_proposal_create.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_proposal_update.value -> {
+                    name = R.string.kOpType_proposal_update.xmlstring(ctx)
+                    val user = chainMgr.getChainObjectByID(opdata.getString("fee_paying_account")).getString("name")
+                    desc = String.format(R.string.kOpDesc_proposal_update.xmlstring(ctx), user, opdata.getString("proposal"))
+                }
+                EBitsharesOperations.ebo_proposal_delete.value -> {
+                    name = R.string.kOpType_proposal_delete.xmlstring(ctx)
+                    desc = R.string.kOpDesc_proposal_delete.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_withdraw_permission_create.value -> {
+                    name = R.string.kOpType_withdraw_permission_create.xmlstring(ctx)
+                    desc = R.string.kOpDesc_withdraw_permission_create.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_withdraw_permission_update.value -> {
+                    name = R.string.kOpType_withdraw_permission_update.xmlstring(ctx)
+                    desc = R.string.kOpDesc_withdraw_permission_update.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_withdraw_permission_claim.value -> {
+                    name = R.string.kOpType_withdraw_permission_claim.xmlstring(ctx)
+                    desc = R.string.kOpDesc_withdraw_permission_claim.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_withdraw_permission_delete.value -> {
+                    name = R.string.kOpType_withdraw_permission_delete.xmlstring(ctx)
+                    desc = R.string.kOpDesc_withdraw_permission_delete.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_committee_member_create.value -> {
+                    name = R.string.kOpType_committee_member_create.xmlstring(ctx)
+                    desc = R.string.kOpDesc_committee_member_create.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_committee_member_update.value -> {
+                    name = R.string.kOpType_committee_member_update.xmlstring(ctx)
+                    desc = R.string.kOpDesc_committee_member_update.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_committee_member_update_global_parameters.value -> {
+                    name = R.string.kOpType_committee_member_update_global_parameters.xmlstring(ctx)
+                    desc = R.string.kOpDesc_committee_member_update_global_parameters.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_vesting_balance_create.value -> {
+                    name = R.string.kOpType_vesting_balance_create.xmlstring(ctx)
+                    desc = R.string.kOpDesc_vesting_balance_create.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_vesting_balance_withdraw.value -> {
+                    name = R.string.kOpType_vesting_balance_withdraw.xmlstring(ctx)
+                    val user = chainMgr.getChainObjectByID(opdata.getString("owner")).getString("name")
+                    desc = String.format(R.string.kOpDesc_vesting_balance_withdraw.xmlstring(ctx), user, formatAssetAmountItem(opdata.getJSONObject("amount")))
+                }
+                EBitsharesOperations.ebo_worker_create.value -> {
+                    name = R.string.kOpType_worker_create.xmlstring(ctx)
+                    desc = R.string.kOpDesc_worker_create.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_custom.value -> {
+                    name = R.string.kOpType_custom.xmlstring(ctx)
+                    desc = R.string.kOpDesc_custom.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_assert.value -> {
+                    name = R.string.kOpType_assert.xmlstring(ctx)
+                    desc = R.string.kOpDesc_assert.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_balance_claim.value -> {
+                    name = R.string.kOpType_balance_claim.xmlstring(ctx)
+                    desc = R.string.kOpDesc_balance_claim.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_override_transfer.value -> {
+                    name = R.string.kOpType_override_transfer.xmlstring(ctx)
+                    desc = R.string.kOpDesc_override_transfer.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_transfer_to_blind.value -> {
+                    name = R.string.kOpType_transfer_to_blind.xmlstring(ctx)
+                    desc = R.string.kOpDesc_transfer_to_blind.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_blind_transfer.value -> {
+                    name = R.string.kOpType_blind_transfer.xmlstring(ctx)
+                    desc = R.string.kOpDesc_blind_transfer.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_transfer_from_blind.value -> {
+                    name = R.string.kOpType_transfer_from_blind.xmlstring(ctx)
+                    desc = R.string.kOpDesc_transfer_from_blind.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_asset_settle_cancel.value -> {
+                    name = R.string.kOpType_asset_settle_cancel.xmlstring(ctx)
+                    desc = R.string.kOpDesc_asset_settle_cancel.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_asset_claim_fees.value -> {
+                    name = R.string.kOpType_asset_claim_fees.xmlstring(ctx)
+                    desc = R.string.kOpDesc_asset_claim_fees.xmlstring(ctx)
+                    //  TODO:待细化
+                }
+                else -> {
+                }
+            }
+            if (isproposal) {
+                name = String.format(R.string.kOpType_proposal_prefix.xmlstring(ctx), name)
+            }
+            return jsonObjectfromKVS("name", name, "desc", desc, "color", color)
+        }
+    }
+
+}

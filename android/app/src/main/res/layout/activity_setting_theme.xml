@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ActivitySettingTheme"
+    android:background="@color/theme01.appBackColor">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp"
+        android:padding="10dp"
+        android:orientation="vertical">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+
+            <LinearLayout
+                android:id="@+id/layout_back_from_setting_theme"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_btn_back"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/nameBack"
+                    style="@style/kNavigationBarTextStyle"
+                    android:gravity="center_vertical"
+                    />
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:text="@string/settingPageThemeStyle"
+                style="@style/kNavigationBarTextStyle" />
+
+        </FrameLayout>
+
+
+
+        <!-- 静谧蓝 -->
+        <LinearLayout
+            android:id="@+id/layout_theme_01"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:textSize="14dp"
+                android:layout_weight="9"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="@string/settingPageJingMiLan"/>
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_weight="0.5"
+                android:foregroundGravity="right"
+                android:src="@drawable/ic_btn_check" />
+
+        </LinearLayout>
+        <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
+
+
+        <!-- 珍珠白 -->
+        <LinearLayout
+            android:id="@+id/layout_theme_02"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:textSize="14dp"
+                android:layout_weight="9"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="@string/settingPageZhenZhuBai"/>
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_weight="0.5"
+                android:foregroundGravity="right"
+                android:visibility="invisible"
+                android:src="@drawable/ic_btn_check" />
+
+        </LinearLayout>
+        <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
+
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

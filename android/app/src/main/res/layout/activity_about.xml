@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ActivityAbout"
+    android:background="@color/theme01.appBackColor">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp"
+        android:padding="10dp"
+        android:orientation="vertical">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+
+            <LinearLayout
+                android:id="@+id/layout_back_from_about"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_btn_back"/>
+                <TextView
+                    style="@style/kNavigationBarTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/nameBack"
+                    android:gravity="center_vertical"
+                    />
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:text="@string/nameAbout"
+                style="@style/kNavigationBarTextStyle" />
+
+
+        </FrameLayout>
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srcCompat="@mipmap/ic_launcher" />
+
+        <TextView
+            android:id="@+id/label_txt_icon_version"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:text="BTS++ v1.0"
+            android:textSize="13dp"
+            android:textColor="@color/theme01.textColorGray" />
+
+        <TextView
+            android:id="@+id/label_txt_main_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:inputType="textMultiLine"
+            android:text="@string/aboutPageIntroForBtspp"
+            android:textColor="@color/theme01.textColorMain" />
+
+        <TextView
+            android:id="@+id/label_txt_version"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:text="BTS++ v1.0.0.0"
+            android:textColor="@color/theme01.textColorMain" />
+
+        <TextView
+            android:id="@+id/label_txt_debuginfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:text="@string/aboutPageDebugVersion"
+            android:visibility="invisible"
+            android:textColor="@color/theme01.textColorMain" />
+
+
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

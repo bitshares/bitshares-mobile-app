@@ -1,0 +1,77 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="FullscreenTheme" parent="AppTheme">
+        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
+        <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
+    </style>
+
+    <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/black_overlay</item>
+    </style>
+
+    <style name="Fullscreen" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="theme01.EditText" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="colorControlNormal">@color/theme01.color01</item>
+        <item name="colorControlActivated">@color/theme01.color01</item>
+    </style>
+    
+    <style name="KLineTabTextStyle">
+        <item name="android:textSize">9dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/theme01.textColorNormal</item>
+    </style>
+
+    <style name="KPageTabTextStyle">
+        <item name="android:textSize">14dp</item>
+    </style>
+
+    <style name="kNavigationBarTextStyle">
+        <item name="android:textSize">16dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/theme01.textColorMain</item>
+    </style>
+
+    <style name="kMainButtonStyle">
+        <item name="android:layout_height">36dp</item>
+        <item name="android:background">@color/theme01.mainButtonBackColor</item>
+        <item name="android:textSize">16dp</item>
+        <item name="android:textColor">@color/theme01.mainButtonTextColor</item>
+    </style>
+
+    <style name="kNormalButtonStyle">
+        <item name="android:layout_height">36dp</item>
+        <item name="android:background">@color/theme01.textColorGray</item>
+        <item name="android:textSize">16dp</item>
+        <item name="android:textColor">@color/theme01.mainButtonTextColor</item>
+    </style>
+
+    <style name="LaunchTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@mipmap/launch</item>
+    </style>
+
+</resources>

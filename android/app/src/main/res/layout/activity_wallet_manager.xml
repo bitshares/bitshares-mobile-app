@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.btsplusplus.fowallet.ActivityWalletManager"
+    android:background="@color/theme01.appBackColor">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="25dp"
+        android:orientation="vertical">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+
+            <LinearLayout
+                android:id="@+id/layout_back_from_page_of_wallet_and_muti_sign"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_btn_back"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/nameBack"
+                    style="@style/kNavigationBarTextStyle"
+                    android:gravity="center_vertical"
+                    />
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:text="@string/myPageWalletAndMutiSignature"
+                style="@style/kNavigationBarTextStyle" />
+
+
+        </FrameLayout>
+
+
+        <LinearLayout
+            android:id="@+id/layout_account_list_of_wallet_and_muti_sign"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+        <!-- import accounts -->
+        <LinearLayout
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:layout_marginTop="10dp">
+
+            <Button
+                android:id="@+id/button_import_more_account_of_wallet_and_muti_sign"
+                android:layout_width="match_parent"
+                style="@style/kMainButtonStyle"
+                android:gravity="center|center_vertical"
+                android:textAllCaps="false"
+                android:text="@string/kWalletBtnImportMoreAccount" />
+        </LinearLayout>
+
+        <!-- backup wallet -->
+        <LinearLayout
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:layout_marginTop="0dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button_backup_wallet_of_wallet_and_muti_sign"
+                android:layout_width="match_parent"
+                style="@style/kNormalButtonStyle"
+                android:gravity="center|center_vertical"
+                android:textAllCaps="false"
+                android:text="@string/kWalletBtnBackup" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

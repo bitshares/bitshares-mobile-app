@@ -1,0 +1,708 @@
+<resources>
+    <string name="app_name">BTS++</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_index">IndexActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_front">frontActivity</string>
+    <string name="title_activity_test">testActivity</string>
+
+    <string name="kSettingCurrencyNameCNY">人民币</string>
+    <string name="kSettingCurrencyNameUSD">美元</string>
+    <string name="kSettingCurrencyNameEUR">欧元</string>
+    <string name="kSettingCurrencyNameJPY">日元</string>
+    <string name="kSettingCurrencyNameKRW">韩元</string>
+    <string name="kSettingCurrencyNameBTS">比特股</string>
+    <string name="kLabelGroupNameMain">主区</string>
+    <string name="kLabelGroupNameGDEX">GDEX(网关)</string>
+    <string name="kLabelGroupNameWWW">WWW(网关)</string>
+    <string name="kLabelGroupNameOPEN">OPEN(网关)</string>
+    <string name="kLabelGroupNameWIN">WIN(网关)</string>
+    <string name="kLabelGroupNameOther">其他</string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- syalon新增多语言支持（初步 -->
+    <string name="kTabNameMarkets">行情</string>
+    <string name="kTabNameDebt">抵押</string>
+    <string name="kTabNameServices">服务</string>
+    <string name="kTabNameMy">我的</string>
+
+    <!-- 特殊 -->
+    <string name="serverWssLangKey">cn</string>
+    <string name="webserverUploadPage">upload</string>
+    <string name="webserverDownloadPage">download</string>
+    <string name="appDepositWithdrawDefaultGateway">GDEX</string>
+
+    <!-- 一些通用的 -->
+    <string name="nameBack">返回</string>
+    <string name="nameCancel">取消</string>
+    <string name="nameRightIntro">介绍 &gt;</string>
+    <string name="nameBuy">买</string>
+    <string name="nameBuyIn">买入</string>
+    <string name="nameSell">卖</string>
+    <string name="nameSellOut">卖出</string>
+    <string name="nameNumber">数量</string>
+    <string name="namePrice">价格</string>
+    <string name="nameRegister">注册</string>
+    <string name="nameLogin">登录</string>
+    <string name="nameReset">重置</string>
+    <string name="nameOk">确定</string>
+    <string name="nameAccount">账号</string>
+    <string name="namePassword">密码</string>
+    <string name="nameNetworkException">网络异常，请稍后再试。</string>
+    <string name="nameNetworkInitException">网络异常，初始化失败，请稍后再试。</string>
+    <string name="nameRequesting">请求中</string>
+    <string name="nameMortgageRate">抵押率</string>
+    <string name="nameAccountManager">账号管理</string>
+    <string name="nameOrderManagement">订单管理</string>
+    <string name="nameAvaliable">可用</string>
+    <string name="nameSaoyisao">扫一扫</string>
+    <string name="nameAbout">关于</string>
+    <string name="nameCancellation">注销</string>
+    <string name="nameRefresh">刷新</string>
+    <string name="nameAll">全部</string>
+    <string name="nameSubmit">提交</string>
+    <string name="nameTelegram">电报</string>
+    <string name="comFavSuccessAdd">添加自选成功</string>
+    <string name="comFavSuccessDelete">删除自选成功</string>
+    <string name="comErrorAccountNotExist">账号不存在。</string>
+    <string name="tipsFormatAccount">帐号由【小写字母】、【数字】、【-】、【.】号组成，且必须字母开头、字母或数字结尾。</string>
+    <string name="tipsFormatPassword">12位以上字符，且必须包含大小写和数字。</string>
+    <string name="tipsFormatWalletPassword">8位以上字符，且必须包含大小写和数字。</string>
+    <string name="tipsFormatWalletPasswordForUpgateWallet">8位以上文件钱包密码</string>
+    <string name="unlockTipsUnlockAccount">解锁帐号</string>
+    <string name="unlockTipsUnlockWallet">解锁钱包</string>
+    <string name="unlockBtnUnlock">解锁</string>
+
+    <!-- 启动界面 -->
+    <string name="launchBtnRemindLater">稍后提醒</string>
+    <string name="launchBtnUpdateNow">立即升级</string>
+    <string name="launchTipVersionKey">newVersionInfo</string>
+    <string name="launchTipDefaultNewVersion">发现新版本 v%s，快前往更新吧。</string>
+
+    <!-- index 页面 -->
+    <string name="indexTabNameFavorite">自选</string>
+    <string name="indexName24Vol">24h量</string>
+    <string name="indexNameNoFavorite">没有任何自选</string>
+    <string name="indexNameWhatGateway">什么是网关？</string>
+
+    <!-- K线界面 -->
+    <string name="klineTabNameDeep">深度</string>
+    <string name="klineTabNameVolume">成交</string>
+    <string name="klineNodData">无数据</string>
+    <string name="klineNameHigh">高</string>
+    <string name="klineNameLow">低</string>
+    <string name="klineName24vol">24小时量</string>
+    <string name="klineNameTimeline">分时</string>
+    <string name="klineName5min">5分</string>
+    <string name="klineName15min">15分</string>
+    <string name="klineName1hour">1小时</string>
+    <string name="klineName4hour">4小时</string>
+    <string name="klineName1day">日线</string>
+    <string name="klineName1week">周线</string>
+    <string name="klineNameBuyOrder">买盘</string>
+    <string name="klineNameSellOrder">卖盘</string>
+    <string name="klineNameFeedPrice">喂价</string>
+    <string name="klineLabelTradeHisTitleTime">时间</string>
+    <string name="klineLabelTradeHisTitleType">方向</string>
+    <string name="klineLabelTradeHisTitlePrice">价格</string>
+    <string name="klineLabelTradeHisTitleAmount">数量</string>
+    <string name="klineLblCrossDate">时间</string>
+    <string name="klineLblCrossOpen">开</string>
+    <string name="klineLblCrossHigh">高</string>
+    <string name="klineLblCrossLow">低</string>
+    <string name="klineLblCrossClose">收</string>
+    <string name="klineLblCrossChange">涨跌额</string>
+    <string name="klineLblCrossChangePercent">涨跌幅</string>
+    <string name="klineLblCrossVol">成交量</string>
+    <string name="klineLblCrossPrice">价格</string>
+
+    <!-- 买入页面 -->
+    <string name="buyPageBtnBuy">买入</string>
+    <string name="buyPageBtnSell">卖出</string>
+    <string name="buyPageBuyPrice">买入单价</string>
+    <string name="buyPageBuyNumber">买入数量</string>
+    <string name="buyPageSellPrice">卖出单价</string>
+    <string name="buyPageSellNumber">卖出数量</string>
+    <string name="buyPageBuyAPrice">买一价</string>
+    <string name="buyPageSellAPrice">卖一价</string>
+    <string name="buyPageTradeAmount">交易额</string>
+    <string name="buyPageCurrentDelegate">当前委托</string>
+    <string name="buyPageTipCancelOrderTxFullOk">订单 %s 已取消。</string>
+    <string name="buyPageTipCancelOrderTxOk">订单 %s 已取消，但刷新界面失败，请稍后再试。</string>
+    <string name="buyPageTipCancelOrderTxFailed">请求失败，请稍后再试。</string>
+    <string name="buyPageTipCreateOrderTxFullOk">下单成功。</string>
+    <string name="buyPageTipCreateOrderTxFullOkWithID">下单成功，订单 #%s 已成交。</string>
+    <string name="buyPageTipCreateOrderTxOk">下单成功，但刷新失败，请稍后再试。</string>
+    <string name="buyPageTipCreateOrderTxFailed">请求失败，请稍后再试。</string>
+    <string name="buyPageTipErrorGettingData">正在获取数据，请稍后。</string>
+    <string name="buyPageTipErrorInputPrice">请输入价格</string>
+    <string name="buyPageTipErrorInputAmount">请输入数量</string>
+    <string name="buyPageTipErrorTotalTooLow">交易额太低</string>
+    <string name="buyPageTipErrorMoneyNotEnough">金额不足</string>
+    <string name="buyPageTipErrorItemNotEnough">数量不足</string>
+
+    <!-- 抵押界面 -->
+    <string name="debtPageSubmitBtn">调整债仓</string>
+    <string name="debtPageMortgageLoan">抵押借贷</string>
+    <string name="debtPageSelectAssets">选择资产</string>
+    <string name="debtPageTipSelectDebtAsset">请选择要借入的资产</string>
+    <string name="debtPageCurrentFeedPrice">当前喂价</string>
+    <string name="debtPageCurrentFeedPriceA">当前喂价 --</string>
+    <string name="debtPageForcedLiquidationPrice">强平价格</string>
+    <string name="debtPageForcedLiquidationPriceA">强平价格 --</string>
+    <string name="debtPageUsableBalance">可用余额</string>
+    <string name="debtPageUsableBalance0cny">可用余额 0CNY</string>
+    <string name="debtPageUsableBalance0bts">可用余额 0BTS</string>
+    <string name="debtPageTextInputBorrowMoney">请输入借款金额</string>
+    <string name="debtPageMaxRepayment">最大还款</string>
+    <string name="debtPageTextInputMortgageNumber">请输入抵押物数量</string>
+    <string name="debtPageTotalMortgage">全部抵押</string>
+    <string name="debtPageCollRatio">抵押率</string>
+    <string name="debtPageLabelTargetRatioName">目标抵押率</string>
+    <string name="debtPageGoalMortgageRateNotSet">目标抵押率 未设置</string>
+    <string name="debtPageTipForTriggerFeedPrice">【温馨提示】\n当喂价下降到强平触发价时，系统将会自动出售您的抵押资产用于归还借款。请注意调整抵押率控制风险。</string>
+    <string name="debtPageTipTxFullOk">债仓调整完毕。</string>
+    <string name="debtPageTipTxOk">债仓调整完毕，但刷新界面数据失败，请稍后再试。</string>
+    <string name="debtPageTipTxFailed">请求失败，请稍后再试。</string>
+    <string name="debtPageTipErrorNoChange">借款数量和抵押物没发生变化。</string>
+    <string name="debtPageTipErrorCollAmount">抵押物余额不足，请调整数量。</string>
+    <string name="debtPageTipErrorAvailableNum">%s余额不足，请调整还款数量。</string>
+    <string name="debtPageTipErrorDebtMore">抵押率低于 %s，不能追加借贷。</string>
+
+    <!-- 服务主界面 -->
+    <string name="serviceMainPageTransfer">转账</string>
+    <string name="serviceMainPageAccountQuery">账号查询</string>
+    <string name="serviceMainPageDebtRanking">抵押排行</string>
+    <string name="serviceMainPageVoting">投票</string>
+    <string name="serviceMainPageGame">小游戏</string>
+    <string name="serviceMainPageRechargeAndWithdraw">冲币提币</string>
+
+    <!-- 转账界面 -->
+    <string name="transferPageFromAccount">来自账号</string>
+    <string name="transferPageToAccount">发往账号</string>
+    <string name="transferPagePleaseSelectCollectionAccount">请选择收款账号</string>
+    <string name="kVcTransferSubmitTipFromToIsSame">收款账号和发送账号不能相同。</string>
+    <string name="transferPagePleaseSelectAsset">请选择要转账的资产</string>
+    <string name="transferPageAssetName">转账资产</string>
+    <string name="transferPageTransferNumber">转账数量</string>
+    <string name="transferPagePleaseInputTransferAmount">请输入转账金额</string>
+    <string name="transferPageTotal">全部</string>
+    <string name="transferPageRemarkInfo">备注信息</string>
+    <string name="transferPagePleaseInputRemarkInfo">请输入备注信息(可选)</string>
+    <string name="transferPageSend">发送</string>
+    <string name="transferPageTipErrorNoTo">请选择收款帐号。</string>
+    <string name="transferPageAmountNotEnough">数量不足</string>
+    <string name="transferPageTipErrorAmount">数量不足。</string>
+    <string name="transferPageTipEncodeMemoError">备注信息加密失败，请稍后再试。</string>
+    <string name="transferPageTipNoMemoKey">帐号没有备注私钥，不支持填写备注信息。</string>
+    <string name="kVcTransferSubmitTipWalletNoMemoKey">没有备注私钥信息，不支持填写备注。</string>
+    <string name="transferPageTipNotSupportMemo">备注私钥和资金私钥不同，不支持填写备注信息。</string>
+    <string name="transferPageTipTxFullOk">发送成功。</string>
+    <string name="transferPageTipTxOk">发送成功，但刷新界面数据失败，请稍后再试。</string>
+    <string name="transferPageTipTxFailed">请求失败，请稍后再试。</string>
+
+    <!-- 转账确认界面 -->
+    <string name="transferConfirmationPagePleaseConfirmTrading">请确认交易</string>
+    <string name="transferConfirmationPageFrom">来自</string>
+    <string name="transferConfirmationPageSendTo">发往</string>
+    <string name="transferConfirmationPageRemark">备注</string>
+    <string name="transferConfirmationPageFee">手续费</string>
+
+    <!-- 抵押排行界面 -->
+    <string name="debtPageMortgageRanking">抵押排行</string>
+    <string name="debtPageNoCallOrder">没有任何债仓信息</string>
+    <string name="debtPageForcedLiquidationTriggerPrice">强平触发价</string>
+    <string name="debtPageBorrow">借入</string>
+    <string name="debtPageCollateral">抵押</string>
+    <string name="debtPageWhatIsFeedPrice">什么是喂价？</string>
+
+    <!-- 投票界面 -->
+    <string name="votingPageCommittees">理事会</string>
+    <string name="votingPageWitness">见证人</string>
+    <string name="votingPageWorker">预算项目</string>
+    <string name="votingPagecurrentAgent">当前代理</string>
+    <string name="votingPagecurrentAgentA">当前代理 --</string>
+    <string name="votingPageCommitVoting">提交投票</string>
+    <string name="votingPageSetAgent">设置代理</string>
+    <string name="votingPageCancelProxy">取消代理</string>
+    <string name="votingPageTotalVotes">总票数</string>
+    <string name="votingPageMissCount">丢块数</string>
+    <string name="votingPageCreateUser">创建者</string>
+    <string name="votingPageBudgetOfEveryDay">每日预算</string>
+    <string name="votingPageValidDate">有效期</string>
+    <string name="kVcVoteCellWPType">类型</string>
+    <string name="kVcVoteCellWPRefund">退款</string>
+    <string name="kVcVoteCellWPVesting">普通</string>
+    <string name="kVcVoteCellWPBurn">销毁</string>
+    <string name="votingPageProjDetail">项目详情</string>
+    <string name="votingPageActiveCommittees">活跃理事会(%s名)</string>
+    <string name="votingPageWhatIsActiveCommittees">什么是活跃理事会？</string>
+    <string name="votingPageCandidateCommittees">候选理事会(%s名)</string>
+    <string name="votingPageWhatIsCandidateCommittees">什么是候选理事会？</string>
+    <string name="votingPageActiveWitness">活跃见证人(%s名)</string>
+    <string name="votingPageWhatIsActiveWitness">什么是活跃见证人？</string>
+    <string name="votingPageCandidateWitness">候选见证人(%s名)</string>
+    <string name="votingPageWhatIsCandidateWitness">什么是候选见证人？</string>
+    <string name="votingPageExpireWorks">过期预算项目(%s个)</string>
+    <string name="votingPageDoingWorks">进行中预算项目(%s个)</string>
+    <string name="votingPageActiveWorks">活跃预算项目(%s个)</string>
+    <string name="votingPageWorksTotalAmount">预算总额</string>
+    <string name="votingPageProposalWorks">提案预算项目(%s个)</string>
+    <string name="votingPagePassNeedTickets">通过所需票数</string>
+    <string name="votingPagePassDeleteDelegate">删除代理</string>
+    <string name="votingPageTipTxFullOk">%s成功。</string>
+    <string name="votingPageTipTxOk">%s成功，但刷新界面失败，请稍后再试。</string>
+    <string name="votingPageTipTxFailed">请求失败，请稍后再试。</string>
+    <string name="votingPageTipSubmitProxy">您设置了投票代理人，手动编辑投票信息将会取消代理人，继续投票吗？</string>
+    <string name="votingPageTipVotingNoChagne">投票信息没有变化，不用提交。</string>
+
+    <!-- 我的主界面 -->
+    <string name="myPageLabelMembership">状态：</string>
+    <string name="myPageLabelMembershipBasic">普通会员</string>
+    <string name="myPageLabelMembershipLifetime">终身会员</string>
+    <string name="myPageLabelAccountLocked">锁定中</string>
+    <string name="myPageLabelAccountUnlocked">未锁定</string>
+    <string name="myPageClickToLogin">点此登录</string>
+    <string name="myPageProposalOfWaitingForProcess">提案管理</string>
+    <string name="myPageWalletAndMutiSignature">钱包&#038;多签</string>
+    <string name="myPageMyAssets">我的资产</string>
+    <string name="myPageMyUnfreezeAmount">待解冻金额</string>
+    <string name="myPageQA">常见问题</string>
+    <string name="myPageSetting">设置</string>
+    <string name="myPageAboutBtspp">关于BTS++</string>
+    <string name="kLblTipsPasswordModeNotSupportMultiSign">多签等功能仅支持钱包模式，是否为当前的账号创建本地钱包文件？</string>
+    <string name="kLblTipsConvertToWalletModeDone">创建钱包完毕。</string>
+
+    <!-- 注册登陆界面 -->
+    <string name="registerLoginPageServiceClause">服务条款</string>
+    <string name="registerLoginPageWalletMode">钱包模式</string>
+    <string name="registerLoginPageAccountMode">账号模式</string>
+    <string name="registerLoginPagePrivateKeyMode">私钥模式</string>
+    <string name="registerLoginPagePleaseInputBtsAccount">请输入 Bitshares 账号名</string>
+    <string name="registerLoginPagePleaseInputPwd">请输入密码</string>
+    <string name="registerLoginPageInputPws">确认密码</string>
+    <string name="registerLoginPageAgreeAgreementAndRegister">同意协议并注册</string>
+    <string name="registerLoginPageTipForAccountPassword">提示：账号密码对应格式要求可以点击问号查看。\n注意：BTS++是去中心化区块链应用密码一旦丢失或遗忘将无法找回，请务必妥善保管。</string>
+    <string name="registerLoginPageTipForWalletPassword">提示：钱包密码对应格式要求可以点击问号查看。\n注意：BTS++是去中心化区块链应用，钱包文件和密码一旦丢失或遗忘将无法找回，建议您注册后将钱包文件做好备份，并妥善保管。\n※ 推荐使用钱包模式。</string>
+    <string name="registerLoginPageTradePws">钱包密码</string>
+    <string name="registerLoginPagePleaseTradePwd">请输入新的钱包密码</string>
+    <string name="registerLoginPageJustLogin">立即登录</string>
+    <string name="registerLoginPageCapitalPrivateKey">资金私钥</string>
+    <string name="registerLoginPagePleaseCapitalPrivateKeyPermission">请输入资金权限私钥</string>
+    <string name="registerLoginPageTipForWifiModeToImpot">仅支持在WIFI网络下导入钱包</string>
+    <string name="registerLoginPageInitializing">初始化中...</string>
+    <string name="registerLoginPageTipForImpotBinToPhone">请在电脑端输入以上网址导入钱包BIN文件到手机</string>
+    <string name="registerLoginPageReceiveFiles">收到的文件</string>
+    <string name="registerLoginPageReceiveFiles0">收到的文件(0个)</string>
+    <string name="registerLoginPageWarmTip">温馨提示</string>
+    <string name="registerLoginPageTipForLogout">注销登录将会从设备删除帐号相关信息，请确认您已经做好备份。是否继续注销？</string>
+    <string name="registerLoginPageInvalidParams">参数无效。</string>
+    <string name="registerLoginPageInvalidAccountFormat">帐号格式无效。</string>
+    <string name="registerLoginPageAccountExisted">帐号已经存在。</string>
+    <string name="registerLoginPageUnknownErrorAndBroadcastFailed">未知错误，广播失败。</string>
+    <string name="registerLoginPageTooManyAccountForThisEquipment">该设备注册帐号数量过多。</string>
+    <string name="registerLoginPageRegisterFrequently">注册太频繁，请稍后再试。</string>
+    <string name="registerLoginPageServerMaintenance">服务器维护中。</string>
+    <string name="registerLoginPagePleaseInputAccountPwd">请输入账号密码</string>
+    <string name="registerLoginPagePleaseInputTradePws">请输入交易密码</string>
+    <string name="registerLoginPagePleaseInputWalletPws">请输入钱包文件密码</string>
+    <string name="registerLoginPageUnlockAccount">解锁帐号</string>
+    <string name="registerLoginPageUnlock">解锁</string>
+    <string name="registerLoginPagePasswordIsEmpty">密码不能为空。</string>
+    <string name="registerLoginPageAccountIsEmptyAndInputAgain">帐号名不能为空，请重新输入。</string>
+    <string name="registerLoginPagePwsIsEmptyAndInputAgain">密码不能为空，请重新输入。</string>
+    <string name="registerLoginPageTradePwsFormatErrorAndInputAgain">交易密码格式不正确，请重新输入。</string>
+    <string name="registerLoginPageAccountNameNotExistAndPleaseInputAgain">帐号名不存在，请重新输入。</string>
+    <string name="registerLoginPageAccountIsMultipleSignatureAndNotSupport">帐号为多签帐号，不支持。</string>
+    <string name="kLoginSubmitTipsAccountPasswordIncorrect">密码不正确，请重新输入。</string>
+    <string name="kLoginSubmitTipsAccountPasswordPermissionNotEnough">该密码权限不足。</string>
+    <string name="kLoginSubmitTipsPrivateKeyIncorrect">私钥不正确，请重新输入。</string>
+    <string name="kLoginSubmitTipsPrivateKeyPermissionNotEnough">该私钥权限不足。</string>
+    <string name="kLoginSubmitTipsPasswordFmtIncorrect">密码格式不正确，请重新输入。</string>
+    <string name="kLoginSubmitTipsWalletPasswordFmtIncorrect">钱包密码格式不正确，请重新输入。</string>
+    <string name="kLoginSubmitTipsConfirmPasswordFailed">两次输入的密码不一致，请重新输入。</string>
+    <string name="kLoginSubmitTipsAccountFmtIncorrect">帐号格式不正确，请重新输入。</string>
+    <string name="kLoginSubmitTipsAccountAlreadyExist">帐号名已存在，请重新输入。</string>
+    <string name="registerLoginPageLoginSuccess">登录成功。</string>
+    <string name="kLoginTipsRegFullOK">注册成功。</string>
+    <string name="kLoginRegTipsRegOK">注册成功，但刷新失败，稍后直接登录即可。</string>
+    <string name="kLoginTipsWalletModeRegOK">注册成功，但获取帐号信息失败，请重新启动APP。</string>
+    <string name="registerLoginPageWhatIsTradePws">什么是交易密码？</string>
+    <string name="registerLoginPageCapitalPrivateKeyIsWrongAndInputAgain">资金私钥不正确，请重新输入。</string>
+    <string name="registerLoginPageAccountQueryFailedAndTryLater">查询帐号信息失败，请稍后再试。</string>
+    <string name="registerLoginPageThisPrivateKeyIsntCapitalPrivateKeyAndInputAgain">该私钥不是资金权限私钥，请重新输入。</string>
+    <string name="registerLoginPageWhatIsCapitalPrivateKey">什么是资金私钥？</string>
+    <string name="kLoginTipsReceivedFileNumber">收到的文件(%s个)</string>
+    <string name="kLoginTipsLocalWalletFileNumber">本机钱包文件(%s个)</string>
+    <string name="kLoginTipsOnlyViaWifiMainDesc">初始化上传失败</string>
+    <string name="registerLoginPageClickToImport">点击导入</string>
+    <string name="registerLoginPageInvalidRequesting">无效请求</string>
+    <string name="registerLoginPageUploadSuccessPleaseContinueForPhone">上传成功，请在手机上继续完成导入操作。</string>
+    <string name="registerLoginPageServerInternalError">服务器内部错误</string>
+    <string name="registerLoginPageTipForDeleteFileForThisPhone">从该设备删除文件%s，确定吗？</string>
+    <string name="registerLoginPageDelete">删除</string>
+    <string name="registerLoginPageClickWrong">点错了</string>
+    <string name="registerLoginPageImportToWallet">导入钱包</string>
+    <string name="registerLoginPagePleaseInputWalletFilePws">请输入钱包文件密码</string>
+    <string name="registerLoginPageJustImport">立即导入</string>
+    <string name="registerLoginPageLoadWalletFileFailed">读取钱包文件失败。</string>
+    <string name="registerLoginPageWalletFilesInvalidOrPwdWrong">钱包文件无效或密码不正确。</string>
+    <string name="registerLoginPageThisWalletIsNotBelongsToBtsChain">该钱包不是Bitshares区块链的钱包。</string>
+    <string name="registerLoginPageThisWalletIsEmpty">该钱包为空钱包，请重新选择。</string>
+    <string name="registerLoginPageThisWalletIncludeMultiAccount">该钱包包含多个账户，不支持导入。</string>
+    <string name="registerLoginPageThisWalletMissedPrivateKeyInfo">该钱包不包含密钥信息，请重新选择。</string>
+    <string name="registerLoginPageThisWalletIsMultiAccountAndNotSupport">该钱包包含多个账户，不支持导入。</string>
+    <string name="registerLoginPageThisWalletIsEmptyAndTryAgainSelect">该钱包为空钱包，请重选选择。</string>
+    <string name="registerLoginPageAccountQueryFailedAndTryLateAgain">查询帐号信息失败，请稍后再试。</string>
+    <string name="registerLoginPageThisWalletCapitalPermissionKeyAndTryAgainToImport">该钱包不包含资金权限密钥，请重新导入。</string>
+    <string name="registerLoginPageBackupWallet">备份钱包</string>
+    <string name="registerLoginPageReferrer">引荐人</string>
+    <string name="registerLoginPageRegisterer">注册人</string>
+    <string name="registerLoginPageSVipRegisterer">终身会员推荐人</string>
+    <string name="registerLoginAccountInfo">账号信息</string>
+    <string name="registerLoginWebServerErrorIp">获取手机地址异常，请稍后再试。</string>
+    <string name="registerLoginWebServerErrorInit">初始化失败，请重启APP再试。</string>
+    <string name="registerLoginTipWifiForBackup">仅支持在WIFI网络下备份钱包。</string>
+    <string name="registerLoginTipBackupError">导出钱包失败，请稍后再试。</string>
+    <string name="registerLoginTipForPcBackWallet">请在电脑端输入以上网址下载钱包BIN文件备份到安全的地方</string>
+    <string name="registerLoginConfirmationPassword">请确认密码</string>
+
+    <!-- 交易对 -->
+    <string name="tradingPairMyTradePair">我的交易对(%s个)</string>
+    <string name="tradingPairCantChange">不可更改</string>
+    <string name="tradingPairMaxDefineCustomTradePair">最多只能自定义 %s 个交易对。</string>
+    <string name="tradingPairAddPair">添加交易对</string>
+    <string name="tradingPairClickToSearchAssets">点击搜索新资产</string>
+    <string name="tradingPairSearchResult">搜索结果</string>
+
+    <!-- 我的资产界面 -->
+    <string name="myAssetsPageAsset">资产</string>
+    <string name="myAssetsPageDetail">明细</string>
+    <string name="myAssetsPageTotalAsset">总资产折合</string>
+    <string name="myAssetsPageEstimating">估算中...</string>
+    <string name="myAssetsPageCanceledFollow">已取消关注</string>
+    <string name="myAssetsPageFollowSuccess">关注成功</string>
+    <string name="myAssetsPageNetworkingExceptionAndEstimatingFailed">网络请求异常，估算失败，请稍后再试。</string>
+    <string name="myAssetsPageAvailable">可用</string>
+    <string name="myAssetsPageHangOrder">挂单</string>
+    <string name="myAssetsPageDebt">负债</string>
+    <string name="myAssetsPageCollateral">抵押</string>
+    <string name="myAssetsPageForcedLiquidationPrice2">强制平仓价</string>
+    <string name="myAssetsPageTrading">交易</string>
+    <string name="myAssetsPageViewTotalAssetsInfo">查看全部资产信息</string>
+    <string name="myAssetsPageUnknowOperationContent">未知操作内容</string>
+    <string name="myAssetsPageOpNameTransfer">转账</string>
+    <string name="myAssetsPageOpNameCreateSellOrder">创建卖单</string>
+    <string name="myAssetsPageOpNameCreateBuyOrder">创建买单</string>
+    <string name="myAssetsPageOpNameCancelOrder">取消订单</string>
+    <string name="myAssetsPageOpNameUpdatePosition">调整债仓</string>
+    <string name="myAssetsPageOpNameFillOrder">订单成交</string>
+    <string name="myAssetsPageOpNameCreateAccount">创建账号</string>
+    <string name="myAssetsPageOpNameUpdateAccount">更新账户</string>
+    <string name="myAssetsPageOpNameUpgradeAccount">升级账户</string>
+    <string name="myAssetsPageOpNameCreateProposal">创建提案</string>
+    <string name="myAssetsPageOpNameUpdateProposal">更新提案</string>
+    <!-- check / -->
+    <string name="myAssetsPageTransferFormat">%s 转账 %s 到 %s。</string>
+    <string name="myAssetsPageSubmitSellOrder">%1$s 提交卖单，以 %2$s 的价格卖出 %3$s。</string>
+    <string name="myAssetsPageSubmitBuyOrder">%1$s 提交买单，以 %2$s 的价格买入 %3$s。</string>
+    <string name="myAssetsPageFillSellOrder">%1$s 以 %2$s 的价格卖出 %3$s。</string>
+    <string name="myAssetsPageFillBuyOrder">%1$s 以 %2$s 的价格买入 %3$s。</string>
+    <string name="myAssetsPageCancelLimitOrder">%s 取消了限价单 %s。</string>
+    <string name="myAssetsPageUpdateMarginMoney">%s 更新保证金 %s，借出 %s。</string>
+    <string name="myAssetsPageCreatedAccount">%s 创建了账号 %s。</string>
+    <string name="myAssetsPageUpdatedAccount">更新了账户信息。</string>
+    <string name="myAssetsPageUpgradedLifelongAccount">升级了终身会员。</string>
+    <string name="myAssetsPageCreateProposal">创建提案。</string>
+    <string name="myAssetsPageUpdateProposal">更新提案。</string>
+    <string name="myAssetsPageNotAnyActivityInfo">没有任何活动信息</string>
+
+
+    <!-- 我的订单界面 -->
+    <string name="myOrderPageCurrentOrder">当前订单</string>
+    <string name="myOrderPageHistoryOrder">历史订单</string>
+    <string name="myOrderPagecurrentNotAnyOrder">当前没有任何订单</string>
+    <string name="myOrderPageExpire">%s 过期</string>
+    <string name="myOrderPageRevocation">撤销</string>
+    <string name="myOrderPageTotalAmount">总金额</string>
+    <string name="myOrderPageLabelPrice">价格</string>
+    <string name="myOrderPageLabelAmount">数量</string>
+    <string name="myOrderPageTipForFeeNotEnough">手续费不足，请确保帐号有足额的 BTS/CNY/USD 用于支付网络手续费。</string>
+    <string name="myOrderPageOrderIsCanceled">订单 %s 已取消。</string>
+    <string name="myOrderPageOrderIsCanceledButRefreshFailed">订单 %s 已取消，但刷新界面失败，请稍后再试。</string>
+    <string name="myOrderPageRequestFailedAndTryAgainLater">请求失败，请稍后再试。</string>
+
+    <!-- 喂价页面 -->
+    <string name="feedPricePageFeedDetail">喂价详情</string>
+    <string name="feedPricePageTitleName">见证人</string>
+    <string name="feedPricePageTitlePrice">喂价</string>
+    <string name="feedPricePageTitleBiasRate">偏差率</string>
+    <string name="feedPricePageTitlePublishDate">最近发布</string>
+    <string name="feedPricePageAge">前</string>
+    <string name="feedPricePageAgeSec">秒</string>
+    <string name="feedPricePageAgeMin">分</string>
+    <string name="feedPricePageAgeHour">小时</string>
+    <string name="feedPricePageAgeDay">天</string>
+    <string name="feedPricePageAgeNoPublish">未发布</string>
+
+    <!-- 充提界面相关 -->
+    <string name="kVcDWCellLabelCurrGateway">当前网关</string>
+    <string name="kVcDWTipsSelectGateway">请选择要进行充提的网关</string>
+    <string name="kVcDWCellBtnNameDeposit">充币</string>
+    <string name="kVcDWCellBtnNameWithdraw">提币</string>
+    <string name="kVcDWHelpGatewayAssets">网关资产(%s个)</string>
+    <string name="kVcDWTipsCopyOK">已复制</string>
+    <string name="kVcDWTipsDisableDeposit">该资产暂停充币。</string>
+    <string name="kVcDWTipsDisableWithdraw">该资产暂停提币。</string>
+    <string name="kVcDWTipsGatewayNotAvailable">当前网关不可用，请稍后再试。</string>
+    <string name="kVcDWCellBtnCopyAddr">复制地址</string>
+    <string name="kVcDWCellBtnCopyMemo">复制备注(TAG)</string>
+    <string name="kVcDWTipsCopyAddrOK">地址已复制</string>
+    <string name="kVcDWTipsCopyMemoOK">备注已复制</string>
+    <string name="kVcDWTipsImportantTitle">【重要】</string>
+    <string name="kVcDWTipsMinDepositAmount">最小充币数量：%s%s。小于最小数量将无法入账且无法退回。\n</string>
+    <string name="kVcDWTipsDepositMatchAsset">请将您的%s资产充入上述地址，禁止向上述地址充入非%s资产，否则资产将不可找回。</string>
+    <string name="kVcDWTipsNetworkConfirm">您充币到上述地址后，请耐性等待网络确认。\n</string>
+    <string name="kVcDWTipsNetworkConfirmWithN">您充币到上述地址后，需要等待网络确认，%s次网络确认后到账。\n</string>
+    <string name="kVcDWTipsFindCustomService">如有任何问题，请联系网关客服。</string>
+    <string name="kVcDWErrTipsRequestDepositAddrFailed">获取充币地址异常，请联系网关客服。</string>
+    <string name="kVcDWErrTipsRequestDepositAddrFailed2">获取充币地址异常，字段'%s'校验失败，请联系网关客服。</string>
+    <string name="kVcDWHelpTitleSupport">帮助支持</string>
+    <string name="kVcDWHelpTitleQQ">客服QQ</string>
+    <string name="kVcDWHelpTitleTelegram">电报</string>
+    <string name="kVcDWWithdrawQueryGatewayAccountFailed">获取网关中间账号信息异常。</string>
+    <string name="kVcDWCellWithdrawAddress">提币地址</string>
+    <string name="kVcDWCellWithdrawMemo">备注信息</string>
+    <string name="kVcDWCellWithdrawPlaceholderAddress">请输入或粘贴提币地址</string>
+    <string name="kVcDWCellWithdrawPlaceholderAmount">请输入提币数量</string>
+    <string name="kVcDWCellWithdrawPlaceholderMemo">请输入备注（Memo）或标签(TAG)</string>
+    <string name="kVcDWCellMinWithdrawNumber">最小提币数量</string>
+    <string name="kVcDWCellWithdrawFee">提币手续费</string>
+    <string name="kVcDWCellWithdrawGatewayAccount">网关账号</string>
+    <string name="kVcDWCellWithdrawFinalValue">实际到账</string>
+    <string name="kVcDWWithdrawSubmitButton">提币</string>
+    <string name="kVcDWSubmitTipsAddressCannotBeEmpty">提币地址不能为空。</string>
+    <string name="kVcDWSubmitTipsPleaseInputAmount">请输入提币数量。</string>
+    <string name="kVcDWSubmitTipsWithdrawAmountNotEnough">数量不足。</string>
+    <string name="kVcDWSubmitTipsWithdrawLessThanMinNumber">不能小于最小提币数量。</string>
+    <string name="kVcDWSubmitTipsFinalValueTooLow">实际到账数量太低。</string>
+    <string name="kVcDWSubmitTipsNoMemoCannotWithdraw">账号没有备注私钥，不支持提币。</string>
+    <string name="kVcDWSubmitSecondConfirmMsg01">提币请求发出后将不可撤回，请确定您的提币地址和备注信息正确哦。</string>
+    <string name="kVcDWSubmitSecondConfirmMsg02">您没有填写备注信息，是否继续提币？</string>
+    <string name="kVcDWSubmitSecondConfirmMsg03">提币请求发出后将不可撤回，请确定您的提币地址正确哦。</string>
+    <string name="kVcDWSubmitSecondBtnContinue">继续提币</string>
+    <string name="kVcDWSubmitTipsInvalidAddress">提币地址无效。</string>
+    <string name="kVcDWSubmitTxFullOK">申请提币成功。</string>
+    <string name="kVcDWSubmitTxOK">申请提币成功，但刷新界面数据失败，请稍后再试。</string>
+
+    <!-- 账号搜索 -->
+    <string name="accountSearchTitle">账号查询</string>
+    <string name="accountSearchMyFavorites">我的关注(%s人)</string>
+    <string name="accountSearchPlaceholder">请输入有效的 Bitshares 账号</string>
+
+    <!-- 常见问题 -->
+
+
+    <!-- 设置 -->
+    <string name="settingPageValuationWay">计价方式</string>
+    <string name="settingPageThemeStyle">主题风格</string>
+    <string name="settingPageJingMiLan">静谧蓝</string>
+    <string name="settingPageZhenZhuBai">珍珠白</string>
+
+    <!-- 关于BTS++ -->
+    <string name="aboutPageIntroForBtspp">\nBTS++是基于比特股石墨烯技术，从产品体验出发，采用原生技术开发的一款可媲美一流中心化交易所的去中心化交易所（DEX）产品。\n\n联系我们\n微信：bts-pp\n邮箱：contact@btsplusplus.com\n电报：https://t.me/btsplusplus\n官网：http://btspp.io\n</string>
+    <string name="aboutPageDebugVersion">调试版</string>
+
+    <!-- 升级钱包模式 -->
+    <string name="upgradeWalletPageTitle">升级钱包模式</string>
+    <string name="upgradeWalletPageCreateWallet">创建钱包</string>
+
+    <!-- 钱包&多签 -->
+    <string name="kWalletUnlockFailedUnknowMode">解锁失败，未知的帐号模式：%s。</string>
+    <string name="kWalletInvalidWalletPassword">钱包密码无效。</string>
+    <string name="kWalletInvalidWalletFile">钱包文件无效。</string>
+    <string name="kWalletIncorrectWalletPassword">钱包密码不正确。</string>
+    <string name="kWalletPermissionNoEnough">权限不足。</string>
+    <string name="kWalletNoAccountData">无账号数据。</string>
+    <string name="kWalletBtnBackup">备份钱包</string>
+    <string name="kWalletBtnImportMoreAccount">导入更多账号</string>
+    <string name="kWalletBtnImportMultiSignedAccount">导入多签账号</string>
+    <string name="kWalletBtnImportNormalAccount">导入普通账号</string>
+    <string name="kWalletBtnSetCurrent">设置为当前账号</string>
+    <string name="kWalletBtnRemoveAccount">删除该账号</string>
+    <string name="kWalletTipsDuplicated">账号已经存在，不用重复导入。</string>
+    <string name="kWalletTipsSwitchCurrentAccountDone">切换当前账号完毕。</string>
+    <string name="kWalletTipsRemoveAccountDone">账号已删除。</string>
+    <string name="kWalletTipsRemoveKeepOne">钱包中至少保留一个账号。</string>
+    <string name="kWalletTipsWarmMessage">删除账号将会连同账号关联的私钥信息一起删除，请确认您已经做好备份。是否继续删除？</string>
+    <string name="kWalletTipsMaxImportAccount">最多只能导入 %s 个账号。</string>
+    <string name="kWalletTipsNotMultiSignAccount">%s 不是多签账号，不能导入。</string>
+    <string name="kWalletImportSuccess">导入完成</string>
+    <string name="kWalletCellCurrentAccount">当前账号</string>
+    <string name="kWalletCellPermissionOwner">账号权限</string>
+    <string name="kWalletCellPermissionActive">资金权限</string>
+    <string name="kWalletCellPermissionMemo">备注权限</string>
+    <string name="kWalletMemuTipsPleaseSelectCellAction">请选择要执行的操作</string>
+    <string name="kWalletMenuTipsPleaseSelectImportType">请选择要导入的账号类型</string>
+
+    <!-- 提案界面 -->
+    <string name="kProposalTipsAskMissingActive">您没有账号 %s 的资金权限，是否发起提案交易？</string>
+    <string name="kProposalTipsAskMissingOwner">您没有账号 %s 的账号权限，是否发起提案交易？</string>
+    <string name="kProposalTipsSelectFeePayingAccount">请选择提案发起账号</string>
+    <string name="kProposalLabelCellProposalCreator">提案发起者</string>
+    <string name="kProposalSubmitTipsSelectCreator">请选择提案创建者账号。</string>
+    <string name="kProposalSubmitTipTxOK">创建提案成功。</string>
+    <string name="kProposalBtnSubmit">提交</string>
+    <string name="kProposalTipsNoAnyProposals">没有任何提案信息</string>
+    <string name="kProposalSubmitTipsInReview">提案处于审核中，不能添加授权。</string>
+    <string name="kProposalSubmitTipsNoPermissionApprove">您没有任何权限，没法执行批准操作。</string>
+    <string name="kProposalSubmitTipsYouAlreadyApproved">您已经批准，不用重复操作。</string>
+    <string name="kProposalSubmitTipsNoNeedRemove">您尚未添加授权，不用移除。</string>
+    <string name="kProposalSubmitTxTipsAddApprovalOK">批准授权成功。</string>
+    <string name="kProposalSubmitTxTipsRemoveApprovalOK">授权撤销成功。</string>
+    <string name="kProposalCellAddApproval">授权批准</string>
+    <string name="kProposalCellRemoveApproval">授权撤销</string>
+    <string name="kProposalCellApproved">已批准</string>
+    <string name="kProposalCellNotApproved">未批准</string>
+    <string name="kProposalCellBtnApprove">授权批准</string>
+    <string name="kProposalCellBtnNotApprove">授权撤销</string>
+    <string name="kProposalCellBtnDelete">删除</string>
+    <string name="kProposalCellApprover">目标账号 </string>
+    <string name="kProposalCellCreator">发起账号 </string>
+    <string name="kProposalCellStatusTitle">状态 </string>
+    <string name="kProposalCellStatusPending">进行中</string>
+    <string name="kProposalCellStatusFailed">失败</string>
+    <string name="kProposalCellStatusWaitReview">待审核</string>
+    <string name="kProposalCellStatusReview">审核中</string>
+    <string name="kProposalCellStatusNotPassed">未通过</string>
+    <string name="kProposalCellProgress">授权进度 </string>
+    <string name="kProposalEditSelectRemoveApproval">请选择移除授权账号</string>
+    <string name="kProposalEditSelectAddApproval">请选择添加授权账号</string>
+    <string name="kProposalEditTipsSelectFeePayingAccount">请选择手续费支付账号。</string>
+    <string name="kProposalEditTipsNoFeePayingAccountActiveKey">没有 %s 账号的资金私钥，该账号不能用于支付手续费。</string>
+    <string name="kProposalEditCellAddApprover">授权批准</string>
+    <string name="kProposalEditCellRemoveApprover">授权撤销</string>
+    <string name="kProposalEditCellPayAccount">手续费账号</string>
+
+    <!-- 各种VC标题栏名字 -->
+    <string name="kVcTitleAgreement">用户协议和服务条款</string>
+    <string name="kVcTitleCreateProposal">请确认提案</string>
+    <string name="kVcTitleSelectMultiSigndAccount">选择多签管理账号</string>
+    <string name="kVcTitleVestingBalance">待解冻金额</string>
+    <string name="kVcTitleProposalAddApprove">授权批准</string>
+    <string name="kVcTitleProposalRemoveApprove">授权撤销</string>
+    <string name="kVcTitleWhatIsGatewayAssets">什么是网关资产？</string>
+    <string name="kVcTitleDeposit">%s充币</string>
+    <string name="kVcTitleWithdraw">%s提币</string>
+
+    <!-- 部分石墨烯错误信息 -->
+    <string name="kGPErrorAccountNotExist">账号不存在。</string>
+    <string name="kGPErrorInsufficientBalance">手续费不足。</string>
+
+    <!-- 交易OP名字 -->
+    <string name="kOpType_proposal_prefix">提案【%s】</string>
+    <string name="kOpType_transfer">转账</string>
+    <string name="kOpType_limit_order_create_sell">创建卖单</string>
+    <string name="kOpType_limit_order_create_buy">创建买单</string>
+    <string name="kOpType_limit_order_cancel">取消订单</string>
+    <string name="kOpType_call_order_update">调整债仓</string>
+    <string name="kOpType_fill_order">订单成交</string>
+    <string name="kOpType_account_create">创建账号</string>
+    <string name="kOpType_account_update">更新账号</string>
+    <string name="kOpType_account_whitelist">更新白名单</string>
+    <string name="kOpType_account_upgrade">升级账号</string>
+    <string name="kOpType_account_transfer">转移账号</string>
+    <string name="kOpType_asset_create">资产创建</string>
+    <string name="kOpType_asset_update">更新资产</string>
+    <string name="kOpType_asset_update_bitasset">更新智能币</string>
+    <string name="kOpType_asset_update_feed_producers">更新喂价者</string>
+    <string name="kOpType_asset_issue">资产发行</string>
+    <string name="kOpType_asset_reserve">资产销毁</string>
+    <string name="kOpType_asset_fund_fee_pool">注资手续费池</string>
+    <string name="kOpType_asset_settle">资产强清</string>
+    <string name="kOpType_asset_global_settle">资产全局清算</string>
+    <string name="kOpType_asset_publish_feed">发布喂价</string>
+    <string name="kOpType_witness_create">创建见证人</string>
+    <string name="kOpType_witness_update">更新见证人</string>
+    <string name="kOpType_proposal_create">创建提案</string>
+    <string name="kOpType_proposal_update">更新提案</string>
+    <string name="kOpType_proposal_delete">删除提案</string>
+    <string name="kOpType_withdraw_permission_create">创建授权提款</string>
+    <string name="kOpType_withdraw_permission_update">更新授权提款</string>
+    <string name="kOpType_withdraw_permission_claim">行使授权提款</string>
+    <string name="kOpType_withdraw_permission_delete">删除授权提款</string>
+    <string name="kOpType_committee_member_create">创建理事会成员</string>
+    <string name="kOpType_committee_member_update">更新理事会成员</string>
+    <string name="kOpType_committee_member_update_global_parameters">更新全局参数</string>
+    <string name="kOpType_vesting_balance_create">创建待解冻金额</string>
+    <string name="kOpType_vesting_balance_withdraw">提取待解冻金额</string>
+    <string name="kOpType_worker_create">创建预算项目</string>
+    <string name="kOpType_custom">自定义</string>
+    <string name="kOpType_assert">断言</string>
+    <string name="kOpType_balance_claim">提取余额</string>
+    <string name="kOpType_override_transfer">回收资产</string>
+    <string name="kOpType_transfer_to_blind">向隐私账户转账</string>
+    <string name="kOpType_blind_transfer">隐私转账</string>
+    <string name="kOpType_transfer_from_blind">从隐私账户转出</string>
+    <string name="kOpType_asset_settle_cancel">取消清算</string>
+    <string name="kOpType_asset_claim_fees">提取资产手续费</string>
+
+    <!-- 交易OP详细描述 -->
+    <string name="kOpDesc_transfer">%s 转账 %s 到 %s。</string>
+    <string name="kOpDesc_limit_order_create_sell">%s 提交卖单，以 %s 的价格卖出 %s。</string>
+    <string name="kOpDesc_limit_order_create_buy">%s 提交买单，以 %s 的价格买入 %s。</string>
+    <string name="kOpDesc_limit_order_cancel">%s 取消限价单 #%s。</string>
+    <string name="kOpDesc_call_order_update">%s 更新保证金 %s，借出 %s。</string>
+    <string name="kOpDesc_fill_order_sell">%s 以 %s 的价格卖出 %s。</string>
+    <string name="kOpDesc_fill_order_buy">%s 以 %s 的价格买入 %s。</string>
+    <string name="kOpDesc_account_create">%s 创建帐号 %s。</string>
+    <string name="kOpDesc_account_update">%s 更新账户信息。</string>
+    <string name="kOpDesc_account_whitelist">更新白名单。</string>
+    <string name="kOpDesc_account_upgrade">%s 升级账户。</string>
+    <string name="kOpDesc_account_upgrade_member">%s 升级终身会员。</string>
+    <string name="kOpDesc_account_transfer">转移账号。</string>
+    <string name="kOpDesc_asset_create">%s 创建资产 %s。</string>
+    <string name="kOpDesc_asset_update">更新资产。</string>
+    <string name="kOpDesc_asset_update_bitasset">更新智能币。</string>
+    <string name="kOpDesc_asset_update_feed_producers">更新喂价者。</string>
+    <string name="kOpDesc_asset_issue">资产发行。</string>
+    <string name="kOpDesc_asset_reserve">资产销毁。</string>
+    <string name="kOpDesc_asset_fund_fee_pool">注资手续费池。</string>
+    <string name="kOpDesc_asset_settle">资产强清。</string>
+    <string name="kOpDesc_asset_global_settle">资产全局清算。</string>
+    <string name="kOpDesc_asset_publish_feed">发布喂价。</string>
+    <string name="kOpDesc_witness_create">创建见证人。</string>
+    <string name="kOpDesc_witness_update">更新见证人。</string>
+    <string name="kOpDesc_proposal_create">创建提案。</string>
+    <string name="kOpDesc_proposal_update">%s 更新提案。#%s</string>
+    <string name="kOpDesc_proposal_delete">删除提案。</string>
+    <string name="kOpDesc_withdraw_permission_create">创建授权提款。</string>
+    <string name="kOpDesc_withdraw_permission_update">更新授权提款。</string>
+    <string name="kOpDesc_withdraw_permission_claim">行使授权提款。</string>
+    <string name="kOpDesc_withdraw_permission_delete">删除授权提款。</string>
+    <string name="kOpDesc_committee_member_create">创建理事会成员。</string>
+    <string name="kOpDesc_committee_member_update">更新理事会成员。</string>
+    <string name="kOpDesc_committee_member_update_global_parameters">更新全局参数。</string>
+    <string name="kOpDesc_vesting_balance_create">创建待解冻金额。</string>
+    <string name="kOpDesc_vesting_balance_withdraw">%s 提取待解冻金额 %s。</string>
+    <string name="kOpDesc_worker_create">创建预算项目。</string>
+    <string name="kOpDesc_custom">自定义。</string>
+    <string name="kOpDesc_assert">断言。</string>
+    <string name="kOpDesc_balance_claim">提取余额。</string>
+    <string name="kOpDesc_override_transfer">回收资产。</string>
+    <string name="kOpDesc_transfer_to_blind">向隐私账户转账。</string>
+    <string name="kOpDesc_blind_transfer">隐私转账。</string>
+    <string name="kOpDesc_transfer_from_blind">从隐私账户转出。</string>
+    <string name="kOpDesc_asset_settle_cancel">取消清算。</string>
+    <string name="kOpDesc_asset_claim_fees">提取资产手续费。</string>
+
+</resources>

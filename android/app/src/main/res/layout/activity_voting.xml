@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ActivityVoting"
+    android:background="@color/theme01.appBackColor">
+
+    <LinearLayout
+        android:id="@+id/container_of_voting"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="25dp"
+        android:orientation="vertical">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+
+            <LinearLayout
+                android:id="@+id/layout_back_from_voting"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_btn_back" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/nameBack"
+                    style="@style/kNavigationBarTextStyle" />
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:text="@string/serviceMainPageVoting"
+                style="@style/kNavigationBarTextStyle" />
+
+            <Button
+                android:id="@+id/button_refresh_of_voting"
+                android:layout_width="48dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:background="#00000000"
+                style="@style/kNavigationBarTextStyle"
+                android:text="@string/nameReset"
+                android:textAllCaps="false"
+                android:layout_marginRight="10dp" />
+
+        </FrameLayout>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tablayout_of_voting"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            app:tabTextAppearance="@style/KPageTabTextStyle"
+            app:tabIndicatorColor="#ff0000"
+            app:tabRippleColor="#aaaaaa"
+            app:tabTextColor="#ffffff">
+
+            <android.support.design.widget.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/votingPageCommittees" />
+
+            <android.support.design.widget.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/votingPageWitness" />
+
+            <android.support.design.widget.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/votingPageWorker" />
+
+
+        </android.support.design.widget.TabLayout>
+
+
+
+        <FrameLayout
+            android:id="@+id/current_proxy_of_voting"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="45dp">
+
+            <TextView
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:id="@+id/current_proxy_name_of_voting"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textColor="@color/theme01.textColorHighlight"
+                android:text="@string/votingPagecurrentAgentA"
+                android:textSize="14dp"
+                android:gravity="center"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="right|center_vertical">
+
+                <ImageView
+                    android:id="@+id/current_proxy_help_of_voting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14dp"
+                    android:src="@drawable/icon_tip"
+                    android:tint="@color/theme01.textColorHighlight"
+                    android:gravity="center_vertical|right"/>
+            </LinearLayout>
+
+
+            <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="40dp" android:layout_width="fill_parent"></View>
+
+        </FrameLayout>
+
+
+
+
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/view_pager_of_voting"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="48dp">
+
+        </android.support.v4.view.ViewPager>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:background="@color/theme01.bottomLineColor"
+            android:layout_height="52dp">
+
+            <TextView
+                android:id="@+id/btn_submit_of_voting"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="4dp"
+                android:textSize="13dp"
+                android:textStyle="bold"
+                android:gravity="center_vertical|center"
+                android:textColor="@color/theme01.textColorPercent"
+                android:text="@string/votingPageCommitVoting"
+                android:background="@color/theme01.buyColor"/>
+
+            <TextView
+                android:id="@+id/btn_set_delegate_of_voting"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="8dp"
+                android:textSize="13dp"
+                android:textStyle="bold"
+                android:gravity="center_vertical|center"
+                android:textColor="@color/theme01.textColorPercent"
+                android:text="@string/votingPageSetAgent"
+                android:background="@color/theme01.sellColor"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

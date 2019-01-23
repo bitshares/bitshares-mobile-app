@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="view1_of_markets" type="id">view1_of_markets</item>
+    <item name="view2_of_markets" type="id">view2_of_markets</item>
+    <item name="view3_of_markets" type="id">view3_of_markets</item>
+    <item name="view4_of_markets" type="id">view4_of_markets</item>
+    <item name="view5_of_markets" type="id">view5_of_markets</item>
+</resources>

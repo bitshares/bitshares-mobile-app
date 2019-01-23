@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.btsplusplus.fowallet.ActivityProposalAuthorizeEdit"
+    android:background="@color/theme01.appBackColor">
+
+
+    <LinearLayout
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="25dp"
+        android:orientation="vertical">
+
+        <!-- title -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+
+            <LinearLayout
+                android:id="@+id/layout_back_from_agree_proposal"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/nameCancel"
+                    style="@style/kNavigationBarTextStyle"
+                    android:gravity="center_vertical"
+                    />
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:text="@string/kVcTitleProposalAddApprove"
+                style="@style/kNavigationBarTextStyle" />
+
+
+        </FrameLayout>
+
+        <!-- layout -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="50dp"
+                android:orientation="vertical">
+
+
+                <!-- progress & authorized list -->
+                <LinearLayout
+                    android:id="@+id/layout_list_of_agress_propsal"
+                    android:orientation="vertical"
+                    android:layout_marginTop="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                </LinearLayout>
+                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+                <!-- target account -->
+                <LinearLayout
+                    android:id="@+id/cell_target_account"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/cell_target_account_title_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:text=""
+                        android:textSize="14dp"
+                        android:layout_weight="3"
+                        android:textColor="@color/theme01.textColorMain" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="7"
+                        android:layout_gravity="right|center_vertical"
+                        android:gravity="right|center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/label_target_account_name"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right|center"
+                            android:singleLine="true"
+                            android:maxLines="1"
+                            android:ellipsize = "end"
+                            android:text=""
+                            android:textSize="14dp"
+                            android:layout_weight="9"
+                            android:gravity="right|center_vertical"
+                            android:textColor="@color/theme01.textColorGray" />
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical|right"
+                            android:layout_weight="1"
+
+                            android:foregroundGravity="right"
+                            android:src="@drawable/ic_btn_right_arrow" />
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+                <!-- fee paying account -->
+                <LinearLayout
+                    android:id="@+id/cell_fee_paying_account"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:text="@string/kProposalEditCellPayAccount"
+                        android:textSize="14dp"
+                        android:layout_weight="3"
+                        android:textColor="@color/theme01.textColorMain" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="7"
+                        android:layout_gravity="right|center_vertical"
+                        android:gravity="right|center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/label_fee_paying_account_name"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right|center"
+                            android:singleLine="true"
+                            android:maxLines="1"
+                            android:ellipsize = "end"
+                            android:text=""
+                            android:textSize="14dp"
+                            android:layout_weight="9"
+                            android:gravity="right|center_vertical"
+                            android:textColor="@color/theme01.textColorGray" />
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical|right"
+                            android:layout_weight="1"
+
+                            android:foregroundGravity="right"
+                            android:src="@drawable/ic_btn_right_arrow" />
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+                <!-- submit -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimary"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_submmit_core"
+                        android:layout_width="wrap_content"
+                        style="@style/kMainButtonStyle"
+                        android:gravity="center|center_vertical"
+                        android:layout_weight="1"
+                        android:padding="5dp"
+                        android:textAllCaps="false"
+                        android:text="@string/nameSubmit" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+        </ScrollView>
+
+
+
+
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>

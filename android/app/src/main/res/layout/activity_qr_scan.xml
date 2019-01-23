@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ActivityQrScan"
+    android:background="@color/theme01.appBackColor">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp"
+        android:orientation="vertical">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+
+            <LinearLayout
+                android:id="@+id/layout_back_from_qrscan"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_btn_back"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/nameBack"
+                    style="@style/kNavigationBarTextStyle"
+                    android:gravity="center_vertical"
+                    />
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/title_of_qrscan"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:text="@string/nameSaoyisao"
+                style="@style/kNavigationBarTextStyle" />
+
+        </FrameLayout>
+
+
+        <!--<com.dlazaro66.qrcodereaderview.QRCodeReaderView-->
+            <!--android:id="@+id/qrdecoderview"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent" />-->
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <com.qingmei2.library.view.QRCodeScannerView
+                android:id="@+id/qrdecoderview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <!--<com.qingmei2.library.view.QRCoverView-->
+                <!--android:id="@+id/cover"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--app:cornerColor="#0f0"-->
+                <!--app:laserVisible="false"-->
+                <!--app:outsideBackgroundColor="#22000000"-->
+                <!--app:scanRectHeight="250dp"-->
+                <!--app:scanRectWidth="250dp" />-->
+
+            <com.qingmei2.library.view.QRCoverView
+                android:id="@+id/cover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:cornerColor="#fff"
+                app:cornerLength="16dp"
+                app:cornerWidth="3dp"
+                app:cornerOutside="false"
+                app:laserVisible="true"
+                app:laserColor="#fff"
+                app:outsideBackgroundColor="#22000000"
+                app:scanRectHeight="250dp"
+                app:scanRectWidth="250dp"
+            />
+
+        </FrameLayout>
+
+
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

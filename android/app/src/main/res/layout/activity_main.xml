@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/theme01.appBackColor"
+    tools:context=".ActivityTradeMain">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="25dp"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+
+            <LinearLayout
+                android:id="@+id/button_back_for_main"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_btn_back" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/nameBack"
+                    style="@style/kNavigationBarTextStyle" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/title_of_main"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:text="BTC/CYN"
+                style="@style/kNavigationBarTextStyle" />
+
+
+            <ImageButton
+                android:id="@+id/btn_fav"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_weight="1"
+
+                android:background="@null"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                app:srcCompat="@drawable/ic_btn_star" />
+
+        </FrameLayout>
+
+
+
+        <!---->
+        <!---->
+        <!--<android.support.design.widget.AppBarLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:theme="@style/AppTheme.AppBarOverlay">-->
+
+            <!--<FrameLayout-->
+                <!--android:layout_marginTop="22dp"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="40dp">-->
+
+                <!--<android.support.v7.widget.Toolbar-->
+                    <!--android:id="@+id/toolbar_of_main_buy_and_sell"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:background="@color/colorBackground"-->
+                    <!--android:theme="@style/Base.AlertDialog.AppCompat"-->
+                    <!--app:contentInsetStart="0dp">-->
+
+                <!--</android.support.v7.widget.Toolbar>-->
+
+                <!--<Button-->
+                    <!--android:id="@+id/button_back"-->
+                    <!--android:layout_width="40dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginLeft="45dp"-->
+                    <!--android:background="#00000000"-->
+                    <!--android:text="@string/nameBack"-->
+                    <!--android:textSize="18dp" />-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/title"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="BTC/CYN"-->
+                    <!--android:textColor="#ffffffff"-->
+                    <!--android:textSize="18dp" />-->
+
+                <!--<Button-->
+                    <!--android:id="@+id/button_follow"-->
+                    <!--android:layout_width="48dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="right"-->
+                    <!--android:background="#00000000"-->
+                    <!--android:text="关注"-->
+                    <!--android:layout_marginRight="10dp"-->
+                    <!--android:textSize="18dp" />-->
+
+
+            <!--</FrameLayout>-->
+        <!--</android.support.design.widget.AppBarLayout>-->
+
+
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tablayout_of_main_buy_and_sell"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="#141e32"
+            app:tabTextAppearance="@style/KPageTabTextStyle"
+            app:tabIndicatorColor="#ff0000"
+            app:tabRippleColor="#aaaaaa"
+            app:tabTextColor="#ffffff">
+
+            <android.support.design.widget.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nameBuyIn" />
+
+            <android.support.design.widget.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nameSellOut" />
+
+        </android.support.design.widget.TabLayout>
+
+
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/view_pager_of_main_buy_and_sell"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </android.support.v4.view.ViewPager>
+
+    </LinearLayout>
+
+
+
+</android.support.design.widget.CoordinatorLayout>

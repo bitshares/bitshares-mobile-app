@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/theme01.appBackColor"
+    tools:context=".ActivityIndexServices">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="25dp"
+        android:orientation="vertical">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center|center_vertical"
+                android:text="@string/kTabNameServices"
+                style="@style/kNavigationBarTextStyle" />
+
+        </FrameLayout>
+
+        <!-- 扫一扫 TODO：未完成-->
+        <LinearLayout
+            android:id="@+id/layout_saoyisao_from_services"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:layout_marginTop="30dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/icon_transfer"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:textSize="16dp"
+                android:layout_weight="9"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="@string/nameSaoyisao"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_weight="1"
+
+                android:foregroundGravity="right"
+                android:src="@drawable/ic_btn_right_arrow" />
+
+        </LinearLayout>
+
+
+        <!-- 转账 -->
+        <LinearLayout
+            android:id="@+id/layout_transfer_from_services"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:layout_marginTop="30dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/img_icon_transfer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/icon_transfer"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:textSize="16dp"
+                android:layout_weight="9"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="@string/serviceMainPageTransfer"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_weight="1"
+
+                android:foregroundGravity="right"
+                android:src="@drawable/ic_btn_right_arrow" />
+
+        </LinearLayout>
+
+        <!-- 投票 -->
+        <LinearLayout
+            android:id="@+id/layout_voting_from_services"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/img_icon_voting"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/icon_vote"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:textSize="16dp"
+                android:layout_weight="9"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="@string/serviceMainPageVoting"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_weight="1"
+
+                android:foregroundGravity="right"
+                android:src="@drawable/ic_btn_right_arrow" />
+
+        </LinearLayout>
+
+        <!-- 账号查询 -->
+        <LinearLayout
+            android:id="@+id/layout_account_query_from_services"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:layout_marginTop="40dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/img_icon_account_search"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/icon_query"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:textSize="16dp"
+                android:layout_weight="9"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="@string/serviceMainPageAccountQuery"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_weight="1"
+
+                android:foregroundGravity="right"
+                android:src="@drawable/ic_btn_right_arrow" />
+
+        </LinearLayout>
+
+        <!-- 抵押排行 -->
+        <LinearLayout
+            android:id="@+id/layout_diya_ranking_from_services"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/img_icon_rank"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/icon_debt_rank"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:textSize="16dp"
+                android:layout_weight="9"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="@string/serviceMainPageDebtRanking"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_weight="1"
+
+                android:foregroundGravity="right"
+                android:src="@drawable/ic_btn_right_arrow" />
+
+        </LinearLayout>
+
+        <!-- 喂价详情 -->
+        <LinearLayout
+            android:id="@+id/layout_feed_price"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/img_icon_feedprice"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/iconfeed"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:textSize="16dp"
+                android:layout_weight="9"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="@string/feedPricePageFeedDetail"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_weight="1"
+
+                android:foregroundGravity="right"
+                android:src="@drawable/ic_btn_right_arrow" />
+        </LinearLayout>
+
+
+        <!-- 充提 -->
+        <LinearLayout
+            android:id="@+id/layout_recharge_and_withdraw_of_service"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:layout_marginTop="40dp"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/img_icon_deposit_withdraw"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/icon_depositwithdraw"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:textSize="16dp"
+                android:layout_weight="9"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="@string/serviceMainPageRechargeAndWithdraw"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_weight="1"
+
+                android:foregroundGravity="right"
+                android:src="@drawable/ic_btn_right_arrow" />
+
+        </LinearLayout>
+
+
+
+        <!-- 小游戏 TODO：未完成 -->
+        <LinearLayout
+            android:id="@+id/layout_game_of_service"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:layout_marginTop="40dp"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/img_icon_game"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/iconfeed"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:textSize="16dp"
+                android:layout_weight="9"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="@string/serviceMainPageGame"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_weight="1"
+
+                android:foregroundGravity="right"
+                android:src="@drawable/ic_btn_right_arrow" />
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+        <include
+            layout="@layout/bottom_nav"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="463dp" />
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

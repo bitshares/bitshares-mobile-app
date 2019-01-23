@@ -1,0 +1,36 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <style>
+
+      body { margin: 0; padding: 0; background-color: #131e31;}
+      #container { width: 400px; margin: 0 auto; margin-top: 80px; }
+      input[name='fileUpload'] { width: 200px; margin: 0 auto; padding: 0; margin-top: 10px; }
+      input[name='fileUpload']:hover {  border-color: white; color:  white;  }
+
+      input[name='submit-btn'] { margin-top: 20px; width: 400px;  border: 1px solid #5075ac; color: #5075ac; background: none; height: 32px; line-height:  32px; font-size: 14px;}
+      input[name='submit-btn']:hover { border-color: white; color:  white;  }
+      #file-wrap {  height: 40px; line-height: 40px; border: 1px solid #5075ac; color: #5075ac;  font-size: 14px; width: 400px; max-width: 400px; text-align: center; }
+
+      #title { color: #5075ac; font-size: 20px; color: white; }
+      #desc { color: #5075ac; font-size: 13px;  }
+
+    </style>
+</head>
+<body>
+<div id="container">
+    <div id="title">BTS++ import wallet file</div>
+    <p id="desc">
+        1. Please select your wallet file(*.BIN)<br/>
+        2. Click Upload -> File will be automatically transferred to your phone
+    </p>
+
+    <form action="upload" method="post" enctype="multipart/form-data">
+        <div id="file-wrap">
+            <input type="file" name="fileUpload" accept=".bin" />
+        </div>
+        <input type="submit" name="submit-btn" value="Upload" />
+    </form>
+</div>
+</body>
+</html>

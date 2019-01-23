@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_markets"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="Markets" />
+    <item
+        android:id="@+id/navigation_diya"
+        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:title="抵押" />
+    <item
+        android:id="@+id/navigation_services"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="Services" />
+    <item
+        android:id="@+id/navigation_my"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="My" />
+
+</menu>
+

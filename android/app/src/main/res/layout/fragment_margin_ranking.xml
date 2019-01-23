@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FragmentMarginRanking">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="match_parent">
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
+
+            <TextView
+                android:id="@+id/label_txt_curr_feed"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="@string/debtPageCurrentFeedPriceA"
+                android:textSize="14dp"
+                android:textColor="@color/theme01.color03"/>
+
+
+            <LinearLayout
+                android:gravity="center_vertical|right"
+                android:layout_gravity="right"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:id="@+id/tip_link_feedprice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:tint="@color/theme01.textColorHighlight"
+                    android:src="@drawable/icon_tip" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <ScrollView
+            android:fillViewport="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/layout_fragment_of_diya_ranking_cny"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+
+
+
+    </LinearLayout>
+
+</FrameLayout>

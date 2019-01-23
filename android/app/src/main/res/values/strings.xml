@@ -1,0 +1,708 @@
+<resources>
+    <string name="app_name">BTS++</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_index">IndexActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_front">frontActivity</string>
+    <string name="title_activity_test">testActivity</string>
+
+    <string name="kSettingCurrencyNameCNY">Chinese Yuan</string>
+    <string name="kSettingCurrencyNameUSD">US Dollar</string>
+    <string name="kSettingCurrencyNameEUR">Euro</string>
+    <string name="kSettingCurrencyNameJPY">Japanese Yen</string>
+    <string name="kSettingCurrencyNameKRW">Korean Won</string>
+    <string name="kSettingCurrencyNameBTS">Bitshares Core Asset</string>
+    <string name="kLabelGroupNameMain">Main</string>
+    <string name="kLabelGroupNameGDEX">GDEX(Gateway)</string>
+    <string name="kLabelGroupNameWWW">WWW(Gateway)</string>
+    <string name="kLabelGroupNameOPEN">OPEN(Gateway)</string>
+    <string name="kLabelGroupNameWIN">WIN(Gateway)</string>
+    <string name="kLabelGroupNameOther">Other</string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- syalon新增多语言支持（初步 -->
+    <string name="kTabNameMarkets">Markets</string>
+    <string name="kTabNameDebt">Margin</string>
+    <string name="kTabNameServices">Services</string>
+    <string name="kTabNameMy">My</string>
+
+    <!-- 特殊 -->
+    <string name="serverWssLangKey">en</string>
+    <string name="webserverUploadPage">upload-en</string>
+    <string name="webserverDownloadPage">download-en</string>
+    <string name="appDepositWithdrawDefaultGateway">RuDEX</string>
+
+    <!-- 一些通用的 -->
+    <string name="nameBack">Back</string>
+    <string name="nameCancel">Cancel</string>
+    <string name="nameRightIntro">Intro &gt;</string>
+    <string name="nameBuy">Buy</string>
+    <string name="nameBuyIn">BUY</string>
+    <string name="nameSell">Sell</string>
+    <string name="nameSellOut">SELL</string>
+    <string name="nameNumber">Amount</string>
+    <string name="namePrice">Price</string>
+    <string name="nameRegister">Register</string>
+    <string name="nameLogin">Login</string>
+    <string name="nameReset">Reset</string>
+    <string name="nameOk">Ok</string>
+    <string name="nameAccount">Account</string>
+    <string name="namePassword">Password</string>
+    <string name="nameNetworkException">Network error, please try again later.</string>
+    <string name="nameNetworkInitException">The network is abnormal and the initialization failed. Please try again later.</string>
+    <string name="nameRequesting">Requesting…</string>
+    <string name="nameMortgageRate">Ratio</string>
+    <string name="nameAccountManager">Account management</string>
+    <string name="nameOrderManagement">Order Management</string>
+    <string name="nameAvaliable">Available</string>
+    <string name="nameSaoyisao">Scan QR code</string>
+    <string name="nameAbout">About</string>
+    <string name="nameCancellation">Logout</string>
+    <string name="nameRefresh">Refresh</string>
+    <string name="nameAll">All</string>
+    <string name="nameSubmit">Submit</string>
+    <string name="nameTelegram">Telegram</string>
+    <string name="comFavSuccessAdd">Successfully add</string>
+    <string name="comFavSuccessDelete">Successfully delete</string>
+    <string name="comErrorAccountNotExist">Account does not exist.</string>
+    <string name="tipsFormatAccount">The account number consists of lowercase letters, numbers, -, ., and must end with a letter beginning with a letter or number.</string>
+    <string name="tipsFormatPassword">More than 12 characters and must contain uppercase and lowercase letters and numbers.</string>
+    <string name="tipsFormatWalletPassword">More than 8 characters and must contain uppercase and lowercase letters and numbers.</string>
+    <string name="tipsFormatWalletPasswordForUpgateWallet">Please input wallet passwrod</string>
+    <string name="unlockTipsUnlockAccount">Unlock account</string>
+    <string name="unlockTipsUnlockWallet">Unlock wallet</string>
+    <string name="unlockBtnUnlock">Unlock</string>
+
+    <!-- 启动界面 -->
+    <string name="launchBtnRemindLater">Remind later</string>
+    <string name="launchBtnUpdateNow">Update</string>
+    <string name="launchTipVersionKey">newVersionInfoEn</string>
+    <string name="launchTipDefaultNewVersion">Discover the new version v%s, go to the update.</string>
+
+    <!-- index 页面 -->
+    <string name="indexTabNameFavorite">Favorites</string>
+    <string name="indexName24Vol">24HVol</string>
+    <string name="indexNameNoFavorite">You have not added any favorites market.</string>
+    <string name="indexNameWhatGateway">What is a gateway?</string>
+
+    <!-- K线界面 -->
+    <string name="klineTabNameDeep">Depth</string>
+    <string name="klineTabNameVolume">Market Trades</string>
+    <string name="klineNodData">NO DATA</string>
+    <string name="klineNameHigh">High</string>
+    <string name="klineNameLow">Low</string>
+    <string name="klineName24vol">24HVol</string>
+    <string name="klineNameTimeline">Line</string>
+    <string name="klineName5min">5min</string>
+    <string name="klineName15min">15min</string>
+    <string name="klineName1hour">1hour</string>
+    <string name="klineName4hour">4hour</string>
+    <string name="klineName1day">1day</string>
+    <string name="klineName1week">1week</string>
+    <string name="klineNameBuyOrder">Buy</string>
+    <string name="klineNameSellOrder">Sell</string>
+    <string name="klineNameFeedPrice">Feed price</string>
+    <string name="klineLabelTradeHisTitleTime">Time</string>
+    <string name="klineLabelTradeHisTitleType">Type</string>
+    <string name="klineLabelTradeHisTitlePrice">Price</string>
+    <string name="klineLabelTradeHisTitleAmount">Amount</string>
+    <string name="klineLblCrossDate">Date</string>
+    <string name="klineLblCrossOpen">Open</string>
+    <string name="klineLblCrossHigh">High</string>
+    <string name="klineLblCrossLow">Low</string>
+    <string name="klineLblCrossClose">Close</string>
+    <string name="klineLblCrossChange">Change</string>
+    <string name="klineLblCrossChangePercent">Change%</string>
+    <string name="klineLblCrossVol">Vol</string>
+    <string name="klineLblCrossPrice">Price</string>
+
+    <!-- 买入页面 -->
+    <string name="buyPageBtnBuy">Buy&#xA0;</string>
+    <string name="buyPageBtnSell">Sell&#xA0;</string>
+    <string name="buyPageBuyPrice">Price</string>
+    <string name="buyPageBuyNumber">Amount</string>
+    <string name="buyPageSellPrice">Price</string>
+    <string name="buyPageSellNumber">Amount</string>
+    <string name="buyPageBuyAPrice">Bid1</string>
+    <string name="buyPageSellAPrice">Ask1</string>
+    <string name="buyPageTradeAmount">Total</string>
+    <string name="buyPageCurrentDelegate">Open Orders</string>
+    <string name="buyPageTipCancelOrderTxFullOk">Order %s has been canceled.</string>
+    <string name="buyPageTipCancelOrderTxOk">Order %s has been canceled, but the refresh failed. Please try again later.</string>
+    <string name="buyPageTipCancelOrderTxFailed">The request failed. Please try again later.</string>
+    <string name="buyPageTipCreateOrderTxFullOk">The limit order was created successfully.</string>
+    <string name="buyPageTipCreateOrderTxFullOkWithID">The order was placed successfully and the order #%s has been completed.</string>
+    <string name="buyPageTipCreateOrderTxOk">The limit order was created successfully, but the refresh failed. Please try again later.</string>
+    <string name="buyPageTipCreateOrderTxFailed">The request failed. Please try again later.</string>
+    <string name="buyPageTipErrorGettingData">Requesting data, please wait.</string>
+    <string name="buyPageTipErrorInputPrice">Please enter the price.</string>
+    <string name="buyPageTipErrorInputAmount">Please enter the amount.</string>
+    <string name="buyPageTipErrorTotalTooLow">The order total is too low.</string>
+    <string name="buyPageTipErrorMoneyNotEnough">Insufficient base asset.</string>
+    <string name="buyPageTipErrorItemNotEnough">Insufficient quote asset.</string>
+
+    <!-- 抵押界面 -->
+    <string name="debtPageSubmitBtn">Update position</string>
+    <string name="debtPageMortgageLoan">Margin position</string>
+    <string name="debtPageSelectAssets">Select asset</string>
+    <string name="debtPageTipSelectDebtAsset">Please select the asset to borrow</string>
+    <string name="debtPageCurrentFeedPrice">Feed price</string>
+    <string name="debtPageCurrentFeedPriceA">Feed price --</string>
+    <string name="debtPageForcedLiquidationPrice">Call price</string>
+    <string name="debtPageForcedLiquidationPriceA">Call price --</string>
+    <string name="debtPageUsableBalance">Available</string>
+    <string name="debtPageUsableBalance0cny">Available 0CNY</string>
+    <string name="debtPageUsableBalance0bts">Available 0BTS</string>
+    <string name="debtPageTextInputBorrowMoney">Please input debt value</string>
+    <string name="debtPageMaxRepayment">Pay Max Debt</string>
+    <string name="debtPageTextInputMortgageNumber">Please input collateral amount</string>
+    <string name="debtPageTotalMortgage">Use Max</string>
+    <string name="debtPageCollRatio">Ratio</string>
+    <string name="debtPageLabelTargetRatioName">Target ratio</string>
+    <string name="debtPageGoalMortgageRateNotSet">Target ratio not set</string>
+    <string name="debtPageTipForTriggerFeedPrice">[Tips] \n When the feed price drops to the call price, the system will automatically sell your collateral assets for debt repayment. Please pay attention to adjusting the ratio to control the risk.</string>
+    <string name="debtPageTipTxFullOk">Update position successfully.</string>
+    <string name="debtPageTipTxOk">Update position successfully, but the refresh failed. Please try again later.</string>
+    <string name="debtPageTipTxFailed">The request failed. Please try again later.</string>
+    <string name="debtPageTipErrorNoChange">The amount of borrowings and collateral did not change.</string>
+    <string name="debtPageTipErrorCollAmount">The collateral balance is insufficient.</string>
+    <string name="debtPageTipErrorAvailableNum">%s balance is insufficient, please adjust the amount of repayment.</string>
+    <string name="debtPageTipErrorDebtMore">The ratio is lower than %s and you cannot borrow more.</string>
+
+    <!-- 服务主界面 -->
+    <string name="serviceMainPageTransfer">Transfer</string>
+    <string name="serviceMainPageAccountQuery">Account search</string>
+    <string name="serviceMainPageDebtRanking">Rank</string>
+    <string name="serviceMainPageVoting">Voting</string>
+    <string name="serviceMainPageGame">Game</string>
+    <string name="serviceMainPageRechargeAndWithdraw">Deposit &#038; Withdraw</string>
+
+    <!-- 转账界面 -->
+    <string name="transferPageFromAccount">From</string>
+    <string name="transferPageToAccount">To</string>
+    <string name="transferPagePleaseSelectCollectionAccount">Please select target account</string>
+    <string name="kVcTransferSubmitTipFromToIsSame">The FROM account and the TO account cannot be the same.</string>
+    <string name="transferPagePleaseSelectAsset">Please select the asset to transfer</string>
+    <string name="transferPageAssetName">Asset</string>
+    <string name="transferPageTransferNumber">Amount</string>
+    <string name="transferPagePleaseInputTransferAmount">Please input transfer value</string>
+    <string name="transferPageTotal">All</string>
+    <string name="transferPageRemarkInfo">Memo</string>
+    <string name="transferPagePleaseInputRemarkInfo">Please input memo infos(optional)</string>
+    <string name="transferPageSend">Send</string>
+    <string name="transferPageTipErrorNoTo">Please select a target account.</string>
+    <string name="transferPageAmountNotEnough">insufficient</string>
+    <string name="transferPageTipErrorAmount">Insufficient quantity.</string>
+    <string name="transferPageTipEncodeMemoError">Memo encryption failed, please try again later.</string>
+    <string name="transferPageTipNoMemoKey">The account does not have a memo private key and does not support memo.</string>
+    <string name="kVcTransferSubmitTipWalletNoMemoKey">The wallet does not have a memo private key and does not support memo.</string>
+    <string name="transferPageTipNotSupportMemo">The memo private key is different from the active private key. Memo is not supported.</string>
+    <string name="transferPageTipTxFullOk">Transfer successfully.</string>
+    <string name="transferPageTipTxOk">The send was successful, but the refresh failed. Please try again later.</string>
+    <string name="transferPageTipTxFailed">The request failed. Please try again later.</string>
+
+    <!-- 转账确认界面 -->
+    <string name="transferConfirmationPagePleaseConfirmTrading">Please confirm the transaction</string>
+    <string name="transferConfirmationPageFrom">From</string>
+    <string name="transferConfirmationPageSendTo">To</string>
+    <string name="transferConfirmationPageRemark">Memo</string>
+    <string name="transferConfirmationPageFee">Fee</string>
+
+    <!-- 抵押排行界面 -->
+    <string name="debtPageMortgageRanking">Rank</string>
+    <string name="debtPageNoCallOrder">No data</string>
+    <string name="debtPageForcedLiquidationTriggerPrice">Call price</string>
+    <string name="debtPageBorrow">Debt</string>
+    <string name="debtPageCollateral">Collateral</string>
+    <string name="debtPageWhatIsFeedPrice">What is the feed price?</string>
+
+    <!-- 投票界面 -->
+    <string name="votingPageCommittees">Committees</string>
+    <string name="votingPageWitness">Witnesses</string>
+    <string name="votingPageWorker">Workers</string>
+    <string name="votingPagecurrentAgent">Current proxy</string>
+    <string name="votingPagecurrentAgentA">Current proxy --</string>
+    <string name="votingPageCommitVoting">Submit</string>
+    <string name="votingPageSetAgent">Set proxy</string>
+    <string name="votingPageCancelProxy">Cancel proxy</string>
+    <string name="votingPageTotalVotes">Votes</string>
+    <string name="votingPageMissCount">Missed</string>
+    <string name="votingPageCreateUser">Creator</string>
+    <string name="votingPageBudgetOfEveryDay">Daily budget</string>
+    <string name="votingPageValidDate">Date</string>
+    <string name="kVcVoteCellWPType">Worker type</string>
+    <string name="kVcVoteCellWPRefund">refund</string>
+    <string name="kVcVoteCellWPVesting">normal</string>
+    <string name="kVcVoteCellWPBurn">burn</string>
+    <string name="votingPageProjDetail">Proposal details</string>
+    <string name="votingPageActiveCommittees">Active committees(%s)</string>
+    <string name="votingPageWhatIsActiveCommittees">What is an active committee?</string>
+    <string name="votingPageCandidateCommittees">Candidate committees(%s)</string>
+    <string name="votingPageWhatIsCandidateCommittees">What is a candidate committee?</string>
+    <string name="votingPageActiveWitness">Active witnesses(%s)</string>
+    <string name="votingPageWhatIsActiveWitness">What is an active witness?</string>
+    <string name="votingPageCandidateWitness">Candidate witnesses(%s)</string>
+    <string name="votingPageWhatIsCandidateWitness">What is a candidate witness?</string>
+    <string name="votingPageExpireWorks">Expired worker proposal(%s)</string>
+    <string name="votingPageDoingWorks">Inactive worker proposal(%s)</string>
+    <string name="votingPageActiveWorks">Active worker proposal(%s)</string>
+    <string name="votingPageWorksTotalAmount">Total budget</string>
+    <string name="votingPageProposalWorks">Inactive worker proposal(%s)</string>
+    <string name="votingPagePassNeedTickets">Minimum votes</string>
+    <string name="votingPagePassDeleteDelegate">Remove proxy</string>
+    <string name="votingPageTipTxFullOk">%s successfully.</string>
+    <string name="votingPageTipTxOk">%s successfully, but the refresh failed. Please try again later.</string>
+    <string name="votingPageTipTxFailed">The request failed. Please try again later.</string>
+    <string name="votingPageTipSubmitProxy">You set up a voting proxy. Manually editing the voting information will cancel the proxy and continue to vote?</string>
+    <string name="votingPageTipVotingNoChagne">The voting information has not changed. No need to submit.</string>
+
+    <!-- 我的主界面 -->
+    <string name="myPageLabelMembership">Status: </string>
+    <string name="myPageLabelMembershipBasic">Basic member</string>
+    <string name="myPageLabelMembershipLifetime">Lifetime member</string>
+    <string name="myPageLabelAccountLocked">Locked</string>
+    <string name="myPageLabelAccountUnlocked">Unlocked</string>
+    <string name="myPageClickToLogin">Click here to login</string>
+    <string name="myPageProposalOfWaitingForProcess">Pending proposal</string>
+    <string name="myPageWalletAndMutiSignature">Wallet &#038; Multi-signature </string>
+    <string name="myPageMyAssets">My Balance</string>
+    <string name="myPageMyUnfreezeAmount">Vesting Balance</string>
+    <string name="myPageQA">FAQ</string>
+    <string name="myPageSetting">Setting</string>
+    <string name="myPageAboutBtspp">About</string>
+    <string name="kLblTipsPasswordModeNotSupportMultiSign">Multi-signature and other functions only support wallet mode. Do you want to create a local wallet file for the current account?</string>
+    <string name="kLblTipsConvertToWalletModeDone">Create wallet successfully.</string>
+
+    <!-- 注册登陆界面 -->
+    <string name="registerLoginPageServiceClause">Terms of Service</string>
+    <string name="registerLoginPageWalletMode">Wallet</string>
+    <string name="registerLoginPageAccountMode">Normal</string>
+    <string name="registerLoginPagePrivateKeyMode">Private Key</string>
+    <string name="registerLoginPagePleaseInputBtsAccount">Please input bitshares account</string>
+    <string name="registerLoginPagePleaseInputPwd">Please input password</string>
+    <string name="registerLoginPageInputPws">Confirm</string>
+    <string name="registerLoginPageAgreeAgreementAndRegister">Agree &amp; Register</string>
+    <string name="registerLoginPageTipForAccountPassword">Tip: The password format can be viewed by clicking on the question mark. \nNote: BTS++ is a decentralized blockchain application. Once the password is lost or forgotten, it will not be retrieved. Please keep it in a safe place.</string>
+    <string name="registerLoginPageTipForWalletPassword">Tip: The password format can be viewed by clicking on the question mark. \nNote: BTS++ is a decentralized blockchain application. If the wallet file or password is lost or forgotten, it is not possible to retrieve it. It is recommended that you back up the wallet file after registration and keep it in a safe place. \n※ Wallet mode is recommended.</string>
+    <string name="registerLoginPageTradePws">W-pwd</string>
+    <string name="registerLoginPagePleaseTradePwd">Please input new wallet password</string>
+    <string name="registerLoginPageJustLogin">Go</string>
+    <string name="registerLoginPageCapitalPrivateKey">Private key</string>
+    <string name="registerLoginPagePleaseCapitalPrivateKeyPermission">Please input active private key</string>
+    <string name="registerLoginPageTipForWifiModeToImpot">Only supports importing wallets via WIFI network</string>
+    <string name="registerLoginPageInitializing">Initializing...</string>
+    <string name="registerLoginPageTipForImpotBinToPhone">Please enter the above URL on the computer to import the wallet BIN file to the phone.</string>
+    <string name="registerLoginPageReceiveFiles">Received documents</string>
+    <string name="registerLoginPageReceiveFiles0">Received documents(0)</string>
+    <string name="registerLoginPageWarmTip">Tips</string>
+    <string name="registerLoginPageTipForLogout">Logging out will delete the account information from the device, please confirm that you have made a backup. Do you want to continue logging out?</string>
+    <string name="registerLoginPageInvalidParams">Invalid argument.</string>
+    <string name="registerLoginPageInvalidAccountFormat">The account format is incorrect.</string>
+    <string name="registerLoginPageAccountExisted">The account already exists.</string>
+    <string name="registerLoginPageUnknownErrorAndBroadcastFailed">Unknown error, broadcast failed.</string>
+    <string name="registerLoginPageTooManyAccountForThisEquipment">The device has too many registered accounts.</string>
+    <string name="registerLoginPageRegisterFrequently">Registration is too frequent, please try again later.</string>
+    <string name="registerLoginPageServerMaintenance">Server maintenance.</string>
+    <string name="registerLoginPagePleaseInputAccountPwd">Please enter your account password</string>
+    <string name="registerLoginPagePleaseInputTradePws">Please enter your wallet password</string>
+    <string name="registerLoginPagePleaseInputWalletPws">Please enter your wallet password</string>
+    <string name="registerLoginPageUnlockAccount">Unlock account</string>
+    <string name="registerLoginPageUnlock">Unlock</string>
+    <string name="registerLoginPagePasswordIsEmpty">password can not be blank.</string>
+    <string name="registerLoginPageAccountIsEmptyAndInputAgain">The account name cannot be empty. Please re-enter.</string>
+    <string name="registerLoginPagePwsIsEmptyAndInputAgain">The password cannot be empty, please re-enter.</string>
+    <string name="registerLoginPageTradePwsFormatErrorAndInputAgain">The wallet password format is incorrect. Please re-enter.</string>
+    <string name="registerLoginPageAccountNameNotExistAndPleaseInputAgain">The account name does not exist. Please re-enter.</string>
+    <string name="registerLoginPageAccountIsMultipleSignatureAndNotSupport">The account is a multi-signed account. not support.</string>
+    <string name="kLoginSubmitTipsAccountPasswordIncorrect">The password is incorrect. Please re-enter.</string>
+    <string name="kLoginSubmitTipsAccountPasswordPermissionNotEnough">The password has insufficient permissions.</string>
+    <string name="kLoginSubmitTipsPrivateKeyIncorrect">The private key is incorrect. Please re-enter.</string>
+    <string name="kLoginSubmitTipsPrivateKeyPermissionNotEnough">The private key has insufficient permissions.</string>
+    <string name="kLoginSubmitTipsPasswordFmtIncorrect">The wallet password format is incorrect. Please re-enter.</string>
+    <string name="kLoginSubmitTipsWalletPasswordFmtIncorrect">The wallet password format is incorrect. Please re-enter.</string>
+    <string name="kLoginSubmitTipsConfirmPasswordFailed">The password is different, please re-enter.</string>
+    <string name="kLoginSubmitTipsAccountFmtIncorrect">The account format is incorrect. Please re-enter.</string>
+    <string name="kLoginSubmitTipsAccountAlreadyExist">The account name already exists. Please re-enter.</string>
+    <string name="registerLoginPageLoginSuccess">Login successful.</string>
+    <string name="kLoginTipsRegFullOK">Register successful.</string>
+    <string name="kLoginRegTipsRegOK">Registration is successful, but the refresh fails. You can log in directly later.</string>
+    <string name="kLoginTipsWalletModeRegOK">The registration is successful, but query account data failed. Please restart the app.</string>
+    <string name="registerLoginPageWhatIsTradePws">What is a wallet password?</string>
+    <string name="registerLoginPageCapitalPrivateKeyIsWrongAndInputAgain">The private key is incorrect. Please re-enter.</string>
+    <string name="registerLoginPageAccountQueryFailedAndTryLater">The query account failed. Please try again later.</string>
+    <string name="registerLoginPageThisPrivateKeyIsntCapitalPrivateKeyAndInputAgain">The private key is not an active private key. Please re-enter it.</string>
+    <string name="registerLoginPageWhatIsCapitalPrivateKey">What is an active private key?</string>
+    <string name="kLoginTipsReceivedFileNumber">Received documents(%s)</string>
+    <string name="kLoginTipsLocalWalletFileNumber">Existing wallet files (%s)</string>
+    <string name="kLoginTipsOnlyViaWifiMainDesc">Init WebServer Failed</string>
+    <string name="registerLoginPageClickToImport">Click to import</string>
+    <string name="registerLoginPageInvalidRequesting">Invalid request</string>
+    <string name="registerLoginPageUploadSuccessPleaseContinueForPhone">The upload is successful, please continue to complete the import operation on your phone.</string>
+    <string name="registerLoginPageServerInternalError">Server internal error</string>
+    <string name="registerLoginPageTipForDeleteFileForThisPhone">Delete the file %s from the device, OK?</string>
+    <string name="registerLoginPageDelete">delete</string>
+    <string name="registerLoginPageClickWrong">cancel</string>
+    <string name="registerLoginPageImportToWallet">Import wallet</string>
+    <string name="registerLoginPagePleaseInputWalletFilePws">Please enter the wallet file password</string>
+    <string name="registerLoginPageJustImport">Import</string>
+    <string name="registerLoginPageLoadWalletFileFailed">Failed to read the wallet file.</string>
+    <string name="registerLoginPageWalletFilesInvalidOrPwdWrong">The wallet file is invalid or the password is incorrect.</string>
+    <string name="registerLoginPageThisWalletIsNotBelongsToBtsChain">This wallet is not a Bitshares wallet.</string>
+    <string name="registerLoginPageThisWalletIsEmpty">The wallet is empty, please re-select.</string>
+    <string name="registerLoginPageThisWalletIncludeMultiAccount">The wallet contains multiple accounts and does not support import.</string>
+    <string name="registerLoginPageThisWalletMissedPrivateKeyInfo">The wallet does not contain a private key, please re-select.</string>
+    <string name="registerLoginPageThisWalletIsMultiAccountAndNotSupport">The wallet contains multiple accounts and does not support import.</string>
+    <string name="registerLoginPageThisWalletIsEmptyAndTryAgainSelect">The wallet is empty, please re-select.</string>
+    <string name="registerLoginPageAccountQueryFailedAndTryLateAgain">The query account failed. Please try again later.</string>
+    <string name="registerLoginPageThisWalletCapitalPermissionKeyAndTryAgainToImport">The wallet does not contain an active key. Please re-import.</string>
+    <string name="registerLoginPageBackupWallet">Backup wallet</string>
+    <string name="registerLoginPageReferrer">Referrer</string>
+    <string name="registerLoginPageRegisterer">Registrar</string>
+    <string name="registerLoginPageSVipRegisterer">Lifetime referrer</string>
+    <string name="registerLoginAccountInfo">Account infos</string>
+    <string name="registerLoginWebServerErrorIp">Get the phone address is abnormal, please try again later.</string>
+    <string name="registerLoginWebServerErrorInit">Initialization failed, please restart the app and try again.</string>
+    <string name="registerLoginTipWifiForBackup">Only supports backup wallets under WIFI network</string>
+    <string name="registerLoginTipBackupError">Failed to export the wallet, please try again later.</string>
+    <string name="registerLoginTipForPcBackWallet">Please enter the above URL on the computer to download the wallet BIN file and backup to a safe place.</string>
+    <string name="registerLoginConfirmationPassword">Please confirm password</string>
+
+    <!-- 交易对 -->
+    <string name="tradingPairMyTradePair">My pairs(%s)</string>
+    <string name="tradingPairCantChange">Frozen</string>
+    <string name="tradingPairMaxDefineCustomTradePair">You can only customize up to %s pairs.</string>
+    <string name="tradingPairAddPair">Custom pairs</string>
+    <string name="tradingPairClickToSearchAssets">Click to search for new assets</string>
+    <string name="tradingPairSearchResult">Search results</string>
+
+    <!-- 我的资产界面 -->
+    <string name="myAssetsPageAsset">Assets</string>
+    <string name="myAssetsPageDetail">Activities</string>
+    <string name="myAssetsPageTotalAsset">Estimated Total Value</string>
+    <string name="myAssetsPageEstimating">Estimating...</string>
+    <string name="myAssetsPageCanceledFollow">Unfollowed</string>
+    <string name="myAssetsPageFollowSuccess">Followed</string>
+    <string name="myAssetsPageNetworkingExceptionAndEstimatingFailed">The network request is abnormal and the evaluation failed. Please try again later.</string>
+    <string name="myAssetsPageAvailable">Available</string>
+    <string name="myAssetsPageHangOrder">Orders</string>
+    <string name="myAssetsPageDebt">Debt</string>
+    <string name="myAssetsPageCollateral">Collateral</string>
+    <string name="myAssetsPageForcedLiquidationPrice2">Call price</string>
+    <string name="myAssetsPageTrading">Trade</string>
+    <string name="myAssetsPageViewTotalAssetsInfo">View all assets</string>
+    <string name="myAssetsPageUnknowOperationContent">Unknown operation content</string>
+    <string name="myAssetsPageOpNameTransfer">Transfer</string>
+    <string name="myAssetsPageOpNameCreateSellOrder">Create Sell Order</string>
+    <string name="myAssetsPageOpNameCreateBuyOrder">Create Buy Order</string>
+    <string name="myAssetsPageOpNameCancelOrder">Cancel Order</string>
+    <string name="myAssetsPageOpNameUpdatePosition">Update Position</string>
+    <string name="myAssetsPageOpNameFillOrder">Fill Order</string>
+    <string name="myAssetsPageOpNameCreateAccount">Create Account</string>
+    <string name="myAssetsPageOpNameUpdateAccount">Update Account</string>
+    <string name="myAssetsPageOpNameUpgradeAccount">Upgrade Account</string>
+    <string name="myAssetsPageOpNameCreateProposal">Create Proposal</string>
+    <string name="myAssetsPageOpNameUpdateProposal">Update Proposal</string>
+    <!-- check / -->
+    <string name="myAssetsPageTransferFormat">%s transfer %s to %s.</string>
+    <string name="myAssetsPageSubmitSellOrder">%1$s submit a sell order. sell %3$s at %2$s.</string>
+    <string name="myAssetsPageSubmitBuyOrder">%1$s submit a buy order. buy %3$s at %2$s.</string>
+    <string name="myAssetsPageFillSellOrder">%1$s has sold %3$s at %2$s.</string>
+    <string name="myAssetsPageFillBuyOrder">%1$s has bought %3$s at %2$s.</string>
+    <string name="myAssetsPageCancelLimitOrder">%s canceled limit order %s.</string>
+    <string name="myAssetsPageUpdateMarginMoney">%s update position, add collateral %s, borrow %s.</string>
+    <string name="myAssetsPageCreatedAccount">%s created the account %s.</string>
+    <string name="myAssetsPageUpdatedAccount">updated the account.</string>
+    <string name="myAssetsPageUpgradedLifelongAccount">upgraded a lifetime membership.</string>
+    <string name="myAssetsPageCreateProposal">create proposal.</string>
+    <string name="myAssetsPageUpdateProposal">update proposal.</string>
+    <string name="myAssetsPageNotAnyActivityInfo">No activity</string>
+
+
+    <!-- 我的订单界面 -->
+    <string name="myOrderPageCurrentOrder">Open Orders</string>
+    <string name="myOrderPageHistoryOrder">History</string>
+    <string name="myOrderPagecurrentNotAnyOrder">No order</string>
+    <string name="myOrderPageExpire">Expired on %s</string>
+    <string name="myOrderPageRevocation">Cancel</string>
+    <string name="myOrderPageTotalAmount">Total</string>
+    <string name="myOrderPageLabelPrice">Price</string>
+    <string name="myOrderPageLabelAmount">Amount</string>
+    <string name="myOrderPageTipForFeeNotEnough">Insufficient handling fee, please make sure that the account has sufficient BTS/CNY/USD to pay the network fee.</string>
+    <string name="myOrderPageOrderIsCanceled">Order %s has been canceled.</string>
+    <string name="myOrderPageOrderIsCanceledButRefreshFailed">Order %s has been canceled, but refresh failed. Please try again later.</string>
+    <string name="myOrderPageRequestFailedAndTryAgainLater">The request failed. Please try again later.</string>
+
+    <!-- 喂价页面 -->
+    <string name="feedPricePageFeedDetail">Feed price details</string>
+    <string name="feedPricePageTitleName">Witness</string>
+    <string name="feedPricePageTitlePrice">Price</string>
+    <string name="feedPricePageTitleBiasRate">Bias</string>
+    <string name="feedPricePageTitlePublishDate">Time</string>
+    <string name="feedPricePageAge">ago</string>
+    <string name="feedPricePageAgeSec">&#xA0;secs&#xA0;</string>
+    <string name="feedPricePageAgeMin">&#xA0;mins&#xA0;</string>
+    <string name="feedPricePageAgeHour">&#xA0;hours&#xA0;</string>
+    <string name="feedPricePageAgeDay">&#xA0;days&#xA0;</string>
+    <string name="feedPricePageAgeNoPublish">no data</string>
+
+    <!-- 充提界面相关 -->
+    <string name="kVcDWCellLabelCurrGateway">Gateway</string>
+    <string name="kVcDWTipsSelectGateway">Please select a gateway</string>
+    <string name="kVcDWCellBtnNameDeposit">Deposit</string>
+    <string name="kVcDWCellBtnNameWithdraw">Withdraw</string>
+    <string name="kVcDWHelpGatewayAssets">Gateway assets(%s)</string>
+    <string name="kVcDWTipsCopyOK">Copied</string>
+    <string name="kVcDWTipsDisableDeposit">Deposits have been disabled.</string>
+    <string name="kVcDWTipsDisableWithdraw">Withdrawls have been disabled.</string>
+    <string name="kVcDWTipsGatewayNotAvailable">The current gateway service is not available. please try again later.</string>
+    <string name="kVcDWCellBtnCopyAddr">Copy address</string>
+    <string name="kVcDWCellBtnCopyMemo">Copy memo or tag</string>
+    <string name="kVcDWTipsCopyAddrOK">Address copied</string>
+    <string name="kVcDWTipsCopyMemoOK">Memo copied</string>
+    <string name="kVcDWTipsImportantTitle">[IMPORTANT]</string>
+    <string name="kVcDWTipsMinDepositAmount">Minimum deposits number: %s%s. Less than the minimum amount will not be credited and cannot be returned.\n</string>
+    <string name="kVcDWTipsDepositMatchAsset">Send only %s to this deposit address. Sending Non-%s to this address will lose it.</string>
+    <string name="kVcDWTipsNetworkConfirm">After you have deposited the above address, please wait for the network to confirm.\n</string>
+    <string name="kVcDWTipsNetworkConfirmWithN">Your  deposit will be deposited after %s confirmations from the network.\n</string>
+    <string name="kVcDWTipsFindCustomService">If you have any questions, please contact the gateway customer service.</string>
+    <string name="kVcDWErrTipsRequestDepositAddrFailed">Request deposits address is abnormal, please contact the gateway customer service.</string>
+    <string name="kVcDWErrTipsRequestDepositAddrFailed2">Request deposits address is abnormal, the field '%s' verification failed, please contact the gateway customer service.</string>
+    <string name="kVcDWHelpTitleSupport">Support</string>
+    <string name="kVcDWHelpTitleQQ">QQ</string>
+    <string name="kVcDWHelpTitleTelegram">Telegram</string>
+    <string name="kVcDWWithdrawQueryGatewayAccountFailed">The query intermediate account information failed.</string>
+    <string name="kVcDWCellWithdrawAddress">Withdraw to address</string>
+    <string name="kVcDWCellWithdrawMemo">Memo(TAG)</string>
+    <string name="kVcDWCellWithdrawPlaceholderAddress">Please enter or paste the withdraw address</string>
+    <string name="kVcDWCellWithdrawPlaceholderAmount">Please enter the withdraw amount</string>
+    <string name="kVcDWCellWithdrawPlaceholderMemo">Please enter a memo or a tag</string>
+    <string name="kVcDWCellMinWithdrawNumber">Minimum amount</string>
+    <string name="kVcDWCellWithdrawFee">Gateway fee</string>
+    <string name="kVcDWCellWithdrawGatewayAccount">Intermediate account</string>
+    <string name="kVcDWCellWithdrawFinalValue">Actual amount</string>
+    <string name="kVcDWWithdrawSubmitButton">Withdraw now</string>
+    <string name="kVcDWSubmitTipsAddressCannotBeEmpty">The withdraw address cannot be empty.</string>
+    <string name="kVcDWSubmitTipsPleaseInputAmount">Please enter the withdraw amount.</string>
+    <string name="kVcDWSubmitTipsWithdrawAmountNotEnough">Insufficient quantity.</string>
+    <string name="kVcDWSubmitTipsWithdrawLessThanMinNumber">Cannot be less than the minimum amount.</string>
+    <string name="kVcDWSubmitTipsFinalValueTooLow">The actual number is too low.</string>
+    <string name="kVcDWSubmitTipsNoMemoCannotWithdraw">The memo private key is missing and the withdraw is not supported.</string>
+    <string name="kVcDWSubmitSecondConfirmMsg01">Once the withdraw request is issued, it will be irrevocable. Please make sure that your withdraw address and memo are correct.</string>
+    <string name="kVcDWSubmitSecondConfirmMsg02">Memo is missing. Do you continue to withdraw?</string>
+    <string name="kVcDWSubmitSecondConfirmMsg03">Once the withdraw request is issued, it will be irrevocable. Please make sure that your withdraw address is correct.</string>
+    <string name="kVcDWSubmitSecondBtnContinue">Continue</string>
+    <string name="kVcDWSubmitTipsInvalidAddress">The withdraw address is invalid.</string>
+    <string name="kVcDWSubmitTxFullOK">Submit the withdraw request successfully.</string>
+    <string name="kVcDWSubmitTxOK">Submit the withdraw request successfully, but refresh failed, please try again later.</string>
+
+    <!-- 账号搜索 -->
+    <string name="accountSearchTitle">Account search</string>
+    <string name="accountSearchMyFavorites">My Favorites(%s)</string>
+    <string name="accountSearchPlaceholder">Please enter a valid Bitshares account</string>
+
+    <!-- 常见问题 -->
+
+
+    <!-- 设置 -->
+    <string name="settingPageValuationWay">Currency</string>
+    <string name="settingPageThemeStyle">Theme</string>
+    <string name="settingPageJingMiLan">Dark Bulue</string>
+    <string name="settingPageZhenZhuBai">White</string>
+
+    <!-- 关于BTS++ -->
+    <string name="aboutPageIntroForBtspp">\nBTS++ is a decentralized exchange (DEX) product based on Bitshares graphene technology, developed from the product experience and developed with native technology comparable to the first-class centralized exchange. \n\nContact us\nWeChat: bts-pp\nE-mail: contact@btsplusplus.com\nTelegram: https://t.me/btsplusplus\nWebsite:http://btspp.io\n</string>
+    <string name="aboutPageDebugVersion">debug version</string>
+
+    <!-- 升级钱包模式 -->
+    <string name="upgradeWalletPageTitle">Upgrade wallet mode</string>
+    <string name="upgradeWalletPageCreateWallet">Create</string>
+
+    <!-- 钱包&多签 -->
+    <string name="kWalletUnlockFailedUnknowMode">Unlock failed, unknown account mode: %s.</string>
+    <string name="kWalletInvalidWalletPassword">The wallet password is invalid.</string>
+    <string name="kWalletInvalidWalletFile">The wallet file is invalid.</string>
+    <string name="kWalletIncorrectWalletPassword">The wallet password is incorrect.</string>
+    <string name="kWalletPermissionNoEnough">Insufficient permissions.</string>
+    <string name="kWalletNoAccountData">No account data.</string>
+    <string name="kWalletBtnBackup">Backup wallet</string>
+    <string name="kWalletBtnImportMoreAccount">Import more accounts</string>
+    <string name="kWalletBtnImportMultiSignedAccount">Import multi-signed account</string>
+    <string name="kWalletBtnImportNormalAccount">Import normal account</string>
+    <string name="kWalletBtnSetCurrent">Set as current account</string>
+    <string name="kWalletBtnRemoveAccount">Delete account</string>
+    <string name="kWalletTipsDuplicated">The account already exists. Please do not import it again.</string>
+    <string name="kWalletTipsSwitchCurrentAccountDone">Switching the current account successfully.</string>
+    <string name="kWalletTipsRemoveAccountDone">The account was deleted successfully.</string>
+    <string name="kWalletTipsRemoveKeepOne">Keep at least one account in your wallet.</string>
+    <string name="kWalletTipsWarmMessage">Deleting an account will be deleted along with the private key associated with the account. Please confirm that you have made a backup. Do you want to continue deleting?</string>
+    <string name="kWalletTipsMaxImportAccount">You can only import up to %s accounts.</string>
+    <string name="kWalletTipsNotMultiSignAccount">%s is not a multi-signed account and cannot be imported.</string>
+    <string name="kWalletImportSuccess">Successfully imported</string>
+    <string name="kWalletCellCurrentAccount">Current</string>
+    <string name="kWalletCellPermissionOwner">Owner</string>
+    <string name="kWalletCellPermissionActive">Active</string>
+    <string name="kWalletCellPermissionMemo">Memo</string>
+    <string name="kWalletMemuTipsPleaseSelectCellAction">Please select the action to perform</string>
+    <string name="kWalletMenuTipsPleaseSelectImportType">Please select the type of account to import</string>
+
+    <!-- 提案界面 -->
+    <string name="kProposalTipsAskMissingActive">You don\'t have active permissions for account %s, do you want to create a proposal?</string>
+    <string name="kProposalTipsAskMissingOwner">You don\'t have owner permissions for account %s, do you want to create a proposal?</string>
+    <string name="kProposalTipsSelectFeePayingAccount">Please select the proposal creator</string>
+    <string name="kProposalLabelCellProposalCreator">Proposal creator</string>
+    <string name="kProposalSubmitTipsSelectCreator">Please select a proposal creator account.</string>
+    <string name="kProposalSubmitTipTxOK">The proposal was created successfully.</string>
+    <string name="kProposalBtnSubmit">Ok</string>
+    <string name="kProposalTipsNoAnyProposals">No proposal</string>
+    <string name="kProposalSubmitTipsInReview">The proposal is in review. cannot add approval.</string>
+    <string name="kProposalSubmitTipsNoPermissionApprove">You do not have any permissions to perform an approval operation.</string>
+    <string name="kProposalSubmitTipsYouAlreadyApproved">You have already approved.</string>
+    <string name="kProposalSubmitTipsNoNeedRemove">You have not approved it and do not need to remove it.</string>
+    <string name="kProposalSubmitTxTipsAddApprovalOK">Add approval is successful.</string>
+    <string name="kProposalSubmitTxTipsRemoveApprovalOK">Remove approval is successful.</string>
+    <string name="kProposalCellAddApproval">Add approval</string>
+    <string name="kProposalCellRemoveApproval">Remove approval</string>
+    <string name="kProposalCellApproved">Approved</string>
+    <string name="kProposalCellNotApproved">Not approved</string>
+    <string name="kProposalCellBtnApprove">Approve</string>
+    <string name="kProposalCellBtnNotApprove">Reject</string>
+    <string name="kProposalCellBtnDelete">Delete</string>
+    <string name="kProposalCellApprover">Approver </string>
+    <string name="kProposalCellCreator">Creator </string>
+    <string name="kProposalCellStatusTitle">Status </string>
+    <string name="kProposalCellStatusPending">Pending</string>
+    <string name="kProposalCellStatusFailed">Failed</string>
+    <string name="kProposalCellStatusWaitReview">Waiting For Review</string>
+    <string name="kProposalCellStatusReview">In Review</string>
+    <string name="kProposalCellStatusNotPassed">Not Passed</string>
+    <string name="kProposalCellProgress">Progress </string>
+    <string name="kProposalEditSelectRemoveApproval">Please select to remove the approved account</string>
+    <string name="kProposalEditSelectAddApproval">Please select to add the approved account</string>
+    <string name="kProposalEditTipsSelectFeePayingAccount">Please select a fee paying account.</string>
+    <string name="kProposalEditTipsNoFeePayingAccountActiveKey">There is no active private key for %s, this account cannot be used to pay the fee.</string>
+    <string name="kProposalEditCellAddApprover">Approver</string>
+    <string name="kProposalEditCellRemoveApprover">Approver</string>
+    <string name="kProposalEditCellPayAccount">PayAccount</string>
+
+    <!-- 各种VC标题栏名字 -->
+    <string name="kVcTitleAgreement">Agreement</string>
+    <string name="kVcTitleCreateProposal">Please confirm the proposal</string>
+    <string name="kVcTitleSelectMultiSigndAccount">Select multi-signed account</string>
+    <string name="kVcTitleVestingBalance">Vesting balance</string>
+    <string name="kVcTitleProposalAddApprove">Add proposal approval</string>
+    <string name="kVcTitleProposalRemoveApprove">Remove proposal approval</string>
+    <string name="kVcTitleWhatIsGatewayAssets">What is gateway assets?</string>
+    <string name="kVcTitleDeposit">%s deposits</string>
+    <string name="kVcTitleWithdraw">%s withdrawls</string>
+
+    <!-- 部分石墨烯错误信息 -->
+    <string name="kGPErrorAccountNotExist">Account does not exist.</string>
+    <string name="kGPErrorInsufficientBalance">Insufficient balance.</string>
+
+    <!-- 交易OP名字 -->
+    <string name="kOpType_proposal_prefix">Proposal \"%s\"</string>
+    <string name="kOpType_transfer">Transfer</string>
+    <string name="kOpType_limit_order_create_sell">Create Sell Order</string>
+    <string name="kOpType_limit_order_create_buy">Create Buy Order</string>
+    <string name="kOpType_limit_order_cancel">Cancel Order</string>
+    <string name="kOpType_call_order_update">Update Position</string>
+    <string name="kOpType_fill_order">Fill Order</string>
+    <string name="kOpType_account_create">Create Account</string>
+    <string name="kOpType_account_update">Update Account</string>
+    <string name="kOpType_account_whitelist">Update Whitelist</string>
+    <string name="kOpType_account_upgrade">Upgrade Account</string>
+    <string name="kOpType_account_transfer">Transfer Account</string>
+    <string name="kOpType_asset_create">Create Asset</string>
+    <string name="kOpType_asset_update">Update Asset</string>
+    <string name="kOpType_asset_update_bitasset">Update Bitasset</string>
+    <string name="kOpType_asset_update_feed_producers">Update Feed Publisher</string>
+    <string name="kOpType_asset_issue">Issue Asset</string>
+    <string name="kOpType_asset_reserve">Reserve Asset</string>
+    <string name="kOpType_asset_fund_fee_pool">Fund  Fee Pool</string>
+    <string name="kOpType_asset_settle">Settle Asset</string>
+    <string name="kOpType_asset_global_settle">Global Settle Asset</string>
+    <string name="kOpType_asset_publish_feed">Publish Feed Price</string>
+    <string name="kOpType_witness_create">Create Witness</string>
+    <string name="kOpType_witness_update">Update Witness</string>
+    <string name="kOpType_proposal_create">Create Proposal</string>
+    <string name="kOpType_proposal_update">Update Proposal</string>
+    <string name="kOpType_proposal_delete">Delete Proposal</string>
+    <string name="kOpType_withdraw_permission_create">Create Permission Withdraw</string>
+    <string name="kOpType_withdraw_permission_update">Update Permission Withdraw</string>
+    <string name="kOpType_withdraw_permission_claim">Claim Permission Withdraw</string>
+    <string name="kOpType_withdraw_permission_delete">Delete Permission Withdraw</string>
+    <string name="kOpType_committee_member_create">Create Committee</string>
+    <string name="kOpType_committee_member_update">Update Committee</string>
+    <string name="kOpType_committee_member_update_global_parameters">Update Global Parameters</string>
+    <string name="kOpType_vesting_balance_create">Create Vesting Balance</string>
+    <string name="kOpType_vesting_balance_withdraw">Withdraw Vesting Balance</string>
+    <string name="kOpType_worker_create">Create Worker</string>
+    <string name="kOpType_custom">Custom</string>
+    <string name="kOpType_assert">Assert</string>
+    <string name="kOpType_balance_claim">Claim Balance</string>
+    <string name="kOpType_override_transfer">Override Transfer</string>
+    <string name="kOpType_transfer_to_blind">Transfer To Blind</string>
+    <string name="kOpType_blind_transfer">Blind Transfer</string>
+    <string name="kOpType_transfer_from_blind">Transfer From Blind</string>
+    <string name="kOpType_asset_settle_cancel">Cancel Settlement</string>
+    <string name="kOpType_asset_claim_fees">Claim Asset Fees</string>
+
+    <!-- 交易OP详细描述 -->
+    <string name="kOpDesc_transfer">%s transfer %s to %s.</string>
+    <string name="kOpDesc_limit_order_create_sell">%1$s submit a sell order. sell %3$s at %2$s.</string>
+    <string name="kOpDesc_limit_order_create_buy">%1$s submit a buy order. buy %3$s at %2$s.</string>
+    <string name="kOpDesc_limit_order_cancel">%s cancel limit order #%s.</string>
+    <string name="kOpDesc_call_order_update">%s update position, add collateral %s, borrow %s.</string>
+    <string name="kOpDesc_fill_order_sell">%1$s sells %3$s at %2$s.</string>
+    <string name="kOpDesc_fill_order_buy">%1$s buys %3$s at %2$s.</string>
+    <string name="kOpDesc_account_create">%s create an account %s.</string>
+    <string name="kOpDesc_account_update">%s update account.</string>
+    <string name="kOpDesc_account_whitelist">update the whitelist.</string>
+    <string name="kOpDesc_account_upgrade">%s upgrade account.</string>
+    <string name="kOpDesc_account_upgrade_member">%s upgrade lifetime membership.</string>
+    <string name="kOpDesc_account_transfer">transfer account.</string>
+    <string name="kOpDesc_asset_create">%s create asset %s.</string>
+    <string name="kOpDesc_asset_update">update assets.</string>
+    <string name="kOpDesc_asset_update_bitasset">update bitasset.</string>
+    <string name="kOpDesc_asset_update_feed_producers">update feed publisher.</string>
+    <string name="kOpDesc_asset_issue">issue assets.</string>
+    <string name="kOpDesc_asset_reserve">reserve assets.</string>
+    <string name="kOpDesc_asset_fund_fee_pool">fund the fee pool.</string>
+    <string name="kOpDesc_asset_settle">settle assets.</string>
+    <string name="kOpDesc_asset_global_settle">global settle assets.</string>
+    <string name="kOpDesc_asset_publish_feed">publish feed price.</string>
+    <string name="kOpDesc_witness_create">create a witness.</string>
+    <string name="kOpDesc_witness_update">update the witness.</string>
+    <string name="kOpDesc_proposal_create">create proposal.</string>
+    <string name="kOpDesc_proposal_update">%s update proposal. #%s</string>
+    <string name="kOpDesc_proposal_delete">delete proposal.</string>
+    <string name="kOpDesc_withdraw_permission_create">create a permission withdraw.</string>
+    <string name="kOpDesc_withdraw_permission_update">update the permission withdraw.</string>
+    <string name="kOpDesc_withdraw_permission_claim">claim the permission withdraw.</string>
+    <string name="kOpDesc_withdraw_permission_delete">delete a permission withdraw.</string>
+    <string name="kOpDesc_committee_member_create">create a committee member.</string>
+    <string name="kOpDesc_committee_member_update">update the committee member.</string>
+    <string name="kOpDesc_committee_member_update_global_parameters">update global parameters.</string>
+    <string name="kOpDesc_vesting_balance_create">create a vesting balance.</string>
+    <string name="kOpDesc_vesting_balance_withdraw">%s withdraw vesting balance %s。</string>
+    <string name="kOpDesc_worker_create">create a worker.</string>
+    <string name="kOpDesc_custom">custom content.</string>
+    <string name="kOpDesc_assert">assertion operation.</string>
+    <string name="kOpDesc_balance_claim">claim balance.</string>
+    <string name="kOpDesc_override_transfer">override transfer.</string>
+    <string name="kOpDesc_transfer_to_blind">transfer asset to blind account.</string>
+    <string name="kOpDesc_blind_transfer">blind transfer.</string>
+    <string name="kOpDesc_transfer_from_blind">transfer asset from a blind account.</string>
+    <string name="kOpDesc_asset_settle_cancel">cancel the settlement.</string>
+    <string name="kOpDesc_asset_claim_fees">claim the asset fees.</string>
+
+</resources>

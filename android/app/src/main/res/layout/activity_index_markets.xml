@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/theme01.appBackColor"
+    tools:context=".ActivityTradeMain">
+
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="25dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"
+            android:text="@string/kTabNameMarkets"
+            style="@style/kNavigationBarTextStyle" />
+
+        <Button
+            android:id="@+id/button_add"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            style="@style/kNavigationBarTextStyle"
+            android:background="#00000000"
+            android:text="+"
+            android:textSize="22dp"
+            android:layout_marginRight="10dp"  />
+
+
+    </FrameLayout>
+    <!---->
+    <!---->
+    <!--<android.support.design.widget.AppBarLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:theme="@style/AppTheme.AppBarOverlay">-->
+
+        <!--<FrameLayout-->
+            <!--android:layout_marginTop="20dp"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="40dp">-->
+
+
+            <!--<android.support.v7.widget.Toolbar-->
+                <!--android:id="@+id/toolbar"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="@color/colorBackground"-->
+                <!--android:theme="@style/Base.AlertDialog.AppCompat"-->
+                <!--app:contentInsetStart="0dp">-->
+
+            <!--</android.support.v7.widget.Toolbar>-->
+
+
+            <!--<TextView-->
+                <!--android:id="@+id/title"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:gravity="center"-->
+                <!--android:text="行情"-->
+                <!--style="@style/kNavigationBarTextStyle" />-->
+
+            <!--<Button-->
+                <!--android:id="@+id/button_add"-->
+                <!--android:layout_width="48dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="right"-->
+                <!--android:background="#00000000"-->
+                <!--android:text="+"-->
+                <!--android:layout_marginRight="10dp"-->
+                <!--android:textSize="22dp" />-->
+
+
+        <!--</FrameLayout>-->
+
+    <!--</android.support.design.widget.AppBarLayout>-->
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tablayout"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="52dp"
+        android:background="#141e32"
+        app:tabTextAppearance="@style/KPageTabTextStyle"
+        app:tabIndicatorColor="#ff0000"
+        app:tabRippleColor="#aaaaaa"
+        app:tabTextColor="#ffffff">
+
+        <android.support.design.widget.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/indexTabNameFavorite" />
+
+        <android.support.design.widget.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BitCNY" />
+
+        <android.support.design.widget.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BitUSD" />
+
+        <android.support.design.widget.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BTS" />
+    </android.support.design.widget.TabLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="92dp"
+        android:paddingBottom="48dp">
+
+    </android.support.v4.view.ViewPager>
+
+    <include
+        layout="@layout/bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        app:layout_anchor="@+id/view_pager"
+        app:layout_anchorGravity="bottom|center" />
+
+    <!--app:layout_anchorGravity="bottom|center"-->
+
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/fab"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|end"-->
+        <!--android:layout_margin="@dimen/fab_margin"-->
+        <!--app:srcCompat="@android:drawable/ic_dialog_email" />-->
+
+</android.support.design.widget.CoordinatorLayout>
+
+
+

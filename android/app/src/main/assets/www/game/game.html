@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="title" content="BTS++">
+  <meta name="description" content="">
+  <meta name="keywords" content="bts++,btsplusplus,wallet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+
+  <title>BTS++ - 一元夺宝</title>
+  <link rel="stylesheet" href="./base.css"/>
+
+  <style>
+
+    body { margin: 0; padding: 0; background-color: #131e31; }
+    
+    #container { width: 95%; margin-left: 2.5%; }
+
+    #header { margin-top: 5%; width: 95%; margin-left: 2.5%; height: 40px; }
+    #header img { width: 40px; height: 40px; border-radius: 4px; }
+    #header * { height: 40px;  line-height: 40px; color: white;}
+    #game-name { margin-left: 20px; font-weight: 600 !important; font-size: 20px; }
+    a#setting { display: block;   }
+    
+    #body {  margin-top: 48px;  }
+    .bodyline{  text-align: center; }
+
+    #game-status-str { font-size: 48px;  font-weight: 600 !important; }
+    #game-current-bts {  margin-top: 20px; font-size: 24px; font-weight: 600 !important;   }
+    #game-current-balance { margin-top: 0px; font-size: 20px; font-weight: 600 !important; }
+    #game-last-round { margin-top: 30px; font-size: 15px; }
+    #game-last-hit-user {  margin-top: 15px; font-size: 15px; }
+    #game-last-result { margin-top: 15px; font-size: 15px; }
+
+    #start { display: block; padding: 10px 40px; background-color: #e76d42; color: white; font-size: 24px; font-weight: 600 !important; text-align: center; width: 60%; margin-left: 10%; margin-top: 20px; }
+
+    #submit { display: block; padding: 10px 0px; background-color: #e76d42; color: white; font-size: 18px; font-weight: 600 !important; text-align: center; width: 100%; margin-left: 0%; margin-top: 20px; }
+
+    p#tip { padding: 10%; font-size: 14px; }
+
+    #pop-window { width: 80%; position: fixed; top: 100px; left: 10%; height: 200px; }
+    #pop-window-inner { position: relative;  }
+    #pop-back { background-color: white; opacity: 1; width: 100%; height: 200px; position: absolute; left: 0; top: 0; }
+    #pop-content-wrap {  
+      position: absolute; left: 0; top: 0; width: 100%;
+    }
+    #pop-content-title { width: 100%; height: 40px; border-bottom: 1px solid #999999;  background-color: #dfdfdf; }
+    #pop-content-title-name { height: 40px; line-height: 40px; font-size: 15px; font-weight: 600 !important; margin-left: 12px; }
+    #pop-content-title-close { height: 40px; line-height: 40px; font-size: 24px; font-weight: 600 !important; margin-right: 12px;}
+
+    #pop-content {
+      padding-top: 48px;
+    }
+
+    .pop-content-line { width: 80%; margin-left: 10%; font-size: 15px; color: #999; }
+
+    #input-bid {  width: 90%; margin-top: 20px; height: 32px; line-height: 32px; color: grey; border: 1px solid #aaa; padding: 0 5%; }
+
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div id="header" class="clearfix">
+      <div class="fl">
+        <img src="./images/game-icon01.png" alt="" />
+      </div>
+      <div id="game-name" class="fl">一元夺宝</div>
+      <a id="setting" class="fr">设置</a>
+    </div>
+    
+    <div id="body">
+      <div class="bodyline color-normal" id="game-status-str">夺宝未开始</div>
+      <div class="bodyline color-highline" id="game-current-bts">1028.48 / 10000 BTS</div>
+      <div class="bodyline color-gray" id="game-current-balance">当前已累积</div>
+      <div class="bodyline color-normal" id="game-last-round">第10223期</div>
+      <div class="bodyline color-normal" id="game-last-hit-user">中奖者: ID0000091X</div>
+      <div class="bodyline color-normal" id="game-last-result">结果: XXXXXXXXXXXXXX</div>
+
+      <a id="start">开始下注</a>
+
+      <p id="tip" class="color-normal">
+        注: 游戏最小下注金额为1BTS, xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      </p>
+    </div>  
+
+    <div id="pop-window" style="display: none;">
+      <div id="pop-window-inner">
+        <div id="pop-back"></div>
+        <div id="pop-content-wrap">
+
+          <div id="pop-content-title" class="clearfix">
+            <div id="pop-content-title-name" class="fl">下注并支付</div>
+            <div id="pop-content-title-close" class="fr">x</div>
+          </div>
+
+          <div id="pop-content">
+            <div class="pop-content-line clearfix">
+              <div class="fl">可用余额: </div>
+              <div class="fl">88912.2234323 BTS </div>
+            </div>
+            <div class="pop-content-line clearfix">
+              <div class="fl">当前赔率: </div>
+              <div class="fl">88912.2234323 BTS </div>
+            </div>
+            <div class="pop-content-line clearfix">
+              <input type="number" id="input-bid" placeholder="请输入下注 BTS 数量" />
+            </div>
+
+            <div class="pop-content-line clearfix">
+              <a id="submit">确认并下注</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="./btsapi.js"></script>
+  <script type="text/javascript" src="./game.js"></script>
+
+</body>
+</html>

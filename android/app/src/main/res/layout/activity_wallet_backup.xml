@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ActivityWalletBackup"
+    android:background="@color/theme01.appBackColor">
+
+
+    <LinearLayout
+        android:id="@+id/container_of_backup_wallet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp"
+        android:orientation="vertical">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+
+            <LinearLayout
+                android:id="@+id/layout_back_from_backup_wallet"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_btn_back" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/nameBack"
+                    style="@style/kNavigationBarTextStyle" />
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:text="@string/registerLoginPageBackupWallet"
+                style="@style/kNavigationBarTextStyle" />
+
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_select_file_of_backup_wallet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/label_txt_address_or_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:text="@string/registerLoginPageInitializing"
+                android:textColor="@color/theme01.textColorMain"
+                android:textSize="24dp" />
+
+            <TextView
+                android:id="@+id/textView16"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:text="@string/registerLoginTipForPcBackWallet"
+                android:textColor="@color/theme01.textColorMain"
+                android:textSize="12dp" />
+
+            <TextView
+                android:id="@+id/textView17"
+                android:visibility="invisible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:layout_marginBottom="20dp"
+                android:textColor="@color/theme01.textColorHighlight"
+                android:textSize="13dp"
+                android:text="选择设备钱包文件(0个)" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+</android.support.constraint.ConstraintLayout>
