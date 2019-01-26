@@ -1,4 +1,5 @@
 *._*
+.idea
 /android/.idea
 /ios/fowallet.xcodeproj/xcuserdata
 /ios/fowallet.xcodeproj/project.xcworkspace/xcuserdata

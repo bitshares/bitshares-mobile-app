@@ -71,7 +71,7 @@ class ActivityGatewayWithdraw : BtsppActivity() {
         val symbol = appext.getString("symbol")
         val withdrawMinAmount = appext.optString("withdrawMinAmount")
         if (withdrawMinAmount != "") {
-            _n_withdrawMinAmount = BigDecimal(withdrawMinAmount)
+            _n_withdrawMinAmount = BigDecimal(withdrawMinAmount.fixComma())
             _aux_data_array.put(JSONObject().apply {
                 put("title", R.string.kVcDWCellMinWithdrawNumber.xmlstring(ctx))
                 put("value", "$withdrawMinAmount $symbol")
