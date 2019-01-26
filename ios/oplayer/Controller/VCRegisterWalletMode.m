@@ -104,6 +104,9 @@ enum
     [_tf_confirm setSecureTextEntry:YES];
     
     //  颜色字号下划线
+    _tf_username.updateClearButtonTintColor = YES;
+    _tf_password.updateClearButtonTintColor = YES;
+    _tf_confirm.updateClearButtonTintColor = YES;
     _tf_username.textColor = [ThemeManager sharedThemeManager].textColorMain;
     _tf_password.textColor = [ThemeManager sharedThemeManager].textColorMain;
     _tf_confirm.textColor = [ThemeManager sharedThemeManager].textColorMain;

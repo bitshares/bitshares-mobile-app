@@ -20,8 +20,8 @@
     
     UITableView*            _mainTableView;
     
-    UITextField*            _tf_password;
-    UITextField*            _tf_wallet_password;
+    MyTextField*            _tf_password;
+    MyTextField*            _tf_wallet_password;
     ViewBlockLabel*         _lbCreate;
 }
 
@@ -116,6 +116,7 @@
     NSString* placeHolder = NSLocalizedString(@"unlockTipsPleaseInputAccountPassword", @"请输入帐号密码");
     _tf_password = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolder];
     _tf_password.secureTextEntry = YES;
+    _tf_password.updateClearButtonTintColor = YES;
     _tf_password.textColor = [ThemeManager sharedThemeManager].textColorMain;
     _tf_password.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolder
                                                                      attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
@@ -126,6 +127,7 @@
                                      placeholder:NSLocalizedString(@"kLoginTipsPlaceholderWalletPassword", @"8位以上钱包文件密码")
                                           action:@selector(onTipButtonClicked:) tag:1];
     _tf_wallet_password.secureTextEntry = YES;
+    _tf_wallet_password.updateClearButtonTintColor = YES;
     _tf_wallet_password.textColor = [ThemeManager sharedThemeManager].textColorMain;
     _tf_wallet_password.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_wallet_password.placeholder
                                                                                 attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,

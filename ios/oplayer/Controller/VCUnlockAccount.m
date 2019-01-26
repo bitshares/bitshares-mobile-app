@@ -20,7 +20,7 @@
     
     UITableView *           _mainTableView;
     
-    UITextField*            _tf_password;
+    MyTextField*            _tf_password;
     ViewBlockLabel*         _lbLogin;
 }
 
@@ -119,6 +119,7 @@
     }
     _tf_password = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolder];
     _tf_password.secureTextEntry = YES;
+    _tf_password.updateClearButtonTintColor = YES;
     _tf_password.textColor = [ThemeManager sharedThemeManager].textColorMain;
     _tf_password.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolder
                                                                      attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,

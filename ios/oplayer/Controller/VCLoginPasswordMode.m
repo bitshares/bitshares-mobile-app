@@ -125,6 +125,8 @@ enum
     }
     
     //  颜色字号下划线
+    _tf_username.updateClearButtonTintColor = YES;
+    _tf_password.updateClearButtonTintColor = YES;
     _tf_username.textColor = [ThemeManager sharedThemeManager].textColorMain;
     _tf_password.textColor = [ThemeManager sharedThemeManager].textColorMain;
     _tf_username.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_username.placeholder
@@ -134,6 +136,7 @@ enum
                                                                          attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
                                                                                       NSFontAttributeName:[UIFont systemFontOfSize:17]}];
     if (_tf_trade_password){
+        _tf_trade_password.updateClearButtonTintColor = YES;
         _tf_trade_password.textColor = [ThemeManager sharedThemeManager].textColorMain;
         _tf_trade_password.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_trade_password.placeholder
                                                                                    attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
