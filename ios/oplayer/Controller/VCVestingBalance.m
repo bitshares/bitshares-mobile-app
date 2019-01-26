@@ -18,6 +18,11 @@
 
 @interface VCVestingBalance ()
 {
+    NSDictionary*           _fullAccountInfo;
+    BOOL                    _isSelfAccount;
+    
+    __weak VCBase*          _owner;         //  REMARK：声明为 weak，否则会导致循环引用。
+    
     UITableViewBase*        _mainTableView;
     NSMutableArray*         _dataArray;
     
@@ -30,6 +35,7 @@
 
 -(void)dealloc
 {
+    _owner = nil;
     _dataArray = nil;
     _lbEmpty = nil;
     if (_mainTableView){
@@ -37,13 +43,17 @@
         _mainTableView.delegate = nil;
         _mainTableView = nil;
     }
+    _fullAccountInfo = nil;
 }
 
-- (id)init
+- (id)initWithOwner:(VCBase*)owner fullAccountInfo:(NSDictionary*)accountInfo
 {
     self = [super init];
-    if (self) {
+    if (self){
+        _owner = owner;
+        _fullAccountInfo = accountInfo;
         _dataArray = [NSMutableArray array];
+        _isSelfAccount = [[WalletManager sharedWalletManager] isMyselfAccount:_fullAccountInfo[@"account"][@"name"]];
     }
     return self;
 }
@@ -63,7 +73,7 @@
             if ([[[vesting objectForKey:@"policy"] objectAtIndex:0] integerValue] == 1){
                 [_dataArray addObject:vesting];
             }else{
-                //  TODO:fowallet 暂时不支持 linear_vesting_policy
+                //  TODO:fowallet 1.7 暂时不支持 linear_vesting_policy
             }
         }
     }
@@ -87,31 +97,24 @@
 
 - (void)queryVestingBalance
 {
-    assert([[WalletManager sharedWalletManager] isWalletExist]);
-    
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
-    
-    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    NSString* accountName = [[WalletManager sharedWalletManager] getWalletAccountName];
-    assert(accountName);
-    [[[chainMgr queryFullAccountInfo:accountName] then:(^id(id full_account_data) {
-        NSString* uid = [[full_account_data objectForKey:@"account"] objectForKey:@"id"];
-        assert(uid);
-        GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
-        return [[api exec:@"get_vesting_balances" params:@[uid]] then:(^id(id data_array) {
-            NSMutableDictionary* asset_ids = [NSMutableDictionary dictionary];
-            for (id vesting in data_array) {
-                [asset_ids setObject:@YES forKey:[[vesting objectForKey:@"balance"] objectForKey:@"asset_id"]];
-            }
-            //  查询 & 缓存
-            return [[chainMgr queryAllAssetsInfo:[asset_ids allKeys]] then:(^id(id asset_hash) {
-                [self hideBlockView];
-                [self onQueryVestingBalanceResponsed:data_array];
-                return nil;
-            })];
+    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    id uid = [[_fullAccountInfo objectForKey:@"account"] objectForKey:@"id"];
+    assert(uid);
+    GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
+    [[[api exec:@"get_vesting_balances" params:@[uid]] then:(^id(id data_array) {
+        NSMutableDictionary* asset_ids = [NSMutableDictionary dictionary];
+        for (id vesting in data_array) {
+            [asset_ids setObject:@YES forKey:[[vesting objectForKey:@"balance"] objectForKey:@"asset_id"]];
+        }
+        //  查询 & 缓存
+        return [[chainMgr queryAllAssetsInfo:[asset_ids allKeys]] then:(^id(id asset_hash) {
+            [_owner hideBlockView];
+            [self onQueryVestingBalanceResponsed:data_array];
+            return nil;
         })];
     })] catch:(^id(id error) {
-        [self hideBlockView];
+        [_owner hideBlockView];
         [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
         return nil;
     })];
@@ -125,8 +128,8 @@
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
     //  UI - 列表
-    CGRect rect = [self rectWithoutNavi];
-    _mainTableView = [[UITableViewBase alloc] initWithFrame:rect style:UITableViewStyleGrouped];
+    CGRect rect = [self rectWithoutNaviAndPageBar];
+    _mainTableView = [[UITableViewBase alloc] initWithFrame:rect style:UITableViewStylePlain];
     _mainTableView.delegate = self;
     _mainTableView.dataSource = self;
     _mainTableView.separatorStyle = UITableViewCellSeparatorStyleNone;  //  REMARK：不显示cell间的横线。
@@ -137,9 +140,6 @@
     _lbEmpty = [self genCenterEmptyLabel:rect txt:NSLocalizedString(@"kVestingTipsNoData", @"没有任何待解冻金额")];
     _lbEmpty.hidden = YES;
     [self.view addSubview:_lbEmpty];
-    
-    //  查询
-    [self queryVestingBalance];
 }
 
 #pragma mark- TableView delegate method
@@ -166,7 +166,7 @@
     ViewVestingBalanceCell* cell = (ViewVestingBalanceCell *)[tableView dequeueReusableCellWithIdentifier:identify];
     if (!cell)
     {
-        cell = [[ViewVestingBalanceCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:identify vc:self];
+        cell = [[ViewVestingBalanceCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:identify vc:_isSelfAccount ? self : nil];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
@@ -224,6 +224,8 @@
  */
 - (void)onButtonClicked_Withdraw:(UIButton*)button
 {
+    assert(_isSelfAccount);
+    
     id vesting = [_dataArray objectAtIndex:button.tag];
     NSLog(@"vesting : %@", vesting[@"id"]);
     
@@ -251,19 +253,17 @@
     //  ----- 准备提取 -----
     
     //  1、判断手续费是否足够。
-    id full_account_data = [[WalletManager sharedWalletManager] getWalletAccountInfo];
-    assert(full_account_data);
-    id fee_item =  [[ChainObjectManager sharedChainObjectManager] getFeeItem:ebo_vesting_balance_withdraw full_account_data:full_account_data];
+    id fee_item =  [[ChainObjectManager sharedChainObjectManager] getFeeItem:ebo_vesting_balance_withdraw full_account_data:_fullAccountInfo];
     if (![[fee_item objectForKey:@"sufficient"] boolValue]){
         [OrgUtils makeToast:NSLocalizedString(@"kTipsTxFeeNotEnough", @"手续费不足，请确保帐号有足额的 BTS/CNY/USD 用于支付网络手续费。")];
         return;
     }
     
     //  2、解锁钱包or账号
-    [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
+    [_owner GuardWalletUnlocked:NO body:^(BOOL unlocked) {
         if (unlocked){
             [self processWithdrawVestingBalanceCore:vesting
-                                  full_account_data:full_account_data
+                                  full_account_data:_fullAccountInfo
                                            fee_item:fee_item
                                  withdraw_available:withdraw_available];
         }
@@ -296,16 +296,16 @@
               };
     
     //  确保有权限发起普通交易，否则作为提案交易处理。
-    [self GuardProposalOrNormalTransaction:ebo_vesting_balance_withdraw
-                     using_owner_authority:NO invoke_proposal_callback:NO
-                                    opdata:op
-                                 opaccount:account
-                                      body:^(BOOL isProposal, NSDictionary *fee_paying_account)
+    [_owner GuardProposalOrNormalTransaction:ebo_vesting_balance_withdraw
+                       using_owner_authority:NO invoke_proposal_callback:NO
+                                      opdata:op
+                                   opaccount:account
+                                        body:^(BOOL isProposal, NSDictionary *fee_paying_account)
      {
          assert(!isProposal);
-         [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+         [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
          [[[[BitsharesClientManager sharedBitsharesClientManager] vestingBalanceWithdraw:op] then:(^id(id data) {
-             [self hideBlockView];
+             [_owner hideBlockView];
              [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVestingTipTxVestingBalanceWithdrawFullOK", @"待解冻金额 %@ 提取成功。"), balance_id]];
              //  [统计]
              [Answers logCustomEventWithName:@"txVestingBalanceWithdrawFullOK" customAttributes:@{@"account":uid}];
@@ -313,12 +313,11 @@
              [self queryVestingBalance];
              return nil;
          })] catch:(^id(id error) {
-             [self hideBlockView];
+             [_owner hideBlockView];
              [OrgUtils makeToast:NSLocalizedString(@"kTipsTxRequestFailed", @"请求失败，请稍后再试。")];
              //  [统计]
              [Answers logCustomEventWithName:@"txVestingBalanceWithdrawFailed" customAttributes:@{@"account":uid}];
              return nil;
-             
          })];
      }];
 }

@@ -46,7 +46,6 @@ enum
     kVcSubUserOrder,            //  订单管理
     kVcSubWalletMgr,            //  钱包管理
     kVcSubProposal,             //  提案管理
-//    kVcSubVestingBalance,       //  待解冻金额（TODO：暂时未完成）
 };
 
 enum
@@ -102,7 +101,6 @@ enum
                           NSLocalizedString(@"kLblCellOrderManagement", @"订单管理"),
                           NSLocalizedString(@"kLblCellWalletAndMultiSign", @"钱包&多签"),
                           NSLocalizedString(@"kLblCellMyProposal", @"待处理提案"),
-//                          NSLocalizedString(@"kLblCellVestingBalance", @"待解冻金额"),
                           nil];
     NSArray* pSection3 = [NSArray arrayWithObjects:
                           NSLocalizedString(@"faq",@"常见问题"),
@@ -237,13 +235,6 @@ enum
                     cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
                 }
                     break;
-//                case kVcSubVestingBalance:
-//                {
-//                    //  TODO:fowallet 图标
-//                    cell.imageView.image = [UIImage templateImageNamed:@"iconOrders"];
-//                    cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
-//                }
-//                    break;
                 default:
                     break;
             }
@@ -369,15 +360,6 @@ enum
                         }];
                     }
                         break;
-//                    case kVcSubVestingBalance:
-//                    {
-//                        [self GuardWalletExist:^{
-//                            VCVestingBalance* vc = [[VCVestingBalance alloc] init];
-//                            vc.title = NSLocalizedString(@"kVcTitleVestingBalance", @"待解冻金额");
-//                            [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-//                        }];
-//                    }
-//                        break;
                     default:
                         break;
                 }
