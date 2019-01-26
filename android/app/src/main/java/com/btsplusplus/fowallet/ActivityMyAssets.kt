@@ -11,6 +11,7 @@ import android.widget.TextView
 import bitshares.*
 import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_my_assets.*
+import org.json.JSONArray
 import org.json.JSONObject
 import java.lang.reflect.Field
 
@@ -117,6 +118,19 @@ class ActivityMyAssets : BtsppActivity() {
     private fun setFragments() {
         fragmens.add(FragmentAssets().initialize(jsonArrayfrom(_userAssetDetailInfos, _full_account_data)))
         fragmens.add(FragmentAssetsDetail().initialize(_full_account_data))
+
+        // Todo Remove Test data
+        val data = JSONArray().apply {
+            for (i in 0 until 20 ) {
+                put(JSONObject().apply {
+                    put("balance","1.13.32")
+                    put("total_amount","214.105232")
+                    put("unfreeze_number","108.22212")
+                    put("unfreeze_cycle","3天")
+                })
+            }
+        }
+        fragmens.add(FragmentVestingBalance().initialize(data))
     }
 
     private fun setTabListener() {
