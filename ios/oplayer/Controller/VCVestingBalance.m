@@ -58,12 +58,17 @@
     return self;
 }
 
-- (void)onQueryVestingBalanceResponsed:(NSArray*)data_array
+- (void)onQueryVestingBalanceResponsed:(NSArray*)data_array nameHash:(NSDictionary*)nameHash
 {
     //  更新数据
     [_dataArray removeAllObjects];
     if (data_array && [data_array count] > 0){
         for (id vesting in data_array) {
+            id oid = [vesting objectForKey:@"id"];
+            assert(oid);
+            if (!oid){
+                continue;
+            }
             //  略过总金额为 0 的待解冻金额对象。
             if ([[[vesting objectForKey:@"balance"] objectForKey:@"amount"] unsignedLongLongValue] == 0){
                 continue;
@@ -71,7 +76,10 @@
             //  linear_vesting_policy = 0,
             //  cdd_vesting_policy
             if ([[[vesting objectForKey:@"policy"] objectAtIndex:0] integerValue] == 1){
-                [_dataArray addObject:vesting];
+                id name = [nameHash objectForKey:oid] ?: NSLocalizedString(@"kVestingCellNameCustomVBO", @"自定义解冻金额");
+                id m_vesting = [vesting mutableCopy];
+                [m_vesting setObject:name forKey:@"kName"];
+                [_dataArray addObject:[m_vesting copy]];
             }else{
                 //  TODO:fowallet 1.7 暂时不支持 linear_vesting_policy
             }
@@ -99,10 +107,41 @@
 {
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    id uid = [[_fullAccountInfo objectForKey:@"account"] objectForKey:@"id"];
+    id account = [_fullAccountInfo objectForKey:@"account"];
+    id uid = [account objectForKey:@"id"];
     assert(uid);
     GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
-    [[[api exec:@"get_vesting_balances" params:@[uid]] then:(^id(id data_array) {
+    
+    id p1 = [api exec:@"get_vesting_balances" params:@[uid]];
+    id p2 = [api exec:@"get_workers_by_account" params:@[uid]];
+    id p3 = [api exec:@"get_witness_by_account" params:@[uid]];
+    
+    [[[WsPromise all:@[p1, p2, p3]] then:(^id(id all_data) {
+        NSMutableDictionary* vesting_balance_name_hash = [NSMutableDictionary dictionary];
+        id data_array = [all_data objectAtIndex:0];
+        id data_workers = [all_data objectAtIndex:1];
+        id data_witness = [all_data objectAtIndex:2];
+        if (data_workers && [data_workers isKindOfClass:[NSArray class]]){
+            for (id worker in data_workers) {
+                if ([OrgUtils getWorkerType:worker] == ebwt_vesting){
+                    id balance = [[[worker objectForKey:@"worker"] objectAtIndex:1] objectForKey:@"balance"];
+                    if (balance){
+                        id name = [worker objectForKey:@"name"] ?: NSLocalizedString(@"kVestingCellNameWorkerFunds", @"预算项目薪资");
+                        [vesting_balance_name_hash setObject:name forKey:balance];
+                    }
+                }
+            }
+        }
+        if (data_witness && ![data_witness isKindOfClass:[NSNull class]]){
+            id pay_vb = [data_witness objectForKey:@"pay_vb"];
+            if (pay_vb){
+                [vesting_balance_name_hash setObject:NSLocalizedString(@"kVestingCellNameWitnessFunds", @"见证人薪资") forKey:pay_vb];
+            }
+        }
+        id cashback_vb = [account objectForKey:@"cashback_vb"];
+        if (cashback_vb){
+            [vesting_balance_name_hash setObject:NSLocalizedString(@"kVestingCellNameCashbackFunds", @"终身会员手续费返现") forKey:cashback_vb];
+        }
         NSMutableDictionary* asset_ids = [NSMutableDictionary dictionary];
         for (id vesting in data_array) {
             [asset_ids setObject:@YES forKey:[[vesting objectForKey:@"balance"] objectForKey:@"asset_id"]];
@@ -110,7 +149,7 @@
         //  查询 & 缓存
         return [[chainMgr queryAllAssetsInfo:[asset_ids allKeys]] then:(^id(id asset_hash) {
             [_owner hideBlockView];
-            [self onQueryVestingBalanceResponsed:data_array];
+            [self onQueryVestingBalanceResponsed:data_array nameHash:vesting_balance_name_hash];
             return nil;
         })];
     })] catch:(^id(id error) {
@@ -171,6 +210,7 @@
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
     cell.showCustomBottomLine = YES;
+    cell.row = indexPath.row;
     [cell setTagData:indexPath.row];
     [cell setItem:[_dataArray objectAtIndex:indexPath.row]];
     return cell;

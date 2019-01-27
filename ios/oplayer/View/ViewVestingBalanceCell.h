@@ -14,6 +14,7 @@
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier vc:(UIViewController*)vc;
 
 @property (nonatomic, strong) NSDictionary* item;
+@property (nonatomic, assign) NSInteger row;
 
 - (void)setTagData:(NSInteger)tag;
 

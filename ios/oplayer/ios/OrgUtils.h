@@ -114,6 +114,11 @@ typedef void (^YklUserCallback)(id data);
 + (NSDictionary*)calcOrderDirectionInfos:(NSDictionary*)priority_hash pay_asset_info:(id)pay_asset_info receive_asset_info:(id)receive_asset_info;
 
 /**
+ *  获取 worker 类型。0:refund 1:vesting 2:burn
+ */
++ (NSInteger)getWorkerType:(NSDictionary*)worker_json_object;
+
+/**
  *  提取OPDATA中所有的石墨烯ID信息。
  */
 + (void)extractObjectID:(NSUInteger)opcode opdata:(id)opdata container:(NSMutableDictionary*)container;

@@ -528,6 +528,19 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 }
 
 /**
+ *  获取 worker 类型。0:refund 1:vesting 2:burn
+ */
++ (NSInteger)getWorkerType:(NSDictionary*)worker_json_object
+{
+    id worker = [worker_json_object objectForKey:@"worker"];
+    if (worker && [worker isKindOfClass:[NSArray class]] && [worker count] > 0){
+        return [[worker firstObject] integerValue];
+    }
+    //  default is vesting worker
+    return (NSInteger)ebwt_vesting;
+}
+
+/**
  *  提取OPDATA中所有的石墨烯ID信息。
  */
 + (void)extractObjectID:(NSUInteger)opcode opdata:(id)opdata container:(NSMutableDictionary*)container

@@ -36,6 +36,7 @@
 @implementation ViewVestingBalanceCell
 
 @synthesize item=_item;
+@synthesize row;
 
 - (void)dealloc
 {
@@ -186,12 +187,14 @@
     CGFloat fWidth = self.bounds.size.width - xOffset * 2;
     
     //  第一行 ID
-    _lbObjectID.text = [NSString stringWithFormat:@"%@ #%@", NSLocalizedString(@"kVestingCellBalanceTitle", @"余额"), _item[@"id"]];
-    _lbObjectID.frame = CGRectMake(xOffset, yOffset, fWidth, 28);
+    _lbObjectID.text = [NSString stringWithFormat:@"%@. %@", @(self.row + 1), _item[@"kName"]];
     _lbObjectID.textColor = theme.textColorMain;
     
     if (_btnWithdraw){
+        _lbObjectID.frame = CGRectMake(xOffset, yOffset, fWidth - 84, 28);
         _btnWithdraw.frame = CGRectMake(self.bounds.size.width - xOffset - 120, yOffset, 120, 28);
+    }else{
+        _lbObjectID.frame = CGRectMake(xOffset, yOffset, fWidth, 28);
     }
     
     yOffset += 28;

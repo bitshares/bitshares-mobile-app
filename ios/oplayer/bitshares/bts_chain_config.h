@@ -20,6 +20,16 @@ typedef enum EBitsharesVoteType
 } EBitsharesVoteType;
 
 /**
+ *  石墨烯预算项目类型
+ */
+typedef enum EBitsharesWorkType
+{
+    ebwt_refund = 0,                //  refund
+    ebwt_vesting,                   //  vesting
+    ebwt_burn                       //  burn
+} EBitsharesWorkType;
+
+/**
  *  区块数据对象类型ID号定义
  */
 typedef enum EBitsharesObjectType

@@ -22,6 +22,10 @@
 - (void)printView:(UIView*)view level:(NSInteger)level;
 
 #pragma mark- aux methods
+/**
+ *  (public) get owner tableview
+ */
+- (UITableView*)getParentTableView;
 
 /**
  *  (public) 辅助计算文字尺寸

@@ -319,7 +319,6 @@
 "kVestingTipsStartClaim" = "The vesting balance can only be withdrawn after %@.";
 "kVestingTipsAvailableZero" = "The vesting numbers is ZERO, please wait.";
 "kVestingTipTxVestingBalanceWithdrawFullOK" = "The vesting balance %@ was successfully withdraw.";
-"kVestingCellBalanceTitle" = "Balance";
 "kVestingCellTotal" = "Total";
 "kVestingCellVesting" = "Vesting";
 "kVestingCellPeriod" = "Period";
@@ -328,6 +327,10 @@
 "kVestingCellPeriodMin" = "%@ mins";
 "kVestingCellPeriodHour" = "%@ hours";
 "kVestingCellPeriodDay" = "%@ days";
+"kVestingCellNameWorkerFunds" = "Worker proposal funds";
+"kVestingCellNameWitnessFunds" = "Witness funds";
+"kVestingCellNameCashbackFunds" = "Lifetime membership fee cashback";
+"kVestingCellNameCustomVBO" = "Custom vesting balance";
 
 /* K线界面各种字符串 */
 "kLabelHeaderFeedPrice" = "Feed price";

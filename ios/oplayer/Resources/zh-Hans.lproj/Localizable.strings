@@ -319,7 +319,6 @@
 "kVestingTipsStartClaim" = "该笔资金在 %@ 之后方可提取。";
 "kVestingTipsAvailableZero" = "没有可提取数量，请等待。";
 "kVestingTipTxVestingBalanceWithdrawFullOK" = "待解冻金额 %@ 提取成功。";
-"kVestingCellBalanceTitle" = "余额";
 "kVestingCellTotal" = "总数量";
 "kVestingCellVesting" = "已解冻数量";
 "kVestingCellPeriod" = "解冻周期";
@@ -328,6 +327,10 @@
 "kVestingCellPeriodMin" = "%@分";
 "kVestingCellPeriodHour" = "%@小时";
 "kVestingCellPeriodDay" = "%@天";
+"kVestingCellNameWorkerFunds" = "预算项目薪资";
+"kVestingCellNameWitnessFunds" = "见证人薪资";
+"kVestingCellNameCashbackFunds" = "终身会员手续费返现";
+"kVestingCellNameCustomVBO" = "自定义解冻金额";
 
 /* K线界面各种字符串 */
 "kLabelHeaderFeedPrice" = "喂价";

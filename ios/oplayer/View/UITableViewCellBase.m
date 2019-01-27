@@ -253,6 +253,25 @@
 }
 
 #pragma mark- aux methods
+/**
+ *  (public) get owner tableview
+ */
+- (UITableView*)getParentTableView
+{
+    UITableView* tableView = nil;
+    UIView* it = self;
+    while (it.superview)
+    {
+        if ([it.superview isKindOfClass:[UITableView class]])
+        {
+            tableView = (UITableView*)it.superview;
+            break;
+        }
+        it = it.superview;
+    }
+    assert(tableView);
+    return tableView;
+}
 
 /**
  *  (public) 辅助计算文字尺寸

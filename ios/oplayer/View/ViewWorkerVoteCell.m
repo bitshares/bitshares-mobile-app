@@ -172,19 +172,6 @@
     }
 }
 
-/**
- *  获取 worker 类型。0:refund 1:vesting 2:burn
- */
-- (NSInteger)_getWorkerType
-{
-    id worker = [_item objectForKey:@"worker"];
-    if ([worker isKindOfClass:[NSArray class]] && [worker count] > 0){
-        return [[worker firstObject] integerValue];
-    }
-    //  default is vesting worker
-    return 1;
-}
-
 - (void)layoutSubviews
 {
     [super layoutSubviews];
@@ -281,15 +268,15 @@
     
     //  type flag
     NSString* flagTypeStr = @"";
-    NSInteger workerType = [self _getWorkerType];
+    NSInteger workerType = [OrgUtils getWorkerType:_item];
     switch (workerType) {
-        case 0: //  refund
+        case ebwt_refund:
             flagTypeStr = NSLocalizedString(@"kVcVoteCellWPRefund", @"退款");
             break;
-        case 1: //  vesting
+        case ebwt_vesting:
             flagTypeStr = NSLocalizedString(@"kVcVoteCellWPVesting", @"普通");
             break;
-        case 2: //  burn
+        case ebwt_burn:
             flagTypeStr = NSLocalizedString(@"kVcVoteCellWPBurn", @"销毁");
             break;
         default:
