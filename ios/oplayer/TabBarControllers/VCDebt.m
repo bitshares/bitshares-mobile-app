@@ -1615,4 +1615,36 @@ enum
     }
 }
 
+#pragma mark- switch language
+- (void)switchLanguage
+{
+    self.title = NSLocalizedString(@"kVcTitleMarginPosition", @"抵押借贷");
+    self.tabBarItem.title = NSLocalizedString(@"kTabBarNameCollateral", @"抵押");
+    self.navigationItem.leftBarButtonItem.title = NSLocalizedString(@"kDebtLableReset", @"重置");
+    self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"kDebtLableSelectAsset", @"选择资产");
+    
+    if (_tfDebtValue && [_tfDebtValue.rightView isKindOfClass:[UIButton class]]){
+        UIButton* btn = (UIButton*)_tfDebtValue.rightView;
+        [btn setTitle:NSLocalizedString(@"kDebtLablePayMaxDebt", @"最大还款") forState:UIControlStateNormal];
+    }
+    
+    if (_tfCollateralValue.rightView && [_tfCollateralValue.rightView isKindOfClass:[UIButton class]]){
+        UIButton* btn = (UIButton*)_tfCollateralValue.rightView;
+        [btn setTitle:NSLocalizedString(@"kDebtLableUseMax", @"全部抵押") forState:UIControlStateNormal];
+    }
+    
+    _tfDebtValue.attributedPlaceholder = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"kDebtTipInputDebtValue", @"请输入借款金额")
+                                                                         attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
+                                                                                      NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tfCollateralValue.attributedPlaceholder = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"kDebtTipInputCollAmount", @"请输入抵押物数量")
+                                                                               attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
+                                                                                            NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    
+    [_cellTips updateLabelText:NSLocalizedString(@"kDebtWarmTips", @"【温馨提示】\n当喂价下降到强平触发价时，系统将会自动出售您的抵押资产用于归还借款。请注意调整抵押率控制风险。")];
+    
+    if (_mainTableView){
+        [_mainTableView reloadData];
+    }
+}
+
 @end

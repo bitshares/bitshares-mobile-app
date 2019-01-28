@@ -94,20 +94,20 @@ enum
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
     NSArray* pSection1 = [NSArray arrayWithObjects:
-                          NSLocalizedString(@"kAccount", @"帐号"),
+                          @"kAccount",                      //  帐号
                           nil];
     NSArray* pSection2 = [NSArray arrayWithObjects:
-                          NSLocalizedString(@"kLblCellMyBalance", @"我的资产"),
-                          NSLocalizedString(@"kLblCellOrderManagement", @"订单管理"),
-                          NSLocalizedString(@"kLblCellWalletAndMultiSign", @"钱包&多签"),
-                          NSLocalizedString(@"kLblCellMyProposal", @"待处理提案"),
+                          @"kLblCellMyBalance",             //  我的资产,
+                          @"kLblCellOrderManagement",       //  订单管理,
+                          @"kLblCellWalletAndMultiSign",    //  钱包&多签
+                          @"kLblCellMyProposal",            //  待处理提案,
                           nil];
     NSArray* pSection3 = [NSArray arrayWithObjects:
-                          NSLocalizedString(@"faq",@"常见问题"),
+                          @"faq",                           //  常见问题,
                           nil];
     NSArray* pSection4 = [NSArray arrayWithObjects:
-                          NSLocalizedString(@"kSettingEx", @"设置"),
-                          NSLocalizedString(@"kLblCellAboutBtspp", @"关于BTS++"),
+                          @"kSettingEx",                    //  设置,
+                          @"kLblCellAboutBtspp",            //  关于BTS++,
                           nil];
     _dateArray = [[NSArray alloc] initWithObjects:pSection1, pSection2, pSection3, pSection4, nil];
     
@@ -203,7 +203,7 @@ enum
     
     id ary = [_dateArray objectAtIndex:indexPath.section];
     
-    cell.textLabel.text = [ary objectAtIndex:indexPath.row];
+    cell.textLabel.text = NSLocalizedString([ary objectAtIndex:indexPath.row], @"");
     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
     
     //  设置图标
@@ -453,6 +453,34 @@ enum
                         continue;
                     }
                     [vc switchTheme];
+                }
+            }
+        }
+    }
+}
+
+#pragma mark- switch language
+- (void)switchLanguage
+{
+    //  required !!!
+    [self refreshBackButtonText];
+    
+    self.title = NSLocalizedString(@"kTabBarNameMy", @"我的");
+    self.tabBarItem.title = NSLocalizedString(@"kTabBarNameMy", @"我的");
+    
+    if (_mainTableView){
+        [_mainTableView reloadData];
+    }
+    //  REMARK：处理个人中心导航堆栈里的所有 VC 的语言切换。
+    if (self.navigationController){
+        NSArray* viewControllers = self.navigationController.viewControllers;
+        if (viewControllers && [viewControllers count] > 0){
+            if ([viewControllers firstObject] == self){
+                for (VCBase* vc in viewControllers) {
+                    if (vc == self){
+                        continue;
+                    }
+                    [vc switchLanguage];
                 }
             }
         }

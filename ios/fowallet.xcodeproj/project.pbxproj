@@ -574,6 +574,10 @@
 		3FEBEEF621DDBBE600C124CF /* iconProposal@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FEBEEF321DDBBE600C124CF /* iconProposal@2x.png */; };
 		3FEBEEF721DDBBE600C124CF /* iconProposal@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FEBEEF421DDBBE600C124CF /* iconProposal@3x.png */; };
 		3FEBEEF821DDBBE600C124CF /* iconProposal@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FEBEEF421DDBBE600C124CF /* iconProposal@3x.png */; };
+		3FF3550621FECDF4008EF213 /* LangManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF3550421FECDF4008EF213 /* LangManager.m */; };
+		3FF3550721FECDF4008EF213 /* LangManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF3550421FECDF4008EF213 /* LangManager.m */; };
+		3FF3550A21FED340008EF213 /* VCSelectLanguage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF3550921FED340008EF213 /* VCSelectLanguage.m */; };
+		3FF3550B21FED340008EF213 /* VCSelectLanguage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF3550921FED340008EF213 /* VCSelectLanguage.m */; };
 		430D23D817D86F4900D85816 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 430D23D717D86F4900D85816 /* ImageIO.framework */; };
 		B7030DF91E2FB64600791B47 /* ViewLoading.m in Sources */ = {isa = PBXBuildFile; fileRef = B7030DF81E2FB64600791B47 /* ViewLoading.m */; };
 		B707E1C51DC89ECC008C92CB /* banner_back@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B707E1C41DC89ECC008C92CB /* banner_back@2x.png */; };
@@ -1152,6 +1156,10 @@
 		3FEA46E7216F812800127CA5 /* CurveSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CurveSlider.h; path = ios/CurveSlider.h; sourceTree = "<group>"; };
 		3FEBEEF321DDBBE600C124CF /* iconProposal@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconProposal@2x.png"; path = "Images/iconProposal@2x.png"; sourceTree = "<group>"; };
 		3FEBEEF421DDBBE600C124CF /* iconProposal@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconProposal@3x.png"; path = "Images/iconProposal@3x.png"; sourceTree = "<group>"; };
+		3FF3550421FECDF4008EF213 /* LangManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LangManager.m; path = ios/LangManager.m; sourceTree = "<group>"; };
+		3FF3550521FECDF4008EF213 /* LangManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LangManager.h; path = ios/LangManager.h; sourceTree = "<group>"; };
+		3FF3550821FED340008EF213 /* VCSelectLanguage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCSelectLanguage.h; path = Controller/VCSelectLanguage.h; sourceTree = "<group>"; };
+		3FF3550921FED340008EF213 /* VCSelectLanguage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCSelectLanguage.m; path = Controller/VCSelectLanguage.m; sourceTree = "<group>"; };
 		430D23D717D86F4900D85816 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		B7030DF71E2FB64600791B47 /* ViewLoading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewLoading.h; path = View/ViewLoading.h; sourceTree = "<group>"; };
 		B7030DF81E2FB64600791B47 /* ViewLoading.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewLoading.m; path = View/ViewLoading.m; sourceTree = "<group>"; };
@@ -1968,6 +1976,8 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3FF3550821FED340008EF213 /* VCSelectLanguage.h */,
+				3FF3550921FED340008EF213 /* VCSelectLanguage.m */,
 				3F6C35AA21EC8399008E2903 /* Gateway */,
 				3F9A731321E729FE00DAF7A2 /* VCGatewayDeposit.h */,
 				3F9A731221E729FD00DAF7A2 /* VCGatewayDeposit.m */,
@@ -2369,6 +2379,8 @@
 		18FF06C217E039240088405E /* Object */ = {
 			isa = PBXGroup;
 			children = (
+				3FF3550521FECDF4008EF213 /* LangManager.h */,
+				3FF3550421FECDF4008EF213 /* LangManager.m */,
 				3FEA46E7216F812800127CA5 /* CurveSlider.h */,
 				3FEA46E6216F812800127CA5 /* CurveSlider.m */,
 				B7C04122210C100100848CBC /* ScheduleManager.h */,
@@ -3897,6 +3909,7 @@
 				3FB8F8C721CE66C200DA88E2 /* HtmlColor.m in Sources */,
 				3FB8F8C821CE66C200DA88E2 /* ViewCallOrderInfoCell.m in Sources */,
 				3FB8F8C921CE66C200DA88E2 /* VCSetting.m in Sources */,
+				3FF3550B21FED340008EF213 /* VCSelectLanguage.m in Sources */,
 				3FB8F8CA21CE66C200DA88E2 /* WalletManager.m in Sources */,
 				3FB8F8CB21CE66C200DA88E2 /* Bra.c in Sources */,
 				3FB8F8CC21CE66C200DA88E2 /* MKlineItemData.m in Sources */,
@@ -4009,6 +4022,7 @@
 				3FB8F93221CE66C200DA88E2 /* MyPopviewManager.m in Sources */,
 				3FB8F93321CE66C200DA88E2 /* ViewFaceCell.m in Sources */,
 				3FB8F93421CE66C200DA88E2 /* AesOpt.c in Sources */,
+				3FF3550721FECDF4008EF213 /* LangManager.m in Sources */,
 				3FB8F93521CE66C200DA88E2 /* zip.c in Sources */,
 				3FB8F93621CE66C200DA88E2 /* ViewSimulateActionSheet.m in Sources */,
 				3FB8F93721CE66C200DA88E2 /* VCDebt.m in Sources */,
@@ -4170,6 +4184,7 @@
 				ED96A090186C62AD002181D4 /* HtmlColor.m in Sources */,
 				B741A76920DFE1A0000FBC00 /* ViewCallOrderInfoCell.m in Sources */,
 				B7E783121C50839500C94B58 /* VCSetting.m in Sources */,
+				3FF3550A21FED340008EF213 /* VCSelectLanguage.m in Sources */,
 				B737A72420F9E42E00818BBA /* WalletManager.m in Sources */,
 				B7BDAA8820B3C77500738F12 /* Bra.c in Sources */,
 				B737850D21002608001EEA8C /* MKlineItemData.m in Sources */,
@@ -4282,6 +4297,7 @@
 				B73B4D931CC9D4E90049D9F5 /* MyPopviewManager.m in Sources */,
 				EDFB5514186DCA16005FB755 /* ViewFaceCell.m in Sources */,
 				B7BDAA8420B3C77500738F12 /* AesOpt.c in Sources */,
+				3FF3550621FECDF4008EF213 /* LangManager.m in Sources */,
 				B7A13B7A1CA1443A0096A6A4 /* zip.c in Sources */,
 				B7E690EF1C16BD3600EF32EF /* ViewSimulateActionSheet.m in Sources */,
 				B741A75D20DB807D000FBC00 /* VCDebt.m in Sources */,

@@ -190,17 +190,6 @@
     [Answers logCustomEventWithName:@"enterForeground" customAttributes:@{}];
 }
 
-/**
- *  TODO:fowallet 这个方法配置
- */
-static void counting_illegal_callback_fn(const char* str, void* data) {
-    /* Dummy callback function that just counts. */
-    int32_t *p;
-    (void)str;
-    p = data;
-    (*p)++;
-}
-
 - (void)onAddMarketInfos
 {
     VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:enstAsset callback:nil];
@@ -597,10 +586,17 @@ static void counting_illegal_callback_fn(const char* str, void* data) {
     self.navigationItem.rightBarButtonItem.tintColor = [ThemeManager sharedThemeManager].navigationBarTextColor;
 }
 
-- (void)didReceiveMemoryWarning
+#pragma mark- switch language
+- (void)switchLanguage
 {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    [[self buttonWithTag:1] setTitle:NSLocalizedString(@"kLabelMarketFavorites", @"自选") forState:UIControlStateNormal];
+    self.title = NSLocalizedString(@"kTabBarNameMarkets", @"行情");
+    self.tabBarItem.title = NSLocalizedString(@"kTabBarNameMarkets", @"行情");
+    if (_subvcArrays){
+        for (VCMarketInfo* vc in _subvcArrays) {
+            [vc switchLanguage];
+        }
+    }
 }
 
 @end

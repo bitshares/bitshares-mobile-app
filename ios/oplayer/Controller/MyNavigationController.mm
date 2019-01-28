@@ -323,4 +323,13 @@
     }
 }
 
+#pragma mark- switch language
+- (void)switchLanguage
+{
+    id vc = [self.viewControllers firstObject];
+    if (vc && [vc respondsToSelector:@selector(switchLanguage)]){
+        [vc switchLanguage];
+    }
+}
+
 @end

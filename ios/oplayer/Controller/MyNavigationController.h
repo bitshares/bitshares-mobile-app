@@ -20,5 +20,6 @@
 - (void)tempDisableDragBack;
 
 - (void)switchTheme;
+- (void)switchLanguage;
 
 @end

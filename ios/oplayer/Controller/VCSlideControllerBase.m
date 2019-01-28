@@ -140,7 +140,7 @@
     _mainScrollView.contentOffset = CGPointMake(kScreenWidth * (_currentSelectedTag - 1), 0);
 }
 
-- (UIButton *)buttonWithTag:(NSInteger)tag
+- (UIButton*)buttonWithTag:(NSInteger)tag
 {
     return [_slideButtonArrays objectAtIndex:tag-1];
 }

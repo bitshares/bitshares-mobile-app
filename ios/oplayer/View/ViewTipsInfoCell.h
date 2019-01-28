@@ -12,6 +12,7 @@
 @interface ViewTipsInfoCell : UITableViewCellBase
 
 - (id)initWithText:(NSString*)pText;
+- (void)updateLabelText:(NSString*)text;
 - (CGFloat)calcCellDynamicHeight:(CGFloat)leftOffset;
 
 @end

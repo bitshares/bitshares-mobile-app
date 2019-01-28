@@ -85,18 +85,18 @@ enum
 //                          nil];
     
     NSArray* pSection2 = [NSArray arrayWithObjects:
-                          NSLocalizedString(@"kServicesCellLabelTransfer", @"转账"),
-                          NSLocalizedString(@"kServicesCellLabelVoting", @"投票"),
+                          @"kServicesCellLabelTransfer",        //  转账
+                          @"kServicesCellLabelVoting",          //  投票
                           nil];
     
     NSArray* pSection3 = [NSArray arrayWithObjects:
-                          NSLocalizedString(@"kServicesCellLabelAccountSearch", @"帐号查询"),
-                          NSLocalizedString(@"kServicesCellLabelRank", @"抵押排行"),
-                          NSLocalizedString(@"kServicesCellLabelFeedPrice", @"喂价详情"),
+                          @"kServicesCellLabelAccountSearch",   //  帐号查询
+                          @"kServicesCellLabelRank",            //  抵押排行
+                          @"kServicesCellLabelFeedPrice",       //  喂价详情
                           nil];
     
     NSArray* pSection4 = [NSArray arrayWithObjects:
-                          NSLocalizedString(@"kServicesCellLabelDepositWithdraw", @"充币提币"),
+                          @"kServicesCellLabelDepositWithdraw", //  充币提币
                           nil];
     
     _dateArray = [[NSArray alloc] initWithObjects:pSection2, pSection3, pSection4, nil];
@@ -171,7 +171,7 @@ enum
     
     cell.showCustomBottomLine = YES;
     
-    cell.textLabel.text = [ary objectAtIndex:indexPath.row];
+    cell.textLabel.text = NSLocalizedString([ary objectAtIndex:indexPath.row], @"");
     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
     
     switch (indexPath.section) {
@@ -383,6 +383,16 @@ enum
 {
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     if (_mainTableView){
+        [_mainTableView reloadData];
+    }
+}
+
+#pragma mark- switch language
+- (void)switchLanguage
+{
+    self.title = NSLocalizedString(@"kTabBarNameServices", @"服务");
+    self.tabBarItem.title = NSLocalizedString(@"kTabBarNameServices", @"服务");
+    if (_mainTableView) {
         [_mainTableView reloadData];
     }
 }

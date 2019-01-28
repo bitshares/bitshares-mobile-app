@@ -348,6 +348,18 @@ static NSInteger gen_notify_unique_id()
 }
 
 /**
+ *  (public) refresh back text when SWITCH LANGUAGE
+ */
+- (void)refreshBackButtonText
+{
+    UIBarButtonItem* barButtonItem = [[UIBarButtonItem alloc] initWithTitle:kVcDefaultBackTitleName
+                                                                      style:UIBarButtonItemStyleDone
+                                                                     target:nil
+                                                                     action:nil];
+    self.navigationItem.backBarButtonItem = barButtonItem;
+}
+
+/**
  *  导航到下一级、便捷方式。
  */
 - (void)pushViewController:(UIViewController*)vc vctitle:(NSString*)vctitle backtitle:(NSString*)backtitle
@@ -934,6 +946,12 @@ static NSInteger gen_notify_unique_id()
 - (void)switchTheme
 {
     //  REMARK:切换theme时需要特殊处理的就重载该方法
+}
+
+#pragma mark- switch language
+- (void)switchLanguage
+{
+    //  REMARK:切换language时需要特殊处理的就重载该方法
 }
 
 - (void)reloadTableView:(UITableView*)tableView

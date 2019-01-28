@@ -13,4 +13,6 @@
     NSArray*    _subvcArrays;
 }
 
+- (UIButton*)buttonWithTag:(NSInteger)tag;
+
 @end

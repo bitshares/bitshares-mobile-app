@@ -11,6 +11,7 @@
 #import "VCAdIntro.h"
 #import "AppCacheManager.h"
 #import "ThemeManager.h"
+#import "LangManager.h"
 
 #import "VCFirstLaunch.h"
 
@@ -344,6 +345,16 @@
     }
 }
 
+- (void)switchLanguage
+{
+    if (!_mainTabController){
+        return;
+    }
+    for (MyNavigationController* navi in _mainTabController.viewControllers) {
+        [navi switchLanguage];
+    }
+}
+
 ///<    设置导航条属性
 -(void)setupNavigationAttribute:(UINavigationController*)nav
 {
@@ -590,7 +601,6 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)initLanguageInfo
 {
-    //  REMARK：下面中文部分语言判断应该和js一致。
     self.currLanguage = [[self class] getSystemLanguage];
     self.isLanguageCN = [self.currLanguage hasPrefix:@"zh"];
     self.isLanguageSimpleChinese = [self.currLanguage hasPrefix:@"zh-Hans"] || [self.currLanguage hasPrefix:@"zh-CN"];
@@ -622,11 +632,12 @@ void uncaughtExceptionHandler(NSException *exception)
     //  初始化部分临时数据
     [[TempManager sharedTempManager] InitData];
     
-    //  初始化语言信息
-    [self initLanguageInfo];
-    
     //  初始化缓存列表（REMARK：放在tempmgr之后初始化，因为缓存文件用到的key在tempmgr中。）
     [[AppCacheManager sharedAppCacheManager] initload];
+    
+    //  初始化语言信息
+    [[LangManager sharedLangManager] initCurrentLanguage];
+    [self initLanguageInfo];
     
     //  初始化帐号、资产、市场等数据（放在cacheMgr之后，可能用到cacheMgr中用户收藏的信息。）
     [[ChainObjectManager sharedChainObjectManager] initAll];

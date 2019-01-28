@@ -483,6 +483,7 @@
 "kVcVoteCellWPBurn" = "销毁";
 
 /* 设置界面 */
+"setting_language" = "语言";
 "setting_currency" = "计价方式";
 "kSettingCurrencyNameCNY" = "人民币";
 "kSettingCurrencyNameUSD" = "美元";
@@ -508,6 +509,7 @@
 "kVcTitleCustomPairs" = "添加交易对";
 "kVcTitleSelectProxy" = "选择代理帐号";
 "kVcTitleTheme" = "主题风格";
+"kVcTitleLanguage" = "语言";
 "kVcTitleOrderManagement" = "订单管理";
 "kVcTitleMyBalance" = "我的资产";
 "kVcTitleAgreement" = "用户协议和服务条款";
@@ -654,6 +656,8 @@
 "kOpDesc_asset_claim_fees" = "提取资产手续费。";
 
 /* 通用字符串 */
+"kLangKeyZhSimple" = "简体中文";
+"kLangKeyEn" = "English / 英文";
 "skip" = "跳过";
 "kAppName" = "BTS++";
 "kAccount" = "帐号";

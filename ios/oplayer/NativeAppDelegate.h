@@ -71,7 +71,8 @@
 
 -(void)enter;
 
-//  切换theme
+//  switch
 - (void)switchTheme;
+- (void)switchLanguage;
 
 @end

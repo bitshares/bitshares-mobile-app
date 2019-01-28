@@ -9,6 +9,8 @@
 #import "VCSetting.h"
 #import "AppCacheManager.h"
 
+#import "LangManager.h"
+#import "VCSelectLanguage.h"
 #import "VCSelectTheme.h"
 #import "VCSelectEstimateUnit.h"
 #import "UIDevice+Helper.h"
@@ -16,7 +18,8 @@
 
 enum
 {
-    kSetting_estimate_unit = 0,     //  记账单位
+    kSetting_language = 0,      //  多语言
+    kSetting_estimate_unit,     //  记账单位
     kSetting_theme,             //  主题风格
     
     kSetting_Max
@@ -48,8 +51,9 @@ enum
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
     _dateArray = [[NSArray alloc] initWithObjects:
-                  NSLocalizedString(@"setting_currency", @"计价方式"),
-                  NSLocalizedString(@"setting_theme", @"主题风格"),
+                  @"setting_language",  //  语言
+                  @"setting_currency",  //  计价方式
+                  @"setting_theme",     //  主题风格
                   nil];
     
     _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];
@@ -124,12 +128,20 @@ enum
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.backgroundColor = [UIColor clearColor];
     id item = [_dateArray objectAtIndex:indexPath.section];
-    cell.textLabel.text = [item isKindOfClass:[NSArray class]] ? [item objectAtIndex:indexPath.row] : item;
+    cell.textLabel.text = NSLocalizedString([item isKindOfClass:[NSArray class]] ? [item objectAtIndex:indexPath.row] : item, @"");
     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
     cell.showCustomBottomLine = YES;
     cell.detailTextLabel.text = nil;
 
     switch (indexPath.section) {
+        case kSetting_language:
+        {
+            cell.detailTextLabel.text = [[LangManager sharedLangManager] getCurrentLanguageName];
+            cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+        }
+            break;
         case kSetting_estimate_unit:
         {
             NSString* assetSymbol = [[SettingManager sharedSettingManager] getEstimateAssetSymbol];
@@ -169,6 +181,13 @@ enum
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
         switch (indexPath.section) {
+            case kSetting_language:
+            {
+                VCSelectLanguage* vc = [[VCSelectLanguage alloc] init];
+                vc.title = NSLocalizedString(@"kVcTitleLanguage", @"语言");
+                [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+            }
+                break;
             case kSetting_estimate_unit:
             {
                 VCSelectEstimateUnit* vc = [[VCSelectEstimateUnit alloc] init];
@@ -194,6 +213,16 @@ enum
 {
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     if (_mainTableView){
+        [_mainTableView reloadData];
+    }
+}
+
+#pragma mark- switch language
+- (void)switchLanguage
+{
+    [self refreshBackButtonText];
+    self.title = NSLocalizedString(@"kVcTitleSetting", @"设置");
+    if (_mainTableView) {
         [_mainTableView reloadData];
     }
 }

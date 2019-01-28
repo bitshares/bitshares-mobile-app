@@ -446,8 +446,17 @@
     if (_mainTableView){
         [_mainTableView reloadData];
     }
-    
-    //    _lbEmptyOrder//TODO:fowallt theme
+}
+
+#pragma mark- switch language
+- (void)switchLanguage
+{
+    if (_mainTableView){
+        [_mainTableView reloadData];
+    }
+    if (_lbEmptyOrder){
+        _lbEmptyOrder.text = NSLocalizedString(@"kLabelNoFavMarket", @"没有任何自选");
+    }
 }
 
 @end

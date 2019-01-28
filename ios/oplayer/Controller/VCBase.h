@@ -161,6 +161,11 @@
  */
 - (void)delay:(void (^)())body;
 
+/**
+ *  (public) refresh back text when SWITCH LANGUAGE
+ */
+- (void)refreshBackButtonText;
+
 - (void)pushViewController:(UIViewController*)vc vctitle:(NSString*)vctitle backtitle:(NSString*)backtitle;
 - (void)clearPushViewController:(UIViewController*)vc vctitle:(NSString*)vctitle backtitle:(NSString*)backtitle;
 
@@ -169,6 +174,9 @@
 
 #pragma mark- switch theme
 - (void)switchTheme;
+
+#pragma mark- switch language
+- (void)switchLanguage;
 
 
 #pragma mark- override in subclass
