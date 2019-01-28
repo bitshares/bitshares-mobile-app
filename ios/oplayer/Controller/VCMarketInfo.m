@@ -446,6 +446,9 @@
     if (_mainTableView){
         [_mainTableView reloadData];
     }
+    if (_lbEmptyOrder){
+        _lbEmptyOrder.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    }
 }
 
 #pragma mark- switch language
