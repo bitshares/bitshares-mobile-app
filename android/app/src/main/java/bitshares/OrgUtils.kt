@@ -500,6 +500,18 @@ class OrgUtils {
         }
 
         /**
+         *  获取 worker 类型。0:refund 1:vesting 2:burn
+         */
+        fun getWorkerType(worker_json_object: JSONObject) : Int {
+            val worker = worker_json_object.optJSONArray("worker")
+            if (worker != null && worker.length() > 0){
+                return worker.getInt(0)
+            }
+            //  default is vesting worker
+            return EBitsharesWorkType.ebwt_vesting.value
+        }
+
+        /**
          *  提取OPDATA中所有的石墨烯ID信息。
          */
         fun extractObjectID(opcode: Int, opdata: JSONObject, container: JSONObject) {

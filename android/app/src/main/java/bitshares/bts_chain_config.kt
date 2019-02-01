@@ -73,6 +73,15 @@ enum class EBitsharesOperations(val value: Int) {
 }
 
 /**
+ *  石墨烯预算项目类型
+ */
+enum class EBitsharesWorkType(val value: Int) {
+    ebwt_refund(0),
+    ebwt_vesting(1),
+    ebwt_burn(2),
+}
+
+/**
  *  钱包中存在的私钥对指定权限状态枚举。
  */
 enum class EAccountPermissionStatus(val value: Int) {

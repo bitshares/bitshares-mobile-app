@@ -11,16 +11,12 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import bitshares.*
+import com.btsplusplus.fowallet.R.id.layout_vesting_balance_cell
 import com.btsplusplus.fowallet.ViewEx.TextViewEx
+import com.fowallet.walletcore.bts.ChainObjectManager
+import com.fowallet.walletcore.bts.WalletManager
 import org.json.JSONArray
 import org.json.JSONObject
-
-//import org.bitshares.app.R
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
@@ -33,96 +29,184 @@ private const val ARG_PARAM2 = "param2"
  */
 class FragmentVestingBalance : BtsppFragment() {
 
+    private var _data_array = mutableListOf<JSONObject>()
     private var _ctx: Context? = null
-    private lateinit var _data: JSONArray
+    private var _full_account_data: JSONObject? = null
+    private var _isSelfAccount = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
+    override fun onInitParams(args: Any?) {
+        _full_account_data = args as JSONObject
+        _isSelfAccount = WalletManager.sharedWalletManager().isMyselfAccount(_full_account_data!!.getJSONObject("account").getString("name"))
+    }
 
+    fun queryVestingBalance() {
+        if (_full_account_data == null){
+            return
+        }
+
+        val chainMgr = ChainObjectManager.sharedChainObjectManager()
+
+        activity?.let { ctx ->
+            val mask = ViewMesk(R.string.nameRequesting.xmlstring(ctx), ctx)
+            mask.show()
+
+            val account = _full_account_data!!.getJSONObject("account")
+            val uid = account.getString("id")
+
+            val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
+            val p1 = conn.async_exec_db("get_vesting_balances", jsonArrayfrom(uid))
+            val p2 = conn.async_exec_db("get_workers_by_account", jsonArrayfrom(uid))
+            val p3 = conn.async_exec_db("get_witness_by_account", jsonArrayfrom(uid))
+
+            Promise.all(p1, p2, p3).then {
+                val all_data = it as JSONArray
+
+                val vesting_balance_name_hash = JSONObject()
+
+                val data_array = all_data.getJSONArray(0)
+                val data_workers = all_data.optJSONArray(1)
+                val data_witness = all_data.optJSONObject(2)
+                data_workers?.forEach<JSONObject> { nullable_worker ->
+                    val worker = nullable_worker!!
+                    if (OrgUtils.getWorkerType(worker) == EBitsharesWorkType.ebwt_vesting.value){
+                        val balance = worker.getJSONArray("worker").getJSONObject(1).optString("balance", null)
+                        if (balance != null) {
+                            val name = worker.optString("name", null) ?: "预算项目薪资"
+                            vesting_balance_name_hash.put(balance, name)
+                        }
+                    }
+                }
+                if (data_witness != null) {
+                    val pay_vb = data_witness.optString("pay_vb", null)
+                    if (pay_vb != null) {
+                        vesting_balance_name_hash.put(pay_vb, "见证人薪资")
+                    }
+                }
+                val cashback_vb = account.optString("cashback_vb", null)
+                if (cashback_vb != null){
+                    vesting_balance_name_hash.put(cashback_vb, "终身会员手续费返现")
+                }
+
+                val asset_ids = JSONObject()
+                data_array.forEach<JSONObject> { nullable_vesting ->
+                    asset_ids.put(nullable_vesting!!.getJSONObject("balance").getString("asset_id"), true)
+                }
+                return@then chainMgr.queryAllAssetsInfo(asset_ids.keys().toJSONArray()).then {
+                    mask.dismiss()
+                    onQueryVestingBalanceResponsed(data_array, vesting_balance_name_hash)
+                    return@then null
+                }
+            }.catch {
+                mask.dismiss()
+                showToast(resources.getString(R.string.nameNetworkException))
+            }
+
+            return@let
         }
     }
 
-    override fun onInitParams(args: Any?) {
-        _data = args as JSONArray
+    private fun onQueryVestingBalanceResponsed(data_array: JSONArray, nameHash: JSONObject) {
+        //  更新数据
+        _data_array.clear()
 
+        if (data_array.length() > 0) {
+            for (it in data_array.forin<JSONObject>()){
+                val vesting = it!!
+                val oid = vesting.getString("id")
+                //  略过总金额为 0 的待解冻金额对象。
+                if (vesting.getJSONObject("balance").getString("amount").toLong() == 0L){
+                    continue
+                }
+                //  linear_vesting_policy = 0,
+                //  cdd_vesting_policy
+                if (vesting.getJSONArray("policy").getInt(0) == 1) {
+                    val name = nameHash.optString(oid, null) ?: "自定义解冻金额"
+                    vesting.put("kName", name)
+                    _data_array.add(vesting)
+                }else{
+                    //  TODO:fowallet 1.7 暂时不支持 linear_vesting_policy
+                }
+            }
+        }
+
+        //  根据ID降序排列
+        _data_array.sortByDescending { it.getString("id").split(".").last().toInt() }
+
+        //  更新显示
+        activity?.let {
+            val container: LinearLayout = it.findViewById(R.id.layout_vesting_balance_cell)
+            container.removeAllViews()
+            if (_data_array.size > 0){
+                refreshUI(container)
+            }else{
+                container.addView(ViewUtils.createEmptyCenterLabel(_ctx!!, "没有任何待解冻金额"))
+            }
+        }
+    }
+
+    private fun refreshUI(container: LinearLayout){
+        _data_array.forEachIndexed { idx, vesting ->
+            val name = vesting.getString("kName")
+            //  TODO:1.7
+            val total_amount = "1234";// vesting.getString("total_amount")
+            val unfreeze_number = "23";// vesting.getString("unfreeze_number")
+            val unfreeze_cycle = "3";// vesting.getString("unfreeze_cycle")
+
+            //  line1 name & button
+            val layout_line1 = LinearLayout(_ctx)
+            val layout_line1_params = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP)
+            layout_line1_params.setMargins(0,10.dp,0,0)
+            layout_line1.layoutParams = layout_line1_params
+            val tv_balance = TextViewEx(_ctx!!,"${idx + 1}. $name", dp_size = 13.0f, bold = true, color = R.color.theme01_textColorMain, gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL)
+            layout_line1.addView(tv_balance)
+            if (_isSelfAccount) {
+                val tv_pickup = TextViewEx(_ctx!!,"提取", dp_size = 13.0f, color = R.color.theme01_textColorHighlight, gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL, width = LLAYOUT_MATCH)
+                layout_line1.addView(tv_pickup)
+
+                // click event
+                tv_pickup.setOnClickListener{
+                    //  TODO:1.7
+                }
+            }
+
+            //  line2 title
+            val layout_line2 = LinearLayout(_ctx)
+            val layout_line2_params = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP)
+            layout_line2_params.setMargins(0,10.dp,0,0)
+            layout_line2.layoutParams = layout_line2_params
+            val tv_total_amount = TextViewEx(_ctx!!,"总数量(BTS)", dp_size = 11.0f, color = R.color.theme01_textColorGray ,width = 0.dp, weight = 1.0f,gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL)
+            val tv_unfreeze_amount = TextViewEx(_ctx!!,"已解冻数量(BTS)", dp_size = 11.0f, color = R.color.theme01_textColorGray ,width = 0.dp, weight = 1.0f,gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL)
+            val tv_unfreeze_cycle = TextViewEx(_ctx!!,"解冻周期", dp_size = 11.0f, color = R.color.theme01_textColorGray ,width = 0.dp, weight = 1.0f,gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL)
+            layout_line2.addView(tv_total_amount)
+            layout_line2.addView(tv_unfreeze_amount)
+            layout_line2.addView(tv_unfreeze_cycle)
+
+            //  line3 value
+            val layout_line3 = LinearLayout(_ctx)
+            val layout_line3_params = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP)
+            layout_line3_params.setMargins(0,10.dp,0,10.dp)
+            layout_line3.layoutParams = layout_line3_params
+            val tv_total_amount_value = TextViewEx(_ctx!!,total_amount, dp_size = 12.0f, color = R.color.theme01_textColorNormal ,width = 0.dp, weight = 1.0f,gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL)
+            val tv_unfreeze_amount_value = TextViewEx(_ctx!!,unfreeze_number, dp_size = 12.0f, color = R.color.theme01_textColorNormal ,width = 0.dp, weight = 1.0f,gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL)
+            val tv_unfreeze_cycle_value = TextViewEx(_ctx!!,unfreeze_cycle, dp_size = 12.0f, color = R.color.theme01_textColorNormal ,width = 0.dp, weight = 1.0f,gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL)
+            layout_line3.addView(tv_total_amount_value)
+            layout_line3.addView(tv_unfreeze_amount_value)
+            layout_line3.addView(tv_unfreeze_cycle_value)
+
+            container.apply {
+                addView(layout_line1)
+                addView(layout_line2)
+                addView(layout_line3)
+                addView(ViewLine(_ctx!!))
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
         _ctx = inflater.context
-
-        val parent_layout = ScrollView(_ctx).apply {
-            layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_MATCH)
-        }
-
-        val layout = LinearLayout(_ctx)
-        val layout_params = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_MATCH)
-        layout.setPadding(10.dp,0,10.dp,0)
-        layout.orientation = LinearLayout.VERTICAL
-        layout.layoutParams = layout_params
-
-        _data.forEach<JSONObject> {
-            val balance = it!!.getString("balance")
-            val total_amount = it!!.getString("total_amount")
-            val unfreeze_number = it!!.getString("unfreeze_number")
-            val unfreeze_cycle = it!!.getString("unfreeze_cycle")
-
-            // line1
-            val layout_line1 = LinearLayout(_ctx)
-            val layout_line1_params = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP)
-            layout_line1_params.setMargins(0,10.dp,0,0)
-            layout_line1.layoutParams = layout_line1_params
-            val tv_balance = TextViewEx(_ctx!!,"余额 #${balance}",color = R.color.theme01_textColorMain, gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL)
-            layout_line1.addView(tv_balance)
-            if (true) {
-                val tv_pickup = TextViewEx(_ctx!!,"提取",color = R.color.theme01_textColorHighlight,gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL, width = LLAYOUT_MATCH)
-                layout_line1.addView(tv_pickup)
-
-                // click event
-                tv_pickup.setOnClickListener{
-
-                }
-            }
-
-            // line2
-            val layout_line2 = LinearLayout(_ctx)
-            val layout_line2_params = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP)
-            layout_line2_params.setMargins(0,10.dp,0,0)
-            layout_line2.layoutParams = layout_line2_params
-            val tv_total_amount = TextViewEx(_ctx!!,"总数量(BTS)",color = R.color.theme01_textColorGray ,width = 0.dp, weight = 1.0f,gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL, dp_size = 11.0f)
-            val tv_unfreeze_amount = TextViewEx(_ctx!!,"已解冻数量(BTS)",color = R.color.theme01_textColorGray ,width = 0.dp, weight = 1.0f,gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL,dp_size = 11.0f)
-            val tv_unfreeze_cycle = TextViewEx(_ctx!!,"解冻周期",color = R.color.theme01_textColorGray ,width = 0.dp, weight = 1.0f,gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL,dp_size = 11.0f)
-            layout_line2.addView(tv_total_amount)
-            layout_line2.addView(tv_unfreeze_amount)
-            layout_line2.addView(tv_unfreeze_cycle)
-
-            // line3
-            val layout_line3 = LinearLayout(_ctx)
-            val layout_line3_params = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP)
-            layout_line3_params.setMargins(0,10.dp,0,10.dp)
-            layout_line3.layoutParams = layout_line3_params
-            val tv_total_amount_value = TextViewEx(_ctx!!,total_amount,color = R.color.theme01_textColorNormal ,width = 0.dp, weight = 1.0f,gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL,dp_size = 11.0f)
-            val tv_unfreeze_amount_value = TextViewEx(_ctx!!,unfreeze_number,color = R.color.theme01_textColorNormal ,width = 0.dp, weight = 1.0f,gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL,dp_size = 11.0f)
-            val tv_unfreeze_cycle_value = TextViewEx(_ctx!!,unfreeze_cycle,color = R.color.theme01_textColorNormal ,width = 0.dp, weight = 1.0f,gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL,dp_size = 11.0f)
-            layout_line3.addView(tv_total_amount_value)
-            layout_line3.addView(tv_unfreeze_amount_value)
-            layout_line3.addView(tv_unfreeze_cycle_value)
-
-
-            layout.addView(layout_line1)
-            layout.addView(layout_line2)
-            layout.addView(layout_line3)
-            layout.addView(ViewLine(_ctx!!))
-
-        }
-
-        parent_layout.addView(layout)
-
-        return parent_layout
-
+        return inflater.inflate(R.layout.fragment_vesting_balance, container, false)
     }
-
 
 }
