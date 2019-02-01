@@ -124,6 +124,7 @@
     <string name="klineLblCrossChangePercent">涨跌幅</string>
     <string name="klineLblCrossVol">成交量</string>
     <string name="klineLblCrossPrice">价格</string>
+    <string name="kLabelTradeHisNdayAgo">%d天前</string>
 
     <!-- 买入页面 -->
     <string name="buyPageBtnBuy">买入</string>
@@ -426,7 +427,6 @@
     <string name="myAssetsPageUpdateProposal">更新提案。</string>
     <string name="myAssetsPageNotAnyActivityInfo">没有任何活动信息</string>
 
-
     <!-- 我的订单界面 -->
     <string name="myOrderPageCurrentOrder">当前订单</string>
     <string name="myOrderPageHistoryOrder">历史订单</string>
@@ -440,6 +440,24 @@
     <string name="myOrderPageOrderIsCanceled">订单 %s 已取消。</string>
     <string name="myOrderPageOrderIsCanceledButRefreshFailed">订单 %s 已取消，但刷新界面失败，请稍后再试。</string>
     <string name="myOrderPageRequestFailedAndTryAgainLater">请求失败，请稍后再试。</string>
+
+    <!-- 待解冻金额 -->
+    <string name="kVestingTipsNoData">没有任何待解冻金额</string>
+    <string name="kVestingTipsStartClaim">该笔资金在 %s 之后方可提取。</string>
+    <string name="kVestingTipsAvailableZero">没有可提取数量，请等待。</string>
+    <string name="kVestingTipTxVestingBalanceWithdrawFullOK">待解冻金额 %s 提取成功。</string>
+    <string name="kVestingCellTotal">总数量</string>
+    <string name="kVestingCellVesting">已解冻数量</string>
+    <string name="kVestingCellPeriod">解冻周期</string>
+    <string name="kVestingCellBtnWithdrawal">提取</string>
+    <string name="kVestingCellPeriodSec">%s秒</string>
+    <string name="kVestingCellPeriodMin">%s分</string>
+    <string name="kVestingCellPeriodHour">%s小时</string>
+    <string name="kVestingCellPeriodDay">%s天</string>
+    <string name="kVestingCellNameWorkerFunds">预算项目薪资</string>
+    <string name="kVestingCellNameWitnessFunds">见证人薪资</string>
+    <string name="kVestingCellNameCashbackFunds">终身会员手续费返现</string>
+    <string name="kVestingCellNameCustomVBO">自定义解冻金额</string>
 
     <!-- 喂价页面 -->
     <string name="feedPricePageFeedDetail">喂价详情</string>

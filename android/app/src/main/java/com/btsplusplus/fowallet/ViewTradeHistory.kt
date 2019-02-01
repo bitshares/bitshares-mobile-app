@@ -58,10 +58,10 @@ class ViewTradeHistory : TableLayout {
         val base_symbol = _tradingPair._baseAsset.getString("symbol")
         val quote_symbol = _tradingPair._quoteAsset.getString("symbol")
 
-        val tv1 = ViewUtils.createTextViewForOrderBook(ctx, R.string.klineLabelTradeHisTitleTime.xmlstring(ctx), Gravity.LEFT, R.color.theme01_textColorGray, 1f, layout_view_height)
-        val tv2 = ViewUtils.createTextViewForOrderBook(ctx, R.string.klineLabelTradeHisTitleType.xmlstring(ctx), Gravity.LEFT, R.color.theme01_textColorGray, 1f, layout_view_height)
-        val tv3 = ViewUtils.createTextViewForOrderBook(ctx, "${R.string.klineLabelTradeHisTitlePrice.xmlstring(ctx)}(${base_symbol})", Gravity.RIGHT, R.color.theme01_textColorGray, 1f, layout_view_height)
-        val tv4 = ViewUtils.createTextViewForOrderBook(ctx, "${R.string.klineLabelTradeHisTitleAmount.xmlstring(ctx)}(${quote_symbol})", Gravity.RIGHT, R.color.theme01_textColorGray, 1f, layout_view_height)
+        val tv1 = ViewUtils.createTextViewForOrderBook(ctx, R.string.klineLabelTradeHisTitleTime.xmlstring(ctx), Gravity.LEFT, R.color.theme01_textColorGray, 25f, layout_view_height)
+        val tv2 = ViewUtils.createTextViewForOrderBook(ctx, R.string.klineLabelTradeHisTitleType.xmlstring(ctx), Gravity.LEFT, R.color.theme01_textColorGray, 15f, layout_view_height)
+        val tv3 = ViewUtils.createTextViewForOrderBook(ctx, "${R.string.klineLabelTradeHisTitlePrice.xmlstring(ctx)}($base_symbol)", Gravity.RIGHT, R.color.theme01_textColorGray, 30f, layout_view_height)
+        val tv4 = ViewUtils.createTextViewForOrderBook(ctx, "${R.string.klineLabelTradeHisTitleAmount.xmlstring(ctx)}($quote_symbol)", Gravity.RIGHT, R.color.theme01_textColorGray, 30f, layout_view_height)
 
         tv1.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11f)
         tv2.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11f)
@@ -82,13 +82,13 @@ class ViewTradeHistory : TableLayout {
             table_row.orientation = TableRow.HORIZONTAL
             table_row.layoutParams = table_row_params
 
-            val tv1 = ViewUtils.createTextViewForOrderBook(ctx, "--", Gravity.LEFT, R.color.theme01_textColorMain, 1f, layout_view_height)
+            val tv1 = ViewUtils.createTextViewForOrderBook(ctx, "--", Gravity.LEFT, R.color.theme01_textColorMain, 25f, layout_view_height)
 
             val color = R.color.theme01_buyColor
-            val tv2 = ViewUtils.createTextViewForOrderBook(ctx, "--", Gravity.LEFT, color, 1f, layout_view_height)
+            val tv2 = ViewUtils.createTextViewForOrderBook(ctx, "--", Gravity.LEFT, color, 15f, layout_view_height)
 
-            val tv3 = ViewUtils.createTextViewForOrderBook(ctx, "--", Gravity.RIGHT, R.color.theme01_textColorMain, 1f, layout_view_height)
-            val tv4 = ViewUtils.createTextViewForOrderBook(ctx, "--", Gravity.RIGHT, R.color.theme01_textColorMain, 1f, layout_view_height)
+            val tv3 = ViewUtils.createTextViewForOrderBook(ctx, "--", Gravity.RIGHT, R.color.theme01_textColorMain, 30f, layout_view_height)
+            val tv4 = ViewUtils.createTextViewForOrderBook(ctx, "--", Gravity.RIGHT, R.color.theme01_textColorMain, 30f, layout_view_height)
 
             table_row.addView(tv1)
             table_row.addView(tv2)
@@ -111,7 +111,7 @@ class ViewTradeHistory : TableLayout {
                 (jsonArray.get(0) as TableRow).visibility = View.VISIBLE
                 val data = data_array.getJSONObject(index)
                 //  时间、方向、价格、数量。
-                (jsonArray.get(1) as TextView).text = Utils.fmtTradeHistoryTimeShowString(data.getString("time"))
+                (jsonArray.get(1) as TextView).text = Utils.fmtTradeHistoryTimeShowString(ctx, data.getString("time"))
                 val dir_label = jsonArray.get(2) as TextView
                 if (data.getBoolean("issell")) {
                     dir_label.text = ctx.resources.getString(R.string.nameSellOut)

@@ -124,6 +124,7 @@
     <string name="klineLblCrossChangePercent">Change%</string>
     <string name="klineLblCrossVol">Vol</string>
     <string name="klineLblCrossPrice">Price</string>
+    <string name="kLabelTradeHisNdayAgo">%d days ago</string>
 
     <!-- 买入页面 -->
     <string name="buyPageBtnBuy">Buy&#xA0;</string>
@@ -426,7 +427,6 @@
     <string name="myAssetsPageUpdateProposal">update proposal.</string>
     <string name="myAssetsPageNotAnyActivityInfo">No activity</string>
 
-
     <!-- 我的订单界面 -->
     <string name="myOrderPageCurrentOrder">Open Orders</string>
     <string name="myOrderPageHistoryOrder">History</string>
@@ -440,6 +440,24 @@
     <string name="myOrderPageOrderIsCanceled">Order %s has been canceled.</string>
     <string name="myOrderPageOrderIsCanceledButRefreshFailed">Order %s has been canceled, but refresh failed. Please try again later.</string>
     <string name="myOrderPageRequestFailedAndTryAgainLater">The request failed. Please try again later.</string>
+
+    <!-- 待解冻金额 -->
+    <string name="kVestingTipsNoData">NO VESTING BALANCE</string>
+    <string name="kVestingTipsStartClaim">The vesting balance can only be withdrawn after %s.</string>
+    <string name="kVestingTipsAvailableZero">The vesting numbers is ZERO, please wait.</string>
+    <string name="kVestingTipTxVestingBalanceWithdrawFullOK">The vesting balance %s was successfully withdraw.</string>
+    <string name="kVestingCellTotal">Total</string>
+    <string name="kVestingCellVesting">Vesting</string>
+    <string name="kVestingCellPeriod">Period</string>
+    <string name="kVestingCellBtnWithdrawal">Withdrawal</string>
+    <string name="kVestingCellPeriodSec">%s secs</string>
+    <string name="kVestingCellPeriodMin">%s mins</string>
+    <string name="kVestingCellPeriodHour">%s hours</string>
+    <string name="kVestingCellPeriodDay">%s days</string>
+    <string name="kVestingCellNameWorkerFunds">Worker proposal funds</string>
+    <string name="kVestingCellNameWitnessFunds">Witness funds</string>
+    <string name="kVestingCellNameCashbackFunds">Lifetime membership fee cashback</string>
+    <string name="kVestingCellNameCustomVBO">Custom vesting balance</string>
 
     <!-- 喂价页面 -->
     <string name="feedPricePageFeedDetail">Feed price details</string>
