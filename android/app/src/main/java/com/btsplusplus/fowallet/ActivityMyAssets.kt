@@ -118,25 +118,19 @@ class ActivityMyAssets : BtsppActivity() {
     private fun setFragments() {
         fragmens.add(FragmentAssets().initialize(jsonArrayfrom(_userAssetDetailInfos, _full_account_data)))
         fragmens.add(FragmentAssetsDetail().initialize(_full_account_data))
-
-        // Todo Remove Test data
-        val data = JSONArray().apply {
-            for (i in 0 until 20 ) {
-                put(JSONObject().apply {
-                    put("balance","1.13.32")
-                    put("total_amount","214.105232")
-                    put("unfreeze_number","108.22212")
-                    put("unfreeze_cycle","3天")
-                })
-            }
-        }
-        fragmens.add(FragmentVestingBalance().initialize(data))
+        fragmens.add(FragmentVestingBalance().initialize(_full_account_data))
     }
 
     private fun setTabListener() {
         tablayout!!.setOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-                view_pager!!.setCurrentItem(tab.position, true)
+                val pos = tab.position
+                view_pager!!.setCurrentItem(pos, true)
+                fragmens[pos].let {
+                    if (it is FragmentVestingBalance){
+                        it.queryVestingBalance()
+                    }
+                }
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {

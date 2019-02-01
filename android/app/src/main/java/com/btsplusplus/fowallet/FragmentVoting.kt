@@ -371,17 +371,6 @@ class FragmentVoting : BtsppFragment() {
         ly_body.addView(ViewUtils.createLine(ctx))
     }
 
-    /**
-     *  获取 worker 类型。0:refund 1:vesting 2:burn
-     */
-    private fun _getWorkerType(data: JSONObject): Int {
-        val worker = data.optJSONArray("worker")
-        if (worker != null && worker.length() > 0) {
-            return worker.getInt(0)
-        }
-        return 1
-    }
-
     private fun addAWorkerView(ctx: Context, v: View, index: Int, data: JSONObject) {
 
         val ly_body: LinearLayout = v.findViewById(R.id.voting_sv)
@@ -472,10 +461,10 @@ class FragmentVoting : BtsppFragment() {
         val tv1_line4 = ViewUtils.createTextView(ctx, "${ctx.resources.getString(R.string.votingPageValidDate)} ", 11f, R.color.theme01_textColorNormal, true)
         val tv2_line4 = ViewUtils.createTextView(ctx, "${s_work_begin_date} - ${s_work_end_date}", 11f, R.color.theme01_textColorNormal, true)
 
-        val typevalue = _getWorkerType(data)
+        val typevalue = OrgUtils.getWorkerType(data)
         val typename = when (typevalue) {
-            0 -> R.string.kVcVoteCellWPRefund.xmlstring(ctx)
-            1 -> R.string.kVcVoteCellWPVesting.xmlstring(ctx)
+            EBitsharesWorkType.ebwt_refund.value -> R.string.kVcVoteCellWPRefund.xmlstring(ctx)
+            EBitsharesWorkType.ebwt_vesting.value -> R.string.kVcVoteCellWPVesting.xmlstring(ctx)
             else -> R.string.kVcVoteCellWPBurn.xmlstring(ctx)
         }
         val isRefundOrBurnWorker = typevalue != 1

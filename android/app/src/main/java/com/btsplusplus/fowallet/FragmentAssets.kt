@@ -40,6 +40,7 @@ class FragmentAssets : BtsppFragment() {
     private var _isSelfAccount: Boolean = false
     private var _showAllAssets: Boolean = true
     private var _assetDataArray = mutableListOf<JSONObject>()
+    private var _total_estimate_value: Double? = null
 
     //  记账单位 默认CNY
     private var _displayEstimateAsset: String = ""
@@ -246,9 +247,19 @@ class FragmentAssets : BtsppFragment() {
         }
         _assetDataArray.sortWith(sorter)
 
+        _total_estimate_value = total_estimate_value
+
         //  刷新UI
         refreshUI()
-        activity!!.findViewById<TextView>(R.id.label_total_value).text = OrgUtils.formatFloatValue(total_estimate_value, display_precision)
+        refreshUI_TotalValue()
+    }
+
+    private fun refreshUI_TotalValue(textView: TextView? = null) {
+        _total_estimate_value?.let { total_estimate_value ->
+            val display_precision = ChainObjectManager.sharedChainObjectManager().getAssetBySymbol(_displayEstimateAsset).getInt("precision")
+            val label = textView ?: activity!!.findViewById<TextView>(R.id.label_total_value)
+            label.text = OrgUtils.formatFloatValue(total_estimate_value, display_precision)
+        }
     }
 
     private fun createCell(ctx: Context, layout_params: LinearLayout.LayoutParams, container: LinearLayout, data: JSONObject) {
@@ -279,9 +290,9 @@ class FragmentAssets : BtsppFragment() {
             ly1.addView(tv2)
         }
 
-        val estimate_value = data.optString("estimate_value")
+        val estimate_value = data.optString("estimate_value", null)
         val tv3 = TextView(ctx)
-        if (estimate_value == null || estimate_value == "") {
+        if (estimate_value == null) {
             tv3.text = ctx.resources.getString(R.string.myAssetsPageEstimating)
             tv3.setTextColor(resources.getColor(R.color.theme01_textColorMain))
         } else {
@@ -529,9 +540,10 @@ class FragmentAssets : BtsppFragment() {
         _ctx = inflater.context
 
         val v: View = inflater.inflate(R.layout.fragment_assets, container, false)
-        val ly: LinearLayout = v.findViewById(R.id.layout_my_assets_from_my_fragment)
+        val ly = v.findViewById<LinearLayout>(R.id.layout_my_assets_from_my_fragment)
 
         v.findViewById<TextView>(R.id.label_total_title).text = "${_ctx!!.resources.getString(R.string.myAssetsPageTotalAsset)}(${SettingManager.sharedSettingManager().getEstimateAssetSymbol()})"
+        refreshUI_TotalValue(v.findViewById<TextView>(R.id.label_total_value))
 
         val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, toDp(30f))
         layout_params.gravity = Gravity.CENTER_VERTICAL
