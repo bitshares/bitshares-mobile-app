@@ -21,6 +21,7 @@ import java.io.InputStreamReader
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
@@ -236,6 +237,41 @@ class Utils {
         }
 
         /**
+         *  (public) 计算已经解冻的余额数量。（可提取的）
+         */
+        fun calcVestingBalanceAmount(vesting: JSONObject) : Long {
+            val policy = vesting.getJSONArray("policy")
+            //  TODO:fowallet 其他的类型不支持。
+            assert(policy.getInt(0) == 1)
+            val policy_data = policy.getJSONObject(1)
+
+            //  vesting seconds     REMARK：解冻周期最低1秒。
+            val vesting_seconds = max(policy_data.getLong("vesting_seconds"), 1L)
+
+            //  last update timestamp
+            val coin_seconds_earned_last_update_ts = parseBitsharesTimeString(policy_data.getString("coin_seconds_earned_last_update"))
+            val now_ts = now_ts()
+
+            //  my balance & already earned seconds
+            val total_balance_amount = vesting.getJSONObject("balance").getString("amount").toLong()
+            val coin_seconds_earned = policy_data.getString("coin_seconds_earned").toLong()
+
+            //  recalc real 'coin_seconds_earned' value
+            var final_earned = coin_seconds_earned
+            if (now_ts > coin_seconds_earned_last_update_ts) {
+                val delta_seconds = now_ts - coin_seconds_earned_last_update_ts
+                val delta_coin_seconds = total_balance_amount * delta_seconds
+                val coin_seconds_earned_max = total_balance_amount * vesting_seconds
+                final_earned = min(coin_seconds_earned + delta_coin_seconds, coin_seconds_earned_max)
+            }
+
+            val withdraw_max = floor(final_earned.toDouble() / vesting_seconds.toDouble()).toLong()
+            assert(withdraw_max <= total_balance_amount)
+
+            return withdraw_max
+        }
+
+        /**
          * 解析 BTS 网络时间字符串，返回 1970 到现在的秒数。格式：2018-06-04T13:03:57。
          */
         fun parseBitsharesTimeString(time: String): Long {
@@ -262,7 +298,7 @@ class Utils {
         /**
          *  格式化：交易历史时间显示格式  24小时内，直接显示时分秒，24小时以外了则显示 x天前。REMARK：以当前时区格式化，BTS默认时间是UTC。北京时间当前时区会+8。
          */
-        fun fmtTradeHistoryTimeShowString(time: String): String {
+        fun fmtTradeHistoryTimeShowString(ctx: Context, time: String): String {
             var ts = parseBitsharesTimeString(time)
             var now_ts = now_ts()
             val diff_ts = now_ts - ts
@@ -271,7 +307,7 @@ class Utils {
                 val f = SimpleDateFormat("HH:mm:ss")
                 return f.format(d)
             } else {
-                return "${(diff_ts / 86400).toLong()}天前"
+                return String.format(R.string.kLabelTradeHisNdayAgo.xmlstring(ctx), (diff_ts / 86400).toInt())
             }
         }
 
@@ -301,6 +337,24 @@ class Utils {
                 return "${(diff_ts / 3600).toInt()}${R.string.feedPricePageAgeHour.xmlstring(ctx)}${R.string.feedPricePageAge.xmlstring(ctx)}"
             } else {
                 return "${(diff_ts / 86400).toInt()}${R.string.feedPricePageAgeDay.xmlstring(ctx)}${R.string.feedPricePageAge.xmlstring(ctx)}"
+            }
+        }
+
+        /**
+         *  格式化：解冻周期。
+         */
+        fun fmtVestingPeriodDateString(ctx: Context, seconds: Long) : String {
+            if (seconds < 60){
+                return String.format(R.string.kVestingCellPeriodSec.xmlstring(ctx), seconds.toString())
+            } else if (seconds < 3600){
+                val min = (seconds / 60).toInt()
+                return String.format(R.string.kVestingCellPeriodMin.xmlstring(ctx), min.toString())
+            } else if (seconds < 86400){
+                val hour = (seconds / 3600).toInt()
+                return String.format(R.string.kVestingCellPeriodHour.xmlstring(ctx), hour.toString())
+            }else{
+                val day = (seconds / 86400).toInt()
+                return String.format(R.string.kVestingCellPeriodDay.xmlstring(ctx), day.toString())
             }
         }
 

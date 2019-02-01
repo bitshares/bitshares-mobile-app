@@ -107,6 +107,26 @@ class BitsharesClientManager {
     }
 
     /**
+     *  OP - 创建待解冻金额
+     */
+    fun vestingBalanceCreate(opdata: JSONObject): Promise{
+        val tr = TransactionBuilder()
+        tr.add_operation(EBitsharesOperations.ebo_vesting_balance_create, opdata)
+        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("creator")))
+        return process_transaction(tr)
+    }
+
+    /**
+     *  OP - 提取待解冻金额
+     */
+    fun vestingBalanceWithdraw(opdata: JSONObject): Promise{
+        val tr = TransactionBuilder()
+        tr.add_operation(EBitsharesOperations.ebo_vesting_balance_withdraw, opdata)
+        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("owner")))
+        return process_transaction(tr)
+    }
+
+    /**
      *  OP - 创建提案
      */
     fun proposalCreate(opcode: EBitsharesOperations, opdata: JSONObject, opaccount: JSONObject, fee_paying_account: String): Promise {
