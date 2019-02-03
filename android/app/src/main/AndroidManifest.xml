@@ -85,6 +85,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".ActivitySettingLanguage"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".ActivitySettingCurrency"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
