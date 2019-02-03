@@ -10,7 +10,7 @@ class ActivitySetting : BtsppActivity() {
     override fun onResume() {
         super.onResume()
         //  初始化默认值
-        _refresh_currency()
+        _refreshUI()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +22,17 @@ class ActivitySetting : BtsppActivity() {
 
         layout_back_from_setting.setOnClickListener { finish() }
 
+        layout_language_from_setting.setOnClickListener { goTo(ActivitySettingLanguage::class.java, true) }
         layout_currency_from_setting.setOnClickListener { goTo(ActivitySettingCurrency::class.java, true) }
+    }
+
+    private fun _refreshUI() {
+        _refresh_language()
+        _refresh_currency()
+    }
+
+    private fun _refresh_language() {
+        //  TODO:1.7
     }
 
     /**

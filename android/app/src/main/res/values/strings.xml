@@ -531,6 +531,7 @@
 
 
     <!-- 设置 -->
+    <string name="settingPageLanguage">Language</string>
     <string name="settingPageValuationWay">Currency</string>
     <string name="settingPageThemeStyle">Theme</string>
     <string name="settingPageJingMiLan">Dark Bulue</string>
