@@ -1,6 +1,7 @@
 package com.btsplusplus.fowallet
 
 import android.os.Bundle
+import bitshares.LangManager
 import bitshares.SettingManager
 import com.fowallet.walletcore.bts.ChainObjectManager
 import kotlinx.android.synthetic.main.activity_setting.*
@@ -32,7 +33,7 @@ class ActivitySetting : BtsppActivity() {
     }
 
     private fun _refresh_language() {
-        //  TODO:1.7
+        label_txt_language.text = LangManager.sharedLangManager().getCurrentLanguageName(this)
     }
 
     /**

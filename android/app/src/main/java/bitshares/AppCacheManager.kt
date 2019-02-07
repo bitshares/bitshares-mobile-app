@@ -128,6 +128,27 @@ class AppCacheManager {
     }
 
     /**
+     * for native KV caches
+     */
+    fun getPref(key: String, default_value: Any? = null): Any? {
+        if (_native_caches.has(key)){
+            return  _native_caches.get(key)
+        }else{
+            return default_value
+        }
+    }
+
+    fun setPref(key: String, value: Any): AppCacheManager {
+        _native_caches.put(key, value)
+        return this
+    }
+
+    fun  deletePref(key: String): AppCacheManager {
+        _native_caches.remove(key)
+        return this
+    }
+
+    /**
      * 对象存储和获取
      */
     fun update_object_cache(oid: String?, obj: JSONObject): AppCacheManager {

@@ -42,6 +42,8 @@
     <string name="appDepositWithdrawDefaultGateway">GDEX</string>
 
     <!-- 一些通用的 -->
+    <string name="kLangKeyZhSimple">简体中文</string>
+    <string name="kLangKeyEn">English / 英文</string>
     <string name="nameBack">返回</string>
     <string name="nameCancel">取消</string>
     <string name="nameRightIntro">介绍 &gt;</string>

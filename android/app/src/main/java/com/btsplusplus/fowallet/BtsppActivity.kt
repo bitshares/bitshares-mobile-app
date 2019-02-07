@@ -1,7 +1,9 @@
 package com.btsplusplus.fowallet
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import bitshares.LangManager
 
 abstract class BtsppActivity : AppCompatActivity() {
 
@@ -17,4 +19,7 @@ abstract class BtsppActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(LangManager.sharedLangManager().getAttachBaseContext(newBase!!, null))
+    }
 }
