@@ -10,7 +10,7 @@
 
 
     <LinearLayout
-        android:id="@+id/layout_wrap_of_currency"
+        android:id="@+id/layout_wrap_of_language"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="15dp"
@@ -25,7 +25,7 @@
 
 
             <LinearLayout
-                android:id="@+id/layout_back_from_setting_currency"
+                android:id="@+id/layout_back_from_setting_language"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:orientation="horizontal">
@@ -50,7 +50,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="@string/settingPageValuationWay"
+                android:text="@string/settingPageLanguage"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
