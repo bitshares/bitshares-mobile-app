@@ -637,7 +637,7 @@ class WalletManager {
         item.put("from", from_public)
         item.put("to", to_public)
         item.put("nonce", nonce)
-        item.put("message", output.hexEncode())
+        item.put("message", output)
         return item
     }
 
