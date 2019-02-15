@@ -40,13 +40,6 @@ class ActivityGatewayWithdraw : BtsppActivity() {
 
     private var _withdrawBalanceDirty = false                   //  是否发生提币，如果提币了返回列表需要刷新。
 
-    /**
-     * 系统返回键
-     */
-    override fun onBackPressed() {
-        onBackClicked()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_gateway_withdraw)
@@ -94,7 +87,7 @@ class ActivityGatewayWithdraw : BtsppActivity() {
         setFullScreen()
 
         //  back
-        layout_back_from_gateway_withdraw.setOnClickListener { onBackClicked() }
+        layout_back_from_gateway_withdraw.setOnClickListener { onBackClicked(null) }
 
         //  init ui
         initAllUI()
@@ -106,7 +99,7 @@ class ActivityGatewayWithdraw : BtsppActivity() {
         _tf_amount_watcher!!.on_value_changed(::onAmountChanged)
     }
 
-    private fun onBackClicked() {
+    override fun onBackClicked(result: Any?) {
         _result_promise.resolve(_withdrawBalanceDirty)
         finish()
     }

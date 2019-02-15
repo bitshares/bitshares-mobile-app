@@ -26,13 +26,6 @@ class ActivityProposalAuthorizeEdit : BtsppActivity() {
     private lateinit var _permissionAccountArray: JSONArray
     private var _title = ""
 
-    /**
-     * 系统返回键
-     */
-    override fun onBackPressed() {
-        onBackClicked()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_proposal_authorize_edit)
@@ -60,7 +53,7 @@ class ActivityProposalAuthorizeEdit : BtsppActivity() {
         }
 
         //  事件 - 返回、授权账号、支付账号、提交
-        layout_back_from_agree_proposal.setOnClickListener { onBackClicked() }
+        layout_back_from_agree_proposal.setOnClickListener { onBackClicked(null) }
         cell_target_account.setOnClickListener { onTargetAccountCellClicked() }
         cell_fee_paying_account.setOnClickListener { onFeePayingAccountCellClicked() }
         btn_submmit_core.setOnClickListener { onSubmitClicked() }
@@ -69,8 +62,8 @@ class ActivityProposalAuthorizeEdit : BtsppActivity() {
         refreshUI()
     }
 
-    private fun onBackClicked() {
-        _result_promise.resolve(null)
+    override fun onBackClicked(result: Any?) {
+        _result_promise.resolve(result)
         finish()
     }
 

@@ -19,7 +19,18 @@ abstract class BtsppActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+    /**
+     * 系统返回键
+     */
+    override fun onBackPressed() {
+        onBackClicked(null)
+    }
+
+    open fun onBackClicked(result: Any?) {
+        finish()
+    }
+
     override fun attachBaseContext(newBase: Context?) {
-        super.attachBaseContext(LangManager.sharedLangManager().getAttachBaseContext(newBase!!, null))
+        super.attachBaseContext(LangManager.sharedLangManager().onAttach(newBase!!))
     }
 }

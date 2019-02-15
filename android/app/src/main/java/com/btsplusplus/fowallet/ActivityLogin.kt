@@ -21,13 +21,6 @@ class ActivityLogin : BtsppActivity() {
     private var _checkActivePermission = true
     private var _result_promise: Promise? = null
 
-    /**
-     * 系统返回键
-     */
-    override fun onBackPressed() {
-        onBackClicked()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setAutoLayoutContentView(R.layout.activity_login)
@@ -42,7 +35,7 @@ class ActivityLogin : BtsppActivity() {
         setFullScreen()
 
         //  事件 - 返回按钮
-        layout_back_from_login.setOnClickListener { onBackClicked() }
+        layout_back_from_login.setOnClickListener { onBackClicked(false) }
 
         //  初始化界面（部分界面在某些模式下不可见）
         if (_checkActivePermission) {
@@ -73,10 +66,8 @@ class ActivityLogin : BtsppActivity() {
     /**
      * 事件 - 返回按钮或系统返回键点击。
      */
-    private fun onBackClicked() {
-        if (_result_promise != null) {
-            _result_promise!!.resolve(false)
-        }
+    override fun onBackClicked(result: Any?) {
+        _result_promise?.resolve(result)
         finish()
     }
 

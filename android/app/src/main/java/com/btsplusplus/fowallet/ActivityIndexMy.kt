@@ -2,10 +2,7 @@ package com.btsplusplus.fowallet
 
 import android.os.Bundle
 import android.widget.TextView
-import bitshares.Promise
-import bitshares.Utils
-import bitshares.jsonObjectfromKVS
-import bitshares.xmlstring
+import bitshares.*
 import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_index_my.*
 
@@ -57,7 +54,14 @@ class ActivityIndexMy : BtsppActivity() {
         }
 
         layout_setting_from_my.setOnClickListener {
-            goTo(ActivitySetting::class.java, true)
+            val saveCurrLangCode = LangManager.sharedLangManager().currLangCode
+            val result_promise = Promise()
+            goTo(ActivitySetting::class.java, true, args = jsonObjectfromKVS("result_promise", result_promise))
+            result_promise.then {
+                if (LangManager.sharedLangManager().currLangCode != saveCurrLangCode){
+                    recreate()
+                }
+            }
         }
 
         //  [待处提案] 需要判断登录
@@ -88,13 +92,6 @@ class ActivityIndexMy : BtsppActivity() {
                 }
             }
         }
-
-//        //  [未解冻资金] Todo 需要登录判断
-//        layout_unfreeze_amount_of_my.setOnClickListener {
-//            guardWalletExist {
-//                goTo(ActivityVestingBalance::class.java, true)
-//            }
-//        }
 
         //  我的资产：需要钱包存在
         layout_my_assets_of_my.setOnClickListener {
