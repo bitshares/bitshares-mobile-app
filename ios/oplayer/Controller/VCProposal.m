@@ -647,17 +647,19 @@
     WalletManager* walletMgr = [WalletManager sharedWalletManager];
     NSDictionary* idAccountDataHash = [walletMgr getAllAccountDataHash:NO];
     for (id key in availableHash) {
+        //  REMARK：批准之后被刷掉了，无权限了，则不存在于需要授权列表了。
         id item = [needAuthorizeHash objectForKey:key];
-        assert(item);
-        if ([[item objectForKey:@"isaccount"] boolValue]){
-            id account_data = [idAccountDataHash objectForKey:key];
-            if (account_data){
-                [rejectArray addObject:item];
-            }
-        }else{
-            assert([[item objectForKey:@"iskey"] boolValue]);
-            if ([walletMgr havePrivateKey:key]){
-                [rejectArray addObject:item];
+        if (item){
+            if ([[item objectForKey:@"isaccount"] boolValue]){
+                id account_data = [idAccountDataHash objectForKey:key];
+                if (account_data){
+                    [rejectArray addObject:item];
+                }
+            }else{
+                assert([[item objectForKey:@"iskey"] boolValue]);
+                if ([walletMgr havePrivateKey:key]){
+                    [rejectArray addObject:item];
+                }
             }
         }
     }
