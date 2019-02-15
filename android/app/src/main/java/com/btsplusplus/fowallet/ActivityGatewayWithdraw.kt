@@ -72,7 +72,7 @@ class ActivityGatewayWithdraw : BtsppActivity() {
         }
         val withdrawGateFee = appext.optString("withdrawGateFee")
         if (withdrawGateFee != "") {
-            _n_withdrawGateFee = BigDecimal(withdrawGateFee)
+            _n_withdrawGateFee = BigDecimal(withdrawGateFee.fixComma())
             _aux_data_array.put(JSONObject().apply {
                 put("title", R.string.kVcDWCellWithdrawFee.xmlstring(ctx))
                 put("value", "$withdrawGateFee $symbol")
