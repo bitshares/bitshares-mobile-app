@@ -766,16 +766,19 @@ class ActivityProposal : BtsppActivity() {
         val walletMgr = WalletManager.sharedWalletManager()
         val idAccountDataHash = walletMgr.getAllAccountDataHash(false)
         availableHash.keys().forEach { key ->
-            val item = needAuthorizeHash.getJSONObject(key)
-            if (item.optBoolean("isaccount")) {
-                val account_data = idAccountDataHash.optJSONObject(key)
-                if (account_data != null) {
-                    rejectArray.put(item)
-                }
-            } else {
-                assert(item.optBoolean("iskey"))
-                if (walletMgr.havePrivateKey(key)) {
-                    rejectArray.put(item)
+            //  REMARK：批准之后被刷掉了，无权限了，则不存在于需要授权列表了。
+            val item = needAuthorizeHash.optJSONObject(key)
+            if (item != null){
+                if (item.optBoolean("isaccount")) {
+                    val account_data = idAccountDataHash.optJSONObject(key)
+                    if (account_data != null) {
+                        rejectArray.put(item)
+                    }
+                } else {
+                    assert(item.optBoolean("iskey"))
+                    if (walletMgr.havePrivateKey(key)) {
+                        rejectArray.put(item)
+                    }
                 }
             }
         }
