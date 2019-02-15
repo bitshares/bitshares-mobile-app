@@ -43,7 +43,7 @@ class ActivityUpgradeToWalletMode : BtsppActivity() {
         button_create_wallet_of_upgrade_to_wallet.setOnClickListener { onSubmitClicked() }
     }
 
-    private fun onBackClicked(success: Boolean) {
+    override fun onBackClicked(success: Any?) {
         _result_promise.resolve(success)
         finish()
     }

@@ -19,13 +19,6 @@ class ActivityCreateProposal : BtsppActivity() {
     private lateinit var _permissionAccountArray: JSONArray
     private var _fee_paying_account: JSONObject? = null
 
-    /**
-     * 系统返回键
-     */
-    override fun onBackPressed() {
-        onBackClicked()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_proposal)
@@ -45,7 +38,7 @@ class ActivityCreateProposal : BtsppActivity() {
         }
 
         //  事件 - 返回按钮 / back button
-        layout_cancel_from_transfer_proposal.setOnClickListener { onBackClicked() }
+        layout_cancel_from_transfer_proposal.setOnClickListener { onBackClicked(null) }
 
         //  事件 - 提交按钮 / submit button
         submit_btn_of_transfer_proposal.setOnClickListener { onSubmitClicked() }
@@ -60,8 +53,8 @@ class ActivityCreateProposal : BtsppActivity() {
         onQueryMissedObjectIDs()
     }
 
-    private fun onBackClicked() {
-        _result_promise.resolve(null)
+    override fun onBackClicked(result: Any?) {
+        _result_promise.resolve(result)
         finish()
     }
 
@@ -118,8 +111,7 @@ class ActivityCreateProposal : BtsppActivity() {
         //  返回结果：提交
         guardWalletUnlocked(false) { unlocked ->
             if (unlocked) {
-                _result_promise.resolve(_fee_paying_account)
-                finish()
+                onBackClicked(_fee_paying_account)
             }
         }
     }

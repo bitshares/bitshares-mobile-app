@@ -1,12 +1,13 @@
 package com.btsplusplus.fowallet
 
 import android.os.Bundle
-import bitshares.LangManager
-import bitshares.SettingManager
+import bitshares.*
 import com.fowallet.walletcore.bts.ChainObjectManager
 import kotlinx.android.synthetic.main.activity_setting.*
 
 class ActivitySetting : BtsppActivity() {
+
+    private lateinit var _result_promise: Promise
 
     override fun onResume() {
         super.onResume()
@@ -14,16 +15,37 @@ class ActivitySetting : BtsppActivity() {
         _refreshUI()
     }
 
+    override fun onBackClicked(result: Any?) {
+        _result_promise.resolve(true)
+        super.onBackClicked(result)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setAutoLayoutContentView(R.layout.activity_setting)
 
+        //  获取参数 / get params
+        val args = TempManager.sharedTempManager().get_args_as_JSONObject()
+        _result_promise = args.get("result_promise") as Promise
+
         // 设置全屏(隐藏状态栏和虚拟导航栏)
         setFullScreen()
 
-        layout_back_from_setting.setOnClickListener { finish() }
+        layout_back_from_setting.setOnClickListener { onBackClicked(false) }
 
-        layout_language_from_setting.setOnClickListener { goTo(ActivitySettingLanguage::class.java, true) }
+        layout_language_from_setting.setOnClickListener {
+            val saveCurrLangCode = LangManager.sharedLangManager().currLangCode
+            val result_promise = Promise()
+            goTo(ActivitySettingLanguage::class.java, true, args = jsonObjectfromKVS("result_promise", result_promise))
+            result_promise.then {
+                if (LangManager.sharedLangManager().currLangCode != saveCurrLangCode){
+                    //  reset arguments
+                    TempManager.sharedTempManager().set_args(args)
+                    recreate()
+                }
+            }
+        }
+
         layout_currency_from_setting.setOnClickListener { goTo(ActivitySettingCurrency::class.java, true) }
     }
 

@@ -13,9 +13,15 @@ import org.json.JSONObject
 
 class ActivitySettingLanguage : BtsppActivity() {
 
+    private lateinit var _result_promise:Promise
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setAutoLayoutContentView(R.layout.activity_setting_language)
+
+        //  获取参数 / get params
+        val args = TempManager.sharedTempManager().get_args_as_JSONObject()
+        _result_promise = args.get("result_promise") as Promise
 
         setFullScreen()
 
@@ -75,16 +81,16 @@ class ActivitySettingLanguage : BtsppActivity() {
             }
         }
 
-        layout_back_from_setting_language.setOnClickListener { finish() }
+        layout_back_from_setting_language.setOnClickListener { onBackClicked(false) }
+    }
+
+    override fun onBackClicked(result: Any?) {
+        _result_promise.resolve(true)
+        super.onBackClicked(result)
     }
 
     private fun onChangeLanguage(langCode: String) {
-        val ctx = this
-        LangManager.sharedLangManager().apply {
-            saveLangCode(ctx, langCode)
-            changeLocalLanguage(BtsppApp.sharedContext(), langCode)
-            changeLocalLanguage(ctx, langCode)
-        }
+        LangManager.sharedLangManager().setLocale(this, langCode, true)
         recreate()
     }
 }
