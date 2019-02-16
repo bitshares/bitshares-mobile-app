@@ -36,8 +36,10 @@ class FragmentAssetsDetail : BtsppFragment() {
     private var _dataArray = mutableListOf<JSONObject>()
 
     override fun onInitParams(args: Any?) {
-        _full_account_data = args as JSONObject
-        queryAccountHistory()
+        if ( args != null ) {
+            _full_account_data = args as JSONObject
+            queryAccountHistory()
+        }
     }
 
     private fun queryAccountHistory() {
