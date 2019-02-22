@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BTS++</string>
+    <string name="app_name">比特股</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_index">IndexActivity</string>
     <string name="title_home">Home</string>
@@ -281,7 +281,7 @@
     <string name="myPageMyUnfreezeAmount">待解冻金额</string>
     <string name="myPageQA">常见问题</string>
     <string name="myPageSetting">设置</string>
-    <string name="myPageAboutBtspp">关于BTS++</string>
+    <string name="myPageAboutBtspp">关于</string>
     <string name="kLblTipsPasswordModeNotSupportMultiSign">多签等功能仅支持钱包模式，是否为当前的账号创建本地钱包文件？</string>
     <string name="kLblTipsConvertToWalletModeDone">创建钱包完毕。</string>
 
@@ -294,8 +294,8 @@
     <string name="registerLoginPagePleaseInputPwd">请输入密码</string>
     <string name="registerLoginPageInputPws">确认密码</string>
     <string name="registerLoginPageAgreeAgreementAndRegister">同意协议并注册</string>
-    <string name="registerLoginPageTipForAccountPassword">提示：账号密码对应格式要求可以点击问号查看。\n注意：BTS++是去中心化区块链应用密码一旦丢失或遗忘将无法找回，请务必妥善保管。</string>
-    <string name="registerLoginPageTipForWalletPassword">提示：钱包密码对应格式要求可以点击问号查看。\n注意：BTS++是去中心化区块链应用，钱包文件和密码一旦丢失或遗忘将无法找回，建议您注册后将钱包文件做好备份，并妥善保管。\n※ 推荐使用钱包模式。</string>
+    <string name="registerLoginPageTipForAccountPassword">提示：账号密码对应格式要求可以点击问号查看。\n注意：比特股是去中心化区块链应用密码一旦丢失或遗忘将无法找回，请务必妥善保管。</string>
+    <string name="registerLoginPageTipForWalletPassword">提示：钱包密码对应格式要求可以点击问号查看。\n注意：比特股是去中心化区块链应用，钱包文件和密码一旦丢失或遗忘将无法找回，建议您注册后将钱包文件做好备份，并妥善保管。\n※ 推荐使用钱包模式。</string>
     <string name="registerLoginPageTradePws">钱包密码</string>
     <string name="registerLoginPagePleaseTradePwd">请输入新的钱包密码</string>
     <string name="registerLoginPageJustLogin">立即登录</string>
@@ -539,8 +539,8 @@
     <string name="settingPageJingMiLan">静谧蓝</string>
     <string name="settingPageZhenZhuBai">珍珠白</string>
 
-    <!-- 关于BTS++ -->
-    <string name="aboutPageIntroForBtspp">\nBTS++是基于比特股石墨烯技术，从产品体验出发，采用原生技术开发的一款可媲美一流中心化交易所的去中心化交易所（DEX）产品。\n\n联系我们\n微信：bts-pp\n邮箱：contact@btsplusplus.com\n电报：https://t.me/btsplusplus\n官网：http://btspp.io\n</string>
+    <!-- 关于比特股 -->
+    <string name="aboutPageIntroForBtspp">\n比特股移动端钱包是基于石墨烯技术，从产品体验出发，采用原生技术开发的一款可媲美一流中心化交易所的去中心化交易所（DEX）产品。\n\n联系我们\n微信：bts-pp\n邮箱：contact@btsplusplus.com\n电报：https://t.me/btsplusplus\n官网：http://btspp.io\n</string>
     <string name="aboutPageDebugVersion">调试版</string>
 
     <!-- 升级钱包模式 -->
