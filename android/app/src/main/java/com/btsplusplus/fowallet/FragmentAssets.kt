@@ -1,5 +1,6 @@
 package com.btsplusplus.fowallet
 
+import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
@@ -257,7 +258,7 @@ class FragmentAssets : BtsppFragment() {
     private fun refreshUI_TotalValue(textView: TextView? = null) {
         _total_estimate_value?.let { total_estimate_value ->
             val display_precision = ChainObjectManager.sharedChainObjectManager().getAssetBySymbol(_displayEstimateAsset).getInt("precision")
-            val label = textView ?: activity!!.findViewById<TextView>(R.id.label_total_value)
+            val label = textView ?: _view!!.findViewById<TextView>(R.id.label_total_value)
             label.text = OrgUtils.formatFloatValue(total_estimate_value, display_precision)
         }
     }
