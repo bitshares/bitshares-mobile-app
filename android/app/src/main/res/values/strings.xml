@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BTS++</string>
+    <string name="app_name">Bitshares</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_index">IndexActivity</string>
     <string name="title_home">Home</string>
@@ -294,8 +294,8 @@
     <string name="registerLoginPagePleaseInputPwd">Please input password</string>
     <string name="registerLoginPageInputPws">Confirm</string>
     <string name="registerLoginPageAgreeAgreementAndRegister">Agree &amp; Register</string>
-    <string name="registerLoginPageTipForAccountPassword">Tip: The password format can be viewed by clicking on the question mark. \nNote: BTS++ is a decentralized blockchain application. Once the password is lost or forgotten, it will not be retrieved. Please keep it in a safe place.</string>
-    <string name="registerLoginPageTipForWalletPassword">Tip: The password format can be viewed by clicking on the question mark. \nNote: BTS++ is a decentralized blockchain application. If the wallet file or password is lost or forgotten, it is not possible to retrieve it. It is recommended that you back up the wallet file after registration and keep it in a safe place. \n※ Wallet mode is recommended.</string>
+    <string name="registerLoginPageTipForAccountPassword">Tip: The password format can be viewed by clicking on the question mark. \nNote: Bitshares is a decentralized blockchain application. Once the password is lost or forgotten, it will not be retrieved. Please keep it in a safe place.</string>
+    <string name="registerLoginPageTipForWalletPassword">Tip: The password format can be viewed by clicking on the question mark. \nNote: Bitshares is a decentralized blockchain application. If the wallet file or password is lost or forgotten, it is not possible to retrieve it. It is recommended that you back up the wallet file after registration and keep it in a safe place. \n※ Wallet mode is recommended.</string>
     <string name="registerLoginPageTradePws">W-pwd</string>
     <string name="registerLoginPagePleaseTradePwd">Please input new wallet password</string>
     <string name="registerLoginPageJustLogin">Go</string>
@@ -539,8 +539,8 @@
     <string name="settingPageJingMiLan">Dark Bulue</string>
     <string name="settingPageZhenZhuBai">White</string>
 
-    <!-- 关于BTS++ -->
-    <string name="aboutPageIntroForBtspp">\nBTS++ is a decentralized exchange (DEX) product based on Bitshares graphene technology, developed from the product experience and developed with native technology comparable to the first-class centralized exchange. \n\nContact us\nWeChat: bts-pp\nE-mail: contact@btsplusplus.com\nTelegram: https://t.me/btsplusplus\nWebsite:http://btspp.io\n</string>
+    <!-- 关于比特股 -->
+    <string name="aboutPageIntroForBtspp">\nBitshares Mobile App is a decentralized exchange (DEX) product based on Bitshares graphene technology, developed from the product experience and developed with native technology comparable to the first-class centralized exchange. \n\nContact us\nWeChat: bts-pp\nE-mail: contact@btsplusplus.com\nTelegram: https://t.me/btsplusplus\nWebsite:http://btspp.io\n</string>
     <string name="aboutPageDebugVersion">debug version</string>
 
     <!-- 升级钱包模式 -->
