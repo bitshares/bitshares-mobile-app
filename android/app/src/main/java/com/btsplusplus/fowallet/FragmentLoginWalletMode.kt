@@ -280,7 +280,7 @@ class FragmentLoginWalletMode : Fragment() {
      */
     private fun onRemoveWalletFile(ctx: Context, data: JSONObject) {
         UtilsAlert.showMessageConfirm(ctx, ctx.resources.getString(R.string.registerLoginPageWarmTip), String.format(ctx.resources.getString(R.string.registerLoginPageTipForDeleteFileForThisPhone), data.getString("name")), btn_ok = _ctx!!.resources.getString(R.string.registerLoginPageDelete), btn_cancel = _ctx!!.resources.getString(R.string.registerLoginPageClickWrong)).then {
-            if (it as Boolean) {
+            if (it != null && it as Boolean) {
                 val file = File(data.getString("path"))
                 if (file.exists() && file.isFile) {
                     if (file.delete()) {

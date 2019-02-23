@@ -287,7 +287,7 @@ fun android.app.Activity.askForCreateProposal(opcode: EBitsharesOperations, usin
         message = String.format(R.string.kProposalTipsAskMissingActive.xmlstring(this), account_name)
     }
     alerShowMessageConfirm(resources.getString(R.string.registerLoginPageWarmTip), message).then {
-        if (it as Boolean) {
+        if (it != null && it as Boolean) {
             //  转到提案确认界面
             val result_promise = Promise()
             val args = jsonObjectfromKVS("opcode", opcode, "opdata", opdata, "result_promise", result_promise)

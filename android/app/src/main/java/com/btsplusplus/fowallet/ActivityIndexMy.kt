@@ -76,11 +76,11 @@ class ActivityIndexMy : BtsppActivity() {
             guardWalletExist {
                 if (WalletManager.sharedWalletManager().isPasswordMode()) {
                     alerShowMessageConfirm(resources.getString(R.string.registerLoginPageWarmTip), R.string.kLblTipsPasswordModeNotSupportMultiSign.xmlstring(this)).then {
-                        if (it as Boolean) {
+                        if (it != null && it as Boolean) {
                             val result_promise = Promise()
                             goTo(ActivityUpgradeToWalletMode::class.java, true, args = jsonObjectfromKVS("result_promise", result_promise))
                             result_promise.then {
-                                if (it as Boolean) {
+                                if (it != null && it as Boolean) {
                                     goTo(ActivityWalletManager::class.java, true)
                                 }
                             }

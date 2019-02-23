@@ -67,7 +67,7 @@ class FragmentRegisterAccountMode : Fragment() {
         val username = account_name.toLowerCase()
         //  1、查询名字是否被占用。
         chainMgr.isAccountExistOnBlockChain(username).then {
-            if (it as Boolean) {
+            if (it != null && it as Boolean) {
                 mask.dismiss()
                 showToast(R.string.kLoginSubmitTipsAccountAlreadyExist.xmlstring(_ctx!!))
                 return@then null

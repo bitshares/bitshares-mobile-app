@@ -115,7 +115,7 @@ class ActivityLaunch : BtsppActivity() {
             //  进入APP
             _enterToMain()
             //  立即升级：打开下载。
-            if (it as Boolean) {
+            if (it != null && it as Boolean) {
                 openURL(url)
             }
         }

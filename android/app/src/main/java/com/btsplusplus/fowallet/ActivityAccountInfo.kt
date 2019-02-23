@@ -49,7 +49,7 @@ class ActivityAccountInfo : BtsppActivity() {
 
     private fun gotoLogout() {
         alerShowMessageConfirm(resources.getString(R.string.registerLoginPageWarmTip), resources.getString(R.string.registerLoginPageTipForLogout)).then {
-            if (it as Boolean) {
+            if (it != null && it as Boolean) {
                 gotoLogoutCore()
             }
             return@then null
