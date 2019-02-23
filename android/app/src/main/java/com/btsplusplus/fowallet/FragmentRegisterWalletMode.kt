@@ -67,7 +67,7 @@ class FragmentRegisterWalletMode : Fragment() {
         val username = account_name.toLowerCase()
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
         chainMgr.isAccountExistOnBlockChain(username).then {
-            if (it as Boolean) {
+            if (it != null && it as Boolean) {
                 mask.dismiss()
                 showToast(R.string.kLoginSubmitTipsAccountAlreadyExist.xmlstring(_ctx!!))
                 return@then null

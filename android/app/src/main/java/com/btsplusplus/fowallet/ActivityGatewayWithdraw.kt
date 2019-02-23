@@ -311,7 +311,7 @@ class ActivityGatewayWithdraw : BtsppActivity() {
                         tipMessage = R.string.kVcDWSubmitSecondConfirmMsg03.xmlstring(this)
                     }
                     UtilsAlert.showMessageConfirm(this, resources.getString(R.string.registerLoginPageWarmTip), tipMessage, btn_ok = R.string.kVcDWSubmitSecondBtnContinue.xmlstring(this)).then {
-                        if (it as Boolean) {
+                        if (it != null && it as Boolean) {
                             //  b、继续提币确认
                             val mask = ViewMesk(R.string.nameRequesting.xmlstring(this), this)
                             mask.show()

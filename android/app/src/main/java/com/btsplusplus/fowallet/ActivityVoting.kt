@@ -150,7 +150,7 @@ class ActivityVoting : BtsppActivity() {
         //  设置了代理人的情况，先弹框告知用户。
         if (_bHaveProxy) {
             alerShowMessageConfirm(null, resources.getString(R.string.votingPageTipSubmitProxy)).then {
-                if (it as Boolean) {
+                if (it != null && it as Boolean) {
                     _processActionVoting()
                 }
                 return@then null

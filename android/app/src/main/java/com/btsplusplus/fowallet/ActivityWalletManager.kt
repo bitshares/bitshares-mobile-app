@@ -125,7 +125,7 @@ class ActivityWalletManager : BtsppActivity() {
         val result_promise = Promise()
         goTo(ActivityLogin::class.java, true, args = jsonObjectfromKVS("checkActivePermission", false, "result_promise", result_promise))
         result_promise.then {
-            if (it as Boolean) {
+            if (it != null && it as Boolean) {
                 //  导入成功（刷新）
                 queryAllAccountInfos()
             }
@@ -241,7 +241,7 @@ class ActivityWalletManager : BtsppActivity() {
         //  删除
         if (will_delete_privatekey) {
             alerShowMessageConfirm(resources.getString(R.string.registerLoginPageWarmTip), R.string.kWalletTipsWarmMessage.xmlstring(this)).then {
-                if (it as Boolean) {
+                if (it != null && it as Boolean) {
                     removeAccountCore(accountName, final_remove_pubkey, newCurrentName)
                 }
                 return@then null
