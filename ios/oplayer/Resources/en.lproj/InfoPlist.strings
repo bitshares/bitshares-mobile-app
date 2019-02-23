@@ -3,7 +3,7 @@
 
   Created by Aonichan on 15/12/1. */
 
-"CFBundleDisplayName" = "BTS++";
+"CFBundleDisplayName" = "Bitshares";
 
 "NSCalendarsUsageDescription" = "Add trip reminders, need to access your calendar.";
 

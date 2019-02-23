@@ -138,7 +138,7 @@
 "kLblCellMyBalance" = "我的资产";
 "kLblCellOrderManagement" = "订单管理";
 "kLblCellVestingBalance" = "待解冻金额";
-"kLblCellAboutBtspp" = "关于BTS++";
+"kLblCellAboutBtspp" = "关于";
 "kLblTipsPasswordModeNotSupportMultiSign" = "多签等功能仅支持钱包模式，是否为当前的账号创建本地钱包文件？";
 "kLblTipsConvertToWalletModeDone" = "创建钱包完毕。";
 
@@ -200,8 +200,8 @@
 "kLoginCellWalletPassword" = "钱包密码";
 "kLoginCellActivePrivateKey" = "资金私钥 ";
 "kLoginCellConfirmPassword" = "确认密码";
-"kLoginRegTipsAccountMode" = "提示：账号密码对应格式要求可以点击问号查看。\n注意：BTS++是去中心化区块链应用密码一旦丢失或遗忘将无法找回，请务必妥善保管。";
-"kLoginRegTipsWalletMode" = "提示：钱包密码对应格式要求可以点击问号查看。\n注意：BTS++是去中心化区块链应用，钱包文件和密码一旦丢失或遗忘将无法找回，建议您注册后将钱包文件做好备份，并妥善保管。※ 推荐使用钱包模式。";
+"kLoginRegTipsAccountMode" = "提示：账号密码对应格式要求可以点击问号查看。\n注意：比特股是去中心化区块链应用密码一旦丢失或遗忘将无法找回，请务必妥善保管。";
+"kLoginRegTipsWalletMode" = "提示：钱包密码对应格式要求可以点击问号查看。\n注意：比特股是去中心化区块链应用，钱包文件和密码一旦丢失或遗忘将无法找回，建议您注册后将钱包文件做好备份，并妥善保管。※ 推荐使用钱包模式。";
 "kLoginFaucetTipsInvalidArguments" = "参数无效。";
 "kLoginFaucetTipsInvalidAccountFmt" = "帐号格式无效。";
 "kLoginFaucetTipsAccountAlreadyExist" = "帐号已经存在。";
@@ -659,9 +659,9 @@
 "kLangKeyZhSimple" = "简体中文";
 "kLangKeyEn" = "English / 英文";
 "skip" = "跳过";
-"kAppName" = "BTS++";
+"kAppName" = "比特股";
 "kAccount" = "帐号";
-"kAboutMainDesc" ="BTS++是基于比特股石墨烯技术，从产品体验出发，采用原生技术开发的一款可媲美一流中心化交易所的去中心化交易所（DEX）产品。";
+"kAboutMainDesc" ="比特股移动端钱包是基于石墨烯技术，从产品体验出发，采用原生技术开发的一款可媲美一流中心化交易所的去中心化交易所（DEX）产品。";
 "kAboutContactUs" = "联系我们";
 "kAboutWechat" = "微信：%@";
 "kAboutEmail" = "邮箱：%@";

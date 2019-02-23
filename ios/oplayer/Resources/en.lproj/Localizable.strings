@@ -200,8 +200,8 @@
 "kLoginCellWalletPassword" = "W-pwd";
 "kLoginCellActivePrivateKey" = "key ";
 "kLoginCellConfirmPassword" = "Confirm ";
-"kLoginRegTipsAccountMode" = "Tip: The password format can be viewed by clicking on the question mark. \nNote: BTS++ is a decentralized blockchain application. Once the password is lost or forgotten, it will not be retrieved. Please keep it in a safe place.";
-"kLoginRegTipsWalletMode" = "Tip: The password format can be viewed by clicking on the question mark. \nNote: BTS++ is a decentralized blockchain application. If the wallet file or password is lost or forgotten, it is not possible to retrieve it. It is recommended that you back up the wallet file after registration and keep it in a safe place. \n※ Wallet mode is recommended.";
+"kLoginRegTipsAccountMode" = "Tip: The password format can be viewed by clicking on the question mark. \nNote: Bitshares is a decentralized blockchain application. Once the password is lost or forgotten, it will not be retrieved. Please keep it in a safe place.";
+"kLoginRegTipsWalletMode" = "Tip: The password format can be viewed by clicking on the question mark. \nNote: Bitshares is a decentralized blockchain application. If the wallet file or password is lost or forgotten, it is not possible to retrieve it. It is recommended that you back up the wallet file after registration and keep it in a safe place. \n※ Wallet mode is recommended.";
 "kLoginFaucetTipsInvalidArguments" = "Invalid argument.";
 "kLoginFaucetTipsInvalidAccountFmt" = "The account format is incorrect.";
 "kLoginFaucetTipsAccountAlreadyExist" = "The account already exists.";
@@ -659,9 +659,9 @@
 "kLangKeyZhSimple" = "简体中文 / Simplified Chinese";
 "kLangKeyEn" = "English";
 "skip" = "Skip";
-"kAppName" = "BTS++";
+"kAppName" = "Bitshares";
 "kAccount" = "Account";
-"kAboutMainDesc" ="BTS++ is a decentralized exchange (DEX) product based on Bitshares graphene technology, developed from the product experience and developed with native technology comparable to the first-class centralized exchange. ";
+"kAboutMainDesc" ="Bitshares Mobile App is a decentralized exchange (DEX) product based on Bitshares graphene technology, developed from the product experience and developed with native technology comparable to the first-class centralized exchange. ";
 "kAboutContactUs" = "Contact us";
 "kAboutWechat" = "Wechat: %@";
 "kAboutEmail" = "E-mail: %@";
