@@ -151,6 +151,9 @@
 @interface T_account_update : T_Base
 @end
 
+@interface T_account_upgrade : T_Base
+@end
+
 /**
  *  OP - 待解冻金额相关
  */

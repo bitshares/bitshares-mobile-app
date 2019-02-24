@@ -149,6 +149,9 @@
 "kAccountMembershipStatus" = "状态";
 "kAccountUpgradeTipsMember" = "尊敬的终身会员，您已享受80%的手续费返现奖励。";
 "kAccountUpgradeTipsNotMember" = "现在升级终身会员，立享80%手续费返现奖励。";
+"kAccountUpgradeMemberSubmitTxFullOK" = "升级终身会员成功。";
+"kAccountUpgradeMemberSubmitTxOK" = "升级终身会员成功，但刷新界面失败，请稍后再试。";
+"kAccountUpgradeMemberCostAsk" = "升级终身会员需要花费 %@，是否继续？";
 
 /* 登录&注册&备份 */
 "kLoginPageModePassword" = "帐号模式";
