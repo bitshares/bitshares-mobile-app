@@ -1,18 +1,26 @@
 # bitshares-mobile-app
-The mobile app for bitshares blockchain. 
+
+The mobile app for [bitshares](https://how.bitshares.works/en/master/technology/what_bitshares.html) blockchain. 
+
+[中文](README_zh.md)
 
 ## About
 
-Bitshares Mobile App is the mobile wallet for the [Bitshares blockchain](https://github.com/bitshares/bitshares-core). Currently features:
+Bitshares Mobile App is the mobile wallet for the [Bitshares Blockchain](https://github.com/bitshares/bitshares-core). Currently features:
 
-* View market quotes anytime, anywhere
-* Update margin position at any time.
+* Support account mode and wallet mode registration
+* Support wallet mode, account mode and private key mode login
+* Support for all asset views and transactions
+* Markets, TimeLine, K-Line Chart, Transaction History
+* Collateral
+* Account Search, Feed Price Details, Margin Ranking
 * Transfer
-* Account management, registration, wallet management.
-* Balance and order management.
-* Proposal transaction and proposal management.
 * Voting
-* There are more features waiting for you to discover.
+* Balance and Order View
+* FAQ
+* Support proposal create, approve, revoke actions.
+* Wallet Management. Import Common Account and Multi-Money Account, Switch, Delete, etc
+* Chinese and English versions are supported
 
 ## Development Environment
 
@@ -39,3 +47,6 @@ Configuration Fabric
 
 BitShares Mobile App is under the MIT license. See [LICENSE](https://github.com/btspp/bitshares-mobile-app/blob/master/LICENSE)
 for more information.
+
+## Contact us
+If you have any questions, please contact us via the [Telegram](https://t.me/btsplusplus) group.
