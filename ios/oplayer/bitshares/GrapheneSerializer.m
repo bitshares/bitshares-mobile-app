@@ -83,6 +83,7 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [T_account_options performSelector:@selector(register_subfields)];
     [T_account_create performSelector:@selector(register_subfields)];
     [T_account_update performSelector:@selector(register_subfields)];
+    [T_account_upgrade performSelector:@selector(register_subfields)];
     
     [T_linear_vesting_policy_initializer performSelector:@selector(register_subfields)];
     [T_cdd_vesting_policy_initializer performSelector:@selector(register_subfields)];
@@ -682,6 +683,8 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
             return [T_account_create class];
         case ebo_account_update:
             return [T_account_update class];
+        case ebo_account_upgrade:
+            return [T_account_upgrade class];
         case ebo_vesting_balance_create:
             return [T_vesting_balance_create class];
         case ebo_vesting_balance_withdraw:
@@ -832,6 +835,18 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [self add_field:@"owner" class:[[Tm_optional alloc] initWithType:[T_authority class]]];
     [self add_field:@"active" class:[[Tm_optional alloc] initWithType:[T_authority class]]];
     [self add_field:@"new_options" class:[[Tm_optional alloc] initWithType:[T_account_options class]]];
+    [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
+}
+
+@end
+
+@implementation T_account_upgrade
+
++ (void)register_subfields
+{
+    [self add_field:@"fee" class:[T_asset class]];
+    [self add_field:@"account_to_upgrade" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"upgrade_to_lifetime_member" class:[T_bool class]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
 

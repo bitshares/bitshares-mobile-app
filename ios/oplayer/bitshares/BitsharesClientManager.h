@@ -33,6 +33,10 @@
  *  更新帐号信息（投票 TODO:fowallet 目前仅支持修改new_options)
  */
 - (WsPromise*)accountUpdate:(NSDictionary*)account_update_op_data;
+/**
+ *  OP - 升级帐号
+ */
+- (WsPromise*)accountUpgrade:(NSDictionary*)op_data;
 - (WsPromise*)callOrderUpdate:(NSDictionary*)callorder_update_op;
 - (WsPromise*)createLimitOrder:(NSDictionary*)limit_order_op;
 - (WsPromise*)cancelLimitOrders:(NSArray*)cancel_limit_order_op_array;

@@ -103,6 +103,17 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
 }
 
 /**
+ *  OP - 升级帐号
+ */
+- (WsPromise*)accountUpgrade:(NSDictionary*)op_data
+{
+    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
+    [tr add_operation:ebo_account_upgrade opdata:op_data];
+    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[op_data objectForKey:@"account_to_upgrade"]]];
+    return [self process_transaction:tr];
+}
+
+/**
  *  OP - 更新保证金（抵押借贷）
  */
 - (WsPromise*)callOrderUpdate:(NSDictionary*)callorder_update_op

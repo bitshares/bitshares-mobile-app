@@ -149,6 +149,9 @@
 "kAccountMembershipStatus" = "Status";
 "kAccountUpgradeTipsMember" = "Dear Life Member, you are entitled to an 80% fee cashback.";
 "kAccountUpgradeTipsNotMember" = "Upgrade lifetime membership and enjoy an 80% fee cashback.";
+"kAccountUpgradeMemberSubmitTxFullOK" = "Upgrade lifetime membership success.";
+"kAccountUpgradeMemberSubmitTxOK" = "Upgrade lifetime membership is successful, but refreshing the interface failed, please try again later.";
+"kAccountUpgradeMemberCostAsk" = "Upgrade lifetime membership will cost %@, do you want to continue?";
 
 /* 登录&注册&备份 */
 "kLoginPageModePassword" = "Normal";

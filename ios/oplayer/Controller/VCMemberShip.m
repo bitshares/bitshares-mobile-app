@@ -72,6 +72,7 @@ enum
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
+    assert([[WalletManager sharedWalletManager] isWalletExist]);
     [self _refreshMemberShipStatus];
     
 	// Do any additional setup after loading the view.
@@ -83,6 +84,12 @@ enum
     [self.view addSubview:_mainTableView];
     
     _lbCommit = [self createCellLableButton:NSLocalizedString(@"kAccountBtnUpgradeToLifetimeMember", @"升级终身会员")];
+}
+
+- (void)_refresh_ui
+{
+    [self _refreshMemberShipStatus];
+    [_mainTableView reloadData];
 }
 
 - (void)_refreshMemberShipStatus
@@ -255,18 +262,95 @@ enum
 
 #pragma mark- UIActionSheetDelegate
 
+- (void)gotoUpgradeToLifetimeMemberCore:(id)op_data fee_item:(id)fee_item account:(id)account_data
+{
+    assert(op_data);
+    assert(fee_item);
+    assert(account_data);
+    
+    id m_opdata = [op_data mutableCopy];
+    [m_opdata setObject:fee_item forKey:@"fee"];
+    op_data = [m_opdata copy];
+    
+    id account_id = account_data[@"id"];
+    
+    //  确保有权限发起普通交易，否则作为提案交易处理。
+    [_owner GuardProposalOrNormalTransaction:ebo_account_upgrade
+                       using_owner_authority:NO
+                    invoke_proposal_callback:NO
+                                      opdata:op_data
+                                   opaccount:account_data
+                                        body:^(BOOL isProposal, NSDictionary *fee_paying_account)
+     {
+         assert(!isProposal);
+         //  请求网络广播
+         [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+         [[[[BitsharesClientManager sharedBitsharesClientManager] accountUpgrade:op_data] then:(^id(id data) {
+             //  升级成功、继续请求、刷新界面。
+             [[[[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:account_id] then:(^id(id full_data) {
+                 [_owner hideBlockView];
+                 // 升级会员成功，保存新数据。
+                 assert(full_data && ![full_data isKindOfClass:[NSNull class]]);
+                 [[AppCacheManager sharedAppCacheManager] updateWalletAccountInfo:full_data];
+                 // 刷新界面
+                 [self _refresh_ui];
+                 [OrgUtils makeToast:NSLocalizedString(@"kAccountUpgradeMemberSubmitTxFullOK", @"升级终身会员成功。")];
+                 //  [统计]
+                 [Answers logCustomEventWithName:@"txUpgradeToLifetimeMemberFullOK" customAttributes:@{@"account":account_id}];
+                 return nil;
+             })] catch:(^id(id error) {
+                 [self hideBlockView];
+                 [OrgUtils makeToast:NSLocalizedString(@"kAccountUpgradeMemberSubmitTxOK", @"升级终身会员成功，但刷新界面失败，请稍后再试。")];
+                 //  [统计]
+                 [Answers logCustomEventWithName:@"txUpgradeToLifetimeMemberOK" customAttributes:@{@"account":account_id}];
+                 return nil;
+             })];
+             return nil;
+         })] catch:(^id(id error) {
+             [_owner hideBlockView];
+             [OrgUtils showGrapheneError:error];
+             //  [统计]
+             [Answers logCustomEventWithName:@"txUpgradeToLifetimeMemberFailed" customAttributes:@{@"account":account_id}];
+             return nil;
+         })];
+     }];
+}
+
 - (void)gotoUpgradeToLifetimeMember
 {
-    //  TODO:1.9
-    [OrgUtils makeToast:@"TODO:"];
-//    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:NSLocalizedString(@"kAccTipsLogout", @"注销登录将会从设备删除帐号相关信息，请确认您已经做好备份。是否继续注销？")
-//                                                           withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
-//                                                          completion:^(NSInteger buttonIndex)
-//     {
-//         if (buttonIndex == 1)
-//         {
-//         }
-//     }];
+    id account_info = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
+    assert(account_info);
+    
+    id op_data = @{
+                   @"fee":@{@"amount":@0, @"asset_id":[ChainObjectManager sharedChainObjectManager].grapheneCoreAssetID},
+                   @"account_to_upgrade":account_info[@"id"],
+                   @"upgrade_to_lifetime_member":@YES,
+                   };
+
+    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    [[[[BitsharesClientManager sharedBitsharesClientManager] calcOperationFee:ebo_account_upgrade opdata:op_data] then:(^id(id fee_price_item) {
+        [_owner hideBlockView];
+        NSString* price = [OrgUtils formatAssetAmountItem:fee_price_item];
+        [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:[NSString stringWithFormat:NSLocalizedString(@"kAccountUpgradeMemberCostAsk", @"升级终身会员需要花费 %@，是否继续？"), price]
+                                                               withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                              completion:^(NSInteger buttonIndex)
+         {
+             if (buttonIndex == 1)
+             {
+                 //  --- 检测合法 执行请求 ---
+                 [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
+                     if (unlocked){
+                         [self gotoUpgradeToLifetimeMemberCore:op_data fee_item:fee_price_item account:account_info];
+                     }
+                 }];
+             }
+         }];
+        return nil;
+    })] catch:(^id(id error) {
+        [_owner hideBlockView];
+        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+        return nil;
+    })];
 }
 
 @end
