@@ -7,11 +7,14 @@
 //
 
 #import "VCUserCenter.h"
+#import "VCMemberShip.h"
 #import "WalletManager.h"
 #import "VCBackupWallet.h"
 
 #import "OrgUtils.h"
 #import "AppCacheManager.h"
+
+#import "MBProgressHUDSingleton.h"
 
 enum
 {
@@ -35,8 +38,59 @@ enum
 };
 
 
+
+@interface VCUserCenterPages ()
+{
+}
+
+@end
+
+@implementation VCUserCenterPages
+
+-(void)dealloc
+{
+}
+
+- (NSArray*)getTitleStringArray
+{
+    return @[NSLocalizedString(@"kAccountPageBasicInfo", @"基本信息"),
+             NSLocalizedString(@"kAccountPageMemberInfo", @"会员信息")];
+}
+
+- (NSArray*)getSubPageVCArray
+{
+    
+    id vc01 = [[VCUserCenter alloc] initWithOwner:self];
+    id vc02 = [[VCMemberShip alloc] initWithOwner:self];
+    return @[vc01, vc02];
+}
+
+- (void)onPageChanged:(NSInteger)tag
+{
+    NSLog(@"onPageChanged: %@", @(tag));
+    
+    //  gurad
+    if ([[MBProgressHUDSingleton sharedMBProgressHUDSingleton] is_showing]){
+        return;
+    }
+    
+    //  TODO:
+//    //  query
+//    if (_subvcArrays){
+//        id vc = [_subvcArrays safeObjectAtIndex:tag - 1];
+//        if (vc && [vc isKindOfClass:[VCUserCenter class]]){
+//
+//        }
+//    }
+}
+
+@end
+
+
 @interface VCUserCenter ()
 {
+    __weak VCBase*          _owner;                 //  REMARK：声明为 weak，否则会导致循环引用。
+    
     UITableView*            _mainTableView;
     NSMutableArray*         _sectionTypeArray;
     
@@ -62,6 +116,16 @@ enum
         _mainTableView.delegate = nil;
         _mainTableView = nil;
     }
+    _owner = nil;
+}
+
+- (id)initWithOwner:(VCBase*)owner
+{
+    self = [super init];
+    if (self) {
+        _owner = owner;
+    }
+    return self;
 }
 
 - (void)buildSectionTypeArray
@@ -267,7 +331,6 @@ enum
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
-        UIViewController* vc = nil;
         switch ([[_sectionTypeArray objectAtIndex:indexPath.section] integerValue])
         {
             case kVcLogout: //  注销
@@ -285,9 +348,6 @@ enum
             default:
                 break;
         }
-        if (vc){
-            [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-        }
     }];
 }
 
@@ -297,7 +357,7 @@ enum
 {
     VCBackupWallet* vc = [[VCBackupWallet alloc] init];
     vc.title = NSLocalizedString(@"kVcTitleBackupWallet", @"备份钱包");
-    [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+    [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
 }
 
 - (void)gotoLogoutCore
@@ -307,7 +367,7 @@ enum
     [[AppCacheManager sharedAppCacheManager] removeWalletInfo];
     
     //  返回
-    [self closeOrPopViewController];
+    [_owner closeOrPopViewController];
 }
 
 - (void)gotoLogout

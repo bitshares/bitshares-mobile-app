@@ -142,6 +142,14 @@
 "kLblTipsPasswordModeNotSupportMultiSign" = "Multi-signature and other functions only support wallet mode. Do you want to create a local wallet file for the current account?";
 "kLblTipsConvertToWalletModeDone" = "Create wallet successfully.";
 
+/* 账号信息 */
+"kAccountPageBasicInfo" = "Basic Info";
+"kAccountPageMemberInfo" = "Member Info";
+"kAccountBtnUpgradeToLifetimeMember" = "Upgrade lifetime membership";
+"kAccountMembershipStatus" = "Status";
+"kAccountUpgradeTipsMember" = "Dear Life Member, you are entitled to an 80% fee cashback.";
+"kAccountUpgradeTipsNotMember" = "Upgrade lifetime membership and enjoy an 80% fee cashback.";
+
 /* 登录&注册&备份 */
 "kLoginPageModePassword" = "Normal";
 "kLoginPageModePrivateKey" = "Private Key";

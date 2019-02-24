@@ -293,7 +293,7 @@ enum
             case kVcBanner:
             {
                 if ([[WalletManager sharedWalletManager] isWalletExist]){
-                    vc = [[VCUserCenter alloc] init];
+                    vc = [[VCUserCenterPages alloc] init];
                     vc.title = NSLocalizedString(@"kVcTitleAccountInfos", @"帐号信息");
                 }else{
                     vc = [[VCImportAccount alloc] init];
