@@ -22,6 +22,8 @@
 		3F0DA36521884011006E1004 /* SGQRCodeObtainConfigure.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0DA36021884011006E1004 /* SGQRCodeObtainConfigure.m */; };
 		3F0DA36621884011006E1004 /* SGQRCodeScanView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0DA36221884011006E1004 /* SGQRCodeScanView.m */; };
 		3F0DA369218851FF006E1004 /* VCQrScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0DA367218851FF006E1004 /* VCQrScan.m */; };
+		3F3847322222686400B55914 /* VCMemberShip.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F3847312222686300B55914 /* VCMemberShip.m */; };
+		3F3847332222686400B55914 /* VCMemberShip.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F3847312222686300B55914 /* VCMemberShip.m */; };
 		3F3E5848218310E900F1DC24 /* iconFeedDetail@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F3E5846218310E800F1DC24 /* iconFeedDetail@3x.png */; };
 		3F3E5849218310E900F1DC24 /* iconFeedDetail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F3E5847218310E800F1DC24 /* iconFeedDetail@2x.png */; };
 		3F475CDF21945A12009DD5C1 /* VCScanNormalString.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F475CDE21945A12009DD5C1 /* VCScanNormalString.m */; };
@@ -1100,6 +1102,8 @@
 		3F0DA36221884011006E1004 /* SGQRCodeScanView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SGQRCodeScanView.m; sourceTree = "<group>"; };
 		3F0DA367218851FF006E1004 /* VCQrScan.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCQrScan.m; path = Controller/VCQrScan.m; sourceTree = "<group>"; };
 		3F0DA368218851FF006E1004 /* VCQrScan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCQrScan.h; path = Controller/VCQrScan.h; sourceTree = "<group>"; };
+		3F3847302222686300B55914 /* VCMemberShip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCMemberShip.h; path = Controller/VCMemberShip.h; sourceTree = "<group>"; };
+		3F3847312222686300B55914 /* VCMemberShip.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCMemberShip.m; path = Controller/VCMemberShip.m; sourceTree = "<group>"; };
 		3F3E5846218310E800F1DC24 /* iconFeedDetail@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconFeedDetail@3x.png"; path = "Images/iconFeedDetail@3x.png"; sourceTree = "<group>"; };
 		3F3E5847218310E800F1DC24 /* iconFeedDetail@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconFeedDetail@2x.png"; path = "Images/iconFeedDetail@2x.png"; sourceTree = "<group>"; };
 		3F475CDD21945A12009DD5C1 /* VCScanNormalString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VCScanNormalString.h; sourceTree = "<group>"; };
@@ -1976,6 +1980,10 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3F3847302222686300B55914 /* VCMemberShip.h */,
+				3F3847312222686300B55914 /* VCMemberShip.m */,
+				B7F288821DC5EDCA00B93ED7 /* VCUserCenter.h */,
+				B7F288831DC5EDCA00B93ED7 /* VCUserCenter.m */,
 				3FF3550821FED340008EF213 /* VCSelectLanguage.h */,
 				3FF3550921FED340008EF213 /* VCSelectLanguage.m */,
 				3F6C35AA21EC8399008E2903 /* Gateway */,
@@ -2052,8 +2060,6 @@
 				B7BDA98520B2FE3800738F12 /* VCTradeMain.m */,
 				B74D4BC820A2B834009DD9B0 /* VCMarketInfo.h */,
 				B74D4BC920A2B834009DD9B0 /* VCMarketInfo.m */,
-				B7F288821DC5EDCA00B93ED7 /* VCUserCenter.h */,
-				B7F288831DC5EDCA00B93ED7 /* VCUserCenter.m */,
 				B7B1E3301DBF3E1C000B9635 /* VCBaseWebView.h */,
 				B7B1E3311DBF3E1C000B9635 /* VCBaseWebView.m */,
 				B7D7DFEE1C5CEFBF007D13DA /* VCSelectTheme.h */,
@@ -4045,6 +4051,7 @@
 				3FB8F94621CE66C200DA88E2 /* SRHash.m in Sources */,
 				3FB8F94721CE66C200DA88E2 /* VCMarketContainer.m in Sources */,
 				3FB8F94821CE66C200DA88E2 /* GCDWebUploader.m in Sources */,
+				3F3847332222686400B55914 /* VCMemberShip.m in Sources */,
 				3FB8F94921CE66C200DA88E2 /* FXBlurView.m in Sources */,
 				3FB8F94A21CE66C200DA88E2 /* ScheduleManager.m in Sources */,
 				3FB8F94B21CE66C200DA88E2 /* NSURLRequest+SRWebSocket.m in Sources */,
@@ -4320,6 +4327,7 @@
 				B714094320A31CC300003311 /* SRHash.m in Sources */,
 				B74D4BC720A2B822009DD9B0 /* VCMarketContainer.m in Sources */,
 				B72A847F20CCD18B00D92A25 /* GCDWebUploader.m in Sources */,
+				3F3847322222686400B55914 /* VCMemberShip.m in Sources */,
 				F5BF57C91E30AE7700DEDE38 /* FXBlurView.m in Sources */,
 				B7C04123210C100100848CBC /* ScheduleManager.m in Sources */,
 				B714094B20A31CC300003311 /* NSURLRequest+SRWebSocket.m in Sources */,

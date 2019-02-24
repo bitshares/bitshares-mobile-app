@@ -6,8 +6,13 @@
 //
 //
 
-#import "VCBase.h"
+#import "VCSlideControllerBase.h"
+
+@interface VCUserCenterPages : VCSlideControllerBase
+@end
 
 @interface VCUserCenter : VCBase<UITableViewDelegate, UITableViewDataSource, UIActionSheetDelegate>
+
+- (id)initWithOwner:(VCBase*)owner;
 
 @end
