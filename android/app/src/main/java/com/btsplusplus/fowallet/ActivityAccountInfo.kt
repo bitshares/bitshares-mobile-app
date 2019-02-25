@@ -1,12 +1,22 @@
 package com.btsplusplus.fowallet
 
 import android.os.Bundle
+import android.support.design.widget.TabLayout
+import android.support.v4.app.Fragment
+import android.support.v4.view.ViewPager
+import android.view.animation.OvershootInterpolator
 import android.widget.TextView
 import bitshares.AppCacheManager
 import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_account_info.*
+import kotlinx.android.synthetic.main.activity_my_orders.*
+import java.lang.reflect.Field
 
 class ActivityAccountInfo : BtsppActivity() {
+
+    private val fragmens: ArrayList<Fragment> = ArrayList()
+    private var tablayout: TabLayout? = null
+    private var view_pager: ViewPager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -14,57 +24,68 @@ class ActivityAccountInfo : BtsppActivity() {
 
         setFullScreen()
 
-        //  初始化 设置备份按钮是否可见
-        val hexwallet_bin = AppCacheManager.sharedAppCacheManager().getWalletInfo().optString("kFullWalletBin", "")
-        if (hexwallet_bin == "") {
-            button_backup_wallet.visibility = android.view.View.GONE
-        } else {
-            button_backup_wallet.visibility = android.view.View.VISIBLE
-        }
+        // 设置 tablelayout 和 view_pager
+        tablayout = tablayout_of_account_info
+        view_pager = view_pager_of_account_info
 
-        //  初始化UI信息
-        val full_account_data = WalletManager.sharedWalletManager().getWalletAccountInfo()!!
-        val account = full_account_data.getJSONObject("account")
-        findViewById<TextView>(R.id.txt_account_id).text = account.getString("id")
-        findViewById<TextView>(R.id.txt_account_name).text = account.getString("name")
-        findViewById<TextView>(R.id.txt_referrer_name).text = full_account_data.getString("referrer_name")
-        findViewById<TextView>(R.id.txt_registrar_name).text = full_account_data.getString("registrar_name")
-        findViewById<TextView>(R.id.txt_lifetime_referrer_name).text = full_account_data.getString("lifetime_referrer_name")
+        // 添加 fargments
+        setFragments()
+
+        // 设置 viewPager 并配置滚动速度
+        setViewPager()
+
+        // 监听 tab 并设置选中 item
+        setTabListener()
 
         //  返回
         layout_back_from_account_detail.setOnClickListener {
             finish()
         }
 
-        //  备份钱包
-        button_backup_wallet.setOnClickListener {
-            backupWallet()
-        }
-
-        //  注销
-        button_logout.setOnClickListener {
-            gotoLogout()
-        }
     }
 
-    private fun gotoLogout() {
-        alerShowMessageConfirm(resources.getString(R.string.registerLoginPageWarmTip), resources.getString(R.string.registerLoginPageTipForLogout)).then {
-            if (it != null && it as Boolean) {
-                gotoLogoutCore()
+
+    private fun setViewPager() {
+        view_pager!!.adapter = ViewPagerAdapter(super.getSupportFragmentManager(), fragmens)
+        val f: Field = ViewPager::class.java.getDeclaredField("mScroller")
+        f.isAccessible = true
+        val vpc: ViewPagerScroller = ViewPagerScroller(view_pager!!.context, OvershootInterpolator(0.6f))
+        f.set(view_pager, vpc)
+        vpc.duration = 700
+
+        view_pager!!.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {
             }
-            return@then null
-        }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            }
+
+            override fun onPageSelected(position: Int) {
+                println(position)
+                tablayout!!.getTabAt(position)!!.select()
+            }
+        })
     }
 
-    private fun gotoLogoutCore() {
-        //  内存钱包锁定、导入钱包删除。
-        WalletManager.sharedWalletManager().Lock()
-        AppCacheManager.sharedAppCacheManager().removeWalletInfo()
-        //  返回
-        finish()
+    private fun setFragments() {
+        fragmens.add(FragmentUserBaseInfo())
+        fragmens.add(FragmentUserMemberInfo())
     }
 
-    private fun backupWallet() {
-        goTo(ActivityWalletBackup::class.java, true)
+    private fun setTabListener() {
+        tablayout!!.setOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                view_pager!!.setCurrentItem(tab.position, true)
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+                //tab未被选择的时候回调
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab) {
+                //tab重新选择的时候回调
+            }
+        })
     }
+
 }

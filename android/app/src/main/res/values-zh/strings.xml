@@ -378,6 +378,12 @@
     <string name="registerLoginTipBackupError">导出钱包失败，请稍后再试。</string>
     <string name="registerLoginTipForPcBackWallet">请在电脑端输入以上网址下载钱包BIN文件备份到安全的地方</string>
     <string name="registerLoginConfirmationPassword">请确认密码</string>
+    <string name="registerLoginBaseInfo">基本信息</string>
+    <string name="registerLoginMemberInfo">会员信息</string>
+    <string name="registerLoginStatus">状态</string>
+    <string name="registerLoginUpgradeMember">升级终身会员</string>
+    <string name="registerLoginUpgradeToMemberTip">现在升级终身会员，立享80%手续费返现奖励。</string>
+    <string name="registerLoginMemberTip">尊敬的终身会员，您已80%手续费返现奖励。</string>
 
     <!-- 交易对 -->
     <string name="tradingPairMyTradePair">我的交易对(%s个)</string>
@@ -725,5 +731,6 @@
     <string name="kOpDesc_transfer_from_blind">从隐私账户转出。</string>
     <string name="kOpDesc_asset_settle_cancel">取消清算。</string>
     <string name="kOpDesc_asset_claim_fees">提取资产手续费。</string>
+
 
 </resources>

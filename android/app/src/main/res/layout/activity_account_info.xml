@@ -12,7 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="15dp"
-        android:padding="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         android:orientation="vertical">
 
 
@@ -53,202 +54,35 @@
 
         </FrameLayout>
 
-
-        <!-- ID -->
-        <LinearLayout
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tablayout_of_account_info"
             android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="15dp"
-            android:orientation="horizontal">
+            android:layout_height="40dp"
+            app:tabTextAppearance="@style/CommonTabTextStyle"
+            app:tabIndicatorColor="@color/theme01.tintColor"
+            app:tabRippleColor="#aaaaaa"
+            app:tabTextColor="#ffffff">
 
-            <TextView
+            <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="ID"/>
+                android:layout_height="wrap_content"
+                android:text="@string/registerLoginBaseInfo" />
 
-            <TextView
-                android:id="@+id/txt_account_id"
+            <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical|right"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorNormal"
-                android:text="placeholder"/>
+                android:layout_height="wrap_content"
+                android:text="@string/registerLoginMemberInfo" />
 
-        </LinearLayout>
-        <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+        </android.support.design.widget.TabLayout>
 
-        <!-- 账号 -->
-        <LinearLayout
+        <android.support.v4.view.ViewPager
+            android:id="@+id/view_pager_of_account_info"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="15dp"
-            android:orientation="horizontal">
+            android:layout_height="match_parent">
 
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/nameAccount"/>
-
-            <TextView
-                android:id="@+id/txt_account_name"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical|right"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorNormal"
-                android:text="placeholder"/>
-
-
-        </LinearLayout>
-        <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
-
-
-        <!-- 引荐人 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="40dp"
-            android:orientation="horizontal">
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/registerLoginPageReferrer"/>
-
-            <TextView
-                android:id="@+id/txt_referrer_name"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical|right"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorNormal"
-                android:text="placeholder"/>
-
-
-        </LinearLayout>
-        <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
-
-        <!-- 注册人 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="15dp"
-            android:orientation="horizontal">
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/registerLoginPageRegisterer"/>
-
-            <TextView
-                android:id="@+id/txt_registrar_name"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical|right"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorNormal"
-                android:text="placeholder"/>
-
-        </LinearLayout>
-        <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
-
-
-        <!-- 终身会员推荐人 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="15dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="3"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/registerLoginPageSVipRegisterer"/>
-
-            <TextView
-                android:id="@+id/txt_lifetime_referrer_name"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical|right"
-                android:textSize="16dp"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:ellipsize = "end"
-                android:layout_weight="5"
-                android:textColor="@color/theme01.textColorNormal"
-                android:text="placeholder"/>
-
-
-        </LinearLayout>
-
-        <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
-
-        <LinearLayout
-        	android:id="@+id/button_backup_wallet_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:orientation="vertical">
-
-            <Button
-                android:id="@+id/button_backup_wallet"
-                android:layout_width="match_parent"
-                style="@style/kMainButtonStyle"
-                android:gravity="center|center_vertical"
-                android:textAllCaps="false"
-                android:text="@string/registerLoginPageBackupWallet" />
-
-            <Button
-                android:id="@+id/button_logout"
-                android:layout_width="match_parent"
-                android:layout_height="36dp"
-                android:layout_marginTop="20dp"
-                android:gravity="center|center_vertical"
-                android:background="@color/theme01.textColorGray"
-                android:text="@string/nameCancellation"
-                android:textColor="@color/theme01.mainButtonTextColor"
-                android:textAllCaps="false"
-                android:textSize="16dp" />
-
-        </LinearLayout>
+        </android.support.v4.view.ViewPager>
 
 
 
