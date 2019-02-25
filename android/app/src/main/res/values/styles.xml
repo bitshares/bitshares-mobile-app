@@ -37,7 +37,13 @@
         <item name="colorControlNormal">@color/theme01.color01</item>
         <item name="colorControlActivated">@color/theme01.color01</item>
     </style>
-    
+
+
+    <style name="CommonTabTextStyle">
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColor">@color/theme01.textColorNormal</item>
+    </style>
+
     <style name="KLineTabTextStyle">
         <item name="android:textSize">9dp</item>
         <item name="android:textStyle">bold</item>
