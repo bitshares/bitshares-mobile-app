@@ -90,7 +90,7 @@
         _currEstimateAssetSymbol = [estimateAssetSymbol copy];
         //  [统计]
         [Answers logCustomEventWithName:@"selectSstimateAsset" customAttributes:@{@"symbol":_currEstimateAssetSymbol}];
-        [[SettingManager sharedSettingManager] setUseConfig:kSettingKey_EstimateAssetSymbol string:_currEstimateAssetSymbol];
+        [[SettingManager sharedSettingManager] setUseConfig:kSettingKey_EstimateAssetSymbol obj:_currEstimateAssetSymbol];
         [tableView reloadData];
     }
     else

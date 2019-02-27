@@ -435,3 +435,69 @@ static NSInteger __staticPromiseAliveNumber = 0;    //  当前活动的promise�
 }
 
 @end
+
+#pragma mark- WsPromiseObject
+
+@interface WsPromiseObject()
+{
+    WsPromise*          _promise;
+    WsResolveHandler    _resolve_callback;
+    WsRejectHandler     _reject_callback;
+}
+@end
+
+@implementation WsPromiseObject
+
+- (void)dealloc
+{
+    _resolve_callback = nil;
+    _reject_callback = nil;
+    _promise = nil;
+}
+
+- (id)init
+{
+    self = [super init];
+    if (self)
+    {
+        _promise = [WsPromise promise:(^(WsResolveHandler resolve, WsRejectHandler reject) {
+            _resolve_callback = resolve;
+            _reject_callback = reject;
+        })];
+    }
+    return self;
+}
+
+/**
+ *  (public) then操作
+ */
+- (WsPromise*)then:(WsResolveHandler)onResolved
+{
+    return [_promise then:onResolved];
+}
+
+/**
+ *  (public) catch操作
+ */
+- (WsPromise*)catch:(WsRejectHandler)onRejected
+{
+    return [_promise catch:onRejected];
+}
+
+/**
+ * 完成 promise，状态变更 pending -> fulfilled 。并处理回调。
+ */
+- (void)resolve:(id)data
+{
+    _resolve_callback(data);
+}
+
+/**
+ * 拒绝 promise，状态变更 pending -> rejected 。并处理回调。
+ */
+- (void)reject:(id)error
+{
+    _reject_callback([WsPromiseException makeException:error]);
+}
+
+@end

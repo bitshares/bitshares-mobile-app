@@ -297,7 +297,7 @@ static ThemeManager *_sharedThemeManager = nil;
     
     //  如果用户当前使用的风格，在js里配置发生改变的话，那写入文件，下次启动刷新。
     if (jsUserCurrentUseTheme){
-        [[SettingManager sharedSettingManager] setUseConfig:kSettingKey_ThemeInfo string:jsUserCurrentUseTheme];
+        [[SettingManager sharedSettingManager] setUseConfig:kSettingKey_ThemeInfo obj:jsUserCurrentUseTheme];
     }
 }
 

@@ -81,3 +81,30 @@ typedef NS_ENUM(NSInteger, WsPromiseState) {
 - (WsPromise*)catch:(WsRejectHandler)onRejected;
 
 @end
+
+/**
+ *  Promise 对象
+ */
+@interface WsPromiseObject : NSObject
+
+/**
+ *  (public) then操作
+ */
+- (WsPromise*)then:(WsResolveHandler)onResolved;
+
+/**
+ *  (public) catch操作
+ */
+- (WsPromise*)catch:(WsRejectHandler)onRejected;
+
+/**
+ * (public) 完成 promise，状态变更 pending -> fulfilled 。并处理回调。
+ */
+- (void)resolve:(id)data;
+
+/**
+ * (public) 拒绝 promise，状态变更 pending -> rejected 。并处理回调。
+ */
+- (void)reject:(id)error;
+
+@end
