@@ -123,7 +123,6 @@
     NSArray* itemlist = [assets ruby_map:(^id(id src) {
         return [src objectForKey:@"symbol"];
     })];
-    //  TODO:fowallet 语言
     [[MyPopviewManager sharedMyPopviewManager] showActionSheet:this
                                                        message:title
                                                         cancel:NSLocalizedString(@"kBtnCancel", @"取消")

@@ -10,6 +10,7 @@
 
 #define kSettingKey_EstimateAssetSymbol @"kEstimateAssetSymbol" //  计价单位符号 CNY、USD等
 #define kSettingKey_ThemeInfo           @"kThemeInfo"           //  主题风格信息
+#define kSettingKey_KLineIndexInfo      @"kKLineIndexInfo_v1"   //  K线指标参数信息    REMARK：如果新增指标需要更新下参数版本
 
 @interface SettingManager : NSObject
 
@@ -27,12 +28,19 @@
  */
 - (NSString*)getEstimateAssetSymbol;
 
-//  获取当前主题风格
+/**
+ *  获取当前主题风格
+ */
 - (NSDictionary*)getThemeInfo;
+
+/**
+ *  获取K线指标参数配置信息
+ */
+- (NSDictionary*)getKLineIndexInfos;
 
 //  保存用户配置  kSettingKey_***
 - (void)setUseConfig:(NSString*)key value:(BOOL)value;
-- (void)setUseConfig:(NSString*)key string:(id)value;
+- (void)setUseConfig:(NSString*)key obj:(id)value;
 
 - (NSString*)getUseConfig:(NSString*)key;
 

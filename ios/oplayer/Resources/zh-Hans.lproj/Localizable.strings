@@ -357,6 +357,8 @@
 "kLabelEkdpt4hour" = "4小时";
 "kLabelEkdpt1day" = "日线";
 "kLabelEkdpt1week" = "周线";
+"kLabelEkdptBtnMore" = "更多";
+"kLabelEkdptBtnIndex" = "指标";
 "kLabelNODATA" = "无数据";
 "kLabelKLineDate" = "时间";
 "kLabelKLineOpen" = "开";
@@ -372,6 +374,9 @@
 "kLabelDepthSideBuy" = "买盘";
 "kLabelDepthSideSell" = "卖盘";
 "kLabelTradeHisNdayAgo" = "%d天前";
+"kKlineIndexCellMain" = "主图";
+"kKlineIndexCellSub" = "副图";
+"kKlineIndexCellHide" = "不显示";
 
 /* 交易界面各种字符串 */
 "kLabelTitleBuy" = "买入";
@@ -542,6 +547,7 @@
 "kVcTitleDepositWithdraw" = "充币提币";
 "kVcTitleDeposit" = "%@充币";
 "kVcTitleWithdraw" = "%@提币";
+"kVcTitleKlineIndexSetting" = "K线指标设置";
 
 /* 钱包管理 */
 "kWalletUnlockFailedUnknowMode" = "解锁失败，未知的帐号模式：%@。";

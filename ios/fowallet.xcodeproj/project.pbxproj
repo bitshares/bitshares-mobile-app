@@ -24,6 +24,8 @@
 		3F0DA369218851FF006E1004 /* VCQrScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0DA367218851FF006E1004 /* VCQrScan.m */; };
 		3F3847322222686400B55914 /* VCMemberShip.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F3847312222686300B55914 /* VCMemberShip.m */; };
 		3F3847332222686400B55914 /* VCMemberShip.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F3847312222686300B55914 /* VCMemberShip.m */; };
+		3F3847362223AC7500B55914 /* VCKlineIndexSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F3847342223AC7400B55914 /* VCKlineIndexSetting.m */; };
+		3F3847372223AC7500B55914 /* VCKlineIndexSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F3847342223AC7400B55914 /* VCKlineIndexSetting.m */; };
 		3F3E5848218310E900F1DC24 /* iconFeedDetail@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F3E5846218310E800F1DC24 /* iconFeedDetail@3x.png */; };
 		3F3E5849218310E900F1DC24 /* iconFeedDetail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F3E5847218310E800F1DC24 /* iconFeedDetail@2x.png */; };
 		3F475CDF21945A12009DD5C1 /* VCScanNormalString.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F475CDE21945A12009DD5C1 /* VCScanNormalString.m */; };
@@ -1104,6 +1106,8 @@
 		3F0DA368218851FF006E1004 /* VCQrScan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCQrScan.h; path = Controller/VCQrScan.h; sourceTree = "<group>"; };
 		3F3847302222686300B55914 /* VCMemberShip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCMemberShip.h; path = Controller/VCMemberShip.h; sourceTree = "<group>"; };
 		3F3847312222686300B55914 /* VCMemberShip.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCMemberShip.m; path = Controller/VCMemberShip.m; sourceTree = "<group>"; };
+		3F3847342223AC7400B55914 /* VCKlineIndexSetting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCKlineIndexSetting.m; path = Controller/VCKlineIndexSetting.m; sourceTree = "<group>"; };
+		3F3847352223AC7500B55914 /* VCKlineIndexSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCKlineIndexSetting.h; path = Controller/VCKlineIndexSetting.h; sourceTree = "<group>"; };
 		3F3E5846218310E800F1DC24 /* iconFeedDetail@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconFeedDetail@3x.png"; path = "Images/iconFeedDetail@3x.png"; sourceTree = "<group>"; };
 		3F3E5847218310E800F1DC24 /* iconFeedDetail@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconFeedDetail@2x.png"; path = "Images/iconFeedDetail@2x.png"; sourceTree = "<group>"; };
 		3F475CDD21945A12009DD5C1 /* VCScanNormalString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VCScanNormalString.h; sourceTree = "<group>"; };
@@ -2016,6 +2020,8 @@
 				B7C0410F21081D7200848CBC /* VCVote.m */,
 				B737850120FF7DA6001EEA8C /* VCKLine.h */,
 				B737850020FF7DA5001EEA8C /* VCKLine.m */,
+				3F3847352223AC7500B55914 /* VCKlineIndexSetting.h */,
+				3F3847342223AC7400B55914 /* VCKlineIndexSetting.m */,
 				B737A72620FC946C00818BBA /* VCUserActivity.h */,
 				B737A72520FC946B00818BBA /* VCUserActivity.m */,
 				B786D51C20EF9E1800427C08 /* VCSelectEstimateUnit.h */,
@@ -4057,6 +4063,7 @@
 				3FB8F94B21CE66C200DA88E2 /* NSURLRequest+SRWebSocket.m in Sources */,
 				3FB8F94C21CE66C200DA88E2 /* VCScanNormalString.m in Sources */,
 				3FB8F94D21CE66C200DA88E2 /* ViewKLine.m in Sources */,
+				3F3847372223AC7500B55914 /* VCKlineIndexSetting.m in Sources */,
 				3FB8F94E21CE66C200DA88E2 /* Bcj2.c in Sources */,
 				3FB8F94F21CE66C200DA88E2 /* SAMKeychainQuery.m in Sources */,
 				3FB8F95021CE66C200DA88E2 /* GCDWebServerFunctions.m in Sources */,
@@ -4333,6 +4340,7 @@
 				B714094B20A31CC300003311 /* NSURLRequest+SRWebSocket.m in Sources */,
 				3F475CDF21945A12009DD5C1 /* VCScanNormalString.m in Sources */,
 				B737850920FF88EE001EEA8C /* ViewKLine.m in Sources */,
+				3F3847362223AC7500B55914 /* VCKlineIndexSetting.m in Sources */,
 				B7BDAA8620B3C77500738F12 /* Bcj2.c in Sources */,
 				B7D5862D2115A9FA00FED7B0 /* SAMKeychainQuery.m in Sources */,
 				B72A848220CCD18B00D92A25 /* GCDWebServerFunctions.m in Sources */,

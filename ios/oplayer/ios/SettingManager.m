@@ -158,6 +158,21 @@ static SettingManager *_sharedSettingManager = nil;
     return value;
 }
 
+- (NSDictionary*)getKLineIndexInfos
+{
+    NSMutableDictionary* settings = [self loadSettingHash];
+    NSDictionary* value = [settings objectForKey:kSettingKey_KLineIndexInfo];
+    //  初始化默认值
+    if (!value){
+        id default_kline_index = [[[ChainObjectManager sharedChainObjectManager] getDefaultParameters] objectForKey:@"default_kline_index"];
+        assert(default_kline_index);
+        [settings setObject:default_kline_index forKey:kSettingKey_KLineIndexInfo];
+        [self saveSettingHash:settings];
+        return default_kline_index;
+    }
+    return value;
+}
+
 - (void)setUseConfig:(NSString*)key value:(BOOL)value
 {
     NSMutableDictionary* settings = [self loadSettingHash];
@@ -165,7 +180,7 @@ static SettingManager *_sharedSettingManager = nil;
     [self saveSettingHash:settings];
 }
 
-- (void)setUseConfig:(NSString*)key string:(id)value
+- (void)setUseConfig:(NSString*)key obj:(id)value
 {
     NSMutableDictionary* settings = [self loadSettingHash];
     [settings setObject:value forKey:key];

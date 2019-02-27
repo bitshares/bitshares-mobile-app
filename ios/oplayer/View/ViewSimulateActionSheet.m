@@ -2,9 +2,6 @@
 //  ViewSimulateActionSheet.m
 //  ViewSimulateActionSheet
 //
-//  Created by 张 聪 on 15/1/14.
-//  Copyright (c) 2015年 张 聪. All rights reserved.
-//
 
 #import "ViewSimulateActionSheet.h"
 #import "NativeAppDelegate.h"
@@ -66,29 +63,24 @@
     
     [UIView animateWithDuration:0.25f
                      animations:^{
-                         [self setBackgroundColor:[[UIColor darkGrayColor] colorWithAlphaComponent:0.5]];
-//                         [controller.view setTintAdjustmentMode:UIViewTintAdjustmentModeDimmed];
-//                         [controller.navigationController.navigationBar setTintAdjustmentMode:UIViewTintAdjustmentModeDimmed];
-                         
+                         [self setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.5]];
                          [self.toolBar setFrame:CGRectMake(self.toolBar.frame.origin.x,
-                                                            toolBarYposition,
-                                                            self.toolBar.frame.size.width,
-                                                            self.toolBar.frame.size.height)];
+                                                           toolBarYposition,
+                                                           self.toolBar.frame.size.width,
+                                                           self.toolBar.frame.size.height)];
                          
                          [self.pickerView setFrame:CGRectMake(self.pickerView.frame.origin.x,
-                                                     toolBarYposition+self.toolBar.frame.size.height,
-                                                     self.pickerView.frame.size.width,
-                                                     self.pickerView.frame.size.height)];
+                                                              toolBarYposition+self.toolBar.frame.size.height,
+                                                              self.pickerView.frame.size.width,
+                                                              self.pickerView.frame.size.height)];
                      }
                      completion:nil];
 
 }
--(void)dismiss:(UIView *)controller completion:(void (^)())completion{
+-(void)dismissWithCompletion:(void (^)())completion{
     [UIView animateWithDuration:0.25f
                      animations:^{
                          [self setBackgroundColor:[UIColor clearColor]];
-//                         [controller.view setTintAdjustmentMode:UIViewTintAdjustmentModeNormal];
-//                         [controller.navigationController.navigationBar setTintAdjustmentMode:UIViewTintAdjustmentModeNormal];
                          [self.subviews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
                              UIView* v = (UIView*)obj;
                              [v setFrame:CGRectMake(v.frame.origin.x,
@@ -101,16 +93,15 @@
                          [self removeFromSuperview];
                          completion();
                      }];
-
 }
 
 -(UIView *)actionToolBar
 {
     UIView *tools = [[UIView alloc]initWithFrame:CGRectMake(0, 0, UIScreen.mainScreen.bounds.size.width, 44)];
-    tools.backgroundColor = RGBACOLOR(240.0, 240.0, 240.0, 1.0);
+    tools.backgroundColor = [ThemeManager sharedThemeManager].tabBarColor;
     UIButton* cancle = [UIButton buttonWithType:UIButtonTypeSystem];
     [cancle setTitle:NSLocalizedString(@"kBtnPickerViewCancel", @"取消") forState:UIControlStateNormal];
-    [cancle setTitleColor:[ThemeManager sharedThemeManager].tintColor forState:UIControlStateNormal];
+    [cancle setTitleColor:[ThemeManager sharedThemeManager].textColorMain forState:UIControlStateNormal];
     [cancle addTarget:self action:@selector(actionCancle) forControlEvents:UIControlEventTouchUpInside];
     [cancle sizeToFit];
     [tools addSubview:cancle];
@@ -123,7 +114,7 @@
     
     UIButton* ok = [UIButton buttonWithType:UIButtonTypeSystem];
     [ok setTitle:NSLocalizedString(@"kBtnPickerViewDone", @"确定") forState:UIControlStateNormal];
-    [ok setTitleColor:[ThemeManager sharedThemeManager].tintColor forState:UIControlStateNormal];
+    [ok setTitleColor:[ThemeManager sharedThemeManager].textColorMain forState:UIControlStateNormal];
     [ok addTarget:self action:@selector(actionDone) forControlEvents:UIControlEventTouchUpInside];
     [ok sizeToFit];
     [tools addSubview:ok];
@@ -141,7 +132,7 @@
 {
     UIPickerView* picker = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 44, UIScreen.mainScreen.bounds.size.width, 216)];
     picker.showsSelectionIndicator = YES;
-    [picker setBackgroundColor:RGBACOLOR(209.0, 213.0, 219.0, 1.0)];
+    [picker setBackgroundColor:[ThemeManager sharedThemeManager].appBackColor];
     return picker;
 }
 
@@ -154,14 +145,14 @@
 }
 
 -(void)actionDone{
-    if([_delegate respondsToSelector:@selector(actionDone)]){
-        [_delegate actionDone];
+    if([_delegate respondsToSelector:@selector(actionDone:)]){
+        [_delegate actionDone:self];
     }
 }
 
 -(void)actionCancle{
-    if ([_delegate respondsToSelector:@selector(actionCancle)]) {
-        [_delegate actionCancle];
+    if ([_delegate respondsToSelector:@selector(actionCancle:)]) {
+        [_delegate actionCancle:self];
     }
 }
 -(void)setDelegate:(id<ViewSimulateActionSheetDelegate>)delegate{
