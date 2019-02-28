@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/theme01.appBackColor"
+    tools:context="com.btsplusplus.fowallet.ActivityKLineQuotaSetting">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp"
+        android:padding="10dp"
+        android:orientation="vertical">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+
+            <LinearLayout
+                android:id="@+id/layout_back_from_kline_quota_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/nameCancel"
+                    style="@style/kNavigationBarTextStyle"
+                    android:gravity="center_vertical"
+                    />
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:text="@string/klineQuotaSettingPageTitle"
+                style="@style/kNavigationBarTextStyle" />
+
+        </FrameLayout>
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+
+            <LinearLayout
+                android:id="@+id/layout_main_view_of_kline_quota_setting"
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:layout_weight="9"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="@string/klineQuotaSettingPageMainView"/>
+
+                <TextView
+                    android:id="@+id/tv_main_view_of_kline_quota_setting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical|right"
+                    android:textSize="16dp"
+                    android:layout_weight="9"
+                    android:textColor="@color/theme01.textColorNormal"
+                    android:text="@string/klineQuotaSettingPageTextNotDisplay"/>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical|right"
+                    android:layout_weight="0.5"
+
+                    android:foregroundGravity="right"
+                    android:src="@drawable/ic_btn_right_arrow" />
+
+            </LinearLayout>
+            <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
+
+
+            <!-- ma 设置 -->
+            <LinearLayout
+                android:id="@+id/layout_ma_setting_of_kline_quota_setting"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- ma1 -->
+                <LinearLayout
+                    android:id="@+id/layout_ma1_of_kline_quota_setting"
+                    android:layout_width="match_parent"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="13dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.ma5Color"
+                        android:text="MA1"/>
+                    <TextView
+                        android:id="@+id/tv_ma1_value_of_kline_quota_setting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical|right"
+                        android:textSize="13dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="5" />
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical|right"
+                        android:layout_weight="0.5"
+                        android:foregroundGravity="right"
+                        android:src="@drawable/ic_btn_right_arrow" />
+                </LinearLayout>
+                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
+
+                <!-- ma2 -->
+                <LinearLayout
+                    android:id="@+id/layout_ma2_of_kline_quota_setting"
+                    android:layout_width="match_parent"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="13dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.ma10Color"
+                        android:text="MA2"/>
+                    <TextView
+                        android:id="@+id/tv_ma2_value_of_kline_quota_setting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical|right"
+                        android:textSize="13dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="5" />
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical|right"
+                        android:layout_weight="0.5"
+                        android:foregroundGravity="right"
+                        android:src="@drawable/ic_btn_right_arrow" />
+                </LinearLayout>
+                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
+
+                <!-- ma3 -->
+                <LinearLayout
+                    android:id="@+id/layout_ma3_of_kline_quota_setting"
+                    android:layout_width="match_parent"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="13dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.ma30Color"
+                        android:text="MA3"/>
+                    <TextView
+                        android:id="@+id/tv_ma3_value_of_kline_quota_setting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical|right"
+                        android:textSize="13dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="5" />
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical|right"
+                        android:layout_weight="0.5"
+                        android:foregroundGravity="right"
+                        android:src="@drawable/ic_btn_right_arrow" />
+                </LinearLayout>
+                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
+            </LinearLayout>
+
+
+            <!-- boll 设置 -->
+            <LinearLayout
+                android:id="@+id/layout_boll_setting_of_kline_quota_setting"
+                android:visibility="gone"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- BOLL N -->
+                <LinearLayout
+                    android:id="@+id/layout_bolln_of_kline_quota_setting"
+                    android:layout_width="match_parent"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="13dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="BOLL N"/>
+                    <TextView
+                        android:id="@+id/tv_bolln_value_of_kline_quota_setting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical|right"
+                        android:textSize="13dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="5" />
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical|right"
+                        android:layout_weight="0.5"
+                        android:foregroundGravity="right"
+                        android:src="@drawable/ic_btn_right_arrow" />
+                </LinearLayout>
+                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
+
+                <!-- BOLL P -->
+                <LinearLayout
+                    android:id="@+id/layout_bollp_of_kline_quota_setting"
+                    android:layout_width="match_parent"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="13dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="BOLL P"/>
+                    <TextView
+                        android:id="@+id/tv_bollp_value_of_kline_quota_setting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical|right"
+                        android:textSize="13dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="5" />
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical|right"
+                        android:layout_weight="0.5"
+                        android:foregroundGravity="right"
+                        android:src="@drawable/ic_btn_right_arrow" />
+                </LinearLayout>
+                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
+
+
+
+            </LinearLayout>
+
+
+
+
+
+
+
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

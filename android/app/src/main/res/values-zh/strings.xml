@@ -732,5 +732,8 @@
     <string name="kOpDesc_asset_settle_cancel">取消清算。</string>
     <string name="kOpDesc_asset_claim_fees">提取资产手续费。</string>
 
+    <!-- K线指标设置 -->
+    <string name="klineQuotaSettingPageTitle">K线指标设置</string>
+    <string name="klineQuotaSettingPageMainView">主图</string>
 
 </resources>
