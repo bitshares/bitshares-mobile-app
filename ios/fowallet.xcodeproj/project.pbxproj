@@ -50,6 +50,8 @@
 		3F9A731121E729A900DAF7A2 /* VCGatewayWithdraw.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9A730E21E729A900DAF7A2 /* VCGatewayWithdraw.m */; };
 		3F9A731421E729FE00DAF7A2 /* VCGatewayDeposit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9A731221E729FD00DAF7A2 /* VCGatewayDeposit.m */; };
 		3F9A731521E729FE00DAF7A2 /* VCGatewayDeposit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9A731221E729FD00DAF7A2 /* VCGatewayDeposit.m */; };
+		3F9F2C3E2229051700D49165 /* MKlineIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9F2C3D2229051600D49165 /* MKlineIndex.m */; };
+		3F9F2C3F2229051700D49165 /* MKlineIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9F2C3D2229051600D49165 /* MKlineIndex.m */; };
 		3FB5BFB62181B5250009C346 /* VCFeedPriceDetail.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB5BFB42181B5250009C346 /* VCFeedPriceDetail.m */; };
 		3FB8F88D21CA4BA000DA88E2 /* DFReachabilityUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB8F88A21CA4BA000DA88E2 /* DFReachabilityUtil.m */; };
 		3FB8F88E21CA4BA000DA88E2 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB8F88C21CA4BA000DA88E2 /* Reachability.m */; };
@@ -1134,6 +1136,8 @@
 		3F9A730F21E729A900DAF7A2 /* VCGatewayWithdraw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCGatewayWithdraw.h; path = Controller/VCGatewayWithdraw.h; sourceTree = "<group>"; };
 		3F9A731221E729FD00DAF7A2 /* VCGatewayDeposit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCGatewayDeposit.m; path = Controller/VCGatewayDeposit.m; sourceTree = "<group>"; };
 		3F9A731321E729FE00DAF7A2 /* VCGatewayDeposit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCGatewayDeposit.h; path = Controller/VCGatewayDeposit.h; sourceTree = "<group>"; };
+		3F9F2C3C2229051600D49165 /* MKlineIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKlineIndex.h; sourceTree = "<group>"; };
+		3F9F2C3D2229051600D49165 /* MKlineIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKlineIndex.m; sourceTree = "<group>"; };
 		3FB5BFB42181B5250009C346 /* VCFeedPriceDetail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCFeedPriceDetail.m; path = Controller/VCFeedPriceDetail.m; sourceTree = "<group>"; };
 		3FB5BFB52181B5250009C346 /* VCFeedPriceDetail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCFeedPriceDetail.h; path = Controller/VCFeedPriceDetail.h; sourceTree = "<group>"; };
 		3FB8F88921CA4BA000DA88E2 /* DFReachabilityUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFReachabilityUtil.h; sourceTree = "<group>"; };
@@ -2720,6 +2724,8 @@
 		B737850A21002607001EEA8C /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				3F9F2C3C2229051600D49165 /* MKlineIndex.h */,
+				3F9F2C3D2229051600D49165 /* MKlineIndex.m */,
 				3F3847382227752300B55914 /* MKlineIndexBoll.h */,
 				3F3847392227752300B55914 /* MKlineIndexBoll.m */,
 				B7A288A2211843BC00339FAE /* TradingPair.h */,
@@ -4005,6 +4011,7 @@
 				3FB8F91221CE66C200DA88E2 /* SCLAlertView.m in Sources */,
 				3FB8F91321CE66C200DA88E2 /* UIView+Toast.m in Sources */,
 				3FB8F91421CE66C200DA88E2 /* ViewEmptyInfoCell.m in Sources */,
+				3F9F2C3F2229051700D49165 /* MKlineIndex.m in Sources */,
 				3FB8F91521CE66C200DA88E2 /* WjCryptLib_Rc4.c in Sources */,
 				3FB8F91621CE66C200DA88E2 /* DFReachabilityUtil.m in Sources */,
 				3FB8F91721CE66C200DA88E2 /* SphereMenu.m in Sources */,
@@ -4283,6 +4290,7 @@
 				B782F0C01D6E94C600F61571 /* SCLAlertView.m in Sources */,
 				F5A162841E0BCEBA0001C99C /* UIView+Toast.m in Sources */,
 				B7A1A245211D34A400333B00 /* ViewEmptyInfoCell.m in Sources */,
+				3F9F2C3E2229051700D49165 /* MKlineIndex.m in Sources */,
 				B7BDA9A720B3A3D100738F12 /* WjCryptLib_Rc4.c in Sources */,
 				3FB8F88D21CA4BA000DA88E2 /* DFReachabilityUtil.m in Sources */,
 				F5666A3B1D631D2800ADA3C6 /* SphereMenu.m in Sources */,
