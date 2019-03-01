@@ -9,6 +9,15 @@
 #import <UIKit/UIKit.h>
 #import "UITableViewCellBase.h"
 
+typedef enum EKLineMainIndexType
+{
+    ekmit_show_ma = 0,      //  显示MA指标
+    ekmit_show_boll,        //  显示BOLL指标
+    ekmit_show_none,        //  不显示
+    
+    ekmit_max
+} EKLineMainIndexType;
+
 typedef enum EKlineDatePeriodType
 {
     ekdpt_timeline = 1,     //  分时图
@@ -69,5 +78,7 @@ typedef enum EKlineDatePeriodType
 - (id)initWithWidth:(CGFloat)width baseAsset:(id)baseAsset quoteAsset:(id)quoteAsset;
 
 - (void)refreshCandleLayer:(NSArray*)kdata;
+
+- (void)refreshUI;
 
 @end

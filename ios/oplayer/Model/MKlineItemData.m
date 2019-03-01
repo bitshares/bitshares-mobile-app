@@ -17,16 +17,19 @@
 
 @implementation MKlineItemData
 
+@synthesize dataIndex;
 @synthesize showIndex;
 @synthesize isRise, isMaxPrice, isMinPrice, isMax24Vol;
 @synthesize nPriceOpen, nPriceClose, nPriceHigh, nPriceLow;
 @synthesize n24Vol;
 @synthesize ma5, ma10, ma30, ma60;
+@synthesize boll, boll_ub, boll_lb;
 @synthesize vol_ma5, vol_ma10;
 @synthesize change, change_percent;
 @synthesize fOffsetOpen, fOffsetClose, fOffsetHigh, fOffsetLow;
 @synthesize fOffset24Vol;
 @synthesize fOffsetMA5, fOffsetMA10, fOffsetMA30, fOffsetMA60;
+@synthesize fOffsetBoll, fOffsetBollUB, fOffsetBollLB;
 @synthesize fOffsetVolMA5, fOffsetVolMA10;
 @synthesize date;
 
@@ -36,6 +39,7 @@
 
 - (void)reset
 {
+    self.dataIndex = 0;
     self.showIndex = 0;
     
     self.isRise = NO;
@@ -55,6 +59,10 @@
     self.ma30 = nil;
     self.ma60 = nil;
     
+    self.boll = nil;
+    self.boll_ub = nil;
+    self.boll_lb = nil;
+    
     self.vol_ma5 = nil;
     self.vol_ma10 = nil;
     
@@ -72,6 +80,10 @@
     self.fOffsetMA10 = 0;
     self.fOffsetMA30 = 0;
     self.fOffsetMA60 = 0;
+    
+    self.fOffsetBoll = 0;
+    self.fOffsetBollUB = 0;
+    self.fOffsetBollLB = 0;
     
     self.fOffsetVolMA5 = 0;
     self.fOffsetVolMA10 = 0;

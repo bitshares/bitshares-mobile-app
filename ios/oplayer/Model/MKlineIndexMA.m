@@ -11,15 +11,7 @@
 
 @interface MKlineIndexMA()
 {
-    NSInteger               _n;
-    NSDecimalNumber*        _n_n;
-    
     NSDecimalNumber*        _sum;
-    
-    FunMAValueGetter        _getter;
-    NSArray*                _data_array;
-    NSDecimalNumberHandler* _ceil_handler;
-    
     NSInteger               _cnt;
 }
 
@@ -36,6 +28,7 @@
     self = [super init];
     if (self)
     {
+        assert(n >= 2);
         _n = n;
         _n_n = [NSDecimalNumber decimalNumberWithMantissa:n exponent:0 isNegative:NO];
         
