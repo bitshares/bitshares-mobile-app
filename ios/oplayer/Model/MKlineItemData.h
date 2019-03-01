@@ -33,6 +33,13 @@
 @property (nonatomic, strong) NSDecimalNumber* boll_ub;         //  BOLL上轨
 @property (nonatomic, strong) NSDecimalNumber* boll_lb;         //  BOLL下轨
 
+@property (nonatomic, strong) NSDecimalNumber* main_index01;    //  主图指标01-03（根据设置对应不同指标，比如ma1-ma3，或者ema1-ema3，或者boll、ub、lb等）
+@property (nonatomic, strong) NSDecimalNumber* main_index02;
+@property (nonatomic, strong) NSDecimalNumber* main_index03;
+@property (nonatomic, assign) CGFloat   fOffsetMainIndex01;
+@property (nonatomic, assign) CGFloat   fOffsetMainIndex02;
+@property (nonatomic, assign) CGFloat   fOffsetMainIndex03;
+
 @property (nonatomic, strong) NSDecimalNumber* change;          //  涨跌额
 @property (nonatomic, strong) NSDecimalNumber* change_percent;  //  涨跌幅
 

@@ -9,6 +9,7 @@
 
 #import "ViewKLine.h"
 #import "MKlineItemData.h"
+#import "MKlineIndex.h"
 #import "MKlineIndexMA.h"
 #import "MKlineIndexBoll.h"
 #import "WalletManager.h"

@@ -24,6 +24,7 @@
 @synthesize n24Vol;
 @synthesize ma5, ma10, ma30, ma60;
 @synthesize boll, boll_ub, boll_lb;
+@synthesize main_index01, main_index02, main_index03, fOffsetMainIndex01, fOffsetMainIndex02, fOffsetMainIndex03;
 @synthesize vol_ma5, vol_ma10;
 @synthesize change, change_percent;
 @synthesize fOffsetOpen, fOffsetClose, fOffsetHigh, fOffsetLow;
@@ -62,6 +63,13 @@
     self.boll = nil;
     self.boll_ub = nil;
     self.boll_lb = nil;
+    
+    self.main_index01 = nil;
+    self.main_index02 = nil;
+    self.main_index03 = nil;
+    self.fOffsetMainIndex01 = 0;
+    self.fOffsetMainIndex02 = 0;
+    self.fOffsetMainIndex03 = 0;
     
     self.vol_ma5 = nil;
     self.vol_ma10 = nil;
