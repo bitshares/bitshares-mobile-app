@@ -10,6 +10,7 @@
 #import "ViewKLine.h"
 #import "MKlineItemData.h"
 #import "MKlineIndexMA.h"
+#import "MKlineIndexBoll.h"
 #import "WalletManager.h"
 #import "NativeAppDelegate.h"
 #import "UIDevice+Helper.h"
@@ -18,6 +19,8 @@
 #import "OrgUtils.h"
 #import "DirectionPanGestureRecognizer.h"
 #import "Extension.h"
+
+#import "SettingManager.h"
 
 /**
  *  (ROW高度等于屏幕宽度 / 5）
@@ -41,6 +44,10 @@
     
     NSMutableArray*     _kdataModelPool;
     NSUInteger          _kdataModelCurrentIndex;
+    
+    EKLineMainIndexType _kMainIndexType;            //  主图显示的指标类型
+    
+    NSMutableArray*     _krawdataArray;             //  保留原始数据
     
     NSMutableArray*     _kdataArrayAll;             //  所有K线数据Model
     NSMutableArray*     _kdataArrayShowing;         //  当前屏幕显示中的数据Model
@@ -278,6 +285,9 @@
         
         CGRect frame = CGRectMake(0, 0, width, width);
         
+        //  默认MA
+        _kMainIndexType = ekmit_show_ma;
+        
         //  初始化默认字体
         _font = [UIFont fontWithName:@"Helvetica" size:kBTS_KLINE_PRICE_VOL_FONTSIZE];
         //  REMARK：测量X轴、Y轴、MAX、MIN价格、VOL等字体高度用。
@@ -302,6 +312,7 @@
         }
         _kdataModelCurrentIndex = 0;
         
+        _krawdataArray = [NSMutableArray array];
         _kdataArrayShowing = [NSMutableArray array];
         _kdataArrayAll = [NSMutableArray array];
         _currMaxPrice = nil;
@@ -404,19 +415,36 @@
                                                                                          raiseOnUnderflow:NO
                                                                                       raiseOnDivideByZero:NO];
     
+    id main_values = [[SettingManager sharedSettingManager] getKLineIndexInfos];
+    id ma_value_config = [main_values objectForKey:@"ma_value"];
+    id boll_value_config = [main_values objectForKey:@"boll_value"];
+    
     //  MA(n)辅助计算类
-    MKlineIndexMA* ma5 = [[MKlineIndexMA alloc] initWithN:5
-                                               data_array:_kdataArrayAll ceil_handler:ceilHandler getter:(^NSDecimalNumber *(MKlineItemData *model) {
-        return model.nPriceClose;
-    })];
-    MKlineIndexMA* ma10 = [[MKlineIndexMA alloc] initWithN:10
-                                                data_array:_kdataArrayAll ceil_handler:ceilHandler getter:(^NSDecimalNumber *(MKlineItemData *model) {
-        return model.nPriceClose;
-    })];
-    MKlineIndexMA* ma30 = [[MKlineIndexMA alloc] initWithN:30
-                                                data_array:_kdataArrayAll ceil_handler:ceilHandler getter:(^NSDecimalNumber *(MKlineItemData *model) {
-        return model.nPriceClose;
-    })];
+    assert([ma_value_config count] == 3);
+    MKlineIndexMA* ma5 = nil;
+    MKlineIndexMA* ma10 = nil;
+    MKlineIndexMA* ma30 = nil;
+    NSInteger ma1_n = [[ma_value_config objectAtIndex:0] integerValue];
+    NSInteger ma2_n = [[ma_value_config objectAtIndex:1] integerValue];
+    NSInteger ma3_n = [[ma_value_config objectAtIndex:2] integerValue];
+    if (ma1_n >= 2){
+        ma5 = [[MKlineIndexMA alloc] initWithN:ma1_n
+                                    data_array:_kdataArrayAll ceil_handler:ceilHandler getter:(^NSDecimalNumber *(MKlineItemData *model) {
+            return model.nPriceClose;
+        })];
+    }
+    if (ma2_n >= 2){
+        ma10 = [[MKlineIndexMA alloc] initWithN:ma2_n
+                                     data_array:_kdataArrayAll ceil_handler:ceilHandler getter:(^NSDecimalNumber *(MKlineItemData *model) {
+            return model.nPriceClose;
+        })];
+    }
+    if (ma3_n >= 2){
+        ma30 = [[MKlineIndexMA alloc] initWithN:ma3_n
+                                     data_array:_kdataArrayAll ceil_handler:ceilHandler getter:(^NSDecimalNumber *(MKlineItemData *model) {
+            return model.nPriceClose;
+        })];
+    }
     //  REMARK：目前仅分时图才显示MA60
     MKlineIndexMA* ma60 = nil;
     if ([self isDrawTimeLine]){
@@ -433,6 +461,17 @@
                                                     data_array:_kdataArrayAll ceil_handler:ceilHandler getter:(^NSDecimalNumber *(MKlineItemData *model) {
         return model.n24Vol;
     })];
+    
+    //  布林线
+    MKlineIndexBoll* boll = [[MKlineIndexBoll alloc] initWithN:[[boll_value_config objectForKey:@"n"] integerValue]
+                                                             p:[[boll_value_config objectForKey:@"p"] integerValue]
+                                                    data_array:_kdataArrayAll
+                                                  ceil_handler:ceilHandler
+                                                        getter:(^NSDecimalNumber *(MKlineItemData *model) {
+        return model.nPriceClose;
+    })];
+    
+    NSInteger data_index = 0;
     for (id data in data_array) {
         //  创建Model
         MKlineItemData* model = [self getOneKdataModel];
@@ -447,13 +486,28 @@
                            percentHandler:percentHandler];
         [_kdataArrayAll addObject:model];
         
+        //  fill index
+        model.dataIndex = data_index++;
+        
+        //  主图指标
         //  计算MA（n）
-        model.ma5 = [ma5 calc_ma:model];
-        model.ma10 = [ma10 calc_ma:model];
-        model.ma30 = [ma30 calc_ma:model];
+        if (ma5){
+            model.ma5 = [ma5 calc_ma:model];
+        }
+        if (ma10){
+            model.ma10 = [ma10 calc_ma:model];
+        }
+        if (ma30){
+            model.ma30 = [ma30 calc_ma:model];
+        }
         if (ma60){
             model.ma60 = [ma60 calc_ma:model];
         }
+        //  计算BOLL(n, p)
+        model.boll = [boll calc_boll:model];
+        [boll fill_ub_and_lb:model];
+        
+        //  副图指标
         model.vol_ma5 = [vol_ma5 calc_ma:model];
         model.vol_ma10 = [vol_ma10 calc_ma:model];
     }
@@ -518,6 +572,9 @@
     NSDecimalNumber* ma10;
     NSDecimalNumber* ma30;
     NSDecimalNumber* ma60;
+    NSDecimalNumber* boll;
+    NSDecimalNumber* boll_ub;
+    NSDecimalNumber* boll_lb;
     NSDecimalNumber* vol_ma5;
     NSDecimalNumber* vol_ma10;
     for (MKlineItemData* m in _kdataArrayShowing) {
@@ -532,6 +589,9 @@
             ma5 = m.ma5;
             ma10 = m.ma10;
             ma30 = m.ma30;
+            boll = m.boll;
+            boll_ub = m.boll_ub;
+            boll_lb = m.boll_lb;
         }
         //  统计副图Y轴最大交易量
         vol = m.n24Vol;
@@ -569,17 +629,24 @@
                 max_price = h;
                 price_max_item = m;
             }
-            if (ma5 && [ma5 compare:max_price] == NSOrderedDescending){
-                max_price = ma5;
-                price_max_item = m;
-            }
-            if (ma10 && [ma10 compare:max_price] == NSOrderedDescending){
-                max_price = ma10;
-                price_max_item = m;
-            }
-            if (ma30 && [ma30 compare:max_price] == NSOrderedDescending){
-                max_price = ma30;
-                price_max_item = m;
+            if (_kMainIndexType == ekmit_show_ma){
+                if (ma5 && [ma5 compare:max_price] == NSOrderedDescending){
+                    max_price = ma5;
+                    price_max_item = m;
+                }
+                if (ma10 && [ma10 compare:max_price] == NSOrderedDescending){
+                    max_price = ma10;
+                    price_max_item = m;
+                }
+                if (ma30 && [ma30 compare:max_price] == NSOrderedDescending){
+                    max_price = ma30;
+                    price_max_item = m;
+                }
+            }else if (_kMainIndexType == ekmit_show_boll){
+                if (boll_ub && [boll_ub compare:max_price] == NSOrderedDescending){
+                    max_price = boll_ub;
+                    price_max_item = m;
+                }
             }
             //  l < candle_min_price
             if ([l compare:candle_min_price] == NSOrderedAscending){
@@ -591,17 +658,25 @@
                 min_price = l;
                 price_min_item = m;
             }
-            if (ma5 && [ma5 compare:min_price] == NSOrderedAscending){
-                min_price = ma5;
-                price_min_item = m;
-            }
-            if (ma10 && [ma10 compare:min_price] == NSOrderedAscending){
-                min_price = ma10;
-                price_min_item = m;
-            }
-            if (ma30 && [ma30 compare:min_price] == NSOrderedAscending){
-                min_price = ma30;
-                price_min_item = m;
+            
+            if (_kMainIndexType == ekmit_show_ma){
+                if (ma5 && [ma5 compare:min_price] == NSOrderedAscending){
+                    min_price = ma5;
+                    price_min_item = m;
+                }
+                if (ma10 && [ma10 compare:min_price] == NSOrderedAscending){
+                    min_price = ma10;
+                    price_min_item = m;
+                }
+                if (ma30 && [ma30 compare:min_price] == NSOrderedAscending){
+                    min_price = ma30;
+                    price_min_item = m;
+                }
+            }else if (_kMainIndexType == ekmit_show_boll){
+                if (boll_lb && [boll_lb compare:min_price] == NSOrderedAscending){
+                    min_price = boll_lb;
+                    price_min_item = m;
+                }
             }
         }
         //  vol > max_24vol
@@ -670,6 +745,15 @@
         }
         if (m.ma60){
             m.fOffsetMA60 = [[max_price decimalNumberBySubtracting:m.ma60] doubleValue] * fViewMaxHeight / f_diff_price;
+        }
+        if (m.boll){
+            m.fOffsetBoll = [[max_price decimalNumberBySubtracting:m.boll] doubleValue] * fViewMaxHeight / f_diff_price;
+        }
+        if (m.boll_ub){
+            m.fOffsetBollUB = [[max_price decimalNumberBySubtracting:m.boll_ub] doubleValue] * fViewMaxHeight / f_diff_price;
+        }
+        if (m.boll_lb){
+            m.fOffsetBollLB = [[max_price decimalNumberBySubtracting:m.boll_lb] doubleValue] * fViewMaxHeight / f_diff_price;
         }
         if (m.vol_ma5){
             m.fOffsetVolMA5 = [[m.vol_ma5 decimalNumberByDividingBy:max_24vol] doubleValue] * fSecondViewHeight;
@@ -976,14 +1060,34 @@
             fMaOffsetX += 2 + [self drawOneMaValue:@"MA60" ma:model.ma60 offset_x:fMaOffsetX offset_y:4 color:theme.ma5Color];  //  同MA5颜色
         }
     }else{
-        if (model.ma5){
-            fMaOffsetX += 2 + [self drawOneMaValue:@"MA5" ma:model.ma5 offset_x:fMaOffsetX offset_y:4 color:theme.ma5Color];
-        }
-        if (model.ma10){
-            fMaOffsetX += 2 + [self drawOneMaValue:@"MA10" ma:model.ma10 offset_x:fMaOffsetX offset_y:4 color:theme.ma10Color];
-        }
-        if (model.ma30){
-            fMaOffsetX += 2 + [self drawOneMaValue:@"MA30" ma:model.ma30 offset_x:fMaOffsetX offset_y:4 color:theme.ma30Color];
+        if (_kMainIndexType == ekmit_show_ma){
+            id main_values = [[SettingManager sharedSettingManager] getKLineIndexInfos];
+            id ma_value_config = [main_values objectForKey:@"ma_value"];
+            if (model.ma5){
+                fMaOffsetX += 2 + [self drawOneMaValue:[NSString stringWithFormat:@"MA%@", [ma_value_config objectAtIndex:0]]
+                                                    ma:model.ma5 offset_x:fMaOffsetX offset_y:4 color:theme.ma5Color];
+            }
+            if (model.ma10){
+                fMaOffsetX += 2 + [self drawOneMaValue:[NSString stringWithFormat:@"MA%@", [ma_value_config objectAtIndex:1]]
+                                                    ma:model.ma10 offset_x:fMaOffsetX offset_y:4 color:theme.ma10Color];
+            }
+            if (model.ma30){
+                fMaOffsetX += 2 + [self drawOneMaValue:[NSString stringWithFormat:@"MA%@", [ma_value_config objectAtIndex:2]]
+                                                    ma:model.ma30 offset_x:fMaOffsetX offset_y:4 color:theme.ma30Color];
+            }
+        }else if (_kMainIndexType == ekmit_show_boll){
+            id main_values = [[SettingManager sharedSettingManager] getKLineIndexInfos];
+            id boll_value_config = [main_values objectForKey:@"boll_value"];
+            if (model.boll){
+                fMaOffsetX += 2 + [self drawOneMaValue:[NSString stringWithFormat:@"BOLL(%@,%@)", [boll_value_config objectForKey:@"n"], [boll_value_config objectForKey:@"p"]]
+                                                    ma:model.boll offset_x:fMaOffsetX offset_y:4 color:theme.ma5Color];
+            }
+            if (model.boll_ub){
+                fMaOffsetX += 2 + [self drawOneMaValue:@"UB" ma:model.boll_ub offset_x:fMaOffsetX offset_y:4 color:theme.ma10Color];
+            }
+            if (model.boll_lb){
+                fMaOffsetX += 2 + [self drawOneMaValue:@"LB" ma:model.boll_lb offset_x:fMaOffsetX offset_y:4 color:theme.ma30Color];
+            }
         }
     }
     //  副图区域 分时和K线一致。
@@ -1201,6 +1305,9 @@
     NSMutableArray* ma10_points = [NSMutableArray array];
     NSMutableArray* ma30_points = [NSMutableArray array];
     NSMutableArray* ma60_points = [NSMutableArray array];
+    NSMutableArray* boll_points = [NSMutableArray array];
+    NSMutableArray* boll_ub_points = [NSMutableArray array];
+    NSMutableArray* boll_lb_points = [NSMutableArray array];
     NSMutableArray* vol_ma5_points = [NSMutableArray array];
     NSMutableArray* vol_ma10_points = [NSMutableArray array];
     idx = 0;
@@ -1211,14 +1318,26 @@
                 [ma60_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, m.fOffsetMA60 + self.fMainMAHeight))];
             }
         }else{
-            if (m.ma5){
-                [ma5_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, m.fOffsetMA5 + self.fMainMAHeight))];
-            }
-            if (m.ma10){
-                [ma10_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, m.fOffsetMA10 + self.fMainMAHeight))];
-            }
-            if (m.ma30){
-                [ma30_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, m.fOffsetMA30 + self.fMainMAHeight))];
+            if (_kMainIndexType == ekmit_show_ma){
+                if (m.ma5){
+                    [ma5_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, m.fOffsetMA5 + self.fMainMAHeight))];
+                }
+                if (m.ma10){
+                    [ma10_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, m.fOffsetMA10 + self.fMainMAHeight))];
+                }
+                if (m.ma30){
+                    [ma30_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, m.fOffsetMA30 + self.fMainMAHeight))];
+                }
+            }else if (_kMainIndexType == ekmit_show_boll){
+                if (m.boll){
+                    [boll_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, m.fOffsetBoll + self.fMainMAHeight))];
+                }
+                if (m.boll_ub){
+                    [boll_ub_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, m.fOffsetBollUB + self.fMainMAHeight))];
+                }
+                if (m.boll_lb){
+                    [boll_lb_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, m.fOffsetBollLB + self.fMainMAHeight))];
+                }
             }
         }
         //  成交量移动均线描绘
@@ -1247,6 +1366,22 @@
     }
     if ([ma60_points count] >= 2){
         id layer = [self getSingleLineLayerWithPointArray:ma60_points lineColor:theme.ma5Color];        //  同MA5颜色
+        [self.layer addSublayer:layer];
+        [_caTextLayerArray addObject:layer];
+    }
+    
+    if ([boll_points count] >= 2){
+        id layer = [self getSingleLineLayerWithPointArray:boll_points lineColor:theme.ma5Color];        //  同MA5颜色
+        [self.layer addSublayer:layer];
+        [_caTextLayerArray addObject:layer];
+    }
+    if ([boll_ub_points count] >= 2){
+        id layer = [self getSingleLineLayerWithPointArray:boll_ub_points lineColor:theme.ma10Color];    //  同MA10颜色
+        [self.layer addSublayer:layer];
+        [_caTextLayerArray addObject:layer];
+    }
+    if ([boll_lb_points count] >= 2){
+        id layer = [self getSingleLineLayerWithPointArray:boll_lb_points lineColor:theme.ma30Color];    //  同MA30颜色
         [self.layer addSublayer:layer];
         [_caTextLayerArray addObject:layer];
     }
@@ -1368,6 +1503,13 @@
  */
 - (void)refreshCandleLayer:(NSArray*)kdata
 {
+    //  刷新主图指标显示类型
+    [self _refreshMainIndexShowType];
+    
+    //  保存数据
+    [_krawdataArray removeAllObjects];
+    [_krawdataArray addObjectsFromArray:kdata];
+    
     //  重置
     _currCandleOffset = 0;
     _panOffsetX = 0;
@@ -1375,6 +1517,33 @@
     [self prepareAllDatas:kdata];
     //  刷新（新数据不偏移，显示最新数据。）
     [self refreshCandleLayerCore:_currCandleOffset];
+}
+
+/**
+ *  (public) 重新刷新（更改了指标参数等直接重新刷新）
+ */
+- (void)refreshUI
+{
+    //  刷新主图指标显示类型
+    [self _refreshMainIndexShowType];
+    
+    [self prepareAllDatas:_krawdataArray];
+    [self refreshCandleLayerCore:_currCandleOffset];
+}
+
+/**
+ *  刷新主图指标显示类型
+ */
+- (void)_refreshMainIndexShowType
+{
+    id main_type = [[[SettingManager sharedSettingManager] getKLineIndexInfos] objectForKey:@"kMain"];
+    if ([main_type isEqualToString:@""]){
+        _kMainIndexType = ekmit_show_none;
+    }else if ([main_type isEqualToString:@"boll"]){
+        _kMainIndexType = ekmit_show_boll;
+    }else{
+        _kMainIndexType = ekmit_show_ma;
+    }
 }
 
 - (void)refreshCandleLayerCore:(NSInteger)offset_number

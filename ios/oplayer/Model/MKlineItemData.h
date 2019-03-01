@@ -10,6 +10,7 @@
 
 @interface MKlineItemData : NSObject
 
+@property (nonatomic, assign) NSInteger dataIndex;
 @property (nonatomic, assign) NSInteger showIndex;
 
 @property (nonatomic, assign) BOOL isRise;
@@ -28,6 +29,10 @@
 @property (nonatomic, strong) NSDecimalNumber* ma30;
 @property (nonatomic, strong) NSDecimalNumber* ma60;            //  分时图需要显示
 
+@property (nonatomic, strong) NSDecimalNumber* boll;            //  BOLL中轨
+@property (nonatomic, strong) NSDecimalNumber* boll_ub;         //  BOLL上轨
+@property (nonatomic, strong) NSDecimalNumber* boll_lb;         //  BOLL下轨
+
 @property (nonatomic, strong) NSDecimalNumber* change;          //  涨跌额
 @property (nonatomic, strong) NSDecimalNumber* change_percent;  //  涨跌幅
 
@@ -44,6 +49,10 @@
 @property (nonatomic, assign) CGFloat   fOffsetMA10;
 @property (nonatomic, assign) CGFloat   fOffsetMA30;
 @property (nonatomic, assign) CGFloat   fOffsetMA60;            //  分时图需要显示
+
+@property (nonatomic, assign) CGFloat   fOffsetBoll;
+@property (nonatomic, assign) CGFloat   fOffsetBollUB;
+@property (nonatomic, assign) CGFloat   fOffsetBollLB;
 
 @property (nonatomic, assign) CGFloat   fOffsetVolMA5;
 @property (nonatomic, assign) CGFloat   fOffsetVolMA10;

@@ -12,6 +12,14 @@
 typedef NSDecimalNumber* (^FunMAValueGetter)(MKlineItemData* model);
 
 @interface MKlineIndexMA : NSObject
+{
+    NSInteger               _n;
+    NSDecimalNumber*        _n_n;
+    
+    FunMAValueGetter        _getter;
+    NSArray*                _data_array;
+    NSDecimalNumberHandler* _ceil_handler;
+}
 
 - (id)initWithN:(NSInteger)n data_array:(NSArray*)data_array ceil_handler:(NSDecimalNumberHandler*)ceil_handler getter:(FunMAValueGetter)getter;
 

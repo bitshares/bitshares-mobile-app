@@ -7,6 +7,7 @@
 //
 
 #import "VCKLine.h"
+#import "VCKlineIndexSetting.h"
 
 #import "MKlineItemData.h"
 #import "ViewTickerHeader.h"
@@ -224,6 +225,13 @@ enum
         }
         [buttonArray addObject:@{@"name":name, @"value":@(ekdpt)}];
     }
+    
+    //  更多 - 按钮
+    [buttonArray addObject:@{@"name":NSLocalizedString(@"kLabelEkdptBtnMore", @"更多"), @"value":@(kBTS_KLINE_MORE_BUTTON_VALUE), @"disable_selected":@YES}];
+    
+    //  指标 - 按钮
+    [buttonArray addObject:@{@"name":NSLocalizedString(@"kLabelEkdptBtnIndex", @"指标"), @"value":@(kBTS_KLINE_INDEX_BUTTON_VALUE), @"disable_selected":@YES}];
+    
     return @{@"button_list":buttonArray, @"default_value":@(kline_period_default)};
 }
 
@@ -550,14 +558,46 @@ enum
 }
 
 /**
+ *  (private) 指标按钮点击
+ */
+- (void)_onIndexButtonClicked
+{
+    WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
+    VCKlineIndexSetting* vc = [[VCKlineIndexSetting alloc] initWithResultPromise:result_promise];
+    vc.title = NSLocalizedString(@"kVcTitleKlineIndexSetting", @"K线指标设置");
+    vc.hidesBottomBarWhenPushed = YES;
+    [self showModelViewController:vc tag:0];
+    [result_promise then:(^id(id cancel) {
+        if (![cancel boolValue]){
+            [_viewKLine refreshUI];
+        }
+        return nil;
+    })];
+}
+
+/**
  *  K线周期按钮点击事件
  */
 - (void)onSliderButtonClicked:(UIButton*)sender
 {
     NSLog(@"tag:%@", @(sender.tag));
-    EKlineDatePeriodType ekdpt = (EKlineDatePeriodType)sender.tag;
-    [self queryKdata:[self getDatePeriodSeconds:ekdpt] ekdptType:ekdpt];
-     
+    NSInteger tag = sender.tag;
+    switch (tag) {
+        case kBTS_KLINE_INDEX_BUTTON_VALUE:
+            [self _onIndexButtonClicked];
+            break;
+        case kBTS_KLINE_MORE_BUTTON_VALUE:
+            //  TODO:
+            [OrgUtils makeToast:@"MORE BUTTON"];
+            break;
+        default:
+        {
+            EKlineDatePeriodType ekdpt = (EKlineDatePeriodType)tag;
+            [self queryKdata:[self getDatePeriodSeconds:ekdpt] ekdptType:ekdpt];
+        }
+            break;
+    }
+
 //    [self resignAllFirstResponder];
 //
 //    [self sliderAnimationWithTag:sender.tag];
