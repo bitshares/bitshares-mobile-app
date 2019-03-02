@@ -81,13 +81,13 @@ class FragmentUserMemberInfo : BtsppFragment() {
         return v
     }
 
-    private fun refreshUINormalMember(){
+    private fun refreshUILefttimeMember(){
         tv_account_status.text = resources.getString(R.string.kLblMembershipLifetime)
         tv_member_tip.text = resources.getString(R.string.kAccountUpgradeTipsMember)
         tv_member_tip.setTextColor(resources.getColor(R.color.theme01_buyColor))
     }
 
-    private fun refreshUILefttimeMember(){
+    private fun refreshUINormalMember(){
         tv_account_status.text = resources.getString(R.string.kLblMembershipBasic)
         tv_member_tip.text = resources.getString(R.string.kAccountUpgradeTipsNotMember)
         tv_member_tip.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
