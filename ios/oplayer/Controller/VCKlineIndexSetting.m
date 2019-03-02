@@ -13,7 +13,7 @@
 enum
 {
     kFieldMain = 0,
-//    kFieldSub,
+    kFieldSub,
     kFieldCommit,
     
     kFieldMax
@@ -124,6 +124,11 @@ enum
         if (![main_value isEqualToString:@""]){
             base += [[_configValueHash objectForKey:[NSString stringWithFormat:@"%@_value", main_value]] count];
         }
+    }else if (section == kFieldSub){
+        id sub_value = [_configValueHash objectForKey:@"kSub"];
+        if (![sub_value isEqualToString:@""]){
+            base += [[_configValueHash objectForKey:[NSString stringWithFormat:@"%@_value", sub_value]] count];
+        }
     }
     return base;
 }
@@ -167,30 +172,30 @@ enum
                 cell.textLabel.font = [UIFont systemFontOfSize:13];
                 cell.detailTextLabel.font = [UIFont systemFontOfSize:13];
                 id value_values = [_configValueHash objectForKey:[NSString stringWithFormat:@"%@_value", main_value]];
-                if ([main_value isEqualToString:@"ma"]){
+                if ([main_value isEqualToString:@"ma"] || [main_value isEqualToString:@"ema"]){
                     UIColor* color = [ThemeManager sharedThemeManager].ma5Color;
                     if (indexPath.row == 2){
                         color = [ThemeManager sharedThemeManager].ma10Color;
                     }else if (indexPath.row == 3){
                         color = [ThemeManager sharedThemeManager].ma30Color;
                     }
-                    cell.textLabel.text = [NSString stringWithFormat:@"MA%@", @(indexPath.row)];
+                    cell.textLabel.text = [NSString stringWithFormat:@"%@%@", [main_value uppercaseString], @(indexPath.row)];
                     cell.textLabel.textColor = color;
-                    NSInteger ma_value = [[value_values objectAtIndex:indexPath.row - 1] integerValue];
-                    if (ma_value > 0){
-                        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", @(ma_value)];
+                    NSInteger ma_or_ema_value = [[value_values objectAtIndex:indexPath.row - 1] integerValue];
+                    if (ma_or_ema_value > 0){
+                        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", @(ma_or_ema_value)];
                     }else{
                         cell.detailTextLabel.text = NSLocalizedString(@"kKlineIndexCellHide", @"不显示");
                     }
                     cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
                 }else if ([main_value isEqualToString:@"boll"]){
                     if (indexPath.row == 1){
-                        cell.textLabel.text = @"BOLL N";
+                        cell.textLabel.text = NSLocalizedString(@"kKlineIndexCellBollN", @"BOLL N");
                         cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", [value_values objectForKey:@"n"]];
                         cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
                     }else{
-                        cell.textLabel.text = @"BOLL P";
+                        cell.textLabel.text = NSLocalizedString(@"kKlineIndexCellBollP", @"BOLL P");
                         cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", [value_values objectForKey:@"p"]];
                         cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
@@ -200,20 +205,50 @@ enum
             return cell;
         }
             break;
-//        case kFieldSub:
-//        {
-//            UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-//            cell.backgroundColor = [UIColor clearColor];
-//            cell.showCustomBottomLine = YES;
-//            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-//            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-//            cell.textLabel.text = NSLocalizedString(@"kKlineIndexCellSub", @"副图");
-//            cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-//            cell.detailTextLabel.text = @"MACD";
-//            cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
-//            return cell;
-//        }
-//            break;
+        case kFieldSub:
+        {
+            UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+            cell.backgroundColor = [UIColor clearColor];
+            cell.showCustomBottomLine = YES;
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+            id sub_value = [_configValueHash objectForKey:@"kSub"];
+            if (indexPath.row == 0){
+                cell.textLabel.text = NSLocalizedString(@"kKlineIndexCellSub", @"副图");
+                cell.textLabel.font = [UIFont boldSystemFontOfSize:16];
+                cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+                if ([sub_value isEqualToString:@""]){
+                    cell.detailTextLabel.text = NSLocalizedString(@"kKlineIndexCellHide", @"不显示");
+                }else{
+                    cell.detailTextLabel.text = [sub_value uppercaseString];
+                }
+                cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+            }else{
+                cell.textLabel.font = [UIFont systemFontOfSize:13];
+                cell.detailTextLabel.font = [UIFont systemFontOfSize:13];
+                id value_values = [_configValueHash objectForKey:[NSString stringWithFormat:@"%@_value", sub_value]];
+                if ([sub_value isEqualToString:@"macd"]){
+                    if (indexPath.row == 1){
+                        cell.textLabel.text = NSLocalizedString(@"kKlineIndexCellMacdS", @"MACD S");
+                        cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+                        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", [value_values objectForKey:@"s"]];
+                        cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+                    }else if (indexPath.row == 2){
+                        cell.textLabel.text = NSLocalizedString(@"kKlineIndexCellMacdL", @"MACD L");
+                        cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+                        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", [value_values objectForKey:@"l"]];
+                        cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+                    }else{
+                        cell.textLabel.text = NSLocalizedString(@"kKlineIndexCellMacdM", @"MACD M");
+                        cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+                        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", [value_values objectForKey:@"m"]];
+                        cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+                    }
+                }
+            }
+            return cell;
+        }
+            break;
         default:
         {
             UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
@@ -241,6 +276,7 @@ enum
                     id list = @[
                                 @{@"name":NSLocalizedString(@"kKlineIndexCellHide", @"不显示"), @"value":@""},
                                 @{@"name":@"MA", @"value":@"ma"},
+                                @{@"name":@"EMA", @"value":@"ema"},
                                 @{@"name":@"BOLL", @"value":@"boll"},
                                 ];
                     [VCCommonLogic showPicker:self object_lists:list key:@"name" title:nil callback:^(id selectItem) {
@@ -253,14 +289,35 @@ enum
                     id main_value = [_configValueHash objectForKey:@"kMain"];
                     if ([main_value isEqualToString:@"ma"]){
                         [self _onMaFieldClicked:indexPath.row];
+                    }else if ([main_value isEqualToString:@"ema"]){
+                        [self _onEmaFieldClicked:indexPath.row];
                     }else if ([main_value isEqualToString:@"boll"]){
                         [self _onBollFieldClicked:indexPath.row];
                     }
                 }
             }
                 break;
-//            case kFieldSub:
-//                break;
+            case kFieldSub:
+            {
+                if (indexPath.row == 0){
+                    id list = @[
+                                @{@"name":NSLocalizedString(@"kKlineIndexCellHide", @"不显示"), @"value":@""},
+                                @{@"name":@"MACD", @"value":@"macd"},
+                                ];
+                    [VCCommonLogic showPicker:self object_lists:list key:@"name" title:nil callback:^(id selectItem) {
+                        if (![[_configValueHash objectForKey:@"kSub"] isEqualToString:selectItem[@"value"]]){
+                            [_configValueHash setObject:selectItem[@"value"] forKey:@"kSub"];
+                            [_mainTableView reloadData];
+                        }
+                    }];
+                }else{
+                    id sub_value = [_configValueHash objectForKey:@"kSub"];
+                    if ([sub_value isEqualToString:@"macd"]){
+                        [self _onMacdFieldClicked:indexPath.row];
+                    }
+                }
+            }
+                break;
             case kFieldCommit:
                 [self onCommitCore];
                 break;
@@ -287,6 +344,32 @@ enum
     //  show
     ViewSimulateActionSheet* sheet = [ViewSimulateActionSheet styleDefault];
     sheet.tag = row;
+    sheet.custom_tag = @"ma";
+    sheet.pickerView.tag = row;
+    sheet.delegate = self;
+    //  selected
+    [sheet selectRow:current_ma_value_index inComponent:0 animated:NO];
+    [sheet showInView:self.navigationController.view];
+}
+
+- (void)_onEmaFieldClicked:(NSInteger)row
+{
+    //  data source
+    [_pickerDataArray removeAllObjects];
+    
+    NSInteger ema_value_min = 2;
+    NSInteger ema_value_max = 90;
+    [_pickerDataArray addObject:@0];    //  0 means 'hide'
+    for (NSInteger ema_value = ema_value_min; ema_value <= ema_value_max; ++ema_value) {
+        [_pickerDataArray addObject:[NSString stringWithFormat:@"%@", @(ema_value)]];
+    }
+    NSInteger current_ma_vlaue = [[[_configValueHash objectForKey:@"ema_value"] objectAtIndex:row - 1] integerValue];
+    NSInteger current_ma_value_index = current_ma_vlaue - ema_value_min + 1;
+    
+    //  show
+    ViewSimulateActionSheet* sheet = [ViewSimulateActionSheet styleDefault];
+    sheet.tag = row;
+    sheet.custom_tag = @"ema";
     sheet.pickerView.tag = row;
     sheet.delegate = self;
     //  selected
@@ -324,6 +407,54 @@ enum
     //  show
     ViewSimulateActionSheet* sheet = [ViewSimulateActionSheet styleDefault];
     sheet.tag = row;
+    sheet.custom_tag = @"boll";
+    sheet.pickerView.tag = row;
+    sheet.delegate = self;
+    //  selected
+    [sheet selectRow:current_index inComponent:0 animated:NO];
+    [sheet showInView:self.navigationController.view];
+}
+
+- (void)_onMacdFieldClicked:(NSInteger)row
+{
+    //  data source
+    [_pickerDataArray removeAllObjects];
+    
+    NSInteger current_index = 0;
+    
+    if (row == 1){
+        //  select short
+        NSInteger value_min = 2;
+        NSInteger value_max = 90;
+        for (NSInteger value = value_min; value <= value_max; ++value) {
+            [_pickerDataArray addObject:[NSString stringWithFormat:@"%@", @(value)]];
+        }
+        NSInteger current_vlaue = [[[_configValueHash objectForKey:@"macd_value"] objectForKey:@"s"] integerValue];
+        current_index = current_vlaue - value_min;
+    }else if (row == 2){
+        //  select long
+        NSInteger value_min = 2;
+        NSInteger value_max = 90;
+        for (NSInteger value = value_min; value <= value_max; ++value) {
+            [_pickerDataArray addObject:[NSString stringWithFormat:@"%@", @(value)]];
+        }
+        NSInteger current_vlaue = [[[_configValueHash objectForKey:@"macd_value"] objectForKey:@"l"] integerValue];
+        current_index = current_vlaue - value_min;
+    }else{
+        //  select dea N
+        NSInteger value_min = 2;
+        NSInteger value_max = 90;
+        for (NSInteger value = value_min; value <= value_max; ++value) {
+            [_pickerDataArray addObject:[NSString stringWithFormat:@"%@", @(value)]];
+        }
+        NSInteger current_vlaue = [[[_configValueHash objectForKey:@"macd_value"] objectForKey:@"m"] integerValue];
+        current_index = current_vlaue - value_min;
+    }
+    
+    //  show
+    ViewSimulateActionSheet* sheet = [ViewSimulateActionSheet styleDefault];
+    sheet.tag = row;
+    sheet.custom_tag = @"macd";
     sheet.pickerView.tag = row;
     sheet.delegate = self;
     //  selected
@@ -341,20 +472,33 @@ enum
 {
     [sheet dismissWithCompletion:^{
         NSInteger selected_value = [[_pickerDataArray objectAtIndex:[sheet selectedRowInComponent:0]] integerValue];
-        
-        id main_value = [_configValueHash objectForKey:@"kMain"];
-        if ([main_value isEqualToString:@"ma"]){
+        id index_type = sheet.custom_tag;
+        assert(index_type);
+        if ([index_type isEqualToString:@"ma"]){
             NSMutableArray* ma_value_ary = [_configValueHash objectForKey:@"ma_value"];
             ma_value_ary[sheet.tag - 1] = @(selected_value);
-        }else if ([main_value isEqualToString:@"boll"]){
+        }else if ([index_type isEqualToString:@"ema"]){
+            NSMutableArray* ema_value_ary = [_configValueHash objectForKey:@"ema_value"];
+            ema_value_ary[sheet.tag - 1] = @(selected_value);
+        }else if ([index_type isEqualToString:@"boll"]){
             NSMutableDictionary* boll_value_hash = [_configValueHash objectForKey:@"boll_value"];
             if (sheet.tag == 1){
                 [boll_value_hash setObject:@(selected_value) forKey:@"n"];
             }else{
                 [boll_value_hash setObject:@(selected_value) forKey:@"p"];
             }
+        }else if ([index_type isEqualToString:@"macd"]){
+            NSMutableDictionary* macd_value_hash = [_configValueHash objectForKey:@"macd_value"];
+            if (sheet.tag == 1){
+                [macd_value_hash setObject:@(selected_value) forKey:@"s"];
+            }else if (sheet.tag == 2){
+                [macd_value_hash setObject:@(selected_value) forKey:@"l"];
+            }else{
+                [macd_value_hash setObject:@(selected_value) forKey:@"m"];
+            }
+        }else{
+            assert(false);
         }
-        
         [_mainTableView reloadData];
     }];
 }

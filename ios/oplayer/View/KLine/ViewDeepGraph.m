@@ -89,7 +89,7 @@
     CGFloat fGridW = 4.0f;
     
     //  买盘
-    CGSize str_size = [self auxSizeWithText:bid_str font:[UIFont systemFontOfSize:kBTS_KLINE_PRICE_VOL_FONTSIZE]
+    CGSize str_size = [self auxSizeWithText:bid_str font:_font
                                     maxsize:CGSizeMake(self.bounds.size.width, 9999)];
     CATextLayer* txt = [self getTextLayerWithString:bid_str
                                           textColor:[ThemeManager sharedThemeManager].textColorNormal
@@ -107,7 +107,7 @@
     [self.layer addSublayer:layer];
     
     //  卖盘
-    CGSize str_size1 = [self auxSizeWithText:ask_str font:[UIFont systemFontOfSize:kBTS_KLINE_PRICE_VOL_FONTSIZE]
+    CGSize str_size1 = [self auxSizeWithText:ask_str font:_font
                                     maxsize:CGSizeMake(self.bounds.size.width, 9999)];
     CATextLayer* txt1 = [self getTextLayerWithString:ask_str
                                           textColor:[ThemeManager sharedThemeManager].textColorNormal

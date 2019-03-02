@@ -18,6 +18,7 @@
 @property(assign, nonatomic) id<ViewSimulateActionSheetDelegate> delegate;
 @property(retain, nonatomic) UIView* toolBar;
 @property(retain, nonatomic) UIPickerView* pickerView;
+@property(strong, nonatomic) NSString* custom_tag;
 
 +(instancetype)styleDefault;
 

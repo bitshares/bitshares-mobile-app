@@ -12,11 +12,20 @@
 typedef enum EKLineMainIndexType
 {
     ekmit_show_ma = 0,      //  显示MA指标
+    ekmit_show_ema,         //  显示EMA指标
     ekmit_show_boll,        //  显示BOLL指标
     ekmit_show_none,        //  不显示
     
     ekmit_max
 } EKLineMainIndexType;
+
+typedef enum EKLineSubIndexType
+{
+    eksit_show_none = 0,    //  高级指标：不显示
+    eksit_show_macd,        //  高级指标：MACD
+    
+    eksit_max
+} EKLineSubIndexType;
 
 typedef enum EKlineDatePeriodType
 {

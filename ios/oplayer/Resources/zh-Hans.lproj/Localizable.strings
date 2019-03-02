@@ -377,6 +377,11 @@
 "kKlineIndexCellMain" = "主图";
 "kKlineIndexCellSub" = "副图";
 "kKlineIndexCellHide" = "不显示";
+"kKlineIndexCellBollN" = "布林带长度";
+"kKlineIndexCellBollP" = "布林带多元";
+"kKlineIndexCellMacdS" = "MACD快线长度";
+"kKlineIndexCellMacdL" = "MACD慢线长度";
+"kKlineIndexCellMacdM" = "MACD信号长度";
 
 /* 交易界面各种字符串 */
 "kLabelTitleBuy" = "买入";

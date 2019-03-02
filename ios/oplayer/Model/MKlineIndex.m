@@ -20,9 +20,12 @@
                setter:(FunKlineIndexSetter)setter
 {
     assert(data_array);
-    assert(n > 0);
     assert(ceil_handler);
     assert(getter && setter);
+    
+    if (n <= 0){
+        return;
+    }
     
     NSDecimalNumber* n_n = [NSDecimalNumber decimalNumberWithMantissa:n exponent:0 isNegative:NO];
     NSDecimalNumber* sum = [NSDecimalNumber zero];
@@ -66,9 +69,12 @@
                 setter:(FunKlineIndexSetter)setter
 {
     assert(data_array);
-    assert(n > 0);
     assert(ceil_handler);
     assert(getter && setter);
+    
+    if (n <= 0){
+        return;
+    }
     
     NSDecimalNumber* n_n = [NSDecimalNumber decimalNumberWithMantissa:n exponent:0 isNegative:NO];
     //  smoothing factor = 2 / (n + 1)
@@ -85,10 +91,13 @@
     for (id m in data_array) {
         //  get
         NSDecimalNumber* value = getter(m);
+        if (!value){
+            continue;
+        }
         
         //  calc
         if (ema_yesterday){
-            ema_today = [[[value decimalNumberBySubtracting:ema_yesterday] decimalNumberByMultiplyingBy:alpha] decimalNumberByAdding:ema_yesterday];
+            ema_today = [[[value decimalNumberBySubtracting:ema_yesterday] decimalNumberByMultiplyingBy:alpha] decimalNumberByAdding:ema_yesterday withBehavior:ceil_handler];
         }else{
             sum = [sum decimalNumberByAdding:value];
             if (dataIndex < n - 1){
