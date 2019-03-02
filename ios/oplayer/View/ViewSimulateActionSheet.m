@@ -17,6 +17,8 @@
 
 @implementation ViewSimulateActionSheet
 
+@synthesize custom_tag;
+
 +(instancetype)styleDefault
 {
     ViewSimulateActionSheet* sheet = [[ViewSimulateActionSheet alloc]initWithFrame:CGRectMake(

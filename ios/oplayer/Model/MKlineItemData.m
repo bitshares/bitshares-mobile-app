@@ -22,15 +22,14 @@
 @synthesize isRise, isMaxPrice, isMinPrice, isMax24Vol;
 @synthesize nPriceOpen, nPriceClose, nPriceHigh, nPriceLow;
 @synthesize n24Vol;
-@synthesize ma5, ma10, ma30, ma60;
-@synthesize boll, boll_ub, boll_lb;
+@synthesize ma60;
 @synthesize main_index01, main_index02, main_index03, fOffsetMainIndex01, fOffsetMainIndex02, fOffsetMainIndex03;
+@synthesize adv_index01, adv_index02, adv_index03, fOffsetAdvIndex01, fOffsetAdvIndex02, fOffsetAdvIndex03;
 @synthesize vol_ma5, vol_ma10;
 @synthesize change, change_percent;
 @synthesize fOffsetOpen, fOffsetClose, fOffsetHigh, fOffsetLow;
 @synthesize fOffset24Vol;
-@synthesize fOffsetMA5, fOffsetMA10, fOffsetMA30, fOffsetMA60;
-@synthesize fOffsetBoll, fOffsetBollUB, fOffsetBollLB;
+@synthesize fOffsetMA60;
 @synthesize fOffsetVolMA5, fOffsetVolMA10;
 @synthesize date;
 
@@ -55,14 +54,7 @@
     
     self.n24Vol = nil;
     
-    self.ma5 = nil;
-    self.ma10 = nil;
-    self.ma30 = nil;
     self.ma60 = nil;
-    
-    self.boll = nil;
-    self.boll_ub = nil;
-    self.boll_lb = nil;
     
     self.main_index01 = nil;
     self.main_index02 = nil;
@@ -70,6 +62,13 @@
     self.fOffsetMainIndex01 = 0;
     self.fOffsetMainIndex02 = 0;
     self.fOffsetMainIndex03 = 0;
+    
+    self.adv_index01 = nil;
+    self.adv_index02 = nil;
+    self.adv_index03 = nil;
+    self.fOffsetAdvIndex01 = 0;
+    self.fOffsetAdvIndex02 = 0;
+    self.fOffsetAdvIndex03 = 0;
     
     self.vol_ma5 = nil;
     self.vol_ma10 = nil;
@@ -84,14 +83,7 @@
     
     self.fOffset24Vol = 0;
     
-    self.fOffsetMA5 = 0;
-    self.fOffsetMA10 = 0;
-    self.fOffsetMA30 = 0;
     self.fOffsetMA60 = 0;
-    
-    self.fOffsetBoll = 0;
-    self.fOffsetBollUB = 0;
-    self.fOffsetBollLB = 0;
     
     self.fOffsetVolMA5 = 0;
     self.fOffsetVolMA10 = 0;

@@ -47,6 +47,7 @@
     NSUInteger          _kdataModelCurrentIndex;
     
     EKLineMainIndexType _kMainIndexType;            //  主图显示的指标类型
+    EKLineSubIndexType  _kSubIndexType;             //  副图显示指标类型
     
     NSMutableArray*     _krawdataArray;             //  保留原始数据
     
@@ -181,21 +182,45 @@
 }
 
 /**
+ *  画线
+ */
+- (CAShapeLayer*)genLineLayer:(CGPoint)startPoint endPoint:(CGPoint)endPoint color:(UIColor*)color
+{
+    UIBezierPath* path = [[UIBezierPath alloc] init];
+    [path moveToPoint:startPoint];
+    [path addLineToPoint:endPoint];
+    
+    CAShapeLayer* layer = [CAShapeLayer layer];
+    layer.path = path.CGPath;
+    
+    layer.strokeColor = color.CGColor;
+    layer.fillColor = color.CGColor;
+    
+    return layer;
+}
+
+/**
  *  绘制成交量柱子
  */
 - (CAShapeLayer*)genVolumeLayer:(MKlineItemData*)model index:(NSInteger)index candle_width:(CGFloat)candle_width
 {
     CGFloat spaceW = candle_width * 2 + kBTS_KLINE_SHADOW_WIDTH + kBTS_KLINE_INTERVAL;
     
+    //  成交量柱子底部Y坐标
+    CGFloat fVolumeGraphBottomY = self.fSquareHeight;
+    if (_kSubIndexType != eksit_show_none){
+        fVolumeGraphBottomY -= self.fSecondMAHeight + self.fSecondGraphHeight;
+    }
+    
     //  REMARK：从最底部倒着往上绘制，高度设置为负数。
     UIBezierPath* path;
     if (candle_width > 0){
-        CGRect candleFrame = CGRectMake(index * spaceW, self.fSquareHeight, candle_width * 2 + kBTS_KLINE_SHADOW_WIDTH, floor(-model.fOffset24Vol));
+        CGRect candleFrame = CGRectMake(index * spaceW, fVolumeGraphBottomY, candle_width * 2 + kBTS_KLINE_SHADOW_WIDTH, floor(-model.fOffset24Vol));
         path = [UIBezierPath bezierPathWithRect:candleFrame];
     }else{
         path = [[UIBezierPath alloc] init];
-        [path moveToPoint:CGPointMake(index * spaceW, self.fSquareHeight)];
-        [path addLineToPoint:CGPointMake(index * spaceW, floor(self.fSquareHeight - model.fOffset24Vol))];
+        [path moveToPoint:CGPointMake(index * spaceW, fVolumeGraphBottomY)];
+        [path addLineToPoint:CGPointMake(index * spaceW, floor(fVolumeGraphBottomY - model.fOffset24Vol))];
     }
     CAShapeLayer* layer = [CAShapeLayer layer];
     layer.path = path.CGPath;
@@ -234,7 +259,6 @@
     UIBezierPath *framePath = [UIBezierPath bezierPathWithRect:frame];
     
     CGFloat cellW = frameW / kBTS_KLINE_COL_NUM;
-    CGFloat cellH = frameH / kBTS_KLINE_ROW_NUM;
     
     //  绘制竖线（kBTS_KLINE_COL_NUM - 1）条
     for (int i = 0; i < kBTS_KLINE_COL_NUM - 1; ++i) {
@@ -243,12 +267,21 @@
         [framePath moveToPoint:startPoint];
         [framePath addLineToPoint:endPoint];
     }
-    
+
     //  绘制横线（kBTS_KLINE_ROW_NUM - 1）条。由于区域顶部显示MA指标，所以横线需要往下偏移。
-    CGFloat fMAOffset = kBTS_KLINE_MA_HEIGHT * cellH;
     for (int i = 0; i < kBTS_KLINE_ROW_NUM - 1; ++i) {
-        CGPoint startPoint = CGPointMake(frameX, frameY + cellH * (i + 1) + fMAOffset);
-        CGPoint endPoint   = CGPointMake(frameX + frameW, frameY + cellH * (i + 1) + fMAOffset);
+        CGPoint startPoint = CGPointMake(frameX, frameY + self.fOneCellHeight * (i + 1) + self.fMainMAHeight);
+        CGPoint endPoint   = CGPointMake(frameX + frameW, frameY + self.fOneCellHeight * (i + 1) + self.fMainMAHeight);
+        [framePath moveToPoint:startPoint];
+        [framePath addLineToPoint:endPoint];
+    }
+    
+    //  REMARK：显示MACD等高级指标区域多一条线。
+    if (_kSubIndexType != eksit_show_none){
+        CGFloat fSecondHeightAll = self.fSecondGraphHeight + self.fSecondMAHeight;
+        CGFloat fSubOffsetY = frameY + self.fOneCellHeight * (kBTS_KLINE_ROW_NUM - 1) + self.fMainMAHeight;
+        CGPoint startPoint = CGPointMake(frameX, fSubOffsetY + fSecondHeightAll);
+        CGPoint endPoint   = CGPointMake(frameX + frameW, fSubOffsetY + fSecondHeightAll);
         [framePath moveToPoint:startPoint];
         [framePath addLineToPoint:endPoint];
     }
@@ -261,6 +294,25 @@
     frameLayer.zPosition = -2;
     
     return frameLayer;
+}
+
+- (void)setMainSubAdvAreaArgs:(CGFloat)width
+{
+    CGFloat fTotalHeight = width;
+    self.fOneCellHeight = fTotalHeight / kBTS_KLINE_ROW_NUM;
+    self.fMainGraphHeight = self.fOneCellHeight * (kBTS_KLINE_ROW_NUM - 1);
+    self.fMainMAHeight = self.fOneCellHeight * kBTS_KLINE_MA_HEIGHT;
+    CGFloat fSecondGraphTotal = self.fOneCellHeight - self.fMainMAHeight;
+    self.fSecondMAHeight = fSecondGraphTotal * kBTS_KLINE_MA_HEIGHT;
+    self.fSecondGraphHeight = fSecondGraphTotal - self.fSecondMAHeight;
+    self.fTimeAxisHeight = ceil(_f10NumberSize.height + 8);
+    self.fSquareHeight = width;
+    
+    //  有高级指标显示的情况下重新计算高度
+    if (_kSubIndexType != eksit_show_none){
+        self.fMainGraphHeight -= fSecondGraphTotal;
+        self.fOneCellHeight = self.fMainGraphHeight / (kBTS_KLINE_ROW_NUM - 1);
+    }
 }
 
 - (id)initWithWidth:(CGFloat)width baseAsset:(id)baseAsset quoteAsset:(id)quoteAsset
@@ -286,8 +338,9 @@
         
         CGRect frame = CGRectMake(0, 0, width, width);
         
-        //  默认MA
+        //  主图默认MA、高级指标默认NONE
         _kMainIndexType = ekmit_show_ma;
+        _kSubIndexType = eksit_show_none;
         
         //  初始化默认字体
         _font = [UIFont fontWithName:@"Helvetica" size:kBTS_KLINE_PRICE_VOL_FONTSIZE];
@@ -296,15 +349,7 @@
         
         //  初始化各种数据
         self.ekdptType = ekdpt_15m; //  默认值
-        CGFloat fTotalHeight = frame.size.height;
-        self.fOneCellHeight = fTotalHeight / kBTS_KLINE_ROW_NUM;
-        self.fMainGraphHeight = self.fOneCellHeight * (kBTS_KLINE_ROW_NUM - 1);
-        self.fMainMAHeight = self.fOneCellHeight * kBTS_KLINE_MA_HEIGHT;
-        CGFloat fSecondGraphTotal = self.fOneCellHeight - self.fMainMAHeight;
-        self.fSecondMAHeight = fSecondGraphTotal * kBTS_KLINE_MA_HEIGHT;
-        self.fSecondGraphHeight = fSecondGraphTotal - self.fSecondMAHeight;
-        self.fTimeAxisHeight = ceil(_f10NumberSize.height + 8);
-        self.fSquareHeight = width;
+        [self setMainSubAdvAreaArgs:width];
         
         //  初始化model池
         _kdataModelPool = [NSMutableArray array];
@@ -381,7 +426,6 @@
     }
     id m = [_kdataModelPool objectAtIndex:_kdataModelCurrentIndex];
     ++_kdataModelCurrentIndex;
-    //  TODO:fowallet 是否需要清0重制model之前的数据。
     [m reset];
     return m;
 }
@@ -416,36 +460,6 @@
                                                                                          raiseOnUnderflow:NO
                                                                                       raiseOnDivideByZero:NO];
     
-    id main_values = [[SettingManager sharedSettingManager] getKLineIndexInfos];
-    id ma_value_config = [main_values objectForKey:@"ma_value"];
-    id boll_value_config = [main_values objectForKey:@"boll_value"];
-    
-    //  MA(n)辅助计算类
-    assert([ma_value_config count] == 3);
-    MKlineIndexMA* ma5 = nil;
-    MKlineIndexMA* ma10 = nil;
-    MKlineIndexMA* ma30 = nil;
-    NSInteger ma1_n = [[ma_value_config objectAtIndex:0] integerValue];
-    NSInteger ma2_n = [[ma_value_config objectAtIndex:1] integerValue];
-    NSInteger ma3_n = [[ma_value_config objectAtIndex:2] integerValue];
-    if (ma1_n >= 2){
-        ma5 = [[MKlineIndexMA alloc] initWithN:ma1_n
-                                    data_array:_kdataArrayAll ceil_handler:ceilHandler getter:(^NSDecimalNumber *(MKlineItemData *model) {
-            return model.nPriceClose;
-        })];
-    }
-    if (ma2_n >= 2){
-        ma10 = [[MKlineIndexMA alloc] initWithN:ma2_n
-                                     data_array:_kdataArrayAll ceil_handler:ceilHandler getter:(^NSDecimalNumber *(MKlineItemData *model) {
-            return model.nPriceClose;
-        })];
-    }
-    if (ma3_n >= 2){
-        ma30 = [[MKlineIndexMA alloc] initWithN:ma3_n
-                                     data_array:_kdataArrayAll ceil_handler:ceilHandler getter:(^NSDecimalNumber *(MKlineItemData *model) {
-            return model.nPriceClose;
-        })];
-    }
     //  REMARK：目前仅分时图才显示MA60
     MKlineIndexMA* ma60 = nil;
     if ([self isDrawTimeLine]){
@@ -463,15 +477,7 @@
         return model.n24Vol;
     })];
     
-    //  布林线
-    MKlineIndexBoll* boll = [[MKlineIndexBoll alloc] initWithN:[[boll_value_config objectForKey:@"n"] integerValue]
-                                                             p:[[boll_value_config objectForKey:@"p"] integerValue]
-                                                    data_array:_kdataArrayAll
-                                                  ceil_handler:ceilHandler
-                                                        getter:(^NSDecimalNumber *(MKlineItemData *model) {
-        return model.nPriceClose;
-    })];
-    
+    //  解析模型
     NSInteger data_index = 0;
     for (id data in data_array) {
         //  创建Model
@@ -490,27 +496,155 @@
         //  fill index
         model.dataIndex = data_index++;
         
-        //  主图指标
-        //  计算MA（n）
-        if (ma5){
-            model.ma5 = [ma5 calc_ma:model];
-        }
-        if (ma10){
-            model.ma10 = [ma10 calc_ma:model];
-        }
-        if (ma30){
-            model.ma30 = [ma30 calc_ma:model];
-        }
+        //  计算：分时图MA指标
         if (ma60){
             model.ma60 = [ma60 calc_ma:model];
         }
-        //  计算BOLL(n, p)
-        model.boll = [boll calc_boll:model];
-        [boll fill_ub_and_lb:model];
         
-        //  副图指标
+        //  计算：成交量副图相关指标
         model.vol_ma5 = [vol_ma5 calc_ma:model];
         model.vol_ma10 = [vol_ma10 calc_ma:model];
+    }
+    
+    //  获取指标参数配置
+    id kline_index_values = [[SettingManager sharedSettingManager] getKLineIndexInfos];
+    
+    //  计算主图指标
+    switch (_kMainIndexType) {
+        case ekmit_show_ma:
+        {
+            id ma_value_config = [kline_index_values objectForKey:@"ma_value"];
+            assert([ma_value_config count] == 3);
+            
+            [MKlineIndex calc_ma_index:_kdataArrayAll n:[[ma_value_config objectAtIndex:0] integerValue]
+                          ceil_handler:ceilHandler getter:(^NSDecimalNumber *(MKlineItemData* model) {
+                return model.nPriceClose;
+            }) setter:(^(MKlineItemData* model, NSDecimalNumber *new_index_value) {
+                model.main_index01 = new_index_value;
+            })];
+            
+            [MKlineIndex calc_ma_index:_kdataArrayAll n:[[ma_value_config objectAtIndex:1] integerValue]
+                          ceil_handler:ceilHandler getter:(^NSDecimalNumber *(MKlineItemData* model) {
+                return model.nPriceClose;
+            }) setter:(^(MKlineItemData* model, NSDecimalNumber *new_index_value) {
+                model.main_index02 = new_index_value;
+            })];
+            
+            [MKlineIndex calc_ma_index:_kdataArrayAll n:[[ma_value_config objectAtIndex:2] integerValue]
+                          ceil_handler:ceilHandler getter:(^NSDecimalNumber *(MKlineItemData* model) {
+                return model.nPriceClose;
+            }) setter:(^(MKlineItemData* model, NSDecimalNumber *new_index_value) {
+                model.main_index03 = new_index_value;
+            })];
+        }
+            break;
+        case ekmit_show_ema:
+        {
+            id ema_value_config = [kline_index_values objectForKey:@"ema_value"];
+            assert([ema_value_config count] == 3);
+            
+            [MKlineIndex calc_ema_index:_kdataArrayAll n:[[ema_value_config objectAtIndex:0] integerValue]
+                           ceil_handler:ceilHandler getter:(^NSDecimalNumber *(MKlineItemData* model) {
+                return model.nPriceClose;
+            }) setter:(^(MKlineItemData* model, NSDecimalNumber *new_index_value) {
+                model.main_index01 = new_index_value;
+            })];
+            
+            [MKlineIndex calc_ema_index:_kdataArrayAll n:[[ema_value_config objectAtIndex:1] integerValue]
+                           ceil_handler:ceilHandler getter:(^NSDecimalNumber *(MKlineItemData* model) {
+                return model.nPriceClose;
+            }) setter:(^(MKlineItemData* model, NSDecimalNumber *new_index_value) {
+                model.main_index02 = new_index_value;
+            })];
+            
+            [MKlineIndex calc_ema_index:_kdataArrayAll n:[[ema_value_config objectAtIndex:2] integerValue]
+                           ceil_handler:ceilHandler getter:(^NSDecimalNumber *(MKlineItemData* model) {
+                return model.nPriceClose;
+            }) setter:(^(MKlineItemData* model, NSDecimalNumber *new_index_value) {
+                model.main_index03 = new_index_value;
+            })];
+        }
+            break;
+        case ekmit_show_boll:
+        {
+            id boll_value_config = [kline_index_values objectForKey:@"boll_value"];
+            
+            //  布林线
+            MKlineIndexBoll* boll = [[MKlineIndexBoll alloc] initWithN:[[boll_value_config objectForKey:@"n"] integerValue]
+                                                                     p:[[boll_value_config objectForKey:@"p"] integerValue]
+                                                            data_array:_kdataArrayAll
+                                                          ceil_handler:ceilHandler
+                                                                getter:(^NSDecimalNumber *(MKlineItemData *model) {
+                return model.nPriceClose;
+            })];
+            
+            for (MKlineItemData* m in _kdataArrayAll) {
+                m.main_index01 = [boll calc_boll:m];
+                [boll fill_ub_and_lb:m];
+            }
+        }
+            break;
+        default:
+            break;
+    }
+    
+    //  计算高级指标
+    switch (_kSubIndexType) {
+        case eksit_show_macd:
+        {
+            id macd_value_config = [kline_index_values objectForKey:@"macd_value"];
+            
+            //  计算MACD指标
+            //  adv_index01 - MACD
+            //  adv_index02 - DIFF
+            //  adv_index03 - DEA
+            [MKlineIndex calc_ema_index:_kdataArrayAll n:[[macd_value_config objectForKey:@"s"] integerValue]
+                           ceil_handler:ceilHandler getter:(^NSDecimalNumber *(MKlineItemData* model) {
+                return model.nPriceClose;
+            }) setter:(^(MKlineItemData* model, NSDecimalNumber *new_index_value) {
+                //  EMA(short)
+                model.adv_index01 = new_index_value;
+            })];
+            [MKlineIndex calc_ema_index:_kdataArrayAll n:[[macd_value_config objectForKey:@"l"] integerValue]
+                           ceil_handler:ceilHandler getter:(^NSDecimalNumber *(MKlineItemData* model) {
+                return model.nPriceClose;
+            }) setter:(^(MKlineItemData* model, NSDecimalNumber *new_index_value) {
+                //  EMA(long)
+                model.adv_index03 = new_index_value;
+            })];
+            for (MKlineItemData* m in _kdataArrayAll) {
+                if (m.adv_index01 && m.adv_index03){
+                    //  DIFF = EMA(short) - EMA(long)
+                    m.adv_index02 = [m.adv_index01 decimalNumberBySubtracting:m.adv_index03 withBehavior:ceilHandler];
+                }else{
+                    m.adv_index02 = nil;
+                }
+                m.adv_index01 = nil;
+                m.adv_index03 = nil;
+            }
+            [MKlineIndex calc_ema_index:_kdataArrayAll n:[[macd_value_config objectForKey:@"m"] integerValue]
+                           ceil_handler:ceilHandler getter:(^NSDecimalNumber *(MKlineItemData* model) {
+                return model.adv_index02;
+            }) setter:(^(MKlineItemData* model, NSDecimalNumber *new_index_value) {
+                //  DEA
+                model.adv_index03 = new_index_value;
+            })];
+            NSDecimalNumber* two = [NSDecimalNumber decimalNumberWithMantissa:2 exponent:0 isNegative:NO];
+            for (MKlineItemData* m in _kdataArrayAll) {
+                if (m.adv_index02 && m.adv_index03){
+                    //  MACD = (DIFF - DEA) * 2
+                    m.adv_index01 = [[m.adv_index02 decimalNumberBySubtracting:m.adv_index03] decimalNumberByMultiplyingBy:two withBehavior:ceilHandler];
+                }else{
+                    m.adv_index01 = nil;
+                    m.adv_index02 = nil;
+                    m.adv_index03 = nil;
+                }
+            }
+        }
+            break;
+            
+        default:
+            break;
     }
 }
 
@@ -569,13 +703,10 @@
     NSDecimalNumber* l;
     NSDecimalNumber* c;
     NSDecimalNumber* vol;
-    NSDecimalNumber* ma5;
-    NSDecimalNumber* ma10;
-    NSDecimalNumber* ma30;
+    NSDecimalNumber* main_index01;
+    NSDecimalNumber* main_index02;
+    NSDecimalNumber* main_index03;
     NSDecimalNumber* ma60;
-    NSDecimalNumber* boll;
-    NSDecimalNumber* boll_ub;
-    NSDecimalNumber* boll_lb;
     NSDecimalNumber* vol_ma5;
     NSDecimalNumber* vol_ma10;
     for (MKlineItemData* m in _kdataArrayShowing) {
@@ -587,12 +718,9 @@
             //  统计K线Y轴最高最低价格、以及蜡烛图最高最低价格（由于MA存在两者可能不同）
             h = m.nPriceHigh;
             l = m.nPriceLow;
-            ma5 = m.ma5;
-            ma10 = m.ma10;
-            ma30 = m.ma30;
-            boll = m.boll;
-            boll_ub = m.boll_ub;
-            boll_lb = m.boll_lb;
+            main_index01 = m.main_index01;
+            main_index02 = m.main_index02;
+            main_index03 = m.main_index03;
         }
         //  统计副图Y轴最大交易量
         vol = m.n24Vol;
@@ -630,22 +758,23 @@
                 max_price = h;
                 price_max_item = m;
             }
-            if (_kMainIndexType == ekmit_show_ma){
-                if (ma5 && [ma5 compare:max_price] == NSOrderedDescending){
-                    max_price = ma5;
+            if (_kMainIndexType == ekmit_show_ma || _kMainIndexType == ekmit_show_ema){
+                if (main_index01 && [main_index01 compare:max_price] == NSOrderedDescending){
+                    max_price = main_index01;
                     price_max_item = m;
                 }
-                if (ma10 && [ma10 compare:max_price] == NSOrderedDescending){
-                    max_price = ma10;
+                if (main_index02 && [main_index02 compare:max_price] == NSOrderedDescending){
+                    max_price = main_index02;
                     price_max_item = m;
                 }
-                if (ma30 && [ma30 compare:max_price] == NSOrderedDescending){
-                    max_price = ma30;
+                if (main_index03 && [main_index03 compare:max_price] == NSOrderedDescending){
+                    max_price = main_index03;
                     price_max_item = m;
                 }
             }else if (_kMainIndexType == ekmit_show_boll){
-                if (boll_ub && [boll_ub compare:max_price] == NSOrderedDescending){
-                    max_price = boll_ub;
+                //  main_index02 is boll ub
+                if (main_index02 && [main_index02 compare:max_price] == NSOrderedDescending){
+                    max_price = main_index02;
                     price_max_item = m;
                 }
             }
@@ -660,22 +789,23 @@
                 price_min_item = m;
             }
             
-            if (_kMainIndexType == ekmit_show_ma){
-                if (ma5 && [ma5 compare:min_price] == NSOrderedAscending){
-                    min_price = ma5;
+            if (_kMainIndexType == ekmit_show_ma || _kMainIndexType == ekmit_show_ema){
+                if (main_index01 && [main_index01 compare:min_price] == NSOrderedAscending){
+                    min_price = main_index01;
                     price_min_item = m;
                 }
-                if (ma10 && [ma10 compare:min_price] == NSOrderedAscending){
-                    min_price = ma10;
+                if (main_index02 && [main_index02 compare:min_price] == NSOrderedAscending){
+                    min_price = main_index02;
                     price_min_item = m;
                 }
-                if (ma30 && [ma30 compare:min_price] == NSOrderedAscending){
-                    min_price = ma30;
+                if (main_index03 && [main_index03 compare:min_price] == NSOrderedAscending){
+                    min_price = main_index03;
                     price_min_item = m;
                 }
             }else if (_kMainIndexType == ekmit_show_boll){
-                if (boll_lb && [boll_lb compare:min_price] == NSOrderedAscending){
-                    min_price = boll_lb;
+                //  main_index03 is boll lb
+                if (main_index03 && [main_index03 compare:min_price] == NSOrderedAscending){
+                    min_price = main_index03;
                     price_min_item = m;
                 }
             }
@@ -735,26 +865,17 @@
         m.fOffsetHigh = [[max_price decimalNumberBySubtracting:m.nPriceHigh] doubleValue] * fViewMaxHeight / f_diff_price;
         m.fOffsetLow = [[max_price decimalNumberBySubtracting:m.nPriceLow] doubleValue] * fViewMaxHeight / f_diff_price;
         m.fOffset24Vol = [[m.n24Vol decimalNumberByDividingBy:max_24vol] doubleValue] * fSecondViewHeight;
-        if (m.ma5){
-            m.fOffsetMA5 = [[max_price decimalNumberBySubtracting:m.ma5] doubleValue] * fViewMaxHeight / f_diff_price;
+        if (m.main_index01){
+            m.fOffsetMainIndex01 = [[max_price decimalNumberBySubtracting:m.main_index01] doubleValue] * fViewMaxHeight / f_diff_price;
         }
-        if (m.ma10){
-            m.fOffsetMA10 = [[max_price decimalNumberBySubtracting:m.ma10] doubleValue] * fViewMaxHeight / f_diff_price;
+        if (m.main_index02){
+            m.fOffsetMainIndex02 = [[max_price decimalNumberBySubtracting:m.main_index02] doubleValue] * fViewMaxHeight / f_diff_price;
         }
-        if (m.ma30){
-            m.fOffsetMA30 = [[max_price decimalNumberBySubtracting:m.ma30] doubleValue] * fViewMaxHeight / f_diff_price;
+        if (m.main_index03){
+            m.fOffsetMainIndex03 = [[max_price decimalNumberBySubtracting:m.main_index03] doubleValue] * fViewMaxHeight / f_diff_price;
         }
         if (m.ma60){
             m.fOffsetMA60 = [[max_price decimalNumberBySubtracting:m.ma60] doubleValue] * fViewMaxHeight / f_diff_price;
-        }
-        if (m.boll){
-            m.fOffsetBoll = [[max_price decimalNumberBySubtracting:m.boll] doubleValue] * fViewMaxHeight / f_diff_price;
-        }
-        if (m.boll_ub){
-            m.fOffsetBollUB = [[max_price decimalNumberBySubtracting:m.boll_ub] doubleValue] * fViewMaxHeight / f_diff_price;
-        }
-        if (m.boll_lb){
-            m.fOffsetBollLB = [[max_price decimalNumberBySubtracting:m.boll_lb] doubleValue] * fViewMaxHeight / f_diff_price;
         }
         if (m.vol_ma5){
             m.fOffsetVolMA5 = [[m.vol_ma5 decimalNumberByDividingBy:max_24vol] doubleValue] * fSecondViewHeight;
@@ -954,7 +1075,7 @@
     }
     
     //  4、底部时间
-    CGSize date_str_size = [self auxSizeWithText:date_str font:[UIFont systemFontOfSize:kBTS_KLINE_PRICE_VOL_FONTSIZE]
+    CGSize date_str_size = [self auxSizeWithText:date_str font:_font
                                          maxsize:CGSizeMake(self.bounds.size.width, 9999)];
     CGFloat bottomRectW = date_str_size.width + 8;
     CGFloat bottomRectX = fmin(fmax(model.showIndex * spaceW + _currCandleWidth - round(bottomRectW / 2.0f), 1), self.bounds.size.width - bottomRectW - 1);
@@ -978,7 +1099,7 @@
     
     //  5、横轴
     NSString* tailer_str = [NSString stringWithFormat:@"%@", model.nPriceClose];
-    CGSize tailer_str_size = [self auxSizeWithText:tailer_str font:[UIFont systemFontOfSize:kBTS_KLINE_PRICE_VOL_FONTSIZE]
+    CGSize tailer_str_size = [self auxSizeWithText:tailer_str font:_font
                                            maxsize:CGSizeMake(self.bounds.size.width, 9999)];
     CGFloat fHorTailerX;
     CGFloat fHorTailerW = tailer_str_size.width + 8;
@@ -986,10 +1107,10 @@
     CGFloat fHorTailerY = yOffsetHor - round(fHorTailerH / 2.0);
     if (model.showIndex >= _maxShowNumber/2){
         //  横轴尾端：靠右显示
-        fHorTailerX = self.bounds.size.width - fHorTailerW;
+        fHorTailerX = self.bounds.size.width - fHorTailerW - 1;
     }else{
         //  横轴尾端：靠左显示
-        fHorTailerX = 0;
+        fHorTailerX = 1;
     }
     UIBezierPath* tailerPath = [UIBezierPath bezierPathWithRect:CGRectMake(fHorTailerX, fHorTailerY, fHorTailerW, fHorTailerH)];
     CAShapeLayer* tailerLayer = [CAShapeLayer layer];
@@ -1027,7 +1148,7 @@
 - (CGFloat)drawOneMaValue:(NSString*)title ma:(id)ma offset_x:(CGFloat)offset_x offset_y:(CGFloat)offset_y color:(UIColor*)color
 {
     id str = [NSString stringWithFormat:@"%@:%@", title, ma];
-    CGSize str_size = [self auxSizeWithText:str font:[UIFont systemFontOfSize:kBTS_KLINE_PRICE_VOL_FONTSIZE]
+    CGSize str_size = [self auxSizeWithText:str font:_font
                                     maxsize:CGSizeMake(self.bounds.size.width, 9999)];
     CATextLayer* txt = [self getTextLayerWithString:str
                                           textColor:color
@@ -1036,7 +1157,7 @@
     [self.layer addSublayer:txt];
     txt.alignmentMode = kCAAlignmentLeft;
     [_maLayerArray addObject:txt];
-    return str_size.width;
+    return str_size.width + 4;
 }
 
 /**
@@ -1058,36 +1179,37 @@
     CGFloat fMaOffsetX = 4;
     if ([self isDrawTimeLine]){
         if (model.ma60){
-            fMaOffsetX += 2 + [self drawOneMaValue:@"MA60" ma:model.ma60 offset_x:fMaOffsetX offset_y:4 color:theme.ma5Color];  //  同MA5颜色
+            fMaOffsetX += [self drawOneMaValue:@"MA60" ma:model.ma60 offset_x:fMaOffsetX offset_y:4 color:theme.ma5Color];  //  同MA5颜色
         }
     }else{
-        if (_kMainIndexType == ekmit_show_ma){
+        if (_kMainIndexType == ekmit_show_ma || _kMainIndexType == ekmit_show_ema){
             id main_values = [[SettingManager sharedSettingManager] getKLineIndexInfos];
-            id ma_value_config = [main_values objectForKey:@"ma_value"];
-            if (model.ma5){
-                fMaOffsetX += 2 + [self drawOneMaValue:[NSString stringWithFormat:@"MA%@", [ma_value_config objectAtIndex:0]]
-                                                    ma:model.ma5 offset_x:fMaOffsetX offset_y:4 color:theme.ma5Color];
+            id ma_value_config = [main_values objectForKey:_kMainIndexType == ekmit_show_ma ? @"ma_value" : @"ema_value"];
+            id value_prefix = _kMainIndexType == ekmit_show_ma ? @"MA" : @"EMA";
+            if (model.main_index01){
+                fMaOffsetX += [self drawOneMaValue:[NSString stringWithFormat:@"%@%@", value_prefix, [ma_value_config objectAtIndex:0]]
+                                                    ma:model.main_index01 offset_x:fMaOffsetX offset_y:4 color:theme.ma5Color];
             }
-            if (model.ma10){
-                fMaOffsetX += 2 + [self drawOneMaValue:[NSString stringWithFormat:@"MA%@", [ma_value_config objectAtIndex:1]]
-                                                    ma:model.ma10 offset_x:fMaOffsetX offset_y:4 color:theme.ma10Color];
+            if (model.main_index02){
+                fMaOffsetX += [self drawOneMaValue:[NSString stringWithFormat:@"%@%@", value_prefix, [ma_value_config objectAtIndex:1]]
+                                                    ma:model.main_index02 offset_x:fMaOffsetX offset_y:4 color:theme.ma10Color];
             }
-            if (model.ma30){
-                fMaOffsetX += 2 + [self drawOneMaValue:[NSString stringWithFormat:@"MA%@", [ma_value_config objectAtIndex:2]]
-                                                    ma:model.ma30 offset_x:fMaOffsetX offset_y:4 color:theme.ma30Color];
+            if (model.main_index03){
+                fMaOffsetX += [self drawOneMaValue:[NSString stringWithFormat:@"%@%@", value_prefix, [ma_value_config objectAtIndex:2]]
+                                                    ma:model.main_index03 offset_x:fMaOffsetX offset_y:4 color:theme.ma30Color];
             }
         }else if (_kMainIndexType == ekmit_show_boll){
             id main_values = [[SettingManager sharedSettingManager] getKLineIndexInfos];
             id boll_value_config = [main_values objectForKey:@"boll_value"];
-            if (model.boll){
-                fMaOffsetX += 2 + [self drawOneMaValue:[NSString stringWithFormat:@"BOLL(%@,%@)", [boll_value_config objectForKey:@"n"], [boll_value_config objectForKey:@"p"]]
-                                                    ma:model.boll offset_x:fMaOffsetX offset_y:4 color:theme.ma5Color];
+            if (model.main_index01){
+                fMaOffsetX += [self drawOneMaValue:[NSString stringWithFormat:@"BOLL(%@,%@)", [boll_value_config objectForKey:@"n"], [boll_value_config objectForKey:@"p"]]
+                                                    ma:model.main_index01 offset_x:fMaOffsetX offset_y:4 color:theme.ma5Color];
             }
-            if (model.boll_ub){
-                fMaOffsetX += 2 + [self drawOneMaValue:@"UB" ma:model.boll_ub offset_x:fMaOffsetX offset_y:4 color:theme.ma10Color];
+            if (model.main_index02){
+                fMaOffsetX += [self drawOneMaValue:@"UB" ma:model.main_index02 offset_x:fMaOffsetX offset_y:4 color:theme.ma10Color];
             }
-            if (model.boll_lb){
-                fMaOffsetX += 2 + [self drawOneMaValue:@"LB" ma:model.boll_lb offset_x:fMaOffsetX offset_y:4 color:theme.ma30Color];
+            if (model.main_index03){
+                fMaOffsetX += [self drawOneMaValue:@"LB" ma:model.main_index03 offset_x:fMaOffsetX offset_y:4 color:theme.ma30Color];
             }
         }
     }
@@ -1101,6 +1223,8 @@
     if (model.vol_ma10){
         fMaOffsetX += [self drawOneMaValue:@"MA10" ma:model.vol_ma10 offset_x:fMaOffsetX offset_y:fSecondOffsetY color:theme.ma10Color];
     }
+    //  描绘其它高级指标属性
+    [self drawAdvancedIndex_values:model];
 }
 
 /**
@@ -1175,6 +1299,236 @@
         bgLayer.zPosition = -1;
         [self.layer addSublayer:bgLayer];
         [_caTextLayerArray addObject:bgLayer];
+    }
+}
+
+- (void)drawIndexMACD:(NSInteger)maxShowNum candle_width:(CGFloat)candle_width
+{
+    id max_value = nil;
+    id min_value = nil;
+    
+    for (MKlineItemData* m in _kdataArrayShowing) {
+        if (!m.adv_index01 || !m.adv_index02 || !m.adv_index03){
+            continue;
+        }
+        //  m.adv_index01 > max_value
+        if (!max_value || [m.adv_index01 compare:max_value] == NSOrderedDescending){
+            max_value = m.adv_index01;
+        }
+        //  m.adv_index02 > max_value
+        if (!max_value || [m.adv_index02 compare:max_value] == NSOrderedDescending){
+            max_value = m.adv_index02;
+        }
+        //  m.adv_index03 > max_value
+        if (!max_value || [m.adv_index03 compare:max_value] == NSOrderedDescending){
+            max_value = m.adv_index03;
+        }
+        
+        //  m.adv_index01 < min_value
+        if (!min_value || [m.adv_index01 compare:min_value] == NSOrderedAscending){
+            min_value = m.adv_index01;
+        }
+        //  m.adv_index02 < min_value
+        if (!min_value || [m.adv_index02 compare:min_value] == NSOrderedAscending){
+            min_value = m.adv_index02;
+        }
+        //  m.adv_index03 < min_value
+        if (!min_value || [m.adv_index03 compare:min_value] == NSOrderedAscending){
+            min_value = m.adv_index03;
+        }
+    }
+    
+    if (!min_value || !max_value){
+        return;
+    }
+    
+    //  REMARK：特殊情况，如果最大最小值为0，那么在屏幕上就只有一个点，不存在区间，那么Y轴价格区间就没法显示，这种情况价格区间上下浮动 10%。
+    if ([max_value compare:min_value] == NSOrderedSame){
+        //  max_price *= 1.1;
+        //  min_price *= 0.9;
+        NSDecimalNumberHandler* ceilHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundUp
+                                                                                                     scale:_base_precision
+                                                                                          raiseOnExactness:NO
+                                                                                           raiseOnOverflow:NO
+                                                                                          raiseOnUnderflow:NO
+                                                                                       raiseOnDivideByZero:NO];
+        NSDecimalNumber* n_percent_90 = [NSDecimalNumber decimalNumberWithString:@"0.9"];
+        NSDecimalNumber* n_percent_110 = [NSDecimalNumber decimalNumberWithString:@"1.1"];
+        max_value = [max_value decimalNumberByMultiplyingBy:n_percent_110 withBehavior:ceilHandler];
+        min_value = [min_value decimalNumberByMultiplyingBy:n_percent_90 withBehavior:ceilHandler];
+    }
+    
+    id diff_value = [max_value decimalNumberBySubtracting:min_value];
+    double f_diff_value = [diff_value doubleValue];
+    
+    CGFloat fSecondViewHeight = self.fSecondGraphHeight;
+    
+    CGFloat fZeroLineOffset = -1.0f * [min_value doubleValue] * fSecondViewHeight / f_diff_value;
+    
+    for (MKlineItemData* m in _kdataArrayShowing) {
+        if (m.adv_index02){
+            m.fOffsetAdvIndex02 = [[m.adv_index02 decimalNumberBySubtracting:min_value] doubleValue] * fSecondViewHeight / f_diff_value;
+        }
+        if (m.adv_index03){
+            m.fOffsetAdvIndex03 = [[m.adv_index03 decimalNumberBySubtracting:min_value] doubleValue] * fSecondViewHeight / f_diff_value;
+        }
+    }
+    
+    CGFloat candleSpaceW = candle_width * 2 + kBTS_KLINE_SHADOW_WIDTH + kBTS_KLINE_INTERVAL;
+    
+    ThemeManager* theme = [ThemeManager sharedThemeManager];
+    
+    //  1、描绘0轴线
+    CGFloat fZeroLinePointY = floor(self.fSquareHeight - fZeroLineOffset);
+    CAShapeLayer* zeroLineLayer = [self genLineLayer:CGPointMake(0, fZeroLinePointY)
+                                            endPoint:CGPointMake(self.bounds.size.width, fZeroLinePointY)
+                                               color:theme.bottomLineColor];
+    [self.layer addSublayer:zeroLineLayer];
+    [_caTextLayerArray addObject:zeroLineLayer];
+    
+    //  2、描绘高级指标背景右边Y轴区间
+    //  保留小数位数 向上取整
+    NSDecimalNumberHandler* ceilHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundUp
+                                                                                                 scale:_base_precision
+                                                                                      raiseOnExactness:NO
+                                                                                       raiseOnOverflow:NO
+                                                                                      raiseOnUnderflow:NO
+                                                                                   raiseOnDivideByZero:NO];
+    for (int i = 0; i <= 2; ++i) {
+        CGFloat txtOffsetY;
+        id value;
+        if (i == 0){
+            value = min_value;
+            txtOffsetY = self.fSquareHeight - _f10NumberSize.height;
+        }else if (i == 1){
+            NSDecimalNumber* two = [NSDecimalNumber decimalNumberWithMantissa:2 exponent:0 isNegative:NO];
+            value = [[diff_value decimalNumberByDividingBy:two] decimalNumberByAdding:min_value withBehavior:ceilHandler];
+            
+            txtOffsetY = self.fSquareHeight - _f10NumberSize.height / 2.0f - (self.fSecondMAHeight + self.fSecondGraphHeight) / 2.0f;
+        }else{
+            value = max_value;
+            txtOffsetY = self.fSquareHeight - (self.fSecondMAHeight + self.fSecondGraphHeight);
+        }
+        id str = [NSString stringWithFormat:@"%@", value];
+
+        CATextLayer* txt = [self getTextLayerWithString:str
+                                              textColor:theme.textColorNormal
+                                                   font:_font backgroundColor:nil
+                                                  frame:CGRectMake(0, txtOffsetY, self.bounds.size.width - 4, _f10NumberSize.height)];
+        txt.alignmentMode = kCAAlignmentRight;
+        [self.layer addSublayer:txt];
+        [_caTextLayerArray addObject:txt];
+    }
+    
+    //  3、描绘MACD柱
+    NSDecimalNumber* zero = [NSDecimalNumber zero];
+    for (MKlineItemData* m in _kdataArrayShowing)
+    {
+        if (!m.adv_index01){
+            continue;
+        }
+        CGFloat x = m.showIndex * candleSpaceW + candle_width;
+        
+        BOOL isPositive = [m.adv_index01 compare:zero] >= 0;
+        
+        CAShapeLayer* layer;
+        if (isPositive){
+            CGFloat y = fmaxf([m.adv_index01 doubleValue] * fSecondViewHeight / f_diff_value, 1.0f);
+            layer = [self genLineLayer:CGPointMake(x, fZeroLinePointY)
+                              endPoint:CGPointMake(x, fZeroLinePointY - y)
+                                 color:isPositive ? theme.buyColor : theme.sellColor];
+        }else{
+            CGFloat y = fminf([m.adv_index01 doubleValue] * fSecondViewHeight / f_diff_value, -1.0f);
+            
+            layer = [self genLineLayer:CGPointMake(x, fZeroLinePointY)
+                              endPoint:CGPointMake(x, fZeroLinePointY - y)
+                                 color:isPositive ? theme.buyColor : theme.sellColor];
+        }
+        
+        [self.layer addSublayer:layer];
+        [_caTextLayerArray addObject:layer];
+    }
+    
+    //  4、描绘DIFF、DEA线
+    NSMutableArray* value01_points = [NSMutableArray array];
+    NSMutableArray* value02_points = [NSMutableArray array];
+    NSInteger idx = 0;
+    for (MKlineItemData* m in _kdataArrayShowing) {
+        if (m.adv_index02){
+            [value01_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, floor(self.fSquareHeight - m.fOffsetAdvIndex02)))];
+        }
+        if (m.adv_index03){
+            [value02_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, floor(self.fSquareHeight - m.fOffsetAdvIndex03)))];
+        }
+        ++idx;
+    }
+    if ([value01_points count] >= 2){
+        id layer = [self getSingleLineLayerWithPointArray:value01_points lineColor:theme.ma10Color];
+        [self.layer addSublayer:layer];
+        [_caTextLayerArray addObject:layer];
+    }
+    if ([value02_points count] >= 2){
+        id layer = [self getSingleLineLayerWithPointArray:value02_points lineColor:theme.ma30Color];
+        [self.layer addSublayer:layer];
+        [_caTextLayerArray addObject:layer];
+    }
+}
+
+- (void)drawIndexMACD_values:(MKlineItemData*)model
+{
+    //  MACD指标
+    //  adv_index01 - MACD
+    //  adv_index02 - DIFF
+    //  adv_index03 - DEA
+    ThemeManager* theme = [ThemeManager sharedThemeManager];
+    
+    //  成交量柱子底部Y坐标
+    CGFloat fVolumeGraphBottomY = self.fSquareHeight;
+    fVolumeGraphBottomY -= self.fSecondMAHeight + self.fSecondGraphHeight;
+
+    id main_values = [[SettingManager sharedSettingManager] getKLineIndexInfos];
+    id macd_value_config = [main_values objectForKey:@"macd_value"];
+    
+    CGFloat fMaOffsetX = 4;
+    if (model.adv_index01){
+        fMaOffsetX += [self drawOneMaValue:[NSString stringWithFormat:@"MACD(%@,%@,%@)", macd_value_config[@"s"], macd_value_config[@"l"], macd_value_config[@"m"]]
+                                        ma:model.adv_index01 offset_x:fMaOffsetX offset_y:fVolumeGraphBottomY color:theme.ma5Color];
+    }
+    if (model.adv_index02){
+        fMaOffsetX += [self drawOneMaValue:@"DIFF"
+                                        ma:model.adv_index02 offset_x:fMaOffsetX offset_y:fVolumeGraphBottomY color:theme.ma10Color];
+    }
+    if (model.adv_index03){
+        fMaOffsetX += [self drawOneMaValue:@"DEA"
+                                        ma:model.adv_index03 offset_x:fMaOffsetX offset_y:fVolumeGraphBottomY color:theme.ma30Color];
+    }
+}
+
+- (void)drawAdvancedIndex:(NSInteger)maxShowNum candle_width:(CGFloat)candle_width
+{
+    switch (_kSubIndexType) {
+        case eksit_show_macd:
+        {
+            [self drawIndexMACD:maxShowNum candle_width:candle_width];
+        }
+            break;
+            
+        default:
+            break;
+    }
+}
+
+- (void)drawAdvancedIndex_values:(MKlineItemData*)model
+{
+    switch (_kSubIndexType) {
+        case eksit_show_macd:
+        {
+            [self drawIndexMACD_values:model];
+        }
+            break;
+            
+        default:
+            break;
     }
 }
 
@@ -1302,13 +1656,10 @@
     }
     
     //  5、描绘MA均线（覆盖在蜡烛图上面）
-    NSMutableArray* ma5_points = [NSMutableArray array];
-    NSMutableArray* ma10_points = [NSMutableArray array];
-    NSMutableArray* ma30_points = [NSMutableArray array];
+    NSMutableArray* main_index01_points = [NSMutableArray array];
+    NSMutableArray* main_index02_points = [NSMutableArray array];
+    NSMutableArray* main_index03_points = [NSMutableArray array];
     NSMutableArray* ma60_points = [NSMutableArray array];
-    NSMutableArray* boll_points = [NSMutableArray array];
-    NSMutableArray* boll_ub_points = [NSMutableArray array];
-    NSMutableArray* boll_lb_points = [NSMutableArray array];
     NSMutableArray* vol_ma5_points = [NSMutableArray array];
     NSMutableArray* vol_ma10_points = [NSMutableArray array];
     idx = 0;
@@ -1319,70 +1670,48 @@
                 [ma60_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, m.fOffsetMA60 + self.fMainMAHeight))];
             }
         }else{
-            if (_kMainIndexType == ekmit_show_ma){
-                if (m.ma5){
-                    [ma5_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, m.fOffsetMA5 + self.fMainMAHeight))];
-                }
-                if (m.ma10){
-                    [ma10_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, m.fOffsetMA10 + self.fMainMAHeight))];
-                }
-                if (m.ma30){
-                    [ma30_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, m.fOffsetMA30 + self.fMainMAHeight))];
-                }
-            }else if (_kMainIndexType == ekmit_show_boll){
-                if (m.boll){
-                    [boll_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, m.fOffsetBoll + self.fMainMAHeight))];
-                }
-                if (m.boll_ub){
-                    [boll_ub_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, m.fOffsetBollUB + self.fMainMAHeight))];
-                }
-                if (m.boll_lb){
-                    [boll_lb_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, m.fOffsetBollLB + self.fMainMAHeight))];
-                }
+            if (m.main_index01){
+                [main_index01_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, m.fOffsetMainIndex01 + self.fMainMAHeight))];
+            }
+            if (m.main_index02){
+                [main_index02_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, m.fOffsetMainIndex02 + self.fMainMAHeight))];
+            }
+            if (m.main_index03){
+                [main_index03_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, m.fOffsetMainIndex03 + self.fMainMAHeight))];
             }
         }
         //  成交量移动均线描绘
+        
+        //  成交量柱子底部Y坐标
+        CGFloat fVolumeGraphBottomY = self.fSquareHeight;
+        if (_kSubIndexType != eksit_show_none){
+            fVolumeGraphBottomY -= self.fSecondMAHeight + self.fSecondGraphHeight;
+        }
         if (m.vol_ma5){
-            [vol_ma5_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, floor(self.fSquareHeight - m.fOffsetVolMA5)))];
+            [vol_ma5_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, floor(fVolumeGraphBottomY - m.fOffsetVolMA5)))];
         }
         if (m.vol_ma10){
-            [vol_ma10_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, floor(self.fSquareHeight - m.fOffsetVolMA10)))];
+            [vol_ma10_points addObject:@(CGPointMake(idx * candleSpaceW+candle_width, floor(fVolumeGraphBottomY - m.fOffsetVolMA10)))];
         }
         ++idx;
     }
-    if ([ma5_points count] >= 2){
-        id layer = [self getSingleLineLayerWithPointArray:ma5_points lineColor:theme.ma5Color];
+    if ([main_index01_points count] >= 2){
+        id layer = [self getSingleLineLayerWithPointArray:main_index01_points lineColor:theme.ma5Color];
         [self.layer addSublayer:layer];
         [_caTextLayerArray addObject:layer];
     }
-    if ([ma10_points count] >= 2){
-        id layer = [self getSingleLineLayerWithPointArray:ma10_points lineColor:theme.ma10Color];
+    if ([main_index02_points count] >= 2){
+        id layer = [self getSingleLineLayerWithPointArray:main_index02_points lineColor:theme.ma10Color];
         [self.layer addSublayer:layer];
         [_caTextLayerArray addObject:layer];
     }
-    if ([ma30_points count] >= 2){
-        id layer = [self getSingleLineLayerWithPointArray:ma30_points lineColor:theme.ma30Color];
+    if ([main_index03_points count] >= 2){
+        id layer = [self getSingleLineLayerWithPointArray:main_index03_points lineColor:theme.ma30Color];
         [self.layer addSublayer:layer];
         [_caTextLayerArray addObject:layer];
     }
     if ([ma60_points count] >= 2){
         id layer = [self getSingleLineLayerWithPointArray:ma60_points lineColor:theme.ma5Color];        //  同MA5颜色
-        [self.layer addSublayer:layer];
-        [_caTextLayerArray addObject:layer];
-    }
-    
-    if ([boll_points count] >= 2){
-        id layer = [self getSingleLineLayerWithPointArray:boll_points lineColor:theme.ma5Color];        //  同MA5颜色
-        [self.layer addSublayer:layer];
-        [_caTextLayerArray addObject:layer];
-    }
-    if ([boll_ub_points count] >= 2){
-        id layer = [self getSingleLineLayerWithPointArray:boll_ub_points lineColor:theme.ma10Color];    //  同MA10颜色
-        [self.layer addSublayer:layer];
-        [_caTextLayerArray addObject:layer];
-    }
-    if ([boll_lb_points count] >= 2){
-        id layer = [self getSingleLineLayerWithPointArray:boll_lb_points lineColor:theme.ma30Color];    //  同MA30颜色
         [self.layer addSublayer:layer];
         [_caTextLayerArray addObject:layer];
     }
@@ -1409,7 +1738,7 @@
     }
     if (candle_max_price_model){
         id str = [NSString stringWithFormat:@"%@", candle_max_price_model.nPriceHigh];
-        CGSize str_size = [self auxSizeWithText:str font:[UIFont systemFontOfSize:kBTS_KLINE_PRICE_VOL_FONTSIZE]
+        CGSize str_size = [self auxSizeWithText:str font:_font
                                         maxsize:CGSizeMake(self.bounds.size.width, 9999)];
         
         CGFloat txtOffsetY = self.fMainMAHeight + floor(candle_max_price_model.fOffsetHigh) - str_size.height / 2;
@@ -1454,7 +1783,7 @@
     }
     if (candle_min_price_model){
         id str = [NSString stringWithFormat:@"%@", candle_min_price_model.nPriceLow];
-        CGSize str_size = [self auxSizeWithText:str font:[UIFont systemFontOfSize:kBTS_KLINE_PRICE_VOL_FONTSIZE]
+        CGSize str_size = [self auxSizeWithText:str font:_font
                                         maxsize:CGSizeMake(self.bounds.size.width, 9999)];
         
         CGFloat txtOffsetY = self.fMainMAHeight + ceil(candle_min_price_model.fOffsetLow) - ceil(str_size.height / 2.0);
@@ -1497,6 +1826,9 @@
         [self.layer addSublayer:layer];
         [_caTextLayerArray addObject:layer];
     }
+    
+    //  描绘高级指标
+    [self drawAdvancedIndex:maxShowNum candle_width:candle_width];
 }
 
 /**
@@ -1504,8 +1836,8 @@
  */
 - (void)refreshCandleLayer:(NSArray*)kdata
 {
-    //  刷新主图指标显示类型
-    [self _refreshMainIndexShowType];
+    //  刷新指标显示类型
+    [self _refreshMainAndAdvIndexShowType];
     
     //  保存数据
     [_krawdataArray removeAllObjects];
@@ -1525,25 +1857,61 @@
  */
 - (void)refreshUI
 {
-    //  刷新主图指标显示类型
-    [self _refreshMainIndexShowType];
+    //  刷新指标显示类型
+    [self _refreshMainAndAdvIndexShowType];
     
     [self prepareAllDatas:_krawdataArray];
     [self refreshCandleLayerCore:_currCandleOffset];
 }
 
 /**
- *  刷新主图指标显示类型
+ *  刷新主图指标和高级指标显示类型
  */
-- (void)_refreshMainIndexShowType
+- (void)_refreshMainAndAdvIndexShowType
 {
-    id main_type = [[[SettingManager sharedSettingManager] getKLineIndexInfos] objectForKey:@"kMain"];
+    id kline_index_values = [[SettingManager sharedSettingManager] getKLineIndexInfos];
+    
+    //  主图指标
+    id main_type = [kline_index_values objectForKey:@"kMain"];
     if ([main_type isEqualToString:@""]){
         _kMainIndexType = ekmit_show_none;
     }else if ([main_type isEqualToString:@"boll"]){
         _kMainIndexType = ekmit_show_boll;
+    }else if ([main_type isEqualToString:@"ema"]){
+        _kMainIndexType = ekmit_show_ema;
     }else{
         _kMainIndexType = ekmit_show_ma;
+    }
+    
+    //  高级指标
+    EKLineSubIndexType subIndexType;
+    id sub_type = [kline_index_values objectForKey:@"kSub"];
+    if ([sub_type isEqualToString:@"macd"]){
+        subIndexType = eksit_show_macd;
+    }else{
+        subIndexType = eksit_show_none;
+    }
+    
+    //  刷新
+    if ((_kSubIndexType == eksit_show_none && subIndexType != eksit_show_none) ||
+        (_kSubIndexType != eksit_show_none && subIndexType == eksit_show_none)){
+        //  refresh sub type and reset canvas
+        _kSubIndexType = subIndexType;
+        
+        //  重置画图区域
+        CGFloat width = self.bounds.size.width;
+        [self setMainSubAdvAreaArgs:width];
+        
+        //  重画背景图
+        CGRect frame = CGRectMake(0, 0, width, width);
+        if (_layerBackFrame){
+            [_layerBackFrame removeFromSuperlayer];
+        }
+        _layerBackFrame = [self genBackFrameLayer:frame];
+        [self.layer addSublayer:_layerBackFrame];
+    }else{
+        //  only refresh sub type
+        _kSubIndexType = subIndexType;
     }
 }
 

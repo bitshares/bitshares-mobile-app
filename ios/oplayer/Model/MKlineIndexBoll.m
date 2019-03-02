@@ -45,7 +45,7 @@
 
 - (void)fill_ub_and_lb:(MKlineItemData*)model
 {
-    if (!model.boll){
+    if (!model.main_index01){
         return;
     }
 
@@ -57,7 +57,7 @@
     assert(model.dataIndex >= _n - 1);
     NSDecimalNumber* sum_of_variance = [NSDecimalNumber zero];
     for (NSInteger i = model.dataIndex + 1 - _n; i <= model.dataIndex; ++i) {
-        id variance = [[model.boll decimalNumberBySubtracting:_getter([_data_array objectAtIndex:i])] decimalNumberByRaisingToPower:2];
+        id variance = [[model.main_index01 decimalNumberBySubtracting:_getter([_data_array objectAtIndex:i])] decimalNumberByRaisingToPower:2];
         sum_of_variance = [sum_of_variance decimalNumberByAdding:variance];
     }
     
@@ -71,8 +71,8 @@
     NSDecimalNumber* n_standard_deviation = (NSDecimalNumber*)[NSDecimalNumber numberWithDouble:p_standard_deviation];
     
     //  REMARK：下轨可能为负数
-    model.boll_ub = [model.boll decimalNumberByAdding:n_standard_deviation withBehavior:_ceil_handler];
-    model.boll_lb = [model.boll decimalNumberBySubtracting:n_standard_deviation withBehavior:_ceil_handler];
+    model.main_index02 = [model.main_index01 decimalNumberByAdding:n_standard_deviation withBehavior:_ceil_handler];
+    model.main_index03 = [model.main_index01 decimalNumberBySubtracting:n_standard_deviation withBehavior:_ceil_handler];
 }
 
 @end

@@ -377,6 +377,11 @@
 "kKlineIndexCellMain" = "Main";
 "kKlineIndexCellSub" = "Sub";
 "kKlineIndexCellHide" = "NONE";
+"kKlineIndexCellBollN" = "Bollinger Bands Length";
+"kKlineIndexCellBollP" = "Bollinger Bands Mult";
+"kKlineIndexCellMacdS" = "MACD Fast Length";
+"kKlineIndexCellMacdL" = "MACD Slow Length";
+"kKlineIndexCellMacdM" = "MACD Signal Length";
 
 /* 交易界面各种字符串 */
 "kLabelTitleBuy" = "BUY";
