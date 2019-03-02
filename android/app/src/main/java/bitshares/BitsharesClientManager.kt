@@ -87,6 +87,16 @@ class BitsharesClientManager {
     }
 
     /**
+     *  升级账号
+     */
+    fun accountUpgrde(account_upgrade_op_data: JSONObject): Promise {
+        val tr = TransactionBuilder()
+        tr.add_operation(EBitsharesOperations.ebo_account_upgrade,account_upgrade_op_data)
+        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(account_upgrade_op_data.getString("account_to_upgrade")))
+        return process_transaction(tr)
+    }
+
+    /**
      *  更新保证金（抵押借贷）
      */
     fun callOrderUpdate(op_data: JSONObject): Promise {

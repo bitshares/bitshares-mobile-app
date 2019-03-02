@@ -52,6 +52,7 @@ open class T_Base_companion {
         T_account_options.register_subfields()
         T_account_create.register_subfields()
         T_account_update.register_subfields()
+        T_account_upgrade.register_subfields()
         T_vesting_balance_withdraw.register_subfields()
 
         T_op_wrapper.register_subfields()
@@ -596,6 +597,17 @@ class T_account_update : T_Base() {
     }
 }
 
+class T_account_upgrade : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("fee", T_asset)
+            add_field("account_to_upgrade", Tm_protocol_id_type("account"))
+            add_field("upgrade_to_lifetime_member", T_bool)
+            add_field("extensions", Tm_set(T_future_extensions))
+        }
+    }
+}
+
 class T_vesting_balance_withdraw : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
@@ -694,6 +706,7 @@ class T_operation : T_Base() {
                 EBitsharesOperations.ebo_call_order_update.value -> T_call_order_update
                 EBitsharesOperations.ebo_account_create.value -> T_account_create
                 EBitsharesOperations.ebo_account_update.value -> T_account_update
+                EBitsharesOperations.ebo_account_upgrade.value -> T_account_upgrade
                 EBitsharesOperations.ebo_vesting_balance_withdraw.value -> T_vesting_balance_withdraw
                 EBitsharesOperations.ebo_proposal_create.value -> T_proposal_create
                 EBitsharesOperations.ebo_proposal_update.value -> T_proposal_update
