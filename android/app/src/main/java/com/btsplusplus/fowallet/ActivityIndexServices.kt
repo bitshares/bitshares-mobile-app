@@ -83,7 +83,7 @@ class ActivityIndexServices : BtsppActivity() {
         }
 
         layout_kline_setting_of_service.setOnClickListener{
-            goTo(ActivityKLineQuotaSetting::class.java,true)
+            goTo(ActivityKLineIndexSetting::class.java,true,args = jsonObjectfromKVS("result_promise", Promise()))
         }
     }
 
