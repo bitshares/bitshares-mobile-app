@@ -219,7 +219,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".ActivityKLineQuotaSetting"
+            android:name=".ActivityKLineIndexSetting"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
