@@ -7,8 +7,6 @@
     android:background="@color/theme01.appBackColor"
     tools:context="com.btsplusplus.fowallet.ActivityKLineIndexSetting">
 
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -45,7 +43,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="@string/klineQuotaSettingPageTitle"
+                android:text="@string/kVcTitleKlineIndexSetting"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
@@ -56,15 +54,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-
-
+            <!-- 主图 -->
             <LinearLayout
-                android:id="@+id/layout_main_view_of_kline_quota_setting"
+                android:id="@+id/layout_main"
                 android:layout_width="match_parent"
                 android:layout_height="34dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="12dp"
                 android:orientation="horizontal">
-
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -72,12 +68,13 @@
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:textSize="16dp"
+                    android:textStyle="bold"
                     android:layout_weight="9"
                     android:textColor="@color/theme01.textColorMain"
-                    android:text="@string/klineQuotaSettingPageMainView"/>
+                    android:text="@string/kKlineIndexCellMain"/>
 
                 <TextView
-                    android:id="@+id/tv_main_view_of_kline_quota_setting"
+                    android:id="@+id/layout_main_value"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
@@ -85,7 +82,7 @@
                     android:textSize="16dp"
                     android:layout_weight="9"
                     android:textColor="@color/theme01.textColorNormal"
-                    android:text="@string/klineQuotaSettingPageTextNotDisplay"/>
+                    android:text="--"/>
 
                 <ImageView
                     android:layout_width="20dp"
@@ -100,32 +97,33 @@
             <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
 
 
-            <!-- ma 设置 -->
+            <!-- 主图指标（MA、EMA、BOLL等) -->
             <LinearLayout
-                android:id="@+id/layout_ma_setting_of_kline_quota_setting"
+                android:id="@+id/layout_main_index_all"
                 android:orientation="vertical"
                 android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <!-- ma1 -->
+                <!-- main index01 -->
                 <LinearLayout
-                    android:id="@+id/layout_ma1_of_kline_quota_setting"
+                    android:id="@+id/layout_main_index01"
                     android:layout_width="match_parent"
                     android:layout_height="34dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="12dp"
                     android:orientation="horizontal">
                     <TextView
+                        android:id="@+id/main_index01_name"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
                         android:gravity="center_vertical"
                         android:textSize="13dp"
                         android:layout_weight="9"
-                        android:textColor="@color/theme01.ma5Color"
-                        android:text="MA1"/>
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="NAME"/>
                     <TextView
-                        android:id="@+id/tv_ma1_value_of_kline_quota_setting"
+                        android:id="@+id/main_index01_value"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
@@ -133,7 +131,7 @@
                         android:textSize="13dp"
                         android:layout_weight="9"
                         android:textColor="@color/theme01.textColorNormal"
-                        android:text="5" />
+                        android:text="VALUE" />
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
@@ -144,24 +142,25 @@
                 </LinearLayout>
                 <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
 
-                <!-- ma2 -->
+                <!-- main index02 -->
                 <LinearLayout
-                    android:id="@+id/layout_ma2_of_kline_quota_setting"
+                    android:id="@+id/layout_main_index02"
                     android:layout_width="match_parent"
                     android:layout_height="34dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="12dp"
                     android:orientation="horizontal">
                     <TextView
+                        android:id="@+id/main_index02_name"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
                         android:gravity="center_vertical"
                         android:textSize="13dp"
                         android:layout_weight="9"
-                        android:textColor="@color/theme01.ma10Color"
-                        android:text="MA2"/>
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="NAME"/>
                     <TextView
-                        android:id="@+id/tv_ma2_value_of_kline_quota_setting"
+                        android:id="@+id/main_index02_value"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
@@ -169,7 +168,7 @@
                         android:textSize="13dp"
                         android:layout_weight="9"
                         android:textColor="@color/theme01.textColorNormal"
-                        android:text="5" />
+                        android:text="VALUE" />
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
@@ -180,24 +179,25 @@
                 </LinearLayout>
                 <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
 
-                <!-- ma3 -->
+                <!-- main index03 -->
                 <LinearLayout
-                    android:id="@+id/layout_ma3_of_kline_quota_setting"
+                    android:id="@+id/layout_main_index03"
                     android:layout_width="match_parent"
                     android:layout_height="34dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="12dp"
                     android:orientation="horizontal">
                     <TextView
+                        android:id="@+id/main_index03_name"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
                         android:gravity="center_vertical"
                         android:textSize="13dp"
                         android:layout_weight="9"
-                        android:textColor="@color/theme01.ma30Color"
-                        android:text="MA3"/>
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="NAME"/>
                     <TextView
-                        android:id="@+id/tv_ma3_value_of_kline_quota_setting"
+                        android:id="@+id/main_index03_value"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
@@ -205,7 +205,7 @@
                         android:textSize="13dp"
                         android:layout_weight="9"
                         android:textColor="@color/theme01.textColorNormal"
-                        android:text="5" />
+                        android:text="VALUE" />
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
@@ -218,22 +218,66 @@
             </LinearLayout>
 
 
-            <!-- boll 设置 -->
+            <!-- 副图 -->
             <LinearLayout
-                android:id="@+id/layout_boll_setting_of_kline_quota_setting"
-                android:visibility="gone"
+                android:id="@+id/layout_sub"
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:layout_marginTop="40dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:layout_weight="9"
+                    android:textStyle="bold"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="@string/kKlineIndexCellSub"/>
+
+                <TextView
+                    android:id="@+id/layout_sub_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical|right"
+                    android:textSize="16dp"
+                    android:layout_weight="9"
+                    android:textColor="@color/theme01.textColorNormal"
+                    android:text="--"/>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical|right"
+                    android:layout_weight="0.5"
+
+                    android:foregroundGravity="right"
+                    android:src="@drawable/ic_btn_right_arrow" />
+
+            </LinearLayout>
+            <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
+
+
+            <!-- 副图指标（MACD） -->
+            <LinearLayout
+                android:id="@+id/layout_sub_index_all"
                 android:orientation="vertical"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <!-- BOLL N -->
+                <!-- sub index01 -->
                 <LinearLayout
-                    android:id="@+id/layout_bolln_of_kline_quota_setting"
+                    android:id="@+id/layout_sub_index01"
                     android:layout_width="match_parent"
                     android:layout_height="34dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="12dp"
                     android:orientation="horizontal">
                     <TextView
+                        android:id="@+id/sub_index01_name"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
@@ -241,9 +285,9 @@
                         android:textSize="13dp"
                         android:layout_weight="9"
                         android:textColor="@color/theme01.textColorMain"
-                        android:text="BOLL N"/>
+                        android:text="NAME"/>
                     <TextView
-                        android:id="@+id/tv_bolln_value_of_kline_quota_setting"
+                        android:id="@+id/sub_index01_value"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
@@ -251,7 +295,7 @@
                         android:textSize="13dp"
                         android:layout_weight="9"
                         android:textColor="@color/theme01.textColorNormal"
-                        android:text="5" />
+                        android:text="VALUE" />
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
@@ -262,14 +306,15 @@
                 </LinearLayout>
                 <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
 
-                <!-- BOLL P -->
+                <!-- sub index02 -->
                 <LinearLayout
-                    android:id="@+id/layout_bollp_of_kline_quota_setting"
+                    android:id="@+id/layout_sub_index02"
                     android:layout_width="match_parent"
                     android:layout_height="34dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="12dp"
                     android:orientation="horizontal">
                     <TextView
+                        android:id="@+id/sub_index02_name"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
@@ -277,9 +322,9 @@
                         android:textSize="13dp"
                         android:layout_weight="9"
                         android:textColor="@color/theme01.textColorMain"
-                        android:text="BOLL P"/>
+                        android:text="NAME"/>
                     <TextView
-                        android:id="@+id/tv_bollp_value_of_kline_quota_setting"
+                        android:id="@+id/sub_index02_value"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
@@ -287,7 +332,7 @@
                         android:textSize="13dp"
                         android:layout_weight="9"
                         android:textColor="@color/theme01.textColorNormal"
-                        android:text="5" />
+                        android:text="VALUE" />
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
@@ -298,16 +343,60 @@
                 </LinearLayout>
                 <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
 
-
-
+                <!-- sub index03 -->
+                <LinearLayout
+                    android:id="@+id/layout_sub_index03"
+                    android:layout_width="match_parent"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/sub_index03_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="13dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="NAME"/>
+                    <TextView
+                        android:id="@+id/sub_index03_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical|right"
+                        android:textSize="13dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="VALUE" />
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical|right"
+                        android:layout_weight="0.5"
+                        android:foregroundGravity="right"
+                        android:src="@drawable/ic_btn_right_arrow" />
+                </LinearLayout>
+                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
             </LinearLayout>
 
+            <!-- button OK -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
 
+                <Button
+                    android:id="@+id/button_commit"
+                    android:layout_width="match_parent"
+                    style="@style/kMainButtonStyle"
+                    android:gravity="center|center_vertical"
+                    android:textAllCaps="false"
+                    android:text="@string/nameOk" />
 
-
-
-
-
+            </LinearLayout>
 
 
         </LinearLayout>

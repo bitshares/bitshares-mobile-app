@@ -127,6 +127,16 @@
     <string name="klineLblCrossVol">成交量</string>
     <string name="klineLblCrossPrice">价格</string>
     <string name="kLabelTradeHisNdayAgo">%d天前</string>
+    <string name="kKlineIndexCellMain">主图</string>
+    <string name="kKlineIndexCellSub">副图</string>
+    <string name="kKlineIndexCellHide">不显示</string>
+    <string name="kKlineIndexCellBollN">布林带长度</string>
+    <string name="kKlineIndexCellBollP">布林带多元</string>
+    <string name="kKlineIndexCellMacdS">MACD快线长度</string>
+    <string name="kKlineIndexCellMacdL">MACD慢线长度</string>
+    <string name="kKlineIndexCellMacdM">MACD信号长度</string>
+    <string name="kKlineIndexSelectMainIndex">请选择主图显示指标</string>
+    <string name="kKlineIndexSelectSubIndex">请选择副图显示指标。</string>
 
     <!-- 买入页面 -->
     <string name="buyPageBtnBuy">买入</string>
@@ -624,6 +634,7 @@
     <string name="kVcTitleWhatIsGatewayAssets">什么是网关资产？</string>
     <string name="kVcTitleDeposit">%s充币</string>
     <string name="kVcTitleWithdraw">%s提币</string>
+    <string name="kVcTitleKlineIndexSetting">K线指标设置</string>
 
     <!-- 部分石墨烯错误信息 -->
     <string name="kGPErrorAccountNotExist">账号不存在。</string>
@@ -740,10 +751,5 @@
     <string name="kAccountUpgradeMemberSubmitTxFullOK">升级终身会员成功。</string>
     <string name="kAccountUpgradeMemberSubmitTxOK">升级终身会员成功，但刷新界面失败，请稍后再试。</string>
     <string name="kAccountUpgradeMemberCostAsk">升级终身会员需要花费 %s，是否继续？</string>
-
-
-    <!-- K线指标设置 -->
-    <string name="klineQuotaSettingPageTitle">K线指标设置</string>
-    <string name="klineQuotaSettingPageMainView">主图</string>
 
 </resources>
