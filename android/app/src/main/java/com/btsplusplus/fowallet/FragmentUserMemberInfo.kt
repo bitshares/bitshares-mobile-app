@@ -18,8 +18,6 @@ import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
 import org.json.JSONObject
 
-//import org.bitshares.app.R
-
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -44,9 +42,7 @@ class FragmentUserMemberInfo : BtsppFragment() {
 
     private lateinit var tv_account_status: TextView
     private lateinit var tv_member_tip: TextView
-    private lateinit var _tv_account_status: TextView
-    private lateinit var tip_fee_confirmation: AlertDialog
-
+    private lateinit var btn_upgrade: Button
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -57,27 +53,21 @@ class FragmentUserMemberInfo : BtsppFragment() {
         //  初始化UI信息
         val full_account_data = WalletManager.sharedWalletManager().getWalletAccountInfo()!!
         val account = full_account_data.getJSONObject("account")
-        tv_account_status = v.findViewById<TextView>(R.id.txt_account_status)
+        tv_account_status = v.findViewById(R.id.txt_account_status)
         v.findViewById<TextView>(R.id.txt_account_id).text = account.getString("id")
         v.findViewById<TextView>(R.id.txt_account_name).text = account.getString("name")
+        tv_member_tip = v.findViewById(R.id.txt_upgrade_to_member_tip)
+        btn_upgrade = v.findViewById<Button>(R.id.button_upgrade_member)
 
-        tv_member_tip = v.findViewById<TextView>(R.id.txt_upgrade_to_member_tip)
-
-
-        val account_info = WalletManager.sharedWalletManager().getWalletAccountInfo()!!.getJSONObject("account")
-        assert(account_info != null);
-        if (Utils.isBitsharesVIP(account_info.getString("membership_expiration_date"))) {
+        if (Utils.isBitsharesVIP(account.getString("membership_expiration_date"))) {
             refreshUILefttimeMember()
         } else {
             refreshUINormalMember()
+            //  binding events
+            btn_upgrade.setOnClickListener {
+                upgradeMemberButtonOnClick()
+            }
         }
-
-        // Todo 升级终身会员 click
-        v.findViewById<Button>(R.id.button_upgrade_member).setOnClickListener {
-            upgradeMemberButtonOnClick()
-        }
-
-
         return v
     }
 
@@ -85,110 +75,102 @@ class FragmentUserMemberInfo : BtsppFragment() {
         tv_account_status.text = resources.getString(R.string.kLblMembershipLifetime)
         tv_member_tip.text = resources.getString(R.string.kAccountUpgradeTipsMember)
         tv_member_tip.setTextColor(resources.getColor(R.color.theme01_buyColor))
+        btn_upgrade.visibility = View.INVISIBLE
     }
 
     private fun refreshUINormalMember(){
         tv_account_status.text = resources.getString(R.string.kLblMembershipBasic)
         tv_member_tip.text = resources.getString(R.string.kAccountUpgradeTipsNotMember)
         tv_member_tip.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
+        btn_upgrade.visibility = View.VISIBLE
     }
-
 
     private fun upgradeMemberButtonOnClick(){
         upgradeToLifetimeMember()
     }
 
     private fun gotoUpgradeToLifetimeMemberCore(op_data: JSONObject, fee_item: JSONObject, account_data: JSONObject ){
-        var m_opdata :JSONObject = JSONObject(op_data.toString())
-        m_opdata.put("fee", fee_item)
-        val op_data = JSONObject(m_opdata.toString())
+        //  adjust fee
+        op_data.put("fee", fee_item)
 
         val account_id = account_data.getString("id")
 
-
         //  确保有权限发起普通交易，否则作为提案交易处理。
         (_ctx as Activity).GuardProposalOrNormalTransaction(EBitsharesOperations.ebo_account_upgrade, false, false,
-                op_data, account_data) { isProposal, fee_paying_account ->
+                op_data, account_data) { isProposal, _ ->
             assert(!isProposal)
 
             //  请求网络广播
-            val mesk = ViewMesk("${resources.getString(R.string.nameRequesting)}...",_ctx)
-            mesk.show()
-
+            val mask = ViewMesk(resources.getString(R.string.nameRequesting), _ctx)
+            mask.show()
 
             BitsharesClientManager.sharedBitsharesClientManager().accountUpgrde(op_data).then{
-                val data = it as JSONObject
-
                 //  升级成功、继续请求、刷新界面。
-                return@then ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(account_id).then{
+                ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(account_id).then{
+                    mask.dismiss()
+
+                    //  升级会员成功，保存新数据。
                     val full_data = it as JSONObject
-                    mesk.dismiss()
-                    // 升级会员成功，保存新数据。
-                    assert(full_data != null)
                     AppCacheManager.sharedAppCacheManager().updateWalletAccountInfo(full_data)
 
-                    // 刷新界面
+                    //  刷新界面
                     refreshUILefttimeMember()
 
                     showToast(resources.getString(R.string.kAccountUpgradeMemberSubmitTxFullOK))
+                    fabricLogCustom("txUpgradeToLifetimeMemberFullOK", jsonObjectfromKVS("account", account_id))
+                }.catch {
+                    mask.dismiss()
+                    showToast(resources.getString(R.string.kAccountUpgradeMemberSubmitTxOK))
                     fabricLogCustom("txUpgradeToLifetimeMemberOK", jsonObjectfromKVS("account", account_id))
-
-
                 }
-
             }.catch { err ->
-                mesk.dismiss()
+                mask.dismiss()
                 showGrapheneError(err)
                 //  [统计]
                 fabricLogCustom("txUpgradeToLifetimeMemberFailed", jsonObjectfromKVS("account", account_id))
             }
         }
-
     }
 
     private fun upgradeToLifetimeMember() {
-
-        val json_account_info = WalletManager.sharedWalletManager().getWalletAccountInfo()
-        assert(json_account_info != null)
-
-        val account_info = json_account_info!!.getJSONObject("account")
-        assert(account_info != null)
+        val full_account_data = WalletManager.sharedWalletManager().getWalletAccountInfo()!!
+        val account_info = full_account_data.getJSONObject("account")
 
         val op_data = JSONObject().apply {
             put("fee",JSONObject().apply {
                 put("amount",0)
                 put("asset_id",BTS_NETWORK_CORE_ASSET_ID)
             })
-            put("account_to_upgrade",account_info.getString("id"))
+            put("account_to_upgrade", account_info.getString("id"))
             put("upgrade_to_lifetime_member",true)
         }
 
-        val mesk = ViewMesk("${resources.getString(R.string.nameRequesting)}...",_ctx)
-        mesk.show()
+        val act = _ctx as Activity
+
+        val mask = ViewMesk(resources.getString(R.string.nameRequesting), _ctx)
+        mask.show()
 
         BitsharesClientManager.sharedBitsharesClientManager().calcOperationFee(op_data, EBitsharesOperations.ebo_account_upgrade).then {
-            mesk.dismiss()
+            mask.dismiss()
+
             val fee_price_item = it as JSONObject
             val price = OrgUtils.formatAssetAmountItem(fee_price_item)
 
-            // Todo 弹窗提示 @"升级终身会员需要花费 %@，是否继续？
-            tip_fee_confirmation = ViewSelector.show(_ctx,String.format(resources.getString(R.string.kAccountUpgradeMemberCostAsk),price), arrayOf("是","否")){ _index: Int, result: String ->
-
-                if (_index == 0) {
-
-                    (_ctx as Activity).guardWalletUnlocked(false) { unlocked ->
+            act.alerShowMessageConfirm(resources.getString(R.string.registerLoginPageWarmTip), String.format(resources.getString(R.string.kAccountUpgradeMemberCostAsk), price)).then {
+                if (it != null && it as Boolean) {
+                    act.guardWalletUnlocked(false) { unlocked ->
                         if (unlocked) {
-                            gotoUpgradeToLifetimeMemberCore(op_data,fee_price_item,account_info)
+                            gotoUpgradeToLifetimeMemberCore(op_data, fee_price_item, account_info)
                         }
                     }
-
                 }
-                tip_fee_confirmation.dismiss()
+                return@then null
             }
-            null
+
+            return@then null
         }.catch {
-            mesk.dismiss()
-            showToast(_ctx!!.resources.getString(R.string.nameNetworkException))
+            mask.dismiss()
+            showToast(_ctx.resources.getString(R.string.nameNetworkException))
         }
     }
 

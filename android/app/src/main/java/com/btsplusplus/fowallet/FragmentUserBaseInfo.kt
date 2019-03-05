@@ -42,14 +42,8 @@ class FragmentUserBaseInfo : BtsppFragment() {
     private var listener: OnFragmentInteractionListener? = null
     private lateinit var mActivity: FragmentActivity
 
-//    override fun onInitParams(args: Any?) {
-//        val mData = args as JSONObject
-//    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-
-        // val _ctx = inflater.context
 
         mActivity = activity!!
 
@@ -83,12 +77,10 @@ class FragmentUserBaseInfo : BtsppFragment() {
             gotoLogout()
         }
 
-
         return v
     }
 
     private fun gotoLogout() {
-
         mActivity.alerShowMessageConfirm(resources.getString(R.string.registerLoginPageWarmTip), resources.getString(R.string.registerLoginPageTipForLogout)).then {
             if (it != null && it as Boolean) {
                 gotoLogoutCore()
@@ -108,8 +100,6 @@ class FragmentUserBaseInfo : BtsppFragment() {
     private fun backupWallet() {
         mActivity.goTo(ActivityWalletBackup::class.java, true)
     }
-
-
 
     // TODO: Rename method, update argument and hook method into UI event
     fun onButtonPressed(uri: Uri) {

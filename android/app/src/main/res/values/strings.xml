@@ -378,13 +378,6 @@
     <string name="registerLoginTipBackupError">Failed to export the wallet, please try again later.</string>
     <string name="registerLoginTipForPcBackWallet">Please enter the above URL on the computer to download the wallet BIN file and backup to a safe place.</string>
     <string name="registerLoginConfirmationPassword">Please confirm password</string>
-    <string name="registerLoginBaseInfo">基本信息</string>
-    <string name="registerLoginMemberInfo">会员信息</string>
-    <string name="registerLoginStatus">状态</string>
-    <string name="registerLoginUpgradeMember">升级终身会员</string>
-    <string name="registerLoginUpgradeToMemberTip">现在升级终身会员，立享80%手续费返现奖励。</string>
-    <string name="registerLoginMemberTip">尊敬的终身会员，您已80%手续费返现奖励。</string>
-    <string name="registerLoginUpgradeMemberFeeTip">升级终身会员需要花费 %s，是否继续？</string>
 
     <!-- 交易对 -->
     <string name="tradingPairMyTradePair">My pairs(%s)</string>
@@ -738,6 +731,9 @@
     <string name="kLblMembershipLifetime">Lifetime member</string>
 
     <!-- 账号信息 -->
+    <string name="kAccountPageBasicInfo">Basic Info</string>
+    <string name="kAccountPageMemberInfo">Member Info</string>
+    <string name="kAccountBtnUpgradeToLifetimeMember">Upgrade lifetime membership</string>
     <string name="kAccountMembershipStatus">Status</string>
     <string name="kAccountUpgradeTipsMember">Dear Life Member, you are entitled to an 80% fee cashback.</string>
     <string name="kAccountUpgradeTipsNotMember">Upgrade lifetime membership and enjoy an 80% fee cashback.</string>
