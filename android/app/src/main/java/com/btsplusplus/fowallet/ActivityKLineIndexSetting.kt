@@ -17,6 +17,8 @@ class ActivityKLineIndexSetting : BtsppActivity() {
     private lateinit var _main_index_type_array: JSONArray
     private lateinit var _sub_index_type_array: JSONArray
 
+//    private lateinit var _number_picker: ViewDialogNumberPicker
+
     override fun onBackClicked(result: Any?) {
         _result_promise.resolve(false)
         super.onBackClicked(result)
@@ -98,9 +100,10 @@ class ActivityKLineIndexSetting : BtsppActivity() {
             }
             valueList.put(i)
         }
-        ViewSelector.show(this,"", nameList.toList<String>().toTypedArray()){ _index: Int, _: String ->
+
+        ViewDialogNumberPicker(this,nameList.toList<String>().toTypedArray()){ _index: Int, _: String ->
             p.resolve(valueList.getInt(_index))
-        }
+        }.show()
 
         return p
     }

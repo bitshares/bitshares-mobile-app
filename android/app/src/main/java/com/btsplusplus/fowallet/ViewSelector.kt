@@ -31,11 +31,6 @@ class ViewSelector {
         fun show(ctx: Context, title: String, list: Array<String>, callback: (index: Int, result: String) -> Unit) : AlertDialog {
             val dig = ViewSelector.create(ctx,title,list,callback)
 
-            // Todo 修改窗口高度
-//            val params : WindowManager.LayoutParams  = dig.getWindow().getAttributes();
-//            params.height = 20.dp
-//            dig.getWindow().setAttributes(params)
-
             dig.show()
             return dig
         }

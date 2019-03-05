@@ -4,7 +4,7 @@ import android.os.Looper
 import org.json.JSONArray
 import org.json.JSONObject
 
-open class Promise {
+class Promise {
 
     /**
      * 空值
