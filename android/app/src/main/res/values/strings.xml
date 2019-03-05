@@ -127,6 +127,16 @@
     <string name="klineLblCrossVol">Vol</string>
     <string name="klineLblCrossPrice">Price</string>
     <string name="kLabelTradeHisNdayAgo">%d days ago</string>
+    <string name="kKlineIndexCellMain">Main</string>
+    <string name="kKlineIndexCellSub">Sub</string>
+    <string name="kKlineIndexCellHide">NONE</string>
+    <string name="kKlineIndexCellBollN">Bollinger Bands Length</string>
+    <string name="kKlineIndexCellBollP">Bollinger Bands Mult</string>
+    <string name="kKlineIndexCellMacdS">MACD Fast Length</string>
+    <string name="kKlineIndexCellMacdL">MACD Slow Length</string>
+    <string name="kKlineIndexCellMacdM">MACD Signal Length</string>
+    <string name="kKlineIndexSelectMainIndex">Please select the MAIN index.</string>
+    <string name="kKlineIndexSelectSubIndex">Please select the SUB index.</string>
 
     <!-- 买入页面 -->
     <string name="buyPageBtnBuy">Buy&#xA0;</string>
@@ -624,6 +634,7 @@
     <string name="kVcTitleWhatIsGatewayAssets">What is gateway assets?</string>
     <string name="kVcTitleDeposit">%s deposits</string>
     <string name="kVcTitleWithdraw">%s withdrawls</string>
+    <string name="kVcTitleKlineIndexSetting">K-Line Index Setting</string>
 
     <!-- 部分石墨烯错误信息 -->
     <string name="kGPErrorAccountNotExist">Account does not exist.</string>
@@ -740,10 +751,5 @@
     <string name="kAccountUpgradeMemberSubmitTxFullOK">Upgrade lifetime membership success.</string>
     <string name="kAccountUpgradeMemberSubmitTxOK">Upgrade lifetime membership is successful, but refreshing the interface failed, please try again later.</string>
     <string name="kAccountUpgradeMemberCostAsk">Upgrade lifetime membership will cost %s, do you want to continue?</string>
-
-    <!-- K线指标设置 -->
-    <string name="klineQuotaSettingPageTitle">K线指标设置</string>
-    <string name="klineQuotaSettingPageMainView">主图</string>
-    <string name="klineQuotaSettingPageTextNotDisplay">不显示</string>
 
 </resources>

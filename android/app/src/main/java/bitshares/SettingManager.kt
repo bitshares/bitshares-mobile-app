@@ -78,25 +78,23 @@ class SettingManager {
      *  获取K线指标参数配置信息
      */
 
-    fun getKLineIndexInfos() : JSONObject? {
+    fun getKLineIndexInfos() : JSONObject {
         val settings = _load_setting_hash()
-        val value = settings.optJSONObject("kSettingKey_KLineIndexInfo")
+        val value = settings.optJSONObject(kSettingKey_KLineIndexInfo)
         if (value == null) {
-            val default_kline_index = ChainObjectManager.sharedChainObjectManager().getDefaultParameters().optJSONObject("default_kline_index")
-            assert(default_kline_index != null)
-            settings.put("kSettingKey_KLineIndexInfo",default_kline_index)
+            val default_kline_index = ChainObjectManager.sharedChainObjectManager().getDefaultParameters().getJSONObject("default_kline_index")
+            settings.put(kSettingKey_KLineIndexInfo, default_kline_index)
             _save_setting_hash(settings)
+            return default_kline_index
         }
         return value
     }
 
-    fun setUseConfig(key: String, value: String) {
+    fun setUseConfig(key: String, value: Any) {
         val settings = _load_setting_hash()
         settings.put(key, value)
         _save_setting_hash(settings)
     }
-
-
 
     private fun _load_setting_hash(): JSONObject {
         var fullname = OrgUtils.makeFullPathByAppStorage(kAppCacheNameUserSettingByApp)

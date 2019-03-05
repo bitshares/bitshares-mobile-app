@@ -285,7 +285,7 @@
         </LinearLayout>
 
 
-        <!-- 小游戏 TODO：未完成 -->
+        <!-- 小游戏 TODO：未完成 TODO:1.9 -->
         <LinearLayout
             android:id="@+id/layout_kline_setting_of_service"
             android:visibility="visible"
@@ -308,7 +308,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/klineQuotaSettingPageTitle"/>
+                android:text="@string/kVcTitleKlineIndexSetting"/>
 
             <ImageView
                 android:layout_width="0dp"
