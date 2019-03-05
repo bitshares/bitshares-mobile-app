@@ -93,7 +93,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/registerLoginStatus"/>
+                android:text="@string/kAccountMembershipStatus"/>
 
             <TextView
                 android:id="@+id/txt_account_status"
@@ -142,7 +142,7 @@
                 style="@style/kMainButtonStyle"
                 android:gravity="center|center_vertical"
                 android:textAllCaps="false"
-                android:text="@string/registerLoginUpgradeMember" />
+                android:text="@string/kAccountBtnUpgradeToLifetimeMember" />
 
         </LinearLayout>
 

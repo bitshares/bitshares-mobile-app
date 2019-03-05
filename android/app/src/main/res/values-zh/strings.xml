@@ -378,14 +378,6 @@
     <string name="registerLoginTipBackupError">导出钱包失败，请稍后再试。</string>
     <string name="registerLoginTipForPcBackWallet">请在电脑端输入以上网址下载钱包BIN文件备份到安全的地方</string>
     <string name="registerLoginConfirmationPassword">请确认密码</string>
-    <string name="registerLoginBaseInfo">基本信息</string>
-    <string name="registerLoginMemberInfo">会员信息</string>
-    <string name="registerLoginStatus">状态</string>
-    <string name="registerLoginUpgradeMember">升级终身会员</string>
-    <string name="registerLoginUpgradeToMemberTip">现在升级终身会员，立享80%手续费返现奖励。</string>
-    <string name="registerLoginMemberTip">尊敬的终身会员，您已80%手续费返现奖励。</string>
-    <string name="registerLoginUpgradeMemberFeeTip">升级终身会员需要花费 %s，是否继续？</string>
-
 
     <!-- 交易对 -->
     <string name="tradingPairMyTradePair">我的交易对(%s个)</string>
@@ -739,6 +731,9 @@
     <string name="kLblMembershipLifetime">终身会员</string>
 
     <!-- 账号信息 -->
+    <string name="kAccountPageBasicInfo">基本信息</string>
+    <string name="kAccountPageMemberInfo">会员信息</string>
+    <string name="kAccountBtnUpgradeToLifetimeMember">升级终身会员</string>
     <string name="kAccountMembershipStatus">状态</string>
     <string name="kAccountUpgradeTipsMember">尊敬的终身会员，您已享受80%的手续费返现奖励。</string>
     <string name="kAccountUpgradeTipsNotMember">现在升级终身会员，立享80%手续费返现奖励。</string>
