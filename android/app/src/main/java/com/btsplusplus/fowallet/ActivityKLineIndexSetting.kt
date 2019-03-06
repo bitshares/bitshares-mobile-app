@@ -87,21 +87,25 @@ class ActivityKLineIndexSetting : BtsppActivity() {
         }
     }
 
-    private fun onSelectNumberFromRange(bgn: Int, end: Int): Promise{
+    private fun onSelectNumberFromRange(title:String, bgn: Int, end: Int, current_value:Int): Promise{
         val p = Promise()
 
         val nameList = JSONArray()
         val valueList = JSONArray()
+        var default_select = -1
         for (i in bgn..end) {
             if (i == 0){
                 nameList.put(resources.getString(R.string.kKlineIndexCellHide))
             }else{
                 nameList.put(i.toString())
             }
+            if (i == current_value){
+                default_select = nameList.length() - 1
+            }
             valueList.put(i)
         }
 
-        ViewDialogNumberPicker(this,nameList.toList<String>().toTypedArray()){ _index: Int, _: String ->
+        ViewDialogNumberPicker(this, title, nameList.toList<String>().toTypedArray(), default_select){ _index: Int, _: String ->
             p.resolve(valueList.getInt(_index))
         }.show()
 
@@ -109,7 +113,7 @@ class ActivityKLineIndexSetting : BtsppActivity() {
     }
 
     private fun onSelectIndexMA(row: Int){
-        onSelectNumberFromRange(0, 90).then {
+        onSelectNumberFromRange("MA${row + 1}", 0, 90, _configValueHash.getJSONArray("ma_value").getInt(row)).then {
             val value = it as Int
             _configValueHash.getJSONArray("ma_value").put(row, value)
             when (row) {
@@ -122,7 +126,7 @@ class ActivityKLineIndexSetting : BtsppActivity() {
     }
 
     private fun onSelectIndexEMA(row: Int){
-        onSelectNumberFromRange(0, 90).then {
+        onSelectNumberFromRange("EMA${row + 1}", 0, 90, _configValueHash.getJSONArray("ema_value").getInt(row)).then {
             val value = it as Int
             _configValueHash.getJSONArray("ema_value").put(row, value)
             when (row) {
@@ -136,18 +140,21 @@ class ActivityKLineIndexSetting : BtsppActivity() {
 
     private fun onSelectIndexBOLL(row: Int){
         val key: String
+        val title: String
         val bgn: Int
         val end: Int
         if (row == 0){
             key = "n"
+            title = resources.getString(R.string.kKlineIndexCellBollN)
             bgn = 1
             end = 90
         }else{
             key = "p"
+            title = resources.getString(R.string.kKlineIndexCellBollP)
             bgn = 1
             end = 9
         }
-        onSelectNumberFromRange(bgn, end).then {
+        onSelectNumberFromRange(title, bgn, end, _configValueHash.getJSONObject("boll_value").getInt(key)).then {
             val value = it as Int
             _configValueHash.getJSONObject("boll_value").put(key, value)
             when (row) {
@@ -159,19 +166,29 @@ class ActivityKLineIndexSetting : BtsppActivity() {
     }
 
     private fun onSelectIndexMACD(row: Int){
-        onSelectNumberFromRange(2, 90).then {
+        val title = when (row) {
+            0 -> resources.getString(R.string.kKlineIndexCellMacdS)
+            1 -> resources.getString(R.string.kKlineIndexCellMacdL)
+            else -> resources.getString(R.string.kKlineIndexCellMacdM)
+        }
+        val key = when (row) {
+            0 -> "s"
+            1 -> "l"
+            else -> "m"
+        }
+        onSelectNumberFromRange(title, 2, 90, _configValueHash.getJSONObject("macd_value").getInt(key)).then {
             val value = it as Int
             when (row) {
                 0 -> {
-                    _configValueHash.getJSONObject("macd_value").put("s", value)
+                    _configValueHash.getJSONObject("macd_value").put(key, value)
                     sub_index01_value.text = value.toString()
                 }
                 1 -> {
-                    _configValueHash.getJSONObject("macd_value").put("l", value)
+                    _configValueHash.getJSONObject("macd_value").put(key, value)
                     sub_index02_value.text = value.toString()
                 }
                 2 -> {
-                    _configValueHash.getJSONObject("macd_value").put("m", value)
+                    _configValueHash.getJSONObject("macd_value").put(key, value)
                     sub_index03_value.text = value.toString()
                 }
             }
