@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Bitshares</string>
+    <string name="app_name">BitShares</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_index">IndexActivity</string>
     <string name="title_home">Home</string>

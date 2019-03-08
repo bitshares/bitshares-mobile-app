@@ -35,6 +35,7 @@ class FragmentVestingBalance : BtsppFragment() {
 
     private var _data_array = mutableListOf<JSONObject>()
     private var _ctx: Context? = null
+    private var _view: View? = null
     private var _full_account_data: JSONObject? = null
     private var _isSelfAccount = false
 
@@ -137,8 +138,8 @@ class FragmentVestingBalance : BtsppFragment() {
         _data_array.sortByDescending { it.getString("id").split(".").last().toInt() }
 
         //  更新显示
-        activity?.let {
-            val container: LinearLayout = it.findViewById(R.id.layout_vesting_balance_cell)
+        _view?.let { view ->
+            val container: LinearLayout = view.findViewById(R.id.layout_vesting_balance_cell)
             container.removeAllViews()
             if (_data_array.size > 0){
                 refreshUI(container)
@@ -294,7 +295,9 @@ class FragmentVestingBalance : BtsppFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         _ctx = inflater.context
-        return inflater.inflate(R.layout.fragment_vesting_balance, container, false)
+        val view = inflater.inflate(R.layout.fragment_vesting_balance, container, false)
+        _view = view
+        return view
     }
 
 }
