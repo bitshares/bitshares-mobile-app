@@ -228,55 +228,80 @@
                     </LinearLayout>
                 </LinearLayout>
 
-
-                <!-- 周期按钮 -->
-                <android.support.design.widget.TabLayout
-                    android:id="@+id/tablayout_of_kline"
+                <!-- K线周期选择 & 更多 & 指标 -->
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    app:tabIndicatorColor="@color/theme01.tintColor"
-                    app:tabRippleColor="#aaaaaa"
-                    app:tabTextAppearance="@style/KLineTabTextStyle"
-                    app:tabSelectedTextColor="@color/theme01.textColorHighlight"
-                    app:tabTextColor="@color/theme01.textColorGray">
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
 
-                    <android.support.design.widget.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/klineNameTimeline" />
+                    <!-- 周期按钮 -->
+                    <android.support.design.widget.TabLayout
+                        android:id="@+id/tablayout_of_kline"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        app:tabIndicatorColor="@color/theme01.tintColor"
+                        app:tabRippleColor="#aaaaaa"
+                        android:layout_weight="6"
+                        app:tabTextAppearance="@style/KLineTabTextStyle"
+                        app:tabSelectedTextColor="@color/theme01.textColorHighlight"
+                        app:tabTextColor="@color/theme01.textColorGray">
 
-                    <android.support.design.widget.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/klineName5min" />
+                        <android.support.design.widget.TabItem
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/klineNameTimeline" />
 
-                    <android.support.design.widget.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/klineName15min" />
+                        <android.support.design.widget.TabItem
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/klineName15min" />
 
-                    <android.support.design.widget.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/klineName1hour" />
+                        <android.support.design.widget.TabItem
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/klineName1hour" />
 
-                    <android.support.design.widget.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/klineName4hour" />
+                        <android.support.design.widget.TabItem
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/klineName4hour" />
 
-                    <android.support.design.widget.TabItem
-                        android:id="@+id/spec_tab_btn_more"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/klineNameBtnMore" />
+                        <android.support.design.widget.TabItem
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/klineName1day" />
 
-                    <android.support.design.widget.TabItem
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/klineNameBtnIndex" />
+                        <android.support.design.widget.TabItem
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/klineNameBtnMore" />
 
-                </android.support.design.widget.TabLayout>
+                    </android.support.design.widget.TabLayout>
+
+                    <!-- More & Index -->
+<!--                     <TextView
+                        android:id="@+id/btn_more"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center|center_vertical"
+                        android:text="@string/klineNameBtnMore"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        style="@style/KLineTabTextStyle"
+                        android:textColor="@color/theme01.textColorGray" /> -->
+
+                    <TextView
+                        android:id="@+id/btn_index"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center|center_vertical"
+                        android:text="@string/klineNameBtnIndex"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        style="@style/KLineTabTextStyle"
+                        android:textColor="@color/theme01.textColorGray" />
+
+                </LinearLayout>
 
                 <!-- K线 -->
                 <FrameLayout
