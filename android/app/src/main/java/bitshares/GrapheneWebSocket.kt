@@ -2,8 +2,6 @@ package com.fowallet.walletcore.bts
 
 import bitshares.*
 import com.crashlytics.android.Crashlytics
-import com.orhanobut.logger.AndroidLogAdapter
-import com.orhanobut.logger.Logger
 import org.json.JSONArray
 import org.json.JSONObject
 import java.net.URI
@@ -99,9 +97,6 @@ class GrapheneWebSocket {
         _keepaliveCb = keepaliveCb
         _api_list = api_list
         _auto_reconnect = true
-
-        // 初始化 Logger
-        Logger.addLogAdapter(AndroidLogAdapter())
 
         //  --- 开始初始化 ---
         reconnect()
@@ -309,15 +304,14 @@ class GrapheneWebSocket {
 
 
         //  TODO:fowallet 取消订阅 unsubscribe_from_market unsubscribe_from_accounts
-//        Logger.d("[ApiCall] %s", method)
 
         //  序列化
-        var data = jsonObjectfromKVS("id", _cbId, "method", "call", "params", params)
+        val data = jsonObjectfromKVS("id", _cbId, "method", "call", "params", params)
 
         //  构造promise对象并发送数据
         _send_life = kGwsMaxSendLife
 
-        var p = Promise()
+        val p = Promise()
         try {
             val send_data = data.toString()
             _webSocket!!.send(send_data)
@@ -392,7 +386,6 @@ class GrapheneWebSocket {
             }
         } else {
             assert(false)
-            Logger.d("Warning: unknown websocket response: ${response}")
         }
     }
 
@@ -426,7 +419,6 @@ class GrapheneWebSocket {
     fun onKeepAliveTimerTick() {
         --_recv_life
         if (_recv_life <= 0) {
-            Logger.d("connection is dead, terminating ws")
             process_websocket_error_or_close("heartbeat...")
             return
         }
@@ -474,7 +466,6 @@ class GrapheneWebSocket {
     @param webSocket An instance of `SRWebSocket` that was open.
      */
     fun webSocketDidOpen() {
-        Logger.d("webSocketDidOpen: $_curr_wsnode")
         //  REMARK：心跳定时器
         startKeepAliveTimer()
         //  连接成功
@@ -484,7 +475,6 @@ class GrapheneWebSocket {
     }
 
     fun process_websocket_error_or_close(message: String) {
-        Logger.d("process_websocket_error_or_close: $_curr_wsnode, msg:$message")
         if (is_closed()) {
             return
         }
@@ -522,7 +512,6 @@ class GrapheneWebSocket {
     }
 
     fun didFailWithError(error: Exception) {
-        Logger.d("didFailWithError: $_curr_wsnode")
         process_websocket_error_or_close("websocket events error, ${error.message}")
     }
 
