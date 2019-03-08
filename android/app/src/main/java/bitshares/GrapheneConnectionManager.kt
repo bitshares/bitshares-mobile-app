@@ -114,9 +114,13 @@ class GrapheneConnectionManager {
                 return conn
             }
         }
-
+        
         //  全部都未连接，则返回第一个，会自动重连。
-        _last_connection = _available_connlist.first()
+        _last_connection = if (_available_connlist.size > 0){
+            _available_connlist.first()
+        }else{
+             _connection_list.first()
+        }
         Logger.d("any_connection: closed")
         return _last_connection!!
     }
