@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.support.design.widget.TabLayout
+import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -190,6 +191,9 @@ class ActivityKLine : BtsppActivity() {
 
         setTabListener()
 
+        //  事件 / events
+        btn_index.setOnClickListener { _onIndexButtonClicked() }
+
         setFullScreen()
     }
 
@@ -203,26 +207,71 @@ class ActivityKLine : BtsppActivity() {
         }
     }
 
+    private fun _onMoreButtonClicked(tab_more: TabLayout.Tab){
+        val more_list = JSONArray().apply {
+            put(JSONObject().apply {
+                put("name", resources.getString(R.string.klineName1min))
+                put("value", ViewKLine.EKlineDatePeriodType.ekdpt_1m)
+            })
+            put(JSONObject().apply {
+                put("name", resources.getString(R.string.klineName5min))
+                put("value", ViewKLine.EKlineDatePeriodType.ekdpt_5m)
+            })
+            put(JSONObject().apply {
+                put("name", resources.getString(R.string.klineName30min))
+                put("value", ViewKLine.EKlineDatePeriodType.ekdpt_30m)
+            })
+            put(JSONObject().apply {
+                put("name", resources.getString(R.string.klineName1week))
+                put("value", ViewKLine.EKlineDatePeriodType.ekdpt_1w)
+            })
+        }
+
+        val nameList = JSONArray()
+        more_list.forEach<JSONObject> { nameList.put(it!!.getString("name")) }
+
+        ViewDialogNumberPicker(this, null, nameList.toList<String>().toTypedArray(), 0){ _index: Int, txt: String ->
+            tab_more.text = "$txt${resources.getString(R.string.klineNameMoreSuffix)}"
+            tab_more.tag = more_list.getJSONObject(_index).get("value")
+            if (tab_more.isSelected){
+                val current_type = tab_more.tag as ViewKLine.EKlineDatePeriodType
+                queryKdata(getDatePeriodSeconds(current_type.value), current_type)
+            }else{
+                tab_more.select()   //  select will trigger `onTabSelected` event
+            }
+        }.show()
+    }
+
     private fun setTabListener() {
-        // 顶部K线tab
+        //  More Tab
+        val tab_more_index = tablayout_of_kline.tabCount - 1
+        val tab_more = tablayout_of_kline.getTabAt(tab_more_index)
+        if (tab_more != null){
+            (tab_more.view as View).setOnTouchListener { _, event ->
+                if (event.action == MotionEvent.ACTION_DOWN){
+                    _onMoreButtonClicked(tab_more)
+                }
+                return@setOnTouchListener true
+            }
+        }
+
+        //  顶部K线tab
         tablayout_of_kline.getTabAt(2)!!.select()
         tablayout_of_kline!!.setOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-                if (tab.position == 6){
-                    _onIndexButtonClicked()
+                val current_type = if (tab.position == tab_more_index){
+                    tab.tag as ViewKLine.EKlineDatePeriodType
                 }else{
-                    var current_type: ViewKLine.EKlineDatePeriodType? = null
-                    when {
-                        tab.position == 0 -> current_type = ViewKLine.EKlineDatePeriodType.ekdpt_timeline
-                        tab.position == 1 -> current_type = ViewKLine.EKlineDatePeriodType.ekdpt_5m
-                        tab.position == 2 -> current_type = ViewKLine.EKlineDatePeriodType.ekdpt_15m
-                        tab.position == 3 -> current_type = ViewKLine.EKlineDatePeriodType.ekdpt_1h
-                        tab.position == 4 -> current_type = ViewKLine.EKlineDatePeriodType.ekdpt_4h
-                        tab.position == 5 -> current_type = ViewKLine.EKlineDatePeriodType.ekdpt_1d
-//                        tab.position == 6 -> current_type = ViewKLine.EKlineDatePeriodType.ekdpt_1w
+                    tablayout_of_kline.getTabAt(tab_more_index)!!.text = resources.getString(R.string.klineNameBtnMore)
+                    when(tab.position) {
+                        0 -> ViewKLine.EKlineDatePeriodType.ekdpt_timeline
+                        1 -> ViewKLine.EKlineDatePeriodType.ekdpt_15m
+                        2 -> ViewKLine.EKlineDatePeriodType.ekdpt_1h
+                        3 -> ViewKLine.EKlineDatePeriodType.ekdpt_4h
+                        else -> ViewKLine.EKlineDatePeriodType.ekdpt_1d
                     }
-                    queryKdata(getDatePeriodSeconds(current_type!!.value), current_type)
                 }
+                queryKdata(getDatePeriodSeconds(current_type.value), current_type)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {
