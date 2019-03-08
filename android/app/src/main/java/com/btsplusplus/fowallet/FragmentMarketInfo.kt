@@ -173,7 +173,7 @@ class FragmentMarketInfo : BtsppFragment() {
                 //  描绘所有自选交易对
                 for (fav_item in _favorites_asset_list!!) {
                     fav_item!!.tap {
-                        _refreshDrawOnCell(_context!!, container, it.getString("quote"), it.getString("base"))
+                        _refreshDrawOnCell(null, _context!!, container, it.getString("quote"), it.getString("base"))
                     }
                 }
             } else {
@@ -189,9 +189,9 @@ class FragmentMarketInfo : BtsppFragment() {
                 val group = group_list.getJSONObject(i)
 
                 //  分组名称
-                val flmain: FrameLayout = FrameLayout(_context)
+                val flmain = FrameLayout(_context)
                 val flmain_layout_params: FrameLayout.LayoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, toDp(32f))
-                val tvmain: TextView = TextView(_context)
+                val tvmain = TextView(_context)
                 val tvmain_layout_params = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
                 tvmain_layout_params.setMargins(toDp(10f), 0, 0, 0)
                 tvmain_layout_params.gravity = Gravity.CENTER_VERTICAL
@@ -227,7 +227,7 @@ class FragmentMarketInfo : BtsppFragment() {
                 for (j in 0 until quote_list.length()) {
                     val base_symbol = _marketInfos!!.getJSONObject("base").getString("symbol")
                     val quote_symbol = quote_list.getString(j)
-                    _refreshDrawOnCell(_context!!, container, quote_symbol, base_symbol)
+                    _refreshDrawOnCell(group_info, _context!!, container, quote_symbol, base_symbol)
                 }
             }
         }
@@ -247,9 +247,9 @@ class FragmentMarketInfo : BtsppFragment() {
         val percent_change: String
         if (ticker_data != null) {
             var sym = ""
-            if (base_symbol.equals("CNY")) {
+            if (base_symbol == "CNY") {
                 sym = "¥"   //  REMARK：半角形式，如果需要全角用这个￥。
-            } else if (base_symbol.equals("USD")) {
+            } else if (base_symbol == "USD") {
                 sym = "$"   //  REMARK：半角形式，如果需要全角用这个＄。
             }
             latest = String.format("%s%s", sym, OrgUtils.formatFloatValue(ticker_data.getString("latest").toDouble(), base_asset.getInt("precision")))
@@ -261,8 +261,8 @@ class FragmentMarketInfo : BtsppFragment() {
             percent_change = "0"
         }
 
-        var percent_color: Int
-        var percent_str: String
+        val percent_color: Int
+        val percent_str: String
 
         val percent = percent_change.toDouble()
         if (percent > 0.0f) {
@@ -279,18 +279,31 @@ class FragmentMarketInfo : BtsppFragment() {
         return jsonObjectfromKVS("price_str", latest, "volume_str", "${_context!!.resources.getString(R.string.indexName24Vol)} ${quote_volume}", "percent_str", percent_str, "percent_color", percent_color)
     }
 
-    private fun _refreshDrawOnCell(ctx: Context, ly: LinearLayout, quote_symbol: String, base_symbol: String) {
+    private fun _refreshDrawOnCell(group_info:JSONObject?, ctx: Context, ly: LinearLayout, quote_symbol: String, base_symbol: String) {
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
 
         //  获取资产信息
         val base = chainMgr.getAssetBySymbol(base_symbol)
         val quote = chainMgr.getAssetBySymbol(quote_symbol)
 
-        val fl: FrameLayout = FrameLayout(ctx)
+        var quote_name = quote_symbol
+
+        //  REMARK：如果是网关资产、则移除网关前缀。自选市场没有分组信息，网关资产也显示全称。
+        if (group_info != null && group_info.optBoolean("gateway")){
+            val group_prefix = group_info.optString("prefix")
+            if (quote_name.indexOf(group_prefix) == 0) {
+                val ary = quote_name.split(".")
+                if (ary.count() >= 2 && ary[0] == group_prefix) {
+                    quote_name = ary.subList(1, ary.size).joinToString(".")
+                }
+            }
+        }
+
+        val fl = FrameLayout(ctx)
         val frame_layout_params: FrameLayout.LayoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, toDp(48f))
 
         //  QUOTE 名
-        val tv1: TextView = TextView(ctx)
+        val tv1 = TextView(ctx)
         val tv1_layout_params = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
 
         tv1_layout_params.setMargins(toDp(10f), toDp(3f), 0, 0)
@@ -299,17 +312,17 @@ class FragmentMarketInfo : BtsppFragment() {
         tv1.id = R.id.view1_of_markets
 
         //  BASE 名
-        val tv2: TextView = TextView(ctx)
+        val tv2 = TextView(ctx)
         val tv2_layout_params = FrameLayout.LayoutParams(toDp(70f), FrameLayout.LayoutParams.MATCH_PARENT)
 
         tv2.setTextColor(resources.getColor(R.color.theme01_textColorGray))
         tv2.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10f)
 
-        tv1.text = quote_symbol
+        tv1.text = quote_name
         tv2.text = "  /${chainMgr.getDefaultMarketInfoByBaseSymbol(base_symbol).getJSONObject("base").getString("name")}"
 
         val tv1_paint = tv1.paint
-        val tv1_width = tv1_paint.measureText(quote_symbol)
+        val tv1_width = tv1_paint.measureText(quote_name)
         tv2_layout_params.setMargins(tv1_width.toInt() + 20, toDp(9f), 0, 0)
 
         val tv3_id = View.generateViewId()
@@ -319,7 +332,7 @@ class FragmentMarketInfo : BtsppFragment() {
         val ticker_show_data = _getTickerData(base_symbol, quote_symbol)
 
         //  24H量
-        val tv3: TextView = TextView(ctx)
+        val tv3 = TextView(ctx)
         val tv3_layout_params = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.MATCH_PARENT)
         tv3_layout_params.setMargins(toDp(10f), toDp(23f), 0, 0)
         tv3.text = ticker_show_data.getString("volume_str")
@@ -328,7 +341,7 @@ class FragmentMarketInfo : BtsppFragment() {
         tv3.id = tv3_id
 
         //  价格
-        val tv4: TextView = TextView(ctx)
+        val tv4 = TextView(ctx)
         val tv4_layout_params = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.MATCH_PARENT, Gravity.RIGHT or Gravity.CENTER_VERTICAL)
         tv4_layout_params.setMargins(0, 0, toDp(85f), 0)
         tv4.text = ticker_show_data.getString("price_str")
@@ -338,7 +351,7 @@ class FragmentMarketInfo : BtsppFragment() {
         tv4.id = tv4_id
 
         //  百分比
-        val tv5: TextView = TextView(ctx)
+        val tv5 = TextView(ctx)
         val tv5_layout_params = FrameLayout.LayoutParams(toDp(70f), toDp(25f), Gravity.RIGHT or Gravity.CENTER_VERTICAL)
         tv5_layout_params.setMargins(0, 0, toDp(10f), 0)
         tv5.id = tv5_id
@@ -362,7 +375,7 @@ class FragmentMarketInfo : BtsppFragment() {
 
         //  点击cell进入K线界面
         fl.setOnClickListener {
-            Crashlytics.log("ready to kline, base: ${base}, quote: ${quote}")
+            Crashlytics.log("ready to kline, base: $base, quote: $quote")
             TempManager.sharedTempManager().set_args(jsonArrayfrom(base, quote))
             val intent = Intent()
             intent.setClass(ctx, ActivityKLine::class.java)
