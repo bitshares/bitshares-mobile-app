@@ -104,12 +104,17 @@
     <string name="klineNameLow">低</string>
     <string name="klineName24vol">24小时量</string>
     <string name="klineNameTimeline">分时</string>
+    <string name="klineName1min">1分</string>
     <string name="klineName5min">5分</string>
     <string name="klineName15min">15分</string>
+    <string name="klineName30min">30分</string>
     <string name="klineName1hour">1小时</string>
     <string name="klineName4hour">4小时</string>
     <string name="klineName1day">日线</string>
     <string name="klineName1week">周线</string>
+    <string name="klineNameMoreSuffix">◢</string>
+    <string name="klineNameBtnMore">更多◢</string>
+    <string name="klineNameBtnIndex">指标</string>
     <string name="klineNameBuyOrder">买盘</string>
     <string name="klineNameSellOrder">卖盘</string>
     <string name="klineNameFeedPrice">喂价</string>

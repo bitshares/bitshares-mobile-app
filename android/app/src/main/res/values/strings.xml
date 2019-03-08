@@ -104,12 +104,17 @@
     <string name="klineNameLow">Low</string>
     <string name="klineName24vol">24HVol</string>
     <string name="klineNameTimeline">Line</string>
+    <string name="klineName1min">1min</string>
     <string name="klineName5min">5min</string>
     <string name="klineName15min">15min</string>
+    <string name="klineName30min">30min</string>
     <string name="klineName1hour">1hour</string>
     <string name="klineName4hour">4hour</string>
     <string name="klineName1day">1day</string>
     <string name="klineName1week">1week</string>
+    <string name="klineNameMoreSuffix">◢</string>
+    <string name="klineNameBtnMore">More◢</string>
+    <string name="klineNameBtnIndex">Index</string>
     <string name="klineNameBuyOrder">Buy</string>
     <string name="klineNameSellOrder">Sell</string>
     <string name="klineNameFeedPrice">Feed price</string>

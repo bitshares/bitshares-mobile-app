@@ -31,15 +31,14 @@ class ActivityKLine : BtsppActivity() {
 
     lateinit var _tradingPair: TradingPair
 
-    var _dataArrayHistory = JSONArray()             //  成交历史
-    var _currSecondPartyShowIndex: Int = 0          //  第二行按钮当前选中索引
-    var _feedPriceInfo: BigDecimal? = null          //  喂价信息（有的交易对没有喂价）
+    private var _dataArrayHistory = JSONArray()             //  成交历史
+    private var _feedPriceInfo: BigDecimal? = null          //  喂价信息（有的交易对没有喂价）
 
-    lateinit var _viewKLine: ViewKLine
-    lateinit var _viewCrss: ViewKLineCross
-    lateinit var _viewDeepGraph: ViewDeepGraph
-    lateinit var _viewTradeHistory: ViewTradeHistory
-    lateinit var _viewBidAsk: ViewBidAsk
+    private lateinit var _viewKLine: ViewKLine
+    private lateinit var _viewCrss: ViewKLineCross
+    private lateinit var _viewDeepGraph: ViewDeepGraph
+    private lateinit var _viewTradeHistory: ViewTradeHistory
+    private lateinit var _viewBidAsk: ViewBidAsk
     private var _notify_handler: Handler? = null
 
     override fun onResume() {
@@ -143,7 +142,7 @@ class ActivityKLine : BtsppActivity() {
         // 4、查询限价单信息
         val promiseLimitOrders = chainMgr.queryLimitOrders(_tradingPair, 200)
         //  5、查询喂价信息（如果需要）
-        var tmp_ary = JSONArray()
+        val tmp_ary = JSONArray()
         if (_tradingPair._baseIsSmart) {
             tmp_ary.put(_tradingPair._baseAsset.getString("bitasset_data_id"))
         }
@@ -170,7 +169,7 @@ class ActivityKLine : BtsppActivity() {
             //  继续订阅
             ScheduleManager.sharedScheduleManager().sub_market_notify(_tradingPair)
             return@then null
-        }.catch { error ->
+        }.catch {
             mask.dismiss()
             showToast(resources.getString(R.string.nameNetworkException))
         }
@@ -194,24 +193,36 @@ class ActivityKLine : BtsppActivity() {
         setFullScreen()
     }
 
-    private fun setTabListener() {
+    private fun _onIndexButtonClicked(){
+        val result_promise = Promise()
+        goTo(ActivityKLineIndexSetting::class.java,true, args = jsonObjectfromKVS("result_promise", result_promise))
+        result_promise.then {
+            if (it != null && it as Boolean){
+                _viewKLine.refreshUI()
+            }
+        }
+    }
 
+    private fun setTabListener() {
         // 顶部K线tab
         tablayout_of_kline.getTabAt(2)!!.select()
         tablayout_of_kline!!.setOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-
-                var current_type: ViewKLine.EKlineDatePeriodType? = null
-                when {
-                    tab.position == 0 -> current_type = ViewKLine.EKlineDatePeriodType.ekdpt_timeline
-                    tab.position == 1 -> current_type = ViewKLine.EKlineDatePeriodType.ekdpt_5m
-                    tab.position == 2 -> current_type = ViewKLine.EKlineDatePeriodType.ekdpt_15m
-                    tab.position == 3 -> current_type = ViewKLine.EKlineDatePeriodType.ekdpt_1h
-                    tab.position == 4 -> current_type = ViewKLine.EKlineDatePeriodType.ekdpt_4h
-                    tab.position == 5 -> current_type = ViewKLine.EKlineDatePeriodType.ekdpt_1d
-                    tab.position == 6 -> current_type = ViewKLine.EKlineDatePeriodType.ekdpt_1w
+                if (tab.position == 6){
+                    _onIndexButtonClicked()
+                }else{
+                    var current_type: ViewKLine.EKlineDatePeriodType? = null
+                    when {
+                        tab.position == 0 -> current_type = ViewKLine.EKlineDatePeriodType.ekdpt_timeline
+                        tab.position == 1 -> current_type = ViewKLine.EKlineDatePeriodType.ekdpt_5m
+                        tab.position == 2 -> current_type = ViewKLine.EKlineDatePeriodType.ekdpt_15m
+                        tab.position == 3 -> current_type = ViewKLine.EKlineDatePeriodType.ekdpt_1h
+                        tab.position == 4 -> current_type = ViewKLine.EKlineDatePeriodType.ekdpt_4h
+                        tab.position == 5 -> current_type = ViewKLine.EKlineDatePeriodType.ekdpt_1d
+//                        tab.position == 6 -> current_type = ViewKLine.EKlineDatePeriodType.ekdpt_1w
+                    }
+                    queryKdata(getDatePeriodSeconds(current_type!!.value), current_type)
                 }
-                queryKdata(getDatePeriodSeconds(current_type!!.value), current_type)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {
@@ -223,26 +234,21 @@ class ActivityKLine : BtsppActivity() {
             }
         })
 
-        // 深度和成交tab
+        //  深度和成交tab
         tablayout_depth_of_kline!!.setOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-
                 if (tab.position == 0) {
                     layout_depth_area_title_from_kline.visibility = View.VISIBLE
                     layout_depth_area_from_kline.visibility = View.VISIBLE
                     layout_order_book_from_kline.visibility = View.VISIBLE
-
                     layout_volume_from_kline.visibility = View.GONE
                 }
-
                 if (tab.position == 1) {
                     layout_depth_area_title_from_kline.visibility = View.GONE
                     layout_depth_area_from_kline.visibility = View.GONE
                     layout_order_book_from_kline.visibility = View.GONE
-
                     layout_volume_from_kline.visibility = View.VISIBLE
                 }
-
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {
@@ -275,7 +281,7 @@ class ActivityKLine : BtsppActivity() {
         }
     }
 
-    fun onQueryFeedPriceInfoResponsed(feed_infos: JSONArray?) {
+    private fun onQueryFeedPriceInfoResponsed(feed_infos: JSONArray?) {
         //  计算喂价（可能为 nil）
         _feedPriceInfo = _tradingPair.calcShowFeedInfo(feed_infos)
 
