@@ -10,6 +10,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import bitshares.*
+import com.btsplusplus.fowallet.kline.MKlineIndex
 import com.btsplusplus.fowallet.kline.MKlineIndexMA
 import com.btsplusplus.fowallet.kline.MKlineItemData
 import org.json.JSONArray
@@ -24,6 +25,22 @@ import kotlin.math.*
  * KLine (K线图)
  */
 class ViewKLine : ViewBase {
+
+    enum class EKLineMainIndexType(val value: Int) {
+        ekmit_show_ma(0),       //  显示MA指标
+        ekmit_show_ema(1),      //  显示EMA指标
+        ekmit_show_boll(2),     //  显示BOLL指标
+        ekmit_show_none(3),     //  不显示
+
+        ekmit_max(4),
+    }
+
+    enum class EKLineSubIndexType(val value: Int) {
+        eksit_show_none(0),     //  高级指标：不显示
+        eksit_show_macd(1),     //  高级指标：MACD
+
+        eksit_max(2),
+    }
 
     enum class EKlineDatePeriodType(val value: Int) {
         ekdpt_timeline(1),     //  分时图
@@ -44,8 +61,11 @@ class ViewKLine : ViewBase {
     private var m_event_delegate: GestureDetector? = null
     private var m_scale_event_delegate: ScaleGestureDetector? = null
 
-    var ekdptType: EKlineDatePeriodType? = null        //  K线周期类型
-    var fOneCellHeight: Float = 0f                  //  主图（K线）区域一个CELL格高度
+    var _kMainIndexType = EKLineMainIndexType.ekmit_show_ma //  主图显示的指标类型
+    var _kSubIndexType = EKLineSubIndexType.eksit_show_none //  副图显示指标类型
+
+    var ekdptType: EKlineDatePeriodType? = null         //  K线周期类型
+    private var fOneCellHeight: Float = 0f                      //  主图（K线）区域一个CELL格高度
     var fMainGraphHeight: Float = 0f                //  主图（K线）区域总高度     该高度不包含 fMainMAHeight
     var fSecondGraphHeight: Float = 0f              //  副图（量）区域总高度      该高度不包含 fSecondMAHeight
     var fMainMAHeight: Float = 0f                   //  主图（K线）MA区域总高度
@@ -54,63 +74,52 @@ class ViewKLine : ViewBase {
 
     var _baseAsset: JSONObject? = null
     var _quoteAsset: JSONObject? = null
-    var _base_precision: Int = 0
-    var _quote_precision: Int = 0
-    var _base_id: String? = null
+    private var _base_precision: Int = 0
+    private var _quote_precision: Int = 0
+    private var _base_id: String? = null
 
-    var _kdataModelPool: MutableList<MKlineItemData>? = null
-    var _kdataModelCurrentIndex: Int = 0
+    private var _kdataModelPool: MutableList<MKlineItemData>? = null
+    private var _kdataModelCurrentIndex: Int = 0
 
     var _kdataArrayAll = mutableListOf<MKlineItemData>()           //  所有K线数据Model
     var _kdataArrayShowing = mutableListOf<MKlineItemData>()       //  当前屏幕显示中的数据Model
-    var _currMaxPrice: BigDecimal? = null                   //  Y轴价格区间最高价格
-    var _currMinPrice: BigDecimal? = null                  //  Y轴价格区间最低价格
-    var _currRowPriceStep: BigDecimal? = null              //  每行价格阶梯
-    var _currMaxVolume: BigDecimal? = null                 //  Vol区间当前最大交易量
+    private var _currMaxPrice: BigDecimal? = null                   //  Y轴价格区间最高价格
+    private var _currMinPrice: BigDecimal? = null                  //  Y轴价格区间最低价格
+    private var _currRowPriceStep: BigDecimal? = null              //  每行价格阶梯
+    private var _currMaxVolume: BigDecimal? = null                 //  Vol区间当前最大交易量
 
-    var _f10NumberSize: SizeF? = null                  //  测量字体高度
+    private var _f10NumberSize: SizeF? = null                  //  测量字体高度
 
-    var _fontname: Typeface? = null
-    var _fontsize: Float? = null
+    private var _fontname: Typeface? = null
+    private var _fontsize: Float? = null
 
     //  手势数据
     var long_press_down: Boolean = false                 //  长按手势是否经过了 down 事件
     var long_press: Boolean = false                     //  长按手势中
     var pan_gesture: Boolean = false                    //  拖拽手势中
     var _startTouch: PointF = PointF(0.0f, 0.0f)
-    var _currCandleOffset: Int = 0
-    var _panOffsetX: Float = 0.0f
+    private var _currCandleOffset: Int = 0
+    private var _panOffsetX: Float = 0.0f
 
     var _scaleStartPan: Float = 0.0f
     var _scale_gesture: Boolean = false
 
 
     //  缩放手势
-    var _currCandleWidth: Int = 0                  //  当前蜡烛图宽度（0-9）
-    var _currCandleTotalWidth: Int = 0               //  当前缩放蜡烛图总宽度（1-10）
-    var _maxShowNumber: Int = 0                    //  当前屏幕最大显示蜡烛数量（根据蜡烛宽度动态计算）
-
-    var _ma: MKlineIndexMA? = null
-
-    var _items: ArrayList<MKlineItemData> = ArrayList()
-
-    var init_scale: Float = 1.0f
-    var scale_level: Float = 1.0f
-
-    var draw_start_x: Float = 0f
-    var draw_start_y: Float = 0f
+    var _currCandleWidth: Int = 0                   //  当前蜡烛图宽度（0-9）
+    private var _currCandleTotalWidth: Int = 0      //  当前缩放蜡烛图总宽度（1-10）
+    var _maxShowNumber: Int = 0                     //  当前屏幕最大显示蜡烛数量（根据蜡烛宽度动态计算）
 
     // 画笔
-    var m_paint01 = Paint()
-    var m_paint02 = Paint()
-    var m_paint03 = Paint()
-    var _context: Context? = null
-    var _view_size: SizeF = SizeF(0f, 0f)
-    var m_canvas: Canvas = Canvas()
-    var first_refresh: Boolean = true
-    var cross_candle_index: Int = 0
+    private var m_paint01 = Paint()
+    private var m_paint_buycolor = Paint()
+    private var m_paint_sellcolor = Paint()
+    private var _context: Context? = null
+    private var _view_size: SizeF = SizeF(0f, 0f)
+    private var m_canvas: Canvas = Canvas()
+    private var cross_candle_index: Int = 0
 
-    lateinit var _kdata: JSONArray
+    private lateinit var _kdata: JSONArray
 
     /**
      * dp 2 px
@@ -141,19 +150,18 @@ class ViewKLine : ViewBase {
         val spaceW = candle_width * 2 + kBTS_KLINE_SHADOW_WIDTH + kBTS_KLINE_INTERVAL
 
         //  判断涨跌来设置颜色
-        var candle_paint: Paint? = null
-        if (model.isRise) {
-            candle_paint = m_paint02
+        val candle_paint = if (model.isRise) {
+            m_paint_buycolor
         } else {
-            candle_paint = m_paint03
+            m_paint_sellcolor
         }
         candle_paint.strokeWidth = 1.0f.dp
         val path = Path()
 
         //  绘制蜡烛和上下影线（如果candle_width为0了则只描绘影线，不描绘蜡烛。）
         if (candle_width > 0) {
-            var fHeight: Float = 0f
-            var yOffset: Float = 0f
+            val fHeight: Float
+            val yOffset: Float
             if (model.isRise) {
                 yOffset = floor(model.fOffsetClose)
                 fHeight = max(Math.abs(ceil(model.fOffsetOpen.minus(model.fOffsetClose))), 1.0f.dp)
@@ -162,12 +170,12 @@ class ViewKLine : ViewBase {
                 fHeight = max(Math.abs(ceil(model.fOffsetClose.minus(model.fOffsetOpen))), 1.0f.dp)
             }
 
-            var x1 = index * spaceW
-            var y1 = fMainMAHeight + yOffset
-            var x2 = x1 + candle_width * 2 + kBTS_KLINE_SHADOW_WIDTH
-            var y2 = y1 + fHeight
+            val x1 = index * spaceW
+            val y1 = fMainMAHeight + yOffset
+            val x2 = x1 + candle_width * 2 + kBTS_KLINE_SHADOW_WIDTH
+            val y2 = y1 + fHeight
 
-            val candleFrame: RectF = RectF(x1, y1, x2, y2)
+            val candleFrame = RectF(x1, y1, x2, y2)
             path.addRect(candleFrame, Path.Direction.CW)
             m_canvas.drawPath(path, candle_paint)
         }
@@ -186,18 +194,24 @@ class ViewKLine : ViewBase {
     private fun genVolumeLayer(model: MKlineItemData, index: Int, candle_width: Float) {
         val spaceW: Float = candle_width * 2 + kBTS_KLINE_SHADOW_WIDTH + kBTS_KLINE_INTERVAL
 
+        //  成交量柱子底部Y坐标
+        var fVolumeGraphBottomY = _view_size.height
+        if (_kSubIndexType != EKLineSubIndexType.eksit_show_none){
+            fVolumeGraphBottomY -= fSecondMAHeight + fSecondGraphHeight
+        }
+
         //  判断涨跌来设置颜色
         val candle_paint: Paint
         if (model.isRise) {
-            candle_paint = m_paint02
+            candle_paint = m_paint_buycolor
         } else {
-            candle_paint = m_paint03
+            candle_paint = m_paint_sellcolor
         }
 
         //  REMARK：从最底部倒着往上绘制，高度设置为负数
         if (candle_width > 0) {
             val x1 = index * spaceW
-            val y2 = _view_size.height
+            val y2 = fVolumeGraphBottomY
             val x2 = x1 + candle_width * 2 + kBTS_KLINE_SHADOW_WIDTH
             val y1 = y2 + ceil(-model.fOffset24Vol)
 
@@ -206,9 +220,9 @@ class ViewKLine : ViewBase {
         } else {
             m_canvas.drawLine(
                     index * spaceW,
-                    _view_size.height,
+                    fVolumeGraphBottomY,
                     index * spaceW,
-                    floor(_view_size.height - model.fOffset24Vol), candle_paint)
+                    floor(fVolumeGraphBottomY - model.fOffset24Vol), candle_paint)
         }
     }
 
@@ -218,10 +232,10 @@ class ViewKLine : ViewBase {
      */
     private fun genBackFrameLayer(frame: RectF) {
 
-        val frameX: Float = 0f
-        val frameY: Float = 0f
-        val frameW: Float = frame.width()
-        val frameH: Float = frame.height()
+        val frameX = 0f
+        val frameY = 0f
+        val frameW = frame.width()
+        val frameH = frame.height()
 
         //  初始化一个路径
         val framePath = Path()
@@ -231,9 +245,7 @@ class ViewKLine : ViewBase {
         paint.strokeWidth = toDp(1.0f)
         framePath.addRect(frame, Path.Direction.CW)
 
-
         val cellW: Float = frameW / kBTS_KLINE_COL_NUM
-        val cellH: Float = frameH / kBTS_KLINE_ROW_NUM
 
         //  绘制竖线（kBTS_KLINE_COL_NUM - 1）条
         for (i in 0 until kBTS_KLINE_COL_NUM - 1) {
@@ -242,10 +254,17 @@ class ViewKLine : ViewBase {
         }
 
         //  绘制横线（kBTS_KLINE_ROW_NUM - 1）条。由于区域顶部显示MA指标，所以横线需要往下偏移。
-        val fMAOffset = kBTS_KLINE_MA_HEIGHT.toFloat() * cellH
         for (i in 0 until kBTS_KLINE_ROW_NUM - 1) {
-            framePath.moveTo(frameX, frameY + cellH * (i + 1) + fMAOffset)
-            framePath.lineTo(frameX + frameW, frameY + cellH * (i + 1) + fMAOffset)
+            framePath.moveTo(frameX, frameY + fOneCellHeight * (i + 1) + fMainMAHeight)
+            framePath.lineTo(frameX + frameW, frameY + fOneCellHeight * (i + 1) + fMainMAHeight)
+        }
+
+        //  REMARK：显示MACD等高级指标区域多一条线。
+        if (_kSubIndexType != EKLineSubIndexType.eksit_show_none){
+            val fSecondHeightAll = fSecondGraphHeight + fSecondMAHeight
+            val fSubOffsetY = frameY + fOneCellHeight * (kBTS_KLINE_ROW_NUM - 1) + fMainMAHeight
+            framePath.moveTo(frameX, fSubOffsetY + fSecondHeightAll)
+            framePath.lineTo(frameX + frameW, fSubOffsetY + fSecondHeightAll)
         }
         m_canvas.drawPath(framePath, paint)
     }
@@ -294,36 +313,19 @@ class ViewKLine : ViewBase {
         //  保留小数位数 向上取整
         val ceilHandler: Array<Int> = arrayOf(_base_precision, BigDecimal.ROUND_UP)
         val percentHandler: Array<Int> = arrayOf(4, BigDecimal.ROUND_UP)
-
-        //  MA(n)辅助计算类
-        var ma5 = MKlineIndexMA(5, _kdataArrayAll, ceilHandler) {
-            it.nPriceClose!!
-        }
-
-        var ma10 = MKlineIndexMA(10, _kdataArrayAll, ceilHandler) {
-            it.nPriceClose!!
-        }
-
-        var ma30 = MKlineIndexMA(30, _kdataArrayAll, ceilHandler) {
-            it.nPriceClose!!
-        }
+        val scale = ceilHandler[0]
+        val rounding = ceilHandler[1]
 
         //  REMARK：目前仅分时图才显示MA60
         var ma60: MKlineIndexMA? = null
         if (isDrawTimeLine()) {
-            ma60 = MKlineIndexMA(60, _kdataArrayAll, ceilHandler) {
-                it.nPriceClose!!
-            }
+            ma60 = MKlineIndexMA(60, _kdataArrayAll, ceilHandler) { it.nPriceClose!! }
         }
+        val vol_ma5 = MKlineIndexMA(5, _kdataArrayAll, ceilHandler) { it.n24Vol!! }
+        val vol_ma10 = MKlineIndexMA(10, _kdataArrayAll, ceilHandler) { it.n24Vol!! }
 
-        var vol_ma5 = MKlineIndexMA(5, _kdataArrayAll, ceilHandler) {
-            it.n24Vol!!
-        }
-
-        var vol_ma10 = MKlineIndexMA(10, _kdataArrayAll, ceilHandler) {
-            it.n24Vol!!
-        }
-
+        //  解析模型
+        var data_index = 0
         data_array.forEach<JSONObject> { data: JSONObject? ->
             //  创建Model
             var model: MKlineItemData = getOneKdataModel()
@@ -332,15 +334,101 @@ class ViewKLine : ViewBase {
             model = MKlineItemData.parseData(data!!, model, _base_id, _base_precision, _quote_precision, ceilHandler, percentHandler)
             _kdataArrayAll.add(model)
 
-            //  计算MA（n）
-            model.ma5 = ma5.calc_ma(model)
-            model.ma10 = ma10.calc_ma(model)
-            model.ma30 = ma30.calc_ma(model)
+            //  fill index
+            model.dataIndex = data_index++
+
+            //  计算：分时图MA指标
             if (ma60 != null) {
                 model.ma60 = ma60.calc_ma(model)
             }
+            //  计算：成交量副图相关指标
             model.vol_ma5 = vol_ma5.calc_ma(model)
             model.vol_ma10 = vol_ma10.calc_ma(model)
+        }
+
+        //  获取指标参数配置
+        val kline_index_values = SettingManager.sharedSettingManager().getKLineIndexInfos()
+
+        //  计算主图指标
+        when (_kMainIndexType) {
+            EKLineMainIndexType.ekmit_show_ma -> {
+                val ma_value_config = kline_index_values.getJSONArray("ma_value")
+                assert(ma_value_config.length() == 3)
+                MKlineIndex.calc_ma_index(ma_value_config.getInt(0), _kdataArrayAll, ceilHandler, {m -> m.nPriceClose}) {m, new_index_value ->
+                    m.main_index01 = new_index_value
+                }
+                MKlineIndex.calc_ma_index(ma_value_config.getInt(1), _kdataArrayAll, ceilHandler, {m -> m.nPriceClose}) {m, new_index_value ->
+                    m.main_index02 = new_index_value
+                }
+                MKlineIndex.calc_ma_index(ma_value_config.getInt(2), _kdataArrayAll, ceilHandler, {m -> m.nPriceClose}) {m, new_index_value ->
+                    m.main_index03 = new_index_value
+                }
+            }
+            EKLineMainIndexType.ekmit_show_ema -> {
+                val ema_value_config = kline_index_values.getJSONArray("ema_value")
+                assert(ema_value_config.length() == 3)
+                MKlineIndex.calc_ema_index(ema_value_config.getInt(0), _kdataArrayAll, ceilHandler, {m -> m.nPriceClose}) {m, new_index_value ->
+                    m.main_index01 = new_index_value
+                }
+                MKlineIndex.calc_ema_index(ema_value_config.getInt(1), _kdataArrayAll, ceilHandler, {m -> m.nPriceClose}) {m, new_index_value ->
+                    m.main_index02 = new_index_value
+                }
+                MKlineIndex.calc_ema_index(ema_value_config.getInt(2), _kdataArrayAll, ceilHandler, {m -> m.nPriceClose}) {m, new_index_value ->
+                    m.main_index03 = new_index_value
+                }
+            }
+            EKLineMainIndexType.ekmit_show_boll -> {
+                val boll_value_config = kline_index_values.getJSONObject("boll_value")
+                MKlineIndex.calc_boll_index(boll_value_config.getInt("n"), boll_value_config.getInt("p"), _kdataArrayAll, ceilHandler) { m->
+                    m.nPriceClose
+                }
+            }
+            else -> {}
+        }
+
+        //  计算高级指标
+        when (_kSubIndexType) {
+            EKLineSubIndexType.eksit_show_macd -> {
+                val macd_value = kline_index_values.getJSONObject("macd_value")
+                //  计算MACD指标
+                //  adv_index01 - MACD
+                //  adv_index02 - DIFF
+                //  adv_index03 - DEA
+                MKlineIndex.calc_ema_index(macd_value.getInt("s"), _kdataArrayAll, ceilHandler, {m -> m.nPriceClose}) {m, new_index_value ->
+                    //  EMA(short)
+                    m.adv_index01 = new_index_value
+                }
+                MKlineIndex.calc_ema_index(macd_value.getInt("l"), _kdataArrayAll, ceilHandler, {m -> m.nPriceClose}) {m, new_index_value ->
+                    //  EMA(long)
+                    m.adv_index03 = new_index_value
+                }
+                _kdataArrayAll.forEach { m ->
+                    if (m.adv_index01 != null && m.adv_index03 != null){
+                        //  DIFF = EMA(short) - EMA(long)
+                        m.adv_index02 = m.adv_index01!!.subtract(m.adv_index03).setScale(scale, rounding)
+                    }else{
+                        m.adv_index02 = null
+                    }
+                    m.adv_index01 = null
+                    m.adv_index03 = null
+                }
+                MKlineIndex.calc_ema_index(macd_value.getInt("m"), _kdataArrayAll, ceilHandler, {m -> m.adv_index02}) {m, new_index_value ->
+                    //  DEA
+                    m.adv_index03 = new_index_value
+                }
+                val two = BigDecimal(2)
+                _kdataArrayAll.forEach { m ->
+                    if (m.adv_index02 != null && m.adv_index03 != null){
+                        //  MACD = (DIFF - DEA) * 2
+                        m.adv_index01 = m.adv_index02!!.subtract(m.adv_index03).multiply(two).setScale(scale, rounding)
+                    }else{
+                        m.adv_index01 = null
+                        m.adv_index02 = null
+                        m.adv_index03 = null
+                    }
+                }
+            }
+            else -> {}
         }
     }
 
@@ -407,9 +495,9 @@ class ViewKLine : ViewBase {
         var l: BigDecimal? = null
         var c: BigDecimal? = null
         var vol: BigDecimal? = null
-        var ma5: BigDecimal? = null
-        var ma10: BigDecimal? = null
-        var ma30: BigDecimal? = null
+        var main_index01: BigDecimal? = null
+        var main_index02: BigDecimal? = null
+        var main_index03: BigDecimal? = null
         var ma60: BigDecimal? = null
         var vol_ma5: BigDecimal? = null
         var vol_ma10: BigDecimal? = null
@@ -427,9 +515,9 @@ class ViewKLine : ViewBase {
                 //  统计K线Y轴最高最低价格、以及蜡烛图最高最低价格（由于MA存在两者可能不同）
                 h = m.nPriceHigh
                 l = m.nPriceLow
-                ma5 = m.ma5
-                ma10 = m.ma10
-                ma30 = m.ma30
+                main_index01 = m.main_index01
+                main_index02 = m.main_index02
+                main_index03 = m.main_index03
             }
 
             //  统计副图Y轴最大交易量
@@ -469,18 +557,27 @@ class ViewKLine : ViewBase {
                     max_price = h
                     price_max_item = m
                 }
-                if (ma5 != null && ma5.compareTo(max_price) == NSOrderedDescending) {
-                    max_price = ma5
-                    price_max_item = m
+                if (_kMainIndexType == EKLineMainIndexType.ekmit_show_ma || _kMainIndexType == EKLineMainIndexType.ekmit_show_ema){
+                    if (main_index01 != null && main_index01.compareTo(max_price) == NSOrderedDescending) {
+                        max_price = main_index01
+                        price_max_item = m
+                    }
+                    if (main_index02 != null && main_index02.compareTo(max_price) == NSOrderedDescending) {
+                        max_price = main_index02
+                        price_max_item = m
+                    }
+                    if (main_index03 != null && main_index03.compareTo(max_price) == NSOrderedDescending) {
+                        max_price = main_index03
+                        price_max_item = m
+                    }
+                }else if (_kMainIndexType == EKLineMainIndexType.ekmit_show_boll){
+                    //  main_index02 is boll ub
+                    if (main_index02 != null && main_index02.compareTo(max_price) == NSOrderedDescending) {
+                        max_price = main_index02
+                        price_max_item = m
+                    }
                 }
-                if (ma10 != null && ma10.compareTo(max_price) == NSOrderedDescending) {
-                    max_price = ma10
-                    price_max_item = m
-                }
-                if (ma30 != null && ma30.compareTo(max_price) == NSOrderedDescending) {
-                    max_price = ma30
-                    price_max_item = m
-                }
+
                 //  l < candle_min_price
                 if (l!!.compareTo(candle_min_price) == NSOrderedAscending) {
                     candle_min_price = l
@@ -491,17 +588,26 @@ class ViewKLine : ViewBase {
                     min_price = l
                     price_min_item = m
                 }
-                if (ma5 != null && ma5.compareTo(min_price) == NSOrderedAscending) {
-                    min_price = ma5
-                    price_min_item = m
-                }
-                if (ma10 != null && ma10.compareTo(min_price) == NSOrderedAscending) {
-                    min_price = ma10
-                    price_min_item = m
-                }
-                if (ma30 != null && ma30.compareTo(min_price) == NSOrderedAscending) {
-                    min_price = ma30
-                    price_min_item = m
+
+                if (_kMainIndexType == EKLineMainIndexType.ekmit_show_ma || _kMainIndexType == EKLineMainIndexType.ekmit_show_ema){
+                    if (main_index01 != null && main_index01.compareTo(min_price) == NSOrderedAscending) {
+                        min_price = main_index01
+                        price_min_item = m
+                    }
+                    if (main_index02 != null && main_index02.compareTo(min_price) == NSOrderedAscending) {
+                        min_price = main_index02
+                        price_min_item = m
+                    }
+                    if (main_index03 != null && main_index03.compareTo(min_price) == NSOrderedAscending) {
+                        min_price = main_index03
+                        price_min_item = m
+                    }
+                }else if (_kMainIndexType == EKLineMainIndexType.ekmit_show_boll){
+                    //  main_index03 is boll lb
+                    if (main_index03 != null && main_index03.compareTo(min_price) == NSOrderedAscending) {
+                        min_price = main_index03
+                        price_min_item = m
+                    }
                 }
             }
 
@@ -559,14 +665,14 @@ class ViewKLine : ViewBase {
             m.fOffsetLow = (max_price.subtract(m.nPriceLow).toDouble() * fViewMaxHeight / f_diff_price).toFloat()
             m.fOffset24Vol = ((m.n24Vol!!.divide(max_24vol, 8, BigDecimal.ROUND_UP)).toDouble() * (fSecondViewHeight.toDouble())).toFloat()
 
-            if (m.ma5 != null) {
-                m.fOffsetMA5 = (max_price.subtract(m.ma5).toDouble() * fViewMaxHeight / f_diff_price).toFloat()
+            if (m.main_index01 != null) {
+                m.fOffsetMainIndex01 = (max_price.subtract(m.main_index01).toDouble() * fViewMaxHeight / f_diff_price).toFloat()
             }
-            if (m.ma10 != null) {
-                m.fOffsetMA10 = (max_price.subtract(m.ma10).toDouble() * fViewMaxHeight / f_diff_price).toFloat()
+            if (m.main_index02 != null) {
+                m.fOffsetMainIndex02 = (max_price.subtract(m.main_index02).toDouble() * fViewMaxHeight / f_diff_price).toFloat()
             }
-            if (m.ma30 != null) {
-                m.fOffsetMA30 = (max_price.subtract(m.ma30).toDouble() * fViewMaxHeight / f_diff_price).toFloat()
+            if (m.main_index03 != null) {
+                m.fOffsetMainIndex03 = (max_price.subtract(m.main_index03).toDouble() * fViewMaxHeight / f_diff_price).toFloat()
             }
             if (m.ma60 != null) {
                 m.fOffsetMA60 = (max_price.subtract(m.ma60).toDouble() * fViewMaxHeight / f_diff_price).toFloat()
@@ -652,7 +758,7 @@ class ViewKLine : ViewBase {
             var point: PointF = timeline_points.first()
             path.moveTo(point.x, point.y)
             for (idxY in 1 until timeline_points.count() - 1) {
-                point = timeline_points.get(idxY)
+                point = timeline_points[idxY]
                 path.lineTo(point.x, point.y)
             }
             // path.close()
@@ -662,7 +768,7 @@ class ViewKLine : ViewBase {
             paint.shader = null
             paint.color = resources.getColor(R.color.theme01_textColorHighlight)
             paint.flags = Paint.ANTI_ALIAS_FLAG
-            paint.strokeWidth = 4.0f//TODO:
+            paint.strokeWidth = 4.0f
 
             m_canvas.drawPath(path, paint)
 
@@ -686,6 +792,144 @@ class ViewKLine : ViewBase {
 
             paint.shader = lg
             m_canvas.drawPath(maskPath, paint)
+        }
+    }
+
+    private fun drawAdvancedIndex(maxShowNum: Int, candle_width: Float){
+        when (_kSubIndexType){
+            EKLineSubIndexType.eksit_show_macd -> drawIndexMACD(maxShowNum, candle_width)
+            else -> {}
+        }
+    }
+
+    private fun drawIndexMACD(maxShowNum: Int, candle_width: Float){
+        var max_value:BigDecimal? = null
+        var min_value:BigDecimal? = null
+
+        for (m in _kdataArrayShowing){
+            if (m.adv_index01 == null || m.adv_index02 == null || m.adv_index03 == null){
+                continue
+            }
+            if (max_value == null || m.adv_index01!! > max_value){
+                max_value = m.adv_index01
+            }
+            if (max_value == null || m.adv_index02!! > max_value){
+                max_value = m.adv_index02
+            }
+            if (max_value == null || m.adv_index03!! > max_value){
+                max_value = m.adv_index03
+            }
+
+            if (min_value == null || m.adv_index01!! < min_value){
+                min_value = m.adv_index01
+            }
+            if (min_value == null || m.adv_index02!! < min_value){
+                min_value = m.adv_index02
+            }
+            if (min_value == null || m.adv_index03!! < min_value){
+                min_value = m.adv_index03
+            }
+        }
+
+        if (min_value == null || max_value == null){
+            return
+        }
+
+        //  REMARK：特殊情况，如果最大最小值为0，那么在屏幕上就只有一个点，不存在区间，那么Y轴价格区间就没法显示，这种情况价格区间上下浮动 10%。
+        if (max_value == min_value) {
+            //  max_price *= 1.1;
+            //  min_price *= 0.9;
+            val ceilHanderScale = _base_precision
+            val ceilHanderScaleRounding = BigDecimal.ROUND_UP
+            val n_percent_90 = BigDecimal("0.9")
+            val n_percent_110 = BigDecimal("1.1")
+            max_value = max_value.multiply(n_percent_110).setScale(ceilHanderScale, ceilHanderScaleRounding)
+            min_value = min_value.multiply(n_percent_90).setScale(ceilHanderScale, ceilHanderScaleRounding)
+        }
+
+        val diff_value = max_value!!.subtract(min_value)
+        val f_diff_value = diff_value.toDouble()
+
+        val fSecondViewHeight = fSecondGraphHeight
+        val fZeroLineOffset = -1.0f * min_value!!.toDouble() * fSecondViewHeight / f_diff_value
+
+        _kdataArrayShowing.forEach { m ->
+            if (m.adv_index02 != null){
+                m.fOffsetAdvIndex02 = (m.adv_index02!!.subtract(min_value).toDouble() * fSecondViewHeight / f_diff_value).toFloat()
+            }
+            if (m.adv_index03 != null){
+                m.fOffsetAdvIndex03 = (m.adv_index03!!.subtract(min_value).toDouble() * fSecondViewHeight / f_diff_value).toFloat()
+            }
+        }
+
+        val candleSpaceW = candle_width * 2 + kBTS_KLINE_SHADOW_WIDTH + kBTS_KLINE_INTERVAL
+
+        //  1、描绘0轴线
+        val fZeroLinePointY = floor(_view_size.height - fZeroLineOffset).toFloat()
+        m_canvas.drawLine(0f, fZeroLinePointY, _view_size.width, fZeroLinePointY, m_paint01)
+
+        //  2、描绘高级指标背景右边Y轴区间
+        //  保留小数位数 向上取整
+        val ceilHandlerScale: Int = _base_precision
+        val ceilHandlerRounding: Int = BigDecimal.ROUND_UP
+
+        for (i in 0..2){
+            val txtOffsetY:Float
+            val value:BigDecimal
+            when (i){
+                0 -> {
+                    value = min_value
+                    txtOffsetY = _view_size.height - 2.dp
+                }
+                1 -> {
+                    value = diff_value.divide(BigDecimal(2)).add(min_value).setScale(ceilHandlerScale, ceilHandlerRounding)
+                    txtOffsetY = _view_size.height - (fSecondMAHeight + fSecondGraphHeight) / 2.0f + _f10NumberSize!!.height / 2.0f + 2.dp
+                }
+                else -> {
+                    value = max_value
+                    txtOffsetY = _view_size.height - (fSecondMAHeight + fSecondGraphHeight) + _f10NumberSize!!.height + 2.dp
+                }
+            }
+            val str = value.toString()
+            val txt_paint = getTextPaintWithString(str, resources.getColor(R.color.theme01_textColorNormal), _fontname!!, _fontsize!!)
+            txt_paint.textAlign = Paint.Align.RIGHT
+            val frame = RectF(0f, txtOffsetY, _view_size.width - 4, _f10NumberSize!!.height)
+            m_canvas.drawText(str, frame.right, frame.top, txt_paint)
+        }
+
+        //  3、描绘MACD柱
+        val zero = BigDecimal.ZERO
+        for (m in _kdataArrayShowing){
+            if (m.adv_index01 == null){
+                continue
+            }
+            val x = m.showIndex * candleSpaceW + candle_width
+            val isPositive = m.adv_index01!! >= zero
+            if (isPositive){
+                val y = max((m.adv_index01!!.toDouble() * fSecondViewHeight / f_diff_value).toFloat(), 1.0f)
+                m_canvas.drawLine(x, fZeroLinePointY, x, fZeroLinePointY - y, m_paint_buycolor)
+            }else{
+                val y = min((m.adv_index01!!.toDouble() * fSecondViewHeight / f_diff_value).toFloat(), -1.0f)
+                m_canvas.drawLine(x, fZeroLinePointY, x, fZeroLinePointY - y, m_paint_sellcolor)
+            }
+        }
+
+        //  4、描绘DIFF、DEA线
+        val value01_points = mutableListOf<PointF>()
+        val value02_points = mutableListOf<PointF>()
+        _kdataArrayShowing.forEachIndexed { idx, m ->
+            if (m.adv_index02 != null) {
+                value01_points.add(PointF(idx * candleSpaceW + candle_width, floor(_view_size.height - m.fOffsetAdvIndex02)))
+            }
+            if (m.adv_index03 != null) {
+                value02_points.add(PointF(idx * candleSpaceW + candle_width, floor(_view_size.height - m.fOffsetAdvIndex03)))
+            }
+        }
+        if (value01_points.count() >= 2) {
+            getSingleLineLayerWithPointArray(value01_points, resources.getColor(R.color.theme01_ma10Color))
+        }
+        if (value02_points.count() >= 2) {
+            getSingleLineLayerWithPointArray(value02_points, resources.getColor(R.color.theme01_ma30Color))
         }
     }
 
@@ -732,7 +976,7 @@ class ViewKLine : ViewBase {
                 }
             }
             val str: String = price.toString()
-            var txt_paint = getTextPaintWithString(str, resources.getColor(R.color.theme01_textColorNormal), _fontname!!, _fontsize!!)
+            val txt_paint = getTextPaintWithString(str, resources.getColor(R.color.theme01_textColorNormal), _fontname!!, _fontsize!!)
             txt_paint.textAlign = Paint.Align.RIGHT
             val frame = RectF(0f, txtOffsetY, _view_size.width - 4, _f10NumberSize!!.height)
             m_canvas.drawText(str, frame.right, frame.top, txt_paint)
@@ -774,8 +1018,7 @@ class ViewKLine : ViewBase {
         //  3、描绘中间主区域蜡烛图影线和成交量
         var candle_max_price_model: MKlineItemData? = null
         var candle_min_price_model: MKlineItemData? = null
-        var idx = 0
-        for (m: MKlineItemData in _kdataArrayShowing) {
+        for ((idx, m) in _kdataArrayShowing.withIndex()){
             m.showIndex = idx
 
             //  非分时图的情况下描绘蜡烛图
@@ -795,7 +1038,6 @@ class ViewKLine : ViewBase {
                     candle_min_price_model = m
                 }
             }
-            ++idx
         }
 
         //  描绘分时图
@@ -804,47 +1046,50 @@ class ViewKLine : ViewBase {
         }
 
         //  4、描绘MA均线（覆盖在蜡烛图上面）
-        var ma5_points: MutableList<PointF> = mutableListOf()
-        var ma10_points: MutableList<PointF> = mutableListOf()
-        var ma30_points: MutableList<PointF> = mutableListOf()
-        var ma60_points: MutableList<PointF> = mutableListOf()
-        var vol_ma5_points: MutableList<PointF> = mutableListOf()
-        var vol_ma10_points: MutableList<PointF> = mutableListOf()
+        val main_index01_points = mutableListOf<PointF>()
+        val main_index02_points = mutableListOf<PointF>()
+        val main_index03_points = mutableListOf<PointF>()
+        val ma60_points = mutableListOf<PointF>()
+        val vol_ma5_points = mutableListOf<PointF>()
+        val vol_ma10_points = mutableListOf<PointF>()
 
-        for ((idx: Int, m: MKlineItemData) in _kdataArrayShowing.withIndex()) {
+        _kdataArrayShowing.forEachIndexed { idx, m ->
             //  分时和蜡烛图分别描绘不同移动均线
             if (isDrawTimeLine()) {
                 if (m.ma60 != null) {
                     ma60_points.add(PointF(idx * candleSpaceW + candle_width, m.fOffsetMA60 + fMainMAHeight))
                 }
             } else {
-                if (m.ma5 != null) {
-                    ma5_points.add(PointF(idx * candleSpaceW + candle_width, m.fOffsetMA5 + fMainMAHeight))
+                if (m.main_index01 != null) {
+                    main_index01_points.add(PointF(idx * candleSpaceW + candle_width, m.fOffsetMainIndex01 + fMainMAHeight))
                 }
-                if (m.ma10 != null) {
-                    ma10_points.add(PointF(idx * candleSpaceW + candle_width, m.fOffsetMA10 + fMainMAHeight))
+                if (m.main_index02 != null) {
+                    main_index02_points.add(PointF(idx * candleSpaceW + candle_width, m.fOffsetMainIndex02 + fMainMAHeight))
                 }
-                if (m.ma30 != null) {
-                    ma30_points.add(PointF(idx * candleSpaceW + candle_width, m.fOffsetMA30 + fMainMAHeight))
+                if (m.main_index03 != null) {
+                    main_index03_points.add(PointF(idx * candleSpaceW + candle_width, m.fOffsetMainIndex03 + fMainMAHeight))
                 }
             }
             //  成交量移动均线描绘
+            var fVolumeGraphBottomY = _view_size.height
+            if (_kSubIndexType != EKLineSubIndexType.eksit_show_none){
+                fVolumeGraphBottomY -= fSecondMAHeight + fSecondGraphHeight
+            }
             if (m.vol_ma5 != null) {
-                vol_ma5_points.add(PointF(idx * candleSpaceW + candle_width, floor(_view_size.height - m.fOffsetVolMA5)))
+                vol_ma5_points.add(PointF(idx * candleSpaceW + candle_width, floor(fVolumeGraphBottomY - m.fOffsetVolMA5)))
             }
             if (m.vol_ma10 != null) {
-                vol_ma10_points.add(PointF(idx * candleSpaceW + candle_width, floor(_view_size.height - m.fOffsetVolMA10)))
+                vol_ma10_points.add(PointF(idx * candleSpaceW + candle_width, floor(fVolumeGraphBottomY - m.fOffsetVolMA10)))
             }
         }
-
-        if (ma5_points.count() >= 2) {
-            getSingleLineLayerWithPointArray(ma5_points, resources.getColor(R.color.theme01_ma5Color))
+        if (main_index01_points.count() >= 2) {
+            getSingleLineLayerWithPointArray(main_index01_points, resources.getColor(R.color.theme01_ma5Color))
         }
-        if (ma10_points.count() >= 2) {
-            getSingleLineLayerWithPointArray(ma10_points, resources.getColor(R.color.theme01_ma10Color))
+        if (main_index02_points.count() >= 2) {
+            getSingleLineLayerWithPointArray(main_index02_points, resources.getColor(R.color.theme01_ma10Color))
         }
-        if (ma30_points.count() >= 2) {
-            getSingleLineLayerWithPointArray(ma30_points, resources.getColor(R.color.theme01_ma30Color))
+        if (main_index03_points.count() >= 2) {
+            getSingleLineLayerWithPointArray(main_index03_points, resources.getColor(R.color.theme01_ma30Color))
         }
         if (ma60_points.count() >= 2) {
             //  同MA5颜色
@@ -860,7 +1105,7 @@ class ViewKLine : ViewBase {
         //  5、描绘副图最大成交量、主图最大价格、最小价格
         if (_currMaxVolume != null) {
             val txtPaint: Paint = getTextPaintWithString(_currMaxVolume!!.toPlainString(), resources.getColor(R.color.theme01_textColorNormal), _fontname!!, _fontsize!!)
-            val frame: RectF = RectF(0f, fMainGraphHeight.plus(fMainMAHeight) + kBTS_KLINE_PRICE_VOL_FONTSIZE, _view_size.width - 4.dp, fSecondMAHeight)
+            val frame = RectF(0f, fMainGraphHeight.plus(fMainMAHeight) + kBTS_KLINE_PRICE_VOL_FONTSIZE, _view_size.width - 4.dp, fSecondMAHeight)
             txtPaint.textAlign = Paint.Align.RIGHT
             m_canvas.drawText(_currMaxVolume!!.toPlainString(), frame.right, frame.top, txtPaint)
         }
@@ -871,10 +1116,10 @@ class ViewKLine : ViewBase {
             val str_size: Size = auxSizeWithText(str, _fontname!!, _fontsize!!)
             val txtOffsetY: Float = fMainMAHeight.plus(floor(candle_max_price_model.fOffsetHigh))
 
-            var txtOffsetX: Float? = null
-            var lineStartX: Float? = null
-            var lineEndX: Float? = null
-            var lineY: Float = fMainMAHeight + floor(candle_max_price_model.fOffsetHigh)
+            val txtOffsetX: Float
+            val lineStartX: Float
+            val lineEndX: Float
+            val lineY: Float = fMainMAHeight + floor(candle_max_price_model.fOffsetHigh)
 
             if (candle_max_price_model.showIndex >= maxShowNum / 2) {
                 //  最高价格在右边区域：靠左边显示
@@ -889,7 +1134,7 @@ class ViewKLine : ViewBase {
             }
 
             val txt_paint: Paint = getTextPaintWithString(str, resources.getColor(R.color.theme01_textColorMain), _fontname!!, _fontsize!!)
-            val frame: RectF = RectF(txtOffsetX, txtOffsetY, txtOffsetX + str_size.width.toFloat(), txtOffsetY + str_size.height.toFloat())
+            val frame = RectF(txtOffsetX, txtOffsetY, txtOffsetX + str_size.width.toFloat(), txtOffsetY + str_size.height.toFloat())
             m_canvas.drawText(str, frame.centerX(), frame.centerY(), txt_paint)
 
             //  短横线-指向最高价格
@@ -910,10 +1155,10 @@ class ViewKLine : ViewBase {
             val str_size: Size = auxSizeWithText(str, _fontname!!, _fontsize!!)
             val txtOffsetY: Float = fMainMAHeight + ceil(candle_min_price_model.fOffsetLow)
 
-            var txtOffsetX: Float? = null
-            var lineStartX: Float? = null
-            var lineEndX: Float? = null
-            var lineY: Float = fMainMAHeight + ceil(candle_min_price_model.fOffsetLow)
+            val txtOffsetX: Float?
+            val lineStartX: Float?
+            val lineEndX: Float?
+            val lineY: Float = fMainMAHeight + ceil(candle_min_price_model.fOffsetLow)
 
             if (candle_min_price_model.showIndex >= maxShowNum / 2) {
                 //  最低价格在右边区域：靠左边显示
@@ -928,7 +1173,7 @@ class ViewKLine : ViewBase {
             }
 
             val txt_paint: Paint = getTextPaintWithString(str, resources.getColor(R.color.theme01_textColorMain), _fontname!!, _fontsize!!)
-            val frame: RectF = RectF(txtOffsetX, txtOffsetY, txtOffsetX + str_size.width.toFloat(), txtOffsetY + str_size.height.toFloat())
+            val frame = RectF(txtOffsetX, txtOffsetY, txtOffsetX + str_size.width.toFloat(), txtOffsetY + str_size.height.toFloat())
             m_canvas.drawText(str, frame.centerX(), frame.centerY(), txt_paint)
 
             //  短横线-指向最高价格
@@ -943,12 +1188,18 @@ class ViewKLine : ViewBase {
             paint.strokeWidth = 1.0f.dp
             m_canvas.drawPath(framePath, paint)
         }
+
+        //  描绘高级指标
+        drawAdvancedIndex(maxShowNum, candle_width)
     }
 
     /**
      *  (public) 服务器返回新数据（准备刷新）
      */
     fun refreshCandleLayerPrepare(kdata: JSONArray) {
+        //  刷新指标显示类型
+        _refreshMainAndAdvIndexShowType()
+
         _first_init_draw = false
         _kdata = kdata
         //  重置
@@ -961,11 +1212,58 @@ class ViewKLine : ViewBase {
     }
 
     /**
+     *  (public) 重新刷新（更改了指标参数等直接重新刷新）
+     */
+    fun refreshUI() {
+        //  刷新指标显示类型
+        _refreshMainAndAdvIndexShowType()
+        //  处理数据
+        prepareAllDatas(_kdata)
+        //  刷新（新数据不偏移，显示最新数据。）
+        postDraw()
+    }
+
+    /**
      * 提交刷新
      */
     private fun postDraw() {
         postInvalidate()
         crossView?.postDraw()
+    }
+
+    /**
+     *  刷新主图指标和高级指标显示类型
+     */
+    private fun _refreshMainAndAdvIndexShowType(){
+        val kline_index_values = SettingManager.sharedSettingManager().getKLineIndexInfos()
+
+        //  主图指标
+        _kMainIndexType = when (kline_index_values.getString("kMain")) {
+            "boll" -> EKLineMainIndexType.ekmit_show_boll
+            "ema" -> EKLineMainIndexType.ekmit_show_ema
+            "ma" -> EKLineMainIndexType.ekmit_show_ma
+            else -> EKLineMainIndexType.ekmit_show_none
+        }
+
+        //  高级指标
+        val sub_type = kline_index_values.getString("kSub")
+        val subIndexType = if (sub_type == "macd"){
+            EKLineSubIndexType.eksit_show_macd
+        }else{
+            EKLineSubIndexType.eksit_show_none
+        }
+
+        //  刷新
+        if ((_kSubIndexType == EKLineSubIndexType.eksit_show_none && subIndexType != EKLineSubIndexType.eksit_show_none) ||
+                (_kSubIndexType != EKLineSubIndexType.eksit_show_none && subIndexType == EKLineSubIndexType.eksit_show_none)){
+            //  refresh sub type and reset canvas
+            _kSubIndexType = subIndexType
+            //  重置画图区域
+            setMainSubAdvAreaArgs(_view_size.width)
+        }else{
+            //  only refresh sub type
+            _kSubIndexType = subIndexType
+        }
     }
 
     /**
@@ -1022,6 +1320,22 @@ class ViewKLine : ViewBase {
         init()
     }
 
+    private fun setMainSubAdvAreaArgs(width: Float){
+        fOneCellHeight = width / kBTS_KLINE_ROW_NUM
+        fMainGraphHeight = fOneCellHeight * (kBTS_KLINE_ROW_NUM - 1)
+        fMainMAHeight = fOneCellHeight * kBTS_KLINE_MA_HEIGHT
+
+        val fSecondGraphTotal = fOneCellHeight - fMainMAHeight
+        fSecondMAHeight = fSecondGraphTotal * kBTS_KLINE_MA_HEIGHT
+        fSecondGraphHeight = fSecondGraphTotal - fSecondMAHeight
+
+        //  有高级指标显示的情况下重新计算高度
+        if (_kSubIndexType != EKLineSubIndexType.eksit_show_none){
+            fMainGraphHeight -= fSecondGraphTotal
+            fOneCellHeight = fMainGraphHeight / (kBTS_KLINE_ROW_NUM - 1)
+        }
+    }
+
     private fun init() {
 
         _currCandleOffset = 0
@@ -1033,16 +1347,7 @@ class ViewKLine : ViewBase {
 
         //  初始化各种数据
         ekdptType = EKlineDatePeriodType.ekdpt_15m //  默认值
-
-
-        val fTotalHeight: Float = _view_size.height
-        fOneCellHeight = fTotalHeight / kBTS_KLINE_ROW_NUM
-        fMainGraphHeight = fOneCellHeight * (kBTS_KLINE_ROW_NUM - 1)
-        fMainMAHeight = fOneCellHeight * kBTS_KLINE_MA_HEIGHT
-
-        val fSecondGraphTotal: Float = fOneCellHeight - fMainMAHeight
-        fSecondMAHeight = fSecondGraphTotal * kBTS_KLINE_MA_HEIGHT
-        fSecondGraphHeight = fSecondGraphTotal - fSecondMAHeight
+        setMainSubAdvAreaArgs(_view_size.height)
 
         //  初始化model池
         _kdataModelPool = mutableListOf()
@@ -1082,13 +1387,13 @@ class ViewKLine : ViewBase {
         m_paint01.color = resources.getColor(R.color.theme01_bottomLineColor)
 
         // 上涨颜色
-        m_paint02.strokeWidth = 2.0f.dp
-        m_paint02.color = resources.getColor(R.color.theme01_buyColor)
+        m_paint_buycolor.strokeWidth = 2.0f.dp
+        m_paint_buycolor.color = resources.getColor(R.color.theme01_buyColor)
 
         // 下跌颜色
-        m_paint03.strokeWidth = 2.0f.dp
-        m_paint03.color = resources.getColor(R.color.theme01_sellColor)
-        m_paint03.isAntiAlias = true
+        m_paint_sellcolor.strokeWidth = 2.0f.dp
+        m_paint_sellcolor.color = resources.getColor(R.color.theme01_sellColor)
+        m_paint_sellcolor.isAntiAlias = true
     }
 
     // 主刷新

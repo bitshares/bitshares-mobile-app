@@ -8,7 +8,7 @@ import kotlin.math.pow
 
 class MKlineItemData {
 
-
+    var dataIndex = 0
     var showIndex = 0
 
     var isRise: Boolean = false
@@ -23,10 +23,21 @@ class MKlineItemData {
 
     var n24Vol: BigDecimal? = null
 
-    var ma5: BigDecimal? = null
-    var ma10: BigDecimal? = null
-    var ma30: BigDecimal? = null
-    var ma60: BigDecimal? = null
+    var ma60: BigDecimal? = null                //  分时图需要显示 / for timeline
+
+    var main_index01: BigDecimal? = null        //  主图指标01-03（根据设置对应不同指标，比如ma1-ma3，或者ema1-ema3，或者boll、ub、lb等）
+    var main_index02: BigDecimal? = null
+    var main_index03: BigDecimal? = null
+    var fOffsetMainIndex01: Float = 0f
+    var fOffsetMainIndex02: Float = 0f
+    var fOffsetMainIndex03: Float = 0f
+
+    var adv_index01: BigDecimal? = null        //  高级指标（MACD等）
+    var adv_index02: BigDecimal? = null
+    var adv_index03: BigDecimal? = null
+    var fOffsetAdvIndex01: Float = 0f
+    var fOffsetAdvIndex02: Float = 0f
+    var fOffsetAdvIndex03: Float = 0f
 
     var vol_ma5: BigDecimal? = null
     var vol_ma10: BigDecimal? = null
@@ -41,9 +52,6 @@ class MKlineItemData {
 
     var fOffset24Vol: Float = 0f
 
-    var fOffsetMA5: Float = 0f
-    var fOffsetMA10: Float = 0f
-    var fOffsetMA30: Float = 0f
     var fOffsetMA60: Float = 0f
 
     var fOffsetVolMA5: Float = 0f
@@ -66,10 +74,22 @@ class MKlineItemData {
 
         n24Vol = null
 
-        ma5 = null
-        ma10 = null
-        ma30 = null
         ma60 = null
+
+        main_index01 = null
+        main_index02 = null
+        main_index03 = null
+
+        fOffsetMainIndex01 = 0f
+        fOffsetMainIndex02 = 0f
+        fOffsetMainIndex03 = 0f
+
+        adv_index01 = null
+        adv_index02 = null
+        adv_index03 = null
+        fOffsetAdvIndex01 = 0f
+        fOffsetAdvIndex02 = 0f
+        fOffsetAdvIndex03 = 0f
 
         vol_ma5 = null
         vol_ma10 = null
@@ -84,9 +104,6 @@ class MKlineItemData {
 
         fOffset24Vol = 0f
 
-        fOffsetMA5 = 0f
-        fOffsetMA10 = 0f
-        fOffsetMA30 = 0f
         fOffsetMA60 = 0f
 
         fOffsetVolMA5 = 0f
@@ -136,11 +153,11 @@ class MKlineItemData {
             val n_base_precision = BigDecimal.valueOf(10.0.pow(base_precision))
             val n_quote_precision = BigDecimal.valueOf(10.0.pow(quote_precision))
 
-            val cell_scale = _ceilHandler.get(0)
-            val cell_rounding = _ceilHandler.get(1)
+            val cell_scale = _ceilHandler[0]
+            val cell_rounding = _ceilHandler[1]
 
-            val percent_scale = _percentHandler.get(0)
-            val percent_rounding = _percentHandler.get(1)
+            val percent_scale = _percentHandler[0]
+            val percent_rounding = _percentHandler[1]
 
             val open_base = data.getString("open_base")
             val open_quote = data.getString("open_quote")
@@ -178,7 +195,7 @@ class MKlineItemData {
                 val n_close_price = n_close_base.divide(n_close_quote, cell_scale, cell_rounding)
 
                 _fillto.n24Vol = bigDecimalfromAmount(data.getString("quote_volume"), n_quote_precision)
-                _fillto.isRise = n_open_price.compareTo(n_close_price) <= 0
+                _fillto.isRise = n_open_price <= n_close_price
 
                 //  REMARK：完全一致、高低也相同
                 _fillto.nPriceOpen = n_open_price
@@ -207,7 +224,7 @@ class MKlineItemData {
                 val n_close_price = n_close_quote.divide(n_close_base, cell_scale, cell_rounding)
 
                 _fillto.n24Vol = bigDecimalfromAmount(data.getString("base_volume"), n_quote_precision)
-                _fillto.isRise = n_open_price.compareTo(n_close_price) <= 0
+                _fillto.isRise = n_open_price <= n_close_price
 
                 //  REMARK：开收相同、高低反向
                 _fillto.nPriceOpen = n_open_price

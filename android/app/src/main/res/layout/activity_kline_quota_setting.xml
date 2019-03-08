@@ -108,113 +108,133 @@
                 <!-- main index01 -->
                 <LinearLayout
                     android:id="@+id/layout_main_index01"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="34dp"
-                    android:layout_marginTop="12dp"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:id="@+id/main_index01_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:gravity="center_vertical"
-                        android:textSize="13dp"
-                        android:layout_weight="9"
-                        android:textColor="@color/theme01.textColorMain"
-                        android:text="NAME"/>
-                    <TextView
-                        android:id="@+id/main_index01_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:gravity="center_vertical|right"
-                        android:textSize="13dp"
-                        android:layout_weight="9"
-                        android:textColor="@color/theme01.textColorNormal"
-                        android:text="VALUE" />
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="center_vertical|right"
-                        android:layout_weight="0.5"
-                        android:foregroundGravity="right"
-                        android:src="@drawable/ic_btn_right_arrow" />
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="34dp"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/main_index01_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:textSize="13dp"
+                            android:layout_weight="9"
+                            android:textColor="@color/theme01.textColorMain"
+                            android:text="NAME"/>
+                        <TextView
+                            android:id="@+id/main_index01_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical|right"
+                            android:textSize="13dp"
+                            android:layout_weight="9"
+                            android:textColor="@color/theme01.textColorNormal"
+                            android:text="VALUE" />
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical|right"
+                            android:layout_weight="0.5"
+                            android:foregroundGravity="right"
+                            android:src="@drawable/ic_btn_right_arrow" />
+                    </LinearLayout>
+                    <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
                 </LinearLayout>
-                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
 
                 <!-- main index02 -->
                 <LinearLayout
                     android:id="@+id/layout_main_index02"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="34dp"
-                    android:layout_marginTop="12dp"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:id="@+id/main_index02_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:gravity="center_vertical"
-                        android:textSize="13dp"
-                        android:layout_weight="9"
-                        android:textColor="@color/theme01.textColorMain"
-                        android:text="NAME"/>
-                    <TextView
-                        android:id="@+id/main_index02_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:gravity="center_vertical|right"
-                        android:textSize="13dp"
-                        android:layout_weight="9"
-                        android:textColor="@color/theme01.textColorNormal"
-                        android:text="VALUE" />
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="center_vertical|right"
-                        android:layout_weight="0.5"
-                        android:foregroundGravity="right"
-                        android:src="@drawable/ic_btn_right_arrow" />
+                    android:layout_height="wrap_content">
+
+                   <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="34dp"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/main_index02_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:textSize="13dp"
+                            android:layout_weight="9"
+                            android:textColor="@color/theme01.textColorMain"
+                            android:text="NAME"/>
+                        <TextView
+                            android:id="@+id/main_index02_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical|right"
+                            android:textSize="13dp"
+                            android:layout_weight="9"
+                            android:textColor="@color/theme01.textColorNormal"
+                            android:text="VALUE" />
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical|right"
+                            android:layout_weight="0.5"
+                            android:foregroundGravity="right"
+                            android:src="@drawable/ic_btn_right_arrow" />
+                    </LinearLayout>
+                    <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
                 </LinearLayout>
-                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
 
                 <!-- main index03 -->
                 <LinearLayout
                     android:id="@+id/layout_main_index03"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="34dp"
-                    android:layout_marginTop="12dp"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:id="@+id/main_index03_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:gravity="center_vertical"
-                        android:textSize="13dp"
-                        android:layout_weight="9"
-                        android:textColor="@color/theme01.textColorMain"
-                        android:text="NAME"/>
-                    <TextView
-                        android:id="@+id/main_index03_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:gravity="center_vertical|right"
-                        android:textSize="13dp"
-                        android:layout_weight="9"
-                        android:textColor="@color/theme01.textColorNormal"
-                        android:text="VALUE" />
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="center_vertical|right"
-                        android:layout_weight="0.5"
-                        android:foregroundGravity="right"
-                        android:src="@drawable/ic_btn_right_arrow" />
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="34dp"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/main_index03_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:textSize="13dp"
+                            android:layout_weight="9"
+                            android:textColor="@color/theme01.textColorMain"
+                            android:text="NAME"/>
+                        <TextView
+                            android:id="@+id/main_index03_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical|right"
+                            android:textSize="13dp"
+                            android:layout_weight="9"
+                            android:textColor="@color/theme01.textColorNormal"
+                            android:text="VALUE" />
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical|right"
+                            android:layout_weight="0.5"
+                            android:foregroundGravity="right"
+                            android:src="@drawable/ic_btn_right_arrow" />
+                    </LinearLayout>
+                    <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
                 </LinearLayout>
-                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
+
+
             </LinearLayout>
 
 
@@ -272,113 +292,133 @@
                 <!-- sub index01 -->
                 <LinearLayout
                     android:id="@+id/layout_sub_index01"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="34dp"
-                    android:layout_marginTop="12dp"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:id="@+id/sub_index01_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:gravity="center_vertical"
-                        android:textSize="13dp"
-                        android:layout_weight="9"
-                        android:textColor="@color/theme01.textColorMain"
-                        android:text="NAME"/>
-                    <TextView
-                        android:id="@+id/sub_index01_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:gravity="center_vertical|right"
-                        android:textSize="13dp"
-                        android:layout_weight="9"
-                        android:textColor="@color/theme01.textColorNormal"
-                        android:text="VALUE" />
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="center_vertical|right"
-                        android:layout_weight="0.5"
-                        android:foregroundGravity="right"
-                        android:src="@drawable/ic_btn_right_arrow" />
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="34dp"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/sub_index01_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:textSize="13dp"
+                            android:layout_weight="9"
+                            android:textColor="@color/theme01.textColorMain"
+                            android:text="NAME"/>
+                        <TextView
+                            android:id="@+id/sub_index01_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical|right"
+                            android:textSize="13dp"
+                            android:layout_weight="9"
+                            android:textColor="@color/theme01.textColorNormal"
+                            android:text="VALUE" />
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical|right"
+                            android:layout_weight="0.5"
+                            android:foregroundGravity="right"
+                            android:src="@drawable/ic_btn_right_arrow" />
+                    </LinearLayout>
+                    <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
                 </LinearLayout>
-                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
 
                 <!-- sub index02 -->
                 <LinearLayout
                     android:id="@+id/layout_sub_index02"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="34dp"
-                    android:layout_marginTop="12dp"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:id="@+id/sub_index02_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:gravity="center_vertical"
-                        android:textSize="13dp"
-                        android:layout_weight="9"
-                        android:textColor="@color/theme01.textColorMain"
-                        android:text="NAME"/>
-                    <TextView
-                        android:id="@+id/sub_index02_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:gravity="center_vertical|right"
-                        android:textSize="13dp"
-                        android:layout_weight="9"
-                        android:textColor="@color/theme01.textColorNormal"
-                        android:text="VALUE" />
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="center_vertical|right"
-                        android:layout_weight="0.5"
-                        android:foregroundGravity="right"
-                        android:src="@drawable/ic_btn_right_arrow" />
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="34dp"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/sub_index02_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:textSize="13dp"
+                            android:layout_weight="9"
+                            android:textColor="@color/theme01.textColorMain"
+                            android:text="NAME"/>
+                        <TextView
+                            android:id="@+id/sub_index02_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical|right"
+                            android:textSize="13dp"
+                            android:layout_weight="9"
+                            android:textColor="@color/theme01.textColorNormal"
+                            android:text="VALUE" />
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical|right"
+                            android:layout_weight="0.5"
+                            android:foregroundGravity="right"
+                            android:src="@drawable/ic_btn_right_arrow" />
+                    </LinearLayout>
+                    <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
+
                 </LinearLayout>
-                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
 
                 <!-- sub index03 -->
                 <LinearLayout
                     android:id="@+id/layout_sub_index03"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="34dp"
-                    android:layout_marginTop="12dp"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:id="@+id/sub_index03_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:gravity="center_vertical"
-                        android:textSize="13dp"
-                        android:layout_weight="9"
-                        android:textColor="@color/theme01.textColorMain"
-                        android:text="NAME"/>
-                    <TextView
-                        android:id="@+id/sub_index03_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:gravity="center_vertical|right"
-                        android:textSize="13dp"
-                        android:layout_weight="9"
-                        android:textColor="@color/theme01.textColorNormal"
-                        android:text="VALUE" />
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="center_vertical|right"
-                        android:layout_weight="0.5"
-                        android:foregroundGravity="right"
-                        android:src="@drawable/ic_btn_right_arrow" />
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="34dp"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/sub_index03_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:textSize="13dp"
+                            android:layout_weight="9"
+                            android:textColor="@color/theme01.textColorMain"
+                            android:text="NAME"/>
+                        <TextView
+                            android:id="@+id/sub_index03_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical|right"
+                            android:textSize="13dp"
+                            android:layout_weight="9"
+                            android:textColor="@color/theme01.textColorNormal"
+                            android:text="VALUE" />
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical|right"
+                            android:layout_weight="0.5"
+                            android:foregroundGravity="right"
+                            android:src="@drawable/ic_btn_right_arrow" />
+                    </LinearLayout>
+                    <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
                 </LinearLayout>
-                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
+
             </LinearLayout>
 
             <!-- button OK -->

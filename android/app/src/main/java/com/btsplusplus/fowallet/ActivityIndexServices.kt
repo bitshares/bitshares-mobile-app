@@ -81,10 +81,6 @@ class ActivityIndexServices : BtsppActivity() {
         layout_recharge_and_withdraw_of_service.setOnClickListener {
             guardWalletExist { goTo(ActivityDepositAndWithdraw::class.java, true) }
         }
-
-        layout_kline_setting_of_service.setOnClickListener{
-            goTo(ActivityKLineIndexSetting::class.java,true,args = jsonObjectfromKVS("result_promise", Promise()))
-        }
     }
 
     /**
