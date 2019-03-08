@@ -45,7 +45,7 @@
     </style>
 
     <style name="KLineTabTextStyle">
-        <item name="android:textSize">9dp</item>
+        <item name="android:textSize">11dp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/theme01.textColorNormal</item>
     </style>

@@ -237,6 +237,10 @@
                     <!-- 周期按钮 -->
                     <android.support.design.widget.TabLayout
                         android:id="@+id/tablayout_of_kline"
+                        app:tabPaddingBottom="0dp"
+                        app:tabPaddingEnd="0dp"
+                        app:tabPaddingStart="0dp"
+                        app:tabPaddingTop="0dp"
                         android:layout_width="0dp"
                         android:layout_height="40dp"
                         app:tabIndicatorColor="@color/theme01.tintColor"
@@ -278,18 +282,7 @@
 
                     </android.support.design.widget.TabLayout>
 
-                    <!-- More & Index -->
-<!--                     <TextView
-                        android:id="@+id/btn_more"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center|center_vertical"
-                        android:text="@string/klineNameBtnMore"
-                        android:layout_weight="1"
-                        android:layout_gravity="center_vertical"
-                        style="@style/KLineTabTextStyle"
-                        android:textColor="@color/theme01.textColorGray" /> -->
-
+                    <!-- Index -->
                     <TextView
                         android:id="@+id/btn_index"
                         android:layout_width="0dp"
@@ -324,6 +317,10 @@
                 <!-- 深度和成交 -->
                 <android.support.design.widget.TabLayout
                     android:id="@+id/tablayout_depth_of_kline"
+                    app:tabPaddingBottom="0dp"
+                    app:tabPaddingEnd="0dp"
+                    app:tabPaddingStart="0dp"
+                    app:tabPaddingTop="0dp"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     app:tabIndicatorColor="@color/theme01.tintColor"
