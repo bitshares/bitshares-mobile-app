@@ -14,4 +14,7 @@
 
 - (id)initWithFrame:(CGRect)frame button_infos:(NSDictionary*)button_infos owner:(VCBase*)owner action:(SEL)action;
 
+- (void)selectButton:(UIButton*)button newText:(NSString*)newText;
+- (void)updateButtonText:(NSInteger)btn_tag newText:(NSString*)newText;
+
 @end
