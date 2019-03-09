@@ -357,7 +357,8 @@
 "kLabelEkdpt4hour" = "4hour";
 "kLabelEkdpt1day" = "1day";
 "kLabelEkdpt1week" = "1week";
-"kLabelEkdptBtnMore" = "More";
+"kLabelEkdptMoreSuffix" = "◢";
+"kLabelEkdptBtnMore" = "More◢";
 "kLabelEkdptBtnIndex" = "Index";
 "kLabelNODATA" = "NO DATA";
 "kLabelKLineDate" = "Date";

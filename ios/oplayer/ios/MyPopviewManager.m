@@ -8,14 +8,20 @@
 
 #import "MyPopviewManager.h"
 #import "NativeAppDelegate.h"
+#import "ThemeManager.h"
+
+#import "objc/runtime.h"
 
 static MyPopviewManager *_sharedMyPopviewManager = nil;
+static const char* __picker_view_args_addr__ = "__picker_view_args_addr__";
 
 @interface MyPopviewManager()
 {
     NSInteger               _popViewUniqueId;
     NSMutableDictionary*    _popViewIdBlockHash;
     BOOL                    _enableUIAlertController;
+    
+    
 }
 @end
 
@@ -151,6 +157,109 @@ static MyPopviewManager *_sharedMyPopviewManager = nil;
         block(buttonIndex, actionSheet.cancelButtonIndex);
         [_popViewIdBlockHash removeObjectForKey:key];
     }
+}
+
+/**
+ *  在底部显示列表选择控件
+ */
+- (WsPromise*)showModernListView:(UIViewController*)vc
+                         message:(NSString*)message
+                           items:(NSArray*)itemlist
+                         itemkey:(NSString*)itemkey
+                    defaultIndex:(NSInteger)defaultIndex
+{
+    assert(itemlist && itemkey);
+    assert(defaultIndex < [itemlist count]);
+    WsPromise* p = [WsPromise promise:(^(WsResolveHandler resolve, WsRejectHandler reject) {
+        ViewSimulateActionSheet* sheet = [ViewSimulateActionSheet styleDefault:message];
+        id picker_args = @{
+                           @"vc":vc,
+                           @"items":itemlist,
+                           @"itemkey":itemkey,
+                           @"promise":@{@"resolve":resolve, @"reject":reject},
+                           };
+        sheet.delegate = self;
+        sheet.cancelable = YES;
+        objc_setAssociatedObject(sheet.pickerView, __picker_view_args_addr__, picker_args, OBJC_ASSOCIATION_RETAIN);
+        if (defaultIndex >= 0){
+            [sheet selectRow:defaultIndex inComponent:0 animated:NO];
+        }
+        if ([vc isKindOfClass:[UINavigationController class]]){
+            UINavigationController* navi = (UINavigationController*)vc;
+            navi.interactivePopGestureRecognizer.enabled = NO;
+        }
+        [sheet showInView:vc.view];
+    })];
+    return p;
+}
+
+-(void)actionCancle:(ViewSimulateActionSheet*)sheet
+{
+    [sheet dismissWithCompletion:^{
+        id picker_args = objc_getAssociatedObject(sheet.pickerView, __picker_view_args_addr__);
+        assert(picker_args && [picker_args isKindOfClass:[NSDictionary class]]);
+        id vc = [picker_args objectForKey:@"vc"];
+        if ([vc isKindOfClass:[UINavigationController class]]){
+            UINavigationController* navi = (UINavigationController*)vc;
+            navi.interactivePopGestureRecognizer.enabled = YES;
+        }
+        WsResolveHandler resolve = [[picker_args objectForKey:@"promise"] objectForKey:@"resolve"];
+        resolve(nil);
+    }];
+}
+
+-(void)actionDone:(ViewSimulateActionSheet*)sheet
+{
+    [sheet dismissWithCompletion:^{
+        id picker_args = objc_getAssociatedObject(sheet.pickerView, __picker_view_args_addr__);
+        assert(picker_args && [picker_args isKindOfClass:[NSDictionary class]]);
+        id vc = [picker_args objectForKey:@"vc"];
+        if ([vc isKindOfClass:[UINavigationController class]]){
+            UINavigationController* navi = (UINavigationController*)vc;
+            navi.interactivePopGestureRecognizer.enabled = YES;
+        }
+        WsResolveHandler resolve = [[picker_args objectForKey:@"promise"] objectForKey:@"resolve"];
+        resolve([[picker_args objectForKey:@"items"] objectAtIndex:[sheet selectedRowInComponent:0]]);
+    }];
+}
+
+// returns the number of 'columns' to display.
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
+{
+    return 1;
+}
+
+// returns the # of rows in each component..
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
+    id picker_args = objc_getAssociatedObject(pickerView, __picker_view_args_addr__);
+    assert(picker_args && [picker_args isKindOfClass:[NSDictionary class]]);
+    return [[picker_args objectForKey:@"items"] count];
+}
+
+//- (nullable NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component __TVOS_PROHIBITED
+//{
+//    return [_pickerDataArray objectAtIndex:row];
+//}
+
+- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(nullable UIView *)view __TVOS_PROHIBITED
+{
+    ThemeManager* theme = [ThemeManager sharedThemeManager];
+    for (UIView* subView in pickerView.subviews) {
+        if (subView.frame.size.height <= 1.0f){
+            subView.backgroundColor = theme.bottomLineColor;
+        }
+    }
+    
+    id picker_args = objc_getAssociatedObject(pickerView, __picker_view_args_addr__);
+    assert(picker_args && [picker_args isKindOfClass:[NSDictionary class]]);
+    
+    UILabel* label = [[UILabel alloc] init];
+    label.textAlignment = NSTextAlignmentCenter;
+    label.text = [[[picker_args objectForKey:@"items"] objectAtIndex:row] objectForKey:picker_args[@"itemkey"]];
+    label.textColor = theme.textColorMain;
+    
+    return label;
 }
 
 @end
