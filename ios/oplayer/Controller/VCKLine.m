@@ -227,7 +227,7 @@ enum
     }
     
     //  更多 - 按钮
-    [buttonArray addObject:@{@"name":NSLocalizedString(@"kLabelEkdptBtnMore", @"更多"), @"value":@(kBTS_KLINE_MORE_BUTTON_VALUE), @"disable_selected":@YES}];
+    [buttonArray addObject:@{@"name":NSLocalizedString(@"kLabelEkdptBtnMore", @"更多◢"), @"value":@(kBTS_KLINE_MORE_BUTTON_VALUE), @"disable_selected":@YES}];
     
     //  指标 - 按钮
     [buttonArray addObject:@{@"name":NSLocalizedString(@"kLabelEkdptBtnIndex", @"指标"), @"value":@(kBTS_KLINE_INDEX_BUTTON_VALUE), @"disable_selected":@YES}];
@@ -469,17 +469,6 @@ enum
     //  刷新深度图和盘口信息
     [_viewDeepGraph refreshDeepGraph:data];
     [_viewOrderBookCell onQueryLimitOrderResponsed:data];
-    
-//    //  加载数据
-//    [_bidDataArray removeAllObjects];
-//    [_bidDataArray addObjectsFromArray:[data objectForKey:@"bids"]];
-//    
-//    [_askDataArray removeAllObjects];
-//    [_askDataArray addObjectsFromArray:[data objectForKey:@"asks"]];
-    
-//    [_bidTableView reloadData];
-//    [_askTableView reloadData];
-    
 }
 
 - (void)onQueryFillOrderHistoryResponsed:(NSArray*)data_array
@@ -575,6 +564,39 @@ enum
     })];
 }
 
+- (void)_onMoreButtonClicked:(UIButton*)sender
+{
+    id data_list = @[
+                     @{@"name":NSLocalizedString(@"kLabelEkdpt1min", @"1分"), @"value":@(ekdpt_1m)},
+                     @{@"name":NSLocalizedString(@"kLabelEkdpt5min", @"5分"), @"value":@(ekdpt_5m)},
+                     @{@"name":NSLocalizedString(@"kLabelEkdpt30min", @"30分"), @"value":@(ekdpt_30m)},
+                     @{@"name":NSLocalizedString(@"kLabelEkdpt1week", @"周线"), @"value":@(ekdpt_1w)},
+                     ];
+    EKlineDatePeriodType currentType = _viewKLine.ekdptType;
+    NSInteger defaultIndex = 0;
+    NSInteger idx = 0;
+    for (id item in data_list) {
+        if ([item[@"value"] integerValue] == (NSInteger)currentType){
+            defaultIndex = idx;
+            break;
+        }
+        ++idx;
+    }
+    [[[MyPopviewManager sharedMyPopviewManager] showModernListView:self.navigationController
+                                                           message:nil
+                                                             items:data_list
+                                                           itemkey:@"name"
+                                                      defaultIndex:defaultIndex] then:(^id(id result) {
+        if (result){
+            [_viewLineButtons selectButton:sender
+                                   newText:[NSString stringWithFormat:@"%@%@", result[@"name"], NSLocalizedString(@"kLabelEkdptMoreSuffix", "◢")]];
+            EKlineDatePeriodType ekdpt = (EKlineDatePeriodType)[[result objectForKey:@"value"] integerValue];
+            [self queryKdata:[self getDatePeriodSeconds:ekdpt] ekdptType:ekdpt];
+        }
+        return nil;
+    })];
+}
+
 /**
  *  K线周期按钮点击事件
  */
@@ -587,30 +609,17 @@ enum
             [self _onIndexButtonClicked];
             break;
         case kBTS_KLINE_MORE_BUTTON_VALUE:
-            //  TODO:
-            [OrgUtils makeToast:@"MORE BUTTON"];
+            [self _onMoreButtonClicked:sender];
             break;
         default:
         {
+            [_viewLineButtons updateButtonText:kBTS_KLINE_MORE_BUTTON_VALUE
+                                       newText:NSLocalizedString(@"kLabelEkdptBtnMore", @"更多◢")];
             EKlineDatePeriodType ekdpt = (EKlineDatePeriodType)tag;
             [self queryKdata:[self getDatePeriodSeconds:ekdpt] ekdptType:ekdpt];
         }
             break;
     }
-
-//    [self resignAllFirstResponder];
-//
-//    [self sliderAnimationWithTag:sender.tag];
-//
-//    CGRect screenRect = [[UIScreen mainScreen] bounds];
-//
-//    CGFloat kScreenWidth = screenRect.size.width;
-//
-//    [UIView animateWithDuration:0.3 animations:^{
-//        _mainScrollView.contentOffset = CGPointMake(kScreenWidth * (sender.tag - 1), 0);
-//    } completion:^(BOOL finished) {
-//        [self onAnimationDone];
-//    }];
 }
 
 - (void)onSliderButtonClicked_DeepAndHistory:(UIButton*)sender
@@ -620,12 +629,6 @@ enum
         _currSecondPartyShowIndex = tag;
         [_mainTableView reloadData];
     }
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 #pragma mark- TableView delegate method

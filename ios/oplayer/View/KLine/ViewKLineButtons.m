@@ -64,8 +64,7 @@
             //  按钮的值和名字
             NSInteger value = [[item objectForKey:@"value"] integerValue];
             NSString* name = [item objectForKey:@"name"];
-            BOOL disable_selected = value == kBTS_KLINE_INDEX_BUTTON_VALUE || value == kBTS_KLINE_MORE_BUTTON_VALUE;
-            
+        
             //  创建点击按钮
             UIButton* btn = [UIButton buttonWithType:UIButtonTypeCustom];
             btn.frame = CGRectMake(cellWidth * [_buttonArray count], 0, cellWidth, frame.size.height);
@@ -75,9 +74,7 @@
             //  普通颜色 和 选中颜色
             assert(owner);
             [btn setTitleColor:theme.textColorGray forState:UIControlStateNormal];
-            if (!disable_selected){
-                [btn setTitleColor:theme.textColorHighlight forState:UIControlStateSelected];
-            }
+            [btn setTitleColor:theme.textColorHighlight forState:UIControlStateSelected];
             [btn addTarget:self action:@selector(onSliderButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
             [btn setTitle:name forState:UIControlStateNormal];
             btn.tag = value;
@@ -108,6 +105,32 @@
         }
     }
     return nil;
+}
+
+- (void)selectButton:(UIButton*)button newText:(NSString*)newText
+{
+    if (newText){
+        [button setTitle:newText forState:UIControlStateNormal];
+    }
+    if (!button.selected){
+        for (UIButton* btn in _buttonArray) {
+            btn.selected = NO;
+        }
+        button.selected = YES;
+        CGRect old = _sliderLabel.frame;
+        _sliderLabel.frame = CGRectMake(button.frame.origin.x, old.origin.y, old.size.width, old.size.height);
+        _sliderLabel.hidden = NO;
+    }
+}
+
+- (void)updateButtonText:(NSInteger)btn_tag newText:(NSString*)newText
+{
+    for (UIButton* btn in _buttonArray) {
+        if (btn.tag == btn_tag){
+            [btn setTitle:newText forState:UIControlStateNormal];
+            break;
+        }
+    }
 }
 
 - (void)onSliderButtonClicked:(UIButton*)sender
