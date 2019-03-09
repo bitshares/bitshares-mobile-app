@@ -126,8 +126,11 @@ class ActivityKLine : BtsppActivity() {
         mask.show()
 
         //  1、查询K线基本数据
-        val kline_period_default = chainMgr.getDefaultParameters().getInt("kline_period_default")
-        val default_query_seconds = getDatePeriodSeconds(kline_period_default)
+        val parameters = chainMgr.getDefaultParameters()
+        val kline_period_ary = parameters.getJSONArray("kline_period_ary")
+        val kline_period_default_index = parameters.getInt("kline_period_default")
+        assert(kline_period_default_index >= 0 && kline_period_default_index < kline_period_ary.length())
+        val default_query_seconds = getDatePeriodSeconds(kline_period_ary.getInt(kline_period_default_index))
         val now: Long = Utils.now_ts()
         val snow = Utils.formatBitsharesTimeString(now)
         val sbgn = Utils.formatBitsharesTimeString(now - default_query_seconds * kBTS_KLINE_MAX_SHOW_CANDLE_NUM)
@@ -227,10 +230,22 @@ class ActivityKLine : BtsppActivity() {
             })
         }
 
+        val currentType = _viewKLine.ekdptType
+        var defaultIndex = 0
+        var idx = 0
+        for (item in more_list){
+            val value = item!!.get("value") as ViewKLine.EKlineDatePeriodType
+            if (currentType != null && value == currentType){
+                defaultIndex = idx
+                break
+            }
+            ++idx
+        }
+
         val nameList = JSONArray()
         more_list.forEach<JSONObject> { nameList.put(it!!.getString("name")) }
 
-        ViewDialogNumberPicker(this, null, nameList.toList<String>().toTypedArray(), 0){ _index: Int, txt: String ->
+        ViewDialogNumberPicker(this, null, nameList.toList<String>().toTypedArray(), defaultIndex){ _index: Int, txt: String ->
             tab_more.text = "$txt${resources.getString(R.string.klineNameMoreSuffix)}"
             tab_more.tag = more_list.getJSONObject(_index).get("value")
             if (tab_more.isSelected){
@@ -255,8 +270,12 @@ class ActivityKLine : BtsppActivity() {
             }
         }
 
+        val kline_period_default_index = ChainObjectManager.sharedChainObjectManager().getDefaultParameters().getInt("kline_period_default")
+        assert(kline_period_default_index >= 0)
+        assert(kline_period_default_index < tab_more_index)
+
         //  顶部K线tab
-        tablayout_of_kline.getTabAt(2)!!.select()
+        tablayout_of_kline.getTabAt(kline_period_default_index)!!.select()
         tablayout_of_kline!!.setOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 val current_type = if (tab.position == tab_more_index){
@@ -308,8 +327,6 @@ class ActivityKLine : BtsppActivity() {
                 //tab重新选择的时候回调
             }
         })
-
-
     }
 
     /**
@@ -362,8 +379,8 @@ class ActivityKLine : BtsppActivity() {
     }
 
     private fun _refreshCurrentTickerData() {
-        var latest: String = "--"
-        var percent_change: String = "0"
+        var latest = "--"
+        var percent_change = "0"
         val ticker_data = ChainObjectManager.sharedChainObjectManager().getTickerData(_tradingPair._baseAsset.getString("symbol"), _tradingPair._quoteAsset.getString("symbol"))
         if (ticker_data != null) {
             latest = OrgUtils.formatFloatValue(ticker_data.getString("latest").toDouble(), _tradingPair._basePrecision)
@@ -425,19 +442,12 @@ class ActivityKLine : BtsppActivity() {
         val api_conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
 
         val api_history = api_conn.async_exec_history("get_market_history", jsonArrayfrom(_tradingPair._baseId, _tradingPair._quoteId, seconds, sbgn, snow))
-        api_history.then { data ->
-            val data = data as JSONArray
+        api_history.then {
+            val data = it as JSONArray
             mask.dismiss()
-
             _viewKLine.ekdptType = ekdptType
-
-            //  生成测试数据json
-            //val data1 = JSONArray(data)
-
             onQueryKdataResponsed(data)
-
             return@then null
-
         }.catch {
             mask.dismiss()
         }
