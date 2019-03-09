@@ -18,9 +18,9 @@
 @property(assign, nonatomic) id<ViewSimulateActionSheetDelegate> delegate;
 @property(retain, nonatomic) UIView* toolBar;
 @property(retain, nonatomic) UIPickerView* pickerView;
-@property(strong, nonatomic) NSString* custom_tag;
+@property(assign, nonatomic) BOOL cancelable;
 
-+(instancetype)styleDefault;
++(instancetype)styleDefault:(NSString*)title;
 
 -(void)showInView:(UIView *)view;
 -(void)dismissWithCompletion:(void (^)())completion;

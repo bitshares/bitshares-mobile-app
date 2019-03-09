@@ -357,7 +357,8 @@
 "kLabelEkdpt4hour" = "4小时";
 "kLabelEkdpt1day" = "日线";
 "kLabelEkdpt1week" = "周线";
-"kLabelEkdptBtnMore" = "更多";
+"kLabelEkdptMoreSuffix" = "◢";
+"kLabelEkdptBtnMore" = "更多◢";
 "kLabelEkdptBtnIndex" = "指标";
 "kLabelNODATA" = "无数据";
 "kLabelKLineDate" = "时间";
