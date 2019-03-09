@@ -171,6 +171,34 @@ enum
     [TempManager sharedTempManager].favoritesMarketDirty = YES;
 }
 
+- (NSString*)getPeriodName:(EKlineDatePeriodType)ekdptType
+{
+    switch (ekdptType) {
+        case ekdpt_timeline:
+            return NSLocalizedString(@"kLabelEkdptLine", @"分时");
+        case ekdpt_1m:
+            return NSLocalizedString(@"kLabelEkdpt1min", @"1分");
+        case ekdpt_5m:
+            return NSLocalizedString(@"kLabelEkdpt5min", @"5分");
+        case ekdpt_15m:
+            return NSLocalizedString(@"kLabelEkdpt15min", @"15分");
+        case ekdpt_30m:
+            return NSLocalizedString(@"kLabelEkdpt30min", @"30分");
+        case ekdpt_1h:
+            return NSLocalizedString(@"kLabelEkdpt1hour", @"1小时");
+        case ekdpt_4h:
+            return NSLocalizedString(@"kLabelEkdpt4hour", @"4小时");
+        case ekdpt_1d:
+            return NSLocalizedString(@"kLabelEkdpt1day", @"日线");
+        case ekdpt_1w:
+            return NSLocalizedString(@"kLabelEkdpt1week", @"周线");
+        default:
+            break;
+    }
+    assert(NO);
+    return nil;
+}
+
 /**
  *  (private) 初始化K线时间周期按钮信息
  */
@@ -183,43 +211,12 @@ enum
     assert(kline_period_ary);
     
     NSInteger kline_period_default = [parameters[@"kline_period_default"] integerValue];
+    assert(kline_period_default >= 0 && kline_period_default < [kline_period_ary count]);
     
     NSMutableArray* buttonArray = [NSMutableArray array];
     for (id ekdpt_value in kline_period_ary) {
         NSInteger ekdpt = [ekdpt_value integerValue];
-        NSString* name = nil;
-        switch (ekdpt) {
-            case ekdpt_timeline:
-                name = NSLocalizedString(@"kLabelEkdptLine", @"分时");
-                break;
-            case ekdpt_1m:
-                name = NSLocalizedString(@"kLabelEkdpt1min", @"1分");
-                break;
-            case ekdpt_5m:
-                name = NSLocalizedString(@"kLabelEkdpt5min", @"5分");
-                break;
-            case ekdpt_15m:
-                name = NSLocalizedString(@"kLabelEkdpt15min", @"15分");
-                break;
-            case ekdpt_30m:
-                name = NSLocalizedString(@"kLabelEkdpt30min", @"30分");
-                break;
-            case ekdpt_1h:
-                name = NSLocalizedString(@"kLabelEkdpt1hour", @"1小时");
-                break;
-            case ekdpt_4h:
-                name = NSLocalizedString(@"kLabelEkdpt4hour", @"4小时");
-                break;
-            case ekdpt_1d:
-                name = NSLocalizedString(@"kLabelEkdpt1day", @"日线");
-                break;
-            case ekdpt_1w:
-                name = NSLocalizedString(@"kLabelEkdpt1week", @"周线");
-                break;
-            default:
-                break;
-        }
-        //  无效配置
+        NSString* name = [self getPeriodName:(EKlineDatePeriodType)ekdpt];
         if (!name){
             continue;
         }
@@ -232,7 +229,7 @@ enum
     //  指标 - 按钮
     [buttonArray addObject:@{@"name":NSLocalizedString(@"kLabelEkdptBtnIndex", @"指标"), @"value":@(kBTS_KLINE_INDEX_BUTTON_VALUE), @"disable_selected":@YES}];
     
-    return @{@"button_list":buttonArray, @"default_value":@(kline_period_default)};
+    return @{@"button_list":buttonArray, @"default_value":@([[kline_period_ary objectAtIndex:kline_period_default] integerValue])};
 }
 
 - (void)viewDidLoad
@@ -341,8 +338,13 @@ enum
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     
     //  1、查询K线基本数据
-    NSInteger kline_period_default = [[chainMgr getDefaultParameters][@"kline_period_default"] integerValue];
-    NSInteger default_query_seconds = [self getDatePeriodSeconds:(EKlineDatePeriodType)kline_period_default];
+    id parameters = [chainMgr getDefaultParameters];
+    id kline_period_ary = parameters[@"kline_period_ary"];
+    assert(kline_period_ary);
+    NSInteger kline_period_default = [parameters[@"kline_period_default"] integerValue];
+    assert(kline_period_default >= 0 && kline_period_default < [kline_period_ary count]);
+    NSInteger kline_period_default_value = [[kline_period_ary objectAtIndex:kline_period_default] integerValue];
+    NSInteger default_query_seconds = [self getDatePeriodSeconds:(EKlineDatePeriodType)kline_period_default_value];
     NSInteger now = [[NSDate date] timeIntervalSince1970];
     id snow = [OrgUtils formatBitsharesTimeString:now];
     id sbgn = [OrgUtils formatBitsharesTimeString:now-default_query_seconds*kBTS_KLINE_MAX_SHOW_CANDLE_NUM];
@@ -566,25 +568,35 @@ enum
 
 - (void)_onMoreButtonClicked:(UIButton*)sender
 {
-    id data_list = @[
-                     @{@"name":NSLocalizedString(@"kLabelEkdpt1min", @"1分"), @"value":@(ekdpt_1m)},
-                     @{@"name":NSLocalizedString(@"kLabelEkdpt5min", @"5分"), @"value":@(ekdpt_5m)},
-                     @{@"name":NSLocalizedString(@"kLabelEkdpt30min", @"30分"), @"value":@(ekdpt_30m)},
-                     @{@"name":NSLocalizedString(@"kLabelEkdpt1week", @"周线"), @"value":@(ekdpt_1w)},
-                     ];
+    id parameters = [[ChainObjectManager sharedChainObjectManager] getDefaultParameters];
+    assert(parameters);
+    id kline_period_ary = parameters[@"kline_period_ary"];
+    assert(kline_period_ary);
+    NSMutableDictionary* kline_period_existed_hash = [NSMutableDictionary dictionary];
+    for (id ekdpt_value in kline_period_ary) {
+        [kline_period_existed_hash setObject:@YES forKey:@([ekdpt_value integerValue])];
+    }
+    
+    id all_periods = @[@(ekdpt_timeline), @(ekdpt_1m), @(ekdpt_5m), @(ekdpt_15m), @(ekdpt_30m),
+                       @(ekdpt_1h), @(ekdpt_4h), @(ekdpt_1d), @(ekdpt_1w)];
+    
+    NSMutableArray* more_list = [NSMutableArray array];
     EKlineDatePeriodType currentType = _viewKLine.ekdptType;
     NSInteger defaultIndex = 0;
-    NSInteger idx = 0;
-    for (id item in data_list) {
-        if ([item[@"value"] integerValue] == (NSInteger)currentType){
-            defaultIndex = idx;
-            break;
+    
+    for (id period in all_periods) {
+        if (![kline_period_existed_hash objectForKey:period]){
+            EKlineDatePeriodType type = (EKlineDatePeriodType)[period integerValue];
+            if (type == currentType){
+                defaultIndex = [more_list count];
+            }
+            [more_list addObject:@{@"name":[self getPeriodName:type], @"value":period}];
         }
-        ++idx;
     }
+    
     [[[MyPopviewManager sharedMyPopviewManager] showModernListView:self.navigationController
                                                            message:nil
-                                                             items:data_list
+                                                             items:more_list
                                                            itemkey:@"name"
                                                       defaultIndex:defaultIndex] then:(^id(id result) {
         if (result){
