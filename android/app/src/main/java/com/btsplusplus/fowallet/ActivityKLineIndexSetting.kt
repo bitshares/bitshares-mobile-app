@@ -113,7 +113,7 @@ class ActivityKLineIndexSetting : BtsppActivity() {
     }
 
     private fun onSelectIndexMA(row: Int){
-        onSelectNumberFromRange("MA${row + 1}", 0, 90, _configValueHash.getJSONArray("ma_value").getInt(row)).then {
+        onSelectNumberFromRange("MA${row + 1}", 0, 120, _configValueHash.getJSONArray("ma_value").getInt(row)).then {
             val value = it as Int
             _configValueHash.getJSONArray("ma_value").put(row, value)
             when (row) {
@@ -126,7 +126,7 @@ class ActivityKLineIndexSetting : BtsppActivity() {
     }
 
     private fun onSelectIndexEMA(row: Int){
-        onSelectNumberFromRange("EMA${row + 1}", 0, 90, _configValueHash.getJSONArray("ema_value").getInt(row)).then {
+        onSelectNumberFromRange("EMA${row + 1}", 0, 120, _configValueHash.getJSONArray("ema_value").getInt(row)).then {
             val value = it as Int
             _configValueHash.getJSONArray("ema_value").put(row, value)
             when (row) {
@@ -147,7 +147,7 @@ class ActivityKLineIndexSetting : BtsppActivity() {
             key = "n"
             title = resources.getString(R.string.kKlineIndexCellBollN)
             bgn = 1
-            end = 90
+            end = 120
         }else{
             key = "p"
             title = resources.getString(R.string.kKlineIndexCellBollP)
@@ -176,7 +176,7 @@ class ActivityKLineIndexSetting : BtsppActivity() {
             1 -> "l"
             else -> "m"
         }
-        onSelectNumberFromRange(title, 2, 90, _configValueHash.getJSONObject("macd_value").getInt(key)).then {
+        onSelectNumberFromRange(title, 2, 120, _configValueHash.getJSONObject("macd_value").getInt(key)).then {
             val value = it as Int
             when (row) {
                 0 -> {
