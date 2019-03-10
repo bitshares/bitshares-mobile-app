@@ -366,7 +366,7 @@ enum
 {
     NSMutableArray* ma_value = [_configValueHash objectForKey:@"ma_value"];
     [[self _onSelectNumberFromRange:[NSString stringWithFormat:@"MA%@", @(row)]
-                                bgn:0 end:90
+                                bgn:0 end:120
                        currentValue:[[ma_value objectAtIndex:row - 1] integerValue]] then:(^id(id selected_value) {
         if (selected_value){
             ma_value[row - 1] = selected_value;
@@ -380,7 +380,7 @@ enum
 {
     NSMutableArray* ema_value = [_configValueHash objectForKey:@"ema_value"];
     [[self _onSelectNumberFromRange:[NSString stringWithFormat:@"EMA%@", @(row)]
-                                bgn:0 end:90
+                                bgn:0 end:120
                        currentValue:[[ema_value objectAtIndex:row - 1] integerValue]] then:(^id(id selected_value) {
         if (selected_value){
             ema_value[row - 1] = selected_value;
@@ -398,7 +398,7 @@ enum
     NSString* title;
     if (row == 1){
         bgn = 1;
-        end = 90;
+        end = 120;
         key = @"n";
         title = NSLocalizedString(@"kKlineIndexCellBollN", @"BOLL N");
     }else{
@@ -449,7 +449,7 @@ enum
     }
     NSMutableDictionary* macd_value = [_configValueHash objectForKey:@"macd_value"];
     [[self _onSelectNumberFromRange:title
-                                bgn:2 end:90
+                                bgn:2 end:120
                        currentValue:[[macd_value objectForKey:key] integerValue]] then:(^id(id selected_value) {
         if (selected_value){
             [macd_value setObject:selected_value forKey:key];
