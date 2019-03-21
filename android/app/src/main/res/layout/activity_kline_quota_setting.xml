@@ -30,7 +30,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="@string/nameCancel"
+                    android:text="@string/Cancel"
                     style="@style/kNavigationBarTextStyle"
                     android:gravity="center_vertical"
                     />
@@ -434,7 +434,7 @@
                     style="@style/kMainButtonStyle"
                     android:gravity="center|center_vertical"
                     android:textAllCaps="false"
-                    android:text="@string/nameOk" />
+                    android:text="@string/kBtnOK" />
 
             </LinearLayout>
 

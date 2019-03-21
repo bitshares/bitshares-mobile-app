@@ -169,7 +169,7 @@ class ActivityGatewayWithdraw : BtsppActivity() {
         if (_n_available < n_amount) {
             //  数量不足
             available_of_withdraw_page.let {
-                it.text = "${_n_available.toPlainString()} $symbol(${R.string.transferPageAmountNotEnough.xmlstring(this)})"
+                it.text = "${_n_available.toPlainString()} $symbol(${R.string.kVcTransferSubmitTipAmountNotEnough.xmlstring(this)})"
                 it.setTextColor(resources.getColor(R.color.theme01_tintColor))
             }
         } else {
@@ -310,10 +310,10 @@ class ActivityGatewayWithdraw : BtsppActivity() {
                     } else {
                         tipMessage = R.string.kVcDWSubmitSecondConfirmMsg03.xmlstring(this)
                     }
-                    UtilsAlert.showMessageConfirm(this, resources.getString(R.string.registerLoginPageWarmTip), tipMessage, btn_ok = R.string.kVcDWSubmitSecondBtnContinue.xmlstring(this)).then {
+                    UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kWarmTips), tipMessage, btn_ok = R.string.kVcDWSubmitSecondBtnContinue.xmlstring(this)).then {
                         if (it != null && it as Boolean) {
                             //  b、继续提币确认
-                            val mask = ViewMesk(R.string.nameRequesting.xmlstring(this), this)
+                            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
                             mask.show()
                             (_gateway.get("api") as GatewayBase).checkAddress(_withdrawAssetItem, address).then { valid ->
                                 if (valid as Boolean) {

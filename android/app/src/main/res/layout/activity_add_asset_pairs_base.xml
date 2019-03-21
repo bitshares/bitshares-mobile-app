@@ -37,7 +37,7 @@
                     style="@style/kNavigationBarTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="@string/nameBack"
+                    android:text="@string/kBtnBack"
                     android:gravity="center_vertical"
                     />
             </LinearLayout>
@@ -49,7 +49,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="@string/tradingPairAddPair"
+                android:text="@string/kVcTitleCustomPairs"
                 style="@style/kNavigationBarTextStyle" />
 
 
@@ -83,7 +83,7 @@
                 android:layout_weight="6"
                 android:textColor="#ffffff"
                 android:textColorHint="@color/theme01.textColorGray"
-                android:hint="@string/tradingPairClickToSearchAssets"
+                android:hint="@string/kSearchPlaceholderAsset"
                 android:theme="@style/theme01.EditText"
                 android:background="@null"
                 android:textSize="16dp"/>

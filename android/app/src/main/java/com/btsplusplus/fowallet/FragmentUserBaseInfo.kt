@@ -81,7 +81,7 @@ class FragmentUserBaseInfo : BtsppFragment() {
     }
 
     private fun gotoLogout() {
-        mActivity.alerShowMessageConfirm(resources.getString(R.string.registerLoginPageWarmTip), resources.getString(R.string.registerLoginPageTipForLogout)).then {
+        mActivity.alerShowMessageConfirm(resources.getString(R.string.kWarmTips), resources.getString(R.string.kAccTipsLogout)).then {
             if (it != null && it as Boolean) {
                 gotoLogoutCore()
             }

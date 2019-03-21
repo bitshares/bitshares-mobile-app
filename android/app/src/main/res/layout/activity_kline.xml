@@ -41,7 +41,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:text="@string/nameBack"
+                    android:text="@string/kBtnBack"
                     style="@style/kNavigationBarTextStyle" />
             </LinearLayout>
 
@@ -126,7 +126,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="4dp"
-                                android:text="@string/klineNameFeedPrice"
+                                android:text="@string/kLabelHeaderFeedPrice"
                                 android:textColor="@color/theme01.textColorNormal"
                                 android:textSize="12dp" />
                             <TextView
@@ -159,7 +159,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="1.2"
                                 android:gravity="left|center_vertical"
-                                android:text="@string/klineNameHigh"
+                                android:text="@string/kLabelHeaderHigh"
                                 android:textColor="@color/theme01.textColorNormal"
                                 android:textSize="12dp" />
 
@@ -184,7 +184,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:gravity="left|center_vertical"
-                                android:text="@string/klineNameLow"
+                                android:text="@string/kLabelHeaderLow"
                                 android:textColor="@color/theme01.textColorNormal"
                                 android:textSize="12dp" />
 
@@ -253,32 +253,32 @@
                         <android.support.design.widget.TabItem
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/klineNameTimeline" />
+                            android:text="@string/kLabelEkdptLine" />
 
                         <android.support.design.widget.TabItem
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/klineName15min" />
+                            android:text="@string/kLabelEkdpt15min" />
 
                         <android.support.design.widget.TabItem
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/klineName1hour" />
+                            android:text="@string/kLabelEkdpt1hour" />
 
                         <android.support.design.widget.TabItem
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/klineName4hour" />
+                            android:text="@string/kLabelEkdpt4hour" />
 
                         <android.support.design.widget.TabItem
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/klineName1day" />
+                            android:text="@string/kLabelEkdpt1day" />
 
                         <android.support.design.widget.TabItem
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/klineNameBtnMore" />
+                            android:text="@string/kLabelEkdptBtnMore" />
 
                     </android.support.design.widget.TabLayout>
 
@@ -288,7 +288,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:gravity="center|center_vertical"
-                        android:text="@string/klineNameBtnIndex"
+                        android:text="@string/kLabelEkdptBtnIndex"
                         android:layout_weight="1"
                         android:layout_gravity="center_vertical"
                         style="@style/KLineTabTextStyle"
@@ -332,12 +332,12 @@
                     <android.support.design.widget.TabItem
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/klineTabNameDeep" />
+                        android:text="@string/kLabelBtnDepth" />
 
                     <android.support.design.widget.TabItem
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/klineTabNameVolume" />
+                        android:text="@string/kLabelBtnMarketTrades" />
 
 
                 </android.support.design.widget.TabLayout>
@@ -374,7 +374,7 @@
                             android:gravity="center_vertical"
                             android:textColor="@color/theme01.textColorNormal"
                             android:textSize="9dp"
-                            android:text="@string/klineNameBuyOrder" />
+                            android:text="@string/kLabelDepthSideBuy" />
 
 
                     </LinearLayout>
@@ -401,7 +401,7 @@
                             android:gravity="center_vertical"
                             android:textColor="@color/theme01.textColorNormal"
                             android:textSize="9dp"
-                            android:text="@string/klineNameSellOrder"/>
+                            android:text="@string/kLabelDepthSideSell"/>
 
                     </LinearLayout>
 
@@ -454,7 +454,7 @@
             android:layout_weight="1"
             android:background="@color/theme01.buyColor"
             android:gravity="center_vertical|center"
-            android:text="@string/nameBuyIn"
+            android:text="@string/kBtnBuy"
             android:textColor="@color/theme01.textColorPercent" />
 
         <Button
@@ -465,7 +465,7 @@
             android:layout_weight="1"
             android:background="@color/theme01.sellColor"
             android:gravity="center_vertical|center"
-            android:text="@string/nameSellOut"
+            android:text="@string/kBtnSell"
             android:textColor="@color/theme01.textColorPercent" />
 
         <ImageButton

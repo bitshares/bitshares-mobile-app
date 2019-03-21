@@ -174,7 +174,7 @@ class FragmentAssets : BtsppFragment() {
             onEstimateDataReached()
             return@then null
         }.catch {
-            showToast(_ctx!!.resources.getString(R.string.myAssetsPageNetworkingExceptionAndEstimatingFailed))
+            showToast(_ctx!!.resources.getString(R.string.kVcAssetTipErrorEstimating))
         }
     }
 
@@ -294,7 +294,7 @@ class FragmentAssets : BtsppFragment() {
         val estimate_value = data.optString("estimate_value", null)
         val tv3 = TextView(ctx)
         if (estimate_value == null) {
-            tv3.text = ctx.resources.getString(R.string.myAssetsPageEstimating)
+            tv3.text = ctx.resources.getString(R.string.kVcAssetTipsEstimating)
             tv3.setTextColor(resources.getColor(R.color.theme01_textColorMain))
         } else {
             tv3.text = "≈ ${estimate_value}${SettingManager.sharedSettingManager().getEstimateAssetSymbol()}"
@@ -319,14 +319,14 @@ class FragmentAssets : BtsppFragment() {
 
         var value = OrgUtils.formatAssetString(data.getString("balance"), data.getInt("precision"))
         val tv5 = TextView(ctx)
-        tv5.text = "${R.string.myAssetsPageAvailable.xmlstring(ctx)} ${value}"
+        tv5.text = "${R.string.kLableAvailable.xmlstring(ctx)} ${value}"
         tv5.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.0f)
         tv5.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
         tv5.gravity = Gravity.CENTER_VERTICAL
 
         value = OrgUtils.formatAssetString(data.getString("limit_order_value"), data.getInt("precision"))
         val tv6 = TextView(ctx)
-        tv6.text = "${R.string.myAssetsPageHangOrder.xmlstring(ctx)} ${value}"
+        tv6.text = "${R.string.kVcAssetOnOrder.xmlstring(ctx)} ${value}"
         tv6.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.0f)
         tv6.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
         tv6.gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
@@ -372,11 +372,11 @@ class FragmentAssets : BtsppFragment() {
 
                 val raw_value = data.getString(key)
                 if (key == "call_order_value") {
-                    dynamic_view.text = "${R.string.myAssetsPageCollateral.xmlstring(ctx)} ${OrgUtils.formatAssetString(raw_value, data.getInt("precision"))}"
+                    dynamic_view.text = "${R.string.kVcAssetColl.xmlstring(ctx)} ${OrgUtils.formatAssetString(raw_value, data.getInt("precision"))}"
                 } else if (key == "debt_value") {
-                    dynamic_view.text = "${R.string.myAssetsPageDebt.xmlstring(ctx)} ${OrgUtils.formatAssetString(raw_value, data.getInt("precision"))}"
+                    dynamic_view.text = "${R.string.kVcAssetDebt.xmlstring(ctx)} ${OrgUtils.formatAssetString(raw_value, data.getInt("precision"))}"
                 } else {
-                    dynamic_view.text = "${R.string.myAssetsPageForcedLiquidationPrice2.xmlstring(ctx)} ${raw_value}"
+                    dynamic_view.text = "${R.string.kVcAssetCallPrice.xmlstring(ctx)} ${raw_value}"
                 }
 
                 //  增加索引
@@ -397,14 +397,14 @@ class FragmentAssets : BtsppFragment() {
             layout_tv7.setMargins(0, 0, toDp(60.0f), 0)
 
             val tv7 = TextView(ctx)
-            tv7.text = R.string.serviceMainPageTransfer.xmlstring(ctx)
+            tv7.text = R.string.kVcActivityTypeTransfer.xmlstring(ctx)
             tv7.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
             tv7.setTextColor(resources.getColor(R.color.theme01_color03))
             tv7.gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
             tv7.layoutParams = layout_tv7
 
             val tv8 = TextView(ctx)
-            tv8.text = R.string.myAssetsPageTrading.xmlstring(ctx)
+            tv8.text = R.string.kVcAssetBtnTrade.xmlstring(ctx)
             tv8.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
             tv8.setTextColor(resources.getColor(R.color.theme01_color03))
             tv8.gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
@@ -509,7 +509,7 @@ class FragmentAssets : BtsppFragment() {
 
             if (!_showAllAssets && showIndex == kAppUserAssetDefaultShowNum) {
                 val viewAll = TextView(_ctx!!)
-                viewAll.text = _ctx!!.resources.getString(R.string.myAssetsPageViewTotalAssetsInfo)
+                viewAll.text = _ctx!!.resources.getString(R.string.kVcAssetViewAllAssets)
                 viewAll.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15.0f)
                 viewAll.setTextColor(resources.getColor(R.color.theme01_color03))
                 viewAll.gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL
@@ -543,7 +543,7 @@ class FragmentAssets : BtsppFragment() {
         val v: View = inflater.inflate(R.layout.fragment_assets, container, false)
         val ly = v.findViewById<LinearLayout>(R.id.layout_my_assets_from_my_fragment)
 
-        v.findViewById<TextView>(R.id.label_total_title).text = "${_ctx!!.resources.getString(R.string.myAssetsPageTotalAsset)}(${SettingManager.sharedSettingManager().getEstimateAssetSymbol()})"
+        v.findViewById<TextView>(R.id.label_total_title).text = "${_ctx!!.resources.getString(R.string.kVcAssetTotalValue)}(${SettingManager.sharedSettingManager().getEstimateAssetSymbol()})"
         refreshUI_TotalValue(v.findViewById<TextView>(R.id.label_total_value))
 
         val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, toDp(30f))

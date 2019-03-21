@@ -93,7 +93,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/serviceMainPageTransfer"/>
+                android:text="@string/kServicesCellLabelTransfer"/>
 
             <ImageView
                 android:layout_width="0dp"
@@ -129,7 +129,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/serviceMainPageVoting"/>
+                android:text="@string/kServicesCellLabelVoting"/>
 
             <ImageView
                 android:layout_width="0dp"
@@ -165,7 +165,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/serviceMainPageAccountQuery"/>
+                android:text="@string/kServicesCellLabelAccountSearch"/>
 
             <ImageView
                 android:layout_width="0dp"
@@ -201,7 +201,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/serviceMainPageDebtRanking"/>
+                android:text="@string/kServicesCellLabelRank"/>
 
             <ImageView
                 android:layout_width="0dp"
@@ -236,7 +236,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/feedPricePageFeedDetail"/>
+                android:text="@string/kServicesCellLabelFeedPrice"/>
 
             <ImageView
                 android:layout_width="0dp"

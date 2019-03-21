@@ -87,7 +87,7 @@ class ActivityCreateProposal : BtsppActivity() {
         val ids = container.keys().toJSONArray()
 
         //  查询
-        val mask = ViewMesk(resources.getString(R.string.nameRequesting), this)
+        val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), this)
         mask.show()
         ChainObjectManager.sharedChainObjectManager().queryAllGrapheneObjects(ids).then {
             mask.dismiss()
@@ -95,7 +95,7 @@ class ActivityCreateProposal : BtsppActivity() {
             return@then null
         }.catch {
             mask.dismiss()
-            showToast(resources.getString(R.string.nameNetworkException))
+            showToast(resources.getString(R.string.tip_network_error))
         }
     }
 

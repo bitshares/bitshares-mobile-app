@@ -22,7 +22,7 @@
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:text="@string/registerLoginPageCapitalPrivateKey"
+                android:text="@string/kLoginCellActivePrivateKey"
                 android:textSize="16dp"
                 android:textColor="@color/theme01.textColorMain"/>
 
@@ -33,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:hint="@string/registerLoginPagePleaseCapitalPrivateKeyPermission"
+                android:hint="@string/kLoginTipsPlaceholderActiveKey"
                 android:textColor="@color/theme01.textColorMain"
                 android:textSize="16dp"
                 android:background="@null"
@@ -65,7 +65,7 @@
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:text="@string/registerLoginPageTradePws"
+                android:text="@string/kLoginCellWalletPassword"
                 android:textSize="16dp"
                 android:textColor="@color/theme01.textColorMain"/>
 
@@ -118,7 +118,7 @@
                 android:layout_weight="1"
                 android:padding="5dp"
                 android:textAllCaps="false"
-                android:text="@string/registerLoginPageJustLogin" />
+                android:text="@string/kBtnLogin" />
         </LinearLayout>
 
 

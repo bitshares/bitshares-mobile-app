@@ -57,7 +57,7 @@ class ActivityTransfer : BtsppActivity() {
             for (asset in _asset_list!!) {
                 list.add(asset!!.getString("symbol"))
             }
-            ViewSelector.show(this, resources.getString(R.string.transferPagePleaseSelectAsset), list.toTypedArray()) { index: Int, result: String ->
+            ViewSelector.show(this, resources.getString(R.string.kVcTransferTipSelectAsset), list.toTypedArray()) { index: Int, result: String ->
                 val select_asset = _asset_list!![index] as JSONObject
                 //  选择发生变化则刷新
                 if (select_asset.getString("symbol") != _transfer_args!!.getJSONObject("asset").getString("symbol")) {
@@ -95,14 +95,14 @@ class ActivityTransfer : BtsppActivity() {
      */
     private fun onSendButtonClicked() {
         if (!_fee_item!!.getBoolean("sufficient")) {
-            showToast(resources.getString(R.string.myOrderPageTipForFeeNotEnough))
+            showToast(resources.getString(R.string.kTipsTxFeeNotEnough))
             return
         }
         val from = _transfer_args!!.getJSONObject("from")
         val asset = _transfer_args!!.getJSONObject("asset")
         val to = _transfer_args!!.optJSONObject("to")
         if (to == null) {
-            showToast(resources.getString(R.string.transferPageTipErrorNoTo))
+            showToast(resources.getString(R.string.kVcTransferTipSelectToAccount))
             return
         }
 
@@ -113,18 +113,18 @@ class ActivityTransfer : BtsppActivity() {
 
         val str_amount = findViewById<EditText>(R.id.tf_amount).text.toString()
         if (str_amount == "") {
-            showToast(resources.getString(R.string.transferPagePleaseInputTransferAmount))
+            showToast(resources.getString(R.string.kVcTransferSubmitTipPleaseInputAmount))
             return
         }
 
         val amount = Utils.auxGetStringDecimalNumberValue(str_amount).toDouble()
         if (amount <= 0) {
-            showToast(resources.getString(R.string.transferPagePleaseInputTransferAmount))
+            showToast(resources.getString(R.string.kVcTransferTipInputSendAmount))
             return
         }
 
         if (amount > _n_available) {
-            showToast(resources.getString(R.string.transferPageTipErrorAmount))
+            showToast(resources.getString(R.string.kVcTransferSubmitTipAmountNotEnough))
             return
         }
 
@@ -142,7 +142,7 @@ class ActivityTransfer : BtsppActivity() {
             val full_account_data = walletMgr.getWalletAccountInfo()!!
             from_public_memo = full_account_data.getJSONObject("account").getJSONObject("options").optString("memo_key")
             if (from_public_memo == null || from_public_memo == "") {
-                showToast(resources.getString(R.string.transferPageTipNoMemoKey))
+                showToast(resources.getString(R.string.kVcTransferSubmitTipAccountNoMemoKey))
                 return
             }
         }
@@ -181,34 +181,34 @@ class ActivityTransfer : BtsppActivity() {
         val asset = _transfer_args!!.getJSONObject("asset")
         val op_data = _transfer_args!!.getJSONObject("kOpData")
         //  请求网络广播
-        val mask = ViewMesk(R.string.nameRequesting.xmlstring(this), this)
+        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
         mask.show()
         BitsharesClientManager.sharedBitsharesClientManager().transfer(op_data).then {
             val account_id = _full_account_data!!.getJSONObject("account").getString("id")
             ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(account_id).then {
                 mask.dismiss()
                 _refreshUI_onSendDone(it as JSONObject)
-                showToast(resources.getString(R.string.transferPageTipTxFullOk))
+                showToast(resources.getString(R.string.kVcTransferTipTxTransferFullOK))
                 //  [统计]
                 fabricLogCustom("txTransferFullOK", jsonObjectfromKVS("account", account_id, "asset", asset.getString("symbol")))
                 return@then null
             }.catch {
                 mask.dismiss()
-                showToast(resources.getString(R.string.transferPageTipTxOk))
+                showToast(resources.getString(R.string.kVcTransferTipTxTransferOK))
                 //  [统计]
                 fabricLogCustom("txTransferOK", jsonObjectfromKVS("account", account_id, "asset", asset.getString("symbol")))
             }
             return@then null
         }.catch {
             mask.dismiss()
-            showToast(resources.getString(R.string.transferPageTipTxFailed))
+            showToast(resources.getString(R.string.kTipsTxRequestFailed))
             //  [统计]
             fabricLogCustom("txTransferFailed", jsonObjectfromKVS("asset", asset.getString("symbol")))
         }
     }
 
     private fun _processTransferCore(from: JSONObject, to: JSONObject, asset: JSONObject, amount: Double, memo: String?, from_public_memo: String?) {
-        val mask = ViewMesk(R.string.nameRequesting.xmlstring(this), this)
+        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
         mask.show()
 
         val promise_map = JSONObject()
@@ -246,7 +246,7 @@ class ActivityTransfer : BtsppActivity() {
                 //  判断手续费是否足够。
                 val n_fee_cost = _isFeeSufficient(fee_price_item, fee_asset_id, asset, amount)
                 if (n_fee_cost == null) {
-                    showToast(resources.getString(R.string.myOrderPageTipForFeeNotEnough))
+                    showToast(resources.getString(R.string.kTipsTxFeeNotEnough))
                     return@then null
                 }
                 //  --- 弹框确认转账行为 ---
@@ -269,12 +269,12 @@ class ActivityTransfer : BtsppActivity() {
                 return@then null
             }.catch {
                 mask.dismiss()
-                showToast(resources.getString(R.string.nameNetworkException))
+                showToast(resources.getString(R.string.tip_network_error))
             }
             return@then null
         }.catch {
             mask.dismiss()
-            showToast(resources.getString(R.string.nameNetworkException))
+            showToast(resources.getString(R.string.tip_network_error))
         }
     }
 
@@ -334,7 +334,7 @@ class ActivityTransfer : BtsppActivity() {
         }
         val amount = Utils.auxGetStringDecimalNumberValue(str_amount).toDouble()
         if (amount > _n_available) {
-            tf.text = "${_s_available}${symbol}(${resources.getString(R.string.transferPageAmountNotEnough)})"
+            tf.text = "${_s_available}${symbol}(${resources.getString(R.string.kVcTransferSubmitTipAmountNotEnough)})"
             tf.setTextColor(resources.getColor(R.color.theme01_tintColor))
         } else {
             tf.text = "${_s_available}${symbol}"

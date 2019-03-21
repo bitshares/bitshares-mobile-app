@@ -173,14 +173,14 @@ class FragmentOrderHistory : BtsppFragment() {
         ly1.setPadding(0, toDp(5.0f), 0, 0)
         val tv1 = TextView(ctx)
         if (data.getBoolean("issell")) {
-            tv1.text = ctx.resources.getString(R.string.nameSellOut)
+            tv1.text = ctx.resources.getString(R.string.kBtnSell)
             if (data.getBoolean("iscall")) {
                 tv1.setTextColor(resources.getColor(R.color.theme01_callOrderColor))
             } else {
                 tv1.setTextColor(resources.getColor(R.color.theme01_sellColor))
             }
         } else {
-            tv1.text = ctx.resources.getString(R.string.nameBuyIn)
+            tv1.text = ctx.resources.getString(R.string.kBtnBuy)
             if (data.getBoolean("iscall")) {
                 tv1.setTextColor(resources.getColor(R.color.theme01_callOrderColor))
             } else {
@@ -222,21 +222,21 @@ class FragmentOrderHistory : BtsppFragment() {
         ly2.layoutParams = layout_params
 
         val tv4 = TextView(ctx)
-        tv4.text = "${R.string.myOrderPageLabelPrice.xmlstring(ctx)}(${base_symbol})"
+        tv4.text = "${R.string.kLableBidPrice.xmlstring(ctx)}(${base_symbol})"
         tv4.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
         tv4.setTextColor(resources.getColor(R.color.theme01_textColorGray))
         tv4.gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
         tv4.layoutParams = createLayout(Gravity.CENTER_VERTICAL or Gravity.LEFT)
 
         val tv5 = TextView(ctx)
-        tv5.text = "${R.string.myOrderPageLabelAmount.xmlstring(ctx)}(${quote_symbol})"
+        tv5.text = "${R.string.kLabelTradeHisTitleAmount.xmlstring(ctx)}(${quote_symbol})"
         tv5.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
         tv5.setTextColor(resources.getColor(R.color.theme01_textColorGray))
         tv5.gravity = Gravity.CENTER_VERTICAL or Gravity.CENTER
         tv5.layoutParams = createLayout(Gravity.CENTER_VERTICAL or Gravity.CENTER)
 
         val tv6 = TextView(ctx)
-        tv6.text = "${R.string.myOrderPageTotalAmount.xmlstring(ctx)}(${base_symbol})"
+        tv6.text = "${R.string.kVcOrderTotal.xmlstring(ctx)}(${base_symbol})"
         tv6.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
         tv6.setTextColor(resources.getColor(R.color.theme01_textColorGray))
         tv6.gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT

@@ -22,7 +22,7 @@ class ViewSelector {
                 dialog.dismiss()
                 callback.invoke(which, items[which])
             }
-            builder.setPositiveButton(ctx.resources.getString(R.string.nameCancel)) { dialog, _ ->
+            builder.setPositiveButton(ctx.resources.getString(R.string.kBtnCancel)) { dialog, _ ->
                 dialog.dismiss()
             }
             return builder.create()

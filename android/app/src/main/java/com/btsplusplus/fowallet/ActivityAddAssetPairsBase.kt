@@ -86,7 +86,7 @@ class ActivityAddAssetPairsBase : BtsppActivity() {
 
     private fun _refreshUI() {
         addDefaultResult()
-        findViewById<TextView>(R.id.label_txt_my_custom_n).text = String.format(resources.getString(R.string.tradingPairMyTradePair), _array_data.size.toString())
+        findViewById<TextView>(R.id.label_txt_my_custom_n).text = String.format(resources.getString(R.string.kSearchTipsMyCustomPairs), _array_data.size.toString())
     }
 
     private fun addDefaultResult() {

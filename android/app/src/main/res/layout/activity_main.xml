@@ -38,7 +38,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:text="@string/nameBack"
+                    android:text="@string/kBtnBack"
                     style="@style/kNavigationBarTextStyle" />
             </LinearLayout>
 
@@ -137,12 +137,12 @@
             <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/nameBuyIn" />
+                android:text="@string/kBtnBuy" />
 
             <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/nameSellOut" />
+                android:text="@string/kBtnSell" />
 
         </android.support.design.widget.TabLayout>
 

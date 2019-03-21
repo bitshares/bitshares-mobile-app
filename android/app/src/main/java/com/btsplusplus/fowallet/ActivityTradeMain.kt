@@ -88,7 +88,7 @@ class ActivityTradeMain : BtsppActivity() {
         setFullScreen()
 
         //  请求数据
-        val mask = ViewMesk(resources.getString(R.string.nameRequesting), this)
+        val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), this)
         mask.show()
         val promise_map = JSONObject()
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
@@ -109,7 +109,7 @@ class ActivityTradeMain : BtsppActivity() {
             return@then null
         }.catch { error ->
             mask.dismiss()
-            showToast(resources.getString(R.string.nameNetworkException))
+            showToast(resources.getString(R.string.tip_network_error))
         }
     }
 
@@ -143,14 +143,14 @@ class ActivityTradeMain : BtsppActivity() {
             //  取消自选、灰色五星、提示信息
             pAppCache.remove_fav_markets(quote_symbol, base_symbol)
             btn_fav.setColorFilter(resources.getColor(R.color.theme01_textColorGray))
-            showToast(resources.getString(R.string.comFavSuccessDelete))
+            showToast(resources.getString(R.string.kTipsAddFavDelete))
             //  [统计]
             fabricLogCustom("event_market_remove_fav", jsonObjectfromKVS("base", base_symbol, "quote", quote_symbol))
         } else {
             //  添加自选、高亮五星、提示信息
             pAppCache.set_fav_markets(quote_symbol, base_symbol)
             btn_fav.setColorFilter(resources.getColor(R.color.theme01_textColorHighlight))
-            showToast(resources.getString(R.string.comFavSuccessAdd))
+            showToast(resources.getString(R.string.kTipsAddFavSuccess))
             //  [统计]
             fabricLogCustom("event_market_add_fav", jsonObjectfromKVS("base", base_symbol, "quote", quote_symbol))
         }

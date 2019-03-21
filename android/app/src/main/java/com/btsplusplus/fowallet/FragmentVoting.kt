@@ -288,7 +288,7 @@ class FragmentVoting : BtsppFragment() {
         val tv1_center = ViewUtils.createTextView(ctx, "${index + 1}. $account_name", 13f, R.color.theme01_textColorNormal, true)
         tv1_center.tag = "tv1_center.$index"
         tv1_center.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f)
-        val tv1_right = ViewUtils.createTextView(ctx, R.string.nameRightIntro.xmlstring(ctx), 11f, R.color.theme01_textColorHighlight, false)
+        val tv1_right = ViewUtils.createTextView(ctx, R.string.kLabelVotingIntroduction.xmlstring(ctx), 11f, R.color.theme01_textColorHighlight, false)
         tv1_right.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f)
         //  不可见
         val url = data.optString("url", "")
@@ -307,7 +307,7 @@ class FragmentVoting : BtsppFragment() {
         val line2_ly1 = ViewUtils.createLinearLayout(ctx, 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f, Gravity.CENTER_VERTICAL, LinearLayout.HORIZONTAL)
         val line2_ly2 = ViewUtils.createLinearLayout(ctx, 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f, Gravity.CENTER_VERTICAL, LinearLayout.HORIZONTAL)
         line2_ly2.gravity = Gravity.RIGHT
-        val tv1_line2_ly1 = ViewUtils.createTextView(ctx, "${ctx.resources.getString(R.string.votingPageTotalVotes)} ", 11f, R.color.theme01_textColorNormal, true)
+        val tv1_line2_ly1 = ViewUtils.createTextView(ctx, "${ctx.resources.getString(R.string.kVcVoteCellTotalVotes)} ", 11f, R.color.theme01_textColorNormal, true)
         val tv2_line2_ly1 = ViewUtils.createTextView(ctx, total_votes, 11f, R.color.theme01_textColorNormal, true)
         tv2_line2_ly1.tag = "tv2_line2_ly1.$index"
         line2_ly1.addView(tv1_line2_ly1)
@@ -319,7 +319,7 @@ class FragmentVoting : BtsppFragment() {
         if (_vote_type == VotingTypes.witnesses) {
             val total_missed = data.optString("total_missed", "")
 
-            val tv1_line2_ly2 = ViewUtils.createTextView(ctx, "${ctx.resources.getString(R.string.votingPageMissCount)} ", 11f, R.color.theme01_textColorNormal, true)
+            val tv1_line2_ly2 = ViewUtils.createTextView(ctx, "${ctx.resources.getString(R.string.kVcVoteCellMissed)} ", 11f, R.color.theme01_textColorNormal, true)
             tv2_line2_ly2 = ViewUtils.createTextView(ctx, total_missed, 11f, R.color.theme01_textColorNormal, true)
             tv2_line2_ly2.tag = "tv2_line2_ly2.$index"
             tv1_line2_ly2.gravity = Gravity.RIGHT
@@ -409,7 +409,7 @@ class FragmentVoting : BtsppFragment() {
         tv1_line1.ellipsize = TextUtils.TruncateAt.END
         tv1_line1.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 8f)
 
-        val tv2_line1 = ViewUtils.createTextView(ctx, R.string.nameRightIntro.xmlstring(ctx), 11f, R.color.theme01_textColorHighlight, true)
+        val tv2_line1 = ViewUtils.createTextView(ctx, R.string.kLabelVotingIntroduction.xmlstring(ctx), 11f, R.color.theme01_textColorHighlight, true)
         tv2_line1.gravity = Gravity.RIGHT
         val tv2_line1_layout_params = LinearLayout.LayoutParams(0, Utils.toDp(25f, ctx.resources), 1.5f)
         tv2_line1_layout_params.gravity = Gravity.RIGHT
@@ -425,7 +425,7 @@ class FragmentVoting : BtsppFragment() {
         //  第二行 creator
         val account_id = data.getString("worker_account")
         var name = ChainObjectManager.sharedChainObjectManager().getChainObjectByID(account_id).getString("name")
-        val tv1_line2 = ViewUtils.createTextView(ctx, "${ctx.resources.getString(R.string.votingPageCreateUser)} ", 11f, R.color.theme01_textColorNormal, true)
+        val tv1_line2 = ViewUtils.createTextView(ctx, "${ctx.resources.getString(R.string.kVcVoteCellCreator)} ", 11f, R.color.theme01_textColorNormal, true)
         val tv2_line2 = ViewUtils.createTextView(ctx, name, 11f, R.color.theme01_textColorNormal, true)
         tv1_line2.tag = "tv1_line2.$index"
         tv2_line2.tag = "tv2_line2.$index"
@@ -437,9 +437,9 @@ class FragmentVoting : BtsppFragment() {
 
         val total_votes_for = OrgUtils.formatFloatValue(round(data.getString("total_votes_for").toDouble() / _bts_precision_pow), _bts_precision)
         val daily_pay = round(data.getString("daily_pay").toDouble() / _bts_precision_pow).toLong().toString()
-        val tv1_line3 = ViewUtils.createTextView(ctx, "${ctx.resources.getString(R.string.votingPageTotalVotes)} ", 11f, R.color.theme01_textColorNormal, true)
+        val tv1_line3 = ViewUtils.createTextView(ctx, "${ctx.resources.getString(R.string.kVcVoteCellTotalVotes)} ", 11f, R.color.theme01_textColorNormal, true)
         val tv2_line3 = ViewUtils.createTextView(ctx, total_votes_for, 11f, R.color.theme01_textColorNormal, true)
-        val tv3_line3 = ViewUtils.createTextView(ctx, "${ctx.resources.getString(R.string.votingPageBudgetOfEveryDay)} ", 11f, R.color.theme01_textColorNormal, true)
+        val tv3_line3 = ViewUtils.createTextView(ctx, "${ctx.resources.getString(R.string.kVcVoteCellDailyPay)} ", 11f, R.color.theme01_textColorNormal, true)
         val tv4_line3 = ViewUtils.createTextView(ctx, daily_pay, 11f, R.color.theme01_textColorNormal, true)
         tv3_line3.gravity = Gravity.RIGHT
         tv4_line3.gravity = Gravity.RIGHT
@@ -458,7 +458,7 @@ class FragmentVoting : BtsppFragment() {
         val fmt = SimpleDateFormat("yy/MM/dd")
         val s_work_begin_date = fmt.format(Date(work_begin_date * 1000))
         val s_work_end_date = fmt.format(Date(work_end_date * 1000))
-        val tv1_line4 = ViewUtils.createTextView(ctx, "${ctx.resources.getString(R.string.votingPageValidDate)} ", 11f, R.color.theme01_textColorNormal, true)
+        val tv1_line4 = ViewUtils.createTextView(ctx, "${ctx.resources.getString(R.string.kVcVoteCellWPDatePeriod)} ", 11f, R.color.theme01_textColorNormal, true)
         val tv2_line4 = ViewUtils.createTextView(ctx, "${s_work_begin_date} - ${s_work_end_date}", 11f, R.color.theme01_textColorNormal, true)
 
         val typevalue = OrgUtils.getWorkerType(data)
@@ -652,22 +652,22 @@ class FragmentVoting : BtsppFragment() {
             when (type) {
                 kSecTypeCommitteeActive -> {
                     segtitle = String.format(_ctx!!.resources.getString(R.string.votingPageActiveCommittees), n.toString())
-                    auxArgs.put("kTitle", _ctx!!.resources.getString(R.string.votingPageWhatIsActiveCommittees))
+                    auxArgs.put("kTitle", _ctx!!.resources.getString(R.string.kVcVoteWhatIsActiveCommittee))
                     auxArgs.put("kURL", "http://btspp.io/qam.html#qa_committee")
                 }
                 kSecTypeCommitteeCandidate -> {
                     segtitle = String.format(_ctx!!.resources.getString(R.string.votingPageCandidateCommittees), n.toString())
-                    auxArgs.put("kTitle", _ctx!!.resources.getString(R.string.votingPageWhatIsCandidateCommittees))
+                    auxArgs.put("kTitle", _ctx!!.resources.getString(R.string.kVcVoteWhatIsStandbyCommittee))
                     auxArgs.put("kURL", "http://btspp.io/qam.html#qa_committee_c")
                 }
                 kSecTypeWitnessActive -> {
                     segtitle = String.format(_ctx!!.resources.getString(R.string.votingPageActiveWitness), n.toString())
-                    auxArgs.put("kTitle", _ctx!!.resources.getString(R.string.votingPageWhatIsActiveWitness))
+                    auxArgs.put("kTitle", _ctx!!.resources.getString(R.string.kVcVoteWhatIsActiveWitness))
                     auxArgs.put("kURL", "http://btspp.io/qam.html#qa_witness")
                 }
                 kSecTypeWitnessCandidate -> {
                     segtitle = String.format(_ctx!!.resources.getString(R.string.votingPageCandidateWitness), n.toString())
-                    auxArgs.put("kTitle", _ctx!!.resources.getString(R.string.votingPageWhatIsCandidateWitness))
+                    auxArgs.put("kTitle", _ctx!!.resources.getString(R.string.kVcVoteWhatIsStandbyWitness))
                     auxArgs.put("kURL", "http://btspp.io/qam.html#qa_witness_c")
                 }
                 kSecTypeWorkerExpired -> {
@@ -681,13 +681,13 @@ class FragmentVoting : BtsppFragment() {
                 kSecTypeWorkerActive -> {
                     segtitle = String.format(_ctx!!.resources.getString(R.string.votingPageActiveWorks), n.toString())
                     hastip = false
-                    auxArgs.put("kTitle", "${_ctx!!.resources.getString(R.string.votingPageWorksTotalAmount)} ")
+                    auxArgs.put("kTitle", "${_ctx!!.resources.getString(R.string.kLabelVotingTotalBudget)} ")
                     auxArgs.put("kValue", OrgUtils.formatFloatValue(round(_nTotalBudget!!.toDouble()), _bts_precision, has_comma = false))
                 }
                 kSecTypeWorkerInactive -> {
                     segtitle = String.format(_ctx!!.resources.getString(R.string.votingPageProposalWorks), n.toString())
                     hastip = false
-                    auxArgs.put("kTitle", "${_ctx!!.resources.getString(R.string.votingPagePassNeedTickets)} ")
+                    auxArgs.put("kTitle", "${_ctx!!.resources.getString(R.string.kLabelVotingWPPassVotes)} ")
                     auxArgs.put("kValue", _nActiveMinVoteNum)
                 }
                 else -> assert(false)

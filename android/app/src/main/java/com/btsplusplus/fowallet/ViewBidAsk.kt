@@ -63,12 +63,12 @@ class ViewBidAsk : FrameLayout {
         table_row.layoutParams = table_row_params
         table_row.gravity = Gravity.CENTER_VERTICAL
 
-        val tv1 = ViewUtils.createTextViewForOrderBook(ctx, ctx.resources.getString(R.string.nameBuy), Gravity.LEFT, R.color.theme01_textColorGray, 2f, layout_view_height)
-        val tv2 = ViewUtils.createTextViewForOrderBook(ctx, ctx.resources.getString(R.string.nameNumber), Gravity.LEFT, R.color.theme01_textColorGray, 6f, layout_view_height)
-        val tv3 = ViewUtils.createTextViewForOrderBook(ctx, ctx.resources.getString(R.string.namePrice), Gravity.RIGHT, R.color.theme01_textColorGray, 6f, layout_view_height)
-        val tv4 = ViewUtils.createTextViewForOrderBook(ctx, ctx.resources.getString(R.string.namePrice), Gravity.LEFT, R.color.theme01_textColorGray, 6f, layout_view_height)
-        val tv5 = ViewUtils.createTextViewForOrderBook(ctx, ctx.resources.getString(R.string.nameNumber), Gravity.RIGHT, R.color.theme01_textColorGray, 6f, layout_view_height)
-        val tv6 = ViewUtils.createTextViewForOrderBook(ctx, ctx.resources.getString(R.string.nameSell), Gravity.RIGHT, R.color.theme01_textColorGray, 2f, layout_view_height)
+        val tv1 = ViewUtils.createTextViewForOrderBook(ctx, ctx.resources.getString(R.string.kLableBidBuy), Gravity.LEFT, R.color.theme01_textColorGray, 2f, layout_view_height)
+        val tv2 = ViewUtils.createTextViewForOrderBook(ctx, ctx.resources.getString(R.string.kLableBidAmount), Gravity.LEFT, R.color.theme01_textColorGray, 6f, layout_view_height)
+        val tv3 = ViewUtils.createTextViewForOrderBook(ctx, ctx.resources.getString(R.string.kLableBidPrice), Gravity.RIGHT, R.color.theme01_textColorGray, 6f, layout_view_height)
+        val tv4 = ViewUtils.createTextViewForOrderBook(ctx, ctx.resources.getString(R.string.kLableBidPrice), Gravity.LEFT, R.color.theme01_textColorGray, 6f, layout_view_height)
+        val tv5 = ViewUtils.createTextViewForOrderBook(ctx, ctx.resources.getString(R.string.kLableBidAmount), Gravity.RIGHT, R.color.theme01_textColorGray, 6f, layout_view_height)
+        val tv6 = ViewUtils.createTextViewForOrderBook(ctx, ctx.resources.getString(R.string.kLableAskSell), Gravity.RIGHT, R.color.theme01_textColorGray, 2f, layout_view_height)
 
         tv3.setPadding(0, 0, Utils.toDp(5f, res), 0)
         tv4.setPadding(Utils.toDp(5f, res), 0, 0, 0)

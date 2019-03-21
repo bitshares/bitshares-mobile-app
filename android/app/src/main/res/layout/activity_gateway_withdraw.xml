@@ -34,7 +34,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="@string/nameBack"
+                    android:text="@string/kBtnBack"
                     style="@style/kNavigationBarTextStyle"
                     android:gravity="center_vertical"
                     />
@@ -108,7 +108,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/theme01.textColorMain"
-                        android:text="@string/nameAvaliable"
+                        android:text="@string/kLableAvailable"
                         android:textSize="13dp"
                         android:layout_gravity="center_vertical"
                         android:gravity="center_vertical"/>
@@ -158,7 +158,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:text="@string/nameAll"
+                        android:text="@string/kLabelAllOrders"
                         android:textColor="@color/theme01.textColorNormal"
                         android:textSize="13dp"
                         android:layout_gravity="right|center_vertical"

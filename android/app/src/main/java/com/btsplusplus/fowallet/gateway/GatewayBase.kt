@@ -326,7 +326,7 @@ open class GatewayBase {
             }
             return@then null
         }.catch {
-            p.resolve(R.string.nameNetworkException.xmlstring(ctx))
+            p.resolve(R.string.tip_network_error.xmlstring(ctx))
         }
         return p
     }

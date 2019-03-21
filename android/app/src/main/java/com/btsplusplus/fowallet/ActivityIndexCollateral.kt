@@ -148,7 +148,7 @@ class ActivityIndexCollateral : BtsppActivity() {
 
         //  参数无效（两个都为0，没有变化。）
         if (n_delta_coll.compareTo(zero) == 0 && n_delta_debt.compareTo(zero) == 0) {
-            showToast(resources.getString(R.string.debtPageTipErrorNoChange))
+            showToast(resources.getString(R.string.kDebtTipValueAndAmountNotChange))
             return
         }
 
@@ -156,7 +156,7 @@ class ActivityIndexCollateral : BtsppActivity() {
         val n_balance_coll = bigDecimalfromAmount(_collateralBalance!!.getString("amount"), _debtPair!!._quotePrecision)
         val n_rest_coll = n_balance_coll.subtract(n_delta_coll)
         if (n_rest_coll.compareTo(zero) < 0) {
-            showToast(resources.getString(R.string.debtPageTipErrorCollAmount))
+            showToast(resources.getString(R.string.kDebtTipCollNotEnough))
             return
         }
 
@@ -164,7 +164,7 @@ class ActivityIndexCollateral : BtsppActivity() {
         val n_balance_debt = _getDebtBalance()
         val n_rest_debt = n_balance_debt.add(n_delta_debt)
         if (n_rest_debt.compareTo(zero) < 0) {
-            showToast(String.format(resources.getString(R.string.debtPageTipErrorAvailableNum), _debtPair!!._baseAsset.getString("symbol")))
+            showToast(String.format(resources.getString(R.string.kDebtTipAvailableNotEnough), _debtPair!!._baseAsset.getString("symbol")))
             return
         }
 
@@ -172,12 +172,12 @@ class ActivityIndexCollateral : BtsppActivity() {
         //  【BSIP30】在爆仓状态可以上调抵押率，不再强制要求必须上调到多少，但抵押率不足最低要求时不能增加借款
         assert(_nCurrMortgageRate != null)
         if (_nCurrMortgageRate!!.compareTo(_nMaintenanceCollateralRatio) < 0 && n_delta_debt.compareTo(zero) > 0) {
-            showToast(String.format(resources.getString(R.string.debtPageTipErrorDebtMore), _nMaintenanceCollateralRatio!!.toPlainString()))
+            showToast(String.format(resources.getString(R.string.kDebtTipRatioTooLow), _nMaintenanceCollateralRatio!!.toPlainString()))
             return
         }
 
         if (!_fee_item!!.getBoolean("sufficient")) {
-            showToast(resources.getString(R.string.myOrderPageTipForFeeNotEnough))
+            showToast(resources.getString(R.string.kTipsTxFeeNotEnough))
             return
         }
 
@@ -222,27 +222,27 @@ class ActivityIndexCollateral : BtsppActivity() {
                 op, opaccount) { isProposal, _ ->
             assert(!isProposal)
             //  请求网络广播
-            val mask = ViewMesk(R.string.nameRequesting.xmlstring(this), this)
+            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
             mask.show()
             BitsharesClientManager.sharedBitsharesClientManager().callOrderUpdate(op).then {
                 ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(funding_account).then {
                     mask.dismiss()
                     //  刷新UI
                     _refreshUI(true, null)
-                    showToast(resources.getString(R.string.debtPageTipTxFullOk))
+                    showToast(resources.getString(R.string.kDebtTipTxUpdatePositionFullOK))
                     //  [统计]
                     fabricLogCustom("txCallOrderUpdateFullOK", jsonObjectfromKVS("account", funding_account, "debt_asset", _debtPair!!._baseAsset.getString("symbol")))
                     return@then null
                 }.catch {
                     mask.dismiss()
-                    showToast(resources.getString(R.string.debtPageTipTxOk))
+                    showToast(resources.getString(R.string.kDebtTipTxUpdatePositionOK))
                     //  [统计]
                     fabricLogCustom("txCallOrderUpdateOK", jsonObjectfromKVS("account", funding_account, "debt_asset", _debtPair!!._baseAsset.getString("symbol")))
                 }
                 return@then null
             }.catch {
                 mask.dismiss()
-                showToast(resources.getString(R.string.debtPageTipTxFailed))
+                showToast(resources.getString(R.string.kTipsTxRequestFailed))
                 //  [统计]
                 fabricLogCustom("txCallOrderUpdateFailed", jsonObjectfromKVS("account", funding_account, "debt_asset", _debtPair!!._baseAsset.getString("symbol")))
             }
@@ -345,7 +345,7 @@ class ActivityIndexCollateral : BtsppActivity() {
      */
     private fun onSelectDebtAssetClicked() {
         var list = ChainObjectManager.sharedChainObjectManager().getDebtAssetList()
-        ViewSelector.show(this, resources.getString(R.string.debtPageTipSelectDebtAsset), list.toList<String>().toTypedArray()) { index: Int, result: String ->
+        ViewSelector.show(this, resources.getString(R.string.kDebtTipSelectDebtAsset), list.toList<String>().toTypedArray()) { index: Int, result: String ->
             processSelectNewDebtAsset(list.getString(index))
         }
     }
@@ -358,7 +358,7 @@ class ActivityIndexCollateral : BtsppActivity() {
         //  获取背书资产
         val newDebtAsset = ChainObjectManager.sharedChainObjectManager().getAssetBySymbol(newDebtAssetSymbol)
         //  获取当前资产喂价信息
-        val mask = ViewMesk(R.string.nameRequesting.xmlstring(this), this)
+        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
         mask.show()
         _asyncQueryFeedPrice(newDebtAsset).then {
             mask.dismiss()
@@ -370,7 +370,7 @@ class ActivityIndexCollateral : BtsppActivity() {
             return@then null
         }.catch {
             mask.dismiss()
-            showToast(resources.getString(R.string.nameNetworkException))
+            showToast(resources.getString(R.string.tip_network_error))
         }
     }
 
@@ -426,7 +426,7 @@ class ActivityIndexCollateral : BtsppActivity() {
         label.setTextColor(resources.getColor(_getCollateralRatioColor()))
         if (_nCurrMortgageRate != null) {
             val value = _nCurrMortgageRate!!.toDouble()
-            label.text = String.format("%s %.2f", resources.getString(R.string.debtPageCollRatio), value.toFloat())
+            label.text = String.format("%s %.2f", resources.getString(R.string.kVcRankRatio), value.toFloat())
             if (reset_slider) {
                 val parameters = ChainObjectManager.sharedChainObjectManager().getDefaultParameters()
                 val mcr = _nMaintenanceCollateralRatio!!.toDouble()
@@ -435,7 +435,7 @@ class ActivityIndexCollateral : BtsppActivity() {
                 _curve_slider_ratio.set_value(value)
             }
         } else {
-            label.text = "${resources.getString(R.string.debtPageCollRatio)} --"
+            label.text = "${resources.getString(R.string.kVcRankRatio)} --"
             if (reset_slider) {
                 _curve_slider_ratio.set_min(0.0)
                 _curve_slider_ratio.set_max(6.0)
@@ -473,7 +473,7 @@ class ActivityIndexCollateral : BtsppActivity() {
      * (private) 刷新强平触发价
      */
     private fun _refreshUI_SettlementTriggerPrice() {
-        val price_title = resources.getString(R.string.debtPageForcedLiquidationPrice)
+        val price_title = resources.getString(R.string.kDebtLableCallPrice)
         val base_symbol = _debtPair!!._baseAsset.getString("symbol")
         val quote_symbol = _debtPair!!._quoteAsset.getString("symbol")
         val suffix = "${base_symbol}/${quote_symbol}"
@@ -513,7 +513,7 @@ class ActivityIndexCollateral : BtsppActivity() {
         val n_total = _getTotalCollateralNumber()
         val n_available = n_total.subtract(new_tf_value)
         val quote_symbol = _debtPair!!._quoteAsset.getString("symbol")
-        lbl_available.text = "${resources.getString(R.string.debtPageUsableBalance)} $n_available${quote_symbol}"
+        lbl_available.text = "${resources.getString(R.string.kDebtLableAvailable)} $n_available${quote_symbol}"
 
         //  变化量
         var n_balance = BigDecimal.ZERO
@@ -566,7 +566,7 @@ class ActivityIndexCollateral : BtsppActivity() {
         //  可用余额
         val n_available = _getDebtBalance().add(n_add_debt)
         val base_symbol = _debtPair!!._baseAsset.getString("symbol")
-        lbl_available.text = "${resources.getString(R.string.debtPageUsableBalance)} $n_available${base_symbol}"
+        lbl_available.text = "${resources.getString(R.string.kDebtLableAvailable)} $n_available${base_symbol}"
 
         //  变化量
         val result = n_add_debt.compareTo(BigDecimal.ZERO)
@@ -640,10 +640,10 @@ class ActivityIndexCollateral : BtsppActivity() {
         //  ratio < _nMaintenanceCollateralRatio
         val label = findViewById<TextView>(R.id.label_txt_target_ratio)
         if (ratio.compareTo(_nMaintenanceCollateralRatio) < 0) {
-            label.text = resources.getString(R.string.debtPageGoalMortgageRateNotSet)
+            label.text = resources.getString(R.string.kDebtTipTargetRatioNotSet)
             label.setTextColor(resources.getColor(R.color.theme01_textColorGray))
         } else {
-            label.text = String.format("%s %.2f", resources.getString(R.string.debtPageLabelTargetRatioName), value.toFloat())
+            label.text = String.format("%s %.2f", resources.getString(R.string.kDebtTipTargetRatio), value.toFloat())
             label.setTextColor(resources.getColor(R.color.theme01_textColorMain))
         }
     }
@@ -711,7 +711,7 @@ class ActivityIndexCollateral : BtsppActivity() {
             val account_id = WalletManager.sharedWalletManager().getWalletAccountInfo()!!.getJSONObject("account").getString("id")
             promise_map.put("kFullAccountData", ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(account_id))
         }
-        val mask = ViewMesk(R.string.nameRequesting.xmlstring(this), this)
+        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
         mask.show()
         Promise.map(promise_map).then {
             mask.dismiss()
@@ -720,7 +720,7 @@ class ActivityIndexCollateral : BtsppActivity() {
             return@then null
         }.catch {
             mask.dismiss()
-            showToast(resources.getString(R.string.nameNetworkException))
+            showToast(resources.getString(R.string.tip_network_error))
         }
     }
 
@@ -742,18 +742,18 @@ class ActivityIndexCollateral : BtsppActivity() {
 
         //  UI - 按钮
         if (bLogined) {
-            findViewById<Button>(R.id.btn_submit_core).text = resources.getString(R.string.debtPageSubmitBtn)
+            findViewById<Button>(R.id.btn_submit_core).text = resources.getString(R.string.kOpType_call_order_update)
         } else {
-            findViewById<Button>(R.id.btn_submit_core).text = resources.getString(R.string.nameLogin)
+            findViewById<Button>(R.id.btn_submit_core).text = resources.getString(R.string.kNormalCellBtnLogin)
         }
 
         //  UI - 喂价
         val base_symbol = _debtPair!!._baseAsset.getString("symbol")
         val quote_symbol = _debtPair!!._quoteAsset.getString("symbol")
         if (_nCurrFeedPrice != null) {
-            findViewById<TextView>(R.id.label_txt_curr_feed).text = "${resources.getString(R.string.debtPageCurrentFeedPrice)} ${_nCurrFeedPrice!!.toPlainString()}${base_symbol}/${quote_symbol}"
+            findViewById<TextView>(R.id.label_txt_curr_feed).text = "${resources.getString(R.string.kVcFeedCurrentFeedPrice)} ${_nCurrFeedPrice!!.toPlainString()}${base_symbol}/${quote_symbol}"
         } else {
-            findViewById<TextView>(R.id.label_txt_curr_feed).text = "${resources.getString(R.string.debtPageCurrentFeedPrice)} --${base_symbol}/${quote_symbol}"
+            findViewById<TextView>(R.id.label_txt_curr_feed).text = "${resources.getString(R.string.kVcFeedCurrentFeedPrice)} --${base_symbol}/${quote_symbol}"
         }
 
         //  UI - 你的强平触发价

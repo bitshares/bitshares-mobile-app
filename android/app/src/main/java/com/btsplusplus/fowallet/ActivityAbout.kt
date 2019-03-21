@@ -16,7 +16,7 @@ class ActivityAbout : BtsppActivity() {
 
         //  draw version
         val ver = Utils.appVersionName(this)
-        val appname = R.string.app_name.xmlstring(this)
+        val appname = R.string.kAppName.xmlstring(this)
         label_txt_icon_version.text = "$appname v$ver"
         label_txt_version.text = "$appname v$ver"
 

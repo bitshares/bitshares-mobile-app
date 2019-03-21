@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="28dp"
-                android:text="@string/kTabNameMarkets"
+                android:text="@string/kTabBarNameMarkets"
                 android:textColor="@color/theme01.textColorGray"
                 android:textSize="10dp" />
         </FrameLayout>
@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="28dp"
-                android:text="@string/kTabNameDebt"
+                android:text="@string/kTabBarNameCollateral"
                 android:textColor="@color/theme01.textColorGray"
                 android:textSize="10dp" />
 
@@ -108,7 +108,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="28dp"
-                android:text="@string/kTabNameMy"
+                android:text="@string/kTabBarNameMy"
                 android:textColor="@color/theme01.textColorGray"
                 android:textSize="10dp" />
         </FrameLayout>

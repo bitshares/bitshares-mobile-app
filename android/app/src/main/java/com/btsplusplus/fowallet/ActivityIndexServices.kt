@@ -53,7 +53,7 @@ class ActivityIndexServices : BtsppActivity() {
 
         layout_transfer_from_services.setOnClickListener {
             guardWalletExist {
-                val mask = ViewMesk(R.string.nameRequesting.xmlstring(this), this)
+                val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
                 mask.show()
                 val p1 = get_full_account_data_and_asset_hash(WalletManager.sharedWalletManager().getWalletAccountName()!!)
                 var p2 = ChainObjectManager.sharedChainObjectManager().queryFeeAssetListDynamicInfo()
@@ -65,7 +65,7 @@ class ActivityIndexServices : BtsppActivity() {
                     return@then null
                 }.catch {
                     mask.dismiss()
-                    showToast(resources.getString(R.string.nameNetworkException))
+                    showToast(resources.getString(R.string.tip_network_error))
                 }
             }
         }

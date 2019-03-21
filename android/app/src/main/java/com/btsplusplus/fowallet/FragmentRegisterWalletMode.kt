@@ -61,7 +61,7 @@ class FragmentRegisterWalletMode : Fragment() {
         }
 
         //   --- 开始注册 ---
-        val mask = ViewMesk(R.string.nameRequesting.xmlstring(this.activity!!), this.activity!!)
+        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
         mask.show()
         //  1、查询名字是否被占用。
         val username = account_name.toLowerCase()
@@ -119,7 +119,7 @@ class FragmentRegisterWalletMode : Fragment() {
             return@then null
         }.catch {
             mask.dismiss()
-            showToast(_ctx!!.resources.getString(R.string.nameNetworkException))
+            showToast(_ctx!!.resources.getString(R.string.tip_network_error))
         }
     }
 
@@ -134,8 +134,8 @@ class FragmentRegisterWalletMode : Fragment() {
             val confirm_password = view.findViewById<EditText>(R.id.tf_confirm_password).text.toString()
             onRegisterClicked(account_name, password, confirm_password)
         }
-        view.findViewById<ImageView>(R.id.tip_account_name).setOnClickListener { UtilsAlert.showMessageBox(activity!!, R.string.tipsFormatAccount.xmlstring(_ctx!!)) }
-        view.findViewById<ImageView>(R.id.tip_password).setOnClickListener { UtilsAlert.showMessageBox(activity!!, R.string.tipsFormatWalletPassword.xmlstring(_ctx!!)) }
+        view.findViewById<ImageView>(R.id.tip_account_name).setOnClickListener { UtilsAlert.showMessageBox(activity!!, R.string.kLoginRegTipsAccountFormat.xmlstring(_ctx!!)) }
+        view.findViewById<ImageView>(R.id.tip_password).setOnClickListener { UtilsAlert.showMessageBox(activity!!, R.string.kLoginRegTipsWalletPasswordFormat.xmlstring(_ctx!!)) }
         return view
     }
 

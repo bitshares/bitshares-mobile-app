@@ -140,7 +140,7 @@ class ActivityDepositAndWithdraw : BtsppActivity() {
     private fun queryFullAccountDataAndCoinList() {
         val account_data = _fullAccountData.getJSONObject("account")
 
-        val mask = ViewMesk(R.string.nameRequesting.xmlstring(this), this)
+        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
         mask.show()
 
         val p1 = ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(account_data.getString("id"))
@@ -156,7 +156,7 @@ class ActivityDepositAndWithdraw : BtsppActivity() {
             }
         }.catch {
             mask.dismiss()
-            showToast(resources.getString(R.string.nameNetworkException))
+            showToast(resources.getString(R.string.tip_network_error))
         }
     }
 
@@ -415,7 +415,7 @@ class ActivityDepositAndWithdraw : BtsppActivity() {
         layout_line2_params.setMargins(0, 0, 0, 10.dp)
 
         val tv_available = TextView(this)
-        tv_available.text = "${R.string.myAssetsPageAvailable.xmlstring(this)} ${strFreeValue}"
+        tv_available.text = "${R.string.kLableAvailable.xmlstring(this)} ${strFreeValue}"
         tv_available.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
         tv_available.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
 
@@ -425,7 +425,7 @@ class ActivityDepositAndWithdraw : BtsppActivity() {
         layout_tv_withdraw.gravity = Gravity.RIGHT
 
         val tv_count = TextView(this)
-        tv_count.text = "${R.string.myAssetsPageHangOrder.xmlstring(this)} ${strOrderValue}"
+        tv_count.text = "${R.string.kVcAssetOnOrder.xmlstring(this)} ${strOrderValue}"
         tv_count.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
         tv_count.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
         tv_count.setPadding(0, 0, 0.dp, 0)
@@ -457,7 +457,7 @@ class ActivityDepositAndWithdraw : BtsppActivity() {
 
         //  获取充币地址
         val ctx = this
-        val mask = ViewMesk(R.string.nameRequesting.xmlstring(ctx), ctx)
+        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
         mask.show()
         (_currGateway.get("api") as GatewayBase).requestDepositAddress(item, _fullAccountData, this).then {
             //  错误处理
@@ -492,7 +492,7 @@ class ActivityDepositAndWithdraw : BtsppActivity() {
         }
 
         val ctx = this
-        val mask = ViewMesk(R.string.nameRequesting.xmlstring(this), this)
+        val mask = ViewMesk(R.string.tip_network_error.xmlstring(this), this)
         mask.show()
         ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(appext.getString("intermediateAccount")).then {
             mask.dismiss()
@@ -522,7 +522,7 @@ class ActivityDepositAndWithdraw : BtsppActivity() {
             return@then null
         }.catch {
             mask.dismiss()
-            showToast(resources.getString(R.string.nameNetworkException))
+            showToast(resources.getString(R.string.tip_network_error))
         }
     }
 }

@@ -86,7 +86,7 @@ fun android.app.Activity.viewUserLimitOrders(account_id: String, tradingPair: Tr
     //  [统计]
     fabricLogCustom("event_view_userlimitorders", jsonObjectfromKVS("account", account_id))
 
-    val mask = ViewMesk(R.string.nameRequesting.xmlstring(this), this)
+    val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
     mask.show()
     //  1、查账号数据
     val p1 = ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(account_id)
@@ -140,7 +140,7 @@ fun android.app.Activity.viewUserLimitOrders(account_id: String, tradingPair: Tr
         }
     }.catch {
         mask.dismiss()
-        showToast(resources.getString(R.string.nameNetworkException))
+        showToast(resources.getString(R.string.tip_network_error))
     }
 }
 
@@ -148,7 +148,7 @@ fun android.app.Activity.viewUserAssets(account_name_or_id: String) {
     //  [统计]
     fabricLogCustom("event_view_userassets", jsonObjectfromKVS("account", account_name_or_id))
 
-    val mask = ViewMesk(R.string.nameRequesting.xmlstring(this), this)
+    val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
     mask.show()
     ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(account_name_or_id).then {
         val full_account_data = it as JSONObject
@@ -160,7 +160,7 @@ fun android.app.Activity.viewUserAssets(account_name_or_id: String) {
         }
     }.catch {
         mask.dismiss()
-        showToast(resources.getString(R.string.nameNetworkException))
+        showToast(resources.getString(R.string.tip_network_error))
     }
 }
 
@@ -218,7 +218,7 @@ fun android.app.Activity.showGrapheneError(error: Any?) {
         }
     }
     //  默认错误信息
-    showToast(resources.getString(R.string.nameNetworkException))
+    showToast(resources.getString(R.string.tip_network_error))
 }
 
 fun Fragment.showGrapheneError(error: Any?) {
@@ -233,18 +233,18 @@ fun android.app.Activity.showFaucetRegisterError(response: JSONObject?) {
         val code = response.getInt("status")
         if (code != 0) {
             when (code) {
-                10 -> showToast(resources.getString(R.string.registerLoginPageInvalidParams))
-                20 -> showToast(resources.getString(R.string.registerLoginPageInvalidAccountFormat))
-                30 -> showToast(resources.getString(R.string.registerLoginPageAccountExisted))
-                40 -> showToast(resources.getString(R.string.registerLoginPageUnknownErrorAndBroadcastFailed))
-                41 -> showToast(resources.getString(R.string.registerLoginPageTooManyAccountForThisEquipment))
-                42 -> showToast(resources.getString(R.string.registerLoginPageRegisterFrequently))
-                999 -> showToast(resources.getString(R.string.registerLoginPageServerMaintenance))
+                10 -> showToast(resources.getString(R.string.kLoginFaucetTipsInvalidArguments))
+                20 -> showToast(resources.getString(R.string.kLoginFaucetTipsInvalidAccountFmt))
+                30 -> showToast(resources.getString(R.string.kLoginFaucetTipsAccountAlreadyExist))
+                40 -> showToast(resources.getString(R.string.kLoginFaucetTipsUnknownError))
+                41 -> showToast(resources.getString(R.string.kLoginFaucetTipsDeviceRegTooMany))
+                42 -> showToast(resources.getString(R.string.kLoginFaucetTipsDeviceRegTooFast))
+                999 -> showToast(resources.getString(R.string.kLoginFaucetTipsServerMaintence))
                 else -> showToast(response.getString("msg"))
             }
         }
     } else {
-        showToast(resources.getString(R.string.nameNetworkException))
+        showToast(resources.getString(R.string.tip_network_error))
     }
 }
 
@@ -255,7 +255,7 @@ fun android.app.Activity.showFaucetRegisterError(response: JSONObject?) {
 fun android.app.Activity.onExecuteCreateProposalCore(opcode: EBitsharesOperations, opdata: JSONObject, opaccount: JSONObject, fee_paying_account: JSONObject, success_callback: (() -> Unit)?) {
     val fee_paying_account_id = fee_paying_account.getString("id")
     //  请求
-    val mask = ViewMesk(R.string.nameRequesting.xmlstring(this), this)
+    val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
     mask.show()
     BitsharesClientManager.sharedBitsharesClientManager().proposalCreate(opcode, opdata, opaccount, fee_paying_account_id).then {
         mask.dismiss()
@@ -286,7 +286,7 @@ fun android.app.Activity.askForCreateProposal(opcode: EBitsharesOperations, usin
     } else {
         message = String.format(R.string.kProposalTipsAskMissingActive.xmlstring(this), account_name)
     }
-    alerShowMessageConfirm(resources.getString(R.string.registerLoginPageWarmTip), message).then {
+    alerShowMessageConfirm(resources.getString(R.string.kWarmTips), message).then {
         if (it != null && it as Boolean) {
             //  转到提案确认界面
             val result_promise = Promise()
@@ -332,11 +332,11 @@ fun android.app.Activity.guardWalletUnlocked(checkActivePermission: Boolean, bod
     if (walletMgr.isLocked()) {
         var title = if (walletMgr.getWalletMode() == AppCacheManager.EWalletMode.kwmPasswordOnlyMode.value) R.string.unlockTipsUnlockAccount.xmlstring(this) else R.string.unlockTipsUnlockWallet.xmlstring(this)
         val placeholder = when (walletMgr.getWalletMode()) {
-            AppCacheManager.EWalletMode.kwmPasswordOnlyMode.value -> resources.getString(R.string.registerLoginPagePleaseInputAccountPwd)
-            AppCacheManager.EWalletMode.kwmPasswordWithWallet.value -> resources.getString(R.string.registerLoginPagePleaseInputTradePws)
-            AppCacheManager.EWalletMode.kwmPrivateKeyWithWallet.value -> resources.getString(R.string.registerLoginPagePleaseInputTradePws)
+            AppCacheManager.EWalletMode.kwmPasswordOnlyMode.value -> resources.getString(R.string.unlockTipsPleaseInputAccountPassword)
+            AppCacheManager.EWalletMode.kwmPasswordWithWallet.value -> resources.getString(R.string.kLoginTipsPlaceholderTradePassword)
+            AppCacheManager.EWalletMode.kwmPrivateKeyWithWallet.value -> resources.getString(R.string.unlockTipsPleaseInputTradePassword)
             AppCacheManager.EWalletMode.kwmFullWalletMode.value -> resources.getString(R.string.registerLoginPagePleaseInputWalletPws)
-            else -> resources.getString(R.string.registerLoginPagePleaseInputPwd)
+            else -> resources.getString(R.string.kLoginImportTipsPleaseInputPassword)
         }
         UtilsAlert.showInputBox(this, title, placeholder, resources.getString(R.string.unlockBtnUnlock)).then {
             val password = it as? String
