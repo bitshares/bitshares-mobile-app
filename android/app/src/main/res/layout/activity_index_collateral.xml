@@ -27,7 +27,7 @@
                 android:layout_height="40dp"
                 android:gravity="center_vertical"
                 android:layout_gravity="center_vertical"
-                android:text="@string/nameReset"
+                android:text="@string/kDebtLableReset"
                 style="@style/kNavigationBarTextStyle" />
 
             <TextView
@@ -36,7 +36,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center|center_vertical"
-                android:text="@string/debtPageMortgageLoan"
+                android:text="@string/kVcTitleMarginPosition"
                 style="@style/kNavigationBarTextStyle" />
 
             <Button
@@ -47,7 +47,7 @@
                 android:layout_gravity="right|center_vertical"
                 style="@style/kNavigationBarTextStyle"
                 android:background="#00000000"
-                android:text="@string/debtPageSelectAssets"
+                android:text="@string/kDebtLableSelectAsset"
                 android:textAllCaps="false"
                 android:layout_marginRight="10dp"  />
 
@@ -233,7 +233,7 @@
                         android:textColorHint="@color/theme01.textColorGray"
                         android:cursorVisible="true"
                         android:textCursorDrawable="@null"
-                        android:hint="@string/debtPageTextInputBorrowMoney"
+                        android:hint="@string/kDebtTipInputDebtValue"
                         android:theme="@style/theme01.EditText"
                         android:textSize="15dp" />
                     <TextView
@@ -243,7 +243,7 @@
                         android:gravity="center_vertical|right"
                         android:textColor="@color/theme01.textColorNormal"
                         android:layout_weight="1"
-                        android:text="@string/debtPageMaxRepayment"
+                        android:text="@string/kDebtLablePayMaxDebt"
                         android:textSize="12dp"
                         />
 
@@ -315,7 +315,7 @@
                         android:textColorHint="@color/theme01.textColorGray"
                         android:cursorVisible="true"
                         android:textCursorDrawable="@null"
-                        android:hint="@string/debtPageTextInputMortgageNumber"
+                        android:hint="@string/kDebtTipInputCollAmount"
                         android:theme="@style/theme01.EditText"
                         android:textSize="15dp" />
 
@@ -328,7 +328,7 @@
                         android:gravity="center_vertical|right"
                         android:textColor="@color/theme01.textColorNormal"
                         android:layout_weight="1"
-                        android:text="@string/debtPageTotalMortgage"
+                        android:text="@string/kDebtLableUseMax"
                         android:textSize="12dp"
                         />
 
@@ -350,7 +350,7 @@
                         android:gravity="center_vertical|left"
                         android:textColor="@color/theme01.textColorMain"
                         android:layout_weight="1"
-                        android:text="@string/debtPageCollRatio"
+                        android:text="@string/kDebtLableRatio"
                         android:textSize="15dp"
                         />
 
@@ -398,7 +398,7 @@
                         android:gravity="center_vertical|left"
                         android:textColor="@color/theme01.textColorGray"
                         android:layout_weight="1"
-                        android:text="@string/debtPageGoalMortgageRateNotSet"
+                        android:text="@string/kDebtTipTargetRatioNotSet"
                         android:textSize="15dp"
                         />
 
@@ -450,7 +450,7 @@
                         android:layout_weight="1"
                         android:padding="5dp"
                         android:textAllCaps="false"
-                        android:text="@string/nameLogin" />
+                        android:text="@string/kNormalCellBtnLogin" />
                 </LinearLayout>
 
                 <TextView
@@ -463,7 +463,7 @@
                     android:textColor="@color/theme01.textColorNormal"
                     android:padding="5dp"
                     android:background="@color/theme01.textColorGray"
-                    android:text="@string/debtPageTipForTriggerFeedPrice"
+                    android:text="@string/kDebtWarmTips"
                     />
 
 

@@ -35,7 +35,7 @@ class ActivityAccountQueryBase : BtsppActivity() {
     }
 
     private fun addDefaultResult(data_array: List<JSONObject>) {
-        findViewById<TextView>(R.id.label_my_fav_n).text = String.format(resources.getString(R.string.accountSearchMyFavorites), "${data_array.size}")
+        findViewById<TextView>(R.id.label_my_fav_n).text = String.format(resources.getString(R.string.kSearchTipsMyFavAccount), "${data_array.size}")
         for (data in data_array) {
             createCell(data.getString("name"), data.getString("id"))
         }

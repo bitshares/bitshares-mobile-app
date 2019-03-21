@@ -63,9 +63,9 @@ class FragmentTradeMainPage : BtsppFragment() {
     fun onRefreshLoginStatus() {
         _view.findViewById<TextView>(R.id.confirmation_btn_of_buy).tap {
             if (_isbuy) {
-                it.text = "${R.string.buyPageBtnBuy.xmlstring(_ctx)}${_tradingPair._quoteAsset.getString("symbol")}"
+                it.text = "${R.string.kBtnBuy.xmlstring(_ctx)}${_tradingPair._quoteAsset.getString("symbol")}"
             } else {
-                it.text = "${R.string.buyPageBtnSell.xmlstring(_ctx)}${_tradingPair._quoteAsset.getString("symbol")}"
+                it.text = "${R.string.kBtnSell.xmlstring(_ctx)}${_tradingPair._quoteAsset.getString("symbol")}"
             }
         }
     }
@@ -333,7 +333,7 @@ class FragmentTradeMainPage : BtsppFragment() {
     private fun onButtonClicked_CancelOrder(order_id: String) {
         val fee_item = ChainObjectManager.sharedChainObjectManager().getFeeItem(EBitsharesOperations.ebo_limit_order_cancel, _balanceData!!.getJSONObject("full_account_data"))
         if (!fee_item.getBoolean("sufficient")) {
-            showToast(_ctx.resources.getString(R.string.myOrderPageTipForFeeNotEnough))
+            showToast(_ctx.resources.getString(R.string.kTipsTxFeeNotEnough))
             return
         }
         //  --- 参数校验完毕开始执行请求 ---
@@ -358,7 +358,7 @@ class FragmentTradeMainPage : BtsppFragment() {
                 op, account_data) { isProposal, _ ->
             assert(!isProposal)
             //  请求网络广播
-            val mask = ViewMesk(R.string.nameRequesting.xmlstring(this.activity!!), this.activity!!)
+            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
             mask.show()
             BitsharesClientManager.sharedBitsharesClientManager().cancelLimitOrders(jsonArrayfrom(op)).then {
                 ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(account_id).then {
@@ -366,20 +366,20 @@ class FragmentTradeMainPage : BtsppFragment() {
                     //  刷新（调用owner的方法刷新、买/卖界面都需要刷新。）
                     getOwner<ActivityTradeMain>()?.onFullAccountInfoResponsed(it as JSONObject)
 
-                    showToast(String.format(resources.getString(R.string.buyPageTipCancelOrderTxFullOk), order_id))
+                    showToast(String.format(resources.getString(R.string.kVcOrderTipTxCancelFullOK), order_id))
                     //  [统计]
                     fabricLogCustom("txCancelLimitOrderFullOK", jsonObjectfromKVS("account", account_id))
                     return@then null
                 }.catch {
                     mask.dismiss()
-                    showToast(String.format(resources.getString(R.string.buyPageTipCancelOrderTxOk), order_id))
+                    showToast(String.format(resources.getString(R.string.kVcOrderTipTxCancelOK), order_id))
                     //  [统计]
                     fabricLogCustom("txCancelLimitOrderOK", jsonObjectfromKVS("account", account_id))
                 }
                 return@then null
             }.catch {
                 mask.dismiss()
-                showToast(resources.getString(R.string.buyPageTipCancelOrderTxFailed))
+                showToast(resources.getString(R.string.kTipsTxRequestFailed))
                 //  [统计]
                 fabricLogCustom("txCancelLimitOrderFailed", jsonObjectfromKVS("account", account_id))
             }
@@ -457,22 +457,22 @@ class FragmentTradeMainPage : BtsppFragment() {
      */
     private fun onBuyOrSellActionClicked() {
         if (_balanceData == null) {
-            showToast(resources.getString(R.string.buyPageTipErrorGettingData))
+            showToast(resources.getString(R.string.kVcTradeSubmitTipNoData))
             return
         }
         if (!_balanceData!!.getJSONObject("fee_item").getBoolean("sufficient")) {
-            showToast(_ctx.resources.getString(R.string.myOrderPageTipForFeeNotEnough))
+            showToast(_ctx.resources.getString(R.string.kTipsTxFeeNotEnough))
             return
         }
 
         val str_price = _tf_price_watcher.get_tf_string()
         var str_amount = _tf_amount_watcher.get_tf_string()
         if (str_price == "") {
-            showToast(resources.getString(R.string.buyPageTipErrorInputPrice))
+            showToast(resources.getString(R.string.kVcTradeSubmitTipPleaseInputPrice))
             return
         }
         if (str_amount == "") {
-            showToast(resources.getString(R.string.buyPageTipErrorInputAmount))
+            showToast(resources.getString(R.string.kVcTradeSubmitTipPleaseInputAmount))
             return
         }
 
@@ -483,11 +483,11 @@ class FragmentTradeMainPage : BtsppFragment() {
         val n_amount = Utils.auxGetStringDecimalNumberValue(str_amount)
         val n_zero = BigDecimal.ZERO
         if (n_price.compareTo(n_zero) <= 0) {
-            showToast(resources.getString(R.string.buyPageTipErrorInputPrice))
+            showToast(resources.getString(R.string.kVcTradeSubmitTipPleaseInputPrice))
             return
         }
         if (n_amount.compareTo(n_zero) <= 0) {
-            showToast(resources.getString(R.string.buyPageTipErrorInputAmount))
+            showToast(resources.getString(R.string.kVcTradeSubmitTipPleaseInputAmount))
             return
         }
 
@@ -500,19 +500,19 @@ class FragmentTradeMainPage : BtsppFragment() {
             BigDecimal.ROUND_DOWN
         })
         if (n_total.compareTo(n_zero) <= 0) {
-            showToast(resources.getString(R.string.buyPageTipErrorTotalTooLow))
+            showToast(resources.getString(R.string.kVcTradeSubmitTotalTooLow))
             return
         }
 
         if (_isbuy) {
             //  买的总金额
             if (_base_amount_n.compareTo(n_total) < 0) {
-                showToast(resources.getString(R.string.buyPageTipErrorMoneyNotEnough))
+                showToast(resources.getString(R.string.kVcTradeSubmitTotalNotEnough))
                 return
             }
         } else {
             if (_quote_amount_n.compareTo(n_amount) < 0) {
-                showToast(resources.getString(R.string.buyPageTipErrorItemNotEnough))
+                showToast(resources.getString(R.string.kVcTradeSubmitAmountNotEnough))
                 return
             }
         }
@@ -573,7 +573,7 @@ class FragmentTradeMainPage : BtsppFragment() {
                 op, account_data) { isProposal, _ ->
             assert(!isProposal)
             //  请求网络广播
-            val mask = ViewMesk(R.string.nameRequesting.xmlstring(this.activity!!), this.activity!!)
+            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
             mask.show()
             BitsharesClientManager.sharedBitsharesClientManager().createLimitOrder(op).then {
                 //  获取新的限价单ID号（考虑到数据结构可能变更，加各种safe判断。）
@@ -611,9 +611,9 @@ class FragmentTradeMainPage : BtsppFragment() {
                             val account_id = WalletManager.sharedWalletManager().getWalletAccountInfo()!!.getJSONObject("account").getString("id")
                             ScheduleManager.sharedScheduleManager().sub_market_monitor_orders(_tradingPair, jsonArrayfrom(new_order_id), account_id)
                         }
-                        showToast(resources.getString(R.string.buyPageTipCreateOrderTxFullOk))
+                        showToast(resources.getString(R.string.kVcTradeTipTxCreateFullOK))
                     } else {
-                        showToast(String.format(resources.getString(R.string.buyPageTipCreateOrderTxFullOkWithID), new_order_id))
+                        showToast(String.format(resources.getString(R.string.kVcTradeTipTxCreateFullOKWithID), new_order_id))
                     }
                     //  [统计]
                     fabricLogCustom("txCreateLimitOrderFullOK", jsonObjectfromKVS("account", seller, "isbuy", _isbuy,
@@ -626,7 +626,7 @@ class FragmentTradeMainPage : BtsppFragment() {
                         ScheduleManager.sharedScheduleManager().sub_market_monitor_orders(_tradingPair, jsonArrayfrom(new_order_id), account_id)
                     }
                     mask.dismiss()
-                    showToast(resources.getString(R.string.buyPageTipCreateOrderTxOk))
+                    showToast(resources.getString(R.string.kVcTradeTipTxCreateOK))
                     //  [统计]
                     fabricLogCustom("txCreateLimitOrderOK", jsonObjectfromKVS("account", seller, "isbuy", _isbuy,
                             "base", _tradingPair._baseAsset.getString("symbol"), "quote", _tradingPair._quoteAsset.getString("symbol")))
@@ -634,7 +634,7 @@ class FragmentTradeMainPage : BtsppFragment() {
                 return@then null
             }.catch {
                 mask.dismiss()
-                showToast(resources.getString(R.string.buyPageTipCreateOrderTxFailed))
+                showToast(resources.getString(R.string.kTipsTxRequestFailed))
                 //  [统计]
                 fabricLogCustom("txCreateLimitOrderFailed", jsonObjectfromKVS("account", seller, "isbuy", _isbuy,
                         "base", _tradingPair._baseAsset.getString("symbol"), "quote", _tradingPair._quoteAsset.getString("symbol")))
@@ -669,11 +669,11 @@ class FragmentTradeMainPage : BtsppFragment() {
         val tf_price = _view.findViewById<EditText>(R.id.tf_price)
         val tf_amount = _view.findViewById<EditText>(R.id.tf_amount)
         if (_isbuy) {
-            tf_price.hint = _ctx.resources.getString(R.string.buyPageBuyPrice)
-            tf_amount.hint = _ctx.resources.getString(R.string.buyPageBuyNumber)
+            tf_price.hint = _ctx.resources.getString(R.string.kPlaceHolderBuyPrice)
+            tf_amount.hint = _ctx.resources.getString(R.string.kPlaceHolderBuyAmount)
         } else {
-            tf_price.hint = R.string.buyPageSellPrice.xmlstring(_ctx)
-            tf_amount.hint = R.string.buyPageSellNumber.xmlstring(_ctx)
+            tf_price.hint = R.string.kPlaceHolderSellPrice.xmlstring(_ctx)
+            tf_amount.hint = R.string.kPlaceHolderSellAmount.xmlstring(_ctx)
         }
         //  输入框输入事件监听
         _tf_price_watcher = UtilsDigitTextWatcher().set_tf(tf_price).set_precision(_tradingPair._displayPrecision)
@@ -710,12 +710,12 @@ class FragmentTradeMainPage : BtsppFragment() {
         val _confirmation_btn_of_buy = _view.findViewById<TextView>(R.id.confirmation_btn_of_buy)
         if (WalletManager.sharedWalletManager().isWalletExist()) {
             if (_isbuy) {
-                _confirmation_btn_of_buy.text = "${R.string.buyPageBtnBuy.xmlstring(_ctx)}${_tradingPair._quoteAsset.getString("symbol")}"
+                _confirmation_btn_of_buy.text = "${R.string.kBtnBuy.xmlstring(_ctx)}${_tradingPair._quoteAsset.getString("symbol")}"
             } else {
-                _confirmation_btn_of_buy.text = "${R.string.buyPageBtnSell.xmlstring(_ctx)}${_tradingPair._quoteAsset.getString("symbol")}"
+                _confirmation_btn_of_buy.text = "${R.string.kBtnSell.xmlstring(_ctx)}${_tradingPair._quoteAsset.getString("symbol")}"
             }
         } else {
-            _confirmation_btn_of_buy.text = _ctx.resources.getString(R.string.nameLogin)
+            _confirmation_btn_of_buy.text = _ctx.resources.getString(R.string.kNormalCellBtnLogin)
         }
         if (_isbuy) {
             _confirmation_btn_of_buy.setBackgroundColor(resources.getColor(R.color.theme01_buyColor))
@@ -840,7 +840,7 @@ class FragmentTradeMainPage : BtsppFragment() {
 
     fun createNoOrderView(ctx: Context): TextView {
         val tv = TextView(ctx)
-        tv.text = R.string.myOrderPagecurrentNotAnyOrder.xmlstring(ctx)
+        tv.text = R.string.kVcOrderTipNoOpenOrder.xmlstring(ctx)
         tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
         tv.setTextColor(ctx.resources.getColor(R.color.theme01_textColorGray))
         tv.setPadding(0, Utils.toDp(40f, ctx.resources), 0, 0)

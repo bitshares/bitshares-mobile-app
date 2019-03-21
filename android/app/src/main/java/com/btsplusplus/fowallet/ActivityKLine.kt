@@ -122,7 +122,7 @@ class ActivityKLine : BtsppActivity() {
 
         //  请求数据
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
-        val mask = ViewMesk(resources.getString(R.string.nameRequesting), this)
+        val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), this)
         mask.show()
 
         //  1、查询K线基本数据
@@ -175,7 +175,7 @@ class ActivityKLine : BtsppActivity() {
             return@then null
         }.catch {
             mask.dismiss()
-            showToast(resources.getString(R.string.nameNetworkException))
+            showToast(resources.getString(R.string.tip_network_error))
         }
 
         //  买
@@ -213,19 +213,19 @@ class ActivityKLine : BtsppActivity() {
     private fun _onMoreButtonClicked(tab_more: TabLayout.Tab){
         val more_list = JSONArray().apply {
             put(JSONObject().apply {
-                put("name", resources.getString(R.string.klineName1min))
+                put("name", resources.getString(R.string.kLabelEkdpt1min))
                 put("value", ViewKLine.EKlineDatePeriodType.ekdpt_1m)
             })
             put(JSONObject().apply {
-                put("name", resources.getString(R.string.klineName5min))
+                put("name", resources.getString(R.string.kLabelEkdpt5min))
                 put("value", ViewKLine.EKlineDatePeriodType.ekdpt_5m)
             })
             put(JSONObject().apply {
-                put("name", resources.getString(R.string.klineName30min))
+                put("name", resources.getString(R.string.kLabelEkdpt30min))
                 put("value", ViewKLine.EKlineDatePeriodType.ekdpt_30m)
             })
             put(JSONObject().apply {
-                put("name", resources.getString(R.string.klineName1week))
+                put("name", resources.getString(R.string.kLabelEkdpt1week))
                 put("value", ViewKLine.EKlineDatePeriodType.ekdpt_1w)
             })
         }
@@ -246,7 +246,7 @@ class ActivityKLine : BtsppActivity() {
         more_list.forEach<JSONObject> { nameList.put(it!!.getString("name")) }
 
         ViewDialogNumberPicker(this, null, nameList.toList<String>().toTypedArray(), defaultIndex){ _index: Int, txt: String ->
-            tab_more.text = "$txt${resources.getString(R.string.klineNameMoreSuffix)}"
+            tab_more.text = "$txt${resources.getString(R.string.kLabelEkdptMoreSuffix)}"
             tab_more.tag = more_list.getJSONObject(_index).get("value")
             if (tab_more.isSelected){
                 val current_type = tab_more.tag as ViewKLine.EKlineDatePeriodType
@@ -281,7 +281,7 @@ class ActivityKLine : BtsppActivity() {
                 val current_type = if (tab.position == tab_more_index){
                     tab.tag as ViewKLine.EKlineDatePeriodType
                 }else{
-                    tablayout_of_kline.getTabAt(tab_more_index)!!.text = resources.getString(R.string.klineNameBtnMore)
+                    tablayout_of_kline.getTabAt(tab_more_index)!!.text = resources.getString(R.string.kLabelEkdptBtnMore)
                     when(tab.position) {
                         0 -> ViewKLine.EKlineDatePeriodType.ekdpt_timeline
                         1 -> ViewKLine.EKlineDatePeriodType.ekdpt_15m
@@ -433,7 +433,7 @@ class ActivityKLine : BtsppActivity() {
     }
 
     fun queryKdata(seconds: Int, ekdptType: ViewKLine.EKlineDatePeriodType) {
-        val mask = ViewMesk(R.string.nameRequesting.xmlstring(this), this)
+        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
         mask.show()
 
         val now = Utils.now_ts()
@@ -499,14 +499,14 @@ class ActivityKLine : BtsppActivity() {
             //  取消自选、灰色五星、提示信息
             pAppCache.remove_fav_markets(quote_symbol, base_symbol)
             v.setColorFilter(resources.getColor(R.color.theme01_textColorNormal))
-            showToast(resources.getString(R.string.comFavSuccessDelete))
+            showToast(resources.getString(R.string.kTipsAddFavDelete))
             //  [统计]
             fabricLogCustom("event_market_remove_fav", jsonObjectfromKVS("base", base_symbol, "quote", quote_symbol))
         } else {
             //  添加自选、高亮五星、提示信息
             pAppCache.set_fav_markets(quote_symbol, base_symbol)
             v.setColorFilter(resources.getColor(R.color.theme01_textColorHighlight))
-            showToast(resources.getString(R.string.comFavSuccessAdd))
+            showToast(resources.getString(R.string.kTipsAddFavSuccess))
             //  [统计]
             fabricLogCustom("event_market_add_fav", jsonObjectfromKVS("base", base_symbol, "quote", quote_symbol))
         }

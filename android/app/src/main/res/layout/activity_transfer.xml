@@ -35,7 +35,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="@string/nameBack"
+                    android:text="@string/kBtnBack"
                     style="@style/kNavigationBarTextStyle"
                     android:gravity="center_vertical"
                     />
@@ -48,7 +48,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="@string/serviceMainPageTransfer"
+                android:text="@string/kVcTitleTransfer"
                 style="@style/kNavigationBarTextStyle" />
 
 
@@ -66,7 +66,7 @@
                 android:gravity="center_vertical"
                 android:textSize="16dp"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/transferPageFromAccount"/>
+                android:text="@string/kVcTransferCellFrom"/>
 
             <TextView
                 android:id="@+id/txt_value_from_name"
@@ -92,7 +92,7 @@
                 android:gravity="center_vertical"
                 android:textSize="16dp"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/transferPageToAccount"/>
+                android:text="@string/kVcTransferCellTo"/>
 
             <TextView
                 android:id="@+id/txt_value_to_name"
@@ -102,7 +102,7 @@
                 android:gravity="center_vertical|right"
                 android:textSize="16dp"
                 android:textColor="@color/theme01.textColorGray"
-                android:text="@string/transferPagePleaseSelectCollectionAccount"/>
+                android:text="@string/kVcTransferTipSelectToAccount"/>
 
             <ImageView
                 android:layout_width="20dp"
@@ -128,7 +128,7 @@
                 android:gravity="center_vertical"
                 android:textSize="16dp"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/transferPageAssetName"/>
+                android:text="@string/kVcTransferCellAsset"/>
 
             <TextView
                 android:id="@+id/txt_value_asset_name"
@@ -163,7 +163,7 @@
                 android:gravity="center_vertical"
                 android:textSize="12dp"
                 android:textColor="@color/theme01.textColorNormal"
-                android:text="@string/nameAvaliable"/>
+                android:text="@string/kLableAvailable"/>
 
             <TextView
                 android:id="@+id/txt_value_avaiable"
@@ -190,7 +190,7 @@
                 android:gravity="center_vertical"
                 android:textSize="16dp"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/transferPageTransferNumber"/>
+                android:text="@string/kVcTransferCellAmount"/>
 
             <EditText
                 android:id="@+id/tf_amount"
@@ -208,7 +208,7 @@
                 android:textColor="@color/theme01.textColorMain"
                 android:background="@null"
                 android:textColorHint="@color/theme01.textColorGray"
-                android:hint="@string/transferPagePleaseInputTransferAmount"/>
+                android:hint="@string/kVcTransferSubmitTipPleaseInputAmount"/>
 
             <TextView
                 android:id="@+id/btn_transfer_all"
@@ -218,7 +218,7 @@
                 android:gravity="center_vertical|right"
                 android:textSize="16dp"
                 android:textColor="@color/theme01.textColorGray"
-                android:text="@string/transferPageTotal"/>
+                android:text="@string/kLabelSendAll"/>
 
         </LinearLayout>
 
@@ -238,7 +238,7 @@
                 android:gravity="center_vertical"
                 android:textSize="16dp"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/transferPageRemarkInfo"/>
+                android:text="@string/kVcTransferCellMemo"/>
 
             <EditText
                 android:id="@+id/tf_memo"
@@ -253,7 +253,7 @@
                 android:textColor="@color/theme01.textColorMain"
                 android:background="@null"
                 android:textColorHint="@color/theme01.textColorGray"
-                android:hint="@string/transferPagePleaseInputRemarkInfo"/>
+                android:hint="@string/kVcTransferTipInputMemo"/>
 
 
         </LinearLayout>
@@ -276,7 +276,7 @@
                 android:gravity="center|center_vertical"
                 android:padding="5dp"
                 android:textAllCaps="false"
-                android:text="@string/transferPageSend" />
+                android:text="@string/kLabelSendBtn" />
         </LinearLayout>
 
 

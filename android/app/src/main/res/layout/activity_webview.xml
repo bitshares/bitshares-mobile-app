@@ -36,7 +36,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="@string/nameBack"
+                    android:text="@string/kBtnBack"
                     style="@style/kNavigationBarTextStyle"
                     android:gravity="center_vertical"
                     />
@@ -49,7 +49,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="@string/myPageQA"
+                android:text="@string/faq"
                 style="@style/kNavigationBarTextStyle" />
 
             <Button
@@ -60,7 +60,7 @@
                 android:background="#00000000"
                 style="@style/kNavigationBarTextStyle"
                 android:textAllCaps="false"
-                android:text="@string/nameRefresh"
+                android:text="@string/kBtnRefresh"
                 android:layout_marginRight="10dp" />
 
 

@@ -35,7 +35,7 @@
                     style="@style/kNavigationBarTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="@string/nameBack"
+                    android:text="@string/kBtnBack"
                     android:gravity="center_vertical"
                     />
             </LinearLayout>
@@ -47,7 +47,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="@string/nameAbout"
+                android:text="@string/kVcTitleAbout"
                 style="@style/kNavigationBarTextStyle" />
 
 
@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:textSize="16dp"
             android:inputType="textMultiLine"
-            android:text="@string/aboutPageIntroForBtspp"
+            android:text="@string/kAboutMainDesc"
             android:textColor="@color/theme01.textColorMain" />
 
         <TextView
@@ -91,7 +91,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16dp"
-            android:text="@string/aboutPageDebugVersion"
+            android:text="@string/kAboutDebugVersion"
             android:visibility="invisible"
             android:textColor="@color/theme01.textColorMain" />
 

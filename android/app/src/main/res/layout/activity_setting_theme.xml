@@ -35,7 +35,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="@string/nameBack"
+                    android:text="@string/kBtnBack"
                     style="@style/kNavigationBarTextStyle"
                     android:gravity="center_vertical"
                     />
@@ -48,7 +48,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="@string/settingPageThemeStyle"
+                android:text="@string/kVcTitleTheme"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
@@ -71,7 +71,7 @@
                 android:textSize="14dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/settingPageJingMiLan"/>
+                android:text="@string/kThemeNameBlue"/>
 
             <ImageView
                 android:layout_width="14dp"
@@ -100,7 +100,7 @@
                 android:textSize="14dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/settingPageZhenZhuBai"/>
+                android:text="@string/kThemeNameWhite"/>
 
             <ImageView
                 android:layout_width="14dp"

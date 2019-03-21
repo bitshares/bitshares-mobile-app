@@ -147,7 +147,7 @@ class FragmentLoginWalletMode : Fragment() {
                 //  导入
                 val lbl_import = TextView(ctx)
                 lbl_import.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 2f)
-                lbl_import.text = _ctx!!.resources.getString(R.string.registerLoginPageClickToImport)
+                lbl_import.text = _ctx!!.resources.getString(R.string.kLoginCellClickImport)
                 lbl_import.gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
                 lbl_import.setTextColor(resources.getColor(R.color.theme01_textColorHighlight))
                 cell.addView(lbl_import)
@@ -176,7 +176,7 @@ class FragmentLoginWalletMode : Fragment() {
             startInitWebserver(_ctx!!)
         } else {
             _view!!.findViewById<TextView>(R.id.text_ip_of_back_wallet).text = R.string.kLoginTipsOnlyViaWifiMainDesc.xmlstring(_ctx!!)
-            _view!!.findViewById<TextView>(R.id.init_desc_message).text = R.string.registerLoginPageTipForWifiModeToImpot.xmlstring(_ctx!!)
+            _view!!.findViewById<TextView>(R.id.init_desc_message).text = R.string.kLoginTipsImportOnlyViaWIFI.xmlstring(_ctx!!)
         }
         return _view
     }
@@ -279,7 +279,7 @@ class FragmentLoginWalletMode : Fragment() {
      * 删除操作
      */
     private fun onRemoveWalletFile(ctx: Context, data: JSONObject) {
-        UtilsAlert.showMessageConfirm(ctx, ctx.resources.getString(R.string.registerLoginPageWarmTip), String.format(ctx.resources.getString(R.string.registerLoginPageTipForDeleteFileForThisPhone), data.getString("name")), btn_ok = _ctx!!.resources.getString(R.string.registerLoginPageDelete), btn_cancel = _ctx!!.resources.getString(R.string.registerLoginPageClickWrong)).then {
+        UtilsAlert.showMessageConfirm(ctx, ctx.resources.getString(R.string.kWarmTips), String.format(ctx.resources.getString(R.string.registerLoginPageTipForDeleteFileForThisPhone), data.getString("name")), btn_ok = _ctx!!.resources.getString(R.string.kProposalCellBtnDelete), btn_cancel = _ctx!!.resources.getString(R.string.registerLoginPageClickWrong)).then {
             if (it != null && it as Boolean) {
                 val file = File(data.getString("path"))
                 if (file.exists() && file.isFile) {
@@ -297,7 +297,7 @@ class FragmentLoginWalletMode : Fragment() {
      * 导入操作
      */
     private fun onSelectWalletFile(ctx: Context, data: JSONObject) {
-        UtilsAlert.showInputBox(ctx, ctx.resources.getString(R.string.registerLoginPageImportToWallet), ctx.resources.getString(R.string.registerLoginPagePleaseInputWalletFilePws), ctx.resources.getString(R.string.registerLoginPageJustImport)).then {
+        UtilsAlert.showInputBox(ctx, ctx.resources.getString(R.string.kLoginTipsImportWalletTitle), ctx.resources.getString(R.string.registerLoginPagePleaseInputWalletFilePws), ctx.resources.getString(R.string.kLoginBtnImportNow)).then {
             val password = it as? String
             if (password != null) {
                 processImportWalletCore(password, data)
@@ -313,27 +313,27 @@ class FragmentLoginWalletMode : Fragment() {
         //  加载钱包对象
         val wallet_bindata = OrgUtils.load_file(data.getString("path"))
         if (wallet_bindata == null) {
-            showToast(_ctx!!.resources.getString(R.string.registerLoginPageLoadWalletFileFailed))
+            showToast(_ctx!!.resources.getString(R.string.kLoginImportTipsReadWalletFailed))
             return
         }
 
         val walletMgr = WalletManager.sharedWalletManager()
         val wallet_object = walletMgr.loadFullWallet(wallet_bindata, wallet_password)
         if (wallet_object == null) {
-            showToast(_ctx!!.resources.getString(R.string.registerLoginPageWalletFilesInvalidOrPwdWrong))
+            showToast(_ctx!!.resources.getString(R.string.kLoginImportTipsInvalidFileOrPassword))
             return
         }
 
         //  加载成功判断钱包有效性
         val wallet = wallet_object.getJSONArray("wallet").getJSONObject(0)
         if (wallet.getString("chain_id") != ChainObjectManager.sharedChainObjectManager().grapheneChainID) {
-            showToast(_ctx!!.resources.getString(R.string.registerLoginPageThisWalletIsNotBelongsToBtsChain))
+            showToast(_ctx!!.resources.getString(R.string.kLoginImportTipsNotBTSWallet))
             return
         }
 
         val linked_accounts = wallet_object.optJSONArray("linked_accounts")
         if (linked_accounts == null || linked_accounts.length() <= 0) {
-            showToast(_ctx!!.resources.getString(R.string.registerLoginPageThisWalletIsEmpty))
+            showToast(_ctx!!.resources.getString(R.string.kLoginImportTipsWalletIsEmpty))
             return
         }
 
@@ -342,7 +342,7 @@ class FragmentLoginWalletMode : Fragment() {
 
         val private_keys = wallet_object.optJSONArray("private_keys")
         if (private_keys == null || private_keys.length() <= 0) {
-            showToast(_ctx!!.resources.getString(R.string.registerLoginPageThisWalletMissedPrivateKeyInfo))
+            showToast(_ctx!!.resources.getString(R.string.kLoginImportTipsWalletNoPrivateKey))
             return
         }
 
@@ -356,13 +356,13 @@ class FragmentLoginWalletMode : Fragment() {
         }
 
         //  查询 Key 详情
-        val mask = ViewMesk(R.string.nameRequesting.xmlstring(this.activity!!), this.activity!!)
+        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
         mask.show()
         ChainObjectManager.sharedChainObjectManager().queryAccountDataHashFromKeys(pubkey_list).then {
             val account_data_hash = it as JSONObject
             if (account_data_hash.length() <= 0) {
                 mask.dismiss()
-                showToast(_ctx!!.resources.getString(R.string.registerLoginPageThisWalletIsEmpty))
+                showToast(_ctx!!.resources.getString(R.string.kLoginImportTipsWalletIsEmpty))
                 return@then null
             }
             //  获取当前账号
@@ -381,7 +381,7 @@ class FragmentLoginWalletMode : Fragment() {
                 mask.dismiss()
                 val full_data = it as? JSONObject
                 if (full_data == null) {
-                    showToast(_ctx!!.resources.getString(R.string.registerLoginPageAccountQueryFailedAndTryLateAgain))
+                    showToast(_ctx!!.resources.getString(R.string.kLoginImportTipsQueryAccountFailed))
                     return@then null
                 }
 
@@ -402,14 +402,14 @@ class FragmentLoginWalletMode : Fragment() {
                 fabricLogCustom("loginEvent", jsonObjectfromKVS("mode", AppCacheManager.EWalletMode.kwmFullWalletMode.value, "desc", "wallet"))
 
                 //  返回
-                showToast(_ctx!!.resources.getString(R.string.registerLoginPageLoginSuccess))
+                showToast(_ctx!!.resources.getString(R.string.kLoginTipsLoginOK))
                 activity!!.finish()
 
                 return@then null
             }
         }.catch {
             mask.dismiss()
-            showToast(_ctx!!.resources.getString(R.string.nameNetworkException))
+            showToast(_ctx!!.resources.getString(R.string.tip_network_error))
         }
     }
 

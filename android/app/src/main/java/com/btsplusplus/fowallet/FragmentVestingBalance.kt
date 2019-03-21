@@ -52,7 +52,7 @@ class FragmentVestingBalance : BtsppFragment() {
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
 
         activity?.let { ctx ->
-            val mask = ViewMesk(R.string.nameRequesting.xmlstring(ctx), ctx)
+            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
             mask.show()
 
             val account = _full_account_data!!.getJSONObject("account")
@@ -103,7 +103,7 @@ class FragmentVestingBalance : BtsppFragment() {
                 }
             }.catch {
                 mask.dismiss()
-                showToast(resources.getString(R.string.nameNetworkException))
+                showToast(resources.getString(R.string.tip_network_error))
             }
 
             return@let
@@ -242,7 +242,7 @@ class FragmentVestingBalance : BtsppFragment() {
         //  1、判断手续费是否足够。
         val fee_item = ChainObjectManager.sharedChainObjectManager().getFeeItem(EBitsharesOperations.ebo_vesting_balance_withdraw, _full_account_data)
         if (!fee_item.getBoolean("sufficient")) {
-            showToast(resources.getString(R.string.myOrderPageTipForFeeNotEnough))
+            showToast(resources.getString(R.string.kTipsTxFeeNotEnough))
             return
         }
 
@@ -272,7 +272,7 @@ class FragmentVestingBalance : BtsppFragment() {
         activity!!.GuardProposalOrNormalTransaction(EBitsharesOperations.ebo_vesting_balance_withdraw, false, false,
                 op, account) { isProposal, _ ->
             assert(!isProposal)
-            val mask = ViewMesk(R.string.nameRequesting.xmlstring(this.activity!!), this.activity!!)
+            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
             mask.show()
             BitsharesClientManager.sharedBitsharesClientManager().vestingBalanceWithdraw(op).then {
                 mask.dismiss()
@@ -285,7 +285,7 @@ class FragmentVestingBalance : BtsppFragment() {
             }.catch {
                 mask.dismiss()
                 //  TODO:多语言key
-                showToast(R.string.transferPageTipTxFailed.xmlstring(_ctx!!))
+                showToast(R.string.kTipsTxRequestFailed.xmlstring(_ctx!!))
                 //  [统计]
                 fabricLogCustom("txVestingBalanceWithdrawFailed", jsonObjectfromKVS("account", uid))
             }

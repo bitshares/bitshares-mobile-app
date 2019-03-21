@@ -61,7 +61,7 @@ class FragmentRegisterAccountMode : Fragment() {
         }
 
         //  --- 开始注册 ---
-        val mask = ViewMesk(R.string.nameRequesting.xmlstring(this.activity!!), this.activity!!)
+        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
         mask.show()
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
         val username = account_name.toLowerCase()
@@ -117,12 +117,12 @@ class FragmentRegisterAccountMode : Fragment() {
                 return@then null
             }.catch {
                 mask.dismiss()
-                showToast(_ctx!!.resources.getString(R.string.nameNetworkException))
+                showToast(_ctx!!.resources.getString(R.string.tip_network_error))
             }
             return@then null
         }.catch {
             mask.dismiss()
-            showToast(_ctx!!.resources.getString(R.string.nameNetworkException))
+            showToast(_ctx!!.resources.getString(R.string.tip_network_error))
         }
     }
 
@@ -137,8 +137,8 @@ class FragmentRegisterAccountMode : Fragment() {
             val confirm_password = view.findViewById<EditText>(R.id.tf_confirm_password).text.toString()
             onRegisterClicked(account_name, password, confirm_password)
         }
-        view.findViewById<ImageView>(R.id.tip_account_name).setOnClickListener { UtilsAlert.showMessageBox(activity!!, R.string.tipsFormatAccount.xmlstring(_ctx!!)) }
-        view.findViewById<ImageView>(R.id.tip_password).setOnClickListener { UtilsAlert.showMessageBox(activity!!, R.string.tipsFormatPassword.xmlstring(_ctx!!)) }
+        view.findViewById<ImageView>(R.id.tip_account_name).setOnClickListener { UtilsAlert.showMessageBox(activity!!, R.string.kLoginRegTipsAccountFormat.xmlstring(_ctx!!)) }
+        view.findViewById<ImageView>(R.id.tip_password).setOnClickListener { UtilsAlert.showMessageBox(activity!!, R.string.kLoginRegTipsAccountPasswordFormat.xmlstring(_ctx!!)) }
         return view
     }
 

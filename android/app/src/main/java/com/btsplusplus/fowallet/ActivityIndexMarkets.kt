@@ -144,7 +144,7 @@ class ActivityIndexMarkets : BtsppActivity() {
     }
 
     fun getTitleStringArray(): MutableList<String> {
-        var ary = mutableListOf<String>(resources.getString(R.string.indexTabNameFavorite))
+        var ary = mutableListOf<String>(resources.getString(R.string.kLabelMarketFavorites))
         ary.addAll(ChainObjectManager.sharedChainObjectManager().getMergedMarketInfos().map { market: JSONObject ->
             market.getJSONObject("base").getString("name")
         })

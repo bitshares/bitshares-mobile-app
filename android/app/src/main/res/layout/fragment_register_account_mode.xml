@@ -22,7 +22,7 @@
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:text="@string/nameAccount"
+                android:text="@string/kLoginCellAccountName"
                 android:textSize="16dp"
                 android:textColor="@color/theme01.textColorMain"/>
 
@@ -33,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:hint="@string/registerLoginPagePleaseInputBtsAccount"
+                android:hint="@string/kLoginTipsPlaceholderAccount"
                 android:textColor="@color/theme01.textColorMain"
                 android:textSize="16dp"
                 android:background="@null"
@@ -64,7 +64,7 @@
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:text="@string/namePassword"
+                android:text="@string/kLoginPassword"
                 android:textSize="16dp"
                 android:textColor="@color/theme01.textColorMain"/>
 
@@ -76,7 +76,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:hint="@string/registerLoginPagePleaseInputPwd"
+                android:hint="@string/tip_placeholder_password"
                 android:textColor="@color/theme01.textColorMain"
                 android:textSize="16dp"
                 android:background="@null"
@@ -107,7 +107,7 @@
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:text="@string/registerLoginPageInputPws"
+                android:text="@string/kLoginCellConfirmPassword"
                 android:textSize="16dp"
                 android:textColor="@color/theme01.textColorMain"/>
 
@@ -119,7 +119,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:hint="@string/registerLoginConfirmationPassword"
+                android:hint="@string/kLoginTipsPlaceholderConfirmPassword"
                 android:textColor="@color/theme01.textColorMain"
                 android:textSize="16dp"
                 android:background="@null"
@@ -144,7 +144,7 @@
                 android:layout_weight="1"
                 android:padding="5dp"
                 android:textAllCaps="false"
-                android:text="@string/registerLoginPageAgreeAgreementAndRegister" />
+                android:text="@string/kLoginCellBtnAgreeAndReg" />
         </LinearLayout>
 
         <TextView
@@ -156,7 +156,7 @@
             android:textColor="@color/theme01.textColorNormal"
             android:padding="5dp"
             android:background="@color/theme01.textColorGray"
-            android:text="@string/registerLoginPageTipForAccountPassword"
+            android:text="@string/kLoginRegTipsAccountMode"
             />
 
         <TextView

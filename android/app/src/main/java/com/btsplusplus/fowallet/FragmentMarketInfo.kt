@@ -178,7 +178,7 @@ class FragmentMarketInfo : BtsppFragment() {
                 }
             } else {
                 //  没有自选交易对
-                container.addView(ViewUtils.createEmptyCenterLabel(_context!!, _context!!.resources.getString(R.string.indexNameNoFavorite)))
+                container.addView(ViewUtils.createEmptyCenterLabel(_context!!, _context!!.resources.getString(R.string.kLabelNoFavMarket)))
             }
         } else {
             //  普通市场
@@ -210,7 +210,7 @@ class FragmentMarketInfo : BtsppFragment() {
                     inmain_layout_params.setMargins(0, 0, toDp(10f), 0)
                     inmain_layout_params.gravity = Gravity.RIGHT
                     inmain.gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
-                    inmain.text = resources.getString(R.string.nameRightIntro)
+                    inmain.text = resources.getString(R.string.kLabelGroupIntroduction)
                     inmain.setTextColor(resources.getColor(R.color.theme01_textColorGray))
                     inmain.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12f)
                     inmain.setOnClickListener {
@@ -276,7 +276,7 @@ class FragmentMarketInfo : BtsppFragment() {
             percent_str = "${percent_change}%"
         }
 
-        return jsonObjectfromKVS("price_str", latest, "volume_str", "${_context!!.resources.getString(R.string.indexName24Vol)} ${quote_volume}", "percent_str", percent_str, "percent_color", percent_color)
+        return jsonObjectfromKVS("price_str", latest, "volume_str", "${_context!!.resources.getString(R.string.kLabelHeader24HVol)} ${quote_volume}", "percent_str", percent_str, "percent_color", percent_color)
     }
 
     private fun _refreshDrawOnCell(group_info:JSONObject?, ctx: Context, ly: LinearLayout, quote_symbol: String, base_symbol: String) {

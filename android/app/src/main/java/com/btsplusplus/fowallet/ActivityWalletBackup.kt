@@ -42,7 +42,7 @@ class ActivityWalletBackup : BtsppActivity() {
             //  初始化webserver
             val nowifi = Utils.isWifi(this)
             if (!nowifi) {
-                findViewById<TextView>(R.id.label_txt_address_or_error).text = resources.getString(R.string.registerLoginTipWifiForBackup)
+                findViewById<TextView>(R.id.label_txt_address_or_error).text = resources.getString(R.string.kBackupWalletOnlyViaWIFI)
             } else {
                 startInitWebserver(this)
             }

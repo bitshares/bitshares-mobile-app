@@ -39,7 +39,7 @@
                 android:layout_weight="1"
                 android:textColor="#ffffff"
                 android:textColorHint="@color/theme01.textColorGray"
-                android:hint="@string/tradingPairClickToSearchAssets"
+                android:hint="@string/kSearchPlaceholderAsset"
                 android:theme="@style/theme01.EditText"
                 android:background="@null"
                 android:textSize="16dp"/>
@@ -50,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
                 android:layout_gravity="center_vertical|right"
-                android:text="@string/nameCancel"
+                android:text="@string/Cancel"
                 android:textColor="@color/theme01.color03"
                 android:foregroundGravity="right"
                 android:src="@drawable/ic_btn_right_arrow" />
@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/theme01.color03"
             android:layout_marginTop="5dp"
-            android:text="@string/tradingPairSearchResult"
+            android:text="@string/search_result"
             />
 
         <ScrollView

@@ -74,7 +74,7 @@ class ActivityAddAssetPairsResult : BtsppActivity() {
             if (ChainObjectManager.sharedChainObjectManager().isDefaultPair(quote, base)) {
                 val label_forbid: TextView = TextView(ctx)
                 label_forbid.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-                label_forbid.text = ctx!!.resources.getString(R.string.tradingPairCantChange)
+                label_forbid.text = ctx!!.resources.getString(R.string.kSearchTipsForbidden)
                 label_forbid.gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
                 label_forbid.setTextColor(ctx!!.resources!!.getColor(R.color.theme01_textColorNormal))
                 v.addView(label_forbid)
@@ -104,7 +104,7 @@ class ActivityAddAssetPairsResult : BtsppActivity() {
                 val max_custom_pair_num = ChainObjectManager.sharedChainObjectManager().getDefaultParameters().getInt("max_custom_pair_num")
                 if (pAppCache.get_all_custom_markets().length() >= max_custom_pair_num) {
                     switch.isChecked = false
-                    ctx!!.showToast(String.format(ctx!!.resources.getString(R.string.tradingPairMaxDefineCustomTradePair), max_custom_pair_num.toString()))
+                    ctx!!.showToast(String.format(ctx!!.resources.getString(R.string.kSearchTipsMaxCustomParisNumber), max_custom_pair_num.toString()))
                     return
                 }
                 val base = data.getJSONObject("base")

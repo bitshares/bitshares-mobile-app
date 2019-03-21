@@ -27,7 +27,7 @@ class UtilsAlert {
         /**
          * 显示输入对话框
          */
-        fun showInputBox(ctx: Context, title: String, placeholder: String, btn_ok: String = ctx.resources.getString(R.string.nameOk), btn_cancel: String = ctx.resources.getString(R.string.nameCancel)): Promise {
+        fun showInputBox(ctx: Context, title: String, placeholder: String, btn_ok: String = ctx.resources.getString(R.string.kBtnOK), btn_cancel: String = ctx.resources.getString(R.string.kBtnCancel)): Promise {
             val p = Promise()
 
             //  输入框
@@ -64,7 +64,7 @@ class UtilsAlert {
         /**
          * 显示确认对话框
          */
-        fun showMessageConfirm(ctx: Context, title: String?, message: String, btn_ok: String? = ctx.resources.getString(R.string.nameOk), btn_cancel: String? = ctx.resources.getString(R.string.nameCancel)): Promise {
+        fun showMessageConfirm(ctx: Context, title: String?, message: String, btn_ok: String? = ctx.resources.getString(R.string.kBtnOK), btn_cancel: String? = ctx.resources.getString(R.string.kBtnCancel)): Promise {
             val p = Promise()
 
             var dig: AlertDialog? = null
@@ -114,9 +114,9 @@ class UtilsAlert {
         /**
          * 显示messagebox
          */
-        fun showMessageBox(ctx: Context, message: String, title: String? = null, btn_ok: String? = ctx.resources.getString(R.string.nameOk)) {
+        fun showMessageBox(ctx: Context, message: String, title: String? = null, btn_ok: String? = ctx.resources.getString(R.string.kBtnOK)) {
             val builder = AlertDialog.Builder(ctx)
-            builder.setTitle(title ?: ctx.resources.getString(R.string.registerLoginPageWarmTip))
+            builder.setTitle(title ?: ctx.resources.getString(R.string.kWarmTips))
             builder.setMessage(message)
             if (btn_ok != null) {
                 builder.setPositiveButton(btn_ok) { dialog, _ ->

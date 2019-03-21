@@ -330,13 +330,13 @@ class Utils {
             //  REMARK：本地时间不准确的情况下该差值可能为负数，故取 MAX。
             val diff_ts = max(now_ts() - ts, 0L)
             if (diff_ts < 60) {
-                return "${diff_ts}${R.string.feedPricePageAgeSec.xmlstring(ctx)}${R.string.feedPricePageAge.xmlstring(ctx)}"
+                return String.format(R.string.kVcFeedNsecAgo.xmlstring(ctx),diff_ts)
             } else if (diff_ts < 3600) {
-                return "${(diff_ts / 60).toInt()}${R.string.feedPricePageAgeMin.xmlstring(ctx)}${R.string.feedPricePageAge.xmlstring(ctx)}"
+                return String.format(R.string.kVcFeedNminAgo.xmlstring(ctx),(diff_ts / 60).toInt())
             } else if (diff_ts < 86400) {
-                return "${(diff_ts / 3600).toInt()}${R.string.feedPricePageAgeHour.xmlstring(ctx)}${R.string.feedPricePageAge.xmlstring(ctx)}"
+                return String.format(R.string.kVcFeedNhourAgo.xmlstring(ctx),(diff_ts / 3600).toInt())
             } else {
-                return "${(diff_ts / 86400).toInt()}${R.string.feedPricePageAgeDay.xmlstring(ctx)}${R.string.feedPricePageAge.xmlstring(ctx)}"
+                return String.format(R.string.kVcFeedNDayAgo.xmlstring(ctx),(diff_ts / 86400).toInt())
             }
         }
 

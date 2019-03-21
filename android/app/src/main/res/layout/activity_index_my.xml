@@ -58,7 +58,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:layout_marginStart="12dp"
-                        android:text="@string/myPageClickToLogin"
+                        android:text="@string/tip_click_to_login"
                         android:textColor="@color/theme01.textColorNormal"
                         android:textSize="12dp" />
                 </LinearLayout>
@@ -98,7 +98,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/myPageMyAssets"/>
+                android:text="@string/kLblCellMyBalance"/>
 
             <ImageView
                 android:layout_width="0dp"
@@ -134,7 +134,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/nameOrderManagement"/>
+                android:text="@string/kVcTitleOrderManagement"/>
 
             <ImageView
                 android:layout_width="0dp"
@@ -171,7 +171,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/myPageWalletAndMutiSignature"/>
+                android:text="@string/kVcTitleWalletAndMultiSign"/>
 
             <ImageView
                 android:layout_width="0dp"
@@ -207,7 +207,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/myPageProposalOfWaitingForProcess"/>
+                android:text="@string/kVcTitleMyProposal"/>
 
             <ImageView
                 android:layout_width="0dp"
@@ -245,7 +245,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/myPageMyUnfreezeAmount"/>
+                android:text="@string/kLblCellVestingBalance"/>
 
             <ImageView
                 android:layout_width="0dp"
@@ -281,7 +281,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/myPageQA"/>
+                android:text="@string/faq"/>
 
             <ImageView
                 android:layout_width="0dp"
@@ -317,7 +317,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/myPageSetting"/>
+                android:text="@string/kSettingEx"/>
 
             <ImageView
                 android:layout_width="0dp"
@@ -352,7 +352,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/myPageAboutBtspp"/>
+                android:text="@string/kLblCellAboutBtspp"/>
 
             <ImageView
                 android:layout_width="0dp"

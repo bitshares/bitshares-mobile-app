@@ -137,7 +137,7 @@ class ViewKLineCross : ViewBase {
 
         if (_kline!!.isDrawTimeLine()) {
             value_ary = arrayOf(date_str, model.nPriceClose!!.toPlainString(), model.n24Vol!!.toPlainString())
-            title_ary = arrayOf(R.string.klineLblCrossDate.xmlstring(_ctx), R.string.klineLblCrossPrice.xmlstring(_ctx), R.string.klineLblCrossVol.xmlstring(_ctx))
+            title_ary = arrayOf(R.string.kLabelKLineDate.xmlstring(_ctx), R.string.kLabelKLinePrice.xmlstring(_ctx), R.string.kLabelKLineVol.xmlstring(_ctx))
 
         } else {
             value_ary = arrayOf(
@@ -151,14 +151,14 @@ class ViewKLineCross : ViewBase {
                     model.n24Vol!!.toPlainString()
             )
             title_ary = arrayOf(
-                    R.string.klineLblCrossDate.xmlstring(_ctx),
-                    R.string.klineLblCrossOpen.xmlstring(_ctx),
-                    R.string.klineLblCrossHigh.xmlstring(_ctx),
-                    R.string.klineLblCrossLow.xmlstring(_ctx),
-                    R.string.klineLblCrossClose.xmlstring(_ctx),
-                    R.string.klineLblCrossChange.xmlstring(_ctx),
-                    R.string.klineLblCrossChangePercent.xmlstring(_ctx),
-                    R.string.klineLblCrossVol.xmlstring(_ctx)
+                    R.string.kLabelKLineDate.xmlstring(_ctx),
+                    R.string.kLabelKLineOpen.xmlstring(_ctx),
+                    R.string.kLabelKLineHigh.xmlstring(_ctx),
+                    R.string.kLabelKLineLow.xmlstring(_ctx),
+                    R.string.kLabelKLineClose.xmlstring(_ctx),
+                    R.string.kLabelKLineChange.xmlstring(_ctx),
+                    R.string.kLabelKLineChangePercent.xmlstring(_ctx),
+                    R.string.kLabelKLineVol.xmlstring(_ctx)
             )
         }
 

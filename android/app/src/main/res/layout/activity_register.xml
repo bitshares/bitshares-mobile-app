@@ -35,7 +35,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="@string/nameBack"
+                    android:text="@string/kBtnBack"
                     style="@style/kNavigationBarTextStyle"
                     android:gravity="center_vertical"
                     />
@@ -48,7 +48,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="@string/nameRegister"
+                android:text="@string/kVcTitleRegister"
                 style="@style/kNavigationBarTextStyle" />
 
             <Button
@@ -56,7 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:text="@string/registerLoginPageServiceClause"
+                android:text="@string/kBtnAppAgreement"
                 android:layout_marginRight="10dp"
                 android:background="#00000000"
                 android:textAllCaps="false"
@@ -77,12 +77,12 @@
             <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/registerLoginPageWalletMode" />
+                android:text="@string/kLoginPageModeWallet" />
 
             <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/registerLoginPageAccountMode" />
+                android:text="@string/kLoginPageModePassword" />
 
         </android.support.design.widget.TabLayout>
 

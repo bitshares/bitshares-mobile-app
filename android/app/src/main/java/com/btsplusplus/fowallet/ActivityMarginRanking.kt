@@ -51,7 +51,7 @@ class ActivityMarginRanking : BtsppActivity() {
     }
 
     private fun queryCallOrderData(pos: Int) {
-        val mask = ViewMesk(R.string.nameRequesting.xmlstring(this), this)
+        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
         mask.show()
         val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
@@ -74,7 +74,7 @@ class ActivityMarginRanking : BtsppActivity() {
             }
         }.catch {
             mask.dismiss()
-            showToast(resources.getString(R.string.nameNetworkException))
+            showToast(resources.getString(R.string.tip_network_error))
         }
     }
 

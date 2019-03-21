@@ -59,7 +59,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/nameAccount"/>
+                android:text="@string/kLoginCellAccountName"/>
 
             <TextView
                 android:id="@+id/txt_account_name"
@@ -93,7 +93,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/registerLoginPageReferrer"/>
+                android:text="@string/kAccLabelReferrer"/>
 
             <TextView
                 android:id="@+id/txt_referrer_name"
@@ -126,7 +126,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/registerLoginPageRegisterer"/>
+                android:text="@string/kAccLabelRegistrar"/>
 
             <TextView
                 android:id="@+id/txt_registrar_name"
@@ -192,7 +192,7 @@
                 style="@style/kMainButtonStyle"
                 android:gravity="center|center_vertical"
                 android:textAllCaps="false"
-                android:text="@string/registerLoginPageBackupWallet" />
+                android:text="@string/kWalletBtnBackup" />
 
             <Button
                 android:id="@+id/button_logout"
@@ -201,7 +201,7 @@
                 android:layout_marginTop="20dp"
                 android:gravity="center|center_vertical"
                 android:background="@color/theme01.textColorGray"
-                android:text="@string/nameCancellation"
+                android:text="@string/kLogout"
                 android:textColor="@color/theme01.mainButtonTextColor"
                 android:textAllCaps="false"
                 android:textSize="16dp" />

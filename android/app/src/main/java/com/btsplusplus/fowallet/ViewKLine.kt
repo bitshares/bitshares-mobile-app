@@ -940,7 +940,7 @@ class ViewKLine : ViewBase {
         //  无数据
         if (_kdataArrayShowing.count() <= 0) {
             val viewSize: SizeF = _view_size
-            val str: String = resources.getString(R.string.klineNodData)
+            val str: String = resources.getString(R.string.kLabelNODATA)
             val fontsize: Float = 30f.dp
             val text_paint: Paint = getTextPaintWithString(str, resources.getColor(R.color.theme01_textColorGray), Typeface.DEFAULT, fontsize)
             val frame = RectF(0f, 0f, viewSize.width, viewSize.height)

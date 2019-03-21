@@ -36,7 +36,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="@string/nameBack"
+                    android:text="@string/kBtnBack"
                     style="@style/kNavigationBarTextStyle"
                     android:gravity="center_vertical"
                     />
@@ -49,7 +49,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="@string/upgradeWalletPageTitle"
+                android:text="@string/kVcTitleConvertToWalletMode"
                 style="@style/kNavigationBarTextStyle" />
 
 
@@ -93,7 +93,7 @@
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:text="@string/namePassword"
+                android:text="@string/kLoginPassword"
                 android:textSize="16dp"
                 android:textColor="@color/theme01.textColorMain"/>
 
@@ -105,7 +105,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:hint="@string/registerLoginPagePleaseInputPwd"
+                android:hint="@string/tip_placeholder_password"
                 android:textColor="@color/theme01.textColorMain"
                 android:textSize="16dp"
                 android:background="@null"
@@ -123,7 +123,7 @@
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:text="@string/registerLoginPageTradePws"
+                android:text="@string/kLoginCellWalletPassword"
                 android:textSize="16dp"
                 android:textColor="@color/theme01.textColorMain"/>
 
@@ -174,7 +174,7 @@
                 android:layout_weight="1"
                 android:padding="5dp"
                 android:textAllCaps="false"
-                android:text="@string/upgradeWalletPageCreateWallet" />
+                android:text="@string/kNormalCellBtnCreateWallet" />
         </LinearLayout>
 
     </LinearLayout>

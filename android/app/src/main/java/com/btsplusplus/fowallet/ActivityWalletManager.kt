@@ -88,7 +88,7 @@ class ActivityWalletManager : BtsppActivity() {
             return
         }
         //  查询要导入的账号信息。
-        val mask = ViewMesk(resources.getString(R.string.nameRequesting), this)
+        val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), this)
         mask.show()
         ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(accountName).then {
             mask.dismiss()
@@ -114,7 +114,7 @@ class ActivityWalletManager : BtsppActivity() {
             return@then null
         }.catch {
             mask.dismiss()
-            showToast(resources.getString(R.string.nameNetworkException))
+            showToast(resources.getString(R.string.tip_network_error))
         }
     }
 
@@ -161,7 +161,7 @@ class ActivityWalletManager : BtsppActivity() {
             return
         }
         val accountName = data.getString("name")
-        val mask = ViewMesk(resources.getString(R.string.nameRequesting), this)
+        val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), this)
         mask.show()
         ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(accountName).then {
             mask.dismiss()
@@ -183,7 +183,7 @@ class ActivityWalletManager : BtsppActivity() {
             return@then null
         }.catch {
             mask.dismiss()
-            showToast(resources.getString(R.string.nameNetworkException))
+            showToast(resources.getString(R.string.tip_network_error))
         }
     }
 
@@ -240,7 +240,7 @@ class ActivityWalletManager : BtsppActivity() {
 
         //  删除
         if (will_delete_privatekey) {
-            alerShowMessageConfirm(resources.getString(R.string.registerLoginPageWarmTip), R.string.kWalletTipsWarmMessage.xmlstring(this)).then {
+            alerShowMessageConfirm(resources.getString(R.string.kWarmTips), R.string.kWalletTipsWarmMessage.xmlstring(this)).then {
                 if (it != null && it as Boolean) {
                     removeAccountCore(accountName, final_remove_pubkey, newCurrentName)
                 }
@@ -253,7 +253,7 @@ class ActivityWalletManager : BtsppActivity() {
 
     private fun removeAccountCore(accountName: String, pubkeyList: JSONArray, newCurrentName: String?) {
         if (newCurrentName != null) {
-            val mask = ViewMesk(resources.getString(R.string.nameRequesting), this)
+            val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), this)
             mask.show()
             ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(newCurrentName).then {
                 mask.dismiss()
@@ -262,7 +262,7 @@ class ActivityWalletManager : BtsppActivity() {
                 return@then null
             }.catch {
                 mask.dismiss()
-                showToast(resources.getString(R.string.nameNetworkException))
+                showToast(resources.getString(R.string.tip_network_error))
             }
         } else {
             removeAccountCore2(accountName, pubkeyList, null)
@@ -530,7 +530,7 @@ class ActivityWalletManager : BtsppActivity() {
         val account_namelist = WalletManager.sharedWalletManager().getWalletAccountNameList()
         assert(account_namelist.length() > 0)
 
-        val mask = ViewMesk(resources.getString(R.string.nameRequesting), this)
+        val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), this)
         mask.show()
 
         val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
@@ -542,7 +542,7 @@ class ActivityWalletManager : BtsppActivity() {
             return@then null
         }.catch {
             mask.dismiss()
-            showToast(resources.getString(R.string.nameNetworkException))
+            showToast(resources.getString(R.string.tip_network_error))
         }
     }
 }

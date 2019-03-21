@@ -82,7 +82,7 @@ class ViewDialogNumberPicker : Dialog {
             }
             gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
             this.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.0f)
-            text = ctx.resources.getString(R.string.nameCancel)
+            text = ctx.resources.getString(R.string.Cancel)
             setTextColor(ctx.resources.getColor(R.color.theme01_textColorMain))
             setPadding(10.dp, 0, 0, 0)
         }
@@ -107,7 +107,7 @@ class ViewDialogNumberPicker : Dialog {
             }
             gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
             this.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.0f)
-            text = ctx.resources.getString(R.string.nameOk)
+            text = ctx.resources.getString(R.string.kBtnOK)
             setTextColor(ctx.resources.getColor(R.color.theme01_textColorMain))
             setPadding(0, 0, 10.dp, 0)
         }

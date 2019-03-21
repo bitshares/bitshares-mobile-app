@@ -59,7 +59,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/nameAccount"/>
+                android:text="@string/kAccLabelAccount"/>
 
             <TextView
                 android:id="@+id/txt_account_name"

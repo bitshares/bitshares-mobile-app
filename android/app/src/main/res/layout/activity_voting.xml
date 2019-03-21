@@ -39,7 +39,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:text="@string/nameBack"
+                    android:text="@string/kBtnBack"
                     style="@style/kNavigationBarTextStyle" />
             </LinearLayout>
 
@@ -49,7 +49,7 @@
                 android:layout_height="40dp"
                 android:layout_gravity="center_vertical"
                 android:gravity="center"
-                android:text="@string/serviceMainPageVoting"
+                android:text="@string/kVcTitleVoting"
                 style="@style/kNavigationBarTextStyle" />
 
             <Button
@@ -59,7 +59,7 @@
                 android:layout_gravity="right"
                 android:background="#00000000"
                 style="@style/kNavigationBarTextStyle"
-                android:text="@string/nameReset"
+                android:text="@string/kVcVoteBtnReset"
                 android:textAllCaps="false"
                 android:layout_marginRight="10dp" />
 
@@ -77,17 +77,17 @@
             <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/votingPageCommittees" />
+                android:text="@string/kLabelVotingCommittees" />
 
             <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/votingPageWitness" />
+                android:text="@string/kLabelVotingWitnesses" />
 
             <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/votingPageWorker" />
+                android:text="@string/kLabelVotingWorkers" />
 
 
         </android.support.design.widget.TabLayout>
@@ -175,7 +175,7 @@
                 android:textStyle="bold"
                 android:gravity="center_vertical|center"
                 android:textColor="@color/theme01.textColorPercent"
-                android:text="@string/votingPageCommitVoting"
+                android:text="@string/kVcVoteBtnSubmitProxy"
                 android:background="@color/theme01.buyColor"/>
 
             <TextView
@@ -191,7 +191,7 @@
                 android:textStyle="bold"
                 android:gravity="center_vertical|center"
                 android:textColor="@color/theme01.textColorPercent"
-                android:text="@string/votingPageSetAgent"
+                android:text="@string/kVcVoteBtnSetupProxy"
                 android:background="@color/theme01.sellColor"/>
 
         </LinearLayout>

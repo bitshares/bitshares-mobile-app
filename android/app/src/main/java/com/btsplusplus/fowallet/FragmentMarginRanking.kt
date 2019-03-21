@@ -62,7 +62,7 @@ class FragmentMarginRanking : BtsppFragment() {
 
         //  刷新UI
         //  喂价
-        _currentView!!.findViewById<TextView>(R.id.label_txt_curr_feed).text = "${_ctx!!.resources.getString(R.string.debtPageCurrentFeedPrice)} ${_feedPriceInfo!!.toPriceAmountString()}"
+        _currentView!!.findViewById<TextView>(R.id.label_txt_curr_feed).text = "${_ctx!!.resources.getString(R.string.kVcRankCurrentFeedPrice)} ${_feedPriceInfo!!.toPriceAmountString()}"
         //  列表
         val lay = _currentView!!.findViewById<LinearLayout>(R.id.layout_fragment_of_diya_ranking_cny)
         lay.removeAllViews()
@@ -96,7 +96,7 @@ class FragmentMarginRanking : BtsppFragment() {
 
         //  强平触发价
         val tv1 = TextView(ctx)
-        tv1.text = R.string.debtPageForcedLiquidationTriggerPrice.xmlstring(ctx)
+        tv1.text = R.string.kVcRankCallPrice.xmlstring(ctx)
         tv1.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
         tv1.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
         tv1.gravity = Gravity.CENTER_VERTICAL
@@ -110,7 +110,7 @@ class FragmentMarginRanking : BtsppFragment() {
 
         //  抵押率
         val tv3 = TextView(ctx)
-        tv3.text = R.string.nameMortgageRate.xmlstring(ctx)
+        tv3.text = R.string.kVcRankRatio.xmlstring(ctx)
         tv3.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
         tv3.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
         tv3.gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
@@ -139,7 +139,7 @@ class FragmentMarginRanking : BtsppFragment() {
 
         //  抵押
         val tv5 = TextView(ctx)
-        tv5.text = "${R.string.debtPageCollateral.xmlstring(ctx)}(${_tradingPair!!._quoteAsset.getString("symbol")})"
+        tv5.text = "${R.string.kVcRankColl.xmlstring(ctx)}(${_tradingPair!!._quoteAsset.getString("symbol")})"
         tv5.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
         tv5.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
         tv5.gravity = Gravity.CENTER_VERTICAL
@@ -153,7 +153,7 @@ class FragmentMarginRanking : BtsppFragment() {
 
         //  借入
         val tv7 = TextView(ctx)
-        tv7.text = "${R.string.debtPageBorrow.xmlstring(ctx)}(${_tradingPair!!._baseAsset.getString("symbol")})"
+        tv7.text = "${R.string.kVcRankDebt.xmlstring(ctx)}(${_tradingPair!!._baseAsset.getString("symbol")})"
         tv7.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
         tv7.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
         tv7.gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
@@ -232,7 +232,7 @@ class FragmentMarginRanking : BtsppFragment() {
         v.findViewById<ImageView>(R.id.tip_link_feedprice).setOnClickListener {
             //  [统计]
             fabricLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_feedprice"))
-            activity!!.goToWebView(_ctx!!.resources.getString(R.string.debtPageWhatIsFeedPrice), "http://btspp.io/qam.html#qa_feedprice")
+            activity!!.goToWebView(_ctx!!.resources.getString(R.string.kVcTitleWhatIsFeedPrice), "http://btspp.io/qam.html#qa_feedprice")
         }
         _currentView = v
         //  refresh UI

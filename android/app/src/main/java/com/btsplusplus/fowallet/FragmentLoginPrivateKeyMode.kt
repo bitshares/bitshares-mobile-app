@@ -69,7 +69,7 @@ class FragmentLoginPrivateKeyMode : Fragment() {
 
         //  仅正常登录是才需要验证交易密码，导入到已有钱包不用验证。
         if (_checkActivePermission && !Utils.isValidBitsharesWalletPassword(trade_password)) {
-            showToast(_ctx!!.resources.getString(R.string.registerLoginPageTradePwsFormatErrorAndInputAgain))
+            showToast(_ctx!!.resources.getString(R.string.kLoginSubmitTipsTradePasswordFmtIncorrect))
             return
         }
 
@@ -82,7 +82,7 @@ class FragmentLoginPrivateKeyMode : Fragment() {
             return
         }
 
-        val mask = ViewMesk(R.string.nameRequesting.xmlstring(this.activity!!), this.activity!!)
+        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
         mask.show()
         ChainObjectManager.sharedChainObjectManager().queryAccountDataHashFromKeys(jsonArrayfrom(calc_bts_active_address)).then {
             val account_data_hash = it as JSONObject
@@ -101,7 +101,7 @@ class FragmentLoginPrivateKeyMode : Fragment() {
                 mask.dismiss()
                 val full_data = it as? JSONObject
                 if (full_data == null) {
-                    showToast(_ctx!!.resources.getString(R.string.registerLoginPageAccountQueryFailedAndTryLater))
+                    showToast(_ctx!!.resources.getString(R.string.kLoginImportTipsQueryAccountFailed))
                     return@then null
                 }
                 val account = full_data.getJSONObject("account")
@@ -136,7 +136,7 @@ class FragmentLoginPrivateKeyMode : Fragment() {
                     //  [统计]
                     fabricLogCustom("loginEvent", jsonObjectfromKVS("mode", AppCacheManager.EWalletMode.kwmPrivateKeyWithWallet.value, "desc", "privatekey"))
                     //  返回 - 登录成功
-                    showToast(_ctx!!.resources.getString(R.string.registerLoginPageLoginSuccess))
+                    showToast(_ctx!!.resources.getString(R.string.kLoginTipsLoginOK))
                     activity!!.finish()
                 } else {
                     //  【导入到已有钱包】
@@ -178,12 +178,12 @@ class FragmentLoginPrivateKeyMode : Fragment() {
         v.findViewById<ImageView>(R.id.tip_link_active_privatekey).setOnClickListener {
             //  [统计]
             fabricLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_active_privatekey"))
-            activity!!.goToWebView(_ctx!!.resources.getString(R.string.registerLoginPageWhatIsCapitalPrivateKey), "http://btspp.io/qam.html#qa_active_privatekey")
+            activity!!.goToWebView(_ctx!!.resources.getString(R.string.kVcTitleWhatIsActivePrivateKey), "http://btspp.io/qam.html#qa_active_privatekey")
         }
         v.findViewById<ImageView>(R.id.tip_link_trading_password).setOnClickListener {
             //  [统计]
             fabricLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_trading_password"))
-            activity!!.goToWebView(_ctx!!.resources.getString(R.string.registerLoginPageWhatIsTradePws), "http://btspp.io/qam.html#qa_trading_password")
+            activity!!.goToWebView(_ctx!!.resources.getString(R.string.kVcTitleWhatIsTradePassowrd), "http://btspp.io/qam.html#qa_trading_password")
         }
         //  导入到已有钱包：隐藏交易密码。
         if (!_checkActivePermission) {

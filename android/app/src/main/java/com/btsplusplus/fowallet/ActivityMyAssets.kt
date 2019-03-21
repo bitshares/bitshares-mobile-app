@@ -37,7 +37,7 @@ class ActivityMyAssets : BtsppActivity() {
         val account = _full_account_data.getJSONObject("account")
         val target_name = account.getString("name")
         if (WalletManager.sharedWalletManager().isMyselfAccount(target_name)) {
-            findViewById<TextView>(R.id.title).text = resources.getString(R.string.myPageMyAssets)
+            findViewById<TextView>(R.id.title).text = resources.getString(R.string.kVcTitleMyBalance)
             //  不显示关注按钮
             btn_fav.visibility = View.GONE
         } else {
@@ -80,13 +80,13 @@ class ActivityMyAssets : BtsppActivity() {
         if (pAppCache.get_all_fav_accounts().has(account_name)) {
             pAppCache.remove_fav_account(account_name)
             btn.setColorFilter(resources.getColor(R.color.theme01_textColorGray))
-            showToast(resources.getString(R.string.myAssetsPageCanceledFollow))
+            showToast(resources.getString(R.string.kTipsUnfollowed))
             //  [统计]
             fabricLogCustom("event_account_remove_fav", jsonObjectfromKVS("account", account_name))
         } else {
             pAppCache.set_fav_account(jsonObjectfromKVS("name", account_name, "id", account.getString("id")))
             btn.setColorFilter(resources.getColor(R.color.theme01_textColorHighlight))
-            showToast(resources.getString(R.string.myAssetsPageFollowSuccess))
+            showToast(resources.getString(R.string.kTipsFollowed))
             //  [统计]
             fabricLogCustom("event_account_add_fav", jsonObjectfromKVS("account", account_name))
         }

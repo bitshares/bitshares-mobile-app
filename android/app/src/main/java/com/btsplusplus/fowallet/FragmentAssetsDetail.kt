@@ -56,7 +56,7 @@ class FragmentAssetsDetail : BtsppFragment() {
             return@then onGetAccountHistoryResponsed(it as JSONArray)
         }.catch {
             _loading = false
-            showToast(_ctx!!.resources.getString(R.string.nameNetworkException))
+            showToast(_ctx!!.resources.getString(R.string.tip_network_error))
         }
     }
 
@@ -158,14 +158,14 @@ class FragmentAssetsDetail : BtsppFragment() {
             //  TODO:fowallet 考虑着色
             when (op_code) {
                 EBitsharesOperations.ebo_transfer.value -> {
-                    transferName = R.string.myAssetsPageOpNameTransfer.xmlstring(_ctx!!)
+                    transferName = R.string.kVcActivityTypeTransfer.xmlstring(_ctx!!)
                     val from = chainMgr.getChainObjectByID(op_data.getString("from")).getString("name")
                     val to = chainMgr.getChainObjectByID(op_data.getString("to")).getString("name")
                     val amount = op_data.getJSONObject("amount")
                     val asset = chainMgr.getChainObjectByID(amount.getString("asset_id"))
                     val num = OrgUtils.formatAssetString(amount.getString("amount"), asset.getInt("precision"))
                     val symbol = asset.getString("symbol")
-                    mainDesc = String.format(R.string.myAssetsPageTransferFormat.xmlstring(_ctx!!), from, "${num}${symbol}", to)
+                    mainDesc = String.format(R.string.kOpDesc_transfer.xmlstring(_ctx!!), from, "${num}${symbol}", to)
                 }
                 EBitsharesOperations.ebo_limit_order_create.value -> {
                     val user = chainMgr.getChainObjectByID(op_data.getString("seller")).getString("name")
@@ -177,23 +177,23 @@ class FragmentAssetsDetail : BtsppFragment() {
                     val str_quote = info.getString("str_quote")
 
                     if (info.getBoolean("issell")) {
-                        transferName = _ctx!!.resources.getString(R.string.myAssetsPageOpNameCreateSellOrder)
+                        transferName = _ctx!!.resources.getString(R.string.kOpType_limit_order_create_sell)
                         transferNameColor = R.color.theme01_sellColor
-                        mainDesc = String.format(R.string.myAssetsPageSubmitSellOrder.xmlstring(_ctx!!), user, "${str_price}${base_symbol}/${quote_symbol}", "${str_quote}${quote_symbol}")
+                        mainDesc = String.format(R.string.kVcActivityDescCreateSellOrder.xmlstring(_ctx!!), user, "${str_price}${base_symbol}/${quote_symbol}", "${str_quote}${quote_symbol}")
                     } else {
-                        transferName = _ctx!!.resources.getString(R.string.myAssetsPageOpNameCreateBuyOrder)
+                        transferName = _ctx!!.resources.getString(R.string.kVcActivityTypeCreateBuyOrder)
                         transferNameColor = R.color.theme01_buyColor
-                        mainDesc = String.format(R.string.myAssetsPageSubmitBuyOrder.xmlstring(_ctx!!), user, "${str_price}${base_symbol}/${quote_symbol}", "${str_quote}${quote_symbol}")
+                        mainDesc = String.format(R.string.kVcActivityDescCreateBuyOrder.xmlstring(_ctx!!), user, "${str_price}${base_symbol}/${quote_symbol}", "${str_quote}${quote_symbol}")
                     }
                 }
                 EBitsharesOperations.ebo_limit_order_cancel.value -> {
-                    transferName = _ctx!!.resources.getString(R.string.myAssetsPageOpNameCancelOrder)
+                    transferName = _ctx!!.resources.getString(R.string.kVcActivityTypeCancelOrder)
                     val user = chainMgr.getChainObjectByID(op_data.getString("fee_paying_account")).getString("name")
                     val oid = op_data.getString("order").split(".").last()
-                    mainDesc = String.format(R.string.myAssetsPageCancelLimitOrder.xmlstring(_ctx!!), user, oid)
+                    mainDesc = String.format(R.string.kVcActivityDescCancelOrder.xmlstring(_ctx!!), user, oid)
                 }
                 EBitsharesOperations.ebo_call_order_update.value -> {
-                    transferName = _ctx!!.resources.getString(R.string.myAssetsPageOpNameUpdatePosition)
+                    transferName = _ctx!!.resources.getString(R.string.kOpType_call_order_update)
                     val user = chainMgr.getChainObjectByID(op_data.getString("funding_account")).getString("name")
                     //  REMARK：这2个字段可能为负数。
                     val delta_collateral = op_data.getJSONObject("delta_collateral")
@@ -204,10 +204,10 @@ class FragmentAssetsDetail : BtsppFragment() {
                     val n_debt = OrgUtils.formatAssetString(delta_debt.getString("amount"), debt_asset.getInt("precision"))
                     val symbol_coll = collateral_asset.getString("symbol")
                     val symbol_debt = debt_asset.getString("symbol")
-                    mainDesc = String.format(R.string.myAssetsPageUpdateMarginMoney.xmlstring(_ctx!!), user, "${n_coll}${symbol_coll}", "${n_debt}${symbol_debt}")
+                    mainDesc = String.format(R.string.kVcActivityDescUpdatePosition.xmlstring(_ctx!!), user, "${n_coll}${symbol_coll}", "${n_debt}${symbol_debt}")
                 }
                 EBitsharesOperations.ebo_fill_order.value -> {
-                    transferName = _ctx!!.resources.getString(R.string.myAssetsPageOpNameFillOrder)
+                    transferName = _ctx!!.resources.getString(R.string.kVcActivityTypeFillOrder)
 
                     val user = chainMgr.getChainObjectByID(op_data.getString("account_id")).getString("name")
                     val isCallOrder = op_data.getString("order_id").split(".")[1].toInt() == EBitsharesObjectType.ebot_call_order.value
@@ -219,40 +219,40 @@ class FragmentAssetsDetail : BtsppFragment() {
                     val str_quote = info.getString("str_quote")
 
                     if (info.getBoolean("issell")) {
-                        mainDesc = String.format(R.string.myAssetsPageFillSellOrder.xmlstring(_ctx!!), user, "${str_price}${base_symbol}/${quote_symbol}", "${str_quote}${quote_symbol}")
+                        mainDesc = String.format(R.string.kVcActivityDescFillSellOrder.xmlstring(_ctx!!), user, "${str_price}${base_symbol}/${quote_symbol}", "${str_quote}${quote_symbol}")
                     } else {
-                        mainDesc = String.format(R.string.myAssetsPageFillBuyOrder.xmlstring(_ctx!!), user, "${str_price}${base_symbol}/${quote_symbol}", "${str_quote}${quote_symbol}")
+                        mainDesc = String.format(R.string.kVcActivityDescFillBuyOrder.xmlstring(_ctx!!), user, "${str_price}${base_symbol}/${quote_symbol}", "${str_quote}${quote_symbol}")
                     }
                     if (isCallOrder) {
                         transferNameColor = R.color.theme01_callOrderColor
                     }
                 }
                 EBitsharesOperations.ebo_account_create.value -> {
-                    transferName = _ctx!!.resources.getString(R.string.myAssetsPageOpNameCreateAccount)
+                    transferName = _ctx!!.resources.getString(R.string.kOpType_account_create)
                     val user = chainMgr.getChainObjectByID(op_data.getString("registrar")).getString("name")
                     var new_user = op_data.getString("name")
                     mainDesc = String.format(R.string.myAssetsPageCreatedAccount.xmlstring(_ctx!!), user, new_user)
                 }
                 EBitsharesOperations.ebo_account_update.value -> {
-                    transferName = _ctx!!.resources.getString(R.string.myAssetsPageOpNameUpdateAccount)
+                    transferName = _ctx!!.resources.getString(R.string.kVcActivityTypeUpdateAccount)
                     val user = chainMgr.getChainObjectByID(op_data.getString("account")).getString("name")
-                    mainDesc = "${user} ${_ctx!!.resources.getString(R.string.myAssetsPageUpdatedAccount)}"
+                    mainDesc = String.format(_ctx!!.resources.getString(R.string.kVcActivityDescUpdateAccount),user)
                 }
                 EBitsharesOperations.ebo_account_upgrade.value -> {
                     if (op_data.optBoolean("upgrade_to_lifetime_member", false)) {
-                        transferName = _ctx!!.resources.getString(R.string.myAssetsPageOpNameUpgradeAccount)
+                        transferName = _ctx!!.resources.getString(R.string.kVcActivityTypeUpgradeAccount)
                         val user = chainMgr.getChainObjectByID(op_data.getString("account_to_upgrade")).getString("name")
-                        mainDesc = "${user} ${_ctx!!.resources.getString(R.string.myAssetsPageUpgradedLifelongAccount)}"
+                        mainDesc = String.format(_ctx!!.resources.getString(R.string.kVcActivityDescUpgradeAccount),user)
                     }
                 }
                 EBitsharesOperations.ebo_proposal_create.value -> {
-                    transferName = _ctx!!.resources.getString(R.string.myAssetsPageOpNameCreateProposal)
-                    mainDesc = "${_ctx!!.resources.getString(R.string.myAssetsPageCreateProposal)}"
+                    transferName = _ctx!!.resources.getString(R.string.kOpDesc_proposal_create)
+                    mainDesc = "${_ctx!!.resources.getString(R.string.kVcActivityTypeCreateProposal)}"
                 }
                 EBitsharesOperations.ebo_proposal_update.value -> {
-                    transferName = _ctx!!.resources.getString(R.string.myAssetsPageOpNameUpdateProposal)
+                    transferName = _ctx!!.resources.getString(R.string.kOpType_proposal_update)
                     val oid = op_data.getString("proposal").split(".").last()
-                    mainDesc = "${_ctx!!.resources.getString(R.string.myAssetsPageUpdateProposal)} #${oid}"
+                    mainDesc = String.format(_ctx!!.resources.getString(R.string.kVcActivityDescUpdateProposal),oid)
                 }
                 else -> {
                     //  TODO:fowallet 其他类型的操作 额外处理。重要！！！！
@@ -299,7 +299,7 @@ class FragmentAssetsDetail : BtsppFragment() {
                     createCell(container, layout_params, _ctx!!, item)
                 }
             } else {
-                container.addView(ViewUtils.createEmptyCenterLabel(_ctx!!, _ctx!!.resources.getString(R.string.myAssetsPageNotAnyActivityInfo)))
+                container.addView(ViewUtils.createEmptyCenterLabel(_ctx!!, _ctx!!.resources.getString(R.string.kVcAssetTipNoActivity)))
             }
         }
     }

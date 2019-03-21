@@ -39,7 +39,7 @@ class ActivityProposal : BtsppActivity() {
         val account_name_list = WalletManager.sharedWalletManager().getWalletAccountNameList()
         assert(account_name_list.length() > 0)
 
-        val mask = ViewMesk(resources.getString(R.string.nameRequesting), this)
+        val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), this)
         mask.show()
 
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
@@ -122,7 +122,7 @@ class ActivityProposal : BtsppActivity() {
             }
         }.catch {
             mask.dismiss()
-            showToast(resources.getString(R.string.nameNetworkException))
+            showToast(resources.getString(R.string.tip_network_error))
         }
     }
 
@@ -311,7 +311,7 @@ class ActivityProposal : BtsppActivity() {
         tv_line1_right_params.gravity = Gravity.RIGHT
         tv_line1_right.layoutParams = tv_line1_right_params
 
-        tv_line1_right.text = String.format(R.string.myOrderPageExpire.xmlstring(ctx), Utils.fmtLimitOrderTimeShowString(proposal.getString("expiration_time")))
+        tv_line1_right.text = String.format(R.string.kVcOrderExpired.xmlstring(ctx), Utils.fmtLimitOrderTimeShowString(proposal.getString("expiration_time")))
         tv_line1_right.setTextSize(TypedValue.COMPLEX_UNIT_DIP, form_font_size)
         tv_line1_right.setTextColor(resources.getColor(R.color.theme01_textColorGray))
         tv_line1_right.gravity = Gravity.RIGHT
@@ -720,7 +720,7 @@ class ActivityProposal : BtsppActivity() {
             }
         } else {
             //  普通交易：请求网络广播
-            val mask = ViewMesk(R.string.nameRequesting.xmlstring(this), this)
+            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
             mask.show()
             BitsharesClientManager.sharedBitsharesClientManager().proposalUpdate(opdata).then {
                 mask.dismiss()

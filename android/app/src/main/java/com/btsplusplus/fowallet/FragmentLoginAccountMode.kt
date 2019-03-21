@@ -65,29 +65,29 @@ class FragmentLoginAccountMode : Fragment() {
 
         //  TODO:检查参数有效性
         if (account_name.isEmpty()) {
-            showToast(_ctx!!.resources.getString(R.string.registerLoginPageAccountIsEmptyAndInputAgain))
+            showToast(_ctx!!.resources.getString(R.string.kLoginSubmitTipsAccountIsEmpty))
             return
         }
         if (password.isEmpty()) {
-            showToast(_ctx!!.resources.getString(R.string.registerLoginPagePwsIsEmptyAndInputAgain))
+            showToast(_ctx!!.resources.getString(R.string.kMsgPasswordCannotBeNull))
             return
         }
 
         //  正常登录才需要验证交易密码。
         if (_checkActivePermission && !Utils.isValidBitsharesWalletPassword(trade_password)) {
-            showToast(_ctx!!.resources.getString(R.string.registerLoginPageTradePwsFormatErrorAndInputAgain))
+            showToast(_ctx!!.resources.getString(R.string.kLoginSubmitTipsTradePasswordFmtIncorrect))
             return
         }
 
         //  开始请求
         val username = account_name.toLowerCase()
-        val mask = ViewMesk(R.string.nameRequesting.xmlstring(this.activity!!), this.activity!!)
+        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
         mask.show()
         ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(username).then {
             mask.dismiss()
             val full_data = it as? JSONObject
             if (full_data == null) {
-                showToast(_ctx!!.resources.getString(R.string.registerLoginPageAccountNameNotExistAndPleaseInputAgain))
+                showToast(_ctx!!.resources.getString(R.string.kLoginSubmitTipsAccountIsNotExist))
                 return@then null
             }
 
@@ -136,7 +136,7 @@ class FragmentLoginAccountMode : Fragment() {
                 //  [统计]
                 fabricLogCustom("loginEvent", jsonObjectfromKVS("mode", AppCacheManager.EWalletMode.kwmPasswordWithWallet.value, "desc", "password+wallet"))
                 //  返回 - 登录成功
-                showToast(_ctx!!.resources.getString(R.string.registerLoginPageLoginSuccess))
+                showToast(_ctx!!.resources.getString(R.string.kLoginTipsLoginOK))
                 activity!!.finish()
             } else {
                 //  【导入到已有钱包】
@@ -190,7 +190,7 @@ class FragmentLoginAccountMode : Fragment() {
         v.findViewById<ImageView>(R.id.tip_link_trading_password).setOnClickListener {
             //  [统计]
             fabricLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_trading_password"))
-            activity!!.goToWebView(_ctx!!.resources.getString(R.string.registerLoginPageWhatIsTradePws), "http://btspp.io/qam.html#qa_trading_password")
+            activity!!.goToWebView(_ctx!!.resources.getString(R.string.kVcTitleWhatIsTradePassowrd), "http://btspp.io/qam.html#qa_trading_password")
         }
         //  导入到已有钱包：隐藏交易密码。
         if (!_checkActivePermission) {

@@ -101,7 +101,7 @@ class FragmentUserMemberInfo : BtsppFragment() {
             assert(!isProposal)
 
             //  请求网络广播
-            val mask = ViewMesk(resources.getString(R.string.nameRequesting), _ctx)
+            val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), _ctx)
             mask.show()
 
             BitsharesClientManager.sharedBitsharesClientManager().accountUpgrde(op_data).then{
@@ -147,7 +147,7 @@ class FragmentUserMemberInfo : BtsppFragment() {
 
         val act = _ctx as Activity
 
-        val mask = ViewMesk(resources.getString(R.string.nameRequesting), _ctx)
+        val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), _ctx)
         mask.show()
 
         BitsharesClientManager.sharedBitsharesClientManager().calcOperationFee(op_data, EBitsharesOperations.ebo_account_upgrade).then {
@@ -156,7 +156,7 @@ class FragmentUserMemberInfo : BtsppFragment() {
             val fee_price_item = it as JSONObject
             val price = OrgUtils.formatAssetAmountItem(fee_price_item)
 
-            act.alerShowMessageConfirm(resources.getString(R.string.registerLoginPageWarmTip), String.format(resources.getString(R.string.kAccountUpgradeMemberCostAsk), price)).then {
+            act.alerShowMessageConfirm(resources.getString(R.string.kWarmTips), String.format(resources.getString(R.string.kAccountUpgradeMemberCostAsk), price)).then {
                 if (it != null && it as Boolean) {
                     act.guardWalletUnlocked(false) { unlocked ->
                         if (unlocked) {
@@ -170,7 +170,7 @@ class FragmentUserMemberInfo : BtsppFragment() {
             return@then null
         }.catch {
             mask.dismiss()
-            showToast(_ctx.resources.getString(R.string.nameNetworkException))
+            showToast(_ctx.resources.getString(R.string.tip_network_error))
         }
     }
 

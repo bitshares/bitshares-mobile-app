@@ -180,7 +180,7 @@ class ViewDeepGraph : ViewBase {
 
         //  数据不足
         if (bid_num <= 2 || ask_num <= 2) {
-            val str = resources.getString(R.string.klineNodData)
+            val str = resources.getString(R.string.kLabelNODATA)
             val fontsize = 30f.dp
             val str_size = auxSizeWithText(str, _fontname, fontsize)
             val paint = getTextPaintWithString(resources.getColor(R.color.theme01_textColorGray), _fontname, fontsize)

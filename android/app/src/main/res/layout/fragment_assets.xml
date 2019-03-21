@@ -31,7 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="24dp"
                 android:layout_gravity="center"
-                android:text="@string/myAssetsPageEstimating"
+                android:text="@string/kVcAssetTipsEstimating"
                 android:textColor="@color/theme01.textColorMain"
                 android:textSize="15dp" />
 

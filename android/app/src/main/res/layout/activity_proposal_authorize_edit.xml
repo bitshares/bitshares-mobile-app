@@ -32,7 +32,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="@string/nameCancel"
+                    android:text="@string/Cancel"
                     style="@style/kNavigationBarTextStyle"
                     android:gravity="center_vertical"
                     />
@@ -204,7 +204,7 @@
                         android:layout_weight="1"
                         android:padding="5dp"
                         android:textAllCaps="false"
-                        android:text="@string/nameSubmit" />
+                        android:text="@string/kProposalBtnSubmit" />
                 </LinearLayout>
 
             </LinearLayout>

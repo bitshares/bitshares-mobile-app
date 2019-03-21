@@ -36,7 +36,7 @@ class ActivityUpgradeToWalletMode : BtsppActivity() {
 
         //  帮助按钮事件
         tip_link_wallet_password_of_upgrade_to_wallet.setOnClickListener {
-            UtilsAlert.showMessageBox(this, R.string.tipsFormatWalletPassword.xmlstring(this))
+            UtilsAlert.showMessageBox(this, R.string.kLoginRegTipsWalletPasswordFormat.xmlstring(this))
         }
 
         //  创建钱包按钮事件
@@ -53,7 +53,7 @@ class ActivityUpgradeToWalletMode : BtsppActivity() {
         val wallet_password = findViewById<EditText>(R.id.tf_wallet_password_of_upgrade_to_wallet).text.toString()
 
         if (password.isEmpty()) {
-            showToast(resources.getString(R.string.registerLoginPagePwsIsEmptyAndInputAgain))
+            showToast(resources.getString(R.string.kMsgPasswordCannotBeNull))
             return
         }
 

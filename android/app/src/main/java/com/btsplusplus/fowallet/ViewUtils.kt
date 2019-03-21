@@ -150,10 +150,10 @@ class ViewUtils {
 
             val tv1 = TextView(ctx)
             if (data.getBoolean("issell")) {
-                tv1.text = ctx.resources.getString(R.string.nameSellOut)
+                tv1.text = ctx.resources.getString(R.string.kBtnSell)
                 tv1.setTextColor(resources.getColor(R.color.theme01_sellColor))
             } else {
-                tv1.text = ctx.resources.getString(R.string.nameBuyIn)
+                tv1.text = ctx.resources.getString(R.string.kBtnBuy)
                 tv1.setTextColor(resources.getColor(R.color.theme01_buyColor))
             }
             tv1.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.0f)
@@ -176,7 +176,7 @@ class ViewUtils {
 
             var time = Utils.fmtLimitOrderTimeShowString(data.getString("time"))
             val tv3 = TextView(ctx)
-            tv3.text = String.format(R.string.myOrderPageExpire.xmlstring(ctx), time)
+            tv3.text = String.format(R.string.kVcOrderExpired.xmlstring(ctx), time)
             tv3.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11.0f)
             tv3.setTextColor(resources.getColor(R.color.theme01_textColorGray))
             tv3.gravity = Gravity.CENTER
@@ -184,7 +184,7 @@ class ViewUtils {
             layout_tv3.gravity = Gravity.CENTER_VERTICAL
             tv3.layoutParams = layout_tv3
 
-            val tv_cancel = ViewUtils.createTextView(ctx, ctx.resources.getString(R.string.myOrderPageRevocation), 11.0f, R.color.theme01_color03, false)
+            val tv_cancel = ViewUtils.createTextView(ctx, ctx.resources.getString(R.string.kVcOrderBtnCancel), 11.0f, R.color.theme01_color03, false)
             tv_cancel.gravity = Gravity.RIGHT
             val layout_cancel = LinearLayout.LayoutParams(Utils.toDp(0f, resources), LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
             layout_cancel.gravity = Gravity.CENTER_VERTICAL
@@ -196,21 +196,21 @@ class ViewUtils {
             ly2.layoutParams = layout_params
 
             val tv4 = TextView(ctx)
-            tv4.text = "${R.string.myOrderPageLabelPrice.xmlstring(ctx)}(${base_symbol})"
+            tv4.text = "${R.string.kLableBidPrice.xmlstring(ctx)}(${base_symbol})"
             tv4.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
             tv4.setTextColor(resources.getColor(R.color.theme01_textColorGray))
             tv4.gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
             tv4.layoutParams = createLinearLayoutParams(ctx, 0f, 24f, 1.0f, Gravity.CENTER_VERTICAL or Gravity.LEFT)
 
             val tv5 = TextView(ctx)
-            tv5.text = "${R.string.myOrderPageLabelAmount.xmlstring(ctx)}(${quote_symbol})"
+            tv5.text = "${R.string.kLableBidAmount.xmlstring(ctx)}(${quote_symbol})"
             tv5.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
             tv5.setTextColor(resources.getColor(R.color.theme01_textColorGray))
             tv5.gravity = Gravity.CENTER_VERTICAL or Gravity.CENTER
             tv5.layoutParams = createLinearLayoutParams(ctx, 0f, 24f, 1.0f, Gravity.CENTER_VERTICAL or Gravity.CENTER)
 
             val tv6 = TextView(ctx)
-            tv6.text = "${ctx.resources.getString(R.string.myOrderPageTotalAmount)}(${base_symbol})"
+            tv6.text = "${ctx.resources.getString(R.string.kVcOrderTotal)}(${base_symbol})"
             tv6.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
             tv6.setTextColor(resources.getColor(R.color.theme01_textColorGray))
             tv6.gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT

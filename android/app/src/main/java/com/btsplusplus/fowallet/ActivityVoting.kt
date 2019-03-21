@@ -61,7 +61,7 @@ class ActivityVoting : BtsppActivity() {
         _btn_proxy = findViewById(R.id.btn_set_delegate_of_voting)
         _btn_proxy!!.isClickable = true
         if (_bHaveProxy) {
-            _btn_proxy!!.text = resources.getString(R.string.votingPageCancelProxy)
+            _btn_proxy!!.text = resources.getString(R.string.kVcVoteBtnCancelProxy)
         }
 
         //  事件
@@ -94,7 +94,7 @@ class ActivityVoting : BtsppActivity() {
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
         val p4 = chainMgr.queryLastBudgetObject()
         val p5 = chainMgr.queryAccountVotingInfos(WalletManager.sharedWalletManager().getWalletAccountInfo()!!.getJSONObject("account").getString("id"))
-        val mask = ViewMesk(R.string.nameRequesting.xmlstring(this), this)
+        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
         mask.show()
         Promise.all(p0, p1, p2, p3, p4, p5).then {
             var data_array = it as JSONArray
@@ -124,7 +124,7 @@ class ActivityVoting : BtsppActivity() {
             }
         }.catch {
             mask.dismiss()
-            showToast(resources.getString(R.string.nameNetworkException))
+            showToast(resources.getString(R.string.tip_network_error))
         }
     }
 
@@ -143,13 +143,13 @@ class ActivityVoting : BtsppActivity() {
      */
     private fun onSubmitVoteClicked() {
         if (_currVoteInfos == null) {
-            showToast(resources.getString(R.string.nameNetworkException))
+            showToast(resources.getString(R.string.tip_network_error))
             return
         }
 
         //  设置了代理人的情况，先弹框告知用户。
         if (_bHaveProxy) {
-            alerShowMessageConfirm(null, resources.getString(R.string.votingPageTipSubmitProxy)).then {
+            alerShowMessageConfirm(null, resources.getString(R.string.kVcVoteTipAutoCancelProxy)).then {
                 if (it != null && it as Boolean) {
                     _processActionVoting()
                 }
@@ -162,7 +162,7 @@ class ActivityVoting : BtsppActivity() {
 
     private fun onProxyClicked() {
         if (_currVoteInfos == null) {
-            showToast(resources.getString(R.string.nameNetworkException))
+            showToast(resources.getString(R.string.tip_network_error))
             return
         }
         if (_bHaveProxy) {
@@ -227,27 +227,27 @@ class ActivityVoting : BtsppActivity() {
                 op_data, account_data) { isProposal, _ ->
             assert(!isProposal)
             //  请求网络广播
-            val mask = ViewMesk(R.string.nameRequesting.xmlstring(this), this)
+            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
             mask.show()
             BitsharesClientManager.sharedBitsharesClientManager().accountUpdate(op_data).then {
                 //  投票成功、继续请求、刷新界面。
                 ChainObjectManager.sharedChainObjectManager().queryAccountVotingInfos(account_id).then {
                     mask.dismiss()
                     _refreshUI(it as JSONObject)
-                    showToast(String.format(resources.getString(R.string.votingPageTipTxFullOk), title))
+                    showToast(String.format(resources.getString(R.string.kVcVoteTipTxFullOK), title))
                     //  [统计]
                     fabricLogCustom("txVotingFullOK", jsonObjectfromKVS("account", account_id))
                     return@then null
                 }.catch {
                     mask.dismiss()
-                    showToast(String.format(resources.getString(R.string.votingPageTipTxOk), title))
+                    showToast(String.format(resources.getString(R.string.kVcVoteTipTxOK), title))
                     //  [统计]
                     fabricLogCustom("txVotingOK", jsonObjectfromKVS("account", account_id))
                 }
                 return@then null
             }.catch {
                 mask.dismiss()
-                showToast(resources.getString(R.string.votingPageTipTxFailed))
+                showToast(resources.getString(R.string.kTipsTxRequestFailed))
                 //  [统计]
                 fabricLogCustom("txVotingFailed", jsonObjectfromKVS("account", account_id))
             }
@@ -263,7 +263,7 @@ class ActivityVoting : BtsppActivity() {
         if (!_bHaveProxy) {
             val old_votes = _currVoteInfos!!.getJSONObject("voting_hash").keys().toJSONArray()
             if (!_isVotingChanged(old_votes, new_votes)) {
-                showToast(resources.getString(R.string.votingPageTipVotingNoChagne))
+                showToast(resources.getString(R.string.kVcVoteTipVoteNoChange))
                 return
             }
         }
@@ -272,12 +272,12 @@ class ActivityVoting : BtsppActivity() {
         val full_account_data = _get_full_account_data()
         val fee_item = _get_fee_item(full_account_data)
         if (!fee_item.getBoolean("sufficient")) {
-            showToast(resources.getString(R.string.myOrderPageTipForFeeNotEnough))
+            showToast(resources.getString(R.string.kTipsTxFeeNotEnough))
             return
         }
 
         //  3、执行请求（代理设置为自己投票）
-        _processActionCore(fee_item, full_account_data, _const_proxy_to_self, new_votes, resources.getString(R.string.serviceMainPageVoting))
+        _processActionCore(fee_item, full_account_data, _const_proxy_to_self, new_votes, resources.getString(R.string.kVcTitleVoting))
     }
 
     /**
@@ -288,12 +288,12 @@ class ActivityVoting : BtsppActivity() {
         val full_account_data = _get_full_account_data()
         val fee_item = _get_fee_item(full_account_data)
         if (!fee_item.getBoolean("sufficient")) {
-            showToast(resources.getString(R.string.myOrderPageTipForFeeNotEnough))
+            showToast(resources.getString(R.string.kTipsTxFeeNotEnough))
             return
         }
 
         //  2、执行请求（设置为自己投票）
-        _processActionCore(fee_item, full_account_data, _const_proxy_to_self, null, resources.getString(R.string.votingPagePassDeleteDelegate))
+        _processActionCore(fee_item, full_account_data, _const_proxy_to_self, null, resources.getString(R.string.kVcVotePrefixRemoveProxy))
     }
 
     /**
@@ -304,7 +304,7 @@ class ActivityVoting : BtsppActivity() {
         val full_account_data = _get_full_account_data()
         val fee_item = _get_fee_item(full_account_data)
         if (!fee_item.getBoolean("sufficient")) {
-            showToast(resources.getString(R.string.myOrderPageTipForFeeNotEnough))
+            showToast(resources.getString(R.string.kTipsTxFeeNotEnough))
             return
         }
 
@@ -312,7 +312,7 @@ class ActivityVoting : BtsppActivity() {
         TempManager.sharedTempManager().set_query_account_callback { last_activity, it ->
             last_activity.goTo(ActivityVoting::class.java, true, back = true)
             //  设置代理人
-            _processActionCore(fee_item, full_account_data, it.getString("id"), null, resources.getString(R.string.votingPageSetAgent))
+            _processActionCore(fee_item, full_account_data, it.getString("id"), null, resources.getString(R.string.kVcVoteBtnSetupProxy))
         }
         goTo(ActivityAccountQueryBase::class.java, true)
     }
@@ -384,9 +384,9 @@ class ActivityVoting : BtsppActivity() {
             //  显示当前代理
             current_proxy_of_voting.visibility = View.VISIBLE
             val curr_proxy_name = vote_info.getJSONObject("voting_account").getString("name")
-            current_proxy_name_of_voting.text = "${resources.getString(R.string.votingPagecurrentAgent)} ${curr_proxy_name}"
+            current_proxy_name_of_voting.text = "${resources.getString(R.string.kVcVoteTipCurrentProxy)} ${curr_proxy_name}"
         } else {
-            _btn_proxy!!.text = resources.getString(R.string.votingPageSetAgent)
+            _btn_proxy!!.text = resources.getString(R.string.kVcVoteBtnSetupProxy)
             //  隐藏当前代理
             current_proxy_of_voting.visibility = View.GONE
         }
