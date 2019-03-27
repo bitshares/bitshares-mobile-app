@@ -151,7 +151,7 @@ class FragmentOrderHistory : BtsppFragment() {
                 createCell(_ctx!!, layout_params, container, item)
             }
         } else {
-            container.addView(ViewUtils.createEmptyCenterLabel(_ctx!!, "近期没有交易记录"))
+            container.addView(ViewUtils.createEmptyCenterLabel(_ctx!!, resources.getString(R.string.kVcOrderTipNoHistory)))
         }
     }
 
