@@ -677,8 +677,9 @@
 "kOpDesc_asset_claim_fees" = "資産の手数料を取り出します。";
 
 /* 通用字符串 */
-"kLangKeyZhSimple" = "簡体字中国語";
-"kLangKeyEn" = "English / 英文";
+"kLangKeyZhSimple" = "简体中文 / 簡体字中国語";
+"kLangKeyEn" = "English / 英語";
+"kLangKeyJa" = "日本語";
 "skip" = "PASS";
 "kAppName" = "BitShares";
 "kAccount" = "アカウント";

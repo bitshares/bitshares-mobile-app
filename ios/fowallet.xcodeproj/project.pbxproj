@@ -42,6 +42,10 @@
 		3F6C35B621EE0AB1008E2903 /* iconDepositWithdraw@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F6C35B321EE0AB1008E2903 /* iconDepositWithdraw@2x.png */; };
 		3F6C35B721EE0AB1008E2903 /* iconDepositWithdraw@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F6C35B421EE0AB1008E2903 /* iconDepositWithdraw@3x.png */; };
 		3F6C35B821EE0AB1008E2903 /* iconDepositWithdraw@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F6C35B421EE0AB1008E2903 /* iconDepositWithdraw@3x.png */; };
+		3F767B0F224B7B310012822D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3F767B0B224B7B310012822D /* InfoPlist.strings */; };
+		3F767B10224B7B310012822D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3F767B0B224B7B310012822D /* InfoPlist.strings */; };
+		3F767B11224B7B310012822D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3F767B0D224B7B310012822D /* Localizable.strings */; };
+		3F767B12224B7B310012822D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3F767B0D224B7B310012822D /* Localizable.strings */; };
 		3F9A730821E59FF300DAF7A2 /* VCDepositWithdrawList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9A730721E59FF300DAF7A2 /* VCDepositWithdrawList.m */; };
 		3F9A730921E59FF300DAF7A2 /* VCDepositWithdrawList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9A730721E59FF300DAF7A2 /* VCDepositWithdrawList.m */; };
 		3F9A730C21E5C20500DAF7A2 /* ViewGatewayCoinInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9A730B21E5C20500DAF7A2 /* ViewGatewayCoinInfoCell.m */; };
@@ -1128,6 +1132,8 @@
 		3F6C35B021EC864F008E2903 /* RuDEX.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RuDEX.m; path = Controller/Gateway/RuDEX.m; sourceTree = "<group>"; };
 		3F6C35B321EE0AB1008E2903 /* iconDepositWithdraw@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconDepositWithdraw@2x.png"; path = "Images/iconDepositWithdraw@2x.png"; sourceTree = "<group>"; };
 		3F6C35B421EE0AB1008E2903 /* iconDepositWithdraw@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconDepositWithdraw@3x.png"; path = "Images/iconDepositWithdraw@3x.png"; sourceTree = "<group>"; };
+		3F767B0C224B7B310012822D /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = InfoPlist.strings; sourceTree = "<group>"; };
+		3F767B0E224B7B310012822D /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = Localizable.strings; sourceTree = "<group>"; };
 		3F9A730621E59FF300DAF7A2 /* VCDepositWithdrawList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCDepositWithdrawList.h; path = Controller/VCDepositWithdrawList.h; sourceTree = "<group>"; };
 		3F9A730721E59FF300DAF7A2 /* VCDepositWithdrawList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCDepositWithdrawList.m; path = Controller/VCDepositWithdrawList.m; sourceTree = "<group>"; };
 		3F9A730A21E5C20400DAF7A2 /* ViewGatewayCoinInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewGatewayCoinInfoCell.h; path = View/ViewGatewayCoinInfoCell.h; sourceTree = "<group>"; };
@@ -2481,6 +2487,16 @@
 			name = Gateway;
 			sourceTree = "<group>";
 		};
+		3F767B0A224B7B310012822D /* ja.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				3F767B0B224B7B310012822D /* InfoPlist.strings */,
+				3F767B0D224B7B310012822D /* Localizable.strings */,
+			);
+			name = ja.lproj;
+			path = Resources/ja.lproj;
+			sourceTree = "<group>";
+		};
 		3FB8F88821CA4BA000DA88E2 /* Reachability */ = {
 			isa = PBXGroup;
 			children = (
@@ -3128,6 +3144,7 @@
 		ED3776931654A8E90016EC64 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				3F767B0A224B7B310012822D /* ja.lproj */,
 				3FB8F88F21CCD0DB00DA88E2 /* zh-Hans.lproj */,
 				F5C25F251CFD97260098D3DA /* Images.xcassets */,
 				F51D14121C5C96C300FBB748 /* Assets.xcassets */,
@@ -3327,6 +3344,7 @@
 				en,
 				Base,
 				"zh-Hant",
+				ja,
 			);
 			mainGroup = ED3776731654A8E90016EC64;
 			productRefGroup = ED37767F1654A8E90016EC64 /* Products */;
@@ -3405,6 +3423,7 @@
 				3FB8F9F221CE66C200DA88E2 /* girl@2x.png in Resources */,
 				3FB8F9F321CE66C200DA88E2 /* iconWallet@2x.png in Resources */,
 				3FB8F9F421CE66C200DA88E2 /* Edit@2x.png in Resources */,
+				3F767B12224B7B310012822D /* Localizable.strings in Resources */,
 				3FB8F9F521CE66C200DA88E2 /* Assets.xcassets in Resources */,
 				3F6C35B621EE0AB1008E2903 /* iconDepositWithdraw@2x.png in Resources */,
 				3FB8F9F621CE66C200DA88E2 /* pass@2x.png in Resources */,
@@ -3451,6 +3470,7 @@
 				3FB8FA1F21CE66C200DA88E2 /* kefuavatar@2x.png in Resources */,
 				3FB8FA2021CE66C200DA88E2 /* iconQuery@2x.png in Resources */,
 				3FB8FA2121CE66C200DA88E2 /* Support@2x.png in Resources */,
+				3F767B10224B7B310012822D /* InfoPlist.strings in Resources */,
 				3FB8FA2221CE66C200DA88E2 /* Cancel-64@2x.png in Resources */,
 				3FB8FA2321CE66C200DA88E2 /* icon_2_3@2x.png in Resources */,
 				3FB8FA2421CE66C200DA88E2 /* end@2x.png in Resources */,
@@ -3579,6 +3599,7 @@
 				F51D13EF1C51103100FBB748 /* tabFast@2x.png in Resources */,
 				F55325991C075D3200EC3F95 /* Bus@2x.png in Resources */,
 				B729E4861C2D566900CE3623 /* page_2@2x.png in Resources */,
+				3F767B11224B7B310012822D /* Localizable.strings in Resources */,
 				B747EFEA2125D57C0012E645 /* iconVote@2x.png in Resources */,
 				ED3DB7651882913500DBA933 /* icon_2_2@2x.png in Resources */,
 				B7C206B31D5D7AD000DF2A36 /* mic@2x.png in Resources */,
@@ -3650,6 +3671,7 @@
 				F532AADE1C3267180081F32C /* Security Checked@2x.png in Resources */,
 				F55325B11C075D3200EC3F95 /* Geo-fence@2x.png in Resources */,
 				B7A3F8881DC6F76700A733DC /* tabvoice@2x.png in Resources */,
+				3F767B0F224B7B310012822D /* InfoPlist.strings in Resources */,
 				ED3776A91654A8EA0016EC64 /* iTunesArtwork in Resources */,
 				F55325971C075D3200EC3F95 /* Arrow@2x.png in Resources */,
 				F55325AD1C075D3200EC3F95 /* Entering Geo Fence@2x.png in Resources */,
@@ -4440,6 +4462,22 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		3F767B0B224B7B310012822D /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3F767B0C224B7B310012822D /* ja */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		3F767B0D224B7B310012822D /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3F767B0E224B7B310012822D /* ja */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		3FB8F89021CCD10300DA88E2 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (

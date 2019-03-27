@@ -76,6 +76,7 @@ static LangManager *_sharedLangManager = nil;
         self.dataArray = @[
                            @{@"langNameKey":@"kLangKeyZhSimple", @"langCode":@"zh-Hans"},
                            @{@"langNameKey":@"kLangKeyEn", @"langCode":@"en"},
+                           @{@"langNameKey":@"kLangKeyJa", @"langCode":@"ja"},
                            ];
     }
     return self;
@@ -106,8 +107,12 @@ static LangManager *_sharedLangManager = nil;
     if (!currentLanguage) {
         currentLanguage = @"en";            //  default lang is english
         NSArray* languages = [[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"];
-        if ([languages count] > 0 && [languages[0] rangeOfString:@"zh"].location == 0) {
-            currentLanguage = @"zh-Hans";   //  lproj file
+        if ([languages count] > 0) {
+            if ([languages[0] rangeOfString:@"zh"].location == 0){
+                currentLanguage = @"zh-Hans";   //  lproj file
+            }else if ([languages[0] rangeOfString:@"ja"].location == 0){
+                currentLanguage = @"ja";        //  lproj file
+            }
         }
         [[pAppCache setPref:kCurrentLanguageKey value:currentLanguage] saveCacheToFile];
     }
