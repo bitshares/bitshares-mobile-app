@@ -98,7 +98,7 @@
 "kVcDWTipsNetworkConfirmWithN" = "Your  deposit will be deposited after %@ confirmations from the network.\n";
 "kVcDWTipsFindCustomService" = "If you have any questions, please contact the gateway customer service.";
 "kVcDWErrTipsRequestDepositAddrFailed" = "Request deposits address is abnormal, please contact the gateway customer service.";
-"kVcDWErrTipsRequestDepositAddrFailed2" = "Request deposits address is abnormal, the field '%@' verification failed, please contact the gateway customer service.";
+"kVcDWErrTipsRequestDepositAddrFailed2" = "Request deposits address is abnormal, the field \"%@\" verification failed, please contact the gateway customer service.";
 "kVcDWHelpTitleSupport" = "Support";
 "kVcDWHelpTitleQQ" = "QQ";
 "kVcDWHelpTitleTelegram" = "Telegram";
@@ -236,8 +236,8 @@
 "kAccTipsLogout" = "Logging out will delete the account information from the device, please confirm that you have made a backup. Do you want to continue logging out?";
 
 /* 提案界面 */
-"kProposalTipsAskMissingActive" = "You don't have active permissions for account %@, do you want to create a proposal?";
-"kProposalTipsAskMissingOwner" = "You don't have owner permissions for account %@, do you want to create a proposal?";
+"kProposalTipsAskMissingActive" = "You don\'t have active permissions for account %@, do you want to create a proposal?";
+"kProposalTipsAskMissingOwner" = "You don\'t have owner permissions for account %@, do you want to create a proposal?";
 "kProposalTipsSelectFeePayingAccount" = "Please select the proposal creator";
 "kProposalLabelCellProposalCreator" = "Proposal creator";
 "kProposalSubmitTipsSelectCreator" = "Please select a proposal creator account.";
@@ -710,8 +710,8 @@
 "kSearchTipsMyCustomPairs" = "My pairs(%@)";
 "kSearchTipsMaxCustomParisNumber" = "You can only customize up to %@ pairs.";
 "kSearchTipsForbidden" = "Frozen";
-"kMsgUsenameCannotBeNull" = "Account can't be empty.";
-"kMsgPasswordCannotBeNull" = "Password can't be empty.";
+"kMsgUsenameCannotBeNull" = "Account can\'t be empty.";
+"kMsgPasswordCannotBeNull" = "Password can\'t be empty.";
 "kTipsAddFavDelete" = "Successfully delete";
 "kTipsAddFavSuccess" = "Successfully add";
 "kTipsUnfollowed" = "Unfollowed";
@@ -734,13 +734,13 @@
 "search_result" = "Search result";
 "other" = "Other";
 "kBtnClose" = "Close";
-"upgrade now" = "Update";
-"remind me latter" = "Remind later";
+"kUpgradeNow" = "Update";
+"kRemindMeLatter" = "Remind later";
 "tip_network_error" = "Network error, please try again later.";
 "Cancel" = "Cancel";
 "faq" = "FAQ";
 "tip_click_to_login" = "Click here to login";
-"account management" = "Account management";
+"kAccountManagement" = "Account management";
 "tip_member_expired" = "Member: Expired";
 "tip_member_timeleft_fmt" = "Member:%@ days left";
 "unlockTipsPleaseInputAccountPassword" = "Please input account password";
@@ -757,3 +757,57 @@
 /* 特殊用途字符串KEY */
 "serverWssLangKey" = "en";
 "appDepositWithdrawDefaultGateway" = "RuDEX";
+
+/* Android专有字符串 */
+"action_settings" = "Settings";
+"title_home" = "Home";
+"title_dashboard" = "Dashboard";
+"title_notifications" = "Notifications";
+"kTabNameServices" = "服务";
+"webserverUploadPage" = "upload";
+"webserverDownloadPage" = "download";
+"nameNetworkInitException" = "网络异常，初始化失败，请稍后再试。";
+"nameSaoyisao" = "扫一扫";
+"tipsFormatWalletPasswordForUpgateWallet" = "8位以上文件钱包密码";
+"launchTipVersionKey" = "newVersionInfo";
+"launchTipDefaultNewVersion" = "发现新版本 v%s，快前往更新吧。";
+"indexNameWhatGateway" = "什么是网关？";
+"kKlineIndexSelectMainIndex" = "请选择主图显示指标";
+"kKlineIndexSelectSubIndex" = "请选择副图显示指标。";
+"debtPageCurrentFeedPriceA" = "当前喂价 &#45;&#45;";
+"debtPageForcedLiquidationPriceA" = "强平价格 &#45;&#45;";
+"debtPageUsableBalance0cny" = "可用余额 0CNY";
+"debtPageUsableBalance0bts" = "可用余额 0BTS";
+"serviceMainPageGame" = "小游戏";
+"serviceMainPageRechargeAndWithdraw" = "冲币提币";
+"transferPagePleaseSelectCollectionAccount" = "请选择收款账号";
+"debtPageNoCallOrder" = "没有任何债仓信息";
+"votingPagecurrentAgentA" = "当前代理 &#45;&#45;";
+"votingPageActiveCommittees" = "活跃理事会(%s名)";
+"votingPageCandidateCommittees" = "候选理事会(%s名)";
+"votingPageActiveWitness" = "活跃见证人(%s名)";
+"votingPageCandidateWitness" = "候选见证人(%s名)";
+"votingPageExpireWorks" = "过期预算项目(%s个)";
+"votingPageDoingWorks" = "进行中预算项目(%s个)";
+"votingPageActiveWorks" = "活跃预算项目(%s个)";
+"votingPageProposalWorks" = "提案预算项目(%s个)";
+"registerLoginPagePleaseTradePwd" = "请输入新的钱包密码";
+"registerLoginPageReceiveFiles0" = "收到的文件(0个)";
+"registerLoginPagePleaseInputWalletPws" = "请输入钱包文件密码";\
+"registerLoginPagePasswordIsEmpty" = "密码不能为空。";
+"registerLoginPageCapitalPrivateKeyIsWrongAndInputAgain" = "资金私钥不正确，请重新输入。";
+"registerLoginPageInvalidRequesting" = "无效请求";
+"registerLoginPageUploadSuccessPleaseContinueForPhone" = "上传成功，请在手机上继续完成导入操作。";
+"registerLoginPageServerInternalError" = "服务器内部错误";
+"registerLoginPageTipForDeleteFileForThisPhone" = "从该设备删除文件%s，确定吗？";
+"registerLoginPageClickWrong" = "点错了";
+"registerLoginPagePleaseInputWalletFilePws" = "请输入钱包文件密码";
+"registerLoginPageSVipRegisterer" = "终身会员推荐人";
+"registerLoginWebServerErrorIp" = "获取手机地址异常，请稍后再试。";
+"registerLoginWebServerErrorInit" = "初始化失败，请重启APP再试。";
+"registerLoginTipBackupError" = "导出钱包失败，请稍后再试。";
+"myAssetsPageUnknowOperationContent" = "未知操作内容";
+"myAssetsPageCreatedAccount" = "%s 创建了账号 %s。";
+"accountSearchTitle" = "账号查询";
+"kWalletMemuTipsPleaseSelectCellAction" = "请选择要执行的操作";
+"kWalletMenuTipsPleaseSelectImportType" = "请选择要导入的账号类型";
