@@ -158,7 +158,7 @@
                 android:textSize="16dp"
                 android:layout_weight="3"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/registerLoginPageSVipRegisterer"/>
+                android:text="@string/kAccLabelLifetimeRef"/>
 
             <TextView
                 android:id="@+id/txt_lifetime_referrer_name"

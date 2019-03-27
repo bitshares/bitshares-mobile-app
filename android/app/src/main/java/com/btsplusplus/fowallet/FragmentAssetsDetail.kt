@@ -231,7 +231,7 @@ class FragmentAssetsDetail : BtsppFragment() {
                     transferName = _ctx!!.resources.getString(R.string.kOpType_account_create)
                     val user = chainMgr.getChainObjectByID(op_data.getString("registrar")).getString("name")
                     var new_user = op_data.getString("name")
-                    mainDesc = String.format(R.string.myAssetsPageCreatedAccount.xmlstring(_ctx!!), user, new_user)
+                    mainDesc = String.format(R.string.kVcActivityDescCreateAccount.xmlstring(_ctx!!), user, new_user)
                 }
                 EBitsharesOperations.ebo_account_update.value -> {
                     transferName = _ctx!!.resources.getString(R.string.kVcActivityTypeUpdateAccount)

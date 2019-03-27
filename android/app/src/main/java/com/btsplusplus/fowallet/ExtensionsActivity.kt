@@ -343,7 +343,7 @@ fun android.app.Activity.guardWalletUnlocked(checkActivePermission: Boolean, bod
             if (password == null) {
                 body(false)
             } else if (password == "") {
-                showToast(resources.getString(R.string.registerLoginPagePasswordIsEmpty))
+                showToast(resources.getString(R.string.kMsgPasswordCannotBeNull))
             } else {
                 val unlockInfos = WalletManager.sharedWalletManager().unLock(password, this)
                 var unlockSuccess = unlockInfos.getBoolean("unlockSuccess")

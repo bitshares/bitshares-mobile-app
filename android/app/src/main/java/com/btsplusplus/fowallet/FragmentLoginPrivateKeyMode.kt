@@ -63,7 +63,7 @@ class FragmentLoginPrivateKeyMode : Fragment() {
     private fun loginBitshares_PrivateKeyMode(active_privatekey: String, trade_password: String) {
         //  检查参数有效性
         if (active_privatekey == "") {
-            showToast(_ctx!!.resources.getString(R.string.registerLoginPageCapitalPrivateKeyIsWrongAndInputAgain))
+            showToast(_ctx!!.resources.getString(R.string.kLoginSubmitTipsInvalidPrivateKey))
             return
         }
 
@@ -78,7 +78,7 @@ class FragmentLoginPrivateKeyMode : Fragment() {
         //  从WIF私钥获取公钥。
         val calc_bts_active_address = OrgUtils.genBtsAddressFromWifPrivateKey(active_privatekey)
         if (calc_bts_active_address == null) {
-            showToast(_ctx!!.resources.getString(R.string.registerLoginPageCapitalPrivateKeyIsWrongAndInputAgain))
+            showToast(_ctx!!.resources.getString(R.string.kLoginSubmitTipsInvalidPrivateKey))
             return
         }
 
@@ -88,7 +88,7 @@ class FragmentLoginPrivateKeyMode : Fragment() {
             val account_data_hash = it as JSONObject
             if (account_data_hash.length() <= 0) {
                 mask.dismiss()
-                showToast(_ctx!!.resources.getString(R.string.registerLoginPageCapitalPrivateKeyIsWrongAndInputAgain))
+                showToast(_ctx!!.resources.getString(R.string.kLoginSubmitTipsInvalidPrivateKey))
                 return@then null
             }
             val account_data_list = account_data_hash.values()

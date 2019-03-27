@@ -271,7 +271,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/serviceMainPageRechargeAndWithdraw"/>
+                android:text="@string/kServicesCellLabelDepositWithdraw"/>
 
             <ImageView
                 android:layout_width="0dp"
