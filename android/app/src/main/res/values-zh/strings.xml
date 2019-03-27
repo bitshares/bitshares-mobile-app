@@ -652,12 +652,7 @@
     <string name="skip">跳过</string>
     <string name="kAppName">比特股</string>
     <string name="kAccount">账号</string>
-    <string name="kAboutMainDesc">比特股移动端钱包是基于石墨烯技术，从产品体验出发，采用原生技术开发的一款可媲美一流中心化交易所的去中心化交易所（DEX）产品。</string>
-    <string name="kAboutContactUs">联系我们</string>
-    <string name="kAboutWechat">微信：%s</string>
-    <string name="kAboutEmail">邮箱：%s</string>
-    <string name="kAboutTelegram">电报：%s</string>
-    <string name="kAboutWebsite">官网：%s</string>
+    <string name="kAboutMainDesc">\n比特股移动端钱包是基于石墨烯技术，从产品体验出发，采用原生技术开发的一款可媲美一流中心化交易所的去中心化交易所（DEX）产品。\n\n联系我们\n微信：bts-pp\n邮箱：contactsbtsplusplus.com\n电报：https://t.me/btsplusplus\n官网：http://btspp.io\n</string>
     <string name="kAboutChannelAppStore">(商店版 &amp; 渠道 %s)</string>
     <string name="kAboutChannelWebsite">(官网版 &amp; 渠道 %s)</string>
     <string name="kAboutDebugVersion">(调试版)</string>
@@ -735,28 +730,18 @@
     <string name="launchTipDefaultNewVersion">发现新版本 v%s，快前往更新吧。</string>
     <string name="kKlineIndexSelectMainIndex">请选择主图显示指标</string>
     <string name="kKlineIndexSelectSubIndex">请选择副图显示指标。</string>
-    <string name="debtPageCurrentFeedPriceA">当前喂价 &amp;#45;&amp;#45;</string>
-    <string name="debtPageUsableBalance0cny">可用余额 0CNY</string>
-    <string name="debtPageUsableBalance0bts">可用余额 0BTS</string>
     <string name="serviceMainPageGame">小游戏</string>
-    <string name="serviceMainPageRechargeAndWithdraw">冲币提币</string>
     <string name="registerLoginPageReceiveFiles0">收到的文件(0个)</string>
-    <!-- TODO -->
     <string name="registerLoginPagePleaseInputWalletPws">请输入钱包文件密码</string>
-    <string name="registerLoginPagePasswordIsEmpty">密码不能为空。</string>
-    <string name="registerLoginPageCapitalPrivateKeyIsWrongAndInputAgain">资金私钥不正确，请重新输入。</string>
     <string name="registerLoginPageInvalidRequesting">无效请求</string>
     <string name="registerLoginPageUploadSuccessPleaseContinueForPhone">上传成功，请在手机上继续完成导入操作。</string>
     <string name="registerLoginPageServerInternalError">服务器内部错误</string>
     <string name="registerLoginPageTipForDeleteFileForThisPhone">从该设备删除文件%s，确定吗？</string>
     <string name="registerLoginPageClickWrong">点错了</string>
-    <string name="registerLoginPagePleaseInputWalletFilePws">请输入钱包文件密码</string>
-    <string name="registerLoginPageSVipRegisterer">终身会员推荐人</string>
     <string name="registerLoginWebServerErrorIp">获取手机地址异常，请稍后再试。</string>
     <string name="registerLoginWebServerErrorInit">初始化失败，请重启APP再试。</string>
     <string name="registerLoginTipBackupError">导出钱包失败，请稍后再试。</string>
     <string name="myAssetsPageUnknowOperationContent">未知操作内容</string>
-    <string name="myAssetsPageCreatedAccount">%s 创建了账号 %s。</string>
     <string name="kWalletMemuTipsPleaseSelectCellAction">请选择要执行的操作</string>
     <string name="kWalletMenuTipsPleaseSelectImportType">请选择要导入的账号类型</string>
 </resources>

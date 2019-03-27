@@ -297,7 +297,7 @@ class FragmentLoginWalletMode : Fragment() {
      * 导入操作
      */
     private fun onSelectWalletFile(ctx: Context, data: JSONObject) {
-        UtilsAlert.showInputBox(ctx, ctx.resources.getString(R.string.kLoginTipsImportWalletTitle), ctx.resources.getString(R.string.registerLoginPagePleaseInputWalletFilePws), ctx.resources.getString(R.string.kLoginBtnImportNow)).then {
+        UtilsAlert.showInputBox(ctx, ctx.resources.getString(R.string.kLoginTipsImportWalletTitle), ctx.resources.getString(R.string.unlockTipsPleaseInputWalletPassword), ctx.resources.getString(R.string.kLoginBtnImportNow)).then {
             val password = it as? String
             if (password != null) {
                 processImportWalletCore(password, data)
@@ -307,7 +307,7 @@ class FragmentLoginWalletMode : Fragment() {
 
     private fun processImportWalletCore(wallet_password: String, data: JSONObject) {
         if (wallet_password == "") {
-            showToast(_ctx!!.resources.getString(R.string.registerLoginPagePasswordIsEmpty))
+            showToast(_ctx!!.resources.getString(R.string.kLoginImportTipsPleaseInputPassword))
             return
         }
         //  加载钱包对象

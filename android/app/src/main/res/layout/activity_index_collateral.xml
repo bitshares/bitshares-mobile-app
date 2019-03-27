@@ -114,7 +114,7 @@
 
             <TextView
                 android:id="@+id/label_txt_curr_feed"
-                android:text="@string/debtPageCurrentFeedPriceA"
+                android:text="--"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
                 android:layout_width="0dp"
@@ -180,7 +180,7 @@
                         android:layout_gravity="center_vertical"
                         android:gravity="center_vertical|left"
                         android:textSize="10dp"
-                        android:text="@string/debtPageUsableBalance0cny"
+                        android:text="--"
                         android:textColor="@color/theme01.textColorNormal" />
                     <TextView
                         android:id="@+id/label_txt_debt_available_changed"
@@ -265,7 +265,7 @@
                         android:layout_gravity="center_vertical"
                         android:gravity="center_vertical|left"
                         android:textSize="10dp"
-                        android:text="@string/debtPageUsableBalance0bts"
+                        android:text="--"
                         android:textColor="@color/theme01.textColorNormal" />
                     <TextView
                         android:id="@+id/label_txt_coll_available_changed"

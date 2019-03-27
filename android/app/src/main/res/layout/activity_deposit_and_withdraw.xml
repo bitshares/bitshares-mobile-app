@@ -48,7 +48,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="@string/serviceMainPageRechargeAndWithdraw"
+                android:text="@string/kVcTitleDepositWithdraw"
                 style="@style/kNavigationBarTextStyle" />
 
 
