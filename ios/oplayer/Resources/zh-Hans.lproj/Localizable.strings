@@ -679,6 +679,7 @@
 /* 通用字符串 */
 "kLangKeyZhSimple" = "简体中文";
 "kLangKeyEn" = "English / 英文";
+"kLangKeyJa" = "日本語 / 日文";
 "skip" = "跳过";
 "kAppName" = "比特股";
 "kAccount" = "账号";

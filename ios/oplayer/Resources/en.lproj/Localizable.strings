@@ -679,6 +679,7 @@
 /* 通用字符串 */
 "kLangKeyZhSimple" = "简体中文 / Simplified Chinese";
 "kLangKeyEn" = "English";
+"kLangKeyJa" = "日本語 / Japanese";
 "skip" = "Skip";
 "kAppName" = "Bitshares";
 "kAccount" = "Account";
