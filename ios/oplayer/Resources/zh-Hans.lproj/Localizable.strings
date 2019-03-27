@@ -761,7 +761,7 @@
 "webserverDownloadPage" = "download";
 "nameSaoyisao" = "扫一扫";
 "launchTipVersionKey" = "newVersionInfo";
-"launchTipDefaultNewVersion" = "发现新版本 v%s，快前往更新吧。";
+"launchTipDefaultNewVersion" = "发现新版本 v%@，快前往更新吧。";
 "kKlineIndexSelectMainIndex" = "请选择主图显示指标";
 "kKlineIndexSelectSubIndex" = "请选择副图显示指标。";
 "serviceMainPageGame" = "小游戏";
@@ -770,7 +770,7 @@
 "registerLoginPageInvalidRequesting" = "无效请求";
 "registerLoginPageUploadSuccessPleaseContinueForPhone" = "上传成功，请在手机上继续完成导入操作。";
 "registerLoginPageServerInternalError" = "服务器内部错误";
-"registerLoginPageTipForDeleteFileForThisPhone" = "从该设备删除文件%s，确定吗？";
+"registerLoginPageTipForDeleteFileForThisPhone" = "从该设备删除文件%@，确定吗？";
 "registerLoginPageClickWrong" = "点错了";
 "registerLoginWebServerErrorIp" = "获取手机地址异常，请稍后再试。";
 "registerLoginWebServerErrorInit" = "初始化失败，请重启APP再试。";

@@ -8,6 +8,7 @@ module AndroidI18nGeneration
     files_mapping: {
       "en.lproj/Localizable.strings"      => "values/strings.xml",      # => en
       "zh-Hans.lproj/Localizable.strings" => "values-zh/strings.xml",   # => zh
+      "ja.lproj/Localizable.strings"      => "values-ja/strings.xml",   # => ja
     },
     ios_base_dir: File.expand_path(File.join("..", 'ios/oplayer/Resources')),
     android_base_dir: File.expand_path(File.join("..", 'android/app/src/main/res')),
