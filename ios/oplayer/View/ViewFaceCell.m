@@ -128,7 +128,7 @@
     WalletManager* walletMgr = [WalletManager sharedWalletManager];
     if (![walletMgr isWalletExist])
     {
-        _lbName.text = NSLocalizedString(@"account management", @"帐号管理");
+        _lbName.text = NSLocalizedString(@"kAccountManagement", @"帐号管理");
         _lbUserName.text = NSLocalizedString(@"tip_click_to_login", @"点此登录");
     }
     else

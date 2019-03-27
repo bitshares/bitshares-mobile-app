@@ -1116,44 +1116,37 @@ enum
         switch (kType) {
             case kSecTypeCommitteeActive:
             {
-                titleLabel.text = [NSString stringWithFormat:@"%@(%@%@)", NSLocalizedString(@"kLabelVotingActiveCommittees", @"活跃理事会"),
-                                   @(num), NSLocalizedString(@"kLabelVotingCommitteesN", @"名")];
+                titleLabel.text = [NSString stringWithFormat:NSLocalizedString(@"kLabelVotingActiveCommittees", @"活跃理事会(%@名)"), @(num)];
                 [myView addSubview:[self _genHelpButton:kType]];
             }
                 break;
             case kSecTypeCommitteeCandidate:
             {
-                titleLabel.text = [NSString stringWithFormat:@"%@(%@%@)", NSLocalizedString(@"kLabelVotingStandbyCommittees", @"候选理事会"),
-                                   @(num), NSLocalizedString(@"kLabelVotingCommitteesN", @"名")];
+                titleLabel.text = [NSString stringWithFormat:NSLocalizedString(@"kLabelVotingStandbyCommittees", @"候选理事会(%@名"), @(num)];
                 [myView addSubview:[self _genHelpButton:kType]];
             }
                 break;
             case kSecTypeWitnessActive:
             {
-                titleLabel.text = [NSString stringWithFormat:@"%@(%@%@)", NSLocalizedString(@"kLabelVotingActiveWitnesses", @"活跃见证人"),
-                                   @(num), NSLocalizedString(@"kLabelVotingWitnessesN", @"名")];
+                titleLabel.text = [NSString stringWithFormat:NSLocalizedString(@"kLabelVotingActiveWitnesses", @"活跃见证人(%@名"), @(num)];
                 [myView addSubview:[self _genHelpButton:kType]];
             }
                 break;
             case kSecTypeWitnessCandidate:
             {
-                titleLabel.text = [NSString stringWithFormat:@"%@(%@%@)", NSLocalizedString(@"kLabelVotingStandbyWitnesses", @"候选见证人"),
-                                   @(num), NSLocalizedString(@"kLabelVotingWitnessesN", @"名")];
+                titleLabel.text = [NSString stringWithFormat:NSLocalizedString(@"kLabelVotingStandbyWitnesses", @"候选见证人(%@名"), @(num)];
                 [myView addSubview:[self _genHelpButton:kType]];
             }
                 break;
             case kSecTypeWorkerExpired:
-                titleLabel.text = [NSString stringWithFormat:@"%@(%@%@)", NSLocalizedString(@"kLabelVotingExpiredWP", @"过期预算项目"),
-                                   @(num), NSLocalizedString(@"kLabelVotingWorkersN", @"个")];
+                titleLabel.text = [NSString stringWithFormat:NSLocalizedString(@"kLabelVotingExpiredWP", @"过期预算项目(%@个)"), @(num)];
                 break;
             case kSecTypeWorkerNotExpired:
-                titleLabel.text = [NSString stringWithFormat:@"%@(%@%@)", NSLocalizedString(@"kLabelVotingNotExpiredWP", @"进行中预算项目"),
-                                   @(num), NSLocalizedString(@"kLabelVotingWorkersN", @"个")];
+                titleLabel.text = [NSString stringWithFormat:NSLocalizedString(@"kLabelVotingNotExpiredWP", @"进行中预算项目(%@个)"), @(num)];
                 break;
             case kSecTypeWorkerActive:
             {
-                titleLabel.text = [NSString stringWithFormat:@"%@(%@%@)", NSLocalizedString(@"kLabelVotingActiveWP", @"活跃预算项目"),
-                                   @(num), NSLocalizedString(@"kLabelVotingWorkersN", @"个")];
+                titleLabel.text = [NSString stringWithFormat:NSLocalizedString(@"kLabelVotingActiveWP", @"活跃预算项目(%@个)"), @(num)];
                 
                 assert(_nTotalBudget);
                 UILabel* secLabel = [[UILabel alloc] initWithFrame:CGRectMake(12, 0, fWidth - 24, 44)];
@@ -1170,8 +1163,7 @@ enum
                 break;
             case kSecTypeWorkerInactive:
             {
-                titleLabel.text = [NSString stringWithFormat:@"%@(%@%@)", NSLocalizedString(@"kLabelVotingInactiveWP", @"提案预算项目"),
-                                   @(num), NSLocalizedString(@"kLabelVotingWorkersN", @"个")];
+                titleLabel.text = [NSString stringWithFormat:NSLocalizedString(@"kLabelVotingInactiveWP", @"提案预算项目(%@个)"), @(num)];
                 
                 assert(_nActiveMinVoteNum);
                 UILabel* secLabel = [[UILabel alloc] initWithFrame:CGRectMake(12, 0, fWidth - 24, 44)];

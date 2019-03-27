@@ -313,9 +313,8 @@
     NSLog(@"intro clicked: %@", @(sender.tag));
     //  [统计]
     [Answers logCustomEventWithName:@"qa_tip_click" customAttributes:@{@"qa":@"qa_gateway"}];
-    //  TODO:fowallet 未完成，我们自己的qa网址。
     VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"http://btspp.io/qam.html#qa_gateway"];
-    vc.title = @"什么是网关？";
+    vc.title = NSLocalizedString(@"kVcTitleWhatIsGateway", @"什么是网关？");
     [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
 }
 

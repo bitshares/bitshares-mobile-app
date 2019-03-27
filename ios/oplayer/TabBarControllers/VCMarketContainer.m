@@ -564,11 +564,11 @@
 {
     NSArray* otherButtons = nil;
     if (!forceUpdate){
-        otherButtons = [NSArray arrayWithObject:NSLocalizedString(@"remind me latter", @"稍后提醒")];
+        otherButtons = [NSArray arrayWithObject:NSLocalizedString(@"kRemindMeLatter", @"稍后提醒")];
     }
     [[UIAlertViewManager sharedUIAlertViewManager] showMessageEx:message
                                                        withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
-                                                    cancelButton:NSLocalizedString(@"upgrade now", @"立即升级")
+                                                    cancelButton:NSLocalizedString(@"kUpgradeNow", @"立即升级")
                                                     otherButtons:otherButtons
                                                       completion:^(NSInteger buttonIndex)
      {
