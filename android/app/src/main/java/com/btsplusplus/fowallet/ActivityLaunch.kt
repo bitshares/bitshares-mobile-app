@@ -109,9 +109,9 @@ class ActivityLaunch : BtsppActivity() {
     private fun _showAppUpdateWindow(message: String, url: String, forceUpdate: Boolean) {
         var btn_cancel: String? = null
         if (!forceUpdate) {
-            btn_cancel = resources.getString(R.string.launchBtnRemindLater)
+            btn_cancel = resources.getString(R.string.kRemindMeLatter)
         }
-        UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kWarmTips), message, btn_ok = resources.getString(R.string.launchBtnUpdateNow), btn_cancel = btn_cancel).then {
+        UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kWarmTips), message, btn_ok = resources.getString(R.string.kUpgradeNow), btn_cancel = btn_cancel).then {
             //  进入APP
             _enterToMain()
             //  立即升级：打开下载。
