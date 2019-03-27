@@ -135,7 +135,7 @@ class ActivityIndexMy : BtsppActivity() {
                 findViewById<TextView>(R.id.label_txt_status).text = "${R.string.kLblMembership.xmlstring(this)}${R.string.kLblMembershipBasic.xmlstring(this)}"
             }
         } else {
-            findViewById<TextView>(R.id.label_txt_accoutname).text = R.string.nameAccountManager.xmlstring(this)
+            findViewById<TextView>(R.id.label_txt_accoutname).text = R.string.kAccountManagement.xmlstring(this)
             findViewById<TextView>(R.id.label_txt_status).text = R.string.tip_click_to_login.xmlstring(this)
         }
     }
