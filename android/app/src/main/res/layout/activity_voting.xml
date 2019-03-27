@@ -107,7 +107,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:textColor="@color/theme01.textColorHighlight"
-                android:text="@string/votingPagecurrentAgentA"
+                android:text="--"
                 android:textSize="14dp"
                 android:gravity="center"/>
 

@@ -448,7 +448,7 @@ class ActivityTransfer : BtsppActivity() {
             to_txt.text = to.getString("name")
             to_txt.setTextColor(resources.getColor(R.color.theme01_buyColor))
         } else {
-            to_txt.text = resources.getString(R.string.transferPagePleaseSelectCollectionAccount)
+            to_txt.text = resources.getString(R.string.kVcTransferTipSelectToAccount)
             to_txt.setTextColor(resources.getColor(R.color.theme01_textColorGray))
         }
         findViewById<TextView>(R.id.txt_value_asset_name).text = _transfer_args!!.getJSONObject("asset").getString("symbol")

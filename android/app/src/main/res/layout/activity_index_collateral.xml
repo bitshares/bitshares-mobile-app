@@ -144,7 +144,7 @@
 
         <TextView
             android:id="@+id/label_txt_trigger_price"
-            android:text="@string/debtPageForcedLiquidationPriceA"
+            android:text="--"
             android:gravity="center"
             android:layout_gravity="center"
             android:layout_width="match_parent"

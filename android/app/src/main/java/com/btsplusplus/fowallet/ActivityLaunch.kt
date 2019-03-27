@@ -71,7 +71,7 @@ class ActivityLaunch : BtsppActivity() {
             }
         }.catch {
             if (first_init) {
-                showToast(resources.getString(R.string.nameNetworkInitException))
+                showToast(resources.getString(R.string.tip_network_error))
             }
             //  auto restart
             OrgUtils.asyncWait(1000).then {

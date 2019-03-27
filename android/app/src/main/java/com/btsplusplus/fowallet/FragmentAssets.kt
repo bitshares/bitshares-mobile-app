@@ -542,8 +542,7 @@ class FragmentAssets : BtsppFragment() {
 
         val v: View = inflater.inflate(R.layout.fragment_assets, container, false)
         val ly = v.findViewById<LinearLayout>(R.id.layout_my_assets_from_my_fragment)
-
-        v.findViewById<TextView>(R.id.label_total_title).text = "${_ctx!!.resources.getString(R.string.kVcAssetTotalValue)}(${SettingManager.sharedSettingManager().getEstimateAssetSymbol()})"
+        v.findViewById<TextView>(R.id.label_total_title).text = String.format(_ctx!!.resources.getString(R.string.kVcAssetTotalValue), SettingManager.sharedSettingManager().getEstimateAssetSymbol())
         refreshUI_TotalValue(v.findViewById<TextView>(R.id.label_total_value))
 
         val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, toDp(30f))
