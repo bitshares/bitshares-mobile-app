@@ -651,41 +651,41 @@ class FragmentVoting : BtsppFragment() {
             val auxArgs = JSONObject()
             when (type) {
                 kSecTypeCommitteeActive -> {
-                    segtitle = String.format(_ctx!!.resources.getString(R.string.votingPageActiveCommittees), n.toString())
+                    segtitle = String.format(_ctx!!.resources.getString(R.string.kLabelVotingActiveCommittees), n.toString())
                     auxArgs.put("kTitle", _ctx!!.resources.getString(R.string.kVcVoteWhatIsActiveCommittee))
                     auxArgs.put("kURL", "http://btspp.io/qam.html#qa_committee")
                 }
                 kSecTypeCommitteeCandidate -> {
-                    segtitle = String.format(_ctx!!.resources.getString(R.string.votingPageCandidateCommittees), n.toString())
+                    segtitle = String.format(_ctx!!.resources.getString(R.string.kLabelVotingStandbyCommittees), n.toString())
                     auxArgs.put("kTitle", _ctx!!.resources.getString(R.string.kVcVoteWhatIsStandbyCommittee))
                     auxArgs.put("kURL", "http://btspp.io/qam.html#qa_committee_c")
                 }
                 kSecTypeWitnessActive -> {
-                    segtitle = String.format(_ctx!!.resources.getString(R.string.votingPageActiveWitness), n.toString())
+                    segtitle = String.format(_ctx!!.resources.getString(R.string.kLabelVotingActiveWitnesses), n.toString())
                     auxArgs.put("kTitle", _ctx!!.resources.getString(R.string.kVcVoteWhatIsActiveWitness))
                     auxArgs.put("kURL", "http://btspp.io/qam.html#qa_witness")
                 }
                 kSecTypeWitnessCandidate -> {
-                    segtitle = String.format(_ctx!!.resources.getString(R.string.votingPageCandidateWitness), n.toString())
+                    segtitle = String.format(_ctx!!.resources.getString(R.string.kLabelVotingStandbyWitnesses), n.toString())
                     auxArgs.put("kTitle", _ctx!!.resources.getString(R.string.kVcVoteWhatIsStandbyWitness))
                     auxArgs.put("kURL", "http://btspp.io/qam.html#qa_witness_c")
                 }
                 kSecTypeWorkerExpired -> {
-                    segtitle = String.format(_ctx!!.resources.getString(R.string.votingPageExpireWorks), n.toString())
+                    segtitle = String.format(_ctx!!.resources.getString(R.string.kLabelVotingExpiredWP), n.toString())
                     hastip = false
                 }
                 kSecTypeWorkerNotExpired -> {
-                    segtitle = String.format(_ctx!!.resources.getString(R.string.votingPageDoingWorks), n.toString())
+                    segtitle = String.format(_ctx!!.resources.getString(R.string.kLabelVotingNotExpiredWP), n.toString())
                     hastip = false
                 }
                 kSecTypeWorkerActive -> {
-                    segtitle = String.format(_ctx!!.resources.getString(R.string.votingPageActiveWorks), n.toString())
+                    segtitle = String.format(_ctx!!.resources.getString(R.string.kLabelVotingActiveWP), n.toString())
                     hastip = false
                     auxArgs.put("kTitle", "${_ctx!!.resources.getString(R.string.kLabelVotingTotalBudget)} ")
                     auxArgs.put("kValue", OrgUtils.formatFloatValue(round(_nTotalBudget!!.toDouble()), _bts_precision, has_comma = false))
                 }
                 kSecTypeWorkerInactive -> {
-                    segtitle = String.format(_ctx!!.resources.getString(R.string.votingPageProposalWorks), n.toString())
+                    segtitle = String.format(_ctx!!.resources.getString(R.string.kLabelVotingInactiveWP), n.toString())
                     hastip = false
                     auxArgs.put("kTitle", "${_ctx!!.resources.getString(R.string.kLabelVotingWPPassVotes)} ")
                     auxArgs.put("kValue", _nActiveMinVoteNum)

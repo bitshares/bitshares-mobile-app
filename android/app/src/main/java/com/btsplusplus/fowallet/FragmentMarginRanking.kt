@@ -75,7 +75,7 @@ class FragmentMarginRanking : BtsppFragment() {
                 createCell(lay, this.activity?.applicationContext!!, layout_params, json!!)
             }
         } else {
-            lay.addView(ViewUtils.createEmptyCenterLabel(_ctx!!, R.string.debtPageNoCallOrder.xmlstring(_ctx!!)))
+            lay.addView(ViewUtils.createEmptyCenterLabel(_ctx!!, R.string.kVcTipsNoCallOrder.xmlstring(_ctx!!)))
         }
     }
 

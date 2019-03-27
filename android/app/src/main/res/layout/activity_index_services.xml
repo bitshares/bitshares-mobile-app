@@ -28,7 +28,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center|center_vertical"
-                android:text="@string/kTabNameServices"
+                android:text="@string/kTabBarNameServices"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>

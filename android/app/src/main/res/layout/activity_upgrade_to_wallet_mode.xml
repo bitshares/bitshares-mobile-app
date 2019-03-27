@@ -135,7 +135,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:hint="@string/tipsFormatWalletPasswordForUpgateWallet"
+                android:hint="@string/kLoginTipsPlaceholderWalletPassword"
                 android:textColor="@color/theme01.textColorMain"
                 android:textSize="16dp"
                 android:background="@null"

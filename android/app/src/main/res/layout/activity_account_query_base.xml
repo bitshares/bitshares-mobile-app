@@ -49,7 +49,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="@string/accountSearchTitle"
+                android:text="@string/kVcTitleAccountSearch"
                 style="@style/kNavigationBarTextStyle" />
 
 
