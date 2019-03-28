@@ -218,30 +218,43 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
 /**
  *  OP - 创建提案
  */
-- (WsPromise*)proposalCreate:(EBitsharesOperations)opcode opdata:(id)opdata opaccount:(id)opaccount fee_paying_account:(NSString*)fee_paying_account
+- (WsPromise*)proposalCreate:(EBitsharesOperations)opcode
+                      opdata:(id)opdata
+                   opaccount:(id)opaccount
+        proposal_create_args:(id)proposal_create_args
 {
     assert(opdata);
     assert(opaccount);
+    assert(proposal_create_args);
+    
+    id kFeePayingAccount = [proposal_create_args objectForKey:@"kFeePayingAccount"];
+    NSInteger kApprovePeriod = [[proposal_create_args objectForKey:@"kApprovePeriod"] integerValue];
+    NSInteger kReviewPeriod = [[proposal_create_args objectForKey:@"kReviewPeriod"] integerValue];
+    
+    assert(kFeePayingAccount);
+    assert(kApprovePeriod > 0);
+    
+    NSString* fee_paying_account_id = [kFeePayingAccount objectForKey:@"id"];
+    assert(fee_paying_account_id);
     
     return [[self _wrap_opdata_with_fee:opcode opdata:opdata] then:(^id(id opdata_with_fee) {
-        //  TODO:fowallet 这2个参数后续考虑让用户自己选择。
         
-        //  提案有效期：3天。TODO：是否考虑用户选择？
-        NSUInteger proposal_lifetime_sec = 3600 * 24 * 3;
+        //  提案有效期
+        NSUInteger proposal_lifetime_sec = kApprovePeriod + kReviewPeriod;
         
-        //  提案审核期：2天    REMARK：该周期必须小于提案有效期
-        NSUInteger review_period_seconds = 3600 * 24 * 2;
+        //  提案审核期
+        NSUInteger review_period_seconds = kReviewPeriod;
         
         //  获取全局参数
         id gp = [[ChainObjectManager sharedChainObjectManager] getObjectGlobalProperties];
         if (gp){
             id parameters = [gp objectForKey:@"parameters"];
             if (parameters){
-                //  不能 超过最大值
+                //  不能 超过最大值（当前值28天）
                 NSUInteger maximum_proposal_lifetime = [[parameters objectForKey:@"maximum_proposal_lifetime"] unsignedIntegerValue];
                 proposal_lifetime_sec = MIN(maximum_proposal_lifetime, proposal_lifetime_sec);
                 
-                //  不能低于最低值
+                //  不能低于最低值（当前值1小时）
                 NSUInteger committee_proposal_review_period = [[parameters objectForKey:@"committee_proposal_review_period"] unsignedIntegerValue];
                 review_period_seconds = MAX(committee_proposal_review_period, review_period_seconds);
             }
@@ -255,13 +268,16 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
         
         id op = @{
                   @"fee":@{@"amount":@0, @"asset_id":[ChainObjectManager sharedChainObjectManager].grapheneCoreAssetID},
-                  @"fee_paying_account":fee_paying_account,
+                  @"fee_paying_account":fee_paying_account_id,
                   @"expiration_time":@(expiration_ts),
                   @"proposed_ops":@[@{@"op":@[@(opcode), opdata_with_fee]}],
                   };
         
-        //  REMARK：如果是理事会账号，必须添加审核周期。一般提案可以不添加。
-        if ( [[opaccount objectForKey:@"id"] isEqualToString:BTS_GRAPHENE_COMMITTEE_ACCOUNT]){
+        //  REMARK：理事会提案必须添加审核期。
+        assert(![[opaccount objectForKey:@"id"] isEqualToString:BTS_GRAPHENE_COMMITTEE_ACCOUNT] || kReviewPeriod > 0);
+        
+        //  添加审核期
+        if (kReviewPeriod > 0){
             id mutable_op = [op mutableCopy];
             [mutable_op setObject:@(review_period_seconds) forKey:@"review_period_seconds"];
             op = [mutable_op copy];
@@ -269,7 +285,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
         
         TransactionBuilder* tr = [[TransactionBuilder alloc] init];
         [tr add_operation:ebo_proposal_create opdata:op];
-        [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:fee_paying_account]];
+        [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:fee_paying_account_id]];
         return [self process_transaction:tr];
     })];
 }

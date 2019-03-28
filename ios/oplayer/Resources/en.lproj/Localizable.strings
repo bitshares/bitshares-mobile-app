@@ -240,6 +240,11 @@
 "kProposalTipsAskMissingOwner" = "You don\'t have owner permissions for account %@, do you want to create a proposal?";
 "kProposalTipsSelectFeePayingAccount" = "Please select the proposal creator";
 "kProposalLabelCellProposalCreator" = "Proposal creator";
+"kProposalLabelApprovePeriod" = "Approval period";
+"kProposalLabelReviewPeriod" = "Review period";
+"kProposalLabel1Days" = "%@ day";
+"kProposalLabelNDays" = "%@ days";
+"kProposalLabelNoReviewPeriod" = "No review period";
 "kProposalSubmitTipsSelectCreator" = "Please select a proposal creator account.";
 "kProposalSubmitTipTxOK" = "The proposal was created successfully.";
 "kProposalBtnSubmit" = "Ok";
