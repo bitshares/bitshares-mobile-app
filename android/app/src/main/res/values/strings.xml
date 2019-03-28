@@ -224,6 +224,11 @@
     <string name="kProposalTipsAskMissingOwner">You don\'t have owner permissions for account %s, do you want to create a proposal?</string>
     <string name="kProposalTipsSelectFeePayingAccount">Please select the proposal creator</string>
     <string name="kProposalLabelCellProposalCreator">Proposal creator</string>
+    <string name="kProposalLabelApprovePeriod">Approval period</string>
+    <string name="kProposalLabelReviewPeriod">Review period</string>
+    <string name="kProposalLabel1Days">%s day</string>
+    <string name="kProposalLabelNDays">%s days</string>
+    <string name="kProposalLabelNoReviewPeriod">No review period</string>
     <string name="kProposalSubmitTipsSelectCreator">Please select a proposal creator account.</string>
     <string name="kProposalSubmitTipTxOK">The proposal was created successfully.</string>
     <string name="kProposalBtnSubmit">Ok</string>
@@ -649,6 +654,7 @@
     <!-- 通用字符串 -->
     <string name="kLangKeyZhSimple">简体中文 / Simplified Chinese</string>
     <string name="kLangKeyEn">English</string>
+    <string name="kLangKeyJa">日本語 / Japanese</string>
     <string name="skip">Skip</string>
     <string name="kAppName">Bitshares</string>
     <string name="kAccount">Account</string>
