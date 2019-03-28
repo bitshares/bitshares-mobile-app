@@ -148,7 +148,6 @@ enum
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    //  TODO:多语言
     switch (indexPath.section) {
         case kFieldMain:
         {
