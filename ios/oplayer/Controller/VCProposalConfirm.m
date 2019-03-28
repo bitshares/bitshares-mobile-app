@@ -15,6 +15,8 @@
 enum
 {
     kVcFeePayingAccount = 0,    //  手续费支付账号（提案发起账号）
+    kVcProposalLifetime,        //  提案有效期
+    kVcProposalReviewtime,      //  提案审核期
     kVcProposalDetails,         //  提案内容
     kVcBtnSubmit,               //  提交按钮
     
@@ -34,6 +36,9 @@ enum
     
     EBitsharesOperations    _opcode;
     NSDictionary*           _opdata;
+    BOOL                    _bForceAddReviewTime;           //  是否必须添加审核周期
+    NSInteger               _iProposalLifetime;             //  有效期
+    NSInteger               _iProposalReviewtime;           //  审核周期
     
     NSDictionary*           _processedOpData;
     
@@ -59,13 +64,17 @@ enum
     _processedOpData = nil;
 }
 
-- (id)initWithOpcode:(EBitsharesOperations)opcode opdata:(NSDictionary*)opdata callback:(BtsppConfirmCallback)callback
+- (id)initWithOpcode:(EBitsharesOperations)opcode
+              opdata:(NSDictionary*)opdata
+           opaccount:(NSDictionary*)opaccount
+            callback:(BtsppConfirmCallback)callback
 {
     self = [super init];
     if (self) {
         // Custom initialization
         _opcode = opcode;
         _opdata = opdata;
+        _bForceAddReviewTime = [[opaccount objectForKey:@"id"] isEqualToString:BTS_GRAPHENE_COMMITTEE_ACCOUNT];
         _callback = callback;
         _bResultCannelled = YES;
         _fee_paying_account = nil;
@@ -74,6 +83,14 @@ enum
         if ([_permissionAccountArray count] > 0){
             //  默认第一个
             _fee_paying_account = [_permissionAccountArray firstObject];
+        }
+        //  初始化默认值
+        if (_bForceAddReviewTime){
+            _iProposalLifetime = 3600 * 24 * 3;
+            _iProposalReviewtime = 3600 * 24 * 2;
+        }else{
+            _iProposalLifetime = 3600 * 24 * 7;
+            _iProposalReviewtime = 3600 * 24 * 0;
         }
     }
     return self;
@@ -147,7 +164,13 @@ enum
     //  解锁回调
     if (_callback){
         [self delay:^{
-            _callback(!_bResultCannelled, _fee_paying_account);
+            id proposal_create_args = nil;
+            if (!_bResultCannelled){
+                proposal_create_args = @{@"kFeePayingAccount":_fee_paying_account,
+                                         @"kApprovePeriod":@(_iProposalLifetime),
+                                         @"kReviewPeriod":@(_iProposalReviewtime)};
+            }
+            _callback(!_bResultCannelled, proposal_create_args);
         }];
     }
 }
@@ -223,6 +246,15 @@ enum
     return @" ";
 }
 
+- (NSString*)_fmtNday:(NSInteger)days
+{
+    if (days > 1){
+        return [NSString stringWithFormat:NSLocalizedString(@"kProposalLabelNDays", @"%@天"), @(days)];
+    }else{
+        return [NSString stringWithFormat:NSLocalizedString(@"kProposalLabel1Days", @"%@天"), @(days)];
+    }
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     switch (indexPath.section) {
@@ -264,6 +296,38 @@ enum
             return cell;
         }
             break;
+        case kVcProposalLifetime:
+        {
+            UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+            cell.backgroundColor = [UIColor clearColor];
+            cell.showCustomBottomLine = YES;
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+            cell.textLabel.text = NSLocalizedString(@"kProposalLabelApprovePeriod", @"操作周期");
+            cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+            cell.detailTextLabel.text = [self _fmtNday:_iProposalLifetime / (3600 * 24)];
+            cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+            return cell;
+        }
+            break;
+        case kVcProposalReviewtime:
+        {
+            UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+            cell.backgroundColor = [UIColor clearColor];
+            cell.showCustomBottomLine = YES;
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+            cell.textLabel.text = NSLocalizedString(@"kProposalLabelReviewPeriod", @"审核周期");
+            cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+            if (_iProposalReviewtime == 0){
+                cell.detailTextLabel.text = NSLocalizedString(@"kProposalLabelNoReviewPeriod", @"不添加");
+            }else{
+                cell.detailTextLabel.text = [self _fmtNday:_iProposalReviewtime / (3600 * 24)];
+            }
+            cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+            return cell;
+        }
+            break;
         case kVcBtnSubmit:
         {
             UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
@@ -299,6 +363,12 @@ enum
                 }];
             }
                 break;
+            case kVcProposalLifetime:
+                [self onProposalLifetimeClicked];
+                break;
+            case kVcProposalReviewtime:
+                [self onProposalReviewtimeClicked];
+                break;
             case kVcBtnSubmit:
                 [self onCommitCore];
                 break;
@@ -306,6 +376,84 @@ enum
                 break;
         }
     }];
+}
+
+- (void)onProposalLifetimeClicked
+{
+    //  REMARK：目前操作周期+审核周期最大28天。
+    
+    NSArray* default_list = @[@1, @2, @3, @5, @7, @15];
+ 
+    NSMutableArray* data_array = [NSMutableArray array];
+    NSInteger default_select = -1;
+    for (id value in default_list) {
+        NSInteger iValue = [value integerValue];
+        id name = [self _fmtNday:iValue];
+        NSInteger sec = iValue * 3600 * 24;
+        if (sec == _iProposalLifetime){
+            default_select = [data_array count];
+        }
+        [data_array addObject:@{@"name":name, @"value":@(sec)}];
+    }
+    
+    [[[MyPopviewManager sharedMyPopviewManager] showModernListView:self.navigationController
+                                                           message:NSLocalizedString(@"kProposalLabelApprovePeriod", @"操作周期")
+                                                             items:data_array
+                                                           itemkey:@"name"
+                                                      defaultIndex:default_select] then:(^id(id result) {
+        if (result){
+            NSInteger sec = [[result objectForKey:@"value"] integerValue];
+            if (sec != _iProposalLifetime){
+                _iProposalLifetime = sec;
+                [_mainTableView reloadData];
+            }
+        }
+        return nil;
+    })];
+}
+
+- (void)onProposalReviewtimeClicked
+{
+    NSArray* default_list = @[@1, @2, @3, @7];
+    NSMutableArray* final_list = [NSMutableArray array];
+    
+    //  REMARK：强制添加审核期则没有0天的选项。
+    if (!_bForceAddReviewTime){
+        [final_list addObject:@0];
+    }
+    [final_list addObjectsFromArray:default_list];
+    
+    NSMutableArray* data_array = [NSMutableArray array];
+    NSInteger default_select = -1;
+    for (id value in final_list) {
+        NSInteger iValue = [value integerValue];
+        id name;
+        if (iValue == 0){
+            name = NSLocalizedString(@"kProposalLabelNoReviewPeriod", @"不添加");
+        }else{
+            name = [self _fmtNday:iValue];
+        }
+        NSInteger sec = iValue * 3600 * 24;
+        if (sec == _iProposalReviewtime){
+            default_select = [data_array count];
+        }
+        [data_array addObject:@{@"name":name, @"value":@(sec)}];
+    }
+    
+    [[[MyPopviewManager sharedMyPopviewManager] showModernListView:self.navigationController
+                                                           message:NSLocalizedString(@"kProposalLabelReviewPeriod", @"审核周期")
+                                                             items:data_array
+                                                           itemkey:@"name"
+                                                      defaultIndex:default_select] then:(^id(id result) {
+        if (result){
+            NSInteger sec = [[result objectForKey:@"value"] integerValue];
+            if (sec != _iProposalReviewtime){
+                _iProposalReviewtime = sec;
+                [_mainTableView reloadData];
+            }
+        }
+        return nil;
+    })];
 }
 
 @end

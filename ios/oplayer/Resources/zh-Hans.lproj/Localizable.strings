@@ -240,6 +240,11 @@
 "kProposalTipsAskMissingOwner" = "您没有账号 %@ 的账号权限，是否发起提案交易？";
 "kProposalTipsSelectFeePayingAccount" = "请选择提案发起账号";
 "kProposalLabelCellProposalCreator" = "提案发起者";
+"kProposalLabelApprovePeriod" = "操作周期";
+"kProposalLabelReviewPeriod" = "审核周期";
+"kProposalLabel1Days" = "%@天";
+"kProposalLabelNDays" = "%@天";
+"kProposalLabelNoReviewPeriod" = "无";
 "kProposalSubmitTipsSelectCreator" = "请选择提案创建者账号。";
 "kProposalSubmitTipTxOK" = "创建提案成功。";
 "kProposalBtnSubmit" = "提交";

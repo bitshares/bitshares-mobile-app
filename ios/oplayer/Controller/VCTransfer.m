@@ -505,7 +505,7 @@ enum
                           invoke_proposal_callback:NO
                                             opdata:[_transfer_args objectForKey:@"kOpData"]
                                          opaccount:[_full_account_data objectForKey:@"account"]
-                                              body:^(BOOL isProposal, NSDictionary *fee_paying_account)
+                                              body:^(BOOL isProposal, NSDictionary *proposal_create_args)
              {
                  assert(!isProposal);
                  // 有权限：转到交易确认界面。

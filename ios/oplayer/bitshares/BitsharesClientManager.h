@@ -59,7 +59,10 @@
 /**
  *  创建提案
  */
-- (WsPromise*)proposalCreate:(EBitsharesOperations)opcode opdata:(id)opdata opaccount:(id)opaccount fee_paying_account:(NSString*)fee_paying_account;
+- (WsPromise*)proposalCreate:(EBitsharesOperations)opcode
+                      opdata:(id)opdata
+                   opaccount:(id)opaccount
+        proposal_create_args:(id)proposal_create_args;
 
 /**
  *  OP - 更新提案（添加授权or移除授权）

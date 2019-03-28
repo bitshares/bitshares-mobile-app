@@ -340,7 +340,7 @@
                        using_owner_authority:NO invoke_proposal_callback:NO
                                       opdata:op
                                    opaccount:account
-                                        body:^(BOOL isProposal, NSDictionary *fee_paying_account)
+                                        body:^(BOOL isProposal, NSDictionary *proposal_create_args)
      {
          assert(!isProposal);
          [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];

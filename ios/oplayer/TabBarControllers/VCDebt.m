@@ -1555,7 +1555,7 @@ enum
                   invoke_proposal_callback:NO
                                     opdata:op
                                  opaccount:account
-                                      body:^(BOOL isProposal, NSDictionary *fee_paying_account)
+                                      body:^(BOOL isProposal, NSDictionary *proposal_create_args)
      {
          assert(!isProposal);
          //  请求网络广播
