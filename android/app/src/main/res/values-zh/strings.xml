@@ -224,6 +224,11 @@
     <string name="kProposalTipsAskMissingOwner">您没有账号 %s 的账号权限，是否发起提案交易？</string>
     <string name="kProposalTipsSelectFeePayingAccount">请选择提案发起账号</string>
     <string name="kProposalLabelCellProposalCreator">提案发起者</string>
+    <string name="kProposalLabelApprovePeriod">操作周期</string>
+    <string name="kProposalLabelReviewPeriod">审核周期</string>
+    <string name="kProposalLabel1Days">%s天</string>
+    <string name="kProposalLabelNDays">%s天</string>
+    <string name="kProposalLabelNoReviewPeriod">无</string>
     <string name="kProposalSubmitTipsSelectCreator">请选择提案创建者账号。</string>
     <string name="kProposalSubmitTipTxOK">创建提案成功。</string>
     <string name="kProposalBtnSubmit">提交</string>

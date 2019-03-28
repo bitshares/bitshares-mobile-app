@@ -182,11 +182,11 @@ class ActivityLaunch : BtsppActivity() {
                     return@then null
                 }
             }.catch { error ->
-                p.reject(resources.getString(R.string.nameNetworkInitException))
+                p.reject(resources.getString(R.string.tip_network_error))
             }
             return@then null
         }.catch { error ->
-            p.reject(resources.getString(R.string.nameNetworkInitException))
+            p.reject(resources.getString(R.string.tip_network_error))
         }
         return p
     }
