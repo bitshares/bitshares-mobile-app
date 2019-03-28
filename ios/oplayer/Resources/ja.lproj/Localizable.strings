@@ -9,7 +9,7 @@
 "kTabBarNameServices" = "サービス";
 "kTabBarNameMy" = "私の";
 
-"kLable24HVol" = "24h量";
+"kLable24HVol" = "24H量";
 
 "kLabelMarketFavorites" = "自選";
 "kLabelGroupNameMain" = "主区";
@@ -142,16 +142,16 @@
 "kLblTipsPasswordModeNotSupportMultiSign" = "多く署名の支持はウオレットモード，当地のウオレットのファイルを創建しますか？";
 "kLblTipsConvertToWalletModeDone" = "創建ウォレット完成。";
 
-/* 账号信息 TODO:多语言 */
-"kAccountPageBasicInfo" = "基本信息";
-"kAccountPageMemberInfo" = "会员信息";
-"kAccountBtnUpgradeToLifetimeMember" = "升级终身会员";
-"kAccountMembershipStatus" = "状态";
-"kAccountUpgradeTipsMember" = "尊敬的终身会员，您已享受80%的手续费返现奖励。";
-"kAccountUpgradeTipsNotMember" = "现在升级终身会员，立享80%手续费返现奖励。";
-"kAccountUpgradeMemberSubmitTxFullOK" = "升级终身会员成功。";
-"kAccountUpgradeMemberSubmitTxOK" = "升级终身会员成功，但刷新界面失败，请稍后再试。";
-"kAccountUpgradeMemberCostAsk" = "升级终身会员需要花费 %@，是否继续？";
+/* 账号信息 */
+"kAccountPageBasicInfo" = "基本情報";
+"kAccountPageMemberInfo" = "会員情報";
+"kAccountBtnUpgradeToLifetimeMember" = "一生会員をアップグレードする";
+"kAccountMembershipStatus" = "状態";
+"kAccountUpgradeTipsMember" = "一生会員各位、あなたは80％の手数料償還報酬を受ける権利があります。";
+"kAccountUpgradeTipsNotMember" = "今すぐあなたの一生会員をアップグレードして、80％の返金手数料を得てください。";
+"kAccountUpgradeMemberSubmitTxFullOK" = "一生会員の成功をアップグレードします。";
+"kAccountUpgradeMemberSubmitTxOK" = "一生会員の成功をアップグレードします。 ただし、更新インターフェイスが失敗しました。しばらくしてからもう一度お試しください。";
+"kAccountUpgradeMemberCostAsk" = "一生の会員資格をアップグレードするには %@ かかります。続行しますか？";
 
 /* 登录&注册&备份 */
 "kLoginPageModePassword" = "アカウントモード";
@@ -262,7 +262,7 @@
 "kProposalCellBtnApprove" = "授権は許可します";
 "kProposalCellBtnNotApprove" = "授権は取り消します";
 "kProposalCellBtnDelete" = "削除";
-"kProposalCellApprover" = "目標のアカウント ";
+"kProposalCellApprover" = "目標者 ";
 "kProposalCellCreator" = "提案者 ";
 "kProposalCellStatusTitle" = "状態 ";
 "kProposalCellStatusPending" = "行う中";
@@ -291,8 +291,8 @@
 "kVcAssetColl" = "抵押";
 "kVcAssetDebt" = "负债";
 "kVcAssetCallPrice" = "强制平仓价";
-"kVcAssetViewAllAssets" = "查看全部资产信息";
-"kVcAssetTipNoActivity" = "没有任何活动信息";
+"kVcAssetViewAllAssets" = "すべての資産を見る";
+"kVcAssetTipNoActivity" = "取引履歴なし";
 "kVcAssetTipNowLoading" = "ロードの中で...";
 "kVcAssetTipErrorEstimating" = "ネットワークが異常で，推定失败，少しの後でまた試みてください。";
 "kVcActivityTypeTransfer"= "送金";
@@ -350,9 +350,9 @@
 
 /* K线界面各种字符串 */
 "kLabelHeaderFeedPrice" = "フィード価格";
-"kLabelHeaderHigh" = "高値";
-"kLabelHeaderLow" = "安値";
-"kLabelHeader24HVol" = "24時間出来高";
+"kLabelHeaderHigh" = "高い値";
+"kLabelHeaderLow" = "低い値";
+"kLabelHeader24HVol" = "24H量";
 "kLabelEkdptLine" = "分时";
 "kLabelEkdpt1min" = "1分";
 "kLabelEkdpt5min" = "5分";
@@ -448,8 +448,8 @@
 "kVcTransferSubmitTipWalletNoMemoKey" = "付注キーファイルはない，付注はできません。";
 "kVcTransferCellFrom" = "FROM";
 "kVcTransferCellTo" = "TO";
-"kVcTransferCellAsset" = "振替の資産";
-"kVcTransferCellAmount" =  "振替の数量";
+"kVcTransferCellAsset" = "資産";
+"kVcTransferCellAmount" =  "数量";
 "kVcTransferCellMemo" = "付注の情報";
 "kVcTransferTipSelectToAccount" = "受取口座を選びください。";
 "kVcTransferTipSelectAsset" = "選んで帳簿の資産を回転してください";
@@ -556,7 +556,7 @@
 "kVcTitleDepositWithdraw" = "入金出金";
 "kVcTitleDeposit" = "%@入金";
 "kVcTitleWithdraw" = "%@出金";
-"kVcTitleKlineIndexSetting" = "K线指标设置";
+"kVcTitleKlineIndexSetting" = "Kライン表示設定";
 
 /* 钱包管理 */
 "kWalletUnlockFailedUnknowMode" = "錠解除に失敗する，未知のパターンです：%@。";

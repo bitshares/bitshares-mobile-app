@@ -10,7 +10,7 @@
 
 #define kSettingKey_EstimateAssetSymbol @"kEstimateAssetSymbol" //  计价单位符号 CNY、USD等
 #define kSettingKey_ThemeInfo           @"kThemeInfo"           //  主题风格信息
-#define kSettingKey_KLineIndexInfo      @"kKLineIndexInfo_v1"   //  K线指标参数信息    REMARK：如果新增指标需要更新下参数版本
+#define kSettingKey_KLineIndexInfo      @"kKLineIndexInfo_v2"   //  K线指标参数信息    REMARK：如果新增指标需要更新下参数版本
 
 @interface SettingManager : NSObject
 
