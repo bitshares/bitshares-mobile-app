@@ -147,6 +147,9 @@
 "kAccountPageMemberInfo" = "会员信息";
 "kAccountBtnUpgradeToLifetimeMember" = "升级终身会员";
 "kAccountMembershipStatus" = "状态";
+"kAccountMembershipMyRefCode" = "我的推荐码";
+"kAccountMembershipNoRefCode" = "无";
+"kAccountMembershipMyRefCodeCopyOK" = "推荐码已复制";
 "kAccountUpgradeTipsMember" = "尊敬的终身会员，您已享受80%的手续费返现奖励。";
 "kAccountUpgradeTipsNotMember" = "现在升级终身会员，立享80%手续费返现奖励。";
 "kAccountUpgradeMemberSubmitTxFullOK" = "升级终身会员成功。";
