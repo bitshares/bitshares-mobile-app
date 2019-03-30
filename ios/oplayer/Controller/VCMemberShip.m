@@ -26,6 +26,7 @@ enum
     kVcSubID = 0,               //  帐号ID
     kVcSubAccount,              //  帐号名字
     kVcSubMemberStatus,         //  会员状态
+    kVcSubRefCode,              //  我的推荐码
     kVcSubMemberDesc,           //  会员返现描述
     
     kVcSubBasicInfoMax
@@ -40,6 +41,7 @@ enum
     ViewBlockLabel*         _lbCommit;
     
     BOOL                    _bIsLifetimeMemberShip;
+    NSString*               _myReferrerCode;
 }
 
 @end
@@ -48,6 +50,7 @@ enum
 
 - (void)dealloc
 {
+    _myReferrerCode = nil;
     _lbCommit = nil;
     if (_mainTableView){
         [[IntervalManager sharedIntervalManager] releaseLock:_mainTableView];
@@ -62,6 +65,7 @@ enum
     self = [super init];
     if (self) {
         _owner = owner;
+        _myReferrerCode = nil;
     }
     return self;
 }
@@ -92,14 +96,24 @@ enum
     [_mainTableView reloadData];
 }
 
+- (NSString*)_encodeMyRefCode:(NSString*)account_id
+{
+    assert(account_id);
+    id uid = [[account_id componentsSeparatedByString:@"."] lastObject];
+    //  base64 编码
+    return [[uid dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
+}
+
 - (void)_refreshMemberShipStatus
 {
     id account_info = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
     assert(account_info);
     if ([OrgUtils isBitsharesVIP:[account_info objectForKey:@"membership_expiration_date"]]){
         _bIsLifetimeMemberShip = YES;
+        _myReferrerCode = [self _encodeMyRefCode:account_info[@"id"]];
     }else{
         _bIsLifetimeMemberShip = NO;
+        _myReferrerCode = nil;
     }
 }
 
@@ -212,6 +226,19 @@ enum
                     }
                 }
                     break;
+                case kVcSubRefCode:
+                {
+                    cell.textLabel.text = NSLocalizedString(@"kAccountMembershipMyRefCode", @"我的推荐码");
+                    if (_myReferrerCode){
+                        cell.selectionStyle = UITableViewCellSelectionStyleGray;
+                        cell.detailTextLabel.text = _myReferrerCode;
+                        cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].buyColor;
+                    }else{
+                        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                        cell.detailTextLabel.text = NSLocalizedString(@"kAccountMembershipNoRefCode", @"无");
+                    }
+                }
+                    break;
                 case kVcSubMemberDesc:
                     cell.showCustomBottomLine = NO;
                     if (_bIsLifetimeMemberShip){
@@ -252,6 +279,12 @@ enum
             }
                 break;
             default:
+            {
+                if (indexPath.row == kVcSubRefCode && _myReferrerCode){
+                    [UIPasteboard generalPasteboard].string = [_myReferrerCode copy];
+                    [OrgUtils makeToast:NSLocalizedString(@"kAccountMembershipMyRefCodeCopyOK", @"推荐码已复制")];
+                }
+            }
                 break;
         }
         if (vc){
