@@ -110,6 +110,40 @@
         </LinearLayout>
         <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
+        <!-- My Referrer Code -->
+        <LinearLayout
+            android:id="@+id/id_my_referrer_code_layout"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:textSize="16dp"
+                android:layout_weight="9"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="@string/kAccountMembershipMyRefCode"/>
+
+            <TextView
+                android:id="@+id/txt_my_referrer_code"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical|right"
+                android:textSize="16dp"
+                android:layout_weight="9"
+                android:textColor="@color/theme01.textColorNormal"
+                android:text="placeholder"/>
+
+
+        </LinearLayout>
+        <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
         <!-- 升级提示 -->
         <LinearLayout
             android:layout_width="match_parent"
