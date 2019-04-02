@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import bitshares.*
@@ -17,6 +18,7 @@ import com.fowallet.walletcore.bts.BitsharesClientManager
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
 import org.json.JSONObject
+import android.util.Base64
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -39,28 +41,34 @@ class FragmentUserMemberInfo : BtsppFragment() {
     private var listener: OnFragmentInteractionListener? = null
 
     private lateinit var _ctx: Context
+    private var _view: View? = null
 
     private lateinit var tv_account_status: TextView
+    private lateinit var tv_my_referrer_code: TextView
     private lateinit var tv_member_tip: TextView
     private lateinit var btn_upgrade: Button
+    private var _myReferrerCode: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
         val v: View = inflater.inflate(R.layout.fragment_user_member_info, container, false)
+        _view = v
+
         _ctx = inflater.context
 
         //  初始化UI信息
         val full_account_data = WalletManager.sharedWalletManager().getWalletAccountInfo()!!
         val account = full_account_data.getJSONObject("account")
         tv_account_status = v.findViewById(R.id.txt_account_status)
+        tv_my_referrer_code = v.findViewById(R.id.txt_my_referrer_code)
         v.findViewById<TextView>(R.id.txt_account_id).text = account.getString("id")
         v.findViewById<TextView>(R.id.txt_account_name).text = account.getString("name")
         tv_member_tip = v.findViewById(R.id.txt_upgrade_to_member_tip)
         btn_upgrade = v.findViewById<Button>(R.id.button_upgrade_member)
 
         if (Utils.isBitsharesVIP(account.getString("membership_expiration_date"))) {
-            refreshUILefttimeMember()
+            refreshUILefttimeMember(account)
         } else {
             refreshUINormalMember()
             //  binding events
@@ -71,15 +79,35 @@ class FragmentUserMemberInfo : BtsppFragment() {
         return v
     }
 
-    private fun refreshUILefttimeMember(){
+    private fun _encodeMyRefCode(account_id: String) : String{
+        val uid = account_id.split(".").last()
+        return Base64.encodeToString(uid.toByteArray(), Base64.URL_SAFE or Base64.NO_WRAP)
+    }
+
+    private fun refreshUILefttimeMember(account_data: JSONObject){
+        _myReferrerCode = _encodeMyRefCode(account_data.getString("id"))
         tv_account_status.text = resources.getString(R.string.kLblMembershipLifetime)
+        tv_my_referrer_code.text = _myReferrerCode
+        tv_my_referrer_code.setTextColor(resources.getColor(R.color.theme01_buyColor))
         tv_member_tip.text = resources.getString(R.string.kAccountUpgradeTipsMember)
         tv_member_tip.setTextColor(resources.getColor(R.color.theme01_buyColor))
         btn_upgrade.visibility = View.INVISIBLE
+        //  copy ref code
+        _view?.let {
+            it.findViewById<LinearLayout>(R.id.id_my_referrer_code_layout).setOnClickListener {
+                if (_myReferrerCode != null){
+                    if (Utils.copyToClipboard(activity!!, _myReferrerCode!!)) {
+                        showToast(resources.getString(R.string.kAccountMembershipMyRefCodeCopyOK))
+                    }
+                }
+            }
+        }
     }
 
     private fun refreshUINormalMember(){
         tv_account_status.text = resources.getString(R.string.kLblMembershipBasic)
+        tv_my_referrer_code.text = resources.getString(R.string.kAccountMembershipNoRefCode)
+        tv_my_referrer_code.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
         tv_member_tip.text = resources.getString(R.string.kAccountUpgradeTipsNotMember)
         tv_member_tip.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
         btn_upgrade.visibility = View.VISIBLE
@@ -114,7 +142,7 @@ class FragmentUserMemberInfo : BtsppFragment() {
                     AppCacheManager.sharedAppCacheManager().updateWalletAccountInfo(full_data)
 
                     //  刷新界面
-                    refreshUILefttimeMember()
+                    refreshUILefttimeMember(full_data.getJSONObject("account"))
 
                     showToast(resources.getString(R.string.kAccountUpgradeMemberSubmitTxFullOK))
                     fabricLogCustom("txUpgradeToLifetimeMemberFullOK", jsonObjectfromKVS("account", account_id))

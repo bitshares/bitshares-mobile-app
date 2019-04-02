@@ -134,6 +134,9 @@
     <string name="kAccountPageMemberInfo">Member Info</string>
     <string name="kAccountBtnUpgradeToLifetimeMember">Upgrade lifetime membership</string>
     <string name="kAccountMembershipStatus">Status</string>
+    <string name="kAccountMembershipMyRefCode">My referrer code</string>
+    <string name="kAccountMembershipNoRefCode">NONE</string>
+    <string name="kAccountMembershipMyRefCodeCopyOK">Referrer code copied</string>
     <string name="kAccountUpgradeTipsMember">Dear Life Member, you are entitled to an 80% fee cashback.</string>
     <string name="kAccountUpgradeTipsNotMember">Upgrade lifetime membership and enjoy an 80% fee cashback.</string>
     <string name="kAccountUpgradeMemberSubmitTxFullOK">Upgrade lifetime membership success.</string>

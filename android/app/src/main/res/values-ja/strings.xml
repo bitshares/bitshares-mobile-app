@@ -134,6 +134,9 @@
     <string name="kAccountPageMemberInfo">会員情報</string>
     <string name="kAccountBtnUpgradeToLifetimeMember">一生会員をアップグレードする</string>
     <string name="kAccountMembershipStatus">状態</string>
+    <string name="kAccountMembershipMyRefCode">私の推薦コード</string>
+    <string name="kAccountMembershipNoRefCode">なし</string>
+    <string name="kAccountMembershipMyRefCodeCopyOK">推薦コードがコピーされました</string>
     <string name="kAccountUpgradeTipsMember">一生会員各位、あなたは80％の手数料償還報酬を受ける権利があります。</string>
     <string name="kAccountUpgradeTipsNotMember">今すぐあなたの一生会員をアップグレードして、80％の返金手数料を得てください。</string>
     <string name="kAccountUpgradeMemberSubmitTxFullOK">一生会員の成功をアップグレードします。</string>
