@@ -165,6 +165,8 @@
 "kLoginTipsPlaceholderActiveKey" = "请输入资金权限私钥";
 "kLoginTipsPlaceholderConfirmPassword" =  "请确认密码";
 "kLoginTipsPlaceholderWalletPassword" = "8位以上钱包文件密码";
+"kLoginTipsPlaceholderInputRefCode" = "引荐人推荐码（选填）";
+"kLoginCellLabelRefCode" = "推荐码";
 "kLoginTipsLoginOK" = "登录成功。";
 "kLoginTipsRegFullOK" = "注册成功。";
 "kLoginRegTipsAccountFormat" = "账号由【小写字母】、【数字】、【-】、【.】号组成，且必须字母开头、字母或数字结尾。";
@@ -547,6 +549,7 @@
 "kVcTitleWhatIsActivePrivateKey" = "什么是资金私钥？";
 "kVcTitleWhatIsGatewayAssets" = "什么是网关资产？";
 "kVcTitleWhatIsGateway" = "什么是网关？";
+"kVcTitleWhatIsRefcode" = "什么是推荐码？";
 "kVcTitleFAQ" = "常见问题";
 "kVcTitleVoting" = "投票";
 "kVcTitleMyProposal" = "提案管理";
@@ -650,7 +653,7 @@
 "kOpDesc_account_upgrade_member" = "%@ 升级终身会员。";
 "kOpDesc_account_transfer" = "转移账号。";
 "kOpDesc_asset_create" = "%@ 创建资产 %@。";
-"kOpDesc_asset_update" = "更新资产。";
+"kOpDesc_asset_update" = "更新资产 %@。";
 "kOpDesc_asset_update_bitasset" = "更新智能币。";
 "kOpDesc_asset_update_feed_producers" = "更新喂价者。";
 "kOpDesc_asset_issue" = "资产发行。";

@@ -17,11 +17,12 @@
 #import "OrgUtils.h"
 #import "NativeAppDelegate.h"
 #import "UIDevice+Helper.h"
-//#import "VCRegister.h"
 #import "MyNavigationController.h"
 #import "AppCacheManager.h"
 
 #import <Crashlytics/Crashlytics.h>
+
+#import "VCBtsaiWebView.h"
 
 //  ［账号+密码] + [登录]
 enum
@@ -38,6 +39,7 @@ enum
     kVcSubAccountName = 0,      //  帐号
     kVcSubPassword,             //  密码
     kVcSubConfirmPassword,      //  确认密码
+    kVcSubRefCode,              //  推荐码（选填）
     
     kVcSubMax
 };
@@ -51,6 +53,7 @@ enum
     MyTextField*            _tf_username;
     MyTextField*            _tf_password;
     MyTextField*            _tf_confirm;
+    MyTextField*            _tf_refcode;
     
     ViewBlockLabel*         _lbSubmit;
     ViewTipsInfoCell*       _cellTips;
@@ -67,6 +70,7 @@ enum
     _tf_username.delegate = nil;
     _tf_password.delegate = nil;
     _tf_confirm.delegate = nil;
+    _tf_refcode.delegate = nil;
     
     if (_mainTableView){
         [[IntervalManager sharedIntervalManager] releaseLock:_mainTableView];
@@ -102,14 +106,19 @@ enum
     [_tf_password setSecureTextEntry:YES];
     _tf_confirm = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:NSLocalizedString(@"kLoginTipsPlaceholderConfirmPassword", @"请确认密码")];
     [_tf_confirm setSecureTextEntry:YES];
+    _tf_refcode = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault
+                             placeholder:NSLocalizedString(@"kLoginTipsPlaceholderInputRefCode", @"引荐人推荐码（选填）")
+                                  action:@selector(onTipButtonClicked:) tag:kVcSubRefCode];
     
     //  颜色字号下划线
     _tf_username.updateClearButtonTintColor = YES;
     _tf_password.updateClearButtonTintColor = YES;
     _tf_confirm.updateClearButtonTintColor = YES;
+    _tf_refcode.updateClearButtonTintColor = YES;
     _tf_username.textColor = [ThemeManager sharedThemeManager].textColorMain;
     _tf_password.textColor = [ThemeManager sharedThemeManager].textColorMain;
     _tf_confirm.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    _tf_refcode.textColor = [ThemeManager sharedThemeManager].textColorMain;
     _tf_username.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_username.placeholder
                                                                          attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
                                                                                       NSFontAttributeName:[UIFont systemFontOfSize:17]}];
@@ -117,6 +126,9 @@ enum
                                                                          attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
                                                                                       NSFontAttributeName:[UIFont systemFontOfSize:17]}];
     _tf_confirm.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_confirm.placeholder
+                                                                        attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
+                                                                                     NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tf_refcode.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_refcode.placeholder
                                                                         attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
                                                                                      NSFontAttributeName:[UIFont systemFontOfSize:17]}];
     
@@ -150,7 +162,6 @@ enum
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    //  TODO:
     if ([TempManager sharedTempManager].jumpToLoginVC){
         [TempManager sharedTempManager].jumpToLoginVC = NO;
         //  REMARK：清理堆栈
@@ -171,6 +182,7 @@ enum
     [_tf_password safeResignFirstResponder];
     [_tf_username safeResignFirstResponder];
     [_tf_confirm safeResignFirstResponder];
+    [_tf_refcode safeResignFirstResponder];
 }
 
 /**
@@ -221,6 +233,7 @@ enum
     NSString* username = [NSString trim:_tf_username.text];
     NSString* password = [NSString trim:_tf_password.text];
     NSString* confirm_password = [NSString trim:_tf_confirm.text];
+    NSString* refcode = [NSString trim:_tf_refcode.text];
     
     //  检测参数有效性
     if (![OrgUtils isValidBitsharesAccountName:username]){
@@ -241,6 +254,7 @@ enum
     [_tf_password safeResignFirstResponder];
     [_tf_username safeResignFirstResponder];
     [_tf_confirm safeResignFirstResponder];
+    [_tf_refcode safeResignFirstResponder];
     
     //   --- 开始注册 ---
     [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
@@ -270,7 +284,8 @@ enum
                     @"owner_key":owner_key,
                     @"active_key":active_key,
                     @"memo_key":active_key,
-                    @"chid":@(kAppChannelID)
+                    @"chid":@(kAppChannelID),
+                    @"referrer_code":refcode
                     };
         [[OrgUtils asyncPostUrl:[chainMgr getFinalFaucetURL]
                            args:args] then:(^id(id response) {
@@ -375,6 +390,7 @@ enum
         [_tf_username safeResignFirstResponder];
         [_tf_password safeResignFirstResponder];
         [_tf_confirm safeResignFirstResponder];
+        [_tf_refcode safeResignFirstResponder];
     }
     return YES;
 }
@@ -406,6 +422,14 @@ enum
         case kVcSubPassword:
             [OrgUtils showMessage:NSLocalizedString(@"kLoginRegTipsWalletPasswordFormat", @"8位以上字符，且必须包含大小写和数字。")];
             break;
+        case kVcSubRefCode:
+        {
+            [Answers logCustomEventWithName:@"qa_tip_click" customAttributes:@{@"qa":@"qa_refcode"}];
+            VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"http://btspp.io/qam.html#qa_refcode"];
+            vc.title = NSLocalizedString(@"kVcTitleWhatIsRefcode", @"什么是推荐码？");
+            [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+        }
+            break;
         default:
             break;
     }
@@ -429,7 +453,7 @@ enum
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (section == kVcUser){
-        return 3;
+        return kVcSubMax;
     }else{
         return 1;
     }
@@ -488,6 +512,19 @@ enum
                 return cell;
             }
                 break;
+            case kVcSubRefCode:
+            {
+                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+                cell.showCustomBottomLine = YES;
+                cell.backgroundColor = [UIColor clearColor];
+                cell.accessoryType = UITableViewCellAccessoryNone;
+                cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                cell.textLabel.text = NSLocalizedString(@"kLoginCellLabelRefCode", @"推荐码");
+                cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+                cell.accessoryView = _tf_refcode;
+                return cell;
+            }
+                break;
             default:
                 break;
         }
@@ -526,6 +563,7 @@ enum
     [_tf_password safeResignFirstResponder];
     [_tf_username safeResignFirstResponder];
     [_tf_confirm safeResignFirstResponder];
+    [_tf_refcode safeResignFirstResponder];
 }
 
 #pragma mark-
@@ -537,6 +575,7 @@ enum
     [_tf_password safeResignFirstResponder];
     [_tf_username safeResignFirstResponder];
     [_tf_confirm safeResignFirstResponder];
+    [_tf_refcode safeResignFirstResponder];
 }
 
 - (void)onDragBackFinish:(BOOL)bToTarget

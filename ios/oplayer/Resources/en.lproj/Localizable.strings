@@ -165,6 +165,8 @@
 "kLoginTipsPlaceholderActiveKey" = "Please input active private key";
 "kLoginTipsPlaceholderConfirmPassword" =  "Please confirm password";
 "kLoginTipsPlaceholderWalletPassword" = "Please input wallet passwrod";
+"kLoginTipsPlaceholderInputRefCode" = "Referrer code (optional)";
+"kLoginCellLabelRefCode" = "Referrer";
 "kLoginTipsLoginOK" = "Login successful.";
 "kLoginTipsRegFullOK" = "Register successful.";
 "kLoginRegTipsAccountFormat" = "The account number consists of lowercase letters, numbers, -, ., and must end with a letter beginning with a letter or number.";
@@ -547,6 +549,7 @@
 "kVcTitleWhatIsActivePrivateKey" = "What is active private key?";
 "kVcTitleWhatIsGatewayAssets" = "What is gateway assets?";
 "kVcTitleWhatIsGateway" = "What is a gateway?";
+"kVcTitleWhatIsRefcode" = "What is a referrer code?";
 "kVcTitleFAQ" = "FAQ";
 "kVcTitleVoting" = "Voting";
 "kVcTitleMyProposal" = "Pending proposal";
@@ -650,7 +653,7 @@
 "kOpDesc_account_upgrade_member" = "%@ upgrade lifetime membership.";
 "kOpDesc_account_transfer" = "transfer account.";
 "kOpDesc_asset_create" = "%@ create asset %@.";
-"kOpDesc_asset_update" = "update assets.";
+"kOpDesc_asset_update" = "update assets %@.";
 "kOpDesc_asset_update_bitasset" = "update bitasset.";
 "kOpDesc_asset_update_feed_producers" = "update feed publisher.";
 "kOpDesc_asset_issue" = "issue assets.";
