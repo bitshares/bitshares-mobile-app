@@ -165,6 +165,8 @@
 "kLoginTipsPlaceholderActiveKey" = "資金キーファイルを入力してください";
 "kLoginTipsPlaceholderConfirmPassword" =  "パスワードを確認してください";
 "kLoginTipsPlaceholderWalletPassword" = "8位以上のファイルパスワード";
+"kLoginTipsPlaceholderInputRefCode" = "推薦コード（オプション）";
+"kLoginCellLabelRefCode" = "推薦コード";
 "kLoginTipsLoginOK" = "ログイン成功。";
 "kLoginTipsRegFullOK" = "登録成功。";
 "kLoginRegTipsAccountFormat" = "アカウントは【小写文字母】、【数字】、【-】、【.】構成されています，首位は字母。字母、数字終わり。";
@@ -546,7 +548,8 @@
 "kVcTitleWhatIsTradePassowrd" = "何が取引パスワード？";
 "kVcTitleWhatIsActivePrivateKey" = "何が資金キーファイル？";
 "kVcTitleWhatIsGatewayAssets" = "何はゲートウェイ資産？";
-"kVcTitleWhatIsGateway" = "什么是网关？";
+"kVcTitleWhatIsGateway" = "ゲートウェイは何ですか？";
+"kVcTitleWhatIsRefcode" = "紹介コードとは何ですか？";
 "kVcTitleFAQ" = "よくある問題";
 "kVcTitleVoting" = "投票";
 "kVcTitleMyProposal" = "提案の管理";
@@ -650,7 +653,7 @@
 "kOpDesc_account_upgrade_member" = "%@ 終身会員をアップグレードする。";
 "kOpDesc_account_transfer" = "アカウントの移転。";
 "kOpDesc_asset_create" = "%@ 資産の創建 %@。";
-"kOpDesc_asset_update" = "資産を更新する。";
+"kOpDesc_asset_update" = "資産 %@ を更新する。";
 "kOpDesc_asset_update_bitasset" = "スマートマネーを更新する。";
 "kOpDesc_asset_update_feed_producers" = "フィード者を更新します。";
 "kOpDesc_asset_issue" = "資産発行。";

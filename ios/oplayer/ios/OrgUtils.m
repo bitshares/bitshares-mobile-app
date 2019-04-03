@@ -808,8 +808,9 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     ThemeManager* theme =  [ThemeManager sharedThemeManager];
     
-#define GRAPHENE_NAME(key)      [[chainMgr getChainObjectByID:opdata[key]] objectForKey:@"name"]
-#define GRAPHENE_ASSET_N(key)   [self formatAssetAmountItem:opdata[key]]
+#define GRAPHENE_NAME(key)          [[chainMgr getChainObjectByID:opdata[key]] objectForKey:@"name"]
+#define GRAPHENE_ASSET_SYMBOL(key)  [[chainMgr getChainObjectByID:opdata[key]] objectForKey:@"symbol"]
+#define GRAPHENE_ASSET_N(key)       [self formatAssetAmountItem:opdata[key]]
     
     NSString* name = nil;
     NSString* desc = nil;
@@ -966,8 +967,8 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
         case ebo_asset_update:
         {
             name = NSLocalizedString(@"kOpType_asset_update", @"更新资产");
-            desc = NSLocalizedString(@"kOpDesc_asset_update", @"更新资产。");
-            //  TODO:待细化
+            id symbol = GRAPHENE_ASSET_SYMBOL(@"asset_to_update");
+            desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_asset_update", @"更新资产 %@。"), symbol];
         }
             break;
         case ebo_asset_update_bitasset:
@@ -1209,6 +1210,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     }
     
 #undef GRAPHENE_NAME
+#undef GRAPHENE_ASSET_SYMBOL
 #undef GRAPHENE_ASSET_N
     
     return @{@"name":name, @"desc":desc, @"color":color ?: theme.textColorMain};
