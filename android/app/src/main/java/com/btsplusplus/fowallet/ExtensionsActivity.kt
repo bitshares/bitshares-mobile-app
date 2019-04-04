@@ -252,12 +252,15 @@ fun android.app.Activity.showFaucetRegisterError(response: JSONObject?) {
 /**
  *  (private) 创建提案请求
  */
-fun android.app.Activity.onExecuteCreateProposalCore(opcode: EBitsharesOperations, opdata: JSONObject, opaccount: JSONObject, fee_paying_account: JSONObject, success_callback: (() -> Unit)?) {
+fun android.app.Activity.onExecuteCreateProposalCore(opcode: EBitsharesOperations, opdata: JSONObject, opaccount: JSONObject, proposal_create_args: JSONObject, success_callback: (() -> Unit)?) {
+
+    val fee_paying_account = proposal_create_args.getJSONObject("kFeePayingAccount")
     val fee_paying_account_id = fee_paying_account.getString("id")
+    assert(fee_paying_account_id != null)
     //  请求
     val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
     mask.show()
-    BitsharesClientManager.sharedBitsharesClientManager().proposalCreate(opcode, opdata, opaccount, fee_paying_account_id).then {
+    BitsharesClientManager.sharedBitsharesClientManager().proposalCreate(opcode, opdata, opaccount, proposal_create_args).then {
         mask.dismiss()
         if (success_callback != null) {
             success_callback()
@@ -278,7 +281,7 @@ fun android.app.Activity.onExecuteCreateProposalCore(opcode: EBitsharesOperation
  */
 fun android.app.Activity.askForCreateProposal(opcode: EBitsharesOperations, using_owner_authority: Boolean, invoke_proposal_callback: Boolean,
                                               opdata: JSONObject, opaccount: JSONObject,
-                                              body: ((isProposal: Boolean, fee_paying_account: JSONObject) -> Unit)?, success_callback: (() -> Unit)?) {
+                                              body: ((isProposal: Boolean, proposal_create_args: JSONObject) -> Unit)?, success_callback: (() -> Unit)?) {
     val account_name = opaccount.getString("name")
     var message: String
     if (using_owner_authority) {
@@ -290,15 +293,17 @@ fun android.app.Activity.askForCreateProposal(opcode: EBitsharesOperations, usin
         if (it != null && it as Boolean) {
             //  转到提案确认界面
             val result_promise = Promise()
-            val args = jsonObjectfromKVS("opcode", opcode, "opdata", opdata, "result_promise", result_promise)
+            val args = jsonObjectfromKVS("opcode", opcode, "opaccount", opaccount, "opdata", opdata, "result_promise", result_promise)
             goTo(ActivityCreateProposal::class.java, true, args = args)
             result_promise.then { result ->
-                val selected_fee_paying_account = result as? JSONObject
-                if (selected_fee_paying_account != null) {
-                    if (invoke_proposal_callback) {
-                        body!!(true, selected_fee_paying_account)
-                    } else {
-                        onExecuteCreateProposalCore(opcode, opdata, opaccount, selected_fee_paying_account, success_callback)
+                if (result != null){
+                    val proposal_create_args = result as? JSONObject
+                    if (proposal_create_args != null) {
+                        if (invoke_proposal_callback) {
+                            body!!(true, proposal_create_args)
+                        } else {
+                            onExecuteCreateProposalCore(opcode, opdata, opaccount, proposal_create_args, success_callback)
+                        }
                     }
                 }
             }
