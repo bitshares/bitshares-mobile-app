@@ -794,8 +794,8 @@ class OrgUtils {
                 }
                 EBitsharesOperations.ebo_asset_update.value -> {
                     name = R.string.kOpType_asset_update.xmlstring(ctx)
-                    desc = R.string.kOpDesc_asset_update.xmlstring(ctx)
-                    //  TODO:待细化
+                    val symbol = chainMgr.getChainObjectByID(opdata.getString("asset_to_update")).getString("symbol")
+                    desc = String.format(R.string.kOpDesc_asset_update.xmlstring(ctx), symbol)
                 }
                 EBitsharesOperations.ebo_asset_update_bitasset.value -> {
                     name = R.string.kOpType_asset_update_bitasset.xmlstring(ctx)
