@@ -37,6 +37,11 @@ class LangManager {
             put("langCode", "en")
             put("langLocale", Locale.ENGLISH)
         })
+        data_array.put(JSONObject().apply {
+            put("langNameKey", R.string.kLangKeyJa)
+            put("langCode", "ja")
+            put("langLocale", Locale.JAPANESE)
+        })
     }
 
     fun onAttach(ctx: Context):Context{
@@ -77,8 +82,12 @@ class LangManager {
                 //  default lang is english
                 currentLanguage = "en"
                 val localeLang = Locale.getDefault().language
-                if (localeLang != null && localeLang.toLowerCase().indexOf("zh") == 0){
-                    currentLanguage = "zh-Hans"
+                if (localeLang != null){
+                    if (localeLang.toLowerCase().indexOf("zh") == 0){
+                        currentLanguage = "zh-Hans"
+                    }else if (localeLang.toLowerCase().indexOf("ja") == 0){
+                        currentLanguage = "ja"
+                    }
                 }
                 PreferenceManager.getDefaultSharedPreferences(ctx).edit().putString(kCurrentLanguageKey, currentLanguage).apply()
             }
