@@ -489,14 +489,14 @@ class GrapheneWebSocket {
         stopKeepAliveTimer()
 
         //  通讯中或登录中异常：则当前的所有待完成promise全部reject
-        if (_cbs.size > 0) {
-            for ((k, v) in _cbs) {
+        if (_cbs.isNotEmpty()) {
+            for ((_, v) in _cbs.toMap()){
                 v.reject(message)
             }
             _cbs.clear()
         }
-        if (_subs.count() > 0) {
-            for ((_, v) in _subs) {
+        if (_subs.isNotEmpty()) {
+            for ((_, v) in _subs.toMap()) {
                 val cb = v as (Boolean, Any?) -> Unit
                 cb.invoke(false, message)
             }

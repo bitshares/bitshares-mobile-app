@@ -151,6 +151,8 @@
     <string name="kLoginTipsPlaceholderActiveKey">Please input active private key</string>
     <string name="kLoginTipsPlaceholderConfirmPassword">Please confirm password</string>
     <string name="kLoginTipsPlaceholderWalletPassword">Please input wallet passwrod</string>
+    <string name="kLoginTipsPlaceholderInputRefCode">Referrer code (optional)</string>
+    <string name="kLoginCellLabelRefCode">Referrer</string>
     <string name="kLoginTipsLoginOK">Login successful.</string>
     <string name="kLoginTipsRegFullOK">Register successful.</string>
     <string name="kLoginRegTipsAccountFormat">The account number consists of lowercase letters, numbers, -, ., and must end with a letter beginning with a letter or number.</string>
@@ -521,6 +523,7 @@
     <string name="kVcTitleWhatIsActivePrivateKey">What is active private key?</string>
     <string name="kVcTitleWhatIsGatewayAssets">What is gateway assets?</string>
     <string name="kVcTitleWhatIsGateway">What is a gateway?</string>
+    <string name="kVcTitleWhatIsRefcode">What is a referrer code?</string>
     <string name="kVcTitleFAQ">FAQ</string>
     <string name="kVcTitleVoting">Voting</string>
     <string name="kVcTitleMyProposal">Pending proposal</string>
@@ -621,7 +624,7 @@
     <string name="kOpDesc_account_upgrade_member">%s upgrade lifetime membership.</string>
     <string name="kOpDesc_account_transfer">transfer account.</string>
     <string name="kOpDesc_asset_create">%s create asset %s.</string>
-    <string name="kOpDesc_asset_update">update assets.</string>
+    <string name="kOpDesc_asset_update">update assets %s.</string>
     <string name="kOpDesc_asset_update_bitasset">update bitasset.</string>
     <string name="kOpDesc_asset_update_feed_producers">update feed publisher.</string>
     <string name="kOpDesc_asset_issue">issue assets.</string>

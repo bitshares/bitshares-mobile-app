@@ -52,7 +52,7 @@ const val kAppCacheNameUserSettingByApp = "usersetting_v1.json"
 
 //  设置界面存储数据的 KEY 值
 const val kSettingKey_EstimateAssetSymbol = "kEstimateAssetSymbol"  //  计价单位符号 CNY、USD等
-const val kSettingKey_KLineIndexInfo = "kKLineIndexInfo_v1"         //  K线指标参数信息    REMARK：如果新增指标需要更新下参数版本
+const val kSettingKey_KLineIndexInfo = "kKLineIndexInfo_v2"         //  K线指标参数信息    REMARK：如果新增指标需要更新下参数版本
 
 //  Actity结果传递请求码
 const val kRequestCodeTransferConfirm = 0x101     //  确认转账交易

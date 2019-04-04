@@ -151,6 +151,8 @@
     <string name="kLoginTipsPlaceholderActiveKey">请输入资金权限私钥</string>
     <string name="kLoginTipsPlaceholderConfirmPassword">请确认密码</string>
     <string name="kLoginTipsPlaceholderWalletPassword">8位以上钱包文件密码</string>
+    <string name="kLoginTipsPlaceholderInputRefCode">引荐人推荐码（选填）</string>
+    <string name="kLoginCellLabelRefCode">推荐码</string>
     <string name="kLoginTipsLoginOK">登录成功。</string>
     <string name="kLoginTipsRegFullOK">注册成功。</string>
     <string name="kLoginRegTipsAccountFormat">账号由【小写字母】、【数字】、【-】、【.】号组成，且必须字母开头、字母或数字结尾。</string>
@@ -521,6 +523,7 @@
     <string name="kVcTitleWhatIsActivePrivateKey">什么是资金私钥？</string>
     <string name="kVcTitleWhatIsGatewayAssets">什么是网关资产？</string>
     <string name="kVcTitleWhatIsGateway">什么是网关？</string>
+    <string name="kVcTitleWhatIsRefcode">什么是推荐码？</string>
     <string name="kVcTitleFAQ">常见问题</string>
     <string name="kVcTitleVoting">投票</string>
     <string name="kVcTitleMyProposal">提案管理</string>
@@ -621,7 +624,7 @@
     <string name="kOpDesc_account_upgrade_member">%s 升级终身会员。</string>
     <string name="kOpDesc_account_transfer">转移账号。</string>
     <string name="kOpDesc_asset_create">%s 创建资产 %s。</string>
-    <string name="kOpDesc_asset_update">更新资产。</string>
+    <string name="kOpDesc_asset_update">更新资产 %s。</string>
     <string name="kOpDesc_asset_update_bitasset">更新智能币。</string>
     <string name="kOpDesc_asset_update_feed_producers">更新喂价者。</string>
     <string name="kOpDesc_asset_issue">资产发行。</string>

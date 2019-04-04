@@ -151,6 +151,8 @@
     <string name="kLoginTipsPlaceholderActiveKey">資金キーファイルを入力してください</string>
     <string name="kLoginTipsPlaceholderConfirmPassword">パスワードを確認してください</string>
     <string name="kLoginTipsPlaceholderWalletPassword">8位以上のファイルパスワード</string>
+    <string name="kLoginTipsPlaceholderInputRefCode">推薦コード（オプション）</string>
+    <string name="kLoginCellLabelRefCode">推薦コード</string>
     <string name="kLoginTipsLoginOK">ログイン成功。</string>
     <string name="kLoginTipsRegFullOK">登録成功。</string>
     <string name="kLoginRegTipsAccountFormat">アカウントは【小写文字母】、【数字】、【-】、【.】構成されています，首位は字母。字母、数字終わり。</string>
@@ -520,7 +522,8 @@
     <string name="kVcTitleWhatIsTradePassowrd">何が取引パスワード？</string>
     <string name="kVcTitleWhatIsActivePrivateKey">何が資金キーファイル？</string>
     <string name="kVcTitleWhatIsGatewayAssets">何はゲートウェイ資産？</string>
-    <string name="kVcTitleWhatIsGateway">什么是网关？</string>
+    <string name="kVcTitleWhatIsGateway">ゲートウェイは何ですか？</string>
+    <string name="kVcTitleWhatIsRefcode">紹介コードとは何ですか？</string>
     <string name="kVcTitleFAQ">よくある問題</string>
     <string name="kVcTitleVoting">投票</string>
     <string name="kVcTitleMyProposal">提案の管理</string>
@@ -621,7 +624,7 @@
     <string name="kOpDesc_account_upgrade_member">%s 終身会員をアップグレードする。</string>
     <string name="kOpDesc_account_transfer">アカウントの移転。</string>
     <string name="kOpDesc_asset_create">%s 資産の創建 %s。</string>
-    <string name="kOpDesc_asset_update">資産を更新する。</string>
+    <string name="kOpDesc_asset_update">資産 %s を更新する。</string>
     <string name="kOpDesc_asset_update_bitasset">スマートマネーを更新する。</string>
     <string name="kOpDesc_asset_update_feed_producers">フィード者を更新します。</string>
     <string name="kOpDesc_asset_issue">資産発行。</string>
