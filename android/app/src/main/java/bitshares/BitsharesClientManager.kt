@@ -139,26 +139,36 @@ class BitsharesClientManager {
     /**
      *  OP - 创建提案
      */
-    fun proposalCreate(opcode: EBitsharesOperations, opdata: JSONObject, opaccount: JSONObject, fee_paying_account: String): Promise {
+    fun proposalCreate(opcode: EBitsharesOperations, opdata: JSONObject, opaccount: JSONObject, proposal_create_args: JSONObject): Promise {
+        val kFeePayingAccount = proposal_create_args.optJSONObject("kFeePayingAccount")
+        val kApprovePeriod = proposal_create_args.optInt("kApprovePeriod")
+        val kReviewPeriod = proposal_create_args.optInt("kReviewPeriod")
+
+        assert(kFeePayingAccount != null)
+        assert(kApprovePeriod > 0)
+        assert(kReviewPeriod != null)
+
+        val fee_paying_account_id = kFeePayingAccount.optString("id")
+        assert(fee_paying_account_id != null)
+
         return _wrap_opdata_with_fee(opcode, opdata).then {
             val opdata_with_fee = it as JSONObject
-            //  TODO:fowallet 这2个参数后续考虑让用户自己选择。
 
-            //  提案有效期：3天。TODO：是否考虑用户选择？
-            var proposal_lifetime_sec = 3600 * 24 * 3
+            //  提案有效期
+            var proposal_lifetime_sec = kApprovePeriod + kReviewPeriod
 
-            //  提案审核期：2天    REMARK：该周期必须小于提案有效期
-            var review_period_seconds = 3600 * 24 * 2
+            //  提案审核期
+            var review_period_seconds = kReviewPeriod
 
             //  获取全局参数
             val gp = ChainObjectManager.sharedChainObjectManager().getObjectGlobalProperties()
             val parameters = gp.optJSONObject("parameters")
             if (parameters != null) {
-                //  不能 超过最大值
+                //  不能 超过最大值（当前值28天）
                 val maximum_proposal_lifetime = parameters.getInt("maximum_proposal_lifetime")
                 proposal_lifetime_sec = min(maximum_proposal_lifetime, proposal_lifetime_sec)
 
-                //  不能低于最低值
+                //  不能低于最低值（当前值1小时）
                 val committee_proposal_review_period = parameters.getInt("committee_proposal_review_period")
                 review_period_seconds = max(committee_proposal_review_period, review_period_seconds)
             }
@@ -171,20 +181,21 @@ class BitsharesClientManager {
 
             val op = jsonObjectfromKVS(
                     "fee", jsonObjectfromKVS("amount", 0, "asset_id", BTS_NETWORK_CORE_ASSET_ID),
-                    "fee_paying_account", fee_paying_account,
+                    "fee_paying_account", fee_paying_account_id,
                     "expiration_time", expiration_ts,
                     "proposed_ops", jsonArrayfrom(jsonObjectfromKVS("op", jsonArrayfrom(opcode.value, opdata_with_fee)))
             )
 
-            //  REMARK：如果是理事会账号，必须添加审核周期。一般提案可以不添加。
-            if (opaccount.getString("id") == BTS_GRAPHENE_COMMITTEE_ACCOUNT) {
+            assert(opaccount.getString("id").equals(BTS_GRAPHENE_COMMITTEE_ACCOUNT) || kReviewPeriod > 0)
+
+            if (kReviewPeriod > 0){
                 op.put("review_period_seconds", review_period_seconds)
             }
 
             //  创建交易
             val tr = TransactionBuilder()
             tr.add_operation(EBitsharesOperations.ebo_proposal_create, op)
-            tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(fee_paying_account))
+            tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(fee_paying_account_id))
             return@then process_transaction(tr)
         }
     }
