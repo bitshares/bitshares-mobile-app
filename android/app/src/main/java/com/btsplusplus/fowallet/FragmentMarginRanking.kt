@@ -67,12 +67,16 @@ class FragmentMarginRanking : BtsppFragment() {
         val lay = _currentView!!.findViewById<LinearLayout>(R.id.layout_fragment_of_diya_ranking_cny)
         lay.removeAllViews()
 
+
+
         val data_array = data_array[0] as JSONArray
         if (data_array.length() > 0) {
             val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, toDp(30f))
             layout_params.gravity = Gravity.CENTER_VERTICAL
             for (json in data_array.forin<JSONObject>()) {
-                createCell(lay, this.activity?.applicationContext!!, layout_params, json!!)
+                // 这里直接获取的 context 可能不对，要使用创建时保存的 _ctx
+                // createCell(lay, this.activity?.applicationContext!!, layout_params, json!!)
+                createCell(lay, _ctx!!, layout_params, json!!)
             }
         } else {
             lay.addView(ViewUtils.createEmptyCenterLabel(_ctx!!, R.string.kVcTipsNoCallOrder.xmlstring(_ctx!!)))
