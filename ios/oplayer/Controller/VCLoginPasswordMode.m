@@ -263,12 +263,15 @@ enum
         id active_seed = [NSString stringWithFormat:@"%@active%@", pUsername, pPassword];
         id calc_bts_active_address = [OrgUtils genBtsAddressFromPrivateKeySeed:active_seed];
         
-        //  检测权限是否足够签署需要active权限的交易。
+        //  权限检查
         EAccountPermissionStatus status = [WalletManager calcPermissionStatus:account_active privateKeysHash:@{calc_bts_active_address:@YES}];
+        //  a、无任何权限，不导入。
         if (status == EAPS_NO_PERMISSION){
             [OrgUtils makeToast:NSLocalizedString(@"kLoginSubmitTipsAccountPasswordIncorrect", @"密码不正确，请重新输入。")];
             return nil;
-        }else if (status == EAPS_PARTIAL_PERMISSION){
+        }
+        //  b、部分权限，仅在导入钱包可以，直接登录时不支持。
+        if (_checkActivePermission && status == EAPS_PARTIAL_PERMISSION){
             [OrgUtils makeToast:NSLocalizedString(@"kLoginSubmitTipsAccountPasswordPermissionNotEnough", @"该密码权限不足。")];
             return nil;
         }

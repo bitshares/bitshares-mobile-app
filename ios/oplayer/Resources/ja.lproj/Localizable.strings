@@ -12,33 +12,33 @@
 "kLable24HVol" = "24H量";
 
 "kLabelMarketFavorites" = "自選";
-"kLabelGroupNameMain" = "主区";
-"kLabelGroupNameGDEX" = "GDEX(网关)";
-"kLabelGroupNameWWW" = "WWW(网关)";
-"kLabelGroupNameOPEN" = "OPEN(网关)";
-"kLabelGroupNameWIN" = "WIN(网关)";
+"kLabelGroupNameMain" = "メイン";
+"kLabelGroupNameGDEX" = "GDEX(ゲートウェイ)";
+"kLabelGroupNameWWW" = "WWW(ゲートウェイ)";
+"kLabelGroupNameOPEN" = "OPEN(ゲートウェイ)";
+"kLabelGroupNameWIN" = "WIN(ゲートウェイ)";
 "kLabelGroupNameOther" = "その他の";
 "kLabelGroupIntroduction" = "绍介 >";
 
-"kLabelNoFavMarket" = "自選はない";
+"kLabelNoFavMarket" = "自選はありません";
 
 /* 抵押界面 */
 "kDebtLableReset" = "リセット";
 "kDebtLableSelectAsset" = "資産の選び";
 "kDebtLableFeedPrice" = "フィード価格";
-"kDebtLableCallPrice" = "コール価格";
+"kDebtLableCallPrice" = "強制単価";
 "kDebtLablePayMaxDebt" = "最大返済";
 "kDebtLableUseMax" = "全部担保";
 "kDebtLableAvailable" = "利用可能額";
 "kDebtLableRatio" = "担保比率";
 "kDebtLableUpdatePosition" = "担保変更";
-"kDebtLableLogin" = "登録";
+"kDebtLableLogin" = "ログイン";
 "kDebtTipSelectDebtAsset" = "選んで入る資産を借ります";
 "kDebtTipInputDebtValue" = "借金の金額を入力してください";
 "kDebtTipInputCollAmount" = "担保物の数量を入力してください";
 "kDebtTipTargetRatioNotSet" = "目标担保比率 はない";
 "kDebtTipTargetRatio" = "目标担保比率";
-"kDebtTipTitleFeedAndCallPrice" = "フィード価格とコール価格";
+"kDebtTipTitleFeedAndCallPrice" = "フィード価格と強制単価";
 "kDebtTipTitleWhatIsRatio" = "何が担保比率？";
 "kDebtTipTitleWhatIsTargetRatio" = "何が目标担保比率？";
 "kDebtTipValueAndAmountNotChange" ="借金の数量はと物を抵当にして変化が発生していません。";
@@ -61,14 +61,14 @@
 "kVcRankCurrentFeedPrice" = "現在のフィード価格";
 "kVcTipsNoCallOrder" = "まだユーザーが担保を入れていない";
 "kVcRankRatio" = "担保比率 ";
-"kVcRankCallPrice" = "コール価格 ";
+"kVcRankCallPrice" = "強制単価 ";
 "kVcRankColl" = "担保";
-"kVcRankDebt" = "入りを借り";
+"kVcRankDebt" = "借金";
 
 /* 喂价详情界面 */
 "kVcFeedCurrentFeedPrice" = "現在のフィード価格";
 "kVcFeedWitnessName" = "証人";
-"kVcFeedPriceName" = "フィード価格";
+"kVcFeedPriceName" = "価格";
 "kVcFeedRate" = "偏差率";
 "kVcFeedPublishDate" = "最近発表";
 "kVcFeedNoData" = "未発表";
@@ -168,7 +168,7 @@
 "kLoginTipsPlaceholderInputRefCode" = "推薦コード（オプション）";
 "kLoginCellLabelRefCode" = "推薦コード";
 "kLoginTipsLoginOK" = "ログイン成功。";
-"kLoginTipsRegFullOK" = "登録成功。";
+"kLoginTipsRegFullOK" = "新規登録成功。";
 "kLoginRegTipsAccountFormat" = "アカウントは【小写文字母】、【数字】、【-】、【.】構成されています，首位は字母。字母、数字終わり。";
 "kLoginRegTipsAccountPasswordFormat" = "12文字以上，数字、大文字，小文字の組み合わせであるべきです。";
 "kLoginRegTipsWalletPasswordFormat" = "8文字以上，数字、大文字，小文字の組み合わせであるべきです。";
@@ -183,7 +183,7 @@
 "kLoginCellClickImport" = "クリックして導入します";
 "kLoginTipsImportWalletTitle" = "ウオレット導入します";
 "kLoginBtnImportNow" = "直ちに導入";
-"kLoginBtnRegister" = "登録";
+"kLoginBtnRegister" = "新規登録";
 "kLoginCellBtnAgreeAndReg" = "合意に賛成新规登录してください";
 "kLoginImportTipsPleaseInputPassword" = "パスワードを入力してください";
 "kLoginImportTipsReadWalletFailed" = "ウオレットを読み取るファイルは失敗します。";
@@ -208,9 +208,9 @@
 "kLoginSubmitTipsPrivateKeyIncorrect" = "不正なキーファイル，再入力してください。";
 "kLoginSubmitTipsPrivateKeyPermissionNotEnough" = "このキーファイルの権限は不足します。";
 "kLoginSubmitTipsAccountFmtIncorrect" = "アカウントの書式は正しくありません，再入力してください。";
-"kLoginRegTipsRegOK" = "登録成功，失敗を更新して、少しの後でまた試みてください。";
-"kLoginTipsWalletModeRegOK" = "登録成功，アカウントの情報を得て失敗します，APPに再起動してください。";
-"kLoginCellAccountName" = "アカウント   ";
+"kLoginRegTipsRegOK" = "新規登録成功，失敗を更新して、少しの後でまた試みてください。";
+"kLoginTipsWalletModeRegOK" = "新規登録成功，アカウントの情報を得て失敗します，APPに再起動してください。";
+"kLoginCellAccountName" = "アカウント ";
 "kLoginCellSetupTradePassword" =  "取引パスワードの設定";
 "kLoginCellTradePassword" = "取引パスワード";
 "kLoginCellWalletPassword" = "アカウントパスワード";
@@ -222,8 +222,8 @@
 "kLoginFaucetTipsInvalidAccountFmt" = "アカウントの書式が無効です。";
 "kLoginFaucetTipsAccountAlreadyExist" = "アカウントはすでに存在しました。";
 "kLoginFaucetTipsUnknownError" = "誤りを知りません，失敗を放送します。";
-"kLoginFaucetTipsDeviceRegTooMany" = "この設備がアカウントの数量を登録するのが多すぎます。";
-"kLoginFaucetTipsDeviceRegTooFast" = "登録するのはとても頻繁で、少しの後でまた試みてください。";
+"kLoginFaucetTipsDeviceRegTooMany" = "この設備がアカウントの数量を新規登録するのが多すぎます。";
+"kLoginFaucetTipsDeviceRegTooFast" = "新規登録するのはとても頻繁で、少しの後でまた試みてください。";
 "kLoginFaucetTipsServerMaintence" = "サーバーの保護の中。";
 "kBackupMobilePhoneNotSupported" = "備品はウオレットファイルをバックアップするのに対応していない。";
 "kBackupInitUnknownError" = "未知のトラブルが発生し、おウオレットを用意することができませんので、后ほどお试しください。";
@@ -238,7 +238,7 @@
 "kAccLabelReferrer" = "推薦人";
 "kAccLabelRegistrar" = "注册人";
 "kAccLabelLifetimeRef" = "一生会員推薦人";
-"kAccTipsLogout" = "登録を取り消してスレイブがアカウントの関連情報を削除するでしょう，あなたがすでにバックアップをしっかりと行ったのを確認してください。引き続き取り消すかどうか？";
+"kAccTipsLogout" = "ログアウトするとデバイスからアカウント情報が削除されます。バックアップを作成したことを確認してください。 ログアウトし続けますか？";
 
 /* 提案界面 */
 "kProposalTipsAskMissingActive" = "アカウント %@ の資金権限はない，取引の提案を発起しますか？";
@@ -253,7 +253,7 @@
 "kProposalSubmitTipsSelectCreator" = "提案の創建者のアカウントを選んでください。";
 "kProposalSubmitTipTxOK" = "提案を創建して成功します。";
 "kProposalBtnSubmit" = "提出します";
-"kProposalTipsNoAnyProposals" = "いかなる提案の情報がありません";
+"kProposalTipsNoAnyProposals" = "提案の情報はありません";
 "kProposalSubmitTipsInReview" = "提案は審査の中であって、授権を添加することはできません。";
 "kProposalSubmitTipsNoPermissionApprove" = "あなたはいかなる権限がなくて、実行して操作を許可することができません。";
 "kProposalSubmitTipsYouAlreadyApproved" = "あなたはすでに許可して、反復処理を使いません。";
@@ -291,11 +291,11 @@
 "kVcAssetBtnTransfer" = "送金";
 "kVcAssetBtnTrade" = "取引";
 "kVcAssetTipsEstimating" = "推定の中...";
-"kVcAssetAvailable" = "可用";
+"kVcAssetAvailable" = "可利用";
 "kVcAssetOnOrder" = "注文";
-"kVcAssetColl" = "抵押";
-"kVcAssetDebt" = "负债";
-"kVcAssetCallPrice" = "强制平仓价";
+"kVcAssetColl" = "担保";
+"kVcAssetDebt" = "借金";
+"kVcAssetCallPrice" = "強制単価";
 "kVcAssetViewAllAssets" = "すべての資産を見る";
 "kVcAssetTipNoActivity" = "取引履歴なし";
 "kVcAssetTipNowLoading" = "ロードの中で...";
@@ -502,7 +502,7 @@
 "kVcVoteTipTxFullOK" = "%@成功。";
 "kVcVoteTipTxOK" = "%@成功，しかしネットワークが異常で、少しの後でまた試みてください。";
 "kVcVoteCellTotalVotes" = "総票数 ";
-"kVcVoteCellMissed" = "失われたブロック数 ";
+"kVcVoteCellMissed" = "失われた数 ";
 "kVcVoteCellCreator" = "創建者 ";
 "kVcVoteCellDailyPay" = "毎日の予算 ";
 "kVcVoteCellWPDatePeriod" = "有効期間 ";
@@ -524,7 +524,7 @@
 /* 各种VC标题栏名字 */
 "kVcTitleLogin" = "ログイン";
 "kVcTitleImportAccount" = "アカウント導入";
-"kVcTitleRegister" = "登録";
+"kVcTitleRegister" = "新規登録";
 "kVcTitleTransfer" = "送金";
 "kVcTitleConfirmTransaction" = "取引の確認をお願いします。";
 "kVcTitleCreateProposal" = "提案を確認してください。";
@@ -703,7 +703,7 @@
 "setting_theme" = "テーマの風格";
 "kThemeNameBlue" = "紺色";
 "kThemeNameWhite" = "真珠白";
-"kNormalCellBtnLogin" = "登録";
+"kNormalCellBtnLogin" = "ログイン";
 "kNormalCellBtnCreateWallet" = "ウオレットを創建";
 "kTipsInitialize" = "初期化の中…";
 "kTipsBeRequesting" = "願いの中…";
@@ -744,7 +744,7 @@
 "tip_network_error" = "ネットワークが異常で、少しの後でまた試みてください。";
 "Cancel" = "キャンセル";
 "faq" = "Q&A";
-"tip_click_to_login" = "点を登録する";
+"tip_click_to_login" = "点をログインする";
 "kAccountManagement" = "アカウント管理";
 "tip_member_expired" = "会员:期限を切れました";
 "tip_member_timeleft_fmt" = "会员：%@日で期限が切れる";
