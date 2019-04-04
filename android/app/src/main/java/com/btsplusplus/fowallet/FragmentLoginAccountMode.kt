@@ -98,12 +98,15 @@ class FragmentLoginAccountMode : Fragment() {
             val active_seed = "${username}active${password}"
             val calc_bts_active_address = OrgUtils.genBtsAddressFromPrivateKeySeed(active_seed)!!
 
+            //  权限检查
             val status = WalletManager.calcPermissionStatus(account_active, jsonObjectfromKVS(calc_bts_active_address, true))
+            //  a、无任何权限，不导入。
             if (status == EAccountPermissionStatus.EAPS_NO_PERMISSION) {
                 showToast(R.string.kLoginSubmitTipsAccountPasswordIncorrect.xmlstring(_ctx!!))
                 return@then null
             }
-            if (status == EAccountPermissionStatus.EAPS_PARTIAL_PERMISSION) {
+            //  b、部分权限，仅在导入钱包可以，直接登录时不支持。
+            if (_checkActivePermission && status == EAccountPermissionStatus.EAPS_PARTIAL_PERMISSION) {
                 showToast(R.string.kLoginSubmitTipsAccountPasswordPermissionNotEnough.xmlstring(_ctx!!))
                 return@then null
             }
