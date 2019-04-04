@@ -7,31 +7,31 @@
     <string name="kTabBarNameMy">私の</string>
     <string name="kLable24HVol">24H量</string>
     <string name="kLabelMarketFavorites">自選</string>
-    <string name="kLabelGroupNameMain">主区</string>
-    <string name="kLabelGroupNameGDEX">GDEX(网关)</string>
-    <string name="kLabelGroupNameWWW">WWW(网关)</string>
-    <string name="kLabelGroupNameOPEN">OPEN(网关)</string>
-    <string name="kLabelGroupNameWIN">WIN(网关)</string>
+    <string name="kLabelGroupNameMain">メイン</string>
+    <string name="kLabelGroupNameGDEX">GDEX(ゲートウェイ)</string>
+    <string name="kLabelGroupNameWWW">WWW(ゲートウェイ)</string>
+    <string name="kLabelGroupNameOPEN">OPEN(ゲートウェイ)</string>
+    <string name="kLabelGroupNameWIN">WIN(ゲートウェイ)</string>
     <string name="kLabelGroupNameOther">その他の</string>
     <string name="kLabelGroupIntroduction">绍介 &gt;</string>
-    <string name="kLabelNoFavMarket">自選はない</string>
+    <string name="kLabelNoFavMarket">自選はありません</string>
     <!-- 抵押界面 -->
     <string name="kDebtLableReset">リセット</string>
     <string name="kDebtLableSelectAsset">資産の選び</string>
     <string name="kDebtLableFeedPrice">フィード価格</string>
-    <string name="kDebtLableCallPrice">コール価格</string>
+    <string name="kDebtLableCallPrice">強制単価</string>
     <string name="kDebtLablePayMaxDebt">最大返済</string>
     <string name="kDebtLableUseMax">全部担保</string>
     <string name="kDebtLableAvailable">利用可能額</string>
     <string name="kDebtLableRatio">担保比率</string>
     <string name="kDebtLableUpdatePosition">担保変更</string>
-    <string name="kDebtLableLogin">登録</string>
+    <string name="kDebtLableLogin">ログイン</string>
     <string name="kDebtTipSelectDebtAsset">選んで入る資産を借ります</string>
     <string name="kDebtTipInputDebtValue">借金の金額を入力してください</string>
     <string name="kDebtTipInputCollAmount">担保物の数量を入力してください</string>
     <string name="kDebtTipTargetRatioNotSet">目标担保比率 はない</string>
     <string name="kDebtTipTargetRatio">目标担保比率</string>
-    <string name="kDebtTipTitleFeedAndCallPrice">フィード価格とコール価格</string>
+    <string name="kDebtTipTitleFeedAndCallPrice">フィード価格と強制単価</string>
     <string name="kDebtTipTitleWhatIsRatio">何が担保比率？</string>
     <string name="kDebtTipTitleWhatIsTargetRatio">何が目标担保比率？</string>
     <string name="kDebtTipValueAndAmountNotChange">借金の数量はと物を抵当にして変化が発生していません。</string>
@@ -52,13 +52,13 @@
     <string name="kVcRankCurrentFeedPrice">現在のフィード価格</string>
     <string name="kVcTipsNoCallOrder">まだユーザーが担保を入れていない</string>
     <string name="kVcRankRatio">担保比率 </string>
-    <string name="kVcRankCallPrice">コール価格 </string>
+    <string name="kVcRankCallPrice">強制単価 </string>
     <string name="kVcRankColl">担保</string>
-    <string name="kVcRankDebt">入りを借り</string>
+    <string name="kVcRankDebt">借金</string>
     <!-- 喂价详情界面 -->
     <string name="kVcFeedCurrentFeedPrice">現在のフィード価格</string>
     <string name="kVcFeedWitnessName">証人</string>
-    <string name="kVcFeedPriceName">フィード価格</string>
+    <string name="kVcFeedPriceName">価格</string>
     <string name="kVcFeedRate">偏差率</string>
     <string name="kVcFeedPublishDate">最近発表</string>
     <string name="kVcFeedNoData">未発表</string>
@@ -154,7 +154,7 @@
     <string name="kLoginTipsPlaceholderInputRefCode">推薦コード（オプション）</string>
     <string name="kLoginCellLabelRefCode">推薦コード</string>
     <string name="kLoginTipsLoginOK">ログイン成功。</string>
-    <string name="kLoginTipsRegFullOK">登録成功。</string>
+    <string name="kLoginTipsRegFullOK">新規登録成功。</string>
     <string name="kLoginRegTipsAccountFormat">アカウントは【小写文字母】、【数字】、【-】、【.】構成されています，首位は字母。字母、数字終わり。</string>
     <string name="kLoginRegTipsAccountPasswordFormat">12文字以上，数字、大文字，小文字の組み合わせであるべきです。</string>
     <string name="kLoginRegTipsWalletPasswordFormat">8文字以上，数字、大文字，小文字の組み合わせであるべきです。</string>
@@ -169,7 +169,7 @@
     <string name="kLoginCellClickImport">クリックして導入します</string>
     <string name="kLoginTipsImportWalletTitle">ウオレット導入します</string>
     <string name="kLoginBtnImportNow">直ちに導入</string>
-    <string name="kLoginBtnRegister">登録</string>
+    <string name="kLoginBtnRegister">新規登録</string>
     <string name="kLoginCellBtnAgreeAndReg">合意に賛成新规登录してください</string>
     <string name="kLoginImportTipsPleaseInputPassword">パスワードを入力してください</string>
     <string name="kLoginImportTipsReadWalletFailed">ウオレットを読み取るファイルは失敗します。</string>
@@ -194,9 +194,9 @@
     <string name="kLoginSubmitTipsPrivateKeyIncorrect">不正なキーファイル，再入力してください。</string>
     <string name="kLoginSubmitTipsPrivateKeyPermissionNotEnough">このキーファイルの権限は不足します。</string>
     <string name="kLoginSubmitTipsAccountFmtIncorrect">アカウントの書式は正しくありません，再入力してください。</string>
-    <string name="kLoginRegTipsRegOK">登録成功，失敗を更新して、少しの後でまた試みてください。</string>
-    <string name="kLoginTipsWalletModeRegOK">登録成功，アカウントの情報を得て失敗します，APPに再起動してください。</string>
-    <string name="kLoginCellAccountName">アカウント   </string>
+    <string name="kLoginRegTipsRegOK">新規登録成功，失敗を更新して、少しの後でまた試みてください。</string>
+    <string name="kLoginTipsWalletModeRegOK">新規登録成功，アカウントの情報を得て失敗します，APPに再起動してください。</string>
+    <string name="kLoginCellAccountName">アカウント </string>
     <string name="kLoginCellSetupTradePassword">取引パスワードの設定</string>
     <string name="kLoginCellTradePassword">取引パスワード</string>
     <string name="kLoginCellWalletPassword">アカウントパスワード</string>
@@ -208,8 +208,8 @@
     <string name="kLoginFaucetTipsInvalidAccountFmt">アカウントの書式が無効です。</string>
     <string name="kLoginFaucetTipsAccountAlreadyExist">アカウントはすでに存在しました。</string>
     <string name="kLoginFaucetTipsUnknownError">誤りを知りません，失敗を放送します。</string>
-    <string name="kLoginFaucetTipsDeviceRegTooMany">この設備がアカウントの数量を登録するのが多すぎます。</string>
-    <string name="kLoginFaucetTipsDeviceRegTooFast">登録するのはとても頻繁で、少しの後でまた試みてください。</string>
+    <string name="kLoginFaucetTipsDeviceRegTooMany">この設備がアカウントの数量を新規登録するのが多すぎます。</string>
+    <string name="kLoginFaucetTipsDeviceRegTooFast">新規登録するのはとても頻繁で、少しの後でまた試みてください。</string>
     <string name="kLoginFaucetTipsServerMaintence">サーバーの保護の中。</string>
     <string name="kBackupMobilePhoneNotSupported">備品はウオレットファイルをバックアップするのに対応していない。</string>
     <string name="kBackupInitUnknownError">未知のトラブルが発生し、おウオレットを用意することができませんので、后ほどお试しください。</string>
@@ -223,7 +223,7 @@
     <string name="kAccLabelReferrer">推薦人</string>
     <string name="kAccLabelRegistrar">注册人</string>
     <string name="kAccLabelLifetimeRef">一生会員推薦人</string>
-    <string name="kAccTipsLogout">登録を取り消してスレイブがアカウントの関連情報を削除するでしょう，あなたがすでにバックアップをしっかりと行ったのを確認してください。引き続き取り消すかどうか？</string>
+    <string name="kAccTipsLogout">ログアウトするとデバイスからアカウント情報が削除されます。バックアップを作成したことを確認してください。 ログアウトし続けますか？</string>
     <!-- 提案界面 -->
     <string name="kProposalTipsAskMissingActive">アカウント %s の資金権限はない，取引の提案を発起しますか？</string>
     <string name="kProposalTipsAskMissingOwner">アカウント %s のアカウント権限はない，取引の提案を発起しますか？</string>
@@ -237,7 +237,7 @@
     <string name="kProposalSubmitTipsSelectCreator">提案の創建者のアカウントを選んでください。</string>
     <string name="kProposalSubmitTipTxOK">提案を創建して成功します。</string>
     <string name="kProposalBtnSubmit">提出します</string>
-    <string name="kProposalTipsNoAnyProposals">いかなる提案の情報がありません</string>
+    <string name="kProposalTipsNoAnyProposals">提案の情報はありません</string>
     <string name="kProposalSubmitTipsInReview">提案は審査の中であって、授権を添加することはできません。</string>
     <string name="kProposalSubmitTipsNoPermissionApprove">あなたはいかなる権限がなくて、実行して操作を許可することができません。</string>
     <string name="kProposalSubmitTipsYouAlreadyApproved">あなたはすでに許可して、反復処理を使いません。</string>
@@ -274,11 +274,11 @@
     <string name="kVcAssetBtnTransfer">送金</string>
     <string name="kVcAssetBtnTrade">取引</string>
     <string name="kVcAssetTipsEstimating">推定の中...</string>
-    <string name="kVcAssetAvailable">可用</string>
+    <string name="kVcAssetAvailable">可利用</string>
     <string name="kVcAssetOnOrder">注文</string>
-    <string name="kVcAssetColl">抵押</string>
-    <string name="kVcAssetDebt">负债</string>
-    <string name="kVcAssetCallPrice">强制平仓价</string>
+    <string name="kVcAssetColl">担保</string>
+    <string name="kVcAssetDebt">借金</string>
+    <string name="kVcAssetCallPrice">強制単価</string>
     <string name="kVcAssetViewAllAssets">すべての資産を見る</string>
     <string name="kVcAssetTipNoActivity">取引履歴なし</string>
     <string name="kVcAssetTipNowLoading">ロードの中で...</string>
@@ -478,7 +478,7 @@
     <string name="kVcVoteTipTxFullOK">%s成功。</string>
     <string name="kVcVoteTipTxOK">%s成功，しかしネットワークが異常で、少しの後でまた試みてください。</string>
     <string name="kVcVoteCellTotalVotes">総票数 </string>
-    <string name="kVcVoteCellMissed">失われたブロック数 </string>
+    <string name="kVcVoteCellMissed">失われた数 </string>
     <string name="kVcVoteCellCreator">創建者 </string>
     <string name="kVcVoteCellDailyPay">毎日の予算 </string>
     <string name="kVcVoteCellWPDatePeriod">有効期間 </string>
@@ -498,7 +498,7 @@
     <!-- 各种VC标题栏名字 -->
     <string name="kVcTitleLogin">ログイン</string>
     <string name="kVcTitleImportAccount">アカウント導入</string>
-    <string name="kVcTitleRegister">登録</string>
+    <string name="kVcTitleRegister">新規登録</string>
     <string name="kVcTitleTransfer">送金</string>
     <string name="kVcTitleConfirmTransaction">取引の確認をお願いします。</string>
     <string name="kVcTitleCreateProposal">提案を確認してください。</string>
@@ -673,7 +673,7 @@
     <string name="setting_theme">テーマの風格</string>
     <string name="kThemeNameBlue">紺色</string>
     <string name="kThemeNameWhite">真珠白</string>
-    <string name="kNormalCellBtnLogin">登録</string>
+    <string name="kNormalCellBtnLogin">ログイン</string>
     <string name="kNormalCellBtnCreateWallet">ウオレットを創建</string>
     <string name="kTipsInitialize">初期化の中…</string>
     <string name="kTipsBeRequesting">願いの中…</string>
@@ -714,7 +714,7 @@
     <string name="tip_network_error">ネットワークが異常で、少しの後でまた試みてください。</string>
     <string name="Cancel">キャンセル</string>
     <string name="faq">Q&amp;A</string>
-    <string name="tip_click_to_login">点を登録する</string>
+    <string name="tip_click_to_login">点をログインする</string>
     <string name="kAccountManagement">アカウント管理</string>
     <string name="tip_member_expired">会员:期限を切れました</string>
     <string name="tip_member_timeleft_fmt">会员：%s日で期限が切れる</string>
