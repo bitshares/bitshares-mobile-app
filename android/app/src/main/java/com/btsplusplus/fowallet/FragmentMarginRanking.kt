@@ -74,8 +74,6 @@ class FragmentMarginRanking : BtsppFragment() {
             val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, toDp(30f))
             layout_params.gravity = Gravity.CENTER_VERTICAL
             for (json in data_array.forin<JSONObject>()) {
-                // 这里直接获取的 context 可能不对，要使用创建时保存的 _ctx
-                // createCell(lay, this.activity?.applicationContext!!, layout_params, json!!)
                 createCell(lay, _ctx!!, layout_params, json!!)
             }
         } else {
