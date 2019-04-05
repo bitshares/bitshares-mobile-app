@@ -45,7 +45,7 @@ class FragmentRegisterAccountMode : Fragment() {
         }
     }
 
-    private fun onRegisterClicked(account_name: String, password: String, confirm_password: String) {
+    private fun onRegisterClicked(account_name: String, password: String, confirm_password: String, refcode: String) {
         //  检测参数有效性
         if (!Utils.isValidBitsharesAccountName(account_name)) {
             showToast(R.string.kLoginSubmitTipsAccountFmtIncorrect.xmlstring(_ctx!!))
@@ -77,7 +77,12 @@ class FragmentRegisterAccountMode : Fragment() {
             val seed_active = "${username}active${password}"
             val owner_key = OrgUtils.genBtsAddressFromPrivateKeySeed(seed_owner)!!
             val active_key = OrgUtils.genBtsAddressFromPrivateKeySeed(seed_active)!!
-            val args = jsonObjectfromKVS("account_name", username, "owner_key", owner_key, "active_key", active_key, "memo_key", active_key, "chid", kAppChannelID)
+            val args = jsonObjectfromKVS("account_name", username,
+                    "owner_key", owner_key,
+                    "active_key", active_key,
+                    "memo_key", active_key,
+                    "chid", kAppChannelID,
+                    "referrer_code", refcode)
             OrgUtils.asyncPost(chainMgr.getFinalFaucetURL(), args).then {
                 val response = it as JSONObject
                 //  注册失败
@@ -135,10 +140,15 @@ class FragmentRegisterAccountMode : Fragment() {
             val account_name = view.findViewById<EditText>(R.id.tf_account_name).text.toString()
             val password = view.findViewById<EditText>(R.id.tf_password).text.toString()
             val confirm_password = view.findViewById<EditText>(R.id.tf_confirm_password).text.toString()
-            onRegisterClicked(account_name, password, confirm_password)
+            val refcode = view.findViewById<EditText>(R.id.tf_refcode).text.toString()
+            onRegisterClicked(account_name, password, confirm_password, refcode)
         }
         view.findViewById<ImageView>(R.id.tip_account_name).setOnClickListener { UtilsAlert.showMessageBox(activity!!, R.string.kLoginRegTipsAccountFormat.xmlstring(_ctx!!)) }
         view.findViewById<ImageView>(R.id.tip_password).setOnClickListener { UtilsAlert.showMessageBox(activity!!, R.string.kLoginRegTipsAccountPasswordFormat.xmlstring(_ctx!!)) }
+        view.findViewById<ImageView>(R.id.tip_refcode).setOnClickListener {
+            fabricLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_refcode"))
+            activity!!.goToWebView(_ctx!!.resources.getString(R.string.kVcTitleWhatIsRefcode), "http://btspp.io/qam.html#qa_refcode")
+        }
         return view
     }
 
