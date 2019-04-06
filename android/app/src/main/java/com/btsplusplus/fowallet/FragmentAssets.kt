@@ -256,6 +256,9 @@ class FragmentAssets : BtsppFragment() {
     }
 
     private fun refreshUI_TotalValue(textView: TextView? = null) {
+        if (!isAdded){
+            return
+        }
         _total_estimate_value?.let { total_estimate_value ->
             val display_precision = ChainObjectManager.sharedChainObjectManager().getAssetBySymbol(_displayEstimateAsset).getInt("precision")
             val label = textView ?: _view!!.findViewById<TextView>(R.id.label_total_value)
@@ -528,6 +531,9 @@ class FragmentAssets : BtsppFragment() {
     }
 
     private fun refreshUI() {
+        if (!isAdded){
+            return
+        }
         val lay: LinearLayout = _view!!.findViewById(R.id.layout_my_assets_from_my_fragment)
         lay.removeAllViews()
         val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, toDp(30f))

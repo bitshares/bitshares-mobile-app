@@ -74,7 +74,6 @@ class ScheduleManager {
 
 
     var _timer_per_seconds: Timer? = null                          //  秒精度定时器
-    var _timer_per_seconds_task: TimerTask? = null
     var _ts_last_tick: Long = 0L
 
     var _task_hash_ticker = mutableMapOf<String, ScheduleTickerUpdate>()
@@ -94,7 +93,13 @@ class ScheduleManager {
     fun startTimer() {
         if (_timer_per_seconds == null) {
             _timer_per_seconds = Timer()
-            _timer_per_seconds!!.schedule(_timer_per_seconds_task, 1000, 3000)
+            _timer_per_seconds!!.schedule(object : TimerTask(){
+                override fun run() {
+                    delay_main {
+                        onTimerTick()
+                    }
+                }
+            }, 1000, 3000)
         }
     }
 
@@ -102,16 +107,6 @@ class ScheduleManager {
         if (_timer_per_seconds != null) {
             _timer_per_seconds!!.cancel()
             _timer_per_seconds = null
-        }
-    }
-
-    private fun initTimer() {
-        _timer_per_seconds_task = object : TimerTask() {
-            override fun run() {
-                delay_main {
-                    onTimerTick()
-                }
-            }
         }
     }
 
@@ -134,16 +129,6 @@ class ScheduleManager {
 
         //  更新订阅任务
         _processSubMarketTimeTick(dt)
-    }
-
-
-    fun onTimerTickerRefresh() {
-
-    }
-
-
-    constructor() {
-        initTimer()
     }
 
     /**
