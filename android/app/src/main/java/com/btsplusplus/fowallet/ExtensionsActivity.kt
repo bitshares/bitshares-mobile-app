@@ -253,10 +253,9 @@ fun android.app.Activity.showFaucetRegisterError(response: JSONObject?) {
  *  (private) 创建提案请求
  */
 fun android.app.Activity.onExecuteCreateProposalCore(opcode: EBitsharesOperations, opdata: JSONObject, opaccount: JSONObject, proposal_create_args: JSONObject, success_callback: (() -> Unit)?) {
-
     val fee_paying_account = proposal_create_args.getJSONObject("kFeePayingAccount")
     val fee_paying_account_id = fee_paying_account.getString("id")
-    assert(fee_paying_account_id != null)
+
     //  请求
     val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
     mask.show()

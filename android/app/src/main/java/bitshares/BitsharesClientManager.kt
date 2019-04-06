@@ -140,16 +140,14 @@ class BitsharesClientManager {
      *  OP - 创建提案
      */
     fun proposalCreate(opcode: EBitsharesOperations, opdata: JSONObject, opaccount: JSONObject, proposal_create_args: JSONObject): Promise {
-        val kFeePayingAccount = proposal_create_args.optJSONObject("kFeePayingAccount")
-        val kApprovePeriod = proposal_create_args.optInt("kApprovePeriod")
-        val kReviewPeriod = proposal_create_args.optInt("kReviewPeriod")
+        val kFeePayingAccount = proposal_create_args.getJSONObject("kFeePayingAccount")
+        val kApprovePeriod = proposal_create_args.getInt("kApprovePeriod")
+        val kReviewPeriod = proposal_create_args.getInt("kReviewPeriod")
 
         assert(kFeePayingAccount != null)
         assert(kApprovePeriod > 0)
-        assert(kReviewPeriod != null)
 
-        val fee_paying_account_id = kFeePayingAccount.optString("id")
-        assert(fee_paying_account_id != null)
+        val fee_paying_account_id = kFeePayingAccount.getString("id")
 
         return _wrap_opdata_with_fee(opcode, opdata).then {
             val opdata_with_fee = it as JSONObject
@@ -186,8 +184,9 @@ class BitsharesClientManager {
                     "proposed_ops", jsonArrayfrom(jsonObjectfromKVS("op", jsonArrayfrom(opcode.value, opdata_with_fee)))
             )
 
-            assert(opaccount.getString("id").equals(BTS_GRAPHENE_COMMITTEE_ACCOUNT) || kReviewPeriod > 0)
+            assert(opaccount.getString("id") != BTS_GRAPHENE_COMMITTEE_ACCOUNT || kReviewPeriod > 0)
 
+            //  添加审核期
             if (kReviewPeriod > 0){
                 op.put("review_period_seconds", review_period_seconds)
             }
