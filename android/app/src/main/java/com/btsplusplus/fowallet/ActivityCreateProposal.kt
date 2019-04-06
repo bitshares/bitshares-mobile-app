@@ -26,11 +26,10 @@ class ActivityCreateProposal : BtsppActivity() {
     private var _iProposalLifetime: Int = 0
     private var _iProposalReviewtime: Int = 0
 
-    private val ARR_DEFAULT_APPROVE_PERIOD_DAYS = arrayOf(1,2,3,5,7,15)
-    private val ARR_DEFAULT_REVIEW_PERIOD_DAYS = arrayOf(0,1,2,3,7)
+    //  REMARK：目前操作周期+审核周期最大28天。
+    private val ARR_DEFAULT_APPROVE_PERIOD_DAYS = arrayOf(1, 2, 3, 5, 7, 15)
+    private val ARR_DEFAULT_REVIEW_PERIOD_DAYS = arrayOf(1, 2, 3, 7)
 
-    private var default_approve_period_select_index: Int = 0
-    private var default_review_period_select_index: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +43,7 @@ class ActivityCreateProposal : BtsppActivity() {
         _opdata = proposal_args.getJSONObject("opdata")
         _opaccount = proposal_args.getJSONObject("opaccount")
         _result_promise = proposal_args.get("result_promise") as Promise
+        _bForceAddReviewTime = _opaccount.getString("id") == BTS_GRAPHENE_COMMITTEE_ACCOUNT
 
         //  默认第一个 / default value
         _permissionAccountArray = WalletManager.sharedWalletManager().getFeePayingAccountList(true)
@@ -55,15 +55,10 @@ class ActivityCreateProposal : BtsppActivity() {
         if (_bForceAddReviewTime){
             _iProposalLifetime = 3600 * 24 * 3
             _iProposalReviewtime = 3600 * 24 * 2
-            default_approve_period_select_index = 4
-            default_review_period_select_index = 2
         }else{
             _iProposalLifetime = 3600 * 24 * 7
             _iProposalReviewtime = 3600 * 24 * 0
-            default_approve_period_select_index = 2
-            default_review_period_select_index = 0
         }
-        _bForceAddReviewTime = _opaccount.getString("id").equals(BTS_GRAPHENE_COMMITTEE_ACCOUNT)
 
         //  事件 - 返回按钮 / back button
         layout_cancel_from_transfer_proposal.setOnClickListener {
@@ -96,13 +91,8 @@ class ActivityCreateProposal : BtsppActivity() {
 
     private fun refreshDefaultUI(){
         refreshPayingAccountUI()
-        if (_bForceAddReviewTime) {
-            label_approve_period_value.text = String.format(R.string.kProposalLabelNDays.xmlstring(this), 3)
-            label_review_period_value.text = String.format(R.string.kProposalLabelNDays.xmlstring(this), 2)
-        } else {
-            label_approve_period_value.text = String.format(R.string.kProposalLabelNDays.xmlstring(this), 7)
-            label_review_period_value.text = R.string.kProposalLabelNoReviewPeriod.xmlstring(this)
-        }
+        label_approve_period_value.text = _fmtFromSec(_iProposalLifetime)
+        label_review_period_value.text = _fmtFromSec(_iProposalReviewtime)
     }
 
     private fun refreshPayingAccountUI() {
@@ -166,31 +156,66 @@ class ActivityCreateProposal : BtsppActivity() {
         }
     }
 
-    private fun onProposalApprovePeriodCellClicked(){
-        val arr_days = ARR_DEFAULT_APPROVE_PERIOD_DAYS.map {
-            String.format(R.string.kProposalLabelNDays.xmlstring(this),it)
+    private fun _fmtFromSec(sec: Int): String{
+        val day = sec / (3600 * 24)
+        if (day == 0){
+            return resources.getString(R.string.kProposalLabelNoReviewPeriod)
+        }else{
+            return _fmtNday(day)
         }
-        ViewDialogNumberPicker(this, null, arr_days.toList<String>().toTypedArray(), default_approve_period_select_index){ _index: Int, txt: String ->
-            _iProposalLifetime = 3600 * 24 * _index
-            _proposal_create_args.put("kApprovePeriod", _iProposalLifetime)
-            default_approve_period_select_index = _index
-            label_approve_period_value.text = txt
+    }
+
+    private fun _fmtNday(days: Int): String{
+        if (days > 1){
+            return String.format(R.string.kProposalLabelNDays.xmlstring(this), days)
+        }else{
+            return String.format(R.string.kProposalLabel1Days.xmlstring(this), days)
+        }
+    }
+
+    private fun onProposalApprovePeriodCellClicked(){
+        val day_strings = JSONArray()
+        var default_select = -1
+        ARR_DEFAULT_APPROVE_PERIOD_DAYS.forEach { day ->
+            if (day * 3600 * 24 == _iProposalLifetime){
+                default_select = day_strings.length()
+            }
+            day_strings.put(_fmtNday(day))
+        }
+        ViewDialogNumberPicker(this, resources.getString(R.string.kProposalLabelApprovePeriod), day_strings.toList<String>().toTypedArray(), default_select){ _index: Int, txt: String ->
+            val sec = 3600 * 24 * ARR_DEFAULT_APPROVE_PERIOD_DAYS[_index]
+            if (sec != _iProposalLifetime){
+                _iProposalLifetime = sec
+                label_approve_period_value.text = txt
+            }
         }.show()
     }
 
     private fun onProposalReviewPeriodCellClicked(){
-        val arr_days = ARR_DEFAULT_REVIEW_PERIOD_DAYS.map {
-            if (it == 0) {
-                String.format(R.string.kProposalLabelNoReviewPeriod.xmlstring(this))
-            } else {
-                String.format(R.string.kProposalLabelNDays.xmlstring(this),it)
-            }
+        val day_list = JSONArray()
+        //  REMARK：强制添加审核期则没有0天的选项。
+        if (!_bForceAddReviewTime){
+            day_list.put(0)
         }
-        ViewDialogNumberPicker(this, null, arr_days.toList<String>().toTypedArray(), default_review_period_select_index){ _index: Int, txt: String ->
-            _iProposalReviewtime = 3600 * 24 * _index
-            _proposal_create_args.put("kReviewPeriod", _iProposalReviewtime)
-            default_review_period_select_index = _index
-            label_review_period_value.text = txt
+        ARR_DEFAULT_REVIEW_PERIOD_DAYS.forEach { day_list.put(it) }
+
+        val day_strings = JSONArray()
+        var default_select = -1
+        day_list.forEach<Int> {
+            val value = it!!
+            val sec = 3600 * 24 * value
+            if (sec == _iProposalReviewtime){
+                default_select = day_strings.length()
+            }
+            day_strings.put(_fmtFromSec(sec))
+        }
+
+        ViewDialogNumberPicker(this, resources.getString(R.string.kProposalLabelReviewPeriod), day_strings.toList<String>().toTypedArray(), default_select){ _index: Int, txt: String ->
+            val sec = 3600 * 24 * day_list.getInt(_index)
+            if (sec != _iProposalReviewtime){
+                _iProposalReviewtime = sec
+                label_review_period_value.text = txt
+            }
         }.show()
     }
 
