@@ -14,7 +14,6 @@ class ActivityIndexMarkets : BtsppActivity() {
     private val fragmens: ArrayList<Fragment> = ArrayList()
 
     private var _tickerRefreshTimer: Timer? = null
-    private var _tickerRefreshTimerTask: TimerTask? = null
 
     /**
      * 重载 - 返回键按下
@@ -71,15 +70,14 @@ class ActivityIndexMarkets : BtsppActivity() {
      */
     private fun startTickerRefreshTimer() {
         if (_tickerRefreshTimer == null) {
-            _tickerRefreshTimerTask = object : TimerTask() {
+            _tickerRefreshTimer = Timer()
+            _tickerRefreshTimer!!.schedule(object : TimerTask(){
                 override fun run() {
                     delay_main {
                         onTimerTickerRefresh()
                     }
                 }
-            }
-            _tickerRefreshTimer = Timer()
-            _tickerRefreshTimer!!.schedule(_tickerRefreshTimerTask, 300, 1000)
+            }, 300, 1000)
         }
     }
 
@@ -88,8 +86,6 @@ class ActivityIndexMarkets : BtsppActivity() {
      */
     private fun stopTickerRefreshTimer() {
         if (_tickerRefreshTimer != null) {
-            _tickerRefreshTimerTask!!.cancel()
-            _tickerRefreshTimerTask = null
             _tickerRefreshTimer!!.cancel()
             _tickerRefreshTimer = null
         }

@@ -30,7 +30,6 @@ class GrapheneWebSocket {
     private var _subs: MutableMap<String, Any> = mutableMapOf()         //  订阅推送回调列表
     private var _unsub: MutableMap<String, Any> = mutableMapOf()        //  取消订阅
     private var _keepAliveTimer: Timer? = null
-    private var _keepAliveTimerTask: TimerTask? = null
     private var _send_life: Int = 0
     private var _recv_life: Int = 0
 
@@ -395,22 +394,19 @@ class GrapheneWebSocket {
 
     private fun startKeepAliveTimer() {
         if (_keepAliveTimer == null) {
-            _keepAliveTimerTask = object : TimerTask() {
+            _keepAliveTimer = Timer()
+            _keepAliveTimer!!.schedule(object : TimerTask(){
                 override fun run() {
                     delay_main {
                         onKeepAliveTimerTick()
                     }
                 }
-            }
-            _keepAliveTimer = Timer()
-            _keepAliveTimer!!.schedule(_keepAliveTimerTask, 5000, 5000)
+            }, 5000, 5000)
         }
     }
 
     private fun stopKeepAliveTimer() {
         if (_keepAliveTimer != null) {
-            _keepAliveTimerTask!!.cancel()
-            _keepAliveTimerTask = null
             _keepAliveTimer!!.cancel()
             _keepAliveTimer = null
         }

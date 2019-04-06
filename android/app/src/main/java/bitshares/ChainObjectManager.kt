@@ -494,12 +494,13 @@ class ChainObjectManager {
     fun updateGrapheneObjectCache(data_array: JSONArray?) {
         if (data_array != null && data_array.length() > 0) {
             val pAppCache = AppCacheManager.sharedAppCacheManager()
-            data_array.forEach<JSONObject> {
-                val obj = it!!
-                val oid = obj.optString("id")
-                if (oid != "") {
-                    pAppCache.update_object_cache(oid, obj)
-                    _cacheObjectID2ObjectHash[oid] = obj
+            data_array.forEach<JSONObject> { obj ->
+                if (obj != null){
+                    val oid = obj.optString("id")
+                    if (oid != "") {
+                        pAppCache.update_object_cache(oid, obj)
+                        _cacheObjectID2ObjectHash[oid] = obj
+                    }
                 }
             }
             pAppCache.saveObjectCacheToFile()
