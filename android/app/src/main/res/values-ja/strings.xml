@@ -95,7 +95,7 @@
     <string name="kVcDWCellWithdrawAddress">出金アドレス</string>
     <string name="kVcDWCellWithdrawMemo">备考情報</string>
     <string name="kVcDWCellWithdrawPlaceholderAddress">コインのアドレスを入力又はペーストしてください</string>
-    <string name="kVcDWCellWithdrawPlaceholderAmount">出金の数を入力してください</string>
+    <string name="kVcDWCellWithdrawPlaceholderAmount">出金数を入力してください</string>
     <string name="kVcDWCellWithdrawPlaceholderMemo">備考を入力してください（Memo）タグや(TAG)</string>
     <string name="kVcDWCellMinWithdrawNumber">最小コイン数</string>
     <string name="kVcDWCellWithdrawFee">出金の手数料</string>
@@ -103,7 +103,7 @@
     <string name="kVcDWCellWithdrawFinalValue">実際に帳簿</string>
     <string name="kVcDWWithdrawSubmitButton">出金</string>
     <string name="kVcDWSubmitTipsAddressCannotBeEmpty">出金アドレスを空けることはできません。</string>
-    <string name="kVcDWSubmitTipsPleaseInputAmount">出金の数を入力してください</string>
+    <string name="kVcDWSubmitTipsPleaseInputAmount">出金数を入力してください</string>
     <string name="kVcDWSubmitTipsWithdrawAmountNotEnough">数量は不足します。</string>
     <string name="kVcDWSubmitTipsWithdrawLessThanMinNumber">最小貨幣の数量を持つのより小さいことはできません。</string>
     <string name="kVcDWSubmitTipsFinalValueTooLow">実際に帳簿の数量に着くのが低すぎます。</string>
@@ -117,11 +117,11 @@
     <string name="kVcDWSubmitTxOK">出金成功を申し込む，しかしネットワークが異常で、少しの後でまた試みてください。</string>
     <!-- 个人中心 -->
     <string name="kLblMembership">状態：</string>
-    <string name="kLblMembershipBasic">普通の会員</string>
+    <string name="kLblMembershipBasic">普通会員</string>
     <string name="kLblMembershipLifetime">一生会員</string>
     <string name="kLblAccountLocked">ロックする中</string>
     <string name="kLblAccountUnlocked">ロックしていません</string>
-    <string name="kLblCellMyProposal">提案の管理</string>
+    <string name="kLblCellMyProposal">提案管理</string>
     <string name="kLblCellWalletAndMultiSign">ウオレット&amp;多く署名</string>
     <string name="kLblCellMyBalance">私の資産</string>
     <string name="kLblCellOrderManagement">注文管理</string>
@@ -137,17 +137,17 @@
     <string name="kAccountMembershipMyRefCode">私の推薦コード</string>
     <string name="kAccountMembershipNoRefCode">なし</string>
     <string name="kAccountMembershipMyRefCodeCopyOK">推薦コードがコピーされました</string>
-    <string name="kAccountUpgradeTipsMember">一生会員各位、あなたは80％の手数料償還報酬を受ける権利があります。</string>
+    <string name="kAccountUpgradeTipsMember">一生会員、あなたは80％の手数料償還報酬を受ける権利があります。</string>
     <string name="kAccountUpgradeTipsNotMember">今すぐあなたの一生会員をアップグレードして、80％の返金手数料を得てください。</string>
-    <string name="kAccountUpgradeMemberSubmitTxFullOK">一生会員の成功をアップグレードします。</string>
-    <string name="kAccountUpgradeMemberSubmitTxOK">一生会員の成功をアップグレードします。 ただし、更新インターフェイスが失敗しました。しばらくしてからもう一度お試しください。</string>
-    <string name="kAccountUpgradeMemberCostAsk">一生の会員資格をアップグレードするには %s かかります。続行しますか？</string>
+    <string name="kAccountUpgradeMemberSubmitTxFullOK">一生会員成功をアップグレードします。</string>
+    <string name="kAccountUpgradeMemberSubmitTxOK">一生会員成功をアップグレードします。 ただし、更新インターフェイスが失敗しました。しばらくしてからもう一度お試しください。</string>
+    <string name="kAccountUpgradeMemberCostAsk">一生会員資格をアップグレードするには %s かかります。続行しますか？</string>
     <!-- 登录&注册&备份 -->
     <string name="kLoginPageModePassword">アカウントモード</string>
     <string name="kLoginPageModePrivateKey">キーファイルモード</string>
     <string name="kLoginPageModeWallet">ウオレットモード</string>
-    <string name="kLoginTipsPlaceholderAccount">Bitsharesのアカウントを入力してください</string>
-    <string name="kLoginTipsPlaceholderTradePassword">取引のパスワードを入力してください</string>
+    <string name="kLoginTipsPlaceholderAccount">アカウントを入力してください</string>
+    <string name="kLoginTipsPlaceholderTradePassword">取引パスワードを入力してください</string>
     <string name="kLoginTipsPlaceholderActiveKey">資金キーファイルを入力してください</string>
     <string name="kLoginTipsPlaceholderConfirmPassword">パスワードを確認してください</string>
     <string name="kLoginTipsPlaceholderWalletPassword">8位以上のファイルパスワード</string>
@@ -225,20 +225,20 @@
     <string name="kAccLabelLifetimeRef">一生会員推薦人</string>
     <string name="kAccTipsLogout">ログアウトするとデバイスからアカウント情報が削除されます。バックアップを作成したことを確認してください。 ログアウトし続けますか？</string>
     <!-- 提案界面 -->
-    <string name="kProposalTipsAskMissingActive">アカウント %s の資金権限はない，取引の提案を発起しますか？</string>
-    <string name="kProposalTipsAskMissingOwner">アカウント %s のアカウント権限はない，取引の提案を発起しますか？</string>
+    <string name="kProposalTipsAskMissingActive">アカウント %s の資金権限はない，取引提案を発起しますか？</string>
+    <string name="kProposalTipsAskMissingOwner">アカウント %s のアカウント権限はない，取引提案を発起しますか？</string>
     <string name="kProposalTipsSelectFeePayingAccount">提案を選んでアカウントを発起するください</string>
-    <string name="kProposalLabelCellProposalCreator">提案の発起人</string>
+    <string name="kProposalLabelCellProposalCreator">提案発起人</string>
     <string name="kProposalLabelApprovePeriod">承認期間</string>
     <string name="kProposalLabelReviewPeriod">レビュー期間</string>
     <string name="kProposalLabel1Days">%s日</string>
     <string name="kProposalLabelNDays">%s日</string>
     <string name="kProposalLabelNoReviewPeriod">レビュー期間なし</string>
-    <string name="kProposalSubmitTipsSelectCreator">提案の創建者のアカウントを選んでください。</string>
+    <string name="kProposalSubmitTipsSelectCreator">提案創建者のアカウントを選んでください。</string>
     <string name="kProposalSubmitTipTxOK">提案を創建して成功します。</string>
     <string name="kProposalBtnSubmit">提出します</string>
-    <string name="kProposalTipsNoAnyProposals">提案の情報はありません</string>
-    <string name="kProposalSubmitTipsInReview">提案は審査の中であって、授権を添加することはできません。</string>
+    <string name="kProposalTipsNoAnyProposals">提案情報はありません</string>
+    <string name="kProposalSubmitTipsInReview">提案は審査中であって、授権を添加することはできません。</string>
     <string name="kProposalSubmitTipsNoPermissionApprove">あなたはいかなる権限がなくて、実行して操作を許可することができません。</string>
     <string name="kProposalSubmitTipsYouAlreadyApproved">あなたはすでに許可して、反復処理を使いません。</string>
     <string name="kProposalSubmitTipsNoNeedRemove">あなたはまだ授権を添加していなくて、移して割る必要はありません。</string>
@@ -257,7 +257,7 @@
     <string name="kProposalCellStatusPending">行う中</string>
     <string name="kProposalCellStatusFailed">失敗します</string>
     <string name="kProposalCellStatusWaitReview">審査を待ちます</string>
-    <string name="kProposalCellStatusReview">審査の中</string>
+    <string name="kProposalCellStatusReview">審査中</string>
     <string name="kProposalCellStatusNotPassed">通していません</string>
     <string name="kProposalCellProgress">進捗 </string>
     <string name="kProposalEditSelectRemoveApproval">授権は割ってアカウントに権限を授けるのを移しを選んでください</string>
@@ -433,7 +433,7 @@
     <string name="kVcTransferCellTo">TO</string>
     <string name="kVcTransferCellAsset">資産</string>
     <string name="kVcTransferCellAmount">数量</string>
-    <string name="kVcTransferCellMemo">付注の情報</string>
+    <string name="kVcTransferCellMemo">付注情報</string>
     <string name="kVcTransferTipSelectToAccount">受取口座を選びください。</string>
     <string name="kVcTransferTipSelectAsset">選んで帳簿の資産を回転してください</string>
     <!-- 确认界面 -->
@@ -458,7 +458,7 @@
     <string name="kLabelVotingActiveWP">活躍のワーカー(%s項)</string>
     <string name="kLabelVotingInactiveWP">ワーカー提案(%s項)</string>
     <string name="kLabelVotingTotalBudget">ワーカー合計額 </string>
-    <string name="kLabelVotingWPPassVotes">必要の票数 </string>
+    <string name="kLabelVotingWPPassVotes">必要票数 </string>
     <string name="kLabelVotingNoBudget">予算がない</string>
     <string name="kVcVoteBtnReset">重置</string>
     <string name="kVcVoteBtnSubmitProxy">提出投票</string>
@@ -480,7 +480,7 @@
     <string name="kVcVoteCellTotalVotes">総票数 </string>
     <string name="kVcVoteCellMissed">失われた数 </string>
     <string name="kVcVoteCellCreator">創建者 </string>
-    <string name="kVcVoteCellDailyPay">毎日の予算 </string>
+    <string name="kVcVoteCellDailyPay">毎日予算 </string>
     <string name="kVcVoteCellWPDatePeriod">有効期間 </string>
     <string name="kVcVoteCellWPType">タイプ </string>
     <string name="kVcVoteCellWPRefund">返金</string>
@@ -507,7 +507,7 @@
     <string name="kVcTitleAbout">About</string>
     <string name="kVcTitleAccountInfos">アカウント情報</string>
     <string name="kVcTitleAccountSearch">アカウント検索</string>
-    <string name="kVcTitleRank">担保の順序</string>
+    <string name="kVcTitleRank">担保順序</string>
     <string name="kVcTitleFeedPrice">詳しいフィード価格</string>
     <string name="kVcTitleCustomPairs">添加取引隊</string>
     <string name="kVcTitleSelectProxy">代理アカウントを選択します</string>
@@ -526,7 +526,7 @@
     <string name="kVcTitleWhatIsRefcode">紹介コードとは何ですか？</string>
     <string name="kVcTitleFAQ">よくある問題</string>
     <string name="kVcTitleVoting">投票</string>
-    <string name="kVcTitleMyProposal">提案の管理</string>
+    <string name="kVcTitleMyProposal">提案管理</string>
     <string name="kVcTitleWalletAndMultiSign">ウオレット&amp;多く署名</string>
     <string name="kVcTitleConvertToWalletMode">ウオレットをアップグレードします</string>
     <string name="kVcTitleSelectMultiSigndAccount">多く署名してアカウントを管理するのを選びます</string>
@@ -559,16 +559,16 @@
     <string name="kWalletTipsNotMultiSignAccount">%s 多く署名のアカウントはない、導入することはできません。</string>
     <string name="kWalletImportSuccess">完成を導入します</string>
     <string name="kWalletCellCurrentAccount">現在のアカウント</string>
-    <string name="kWalletCellPermissionOwner">アカウントの権限</string>
-    <string name="kWalletCellPermissionActive">資金の権限</string>
-    <string name="kWalletCellPermissionMemo">付注の権限</string>
+    <string name="kWalletCellPermissionOwner">アカウント権限</string>
+    <string name="kWalletCellPermissionActive">資金権限</string>
+    <string name="kWalletCellPermissionMemo">付注権限</string>
     <!-- 交易OP名字 -->
     <string name="kOpType_proposal_prefix">提案【%s】</string>
     <string name="kOpType_transfer">送金</string>
     <string name="kOpType_limit_order_create_sell">創建売り注文</string>
     <string name="kOpType_limit_order_create_buy">創建買い注文</string>
     <string name="kOpType_limit_order_cancel">注文を取り消す</string>
-    <string name="kOpType_call_order_update">ポジションを更新</string>
+    <string name="kOpType_call_order_update">担保調整</string>
     <string name="kOpType_fill_order">執行注文</string>
     <string name="kOpType_account_create">アカウントを創建します</string>
     <string name="kOpType_account_update">アカウントを更新します</string>
@@ -629,7 +629,7 @@
     <string name="kOpDesc_asset_update_feed_producers">フィード者を更新します。</string>
     <string name="kOpDesc_asset_issue">資産発行。</string>
     <string name="kOpDesc_asset_reserve">資産消却。</string>
-    <string name="kOpDesc_asset_fund_fee_pool">手数料の池を資金注入します。</string>
+    <string name="kOpDesc_asset_fund_fee_pool">手数料池を資金注入します。</string>
     <string name="kOpDesc_asset_settle">資産強制清算。</string>
     <string name="kOpDesc_asset_global_settle">資産のグローバル清算。。</string>
     <string name="kOpDesc_asset_publish_feed">発表フィード価格</string>
