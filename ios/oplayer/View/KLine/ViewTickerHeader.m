@@ -204,9 +204,10 @@
         _lbLow.text = [NSString stringWithFormat:@"%@", model.nPriceLow];
         _lbHigh.text = [NSString stringWithFormat:@"%@", model.nPriceHigh];
         _lb24Vol.text = [NSString stringWithFormat:@"%@", model.n24Vol];
-        
-        [self refreshTickerData];
+    }else{
+        _lb24Vol.text = @"0";
     }
+    [self refreshTickerData];
 }
 
 - (void)refreshTickerData

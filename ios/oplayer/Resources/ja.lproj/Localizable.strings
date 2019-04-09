@@ -106,7 +106,7 @@
 "kVcDWCellWithdrawAddress" = "出金アドレス";
 "kVcDWCellWithdrawMemo" = "备考情報";
 "kVcDWCellWithdrawPlaceholderAddress" = "コインのアドレスを入力又はペーストしてください";
-"kVcDWCellWithdrawPlaceholderAmount" = "出金の数を入力してください";
+"kVcDWCellWithdrawPlaceholderAmount" = "出金数を入力してください";
 "kVcDWCellWithdrawPlaceholderMemo" = "備考を入力してください（Memo）タグや(TAG)";
 "kVcDWCellMinWithdrawNumber" = "最小コイン数";
 "kVcDWCellWithdrawFee" = "出金の手数料";
@@ -114,7 +114,7 @@
 "kVcDWCellWithdrawFinalValue" = "実際に帳簿";
 "kVcDWWithdrawSubmitButton" = "出金";
 "kVcDWSubmitTipsAddressCannotBeEmpty" = "出金アドレスを空けることはできません。";
-"kVcDWSubmitTipsPleaseInputAmount" = "出金の数を入力してください";
+"kVcDWSubmitTipsPleaseInputAmount" = "出金数を入力してください";
 "kVcDWSubmitTipsWithdrawAmountNotEnough" = "数量は不足します。";
 "kVcDWSubmitTipsWithdrawLessThanMinNumber" = "最小貨幣の数量を持つのより小さいことはできません。";
 "kVcDWSubmitTipsFinalValueTooLow" = "実際に帳簿の数量に着くのが低すぎます。";
@@ -129,11 +129,11 @@
 
 /* 个人中心 */
 "kLblMembership" = "状態：";
-"kLblMembershipBasic" = "普通の会員";
+"kLblMembershipBasic" = "普通会員";
 "kLblMembershipLifetime" = "一生会員";
 "kLblAccountLocked" = "ロックする中";
 "kLblAccountUnlocked" = "ロックしていません";
-"kLblCellMyProposal" = "提案の管理";
+"kLblCellMyProposal" = "提案管理";
 "kLblCellWalletAndMultiSign" = "ウオレット&多く署名";
 "kLblCellMyBalance" = "私の資産";
 "kLblCellOrderManagement" = "注文管理";
@@ -150,18 +150,18 @@
 "kAccountMembershipMyRefCode" = "私の推薦コード";
 "kAccountMembershipNoRefCode" = "なし";
 "kAccountMembershipMyRefCodeCopyOK" = "推薦コードがコピーされました";
-"kAccountUpgradeTipsMember" = "一生会員各位、あなたは80％の手数料償還報酬を受ける権利があります。";
+"kAccountUpgradeTipsMember" = "一生会員、あなたは80％の手数料償還報酬を受ける権利があります。";
 "kAccountUpgradeTipsNotMember" = "今すぐあなたの一生会員をアップグレードして、80％の返金手数料を得てください。";
-"kAccountUpgradeMemberSubmitTxFullOK" = "一生会員の成功をアップグレードします。";
-"kAccountUpgradeMemberSubmitTxOK" = "一生会員の成功をアップグレードします。 ただし、更新インターフェイスが失敗しました。しばらくしてからもう一度お試しください。";
-"kAccountUpgradeMemberCostAsk" = "一生の会員資格をアップグレードするには %@ かかります。続行しますか？";
+"kAccountUpgradeMemberSubmitTxFullOK" = "一生会員成功をアップグレードします。";
+"kAccountUpgradeMemberSubmitTxOK" = "一生会員成功をアップグレードします。 ただし、更新インターフェイスが失敗しました。しばらくしてからもう一度お試しください。";
+"kAccountUpgradeMemberCostAsk" = "一生会員資格をアップグレードするには %@ かかります。続行しますか？";
 
 /* 登录&注册&备份 */
 "kLoginPageModePassword" = "アカウントモード";
 "kLoginPageModePrivateKey" = "キーファイルモード";
 "kLoginPageModeWallet" = "ウオレットモード";
-"kLoginTipsPlaceholderAccount" = "Bitsharesのアカウントを入力してください";
-"kLoginTipsPlaceholderTradePassword" = "取引のパスワードを入力してください";
+"kLoginTipsPlaceholderAccount" = "アカウントを入力してください";
+"kLoginTipsPlaceholderTradePassword" = "取引パスワードを入力してください";
 "kLoginTipsPlaceholderActiveKey" = "資金キーファイルを入力してください";
 "kLoginTipsPlaceholderConfirmPassword" =  "パスワードを確認してください";
 "kLoginTipsPlaceholderWalletPassword" = "8位以上のファイルパスワード";
@@ -241,20 +241,20 @@
 "kAccTipsLogout" = "ログアウトするとデバイスからアカウント情報が削除されます。バックアップを作成したことを確認してください。 ログアウトし続けますか？";
 
 /* 提案界面 */
-"kProposalTipsAskMissingActive" = "アカウント %@ の資金権限はない，取引の提案を発起しますか？";
-"kProposalTipsAskMissingOwner" = "アカウント %@ のアカウント権限はない，取引の提案を発起しますか？";
+"kProposalTipsAskMissingActive" = "アカウント %@ の資金権限はない，取引提案を発起しますか？";
+"kProposalTipsAskMissingOwner" = "アカウント %@ のアカウント権限はない，取引提案を発起しますか？";
 "kProposalTipsSelectFeePayingAccount" = "提案を選んでアカウントを発起するください";
-"kProposalLabelCellProposalCreator" = "提案の発起人";
+"kProposalLabelCellProposalCreator" = "提案発起人";
 "kProposalLabelApprovePeriod" = "承認期間";
 "kProposalLabelReviewPeriod" = "レビュー期間";
 "kProposalLabel1Days" = "%@日";
 "kProposalLabelNDays" = "%@日";
 "kProposalLabelNoReviewPeriod" = "レビュー期間なし";
-"kProposalSubmitTipsSelectCreator" = "提案の創建者のアカウントを選んでください。";
+"kProposalSubmitTipsSelectCreator" = "提案創建者のアカウントを選んでください。";
 "kProposalSubmitTipTxOK" = "提案を創建して成功します。";
 "kProposalBtnSubmit" = "提出します";
-"kProposalTipsNoAnyProposals" = "提案の情報はありません";
-"kProposalSubmitTipsInReview" = "提案は審査の中であって、授権を添加することはできません。";
+"kProposalTipsNoAnyProposals" = "提案情報はありません";
+"kProposalSubmitTipsInReview" = "提案は審査中であって、授権を添加することはできません。";
 "kProposalSubmitTipsNoPermissionApprove" = "あなたはいかなる権限がなくて、実行して操作を許可することができません。";
 "kProposalSubmitTipsYouAlreadyApproved" = "あなたはすでに許可して、反復処理を使いません。";
 "kProposalSubmitTipsNoNeedRemove" = "あなたはまだ授権を添加していなくて、移して割る必要はありません。";
@@ -273,7 +273,7 @@
 "kProposalCellStatusPending" = "行う中";
 "kProposalCellStatusFailed" = "失敗します";
 "kProposalCellStatusWaitReview" = "審査を待ちます";
-"kProposalCellStatusReview" = "審査の中";
+"kProposalCellStatusReview" = "審査中";
 "kProposalCellStatusNotPassed" = "通していません";
 "kProposalCellProgress" = "進捗 ";
 "kProposalEditSelectRemoveApproval" = "授権は割ってアカウントに権限を授けるのを移しを選んでください";
@@ -455,7 +455,7 @@
 "kVcTransferCellTo" = "TO";
 "kVcTransferCellAsset" = "資産";
 "kVcTransferCellAmount" =  "数量";
-"kVcTransferCellMemo" = "付注の情報";
+"kVcTransferCellMemo" = "付注情報";
 "kVcTransferTipSelectToAccount" = "受取口座を選びください。";
 "kVcTransferTipSelectAsset" = "選んで帳簿の資産を回転してください";
 
@@ -482,7 +482,7 @@
 "kLabelVotingActiveWP" = "活躍のワーカー(%@項)";
 "kLabelVotingInactiveWP" = "ワーカー提案(%@項)";
 "kLabelVotingTotalBudget" = "ワーカー合計額 ";
-"kLabelVotingWPPassVotes" = "必要の票数 ";
+"kLabelVotingWPPassVotes" = "必要票数 ";
 "kLabelVotingNoBudget" = "予算がない";
 "kVcVoteBtnReset" = "重置";
 "kVcVoteBtnSubmitProxy" = "提出投票";
@@ -504,7 +504,7 @@
 "kVcVoteCellTotalVotes" = "総票数 ";
 "kVcVoteCellMissed" = "失われた数 ";
 "kVcVoteCellCreator" = "創建者 ";
-"kVcVoteCellDailyPay" = "毎日の予算 ";
+"kVcVoteCellDailyPay" = "毎日予算 ";
 "kVcVoteCellWPDatePeriod" = "有効期間 ";
 "kVcVoteCellWPType" = "タイプ ";
 "kVcVoteCellWPRefund" = "返金";
@@ -533,7 +533,7 @@
 "kVcTitleAbout" = "About";
 "kVcTitleAccountInfos" = "アカウント情報";
 "kVcTitleAccountSearch" = "アカウント検索";
-"kVcTitleRank" = "担保の順序";
+"kVcTitleRank" = "担保順序";
 "kVcTitleFeedPrice" = "詳しいフィード価格";
 "kVcTitleCustomPairs" = "添加取引隊";
 "kVcTitleSelectProxy" = "代理アカウントを選択します";
@@ -552,7 +552,7 @@
 "kVcTitleWhatIsRefcode" = "紹介コードとは何ですか？";
 "kVcTitleFAQ" = "よくある問題";
 "kVcTitleVoting" = "投票";
-"kVcTitleMyProposal" = "提案の管理";
+"kVcTitleMyProposal" = "提案管理";
 "kVcTitleWalletAndMultiSign" = "ウオレット&多く署名";
 "kVcTitleConvertToWalletMode" = "ウオレットをアップグレードします";
 "kVcTitleSelectMultiSigndAccount" = "多く署名してアカウントを管理するのを選びます";
@@ -586,9 +586,9 @@
 "kWalletTipsNotMultiSignAccount" = "%@ 多く署名のアカウントはない、導入することはできません。";
 "kWalletImportSuccess" = "完成を導入します";
 "kWalletCellCurrentAccount" = "現在のアカウント";
-"kWalletCellPermissionOwner" = "アカウントの権限";
-"kWalletCellPermissionActive" = "資金の権限";
-"kWalletCellPermissionMemo" = "付注の権限";
+"kWalletCellPermissionOwner" = "アカウント権限";
+"kWalletCellPermissionActive" = "資金権限";
+"kWalletCellPermissionMemo" = "付注権限";
 
 /* 交易OP名字 */
 "kOpType_proposal_prefix" = "提案【%@】";
@@ -596,7 +596,7 @@
 "kOpType_limit_order_create_sell" = "創建売り注文";
 "kOpType_limit_order_create_buy" = "創建買い注文";
 "kOpType_limit_order_cancel" = "注文を取り消す";
-"kOpType_call_order_update" = "ポジションを更新";
+"kOpType_call_order_update" = "担保調整";
 "kOpType_fill_order" = "執行注文";
 "kOpType_account_create" = "アカウントを創建します";
 "kOpType_account_update" = "アカウントを更新します";
@@ -658,7 +658,7 @@
 "kOpDesc_asset_update_feed_producers" = "フィード者を更新します。";
 "kOpDesc_asset_issue" = "資産発行。";
 "kOpDesc_asset_reserve" = "資産消却。";
-"kOpDesc_asset_fund_fee_pool" = "手数料の池を資金注入します。";
+"kOpDesc_asset_fund_fee_pool" = "手数料池を資金注入します。";
 "kOpDesc_asset_settle" = "資産強制清算。";
 "kOpDesc_asset_global_settle" = "資産のグローバル清算。。";
 "kOpDesc_asset_publish_feed" = "発表フィード価格";

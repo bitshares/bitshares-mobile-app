@@ -3,17 +3,17 @@
 
   Created by Aonichan on 15/12/1. */
 
-"CFBundleDisplayName" = "比特股";
+"CFBundleDisplayName" = "BitShares";
 
-"NSCalendarsUsageDescription" = "添加行程提醒时，需要访问您的日历。";
+"NSCalendarsUsageDescription" = "旅程のリマインダーを追加するときは、カレンダーにアクセスする必要があります。";
 
-"NSCameraUsageDescription" = "拍摄照片时，需要访问您的相机。";
+"NSCameraUsageDescription" = "写真を撮るときはカメラにアクセスする必要があります。";
 
-"NSPhotoLibraryUsageDescription" = "选择照片时，需要访问您的相册。";
+"NSPhotoLibraryUsageDescription" = "写真を選ぶときは、フォトアルバムにアクセスする必要があります。";
 
-"NSMicrophoneUsageDescription" = "使用语音输入时，需要访问您的麦克风。";
+"NSMicrophoneUsageDescription" = "音声入力を使用するときは、マイクにアクセスする必要があります。";
 
-"NSLocationAlwaysUsageDescription" = "使用路线图功能时，需要访问您的位置信息。";
+"NSLocationAlwaysUsageDescription" = "ロードマップ機能を使用するときは、自分の位置情報にアクセスする必要があります。";
 
-"NSLocationWhenInUseUsageDescription" = "使用路线图功能时，需要访问您的位置信息。";
+"NSLocationWhenInUseUsageDescription" = "ロードマップ機能を使用するときは、自分の位置情報にアクセスする必要があります。";
 
