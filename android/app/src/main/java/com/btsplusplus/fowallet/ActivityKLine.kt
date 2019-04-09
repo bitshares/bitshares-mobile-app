@@ -375,6 +375,8 @@ class ActivityKLine : BtsppActivity() {
             label_txt_low_value.text = "${model.nPriceLow}"
             label_txt_24h_value.text = "${model.n24Vol}"
             _refreshCurrentTickerData()
+        }else{
+            label_txt_24h_value.text = "0"
         }
     }
 
