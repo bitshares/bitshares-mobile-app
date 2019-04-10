@@ -840,7 +840,7 @@ class FragmentTradeMainPage : BtsppFragment() {
 
     fun createNoOrderView(ctx: Context): TextView {
         val tv = TextView(ctx)
-        tv.text = R.string.kVcOrderTipNoOpenOrder.xmlstring(ctx)
+        tv.text = R.string.kLabelNoOrder.xmlstring(ctx)
         tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
         tv.setTextColor(ctx.resources.getColor(R.color.theme01_textColorGray))
         tv.setPadding(0, Utils.toDp(40f, ctx.resources), 0, 0)
