@@ -139,9 +139,9 @@
     <string name="kAccountMembershipMyRefCodeCopyOK">推薦コードがコピーされました</string>
     <string name="kAccountUpgradeTipsMember">一生会員、あなたは80％の手数料償還報酬を受ける権利があります。</string>
     <string name="kAccountUpgradeTipsNotMember">今すぐあなたの一生会員をアップグレードして、80％の返金手数料を得てください。</string>
-    <string name="kAccountUpgradeMemberSubmitTxFullOK">一生会員成功をアップグレードします。</string>
-    <string name="kAccountUpgradeMemberSubmitTxOK">一生会員成功をアップグレードします。 ただし、更新インターフェイスが失敗しました。しばらくしてからもう一度お試しください。</string>
-    <string name="kAccountUpgradeMemberCostAsk">一生会員資格をアップグレードするには %s かかります。続行しますか？</string>
+    <string name="kAccountUpgradeMemberSubmitTxFullOK">一生会員は正常にアップグレードされました。</string>
+    <string name="kAccountUpgradeMemberSubmitTxOK">一生会員は正常にアップグレードされました。 ただし、更新インターフェイスが失敗しました。しばらくしてからもう一度お試しください。</string>
+    <string name="kAccountUpgradeMemberCostAsk">一生会員をアップグレードするには %s かかります。続行しますか？</string>
     <!-- 登录&注册&备份 -->
     <string name="kLoginPageModePassword">アカウントモード</string>
     <string name="kLoginPageModePrivateKey">キーファイルモード</string>
@@ -386,18 +386,18 @@
     <string name="kBtnSell">売り</string>
     <string name="kLableAvailable">可利用</string>
     <string name="kLableTotalPrice">取引額</string>
-    <string name="kPlaceHolderBuyPrice">購い单价</string>
-    <string name="kPlaceHolderBuyAmount">購い数量</string>
-    <string name="kPlaceHolderSellPrice">売却価格</string>
-    <string name="kPlaceHolderSellAmount">売却価格</string>
+    <string name="kPlaceHolderBuyPrice">購い単価</string>
+    <string name="kPlaceHolderBuyAmount">購数量</string>
+    <string name="kPlaceHolderSellPrice">売却単価</string>
+    <string name="kPlaceHolderSellAmount">売数量</string>
     <string name="kTailerBtnBid1">購一価</string>
     <string name="kTailerBtnAsk1">売一価</string>
     <string name="kLableBuyPrice">購い单价 </string>
-    <string name="kLableBuyAmount">購い数量 </string>
+    <string name="kLableBuyAmount">購数量 </string>
     <string name="kLableSellPrice">売却価格 </string>
     <string name="kLableSellAmount">売却価格 </string>
     <string name="kLableBidBuy">購い</string>
-    <string name="kLableAskSell">売り出</string>
+    <string name="kLableAskSell">売り</string>
     <string name="kLableBidAmount">数量</string>
     <string name="kLableBidPrice">価格</string>
     <string name="kLabelOpenOrders">現在の注文</string>
