@@ -152,9 +152,9 @@
 "kAccountMembershipMyRefCodeCopyOK" = "推薦コードがコピーされました";
 "kAccountUpgradeTipsMember" = "一生会員、あなたは80％の手数料償還報酬を受ける権利があります。";
 "kAccountUpgradeTipsNotMember" = "今すぐあなたの一生会員をアップグレードして、80％の返金手数料を得てください。";
-"kAccountUpgradeMemberSubmitTxFullOK" = "一生会員成功をアップグレードします。";
-"kAccountUpgradeMemberSubmitTxOK" = "一生会員成功をアップグレードします。 ただし、更新インターフェイスが失敗しました。しばらくしてからもう一度お試しください。";
-"kAccountUpgradeMemberCostAsk" = "一生会員資格をアップグレードするには %@ かかります。続行しますか？";
+"kAccountUpgradeMemberSubmitTxFullOK" = "一生会員は正常にアップグレードされました。";
+"kAccountUpgradeMemberSubmitTxOK" = "一生会員は正常にアップグレードされました。 ただし、更新インターフェイスが失敗しました。しばらくしてからもう一度お試しください。";
+"kAccountUpgradeMemberCostAsk" = "一生会員をアップグレードするには %@ かかります。続行しますか？";
 
 /* 登录&注册&备份 */
 "kLoginPageModePassword" = "アカウントモード";
@@ -407,18 +407,18 @@
 "kBtnSell" = "売り";
 "kLableAvailable" = "可利用";
 "kLableTotalPrice" = "取引額";
-"kPlaceHolderBuyPrice" = "購い单价";
-"kPlaceHolderBuyAmount" = "購い数量";
-"kPlaceHolderSellPrice" = "売却価格";
-"kPlaceHolderSellAmount" = "売却価格";
+"kPlaceHolderBuyPrice" = "購い単価";
+"kPlaceHolderBuyAmount" = "購数量";
+"kPlaceHolderSellPrice" = "売却単価";
+"kPlaceHolderSellAmount" = "売数量";
 "kTailerBtnBid1" = "購一価";
 "kTailerBtnAsk1" = "売一価";
 "kLableBuyPrice" = "購い单价 ";
-"kLableBuyAmount" = "購い数量 ";
+"kLableBuyAmount" = "購数量 ";
 "kLableSellPrice" = "売却価格 ";
 "kLableSellAmount" = "売却価格 ";
 "kLableBidBuy" = "購い";
-"kLableAskSell" = "売り出";
+"kLableAskSell" = "売り";
 "kLableBidAmount" = "数量";
 "kLableBidPrice" = "価格";
 "kLabelOpenOrders" = "現在の注文";
