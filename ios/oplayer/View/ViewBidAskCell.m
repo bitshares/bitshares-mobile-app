@@ -190,7 +190,7 @@
     CGFloat xOffset = self.textLabel.frame.origin.x;
     
     //  设置 frame 位置
-    CGFloat spaceID2Num = 22.0f;    //  REMARK：ID编号和挂单数量的间距
+    CGFloat spaceID2Num = 26.0f;    //  REMARK：ID编号和挂单数量的间距
     
     if (_isbuy)
     {
