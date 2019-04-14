@@ -33,7 +33,7 @@ Only need to adjust `Bundle Identifier` to your app id. Then you can run it dire
 
 ## Android Compile
 
-Install [Android Studio](https://developer.android.com/studio)
+[Click here to view](android_compile.md)
 
 ## Other
 

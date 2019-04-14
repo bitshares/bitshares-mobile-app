@@ -29,7 +29,7 @@ Bitshares Mobile App 是 [Bitshares区块链](https://github.com/bitshares/bitsh
 只需要调整 `Bundle Identifier` 为您的应用ID。然后直接在xcode中运行即可。
 
 ## Android编译
-安装 [Android Studio](https://developer.android.com/studio/)
+[点击这里查看](android_compile.md)
 
 ## 其他
 配置Fabric
