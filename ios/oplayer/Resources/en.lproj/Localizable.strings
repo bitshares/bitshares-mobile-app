@@ -459,6 +459,21 @@
 "kVcTransferTipSelectToAccount" = "Please select target account";
 "kVcTransferTipSelectAsset" = "Please select the asset to transfer";
 
+/* HTLC合约 */
+"kVcHtlcCellTitlePreimage" = "Preimage";
+"kVcHtlcCellTitleAdvSwitch" = "Advanced Settings";
+"kVcHtlcCellTitleHashMethod" = "Hash Type";
+"kVcHtlcCellTitleClaimPeriod" = "Expiry";
+"kVcHtlcCellTitlePreimageHash" = "Hash";
+"kVcHtlcCellTitlePreimageLength" = "Length";
+"kVcHtlcPlaceholderInputPreimage" = "Input the preimage of the HTLC";
+"kVcHtlcPlaceholderInputPreimageHash" = "Input hash value of the preimage";
+"kVcHtlcTailerBtnCopy" = "Copy";
+"kVcHtlcTailerBtnPaste" = "Paste";
+"kVcHtlcSubmitBtn01" = "Create";
+"kVcHtlcSubmitBtn02" = "I am passively creating a contract";
+"kVcHtlcSubmitBtn03" = "I am actively creating a contract";
+
 /* 确认界面 */
 "kVcConfirmTipFrom" = "From";
 "kVcConfirmTipTo" = "To";

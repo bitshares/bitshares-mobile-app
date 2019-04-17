@@ -459,6 +459,21 @@
 "kVcTransferTipSelectToAccount" = "受取口座を選びください。";
 "kVcTransferTipSelectAsset" = "選んで帳簿の資産を回転してください";
 
+/* HTLC合约 TODO:2.1 */
+"kVcHtlcCellTitlePreimage" = "原像";
+"kVcHtlcCellTitleAdvSwitch" = "高级设置";
+"kVcHtlcCellTitleHashMethod" = "哈希算法";
+"kVcHtlcCellTitleClaimPeriod" = "有效期";
+"kVcHtlcCellTitlePreimageHash" = "原像哈希";
+"kVcHtlcCellTitlePreimageLength" = "原像长度";
+"kVcHtlcPlaceholderInputPreimage" = "请输入合约的原像";
+"kVcHtlcPlaceholderInputPreimageHash" = "请输入原像的哈希值";
+"kVcHtlcTailerBtnCopy" = "复制";
+"kVcHtlcTailerBtnPaste" = "粘贴";
+"kVcHtlcSubmitBtn01" = "创建";
+"kVcHtlcSubmitBtn02" = "根据对方合约创建";
+"kVcHtlcSubmitBtn03" = "主动创建合约";
+
 /* 确认界面 */
 "kVcConfirmTipFrom" = "FROM";
 "kVcConfirmTipTo" = "TO";
