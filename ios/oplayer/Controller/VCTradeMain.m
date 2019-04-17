@@ -1204,7 +1204,6 @@ enum
                         cell.backgroundColor = [UIColor clearColor];
                         cell.accessoryType = UITableViewCellAccessoryNone;
                         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                        cell.textLabel.text = _isbuy ? NSLocalizedString(@"kLableBuyPrice", @"买入价 ") : NSLocalizedString(@"kLableSellPrice", @"卖出价 ");
                         cell.textLabel.text = @" ";
                         cell.accessoryView = _tfPrice;
                         return cell;
@@ -1216,7 +1215,6 @@ enum
                         cell.backgroundColor = [UIColor clearColor];
                         cell.accessoryType = UITableViewCellAccessoryNone;
                         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                        cell.textLabel.text = _isbuy ? NSLocalizedString(@"kLableBuyAmount", @"买入量 ") : NSLocalizedString(@"kLableSellAmount", @"卖出量 ");
                         cell.textLabel.text = @" ";
                         cell.accessoryView = _tfNumber;
                         return cell;

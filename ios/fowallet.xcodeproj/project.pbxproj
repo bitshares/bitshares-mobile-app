@@ -46,6 +46,10 @@
 		3F767B10224B7B310012822D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3F767B0B224B7B310012822D /* InfoPlist.strings */; };
 		3F767B11224B7B310012822D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3F767B0D224B7B310012822D /* Localizable.strings */; };
 		3F767B12224B7B310012822D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3F767B0D224B7B310012822D /* Localizable.strings */; };
+		3F78E07622630585007D41A3 /* VCHtlcTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F78E07422630584007D41A3 /* VCHtlcTransfer.m */; };
+		3F78E07722630585007D41A3 /* VCHtlcTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F78E07422630584007D41A3 /* VCHtlcTransfer.m */; };
+		3F78E07A22637E22007D41A3 /* VCAdvancedFeatures.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F78E07922637E22007D41A3 /* VCAdvancedFeatures.m */; };
+		3F78E07B22637E22007D41A3 /* VCAdvancedFeatures.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F78E07922637E22007D41A3 /* VCAdvancedFeatures.m */; };
 		3F9A730821E59FF300DAF7A2 /* VCDepositWithdrawList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9A730721E59FF300DAF7A2 /* VCDepositWithdrawList.m */; };
 		3F9A730921E59FF300DAF7A2 /* VCDepositWithdrawList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9A730721E59FF300DAF7A2 /* VCDepositWithdrawList.m */; };
 		3F9A730C21E5C20500DAF7A2 /* ViewGatewayCoinInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9A730B21E5C20500DAF7A2 /* ViewGatewayCoinInfoCell.m */; };
@@ -1134,6 +1138,10 @@
 		3F6C35B421EE0AB1008E2903 /* iconDepositWithdraw@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconDepositWithdraw@3x.png"; path = "Images/iconDepositWithdraw@3x.png"; sourceTree = "<group>"; };
 		3F767B0C224B7B310012822D /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = InfoPlist.strings; sourceTree = "<group>"; };
 		3F767B0E224B7B310012822D /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = Localizable.strings; sourceTree = "<group>"; };
+		3F78E07422630584007D41A3 /* VCHtlcTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCHtlcTransfer.m; path = Controller/VCHtlcTransfer.m; sourceTree = "<group>"; };
+		3F78E07522630585007D41A3 /* VCHtlcTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCHtlcTransfer.h; path = Controller/VCHtlcTransfer.h; sourceTree = "<group>"; };
+		3F78E07822637E22007D41A3 /* VCAdvancedFeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAdvancedFeatures.h; path = Controller/VCAdvancedFeatures.h; sourceTree = "<group>"; };
+		3F78E07922637E22007D41A3 /* VCAdvancedFeatures.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAdvancedFeatures.m; path = Controller/VCAdvancedFeatures.m; sourceTree = "<group>"; };
 		3F9A730621E59FF300DAF7A2 /* VCDepositWithdrawList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCDepositWithdrawList.h; path = Controller/VCDepositWithdrawList.h; sourceTree = "<group>"; };
 		3F9A730721E59FF300DAF7A2 /* VCDepositWithdrawList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCDepositWithdrawList.m; path = Controller/VCDepositWithdrawList.m; sourceTree = "<group>"; };
 		3F9A730A21E5C20400DAF7A2 /* ViewGatewayCoinInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewGatewayCoinInfoCell.h; path = View/ViewGatewayCoinInfoCell.h; sourceTree = "<group>"; };
@@ -1998,6 +2006,10 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3F78E07822637E22007D41A3 /* VCAdvancedFeatures.h */,
+				3F78E07922637E22007D41A3 /* VCAdvancedFeatures.m */,
+				3F78E07522630585007D41A3 /* VCHtlcTransfer.h */,
+				3F78E07422630584007D41A3 /* VCHtlcTransfer.m */,
 				3F3847302222686300B55914 /* VCMemberShip.h */,
 				3F3847312222686300B55914 /* VCMemberShip.m */,
 				B7F288821DC5EDCA00B93ED7 /* VCUserCenter.h */,
@@ -3994,6 +4006,7 @@
 				3FB8F8EC21CE66C200DA88E2 /* MySecurityFileMgr.m in Sources */,
 				3FB8F8ED21CE66C200DA88E2 /* NSObject+Reflection.m in Sources */,
 				3FB8F8EE21CE66C200DA88E2 /* SRMutex.m in Sources */,
+				3F78E07B22637E22007D41A3 /* VCAdvancedFeatures.m in Sources */,
 				3F9A730921E59FF300DAF7A2 /* VCDepositWithdrawList.m in Sources */,
 				3FB8F8EF21CE66C200DA88E2 /* LzFindMt.c in Sources */,
 				3FB8F8F021CE66C200DA88E2 /* VCVote.m in Sources */,
@@ -4163,6 +4176,7 @@
 				3FDD800521D763C100DA61FC /* ViewProposalActionsCell.m in Sources */,
 				3FB8F98721CE66C200DA88E2 /* MyNavigationController.mm in Sources */,
 				3FDD800B21D77A0700DA61FC /* ViewProposalAuthorizedStatusCell.m in Sources */,
+				3F78E07722630585007D41A3 /* VCHtlcTransfer.m in Sources */,
 				3FB8F98821CE66C200DA88E2 /* ViewOrderBookCell.m in Sources */,
 				3FB8F98921CE66C200DA88E2 /* ViewTextFieldOwner.m in Sources */,
 				3FB8F98A21CE66C200DA88E2 /* Sha256.c in Sources */,
@@ -4273,6 +4287,7 @@
 				B78E84D21CCA28CB0033B258 /* MySecurityFileMgr.m in Sources */,
 				B7388BD71C5A1C8D00B0AFF1 /* NSObject+Reflection.m in Sources */,
 				B714094620A31CC300003311 /* SRMutex.m in Sources */,
+				3F78E07A22637E22007D41A3 /* VCAdvancedFeatures.m in Sources */,
 				3F9A730821E59FF300DAF7A2 /* VCDepositWithdrawList.m in Sources */,
 				B7BDAA8E20B3C77500738F12 /* LzFindMt.c in Sources */,
 				B7C0411121081D7200848CBC /* VCVote.m in Sources */,
@@ -4442,6 +4457,7 @@
 				3FDD800421D763C100DA61FC /* ViewProposalActionsCell.m in Sources */,
 				ED75E62A186C63C9009BEF5E /* MyNavigationController.mm in Sources */,
 				3FDD800A21D77A0700DA61FC /* ViewProposalAuthorizedStatusCell.m in Sources */,
+				3F78E07622630585007D41A3 /* VCHtlcTransfer.m in Sources */,
 				B7A288A72119401700339FAE /* ViewOrderBookCell.m in Sources */,
 				B78639E61C1878A600B55506 /* ViewTextFieldOwner.m in Sources */,
 				B7BDAA9B20B3C77500738F12 /* Sha256.c in Sources */,

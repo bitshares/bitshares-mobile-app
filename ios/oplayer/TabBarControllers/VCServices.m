@@ -14,6 +14,7 @@
 #import "VCFeedPriceDetail.h"
 #import "VCBtsaiWebView.h"
 #import "VCTransfer.h"
+#import "VCAdvancedFeatures.h"
 #import "VCVote.h"
 #import "VCDepositWithdrawList.h"
 
@@ -26,6 +27,7 @@ enum
     kVcTransfer = 0,        //  转账区域
     kVcQuery,               //  数据查询区域（账号、抵押信息、喂价信息）
     kVcGateway,             //  网关/充提
+    kVcAdvanced,            //  更多高级功能(HTLC等）
     
     kVcMax
 };
@@ -99,7 +101,12 @@ enum
                           @"kServicesCellLabelDepositWithdraw", //  充币提币
                           nil];
     
-    _dateArray = [[NSArray alloc] initWithObjects:pSection2, pSection3, pSection4, nil];
+    //  TODO:多语言
+    NSArray* pSection5 = @[
+                           @"高级功能"
+                           ];
+    
+    _dateArray = [[NSArray alloc] initWithObjects:pSection2, pSection3, pSection4, pSection5, nil];
     
     _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutNaviAndTab] style:UITableViewStyleGrouped];
     _mainTableView.delegate = self;
@@ -251,6 +258,13 @@ enum
             }
         }
             break;
+        case kVcAdvanced:
+        {
+            //  TODO:2.1 高级功能图标
+            cell.imageView.image = [UIImage templateImageNamed:@"iconDepositWithdraw"];
+            cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
+        }
+            break;
         default:
             break;
     }
@@ -367,6 +381,31 @@ enum
                     default:
                         break;
                 }
+            }
+                break;
+            case kVcAdvanced:
+            {
+                vc = [[VCAdvancedFeatures alloc] init];
+                
+//                //  TODO:2.1 待处理 多语言
+                vc.title = @"高级功能";
+//                [self GuardWalletExist:^{
+//                    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+//                    id p1 = [self get_full_account_data_and_asset_hash:[[WalletManager sharedWalletManager] getWalletAccountName]];
+//                    id p2 = [[ChainObjectManager sharedChainObjectManager] queryFeeAssetListDynamicInfo];   //  查询手续费兑换比例、手续费池等信息
+//                    [[[WsPromise all:@[p1, p2]] then:(^id(id data) {
+//                        [self hideBlockView];
+//                        id full_userdata = [data objectAtIndex:0];
+//                        VCHtlcTransfer* vc = [[VCHtlcTransfer alloc] initWithUserFullInfo:full_userdata defaultAsset:nil];
+//                        vc.title = @"HTLC合约创建";
+//                        [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+//                        return nil;
+//                    })] catch:(^id(id error) {
+//                        [self hideBlockView];
+//                        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+//                        return nil;
+//                    })];
+//                }];
             }
                 break;
             default:
