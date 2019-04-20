@@ -185,6 +185,18 @@
 @end
 
 /**
+ *  OP - HTLC相关
+ */
+@interface T_htlc_create : T_Base
+@end
+
+@interface T_htlc_redeem : T_Base
+@end
+
+@interface T_htlc_extend : T_Base
+@end
+
+/**
  *  特殊OP - 操作类型和操作对象。
  */
 @interface T_operation : T_Base

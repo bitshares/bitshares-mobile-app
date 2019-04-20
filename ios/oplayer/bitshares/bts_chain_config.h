@@ -139,7 +139,19 @@ typedef enum EBitsharesOperations
     ebo_blind_transfer = 40,
     ebo_transfer_from_blind = 41,
     ebo_asset_settle_cancel = 42,
-    ebo_asset_claim_fees = 43
+    ebo_asset_claim_fees = 43,
+    
+    //  TODO:2.1
+    ebo_fba_distribute = 44,        // VIRTUAL
+    ebo_bid_collateral = 45,
+    ebo_execute_bid = 46,           // VIRTUAL
+    ebo_asset_claim_pool = 47,
+    ebo_asset_update_issuer = 48,
+    ebo_htlc_create = 49,
+    ebo_htlc_redeem = 50,
+    ebo_htlc_redeemed = 51,         // VIRTUAL
+    ebo_htlc_extend = 52,
+    ebo_htlc_refund = 53,           // VIRTUAL
     
 } EBitsharesOperations;
 

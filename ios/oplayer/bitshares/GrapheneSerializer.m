@@ -95,6 +95,10 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [T_proposal_update performSelector:@selector(register_subfields)];
     [T_proposal_delete performSelector:@selector(register_subfields)];
     
+    [T_htlc_create performSelector:@selector(register_subfields)];
+    [T_htlc_redeem performSelector:@selector(register_subfields)];
+    [T_htlc_extend performSelector:@selector(register_subfields)];
+    
     [T_transaction performSelector:@selector(register_subfields)];
     [T_signed_transaction performSelector:@selector(register_subfields)];
 }
@@ -695,6 +699,12 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
             return [T_proposal_update class];
         case ebo_proposal_delete:
             return [T_proposal_delete class];
+        case ebo_htlc_create:
+            return [T_htlc_create class];
+        case ebo_htlc_redeem:
+            return [T_htlc_redeem class];
+        case ebo_htlc_extend:
+            return [T_htlc_extend class];
         default:
             break;
     }
@@ -948,6 +958,52 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [self add_field:@"fee_paying_account" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
     [self add_field:@"using_owner_authority" class:[T_bool class]];
     [self add_field:@"proposal" class:[[Tm_protocol_id_type alloc] initWithName:@"proposal"]];
+    [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
+}
+
+@end
+
+@implementation T_htlc_create
+
++ (void)register_subfields
+{
+    [self add_field:@"fee" class:[T_asset class]];
+    [self add_field:@"from" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"to" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"amount" class:[T_asset class]];
+    [self add_field:@"preimage_hash" class:[[Tm_static_variant alloc] initWithTypeArray:@[
+                                                                                          [[Tm_bytes alloc] initWithSize:@(20)],    //  RMD160
+                                                                                          [[Tm_bytes alloc] initWithSize:@(20)],    //  SHA1 or SHA160
+                                                                                          [[Tm_bytes alloc] initWithSize:@(32)]     //  SHA256
+                                                                                          ]]];
+    [self add_field:@"preimage_size" class:[T_uint16 class]];
+    [self add_field:@"claim_period_seconds" class:[T_uint32 class]];
+    [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
+}
+
+@end
+
+@implementation T_htlc_redeem
+
++ (void)register_subfields
+{
+    [self add_field:@"fee" class:[T_asset class]];
+    [self add_field:@"htlc_id" class:[[Tm_protocol_id_type alloc] initWithName:@"htlc"]];
+    [self add_field:@"redeemer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"preimage" class:[[Tm_bytes alloc] initWithSize:nil]];
+    [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
+}
+
+@end
+
+@implementation T_htlc_extend
+
++ (void)register_subfields
+{
+    [self add_field:@"fee" class:[T_asset class]];
+    [self add_field:@"htlc_id" class:[[Tm_protocol_id_type alloc] initWithName:@"htlc"]];
+    [self add_field:@"update_issuer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"seconds_to_add" class:[T_uint32 class]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
 

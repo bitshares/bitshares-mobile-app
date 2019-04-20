@@ -335,4 +335,37 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
     return [self process_transaction:tr];
 }
 
+/**
+ *  OP - 创建HTLC合约
+ */
+- (WsPromise*)htlcCreate:(NSDictionary*)opdata
+{
+    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
+    [tr add_operation:ebo_htlc_create opdata:opdata];
+    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"from"]]];
+    return [self process_transaction:tr];
+}
+
+/**
+ *  OP - 提取HTLC合约
+ */
+- (WsPromise*)htlcRedeem:(NSDictionary*)opdata
+{
+    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
+    [tr add_operation:ebo_htlc_redeem opdata:opdata];
+    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"redeemer"]]];
+    return [self process_transaction:tr];
+}
+
+/**
+ *  OP - 扩展HTLC合约有效期
+ */
+- (WsPromise*)htlcExtend:(NSDictionary*)opdata
+{
+    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
+    [tr add_operation:ebo_htlc_extend opdata:opdata];
+    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"update_issuer"]]];
+    return [self process_transaction:tr];
+}
+
 @end
