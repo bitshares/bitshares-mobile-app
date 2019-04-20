@@ -69,4 +69,19 @@
  */
 - (WsPromise*)proposalUpdate:(NSDictionary*)opdata;
 
+/**
+ *  OP - 创建HTLC合约
+ */
+- (WsPromise*)htlcCreate:(NSDictionary*)opdata;
+
+/**
+ *  OP - 提取HTLC合约
+ */
+- (WsPromise*)htlcRedeem:(NSDictionary*)opdata;
+
+/**
+ *  OP - 扩展HTLC合约有效期
+ */
+- (WsPromise*)htlcExtend:(NSDictionary*)opdata;
+
 @end
