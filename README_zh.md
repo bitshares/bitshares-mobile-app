@@ -31,6 +31,9 @@ Bitshares Mobile App 是 [Bitshares区块链](https://github.com/bitshares/bitsh
 ## Android编译
 [点击这里查看](android_compile.md)
 
+## 本地库编译
+[点击这里查看](native_lib_compile_zh.md)
+
 ## 其他
 配置Fabric
 

@@ -35,6 +35,10 @@ Only need to adjust `Bundle Identifier` to your app id. Then you can run it dire
 
 [Click here to view](android_compile.md)
 
+## Native Library Compile
+
+[Click here to view](native_lib_compile.md)
+
 ## Other
 
 Configuration Fabric
