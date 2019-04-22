@@ -86,6 +86,8 @@ static GrapheneConnectionManager *_sharedGrapheneConnectionManager = nil;
     
     //  1、获取服务器动态配置的api结点信息
     NSMutableDictionary* wssUrlHash = [NSMutableDictionary dictionary];
+    
+#if GRAPHENE_BITSHARES_MAINNET
     id serverConfig = [SettingManager sharedSettingManager].serverConfig;
     if (serverConfig){
         id serverWssNodes = [serverConfig objectForKey:@"wssNodes"];
@@ -105,6 +107,7 @@ static GrapheneConnectionManager *_sharedGrapheneConnectionManager = nil;
             }
         }
     }
+#endif  //  GRAPHENE_BITSHARES_TESTNET
     
     //  2、获取app内配置的api结点信息
     id wslist = [network_infos objectForKey:@"ws_node_list"];

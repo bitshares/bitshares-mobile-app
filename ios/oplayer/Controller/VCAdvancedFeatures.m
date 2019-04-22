@@ -81,12 +81,6 @@ enum
     [super viewWillDisappear:animated];
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 #pragma mark- TableView delegate method
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -157,30 +151,40 @@ enum
         switch (indexPath.section) {
             case kVcHTLC:
             {
-                [self GuardWalletExist:^{
-                    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-                    id p1 = [self get_full_account_data_and_asset_hash:[[WalletManager sharedWalletManager] getWalletAccountName]];
-                    id p2 = [[ChainObjectManager sharedChainObjectManager] queryFeeAssetListDynamicInfo];   //  查询手续费兑换比例、手续费池等信息
-                    [[[WsPromise all:@[p1, p2]] then:(^id(id data) {
-                        [self hideBlockView];
-                        id full_userdata = [data objectAtIndex:0];
-                        VCHtlcTransfer* vc = nil;
-                        //  TODO:2.1多语言
-                        if (indexPath.row == kVcSubHtlcPreimage){
-                            vc = [[VCHtlcTransfer alloc] initWithUserFullInfo:full_userdata mode:EDM_PREIMAGE];
-                            vc.title = @"创建HTLC合约";
-                        }else{
-                            vc = [[VCHtlcTransfer alloc] initWithUserFullInfo:full_userdata mode:EDM_HASHCODE];
-                            vc.title = @"创建HTLC合约";
-                        }
-                        [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-                        return nil;
-                    })] catch:(^id(id error) {
-                        [self hideBlockView];
-                        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
-                        return nil;
-                    })];
-                }];
+                switch (indexPath.row) {
+                    case kVcSubHtlcPreimage:
+                    {
+                        [self GuardWalletExist:^{
+                            [self _gotoCreateHtlcVC:EDM_PREIMAGE havePreimage:YES];
+                        }];
+                    }
+                        break;
+                    case kVcSubHtlcHashcode:
+                    {
+                        [self GuardWalletExist:^{
+                            //  TODO:2.1 fowallet 多语言
+                            [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
+                                                                               message:nil
+                                                                                cancel:NSLocalizedString(@"kBtnCancel", @"取消")
+                                                                                 items:@[@"被动部署合约", @"主动创建合约"]
+                                                                              callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
+                             {
+                                 if (buttonIndex != cancelIndex){
+                                     if (buttonIndex == 0){
+                                         [self _gotoCreateHtlcVC:EDM_HASHCODE havePreimage:NO];
+                                     }else if (buttonIndex ==1){
+                                         [self _gotoCreateHtlcVC:EDM_HASHCODE havePreimage:YES];
+                                     }else{
+                                         assert(false);
+                                     }
+                                 }
+                             }];
+                        }];
+                    }
+                        break;
+                    default:
+                        break;
+                }
             }
                 break;
             default:
@@ -190,6 +194,31 @@ enum
             [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
         }
     }];
+}
+
+/**
+ *  (private) 转到合约创建界面。
+ *  mode            - 从原像创建还是哈希创建。
+ *  havePreimage    - 如果根据哈希部署（用户指定主动部署和被动部署：有原像则是主动，无原像则是被动。）
+ */
+- (void)_gotoCreateHtlcVC:(EHtlcDeployMode)mode havePreimage:(BOOL)havePreimage
+{
+    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    id p1 = [self get_full_account_data_and_asset_hash:[[WalletManager sharedWalletManager] getWalletAccountName]];
+    id p2 = [[ChainObjectManager sharedChainObjectManager] queryFeeAssetListDynamicInfo];   //  查询手续费兑换比例、手续费池等信息
+    [[[WsPromise all:@[p1, p2]] then:(^id(id data) {
+        [self hideBlockView];
+        id full_userdata = [data objectAtIndex:0];
+        //  TODO:2.1多语言
+        VCHtlcTransfer* vc = [[VCHtlcTransfer alloc] initWithUserFullInfo:full_userdata mode:mode havePreimage:havePreimage];
+        vc.title = @"创建HTLC合约";
+        [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+        return nil;
+    })] catch:(^id(id error) {
+        [self hideBlockView];
+        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+        return nil;
+    })];
 }
 
 @end

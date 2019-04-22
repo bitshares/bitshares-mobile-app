@@ -386,26 +386,8 @@ enum
             case kVcAdvanced:
             {
                 vc = [[VCAdvancedFeatures alloc] init];
-                
 //                //  TODO:2.1 待处理 多语言
                 vc.title = @"高级功能";
-//                [self GuardWalletExist:^{
-//                    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-//                    id p1 = [self get_full_account_data_and_asset_hash:[[WalletManager sharedWalletManager] getWalletAccountName]];
-//                    id p2 = [[ChainObjectManager sharedChainObjectManager] queryFeeAssetListDynamicInfo];   //  查询手续费兑换比例、手续费池等信息
-//                    [[[WsPromise all:@[p1, p2]] then:(^id(id data) {
-//                        [self hideBlockView];
-//                        id full_userdata = [data objectAtIndex:0];
-//                        VCHtlcTransfer* vc = [[VCHtlcTransfer alloc] initWithUserFullInfo:full_userdata defaultAsset:nil];
-//                        vc.title = @"HTLC合约创建";
-//                        [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-//                        return nil;
-//                    })] catch:(^id(id error) {
-//                        [self hideBlockView];
-//                        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
-//                        return nil;
-//                    })];
-//                }];
             }
                 break;
             default:

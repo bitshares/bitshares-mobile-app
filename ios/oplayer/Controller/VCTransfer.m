@@ -850,14 +850,7 @@ enum
             }
                 break;
             case kVcSubAssetID:
-            {
-                //  TODO:帐号所持有的资产种类如果少于4、5种则考虑这样选择，太多的话考虑用单独的vc选择。
-                [VCCommonLogic showPicker:self selectAsset:_asset_list
-                                    title:NSLocalizedString(@"kVcTransferTipSelectAsset", @"请选择要转账的资产") callback:^(id selectItem) {
-                    [self setAsset:selectItem];
-                    [_mainTableView reloadData];
-                }];
-            }
+                [self onSelectAssetClicked];
                 break;
             default:
                 break;
@@ -874,29 +867,38 @@ enum
     }
 }
 
-#pragma mark- MFMessageComposeViewControllerDelegate
-- (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
+/**
+ *  (private) 选择转账资产
+ */
+- (void)onSelectAssetClicked
 {
-    //  暂时什么都不处理
-}
-
-#pragma mark-
-#pragma drag back event
-
-- (void)onDragBackStart
-{
-    [self.view endEditing:YES];
+    id curr_asset = [_transfer_args objectForKey:@"asset"];
+    assert(curr_asset);
+    id curr_symbol = [curr_asset objectForKey:@"symbol"];
     
-    [_tf_amount safeResignFirstResponder];
-    [_tf_memo safeResignFirstResponder];
-}
-
-- (void)onDragBackFinish:(BOOL)bToTarget
-{
-    if (!bToTarget)
-    {
-        //  TODO:...
+    NSInteger defaultIndex = 0;
+    NSInteger idx = 0;
+    for (id asset in _asset_list) {
+        if ([[asset objectForKey:@"symbol"] isEqualToString:curr_symbol]){
+            defaultIndex = idx;
+            break;
+        }
+        ++idx;
     }
+    [[[MyPopviewManager sharedMyPopviewManager] showModernListView:self.navigationController
+                                                           message:NSLocalizedString(@"kVcTransferTipSelectAsset", @"请选择要转账的资产")
+                                                             items:_asset_list
+                                                           itemkey:@"symbol"
+                                                      defaultIndex:defaultIndex] then:(^id(id result) {
+        if (result){
+            id select_symbol = [result objectForKey:@"symbol"];
+            if (![select_symbol isEqualToString:curr_symbol]){
+                [self setAsset:result];
+                [_mainTableView reloadData];
+            }
+        }
+        return nil;
+    })];
 }
 
 @end

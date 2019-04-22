@@ -605,7 +605,7 @@
 "kWalletCellPermissionActive" = "資金権限";
 "kWalletCellPermissionMemo" = "付注権限";
 
-/* 交易OP名字 */
+/* 交易OP名字TODO:2.1 */
 "kOpType_proposal_prefix" = "提案【%@】";
 "kOpType_transfer" = "送金";
 "kOpType_limit_order_create_sell" = "創建売り注文";
@@ -652,6 +652,16 @@
 "kOpType_transfer_from_blind" = "プライバシーのアカウントから回転しだします";
 "kOpType_asset_settle_cancel" = "キャンセルして清算します";
 "kOpType_asset_claim_fees" = "資産の手数料を取り出します";
+"kOpType_fba_distribute" = "fba_distribute";
+"kOpType_bid_collateral" = "bid_collateral";
+"kOpType_execute_bid" = "execute_bid";
+"kOpType_asset_claim_pool" = "asset_claim_pool";
+"kOpType_asset_update_issuer" = "asset_update_issuer";
+"kOpType_htlc_create" = "htlc_create";
+"kOpType_htlc_redeem" = "htlc_redeem";
+"kOpType_htlc_redeemed" = "htlc_redeemed";
+"kOpType_htlc_extend" = "htlc_extend";
+"kOpType_htlc_refund" = "htlc_refund";
 
 /* 交易OP详细描述 */
 "kOpDesc_transfer" = "%@ 送金 %@ と %@。";
