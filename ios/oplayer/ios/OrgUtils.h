@@ -68,6 +68,12 @@ typedef void (^YklUserCallback)(id data);
 + (BOOL)isValidBitsharesWalletPassword:(NSString*)password;
 
 /**
+ *  (public) 原像格式是否正确
+ *  格式：20位以上，包含大写字母和数字。
+ */
++ (BOOL)isValidHTCLPreimageFormat:(NSString*)preimage;
+
+/**
  *  解析 BTS 网络时间字符串，返回 1970 到现在的秒数。格式：2018-06-04T13:03:57。
  */
 + (NSTimeInterval)parseBitsharesTimeString:(NSString*)time;
@@ -117,6 +123,13 @@ typedef void (^YklUserCallback)(id data);
  *  获取 worker 类型。0:refund 1:vesting 2:burn
  */
 + (NSInteger)getWorkerType:(NSDictionary*)worker_json_object;
+
+/**
+ *  从广播交易结果获取新生成的对象ID号（比如新的订单号、新HTLC号等）
+ *  考虑到数据结构可能变更，加各种safe判断。
+ *  REMARK：仅考虑一个 op 的情况，如果一个交易包含多个 op 则不支持。
+ */
++ (NSString*)extractNewObjectID:(id)transaction_confirmation_list;
 
 /**
  *  提取OPDATA中所有的石墨烯ID信息。

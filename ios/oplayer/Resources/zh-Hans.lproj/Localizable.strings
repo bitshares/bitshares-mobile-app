@@ -605,7 +605,7 @@
 "kWalletCellPermissionActive" = "资金权限";
 "kWalletCellPermissionMemo" = "备注权限";
 
-/* 交易OP名字 */
+/* 交易OP名字TODO:2.1 */
 "kOpType_proposal_prefix" = "提案【%@】";
 "kOpType_transfer" = "转账";
 "kOpType_limit_order_create_sell" = "创建卖单";
@@ -652,6 +652,16 @@
 "kOpType_transfer_from_blind" = "从隐私账户转出";
 "kOpType_asset_settle_cancel" = "取消清算";
 "kOpType_asset_claim_fees" = "提取资产手续费";
+"kOpType_fba_distribute" = "fba_distribute";
+"kOpType_bid_collateral" = "bid_collateral";
+"kOpType_execute_bid" = "execute_bid";
+"kOpType_asset_claim_pool" = "asset_claim_pool";
+"kOpType_asset_update_issuer" = "asset_update_issuer";
+"kOpType_htlc_create" = "创建合约转账";
+"kOpType_htlc_redeem" = "兑换合约转账";
+"kOpType_htlc_redeemed" = "转账合约已执行";
+"kOpType_htlc_extend" = "更新合约";
+"kOpType_htlc_refund" = "合约转账退款";
 
 /* 交易OP详细描述 */
 "kOpDesc_transfer" = "%@ 转账 %@ 到 %@。";

@@ -24,8 +24,9 @@
 enum
 {
     kVcFormArgs = 0,
-    kVcSubmitBtn01,
-    kVcSubmitBtn02,
+    kVcSubmitBtn,
+    
+    kVcMax
 };
 
 enum
@@ -55,6 +56,7 @@ enum
 @interface VCHtlcTransfer ()
 {
     EHtlcDeployMode         _mode;
+    BOOL                    _havePreimage;
     NSMutableArray*         _rowTypeArray;
     
     NSDictionary*           _default_asset;     //  默认转账资产
@@ -67,15 +69,21 @@ enum
     UITableViewCellBase*    _cellAssetAvailable;
     
     MyTextField*            _tf_amount;
-    MyTextField*            _tf_memo;
+    MyTextField*            _tf_preimage_or_hash;
     
-    ViewBlockLabel*         _goto_submit_01;    //  创建合约 or 我是根据别人合约创建
-    ViewBlockLabel*         _goto_submit_02;    //  我是主动创建合约
+    ViewBlockLabel*         _goto_submit;       //  创建合约
     
     NSMutableDictionary*    _transfer_args;
     NSDecimalNumber*        _n_available;
     
     BOOL                    _enable_more_args;  //  启用高级设置
+    
+    NSArray*                _const_hashtype_list;
+    NSArray*                _const_expire_list;
+    
+    NSDictionary*           _currHashType;
+    NSDictionary*           _currExpire;
+    NSInteger               _currPreimageLength;
 }
 
 @end
@@ -94,9 +102,9 @@ enum
         _tf_amount = nil;
     }
 
-    if (_tf_memo){
-        _tf_memo.delegate = nil;
-        _tf_memo = nil;
+    if (_tf_preimage_or_hash){
+        _tf_preimage_or_hash.delegate = nil;
+        _tf_preimage_or_hash = nil;
     }
     
     _transfer_args = nil;
@@ -138,12 +146,13 @@ enum
     }
 }
 
-- (id)initWithUserFullInfo:(NSDictionary*)full_account_data mode:(EHtlcDeployMode)mode
+- (id)initWithUserFullInfo:(NSDictionary*)full_account_data mode:(EHtlcDeployMode)mode havePreimage:(BOOL)havePreimage
 {
     self = [super init];
     if (self) {
         // Custom initialization
         _mode = mode;
+        _havePreimage = havePreimage;
         _rowTypeArray = [NSMutableArray array];
         _default_asset = nil;//TODO:2.1无用？
         _full_account_data = full_account_data;
@@ -152,9 +161,50 @@ enum
         _fee_item = nil;
         _asset_list = nil;
         _enable_more_args = NO;
+        
+        _const_hashtype_list = @[
+                                 @{@"name":@"RIPEMD160", @"value":@0},
+                                 @{@"name":@"SHA1", @"value":@1},
+                                 @{@"name":@"SHA256", @"value":@2}
+                                 ];
+        _currHashType = [_const_hashtype_list lastObject];
+        
+        //  TODO:fowallet 最大时间不能超过理事会 parameters.extensions.value.updatable_htlc_options; 配置。
+        if (_mode == EDM_PREIMAGE || _havePreimage){
+            //  主动创建时候的合约有效期（先创建）
+            _const_expire_list = @[
+                                   @{@"name":@"3天", @"value":@(3600*24*3)},
+                                   @{@"name":@"5天", @"value":@(3600*24*5)},
+                                   @{@"name":@"7天", @"value":@(3600*24*7)},
+                                   @{@"name":@"15天", @"value":@(3600*24*15)},
+                                   ];
+            _currExpire = [_const_expire_list objectAtIndex:1];
+        }else{
+            //  被动创建时候的合约有效期（后创建）
+            _const_expire_list = @[
+                                   @{@"name":@"6小时", @"value":@(3600*6)},
+                                   @{@"name":@"12小时", @"value":@(3600*12)},
+                                   @{@"name":@"1天", @"value":@(3600*24*1)},
+                                   @{@"name":@"2天", @"value":@(3600*24*2)},
+                                   @{@"name":@"3天", @"value":@(3600*24*3)},
+                                   ];
+            _currExpire = [_const_expire_list objectAtIndex:2];
+        }
+        
+        _currPreimageLength = [self _randomSecurePreimage].length;
+
         [self _buildRowTypeArray];
     }
     return self;
+}
+
+/**
+ *  随机生成安全的原像
+ */
+- (NSString*)_randomSecurePreimage
+{
+    //  TODO:fowallet 最大原像不能超过 o.preimage_size <= htlc_options->max_preimage_size
+    return [[NSString stringWithFormat:@"BTSPP%@PREIMAGE", [WalletManager randomPrivateKeyWIF]] uppercaseString];
 }
 
 /**
@@ -179,7 +229,7 @@ enum
     id balances_list = [_balances_hash allValues];
     
     //  计算手续费对象（更新手续费资产的可用余额，即减去手续费需要的amount）
-    _fee_item = [chainMgr estimateFeeObject:ebo_transfer balances:balances_list];
+    _fee_item = [chainMgr estimateFeeObject:ebo_htlc_create balances:balances_list];
     id fee_asset_id = _fee_item[@"fee_asset_id"];
     id fee_balance = [_balances_hash objectForKey:fee_asset_id];
     if (fee_balance){
@@ -248,7 +298,7 @@ enum
 - (void)refreshUI:(id)new_full_account_data
 {
     _tf_amount.text = @"";
-    _tf_memo.text = @"";
+    _tf_preimage_or_hash.text = @"";
     [self genTransferDefaultArgs:new_full_account_data];
     [_mainTableView reloadData];
 }
@@ -258,13 +308,32 @@ enum
     //  REMARK：强制结束键盘
     [self.view endEditing:YES];
     [_tf_amount safeResignFirstResponder];
-    [_tf_memo safeResignFirstResponder];
+    [_tf_preimage_or_hash safeResignFirstResponder];
 }
 
 - (void)onAmountAllButtonClicked:(UIButton*)sender
 {
     _tf_amount.text = [NSString stringWithFormat:@"%@", _n_available];
     [self onAmountChanged];
+}
+
+/**
+ *  复制 or 粘贴按钮点击
+ */
+- (void)onCopyOrPasteButtonClicked:(UIButton*)sender
+{
+    if (_mode == EDM_PREIMAGE){
+        //  copy
+        //  TODO:2.1多语言
+        id preimage = _tf_preimage_or_hash.text ?: @"";
+        [UIPasteboard generalPasteboard].string = preimage;
+        [OrgUtils makeToast:[NSString stringWithFormat:@"原像已复制：%@", preimage]];
+    }else{
+        //  paste
+        NSString* hashcode = [UIPasteboard generalPasteboard].string ?: @"";
+        //  TODO:检测是否是有效的Hashcode格式。
+        _tf_preimage_or_hash.text = hashcode;
+    }
 }
 
 - (void)viewDidLoad
@@ -280,16 +349,15 @@ enum
     NSString* placeHolderMemo = _mode == EDM_PREIMAGE ? NSLocalizedString(@"kVcHtlcPlaceholderInputPreimage", @"请输入合约的原像") : NSLocalizedString(@"kVcHtlcPlaceholderInputPreimageHash", @"请输入原像的哈希值");
     CGRect rect = [self makeTextFieldRect];
     _tf_amount = [self createTfWithRect:[self makeTextFieldRectFull] keyboard:UIKeyboardTypeDecimalPad placeholder:placeHolderAmount];
-    _tf_memo = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolderMemo];
-    
+    _tf_preimage_or_hash = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolderMemo];
     _tf_amount.showBottomLine = YES;
     
     //  设置属性颜色等
-    _tf_memo.updateClearButtonTintColor = YES;
-    _tf_memo.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    _tf_memo.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderMemo
-                                                                       attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                    NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tf_preimage_or_hash.updateClearButtonTintColor = YES;
+    _tf_preimage_or_hash.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    _tf_preimage_or_hash.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderMemo
+                                                                                 attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
+                                                                                              NSFontAttributeName:[UIFont systemFontOfSize:17]}];
     _tf_amount.updateClearButtonTintColor = YES;
     _tf_amount.textColor = [ThemeManager sharedThemeManager].textColorMain;
     _tf_amount.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderAmount
@@ -311,7 +379,7 @@ enum
     _tf_amount.rightView = btn100;
     _tf_amount.rightViewMode = UITextFieldViewModeAlways;
     
-    //  UI - 提取码末尾按钮 TODO:2.1未完成
+    //  UI - 末尾按钮
     UIButton* btn_copy = [UIButton buttonWithType:UIButtonTypeSystem];
     btn_copy.titleLabel.font = [UIFont systemFontOfSize:13];
     if (_mode == EDM_PREIMAGE){
@@ -321,10 +389,10 @@ enum
     }
     [btn_copy setTitleColor:[ThemeManager sharedThemeManager].textColorHighlight forState:UIControlStateNormal];
     btn_copy.userInteractionEnabled = YES;
-    [btn_copy addTarget:self action:@selector(onAmountAllButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [btn_copy addTarget:self action:@selector(onCopyOrPasteButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     btn_copy.frame = CGRectMake(6, 2, 40, 27);
-    _tf_memo.rightView = btn_copy;
-    _tf_memo.rightViewMode = UITextFieldViewModeAlways;
+    _tf_preimage_or_hash.rightView = btn_copy;
+    _tf_preimage_or_hash.rightViewMode = UITextFieldViewModeAlways;
     
     //  待转账资产总可用余额
     _cellAssetAvailable = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
@@ -349,22 +417,16 @@ enum
     
     //  初始化相关参数
     [self genTransferDefaultArgs:nil];
+    if (_mode == EDM_PREIMAGE){
+        _tf_preimage_or_hash.text = [self _randomSecurePreimage];
+    }
     
     UITapGestureRecognizer* pTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTap:)];
     pTap.cancelsTouchesInView = NO; //  IOS 5.0系列导致按钮没响应
     [self.view addGestureRecognizer:pTap];
     
-    //  发送按钮
-    if (_mode == EDM_PREIMAGE){
-        _goto_submit_01 = [self createCellLableButton:NSLocalizedString(@"kVcHtlcSubmitBtn01", @"创建")];
-        _goto_submit_02 = nil;
-    }else{
-        _goto_submit_01 = [self createCellLableButton:NSLocalizedString(@"kVcHtlcSubmitBtn02", @"我是参考对方合约创建")];
-        _goto_submit_02 = [self createCellLableButton:NSLocalizedString(@"kVcHtlcSubmitBtn03", @"我是主动创建合约")];
-        UIColor* backColor = [ThemeManager sharedThemeManager].textColorGray;
-        _goto_submit_02.layer.borderColor = backColor.CGColor;
-        _goto_submit_02.layer.backgroundColor = backColor.CGColor;
-    }
+    //  提交按钮
+    _goto_submit = [self createCellLableButton:NSLocalizedString(@"kVcHtlcSubmitBtn01", @"创建")];
 }
 
 /**
@@ -393,8 +455,69 @@ enum
     [self resignAllFirstResponder];
 }
 
--(void)gotoTransfer
+/**
+ *  (private) 根据当前哈希算法获取对应的哈希值字节数。
+ */
+- (NSInteger)_calcHashValueByteSize
 {
+    switch ([[_currHashType objectForKey:@"value"] integerValue]) {
+        case 0: //  RIPEMD160
+            return 20;
+        case 1: //  SHA1 SHA160
+            return 20;
+        case 2: //  SHA256
+            return 32;
+        default:
+            assert(false);
+            break;
+    }
+    return 0;
+}
+
+/**
+ *  (private) 根据当前哈希算法计算原像哈希值。
+ */
+- (NSData*)_calcPreimageHashCode:(NSData*)preimage
+{
+    //    sha256((const unsigned char*)[preimage UTF8String], [preimage length], digest);
+    //    id preimage_hash = [[NSData alloc] initWithBytes:digest length:sizeof(digest)];
+    
+//    NSData* message_data = [memo_string dataUsingEncoding:NSUTF8StringEncoding];
+//    size_t message_size = (size_t)[message_data length];
+//    const unsigned char* message = (const unsigned char*)[message_data bytes];
+//    size_t output_size = __bts_aes256_encrypt_with_checksum_calc_outputsize(message_size);
+//    unsigned char output[output_size];
+//
+    switch ([[_currHashType objectForKey:@"value"] integerValue]) {
+        case 0: //  RIPEMD160
+        {
+            //  TODO:2.1
+            unsigned char digest[20] = {0, };
+        }
+            break;
+        case 1: //  SHA1 SHA160
+        {
+            //  TODO:2.1
+            unsigned char digest[20] = {0, };
+        }
+            break;
+        case 2: //  SHA256
+        {
+            unsigned char digest[32] = {0, };
+            sha256((const unsigned char*)[preimage bytes], (const size_t)[preimage length], digest);
+            return [[NSData alloc] initWithBytes:digest length:sizeof(digest)];
+        }
+            break;
+        default:
+            assert(false);
+            break;
+    }
+    return nil;
+}
+
+-(void)gotoCreateHTLC
+{
+    //  === 转账基本参数有效性检测 ===
     //  TODO:fowallet 不足的时候否直接提示显示？？？
     if (![[_fee_item objectForKey:@"sufficient"] boolValue]){
         [OrgUtils makeToast:NSLocalizedString(@"kTipsTxFeeNotEnough", @"手续费不足，请确保帐号有足额的 BTS/CNY/USD 用于支付网络手续费。")];
@@ -438,226 +561,360 @@ enum
         return;
     }
     
-    //  获取备注(memo)信息
-    NSString* str_memo = _tf_memo.text;
-    if (!str_memo || str_memo.length == 0){
-        str_memo = nil;
-    }
+    //  === 风险提示 ===
+    //  TODO:2.1 多语言
+    NSData* preimage_hash = nil;
+    NSInteger preimage_length = 0;
     
-    //  检测备注私钥相关信息
-    NSString* from_public_memo = nil;
-    WalletManager* walletMgr = nil;
-    if (str_memo){
-        walletMgr = [WalletManager sharedWalletManager];
-        id full_account_data = [walletMgr getWalletAccountInfo];
-        from_public_memo = [[[full_account_data objectForKey:@"account"] objectForKey:@"options"] objectForKey:@"memo_key"];
-        if (!from_public_memo || [from_public_memo isEqualToString:@""]){
-            [OrgUtils makeToast:NSLocalizedString(@"kVcTransferSubmitTipAccountNoMemoKey", @"帐号没有备注私钥，不支持填写备注信息。")];
+    id message;
+    id title = NSLocalizedString(@"kWarmTips", @"温馨提示");
+    if (_mode == EDM_PREIMAGE){
+        NSString* preimage = [NSString trim:_tf_preimage_or_hash.text];
+        if (![OrgUtils isValidHTCLPreimageFormat:preimage]){
+            [OrgUtils showMessage:@"原像格式为20位以上，且必须同时包含大写字母和数字。"];
             return;
         }
-    }
-    
-    //  --- 参数大部分检测合法 执行请求 ---
-    [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
-        if (unlocked){
-            [self _processTransferCore:from to:to asset:asset amount:n_amount memo:str_memo from_public_memo:from_public_memo];
+        
+        NSData* preimage_data = [preimage dataUsingEncoding:NSUTF8StringEncoding];
+        preimage_hash = [self _calcPreimageHashCode:preimage_data];
+        preimage_length = [preimage_data length];
+        
+        message = @"请确认已经复制备份好【原像】信息，丢失原像只能等待合约到期后自动解锁。是否继续创建合约？";
+    }else{
+        NSString* hashvalue = [NSString trim:_tf_preimage_or_hash.text];
+        if (!hashvalue){
+            [OrgUtils makeToast:@"请输入原像哈希值。"];
+            return;
         }
-    }];
+        NSData* hashvalue_data = [hashvalue dataUsingEncoding:NSUTF8StringEncoding];
+        NSInteger hashvalue_bytesize = [self _calcHashValueByteSize];
+        if ([hashvalue_data length] != hashvalue_bytesize * 2){
+            [OrgUtils makeToast:@"请输入有效的原像哈希值。"];
+            return;
+        }
+        //  TODO:2.1 是否是有效的16进制 检测
+        unsigned char hashvalue_bytes[hashvalue_bytesize];
+        hex_decode((const unsigned char*)[hashvalue_data bytes], (const size_t)[hashvalue_data length], hashvalue_bytes);
+        preimage_hash = [[NSData alloc] initWithBytes:hashvalue_bytes length:hashvalue_bytesize];
+        preimage_length = _currPreimageLength;
+        
+        if (_havePreimage){
+            message = @"主动创建合约请备份好【原像】信息，丢失原像只能等待合约到期后自动解锁。是否继续创建合约？";
+        }else{
+            message = @"被动部署合约请仔细确认对方已经部署好了相同的合约，并仔细核对各种参数。\n\n※ 注意 ※\n1、原像哈希和原像长度必须和对方完全匹配。\n2、建议合约【有效期】务必“小于”对方合约有效期2天以上，否则可能造成资金损失。是否继续创建合约？";
+            title = @"风险提示";
+        }
+    }
+    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:message
+                                                           withTitle:title
+                                                          completion:^(NSInteger buttonIndex)
+     {
+         if (buttonIndex == 1)
+         {
+             //  --- 参数大部分检测合法 执行请求 ---
+             [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
+                 if (unlocked){
+                     [self _gotoCreateHTLCCore:from to:to asset:asset amount:n_amount
+                                 preimage_hash:preimage_hash preimage_length:preimage_length
+                                      hashtype:[[_currHashType objectForKey:@"value"] integerValue]
+                          claim_period_seconds:[[_currExpire objectForKey:@"value"] integerValue]];
+                 }
+             }];
+         }
+     }];
 }
 
 /**
- *  (private) 辅助 - 判断手续费是否足够，足够则返回需要消耗的手续费，不足则返回 nil。
- *  fee_price_item      - 服务器返回的需要手续费值
- *  fee_asset_id        - 当前手续费资产ID
- *  asset               - 正在转账的资产
- *  n_amount            - 正在转账的数量
+ *  (private) 创建合约核心。
  */
-- (id)_isFeeSufficient:(id)fee_price_item fee_asset_id:(NSString*)fee_asset_id asset:(id)asset amount:(id)n_amount
-{
-    assert(fee_price_item);
-    assert(fee_asset_id);
-    assert(asset);
-    assert(n_amount);
-    assert([fee_asset_id isEqualToString:[fee_price_item objectForKey:@"asset_id"]]);
-    
-    //  1、转账消耗资产值（只有转账资产和手续费资产相同时候才设置）
-    NSDecimalNumber* n_transfer_cost = [NSDecimalNumber zero];
-    if ([asset[@"id"] isEqualToString:fee_asset_id]){
-        n_transfer_cost = n_amount;
-    }
-    
-    //  2、手续费消耗值
-    id fee_asset = _transfer_args[@"fee_asset"];
-    assert(fee_asset);
-    NSDecimalNumber* n_fee_cost = [NSDecimalNumber decimalNumberWithMantissa:[[fee_price_item objectForKey:@"amount"] unsignedLongLongValue]
-                                                                    exponent:-[fee_asset[@"precision"] integerValue]
-                                                                  isNegative:NO];
-    
-    //  3、总消耗值
-    id n_total_cost = [n_transfer_cost decimalNumberByAdding:n_fee_cost];
-    
-    //  4、获取手续费资产总的可用余额
-    id n_available = [NSDecimalNumber zero];
-    for (id balance_object in [_full_account_data objectForKey:@"balances"]) {
-        id asset_type = [balance_object objectForKey:@"asset_type"];
-        if ([asset_type isEqualToString:fee_asset_id]){
-            n_available = [NSDecimalNumber decimalNumberWithMantissa:[balance_object[@"balance"] unsignedLongLongValue]
-                                                            exponent:-[fee_asset[@"precision"] integerValue]
-                                                          isNegative:NO];
-            break;
-        }
-    }
-    
-    //  5、判断：n_available < n_total_cost
-    if ([n_available compare:n_total_cost] == NSOrderedAscending){
-        //  不足：返回 nil。
-        return nil;
-    }
-    
-    //  足够（返回手续费值）
-    return n_fee_cost;
-}
-
--(void)_processTransferCore:(id)from
+- (void)_gotoCreateHTLCCore:(id)from
                          to:(id)to
                       asset:(id)asset
                      amount:(id)n_amount
-                       memo:(NSString*)memo
-           from_public_memo:(NSString*)from_public_memo
+              preimage_hash:(id)preimage_hash
+            preimage_length:(NSInteger)preimage_length
+                   hashtype:(NSInteger)hashtype
+       claim_period_seconds:(NSInteger)claim_period_seconds
 {
-    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    //  构造请求
-    id fetch_to = memo ? [[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:to[@"id"]] : [NSNull null];
-    [[[WsPromise all:@[fetch_to]] then:(^id(id data_array) {
-        //  生成 memo 对象。
-        id memo_object = [NSNull null];
-        if (memo){
-            id to_full_account_data = data_array[0];
-            id to_public = [[[to_full_account_data objectForKey:@"account"] objectForKey:@"options"] objectForKey:@"memo_key"];
-            memo_object = [[WalletManager sharedWalletManager] genMemoObject:memo from_public:from_public_memo to_public:to_public];
-            if (!memo_object){
-                [self hideBlockView];
-                [OrgUtils makeToast:NSLocalizedString(@"kVcTransferSubmitTipWalletNoMemoKey", @"没有备注私钥信息，不支持填写备注。")];
-                return nil;
-            }
-        }
-        //  --- 开始构造OP ---
-        id n_amount_pow = [NSString stringWithFormat:@"%@", [n_amount decimalNumberByMultiplyingByPowerOf10:[asset[@"precision"] integerValue]]];
-        id fee_asset_id = [_fee_item objectForKey:@"fee_asset_id"];
-        id op = @{
-                  @"fee":@{
-                          @"amount":@0,
-                          @"asset_id":fee_asset_id,
-                          },
-                  @"from":from[@"id"],
-                  @"to":to[@"id"],
-                  @"amount":@{
-                          @"amount":@([n_amount_pow unsignedLongLongValue]),
-                          @"asset_id":asset[@"id"],
-                          },
-                  @"memo":memo_object
-                  };
-        //  --- 开始评估手续费 ---
-        [[[[BitsharesClientManager sharedBitsharesClientManager] calcOperationFee:ebo_transfer opdata:op] then:(^id(id fee_price_item) {
-            [self hideBlockView];
-            //  判断手续费是否足够。
-            id n_fee_cost = [self _isFeeSufficient:fee_price_item fee_asset_id:fee_asset_id asset:asset amount:n_amount];
-            if (!n_fee_cost){
-                [OrgUtils makeToast:NSLocalizedString(@"kTipsTxFeeNotEnough", @"手续费不足，请确保帐号有足额的 BTS/CNY/USD 用于支付网络手续费。")];
-                return nil;
-            }
-            //  --- 弹框确认转账行为 ---
-            //  弹确认框之前 设置参数
-            [_transfer_args setObject:n_amount forKey:@"kAmount"];
-            [_transfer_args setObject:n_fee_cost forKey:@"kFeeCost"];
-            
-            id op_with_fee = [op mutableCopy];
-            [op_with_fee setObject:fee_price_item forKey:@"fee"];
-            [_transfer_args setObject:[op_with_fee copy] forKey:@"kOpData"];            //  传递过去，避免再次构造。
-            if (memo){
-                [_transfer_args setObject:memo forKey:@"kMemo"];
-            }else{
-                [_transfer_args removeObjectForKey:@"kMemo"];
-            }
-            //  确保有权限发起普通交易，否则作为提案交易处理。
-            [self GuardProposalOrNormalTransaction:ebo_transfer
-                             using_owner_authority:NO
-                          invoke_proposal_callback:NO
-                                            opdata:[_transfer_args objectForKey:@"kOpData"]
-                                         opaccount:[_full_account_data objectForKey:@"account"]
-                                              body:^(BOOL isProposal, NSDictionary *proposal_create_args)
-             {
-                 assert(!isProposal);
-                 // 有权限：转到交易确认界面。
-                 VCTransactionConfirm* vc = [[VCTransactionConfirm alloc] initWithTransferArgs:[_transfer_args copy] callback:(^(BOOL isOk) {
-                     if (isOk){
-                         [self _processTransferCore];
-                     }else{
-                         NSLog(@"cancel...");
-                     }
-                 })];
-                 vc.title = NSLocalizedString(@"kVcTitleConfirmTransaction", @"请确认交易");
-                 vc.hidesBottomBarWhenPushed = YES;
-                 [self showModelViewController:vc tag:0];
-             }];
-            return nil;
-        })] catch:(^id(id error) {
-            [self hideBlockView];
-            [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
-            return nil;
-        })];
-        return nil;
-    })] catch:(^id(id error) {
-        [self hideBlockView];
-        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
-        return nil;
-    })];
-}
-
-/**
- *  (private) 用户确认完毕 最后提交请求。
- */
-- (void)_processTransferCore
-{
-    id asset = [_transfer_args objectForKey:@"asset"];
-    assert(asset);
-    id op_data = [_transfer_args objectForKey:@"kOpData"];
-    assert(op_data);
+    id n_amount_pow = [NSString stringWithFormat:@"%@", [n_amount decimalNumberByMultiplyingByPowerOf10:[asset[@"precision"] integerValue]]];
+    id fee_asset_id = [_fee_item objectForKey:@"fee_asset_id"];
     
-    //  请求网络广播
-    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    [[[[BitsharesClientManager sharedBitsharesClientManager] transfer:op_data] then:(^id(id data) {
-        id account_id = [[_full_account_data objectForKey:@"account"] objectForKey:@"id"];
-        [[[[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:account_id] then:(^id(id full_data) {
-            NSLog(@"transfer & refresh: %@", full_data);
-            [self hideBlockView];
-            [self refreshUI:full_data];
-            [OrgUtils makeToast:NSLocalizedString(@"kVcTransferTipTxTransferFullOK", @"发送成功。")];
-            //  [统计]
-            [Answers logCustomEventWithName:@"txTransferFullOK" customAttributes:@{@"account":account_id, @"asset":asset[@"symbol"]}];
-            return nil;
-        })] catch:(^id(id error) {
-            [self hideBlockView];
-            [OrgUtils makeToast:NSLocalizedString(@"kVcTransferTipTxTransferOK", @"发送成功，但刷新界面数据失败，请稍后再试。")];
-            //  [统计]
-            [Answers logCustomEventWithName:@"txTransferOK" customAttributes:@{@"account":account_id, @"asset":asset[@"symbol"]}];
-            return nil;
-        })];
-        return nil;
-    })] catch:(^id(id error) {
-        [self hideBlockView];
-        [OrgUtils makeToast:NSLocalizedString(@"kTipsTxRequestFailed", @"请求失败，请稍后再试。")];
-        //  [统计]
-        [Answers logCustomEventWithName:@"txTransferFailed" customAttributes:@{@"asset":asset[@"symbol"]}];
-        return nil;
-    })];
+    id op = @{
+              @"fee":@{
+                      @"amount":@0,
+                      @"asset_id":fee_asset_id,
+                      },
+              @"from":from[@"id"],
+              @"to":to[@"id"],
+              @"amount":@{
+                      @"amount":@([n_amount_pow unsignedLongLongValue]),
+                      @"asset_id":asset[@"id"],
+                      },
+              @"preimage_hash":@[@(hashtype), preimage_hash],
+              @"preimage_size":@(preimage_length),
+              @"claim_period_seconds":@(claim_period_seconds)
+              };
+    
+    //  TODO:2.1 提案？？
+    
+    id opaccount = [_full_account_data objectForKey:@"account"];
+    id opaccount_id = [opaccount objectForKey:@"id"];
+    assert(opaccount_id);
+    
+    //  确保有权限发起普通交易，否则作为提案交易处理。
+    [self GuardProposalOrNormalTransaction:ebo_htlc_create
+                     using_owner_authority:NO
+                  invoke_proposal_callback:NO
+                                    opdata:op
+                                 opaccount:opaccount
+                                      body:^(BOOL isProposal, NSDictionary *proposal_create_args)
+     {
+         assert(!isProposal);
+         //  请求网络广播
+         [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+         [[[[BitsharesClientManager sharedBitsharesClientManager] htlcCreate:op] then:(^id(id transaction_confirmation) {
+             [self hideBlockView];
+             NSLog(@"%@", transaction_confirmation);
+             id new_htlc_id = [OrgUtils extractNewObjectID:transaction_confirmation];
+             [OrgUtils makeToast:[NSString stringWithFormat:@"new htlc id: %@", new_htlc_id]];
+//             [[[[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:opaccount_id] then:(^id(id full_data) {
+//                 NSLog(@"callorder_update & refresh: %@", full_data);
+//                 [self hideBlockView];
+//                 //  刷新UI
+//                 [self refreshUI:YES new_feed_price_data:nil];
+//                 [OrgUtils makeToast:NSLocalizedString(@"kDebtTipTxUpdatePositionFullOK", @"债仓调整完毕。")];
+//                 //  [统计]
+//                 [Answers logCustomEventWithName:@"txCallOrderUpdateFullOK"
+//                                customAttributes:@{@"account":funding_account, @"debt_asset":_debtPair.baseAsset[@"symbol"]}];
+//                 return nil;
+//             })] catch:(^id(id error) {
+//                 [self hideBlockView];
+//                 [OrgUtils makeToast:NSLocalizedString(@"kDebtTipTxUpdatePositionOK", @"债仓调整完毕，但刷新界面数据失败，请稍后再试。")];
+//                 //  [统计]
+//                 [Answers logCustomEventWithName:@"txCallOrderUpdateOK"
+//                                customAttributes:@{@"account":funding_account, @"debt_asset":_debtPair.baseAsset[@"symbol"]}];
+//                 return nil;
+//             })];
+             return nil;
+         })] catch:(^id(id error) {
+             [self hideBlockView];
+             [OrgUtils makeToast:NSLocalizedString(@"kTipsTxRequestFailed", @"请求失败，请稍后再试。")];
+//             //  [统计]
+//             [Answers logCustomEventWithName:@"txCallOrderUpdateFailed"
+//                            customAttributes:@{@"account":opaccount_id, @"debt_asset":_debtPair.baseAsset[@"symbol"]}];
+             return nil;
+         })];
+     }];
+    
+    
+//    [[[[BitsharesClientManager sharedBitsharesClientManager] htlcCreate:op] then:(^id(id data) {
+//        NSLog(@"%@", data);
+//        return nil;
+//    })] catch:(^id(id error) {
+//        NSLog(@"%@", error);
+//        return nil;
+//    })];
+//    return;
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
+//
+///**
+// *  (private) 辅助 - 判断手续费是否足够，足够则返回需要消耗的手续费，不足则返回 nil。
+// *  fee_price_item      - 服务器返回的需要手续费值
+// *  fee_asset_id        - 当前手续费资产ID
+// *  asset               - 正在转账的资产
+// *  n_amount            - 正在转账的数量
+// */
+//- (id)_isFeeSufficient:(id)fee_price_item fee_asset_id:(NSString*)fee_asset_id asset:(id)asset amount:(id)n_amount
+//{
+//    assert(fee_price_item);
+//    assert(fee_asset_id);
+//    assert(asset);
+//    assert(n_amount);
+//    assert([fee_asset_id isEqualToString:[fee_price_item objectForKey:@"asset_id"]]);
+//
+//    //  1、转账消耗资产值（只有转账资产和手续费资产相同时候才设置）
+//    NSDecimalNumber* n_transfer_cost = [NSDecimalNumber zero];
+//    if ([asset[@"id"] isEqualToString:fee_asset_id]){
+//        n_transfer_cost = n_amount;
+//    }
+//
+//    //  2、手续费消耗值
+//    id fee_asset = _transfer_args[@"fee_asset"];
+//    assert(fee_asset);
+//    NSDecimalNumber* n_fee_cost = [NSDecimalNumber decimalNumberWithMantissa:[[fee_price_item objectForKey:@"amount"] unsignedLongLongValue]
+//                                                                    exponent:-[fee_asset[@"precision"] integerValue]
+//                                                                  isNegative:NO];
+//
+//    //  3、总消耗值
+//    id n_total_cost = [n_transfer_cost decimalNumberByAdding:n_fee_cost];
+//
+//    //  4、获取手续费资产总的可用余额
+//    id n_available = [NSDecimalNumber zero];
+//    for (id balance_object in [_full_account_data objectForKey:@"balances"]) {
+//        id asset_type = [balance_object objectForKey:@"asset_type"];
+//        if ([asset_type isEqualToString:fee_asset_id]){
+//            n_available = [NSDecimalNumber decimalNumberWithMantissa:[balance_object[@"balance"] unsignedLongLongValue]
+//                                                            exponent:-[fee_asset[@"precision"] integerValue]
+//                                                          isNegative:NO];
+//            break;
+//        }
+//    }
+//
+//    //  5、判断：n_available < n_total_cost
+//    if ([n_available compare:n_total_cost] == NSOrderedAscending){
+//        //  不足：返回 nil。
+//        return nil;
+//    }
+//
+//    //  足够（返回手续费值）
+//    return n_fee_cost;
+//}
+//
+//-(void)_processTransferCore:(id)from
+//                         to:(id)to
+//                      asset:(id)asset
+//                     amount:(id)n_amount
+//{
+//    //    NSString* preimage = @"s123";
+//    //    unsigned char digest[32] = {0, };
+//    //    sha256((const unsigned char*)[preimage UTF8String], [preimage length], digest);
+//    //    id preimage_hash = [[NSData alloc] initWithBytes:digest length:sizeof(digest)];
+//    //
+//    //    id account_info = [_full_account_data objectForKey:@"account"];
+//    //    id to1 = [_transfer_args objectForKey:@"to"];
+//    //    id op = @{
+//    //              @"fee":@{
+//    //                      @"amount":@0,
+//    //                      @"asset_id":@"1.3.0",
+//    //                      },
+//    //              @"from":account_info[@"id"],
+//    //              @"to":to1[@"id"],
+//    //              @"amount":@{
+//    //                      @"amount":@(1234),
+//    //                      @"asset_id":@"1.3.0",
+//    //                      },
+//    //              @"preimage_hash":@[@2, preimage_hash],
+//    //              @"preimage_size":@([preimage length]),
+//    //              @"claim_period_seconds":@(3600*10)
+//    //              };
+//    //
+//    //    [[[[BitsharesClientManager sharedBitsharesClientManager] htlcCreate:op] then:(^id(id data) {
+//    //        NSLog(@"%@", data);
+//    //        return nil;
+//    //    })] catch:(^id(id error) {
+//    //        NSLog(@"%@", error);
+//    //        return nil;
+//    //    })];
+//    //    return;
+//    
+//    
+////    //  --- 开始构造OP ---
+////    id n_amount_pow = [NSString stringWithFormat:@"%@", [n_amount decimalNumberByMultiplyingByPowerOf10:[asset[@"precision"] integerValue]]];
+////    id fee_asset_id = [_fee_item objectForKey:@"fee_asset_id"];
+////    id op = @{
+////              @"fee":@{
+////                      @"amount":@0,
+////                      @"asset_id":fee_asset_id,
+////                      },
+////              @"from":from[@"id"],
+////              @"to":to[@"id"],
+////              @"amount":@{
+////                      @"amount":@([n_amount_pow unsignedLongLongValue]),
+////                      @"asset_id":asset[@"id"],
+////                      },
+////              @"memo":memo_object
+////              };
+////    //  --- 开始评估手续费 ---
+////    [[[[BitsharesClientManager sharedBitsharesClientManager] calcOperationFee:ebo_transfer opdata:op] then:(^id(id fee_price_item) {
+////        [self hideBlockView];
+////        //  判断手续费是否足够。
+////        id n_fee_cost = [self _isFeeSufficient:fee_price_item fee_asset_id:fee_asset_id asset:asset amount:n_amount];
+////        if (!n_fee_cost){
+////            [OrgUtils makeToast:NSLocalizedString(@"kTipsTxFeeNotEnough", @"手续费不足，请确保帐号有足额的 BTS/CNY/USD 用于支付网络手续费。")];
+////            return nil;
+////        }
+////        //  --- 弹框确认转账行为 ---
+////        //  弹确认框之前 设置参数
+////        [_transfer_args setObject:n_amount forKey:@"kAmount"];
+////        [_transfer_args setObject:n_fee_cost forKey:@"kFeeCost"];
+////
+////        id op_with_fee = [op mutableCopy];
+////        [op_with_fee setObject:fee_price_item forKey:@"fee"];
+////        [_transfer_args setObject:[op_with_fee copy] forKey:@"kOpData"];            //  传递过去，避免再次构造。
+////        if (memo){
+////            [_transfer_args setObject:memo forKey:@"kMemo"];
+////        }else{
+////            [_transfer_args removeObjectForKey:@"kMemo"];
+////        }
+////        //  确保有权限发起普通交易，否则作为提案交易处理。
+////        [self GuardProposalOrNormalTransaction:ebo_transfer
+////                         using_owner_authority:NO
+////                      invoke_proposal_callback:NO
+////                                        opdata:[_transfer_args objectForKey:@"kOpData"]
+////                                     opaccount:[_full_account_data objectForKey:@"account"]
+////                                          body:^(BOOL isProposal, NSDictionary *proposal_create_args)
+////         {
+////             assert(!isProposal);
+////             // 有权限：转到交易确认界面。
+////             VCTransactionConfirm* vc = [[VCTransactionConfirm alloc] initWithTransferArgs:[_transfer_args copy] callback:(^(BOOL isOk) {
+////                 if (isOk){
+////                     [self _processTransferCore];
+////                 }else{
+////                     NSLog(@"cancel...");
+////                 }
+////             })];
+////             vc.title = NSLocalizedString(@"kVcTitleConfirmTransaction", @"请确认交易");
+////             vc.hidesBottomBarWhenPushed = YES;
+////             [self showModelViewController:vc tag:0];
+////         }];
+////        return nil;
+////    })] catch:(^id(id error) {
+////        [self hideBlockView];
+////        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+////        return nil;
+////    })];
+////    return nil;
+//}
+//
+///**
+// *  (private) 用户确认完毕 最后提交请求。
+// */
+//- (void)_processTransferCore
+//{
+//    id asset = [_transfer_args objectForKey:@"asset"];
+//    assert(asset);
+//    id op_data = [_transfer_args objectForKey:@"kOpData"];
+//    assert(op_data);
+//    
+//    //  请求网络广播
+//    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+//    [[[[BitsharesClientManager sharedBitsharesClientManager] transfer:op_data] then:(^id(id data) {
+//        id account_id = [[_full_account_data objectForKey:@"account"] objectForKey:@"id"];
+//        [[[[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:account_id] then:(^id(id full_data) {
+//            NSLog(@"transfer & refresh: %@", full_data);
+//            [self hideBlockView];
+//            [self refreshUI:full_data];
+//            [OrgUtils makeToast:NSLocalizedString(@"kVcTransferTipTxTransferFullOK", @"发送成功。")];
+//            //  [统计]
+//            [Answers logCustomEventWithName:@"txTransferFullOK" customAttributes:@{@"account":account_id, @"asset":asset[@"symbol"]}];
+//            return nil;
+//        })] catch:(^id(id error) {
+//            [self hideBlockView];
+//            [OrgUtils makeToast:NSLocalizedString(@"kVcTransferTipTxTransferOK", @"发送成功，但刷新界面数据失败，请稍后再试。")];
+//            //  [统计]
+//            [Answers logCustomEventWithName:@"txTransferOK" customAttributes:@{@"account":account_id, @"asset":asset[@"symbol"]}];
+//            return nil;
+//        })];
+//        return nil;
+//    })] catch:(^id(id error) {
+//        [self hideBlockView];
+//        [OrgUtils makeToast:NSLocalizedString(@"kTipsTxRequestFailed", @"请求失败，请稍后再试。")];
+//        //  [统计]
+//        [Answers logCustomEventWithName:@"txTransferFailed" customAttributes:@{@"asset":asset[@"symbol"]}];
+//        return nil;
+//    })];
+//}
 
 #pragma mark- for UITextFieldDelegate
 
@@ -738,13 +995,13 @@ enum
 {
     if (textField == _tf_amount)
     {
-        [_tf_memo becomeFirstResponder];
+        [_tf_preimage_or_hash becomeFirstResponder];
     }
     else
     {
         [self.view endEditing:YES];
         [_tf_amount safeResignFirstResponder];
-        [_tf_memo safeResignFirstResponder];
+        [_tf_preimage_or_hash safeResignFirstResponder];
     }
     return YES;
 }
@@ -753,11 +1010,7 @@ enum
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    if (_mode == EDM_PREIMAGE){
-        return 2;
-    }else{
-        return 3;
-    }
+    return kVcMax;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -826,8 +1079,12 @@ enum
 -(void)onSwitchAction:(UISwitch*)pSwitch
 {
     _enable_more_args = pSwitch.on;
+    
+//    //  REMARK：恢复默认值 TODO:设置默认值。
+//    _currHashType = [_const_hashtype_list lastObject];
+//    _currExpire = [_const_expire_list objectAtIndex:1];
+    
     [self _buildRowTypeArray];
-    //  TODO:2.1是否恢复默认值。
     [_mainTableView reloadData];
 }
 
@@ -940,7 +1197,7 @@ enum
                         cell.textLabel.text = NSLocalizedString(@"kVcHtlcCellTitlePreimageHash", @"原像哈希");
                     }
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                    cell.accessoryView = _tf_memo;
+                    cell.accessoryView = _tf_preimage_or_hash;
                     cell.showCustomBottomLine = YES;
                     cell.hideTopLine = YES;
                     cell.hideBottomLine = YES;
@@ -980,7 +1237,7 @@ enum
                     cell.selectionStyle = UITableViewCellSelectionStyleBlue;
                     cell.textLabel.text = NSLocalizedString(@"kVcHtlcCellTitleClaimPeriod", @"有效期");
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                    cell.detailTextLabel.text = @"3天";//[self _fmtNday:_iProposalReviewtime / (3600 * 24)];
+                    cell.detailTextLabel.text = _currExpire[@"name"];
                     cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
                     return cell;
                 }
@@ -996,7 +1253,7 @@ enum
                     cell.selectionStyle = UITableViewCellSelectionStyleBlue;
                     cell.textLabel.text = NSLocalizedString(@"kVcHtlcCellTitleHashMethod", @"哈希算法");
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                    cell.detailTextLabel.text = @"SHA256";//[self _fmtNday:_iProposalReviewtime / (3600 * 24)];
+                    cell.detailTextLabel.text = _currHashType[@"name"];
                     cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
                     return cell;
                 }
@@ -1011,8 +1268,13 @@ enum
                     cell.selectionStyle = UITableViewCellSelectionStyleBlue;
                     cell.textLabel.text = NSLocalizedString(@"kVcHtlcCellTitlePreimageLength", @"原像长度");
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                    cell.detailTextLabel.text = @"32";//[self _fmtNday:_iProposalReviewtime / (3600 * 24)];
-                    cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+                    if (_currPreimageLength > 0){
+                        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", @(_currPreimageLength)];
+                        cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+                    }else{
+                        cell.detailTextLabel.text = @"请选择原像长度值";
+                        cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorGray;
+                    }
                     return cell;
                 }
                     break;
@@ -1021,7 +1283,7 @@ enum
             }
         }
             break;
-        case kVcSubmitBtn01:
+        case kVcSubmitBtn:
         {
             UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
             cell.accessoryType = UITableViewCellAccessoryNone;
@@ -1029,23 +1291,10 @@ enum
             cell.hideBottomLine = YES;
             cell.hideTopLine = YES;
             cell.backgroundColor = [UIColor clearColor];
-            [self addLabelButtonToCell:_goto_submit_01 cell:cell leftEdge:tableView.layoutMargins.left];
+            [self addLabelButtonToCell:_goto_submit cell:cell leftEdge:tableView.layoutMargins.left];
             return cell;
         }
             break;
-        case kVcSubmitBtn02:
-        {
-            UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-            cell.accessoryType = UITableViewCellAccessoryNone;
-            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-            cell.hideBottomLine = YES;
-            cell.hideTopLine = YES;
-            cell.backgroundColor = [UIColor clearColor];
-            [self addLabelButtonToCell:_goto_submit_02 cell:cell leftEdge:tableView.layoutMargins.left];
-            return cell;
-        }
-            break;
-            
         default:
             break;
     }
@@ -1074,19 +1323,13 @@ enum
                             [_mainTableView reloadData];
                         }
                     }];
-                    [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleSelectToAccount", @"搜索目标帐号") backtitle:kVcDefaultBackTitleName];
-                    //  TODO:log
+                    [self pushViewController:vc
+                                     vctitle:NSLocalizedString(@"kVcTitleSelectToAccount", @"搜索目标帐号")
+                                   backtitle:kVcDefaultBackTitleName];
                 }
                     break;
                 case kVcSubAssetID:
-                {
-                    //  TODO:帐号所持有的资产种类如果少于4、5种则考虑这样选择，太多的话考虑用单独的vc选择。
-                    [VCCommonLogic showPicker:self selectAsset:_asset_list
-                                        title:NSLocalizedString(@"kVcTransferTipSelectAsset", @"请选择要转账的资产") callback:^(id selectItem) {
-                                            [self setAsset:selectItem];
-                                            [_mainTableView reloadData];
-                                        }];
-                }
+                    [self onSelectAssetClicked];
                     break;
                 case kVcSubPreimage_HashMethod:
                 case kVcSubHashCode_HashMethod:
@@ -1104,27 +1347,14 @@ enum
             }
         }
             break;
-        case kVcSubmitBtn01:
+        case kVcSubmitBtn:
         {
             //  表单行为按钮点击
             [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
                 [self delay:^{
-                    [self gotoTransfer];
+                    [self gotoCreateHTLC];
                 }];
             }];
-        }
-            break;
-        case kVcSubmitBtn02:
-        {
-            //  TODO:2.1
-//            [self resignAllFirstResponder];
-//
-//            //  表单行为按钮点击
-//            [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
-//                [self delay:^{
-//                    [self gotoTransfer];
-//                }];
-//            }];
         }
             break;
         default:
@@ -1133,20 +1363,65 @@ enum
 }
 
 /**
+ *  (private) 选择转账资产
+ */
+- (void)onSelectAssetClicked
+{
+    id curr_asset = [_transfer_args objectForKey:@"asset"];
+    assert(curr_asset);
+    id curr_symbol = [curr_asset objectForKey:@"symbol"];
+
+    NSInteger defaultIndex = 0;
+    NSInteger idx = 0;
+    for (id asset in _asset_list) {
+        if ([[asset objectForKey:@"symbol"] isEqualToString:curr_symbol]){
+            defaultIndex = idx;
+            break;
+        }
+        ++idx;
+    }
+    [[[MyPopviewManager sharedMyPopviewManager] showModernListView:self.navigationController
+                                                           message:NSLocalizedString(@"kVcTransferTipSelectAsset", @"请选择要转账的资产")
+                                                             items:_asset_list
+                                                           itemkey:@"symbol"
+                                                      defaultIndex:defaultIndex] then:(^id(id result) {
+        if (result){
+            id select_symbol = [result objectForKey:@"symbol"];
+            if (![select_symbol isEqualToString:curr_symbol]){
+                [self setAsset:result];
+                [_mainTableView reloadData];
+            }
+        }
+        return nil;
+    })];
+}
+
+/**
  *  (private) 原像长度选择
  */
 - (void)onPreimageLengthClicked
 {
+    //  TODO:2.1 未完成 多语言
+    NSInteger defaultIndex = 0;
+    NSMutableArray* list = [NSMutableArray array];
+    for (NSInteger i = 1; i <= 256; ++i) {
+        if (i == _currPreimageLength){
+            defaultIndex = [list count];
+        }
+        [list addObject:@{@"name":[NSString stringWithFormat:@"%@", @(i)], @"value":@(i)}];
+    }
     [[[MyPopviewManager sharedMyPopviewManager] showModernListView:self.navigationController
                                                            message:@"请选择原像字符长度"
-                                                             items:@[@{@"name":@"1"}, @{@"name":@"2"}, @{@"name":@"3"}]
+                                                             items:list
                                                            itemkey:@"name"
-                                                      defaultIndex:0] then:(^id(id result) {
-        //        if (result){
-        //            resolve(@([[result objectForKey:@"value"] integerValue]));
-        //        }else{
-        //            resolve(nil);
-        //        }
+                                                      defaultIndex:defaultIndex] then:(^id(id result) {
+        if (result){
+            NSInteger len = [[result objectForKey:@"value"] integerValue];
+            if (_currPreimageLength != len){
+                _currPreimageLength = len;
+                [_mainTableView reloadData];
+            }
+        }
         return nil;
     })];
 }
@@ -1157,16 +1432,28 @@ enum
 - (void)onHashMethodClicked
 {
     //  TODO:2.1 未完成
+    NSInteger defaultIndex = 0;
+    NSInteger currValue = [[_currHashType objectForKey:@"value"] integerValue];
+    NSInteger idx = 0;
+    for (id item in _const_hashtype_list) {
+        if ([[item objectForKey:@"value"] integerValue] == currValue){
+            defaultIndex = idx;
+            break;
+        }
+        ++idx;
+    }
     [[[MyPopviewManager sharedMyPopviewManager] showModernListView:self.navigationController
                                                            message:@"请选择哈希算法"
-                                                             items:@[@{@"name":@"RIPEMD160"}, @{@"name":@"SHA1"}, @{@"name":@"SHA256"}]
+                                                             items:_const_hashtype_list
                                                            itemkey:@"name"
-                                                      defaultIndex:2] then:(^id(id result) {
-//        if (result){
-//            resolve(@([[result objectForKey:@"value"] integerValue]));
-//        }else{
-//            resolve(nil);
-//        }
+                                                      defaultIndex:defaultIndex] then:(^id(id result) {
+        if (result){
+            NSInteger type = [[result objectForKey:@"value"] integerValue];
+            if ([[_currHashType objectForKey:@"value"] integerValue] != type){
+                _currHashType = result;
+                [_mainTableView reloadData];
+            }
+        }
         return nil;
     })];
 }
@@ -1177,37 +1464,30 @@ enum
 - (void)onExpirationClicked
 {
     //  TODO:2.1 未完成
+    NSInteger defaultIndex = 0;
+    NSInteger currValue = [[_currExpire objectForKey:@"value"] integerValue];
+    NSInteger idx = 0;
+    for (id item in _const_expire_list) {
+        if ([[item objectForKey:@"value"] integerValue] == currValue){
+            defaultIndex = idx;
+            break;
+        }
+        ++idx;
+    }
     [[[MyPopviewManager sharedMyPopviewManager] showModernListView:self.navigationController
                                                            message:@"请选择合约有效期"
-                                                             items:@[@{@"name":@"1天"}, @{@"name":@"2天"}, @{@"name":@"3天"}]
+                                                             items:_const_expire_list
                                                            itemkey:@"name"
-                                                      defaultIndex:0] then:(^id(id result) {
-        //        if (result){
-        //            resolve(@([[result objectForKey:@"value"] integerValue]));
-        //        }else{
-        //            resolve(nil);
-        //        }
+                                                      defaultIndex:defaultIndex] then:(^id(id result) {
+        if (result){
+            NSInteger sec = [[result objectForKey:@"value"] integerValue];
+            if ([[_currExpire objectForKey:@"value"] integerValue] != sec){
+                _currExpire = result;
+                [_mainTableView reloadData];
+            }
+        }
         return nil;
     })];
-}
-
-#pragma mark-
-#pragma drag back event
-
-- (void)onDragBackStart
-{
-    [self.view endEditing:YES];
-    
-    [_tf_amount safeResignFirstResponder];
-    [_tf_memo safeResignFirstResponder];
-}
-
-- (void)onDragBackFinish:(BOOL)bToTarget
-{
-    if (!bToTarget)
-    {
-        //  TODO:...
-    }
 }
 
 @end

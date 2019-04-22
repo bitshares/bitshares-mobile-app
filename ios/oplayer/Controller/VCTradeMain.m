@@ -1564,21 +1564,8 @@ enum
          //  请求网络广播
          [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
          [[[[BitsharesClientManager sharedBitsharesClientManager] createLimitOrder:op] then:(^id(id tx_data) {
-             //  获取新的限价单ID号（考虑到数据结构可能变更，加各种safe判断。）
-             id new_order_id = nil;
-             if (tx_data && [tx_data count] > 0){
-                 id trx = [tx_data[0] objectForKey:@"trx"];
-                 if (trx){
-                     id operation_results = [trx objectForKey:@"operation_results"];
-                     if (operation_results){
-                         id tmp = [operation_results safeObjectAtIndex:0];
-                         if (tmp){
-                             new_order_id = [tmp safeObjectAtIndex:1];
-                             NSLog(@"new limit order: %@", new_order_id);
-                         }
-                     }
-                 }
-             }
+             //  获取新的限价单ID号
+             id new_order_id = [OrgUtils extractNewObjectID:tx_data];
              [[[[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:seller] then:(^id(id full_data) {
                  [_owner hideBlockView];
                  //  刷新（调用owner的方法刷新、买/卖界面都需要刷新。）

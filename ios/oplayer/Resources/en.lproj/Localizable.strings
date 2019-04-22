@@ -605,7 +605,7 @@
 "kWalletCellPermissionActive" = "Active";
 "kWalletCellPermissionMemo" = "Memo";
 
-/* 交易OP名字 */
+/* 交易OP名字TODO:2.1kOpType_fba_distribute */
 "kOpType_proposal_prefix" = "Proposal \"%@\"";
 "kOpType_transfer" = "Transfer";
 "kOpType_limit_order_create_sell" = "Create Sell Order";
@@ -652,6 +652,16 @@
 "kOpType_transfer_from_blind" = "Transfer From Blind";
 "kOpType_asset_settle_cancel" = "Cancel Settlement";
 "kOpType_asset_claim_fees" = "Claim Asset Fees";
+"kOpType_fba_distribute" = "fba_distribute";
+"kOpType_bid_collateral" = "bid_collateral";
+"kOpType_execute_bid" = "execute_bid";
+"kOpType_asset_claim_pool" = "asset_claim_pool";
+"kOpType_asset_update_issuer" = "asset_update_issuer";
+"kOpType_htlc_create" = "Create HTLC";
+"kOpType_htlc_redeem" = "Rredeem HTLC";
+"kOpType_htlc_redeemed" = "htlc_redeemed";
+"kOpType_htlc_extend" = "htlc_extend";
+"kOpType_htlc_refund" = "htlc_refund";
 
 /* 交易OP详细描述 */
 "kOpDesc_transfer" = "%@ transfer %@ to %@.";
