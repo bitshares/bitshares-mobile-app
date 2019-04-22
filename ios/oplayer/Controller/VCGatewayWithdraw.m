@@ -816,19 +816,4 @@ enum
     }
 }
 
-#pragma mark- drag back event
-
-- (void)onDragBackStart
-{
-    [self resignAllFirstResponder];
-}
-
-- (void)onDragBackFinish:(BOOL)bToTarget
-{
-    if (!bToTarget)
-    {
-        //  TODO:...
-    }
-}
-
 @end

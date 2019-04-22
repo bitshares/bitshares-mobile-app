@@ -125,185 +125,28 @@
 //    NSInteger history_id = [[[[first_item objectForKey:@"id"] componentsSeparatedByString:@"."] lastObject] integerValue];
     
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
-    id assetBasePriority = [chainMgr genAssetBasePriorityHash];
     for (id history in data) {
         id block_num = [history objectForKey:@"block_num"];
         id block_header = [chainMgr getBlockHeaderInfoByBlockNumber:block_num];
         assert(block_header);
         
         //  根据操作op构造显示内容
-        NSString* transferName = nil;
-        NSString* mainDesc = @"未知操作内容。。。";
-        UIColor* transferNameColor = nil;
         id op = [history objectForKey:@"op"];
         NSInteger optype = [[op objectAtIndex:0] integerValue];
         id opdata = [op objectAtIndex:1];
         
-        //  处理要显示的操作类型 TODO:fowallet 待完善添加支持更多。
-        //  TODO:fowallet 各种细节优化、比如更新账户 投票独立出来 等等。买单卖单独立等等。
-        //  TODO:fowallet 考虑着色
-        switch (optype) {
-            case ebo_transfer:
-            {
-                transferName = NSLocalizedString(@"kVcActivityTypeTransfer", @"转账");
-                id from = [[chainMgr getChainObjectByID:opdata[@"from"]] objectForKey:@"name"];
-                id to = [[chainMgr getChainObjectByID:opdata[@"to"]] objectForKey:@"name"];
-                id amount = opdata[@"amount"];
-                id asset = [chainMgr getChainObjectByID:amount[@"asset_id"]];
-                id num = [OrgUtils formatAssetString:amount[@"amount"] asset:asset];
-                id str_amount = [NSString stringWithFormat:@"%@%@", num, asset[@"symbol"]];
-                mainDesc = [NSString stringWithFormat:NSLocalizedString(@"kVcActivityDescTransfer", @"%@ 转账 %@ 到 %@。"), from, str_amount, to];
-            }
-                break;
-            case ebo_limit_order_create:
-            {
-                //  luxs 提交卖单，以101.9134 SEED/CNY的价格卖出 0.0993 CNY
-                id user = [[chainMgr getChainObjectByID:opdata[@"seller"]] objectForKey:@"name"];
-                
-                //  @{@"issell":@(issell), @"base":base_asset, @"quote":quote_asset, @"n_base":n_base, @"n_quote":n_quote, @"n_price":n_price};
-                id infos = [OrgUtils calcOrderDirectionInfos:assetBasePriority
-                                              pay_asset_info:opdata[@"amount_to_sell"]
-                                          receive_asset_info:opdata[@"min_to_receive"]];
-                
-                id base_asset = infos[@"base"];
-                id quote_asset = infos[@"quote"];
-                id n_price = infos[@"n_price"];
-                id n_quote = infos[@"n_quote"];
-                id str_price = [NSString stringWithFormat:@"%@%@/%@",n_price, base_asset[@"symbol"], quote_asset[@"symbol"]];
-                id str_amount = [NSString stringWithFormat:@"%@%@", n_quote, quote_asset[@"symbol"]];
-                
-                if ([infos[@"issell"] boolValue]){
-                    transferName = NSLocalizedString(@"kVcActivityTypeCreateSellOrder", @"创建卖单");
-                    transferNameColor = [ThemeManager sharedThemeManager].sellColor;
-                    mainDesc = [NSString stringWithFormat:NSLocalizedString(@"kVcActivityDescCreateSellOrder", @"%@ 提交卖单，以 %@ 的价格卖出 %@。"),
-                                user, str_price, str_amount];
-                }else{
-                    transferName = NSLocalizedString(@"kVcActivityTypeCreateBuyOrder", @"创建买单");
-                    transferNameColor = [ThemeManager sharedThemeManager].buyColor;
-                    mainDesc = [NSString stringWithFormat:NSLocalizedString(@"kVcActivityDescCreateBuyOrder", @"%@ 提交买单，以 %@ 的价格买入 %@。"),
-                                user, str_price, str_amount];
-                }
-            }
-                break;
-            case ebo_limit_order_cancel:
-            {
-                transferName = NSLocalizedString(@"kVcActivityTypeCancelOrder", @"取消订单");
-                id user = [[chainMgr getChainObjectByID:opdata[@"fee_paying_account"]] objectForKey:@"name"];
-                mainDesc = [NSString stringWithFormat:NSLocalizedString(@"kVcActivityDescCancelOrder", @"%@ 取消了限价单 #%@。"),
-                            user, [[opdata[@"order"] componentsSeparatedByString:@"."] lastObject]];
-            }
-                break;
-            case ebo_call_order_update:
-            {
-                transferName = NSLocalizedString(@"kVcActivityTypeUpdatePosition", @"调整债仓");
-                
-                id user = [[chainMgr getChainObjectByID:opdata[@"funding_account"]] objectForKey:@"name"];
-                
-                //  REMARK：这2个字段可能为负数。
-                id collateral = opdata[@"delta_collateral"];
-                id debt = opdata[@"delta_debt"];
-                
-                id collateral_asset = [chainMgr getChainObjectByID:collateral[@"asset_id"]];
-                id debt_asset = [chainMgr getChainObjectByID:debt[@"asset_id"]];
-                
-                id collateral_num = [OrgUtils formatAssetString:collateral[@"amount"] asset:collateral_asset];
-                id debt_num = [OrgUtils formatAssetString:debt[@"amount"] asset:debt_asset];
-                
-                id str_collateral = [NSString stringWithFormat:@"%@%@", collateral_num, collateral_asset[@"symbol"]];
-                id str_debt = [NSString stringWithFormat:@"%@%@", debt_num, debt_asset[@"symbol"]];
-                
-                mainDesc = [NSString stringWithFormat:NSLocalizedString(@"kVcActivityDescUpdatePosition", @"%@ 更新保证金 %@，借出 %@。"),
-                            user, str_collateral, str_debt];
-            }
-                break;
-            case ebo_fill_order:
-            {
-                transferName = NSLocalizedString(@"kVcActivityTypeFillOrder", @"订单成交");
-                
-                id user = [[chainMgr getChainObjectByID:opdata[@"account_id"]] objectForKey:@"name"];
-                BOOL isCallOrder = [[[opdata[@"order_id"] componentsSeparatedByString:@"."] objectAtIndex:1] integerValue] == ebot_call_order;
-                
-                //  @{@"issell":@(issell), @"base":base_asset, @"quote":quote_asset, @"n_base":n_base, @"n_quote":n_quote, @"n_price":n_price};
-                id infos = [OrgUtils calcOrderDirectionInfos:assetBasePriority
-                                              pay_asset_info:opdata[@"pays"]
-                                          receive_asset_info:opdata[@"receives"]];
-                
-                id base_asset = infos[@"base"];
-                id quote_asset = infos[@"quote"];
-                id n_price = infos[@"n_price"];
-                id n_quote = infos[@"n_quote"];
-                id str_price = [NSString stringWithFormat:@"%@%@/%@", n_price, base_asset[@"symbol"], quote_asset[@"symbol"]];
-                id str_amount = [NSString stringWithFormat:@"%@%@", n_quote, quote_asset[@"symbol"]];
-                
-                if ([infos[@"issell"] boolValue]){
-                    mainDesc = [NSString stringWithFormat:NSLocalizedString(@"kVcActivityDescFillSellOrder", @"%@ 以 %@ 的价格卖出 %@。"),
-                                user, str_price, str_amount];
-                }else{
-                    mainDesc = [NSString stringWithFormat:NSLocalizedString(@"kVcActivityDescFillBuyOrder", @"%@ 以 %@ 的价格买入 %@。"),
-                                user, str_price, str_amount];
-                }
-                if (isCallOrder){
-                    transferNameColor = [ThemeManager sharedThemeManager].callOrderColor;
-                }
-            }
-                break;
-            case ebo_account_create:
-            {
-                transferName = NSLocalizedString(@"kVcActivityTypeCreateAccount", @"创建帐号");
-                id user = [[chainMgr getChainObjectByID:opdata[@"registrar"]] objectForKey:@"name"];
-                mainDesc = [NSString stringWithFormat:NSLocalizedString(@"kVcActivityDescCreateAccount", @"%@ 创建了帐号 %@。"), user, opdata[@"name"]];
-            }
-                break;
-            case ebo_account_update:
-            {
-                transferName = NSLocalizedString(@"kVcActivityTypeUpdateAccount", @"更新账户");
-                id user = [[chainMgr getChainObjectByID:opdata[@"account"]] objectForKey:@"name"];
-                mainDesc = [NSString stringWithFormat:NSLocalizedString(@"kVcActivityDescUpdateAccount", @"%@ 更新了账户信息。"), user];
-            }
-                break;
-            case ebo_account_upgrade:
-            {
-                if ([opdata[@"upgrade_to_lifetime_member"] boolValue]){
-                    transferName = NSLocalizedString(@"kVcActivityTypeUpgradeAccount", @"升级账户");
-                    id user = [[chainMgr getChainObjectByID:opdata[@"account_to_upgrade"]] objectForKey:@"name"];
-                    mainDesc = [NSString stringWithFormat:NSLocalizedString(@"kVcActivityDescUpgradeAccount", @"%@ 升级了终身会员。"), user];
-                }
-            }
-                break;
-            case ebo_proposal_create:   //  22
-            {
-                transferName = NSLocalizedString(@"kVcActivityTypeCreateProposal", @"创建提案");
-                mainDesc = NSLocalizedString(@"kVcActivityDescCreateProposal", @"创建提案。");
-//                for (id proposed_op in opdata[@"proposed_ops"]) {
-//                    [proposed_op objectForKey:@"op"];
-//                }
-//                mainDesc = [NSString stringWithFormat:@"%@ 升级了终身会员。", user];
-            }
-                break;
-            case ebo_proposal_update:   //  23
-            {
-                transferName = NSLocalizedString(@"kVcActivityTypeUpdateProposal", @"更新提案");
-                mainDesc =[NSString stringWithFormat:NSLocalizedString(@"kVcActivityDescUpdateProposal", @"更新提案。#%@"), [[opdata[@"proposal"] componentsSeparatedByString:@"."] lastObject]];
-            }
-                break;
-            default:
-            {
-                NSLog(@"未知操作%@", @(optype));
-            }
-                break;
-        }
+        id uidata = [OrgUtils processOpdata2UiData:optype opdata:opdata isproposal:NO];
         
         //  REMARK：未知操作不显示，略过。
-        if (!transferName){
+        if (!uidata){
             continue;
         }
         
-        if (transferNameColor){
-            [_dataArray addObject:@{@"block_time":[block_header objectForKey:@"timestamp"] ?: @"", @"history":history, @"typename":transferName, @"desc":mainDesc, @"typecolor":transferNameColor}];
-        }else{
-            [_dataArray addObject:@{@"block_time":[block_header objectForKey:@"timestamp"] ?: @"", @"history":history, @"typename":transferName, @"desc":mainDesc}];
-        }
-        
+        [_dataArray addObject:@{@"block_time":[block_header objectForKey:@"timestamp"] ?: @"",
+                                @"history":history,
+                                @"typename":uidata[@"name"],
+                                @"desc":uidata[@"desc"],
+                                @"typecolor":uidata[@"color"]}];
     }
     
     //  刷新
@@ -315,84 +158,21 @@
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     
     NSMutableDictionary* block_num_hash = [NSMutableDictionary dictionary];
-    NSMutableDictionary* asset_id_hash = [NSMutableDictionary dictionary];
-    NSMutableDictionary* account_id_hash = [NSMutableDictionary dictionary];
+    NSMutableDictionary* query_ids = [NSMutableDictionary dictionary];
     for (id history in data_array) {
         block_num_hash[[history objectForKey:@"block_num"]] = @YES;
         id op = [history objectForKey:@"op"];
         id op_data = [op objectAtIndex:1];
-        //  手续费资产查询
-        id fee = [op_data objectForKey:@"fee"];
-        if (fee){
-            asset_id_hash[fee[@"asset_id"]] = @YES;
-        }
-        //  获取每项操作需要额外查询到信息（资产ID、帐号ID等）
-        switch ([[op objectAtIndex:0] integerValue]) {
-            case ebo_transfer:              //  0
-            {
-                account_id_hash[op_data[@"from"]] = @YES;
-                account_id_hash[op_data[@"to"]] = @YES;
-                asset_id_hash[op_data[@"amount"][@"asset_id"]] = @YES;
-            }
-                break;
-            case ebo_limit_order_create:    //  1
-            {
-                account_id_hash[op_data[@"seller"]] = @YES;
-                asset_id_hash[op_data[@"amount_to_sell"][@"asset_id"]] = @YES;
-                asset_id_hash[op_data[@"min_to_receive"][@"asset_id"]] = @YES;
-            }
-                break;
-            case ebo_limit_order_cancel:    //  2
-            {
-                account_id_hash[op_data[@"fee_paying_account"]] = @YES;
-            }
-                break;
-            case ebo_call_order_update:     //  3
-            {
-                account_id_hash[op_data[@"funding_account"]] = @YES;
-                asset_id_hash[op_data[@"delta_collateral"][@"asset_id"]] = @YES;
-                asset_id_hash[op_data[@"delta_debt"][@"asset_id"]] = @YES;
-            }
-                break;
-            case ebo_fill_order:            //  4
-            {
-                account_id_hash[op_data[@"account_id"]] = @YES;
-                asset_id_hash[op_data[@"pays"][@"asset_id"]] = @YES;
-                asset_id_hash[op_data[@"receives"][@"asset_id"]] = @YES;
-            }
-                break;
-            case ebo_account_create:        //  5
-            {
-                account_id_hash[op_data[@"registrar"]] = @YES;
-            }
-                break;
-            case ebo_account_update:        //  6
-            {
-                account_id_hash[op_data[@"account"]] = @YES;
-            }
-                break;
-            case ebo_account_upgrade:       //  8
-            {
-                account_id_hash[op_data[@"account_to_upgrade"]] = @YES;
-            }
-                break;
-            default:
-                //  TODO:fowallet 其他类型的操作 额外处理。重要！！！！
-                break;
-        }
+        [OrgUtils extractObjectID:[[op objectAtIndex:0] integerValue] opdata:op_data container:query_ids];
     }
-    //  额外查询 各种操作以来的资产信息、帐号信息、时间信息等
-    NSArray* block_num_list = [block_num_hash allKeys];
-    NSArray* asset_id_list = [asset_id_hash allKeys];
-    NSArray* account_id_list = [account_id_hash allKeys];
     
-    id p1 = [chainMgr queryAllAssetsInfo:asset_id_list];
-    id p2 = [chainMgr queryAllAccountsInfo:account_id_list];
-    id p3 = [chainMgr queryAllBlockHeaderInfos:block_num_list skipQueryCache:NO];
+    //  额外查询 各种操作依赖的资产信息、帐号信息、时间信息等
+    id p1 = [chainMgr queryAllGrapheneObjects:[query_ids allKeys]];
+    id p2 = [chainMgr queryAllBlockHeaderInfos:[block_num_hash allKeys] skipQueryCache:NO];
     
     //  这里面引用的变量必须是 weak 的，不然该 vc 没法释放。
     __weak typeof(self) weak_self = self;
-    return [[WsPromise all:@[p1, p2, p3]] then:(^id(id data) {
+    return [[WsPromise all:@[p1, p2]] then:(^id(id data) {
         if (weak_self){
             [weak_self onQueryAccountHistoryDetailResponsed:data_array];
         }

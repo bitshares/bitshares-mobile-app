@@ -933,18 +933,6 @@ static NSInteger gen_notify_unique_id()
 //
 //}
 
-#pragma mark- drag back event
-
-- (void)onDragBackStart
-{
-    [self.view endEditing:YES];
-    
-    id list = [self getIvarList:[UITextField class]];
-    for (id tf in list) {
-        [tf safeResignFirstResponder];
-    }
-}
-
 #pragma mark- switch theme
 - (void)switchTheme
 {
