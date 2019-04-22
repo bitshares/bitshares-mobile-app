@@ -290,7 +290,6 @@
 		3FB8F97821CE66C200DA88E2 /* Bra86.c in Sources */ = {isa = PBXBuildFile; fileRef = B7BDAA4620B3C77400738F12 /* Bra86.c */; };
 		3FB8F97921CE66C200DA88E2 /* SRURLUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B714092F20A31CC300003311 /* SRURLUtilities.m */; };
 		3FB8F97A21CE66C200DA88E2 /* ViewWorkerVoteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C04116210867C300848CBC /* ViewWorkerVoteCell.m */; };
-		3FB8F97B21CE66C200DA88E2 /* ViewBackground.m in Sources */ = {isa = PBXBuildFile; fileRef = EDF3806B18687FBF004891BB /* ViewBackground.m */; };
 		3FB8F97C21CE66C200DA88E2 /* VCProposal.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC43A1E2196E1BB004DFFA5 /* VCProposal.m */; };
 		3FB8F97D21CE66C200DA88E2 /* Sort.c in Sources */ = {isa = PBXBuildFile; fileRef = B7BDAA6D20B3C77400738F12 /* Sort.c */; };
 		3FB8F97E21CE66C200DA88E2 /* GCDWebServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = B72A846320CCD18B00D92A25 /* GCDWebServerConnection.m */; };
@@ -919,7 +918,6 @@
 		EDE7B7D81869D55100D68D42 /* VCAbout.m in Sources */ = {isa = PBXBuildFile; fileRef = EDE7B7D71869D55100D68D42 /* VCAbout.m */; };
 		EDF1BBE7181E3AD40027F359 /* user_avatar_border.png in Resources */ = {isa = PBXBuildFile; fileRef = EDF1BBE5181E3AD40027F359 /* user_avatar_border.png */; };
 		EDF1BBE8181E3AD40027F359 /* user_avatar_border@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EDF1BBE6181E3AD40027F359 /* user_avatar_border@2x.png */; };
-		EDF3806C18687FBF004891BB /* ViewBackground.m in Sources */ = {isa = PBXBuildFile; fileRef = EDF3806B18687FBF004891BB /* ViewBackground.m */; };
 		EDFAE6911832397800E4F3CD /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EDFAE6901832397800E4F3CD /* CoreText.framework */; };
 		EDFB5514186DCA16005FB755 /* ViewFaceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = EDFB5513186DCA16005FB755 /* ViewFaceCell.m */; };
 		F50C49681C131CBA0001D9EA /* Refresh-64@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F50C49651C131CBA0001D9EA /* Refresh-64@2x.png */; };
@@ -1749,8 +1747,6 @@
 		EDE7B7D71869D55100D68D42 /* VCAbout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAbout.m; path = Controller/VCAbout.m; sourceTree = "<group>"; };
 		EDF1BBE5181E3AD40027F359 /* user_avatar_border.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = user_avatar_border.png; path = Images/user_avatar_border.png; sourceTree = "<group>"; };
 		EDF1BBE6181E3AD40027F359 /* user_avatar_border@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "user_avatar_border@2x.png"; path = "Images/user_avatar_border@2x.png"; sourceTree = "<group>"; };
-		EDF3806A18687FBF004891BB /* ViewBackground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewBackground.h; path = View/ViewBackground.h; sourceTree = "<group>"; };
-		EDF3806B18687FBF004891BB /* ViewBackground.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewBackground.m; path = View/ViewBackground.m; sourceTree = "<group>"; };
 		EDFAE6901832397800E4F3CD /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		EDFB5512186DCA16005FB755 /* ViewFaceCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewFaceCell.h; path = View/ViewFaceCell.h; sourceTree = "<group>"; };
 		EDFB5513186DCA16005FB755 /* ViewFaceCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewFaceCell.m; path = View/ViewFaceCell.m; sourceTree = "<group>"; };
@@ -2181,8 +2177,6 @@
 				B7E690EE1C16BD3600EF32EF /* ViewSimulateActionSheet.m */,
 				EDFB5512186DCA16005FB755 /* ViewFaceCell.h */,
 				EDFB5513186DCA16005FB755 /* ViewFaceCell.m */,
-				EDF3806A18687FBF004891BB /* ViewBackground.h */,
-				EDF3806B18687FBF004891BB /* ViewBackground.m */,
 				B75A1D6D1C06F5A70012D1D5 /* MBProgressHUDSingleton.m */,
 				B75A1D6F1C06F5C50012D1D5 /* MBProgressHUDSingleton.h */,
 				B75B39441C5B5E70004C37E1 /* UITableViewCellBase.h */,
@@ -4161,7 +4155,6 @@
 				3FB8F97921CE66C200DA88E2 /* SRURLUtilities.m in Sources */,
 				3F6C357B21E86C9E008E2903 /* ViewAddrMemoInfoCell.m in Sources */,
 				3FB8F97A21CE66C200DA88E2 /* ViewWorkerVoteCell.m in Sources */,
-				3FB8F97B21CE66C200DA88E2 /* ViewBackground.m in Sources */,
 				3FB8F97C21CE66C200DA88E2 /* VCProposal.m in Sources */,
 				3FB8F97D21CE66C200DA88E2 /* Sort.c in Sources */,
 				3FB8F97E21CE66C200DA88E2 /* GCDWebServerConnection.m in Sources */,
@@ -4442,7 +4435,6 @@
 				B714094920A31CC300003311 /* SRURLUtilities.m in Sources */,
 				3F6C357A21E86C9E008E2903 /* ViewAddrMemoInfoCell.m in Sources */,
 				B7C04117210867C300848CBC /* ViewWorkerVoteCell.m in Sources */,
-				EDF3806C18687FBF004891BB /* ViewBackground.m in Sources */,
 				3FC43A202196E1BB004DFFA5 /* VCProposal.m in Sources */,
 				B7BDAA9C20B3C77500738F12 /* Sort.c in Sources */,
 				B72A848120CCD18B00D92A25 /* GCDWebServerConnection.m in Sources */,

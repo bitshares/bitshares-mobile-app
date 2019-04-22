@@ -345,21 +345,4 @@
     [_tf_wallet_password safeResignFirstResponder];
 }
 
-#pragma mark-
-#pragma drag back event
-
-- (void)onDragBackStart
-{
-    [self.view endEditing:YES];
-    [_tf_password safeResignFirstResponder];
-    [_tf_wallet_password safeResignFirstResponder];
-}
-
-- (void)onDragBackFinish:(BOOL)bToTarget
-{
-    if (!bToTarget)
-    {
-    }
-}
-
 @end

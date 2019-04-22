@@ -476,28 +476,6 @@ enum
     }
 }
 
-#pragma mark-
-#pragma drag back event
-
-- (void)onDragBackStart
-{
-    [self.view endEditing:YES];
-    [_tf_private_key safeResignFirstResponder];
-    if (_tf_trade_password){
-        [_tf_trade_password safeResignFirstResponder];
-    }
-}
-
-- (void)onDragBackFinish:(BOOL)bToTarget
-{
-    if (!bToTarget)
-    {
-        if (_tf_trade_password){
-            [_tf_trade_password becomeFirstResponder];
-        }
-    }
-}
-
 #pragma mark- tip button
 - (void)onTipButtonClicked:(UIButton*)button
 {

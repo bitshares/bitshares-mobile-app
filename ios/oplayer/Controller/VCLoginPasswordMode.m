@@ -563,28 +563,6 @@ enum
  //   [[AppCacheManager sharedAppCacheManager] setSavePassword:pSwitch.on];
 }
 
-#pragma mark-
-#pragma drag back event
-
-- (void)onDragBackStart
-{
-    [self.view endEditing:YES];
-    [_tf_password safeResignFirstResponder];
-    [_tf_username safeResignFirstResponder];
-    if (_tf_trade_password){
-        [_tf_trade_password safeResignFirstResponder];
-    }
-}
-
-- (void)onDragBackFinish:(BOOL)bToTarget
-{
-    if (!bToTarget)
-    {
-        //        [_tf_password becomeFirstResponder];
-        [_tf_username becomeFirstResponder];
-    }
-}
-
 #pragma mark- tip button
 - (void)onTipButtonClicked:(UIButton*)button
 {

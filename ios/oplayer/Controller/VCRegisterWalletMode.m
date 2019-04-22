@@ -566,25 +566,4 @@ enum
     [_tf_refcode safeResignFirstResponder];
 }
 
-#pragma mark-
-#pragma drag back event
-
-- (void)onDragBackStart
-{
-    [self.view endEditing:YES];
-    [_tf_password safeResignFirstResponder];
-    [_tf_username safeResignFirstResponder];
-    [_tf_confirm safeResignFirstResponder];
-    [_tf_refcode safeResignFirstResponder];
-}
-
-- (void)onDragBackFinish:(BOOL)bToTarget
-{
-    if (!bToTarget)
-    {
-        //        [_tf_password becomeFirstResponder];
-        [_tf_username becomeFirstResponder];
-    }
-}
-
 @end
