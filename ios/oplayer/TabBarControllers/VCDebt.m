@@ -54,7 +54,6 @@ enum
     UILabel*                _triggerSettlementPriceTitle;
     
     UITableViewBase*        _mainTableView;
-    NSArray*                _dateArray;                 //  assgin
     
     BOOL                    _bReadyToUpdateUserData;    //  准备更新用户数据（每次切换 tab 的时候考虑更新）
     BOOL                    _bLoginedOnDisappear;       //  记录界面消失事件触发时帐号是否已经登录。

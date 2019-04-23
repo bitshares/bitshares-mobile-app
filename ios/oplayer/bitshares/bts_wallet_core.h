@@ -25,6 +25,8 @@ extern "C"
     /**
      *  计算各种 hash 摘要
      */
+    extern void rmd160(const unsigned char* message, const size_t length, unsigned char digest20[]);
+    extern void sha1(const unsigned char* buffer, const size_t size, unsigned char digest20[]);
     extern void sha256(const unsigned char* buffer, const size_t size, unsigned char digest32[]);
     extern void sha512(const unsigned char* buffer, const size_t size, unsigned char digest64[]);
     

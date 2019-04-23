@@ -62,7 +62,7 @@ enum
 @interface VCMyself ()
 {    
     UITableView*            _mainTableView;
-    NSArray*                _dateArray; //  assgin
+    NSArray*                _dataArray; //  assgin
     
     ViewFaceCell*           _faceView;
 }
@@ -109,7 +109,7 @@ enum
                           @"kSettingEx",                    //  设置,
                           @"kLblCellAboutBtspp",            //  关于BTS++,
                           nil];
-    _dateArray = [[NSArray alloc] initWithObjects:pSection1, pSection2, pSection3, pSection4, nil];
+    _dataArray = [[NSArray alloc] initWithObjects:pSection1, pSection2, pSection3, pSection4, nil];
     
     _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutTabbar] style:UITableViewStyleGrouped];
     _mainTableView.delegate = self;
@@ -146,12 +146,12 @@ enum
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return [_dateArray count];
+    return [_dataArray count];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[_dateArray objectAtIndex:section] count];
+    return [[_dataArray objectAtIndex:section] count];
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -201,7 +201,7 @@ enum
     
     cell.showCustomBottomLine = YES;
     
-    id ary = [_dateArray objectAtIndex:indexPath.section];
+    id ary = [_dataArray objectAtIndex:indexPath.section];
     
     cell.textLabel.text = NSLocalizedString([ary objectAtIndex:indexPath.row], @"");
     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;

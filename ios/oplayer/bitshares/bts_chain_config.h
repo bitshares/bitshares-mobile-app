@@ -10,6 +10,16 @@
 #define __bts_chain_config__
 
 /**
+ *  石墨烯网络HTLC支持的Hash类型。
+ */
+typedef enum EBitsharesHtlcHashType
+{
+    EBHHT_RMD160 = 0,
+    EBHHT_SHA1,
+    EBHHT_SHA256
+} EBitsharesHtlcHashType;
+
+/**
  *  石墨烯网络投票类型定义
  */
 typedef enum EBitsharesVoteType

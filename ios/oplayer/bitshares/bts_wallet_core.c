@@ -16,6 +16,7 @@
 
 #include "rmd160.h"
 
+#include "WjCryptLib_Sha1.h"
 #include "WjCryptLib_Sha256.h"
 #include "WjCryptLib_Sha512.h"
 #include "WjCryptLib_AesCbc.h"
@@ -35,7 +36,6 @@ struct __aes256_context
 
 #pragma mark- prototype
 
-static void rmd160(const byte* message, const dword length, byte digest20[]);
 static void rmd160hex(const byte* message, const dword length, byte digest40[]);
 static void gen_aes_context_from_seed(struct __aes256_context* ctx, const unsigned char* seed, const size_t seed_size);
 static void gen_aes_context_from_sha512(struct __aes256_context* ctx, const unsigned char* hex_sha512);
@@ -48,7 +48,7 @@ static secp256k1_context* get_static_context();
 #pragma mark- digest
 
 /**
- *  计算 RMD160 摘要
+ *  (public) 计算 RMD160 摘要
  *
  *  From：https://homes.esat.kuleuven.be/~bosselae/ripemd160/
  *  参考：https://homes.esat.kuleuven.be/~bosselae/ripemd160/ps/AB-9601/hashtest.c
@@ -56,7 +56,7 @@ static secp256k1_context* get_static_context();
 #ifndef RMDsize
 #define RMDsize 160
 #endif
-static void rmd160(const byte* message, const dword length, byte digest20[])
+void rmd160(const unsigned char* message, const size_t length, unsigned char digest20[])
 {
     dword         MDbuf[RMDsize/32];   /* contains (A, B, C, D(, E))   */
     dword         X[16];               /* current 16-word chunk        */
@@ -67,7 +67,7 @@ static void rmd160(const byte* message, const dword length, byte digest20[])
     MDinit(MDbuf);
     
     /* process message in 16-word chunks */
-    for (nbytes=length; nbytes > 63; nbytes-=64) {
+    for (nbytes=(dword)length; nbytes > 63; nbytes-=64) {
         for (i=0; i<16; i++) {
             X[i] = BYTES_TO_DWORD(message);
             message += 4;
@@ -76,7 +76,7 @@ static void rmd160(const byte* message, const dword length, byte digest20[])
     }                                    /* length mod 64 bytes left */
     
     /* finish: */
-    MDfinish(MDbuf, (byte*)message, length, 0);
+    MDfinish(MDbuf, (byte*)message, (dword)length, 0);
     
     for (i=0; i<RMDsize/8; i+=4) {
         digest20[i]   =  MDbuf[i>>2];         /* implicit cast to byte  */
@@ -93,6 +93,22 @@ static void rmd160hex(const byte* message, const dword length, byte digest40[])
     byte digest20[20];
     rmd160(message, length, digest20);
     hex_encode(digest20, sizeof(digest20), digest40);
+}
+
+/**
+ *  (public) 计算 SHA1 摘要（即SHA160）
+ */
+void sha1(const unsigned char* buffer, const size_t size, unsigned char digest20[])
+{
+    Sha1Context   sha1Context;
+    SHA1_HASH     sha1Hash;
+    
+    Sha1Initialise( &sha1Context );
+    Sha1Update( &sha1Context, buffer, (uint32_t)size);
+    Sha1Finalise( &sha1Context, &sha1Hash );
+    
+    //  TODO:这个拷贝可以省略吗
+    memcpy((void*)digest20, sha1Hash.bytes, sizeof(sha1Hash.bytes));
 }
 
 /**

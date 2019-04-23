@@ -571,6 +571,8 @@
 		3FB8FAA221CF361900DA88E2 /* VCConvertToWalletMode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB8FA9F21CF361900DA88E2 /* VCConvertToWalletMode.m */; };
 		3FC43A202196E1BB004DFFA5 /* VCProposal.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC43A1E2196E1BB004DFFA5 /* VCProposal.m */; };
 		3FC43A232196EF91004DFFA5 /* ViewProposalInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC43A212196EF90004DFFA5 /* ViewProposalInfoCell.m */; };
+		3FC4D44C226F2EEB00787082 /* VCHtlcList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D44A226F2EEA00787082 /* VCHtlcList.m */; };
+		3FC4D44D226F2EEB00787082 /* VCHtlcList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D44A226F2EEA00787082 /* VCHtlcList.m */; };
 		3FCA2DC9219EC45900A5F4E9 /* VCProposalConfirm.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FCA2DC8219EC45900A5F4E9 /* VCProposalConfirm.m */; };
 		3FDD7FFA21D46F9800DA61FC /* VCVestingBalance.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FDD7FF821D46F9700DA61FC /* VCVestingBalance.m */; };
 		3FDD7FFB21D46F9800DA61FC /* VCVestingBalance.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FDD7FF821D46F9700DA61FC /* VCVestingBalance.m */; };
@@ -1166,6 +1168,8 @@
 		3FC43A1F2196E1BB004DFFA5 /* VCProposal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCProposal.h; path = Controller/VCProposal.h; sourceTree = "<group>"; };
 		3FC43A212196EF90004DFFA5 /* ViewProposalInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewProposalInfoCell.m; path = View/ViewProposalInfoCell.m; sourceTree = "<group>"; };
 		3FC43A222196EF90004DFFA5 /* ViewProposalInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewProposalInfoCell.h; path = View/ViewProposalInfoCell.h; sourceTree = "<group>"; };
+		3FC4D44A226F2EEA00787082 /* VCHtlcList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCHtlcList.m; path = Controller/VCHtlcList.m; sourceTree = "<group>"; };
+		3FC4D44B226F2EEB00787082 /* VCHtlcList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCHtlcList.h; path = Controller/VCHtlcList.h; sourceTree = "<group>"; };
 		3FCA2DC7219EC45800A5F4E9 /* VCProposalConfirm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCProposalConfirm.h; path = Controller/VCProposalConfirm.h; sourceTree = "<group>"; };
 		3FCA2DC8219EC45900A5F4E9 /* VCProposalConfirm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCProposalConfirm.m; path = Controller/VCProposalConfirm.m; sourceTree = "<group>"; };
 		3FDD7FF821D46F9700DA61FC /* VCVestingBalance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCVestingBalance.m; path = Controller/VCVestingBalance.m; sourceTree = "<group>"; };
@@ -2004,6 +2008,8 @@
 			children = (
 				3F78E07822637E22007D41A3 /* VCAdvancedFeatures.h */,
 				3F78E07922637E22007D41A3 /* VCAdvancedFeatures.m */,
+				3FC4D44B226F2EEB00787082 /* VCHtlcList.h */,
+				3FC4D44A226F2EEA00787082 /* VCHtlcList.m */,
 				3F78E07522630585007D41A3 /* VCHtlcTransfer.h */,
 				3F78E07422630584007D41A3 /* VCHtlcTransfer.m */,
 				3F3847302222686300B55914 /* VCMemberShip.h */,
@@ -3932,6 +3938,7 @@
 				3FB8F8AB21CE66C200DA88E2 /* Bcj2Enc.c in Sources */,
 				3FB8F8AC21CE66C200DA88E2 /* GCDWebServerRequest.m in Sources */,
 				3FB8F8AD21CE66C200DA88E2 /* WjCryptLib_Sha1.c in Sources */,
+				3FC4D44D226F2EEB00787082 /* VCHtlcList.m in Sources */,
 				3FB8F8AE21CE66C200DA88E2 /* ViewLimitOrderInfoCell.m in Sources */,
 				3FB8F8AF21CE66C200DA88E2 /* VCSlideControllerBase.m in Sources */,
 				3FB8F8B021CE66C200DA88E2 /* MyTabBarController.m in Sources */,
@@ -4212,6 +4219,7 @@
 				B7BDAA8720B3C77500738F12 /* Bcj2Enc.c in Sources */,
 				B72A848320CCD18B00D92A25 /* GCDWebServerRequest.m in Sources */,
 				B7BDA9A820B3A3D100738F12 /* WjCryptLib_Sha1.c in Sources */,
+				3FC4D44C226F2EEB00787082 /* VCHtlcList.m in Sources */,
 				B786D52020F1FE7200427C08 /* ViewLimitOrderInfoCell.m in Sources */,
 				B72A845320CBE13B00D92A25 /* VCSlideControllerBase.m in Sources */,
 				ED75E62B186C63C9009BEF5E /* MyTabBarController.m in Sources */,
