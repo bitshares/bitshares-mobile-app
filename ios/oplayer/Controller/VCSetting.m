@@ -28,7 +28,7 @@ enum
 @interface VCSetting ()
 {
     UITableView*            _mainTableView;
-    NSArray*                _dateArray; //  assgin
+    NSArray*                _dataArray; //  assgin
 }
 
 @end
@@ -50,7 +50,7 @@ enum
 	// Do any additional setup after loading the view.
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
-    _dateArray = [[NSArray alloc] initWithObjects:
+    _dataArray = [[NSArray alloc] initWithObjects:
                   @"setting_language",  //  语言
                   @"setting_currency",  //  计价方式
                   @"setting_theme",     //  主题风格
@@ -90,7 +90,7 @@ enum
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return [_dateArray count];
+    return [_dataArray count];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -105,7 +105,7 @@ enum
 
 - (nullable NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
 {
-    id item = [_dateArray objectAtIndex:section];
+    id item = [_dataArray objectAtIndex:section];
     if ([self needShowFooter:item]){
         return [item lastObject];
     }
@@ -114,7 +114,7 @@ enum
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
-    id item = [_dateArray objectAtIndex:section];
+    id item = [_dataArray objectAtIndex:section];
     if ([self needShowFooter:item]){
         return 26.0f;
     }
@@ -127,7 +127,7 @@ enum
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.backgroundColor = [UIColor clearColor];
-    id item = [_dateArray objectAtIndex:indexPath.section];
+    id item = [_dataArray objectAtIndex:indexPath.section];
     cell.textLabel.text = NSLocalizedString([item isKindOfClass:[NSArray class]] ? [item objectAtIndex:indexPath.row] : item, @"");
     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
     cell.showCustomBottomLine = YES;

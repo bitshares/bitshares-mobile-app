@@ -13,6 +13,7 @@
 #import "WalletManager.h"
 #import "VCUserActivity.h"
 #import "VCVestingBalance.h"
+#import "VCHtlcList.h"
 
 #import "VCTransfer.h"
 #import "VCTradeHor.h"
@@ -48,15 +49,17 @@
 {
     return @[NSLocalizedString(@"kVcAssetPageAsset", @"资产"),
              NSLocalizedString(@"kVcAssetPageActivity", @"明细"),
-             NSLocalizedString(@"kLblCellVestingBalance", @"待解冻金额")];
+             @"HTLC合约",
+             NSLocalizedString(@"kLblCellVestingBalance", @"待解冻金额"),];//TODO:2.1多语言
 }
 
 - (NSArray*)getSubPageVCArray
 {
     id vc01 = [[VCUserAssets alloc] initWithOwner:self assetDetailInfos:_userAssetDetailInfos assetHash:_assethash accountInfo:_fullAccountInfo];
     id vc02 = [[VCUserActivity alloc] initWithAccountInfo:_fullAccountInfo[@"account"]];
-    id vc03 = [[VCVestingBalance alloc] initWithOwner:self fullAccountInfo:_fullAccountInfo];
-    return @[vc01, vc02, vc03];
+    id vc03 = [[VCHtlcList alloc] initWithOwner:self fullAccountInfo:_fullAccountInfo];
+    id vc04 = [[VCVestingBalance alloc] initWithOwner:self fullAccountInfo:_fullAccountInfo];
+    return @[vc01, vc02, vc03, vc04];
 }
 
 - (id)initWithUserAssetDetailInfos:(NSDictionary*)userAssetDetailInfos assetHash:(NSDictionary*)assetHash accountInfo:(NSDictionary*)accountInfo
@@ -122,9 +125,14 @@
     //  query
     if (_subvcArrays){
         id vc = [_subvcArrays safeObjectAtIndex:tag - 1];
-        if (vc && [vc isKindOfClass:[VCVestingBalance class]]){
-            VCVestingBalance* vc_vesting_balance = (VCVestingBalance*)vc;
-            [vc_vesting_balance queryVestingBalance];
+        if (vc){
+            if ([vc isKindOfClass:[VCVestingBalance class]]){
+                VCVestingBalance* vc_vesting_balance = (VCVestingBalance*)vc;
+                [vc_vesting_balance queryVestingBalance];
+            }else if ([vc isKindOfClass:[VCHtlcList class]]){
+                VCHtlcList* vc_htlc_list = (VCHtlcList*)vc;
+                [vc_htlc_list queryUserHTLCs];
+            }
         }
     }
 }

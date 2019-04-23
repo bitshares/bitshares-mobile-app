@@ -28,7 +28,7 @@ enum
 @interface VCAdvancedFeatures ()
 {    
     UITableView*            _mainTableView;
-    NSArray*                _dateArray; //  assgin
+    NSArray*                _dataArray; //  assgin
 }
 
 @end
@@ -57,7 +57,7 @@ enum
                            @"HTLC合约（哈希创建）"
                            ];
     
-    _dateArray = @[pSection1];
+    _dataArray = @[pSection1];
     
     _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];
     _mainTableView.delegate = self;
@@ -85,12 +85,12 @@ enum
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return [_dateArray count];
+    return [_dataArray count];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[_dateArray objectAtIndex:section] count];
+    return [[_dataArray objectAtIndex:section] count];
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -117,7 +117,7 @@ enum
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.selectionStyle = UITableViewCellSelectionStyleBlue;
 
-    id ary = [_dateArray objectAtIndex:indexPath.section];
+    id ary = [_dataArray objectAtIndex:indexPath.section];
     
     cell.backgroundColor = [UIColor clearColor];
     

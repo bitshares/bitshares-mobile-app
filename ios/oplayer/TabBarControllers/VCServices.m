@@ -58,7 +58,7 @@ enum
 @interface VCServices ()
 {    
     UITableView*            _mainTableView;
-    NSArray*                _dateArray; //  assgin
+    NSArray*                _dataArray; //  assgin
 }
 
 @end
@@ -106,7 +106,7 @@ enum
                            @"高级功能"
                            ];
     
-    _dateArray = [[NSArray alloc] initWithObjects:pSection2, pSection3, pSection4, pSection5, nil];
+    _dataArray = [[NSArray alloc] initWithObjects:pSection2, pSection3, pSection4, pSection5, nil];
     
     _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutNaviAndTab] style:UITableViewStyleGrouped];
     _mainTableView.delegate = self;
@@ -140,12 +140,12 @@ enum
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return [_dateArray count];
+    return [_dataArray count];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[_dateArray objectAtIndex:section] count];
+    return [[_dataArray objectAtIndex:section] count];
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -172,7 +172,7 @@ enum
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.selectionStyle = UITableViewCellSelectionStyleBlue;
 
-    id ary = [_dateArray objectAtIndex:indexPath.section];
+    id ary = [_dataArray objectAtIndex:indexPath.section];
     
     cell.backgroundColor = [UIColor clearColor];
     

@@ -468,11 +468,20 @@
 "kVcHtlcCellTitlePreimageLength" = "原像长度";
 "kVcHtlcPlaceholderInputPreimage" = "请输入合约的原像";
 "kVcHtlcPlaceholderInputPreimageHash" = "请输入原像的哈希值";
+"kVcHtlcPlaceholderInputPreimageLength" = "请选择原像长度值";
 "kVcHtlcTailerBtnCopy" = "复制";
 "kVcHtlcTailerBtnPaste" = "粘贴";
 "kVcHtlcSubmitBtn01" = "创建";
 "kVcHtlcSubmitBtn02" = "根据对方合约创建";
 "kVcHtlcSubmitBtn03" = "主动创建合约";
+"kVcHtlcTipsPreimageCopied" = "原像已复制：%@";
+"kVcHtlcTipsPreimageForm" = "原像格式为20位以上，且必须同时包含大写字母和数字。";
+"kVcHtlcTipsInputPreimageHash" = "请输入原像哈希值。";
+"kVcHtlcTipsInputValidPreimageHash" = "请输入有效的原像哈希值。";
+"kVcHtlcMessageCreateFromPreimage" = "请确认已经复制备份好【原像】信息，丢失原像只能等待合约到期后自动解锁。是否继续创建合约？";
+"kVcHtlcMessageCreateFromHashHavePreimage" = "主动创建合约请备份好【原像】信息，丢失原像只能等待合约到期后自动解锁。是否继续创建合约？";
+"kVcHtlcMessageCreateFromHashNoPreimage" = "被动部署合约请仔细确认对方已经部署好了相同的合约，并仔细核对各种参数。\n\n※ 注意 ※\n1、原像哈希和原像长度必须和对方完全匹配。\n2、建议合约【有效期】务必“小于”对方合约有效期2天以上，否则可能造成资金损失。是否继续创建合约？";
+"kVcHtlcMessageTipsTitle" = "风险提示";
 
 /* 确认界面 */
 "kVcConfirmTipFrom" = "FROM";

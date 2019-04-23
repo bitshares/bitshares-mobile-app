@@ -163,9 +163,9 @@ enum
         _enable_more_args = NO;
         
         _const_hashtype_list = @[
-                                 @{@"name":@"RIPEMD160", @"value":@0},
-                                 @{@"name":@"SHA1", @"value":@1},
-                                 @{@"name":@"SHA256", @"value":@2}
+                                 @{@"name":@"RIPEMD160", @"value":@(EBHHT_RMD160)},
+                                 @{@"name":@"SHA1", @"value":@(EBHHT_SHA1)},
+                                 @{@"name":@"SHA256", @"value":@(EBHHT_SHA256)}
                                  ];
         _currHashType = [_const_hashtype_list lastObject];
         
@@ -324,14 +324,13 @@ enum
 {
     if (_mode == EDM_PREIMAGE){
         //  copy
-        //  TODO:2.1多语言
         id preimage = _tf_preimage_or_hash.text ?: @"";
         [UIPasteboard generalPasteboard].string = preimage;
-        [OrgUtils makeToast:[NSString stringWithFormat:@"原像已复制：%@", preimage]];
+        [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcHtlcTipsPreimageCopied", @"原像已复制：%@"), preimage]];
     }else{
         //  paste
         NSString* hashcode = [UIPasteboard generalPasteboard].string ?: @"";
-        //  TODO:检测是否是有效的Hashcode格式。
+        //  TODO:2.1 检测是否是有效的Hashcode格式。
         _tf_preimage_or_hash.text = hashcode;
     }
 }
@@ -344,7 +343,7 @@ enum
     //  背景颜色
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
-    //  初始化UI TODO:2.1多语言
+    //  初始化UI
     NSString* placeHolderAmount = NSLocalizedString(@"kVcTransferTipInputSendAmount", @"请输入转账金额");
     NSString* placeHolderMemo = _mode == EDM_PREIMAGE ? NSLocalizedString(@"kVcHtlcPlaceholderInputPreimage", @"请输入合约的原像") : NSLocalizedString(@"kVcHtlcPlaceholderInputPreimageHash", @"请输入原像的哈希值");
     CGRect rect = [self makeTextFieldRect];
@@ -461,11 +460,11 @@ enum
 - (NSInteger)_calcHashValueByteSize
 {
     switch ([[_currHashType objectForKey:@"value"] integerValue]) {
-        case 0: //  RIPEMD160
+        case EBHHT_RMD160:  //  160 bits
             return 20;
-        case 1: //  SHA1 SHA160
+        case EBHHT_SHA1:    //  160 bits
             return 20;
-        case 2: //  SHA256
+        case EBHHT_SHA256:  //  256 bits
             return 32;
         default:
             assert(false);
@@ -479,29 +478,22 @@ enum
  */
 - (NSData*)_calcPreimageHashCode:(NSData*)preimage
 {
-    //    sha256((const unsigned char*)[preimage UTF8String], [preimage length], digest);
-    //    id preimage_hash = [[NSData alloc] initWithBytes:digest length:sizeof(digest)];
-    
-//    NSData* message_data = [memo_string dataUsingEncoding:NSUTF8StringEncoding];
-//    size_t message_size = (size_t)[message_data length];
-//    const unsigned char* message = (const unsigned char*)[message_data bytes];
-//    size_t output_size = __bts_aes256_encrypt_with_checksum_calc_outputsize(message_size);
-//    unsigned char output[output_size];
-//
     switch ([[_currHashType objectForKey:@"value"] integerValue]) {
-        case 0: //  RIPEMD160
+        case EBHHT_RMD160:
         {
-            //  TODO:2.1
             unsigned char digest[20] = {0, };
+            rmd160((const unsigned char*)[preimage bytes], (const size_t)[preimage length], digest);
+            return [[NSData alloc] initWithBytes:digest length:sizeof(digest)];
         }
             break;
-        case 1: //  SHA1 SHA160
+        case EBHHT_SHA1:
         {
-            //  TODO:2.1
             unsigned char digest[20] = {0, };
+            sha1((const unsigned char*)[preimage bytes], (const size_t)[preimage length], digest);
+            return [[NSData alloc] initWithBytes:digest length:sizeof(digest)];
         }
             break;
-        case 2: //  SHA256
+        case EBHHT_SHA256:
         {
             unsigned char digest[32] = {0, };
             sha256((const unsigned char*)[preimage bytes], (const size_t)[preimage length], digest);
@@ -562,7 +554,6 @@ enum
     }
     
     //  === 风险提示 ===
-    //  TODO:2.1 多语言
     NSData* preimage_hash = nil;
     NSInteger preimage_length = 0;
     
@@ -571,7 +562,7 @@ enum
     if (_mode == EDM_PREIMAGE){
         NSString* preimage = [NSString trim:_tf_preimage_or_hash.text];
         if (![OrgUtils isValidHTCLPreimageFormat:preimage]){
-            [OrgUtils showMessage:@"原像格式为20位以上，且必须同时包含大写字母和数字。"];
+            [OrgUtils showMessage:NSLocalizedString(@"kVcHtlcTipsPreimageForm", @"原像格式为20位以上，且必须同时包含大写字母和数字。")];
             return;
         }
         
@@ -579,17 +570,17 @@ enum
         preimage_hash = [self _calcPreimageHashCode:preimage_data];
         preimage_length = [preimage_data length];
         
-        message = @"请确认已经复制备份好【原像】信息，丢失原像只能等待合约到期后自动解锁。是否继续创建合约？";
+        message = NSLocalizedString(@"kVcHtlcMessageCreateFromPreimage", @"请确认已经复制备份好【原像】信息，丢失原像只能等待合约到期后自动解锁。是否继续创建合约？");
     }else{
         NSString* hashvalue = [NSString trim:_tf_preimage_or_hash.text];
         if (!hashvalue){
-            [OrgUtils makeToast:@"请输入原像哈希值。"];
+            [OrgUtils makeToast:NSLocalizedString(@"kVcHtlcTipsInputPreimageHash", @"请输入原像哈希值。")];
             return;
         }
         NSData* hashvalue_data = [hashvalue dataUsingEncoding:NSUTF8StringEncoding];
         NSInteger hashvalue_bytesize = [self _calcHashValueByteSize];
         if ([hashvalue_data length] != hashvalue_bytesize * 2){
-            [OrgUtils makeToast:@"请输入有效的原像哈希值。"];
+            [OrgUtils makeToast:NSLocalizedString(@"kVcHtlcTipsInputValidPreimageHash", @"请输入有效的原像哈希值。")];
             return;
         }
         //  TODO:2.1 是否是有效的16进制 检测
@@ -599,10 +590,10 @@ enum
         preimage_length = _currPreimageLength;
         
         if (_havePreimage){
-            message = @"主动创建合约请备份好【原像】信息，丢失原像只能等待合约到期后自动解锁。是否继续创建合约？";
+            message = NSLocalizedString(@"kVcHtlcMessageCreateFromHashHavePreimage", @"主动创建合约请备份好【原像】信息，丢失原像只能等待合约到期后自动解锁。是否继续创建合约？");
         }else{
-            message = @"被动部署合约请仔细确认对方已经部署好了相同的合约，并仔细核对各种参数。\n\n※ 注意 ※\n1、原像哈希和原像长度必须和对方完全匹配。\n2、建议合约【有效期】务必“小于”对方合约有效期2天以上，否则可能造成资金损失。是否继续创建合约？";
-            title = @"风险提示";
+            message = NSLocalizedString(@"kVcHtlcMessageCreateFromHashNoPreimage", @"被动部署合约请仔细确认对方已经部署好了相同的合约，并仔细核对各种参数。\n\n※ 注意 ※\n1、原像哈希和原像长度必须和对方完全匹配。\n2、建议合约【有效期】务必“小于”对方合约有效期2天以上，否则可能造成资金损失。是否继续创建合约？");
+            title = NSLocalizedString(@"kVcHtlcMessageTipsTitle", @"风险提示");
         }
     }
     [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:message
@@ -654,8 +645,6 @@ enum
               @"preimage_size":@(preimage_length),
               @"claim_period_seconds":@(claim_period_seconds)
               };
-    
-    //  TODO:2.1 提案？？
     
     id opaccount = [_full_account_data objectForKey:@"account"];
     id opaccount_id = [opaccount objectForKey:@"id"];
@@ -1079,11 +1068,7 @@ enum
 -(void)onSwitchAction:(UISwitch*)pSwitch
 {
     _enable_more_args = pSwitch.on;
-    
-//    //  REMARK：恢复默认值 TODO:设置默认值。
-//    _currHashType = [_const_hashtype_list lastObject];
-//    _currExpire = [_const_expire_list objectAtIndex:1];
-    
+    //  REMARK: 关闭高级参数设置也不恢复默认值，依然使用用户选择的参数。
     [self _buildRowTypeArray];
     [_mainTableView reloadData];
 }
@@ -1229,7 +1214,6 @@ enum
                 case kVcSubPreimage_Expiration:
                 case kVcSubHashCode_Expiration:
                 {
-                    //  TODO:2.1多语言
                     UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
                     cell.backgroundColor = [UIColor clearColor];
                     cell.showCustomBottomLine = YES;
@@ -1245,7 +1229,6 @@ enum
                 case kVcSubPreimage_HashMethod:
                 case kVcSubHashCode_HashMethod:
                 {
-                    //  TODO:2.1多语言
                     UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
                     cell.backgroundColor = [UIColor clearColor];
                     cell.showCustomBottomLine = YES;
@@ -1260,7 +1243,6 @@ enum
                     break;
                 case kVcSubHashCode_PreimageLength:
                 {
-                    //  TODO:2.1多语言
                     UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
                     cell.backgroundColor = [UIColor clearColor];
                     cell.showCustomBottomLine = YES;
@@ -1272,7 +1254,7 @@ enum
                         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", @(_currPreimageLength)];
                         cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
                     }else{
-                        cell.detailTextLabel.text = @"请选择原像长度值";
+                        cell.detailTextLabel.text = NSLocalizedString(@"kVcHtlcPlaceholderInputPreimageLength", @"请选择原像长度值");
                         cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorGray;
                     }
                     return cell;
@@ -1317,7 +1299,6 @@ enum
                 {
                     VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:enstAccount callback:^(id account_info) {
                         if (account_info){
-                            //  TODO:fowallet
                             NSLog(@"select: %@", account_info);
                             [_transfer_args setObject:account_info forKey:@"to"];
                             [_mainTableView reloadData];
@@ -1401,7 +1382,6 @@ enum
  */
 - (void)onPreimageLengthClicked
 {
-    //  TODO:2.1 未完成 多语言
     NSInteger defaultIndex = 0;
     NSMutableArray* list = [NSMutableArray array];
     for (NSInteger i = 1; i <= 256; ++i) {
@@ -1411,7 +1391,7 @@ enum
         [list addObject:@{@"name":[NSString stringWithFormat:@"%@", @(i)], @"value":@(i)}];
     }
     [[[MyPopviewManager sharedMyPopviewManager] showModernListView:self.navigationController
-                                                           message:@"请选择原像字符长度"
+                                                           message:NSLocalizedString(@"kVcHtlcPlaceholderInputPreimageLength", @"请选择原像字符长度")
                                                              items:list
                                                            itemkey:@"name"
                                                       defaultIndex:defaultIndex] then:(^id(id result) {
