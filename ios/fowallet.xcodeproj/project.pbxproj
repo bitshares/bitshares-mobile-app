@@ -22,6 +22,8 @@
 		3F0DA36521884011006E1004 /* SGQRCodeObtainConfigure.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0DA36021884011006E1004 /* SGQRCodeObtainConfigure.m */; };
 		3F0DA36621884011006E1004 /* SGQRCodeScanView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0DA36221884011006E1004 /* SGQRCodeScanView.m */; };
 		3F0DA369218851FF006E1004 /* VCQrScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0DA367218851FF006E1004 /* VCQrScan.m */; };
+		3F216571226FEF5500AB5A3D /* ViewActionsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F216570226FEF5500AB5A3D /* ViewActionsCell.m */; };
+		3F216572226FEF5500AB5A3D /* ViewActionsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F216570226FEF5500AB5A3D /* ViewActionsCell.m */; };
 		3F3847322222686400B55914 /* VCMemberShip.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F3847312222686300B55914 /* VCMemberShip.m */; };
 		3F3847332222686400B55914 /* VCMemberShip.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F3847312222686300B55914 /* VCMemberShip.m */; };
 		3F3847362223AC7500B55914 /* VCKlineIndexSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F3847342223AC7400B55914 /* VCKlineIndexSetting.m */; };
@@ -1116,6 +1118,8 @@
 		3F0DA36221884011006E1004 /* SGQRCodeScanView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SGQRCodeScanView.m; sourceTree = "<group>"; };
 		3F0DA367218851FF006E1004 /* VCQrScan.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCQrScan.m; path = Controller/VCQrScan.m; sourceTree = "<group>"; };
 		3F0DA368218851FF006E1004 /* VCQrScan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCQrScan.h; path = Controller/VCQrScan.h; sourceTree = "<group>"; };
+		3F21656F226FEF5400AB5A3D /* ViewActionsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewActionsCell.h; path = View/ViewActionsCell.h; sourceTree = "<group>"; };
+		3F216570226FEF5500AB5A3D /* ViewActionsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewActionsCell.m; path = View/ViewActionsCell.m; sourceTree = "<group>"; };
 		3F3847302222686300B55914 /* VCMemberShip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCMemberShip.h; path = Controller/VCMemberShip.h; sourceTree = "<group>"; };
 		3F3847312222686300B55914 /* VCMemberShip.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCMemberShip.m; path = Controller/VCMemberShip.m; sourceTree = "<group>"; };
 		3F3847342223AC7400B55914 /* VCKlineIndexSetting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCKlineIndexSetting.m; path = Controller/VCKlineIndexSetting.m; sourceTree = "<group>"; };
@@ -2122,6 +2126,8 @@
 		18FF069017E00C5C0088405E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				3F21656F226FEF5400AB5A3D /* ViewActionsCell.h */,
+				3F216570226FEF5500AB5A3D /* ViewActionsCell.m */,
 				3F6C357921E86C9E008E2903 /* ViewAddrMemoInfoCell.h */,
 				3F6C357821E86C9D008E2903 /* ViewAddrMemoInfoCell.m */,
 				3F9A730A21E5C20400DAF7A2 /* ViewGatewayCoinInfoCell.h */,
@@ -3980,6 +3986,7 @@
 				3FB8F8D221CE66C200DA88E2 /* XzDec.c in Sources */,
 				3FB8F8D321CE66C200DA88E2 /* GrapheneSerializer.m in Sources */,
 				3FB8F8D421CE66C200DA88E2 /* VCSelectEstimateUnit.m in Sources */,
+				3F216572226FEF5500AB5A3D /* ViewActionsCell.m in Sources */,
 				3FB8F8D521CE66C200DA88E2 /* GCDWebServerFileResponse.m in Sources */,
 				3FB8F8D621CE66C200DA88E2 /* TempManager.m in Sources */,
 				3FB8F8D721CE66C200DA88E2 /* AsyncTaskManager.m in Sources */,
@@ -4261,6 +4268,7 @@
 				B7BDAAA120B3C77500738F12 /* XzDec.c in Sources */,
 				B77EBBF2213D1869009AC776 /* GrapheneSerializer.m in Sources */,
 				B786D51D20EF9E1800427C08 /* VCSelectEstimateUnit.m in Sources */,
+				3F216571226FEF5500AB5A3D /* ViewActionsCell.m in Sources */,
 				B72A848B20CCD18B00D92A25 /* GCDWebServerFileResponse.m in Sources */,
 				B741F0291C27A6A000F3803A /* TempManager.m in Sources */,
 				B7B1D9D21C154EB80059E71A /* AsyncTaskManager.m in Sources */,

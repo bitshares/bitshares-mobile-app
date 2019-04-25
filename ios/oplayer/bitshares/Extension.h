@@ -34,9 +34,11 @@
 
 typedef id (^RubyFilterMapFunction)(id src);
 typedef BOOL (^RubyFilterBoolFunction)(id src);
+typedef void (^RubyFilterEachWithIndexFunction)(id src, NSInteger idx);
 
 @interface NSArray (RubyFilter)
 
+- (void)ruby_each_with_index:(RubyFilterEachWithIndexFunction)func;
 - (NSArray*)ruby_map:(RubyFilterMapFunction)func;
 - (id)ruby_find:(RubyFilterBoolFunction)func;
 - (NSArray*)ruby_select:(RubyFilterBoolFunction)func;

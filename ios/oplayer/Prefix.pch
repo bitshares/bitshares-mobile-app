@@ -20,10 +20,14 @@
 
 //  运行模式
 
-//  比特股正式网络
+//  比特股正式网络（可配置）
 #define GRAPHENE_BITSHARES_MAINNET  1
 
-//  比特股测试网络
+//  比特股测试网络（不用配置）
+#if GRAPHENE_BITSHARES_MAINNET
 #define GRAPHENE_BITSHARES_TESTNET  0
+#else
+#define GRAPHENE_BITSHARES_TESTNET  1
+#endif
 
 #import "CompileTimeMacro.h"

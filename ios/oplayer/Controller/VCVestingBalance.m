@@ -10,7 +10,6 @@
 #import "VCSearchNetwork.h"
 #import "VCImportAccount.h"
 #import "BitsharesClientManager.h"
-#import "ViewWalletAccountInfoCell.h"
 #import "ViewVestingBalanceCell.h"
 #import "OrgUtils.h"
 #import "ScheduleManager.h"
