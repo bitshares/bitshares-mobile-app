@@ -30,11 +30,15 @@
 @implementation ViewCallOrderInfoCell
 
 @synthesize feedPriceInfo;
+@synthesize mcr;
 @synthesize item=_item;
+@synthesize debt_precision;
+@synthesize collateral_precision;
 
 - (void)dealloc
 {
     self.feedPriceInfo = nil;
+    self.mcr = nil;
     _item = nil;
     
     _lbUsername = nil;
@@ -53,6 +57,7 @@
         self.textLabel.hidden = YES;
         
         self.feedPriceInfo = [NSDecimalNumber zero];
+        self.mcr = nil;
         _item = nil;
         
         _lbUsername = [[UILabel alloc] initWithFrame:CGRectZero];
@@ -131,9 +136,6 @@
     if (!_item)
         return;
     
-    //  TODO:fowallet 719新版本爆仓调整，强平价格根据 call_price 计算还是  debt和diya计算。
-    //  The call price is DEBT * MCR / COLLATERAL
-    
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     
     CGFloat fWidth = self.bounds.size.width;
@@ -150,10 +152,8 @@
     assert(coll_asset);
     assert(debt_asset);
     
-    NSInteger coll_precision = [[coll_asset objectForKey:@"precision"] integerValue];
-    NSInteger debt_precision = [[debt_asset objectForKey:@"precision"] integerValue];
-    double f_collateral = [OrgUtils calcAssetRealPrice:[_item objectForKey:@"collateral"] precision:coll_precision];
-    double f_debt = [OrgUtils calcAssetRealPrice:[_item objectForKey:@"debt"] precision:debt_precision];
+    double f_collateral = [OrgUtils calcAssetRealPrice:[_item objectForKey:@"collateral"] precision:self.collateral_precision];
+    double f_debt = [OrgUtils calcAssetRealPrice:[_item objectForKey:@"debt"] precision:self.debt_precision];
     
     double rate_percent100 = 100 * [self.feedPriceInfo doubleValue] * f_collateral / f_debt;
     
@@ -176,16 +176,12 @@
     //  第二行
     
     //  强平触发价 高精度计算
-    NSDecimalNumber* n_settlement_trigger_price = [OrgUtils calcSettlementTriggerPrice:call_price
-                                                                  collateral_precision:coll_precision
-                                                                        debt_precision:debt_precision];
-    //  非高精度计算
-//    double f_callprice_base = [OrgUtils calcAssetRealPrice:[[call_price objectForKey:@"base"] objectForKey:@"amount"]
-//                                                 precision:coll_precision];
-//    double f_callprice_quote = [OrgUtils calcAssetRealPrice:[[call_price objectForKey:@"quote"] objectForKey:@"amount"]
-//                                                  precision:debt_precision];
-//    double f_settlemet_trigger_price = f_callprice_quote/f_callprice_base;
-//    NSString* str_settlemet_trigger_price = [OrgUtils formatFloatValue:f_settlemet_trigger_price precision:debt_precision];
+    NSDecimalNumber* n_settlement_trigger_price = [OrgUtils calcSettlementTriggerPrice:_item[@"debt"]
+                                                                            collateral:_item[@"collateral"]
+                                                                        debt_precision:self.debt_precision
+                                                                  collateral_precision:self.collateral_precision
+                                                                                 n_mcr:self.mcr ceil_handler:nil];
+  
     _lbTriggerPrice.attributedText = [self genAndColorAttributedText:NSLocalizedString(@"kVcRankCallPrice", @"强平触发价 ")
                                                                   value:[NSString stringWithFormat:@"%@", n_settlement_trigger_price]
                                                              titleColor:theme.textColorNormal
@@ -202,13 +198,13 @@
     
     _lbAssetCollateral.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@(%@) ", NSLocalizedString(@"kVcRankColl", @"抵押"), coll_asset[@"symbol"]]
                                                                   value:[OrgUtils formatAssetString:_item[@"collateral"]
-                                                                                          precision:coll_precision]
+                                                                                          precision:self.collateral_precision]
                                                              titleColor:theme.textColorNormal
                                                              valueColor:theme.textColorMain];
     _lbAssetCollateral.frame = CGRectMake(fOffsetX, fOffsetY, fWidth - fOffsetX_2x, 28);
     
     _lbAssetDebt.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@(%@) ", NSLocalizedString(@"kVcRankDebt", @"借入"), debt_asset[@"symbol"]]
-                                                            value:[OrgUtils formatAssetString:_item[@"debt"] precision:debt_precision]
+                                                            value:[OrgUtils formatAssetString:_item[@"debt"] precision:self.debt_precision]
                                                        titleColor:theme.textColorNormal
                                                        valueColor:theme.textColorMain];
     _lbAssetDebt.frame = CGRectMake(fOffsetX, fOffsetY, fWidth - fOffsetX_2x, 28);

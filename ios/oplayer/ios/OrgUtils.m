@@ -1402,23 +1402,33 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 }
 
 /**
- *  计算抵押资产的强平触发价。
+ *  (public) 计算强平触发价格。
+ *  call_price = (collateral × MCR) ÷ debt
  */
-+ (NSDecimalNumber*)calcSettlementTriggerPrice:(NSDictionary*)call_price
-                          collateral_precision:(NSInteger)collateral_precision
++ (NSDecimalNumber*)calcSettlementTriggerPrice:(id)debt_amount
+                                    collateral:(id)collateral_amount
                                 debt_precision:(NSInteger)debt_precision
+                          collateral_precision:(NSInteger)collateral_precision
+                                         n_mcr:(id)n_mcr
+                                  ceil_handler:(NSDecimalNumberHandler*)ceil_handler
 {
-    NSDecimalNumber* n_callprice_base = [NSDecimalNumber decimalNumberWithMantissa:[[[call_price objectForKey:@"base"] objectForKey:@"amount"] unsignedLongLongValue]
-                                                                          exponent:-collateral_precision isNegative:NO];
-    NSDecimalNumber* n_callprice_quote = [NSDecimalNumber decimalNumberWithMantissa:[[[call_price objectForKey:@"quote"] objectForKey:@"amount"] unsignedLongLongValue]
-                                                                           exponent:-debt_precision isNegative:NO];
-    NSDecimalNumberHandler* ceilHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundUp
-                                                                                                 scale:debt_precision
-                                                                                      raiseOnExactness:NO
-                                                                                       raiseOnOverflow:NO
-                                                                                      raiseOnUnderflow:NO
-                                                                                   raiseOnDivideByZero:NO];
-    return [n_callprice_quote decimalNumberByDividingBy:n_callprice_base withBehavior:ceilHandler];
+    NSDecimalNumber* n_debt = [NSDecimalNumber decimalNumberWithMantissa:[debt_amount unsignedLongLongValue]
+                                                                exponent:-debt_precision isNegative:NO];
+    NSDecimalNumber* n_collateral = [NSDecimalNumber decimalNumberWithMantissa:[collateral_amount unsignedLongLongValue]
+                                                                      exponent:-collateral_precision isNegative:NO];
+    
+    if (!ceil_handler){
+        ceil_handler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundUp
+                                                                              scale:debt_precision
+                                                                   raiseOnExactness:NO
+                                                                    raiseOnOverflow:NO
+                                                                   raiseOnUnderflow:NO
+                                                                raiseOnDivideByZero:NO];
+    }
+    
+    id n = [n_debt decimalNumberByMultiplyingBy:n_mcr];
+    n = [n decimalNumberByDividingBy:n_collateral withBehavior:ceil_handler];
+    return n;
 }
 
 /**

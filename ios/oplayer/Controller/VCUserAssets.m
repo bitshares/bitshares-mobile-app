@@ -275,9 +275,14 @@
             //  REMARK：collateral_asset_id 是 debt 的背书资产，那么用户的资产余额里肯定有 抵押中 的背书资产。
             NSInteger debt_precision = [[asset_detail objectForKey:@"precision"] integerValue];
             NSInteger collateral_precision = [[collateral_asset objectForKey:@"precision"] integerValue];
-            id trigger_price = [OrgUtils calcSettlementTriggerPrice:asset_call_price
+            id mcr = [[[chainMgr getChainObjectByID:[asset_detail objectForKey:@"bitasset_data_id"]] objectForKey:@"current_feed"] objectForKey:@"maintenance_collateral_ratio"];
+            id trigger_price = [OrgUtils calcSettlementTriggerPrice:asset_call_order[@"debt"]
+                                                         collateral:asset_call_order[@"collateral"]
+                                                     debt_precision:debt_precision
                                                collateral_precision:collateral_precision
-                                                     debt_precision:debt_precision];
+                                                              n_mcr:[NSDecimalNumber decimalNumberWithMantissa:[mcr unsignedLongLongValue]
+                                                                                                      exponent:-3 isNegative:NO]
+                                                       ceil_handler:nil];
             optional_number++;
             [asset_final setObject:[NSString stringWithFormat:@"%@", trigger_price] forKey:@"trigger_price"];
         }
