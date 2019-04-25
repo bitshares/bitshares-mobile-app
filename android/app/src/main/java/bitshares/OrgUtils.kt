@@ -188,12 +188,20 @@ class OrgUtils {
         }
 
         /**
-         * 计算抵押资产的强平触发价。
+         * (public) 计算强平触发价格。
+         * call_price = (collateral × MCR) ÷ debt
          */
-        fun calcSettlementTriggerPrice(call_price: JSONObject, collateral_precision: Int, debt_precision: Int): BigDecimal {
-            val n_callprice_base = bigDecimalfromAmount(call_price.getJSONObject("base").getString("amount"), collateral_precision)
-            val n_callprice_quote = bigDecimalfromAmount(call_price.getJSONObject("quote").getString("amount"), debt_precision)
-            return n_callprice_quote.divide(n_callprice_base, debt_precision, BigDecimal.ROUND_UP)
+        fun calcSettlementTriggerPrice(debt_amount: String, collateral_amount: String, debt_precision: Int, collateral_precision: Int, n_mcr: BigDecimal, roundingMode: Int?, precision: Int?): BigDecimal {
+            val n_debt = bigDecimalfromAmount(debt_amount,debt_precision)
+            val n_collateral = bigDecimalfromAmount(collateral_amount, collateral_precision)
+
+            var n: BigDecimal = n_debt.multiply(n_mcr)
+            if (roundingMode == null || precision == null) {
+                n = n.divide(n_collateral, debt_precision, BigDecimal.ROUND_UP)
+            } else {
+                n = n.divide(n_collateral, precision, roundingMode)
+            }
+            return n
         }
 
         /**
