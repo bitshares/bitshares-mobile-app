@@ -124,7 +124,10 @@ class FragmentAssets : BtsppFragment() {
                 //  REMARK：collateral_asset_id 是 debt 的背书资产，那么用户的资产余额里肯定有 抵押中 的背书资产。
                 val debt_precision = asset_detail.getInt("precision")
                 val collateral_precision = collateral_asset.getInt("precision")
-                val trigger_price = OrgUtils.calcSettlementTriggerPrice(asset_call_price, collateral_precision, debt_precision)
+                val mcr = chainMgr.getChainObjectByID(asset_detail.getString("bitasset_data_id")).getJSONObject("current_feed").getString("maintenance_collateral_ratio")
+                val _mcr = bigDecimalfromAmount(mcr, 3)
+                val trigger_price = OrgUtils.calcSettlementTriggerPrice(asset_call_order.getString("debt"), asset_call_order.getString("collateral"), debt_precision, collateral_precision,_mcr,null,null)
+
                 optional_number++
                 asset_final.put("trigger_price", trigger_price.toPriceAmountString())
             }

@@ -150,18 +150,35 @@ fun android.app.Activity.viewUserAssets(account_name_or_id: String) {
 
     val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
     mask.show()
-    ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(account_name_or_id).then {
+
+    val chainMgr = ChainObjectManager.sharedChainObjectManager()
+    chainMgr.queryFullAccountInfo(account_name_or_id).then {
         val full_account_data = it as JSONObject
         val userAssetDetailInfos = OrgUtils.calcUserAssetDetailInfos(full_account_data)
-        return@then ChainObjectManager.sharedChainObjectManager().queryAllAssetsInfo(userAssetDetailInfos.getJSONObject("validBalancesHash").keys().toJSONArray()).then {
-            mask.dismiss()
-            goTo(ActivityMyAssets::class.java, true, args = jsonArrayfrom(userAssetDetailInfos, full_account_data))
-            return@then null
+        val debtValuesHashKeys = userAssetDetailInfos.getJSONObject("debtValuesHash").keys().toJSONArray()
+        var debt_asset_ids = Array(debtValuesHashKeys.length()){ return@Array "" }
+        var i = 0
+        debtValuesHashKeys.forEach<String> {
+            debt_asset_ids.set(i, it!!)
+            i++
         }
-    }.catch {
+        val args = userAssetDetailInfos.getJSONObject("validBalancesHash").keys().toJSONArray()
+        return@then chainMgr.queryAllAssetsInfo(args).then {
+            val debt_bitasset_data_id_list = debt_asset_ids.map {
+                val debt_asset_id = it
+                return@map chainMgr.getChainObjectByID(debt_asset_id).getString("bitasset_data_id")
+            }
+            return@then chainMgr.queryAllGrapheneObjects(debt_bitasset_data_id_list.toJsonArray()).then {
+                mask.dismiss()
+                goTo(ActivityMyAssets::class.java, true, args = jsonArrayfrom(userAssetDetailInfos, full_account_data))
+                return@then null
+            }
+        }
+    }.catch{
         mask.dismiss()
         showToast(resources.getString(R.string.tip_network_error))
     }
+
 }
 
 fun android.app.Activity.runOnMainUI(body: () -> Unit) {
