@@ -564,6 +564,19 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 }
 
 /**
+ *  从操作的结果结构体中提取新对象ID。
+ */
++ (NSString*)extractNewObjectIDFromOperationResult:(id)operation_result
+{
+    //  typedef fc::static_variant<void_result,object_id_type,asset> operation_result
+    //  object_id_type index value is 1
+    if (operation_result && [operation_result count] == 2 && [[operation_result firstObject] integerValue] == 1){
+        return [operation_result objectAtIndex:1];
+    }
+    return nil;
+}
+
+/**
  *  从广播交易结果获取新生成的对象ID号（比如新的订单号、新HTLC号等）
  *  考虑到数据结构可能变更，加各种safe判断。
  *  REMARK：仅考虑一个 op 的情况，如果一个交易包含多个 op 则不支持。
@@ -576,13 +589,8 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
         if (trx){
             id operation_results = [trx objectForKey:@"operation_results"];
             if (operation_results){
-                id tmp = [operation_results safeObjectAtIndex:0];
-                //  typedef fc::static_variant<void_result,object_id_type,asset> operation_result
-                //  object_id_type index value is 1
-                if (tmp && [tmp count] == 2 && [[tmp firstObject] integerValue] == 1){
-                    new_object_id = [tmp safeObjectAtIndex:1];
-                    NSLog(@"new object id: %@", new_object_id);
-                }
+                id operation_result = [operation_results safeObjectAtIndex:0];
+                return [self extractNewObjectIDFromOperationResult:operation_result];
             }
         }
     }

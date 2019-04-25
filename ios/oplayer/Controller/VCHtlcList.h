@@ -7,8 +7,9 @@
 //  HTLC object list / 哈希时间锁合约列表
 
 #import "VCBase.h"
+#import "ViewActionsCell.h"
 
-@interface VCHtlcList : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
+@interface VCHtlcList : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, ViewActionsCellClickedDelegate>
 
 - (id)initWithOwner:(VCBase*)owner fullAccountInfo:(NSDictionary*)accountInfo;
 

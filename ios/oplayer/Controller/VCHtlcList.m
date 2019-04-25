@@ -10,20 +10,18 @@
 #import "VCSearchNetwork.h"
 #import "VCImportAccount.h"
 #import "BitsharesClientManager.h"
-#import "ViewWalletAccountInfoCell.h"
-#import "ViewVestingBalanceCell.h"
+#import "ViewActionsCell.h"
 #import "OrgUtils.h"
 #import "ScheduleManager.h"
 #import "MyPopviewManager.h"
 
 enum
 {
-    kVcSubFrom = 0,
-    kVcSubTo,
+    kVcSubFromAndTo = 0,
     kVcSubAssetAmount,
+    kVcSubPreimageLengthAndHashType,
     kVcSubPreimageHash,
-    kVcSubPreimageLength,
-    kVcSubHashType,
+    kVcSubActions,
     
     kVcSubMax
 };
@@ -125,45 +123,60 @@ enum
     id uid = [account objectForKey:@"id"];
     assert(uid);
 
-    //  TODO:2.1 因为database api尚未完成，暂时采用临时测试数据。
-    id test_htlc_list = @[@"1.16.62", @"1.16.63"];
+    //  TODO:2.1 REMARK: !!!!!! 因为core-team的database api尚未完成 !!!!，这里直接从用户明细里获取HTLC编号。
+    //  TODO：特别注意：如果API节点配置的账户历史明细太低，可能漏掉部分HTLC对象。又或者用户的账号交易记录太多，HTLC对象也可能被漏掉 。
+    //  TODO：后期data base api更新后处理。
     
-    [[[chainMgr queryAllGrapheneObjects:test_htlc_list] then:(^id(id data_hash) {
-        NSMutableDictionary* query_ids = [NSMutableDictionary dictionary];
-        //{
-        //    conditions =         {
-        //        "hash_lock" =             {
-        //            "preimage_hash" =                 (
-        //                                               2,
-        //                                               9464eddceb9e42e757d935e035b2029da01aef237aa98c0f9adb92ee93de8ee0
-        //                                               );
-        //            "preimage_size" = 64;
-        //        };
-        //        "time_lock" =             {
-        //            expiration = "2019-05-08T11:34:57";
-        //        };
-        //    };
-        //    id = "1.16.62";
-        //    transfer =         {
-        //        amount = 100000;
-        //        "asset_id" = "1.3.0";
-        //        from = "1.2.23173";
-        //        to = "1.2.23083";
-        //    };
-        //};
-        id htlc_list = [data_hash allValues];
-        for (id htlc in htlc_list) {
-            id transfer = [htlc objectForKey:@"transfer"];
-            assert(transfer);
-            [query_ids setObject:@YES forKey:[transfer objectForKey:@"from"]];
-            [query_ids setObject:@YES forKey:[transfer objectForKey:@"to"]];
-            [query_ids setObject:@YES forKey:[transfer objectForKey:@"asset_id"]];
+    NSMutableDictionary* htlc_id_hash = [NSMutableDictionary dictionary];
+    GrapheneApi* api_history = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_history;
+    [[[api_history exec:@"get_account_history_by_operations" params:@[uid, @[@(ebo_htlc_create)], @0, @100]] then:(^id(id data) {
+        id operation_history_objs = [data objectForKey:@"operation_history_objs"];
+        if (operation_history_objs && [operation_history_objs isKindOfClass:[NSArray class]] && [operation_history_objs count] > 0){
+            for (id op_history in operation_history_objs) {
+                id new_object_id = [OrgUtils extractNewObjectIDFromOperationResult:[op_history objectForKey:@"result"]];
+                if (new_object_id){
+                    [htlc_id_hash setObject:@YES forKey:new_object_id];
+                }
+            }
         }
-        //  查询 & 缓存
-        return [[chainMgr queryAllGrapheneObjects:[query_ids allKeys]] then:(^id(id data) {
-            [_owner hideBlockView];
-            [self onQueryUserHTLCsResponsed:htlc_list];
-            return nil;
+        id htlc_id_list = [htlc_id_hash allKeys];
+        return [[chainMgr queryAllGrapheneObjects:htlc_id_list] then:(^id(id data_hash) {
+            NSMutableDictionary* query_ids = [NSMutableDictionary dictionary];
+            //{
+            //    conditions =         {
+            //        "hash_lock" =             {
+            //            "preimage_hash" =                 (
+            //                                               2,
+            //                                               9464eddceb9e42e757d935e035b2029da01aef237aa98c0f9adb92ee93de8ee0
+            //                                               );
+            //            "preimage_size" = 64;
+            //        };
+            //        "time_lock" =             {
+            //            expiration = "2019-05-08T11:34:57";
+            //        };
+            //    };
+            //    id = "1.16.62";
+            //    transfer =         {
+            //        amount = 100000;
+            //        "asset_id" = "1.3.0";
+            //        from = "1.2.23173";
+            //        to = "1.2.23083";
+            //    };
+            //};
+            id htlc_list = [data_hash allValues];
+            for (id htlc in htlc_list) {
+                id transfer = [htlc objectForKey:@"transfer"];
+                assert(transfer);
+                [query_ids setObject:@YES forKey:[transfer objectForKey:@"from"]];
+                [query_ids setObject:@YES forKey:[transfer objectForKey:@"to"]];
+                [query_ids setObject:@YES forKey:[transfer objectForKey:@"asset_id"]];
+            }
+            //  查询 & 缓存
+            return [[chainMgr queryAllGrapheneObjects:[query_ids allKeys]] then:(^id(id data) {
+                [_owner hideBlockView];
+                [self onQueryUserHTLCsResponsed:htlc_list];
+                return nil;
+            })];
         })];
     })] catch:(^id(id error) {
         [_owner hideBlockView];
@@ -208,22 +221,24 @@ enum
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
+    ThemeManager* theme = [ThemeManager sharedThemeManager];
+    
     id htlc = [_dataArray objectAtIndex:section];
     
     CGFloat fWidth = self.view.bounds.size.width;
     CGFloat xOffset = tableView.layoutMargins.left;
     
     UIView* myView = [[UIView alloc] init];
-    myView.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
+    myView.backgroundColor = theme.appBackColor;
     
     UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(xOffset, 0, fWidth - xOffset * 2, 28)];
-    titleLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
     titleLabel.backgroundColor = [UIColor clearColor];
+    titleLabel.textColor = theme.textColorMain;
     titleLabel.font = [UIFont boldSystemFontOfSize:16];
-    titleLabel.text = [NSString stringWithFormat:@"%@. #%@", @(section + 1), htlc[@"id"]];
+    titleLabel.text = [NSString stringWithFormat:@"%@. #%@ ", @(section + 1), htlc[@"id"]];
     
     UILabel *dateLabel = [[UILabel alloc] initWithFrame:CGRectMake(xOffset, 0, fWidth - xOffset * 2, 28)];
-    dateLabel.textColor = [ThemeManager sharedThemeManager].textColorGray;
+    dateLabel.textColor = theme.textColorGray;
     dateLabel.textAlignment = NSTextAlignmentRight;
     dateLabel.backgroundColor = [UIColor clearColor];
     dateLabel.font = [UIFont systemFontOfSize:13];
@@ -250,33 +265,16 @@ enum
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
     UIView* myView = [[UIView alloc] init];
-    myView.backgroundColor = [UIColor clearColor];// [ThemeManager sharedThemeManager].appBackColor;
+    myView.backgroundColor = [UIColor clearColor];
     return myView;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (indexPath.row == kVcSubActions){
+        return tableView.rowHeight;
+    }
     return 32.0f;
-//    id proposal = [_dataArray objectAtIndex:indexPath.section];
-//    id newOperations = [[proposal objectForKey:@"kProcessedData"] objectForKey:@"newOperations"];
-//    assert(newOperations);
-//
-//    if (indexPath.row == 0){
-//        //  proposal basic infos
-//        return 4.0 + 28 * 2;
-//    }else if (indexPath.row == 1){
-//        //  authorize infos
-//        id kProcessedData = [proposal objectForKey:@"kProcessedData"];
-//        assert(kProcessedData);
-//        id needAuthorizeHash = [kProcessedData objectForKey:@"needAuthorizeHash"];
-//        return 4.0 + 22 * [needAuthorizeHash count];
-//    }else if (indexPath.row == 2 + [newOperations count]){
-//        //  actions buttons
-//        return tableView.rowHeight;
-//    }else{
-//        //  OP LIST
-//        return [ViewProposalOpInfoCell getCellHeight:[newOperations objectAtIndex:indexPath.row - 2] leftOffset:tableView.layoutMargins.left];
-//    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -295,46 +293,55 @@ enum
     cell.detailTextLabel.font = [UIFont boldSystemFontOfSize:13.0f];
     
     //  TODO:2.1多语言
+    ThemeManager* theme = [ThemeManager sharedThemeManager];
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     switch (indexPath.row) {
-        case kVcSubFrom:
+        case kVcSubFromAndTo:
         {
-            cell.textLabel.text = @"付款方";
-            cell.detailTextLabel.text = [[chainMgr getChainObjectByID:[[htlc objectForKey:@"transfer"] objectForKey:@"from"]] objectForKey:@"name"];
-        }
-            break;
-        case kVcSubTo:
-        {
-            cell.textLabel.text = @"收款方";
-            cell.detailTextLabel.text = [[chainMgr getChainObjectByID:[[htlc objectForKey:@"transfer"] objectForKey:@"to"]] objectForKey:@"name"];
+            cell.textLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:@"付款账号 "
+                                                                                     value:[[chainMgr getChainObjectByID:[[htlc objectForKey:@"transfer"] objectForKey:@"from"]] objectForKey:@"name"]
+                                                                                titleColor:theme.textColorNormal
+                                                                                valueColor:theme.textColorMain];
+            
+            
+            cell.detailTextLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:@"收款账号 "
+                                                                                           value:[[chainMgr getChainObjectByID:[[htlc objectForKey:@"transfer"] objectForKey:@"to"]] objectForKey:@"name"]
+                                                                                      titleColor:theme.textColorNormal
+                                                                                      valueColor:theme.textColorMain];
         }
             break;
         case kVcSubAssetAmount:
         {
-            id str = [OrgUtils formatAssetAmountItem:[htlc objectForKey:@"transfer"]];
-            cell.textLabel.text = @"金额";
-            cell.detailTextLabel.text = str;
+            BOOL isPay = [_fullAccountInfo[@"account"][@"id"] isEqualToString:[[htlc objectForKey:@"transfer"] objectForKey:@"from"]];
+            if (isPay){
+                cell.textLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:@"转账类型 "
+                                                                                         value:@"付款"
+                                                                                    titleColor:theme.textColorNormal
+                                                                                    valueColor:theme.sellColor];
+            }else{
+                cell.textLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:@"转账类型 "
+                                                                                         value:@"收款"
+                                                                                    titleColor:theme.textColorNormal
+                                                                                    valueColor:theme.buyColor];
+            }
+            cell.detailTextLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:@"转账金额 "
+                                                                                           value:[OrgUtils formatAssetAmountItem:[htlc objectForKey:@"transfer"]]
+                                                                                      titleColor:theme.textColorNormal
+                                                                                      valueColor:theme.textColorMain];
+            
             cell.showCustomBottomLine = YES;
         }
             break;
-        case kVcSubPreimageHash:
+        case kVcSubPreimageLengthAndHashType:
         {
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-            cell.textLabel.text = @"原像哈希";
-            cell.detailTextLabel.text = [[[[htlc objectForKey:@"conditions"] objectForKey:@"hash_lock"] objectForKey:@"preimage_hash"] lastObject];
-        }
-            break;
-        case kVcSubPreimageLength:
-        {
-            cell.textLabel.text = @"原像长度";
             id size = [[[htlc objectForKey:@"conditions"] objectForKey:@"hash_lock"] objectForKey:@"preimage_size"];
-            cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", size];
-        }
-            break;
-        case kVcSubHashType:
-        {
-            cell.textLabel.text = @"哈希类型";
+            
+            cell.textLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:@"原像长度 "
+                                                                                     value:[NSString stringWithFormat:@"%@", size]
+                                                                                titleColor:theme.textColorNormal
+                                                                                valueColor:theme.textColorMain];
+            
+            
             NSInteger hash_type = [[[[[htlc objectForKey:@"conditions"] objectForKey:@"hash_lock"] objectForKey:@"preimage_hash"] firstObject] integerValue];
             NSString* hash_type_str = [NSString stringWithFormat:@"未知类型 %@", @(hash_type)];
             switch (hash_type) {
@@ -350,14 +357,48 @@ enum
                 default:
                     break;
             }
-            cell.detailTextLabel.text = hash_type_str;
+            
+            cell.detailTextLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:@"哈希类型 "
+                                                                                           value:hash_type_str
+                                                                                      titleColor:theme.textColorNormal
+                                                                                      valueColor:theme.textColorMain];
+        }
+            break;
+        case kVcSubPreimageHash:
+        {
+            cell.textLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:@"原像哈希 "
+                                                                                     value:[[[[htlc objectForKey:@"conditions"] objectForKey:@"hash_lock"] objectForKey:@"preimage_hash"] lastObject]
+                                                                                titleColor:theme.textColorNormal
+                                                                                valueColor:theme.textColorMain];
             cell.showCustomBottomLine = YES;
+        }
+            break;
+        case kVcSubActions:
+        {
+            static NSString* identify = @"id_htlc_actions_cell";
+            ViewActionsCell* cell = (ViewActionsCell *)[tableView dequeueReusableCellWithIdentifier:identify];
+            if (!cell)
+            {
+                id buttons = @[
+                               @{@"name":@"提取", @"type":@0},
+                               @{@"name":@"部署", @"type":@1},
+                               ];
+                cell = [[ViewActionsCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identify buttons:buttons];
+                cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                cell.accessoryType = UITableViewCellAccessoryNone;
+                cell.backgroundColor = [UIColor clearColor];
+            }
+            cell.showCustomBottomLine = YES;
+            cell.user_tag = indexPath.section;
+            cell.button_delegate = self;
+            [cell setItem:htlc];
+            return cell;
         }
             break;
         default:
             break;
     }
-
+    
     return cell;
 }
 
@@ -505,6 +546,15 @@ enum
              return nil;
          })];
      }];
+}
+
+/**
+ *  提取/扩展/部署等按钮点击。
+ */
+- (void)onButtonClicked:(ViewActionsCell*)cell infos:(id)infos
+{
+    id htlc = [_dataArray objectAtIndex:cell.user_tag];
+    assert(htlc);
 }
 
 @end

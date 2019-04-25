@@ -125,6 +125,11 @@ typedef void (^YklUserCallback)(id data);
 + (NSInteger)getWorkerType:(NSDictionary*)worker_json_object;
 
 /**
+ *  从操作的结果结构体中提取新对象ID。
+ */
++ (NSString*)extractNewObjectIDFromOperationResult:(id)operation_result;
+
+/**
  *  从广播交易结果获取新生成的对象ID号（比如新的订单号、新HTLC号等）
  *  考虑到数据结构可能变更，加各种safe判断。
  *  REMARK：仅考虑一个 op 的情况，如果一个交易包含多个 op 则不支持。

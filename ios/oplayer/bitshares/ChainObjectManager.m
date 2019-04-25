@@ -756,12 +756,11 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     }
     
     return [[WsPromise all:[promise_list copy]] then:(^id(id data_list) {
-        NSInteger idx = 0;
-        for (id ticker in data_list) {
+        [data_list ruby_each_with_index:(^(id ticker, NSInteger idx) {
             NSString* pair = [pairs_list objectAtIndex:idx];
             [_tickerDatas setObject:ticker forKey:pair];
-            ++idx;
-        }
+        })];
+        
         //  初始化成功
         return @YES;
     })];

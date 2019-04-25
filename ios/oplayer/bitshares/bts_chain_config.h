@@ -59,7 +59,8 @@ typedef enum EBitsharesObjectType
     ebot_withdraw_permission,
     ebot_vesting_balance,
     ebot_worker,
-    ebot_balance
+    ebot_balance,
+    ebot_htlc,                      //  16
 } EBitsharesObjectType;
 
 /**
