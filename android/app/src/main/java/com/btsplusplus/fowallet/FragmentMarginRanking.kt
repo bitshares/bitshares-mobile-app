@@ -35,6 +35,7 @@ class FragmentMarginRanking : BtsppFragment() {
     private var _currentView: View? = null
     private var _tradingPair: TradingPair? = null
     private var _feedPriceInfo: BigDecimal? = null
+    private var _mcr: BigDecimal? = null
 
     private var _ctx: Context? = null
 
@@ -60,14 +61,16 @@ class FragmentMarginRanking : BtsppFragment() {
         }
         _feedPriceInfo = _tradingPair!!.calcShowFeedInfo(jsonArrayfrom(feedPriceData))
 
+         //  计算MCR
+        val mcr = feedPriceData.getJSONObject("current_feed").getString("maintenance_collateral_ratio")
+        _mcr = bigDecimalfromAmount(mcr, 3)
+
         //  刷新UI
         //  喂价
         _currentView!!.findViewById<TextView>(R.id.label_txt_curr_feed).text = "${_ctx!!.resources.getString(R.string.kVcRankCurrentFeedPrice)} ${_feedPriceInfo!!.toPriceAmountString()}"
         //  列表
         val lay = _currentView!!.findViewById<LinearLayout>(R.id.layout_fragment_of_diya_ranking_cny)
         lay.removeAllViews()
-
-
 
         val data_array = data_array[0] as JSONArray
         if (data_array.length() > 0) {
@@ -190,16 +193,19 @@ class FragmentMarginRanking : BtsppFragment() {
         val str_collateral = data.getString("collateral")
         val str_debt = data.getString("debt")
 
+        val debt_precision = _tradingPair!!._basePrecision
+        val collateral_precision = _tradingPair!!._quotePrecision
+
         //  计算抵押率
-        val n_coll = bigDecimalfromAmount(str_collateral, base_precision)
-        val n_debt = bigDecimalfromAmount(str_debt, quote_precision)
+        val n_coll = bigDecimalfromAmount(str_collateral, collateral_precision)
+        val n_debt = bigDecimalfromAmount(str_debt, debt_precision)
         val n_ratio = BigDecimal.valueOf(100.0).multiply(n_coll).multiply(_feedPriceInfo!!).divide(n_debt, 2, BigDecimal.ROUND_UP)
 
         //  强平触发价 高精度计算
-        tv2.text = OrgUtils.calcSettlementTriggerPrice(call_price, base_precision, quote_precision).toPriceAmountString()
+        tv2.text = OrgUtils.calcSettlementTriggerPrice(str_debt,str_collateral,debt_precision,collateral_precision,_mcr!!,null,null).toPriceAmountString()
         tv4.text = "${n_ratio.toPlainString()}%"
-        tv6.text = OrgUtils.formatAssetString(str_collateral, base_precision)
-        tv8.text = OrgUtils.formatAssetString(str_debt, quote_precision)
+        tv6.text = OrgUtils.formatAssetString(str_collateral, collateral_precision)
+        tv8.text = OrgUtils.formatAssetString(str_debt, debt_precision)
 
         // 线
         val lv_line = View(ctx)
