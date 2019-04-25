@@ -145,11 +145,15 @@ typedef void (^YklUserCallback)(id data);
                         set_divide_precision:(BOOL)set_divide_precision;
 
 /**
- *  计算抵押资产的强平触发价。
+ *  (public) 计算强平触发价格。
+ *  call_price = (collateral × MCR) ÷ debt
  */
-+ (NSDecimalNumber*)calcSettlementTriggerPrice:(NSDictionary*)call_price
++ (NSDecimalNumber*)calcSettlementTriggerPrice:(id)debt_amount
+                                    collateral:(id)collateral_amount
+                                debt_precision:(NSInteger)debt_precision
                           collateral_precision:(NSInteger)collateral_precision
-                                debt_precision:(NSInteger)debt_precision;
+                                         n_mcr:(id)n_mcr
+                                  ceil_handler:(NSDecimalNumberHandler*)ceil_handler;
 
 /**
  *  (public) 格式化ASSET_JSON对象为价格字符串，例：2323.32BTS

@@ -88,28 +88,38 @@
     
     [this showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     
-    [[[[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:account_name_or_id] then:(^id(id full_account_data) {
+    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+    [[[chainMgr queryFullAccountInfo:account_name_or_id] then:(^id(id full_account_data) {
         NSLog(@"%@", full_account_data);
         
         NSDictionary* userAssetDetailInfos = [OrgUtils calcUserAssetDetailInfos:full_account_data];
         NSArray* args = [[userAssetDetailInfos objectForKey:@"validBalancesHash"] allKeys];
+        NSArray* debt_asset_ids = [[userAssetDetailInfos objectForKey:@"debtValuesHash"] allKeys];
         
-        return [[[ChainObjectManager sharedChainObjectManager] queryAllAssetsInfo:args] then:(^id(id asset_hash) {
-            [this hideBlockView];
-
-            VCAccountInfoPages* vc = [[VCAccountInfoPages alloc] initWithUserAssetDetailInfos:userAssetDetailInfos
-                                                                                    assetHash:asset_hash
-                                                                                  accountInfo:full_account_data];
-
-            id target_name = [[full_account_data objectForKey:@"account"] objectForKey:@"name"];
-            if ([[WalletManager sharedWalletManager] isMyselfAccount:target_name]){
-                vc.title = NSLocalizedString(@"kVcTitleMyBalance", @"我的资产");
-            }else{
-                vc.title = target_name;
-            }
-
-            [this pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-            return nil;
+        //  查询所有资产信息
+        return [[chainMgr queryAllAssetsInfo:args] then:(^id(id asset_hash) {
+            id debt_bitasset_data_id_list = [debt_asset_ids ruby_map:(^id(id debt_asset_id) {
+                return [chainMgr getChainObjectByID:debt_asset_id][@"bitasset_data_id"];
+            })];
+            
+            //  查询所有智能资产的喂价和MCR、MSSR等信息
+            return [[chainMgr queryAllGrapheneObjects:debt_bitasset_data_id_list] then:(^id(id data) {
+                [this hideBlockView];
+                
+                VCAccountInfoPages* vc = [[VCAccountInfoPages alloc] initWithUserAssetDetailInfos:userAssetDetailInfos
+                                                                                        assetHash:asset_hash
+                                                                                      accountInfo:full_account_data];
+                
+                id target_name = [[full_account_data objectForKey:@"account"] objectForKey:@"name"];
+                if ([[WalletManager sharedWalletManager] isMyselfAccount:target_name]){
+                    vc.title = NSLocalizedString(@"kVcTitleMyBalance", @"我的资产");
+                }else{
+                    vc.title = target_name;
+                }
+                
+                [this pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+                return nil;
+            })];
         })];
     })] catch:(^id(id error) {
         [this hideBlockView];

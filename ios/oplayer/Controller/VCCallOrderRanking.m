@@ -127,6 +127,7 @@
     
     NSMutableArray*     _dataCallOrders;
     NSDecimalNumber*    _feedPriceInfo;
+    NSDecimalNumber*    _mcr;
 }
 
 @end
@@ -143,6 +144,7 @@
     _lbEmptyOrder = nil;
     _dataCallOrders = nil;
     _feedPriceInfo = nil;
+    _mcr = nil;
     _tradingPair = nil;
     _asset = nil;
     _owner = nil;
@@ -158,6 +160,7 @@
         _asset = asset;
         _dataCallOrders = [NSMutableArray array];
         _feedPriceInfo = nil;
+        _mcr = nil;
     }
     return self;
 }
@@ -207,6 +210,10 @@
         _tradingPair = [[TradingPair alloc] initWithBaseID:[feedPriceData objectForKey:@"asset_id"] quoteId:short_backing_asset];
     }
     _feedPriceInfo = [_tradingPair calcShowFeedInfo:@[feedPriceData]];
+    
+    //  计算MCR
+    id mcr = [[feedPriceData objectForKey:@"current_feed"] objectForKey:@"maintenance_collateral_ratio"];
+    _mcr = [NSDecimalNumber decimalNumberWithMantissa:[mcr unsignedLongLongValue] exponent:-3 isNegative:NO];
     
     //  动态设置UI的可见性（没有抵押信息的情况几乎不存在）
     if ([_dataCallOrders count] > 0){
@@ -311,6 +318,10 @@
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.backgroundColor = [UIColor clearColor];
     }
+    
+    cell.debt_precision = _tradingPair.basePrecision;
+    cell.collateral_precision = _tradingPair.quotePrecision;
+    cell.mcr = _mcr;
     cell.showCustomBottomLine = YES;
     cell.feedPriceInfo = _feedPriceInfo;
     [cell setItem:[_dataCallOrders objectAtIndex:indexPath.row]];
