@@ -364,7 +364,7 @@ class GrapheneWebSocket {
                 val error_data = resp_error.optJSONObject("data")
                 if (error_data != null) {
                     val error_message = error_data.optString("message")
-                    val error_code = error_data.optString("error_code")
+                    val error_code = error_data.optInt("code").toString()
                     val error_stack = error_data.optJSONArray("stack")
                     if (error_message != "" && error_code != "" && error_stack != null && error_stack.length() > 0) {
                         val stack_str = error_stack.last<JSONObject>().toString()
