@@ -30,6 +30,7 @@ typedef void (^ArgTextFieldCompletionBlock)(NSInteger buttonIndex, NSString* tfv
 - (void)showInputBox:(NSString*)message
            withTitle:(NSString*)title
          placeholder:(NSString*)placeholder
+          ispassword:(BOOL)ispassword
                   ok:(NSString*)okbutton
           completion:(ArgTextFieldCompletionBlock)completion;
 

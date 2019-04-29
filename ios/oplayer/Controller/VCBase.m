@@ -832,6 +832,7 @@ static NSInteger gen_notify_unique_id()
             [[UIAlertViewManager sharedUIAlertViewManager] showInputBox:title
                                                               withTitle:nil
                                                             placeholder:NSLocalizedString(@"unlockTipsPleaseInputWalletPassword", @"请输入钱包密码")
+                                                             ispassword:YES
                                                                      ok:NSLocalizedString(@"unlockBtnUnlock", @"解锁") completion:^(NSInteger buttonIndex, NSString *tfvalue)
              {
                  if (buttonIndex != 0){

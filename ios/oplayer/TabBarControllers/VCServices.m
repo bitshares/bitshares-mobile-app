@@ -260,8 +260,7 @@ enum
             break;
         case kVcAdvanced:
         {
-            //  TODO:2.1 高级功能图标
-            cell.imageView.image = [UIImage templateImageNamed:@"iconDepositWithdraw"];
+            cell.imageView.image = [UIImage templateImageNamed:@"iconAdvFunction"];
             cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
         }
             break;

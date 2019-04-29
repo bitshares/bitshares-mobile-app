@@ -57,13 +57,20 @@ enum
 {
     EHtlcDeployMode         _mode;
     BOOL                    _havePreimage;
+    
+    NSDictionary*           _ref_htlc;              //  根据合约A作为参考部署合约B，该字段可能为nil。（REMARK：以下几个字段相关联。）
+    NSDictionary*           _ref_to;
+    NSTimeInterval          _htlc_a_expiration;     //  合约A等过期时间。
+    NSInteger               _htlc_b_reserved_time;  //  合约B部署时预留安全时间。
+    BOOL                    _lock_field;            //  是否锁定部分字段。（不可编辑）
+    
     NSMutableArray*         _rowTypeArray;
     
-    NSDictionary*           _default_asset;     //  默认转账资产
-    NSDictionary*           _full_account_data; //  数据 - 帐号全数据（包含帐号、资产、挂单、债仓等所有信息）
-    NSArray*                _asset_list;        //  数据 - 用户不为0的所有资产列表
-    NSMutableDictionary*    _balances_hash;     //  数据 - 资产ID和对应的余额信息Hash。
-    NSDictionary*           _fee_item;          //  手续费对象
+    NSDictionary*           _default_asset;         //  默认转账资产
+    NSDictionary*           _full_account_data;     //  数据 - 帐号全数据（包含帐号、资产、挂单、债仓等所有信息）
+    NSArray*                _asset_list;            //  数据 - 用户不为0的所有资产列表
+    NSMutableDictionary*    _balances_hash;         //  数据 - 资产ID和对应的余额信息Hash。
+    NSDictionary*           _fee_item;              //  手续费对象
     
     UITableViewBase*        _mainTableView;
     UITableViewCellBase*    _cellAssetAvailable;
@@ -71,12 +78,12 @@ enum
     MyTextField*            _tf_amount;
     MyTextField*            _tf_preimage_or_hash;
     
-    ViewBlockLabel*         _goto_submit;       //  创建合约
+    ViewBlockLabel*         _goto_submit;           //  创建合约
     
     NSMutableDictionary*    _transfer_args;
     NSDecimalNumber*        _n_available;
     
-    BOOL                    _enable_more_args;  //  启用高级设置
+    BOOL                    _enable_more_args;      //  启用高级设置
     
     NSArray*                _const_hashtype_list;
     NSArray*                _const_expire_list;
@@ -115,6 +122,7 @@ enum
         _mainTableView.delegate = nil;
         _mainTableView = nil;
     }
+    _ref_htlc = nil;
 }
 
 - (void)_buildRowTypeArray
@@ -146,13 +154,21 @@ enum
     }
 }
 
-- (id)initWithUserFullInfo:(NSDictionary*)full_account_data mode:(EHtlcDeployMode)mode havePreimage:(BOOL)havePreimage
+- (id)initWithUserFullInfo:(NSDictionary*)full_account_data
+                      mode:(EHtlcDeployMode)mode
+              havePreimage:(BOOL)havePreimage
+                  ref_htlc:(id)ref_htlc
+                    ref_to:(id)ref_to
 {
     self = [super init];
     if (self) {
         // Custom initialization
         _mode = mode;
         _havePreimage = havePreimage;
+        _ref_htlc = ref_htlc;
+        _ref_to = ref_to;
+        _lock_field = _ref_htlc != nil;
+        
         _rowTypeArray = [NSMutableArray array];
         _default_asset = nil;//TODO:2.1无用？
         _full_account_data = full_account_data;
@@ -189,10 +205,37 @@ enum
                                    @{@"name":@"3天", @"value":@(3600*24*3)},
                                    ];
             _currExpire = [_const_expire_list objectAtIndex:2];
+            
+            
+            if (_lock_field){
+                NSTimeInterval now_ts = [[NSDate date] timeIntervalSince1970];
+                _htlc_a_expiration = [OrgUtils parseBitsharesTimeString:_ref_htlc[@"conditions"][@"time_lock"][@"expiration"]];
+                
+                //  REMARK：预留至少一天。
+                //  如果后部署的用户的有效期接近合约A的有效期，那么后部署的用户可能存在资金分享。（用户A在合约B即将到期的时候提取，那么用户B来不及提取合约A。）
+                _htlc_b_reserved_time = 3600 * 24;
+                NSMutableArray* mutable_list = [NSMutableArray array];
+                for (id item in _const_expire_list) {
+                    NSInteger seconds = [[item objectForKey:@"value"] integerValue];
+                    if (now_ts + seconds <= _htlc_a_expiration - _htlc_b_reserved_time){
+                        [mutable_list addObject:item];
+                    }else{
+                        break;
+                    }
+                }
+                
+                //  REMARK：没有满足条件的时间周期，默认第一个。但提示用户不可部署合约。
+                if ([mutable_list count] <= 0){
+                    [mutable_list addObject:[_const_expire_list firstObject]];
+                }
+                
+                _const_expire_list = [mutable_list copy];
+                _currExpire = [_const_expire_list lastObject];
+            }
+            
         }
-        
         _currPreimageLength = [self _randomSecurePreimage].length;
-
+        
         [self _buildRowTypeArray];
     }
     return self;
@@ -330,8 +373,9 @@ enum
     }else{
         //  paste
         NSString* hashcode = [UIPasteboard generalPasteboard].string ?: @"";
-        //  TODO:2.1 检测是否是有效的Hashcode格式。
-        _tf_preimage_or_hash.text = hashcode;
+        if ([OrgUtils isValidHexString:hashcode]){
+            _tf_preimage_or_hash.text = hashcode;
+        }
     }
 }
 
@@ -340,8 +384,10 @@ enum
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     
+    ThemeManager* theme = [ThemeManager sharedThemeManager];
+    
     //  背景颜色
-    self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
+    self.view.backgroundColor = theme.appBackColor;
     
     //  初始化UI
     NSString* placeHolderAmount = NSLocalizedString(@"kVcTransferTipInputSendAmount", @"请输入转账金额");
@@ -353,14 +399,14 @@ enum
     
     //  设置属性颜色等
     _tf_preimage_or_hash.updateClearButtonTintColor = YES;
-    _tf_preimage_or_hash.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    _tf_preimage_or_hash.textColor = theme.textColorMain;
     _tf_preimage_or_hash.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderMemo
-                                                                                 attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
+                                                                                 attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
                                                                                               NSFontAttributeName:[UIFont systemFontOfSize:17]}];
     _tf_amount.updateClearButtonTintColor = YES;
-    _tf_amount.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    _tf_amount.textColor = theme.textColorMain;
     _tf_amount.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderAmount
-                                                                       attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
+                                                                       attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
                                                                                     NSFontAttributeName:[UIFont systemFontOfSize:17]}];
     
     //  绑定输入事件（限制输入）
@@ -370,7 +416,7 @@ enum
     UIButton* btn100 = [UIButton buttonWithType:UIButtonTypeSystem];
     btn100.titleLabel.font = [UIFont systemFontOfSize:13];
     [btn100 setTitle:NSLocalizedString(@"kLabelSendAll", @"全部") forState:UIControlStateNormal];
-    [btn100 setTitleColor:[ThemeManager sharedThemeManager].textColorHighlight forState:UIControlStateNormal];
+    [btn100 setTitleColor:theme.textColorHighlight forState:UIControlStateNormal];
     btn100.userInteractionEnabled = YES;
     [btn100 addTarget:self action:@selector(onAmountAllButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     btn100.frame = CGRectMake(6, 2, 40, 27);
@@ -378,20 +424,23 @@ enum
     _tf_amount.rightView = btn100;
     _tf_amount.rightViewMode = UITextFieldViewModeAlways;
     
-    //  UI - 末尾按钮
-    UIButton* btn_copy = [UIButton buttonWithType:UIButtonTypeSystem];
-    btn_copy.titleLabel.font = [UIFont systemFontOfSize:13];
-    if (_mode == EDM_PREIMAGE){
-        [btn_copy setTitle:NSLocalizedString(@"kVcHtlcTailerBtnCopy", @"复制") forState:UIControlStateNormal];
-    }else{
-        [btn_copy setTitle:NSLocalizedString(@"kVcHtlcTailerBtnPaste", @"粘贴") forState:UIControlStateNormal];
+    //  UI - 末尾按钮（锁定时不添加按钮）
+    if (!_lock_field)
+    {
+        UIButton* btn_copy = [UIButton buttonWithType:UIButtonTypeSystem];
+        btn_copy.titleLabel.font = [UIFont systemFontOfSize:13];
+        if (_mode == EDM_PREIMAGE){
+            [btn_copy setTitle:NSLocalizedString(@"kVcHtlcTailerBtnCopy", @"复制") forState:UIControlStateNormal];
+        }else{
+            [btn_copy setTitle:NSLocalizedString(@"kVcHtlcTailerBtnPaste", @"粘贴") forState:UIControlStateNormal];
+        }
+        [btn_copy setTitleColor:theme.textColorHighlight forState:UIControlStateNormal];
+        btn_copy.userInteractionEnabled = YES;
+        [btn_copy addTarget:self action:@selector(onCopyOrPasteButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+        btn_copy.frame = CGRectMake(6, 2, 40, 27);
+        _tf_preimage_or_hash.rightView = btn_copy;
+        _tf_preimage_or_hash.rightViewMode = UITextFieldViewModeAlways;
     }
-    [btn_copy setTitleColor:[ThemeManager sharedThemeManager].textColorHighlight forState:UIControlStateNormal];
-    btn_copy.userInteractionEnabled = YES;
-    [btn_copy addTarget:self action:@selector(onCopyOrPasteButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-    btn_copy.frame = CGRectMake(6, 2, 40, 27);
-    _tf_preimage_or_hash.rightView = btn_copy;
-    _tf_preimage_or_hash.rightViewMode = UITextFieldViewModeAlways;
     
     //  待转账资产总可用余额
     _cellAssetAvailable = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
@@ -401,10 +450,10 @@ enum
     _cellAssetAvailable.selectionStyle = UITableViewCellSelectionStyleNone;
     _cellAssetAvailable.textLabel.text = NSLocalizedString(@"kLableAvailable", @"可用");
     _cellAssetAvailable.textLabel.font = [UIFont systemFontOfSize:13.0f];
-    _cellAssetAvailable.textLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+    _cellAssetAvailable.textLabel.textColor = theme.textColorNormal;
     _cellAssetAvailable.detailTextLabel.text = @"";
     _cellAssetAvailable.detailTextLabel.font = [UIFont systemFontOfSize:13.0f];
-    _cellAssetAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    _cellAssetAvailable.detailTextLabel.textColor = theme.textColorMain;
     
     _mainTableView = [[UITableViewBase alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];
     _mainTableView.delegate = self;
@@ -418,6 +467,28 @@ enum
     [self genTransferDefaultArgs:nil];
     if (_mode == EDM_PREIMAGE){
         _tf_preimage_or_hash.text = [self _randomSecurePreimage];
+    }
+    
+    //  初始化【锁定】部分默认值
+    if (_lock_field){
+        id hash_lock = [[_ref_htlc objectForKey:@"conditions"] objectForKey:@"hash_lock"];
+        _currPreimageLength = [[hash_lock objectForKey:@"preimage_size"] integerValue];
+        id preimage_hash = [hash_lock objectForKey:@"preimage_hash"];
+        assert(preimage_hash && [preimage_hash count] == 2);
+        NSInteger lock_hashtype = [[preimage_hash firstObject] integerValue];
+        _currHashType = nil;
+        for (id hash_type in _const_hashtype_list) {
+            if ([[hash_type objectForKey:@"value"] integerValue] == lock_hashtype){
+                _currHashType = hash_type;
+                break;
+            }
+        }
+        assert(_currHashType);
+        _tf_preimage_or_hash.text = [[preimage_hash lastObject] uppercaseString];
+        _tf_preimage_or_hash.enabled = NO;
+        _tf_preimage_or_hash.textColor = theme.textColorGray;
+        assert(_ref_to);
+        [_transfer_args setObject:_ref_to forKey:@"to"];
     }
     
     UITapGestureRecognizer* pTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTap:)];
@@ -553,6 +624,16 @@ enum
         return;
     }
     
+    //  提取有效期
+    NSInteger claim_period_seconds = [[_currExpire objectForKey:@"value"] integerValue];
+    if (_lock_field){
+        NSTimeInterval now_ts = [[NSDate date] timeIntervalSince1970];
+        if (now_ts + claim_period_seconds > _htlc_a_expiration - _htlc_b_reserved_time){
+            [OrgUtils showMessage:NSLocalizedString(@"kVcHtlcTipsExpireIsTooShort", @"临近合约A有效期，存在安全风险，不可创建合约B。请联系对方延长合约有效期。")];
+            return;
+        }
+    }
+    
     //  === 风险提示 ===
     NSData* preimage_hash = nil;
     NSInteger preimage_length = 0;
@@ -583,7 +664,10 @@ enum
             [OrgUtils makeToast:NSLocalizedString(@"kVcHtlcTipsInputValidPreimageHash", @"请输入有效的原像哈希值。")];
             return;
         }
-        //  TODO:2.1 是否是有效的16进制 检测
+        if (![OrgUtils isValidHexString:hashvalue]){
+            [OrgUtils makeToast:NSLocalizedString(@"kVcHtlcTipsInputValidPreimageHash", @"请输入有效的原像哈希值。")];
+            return;
+        }
         unsigned char hashvalue_bytes[hashvalue_bytesize];
         hex_decode((const unsigned char*)[hashvalue_data bytes], (const size_t)[hashvalue_data length], hashvalue_bytes);
         preimage_hash = [[NSData alloc] initWithBytes:hashvalue_bytes length:hashvalue_bytesize];
@@ -592,8 +676,12 @@ enum
         if (_havePreimage){
             message = NSLocalizedString(@"kVcHtlcMessageCreateFromHashHavePreimage", @"主动创建合约请备份好【原像】信息，丢失原像只能等待合约到期后自动解锁。是否继续创建合约？");
         }else{
-            message = NSLocalizedString(@"kVcHtlcMessageCreateFromHashNoPreimage", @"被动部署合约请仔细确认对方已经部署好了相同的合约，并仔细核对各种参数。\n\n※ 注意 ※\n1、原像哈希和原像长度必须和对方完全匹配。\n2、建议合约【有效期】务必“小于”对方合约有效期2天以上，否则可能造成资金损失。是否继续创建合约？");
             title = NSLocalizedString(@"kVcHtlcMessageTipsTitle", @"风险提示");
+            if (_lock_field){
+                message = NSLocalizedString(@"kVcHtlcMessageCreateFromHtlcObject", @"建议合约【有效期】务必“小于”对方合约有效期2天以上，否则可能造成资金损失。是否继续创建合约？");
+            }else{
+                message = NSLocalizedString(@"kVcHtlcMessageCreateFromHashNoPreimage", @"被动部署合约请仔细确认对方已经部署好了相同的合约，并仔细核对各种参数。\n\n※ 注意 ※\n1、原像哈希和原像长度必须和对方完全匹配。\n2、建议合约【有效期】务必“小于”对方合约有效期2天以上，否则可能造成资金损失。是否继续创建合约？");
+            }
         }
     }
     [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:message
@@ -608,7 +696,7 @@ enum
                      [self _gotoCreateHTLCCore:from to:to asset:asset amount:n_amount
                                  preimage_hash:preimage_hash preimage_length:preimage_length
                                       hashtype:[[_currHashType objectForKey:@"value"] integerValue]
-                          claim_period_seconds:[[_currExpire objectForKey:@"value"] integerValue]];
+                          claim_period_seconds:claim_period_seconds];
                  }
              }];
          }
@@ -664,6 +752,7 @@ enum
          [[[[BitsharesClientManager sharedBitsharesClientManager] htlcCreate:op] then:(^id(id transaction_confirmation) {
              [self hideBlockView];
              NSLog(@"%@", transaction_confirmation);
+             // TODO:2.1未完成
              id new_htlc_id = [OrgUtils extractNewObjectID:transaction_confirmation];
              [OrgUtils makeToast:[NSString stringWithFormat:@"new htlc id: %@", new_htlc_id]];
 //             [[[[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:opaccount_id] then:(^id(id full_data) {
@@ -694,216 +783,7 @@ enum
              return nil;
          })];
      }];
-    
-    
-//    [[[[BitsharesClientManager sharedBitsharesClientManager] htlcCreate:op] then:(^id(id data) {
-//        NSLog(@"%@", data);
-//        return nil;
-//    })] catch:(^id(id error) {
-//        NSLog(@"%@", error);
-//        return nil;
-//    })];
-//    return;
 }
-
-//
-///**
-// *  (private) 辅助 - 判断手续费是否足够，足够则返回需要消耗的手续费，不足则返回 nil。
-// *  fee_price_item      - 服务器返回的需要手续费值
-// *  fee_asset_id        - 当前手续费资产ID
-// *  asset               - 正在转账的资产
-// *  n_amount            - 正在转账的数量
-// */
-//- (id)_isFeeSufficient:(id)fee_price_item fee_asset_id:(NSString*)fee_asset_id asset:(id)asset amount:(id)n_amount
-//{
-//    assert(fee_price_item);
-//    assert(fee_asset_id);
-//    assert(asset);
-//    assert(n_amount);
-//    assert([fee_asset_id isEqualToString:[fee_price_item objectForKey:@"asset_id"]]);
-//
-//    //  1、转账消耗资产值（只有转账资产和手续费资产相同时候才设置）
-//    NSDecimalNumber* n_transfer_cost = [NSDecimalNumber zero];
-//    if ([asset[@"id"] isEqualToString:fee_asset_id]){
-//        n_transfer_cost = n_amount;
-//    }
-//
-//    //  2、手续费消耗值
-//    id fee_asset = _transfer_args[@"fee_asset"];
-//    assert(fee_asset);
-//    NSDecimalNumber* n_fee_cost = [NSDecimalNumber decimalNumberWithMantissa:[[fee_price_item objectForKey:@"amount"] unsignedLongLongValue]
-//                                                                    exponent:-[fee_asset[@"precision"] integerValue]
-//                                                                  isNegative:NO];
-//
-//    //  3、总消耗值
-//    id n_total_cost = [n_transfer_cost decimalNumberByAdding:n_fee_cost];
-//
-//    //  4、获取手续费资产总的可用余额
-//    id n_available = [NSDecimalNumber zero];
-//    for (id balance_object in [_full_account_data objectForKey:@"balances"]) {
-//        id asset_type = [balance_object objectForKey:@"asset_type"];
-//        if ([asset_type isEqualToString:fee_asset_id]){
-//            n_available = [NSDecimalNumber decimalNumberWithMantissa:[balance_object[@"balance"] unsignedLongLongValue]
-//                                                            exponent:-[fee_asset[@"precision"] integerValue]
-//                                                          isNegative:NO];
-//            break;
-//        }
-//    }
-//
-//    //  5、判断：n_available < n_total_cost
-//    if ([n_available compare:n_total_cost] == NSOrderedAscending){
-//        //  不足：返回 nil。
-//        return nil;
-//    }
-//
-//    //  足够（返回手续费值）
-//    return n_fee_cost;
-//}
-//
-//-(void)_processTransferCore:(id)from
-//                         to:(id)to
-//                      asset:(id)asset
-//                     amount:(id)n_amount
-//{
-//    //    NSString* preimage = @"s123";
-//    //    unsigned char digest[32] = {0, };
-//    //    sha256((const unsigned char*)[preimage UTF8String], [preimage length], digest);
-//    //    id preimage_hash = [[NSData alloc] initWithBytes:digest length:sizeof(digest)];
-//    //
-//    //    id account_info = [_full_account_data objectForKey:@"account"];
-//    //    id to1 = [_transfer_args objectForKey:@"to"];
-//    //    id op = @{
-//    //              @"fee":@{
-//    //                      @"amount":@0,
-//    //                      @"asset_id":@"1.3.0",
-//    //                      },
-//    //              @"from":account_info[@"id"],
-//    //              @"to":to1[@"id"],
-//    //              @"amount":@{
-//    //                      @"amount":@(1234),
-//    //                      @"asset_id":@"1.3.0",
-//    //                      },
-//    //              @"preimage_hash":@[@2, preimage_hash],
-//    //              @"preimage_size":@([preimage length]),
-//    //              @"claim_period_seconds":@(3600*10)
-//    //              };
-//    //
-//    //    [[[[BitsharesClientManager sharedBitsharesClientManager] htlcCreate:op] then:(^id(id data) {
-//    //        NSLog(@"%@", data);
-//    //        return nil;
-//    //    })] catch:(^id(id error) {
-//    //        NSLog(@"%@", error);
-//    //        return nil;
-//    //    })];
-//    //    return;
-//    
-//    
-////    //  --- 开始构造OP ---
-////    id n_amount_pow = [NSString stringWithFormat:@"%@", [n_amount decimalNumberByMultiplyingByPowerOf10:[asset[@"precision"] integerValue]]];
-////    id fee_asset_id = [_fee_item objectForKey:@"fee_asset_id"];
-////    id op = @{
-////              @"fee":@{
-////                      @"amount":@0,
-////                      @"asset_id":fee_asset_id,
-////                      },
-////              @"from":from[@"id"],
-////              @"to":to[@"id"],
-////              @"amount":@{
-////                      @"amount":@([n_amount_pow unsignedLongLongValue]),
-////                      @"asset_id":asset[@"id"],
-////                      },
-////              @"memo":memo_object
-////              };
-////    //  --- 开始评估手续费 ---
-////    [[[[BitsharesClientManager sharedBitsharesClientManager] calcOperationFee:ebo_transfer opdata:op] then:(^id(id fee_price_item) {
-////        [self hideBlockView];
-////        //  判断手续费是否足够。
-////        id n_fee_cost = [self _isFeeSufficient:fee_price_item fee_asset_id:fee_asset_id asset:asset amount:n_amount];
-////        if (!n_fee_cost){
-////            [OrgUtils makeToast:NSLocalizedString(@"kTipsTxFeeNotEnough", @"手续费不足，请确保帐号有足额的 BTS/CNY/USD 用于支付网络手续费。")];
-////            return nil;
-////        }
-////        //  --- 弹框确认转账行为 ---
-////        //  弹确认框之前 设置参数
-////        [_transfer_args setObject:n_amount forKey:@"kAmount"];
-////        [_transfer_args setObject:n_fee_cost forKey:@"kFeeCost"];
-////
-////        id op_with_fee = [op mutableCopy];
-////        [op_with_fee setObject:fee_price_item forKey:@"fee"];
-////        [_transfer_args setObject:[op_with_fee copy] forKey:@"kOpData"];            //  传递过去，避免再次构造。
-////        if (memo){
-////            [_transfer_args setObject:memo forKey:@"kMemo"];
-////        }else{
-////            [_transfer_args removeObjectForKey:@"kMemo"];
-////        }
-////        //  确保有权限发起普通交易，否则作为提案交易处理。
-////        [self GuardProposalOrNormalTransaction:ebo_transfer
-////                         using_owner_authority:NO
-////                      invoke_proposal_callback:NO
-////                                        opdata:[_transfer_args objectForKey:@"kOpData"]
-////                                     opaccount:[_full_account_data objectForKey:@"account"]
-////                                          body:^(BOOL isProposal, NSDictionary *proposal_create_args)
-////         {
-////             assert(!isProposal);
-////             // 有权限：转到交易确认界面。
-////             VCTransactionConfirm* vc = [[VCTransactionConfirm alloc] initWithTransferArgs:[_transfer_args copy] callback:(^(BOOL isOk) {
-////                 if (isOk){
-////                     [self _processTransferCore];
-////                 }else{
-////                     NSLog(@"cancel...");
-////                 }
-////             })];
-////             vc.title = NSLocalizedString(@"kVcTitleConfirmTransaction", @"请确认交易");
-////             vc.hidesBottomBarWhenPushed = YES;
-////             [self showModelViewController:vc tag:0];
-////         }];
-////        return nil;
-////    })] catch:(^id(id error) {
-////        [self hideBlockView];
-////        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
-////        return nil;
-////    })];
-////    return nil;
-//}
-//
-///**
-// *  (private) 用户确认完毕 最后提交请求。
-// */
-//- (void)_processTransferCore
-//{
-//    id asset = [_transfer_args objectForKey:@"asset"];
-//    assert(asset);
-//    id op_data = [_transfer_args objectForKey:@"kOpData"];
-//    assert(op_data);
-//    
-//    //  请求网络广播
-//    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-//    [[[[BitsharesClientManager sharedBitsharesClientManager] transfer:op_data] then:(^id(id data) {
-//        id account_id = [[_full_account_data objectForKey:@"account"] objectForKey:@"id"];
-//        [[[[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:account_id] then:(^id(id full_data) {
-//            NSLog(@"transfer & refresh: %@", full_data);
-//            [self hideBlockView];
-//            [self refreshUI:full_data];
-//            [OrgUtils makeToast:NSLocalizedString(@"kVcTransferTipTxTransferFullOK", @"发送成功。")];
-//            //  [统计]
-//            [Answers logCustomEventWithName:@"txTransferFullOK" customAttributes:@{@"account":account_id, @"asset":asset[@"symbol"]}];
-//            return nil;
-//        })] catch:(^id(id error) {
-//            [self hideBlockView];
-//            [OrgUtils makeToast:NSLocalizedString(@"kVcTransferTipTxTransferOK", @"发送成功，但刷新界面数据失败，请稍后再试。")];
-//            //  [统计]
-//            [Answers logCustomEventWithName:@"txTransferOK" customAttributes:@{@"account":account_id, @"asset":asset[@"symbol"]}];
-//            return nil;
-//        })];
-//        return nil;
-//    })] catch:(^id(id error) {
-//        [self hideBlockView];
-//        [OrgUtils makeToast:NSLocalizedString(@"kTipsTxRequestFailed", @"请求失败，请稍后再试。")];
-//        //  [统计]
-//        [Answers logCustomEventWithName:@"txTransferFailed" customAttributes:@{@"asset":asset[@"symbol"]}];
-//        return nil;
-//    })];
-//}
 
 #pragma mark- for UITextFieldDelegate
 
@@ -1075,11 +955,12 @@ enum
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    ThemeManager* theme = [ThemeManager sharedThemeManager];
+    
     switch (indexPath.section) {
         case kVcFormArgs:
         {
             NSInteger row_type = [[_rowTypeArray objectAtIndex:indexPath.row] integerValue];
-            //  TODO:fowallet color
             switch (row_type) {
                 case kVcSubFrom:
                 {
@@ -1088,9 +969,9 @@ enum
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
                     cell.textLabel.text = NSLocalizedString(@"kVcTransferCellFrom", @"来自帐号");
-                    cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+                    cell.textLabel.textColor = theme.textColorMain;
                     cell.detailTextLabel.text = [[_transfer_args objectForKey:@"from"] objectForKey:@"name"];
-                    cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+                    cell.detailTextLabel.textColor = theme.textColorMain;
                     cell.hideTopLine = YES;
                     cell.hideBottomLine = YES;
                     return cell;
@@ -1101,7 +982,7 @@ enum
                     UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
                     cell.backgroundColor = [UIColor clearColor];
                     cell.textLabel.text = NSLocalizedString(@"kVcTransferCellTo", @"发往帐号");
-                    cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+                    cell.textLabel.textColor = theme.textColorMain;
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                     cell.selectionStyle = UITableViewCellSelectionStyleBlue;
                     cell.hideTopLine = YES;
@@ -1109,10 +990,10 @@ enum
                     
                     NSString* str = [[_transfer_args objectForKey:@"to"] objectForKey:@"name"];
                     if (!str || [str length] == 0){
-                        cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorGray;
+                        cell.detailTextLabel.textColor = theme.textColorGray;
                         cell.detailTextLabel.text = NSLocalizedString(@"kVcTransferTipSelectToAccount", @"请选择收款帐号");
                     }else{
-                        cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].buyColor;//TODO:color
+                        cell.detailTextLabel.textColor = theme.buyColor;
                         cell.detailTextLabel.text = str;
                     }
                     
@@ -1124,14 +1005,14 @@ enum
                     UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
                     cell.backgroundColor = [UIColor clearColor];
                     cell.textLabel.text = NSLocalizedString(@"kVcTransferCellAsset", @"转账资产");
-                    cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+                    cell.textLabel.textColor = theme.textColorMain;
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                     cell.selectionStyle = UITableViewCellSelectionStyleBlue;
                     cell.hideTopLine = YES;
                     cell.hideBottomLine = YES;
                     id asset = [_transfer_args objectForKey:@"asset"];
                     assert(asset);
-                    cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+                    cell.detailTextLabel.textColor = theme.textColorMain;
                     cell.detailTextLabel.text = [asset objectForKey:@"symbol"];
                     return cell;
                 }
@@ -1181,11 +1062,15 @@ enum
                     }else{
                         cell.textLabel.text = NSLocalizedString(@"kVcHtlcCellTitlePreimageHash", @"原像哈希");
                     }
-                    cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                     cell.accessoryView = _tf_preimage_or_hash;
                     cell.showCustomBottomLine = YES;
                     cell.hideTopLine = YES;
                     cell.hideBottomLine = YES;
+                    if (_lock_field){
+                        cell.textLabel.textColor = theme.textColorGray;
+                    }else{
+                        cell.textLabel.textColor = theme.textColorMain;
+                    }
                     return cell;
                 }
                     break;
@@ -1198,9 +1083,9 @@ enum
                     cell.showCustomBottomLine = YES;
                     
                     UISwitch* pSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
-                    pSwitch.tintColor = [ThemeManager sharedThemeManager].textColorGray;        //  边框颜色
-                    pSwitch.thumbTintColor = [ThemeManager sharedThemeManager].textColorGray;   //  按钮颜色
-                    pSwitch.onTintColor = [ThemeManager sharedThemeManager].textColorHighlight; //  开启时颜色
+                    pSwitch.tintColor = theme.textColorGray;        //  边框颜色
+                    pSwitch.thumbTintColor = theme.textColorGray;   //  按钮颜色
+                    pSwitch.onTintColor = theme.textColorHighlight; //  开启时颜色
                     
                     pSwitch.tag = [[_rowTypeArray objectAtIndex:indexPath.row] integerValue];
                     pSwitch.on = _enable_more_args;
@@ -1220,9 +1105,9 @@ enum
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                     cell.selectionStyle = UITableViewCellSelectionStyleBlue;
                     cell.textLabel.text = NSLocalizedString(@"kVcHtlcCellTitleClaimPeriod", @"有效期");
-                    cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+                    cell.textLabel.textColor = theme.textColorMain;
                     cell.detailTextLabel.text = _currExpire[@"name"];
-                    cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+                    cell.detailTextLabel.textColor = theme.textColorNormal;
                     return cell;
                 }
                     break;
@@ -1232,12 +1117,19 @@ enum
                     UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
                     cell.backgroundColor = [UIColor clearColor];
                     cell.showCustomBottomLine = YES;
-                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-                    cell.selectionStyle = UITableViewCellSelectionStyleBlue;
                     cell.textLabel.text = NSLocalizedString(@"kVcHtlcCellTitleHashMethod", @"哈希算法");
-                    cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                     cell.detailTextLabel.text = _currHashType[@"name"];
-                    cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+                    if (_lock_field){
+                        cell.textLabel.textColor = theme.textColorGray;
+                        cell.detailTextLabel.textColor = theme.textColorGray;
+                        cell.accessoryType = UITableViewCellAccessoryNone;
+                        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                    }else{
+                        cell.textLabel.textColor = theme.textColorMain;
+                        cell.detailTextLabel.textColor = theme.textColorNormal;
+                        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                        cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+                    }
                     return cell;
                 }
                     break;
@@ -1246,16 +1138,23 @@ enum
                     UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
                     cell.backgroundColor = [UIColor clearColor];
                     cell.showCustomBottomLine = YES;
-                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-                    cell.selectionStyle = UITableViewCellSelectionStyleBlue;
                     cell.textLabel.text = NSLocalizedString(@"kVcHtlcCellTitlePreimageLength", @"原像长度");
-                    cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                     if (_currPreimageLength > 0){
                         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", @(_currPreimageLength)];
-                        cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+                        cell.detailTextLabel.textColor = theme.textColorNormal;
                     }else{
                         cell.detailTextLabel.text = NSLocalizedString(@"kVcHtlcPlaceholderInputPreimageLength", @"请选择原像长度值");
-                        cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorGray;
+                        cell.detailTextLabel.textColor = theme.textColorGray;
+                    }
+                    if (_lock_field){
+                        cell.textLabel.textColor = theme.textColorGray;
+                        cell.detailTextLabel.textColor = theme.textColorGray;
+                        cell.accessoryType = UITableViewCellAccessoryNone;
+                        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                    }else{
+                        cell.textLabel.textColor = theme.textColorMain;
+                        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                        cell.selectionStyle = UITableViewCellSelectionStyleBlue;
                     }
                     return cell;
                 }
@@ -1382,6 +1281,9 @@ enum
  */
 - (void)onPreimageLengthClicked
 {
+    if (_lock_field){
+        return;
+    }
     NSInteger defaultIndex = 0;
     NSMutableArray* list = [NSMutableArray array];
     for (NSInteger i = 1; i <= 256; ++i) {
@@ -1411,7 +1313,9 @@ enum
  */
 - (void)onHashMethodClicked
 {
-    //  TODO:2.1 未完成
+    if (_lock_field){
+        return;
+    }
     NSInteger defaultIndex = 0;
     NSInteger currValue = [[_currHashType objectForKey:@"value"] integerValue];
     NSInteger idx = 0;
@@ -1423,7 +1327,7 @@ enum
         ++idx;
     }
     [[[MyPopviewManager sharedMyPopviewManager] showModernListView:self.navigationController
-                                                           message:@"请选择哈希算法"
+                                                           message:NSLocalizedString(@"kVcHtlcPlaceholderInputHashType", @"请选择哈希算法")
                                                              items:_const_hashtype_list
                                                            itemkey:@"name"
                                                       defaultIndex:defaultIndex] then:(^id(id result) {
@@ -1443,7 +1347,6 @@ enum
  */
 - (void)onExpirationClicked
 {
-    //  TODO:2.1 未完成
     NSInteger defaultIndex = 0;
     NSInteger currValue = [[_currExpire objectForKey:@"value"] integerValue];
     NSInteger idx = 0;
@@ -1455,7 +1358,7 @@ enum
         ++idx;
     }
     [[[MyPopviewManager sharedMyPopviewManager] showModernListView:self.navigationController
-                                                           message:@"请选择合约有效期"
+                                                           message:NSLocalizedString(@"kVcHtlcPlaceholderInputExpire", @"请选择合约有效期")
                                                              items:_const_expire_list
                                                            itemkey:@"name"
                                                       defaultIndex:defaultIndex] then:(^id(id result) {

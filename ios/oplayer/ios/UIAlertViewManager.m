@@ -93,26 +93,29 @@ static UIAlertViewManager *_sharedUIAlertViewManager = nil;
     }
 }
 
-- (void)showMessageEx:(NSString*)pMessage
-            withTitle:(NSString*)pTitle
-         cancelButton:(NSString*)cancel
-         otherButtons:(NSArray*)otherButtons
-            textfield:(NSString*)placeholder
-           completion:(Arg1CompletionBlock)completion
+- (void)_showMessageEx:(NSString*)pMessage
+             withTitle:(NSString*)pTitle
+          cancelButton:(NSString*)cancel
+          otherButtons:(NSArray*)otherButtons
+             textfield:(NSString*)placeholder
+            ispassword:(BOOL)ispassword
+            completion:(Arg1CompletionBlock)completion
 {
+    ThemeManager* theme = [ThemeManager sharedThemeManager];
+    
     UIWindow* currKeyWindow = [UIApplication sharedApplication].keyWindow;
     currKeyWindow = [NativeAppDelegate sharedAppDelegate].lockScreenWindow == currKeyWindow ? currKeyWindow : [NativeAppDelegate sharedAppDelegate].window;
     
     SCLAlertView* alert = [[SCLAlertView alloc] init];
     
-    alert.customViewColor = [ThemeManager sharedThemeManager].textColorNormal;
+    alert.customViewColor = theme.textColorNormal;
     alert.shouldDismissOnTapOutside = NO;
     alert.showAnimationType = SimplyAppear;
     
     //  样式定制
     alert.tintTopCircle = NO;
     alert.useLargerIcon = NO;
-    alert.backgroundViewColor = [ThemeManager sharedThemeManager].appBackColor;
+    alert.backgroundViewColor = theme.appBackColor;
     alert.horizontalButtons = YES;
     [alert removeTopCircle];
     
@@ -121,19 +124,18 @@ static UIAlertViewManager *_sharedUIAlertViewManager = nil;
     if (placeholder){
         //  输入框样式定制
         textfield = [alert addTextField:placeholder];
-        //  TODO:fowallet 是否是密码框，外部参数？
-        textfield.secureTextEntry = YES;
-        textfield.textColor = [ThemeManager sharedThemeManager].textColorMain;
-        textfield.tintColor = [ThemeManager sharedThemeManager].tintColor;
+        textfield.secureTextEntry = ispassword;
+        textfield.textColor = theme.textColorMain;
+        textfield.tintColor = theme.tintColor;
         textfield.backgroundColor = [UIColor clearColor];
         textfield.autocapitalizationType = UITextAutocapitalizationTypeNone;
         textfield.autocorrectionType = UITextAutocorrectionTypeNo;
         textfield.layer.masksToBounds = NO;
         textfield.layer.borderWidth = 0.5f;
         textfield.layer.cornerRadius = 1;
-        textfield.layer.borderColor = [ThemeManager sharedThemeManager].textColorNormal.CGColor;
+        textfield.layer.borderColor = theme.textColorNormal.CGColor;
         textfield.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeholder
-                                                                          attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
+                                                                          attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
                                                                                        NSFontAttributeName:[UIFont systemFontOfSize:14]}];
     }
     
@@ -178,7 +180,7 @@ static UIAlertViewManager *_sharedUIAlertViewManager = nil;
          otherButtons:(NSArray*)otherButtons
            completion:(Arg1CompletionBlock)completion
 {
-    [self showMessageEx:pMessage withTitle:pTitle cancelButton:cancel otherButtons:otherButtons textfield:nil completion:completion];
+    [self _showMessageEx:pMessage withTitle:pTitle cancelButton:cancel otherButtons:otherButtons textfield:nil ispassword:NO completion:completion];
 }
 
 /**
@@ -211,15 +213,17 @@ static UIAlertViewManager *_sharedUIAlertViewManager = nil;
 - (void)showInputBox:(NSString*)message
            withTitle:(NSString*)title
          placeholder:(NSString*)placeholder
+          ispassword:(BOOL)ispassword
                   ok:(NSString*)okbutton
           completion:(ArgTextFieldCompletionBlock)completion
 {
-    [self showMessageEx:message
-              withTitle:title
-           cancelButton:NSLocalizedString(@"kBtnCancel", @"取消")
-           otherButtons:[NSArray arrayWithObject:okbutton]
-              textfield:placeholder
-             completion:(Arg1CompletionBlock)completion];
+    [self _showMessageEx:message
+               withTitle:title
+            cancelButton:NSLocalizedString(@"kBtnCancel", @"取消")
+            otherButtons:[NSArray arrayWithObject:okbutton]
+               textfield:placeholder
+              ispassword:ispassword
+              completion:(Arg1CompletionBlock)completion];
 }
 
 @end

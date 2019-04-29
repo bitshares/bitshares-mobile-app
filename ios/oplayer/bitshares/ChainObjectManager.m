@@ -443,6 +443,15 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     }
 }
 
+- (WsPromise*)queryGlobalProperties
+{
+    GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
+    return [[api exec:@"get_global_properties" params:@[]] then:(^id(id global_data) {
+        [self updateObjectGlobalProperties:global_data];
+        return global_data;
+    })];
+}
+
 /**
  *  (public) 获取指定分组信息
  */
@@ -970,6 +979,14 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
                       cacheContainer:nil
                       cacheObjectKey:nil
                       skipQueryCache:NO];
+}
+
+- (WsPromise*)queryAllGrapheneObjectsSkipCache:(NSArray*)id_array
+{
+    return [self queryAllObjectsInfo:id_array
+                      cacheContainer:nil
+                      cacheObjectKey:nil
+                      skipQueryCache:YES];
 }
 
 /**

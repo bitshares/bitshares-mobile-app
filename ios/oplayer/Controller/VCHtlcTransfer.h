@@ -20,6 +20,10 @@ typedef enum EHtlcDeployMode
 
 @interface VCHtlcTransfer : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
-- (id)initWithUserFullInfo:(NSDictionary*)full_account_data mode:(EHtlcDeployMode)mode havePreimage:(BOOL)havePreimage;
+- (id)initWithUserFullInfo:(NSDictionary*)full_account_data
+                      mode:(EHtlcDeployMode)mode
+              havePreimage:(BOOL)havePreimage
+                  ref_htlc:(id)ref_htlc
+                    ref_to:(id)ref_to;
 
 @end
