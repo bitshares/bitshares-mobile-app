@@ -280,12 +280,13 @@
         [[UIAlertViewManager sharedUIAlertViewManager] showInputBox:NSLocalizedString(@"kLoginTipsImportWalletTitle", @"导入钱包")
                                                           withTitle:nil
                                                         placeholder:NSLocalizedString(@"unlockTipsPleaseInputWalletPassword", @"请输入钱包密码")
+                                                         ispassword:YES
                                                                  ok:NSLocalizedString(@"kLoginBtnImportNow", @"立即导入")
                                                          completion:^(NSInteger buttonIndex, NSString *tfvalue) {
-            if (buttonIndex != 0){
-                [self processImportWalletCore:tfvalue fileitem:item];
-            }
-        }];
+                                                             if (buttonIndex != 0){
+                                                                 [self processImportWalletCore:tfvalue fileitem:item];
+                                                             }
+                                                         }];
     }];
 }
 

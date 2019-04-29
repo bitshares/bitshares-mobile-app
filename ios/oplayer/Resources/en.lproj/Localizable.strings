@@ -460,6 +460,10 @@
 "kVcTransferTipSelectAsset" = "Please select the asset to transfer";
 
 /* HTLC合约TODO:2.1 */
+"kVcHtlcEntryFromPreimage" = "HTLC合约（原像创建）";
+"kVcHtlcEntryFromHashcode" = "HTLC合约（哈希创建）";
+"kVcHtlcMenuPassiveCreate" = "被动部署合约";
+"kVcHtlcMenuProactivelyCreate" = "主动创建合约";
 "kVcHtlcCellTitlePreimage" = "原像";
 "kVcHtlcCellTitleAdvSwitch" = "高级设置";
 "kVcHtlcCellTitleHashMethod" = "哈希算法";
@@ -469,6 +473,8 @@
 "kVcHtlcPlaceholderInputPreimage" = "请输入合约的原像";
 "kVcHtlcPlaceholderInputPreimageHash" = "请输入原像的哈希值";
 "kVcHtlcPlaceholderInputPreimageLength" = "请选择原像长度值";
+"kVcHtlcPlaceholderInputHashType" = "请选择哈希算法";
+"kVcHtlcPlaceholderInputExpire" = "请选择合约有效期";
 "kVcHtlcTailerBtnCopy" = "复制";
 "kVcHtlcTailerBtnPaste" = "粘贴";
 "kVcHtlcSubmitBtn01" = "创建";
@@ -478,10 +484,36 @@
 "kVcHtlcTipsPreimageForm" = "原像格式为20位以上，且必须同时包含大写字母和数字。";
 "kVcHtlcTipsInputPreimageHash" = "请输入原像哈希值。";
 "kVcHtlcTipsInputValidPreimageHash" = "请输入有效的原像哈希值。";
+"kVcHtlcTipsExpireIsTooShort" = "临近合约A有效期，存在安全风险，不可创建合约B。请联系对方延长合约有效期。";
 "kVcHtlcMessageCreateFromPreimage" = "请确认已经复制备份好【原像】信息，丢失原像只能等待合约到期后自动解锁。是否继续创建合约？";
+"kVcHtlcMessageCreateFromHtlcObject" = "建议合约【有效期】务必“小于”对方合约有效期2天以上，否则可能造成资金损失。是否继续创建合约？";
 "kVcHtlcMessageCreateFromHashHavePreimage" = "主动创建合约请备份好【原像】信息，丢失原像只能等待合约到期后自动解锁。是否继续创建合约？";
 "kVcHtlcMessageCreateFromHashNoPreimage" = "被动部署合约请仔细确认对方已经部署好了相同的合约，并仔细核对各种参数。\n\n※ 注意 ※\n1、原像哈希和原像长度必须和对方完全匹配。\n2、建议合约【有效期】务必“小于”对方合约有效期2天以上，否则可能造成资金损失。是否继续创建合约？";
 "kVcHtlcMessageTipsTitle" = "风险提示";
+"kVcHtlcNoAnyObjects" = "没有任何HTLC合约信息";
+"kVcHtlcListCellFrom" = "付款账号 ";
+"kVcHtlcListCellTo" = "收款账号 ";
+"kVcHtlcListTransferDir" = "转账类型 ";
+"kVcHtlcListTransferDirPayment" = "付款";
+"kVcHtlcListTransferDirIncome" = "收款";
+"kVcHtlcListTransferAmount" = "转账金额 ";
+"kVcHtlcListPreimageLength" = "原像长度 ";
+"kVcHtlcListHashType" = "哈希类型 ";
+"kVcHtlcListHashTypeValueUnknown" = "未知类型 %@";
+"kVcHtlcListHashValue" = "原像哈希 ";
+"kVcHtlcListBtnExtend" = "延长有效期";
+"kVcHtlcListBtnRedeem" = "提取";
+"kVcHtlcListBtnCreate" = "部署";
+"kVcHtlcListTipsErrorMissParams" = "HTLC相关参数理事会尚未配置，请稍后再试。";
+"kVcHtlcListTipsErrorMaxExpire" = "已经达到最长有效期，不能再延长了。";
+"kVcHtlcListTipsSelectExtendDays" = "请选择延长天数";
+"kVcHtlcListTipsExtendConfirm" = "延长 %@ 天合约的有效期，延长之后不可降低。是否继续？";
+"kVcHtlcListTipsInputValidPreimage" = "请输入有效的原像信息。";
+"kVcHtlcListAskTitleRedeem" = "提取合约";
+"kVcHtlcListAskPlaceholderRedeem" = "请输入合约原像";
+"kVcHtlcListTipsRedeemOK" = "HTLC合约 %@ 提取成功。";
+"kVcHtlcListTipsExtendOK" = "HTLC合约 %@ 延长有效期成功。";
+"kVcHtlcListExtendNDayFmt" = "%@天";
 
 /* 确认界面 */
 "kVcConfirmTipFrom" = "From";
@@ -545,7 +577,7 @@
 "kSettingCurrencyNameKRW" = "Korean Won";
 "kSettingCurrencyNameBTS" = "Bitshares Core Asset";
 
-/* 各种VC标题栏名字 */
+/* 各种VC标题栏名字TODO:2.1HTLC */
 "kVcTitleLogin" = "Login";
 "kVcTitleImportAccount" = "Import account";
 "kVcTitleRegister" = "Register";
@@ -587,6 +619,8 @@
 "kVcTitleDeposit" = "%@ deposits";
 "kVcTitleWithdraw" = "%@ withdrawls";
 "kVcTitleKlineIndexSetting" = "K-Line Index Setting";
+"kVcTitleCreateHTLC" = "创建HTLC合约";
+"kVcTitleCreateSubHTLC" = "部署副合约";
 
 /* 钱包管理 */
 "kWalletUnlockFailedUnknowMode" = "Unlock failed, unknown account mode: %@.";

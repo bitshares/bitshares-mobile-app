@@ -14,11 +14,6 @@
 - (id)initWithOwner:(VCBase*)owner fullAccountInfo:(NSDictionary*)accountInfo;
 
 /**
- *  (public) 计算已经解冻的余额数量。（可提取的）
- */
-+ (unsigned long long)calcVestingBalanceAmount:(id)vesting;
-
-/**
  *  (public) query user htlc objects
  */
 - (void)queryUserHTLCs;

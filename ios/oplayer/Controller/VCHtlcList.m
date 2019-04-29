@@ -7,13 +7,26 @@
 //
 
 #import "VCHtlcList.h"
-#import "VCSearchNetwork.h"
-#import "VCImportAccount.h"
+#import "VCHtlcTransfer.h"
 #import "BitsharesClientManager.h"
 #import "ViewActionsCell.h"
 #import "OrgUtils.h"
 #import "ScheduleManager.h"
 #import "MyPopviewManager.h"
+
+enum
+{
+    kMySideFrom = 0,                //  我是付款方
+    kMySideTo,                      //  我是收款方
+    kMySideOther                    //  我吃吃瓜群众（仅查看别人的合约信息）
+};
+
+enum
+{
+    kHtlcActionTypeRedeem = 0,      //  提取（兑换）
+    kHtlcActionTypeCreate,          //  创建（部署）副本合约
+    kHtlcActionTypeExtendExpiry     //  扩展有效期
+};
 
 enum
 {
@@ -29,7 +42,6 @@ enum
 @interface VCHtlcList ()
 {
     NSDictionary*           _fullAccountInfo;
-    BOOL                    _isSelfAccount;
     
     __weak VCBase*          _owner;         //  REMARK：声明为 weak，否则会导致循环引用。
     
@@ -63,7 +75,6 @@ enum
         _owner = owner;
         _fullAccountInfo = accountInfo;
         _dataArray = [NSMutableArray array];
-        _isSelfAccount = [[WalletManager sharedWalletManager] isMyselfAccount:_fullAccountInfo[@"account"][@"name"]];
     }
     return self;
 }
@@ -72,31 +83,25 @@ enum
 {
     //  更新数据
     [_dataArray removeAllObjects];
-    //  TODO:2.1
+    
     if (data_array && [data_array count] > 0){
-//        for (id vesting in data_array) {
-//            id oid = [vesting objectForKey:@"id"];
-//            assert(oid);
-//            if (!oid){
-//                continue;
-//            }
-//            //  略过总金额为 0 的待解冻金额对象。
-//            if ([[[vesting objectForKey:@"balance"] objectForKey:@"amount"] unsignedLongLongValue] == 0){
-//                continue;
-//            }
-//            //  linear_vesting_policy = 0,
-//            //  cdd_vesting_policy
-//            if ([[[vesting objectForKey:@"policy"] objectAtIndex:0] integerValue] == 1){
-//                id name = [nameHash objectForKey:oid] ?: NSLocalizedString(@"kVestingCellNameCustomVBO", @"自定义解冻金额");
-//                id m_vesting = [vesting mutableCopy];
-//                [m_vesting setObject:name forKey:@"kName"];
-//                [_dataArray addObject:[m_vesting copy]];
-//            }else{
-//                //  TODO:fowallet 1.7 暂时不支持 linear_vesting_policy
-//            }
-//        }
+        id my_id = [[[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"] objectForKey:@"id"];
+        for (id htlc in data_array) {
+            id transfer = [htlc objectForKey:@"transfer"];
+            assert(transfer);
+            NSInteger side = kMySideOther;
+            if (my_id){
+                if ([my_id isEqualToString:[transfer objectForKey:@"from"]]){
+                    side = kMySideFrom;
+                }else if ([my_id isEqualToString:[transfer objectForKey:@"to"]]){
+                    side = kMySideTo;
+                }
+            }
+            id m_htlc = [htlc mutableCopy];
+            [m_htlc setObject:@(side) forKey:@"kSide"];
+            [_dataArray addObject:[m_htlc copy]];
+        }
     }
-    [_dataArray addObjectsFromArray:data_array];
     
     //  根据ID降序排列
     if ([_dataArray count] > 0){
@@ -127,12 +132,14 @@ enum
     //  TODO：特别注意：如果API节点配置的账户历史明细太低，可能漏掉部分HTLC对象。又或者用户的账号交易记录太多，HTLC对象也可能被漏掉 。
     //  TODO：后期data base api更新后处理。
     
+    id stop = [NSString stringWithFormat:@"1.%@.0", @(ebot_operation_history)];
+    id start = [NSString stringWithFormat:@"1.%@.0", @(ebot_operation_history)];
+    
     NSMutableDictionary* htlc_id_hash = [NSMutableDictionary dictionary];
     GrapheneApi* api_history = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_history;
-    [[[api_history exec:@"get_account_history_by_operations" params:@[uid, @[@(ebo_htlc_create)], @0, @100]] then:(^id(id data) {
-        id operation_history_objs = [data objectForKey:@"operation_history_objs"];
-        if (operation_history_objs && [operation_history_objs isKindOfClass:[NSArray class]] && [operation_history_objs count] > 0){
-            for (id op_history in operation_history_objs) {
+    [[[api_history exec:@"get_account_history_operations" params:@[uid, @(ebo_htlc_create), stop, start, @100]] then:(^id(id data_array) {
+        if (data_array && [data_array isKindOfClass:[NSArray class]] && [data_array count] > 0){
+            for (id op_history in data_array) {
                 id new_object_id = [OrgUtils extractNewObjectIDFromOperationResult:[op_history objectForKey:@"result"]];
                 if (new_object_id){
                     [htlc_id_hash setObject:@YES forKey:new_object_id];
@@ -140,7 +147,7 @@ enum
             }
         }
         id htlc_id_list = [htlc_id_hash allKeys];
-        return [[chainMgr queryAllGrapheneObjects:htlc_id_list] then:(^id(id data_hash) {
+        return [[chainMgr queryAllGrapheneObjectsSkipCache:htlc_id_list] then:(^id(id data_hash) {
             NSMutableDictionary* query_ids = [NSMutableDictionary dictionary];
             //{
             //    conditions =         {
@@ -172,7 +179,9 @@ enum
                 [query_ids setObject:@YES forKey:[transfer objectForKey:@"asset_id"]];
             }
             //  查询 & 缓存
-            return [[chainMgr queryAllGrapheneObjects:[query_ids allKeys]] then:(^id(id data) {
+            id p1 = [chainMgr queryAllGrapheneObjects:[query_ids allKeys]];
+            id p2 = [chainMgr queryGlobalProperties];
+            return [[WsPromise all:@[p1, p2]] then:(^id(id data) {
                 [_owner hideBlockView];
                 [self onQueryUserHTLCsResponsed:htlc_list];
                 return nil;
@@ -202,8 +211,7 @@ enum
     [self.view addSubview:_mainTableView];
     
     //  UI - 空
-    //  TODO:2.1多语言
-    _lbEmpty = [self genCenterEmptyLabel:rect txt:@"没有任何HTLC合约信息"];
+    _lbEmpty = [self genCenterEmptyLabel:rect txt:NSLocalizedString(@"kVcHtlcNoAnyObjects", @"没有任何HTLC合约信息")];
     _lbEmpty.hidden = YES;
     [self.view addSubview:_lbEmpty];
 }
@@ -216,6 +224,9 @@ enum
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if ([[[_dataArray objectAtIndex:section] objectForKey:@"kSide"] integerValue] == kMySideOther){
+        return kVcSubMax - 1;
+    }
     return kVcSubMax;
 }
 
@@ -286,25 +297,23 @@ enum
     
     id htlc = [_dataArray objectAtIndex:indexPath.section];
     
-//    cell.textLabel.text = NSLocalizedString([ary objectAtIndex:indexPath.row], @"");
     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
     
     cell.textLabel.font = [UIFont boldSystemFontOfSize:13.0f];
     cell.detailTextLabel.font = [UIFont boldSystemFontOfSize:13.0f];
     
-    //  TODO:2.1多语言
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     switch (indexPath.row) {
         case kVcSubFromAndTo:
         {
-            cell.textLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:@"付款账号 "
+            cell.textLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListCellFrom", @"付款账号 ")
                                                                                      value:[[chainMgr getChainObjectByID:[[htlc objectForKey:@"transfer"] objectForKey:@"from"]] objectForKey:@"name"]
                                                                                 titleColor:theme.textColorNormal
                                                                                 valueColor:theme.textColorMain];
             
             
-            cell.detailTextLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:@"收款账号 "
+            cell.detailTextLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListCellTo", @"收款账号 ")
                                                                                            value:[[chainMgr getChainObjectByID:[[htlc objectForKey:@"transfer"] objectForKey:@"to"]] objectForKey:@"name"]
                                                                                       titleColor:theme.textColorNormal
                                                                                       valueColor:theme.textColorMain];
@@ -314,17 +323,17 @@ enum
         {
             BOOL isPay = [_fullAccountInfo[@"account"][@"id"] isEqualToString:[[htlc objectForKey:@"transfer"] objectForKey:@"from"]];
             if (isPay){
-                cell.textLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:@"转账类型 "
-                                                                                         value:@"付款"
+                cell.textLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListTransferDir", @"转账类型 ")
+                                                                                         value:NSLocalizedString(@"kVcHtlcListTransferDirPayment", @"付款")
                                                                                     titleColor:theme.textColorNormal
                                                                                     valueColor:theme.sellColor];
             }else{
-                cell.textLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:@"转账类型 "
-                                                                                         value:@"收款"
+                cell.textLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListTransferDir", @"转账类型 ")
+                                                                                         value:NSLocalizedString(@"kVcHtlcListTransferDirIncome", @"收款")
                                                                                     titleColor:theme.textColorNormal
                                                                                     valueColor:theme.buyColor];
             }
-            cell.detailTextLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:@"转账金额 "
+            cell.detailTextLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListTransferAmount", @"转账金额 ")
                                                                                            value:[OrgUtils formatAssetAmountItem:[htlc objectForKey:@"transfer"]]
                                                                                       titleColor:theme.textColorNormal
                                                                                       valueColor:theme.textColorMain];
@@ -336,14 +345,14 @@ enum
         {
             id size = [[[htlc objectForKey:@"conditions"] objectForKey:@"hash_lock"] objectForKey:@"preimage_size"];
             
-            cell.textLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:@"原像长度 "
+            cell.textLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListPreimageLength", @"原像长度 ")
                                                                                      value:[NSString stringWithFormat:@"%@", size]
                                                                                 titleColor:theme.textColorNormal
                                                                                 valueColor:theme.textColorMain];
             
             
             NSInteger hash_type = [[[[[htlc objectForKey:@"conditions"] objectForKey:@"hash_lock"] objectForKey:@"preimage_hash"] firstObject] integerValue];
-            NSString* hash_type_str = [NSString stringWithFormat:@"未知类型 %@", @(hash_type)];
+            NSString* hash_type_str = [NSString stringWithFormat:NSLocalizedString(@"kVcHtlcListHashTypeValueUnknown", @"未知类型 %@"), @(hash_type)];
             switch (hash_type) {
                 case EBHHT_RMD160:
                     hash_type_str = @"RIPEMD160";
@@ -358,7 +367,7 @@ enum
                     break;
             }
             
-            cell.detailTextLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:@"哈希类型 "
+            cell.detailTextLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListHashType", @"哈希类型 ")
                                                                                            value:hash_type_str
                                                                                       titleColor:theme.textColorNormal
                                                                                       valueColor:theme.textColorMain];
@@ -366,8 +375,10 @@ enum
             break;
         case kVcSubPreimageHash:
         {
-            cell.textLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:@"原像哈希 "
-                                                                                     value:[[[[htlc objectForKey:@"conditions"] objectForKey:@"hash_lock"] objectForKey:@"preimage_hash"] lastObject]
+            NSString* have_value = [[[[htlc objectForKey:@"conditions"] objectForKey:@"hash_lock"] objectForKey:@"preimage_hash"] lastObject];
+            cell.textLabel.lineBreakMode = NSLineBreakByTruncatingMiddle;
+            cell.textLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListHashValue", @"原像哈希 ")
+                                                                                     value:[have_value uppercaseString]
                                                                                 titleColor:theme.textColorNormal
                                                                                 valueColor:theme.textColorMain];
             cell.showCustomBottomLine = YES;
@@ -379,10 +390,27 @@ enum
             ViewActionsCell* cell = (ViewActionsCell *)[tableView dequeueReusableCellWithIdentifier:identify];
             if (!cell)
             {
-                id buttons = @[
-                               @{@"name":@"提取", @"type":@0},
-                               @{@"name":@"部署", @"type":@1},
-                               ];
+                id buttons;
+                switch ([[htlc objectForKey:@"kSide"] integerValue]) {
+                    case kMySideFrom:
+                    {
+                        buttons = @[
+                                    @{@"name":NSLocalizedString(@"kVcHtlcListBtnExtend", @"延长有效期"), @"type":@(kHtlcActionTypeExtendExpiry)},
+                                    ];
+                    }
+                        break;
+                    case kMySideTo:
+                    {
+                        buttons = @[
+                                    @{@"name":NSLocalizedString(@"kVcHtlcListBtnRedeem", @"提取"), @"type":@(kHtlcActionTypeRedeem)},
+                                    @{@"name":NSLocalizedString(@"kVcHtlcListBtnCreate", @"部署"), @"type":@(kHtlcActionTypeCreate)},
+                                    ];
+                    }
+                        break;
+                    default:
+                        assert(false);
+                        break;
+                }
                 cell = [[ViewActionsCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identify buttons:buttons];
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 cell.accessoryType = UITableViewCellAccessoryNone;
@@ -408,153 +436,238 @@ enum
 }
 
 /**
- *  (public) 计算已经解冻的余额数量。（可提取的）
- */
-+ (unsigned long long)calcVestingBalanceAmount:(id)vesting
-{
-    id policy = [vesting objectForKey:@"policy"];
-    assert(policy);
-    //  TODO:fowallet 其他的类型不支持。
-    assert([[policy objectAtIndex:0] integerValue] == 1);
-    id policy_data = [policy objectAtIndex:1];
-    assert(policy_data);
-    
-    //  vesting seconds     REMARK：解冻周期最低1秒。
-    NSUInteger vesting_seconds = MAX([[policy_data objectForKey:@"vesting_seconds"] unsignedIntegerValue], 1L);
-    
-    //  last update timestamp
-    NSTimeInterval coin_seconds_earned_last_update_ts = [OrgUtils parseBitsharesTimeString:policy_data[@"coin_seconds_earned_last_update"]];
-    NSTimeInterval now_ts = [[NSDate date] timeIntervalSince1970];
-    
-    //  my balance & already earned seconds
-    unsigned long long total_balance_amount = [[[vesting objectForKey:@"balance"] objectForKey:@"amount"] unsignedLongLongValue];
-    unsigned long long coin_seconds_earned = [[policy_data objectForKey:@"coin_seconds_earned"] unsignedLongLongValue];
-    
-    //  recalc real 'coin_seconds_earned' value
-    unsigned long long final_earned = coin_seconds_earned;
-    if (now_ts > coin_seconds_earned_last_update_ts){
-        unsigned long long delta_seconds = (unsigned long long)(now_ts - coin_seconds_earned_last_update_ts);
-        unsigned long long delta_coin_seconds = total_balance_amount * delta_seconds;
-        unsigned long long coin_seconds_earned_max = total_balance_amount * vesting_seconds;
-        final_earned = MIN(coin_seconds_earned + delta_coin_seconds, coin_seconds_earned_max);
-    }
-    
-    unsigned long long withdraw_max = (unsigned long long)floor(final_earned / (double)vesting_seconds);
-    assert(withdraw_max <= total_balance_amount);
-    
-    return withdraw_max;
-}
-
-/**
- *  事件 - 提取待解冻金额
- */
-- (void)onButtonClicked_Withdraw:(UIButton*)button
-{
-    assert(_isSelfAccount);
-    
-    id vesting = [_dataArray objectAtIndex:button.tag];
-    NSLog(@"vesting : %@", vesting[@"id"]);
-    
-    id policy = [vesting objectForKey:@"policy"];
-    assert(policy);
-    //  TODO:fowallet 其他的类型不支持。
-    assert([[policy objectAtIndex:0] integerValue] == 1);
-    id policy_data = [policy objectAtIndex:1];
-    id start_claim = [policy_data objectForKey:@"start_claim"];
-    NSTimeInterval start_claim_ts = [OrgUtils parseBitsharesTimeString:start_claim];
-    NSTimeInterval now_ts = [[NSDate date] timeIntervalSince1970];
-    if (now_ts <= start_claim_ts){
-        id s = [OrgUtils getDateTimeLocaleString:[NSDate dateWithTimeIntervalSince1970:start_claim_ts]];
-        [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVestingTipsStartClaim", @"该笔金额在 %@ 之后方可提取。"), s]];
-        return;
-    }
-    
-    //  计算可提取数量
-    unsigned long long withdraw_available = [[self class] calcVestingBalanceAmount:vesting];
-    if (withdraw_available <= 0){
-        [OrgUtils makeToast:NSLocalizedString(@"kVestingTipsAvailableZero", @"没有可提取数量，请等待。")];
-        return;
-    }
-    
-    //  ----- 准备提取 -----
-    
-    //  1、判断手续费是否足够。
-    id fee_item =  [[ChainObjectManager sharedChainObjectManager] getFeeItem:ebo_vesting_balance_withdraw full_account_data:_fullAccountInfo];
-    if (![[fee_item objectForKey:@"sufficient"] boolValue]){
-        [OrgUtils makeToast:NSLocalizedString(@"kTipsTxFeeNotEnough", @"手续费不足，请确保帐号有足额的 BTS/CNY/USD 用于支付网络手续费。")];
-        return;
-    }
-    
-    //  2、解锁钱包or账号
-    [_owner GuardWalletUnlocked:NO body:^(BOOL unlocked) {
-        if (unlocked){
-            [self processWithdrawVestingBalanceCore:vesting
-                                  full_account_data:_fullAccountInfo
-                                           fee_item:fee_item
-                                 withdraw_available:withdraw_available];
-        }
-    }];
-}
-
-
-- (void)processWithdrawVestingBalanceCore:(id)vesting_balance
-                        full_account_data:(id)full_account_data
-                                 fee_item:(id)fee_item
-                       withdraw_available:(unsigned long long)withdraw_available
-{
-    assert(vesting_balance);
-    assert(full_account_data);
-    assert(fee_item);
-    id balance_id = vesting_balance[@"id"];
-    
-    id balance = vesting_balance[@"balance"];
-    assert(balance);
-    id account = [full_account_data objectForKey:@"account"];
-    assert(account);
-    
-    id uid = [account objectForKey:@"id"];
-    
-    id op = @{
-              @"fee":@{@"amount":@0, @"asset_id":fee_item[@"fee_asset_id"]},
-              @"vesting_balance":balance_id,
-              @"owner":uid,
-              @"amount":@{@"amount":@(withdraw_available), @"asset_id":balance[@"asset_id"]}
-              };
-    
-    //  确保有权限发起普通交易，否则作为提案交易处理。
-    [_owner GuardProposalOrNormalTransaction:ebo_vesting_balance_withdraw
-                       using_owner_authority:NO invoke_proposal_callback:NO
-                                      opdata:op
-                                   opaccount:account
-                                        body:^(BOOL isProposal, NSDictionary *proposal_create_args)
-     {
-         assert(!isProposal);
-         [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-         [[[[BitsharesClientManager sharedBitsharesClientManager] vestingBalanceWithdraw:op] then:(^id(id data) {
-             [_owner hideBlockView];
-             [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVestingTipTxVestingBalanceWithdrawFullOK", @"待解冻金额 %@ 提取成功。"), balance_id]];
-             //  [统计]
-             [Answers logCustomEventWithName:@"txVestingBalanceWithdrawFullOK" customAttributes:@{@"account":uid}];
-             //  刷新
-             [self queryUserHTLCs];
-             return nil;
-         })] catch:(^id(id error) {
-             [_owner hideBlockView];
-             [OrgUtils makeToast:NSLocalizedString(@"kTipsTxRequestFailed", @"请求失败，请稍后再试。")];
-             //  [统计]
-             [Answers logCustomEventWithName:@"txVestingBalanceWithdrawFailed" customAttributes:@{@"account":uid}];
-             return nil;
-         })];
-     }];
-}
-
-/**
  *  提取/扩展/部署等按钮点击。
  */
 - (void)onButtonClicked:(ViewActionsCell*)cell infos:(id)infos
 {
     id htlc = [_dataArray objectAtIndex:cell.user_tag];
     assert(htlc);
+    switch ([[infos objectForKey:@"type"] integerValue]) {
+        case kHtlcActionTypeCreate:
+            [self _onHtlcActionCreateClicked:htlc];
+            break;
+        case kHtlcActionTypeRedeem:
+            [self _onHtlcActionRedeemClicked:htlc];
+            break;
+        case kHtlcActionTypeExtendExpiry:
+            [self _onHtlcActionExtendExpiryClicked:htlc];
+            break;
+        default:
+            break;
+    }
+}
+
+- (void)_gotoCreateHTLC:(id)htlc fullaccountdata:(id)fullaccountdata
+{
+    id to_id = [[htlc objectForKey:@"transfer"] objectForKey:@"from"];
+    id to_name = [[[ChainObjectManager sharedChainObjectManager] getChainObjectByID:to_id] objectForKey:@"name"];
+    assert(to_name);
+    VCHtlcTransfer* vc = [[VCHtlcTransfer alloc] initWithUserFullInfo:fullaccountdata
+                                                                 mode:EDM_HASHCODE
+                                                         havePreimage:NO
+                                                             ref_htlc:htlc
+                                                               ref_to:@{@"id":to_id, @"name":to_name}];
+    vc.title = NSLocalizedString(@"kVcTitleCreateSubHTLC", @"部署副合约");
+    [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+}
+
+- (void)_onHtlcActionCreateClicked:(id)htlc
+{
+    if ([[WalletManager sharedWalletManager] isMyselfAccount:_fullAccountInfo[@"account"][@"name"]]){
+        [self _gotoCreateHTLC:htlc fullaccountdata:_fullAccountInfo];
+    }else{
+        [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+        id p1 = [self get_full_account_data_and_asset_hash:[[WalletManager sharedWalletManager] getWalletAccountName]];
+        id p2 = [[ChainObjectManager sharedChainObjectManager] queryFeeAssetListDynamicInfo];   //  查询手续费兑换比例、手续费池等信息
+        [[[WsPromise all:@[p1, p2]] then:(^id(id data) {
+            [_owner hideBlockView];
+            [self _gotoCreateHTLC:htlc fullaccountdata:[data objectAtIndex:0]];
+            return nil;
+        })] catch:(^id(id error) {
+            [_owner hideBlockView];
+            [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+            return nil;
+        })];
+    }
+}
+
+- (void)_onHtlcActionRedeemClicked:(id)htlc preimage:(NSString*)preimage
+{
+    if ([self isStringEmpty:preimage])
+    {
+        [OrgUtils makeToast:NSLocalizedString(@"kVcHtlcListTipsInputValidPreimage", @"请输入有效的原像信息。")];
+        return;
+    }
+
+    //  构造请求
+    id opaccount = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
+    assert(opaccount);
+    id account_id = [opaccount objectForKey:@"id"];
+    assert(account_id);
+    id htlc_id = [htlc objectForKey:@"id"];
+    assert(htlc_id);
+    
+    id op = @{
+              @"fee":@{
+                      @"amount":@0,
+                      @"asset_id":[ChainObjectManager sharedChainObjectManager].grapheneCoreAssetID,
+                      },
+              @"htlc_id":htlc_id,
+              @"redeemer":account_id,
+              @"preimage":[preimage dataUsingEncoding:NSUTF8StringEncoding]
+              };
+    
+    //  确保有权限发起普通交易，否则作为提案交易处理。
+    [_owner GuardProposalOrNormalTransaction:ebo_htlc_redeem
+                       using_owner_authority:NO
+                    invoke_proposal_callback:NO
+                                      opdata:op
+                                   opaccount:opaccount
+                                        body:^(BOOL isProposal, NSDictionary *proposal_create_args)
+     {
+         assert(!isProposal);
+         //  请求网络广播
+         [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+         [[[[BitsharesClientManager sharedBitsharesClientManager] htlcRedeem:op] then:(^id(id transaction_confirmation) {
+             [_owner hideBlockView];
+             [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcHtlcListTipsRedeemOK", @"HTLC合约 %@ 提取成功。"), htlc_id]];
+             //  [统计]
+             [Answers logCustomEventWithName:@"txHtlcRedeemFullOK" customAttributes:@{@"redeemer":account_id, @"htlc_id":htlc_id}];
+             //  刷新
+             [self queryUserHTLCs];
+             return nil;
+         })] catch:(^id(id error) {
+             [_owner hideBlockView];
+             [OrgUtils showGrapheneError:error];
+             //  [统计]
+             [Answers logCustomEventWithName:@"txHtlcRedeemFailed" customAttributes:@{@"redeemer":account_id, @"htlc_id":htlc_id}];
+             return nil;
+         })];
+     }];
+}
+
+- (void)_onHtlcActionRedeemClicked:(id)htlc
+{
+    [[UIAlertViewManager sharedUIAlertViewManager] showInputBox:NSLocalizedString(@"kVcHtlcListAskTitleRedeem", @"提取合约")
+                                                      withTitle:nil
+                                                    placeholder:NSLocalizedString(@"kVcHtlcListAskPlaceholderRedeem", @"请输入合约原像")
+                                                     ispassword:NO
+                                                             ok:NSLocalizedString(@"kBtnOK", @"确定")
+                                                     completion:^(NSInteger buttonIndex, NSString *tfvalue) {
+                                                         if (buttonIndex != 0){
+                                                             [_owner GuardWalletUnlocked:NO body:^(BOOL unlocked) {
+                                                                 if (unlocked){
+                                                                     [self _onHtlcActionRedeemClicked:htlc preimage:tfvalue];
+                                                                 }
+                                                             }];
+                                                         }
+                                                     }];
+}
+
+- (void)_onHtlcActionExtendExpiryClicked:(id)htlc seconds:(NSInteger)seconds
+{
+    assert(seconds > 0);
+    
+    //  构造请求
+    id opaccount = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
+    assert(opaccount);
+    id account_id = [opaccount objectForKey:@"id"];
+    assert(account_id);
+    id htlc_id = [htlc objectForKey:@"id"];
+    assert(htlc_id);
+    
+    id op = @{
+              @"fee":@{
+                      @"amount":@0,
+                      @"asset_id":[ChainObjectManager sharedChainObjectManager].grapheneCoreAssetID,
+                      },
+              @"htlc_id":htlc_id,
+              @"update_issuer":account_id,
+              @"seconds_to_add":@(seconds)
+              };
+    
+    //  确保有权限发起普通交易，否则作为提案交易处理。
+    [_owner GuardProposalOrNormalTransaction:ebo_htlc_extend
+                       using_owner_authority:NO
+                    invoke_proposal_callback:NO
+                                      opdata:op
+                                   opaccount:opaccount
+                                        body:^(BOOL isProposal, NSDictionary *proposal_create_args)
+     {
+         assert(!isProposal);
+         //  请求网络广播
+         [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+         [[[[BitsharesClientManager sharedBitsharesClientManager] htlcExtend:op] then:(^id(id transaction_confirmation) {
+             [_owner hideBlockView];
+             [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcHtlcListTipsExtendOK", @"HTLC合约 %@ 延长有效期成功。"), htlc_id]];
+             //  [统计]
+             [Answers logCustomEventWithName:@"txHtlcExtendFullOK" customAttributes:@{@"update_issuer":account_id, @"htlc_id":htlc_id}];
+             //  刷新
+             [self queryUserHTLCs];
+             return nil;
+         })] catch:(^id(id error) {
+             [_owner hideBlockView];
+             [OrgUtils showGrapheneError:error];
+             //  [统计]
+             [Answers logCustomEventWithName:@"txHtlcExtendFailed" customAttributes:@{@"update_issuer":account_id, @"htlc_id":htlc_id}];
+             return nil;
+         })];
+     }];
+}
+
+- (void)_onHtlcActionExtendExpiryClicked:(id)htlc
+{
+    id gp = [[ChainObjectManager sharedChainObjectManager] getObjectGlobalProperties];
+    assert(gp);
+    id extensions = [[gp objectForKey:@"parameters"] objectForKey:@"extensions"];
+    if (!extensions || ![extensions isKindOfClass:[NSDictionary class]]){
+        [OrgUtils makeToast:NSLocalizedString(@"kVcHtlcListTipsErrorMissParams", @"HTLC相关参数理事会尚未配置，请稍后再试。")];
+        return;
+    }
+    id updatable_htlc_options = [extensions objectForKey:@"updatable_htlc_options"];
+    if (!updatable_htlc_options){
+        [OrgUtils makeToast:NSLocalizedString(@"kVcHtlcListTipsErrorMissParams", @"HTLC相关参数理事会尚未配置，请稍后再试。")];
+        return;
+    }
+    NSInteger max_timeout_secs = [[updatable_htlc_options objectForKey:@"max_timeout_secs"] integerValue];
+    NSTimeInterval now_ts = [[NSDate date] timeIntervalSince1970];
+    NSTimeInterval htlc_expiration = [OrgUtils parseBitsharesTimeString:[[[htlc objectForKey:@"conditions"] objectForKey:@"time_lock"] objectForKey:@"expiration"]];
+    NSInteger max_add_seconds = max_timeout_secs - (htlc_expiration - now_ts);
+    NSInteger max_add_days = max_add_seconds / 86400;
+    if (max_add_days <= 0){
+        [OrgUtils makeToast:NSLocalizedString(@"kVcHtlcListTipsErrorMaxExpire", @"已经达到最长有效期，不能再延长了。")];
+        return;
+    }
+    
+    NSMutableArray* list = [NSMutableArray array];
+    for (NSInteger day = 1; day <= max_add_days; ++day) {
+        [list addObject:@{@"name":[NSString stringWithFormat:NSLocalizedString(@"kVcHtlcListExtendNDayFmt", @"%@天"), @(day)], @"value":@(day)}];
+    }
+    
+    [[[MyPopviewManager sharedMyPopviewManager] showModernListView:_owner.navigationController
+                                                           message:NSLocalizedString(@"kVcHtlcListTipsSelectExtendDays", @"请选择延长天数")
+                                                             items:list
+                                                           itemkey:@"name"
+                                                      defaultIndex:0] then:(^id(id result) {
+        if (result){
+            NSInteger extend_day = [[result objectForKey:@"value"] integerValue];
+            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:[NSString stringWithFormat:NSLocalizedString(@"kVcHtlcListTipsExtendConfirm", @"延长 %@ 天合约的有效期，延长之后不可降低。是否继续？"), @(extend_day)]
+                                                                   withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                                  completion:^(NSInteger buttonIndex)
+             {
+                 if (buttonIndex == 1)
+                 {
+                     //  --- 参数大部分检测合法 执行请求 ---
+                     [_owner GuardWalletUnlocked:NO body:^(BOOL unlocked) {
+                         if (unlocked){
+                             [self _onHtlcActionExtendExpiryClicked:htlc seconds:extend_day * 3600 * 24];
+                         }
+                     }];
+                 }
+             }];
+        }
+        return nil;
+    })];
 }
 
 @end

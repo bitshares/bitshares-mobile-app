@@ -74,6 +74,11 @@ typedef void (^YklUserCallback)(id data);
 + (BOOL)isValidHTCLPreimageFormat:(NSString*)preimage;
 
 /**
+ *  是否是有效的16进制字符串检测。
+ */
++ (BOOL)isValidHexString:(NSString*)hexstring;
+
+/**
  *  解析 BTS 网络时间字符串，返回 1970 到现在的秒数。格式：2018-06-04T13:03:57。
  */
 + (NSTimeInterval)parseBitsharesTimeString:(NSString*)time;

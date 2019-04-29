@@ -119,6 +119,7 @@
  */
 - (NSDictionary*)getObjectGlobalProperties;
 - (void)updateObjectGlobalProperties:(NSDictionary*)gp;
+- (WsPromise*)queryGlobalProperties;
 
 /**
  *  (public) 获取指定分组信息
@@ -190,6 +191,7 @@
 - (WsPromise*)queryAllAccountsInfo:(NSArray*)account_id_array;
 - (WsPromise*)queryAllAssetsInfo:(NSArray*)asset_id_array;
 - (WsPromise*)queryAllGrapheneObjects:(NSArray*)id_array;
+- (WsPromise*)queryAllGrapheneObjectsSkipCache:(NSArray*)id_array;
 
 /**
  *  (public) 查询所有 block_num 的 header 信息，返回 Hash。 格式：{对象ID=>对象信息, ...}

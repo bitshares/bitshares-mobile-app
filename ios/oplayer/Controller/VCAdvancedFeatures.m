@@ -51,10 +51,9 @@ enum
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
 
-    //  TODO:多语言
     NSArray* pSection1 = @[
-                           @"HTLC合约（原像创建）",
-                           @"HTLC合约（哈希创建）"
+                           NSLocalizedString(@"kVcHtlcEntryFromPreimage", @"HTLC合约（原像创建）"),
+                           NSLocalizedString(@"kVcHtlcEntryFromHashcode", @"HTLC合约（哈希创建）")
                            ];
     
     _dataArray = @[pSection1];
@@ -129,9 +128,22 @@ enum
     switch (indexPath.section) {
         case kVcHTLC:
         {
-            //  TODO:2.1 高级功能图标
-            cell.imageView.image = [UIImage templateImageNamed:@"iconDepositWithdraw"];
-            cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
+            switch (indexPath.row) {
+                case kVcSubHtlcPreimage:
+                {
+                    cell.imageView.image = [UIImage templateImageNamed:@"iconHtlcPreimage"];
+                    cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
+                }
+                    break;
+                case kVcSubHtlcHashcode:
+                {
+                    cell.imageView.image = [UIImage templateImageNamed:@"iconHtlcHashcode"];
+                    cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
+                }
+                    break;
+                default:
+                    break;
+            }
         }
             break;
         default:
@@ -162,11 +174,10 @@ enum
                     case kVcSubHtlcHashcode:
                     {
                         [self GuardWalletExist:^{
-                            //  TODO:2.1 fowallet 多语言
                             [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
                                                                                message:nil
                                                                                 cancel:NSLocalizedString(@"kBtnCancel", @"取消")
-                                                                                 items:@[@"被动部署合约", @"主动创建合约"]
+                                                                                 items:@[NSLocalizedString(@"kVcHtlcMenuPassiveCreate", @"被动部署合约"), NSLocalizedString(@"kVcHtlcMenuProactivelyCreate", @"主动创建合约")]
                                                                               callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
                              {
                                  if (buttonIndex != cancelIndex){
@@ -209,9 +220,8 @@ enum
     [[[WsPromise all:@[p1, p2]] then:(^id(id data) {
         [self hideBlockView];
         id full_userdata = [data objectAtIndex:0];
-        //  TODO:2.1多语言
-        VCHtlcTransfer* vc = [[VCHtlcTransfer alloc] initWithUserFullInfo:full_userdata mode:mode havePreimage:havePreimage];
-        vc.title = @"创建HTLC合约";
+        VCHtlcTransfer* vc = [[VCHtlcTransfer alloc] initWithUserFullInfo:full_userdata mode:mode havePreimage:havePreimage ref_htlc:nil ref_to:nil];
+        vc.title = NSLocalizedString(@"kVcTitleCreateHTLC", @"创建HTLC合约");
         [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
         return nil;
     })] catch:(^id(id error) {
