@@ -755,6 +755,22 @@
 "kOpDesc_asset_settle_cancel" = "cancel the settlement.";
 "kOpDesc_asset_claim_fees" = "claim the asset fees.";
 
+/* 交易OP细化TODO:2.1 */
+"kOpDetailFlagDangerous" = "DANGEROUS";
+"kOpDetailPermissionOwner" = "Owner Permission";
+"kOpDetailPermissionActive" = "Active Permission";
+"kOpDetailPermissionMemo" = "Memo Permission";
+"kOpDetailSubTitleVoteTargeter" = "Voting target";
+"kOpDetailSubTitleOperate" = "Action";
+"kOpDetailSubTitleNewWeightOrThreshold" = "New threshold / weight";
+"kOpDetailSubTitleChangeValue" = "Change";
+"kOpDetailSubOpAdd" = "Add";
+"kOpDetailSubOpDelete" = "Delete";
+"kOpDetailSubPrefixThreshold" = "Pass threshold";
+"kOpDetailSubPrefixCommittee" = "Committee";
+"kOpDetailSubPrefixWitness" = "Witness";
+"kOpDetailSubPrefixProxy" = "Proxy";
+
 /* 通用字符串 */
 "kLangKeyZhSimple" = "简体中文 / Simplified Chinese";
 "kLangKeyEn" = "English";

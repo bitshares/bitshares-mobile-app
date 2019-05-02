@@ -23,6 +23,8 @@
     UILabel*                _lbTransferName;    //  交易类型描述 转账、限价单等
     UILabel*                _lbMainDesc;        //  描述
     
+    UILabel*                _lbDangerous;       //  标签：危险操作
+    
     ViewPermissionCell*     _viewPermissionOwner;
     ViewPermissionCell*     _viewPermissionActive;
     ViewMemoKeyCell*        _viewPermissionMemoKey;
@@ -44,6 +46,7 @@
     
     _lbTransferName = nil;
     _lbMainDesc = nil;
+    _lbDangerous = nil;
     
     _viewPermissionOwner = nil;
     _viewPermissionActive = nil;
@@ -70,6 +73,20 @@
         _lbTransferName.backgroundColor = [UIColor clearColor];
         _lbTransferName.font = [UIFont boldSystemFontOfSize:13];
         [self addSubview:_lbTransferName];
+        
+        _lbDangerous = [[UILabel alloc] initWithFrame:CGRectZero];
+        UIColor* backColor = [ThemeManager sharedThemeManager].sellColor;
+        _lbDangerous.textAlignment = NSTextAlignmentCenter;
+        _lbDangerous.backgroundColor = [UIColor clearColor];
+        _lbDangerous.textColor = [ThemeManager sharedThemeManager].textColorMain;
+        _lbDangerous.font = [UIFont boldSystemFontOfSize:12];
+        _lbDangerous.layer.borderWidth = 1;
+        _lbDangerous.layer.cornerRadius = 2;
+        _lbDangerous.layer.masksToBounds = YES;
+        _lbDangerous.layer.borderColor = backColor.CGColor;
+        _lbDangerous.layer.backgroundColor = backColor.CGColor;
+        _lbDangerous.hidden = YES;
+        [self addSubview:_lbDangerous];
         
         _lbMainDesc = [[UILabel alloc] initWithFrame:CGRectZero];
         _lbMainDesc.lineBreakMode = NSLineBreakByWordWrapping;
@@ -222,6 +239,21 @@
     if (self.useLabelFont){
         _lbTransferName.font = self.textLabel.font;
     }
+    
+    //  特殊标签【危险操作】
+    if (new_owner || new_active){
+        _lbDangerous.text = NSLocalizedString(@"kOpDetailFlagDangerous", @"危险操作");
+        _lbDangerous.hidden = NO;
+        if (!_lbDangerous.hidden){
+            CGSize size1 = [self auxSizeWithText:_lbTransferName.text font:_lbTransferName.font maxsize:CGSizeMake(fWidth, 9999)];
+            CGSize size2 = [self auxSizeWithText:_lbDangerous.text font:_lbDangerous.font maxsize:CGSizeMake(fWidth, 9999)];
+            _lbDangerous.frame = CGRectMake(xOffset + size1.width + 4, yOffset + (fLineHeight - size2.height - 2)/2,
+                                            size2.width + 8, size2.height + 2);
+        }
+    }else{
+        _lbDangerous.hidden = YES;
+    }
+    
     yOffset += fLineHeight;
 
     //  第二行 特殊View or 没有任何更新。
@@ -246,7 +278,7 @@
     if (new_owner){
         _viewPermissionOwner = [[ViewPermissionCell alloc] initWithPermission:opaccount[@"owner"]
                                                                             new:new_owner
-                                                                          title:@"所有者权限"];
+                                                                          title:NSLocalizedString(@"kOpDetailPermissionOwner", @"所有者权限")];
         _viewPermissionOwner.xOffset = xOffset;
         [self addSubview:_viewPermissionOwner];
         CGFloat height = [_viewPermissionOwner getViewHeight];
@@ -258,7 +290,7 @@
     if (new_active){
         _viewPermissionActive = [[ViewPermissionCell alloc] initWithPermission:opaccount[@"active"]
                                                                              new:new_active
-                                                                           title:@"资金权限"];
+                                                                           title:NSLocalizedString(@"kOpDetailPermissionActive", @"资金权限")];
         _viewPermissionActive.xOffset = xOffset;
         [self addSubview:_viewPermissionActive];
         CGFloat height = [_viewPermissionActive getViewHeight];
@@ -275,7 +307,7 @@
         if (![old_memo_key isEqualToString:new_memo_key]){
             _viewPermissionMemoKey = [[ViewMemoKeyCell alloc] initWithOldMemo:old_memo_key
                                                                          new:new_memo_key
-                                                                       title:@"备注权限"];
+                                                                       title:NSLocalizedString(@"kOpDetailPermissionMemo", @"备注权限")];
             _viewPermissionMemoKey.xOffset = xOffset;
             [self addSubview:_viewPermissionMemoKey];
             CGFloat height = [_viewPermissionMemoKey getViewHeight];

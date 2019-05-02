@@ -115,13 +115,15 @@
         _lbLineLabelArray = [NSMutableArray array];
         
         UILabel* name = [self genOneLineLabel:title align:NSTextAlignmentLeft];
-        UILabel* change = [self genOneLineLabel:@"新阈值/新权重" align:NSTextAlignmentRight];
-        UILabel* result = [self genOneLineLabel:@"变化量" align:NSTextAlignmentRight];
+        UILabel* change = [self genOneLineLabel:NSLocalizedString(@"kOpDetailSubTitleNewWeightOrThreshold", @"新阈值/新权重")
+                                          align:NSTextAlignmentRight];
+        UILabel* result = [self genOneLineLabel:NSLocalizedString(@"kOpDetailSubTitleChangeValue", @"变化量")
+                                          align:NSTextAlignmentRight];
         name.textColor = [ThemeManager sharedThemeManager].textColorGray;
         change.textColor = [ThemeManager sharedThemeManager].textColorGray;
         result.textColor = [ThemeManager sharedThemeManager].textColorGray;
         [_lbLineLabelArray addObject:@{@"name":name, @"change":change, @"result":result}];
-        [_lbLineLabelArray addObject:[self genLineLables:@"* 阈值"
+        [_lbLineLabelArray addObject:[self genLineLables:[NSString stringWithFormat:@"* %@", NSLocalizedString(@"kOpDetailSubPrefixThreshold", @"阈值")]
                                                old_value:[[old_permission_json objectForKey:@"weight_threshold"] integerValue]
                                                new_value:[[new_permission_json objectForKey:@"weight_threshold"] integerValue]]];
         

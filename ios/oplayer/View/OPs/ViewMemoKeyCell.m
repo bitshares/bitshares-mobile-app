@@ -70,20 +70,20 @@
         _lbLineLabelArray = [NSMutableArray array];
         
         UILabel* name = [self genOneLineLabel:title align:NSTextAlignmentLeft];
-        UILabel* result = [self genOneLineLabel:@"操作" align:NSTextAlignmentRight];
+        UILabel* result = [self genOneLineLabel:NSLocalizedString(@"kOpDetailSubTitleOperate", @"操作") align:NSTextAlignmentRight];
         name.textColor = [ThemeManager sharedThemeManager].textColorGray;
         result.textColor = [ThemeManager sharedThemeManager].textColorGray;
         [_lbLineLabelArray addObject:@{@"name":name, @"result":result}];
         
         //  old memokey line
         name = [self genOneLineLabel:[NSString stringWithFormat:@"* %@", old_memokey] align:NSTextAlignmentLeft];
-        result = [self genOneLineLabel:@"删除" align:NSTextAlignmentRight];
+        result = [self genOneLineLabel:NSLocalizedString(@"kOpDetailSubOpDelete", @"删除") align:NSTextAlignmentRight];
         result.textColor = [ThemeManager sharedThemeManager].sellColor;
         [_lbLineLabelArray addObject:@{@"name":name, @"result":result}];
         
         //  new memokey line
         name = [self genOneLineLabel:[NSString stringWithFormat:@"* %@", new_memokey] align:NSTextAlignmentLeft];
-        result = [self genOneLineLabel:@"添加" align:NSTextAlignmentRight];
+        result = [self genOneLineLabel:NSLocalizedString(@"kOpDetailSubOpAdd", @"添加") align:NSTextAlignmentRight];
         result.textColor = [ThemeManager sharedThemeManager].buyColor;
         [_lbLineLabelArray addObject:@{@"name":name, @"result":result}];
         
