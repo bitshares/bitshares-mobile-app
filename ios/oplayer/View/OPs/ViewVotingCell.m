@@ -174,31 +174,35 @@
         id vote_info = [chainMgr getVoteInfoByVoteID:vote_id];
         id committee_member_account = [vote_info objectForKey:@"committee_member_account"];
         if (committee_member_account){
-            name = [NSString stringWithFormat:@"理事会 %@", [[chainMgr getChainObjectByID:committee_member_account] objectForKey:@"name"]];
+            name = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kOpDetailSubPrefixCommittee", @"理事会"),
+                    [[chainMgr getChainObjectByID:committee_member_account] objectForKey:@"name"]];
         }else{
             id witness_account = [vote_info objectForKey:@"witness_account"];
             if (witness_account){
-                name = [NSString stringWithFormat:@"见证人 %@", [[chainMgr getChainObjectByID:witness_account] objectForKey:@"name"]];
+                name = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kOpDetailSubPrefixWitness", @"见证人"),
+                        [[chainMgr getChainObjectByID:witness_account] objectForKey:@"name"]];
             }else{
                 name = [NSString stringWithFormat:@"%@ %@", vote_info[@"id"], vote_info[@"name"]];
             }
         }
         name = [NSString stringWithFormat:@"* %@", name];
         if ([[line objectForKey:@"isadd"] boolValue]){
-            status = @"新增";
+            status = NSLocalizedString(@"kOpDetailSubOpAdd", @"添加");
             status_color = [ThemeManager sharedThemeManager].buyColor;
         }else{
-            status = @"撤销";
+            status = NSLocalizedString(@"kOpDetailSubOpDelete", @"删除");
             status_color = [ThemeManager sharedThemeManager].sellColor;
         }
     }else{
         if ([[line objectForKey:@"isremoveproxy"] boolValue]){
-            name = [NSString stringWithFormat:@"* 代理人 %@", [[chainMgr getChainObjectByID:[line objectForKey:@"voting_account"]] objectForKey:@"name"]];
-            status = @"移除";
+            name = [NSString stringWithFormat:@"* %@ %@", NSLocalizedString(@"kOpDetailSubPrefixProxy", @"代理人"),
+                    [[chainMgr getChainObjectByID:[line objectForKey:@"voting_account"]] objectForKey:@"name"]];
+            status = NSLocalizedString(@"kOpDetailSubOpDelete", @"删除");
             status_color = [ThemeManager sharedThemeManager].sellColor;
         }else{
-            name = [NSString stringWithFormat:@"* 代理人 %@", [[chainMgr getChainObjectByID:[line objectForKey:@"voting_account"]] objectForKey:@"name"]];
-            status = @"添加";
+            name = [NSString stringWithFormat:@"* %@ %@", NSLocalizedString(@"kOpDetailSubPrefixProxy", @"代理人"),
+                    [[chainMgr getChainObjectByID:[line objectForKey:@"voting_account"]] objectForKey:@"name"]];
+            status = NSLocalizedString(@"kOpDetailSubOpAdd", @"添加");
             status_color = [ThemeManager sharedThemeManager].buyColor;
         }
     }
@@ -221,8 +225,8 @@
         
         NSMutableDictionary* lines = [[self class] calcLineInfos:old_options_json new:new_options_json];
         
-        UILabel* name = [self genOneLineLabel:@"投票对象" align:NSTextAlignmentLeft];
-        UILabel* result = [self genOneLineLabel:@"操作" align:NSTextAlignmentRight];
+        UILabel* name = [self genOneLineLabel:NSLocalizedString(@"kOpDetailSubTitleVoteTargeter", @"投票对象") align:NSTextAlignmentLeft];
+        UILabel* result = [self genOneLineLabel:NSLocalizedString(@"kOpDetailSubTitleOperate", @"操作") align:NSTextAlignmentRight];
         name.textColor = [ThemeManager sharedThemeManager].textColorGray;
         result.textColor = [ThemeManager sharedThemeManager].textColorGray;
         [_lbLineLabelArray addObject:@{@"name":name, @"result":result}];

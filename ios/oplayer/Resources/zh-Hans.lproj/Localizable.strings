@@ -755,6 +755,22 @@
 "kOpDesc_asset_settle_cancel" = "取消清算。";
 "kOpDesc_asset_claim_fees" = "提取资产手续费。";
 
+/* 交易OP细化 */
+"kOpDetailFlagDangerous" = "危险操作";
+"kOpDetailPermissionOwner" = "所有者权限";
+"kOpDetailPermissionActive" = "资金权限";
+"kOpDetailPermissionMemo" = "备注权限";
+"kOpDetailSubTitleVoteTargeter" = "投票对象";
+"kOpDetailSubTitleOperate" = "操作";
+"kOpDetailSubTitleNewWeightOrThreshold" = "新阈值/新权重";
+"kOpDetailSubTitleChangeValue" = "变化量";
+"kOpDetailSubOpAdd" = "添加";
+"kOpDetailSubOpDelete" = "删除";
+"kOpDetailSubPrefixThreshold" = "阈值";
+"kOpDetailSubPrefixCommittee" = "理事会";
+"kOpDetailSubPrefixWitness" = "见证人";
+"kOpDetailSubPrefixProxy" = "代理人";
+
 /* 通用字符串 */
 "kLangKeyZhSimple" = "简体中文";
 "kLangKeyEn" = "English / 英文";
