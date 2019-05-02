@@ -671,6 +671,20 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
         case ebo_account_update:
         {
             [container setObject:@YES forKey:[opdata objectForKey:@"account"]];
+            id owner = [opdata objectForKey:@"owner"];
+            if (owner){
+                for (id item in [owner objectForKey:@"account_auths"]) {
+                    assert([item isKindOfClass:[NSArray class]] && [item count] == 2);
+                    [container setObject:@YES forKey:[item firstObject]];
+                }
+            }
+            id active = [opdata objectForKey:@"active"];
+            if (active){
+                for (id item in [active objectForKey:@"account_auths"]) {
+                    assert([item isKindOfClass:[NSArray class]] && [item count] == 2);
+                    [container setObject:@YES forKey:[item firstObject]];
+                }
+            }
         }
             break;
         case ebo_account_whitelist:

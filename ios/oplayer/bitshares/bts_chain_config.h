@@ -194,6 +194,9 @@ typedef enum EBitsharesOperations
 //  4:空账号（隐私交易可能需要由该账号支付手续费等）
 #define BTS_GRAPHENE_TEMP_ACCOUNT           @"1.2.4"
 
+//  5:代理给自己
+#define BTS_GRAPHENE_PROXY_TO_SELF          @"1.2.5"
+
 
 //  BTS网络动态全局信息对象ID号
 //  格式：
