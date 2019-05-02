@@ -131,6 +131,7 @@
  */
 - (id)getAssetBySymbol:(NSString*)symbol;
 - (id)getChainObjectByID:(NSString*)oid;
+- (id)getVoteInfoByVoteID:(NSString*)vote_id;
 - (id)getAccountByName:(NSString*)name;
 - (id)getBlockHeaderInfoByBlockNumber:(id)block_number;
 - (id)getFullAccountDataFromCache:(id)account_id_or_name;
@@ -187,11 +188,24 @@
  *  (public) 查询手续费资产的详细信息（包括动态信息）
  */
 - (WsPromise*)queryFeeAssetListDynamicInfo;
-
+/**
+ *  (public) 查询所有投票ID信息
+ */
+- (WsPromise*)queryAllVoteIds:(NSArray*)vote_id_array;
 - (WsPromise*)queryAllAccountsInfo:(NSArray*)account_id_array;
 - (WsPromise*)queryAllAssetsInfo:(NSArray*)asset_id_array;
+/**
+ *  (public) 查询对象信息（优先查询缓存）
+ */
 - (WsPromise*)queryAllGrapheneObjects:(NSArray*)id_array;
+/**
+ *  (public) 查询对象信息（全部跳过缓存）
+ */
 - (WsPromise*)queryAllGrapheneObjectsSkipCache:(NSArray*)id_array;
+/**
+ *  (public) 查询对象信息（部分跳过缓存）
+ */
+- (WsPromise*)queryAllGrapheneObjects:(NSArray*)id_array skipCacheIdHash:(NSDictionary*)skipCacheIdHash;
 
 /**
  *  (public) 查询所有 block_num 的 header 信息，返回 Hash。 格式：{对象ID=>对象信息, ...}

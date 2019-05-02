@@ -12,6 +12,7 @@
 #import "ViewProposalInfoCell.h"
 #import "ViewProposalAuthorizedStatusCell.h"
 #import "ViewProposalOpInfoCell.h"
+#import "ViewProposalOpInfoCell_AccountUpdate.h"
 #import "ViewProposalActionsCell.h"
 #import "OrgUtils.h"
 #import "ScheduleManager.h"
@@ -59,7 +60,6 @@
     
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
-    
     NSMutableArray* promiseList = [NSMutableArray array];
     for (id accountId in account_name_list) {
         [promiseList addObject:[api exec:@"get_proposed_transactions" params:@[accountId]]];
@@ -70,6 +70,7 @@
         NSMutableDictionary* proposal_marked = [NSMutableDictionary dictionary];
         //  查询依赖
         NSMutableDictionary* query_ids = [NSMutableDictionary dictionary];
+        NSMutableDictionary* skip_cache_ids = [NSMutableDictionary dictionary];
         for (id proposals in data_array) {
             if ([proposals isKindOfClass:[NSArray class]] && [proposals count] > 0){
                 for (id proposal in proposals) {
@@ -86,15 +87,19 @@
                     [query_ids setObject:@YES forKey:[proposal objectForKey:@"proposer"]];
                     for (id account_id in [proposal objectForKey:@"available_active_approvals"]) {
                         [query_ids setObject:@YES forKey:account_id];
+                        [skip_cache_ids setObject:@YES forKey:account_id];
                     }
                     for (id account_id in [proposal objectForKey:@"available_owner_approvals"]) {
                         [query_ids setObject:@YES forKey:account_id];
+                        [skip_cache_ids setObject:@YES forKey:account_id];
                     }
                     for (id account_id in [proposal objectForKey:@"required_active_approvals"]) {
                         [query_ids setObject:@YES forKey:account_id];
+                        [skip_cache_ids setObject:@YES forKey:account_id];
                     }
                     for (id account_id in [proposal objectForKey:@"required_owner_approvals"]) {
                         [query_ids setObject:@YES forKey:account_id];
+                        [skip_cache_ids setObject:@YES forKey:account_id];
                     }
                     //  TODO:fowallet 进行中 proposed_transaction 中的各种ID
                     
@@ -114,8 +119,9 @@
                 }
             }
         }
-        return [[chainMgr queryAllGrapheneObjects:[query_ids allKeys]] then:(^id(id data) {
+        return [[chainMgr queryAllGrapheneObjects:[query_ids allKeys] skipCacheIdHash:skip_cache_ids] then:(^id(id data) {
             //  二次查询依赖
+            //  1、查询提案账号权限中的多签成员/代理人等名字信息等。
             NSMutableDictionary* query_account_ids = [NSMutableDictionary dictionary];
             for (id proposal in proposal_list) {
                 for (id account_id in [proposal objectForKey:@"required_active_approvals"]) {
@@ -127,6 +133,10 @@
                         assert([item count] == 2);
                         [query_account_ids setObject:@YES forKey:[item firstObject]];
                     }
+                    id voting_account = [[account objectForKey:@"options"] objectForKey:@"voting_account"];
+                    if (![voting_account isEqualToString:BTS_GRAPHENE_PROXY_TO_SELF]){
+                        [query_account_ids setObject:@YES forKey:voting_account];
+                    }
                 }
                 for (id account_id in [proposal objectForKey:@"required_owner_approvals"]) {
                     id account = [chainMgr getChainObjectByID:account_id];
@@ -137,12 +147,73 @@
                         assert([item count] == 2);
                         [query_account_ids setObject:@YES forKey:[item firstObject]];
                     }
+                    id voting_account = [[account objectForKey:@"options"] objectForKey:@"voting_account"];
+                    if (![voting_account isEqualToString:BTS_GRAPHENE_PROXY_TO_SELF]){
+                        [query_account_ids setObject:@YES forKey:voting_account];
+                    }
                 }
             }
-            return [[chainMgr queryAllAccountsInfo:[query_account_ids allKeys]] then:(^id(id data) {
-                [self hideBlockView];
-                [self onqueryAllProposalsResponse:proposal_list];
-                return nil;
+            //  2、更新账号信息时候查询投票信息
+            //  新vote_id
+            NSMutableDictionary* new_vote_id_hash = [NSMutableDictionary dictionary];
+            for (id proposal in proposal_list) {
+                id operations = [[proposal objectForKey:@"proposed_transaction"] objectForKey:@"operations"];
+                assert(operations);
+                for (id ary in operations) {
+                    assert([ary count] == 2);
+                    NSInteger opcode = [[ary firstObject] integerValue];
+                    if (opcode == ebo_account_update){
+                        id opdata = [ary lastObject];
+                        id new_options = [opdata objectForKey:@"new_options"];
+                        if (new_options){
+                            id votes = [new_options objectForKey:@"votes"];
+                            if (votes && [votes count] > 0){
+                                for (NSString* vote_id in votes) {
+                                    [new_vote_id_hash setObject:@YES forKey:vote_id];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            //  老vote_id
+            for (id account_id in [skip_cache_ids allKeys]) {
+                id account = [chainMgr getChainObjectByID:account_id];
+                assert(account);
+                id options = [account objectForKey:@"options"];
+                id votes = [options objectForKey:@"votes"];
+                if (votes && [votes count] > 0){
+                    for (NSString* vote_id in votes) {
+                        [new_vote_id_hash setObject:@YES forKey:vote_id];
+                    }
+                }
+            }
+            
+            NSArray* vote_id_list = [new_vote_id_hash allKeys];
+            
+            WsPromise* p1 = [chainMgr queryAllGrapheneObjects:[query_account_ids allKeys]];
+            WsPromise* p2 = [chainMgr queryAllVoteIds:vote_id_list];
+            
+            return [[WsPromise all:@[p1, p2]] then:(^id(id data) {
+                //  第三次查询依赖（投票信息中的见证人理事会成员名字等）
+                NSMutableDictionary* query_ids_3rd = [NSMutableDictionary dictionary];
+                for (id vote_id in vote_id_list) {
+                    id vote_info = [chainMgr getVoteInfoByVoteID:vote_id];
+                    id committee_member_account = [vote_info objectForKey:@"committee_member_account"];
+                    if (committee_member_account){
+                        [query_ids_3rd setObject:@YES forKey:committee_member_account];
+                    }else{
+                        id witness_account = [vote_info objectForKey:@"witness_account"];
+                        if (witness_account){
+                            [query_ids_3rd setObject:@YES forKey:witness_account];
+                        }
+                    }
+                }
+                return [[chainMgr queryAllGrapheneObjects:[query_ids_3rd allKeys]] then:(^id(id data) {
+                    [self hideBlockView];
+                    [self onqueryAllProposalsResponse:proposal_list];
+                    return nil;
+                })];
             })];
         })];
     })] catch:(^id(id error) {
@@ -449,7 +520,14 @@
         return tableView.rowHeight;
     }else{
         //  OP LIST
-        return [ViewProposalOpInfoCell getCellHeight:[newOperations objectAtIndex:indexPath.row - 2] leftOffset:tableView.layoutMargins.left];
+        id operation = [newOperations objectAtIndex:indexPath.row - 2];
+        switch ([[operation objectForKey:@"opcode"] integerValue]) {
+            case ebo_account_update:
+                return [ViewProposalOpInfoCell_AccountUpdate getCellHeight:operation leftOffset:tableView.layoutMargins.left];
+            default:
+                break;
+        }
+        return [ViewProposalOpInfoCell getCellHeight:operation leftOffset:tableView.layoutMargins.left];
     }
 }
 
@@ -503,19 +581,43 @@
         return cell;
     }else{
         //  proposal operations infos: index is [2...n)
-        static NSString* identify = @"id_proposal_opinfo_cell";
-        ViewProposalOpInfoCell* cell = (ViewProposalOpInfoCell *)[tableView dequeueReusableCellWithIdentifier:identify];
-        if (!cell)
-        {
-            cell = [[ViewProposalOpInfoCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identify];
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
-            cell.accessoryType = UITableViewCellAccessoryNone;
-            cell.backgroundColor = [UIColor clearColor];
+        id operation = [newOperations objectAtIndex:indexPath.row - 2];
+        switch ([[operation objectForKey:@"opcode"] integerValue]) {
+            case ebo_account_update:
+            {
+                static NSString* identify_account_update = @"id_proposal_op_account_update";
+                ViewProposalOpInfoCell_AccountUpdate* cell = [tableView dequeueReusableCellWithIdentifier:identify_account_update];
+                if (!cell)
+                {
+                    cell = [[ViewProposalOpInfoCell_AccountUpdate alloc] initWithStyle:UITableViewCellStyleDefault
+                                                                       reuseIdentifier:identify_account_update];
+                    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                    cell.accessoryType = UITableViewCellAccessoryNone;
+                    cell.backgroundColor = [UIColor clearColor];
+                }
+//                cell.showCustomBottomLine = YES;
+                cell.useBuyColorForTitle = YES;
+                [cell setItem:operation];    //  REMARK: skip first row
+                return cell;
+            }
+            default:
+            {
+                static NSString* identify = @"id_proposal_opinfo_cell";
+                ViewProposalOpInfoCell* cell = [tableView dequeueReusableCellWithIdentifier:identify];
+                if (!cell)
+                {
+                    cell = [[ViewProposalOpInfoCell alloc] initWithStyle:UITableViewCellStyleDefault
+                                                         reuseIdentifier:identify];
+                    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                    cell.accessoryType = UITableViewCellAccessoryNone;
+                    cell.backgroundColor = [UIColor clearColor];
+                }
+                cell.showCustomBottomLine = YES;
+                cell.useBuyColorForTitle = YES;
+                [cell setItem:operation];    //  REMARK: skip first row
+                return cell;
+            }
         }
-        cell.showCustomBottomLine = YES;
-        cell.useBuyColorForTitle = YES;
-        [cell setItem:[newOperations objectAtIndex:indexPath.row - 2]];    //  REMARK: skip first row
-        return cell;
     }
 }
 

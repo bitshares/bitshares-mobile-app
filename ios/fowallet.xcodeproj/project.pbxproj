@@ -44,6 +44,10 @@
 		3F6C35B621EE0AB1008E2903 /* iconDepositWithdraw@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F6C35B321EE0AB1008E2903 /* iconDepositWithdraw@2x.png */; };
 		3F6C35B721EE0AB1008E2903 /* iconDepositWithdraw@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F6C35B421EE0AB1008E2903 /* iconDepositWithdraw@3x.png */; };
 		3F6C35B821EE0AB1008E2903 /* iconDepositWithdraw@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F6C35B421EE0AB1008E2903 /* iconDepositWithdraw@3x.png */; };
+		3F6E4F25227ABCD000FE3C72 /* ViewVotingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6E4F23227ABCD000FE3C72 /* ViewVotingCell.m */; };
+		3F6E4F26227ABCD000FE3C72 /* ViewVotingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6E4F23227ABCD000FE3C72 /* ViewVotingCell.m */; };
+		3F6E4F29227AC15E00FE3C72 /* ViewMemoKeyCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6E4F27227AC15E00FE3C72 /* ViewMemoKeyCell.m */; };
+		3F6E4F2A227AC15E00FE3C72 /* ViewMemoKeyCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6E4F27227AC15E00FE3C72 /* ViewMemoKeyCell.m */; };
 		3F767B0F224B7B310012822D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3F767B0B224B7B310012822D /* InfoPlist.strings */; };
 		3F767B10224B7B310012822D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3F767B0B224B7B310012822D /* InfoPlist.strings */; };
 		3F767B11224B7B310012822D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3F767B0D224B7B310012822D /* Localizable.strings */; };
@@ -64,6 +68,10 @@
 		3F7ED8E72276937D00082680 /* iconHtlcHashcode@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F7ED8E02276937D00082680 /* iconHtlcHashcode@2x.png */; };
 		3F7ED8E82276937D00082680 /* iconHtlcHashcode@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F7ED8E12276937D00082680 /* iconHtlcHashcode@3x.png */; };
 		3F7ED8E92276937D00082680 /* iconHtlcHashcode@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F7ED8E12276937D00082680 /* iconHtlcHashcode@3x.png */; };
+		3F7ED8F32277F24700082680 /* ViewPermissionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F7ED8F22277F24700082680 /* ViewPermissionCell.m */; };
+		3F7ED8F42277F24700082680 /* ViewPermissionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F7ED8F22277F24700082680 /* ViewPermissionCell.m */; };
+		3F7ED8F72278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F7ED8F62278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.m */; };
+		3F7ED8F82278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F7ED8F62278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.m */; };
 		3F9A730821E59FF300DAF7A2 /* VCDepositWithdrawList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9A730721E59FF300DAF7A2 /* VCDepositWithdrawList.m */; };
 		3F9A730921E59FF300DAF7A2 /* VCDepositWithdrawList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9A730721E59FF300DAF7A2 /* VCDepositWithdrawList.m */; };
 		3F9A730C21E5C20500DAF7A2 /* ViewGatewayCoinInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9A730B21E5C20500DAF7A2 /* ViewGatewayCoinInfoCell.m */; };
@@ -1152,6 +1160,10 @@
 		3F6C35B021EC864F008E2903 /* RuDEX.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RuDEX.m; path = Controller/Gateway/RuDEX.m; sourceTree = "<group>"; };
 		3F6C35B321EE0AB1008E2903 /* iconDepositWithdraw@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconDepositWithdraw@2x.png"; path = "Images/iconDepositWithdraw@2x.png"; sourceTree = "<group>"; };
 		3F6C35B421EE0AB1008E2903 /* iconDepositWithdraw@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconDepositWithdraw@3x.png"; path = "Images/iconDepositWithdraw@3x.png"; sourceTree = "<group>"; };
+		3F6E4F23227ABCD000FE3C72 /* ViewVotingCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewVotingCell.m; sourceTree = "<group>"; };
+		3F6E4F24227ABCD000FE3C72 /* ViewVotingCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewVotingCell.h; sourceTree = "<group>"; };
+		3F6E4F27227AC15E00FE3C72 /* ViewMemoKeyCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewMemoKeyCell.m; sourceTree = "<group>"; };
+		3F6E4F28227AC15E00FE3C72 /* ViewMemoKeyCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewMemoKeyCell.h; sourceTree = "<group>"; };
 		3F767B0C224B7B310012822D /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = InfoPlist.strings; sourceTree = "<group>"; };
 		3F767B0E224B7B310012822D /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = Localizable.strings; sourceTree = "<group>"; };
 		3F78E07422630584007D41A3 /* VCHtlcTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCHtlcTransfer.m; path = Controller/VCHtlcTransfer.m; sourceTree = "<group>"; };
@@ -1164,6 +1176,10 @@
 		3F7ED8DF2276937D00082680 /* iconHtlcPreimage@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconHtlcPreimage@2x.png"; path = "Images/iconHtlcPreimage@2x.png"; sourceTree = "<group>"; };
 		3F7ED8E02276937D00082680 /* iconHtlcHashcode@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconHtlcHashcode@2x.png"; path = "Images/iconHtlcHashcode@2x.png"; sourceTree = "<group>"; };
 		3F7ED8E12276937D00082680 /* iconHtlcHashcode@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconHtlcHashcode@3x.png"; path = "Images/iconHtlcHashcode@3x.png"; sourceTree = "<group>"; };
+		3F7ED8F12277F24700082680 /* ViewPermissionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewPermissionCell.h; sourceTree = "<group>"; };
+		3F7ED8F22277F24700082680 /* ViewPermissionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewPermissionCell.m; sourceTree = "<group>"; };
+		3F7ED8F52278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewProposalOpInfoCell_AccountUpdate.h; path = View/ViewProposalOpInfoCell_AccountUpdate.h; sourceTree = "<group>"; };
+		3F7ED8F62278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewProposalOpInfoCell_AccountUpdate.m; path = View/ViewProposalOpInfoCell_AccountUpdate.m; sourceTree = "<group>"; };
 		3F9A730621E59FF300DAF7A2 /* VCDepositWithdrawList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCDepositWithdrawList.h; path = Controller/VCDepositWithdrawList.h; sourceTree = "<group>"; };
 		3F9A730721E59FF300DAF7A2 /* VCDepositWithdrawList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCDepositWithdrawList.m; path = Controller/VCDepositWithdrawList.m; sourceTree = "<group>"; };
 		3F9A730A21E5C20400DAF7A2 /* ViewGatewayCoinInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewGatewayCoinInfoCell.h; path = View/ViewGatewayCoinInfoCell.h; sourceTree = "<group>"; };
@@ -2144,6 +2160,7 @@
 		18FF069017E00C5C0088405E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				3F7ED8F02277F24700082680 /* OPs */,
 				3F21656F226FEF5400AB5A3D /* ViewActionsCell.h */,
 				3F216570226FEF5500AB5A3D /* ViewActionsCell.m */,
 				3F6C357921E86C9E008E2903 /* ViewAddrMemoInfoCell.h */,
@@ -2156,6 +2173,8 @@
 				3FDD800021D763C100DA61FC /* ViewProposalActionsCell.m */,
 				3FDD800321D763C100DA61FC /* ViewProposalOpInfoCell.h */,
 				3FDD800121D763C100DA61FC /* ViewProposalOpInfoCell.m */,
+				3F7ED8F52278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.h */,
+				3F7ED8F62278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.m */,
 				3FC43A222196EF90004DFFA5 /* ViewProposalInfoCell.h */,
 				3FC43A212196EF90004DFFA5 /* ViewProposalInfoCell.m */,
 				3FDD7FFC21D728DF00DA61FC /* ViewVestingBalanceCell.h */,
@@ -2537,6 +2556,20 @@
 			);
 			name = ja.lproj;
 			path = Resources/ja.lproj;
+			sourceTree = "<group>";
+		};
+		3F7ED8F02277F24700082680 /* OPs */ = {
+			isa = PBXGroup;
+			children = (
+				3F6E4F28227AC15E00FE3C72 /* ViewMemoKeyCell.h */,
+				3F6E4F27227AC15E00FE3C72 /* ViewMemoKeyCell.m */,
+				3F6E4F24227ABCD000FE3C72 /* ViewVotingCell.h */,
+				3F6E4F23227ABCD000FE3C72 /* ViewVotingCell.m */,
+				3F7ED8F12277F24700082680 /* ViewPermissionCell.h */,
+				3F7ED8F22277F24700082680 /* ViewPermissionCell.m */,
+			);
+			name = OPs;
+			path = View/OPs;
 			sourceTree = "<group>";
 		};
 		3FB8F88821CA4BA000DA88E2 /* Reachability */ = {
@@ -3962,6 +3995,7 @@
 				3FB8F89A21CE66C200DA88E2 /* VCAbout.m in Sources */,
 				3FB8F89B21CE66C200DA88E2 /* VCSelectTheme.m in Sources */,
 				3FB8F89C21CE66C200DA88E2 /* ViewDeepGraph.m in Sources */,
+				3F6E4F26227ABCD000FE3C72 /* ViewVotingCell.m in Sources */,
 				3FB8F89D21CE66C200DA88E2 /* 7zDec.c in Sources */,
 				3FB8F89E21CE66C200DA88E2 /* ImageCropView.m in Sources */,
 				3FB8F89F21CE66C200DA88E2 /* 7zCrc.c in Sources */,
@@ -4006,6 +4040,7 @@
 				3FB8F8C321CE66C200DA88E2 /* ViewProposalInfoCell.m in Sources */,
 				3FB8F8C421CE66C200DA88E2 /* SCLButton.m in Sources */,
 				3FB8F8C521CE66C200DA88E2 /* UIDevice+Helper.m in Sources */,
+				3F7ED8F42277F24700082680 /* ViewPermissionCell.m in Sources */,
 				3FB8F8C621CE66C200DA88E2 /* ViewEnterApp.m in Sources */,
 				3FB8F8C721CE66C200DA88E2 /* HtmlColor.m in Sources */,
 				3FB8F8C821CE66C200DA88E2 /* ViewCallOrderInfoCell.m in Sources */,
@@ -4079,6 +4114,7 @@
 				3FB8F90721CE66C200DA88E2 /* VCRegisterWalletMode.m in Sources */,
 				3FB8F90821CE66C200DA88E2 /* VCRegisterPasswordMode.m in Sources */,
 				3FB8F90921CE66C200DA88E2 /* NativeMethodExtension.m in Sources */,
+				3F7ED8F82278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.m in Sources */,
 				3FB8F90A21CE66C200DA88E2 /* WsPromise.m in Sources */,
 				3FB8F90B21CE66C200DA88E2 /* VCTransfer.m in Sources */,
 				3FB8F90C21CE66C200DA88E2 /* WjCryptLib_Sha256.c in Sources */,
@@ -4087,6 +4123,7 @@
 				3FB8F90F21CE66C200DA88E2 /* GrapheneConnection.m in Sources */,
 				3FB8F91021CE66C200DA88E2 /* SRIOConsumer.m in Sources */,
 				3FB8F91121CE66C200DA88E2 /* Alloc.c in Sources */,
+				3F6E4F2A227AC15E00FE3C72 /* ViewMemoKeyCell.m in Sources */,
 				3FB8F91221CE66C200DA88E2 /* SCLAlertView.m in Sources */,
 				3FB8F91321CE66C200DA88E2 /* UIView+Toast.m in Sources */,
 				3FB8F91421CE66C200DA88E2 /* ViewEmptyInfoCell.m in Sources */,
@@ -4244,6 +4281,7 @@
 				EDE7B7D81869D55100D68D42 /* VCAbout.m in Sources */,
 				B7D7DFF01C5CEFBF007D13DA /* VCSelectTheme.m in Sources */,
 				B7A288AA2119776F00339FAE /* ViewDeepGraph.m in Sources */,
+				3F6E4F25227ABCD000FE3C72 /* ViewVotingCell.m in Sources */,
 				B7BDAA8020B3C77400738F12 /* 7zDec.c in Sources */,
 				F5BF57C61E30AD7200DEDE38 /* ImageCropView.m in Sources */,
 				B7BDAA7E20B3C77400738F12 /* 7zCrc.c in Sources */,
@@ -4288,6 +4326,7 @@
 				3FC43A232196EF91004DFFA5 /* ViewProposalInfoCell.m in Sources */,
 				B782F0C31D6E94C600F61571 /* SCLButton.m in Sources */,
 				ED696AD0182B8425007053BA /* UIDevice+Helper.m in Sources */,
+				3F7ED8F32277F24700082680 /* ViewPermissionCell.m in Sources */,
 				B7ED5E341D6BF6EB0043338B /* ViewEnterApp.m in Sources */,
 				ED96A090186C62AD002181D4 /* HtmlColor.m in Sources */,
 				B741A76920DFE1A0000FBC00 /* ViewCallOrderInfoCell.m in Sources */,
@@ -4361,6 +4400,7 @@
 				B72A84A420D14A4D00D92A25 /* VCRegisterWalletMode.m in Sources */,
 				B72A84A320D14A4D00D92A25 /* VCRegisterPasswordMode.m in Sources */,
 				B78553461CA253E600B921AE /* NativeMethodExtension.m in Sources */,
+				3F7ED8F72278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.m in Sources */,
 				B7BDA98420B28C7D00738F12 /* WsPromise.m in Sources */,
 				B7F99C4E20B80A740084CB56 /* VCTransfer.m in Sources */,
 				B7BDA9A920B3A3D100738F12 /* WjCryptLib_Sha256.c in Sources */,
@@ -4369,6 +4409,7 @@
 				B7C0411F2109BDC400848CBC /* GrapheneConnection.m in Sources */,
 				B714093C20A31CC300003311 /* SRIOConsumer.m in Sources */,
 				B7BDAA8520B3C77500738F12 /* Alloc.c in Sources */,
+				3F6E4F29227AC15E00FE3C72 /* ViewMemoKeyCell.m in Sources */,
 				B782F0C01D6E94C600F61571 /* SCLAlertView.m in Sources */,
 				F5A162841E0BCEBA0001C99C /* UIView+Toast.m in Sources */,
 				B7A1A245211D34A400333B00 /* ViewEmptyInfoCell.m in Sources */,

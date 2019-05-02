@@ -27,6 +27,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     NSMutableDictionary*    _cacheObjectID2ObjectHash;      //  内存缓存
     NSMutableDictionary*    _cacheAccountName2ObjectHash;   //  内存缓存
     NSMutableDictionary*    _cacheUserFullAccountData;      //  内存缓存 - 用户完整信息（每次查询后更新。）
+    NSMutableDictionary*    _cacheVoteIdInfoHash;           //  内存缓存
     
     NSDictionary*           _defaultMarketInfos;            //  ipa自带的默认配置信息（fowallet_config.json）
     NSMutableDictionary*    _defaultMarketPairs;            //  默认内置交易对。交易对格式：#{base_symbol}_#{quote_symbol}
@@ -76,6 +77,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
         _cacheObjectID2ObjectHash = [NSMutableDictionary dictionary];
         _cacheAccountName2ObjectHash = [NSMutableDictionary dictionary];
         _cacheUserFullAccountData = [NSMutableDictionary dictionary];
+        _cacheVoteIdInfoHash = [NSMutableDictionary dictionary];
         _defaultMarketInfos = nil;
         _defaultMarketPairs = nil;
         _defaultGroupList = nil;
@@ -92,6 +94,8 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     _cacheAssetSymbol2ObjectHash = nil;
     _cacheObjectID2ObjectHash = nil;
     _cacheAccountName2ObjectHash = nil;
+    _cacheUserFullAccountData = nil;
+    _cacheVoteIdInfoHash = nil;
     
     _tickerDatas = nil;
     _mergedMarketInfoList = nil;
@@ -495,6 +499,11 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     return [_cacheObjectID2ObjectHash objectForKey:oid];
 }
 
+- (id)getVoteInfoByVoteID:(NSString*)vote_id
+{
+    return [_cacheVoteIdInfoHash objectForKey:vote_id];
+}
+
 - (id)getAccountByName:(NSString*)name
 {
     assert(_cacheAccountName2ObjectHash);
@@ -860,7 +869,8 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     return [[self queryAllObjectsInfo:asset_id_array
                        cacheContainer:_cacheAssetSymbol2ObjectHash
                        cacheObjectKey:@"symbol"
-                       skipQueryCache:YES] then:(^id(id asset_hash) {
+                       skipQueryCache:YES
+                      skipCacheIdHash:nil] then:(^id(id asset_hash) {
         NSLog(@"[Track] queryFeeAssetListDynamicInfo step01 finish.");
         // 仅有 BTS 可支付手续费，那么这里应该为空了。
         if ([asset_hash count] <= 0){
@@ -887,6 +897,75 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
 }
 
 /**
+ *  (public) 查询所有投票ID信息
+ */
+- (WsPromise*)queryAllVoteIds:(NSArray*)vote_id_array
+{
+    //  TODO:分批查询？
+    assert([vote_id_array count] < 1000);
+    
+    NSMutableDictionary* resultHash = [NSMutableDictionary dictionary];
+    
+    //  要查询的数据为空，则返回空的 Hash。
+    if (!vote_id_array || [vote_id_array count] <= 0){
+        return [WsPromise resolve:resultHash];
+    }
+    
+    NSMutableArray* queryArray = [NSMutableArray array];
+    
+    //  从缓存加载
+    AppCacheManager* pAppCache = [AppCacheManager sharedAppCacheManager];
+    NSTimeInterval now_ts = [[NSDate date] timeIntervalSince1970];
+    for (NSString* vote_id in vote_id_array) {
+        id obj = [pAppCache get_object_cache:vote_id now_ts:now_ts];
+        if (obj){
+            [_cacheVoteIdInfoHash setObject:obj forKey:vote_id];     //  add to memory cache: id hash
+            [resultHash setObject:obj forKey:vote_id];
+        }else{
+            [queryArray addObject:vote_id];
+        }
+    }
+    //  从缓存获取完毕，直接返回。
+    if ([queryArray count] == 0){
+        return [WsPromise resolve:resultHash];
+    }
+    
+    //  从网络查询。
+    GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
+    
+    return [[api exec:@"lookup_vote_ids" params:@[queryArray]] then:(^id(id data_array) {
+        //  更新缓存 和 结果
+        for (id obj in data_array) {
+            if ([obj isKindOfClass:[NSNull class]]){
+                continue;
+            }
+            id vid = [obj objectForKey:@"vote_id"];
+            if (vid){
+                [pAppCache update_object_cache:vid object:obj];
+                [_cacheVoteIdInfoHash setObject:obj forKey:vid];            //  add to memory cache: id hash
+                [resultHash setObject:obj forKey:vid];
+            }else{
+                id vote_for = [obj objectForKey:@"vote_for"];
+                id vote_against = [obj objectForKey:@"vote_against"];
+                assert(vote_for && vote_against);
+                
+                [pAppCache update_object_cache:vote_for object:obj];
+                [_cacheVoteIdInfoHash setObject:obj forKey:vote_for];       //  add to memory cache: id hash
+                [resultHash setObject:obj forKey:vote_for];
+                
+                [pAppCache update_object_cache:vote_against object:obj];
+                [_cacheVoteIdInfoHash setObject:obj forKey:vote_against];   //  add to memory cache: id hash
+                [resultHash setObject:obj forKey:vote_against];
+            }
+        }
+        //  保存缓存
+        [pAppCache saveObjectCacheToFile];
+        //  返回结果
+        return resultHash;
+    })];
+}
+
+/**
  *  (private) 查询指定对象ID列表的所有对象信息，返回 Hash。 格式：{对象ID=>对象信息, ...}
  *
  *  skipQueryCache - 控制是否查询缓存
@@ -897,6 +976,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
                    cacheContainer:(NSMutableDictionary*)cache
                    cacheObjectKey:(NSString*)key
                    skipQueryCache:(BOOL)skipQueryCache
+                  skipCacheIdHash:(NSDictionary*)skipCacheIdHash
 {
     NSMutableDictionary* resultHash = [NSMutableDictionary dictionary];
     
@@ -914,15 +994,20 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
         AppCacheManager* pAppCache = [AppCacheManager sharedAppCacheManager];
         NSTimeInterval now_ts = [[NSDate date] timeIntervalSince1970];
         for (NSString* object_id in object_id_array) {
-            id obj = [pAppCache get_object_cache:object_id now_ts:now_ts];
-            if (obj){
-                [_cacheObjectID2ObjectHash setObject:obj forKey:object_id];     //  add to memory cache: id hash
-                if (cache && key){
-                    [cache setObject:obj forKey:[obj objectForKey:key]];        //  add to memory cache: key hash
-                }
-                [resultHash setObject:obj forKey:object_id];
-            }else{
+            if (skipCacheIdHash && [skipCacheIdHash objectForKey:object_id]){
+                //  部分ID跳过缓存
                 [queryArray addObject:object_id];
+            }else{
+                id obj = [pAppCache get_object_cache:object_id now_ts:now_ts];
+                if (obj){
+                    [_cacheObjectID2ObjectHash setObject:obj forKey:object_id];     //  add to memory cache: id hash
+                    if (cache && key){
+                        [cache setObject:obj forKey:[obj objectForKey:key]];        //  add to memory cache: key hash
+                    }
+                    [resultHash setObject:obj forKey:object_id];
+                }else{
+                    [queryArray addObject:object_id];
+                }
             }
         }
         //  从缓存获取完毕，直接返回。
@@ -962,7 +1047,8 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     return [self queryAllObjectsInfo:account_id_array
                       cacheContainer:_cacheAccountName2ObjectHash
                       cacheObjectKey:@"name"
-                      skipQueryCache:NO];
+                      skipQueryCache:NO
+                     skipCacheIdHash:nil];
 }
 
 - (WsPromise*)queryAllAssetsInfo:(NSArray*)asset_id_array
@@ -970,7 +1056,8 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     return [self queryAllObjectsInfo:asset_id_array
                       cacheContainer:_cacheAssetSymbol2ObjectHash
                       cacheObjectKey:@"symbol"
-                      skipQueryCache:NO];
+                      skipQueryCache:NO
+                     skipCacheIdHash:nil];
 }
 
 - (WsPromise*)queryAllGrapheneObjects:(NSArray*)id_array
@@ -978,7 +1065,8 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     return [self queryAllObjectsInfo:id_array
                       cacheContainer:nil
                       cacheObjectKey:nil
-                      skipQueryCache:NO];
+                      skipQueryCache:NO
+                     skipCacheIdHash:nil];
 }
 
 - (WsPromise*)queryAllGrapheneObjectsSkipCache:(NSArray*)id_array
@@ -986,7 +1074,17 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     return [self queryAllObjectsInfo:id_array
                       cacheContainer:nil
                       cacheObjectKey:nil
-                      skipQueryCache:YES];
+                      skipQueryCache:YES
+                     skipCacheIdHash:nil];
+}
+
+- (WsPromise*)queryAllGrapheneObjects:(NSArray*)id_array skipCacheIdHash:(NSDictionary*)skipCacheIdHash
+{
+    return [self queryAllObjectsInfo:id_array
+                      cacheContainer:nil
+                      cacheObjectKey:nil
+                      skipQueryCache:NO
+                     skipCacheIdHash:skipCacheIdHash];
 }
 
 /**
@@ -1325,7 +1423,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     for (NSInteger i = 0; i <= 10; ++i) {
         [query_oid_list addObject:[NSString stringWithFormat:@"2.13.%@", @(latest_oid - i)]];
     }
-    return [[self queryAllObjectsInfo:query_oid_list cacheContainer:nil cacheObjectKey:nil skipQueryCache:NO] then:(^id(id asset_hash) {
+    return [[self queryAllObjectsInfo:query_oid_list cacheContainer:nil cacheObjectKey:nil skipQueryCache:NO skipCacheIdHash:nil] then:(^id(id asset_hash) {
         id budget_object = nil;
         for (id check_oid in query_oid_list) {
             budget_object = [asset_hash objectForKey:check_oid];
@@ -1414,7 +1512,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     //  当前帐号设置了代理，继续递归查询。
     //  TODO:fowallet 统计数据
     NSLog(@"[Voting Proxy] Query proxy account: %@, level: %@", voting_account_id, @(level + 1));
-    return [[self queryAllObjectsInfo:@[voting_account_id] cacheContainer:nil cacheObjectKey:nil skipQueryCache:YES] then:(^id(id data_hash) {
+    return [[self queryAllObjectsInfo:@[voting_account_id] cacheContainer:nil cacheObjectKey:nil skipQueryCache:YES skipCacheIdHash:nil] then:(^id(id data_hash) {
         id proxy_account_data = [data_hash objectForKey:voting_account_id];
         assert(proxy_account_data);
         return [self _queryAccountVotingInfosCore:proxy_account_data result:resultHash level:level + 1 checked:checked_hash];
