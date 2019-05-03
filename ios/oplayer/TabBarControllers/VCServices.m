@@ -101,9 +101,8 @@ enum
                           @"kServicesCellLabelDepositWithdraw", //  充币提币
                           nil];
     
-    //  TODO:多语言
     NSArray* pSection5 = @[
-                           @"高级功能"
+                           @"kServicesCellLabelAdvFunction"     //  高级功能
                            ];
     
     _dataArray = [[NSArray alloc] initWithObjects:pSection2, pSection3, pSection4, pSection5, nil];
@@ -385,8 +384,7 @@ enum
             case kVcAdvanced:
             {
                 vc = [[VCAdvancedFeatures alloc] init];
-//                //  TODO:2.1 待处理 多语言
-                vc.title = @"高级功能";
+                vc.title = NSLocalizedString(@"kVcTitleDepositAdvFunction", @"高级功能");
             }
                 break;
             default:

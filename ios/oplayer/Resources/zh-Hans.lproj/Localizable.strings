@@ -56,6 +56,7 @@
 "kServicesCellLabelVoting" = "投票";
 "kServicesCellLabelFeedPrice" = "喂价详情";
 "kServicesCellLabelDepositWithdraw" = "充币提币";
+"kServicesCellLabelAdvFunction" = "高级功能";
 
 /* 抵押排行 */
 "kVcRankCurrentFeedPrice" = "当前喂价";
@@ -287,6 +288,8 @@
 /* 资产界面 */
 "kVcAssetPageAsset" = "资产";
 "kVcAssetPageActivity" = "明细";
+"kVcAssetPageHTLC" = "HTLC";
+"kVcAssetPageVestingBalance" = "待解冻金额";
 "kVcAssetTotalValue" = "总资产折合(%@)";
 "kVcAssetBtnTransfer" = "转账";
 "kVcAssetBtnTrade" = "交易";
@@ -470,6 +473,8 @@
 "kVcHtlcCellTitleClaimPeriod" = "有效期";
 "kVcHtlcCellTitlePreimageHash" = "原像哈希";
 "kVcHtlcCellTitlePreimageLength" = "原像长度";
+"kVcHtlcCellValueNDayFmt" = "%@天";
+"kVcHtlcCellValueNHourFmt" = "%@小时";
 "kVcHtlcPlaceholderInputPreimage" = "请输入合约的原像";
 "kVcHtlcPlaceholderInputPreimageHash" = "请输入原像的哈希值";
 "kVcHtlcPlaceholderInputPreimageLength" = "请选择原像长度值";
@@ -478,8 +483,6 @@
 "kVcHtlcTailerBtnCopy" = "复制";
 "kVcHtlcTailerBtnPaste" = "粘贴";
 "kVcHtlcSubmitBtn01" = "创建";
-"kVcHtlcSubmitBtn02" = "根据对方合约创建";
-"kVcHtlcSubmitBtn03" = "主动创建合约";
 "kVcHtlcTipsPreimageCopied" = "原像已复制：%@";
 "kVcHtlcTipsPreimageForm" = "原像格式为20位以上，且必须同时包含大写字母和数字。";
 "kVcHtlcTipsInputPreimageHash" = "请输入原像哈希值。";
@@ -490,6 +493,8 @@
 "kVcHtlcMessageCreateFromHashHavePreimage" = "主动创建合约请备份好【原像】信息，丢失原像只能等待合约到期后自动解锁。是否继续创建合约？";
 "kVcHtlcMessageCreateFromHashNoPreimage" = "被动部署合约请仔细确认对方已经部署好了相同的合约，并仔细核对各种参数。\n\n※ 注意 ※\n1、原像哈希和原像长度必须和对方完全匹配。\n2、建议合约【有效期】务必“小于”对方合约有效期2天以上，否则可能造成资金损失。是否继续创建合约？";
 "kVcHtlcMessageTipsTitle" = "风险提示";
+"kVcHtlcSubmitTipsFullOK" = "创建HTLC成功，可在我的资产界面查看HTLC详细信息。";
+"kVcHtlcSubmitTipsOK" = "创建HTLC成功，但刷新界面失败，可在我的资产界面查看HTLC详细信息。";
 "kVcHtlcNoAnyObjects" = "没有任何HTLC合约信息";
 "kVcHtlcListCellFrom" = "付款账号 ";
 "kVcHtlcListCellTo" = "收款账号 ";
@@ -514,6 +519,7 @@
 "kVcHtlcListTipsRedeemOK" = "HTLC合约 %@ 提取成功。";
 "kVcHtlcListTipsExtendOK" = "HTLC合约 %@ 延长有效期成功。";
 "kVcHtlcListExtendNDayFmt" = "%@天";
+"kVcHtlcListCopyPreimageHashOK" = "原像哈希已复制：%@";
 
 /* 确认界面 */
 "kVcConfirmTipFrom" = "来自";
@@ -616,6 +622,7 @@
 "kVcTitleProposalAddApprove" = "授权批准";
 "kVcTitleProposalRemoveApprove" = "授权撤销";
 "kVcTitleDepositWithdraw" = "充币提币";
+"kVcTitleDepositAdvFunction" = "高级功能";
 "kVcTitleDeposit" = "%@充币";
 "kVcTitleWithdraw" = "%@提币";
 "kVcTitleKlineIndexSetting" = "K线指标设置";
@@ -648,7 +655,7 @@
 "kWalletCellPermissionActive" = "资金权限";
 "kWalletCellPermissionMemo" = "备注权限";
 
-/* 交易OP名字TODO:2.1 */
+/* 交易OP名字 */
 "kOpType_proposal_prefix" = "提案【%@】";
 "kOpType_transfer" = "转账";
 "kOpType_limit_order_create_sell" = "创建卖单";
@@ -695,16 +702,17 @@
 "kOpType_transfer_from_blind" = "从隐私账户转出";
 "kOpType_asset_settle_cancel" = "取消清算";
 "kOpType_asset_claim_fees" = "提取资产手续费";
-"kOpType_fba_distribute" = "fba_distribute";
-"kOpType_bid_collateral" = "bid_collateral";
-"kOpType_execute_bid" = "execute_bid";
-"kOpType_asset_claim_pool" = "asset_claim_pool";
-"kOpType_asset_update_issuer" = "asset_update_issuer";
-"kOpType_htlc_create" = "创建合约转账";
-"kOpType_htlc_redeem" = "兑换合约转账";
-"kOpType_htlc_redeemed" = "转账合约已执行";
-"kOpType_htlc_extend" = "更新合约";
-"kOpType_htlc_refund" = "合约转账退款";
+"kOpType_fba_distribute" = "FBA分发";
+"kOpType_bid_collateral" = "黑天鹅竞价";
+"kOpType_execute_bid" = "竞价成功";
+"kOpType_asset_claim_pool" = "提取资产手续费池";
+"kOpType_asset_update_issuer" = "更新资产发行账号";
+"kOpType_htlc_create" = "创建HTLC";
+"kOpType_htlc_redeem" = "赎回HTLC";
+"kOpType_htlc_redeemed" = "赎回HTLC成功";
+"kOpType_htlc_extend" = "更新HTLC";
+"kOpType_htlc_refund" = "HTLC退款";
+"kOpType_unknown_op" = "未知操作";
 
 /* 交易OP详细描述 */
 "kOpDesc_transfer" = "%@ 转账 %@ 到 %@。";
@@ -723,7 +731,7 @@
 "kOpDesc_asset_create" = "%@ 创建资产 %@。";
 "kOpDesc_asset_update" = "更新资产 %@。";
 "kOpDesc_asset_update_bitasset" = "更新智能币。";
-"kOpDesc_asset_update_feed_producers" = "更新喂价者。";
+"kOpDesc_asset_update_feed_producers" = "%@ 资产更新发布喂价的账号信息。";
 "kOpDesc_asset_issue" = "资产发行。";
 "kOpDesc_asset_reserve" = "资产销毁。";
 "kOpDesc_asset_fund_fee_pool" = "注资手续费池。";
@@ -732,7 +740,8 @@
 "kOpDesc_asset_publish_feed" = "发布喂价。";
 "kOpDesc_witness_create" = "创建见证人。";
 "kOpDesc_witness_update" = "更新见证人。";
-"kOpDesc_proposal_create" = "创建提案。";
+"kOpDesc_proposal_create_with_id" = "%@ 创建提案。#%@";
+"kOpDesc_proposal_create" = "%@ 创建提案。";
 "kOpDesc_proposal_update" = "%@ 更新提案。#%@";
 "kOpDesc_proposal_delete" = "删除提案。";
 "kOpDesc_withdraw_permission_create" = "创建授权提款。";
@@ -754,6 +763,18 @@
 "kOpDesc_transfer_from_blind" = "从隐私账户转出。";
 "kOpDesc_asset_settle_cancel" = "取消清算。";
 "kOpDesc_asset_claim_fees" = "提取资产手续费。";
+"kOpDesc_fba_distribute" = "FBA分发。";
+"kOpDesc_bid_collateral" = "黑天鹅竞价。";
+"kOpDesc_execute_bid" = "竞价成功。";
+"kOpDesc_asset_claim_pool" = "提取手续费池资产。";
+"kOpDesc_asset_update_issuer" = "更改资产发行账号。";
+"kOpDesc_htlc_create_with_id" = "%@ 准备转账 %@ 到 %@。#%@";
+"kOpDesc_htlc_create" = "%@ 准备转账 %@ 到 %@。";
+"kOpDesc_htlc_redeem" = "%@ 使用原像 %@ 赎回HTLC。#%@";
+"kOpDesc_htlc_redeemed" = "%@ 赎回HTLC成功，%@ 转入账号 %@。#%@";
+"kOpDesc_htlc_extend" = "%@ 延长HTLC有效期 %@ 秒。#%@";
+"kOpDesc_htlc_refund" = "HTLC过期，资产自动退回到账号 %@。#%@";
+"kOpDesc_unknown_op" = "未知的操作 #%@。";
 
 /* 交易OP细化 */
 "kOpDetailFlagDangerous" = "危险操作";

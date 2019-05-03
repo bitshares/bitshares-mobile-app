@@ -377,7 +377,7 @@
             id new_op = @{
                           @"opcode":@(opcode),
                           @"opdata":opdata,
-                          @"uidata":[OrgUtils processOpdata2UiData:opcode opdata:opdata isproposal:YES]
+                          @"uidata":[OrgUtils processOpdata2UiData:opcode opdata:opdata opresult:nil isproposal:YES]
                           };
             [new_operations addObject:new_op];
         }

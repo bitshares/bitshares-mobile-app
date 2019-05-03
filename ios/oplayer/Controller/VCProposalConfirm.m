@@ -107,7 +107,7 @@ enum
     _processedOpData = @{
                          @"opcode":@(_opcode),
                          @"opdata":_opdata,
-                         @"uidata":[OrgUtils processOpdata2UiData:_opcode opdata:_opdata isproposal:YES]
+                         @"uidata":[OrgUtils processOpdata2UiData:_opcode opdata:_opdata opresult:nil isproposal:YES]
                          };
     _mainTableView.hidden = NO;
     [_mainTableView reloadData];

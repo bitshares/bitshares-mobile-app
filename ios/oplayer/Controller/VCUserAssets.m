@@ -49,8 +49,8 @@
 {
     return @[NSLocalizedString(@"kVcAssetPageAsset", @"资产"),
              NSLocalizedString(@"kVcAssetPageActivity", @"明细"),
-             @"HTLC合约",
-             NSLocalizedString(@"kLblCellVestingBalance", @"待解冻金额"),];//TODO:2.1多语言
+             NSLocalizedString(@"kVcAssetPageHTLC", @"HTLC"),
+             NSLocalizedString(@"kVcAssetPageVestingBalance", @"待解冻金额")];
 }
 
 - (NSArray*)getSubPageVCArray

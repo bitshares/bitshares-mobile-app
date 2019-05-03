@@ -362,7 +362,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
         return NO;
     }
     //  A-F、a-f、0-9 组成
-    NSPredicate* pre = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", @"^[A-Fa-f0-0]+$"];
+    NSPredicate* pre = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", @"^[A-Fa-f0-9]+$"];
     if (![pre evaluateWithObject:hexstring]){
         return NO;
     }
@@ -776,7 +776,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
             break;
         case ebo_proposal_create:
         {
-            //  TODO:
+            [container setObject:@YES forKey:[opdata objectForKey:@"fee_paying_account"]];
         }
             break;
         case ebo_proposal_update:
@@ -919,22 +919,23 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
             break;
         case ebo_htlc_redeem:
         {
-            //  TODO:2.1 fowallet 未完成
+            [container setObject:@YES forKey:[opdata objectForKey:@"redeemer"]];
         }
             break;
         case ebo_htlc_redeemed:
         {
-            //  TODO:2.1 fowallet 未完成
+            [container setObject:@YES forKey:[opdata objectForKey:@"redeemer"]];
+            [container setObject:@YES forKey:[opdata objectForKey:@"to"]];
+            [container setObject:@YES forKey:[[opdata objectForKey:@"amount"] objectForKey:@"asset_id"]];
         }
             break;
         case ebo_htlc_extend:
         {
-            //  TODO:2.1 fowallet 未完成
+            [container setObject:@YES forKey:[opdata objectForKey:@"update_issuer"]];
         }
             break;
         case ebo_htlc_refund:
         {
-            //  TODO:2.1 fowallet 未完成
             [container setObject:@YES forKey:[opdata objectForKey:@"to"]];
         }
             break;
@@ -946,7 +947,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 /**
  *  转换OP数据为UI显示数据。
  */
-+ (NSDictionary*)processOpdata2UiData:(NSUInteger)opcode opdata:(id)opdata isproposal:(BOOL)isproposal
++ (NSDictionary*)processOpdata2UiData:(NSUInteger)opcode opdata:(id)opdata opresult:(id)opresult isproposal:(BOOL)isproposal
 {
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     ThemeManager* theme =  [ThemeManager sharedThemeManager];
@@ -1124,8 +1125,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
         case ebo_asset_update_feed_producers:
         {
             name = NSLocalizedString(@"kOpType_asset_update_feed_producers", @"更新喂价者");
-            desc = NSLocalizedString(@"kOpDesc_asset_update_feed_producers", @"更新提供喂价的账号信息。");
-            //  TODO:待细化
+            desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_asset_update_feed_producers", @"%@ 资产更新发布喂价的账号信息。"), GRAPHENE_ASSET_SYMBOL(@"asset_to_update")];
         }
             break;
         case ebo_asset_issue:
@@ -1187,8 +1187,12 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
         case ebo_proposal_create:
         {
             name = NSLocalizedString(@"kOpType_proposal_create", @"创建提案");
-            desc = NSLocalizedString(@"kOpDesc_proposal_create", @"创建提案。");
-            //  TODO:待细化
+            id new_proposal_id = [self extractNewObjectIDFromOperationResult:opresult];
+            if (new_proposal_id){
+                desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_proposal_create_with_id", @"%@ 创建提案。#%@"), GRAPHENE_NAME(@"fee_paying_account"), new_proposal_id];
+            }else{
+                desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_proposal_create", @"%@ 创建提案。"), GRAPHENE_NAME(@"fee_paying_account")];
+            }
         }
             break;
         case ebo_proposal_update:
@@ -1341,84 +1345,104 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
             break;
         case ebo_fba_distribute:
         {
-            //  TODO:2.1 fowallet 未完成
-            name = @"fba_distribute";
-            desc = @"fba_distribute";
+            name = NSLocalizedString(@"kOpType_fba_distribute", @"FBA分发");
+            desc = NSLocalizedString(@"kOpDesc_fba_distribute", @"FBA分发。");
+            //  TODO:待细化
         }
             break;
         case ebo_bid_collateral:
         {
-            //  TODO:2.1 fowallet 未完成
-            name = @"bid_collateral";
-            desc = @"bid_collateral";
+            name = NSLocalizedString(@"kOpType_bid_collateral", @"黑天鹅竞价");
+            desc = NSLocalizedString(@"kOpDesc_bid_collateral", @"黑天鹅竞价。");
+            //  TODO:待细化
         }
             break;
         case ebo_execute_bid:
         {
-            //  TODO:2.1 fowallet 未完成
-            name = @"execute_bid";
-            desc = @"execute_bid";
+            name = NSLocalizedString(@"kOpType_execute_bid", @"竞价成功");
+            desc = NSLocalizedString(@"kOpDesc_execute_bid", @"竞价成功。");
+            //  TODO:待细化
         }
             break;
         case ebo_asset_claim_pool:
         {
-            //  TODO:2.1 fowallet 未完成
-            name = @"asset_claim_pool";
-            desc = @"asset_claim_pool";
+            name = NSLocalizedString(@"kOpType_asset_claim_pool", @"提取资产手续费池");
+            desc = NSLocalizedString(@"kOpDesc_asset_claim_pool", @"提取手续费池资产。");
+            //  TODO:待细化
         }
             break;
         case ebo_asset_update_issuer:
         {
-            //  TODO:2.1 fowallet 未完成
-            name = @"asset_update_issuer";
-            desc = @"asset_update_issuer";
+            name = NSLocalizedString(@"kOpType_asset_update_issuer", @"更新资产发行账号");
+            desc = NSLocalizedString(@"kOpDesc_asset_update_issuer", @"更改资产发行账号。");
+            //  TODO:待细化
         }
             break;
         case ebo_htlc_create:
         {
-            //  TODO:2.1 fowallet 未完成
             name = NSLocalizedString(@"kOpType_htlc_create", @"创建合约转账");
             id from = GRAPHENE_NAME(@"from");
             id to = GRAPHENE_NAME(@"to");
             id str_amount = GRAPHENE_ASSET_N(@"amount");
-//            desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_transfer", @"%@ 转账 %@ 到 %@。"), from, str_amount, to];
-            desc = [NSString stringWithFormat:@"%@ 准备转账 %@ 到 %@。", from, str_amount, to];
+            
+            id new_htlc_id = [self extractNewObjectIDFromOperationResult:opresult];
+            if (new_htlc_id){
+                desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_htlc_create_with_id", @"%@ 准备转账 %@ 到 %@。#%@"),
+                        from, str_amount, to, new_htlc_id];
+            }else{
+                desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_htlc_create", @"%@ 准备转账 %@ 到 %@。"), from, str_amount, to];
+            }
         }
             break;
         case ebo_htlc_redeem:
         {
-            //  TODO:2.1 fowallet 未完成
             name = NSLocalizedString(@"kOpType_htlc_redeem", @"执行合约转账");
-            desc = @"提取HTLC。";
+            
+            NSString* hex_preimage = opdata[@"preimage"];
+            assert([OrgUtils isValidHexString:hex_preimage]);
+            
+            NSInteger hex_len = [hex_preimage length];
+            NSInteger raw_len = hex_len / 2;
+            assert(raw_len > 0);
+            
+            unsigned char raw_preimage[raw_len];
+            hex_decode((const unsigned char*)[hex_preimage UTF8String], hex_len, raw_preimage);
+            desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_htlc_redeem", @"%@ 使用原像 %@ 赎回HTLC。#%@"),
+                    GRAPHENE_NAME(@"redeemer"),
+                    [[NSString alloc] initWithBytes:raw_preimage length:raw_len encoding:NSUTF8StringEncoding],
+                    opdata[@"htlc_id"]];
         }
             break;
         case ebo_htlc_redeemed:
         {
-            //  TODO:2.1 fowallet 未完成
             name = NSLocalizedString(@"kOpType_htlc_redeemed", @"转账合约已执行");
-            desc = @"HTLC已提取。";
+            desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_htlc_redeemed", @"%@ 赎回HTLC成功，%@ 转入账号 %@。#%@"),
+                    GRAPHENE_NAME(@"redeemer"),
+                    GRAPHENE_ASSET_N(@"amount"),
+                    GRAPHENE_NAME(@"to"),
+                    opdata[@"htlc_id"]];
         }
             break;
         case ebo_htlc_extend:
         {
-            //  TODO:2.1 fowallet 未完成
             name = NSLocalizedString(@"kOpType_htlc_extend", @"更新合约");
-            desc = @"扩展HTLC有效期。";
+            desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_htlc_extend", @"%@ 延长HTLC有效期 %@ 秒。#%@"),
+                    GRAPHENE_NAME(@"update_issuer"),
+                    opdata[@"seconds_to_add"],
+                    opdata[@"htlc_id"]];
         }
             break;
         case ebo_htlc_refund:
         {
-            //  TODO:2.1 fowallet 未完成
             name = NSLocalizedString(@"kOpType_htlc_refund", @"合约转账退款");
             id to = GRAPHENE_NAME(@"to");
-            desc = [NSString stringWithFormat:@"合约退款到账号 %@。#%@", to, opdata[@"htlc_id"]];
+            desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_htlc_refund", @"HTLC过期，资产自动退回到账号 %@。#%@"), to, opdata[@"htlc_id"]];
         }
             break;
         default:
         {
-            //  TODO:多语言
-            name = @"未知操作";
-            desc = @"未知的操作。";
+            name = NSLocalizedString(@"kOpType_unknown_op", @"未知操作");
+            desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_unknown_op", @"未知的操作 #%@。"), @(opcode)];
         }
             break;
     }

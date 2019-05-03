@@ -149,7 +149,7 @@ typedef void (^YklUserCallback)(id data);
 /**
  *  转换OP数据为UI显示数据。
  */
-+ (NSDictionary*)processOpdata2UiData:(NSUInteger)opcode opdata:(id)opdata isproposal:(BOOL)isproposal;
++ (NSDictionary*)processOpdata2UiData:(NSUInteger)opcode opdata:(id)opdata opresult:(id)opresult isproposal:(BOOL)isproposal;
 
 /**
  *  计算资产真实价格

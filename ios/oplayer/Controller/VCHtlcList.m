@@ -84,7 +84,7 @@ enum
     //  更新数据
     [_dataArray removeAllObjects];
     
-    if (data_array && [data_array count] > 0){
+    if (data_array && [data_array isKindOfClass:[NSArray class]] && [data_array count] > 0){
         id my_id = [[[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"] objectForKey:@"id"];
         for (id htlc in data_array) {
             id transfer = [htlc objectForKey:@"transfer"];
@@ -120,72 +120,89 @@ enum
     }
 }
 
-- (void)queryUserHTLCs
+/**
+ *  (private) 查询账号关联的HTLC对象信息（包含FROM和TO）。
+ */
+- (WsPromise*)_queryUserHTLCObjectList
 {
-    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
-    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     id account = [_fullAccountInfo objectForKey:@"account"];
     id uid = [account objectForKey:@"id"];
     assert(uid);
-
-    //  TODO:2.1 REMARK: !!!!!! 因为core-team的database api尚未完成 !!!!，这里直接从用户明细里获取HTLC编号。
-    //  TODO：特别注意：如果API节点配置的账户历史明细太低，可能漏掉部分HTLC对象。又或者用户的账号交易记录太多，HTLC对象也可能被漏掉 。
-    //  TODO：后期data base api更新后处理。
     
-    id stop = [NSString stringWithFormat:@"1.%@.0", @(ebot_operation_history)];
-    id start = [NSString stringWithFormat:@"1.%@.0", @(ebot_operation_history)];
+    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     
-    NSMutableDictionary* htlc_id_hash = [NSMutableDictionary dictionary];
-    GrapheneApi* api_history = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_history;
-    [[[api_history exec:@"get_account_history_operations" params:@[uid, @(ebo_htlc_create), stop, start, @100]] then:(^id(id data_array) {
-        if (data_array && [data_array isKindOfClass:[NSArray class]] && [data_array count] > 0){
-            for (id op_history in data_array) {
-                id new_object_id = [OrgUtils extractNewObjectIDFromOperationResult:[op_history objectForKey:@"result"]];
-                if (new_object_id){
-                    [htlc_id_hash setObject:@YES forKey:new_object_id];
+    if ([_fullAccountInfo objectForKey:@"htlcs"]){
+        //  3.0.1 之后版本添加了获取HTLC相关API，full accounts也包含了HTLC对象信息。直接查询账号信息即可。
+        return [[chainMgr queryFullAccountInfo:uid] then:(^id(id full_data) {
+            return [full_data objectForKey:@"htlcs"];
+        })];
+    }else{
+        //  3.0.1 及其之前版本，获取HTLC的接口尚未完成。full accounts也未包含HTLC对象信息。这里直接从账号明细里获取。但存在缺陷。
+        //  TODO：特别注意：如果API节点配置的账户历史明细太低，可能漏掉部分HTLC对象。又或者用户的账号交易记录太多，HTLC对象也可能被漏掉 。
+        id stop = [NSString stringWithFormat:@"1.%@.0", @(ebot_operation_history)];
+        id start = [NSString stringWithFormat:@"1.%@.0", @(ebot_operation_history)];
+        GrapheneApi* api_history = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_history;
+        
+        return [[api_history exec:@"get_account_history_operations" params:@[uid, @(ebo_htlc_create), stop, start, @100]] then:(^id(id data_array) {
+            NSMutableDictionary* htlc_id_hash = [NSMutableDictionary dictionary];
+            if (data_array && [data_array isKindOfClass:[NSArray class]] && [data_array count] > 0){
+                for (id op_history in data_array) {
+                    id new_object_id = [OrgUtils extractNewObjectIDFromOperationResult:[op_history objectForKey:@"result"]];
+                    if (new_object_id){
+                        [htlc_id_hash setObject:@YES forKey:new_object_id];
+                    }
                 }
             }
-        }
-        id htlc_id_list = [htlc_id_hash allKeys];
-        return [[chainMgr queryAllGrapheneObjectsSkipCache:htlc_id_list] then:(^id(id data_hash) {
-            NSMutableDictionary* query_ids = [NSMutableDictionary dictionary];
-            //{
-            //    conditions =         {
-            //        "hash_lock" =             {
-            //            "preimage_hash" =                 (
-            //                                               2,
-            //                                               9464eddceb9e42e757d935e035b2029da01aef237aa98c0f9adb92ee93de8ee0
-            //                                               );
-            //            "preimage_size" = 64;
-            //        };
-            //        "time_lock" =             {
-            //            expiration = "2019-05-08T11:34:57";
-            //        };
-            //    };
-            //    id = "1.16.62";
-            //    transfer =         {
-            //        amount = 100000;
-            //        "asset_id" = "1.3.0";
-            //        from = "1.2.23173";
-            //        to = "1.2.23083";
-            //    };
-            //};
-            id htlc_list = [data_hash allValues];
-            for (id htlc in htlc_list) {
+            return [[chainMgr queryAllGrapheneObjectsSkipCache:[htlc_id_hash allKeys]] then:(^id(id data_hash) {
+                return [data_hash allValues];
+            })];
+        })];
+    }
+}
+
+- (void)queryUserHTLCs
+{
+    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    [[[self _queryUserHTLCObjectList] then:(^id(id htlcs) {
+        NSMutableDictionary* query_ids = [NSMutableDictionary dictionary];
+        //{
+        //    conditions =         {
+        //        "hash_lock" =             {
+        //            "preimage_hash" =                 (
+        //                                               2,
+        //                                               9464eddceb9e42e757d935e035b2029da01aef237aa98c0f9adb92ee93de8ee0
+        //                                               );
+        //            "preimage_size" = 64;
+        //        };
+        //        "time_lock" =             {
+        //            expiration = "2019-05-08T11:34:57";
+        //        };
+        //    };
+        //    id = "1.16.62";
+        //    transfer =         {
+        //        amount = 100000;
+        //        "asset_id" = "1.3.0";
+        //        from = "1.2.23173";
+        //        to = "1.2.23083";
+        //    };
+        //};
+        if (htlcs && [htlcs isKindOfClass:[NSArray class]]){
+            for (id htlc in htlcs) {
                 id transfer = [htlc objectForKey:@"transfer"];
                 assert(transfer);
                 [query_ids setObject:@YES forKey:[transfer objectForKey:@"from"]];
                 [query_ids setObject:@YES forKey:[transfer objectForKey:@"to"]];
                 [query_ids setObject:@YES forKey:[transfer objectForKey:@"asset_id"]];
             }
-            //  查询 & 缓存
-            id p1 = [chainMgr queryAllGrapheneObjects:[query_ids allKeys]];
-            id p2 = [chainMgr queryGlobalProperties];
-            return [[WsPromise all:@[p1, p2]] then:(^id(id data) {
-                [_owner hideBlockView];
-                [self onQueryUserHTLCsResponsed:htlc_list];
-                return nil;
-            })];
+        }
+        //  查询 & 缓存
+        ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+        id p1 = [chainMgr queryAllGrapheneObjects:[query_ids allKeys]];
+        id p2 = [chainMgr queryGlobalProperties];
+        return [[WsPromise all:@[p1, p2]] then:(^id(id data) {
+            [_owner hideBlockView];
+            [self onQueryUserHTLCsResponsed:htlcs];
+            return nil;
         })];
     })] catch:(^id(id error) {
         [_owner hideBlockView];
@@ -375,6 +392,8 @@ enum
             break;
         case kVcSubPreimageHash:
         {
+            cell.selectionStyle = UITableViewCellSelectionStyleGray;
+            
             NSString* have_value = [[[[htlc objectForKey:@"conditions"] objectForKey:@"hash_lock"] objectForKey:@"preimage_hash"] lastObject];
             cell.textLabel.lineBreakMode = NSLineBreakByTruncatingMiddle;
             cell.textLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListHashValue", @"原像哈希 ")
@@ -433,6 +452,22 @@ enum
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
+        switch (indexPath.row)
+        {
+            case kVcSubPreimageHash:
+            {
+                id htlc = [_dataArray objectAtIndex:indexPath.section];
+                NSString* have_value = [[[[[htlc objectForKey:@"conditions"] objectForKey:@"hash_lock"] objectForKey:@"preimage_hash"] lastObject] uppercaseString];
+                [UIPasteboard generalPasteboard].string = [have_value copy];
+                [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcHtlcListCopyPreimageHashOK", @"原像哈希：%@ 已复制。"), have_value]];
+            }
+                break;
+            default:
+                break;
+        }
+    }];
 }
 
 /**

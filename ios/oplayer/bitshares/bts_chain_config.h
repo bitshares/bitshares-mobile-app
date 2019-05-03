@@ -68,45 +68,6 @@ typedef enum EBitsharesObjectType
  */
 typedef enum EBitsharesOperations
 {
-//    ebo_transfer = 0,           //  转账
-//    ebo_limit_order_create,     //  (创建)限价单
-//    ebo_limit_order_cancel,     //  取消限价单
-//    ebo_call_order_update,      //  更新保证金（抵押借贷）
-//
-//    ebo_fill_order,             //  4
-//
-//    //  TODO:fowallet 暂时没用到
-//    ebo_account_create,         //  5 创建帐号
-//    ebo_account_update,         //  6 更新帐号
-//    ebo_account_whitelist,
-//    ebo_account_upgrade,
-//    ebo_account_transfer,       //  9
-//
-//    ebo_asset_create = 10,      //  10
-//    ebo_asset_update,
-//    ebo_asset_update_bitasset,
-//    ebo_asset_update_feed_producers,
-//    ebo_asset_issue,
-//    ebo_asset_reserve,
-//    ebo_asset_fund_fee_pool,
-//    ebo_asset_settle,
-//    ebo_asset_global_settle,
-//    ebo_asset_publish_feed,     //  19
-//
-//    ebo_witness_create = 20,
-//    ebo_witness_update,
-//
-//    ebo_proposal_create = 22,   //  22、提案创建、更新、删除
-//    ebo_proposal_update,
-//    ebo_proposal_delete,
-//
-//    ebo_committee_member_create = 29,
-//    ebo_committee_member_update,
-//    ebo_committee_member_update_global_parameters,
-//
-//    ebo_vesting_balance_create = 32,    //  创建待解冻金额
-//    ebo_vesting_balance_withdraw,       //  提取待解冻金额
-
     ebo_transfer = 0,
     ebo_limit_order_create = 1,
     ebo_limit_order_cancel = 2,
@@ -151,8 +112,6 @@ typedef enum EBitsharesOperations
     ebo_transfer_from_blind = 41,
     ebo_asset_settle_cancel = 42,
     ebo_asset_claim_fees = 43,
-    
-    //  TODO:2.1
     ebo_fba_distribute = 44,        // VIRTUAL
     ebo_bid_collateral = 45,
     ebo_execute_bid = 46,           // VIRTUAL
@@ -163,7 +122,6 @@ typedef enum EBitsharesOperations
     ebo_htlc_redeemed = 51,         // VIRTUAL
     ebo_htlc_extend = 52,
     ebo_htlc_refund = 53,           // VIRTUAL
-    
 } EBitsharesOperations;
 
 //  BTS公钥地址前缀
