@@ -134,8 +134,9 @@
         id op = [history objectForKey:@"op"];
         NSInteger optype = [[op objectAtIndex:0] integerValue];
         id opdata = [op objectAtIndex:1];
+        id opresult = [history objectForKey:@"result"];
         
-        id uidata = [OrgUtils processOpdata2UiData:optype opdata:opdata isproposal:NO];
+        id uidata = [OrgUtils processOpdata2UiData:optype opdata:opdata opresult:opresult isproposal:NO];
         
         //  REMARK：未知操作不显示，略过。
         if (!uidata){

@@ -189,20 +189,21 @@ enum
         if (_mode == EDM_PREIMAGE || _havePreimage){
             //  主动创建时候的合约有效期（先创建）
             _const_expire_list = @[
-                                   @{@"name":@"3天", @"value":@(3600*24*3)},
-                                   @{@"name":@"5天", @"value":@(3600*24*5)},
-                                   @{@"name":@"7天", @"value":@(3600*24*7)},
-                                   @{@"name":@"15天", @"value":@(3600*24*15)},
+                                   @{@"name":[NSString stringWithFormat:NSLocalizedString(@"kVcHtlcCellValueNDayFmt", @"%@天"), @(3)], @"value":@(3600*24*3)},
+                                   @{@"name":[NSString stringWithFormat:NSLocalizedString(@"kVcHtlcCellValueNDayFmt", @"%@天"), @(5)], @"value":@(3600*24*5)},
+                                   @{@"name":[NSString stringWithFormat:NSLocalizedString(@"kVcHtlcCellValueNDayFmt", @"%@天"), @(7)], @"value":@(3600*24*7)},
+                                   @{@"name":[NSString stringWithFormat:NSLocalizedString(@"kVcHtlcCellValueNDayFmt", @"%@天"), @(15)], @"value":@(3600*24*15)},
                                    ];
             _currExpire = [_const_expire_list objectAtIndex:1];
         }else{
             //  被动创建时候的合约有效期（后创建）
+            //  TODO:1 day 单数和复数显示区别
             _const_expire_list = @[
-                                   @{@"name":@"6小时", @"value":@(3600*6)},
-                                   @{@"name":@"12小时", @"value":@(3600*12)},
-                                   @{@"name":@"1天", @"value":@(3600*24*1)},
-                                   @{@"name":@"2天", @"value":@(3600*24*2)},
-                                   @{@"name":@"3天", @"value":@(3600*24*3)},
+                                   @{@"name":[NSString stringWithFormat:NSLocalizedString(@"kVcHtlcCellValueNHourFmt", @"%@小时"), @(6)], @"value":@(3600*6)},
+                                   @{@"name":[NSString stringWithFormat:NSLocalizedString(@"kVcHtlcCellValueNHourFmt", @"%@小时"), @(12)], @"value":@(3600*12)},
+                                   @{@"name":[NSString stringWithFormat:NSLocalizedString(@"kVcHtlcCellValueNDayFmt", @"%@天"), @(1)], @"value":@(3600*24*1)},
+                                   @{@"name":[NSString stringWithFormat:NSLocalizedString(@"kVcHtlcCellValueNDayFmt", @"%@天"), @(2)], @"value":@(3600*24*2)},
+                                   @{@"name":[NSString stringWithFormat:NSLocalizedString(@"kVcHtlcCellValueNDayFmt", @"%@天"), @(3)], @"value":@(3600*24*3)},
                                    ];
             _currExpire = [_const_expire_list objectAtIndex:2];
             
@@ -336,7 +337,7 @@ enum
 }
 
 /**
- *  (private) 转账成功后刷新界面。
+ *  (private) 提交交易成功后刷新界面。
  */
 - (void)refreshUI:(id)new_full_account_data
 {
@@ -750,36 +751,27 @@ enum
          //  请求网络广播
          [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
          [[[[BitsharesClientManager sharedBitsharesClientManager] htlcCreate:op] then:(^id(id transaction_confirmation) {
-             [self hideBlockView];
-             NSLog(@"%@", transaction_confirmation);
-             // TODO:2.1未完成
              id new_htlc_id = [OrgUtils extractNewObjectID:transaction_confirmation];
-             [OrgUtils makeToast:[NSString stringWithFormat:@"new htlc id: %@", new_htlc_id]];
-//             [[[[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:opaccount_id] then:(^id(id full_data) {
-//                 NSLog(@"callorder_update & refresh: %@", full_data);
-//                 [self hideBlockView];
-//                 //  刷新UI
-//                 [self refreshUI:YES new_feed_price_data:nil];
-//                 [OrgUtils makeToast:NSLocalizedString(@"kDebtTipTxUpdatePositionFullOK", @"债仓调整完毕。")];
-//                 //  [统计]
-//                 [Answers logCustomEventWithName:@"txCallOrderUpdateFullOK"
-//                                customAttributes:@{@"account":funding_account, @"debt_asset":_debtPair.baseAsset[@"symbol"]}];
-//                 return nil;
-//             })] catch:(^id(id error) {
-//                 [self hideBlockView];
-//                 [OrgUtils makeToast:NSLocalizedString(@"kDebtTipTxUpdatePositionOK", @"债仓调整完毕，但刷新界面数据失败，请稍后再试。")];
-//                 //  [统计]
-//                 [Answers logCustomEventWithName:@"txCallOrderUpdateOK"
-//                                customAttributes:@{@"account":funding_account, @"debt_asset":_debtPair.baseAsset[@"symbol"]}];
-//                 return nil;
-//             })];
+             [[[[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:opaccount_id] then:(^id(id full_data) {
+                 [self hideBlockView];
+                 [self refreshUI:full_data];
+                 [OrgUtils makeToast:NSLocalizedString(@"kVcHtlcSubmitTipsFullOK", @"创建HTLC成功，可在我的资产界面查看HTLC详细信息。")];
+                 //  [统计]
+                 [Answers logCustomEventWithName:@"txHtlcCreateFullOK" customAttributes:@{@"from":opaccount_id, @"htlc_id":new_htlc_id ?: @""}];
+                 return nil;
+             })] catch:(^id(id error) {
+                 [self hideBlockView];
+                 [OrgUtils makeToast:NSLocalizedString(@"kVcHtlcSubmitTipsOK", @"创建HTLC成功，但刷新界面失败，可在我的资产界面查看HTLC详细信息。")];
+                 //  [统计]
+                 [Answers logCustomEventWithName:@"txHtlcCreateOK" customAttributes:@{@"from":opaccount_id, @"htlc_id":new_htlc_id ?: @""}];
+                 return nil;
+             })];
              return nil;
          })] catch:(^id(id error) {
              [self hideBlockView];
-             [OrgUtils makeToast:NSLocalizedString(@"kTipsTxRequestFailed", @"请求失败，请稍后再试。")];
-//             //  [统计]
-//             [Answers logCustomEventWithName:@"txCallOrderUpdateFailed"
-//                            customAttributes:@{@"account":opaccount_id, @"debt_asset":_debtPair.baseAsset[@"symbol"]}];
+             [OrgUtils showGrapheneError:error];
+             //  [统计]
+             [Answers logCustomEventWithName:@"txHtlcCreateFailed" customAttributes:@{@"from":opaccount_id}];
              return nil;
          })];
      }];

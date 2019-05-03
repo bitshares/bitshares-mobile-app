@@ -56,6 +56,7 @@
 "kServicesCellLabelVoting" = "Voting";
 "kServicesCellLabelFeedPrice" = "Feed price details";
 "kServicesCellLabelDepositWithdraw" = "Deposit & Withdraw";
+"kServicesCellLabelAdvFunction" = "Advanced Features";
 
 /* 抵押排行 */
 "kVcRankCurrentFeedPrice" = "Feed price";
@@ -287,6 +288,8 @@
 /* 资产界面 */
 "kVcAssetPageAsset" = "Assets";
 "kVcAssetPageActivity" = "Activities";
+"kVcAssetPageHTLC" = "HTLC";
+"kVcAssetPageVestingBalance" = "Vesting";
 "kVcAssetTotalValue" = "Estimated Total Value(%@)";
 "kVcAssetBtnTransfer" = "Transfer";
 "kVcAssetBtnTrade" = "Trade";
@@ -459,61 +462,64 @@
 "kVcTransferTipSelectToAccount" = "Please select target account";
 "kVcTransferTipSelectAsset" = "Please select the asset to transfer";
 
-/* HTLC合约TODO:2.1 */
-"kVcHtlcEntryFromPreimage" = "HTLC合约（原像创建）";
-"kVcHtlcEntryFromHashcode" = "HTLC合约（哈希创建）";
-"kVcHtlcMenuPassiveCreate" = "被动部署合约";
-"kVcHtlcMenuProactivelyCreate" = "主动创建合约";
-"kVcHtlcCellTitlePreimage" = "原像";
-"kVcHtlcCellTitleAdvSwitch" = "高级设置";
-"kVcHtlcCellTitleHashMethod" = "哈希算法";
-"kVcHtlcCellTitleClaimPeriod" = "有效期";
-"kVcHtlcCellTitlePreimageHash" = "原像哈希";
-"kVcHtlcCellTitlePreimageLength" = "原像长度";
-"kVcHtlcPlaceholderInputPreimage" = "请输入合约的原像";
-"kVcHtlcPlaceholderInputPreimageHash" = "请输入原像的哈希值";
-"kVcHtlcPlaceholderInputPreimageLength" = "请选择原像长度值";
-"kVcHtlcPlaceholderInputHashType" = "请选择哈希算法";
-"kVcHtlcPlaceholderInputExpire" = "请选择合约有效期";
-"kVcHtlcTailerBtnCopy" = "复制";
-"kVcHtlcTailerBtnPaste" = "粘贴";
-"kVcHtlcSubmitBtn01" = "创建";
-"kVcHtlcSubmitBtn02" = "根据对方合约创建";
-"kVcHtlcSubmitBtn03" = "主动创建合约";
-"kVcHtlcTipsPreimageCopied" = "原像已复制：%@";
-"kVcHtlcTipsPreimageForm" = "原像格式为20位以上，且必须同时包含大写字母和数字。";
-"kVcHtlcTipsInputPreimageHash" = "请输入原像哈希值。";
-"kVcHtlcTipsInputValidPreimageHash" = "请输入有效的原像哈希值。";
-"kVcHtlcTipsExpireIsTooShort" = "临近合约A有效期，存在安全风险，不可创建合约B。请联系对方延长合约有效期。";
-"kVcHtlcMessageCreateFromPreimage" = "请确认已经复制备份好【原像】信息，丢失原像只能等待合约到期后自动解锁。是否继续创建合约？";
-"kVcHtlcMessageCreateFromHtlcObject" = "建议合约【有效期】务必“小于”对方合约有效期2天以上，否则可能造成资金损失。是否继续创建合约？";
-"kVcHtlcMessageCreateFromHashHavePreimage" = "主动创建合约请备份好【原像】信息，丢失原像只能等待合约到期后自动解锁。是否继续创建合约？";
-"kVcHtlcMessageCreateFromHashNoPreimage" = "被动部署合约请仔细确认对方已经部署好了相同的合约，并仔细核对各种参数。\n\n※ 注意 ※\n1、原像哈希和原像长度必须和对方完全匹配。\n2、建议合约【有效期】务必“小于”对方合约有效期2天以上，否则可能造成资金损失。是否继续创建合约？";
-"kVcHtlcMessageTipsTitle" = "风险提示";
-"kVcHtlcNoAnyObjects" = "没有任何HTLC合约信息";
-"kVcHtlcListCellFrom" = "付款账号 ";
-"kVcHtlcListCellTo" = "收款账号 ";
-"kVcHtlcListTransferDir" = "转账类型 ";
-"kVcHtlcListTransferDirPayment" = "付款";
-"kVcHtlcListTransferDirIncome" = "收款";
-"kVcHtlcListTransferAmount" = "转账金额 ";
-"kVcHtlcListPreimageLength" = "原像长度 ";
-"kVcHtlcListHashType" = "哈希类型 ";
-"kVcHtlcListHashTypeValueUnknown" = "未知类型 %@";
-"kVcHtlcListHashValue" = "原像哈希 ";
-"kVcHtlcListBtnExtend" = "延长有效期";
-"kVcHtlcListBtnRedeem" = "提取";
-"kVcHtlcListBtnCreate" = "部署";
-"kVcHtlcListTipsErrorMissParams" = "HTLC相关参数理事会尚未配置，请稍后再试。";
-"kVcHtlcListTipsErrorMaxExpire" = "已经达到最长有效期，不能再延长了。";
-"kVcHtlcListTipsSelectExtendDays" = "请选择延长天数";
-"kVcHtlcListTipsExtendConfirm" = "延长 %@ 天合约的有效期，延长之后不可降低。是否继续？";
-"kVcHtlcListTipsInputValidPreimage" = "请输入有效的原像信息。";
-"kVcHtlcListAskTitleRedeem" = "提取合约";
-"kVcHtlcListAskPlaceholderRedeem" = "请输入合约原像";
-"kVcHtlcListTipsRedeemOK" = "HTLC合约 %@ 提取成功。";
-"kVcHtlcListTipsExtendOK" = "HTLC合约 %@ 延长有效期成功。";
-"kVcHtlcListExtendNDayFmt" = "%@天";
+/* HTLC合约 */
+"kVcHtlcEntryFromPreimage" = "Create HTLC (by preimage)";
+"kVcHtlcEntryFromHashcode" = "Create HTLC (by hashcode)";
+"kVcHtlcMenuPassiveCreate" = "Passive deployment contract";
+"kVcHtlcMenuProactivelyCreate" = "Proactively create contracts";
+"kVcHtlcCellTitlePreimage" = "Preimage";
+"kVcHtlcCellTitleAdvSwitch" = "More Settings";
+"kVcHtlcCellTitleHashMethod" = "Hash Type";
+"kVcHtlcCellTitleClaimPeriod" = "Expiry";
+"kVcHtlcCellTitlePreimageHash" = "Hash";
+"kVcHtlcCellTitlePreimageLength" = "Preimage Length";
+"kVcHtlcCellValueNDayFmt" = "%@ days";
+"kVcHtlcCellValueNHourFmt" = "%@ hours";
+"kVcHtlcPlaceholderInputPreimage" = "input the preimage";
+"kVcHtlcPlaceholderInputPreimageHash" = "hash value of the preimage";
+"kVcHtlcPlaceholderInputPreimageLength" = "length of the preimage";
+"kVcHtlcPlaceholderInputHashType" = "Please select hash type";
+"kVcHtlcPlaceholderInputExpire" = "Please select the expiry";
+"kVcHtlcTailerBtnCopy" = "Copy";
+"kVcHtlcTailerBtnPaste" = "Paste";
+"kVcHtlcSubmitBtn01" = "Create";
+"kVcHtlcTipsPreimageCopied" = "The preimage has been copied: %@";
+"kVcHtlcTipsPreimageForm" = "The preimage format is 20 characters or more and must contain both uppercase letters and numbers.";
+"kVcHtlcTipsInputPreimageHash" = "Please enter the preimage hash value.";
+"kVcHtlcTipsInputValidPreimageHash" = "Please enter a valid preimage hash value.";
+"kVcHtlcTipsExpireIsTooShort" = "Near the expiration date of Contract A, there is a security risk and Contract B cannot be created. Please contact the other party to extend the contract expiry.";
+"kVcHtlcMessageCreateFromPreimage" = "Please confirm that the \"Preimage\" has been backed up. If the preimage is lost, it only can be automatically unlocked after the contract expires. Do you want to continue creating contracts?";
+"kVcHtlcMessageCreateFromHtlcObject" = "It is recommended that \"Expiry\" must be \"less than\" the expiry of the other party's contract for more than 2 days, otherwise it may cause asset loss. Do you want to continue creating contracts?";
+"kVcHtlcMessageCreateFromHashHavePreimage" = "Proactively create a contract, please back up the \"preimage\". If the preimage is lost, it only can be automatically unlocked after the contract expires. Do you want to continue creating contracts?";
+"kVcHtlcMessageCreateFromHashNoPreimage" = "Passive deployment contract please carefully confirm that the other party has deployed the same contract and carefully check the various parameters. \n\n※ Note ※\n1. the preimage hash and the preimage length must match the other party perfectly. \n2. It is recommended that \"Expiry\" must be \"less than\" the expiry of the other party's contract for more than 2 days, otherwise it may cause asset loss. Do you want to continue creating contracts?";
+"kVcHtlcMessageTipsTitle" = "Risk Warning";
+"kVcHtlcSubmitTipsFullOK" = "The HTLC was created successfully, view the HTLC details on the \"My Balance\".";
+"kVcHtlcSubmitTipsOK" = "The HTLC was created successfully, but the refresh interface failed. You can view the HTLC details on the \"My Balance\".";
+"kVcHtlcNoAnyObjects" = "No HTLC objects";
+"kVcHtlcListCellFrom" = "From ";
+"kVcHtlcListCellTo" = "To ";
+"kVcHtlcListTransferDir" = "Direction ";
+"kVcHtlcListTransferDirPayment" = "Lose";
+"kVcHtlcListTransferDirIncome" = "Gain";
+"kVcHtlcListTransferAmount" = "Amount ";
+"kVcHtlcListPreimageLength" = "Preimage length ";
+"kVcHtlcListHashType" = "Hash type ";
+"kVcHtlcListHashTypeValueUnknown" = "Unknown type %@";
+"kVcHtlcListHashValue" = "Preimage hash ";
+"kVcHtlcListBtnExtend" = "Extend expiry";
+"kVcHtlcListBtnRedeem" = "Redeem";
+"kVcHtlcListBtnCreate" = "Deploy";
+"kVcHtlcListTipsErrorMissParams" = "The HTLC related parameters committees have not been configured, please try again later.";
+"kVcHtlcListTipsErrorMaxExpire" = "It has reached the maximum expiry and cannot be extended any longer.";
+"kVcHtlcListTipsSelectExtendDays" = "Please choose to extend days";
+"kVcHtlcListTipsExtendConfirm" = "Extend the expiry %@ days and do not reduce it after the extension. Whether to continue?";
+"kVcHtlcListTipsInputValidPreimage" = "Please enter valid preimage.";
+"kVcHtlcListAskTitleRedeem" = "Redeem HTLC";
+"kVcHtlcListAskPlaceholderRedeem" = "preimage of the HTLC";
+"kVcHtlcListTipsRedeemOK" = "Redeem the HTLC %@ successfully.";
+"kVcHtlcListTipsExtendOK" = "Extend the HTLC %@ expiry successfully.";
+"kVcHtlcListExtendNDayFmt" = "%@ days";
+"kVcHtlcListCopyPreimageHashOK" = "The preimage hash has been copied: %@";
 
 /* 确认界面 */
 "kVcConfirmTipFrom" = "From";
@@ -577,7 +583,7 @@
 "kSettingCurrencyNameKRW" = "Korean Won";
 "kSettingCurrencyNameBTS" = "Bitshares Core Asset";
 
-/* 各种VC标题栏名字TODO:2.1HTLC */
+/* 各种VC标题栏名字 */
 "kVcTitleLogin" = "Login";
 "kVcTitleImportAccount" = "Import account";
 "kVcTitleRegister" = "Register";
@@ -616,11 +622,12 @@
 "kVcTitleProposalAddApprove" = "Add proposal approval";
 "kVcTitleProposalRemoveApprove" = "Remove proposal approval";
 "kVcTitleDepositWithdraw" = "Deposit & Withdraw";
+"kVcTitleDepositAdvFunction" = "Advanced Features";
 "kVcTitleDeposit" = "%@ deposits";
 "kVcTitleWithdraw" = "%@ withdrawls";
 "kVcTitleKlineIndexSetting" = "K-Line Index Setting";
-"kVcTitleCreateHTLC" = "创建HTLC合约";
-"kVcTitleCreateSubHTLC" = "部署副合约";
+"kVcTitleCreateHTLC" = "Create HTLC";
+"kVcTitleCreateSubHTLC" = "Deploy sub-contracts";
 
 /* 钱包管理 */
 "kWalletUnlockFailedUnknowMode" = "Unlock failed, unknown account mode: %@.";
@@ -648,7 +655,7 @@
 "kWalletCellPermissionActive" = "Active";
 "kWalletCellPermissionMemo" = "Memo";
 
-/* 交易OP名字TODO:2.1kOpType_fba_distribute */
+/* 交易OP名字 */
 "kOpType_proposal_prefix" = "Proposal \"%@\"";
 "kOpType_transfer" = "Transfer";
 "kOpType_limit_order_create_sell" = "Create Sell Order";
@@ -695,16 +702,17 @@
 "kOpType_transfer_from_blind" = "Transfer From Blind";
 "kOpType_asset_settle_cancel" = "Cancel Settlement";
 "kOpType_asset_claim_fees" = "Claim Asset Fees";
-"kOpType_fba_distribute" = "fba_distribute";
-"kOpType_bid_collateral" = "bid_collateral";
-"kOpType_execute_bid" = "execute_bid";
-"kOpType_asset_claim_pool" = "asset_claim_pool";
-"kOpType_asset_update_issuer" = "asset_update_issuer";
+"kOpType_fba_distribute" = "FBA Distribute";
+"kOpType_bid_collateral" = "Bid Collateral";
+"kOpType_execute_bid" = "Bid Collateral Success";
+"kOpType_asset_claim_pool" = "Claim Asset Pool";
+"kOpType_asset_update_issuer" = "Update Asset Issuer";
 "kOpType_htlc_create" = "Create HTLC";
 "kOpType_htlc_redeem" = "Rredeem HTLC";
-"kOpType_htlc_redeemed" = "htlc_redeemed";
-"kOpType_htlc_extend" = "htlc_extend";
-"kOpType_htlc_refund" = "htlc_refund";
+"kOpType_htlc_redeemed" = "HTLC Redeemed";
+"kOpType_htlc_extend" = "HTLC Extend";
+"kOpType_htlc_refund" = "HTLC Refund";
+"kOpType_unknown_op" = "Unknown";
 
 /* 交易OP详细描述 */
 "kOpDesc_transfer" = "%@ transfer %@ to %@.";
@@ -723,7 +731,7 @@
 "kOpDesc_asset_create" = "%@ create asset %@.";
 "kOpDesc_asset_update" = "update assets %@.";
 "kOpDesc_asset_update_bitasset" = "update bitasset.";
-"kOpDesc_asset_update_feed_producers" = "update feed publisher.";
+"kOpDesc_asset_update_feed_producers" = "%@ update feed publisher.";
 "kOpDesc_asset_issue" = "issue assets.";
 "kOpDesc_asset_reserve" = "reserve assets.";
 "kOpDesc_asset_fund_fee_pool" = "fund the fee pool.";
@@ -732,7 +740,8 @@
 "kOpDesc_asset_publish_feed" = "publish feed price.";
 "kOpDesc_witness_create" = "create a witness.";
 "kOpDesc_witness_update" = "update the witness.";
-"kOpDesc_proposal_create" = "create proposal.";
+"kOpDesc_proposal_create_with_id" = "%@ create proposal. #%@";
+"kOpDesc_proposal_create" = "%@ create proposal.";
 "kOpDesc_proposal_update" = "%@ update proposal. #%@";
 "kOpDesc_proposal_delete" = "delete proposal.";
 "kOpDesc_withdraw_permission_create" = "create a permission withdraw.";
@@ -754,8 +763,20 @@
 "kOpDesc_transfer_from_blind" = "transfer asset from a blind account.";
 "kOpDesc_asset_settle_cancel" = "cancel the settlement.";
 "kOpDesc_asset_claim_fees" = "claim the asset fees.";
+"kOpDesc_fba_distribute" = "FBA distribute.";
+"kOpDesc_bid_collateral" = "bid collateral.";
+"kOpDesc_execute_bid" = "bidding collateral success.";
+"kOpDesc_asset_claim_pool" = "claim the asset pool.";
+"kOpDesc_asset_update_issuer" = "update asset issuer account.";
+"kOpDesc_htlc_create_with_id" = "%@ ready to transfer %@ to %@. #%@";
+"kOpDesc_htlc_create" = "%@ ready to transfer %@ to %@.";
+"kOpDesc_htlc_redeem" = "%@ redeem HTLC with preimage %@. #%@";
+"kOpDesc_htlc_redeemed" = "%@ redeem HTLC successfully. %@ transferred to %@. #%@";
+"kOpDesc_htlc_extend" = "%@ extended HTLC expiration time %@ seconds. #%@";
+"kOpDesc_htlc_refund" = "HTLC expires. assets are automatically returned to %@. #%@";
+"kOpDesc_unknown_op" = "unknown operation #%@.";
 
-/* 交易OP细化TODO:2.1 */
+/* 交易OP细化 */
 "kOpDetailFlagDangerous" = "DANGEROUS";
 "kOpDetailPermissionOwner" = "Owner Permission";
 "kOpDetailPermissionActive" = "Active Permission";
