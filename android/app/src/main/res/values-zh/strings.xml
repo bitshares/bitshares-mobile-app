@@ -48,6 +48,7 @@
     <string name="kServicesCellLabelVoting">投票</string>
     <string name="kServicesCellLabelFeedPrice">喂价详情</string>
     <string name="kServicesCellLabelDepositWithdraw">充币提币</string>
+    <string name="kServicesCellLabelAdvFunction">高级功能</string>
     <!-- 抵押排行 -->
     <string name="kVcRankCurrentFeedPrice">当前喂价</string>
     <string name="kVcTipsNoCallOrder">还没有用户进行抵押</string>
@@ -270,6 +271,8 @@
     <!-- 资产界面 -->
     <string name="kVcAssetPageAsset">资产</string>
     <string name="kVcAssetPageActivity">明细</string>
+    <string name="kVcAssetPageHTLC">HTLC</string>
+    <string name="kVcAssetPageVestingBalance">待解冻金额</string>
     <string name="kVcAssetTotalValue">总资产折合(%s)</string>
     <string name="kVcAssetBtnTransfer">转账</string>
     <string name="kVcAssetBtnTrade">交易</string>
@@ -436,6 +439,64 @@
     <string name="kVcTransferCellMemo">备注信息</string>
     <string name="kVcTransferTipSelectToAccount">请选择收款账号</string>
     <string name="kVcTransferTipSelectAsset">请选择要转账的资产</string>
+    <!-- HTLC合约 -->
+    <string name="kVcHtlcEntryFromPreimage">HTLC合约（原像创建）</string>
+    <string name="kVcHtlcEntryFromHashcode">HTLC合约（哈希创建）</string>
+    <string name="kVcHtlcMenuPassiveCreate">被动部署合约</string>
+    <string name="kVcHtlcMenuProactivelyCreate">主动创建合约</string>
+    <string name="kVcHtlcCellTitlePreimage">原像</string>
+    <string name="kVcHtlcCellTitleAdvSwitch">高级设置</string>
+    <string name="kVcHtlcCellTitleHashMethod">哈希算法</string>
+    <string name="kVcHtlcCellTitleClaimPeriod">有效期</string>
+    <string name="kVcHtlcCellTitlePreimageHash">原像哈希</string>
+    <string name="kVcHtlcCellTitlePreimageLength">原像长度</string>
+    <string name="kVcHtlcCellValueNDayFmt">%s天</string>
+    <string name="kVcHtlcCellValueNHourFmt">%s小时</string>
+    <string name="kVcHtlcPlaceholderInputPreimage">请输入合约的原像</string>
+    <string name="kVcHtlcPlaceholderInputPreimageHash">请输入原像的哈希值</string>
+    <string name="kVcHtlcPlaceholderInputPreimageLength">请选择原像长度值</string>
+    <string name="kVcHtlcPlaceholderInputHashType">请选择哈希算法</string>
+    <string name="kVcHtlcPlaceholderInputExpire">请选择合约有效期</string>
+    <string name="kVcHtlcTailerBtnCopy">复制</string>
+    <string name="kVcHtlcTailerBtnPaste">粘贴</string>
+    <string name="kVcHtlcSubmitBtn01">创建</string>
+    <string name="kVcHtlcTipsPreimageCopied">原像已复制：%s</string>
+    <string name="kVcHtlcTipsPreimageForm">原像格式为20位以上，且必须同时包含大写字母和数字。</string>
+    <string name="kVcHtlcTipsInputPreimageHash">请输入原像哈希值。</string>
+    <string name="kVcHtlcTipsInputValidPreimageHash">请输入有效的原像哈希值。</string>
+    <string name="kVcHtlcTipsExpireIsTooShort">临近合约A有效期，存在安全风险，不可创建合约B。请联系对方延长合约有效期。</string>
+    <string name="kVcHtlcMessageCreateFromPreimage">请确认已经复制备份好【原像】信息，丢失原像只能等待合约到期后自动解锁。是否继续创建合约？</string>
+    <string name="kVcHtlcMessageCreateFromHtlcObject">建议合约【有效期】务必“小于”对方合约有效期2天以上，否则可能造成资金损失。是否继续创建合约？</string>
+    <string name="kVcHtlcMessageCreateFromHashHavePreimage">主动创建合约请备份好【原像】信息，丢失原像只能等待合约到期后自动解锁。是否继续创建合约？</string>
+    <string name="kVcHtlcMessageCreateFromHashNoPreimage">被动部署合约请仔细确认对方已经部署好了相同的合约，并仔细核对各种参数。\n\n※ 注意 ※\n1、原像哈希和原像长度必须和对方完全匹配。\n2、建议合约【有效期】务必“小于”对方合约有效期2天以上，否则可能造成资金损失。是否继续创建合约？</string>
+    <string name="kVcHtlcMessageTipsTitle">风险提示</string>
+    <string name="kVcHtlcSubmitTipsFullOK">创建HTLC成功，可在我的资产界面查看HTLC详细信息。</string>
+    <string name="kVcHtlcSubmitTipsOK">创建HTLC成功，但刷新界面失败，可在我的资产界面查看HTLC详细信息。</string>
+    <string name="kVcHtlcNoAnyObjects">没有任何HTLC合约信息</string>
+    <string name="kVcHtlcListCellFrom">付款账号 </string>
+    <string name="kVcHtlcListCellTo">收款账号 </string>
+    <string name="kVcHtlcListTransferDir">转账类型 </string>
+    <string name="kVcHtlcListTransferDirPayment">付款</string>
+    <string name="kVcHtlcListTransferDirIncome">收款</string>
+    <string name="kVcHtlcListTransferAmount">转账金额 </string>
+    <string name="kVcHtlcListPreimageLength">原像长度 </string>
+    <string name="kVcHtlcListHashType">哈希类型 </string>
+    <string name="kVcHtlcListHashTypeValueUnknown">未知类型 %s</string>
+    <string name="kVcHtlcListHashValue">原像哈希 </string>
+    <string name="kVcHtlcListBtnExtend">延长有效期</string>
+    <string name="kVcHtlcListBtnRedeem">提取</string>
+    <string name="kVcHtlcListBtnCreate">部署</string>
+    <string name="kVcHtlcListTipsErrorMissParams">HTLC相关参数理事会尚未配置，请稍后再试。</string>
+    <string name="kVcHtlcListTipsErrorMaxExpire">已经达到最长有效期，不能再延长了。</string>
+    <string name="kVcHtlcListTipsSelectExtendDays">请选择延长天数</string>
+    <string name="kVcHtlcListTipsExtendConfirm">延长 %s 天合约的有效期，延长之后不可降低。是否继续？</string>
+    <string name="kVcHtlcListTipsInputValidPreimage">请输入有效的原像信息。</string>
+    <string name="kVcHtlcListAskTitleRedeem">提取合约</string>
+    <string name="kVcHtlcListAskPlaceholderRedeem">请输入合约原像</string>
+    <string name="kVcHtlcListTipsRedeemOK">HTLC合约 %s 提取成功。</string>
+    <string name="kVcHtlcListTipsExtendOK">HTLC合约 %s 延长有效期成功。</string>
+    <string name="kVcHtlcListExtendNDayFmt">%s天</string>
+    <string name="kVcHtlcListCopyPreimageHashOK">原像哈希已复制：%s</string>
     <!-- 确认界面 -->
     <string name="kVcConfirmTipFrom">来自</string>
     <string name="kVcConfirmTipTo">发往</string>
@@ -534,9 +595,12 @@
     <string name="kVcTitleProposalAddApprove">授权批准</string>
     <string name="kVcTitleProposalRemoveApprove">授权撤销</string>
     <string name="kVcTitleDepositWithdraw">充币提币</string>
+    <string name="kVcTitleDepositAdvFunction">高级功能</string>
     <string name="kVcTitleDeposit">%s充币</string>
     <string name="kVcTitleWithdraw">%s提币</string>
     <string name="kVcTitleKlineIndexSetting">K线指标设置</string>
+    <string name="kVcTitleCreateHTLC">创建HTLC合约</string>
+    <string name="kVcTitleCreateSubHTLC">部署副合约</string>
     <!-- 钱包管理 -->
     <string name="kWalletUnlockFailedUnknowMode">解锁失败，未知的账号模式：%s。</string>
     <string name="kWalletInvalidWalletPassword">钱包密码无效。</string>
@@ -609,6 +673,17 @@
     <string name="kOpType_transfer_from_blind">从隐私账户转出</string>
     <string name="kOpType_asset_settle_cancel">取消清算</string>
     <string name="kOpType_asset_claim_fees">提取资产手续费</string>
+    <string name="kOpType_fba_distribute">FBA分发</string>
+    <string name="kOpType_bid_collateral">黑天鹅竞价</string>
+    <string name="kOpType_execute_bid">竞价成功</string>
+    <string name="kOpType_asset_claim_pool">提取资产手续费池</string>
+    <string name="kOpType_asset_update_issuer">更新资产发行账号</string>
+    <string name="kOpType_htlc_create">创建HTLC</string>
+    <string name="kOpType_htlc_redeem">赎回HTLC</string>
+    <string name="kOpType_htlc_redeemed">赎回HTLC成功</string>
+    <string name="kOpType_htlc_extend">更新HTLC</string>
+    <string name="kOpType_htlc_refund">HTLC退款</string>
+    <string name="kOpType_unknown_op">未知操作</string>
     <!-- 交易OP详细描述 -->
     <string name="kOpDesc_transfer">%s 转账 %s 到 %s。</string>
     <string name="kOpDesc_limit_order_create_sell">%s 提交卖单，以 %s 的价格卖出 %s。</string>
@@ -626,7 +701,7 @@
     <string name="kOpDesc_asset_create">%s 创建资产 %s。</string>
     <string name="kOpDesc_asset_update">更新资产 %s。</string>
     <string name="kOpDesc_asset_update_bitasset">更新智能币。</string>
-    <string name="kOpDesc_asset_update_feed_producers">更新喂价者。</string>
+    <string name="kOpDesc_asset_update_feed_producers">%s 资产更新发布喂价的账号信息。</string>
     <string name="kOpDesc_asset_issue">资产发行。</string>
     <string name="kOpDesc_asset_reserve">资产销毁。</string>
     <string name="kOpDesc_asset_fund_fee_pool">注资手续费池。</string>
@@ -635,7 +710,8 @@
     <string name="kOpDesc_asset_publish_feed">发布喂价。</string>
     <string name="kOpDesc_witness_create">创建见证人。</string>
     <string name="kOpDesc_witness_update">更新见证人。</string>
-    <string name="kOpDesc_proposal_create">创建提案。</string>
+    <string name="kOpDesc_proposal_create_with_id">%s 创建提案。#%s</string>
+    <string name="kOpDesc_proposal_create">%s 创建提案。</string>
     <string name="kOpDesc_proposal_update">%s 更新提案。#%s</string>
     <string name="kOpDesc_proposal_delete">删除提案。</string>
     <string name="kOpDesc_withdraw_permission_create">创建授权提款。</string>
@@ -657,6 +733,33 @@
     <string name="kOpDesc_transfer_from_blind">从隐私账户转出。</string>
     <string name="kOpDesc_asset_settle_cancel">取消清算。</string>
     <string name="kOpDesc_asset_claim_fees">提取资产手续费。</string>
+    <string name="kOpDesc_fba_distribute">FBA分发。</string>
+    <string name="kOpDesc_bid_collateral">黑天鹅竞价。</string>
+    <string name="kOpDesc_execute_bid">竞价成功。</string>
+    <string name="kOpDesc_asset_claim_pool">提取手续费池资产。</string>
+    <string name="kOpDesc_asset_update_issuer">更改资产发行账号。</string>
+    <string name="kOpDesc_htlc_create_with_id">%s 准备转账 %s 到 %s。#%s</string>
+    <string name="kOpDesc_htlc_create">%s 准备转账 %s 到 %s。</string>
+    <string name="kOpDesc_htlc_redeem">%s 使用原像 %s 赎回HTLC。#%s</string>
+    <string name="kOpDesc_htlc_redeemed">%s 赎回HTLC成功，%s 转入账号 %s。#%s</string>
+    <string name="kOpDesc_htlc_extend">%s 延长HTLC有效期 %s 秒。#%s</string>
+    <string name="kOpDesc_htlc_refund">HTLC过期，资产自动退回到账号 %s。#%s</string>
+    <string name="kOpDesc_unknown_op">未知的操作 #%s。</string>
+    <!-- 交易OP细化 -->
+    <string name="kOpDetailFlagDangerous">危险操作</string>
+    <string name="kOpDetailPermissionOwner">所有者权限</string>
+    <string name="kOpDetailPermissionActive">资金权限</string>
+    <string name="kOpDetailPermissionMemo">备注权限</string>
+    <string name="kOpDetailSubTitleVoteTargeter">投票对象</string>
+    <string name="kOpDetailSubTitleOperate">操作</string>
+    <string name="kOpDetailSubTitleNewWeightOrThreshold">新阈值/新权重</string>
+    <string name="kOpDetailSubTitleChangeValue">变化量</string>
+    <string name="kOpDetailSubOpAdd">添加</string>
+    <string name="kOpDetailSubOpDelete">删除</string>
+    <string name="kOpDetailSubPrefixThreshold">阈值</string>
+    <string name="kOpDetailSubPrefixCommittee">理事会</string>
+    <string name="kOpDetailSubPrefixWitness">见证人</string>
+    <string name="kOpDetailSubPrefixProxy">代理人</string>
     <!-- 通用字符串 -->
     <string name="kLangKeyZhSimple">简体中文</string>
     <string name="kLangKeyEn">English / 英文</string>

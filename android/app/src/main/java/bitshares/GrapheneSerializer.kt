@@ -63,6 +63,10 @@ open class T_Base_companion {
 
         T_transaction.register_subfields()
         T_signed_transaction.register_subfields()
+
+        T_htlc_create.register_subfields()
+        T_htlc_redeem.register_subfields()
+        T_htlc_extend.register_subfields()
     }
 
     open fun register_subfields() {
@@ -471,6 +475,37 @@ class Tm_optional(optype: T_Base_companion) : T_Base_companion() {
     }
 }
 
+class Tm_static_variant(optypearray: JSONArray) : T_Base_companion() {
+    private var _optypearray = optypearray
+
+    override fun to_byte_buffer(io: BinSerializer, opdata: Any?){
+        assert(opdata != null && opdata is JSONArray)
+        val _opdata = opdata as JSONArray
+        assert(opdata.length() == 2)
+        val type_id = _opdata.first<Int>()
+        assert(type_id!! < _optypearray.length())
+        val optype = _optypearray.get(type_id) as T_Base_companion
+
+        //  1、write typeid  2、write opdata
+        io.write_varint32(type_id)
+        encode_to_bytes_with_type(optype,opdata.last(),io)
+    }
+
+    override fun to_object(opdata: Any?): Any? {
+        assert(opdata != null && opdata is JSONArray)
+        val _opdata = opdata as JSONArray
+        assert(opdata.length() == 2)
+        val type_id = _opdata.first<Int>()
+        assert(type_id!! < _optypearray.length())
+        val optype = _optypearray.get(type_id) as T_Base_companion
+
+        return JSONArray().apply {
+            put(type_id)
+            put(encode_to_object_with_type(optype,opdata.last()))
+        }
+    }
+}
+
 /***
  * 以下为复合数据类型（大部分op都是为复合类型）。
  */
@@ -669,6 +704,49 @@ class T_proposal_delete : T_Base() {
     }
 }
 
+class T_htlc_create : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("fee", T_asset)
+            add_field("from", Tm_protocol_id_type("account"))
+            add_field("to", Tm_protocol_id_type("account"))
+            add_field("amount", T_asset)
+            add_field("preimage_hash", Tm_static_variant(JSONArray().apply {
+                put(Tm_bytes(20))
+                put(Tm_bytes(20))
+                put(Tm_bytes(32))
+            }))
+            add_field("preimage_size", T_uint16)
+            add_field("claim_period_seconds", T_uint32)
+            add_field("extensions", Tm_set(T_future_extensions))
+        }
+    }
+}
+
+class T_htlc_redeem : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("fee",T_asset)
+            add_field("htlc_id",Tm_protocol_id_type("htlc"))
+            add_field("redeemer",Tm_protocol_id_type("account"))
+            add_field("preimage",Tm_bytes())
+            add_field("extensions",Tm_set(T_future_extensions))
+        }
+    }
+}
+
+class T_htlc_extend : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("fee",T_asset)
+            add_field("htlc_id",Tm_protocol_id_type("htlc"))
+            add_field("update_issuer",Tm_protocol_id_type("account"))
+            add_field("seconds_to_add",T_uint32)
+            add_field("extensions",Tm_set(T_future_extensions))
+        }
+    }
+}
+
 class T_operation : T_Base() {
     companion object : T_Base_companion() {
         override fun to_byte_buffer(io: BinSerializer, opdata: Any?) {
@@ -711,6 +789,9 @@ class T_operation : T_Base() {
                 EBitsharesOperations.ebo_proposal_create.value -> T_proposal_create
                 EBitsharesOperations.ebo_proposal_update.value -> T_proposal_update
                 EBitsharesOperations.ebo_proposal_delete.value -> T_proposal_delete
+                EBitsharesOperations.ebo_htlc_create.value -> T_htlc_create
+                EBitsharesOperations.ebo_htlc_redeem.value -> T_htlc_redeem
+                EBitsharesOperations.ebo_htlc_extend.value -> T_htlc_extend
                 else -> {
                     assert(false)
                     return T_transfer

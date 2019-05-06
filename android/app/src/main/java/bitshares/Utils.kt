@@ -135,6 +135,44 @@ class Utils {
         }
 
         /**
+         *  (public) 原像格式是否正确　TODO:fowallet 格式细节
+         *  格式：20位以上，包含大写字母和数字。
+         */
+        fun isValidHTCLPreimageFormat(preimage: String?) : Boolean {
+            if (preimage == null) {
+                return false
+            }
+            if (preimage.length < 20){ //TODO:fowallet cfg
+                return false
+            }
+            val regular_list = arrayOf(".*[A-Z]+.*",".*[0-9]+.*")
+            regular_list.forEach {
+                if (!Regex(it).containsMatchIn(preimage)){
+                    return false
+                }
+            }
+            return true
+        }
+
+        /**
+         *  是否是有效的16进制字符串检测。
+         */
+        fun isValidHexString(hexstring: String?) : Boolean {
+            if (hexstring == null) {
+                return false
+            }
+            if (hexstring.length % 2 != 0){
+                return false
+            }
+            //  A-F、a-f、0-9 组成
+            val pre = "^[A-Fa-f0-0]+$"
+            if (!Regex(pre).containsMatchIn(hexstring)) {
+                return false
+            }
+            return true
+        }
+
+        /**
          * text是否匹配正则
          */
         private fun isRegularMatch(text: String, format: String): Boolean {

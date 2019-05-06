@@ -154,6 +154,14 @@ inline fun <reified T> List<T>.toJsonArray(): JSONArray {
 /**
  * 计算摘要信息
  */
+fun rmd160(buffer: ByteArray): ByteArray {
+    return  NativeInterface.sharedNativeInterface().rmd160(buffer)
+}
+
+fun sha1(buffer: ByteArray): ByteArray {
+    return  NativeInterface.sharedNativeInterface().sha1(buffer)
+}
+
 fun sha256(buffer: ByteArray): ByteArray {
     return NativeInterface.sharedNativeInterface().sha256(buffer)
 }

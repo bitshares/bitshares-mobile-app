@@ -512,6 +512,36 @@ class OrgUtils {
         }
 
         /**
+         *  从操作的结果结构体中提取新对象ID。
+         */
+        fun extractNewObjectIDFromOperationResult(operation_result: JSONArray?) : String? {
+            if (operation_result != null && operation_result.length() == 2 && operation_result.first<Int>() == 1){
+                return operation_result.getString(1)
+            }
+            return null
+        }
+
+        /**
+         *  从广播交易结果获取新生成的对象ID号（比如新的订单号、新HTLC号等）
+         *  考虑到数据结构可能变更，加各种safe判断。
+         *  REMARK：仅考虑一个 op 的情况，如果一个交易包含多个 op 则不支持。
+         */
+        fun extractNewObjectID(transaction_confirmation_list: JSONArray?) : String? {
+            val new_object_id = null
+            if (transaction_confirmation_list != null && transaction_confirmation_list.length() > 0) {
+                val trx = transaction_confirmation_list.getJSONObject(0).optJSONObject("trx")
+                if (trx != null) {
+                    val operation_results = trx.optJSONArray("operation_results")
+                    if (operation_results != null) {
+                        val operation_result = operation_results.optJSONArray(0)
+                        return extractNewObjectIDFromOperationResult(operation_result)
+                    }
+                }
+            }
+            return new_object_id
+        }
+
+        /**
          *  提取OPDATA中所有的石墨烯ID信息。
          */
         fun extractObjectID(opcode: Int, opdata: JSONObject, container: JSONObject) {
@@ -674,6 +704,23 @@ class OrgUtils {
                 }
                 EBitsharesOperations.ebo_asset_claim_fees.value -> {
                     //  TODO:
+                }
+                EBitsharesOperations.ebo_htlc_create.value -> {
+                    container.put(opdata.getString("from"),true)
+                    container.put(opdata.getString("to"),true)
+                    container.put(opdata.getJSONObject("amount").getString("asset_id"),true)
+                }
+                EBitsharesOperations.ebo_htlc_redeem.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_htlc_redeemed.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_htlc_extend.value -> {
+                    //  TODO:
+                }
+                EBitsharesOperations.ebo_htlc_refund.value -> {
+                    container.put(opdata.getString("to"),true)
                 }
                 else -> {
                 }
@@ -956,6 +1003,35 @@ class OrgUtils {
                     name = R.string.kOpType_asset_claim_fees.xmlstring(ctx)
                     desc = R.string.kOpDesc_asset_claim_fees.xmlstring(ctx)
                     //  TODO:待细化
+                }
+                EBitsharesOperations.ebo_htlc_create.value -> {
+                    //  TODO:2.1 fowallet 未完成
+                    name = R.string.kOpType_htlc_create.xmlstring(ctx)
+                    val from = chainMgr.getChainObjectByID(opdata.getString("from")).getString("name")
+                    val to = chainMgr.getChainObjectByID(opdata.getString("to")).getString("name")
+                    val str_amount = formatAssetAmountItem(opdata.getJSONObject("amount"))
+                    desc = String.format("%s 准备转账 %s 到 %s。", from, str_amount, to)
+                }
+                EBitsharesOperations.ebo_htlc_redeem.value -> {
+                    //  TODO:2.1 fowallet 未完成
+                    name = R.string.kOpType_htlc_redeem.xmlstring(ctx)
+                    desc = "提取HTLC。"
+                }
+                EBitsharesOperations.ebo_htlc_redeemed.value -> {
+                    //  TODO:2.1 fowallet 未完成
+                    name = R.string.kOpType_htlc_redeemed.xmlstring(ctx)
+                    desc = "HTLC已提取。"
+                }
+                EBitsharesOperations.ebo_htlc_extend.value -> {
+                    //  TODO:2.1 fowallet 未完成
+                    name = R.string.kOpType_htlc_extend.xmlstring(ctx)
+                    desc = "扩展HTLC有效期"
+                }
+                EBitsharesOperations.ebo_htlc_refund.value -> {
+                    //  TODO:2.1 fowallet 未完成
+                    name = R.string.kOpType_htlc_refund.xmlstring(ctx)
+                    val to = chainMgr.getChainObjectByID(opdata.getString("to")).getString("name")
+                    desc = String.format("合约退款到账号 %@。#%@",to, opdata.getString("htlc_id"))
                 }
                 else -> {
                 }

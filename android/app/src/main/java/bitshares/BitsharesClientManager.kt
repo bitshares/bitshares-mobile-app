@@ -263,6 +263,37 @@ class BitsharesClientManager {
 
         return process_transaction(tr)
     }
+
+    /**
+     *  OP - 创建HTLC合约
+     */
+    fun htlcCreate(opdata: JSONObject) : Promise {
+        val tr = TransactionBuilder()
+        tr.add_operation(EBitsharesOperations.ebo_htlc_create, opdata)
+        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("from")))
+        return process_transaction(tr)
+    }
+
+    /**
+     *  OP - 提取HTLC合约
+     */
+    fun htlcRedeem(opdata: JSONObject) : Promise {
+        val tr = TransactionBuilder()
+        tr.add_operation(EBitsharesOperations.ebo_htlc_redeem, opdata)
+        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("redeemer")))
+        return process_transaction(tr)
+    }
+
+    /**
+     *  OP - 扩展HTLC合约有效期
+     */
+    fun htlcExtend(opdata: JSONObject) : Promise {
+        val tr = TransactionBuilder()
+        tr.add_operation(EBitsharesOperations.ebo_htlc_extend, opdata)
+        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("update_issuer")))
+        return process_transaction(tr)
+    }
+
 }
 
 
