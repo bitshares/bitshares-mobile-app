@@ -14,8 +14,9 @@ class ChainObjectManager {
     /**
      *  各种属性定义
      */
-    var isTestNetwork: Boolean = false                   //  是否是测试网络
+    var isTestNetwork: Boolean = false          //  是否是测试网络
     var grapheneChainID: String                 //  石墨烯区块链ID
+    var grapheneCoreAssetID: String             //  石墨烯网络核心资产ID
     var grapheneAssetSymbol: String             //  石墨烯网络核心资产名称
     var grapheneAddressPrefix: String           //  石墨烯网络地址前缀
 
@@ -55,6 +56,7 @@ class ChainObjectManager {
         //  初始化各种属性默认值
         isTestNetwork = false
         grapheneChainID = BTS_NETWORK_CHAIN_ID
+        grapheneCoreAssetID = BTS_NETWORK_CORE_ASSET_ID
         grapheneAssetSymbol = BTS_NETWORK_CORE_ASSET
         grapheneAddressPrefix = BTS_ADDRESS_PREFIX
 
@@ -411,6 +413,14 @@ class ChainObjectManager {
         }
     }
 
+    fun queryGlobalProperties() : Promise {
+        val api = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
+        return api.async_exec_db("get_global_properties").then {
+            val global_data = it as JSONObject
+            updateObjectGlobalProperties(global_data)
+            return@then global_data
+        }
+    }
 
     /**
      *  (public) 获取指定分组信息
@@ -931,6 +941,10 @@ class ChainObjectManager {
 
     fun queryAllGrapheneObjects(id_array: JSONArray): Promise {
         return queryAllObjectsInfo(id_array, null, null, false)
+    }
+
+    fun queryAllGrapheneObjectsSkipCache(id_array: JSONArray): Promise {
+        return queryAllObjectsInfo(id_array, null, null, true)
     }
 
     /**

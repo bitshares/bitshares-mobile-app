@@ -81,23 +81,9 @@ class ActivityIndexServices : BtsppActivity() {
         layout_recharge_and_withdraw_of_service.setOnClickListener {
             guardWalletExist { goTo(ActivityDepositAndWithdraw::class.java, true) }
         }
-    }
 
-    /**
-     * 获取用户的 full_account_data 数据，并且获取余额里所有 asset 的资产详细信息。
-     */
-    private fun get_full_account_data_and_asset_hash(account_name_or_id: String): Promise {
-        //  TODO:后期移动到 ChainObjectManager里
-        return ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(account_name_or_id).then {
-            val full_account_data = it as JSONObject
-            val list = JSONArray()
-            for (balance in full_account_data.getJSONArray("balances")) {
-                list.put(balance!!.getString("asset_type"))
-            }
-            return@then ChainObjectManager.sharedChainObjectManager().queryAllAssetsInfo(list).then {
-                //  (void)asset_hash 省略，缓存到 ChainObjectManager 即可。
-                return@then full_account_data
-            }
+        layout_advanced_feature_of_service.setOnClickListener {
+            goTo(ActivityAdvancedFeature::class.java, true)
         }
     }
 }

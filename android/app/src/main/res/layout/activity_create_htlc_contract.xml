@@ -1,0 +1,551 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/theme01.appBackColor"
+    tools:context="com.btsplusplus.fowallet.ActivityCreateHtlcContract">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp"
+        android:padding="10dp"
+        android:orientation="vertical">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+
+            <LinearLayout
+                android:id="@+id/layout_back_from_create_htlc_contract"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_btn_back"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/kBtnBack"
+                    style="@style/kNavigationBarTextStyle"
+                    android:gravity="center_vertical"
+                    />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/title_from_create_htlc_contract"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:text=""
+                style="@style/kNavigationBarTextStyle" />
+
+        </FrameLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textSize="16dp"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="@string/kVcTransferCellFrom"/>
+
+            <TextView
+                android:id="@+id/txt_value_from_name"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical|right"
+                android:textSize="16dp"
+                android:textColor="@color/theme01.textColorMain"
+                android:text=""/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/cell_to_account"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="40dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textSize="16dp"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="@string/kVcTransferCellTo"/>
+
+            <TextView
+                android:id="@+id/txt_value_to_name"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical|right"
+                android:textSize="16dp"
+                android:textColor="@color/theme01.textColorGray"
+                android:text="@string/kVcTransferTipSelectToAccount"/>
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical|right"
+
+
+                android:foregroundGravity="right"
+                android:src="@drawable/ic_btn_right_arrow" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/cell_transfer_asset"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="40dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textSize="16dp"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="@string/kVcTransferCellAsset"/>
+
+            <TextView
+                android:id="@+id/txt_value_asset_name"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical|right"
+                android:textSize="16dp"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="CNY"/>
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical|right"
+
+
+                android:foregroundGravity="right"
+                android:src="@drawable/ic_btn_right_arrow" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="40dp">
+
+            <EditText
+                android:id="@+id/et_amount_from_create_htlc_contract"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:digits=".1234567890"
+                android:inputType="phone|number"
+                android:maxLength="24"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:textSize="16dp"
+                android:textColor="@color/theme01.textColorMain"
+                android:background="@null"
+                android:textColorHint="@color/theme01.textColorGray"
+                android:hint="@string/kVcTransferSubmitTipPleaseInputAmount"/>
+
+            <TextView
+                android:id="@+id/btn_transfer_all"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical|right"
+                android:textSize="16dp"
+                android:textColor="@color/theme01.textColorHighlight"
+                android:text="@string/kLabelSendAll"/>
+
+        </LinearLayout>
+
+        <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="40dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textSize="12dp"
+                android:textColor="@color/theme01.textColorNormal"
+                android:text="@string/kLableAvailable"/>
+
+            <TextView
+                android:id="@+id/txt_value_avaiable"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical|right"
+                android:textSize="16dp"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="4.969999CNY"/>
+
+        </LinearLayout>
+
+
+        <!-- 原像创建的部分 -->
+        <LinearLayout
+            android:id="@+id/ly_preimage_wrap_of_create_htlc_contract"
+            android:visibility="gone"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 原像 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="40dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="@string/kVcHtlcCellTitlePreimage"/>
+                <EditText
+                    android:id="@+id/et_input_contract_preimage"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:digits=".1234567890"
+                    android:inputType="phone|number"
+                    android:maxLength="24"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="30dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:background="@null"
+                    android:textColorHint="@color/theme01.textColorGray"
+                    android:hint="@string/kVcHtlcPlaceholderInputPreimage"/>
+                <TextView
+                    android:id="@+id/tv_copy_preimage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|right"
+                    android:textSize="12dp"
+                    android:textColor="@color/theme01.textColorHighlight"
+                    android:text="@string/kVcHtlcTailerBtnCopy"/>
+            </LinearLayout>
+            <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+            <!-- 高级设置 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="40dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="@string/kVcHtlcCellTitleAdvSwitch"/>
+                <Switch
+                    android:id="@+id/switch_advance_setting_of_create_htlc_contract"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|right" />
+            </LinearLayout>
+            <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+            <LinearLayout
+                android:id="@+id/ly_preimage_advance_wrap_of_create_htlc_contract"
+                android:layout_width="wrap_content"
+                android:visibility="gone"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- 哈希算法 -->
+                <LinearLayout
+                    android:id="@+id/ly_hash_arithmetic_of_create_htlc_contract_preimage"
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_height="40dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:textSize="16dp"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="@string/kVcHtlcCellTitleHashMethod"/>
+                    <TextView
+                        android:id="@+id/tv_hash_arithmetic_name_of_create_htlc_contract_preimage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|right"
+                        android:textSize="16dp"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="SHA256"/>
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical|right"
+                        android:foregroundGravity="right"
+                        android:src="@drawable/ic_btn_right_arrow" />
+                </LinearLayout>
+                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+                <!-- 有效期 -->
+                <LinearLayout
+                    android:id="@+id/ly_valid_date_of_create_htlc_contract_preimage"
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_height="40dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:textSize="16dp"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="@string/kVcHtlcCellTitleClaimPeriod"/>
+                    <TextView
+                        android:id="@+id/tv_valid_date_name_of_create_htlc_contract_preimage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|right"
+                        android:textSize="16dp"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="3天"/>
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical|right"
+                        android:foregroundGravity="right"
+                        android:src="@drawable/ic_btn_right_arrow" />
+                </LinearLayout>
+                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@color/colorPrimary"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/button_create_of_htlc_preimage"
+                    android:layout_width="wrap_content"
+                    style="@style/kMainButtonStyle"
+                    android:gravity="center|center_vertical"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    android:textAllCaps="false"
+                    android:text="@string/kVcHtlcSubmitBtn01" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+
+        <!-- hash 创建的部分 -->
+        <LinearLayout
+            android:id="@+id/ly_hash_wrap_of_create_htlc_contract"
+            android:visibility="gone"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 原像哈希 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="40dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="@string/kVcHtlcCellTitlePreimageHash"/>
+                <EditText
+                    android:id="@+id/et_input_preimage_value"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:digits=".1234567890"
+                    android:inputType="phone|number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="30dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:background="@null"
+                    android:textColorHint="@color/theme01.textColorGray"
+                    android:hint="@string/kVcHtlcPlaceholderInputPreimageHash"/>
+                <TextView
+                    android:id="@+id/tv_paste_preimage_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|right"
+                    android:textSize="12dp"
+                    android:textColor="@color/theme01.textColorHighlight"
+                    android:text="@string/kVcHtlcTailerBtnPaste"/>
+            </LinearLayout>
+            <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+            <!-- 原像长度 -->
+            <LinearLayout
+                android:id="@+id/ly_preimage_length_of_create_htlc_contract_hash"
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="40dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="@string/kVcHtlcCellTitlePreimageLength"/>
+                <TextView
+                    android:id="@+id/tv_preimage_length_name_of_create_htlc_contract_hash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|right"
+                    android:textSize="16dp"
+                    android:textColor="@color/theme01.textColorNormal"
+                    android:text="32"/>
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical|right"
+                    android:foregroundGravity="right"
+                    android:src="@drawable/ic_btn_right_arrow" />
+            </LinearLayout>
+            <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+            <!-- 哈希算法 -->
+            <LinearLayout
+                android:id="@+id/ly_hash_arithmetic_of_create_htlc_contract_hash"
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="40dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="@string/kVcHtlcCellTitleHashMethod"/>
+                <TextView
+                    android:id="@+id/tv_hash_arithmetic_name_of_create_htlc_contract_hash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|right"
+                    android:textSize="16dp"
+                    android:textColor="@color/theme01.textColorNormal"
+                    android:text="SHA256"/>
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical|right"
+                    android:foregroundGravity="right"
+                    android:src="@drawable/ic_btn_right_arrow" />
+            </LinearLayout>
+            <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+            <!-- 有效期 -->
+            <LinearLayout
+                android:id="@+id/ly_valid_date_of_create_htlc_contract_hash"
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="40dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="@string/kVcHtlcCellTitleClaimPeriod"/>
+                <TextView
+                    android:id="@+id/tv_valid_date_name_of_create_htlc_contract_hash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|right"
+                    android:textSize="16dp"
+                    android:textColor="@color/theme01.textColorNormal"
+                    android:text="3天"/>
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical|right"
+                    android:foregroundGravity="right"
+                    android:src="@drawable/ic_btn_right_arrow" />
+            </LinearLayout>
+            <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@color/colorPrimary"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/button_create_of_create_htlc_hash"
+                    android:layout_width="wrap_content"
+                    style="@style/kMainButtonStyle"
+                    android:gravity="center|center_vertical"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    android:textAllCaps="false"
+                    android:text="@string/kVcHtlcSubmitBtn01" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

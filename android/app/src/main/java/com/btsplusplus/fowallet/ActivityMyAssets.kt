@@ -118,6 +118,7 @@ class ActivityMyAssets : BtsppActivity() {
     private fun setFragments() {
         fragmens.add(FragmentAssets().initialize(jsonArrayfrom(_userAssetDetailInfos, _full_account_data)))
         fragmens.add(FragmentAssetsDetail().initialize(_full_account_data))
+        fragmens.add(FragmentAssetsHtlcList().initialize(_full_account_data))
         fragmens.add(FragmentVestingBalance().initialize(_full_account_data))
     }
 

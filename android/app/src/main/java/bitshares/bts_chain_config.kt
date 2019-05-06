@@ -70,6 +70,19 @@ enum class EBitsharesOperations(val value: Int) {
     ebo_transfer_from_blind(41),
     ebo_asset_settle_cancel(42),
     ebo_asset_claim_fees(43),
+
+    //  TODO:2.1
+    ebo_fba_distribute(44),        // VIRTUAL
+    ebo_bid_collateral(45),
+    ebo_execute_bid(46),           // VIRTUAL
+    ebo_asset_claim_pool(47),
+    ebo_asset_update_issuer(48),
+    ebo_htlc_create(49),
+    ebo_htlc_redeem(50),
+    ebo_htlc_redeemed(51),         // VIRTUAL
+    ebo_htlc_extend(52),
+    ebo_htlc_refund(53),           // VIRTUAL
+
 }
 
 /**
@@ -143,3 +156,19 @@ enum class VotingTypes(val value: Int) {
     workers(2),                  //  worker
 }
 
+/**
+ *  HTLC合约部署方式
+ */
+enum class EHtlcDeployMode(val value: Int) {
+    EDM_PREIMAGE(0),               //  根据原像部署
+    EDM_HASHCODE(1),               //  根据Hash部署
+}
+
+/**
+ *  石墨烯网络HTLC支持的Hash类型。
+ */
+enum class EBitsharesHtlcHashType(val value: Int) {
+    EBHHT_RMD160(0),
+    EBHHT_SHA1(1),
+    EBHHT_SHA256(2)
+}

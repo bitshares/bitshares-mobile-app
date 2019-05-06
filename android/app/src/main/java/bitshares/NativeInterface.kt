@@ -2,6 +2,10 @@ package com.btsplusplus.fowallet
 
 class NativeInterface {
 
+    external fun rmd160(buffer: ByteArray): ByteArray
+
+    external fun sha1(buffer: ByteArray): ByteArray
+
     external fun sha256(buffer: ByteArray): ByteArray
 
     external fun sha512(buffer: ByteArray): ByteArray
