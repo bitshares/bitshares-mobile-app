@@ -524,10 +524,10 @@ class ActivityCreateHtlcContract : BtsppActivity() {
         }
 
         //  === 风险提示 ===
-        var preimage_hash: ByteArray? = null
-        var preimage_length: Int = 0
-        var message: String
-        val title = "温馨提示"
+        val preimage_hash: ByteArray?
+        val preimage_length:Int
+        val message: String
+        val title = resources.getString(R.string.kWarmTips)
         if (_mode == EHtlcDeployMode.EDM_PREIMAGE.value){
             val preimage = _tv_preimage!!.text.toString().trim()
             if (!Utils.isValidHTCLPreimageFormat(preimage)){
@@ -546,9 +546,8 @@ class ActivityCreateHtlcContract : BtsppActivity() {
                 showToast(R.string.kVcHtlcTipsInputPreimageHash.xmlstring(this))
                 return
             }
-            val hashvalue_data = hashvalue.utf8String()
             val hashvalue_bytesize = _calcHashValueByteSize()
-            if (hashvalue_data.size != hashvalue_bytesize * 2) {
+            if (hashvalue.length != hashvalue_bytesize * 2) {
                 showToast(R.string.kVcHtlcTipsInputValidPreimageHash.xmlstring(this))
                 return
             }
@@ -556,10 +555,8 @@ class ActivityCreateHtlcContract : BtsppActivity() {
                 showToast(R.string.kVcHtlcTipsInputValidPreimageHash.xmlstring(this))
                 return
             }
-            val hashvalue_bytes = hashvalue_data.hexEncode()
-            preimage_hash = hashvalue_bytes.toByteArray()
+            preimage_hash = hashvalue.hexDecode()
             preimage_length = _currPreimageLength!!
-
             if (_have_preimage != null && _have_preimage == true) {
                 message = R.string.kVcHtlcMessageCreateFromHashHavePreimage.xmlstring(this)
             } else {

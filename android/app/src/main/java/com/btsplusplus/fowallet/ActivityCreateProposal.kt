@@ -107,7 +107,7 @@ class ActivityCreateProposal : BtsppActivity() {
         val layout_body = layout_body_of_transfer_proposal
         layout_body.removeAllViews()
         //  刷新显示
-        val uidata = OrgUtils.processOpdata2UiData(_opcode.value, _opdata, false, this)
+        val uidata = OrgUtils.processOpdata2UiData(_opcode.value, _opdata, null, false, this)
         layout_body.addView(ViewUtils.createProposalOpInfoCell(this, uidata, useBuyColorForTitle = false, nameFontSize = 14.0f))
         //  line
         val lv_line = View(this)
