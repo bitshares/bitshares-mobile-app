@@ -232,7 +232,7 @@ class ActivityProposal : BtsppActivity() {
                 assert(ary!!.length() == 2)
                 val opcode = ary.getInt(0)
                 val opdata = ary.getJSONObject(1)
-                val new_op = jsonObjectfromKVS("opcode", opcode, "opdata", opdata, "uidata", OrgUtils.processOpdata2UiData(opcode, opdata, true, this))
+                val new_op = jsonObjectfromKVS("opcode", opcode, "opdata", opdata, "uidata", OrgUtils.processOpdata2UiData(opcode, opdata, null, true, this))
                 new_operations.put(new_op)
             }
 
