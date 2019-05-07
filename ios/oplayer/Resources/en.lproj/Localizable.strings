@@ -565,6 +565,7 @@
 "kVcVoteTipTxOK" = "%@ successfully, but the refresh failed. Please try again later.";
 "kVcVoteCellTotalVotes" = "Votes ";
 "kVcVoteCellMissed" = "Missed ";
+"kVcVoteCellWorkerID" = "ID ";
 "kVcVoteCellCreator" = "Creator ";
 "kVcVoteCellDailyPay" = "Daily budget ";
 "kVcVoteCellWPDatePeriod" = "Date ";

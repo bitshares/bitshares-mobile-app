@@ -21,6 +21,7 @@
     UILabel*        _lbWorkerName;
     UIButton*       _btnIntro;
     
+    UILabel*        _lbWorkerID;
     UILabel*        _lbAccountName;
     UILabel*        _lbVoteNumber;
     UILabel*        _lbDailyPay;
@@ -43,6 +44,7 @@
     _lbWorkerName = nil;
     _btnIntro = nil;
     
+    _lbWorkerID = nil;
     _lbAccountName = nil;
     _lbVoteNumber = nil;
     _lbDailyPay = nil;
@@ -91,9 +93,17 @@
             _btnIntro = nil;
         }
         
+        _lbWorkerID = [[UILabel alloc] initWithFrame:CGRectZero];
+        _lbWorkerID.lineBreakMode = NSLineBreakByTruncatingTail;
+        _lbWorkerID.textAlignment = NSTextAlignmentLeft;
+        _lbWorkerID.numberOfLines = 1;
+        _lbWorkerID.backgroundColor = [UIColor clearColor];
+        _lbWorkerID.font = [UIFont boldSystemFontOfSize:13];
+        [self addSubview:_lbWorkerID];
+        
         _lbAccountName = [[UILabel alloc] initWithFrame:CGRectZero];
         _lbAccountName.lineBreakMode = NSLineBreakByTruncatingTail;
-        _lbAccountName.textAlignment = NSTextAlignmentLeft;
+        _lbAccountName.textAlignment = NSTextAlignmentRight;
         _lbAccountName.numberOfLines = 1;
         _lbAccountName.backgroundColor = [UIColor clearColor];
         _lbAccountName.font = [UIFont boldSystemFontOfSize:13];
@@ -227,6 +237,13 @@
     }else{
         name = account_id;
     }
+    
+    _lbWorkerID.attributedText = [self genAndColorAttributedText:NSLocalizedString(@"kVcVoteCellWorkerID", @"ID ")
+                                                           value:_item[@"id"]
+                                                      titleColor:theme.textColorNormal
+                                                      valueColor:mainColor];
+    _lbWorkerID.frame = CGRectMake(xOffset, yOffset, fWidth, fLineHeight);
+    
     
     _lbAccountName.attributedText = [self genAndColorAttributedText:NSLocalizedString(@"kVcVoteCellCreator", @"创建者 ")
                                                              value:name
