@@ -565,6 +565,7 @@
 "kVcVoteTipTxOK" = "%@成功，但刷新界面失败，请稍后再试。";
 "kVcVoteCellTotalVotes" = "总票数 ";
 "kVcVoteCellMissed" = "丢块数 ";
+"kVcVoteCellWorkerID" = "编号 ";
 "kVcVoteCellCreator" = "创建者 ";
 "kVcVoteCellDailyPay" = "每日预算 ";
 "kVcVoteCellWPDatePeriod" = "有效期 ";

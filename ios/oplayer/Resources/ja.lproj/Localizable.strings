@@ -565,6 +565,7 @@
 "kVcVoteTipTxOK" = "%@成功，しかしネットワークが異常で、少しの後でまた試みてください。";
 "kVcVoteCellTotalVotes" = "総票数 ";
 "kVcVoteCellMissed" = "失われた数 ";
+"kVcVoteCellWorkerID" = "番号 ";
 "kVcVoteCellCreator" = "創建者 ";
 "kVcVoteCellDailyPay" = "毎日予算 ";
 "kVcVoteCellWPDatePeriod" = "有効期間 ";
@@ -583,7 +584,7 @@
 "kSettingCurrencyNameKRW" = "ウォン";
 "kSettingCurrencyNameBTS" = "BitSharesコア資産";
 
-/* 各种VC标题栏名字TODO:2.1HTLC */
+/* 各种VC标题栏名字 */
 "kVcTitleLogin" = "ログイン";
 "kVcTitleImportAccount" = "アカウント導入";
 "kVcTitleRegister" = "新規登録";
@@ -626,8 +627,8 @@
 "kVcTitleDeposit" = "%@入金";
 "kVcTitleWithdraw" = "%@出金";
 "kVcTitleKlineIndexSetting" = "Kライン表示設定";
-"kVcTitleCreateHTLC" = "创建HTLC合约";
-"kVcTitleCreateSubHTLC" = "部署副合约";
+"kVcTitleCreateHTLC" = "HTLCを作成する";
+"kVcTitleCreateSubHTLC" = "コピー契約を作成する";
 
 /* 钱包管理 */
 "kWalletUnlockFailedUnknowMode" = "錠解除に失敗する，未知のパターンです：%@。";
@@ -655,7 +656,7 @@
 "kWalletCellPermissionActive" = "資金権限";
 "kWalletCellPermissionMemo" = "付注権限";
 
-/* 交易OP名字TODO:2.1 */
+/* 交易OP名字TODO:2.1kOpType_fba_distribute */
 "kOpType_proposal_prefix" = "提案【%@】";
 "kOpType_transfer" = "送金";
 "kOpType_limit_order_create_sell" = "創建売り注文";
@@ -712,7 +713,7 @@
 "kOpType_htlc_redeemed" = "htlc_redeemed";
 "kOpType_htlc_extend" = "htlc_extend";
 "kOpType_htlc_refund" = "htlc_refund";
-"kOpType_unknown_op" = "未知操作";
+"kOpType_unknown_op" = "不明な操作";
 
 /* 交易OP详细描述TODO:2.1 */
 "kOpDesc_transfer" = "%@ 送金 %@ と %@。";
@@ -774,23 +775,23 @@
 "kOpDesc_htlc_redeemed" = "%@ 赎回HTLC成功，%@ 转入账号 %@。#%@";
 "kOpDesc_htlc_extend" = "%@ 延长HTLC有效期 %@ 秒。#%@";
 "kOpDesc_htlc_refund" = "HTLC过期，资产自动退回到账号 %@。#%@";
-"kOpDesc_unknown_op" = "未知的操作 #%@。";
+"kOpDesc_unknown_op" = "不明な操作 #%@。";
 
-/* 交易OP细化TODO:2.1 */
+/* 交易OP细化 */
 "kOpDetailFlagDangerous" = "危険な操作";
-"kOpDetailPermissionOwner" = "所有者权限";
-"kOpDetailPermissionActive" = "资金权限";
-"kOpDetailPermissionMemo" = "备注权限";
-"kOpDetailSubTitleVoteTargeter" = "投票对象";
-"kOpDetailSubTitleOperate" = "操作";
-"kOpDetailSubTitleNewWeightOrThreshold" = "新阈值/新权重";
-"kOpDetailSubTitleChangeValue" = "变化量";
-"kOpDetailSubOpAdd" = "添加";
-"kOpDetailSubOpDelete" = "删除";
-"kOpDetailSubPrefixThreshold" = "阈值";
-"kOpDetailSubPrefixCommittee" = "理事会";
-"kOpDetailSubPrefixWitness" = "见证人";
-"kOpDetailSubPrefixProxy" = "代理人";
+"kOpDetailPermissionOwner" = "アカウント権限";
+"kOpDetailPermissionActive" = "資金権限";
+"kOpDetailPermissionMemo" = "付注権限";
+"kOpDetailSubTitleVoteTargeter" = "投票対象";
+"kOpDetailSubTitleOperate" = "タイプ";
+"kOpDetailSubTitleNewWeightOrThreshold" = "新しいしきい値/重量";
+"kOpDetailSubTitleChangeValue" = "変化量";
+"kOpDetailSubOpAdd" = "追加する";
+"kOpDetailSubOpDelete" = "削除する";
+"kOpDetailSubPrefixThreshold" = "しきい値";
+"kOpDetailSubPrefixCommittee" = "委員";
+"kOpDetailSubPrefixWitness" = "証人";
+"kOpDetailSubPrefixProxy" = "エージェント";
 
 /* 通用字符串 */
 "kLangKeyZhSimple" = "简体中文 / 簡体字中国語";
