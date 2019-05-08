@@ -354,8 +354,6 @@ enum
                                                                                            value:[OrgUtils formatAssetAmountItem:[htlc objectForKey:@"transfer"]]
                                                                                       titleColor:theme.textColorNormal
                                                                                       valueColor:theme.textColorMain];
-            
-            cell.showCustomBottomLine = YES;
         }
             break;
         case kVcSubPreimageLengthAndHashType:

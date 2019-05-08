@@ -507,8 +507,8 @@
 "kVcHtlcListHashTypeValueUnknown" = "未知类型 %@";
 "kVcHtlcListHashValue" = "原像哈希 ";
 "kVcHtlcListBtnExtend" = "延长有效期";
-"kVcHtlcListBtnRedeem" = "提取";
-"kVcHtlcListBtnCreate" = "部署";
+"kVcHtlcListBtnRedeem" = "赎回合约";
+"kVcHtlcListBtnCreate" = "部署副合约";
 "kVcHtlcListTipsErrorMissParams" = "HTLC相关参数理事会尚未配置，请稍后再试。";
 "kVcHtlcListTipsErrorMaxExpire" = "已经达到最长有效期，不能再延长了。";
 "kVcHtlcListTipsSelectExtendDays" = "请选择延长天数";
@@ -864,6 +864,7 @@
 /* 部分石墨烯错误信息 */
 "kGPErrorAccountNotExist" = "账号不存在。";
 "kGPErrorInsufficientBalance" = "手续费不足。";
+"kGPErrorRedeemInvalidPreimage" = "原像不正确。";
 
 /* 特殊用途字符串KEY */
 "serverWssLangKey" = "cn";
