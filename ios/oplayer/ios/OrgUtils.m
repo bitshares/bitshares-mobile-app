@@ -100,6 +100,12 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
                     [self makeToast:NSLocalizedString(@"kGPErrorInsufficientBalance", @"手续费不足。")];
                     return;
                 }
+                NSString* lowermsg = [message lowercaseString];
+                if ([lowermsg rangeOfString:@"preimage size"].location != NSNotFound ||
+                    [lowermsg rangeOfString:@"provided preimage"].location != NSNotFound){
+                    [self makeToast:NSLocalizedString(@"kGPErrorRedeemInvalidPreimage", @"原像不正确。")];
+                    return;
+                }
                 //  TODO:fowallet 提案等手续费不足等情况显示
             }
         }

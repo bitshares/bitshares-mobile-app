@@ -864,6 +864,7 @@
 /* 部分石墨烯错误信息 */
 "kGPErrorAccountNotExist" = "Account does not exist.";
 "kGPErrorInsufficientBalance" = "Insufficient balance.";
+"kGPErrorRedeemInvalidPreimage" = "The preimage is incorrect.";
 
 /* 特殊用途字符串KEY */
 "serverWssLangKey" = "en";

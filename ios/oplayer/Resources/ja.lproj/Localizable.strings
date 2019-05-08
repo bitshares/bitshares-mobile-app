@@ -861,9 +861,10 @@
 "unlockTipsUnlockWallet" = "アンロックのアカウント";
 "unlockBtnUnlock" = "アンロック";
 
-/* 部分石墨烯错误信息 */
+/* 部分石墨烯错误信息TODO:2.1preimage */
 "kGPErrorAccountNotExist" = "アカウントは存在しません。";
 "kGPErrorInsufficientBalance" = "手数料は不足します。";
+"kGPErrorRedeemInvalidPreimage" = "元の画像が正しくありません。";
 
 /* 特殊用途字符串KEY */
 "serverWssLangKey" = "cn";

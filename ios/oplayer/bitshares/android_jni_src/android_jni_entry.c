@@ -26,6 +26,60 @@ void __fowallet_printf(const char *format, ...)
  *  计算各种 hash 摘要
  */
 JNIEXPORT jbyteArray
+java_jni_entry_rmd160(JNIEnv* env, jobject self, 
+    jbyteArray buffer)
+{
+    //  检查参数
+    assert(buffer);
+    if (!buffer){
+        return NULL;
+    }
+
+    //  获取数据
+    jbyte* buffer_ptr = (*env)->GetByteArrayElements(env, buffer, 0);
+    jsize buffer_size = (*env)->GetArrayLength(env, buffer);
+
+    //  调用API
+    unsigned char digest20[20];
+    rmd160((const unsigned char*)buffer_ptr, (const size_t)buffer_size, digest20);
+
+    //  释放参数数据
+    (*env)->ReleaseByteArrayElements(env, buffer, buffer_ptr, JNI_ABORT);
+
+    //  返回
+    jbyteArray retv = (*env)->NewByteArray(env, sizeof(digest20));
+    (*env)->SetByteArrayRegion(env, retv, 0, sizeof(digest20), (const jbyte*)digest20);
+    return retv;
+}
+
+JNIEXPORT jbyteArray
+java_jni_entry_sha1(JNIEnv* env, jobject self, 
+    jbyteArray buffer)
+{
+    //  检查参数
+    assert(buffer);
+    if (!buffer){
+        return NULL;
+    }
+
+    //  获取数据
+    jbyte* buffer_ptr = (*env)->GetByteArrayElements(env, buffer, 0);
+    jsize buffer_size = (*env)->GetArrayLength(env, buffer);
+
+    //  调用API
+    unsigned char digest20[20];
+    sha1((const unsigned char*)buffer_ptr, (const size_t)buffer_size, digest20);
+
+    //  释放参数数据
+    (*env)->ReleaseByteArrayElements(env, buffer, buffer_ptr, JNI_ABORT);
+
+    //  返回
+    jbyteArray retv = (*env)->NewByteArray(env, sizeof(digest20));
+    (*env)->SetByteArrayRegion(env, retv, 0, sizeof(digest20), (const jbyte*)digest20);
+    return retv;
+}
+
+JNIEXPORT jbyteArray
 java_jni_entry_sha256(JNIEnv* env, jobject self, 
     jbyteArray buffer)
 {
@@ -659,6 +713,14 @@ java_jni_entry_bts_sign_buffer(JNIEnv* env, jobject self,
 }
 
 JNIEXPORT jbyteArray
+java_jni_entry_rmd160(JNIEnv* env, jobject self, 
+    jbyteArray buffer);
+
+JNIEXPORT jbyteArray
+java_jni_entry_sha1(JNIEnv* env, jobject self, 
+    jbyteArray buffer);
+
+JNIEXPORT jbyteArray
 java_jni_entry_sha256(JNIEnv* env, jobject self, 
     jbyteArray buffer);
 
@@ -724,6 +786,8 @@ java_jni_entry_bts_sign_buffer(JNIEnv* env, jobject self,
 
 static JNINativeMethod jni_methods_table[] = 
 {
+    {"rmd160",                                  "([B)[B",                   (void*)java_jni_entry_rmd160},
+    {"sha1",                                    "([B)[B",                   (void*)java_jni_entry_sha1},
     {"sha256",                                  "([B)[B",                   (void*)java_jni_entry_sha256},
     {"sha512",                                  "([B)[B",                   (void*)java_jni_entry_sha512},
     {"bts_aes256_encrypt_to_hex",               "([B[B)[B",                 (void*)java_jni_entry_bts_aes256_encrypt_to_hex},
@@ -740,26 +804,6 @@ static JNINativeMethod jni_methods_table[] =
     {"bts_save_wallet",                         "([B[B[B)[B",               (void*)java_jni_entry_bts_save_wallet},
     {"bts_load_wallet",                         "([B[B)[B",                 (void*)java_jni_entry_bts_load_wallet},
     {"bts_sign_buffer",                         "([B[B)[B",                 (void*)java_jni_entry_bts_sign_buffer},
-
-    // // TODO:参数核对
-    // {__CTM_FMD5Q(hash32), "(Ljava/lang/String;)J", (void*)Java_com_ffgamestudio_fast12306_plugin_SimulateiOSUIPlugin_hash32},
-    // {__CTM_FMD5Q(fShowMsgBoxFull), "(Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;", (void*)Java_com_ffgamestudio_fast12306_plugin_SimulateiOSUIPlugin_fShowMsgBoxFull},
-    // {__CTM_FMD5Q(fShowMsgBoxOkAndCancel), "(Ljava/lang/String;I)Ljava/lang/String;", (void*)Java_com_ffgamestudio_fast12306_plugin_SimulateiOSUIPlugin_fShowMsgBoxOkAndCancel},
-    // {__CTM_FMD5Q(fShowMsgBoxWarning), "(Ljava/lang/String;)Ljava/lang/String;", (void*)Java_com_ffgamestudio_fast12306_plugin_SimulateiOSUIPlugin_fShowMsgBoxWarning},
-    // {__CTM_FMD5Q(fShowMsgBoxReview), "(Ljava/lang/String;)Ljava/lang/String;", (void*)Java_com_ffgamestudio_fast12306_plugin_SimulateiOSUIPlugin_fShowMsgBoxReview},
-    // {__CTM_FMD5Q(load), "(Ljava/lang/Object;Ljava/lang/String;Z)Z", (void*)Java_com_ffgamestudio_fast12306_plugin_SimulateiOSUIPlugin_load},
-    // {__CTM_FMD5Q(captcha), "(Ljava/lang/String;)Ljava/lang/String;", (void*)Java_com_ffgamestudio_fast12306_plugin_SimulateiOSUIPlugin_captcha},
-    // {__CTM_FMD5Q(init), "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V", (void*)Java_com_ffgamestudio_fast12306_plugin_SimulateiOSUIPlugin_init},
-    // {__CTM_FMD5Q(savefile), "(Ljava/lang/String;[B)Z", (void*)Java_com_ffgamestudio_fast12306_plugin_SimulateiOSUIPlugin_savefile},
-    // {__CTM_FMD5Q(loadfile), "(Ljava/lang/Object;Ljava/lang/String;ZZ)Ljava/lang/String;", (void*)Java_com_ffgamestudio_fast12306_plugin_SimulateiOSUIPlugin_loadfile},
-    // {__CTM_FMD5Q(deletefile), "(Ljava/lang/String;)Z", (void*)Java_com_ffgamestudio_fast12306_plugin_SimulateiOSUIPlugin_deletefile},
-    // {__CTM_FMD5Q(savesecfile), "(Ljava/lang/String;[B)Z", (void*)Java_com_ffgamestudio_fast12306_plugin_SimulateiOSUIPlugin_savesecfile},
-    // {__CTM_FMD5Q(loadsecfile), "(Ljava/lang/String;)[B", (void*)Java_com_ffgamestudio_fast12306_plugin_SimulateiOSUIPlugin_loadsecfile},
-    // {__CTM_FMD5Q(deletesecfile), "(Ljava/lang/String;)Z", (void*)Java_com_ffgamestudio_fast12306_plugin_SimulateiOSUIPlugin_deletesecfile},
-    // {__CTM_FMD5Q(check), "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Z", (void*)Java_com_ffgamestudio_fast12306_plugin_SimulateiOSUIPlugin_check},
-    // {__CTM_FMD5Q(crash), "()J", (void*)Java_com_ffgamestudio_fast12306_plugin_SimulateiOSUIPlugin_crash},
-    // {__CTM_FMD5Q(unzip), "(Ljava/lang/String;Ljava/lang/String;)Z", (void*)Java_com_ffgamestudio_fast12306_plugin_SimulateiOSUIPlugin_unzip},
-    // {__CTM_FMD5Q(mynativebase64decode), "(Ljava/lang/String;)Ljava/lang/String;", (void*)Java_com_ffgamestudio_fast12306_plugin_SimulateiOSUIPlugin_mynativebase64decode},
 }; 
 
 static int jniRegisterNativeMethods(JNIEnv* env, const char* className, const JNINativeMethod* gMethods, int numMethods)  
