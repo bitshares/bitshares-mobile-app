@@ -24,6 +24,7 @@ class ChainObjectManager {
     var _cacheObjectID2ObjectHash: MutableMap<String, JSONObject>       //  内存缓存
     var _cacheAccountName2ObjectHash: MutableMap<String, JSONObject>    //  内存缓存
     var _cacheUserFullAccountData: MutableMap<String, JSONObject>       //  内存缓存
+    var _cacheVoteIdInfoHash: MutableMap<String, JSONObject>            //  内存缓存
 
     var _defaultMarketInfos: JSONObject?                                         //  ipa自带的默认配置信息（fowallet_market.json）
     var _defaultMarketPairs: JSONObject? = null                             //  默认内置交易对。交易对格式：#{base_symbol}_#{quote_symbol}
@@ -64,6 +65,7 @@ class ChainObjectManager {
         _cacheObjectID2ObjectHash = mutableMapOf()
         _cacheAccountName2ObjectHash = mutableMapOf()
         _cacheUserFullAccountData = mutableMapOf()
+        _cacheVoteIdInfoHash = mutableMapOf()
 
         _defaultMarketInfos = null
         _defaultMarketPairs = null
@@ -465,6 +467,10 @@ class ChainObjectManager {
         return _cacheObjectID2ObjectHash[oid]
     }
 
+    fun getVoteInfoByVoteID(vote_id: String): JSONObject? {
+        return _cacheVoteIdInfoHash[vote_id]
+    }
+
     fun getAccountByName(name: String): JSONObject {
         assert(_cacheAccountName2ObjectHash != null)
         assert(name != null)
@@ -828,8 +834,7 @@ class ChainObjectManager {
         }
         Logger.d("[Track] queryFeeAssetListDynamicInfo start.")
 
-
-        return queryAllObjectsInfo(asset_id_array, _cacheAssetSymbol2ObjectHash, "symbol", true).then {
+        return queryAllObjectsInfo(asset_id_array, _cacheAssetSymbol2ObjectHash, "symbol", true, null).then {
             val asset_hash = it as JSONObject
             Logger.d("[Track] queryFeeAssetListDynamicInfo step01 finish.")
             //  仅有 BTS 可支付手续费，那么这里应该为空了。
@@ -855,9 +860,75 @@ class ChainObjectManager {
                 return@then null
             }
         }
-
     }
 
+    /**
+     *  (public) 查询所有投票ID信息
+     */
+    fun queryAllVoteIds(vote_id_array: JSONArray) : Promise {
+
+        //  TODO:分批查询？
+        assert(vote_id_array.length() < 1000)
+
+        val resultHash = JSONObject()
+
+        //  要查询的数据为空，则返回空的 Hash。
+        if (vote_id_array.length() <= 0) {
+            return Promise._resolve(resultHash)
+        }
+
+        val queryArray = JSONArray()
+
+        //  从缓存加载
+        val pAppCache = AppCacheManager.sharedAppCacheManager()
+        val now_ts = Utils.now_ts()
+
+        vote_id_array.forEach<String> {
+            val vote_id = it!!
+            val obj = pAppCache.get_object_cache_ts(vote_id,now_ts)
+            if (obj != null) {
+                _cacheVoteIdInfoHash[vote_id] = obj     //  add to memory cache: id hash
+                resultHash.put(vote_id, obj)
+            } else {
+                queryArray.put(vote_id)
+            }
+        }
+        if (queryArray.length() == 0){
+            return Promise._resolve(resultHash)
+        }
+        //  从网络查询。
+        val api = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
+        return api.async_exec_db("lookup_vote_ids",JSONArray().apply { put(queryArray) }).then{
+            val data_array = it as JSONArray
+
+            data_array.forEach<JSONObject?> {
+                val obj = it
+                if (obj != null){
+                    val vid = obj.optString("vote_id", null)
+                    if (vid != null){
+                        pAppCache.update_object_cache(vid,obj)
+                        _cacheVoteIdInfoHash[vid] = obj           //  add to memory cache: id hash
+                        resultHash.put("vid", obj)
+                    } else {
+                        val vote_for = obj.getString("vote_for")
+                        val vote_against = obj.getString("vote_against")
+
+                        pAppCache.update_object_cache(vote_for,obj)
+                        _cacheVoteIdInfoHash[vote_for] = obj      //  add to memory cache: id hash
+                        resultHash.put(vote_for,obj)
+
+                        pAppCache.update_object_cache(vote_against,obj)
+                        _cacheVoteIdInfoHash[vote_against] = obj  //  add to memory cache: id hash
+                        resultHash.put(vote_against,obj)
+                    }
+                }
+            }
+            //  保存缓存
+            pAppCache.saveObjectCacheToFile()
+            //  返回结果
+            return@then resultHash
+        }
+    }
 
     /**
      *  (private) 查询指定对象ID列表的所有对象信息，返回 Hash。 格式：{对象ID=>对象信息, ...}
@@ -866,7 +937,7 @@ class ChainObjectManager {
      *
      *  REMARK：不处理异常，在外层 VC 逻辑中处理。外部需要 catch 该 promise。
      */
-    fun queryAllObjectsInfo(object_id_array: JSONArray, cache: MutableMap<String, JSONObject>?, key: String?, skipQueryCache: Boolean): Promise {
+    fun queryAllObjectsInfo(object_id_array: JSONArray, cache: MutableMap<String, JSONObject>?, key: String?, skipQueryCache: Boolean, skipCacheIdHash: JSONObject?): Promise {
 
         var resultHash = JSONObject()
 
@@ -884,15 +955,20 @@ class ChainObjectManager {
             var pAppCache = AppCacheManager.sharedAppCacheManager()
             val now_ts = Utils.now_ts()
             for (object_id in object_id_array.forin<String>()) {
-                val obj = pAppCache.get_object_cache_ts(object_id!!, now_ts)
-                if (obj != null) {
-                    _cacheObjectID2ObjectHash[object_id] = obj  //  add to memory cache: id hash
-                    if (cache != null && key != null) {
-                        cache[obj.getString(key)] = obj         //  add to memory cache: key hash
-                    }
-                    resultHash.put(object_id, obj)
-                } else {
+                if (skipCacheIdHash != null && skipCacheIdHash.optString(object_id) != null){
+                    //  部分ID跳过缓存
                     queryArray.put(object_id)
+                } else {
+                    val obj = pAppCache.get_object_cache_ts(object_id!!, now_ts)
+                    if (obj != null) {
+                        _cacheObjectID2ObjectHash[object_id] = obj  //  add to memory cache: id hash
+                        if (cache != null && key != null) {
+                            cache[obj.getString(key)] = obj         //  add to memory cache: key hash
+                        }
+                        resultHash.put(object_id, obj)
+                    } else {
+                        queryArray.put(object_id)
+                    }
                 }
             }
             //  从缓存获取完毕，直接返回。
@@ -932,19 +1008,23 @@ class ChainObjectManager {
     }
 
     fun queryAllAccountsInfo(account_id_array: JSONArray): Promise {
-        return queryAllObjectsInfo(account_id_array, _cacheAccountName2ObjectHash, "name", false)
+        return queryAllObjectsInfo(account_id_array, _cacheAccountName2ObjectHash, "name", false, null)
     }
 
     fun queryAllAssetsInfo(asset_id_array: JSONArray): Promise {
-        return queryAllObjectsInfo(asset_id_array, _cacheAssetSymbol2ObjectHash, "symbol", false)
+        return queryAllObjectsInfo(asset_id_array, _cacheAssetSymbol2ObjectHash, "symbol", false, null)
     }
 
     fun queryAllGrapheneObjects(id_array: JSONArray): Promise {
-        return queryAllObjectsInfo(id_array, null, null, false)
+        return queryAllObjectsInfo(id_array, null, null, false, null)
     }
 
     fun queryAllGrapheneObjectsSkipCache(id_array: JSONArray): Promise {
-        return queryAllObjectsInfo(id_array, null, null, true)
+        return queryAllObjectsInfo(id_array, null, null, true, null)
+    }
+
+    fun queryAllGrapheneObjects(id_array: JSONArray, skipCacheIdHash: JSONObject?): Promise {
+        return queryAllObjectsInfo(id_array, null, null, false, skipCacheIdHash)
     }
 
     /**
@@ -1253,7 +1333,7 @@ class ChainObjectManager {
         for (i in 0..10) {
             query_oid_list.put("2.13.${latest_oid - i}")
         }
-        return queryAllObjectsInfo(query_oid_list, null, null, false).then {
+        return queryAllObjectsInfo(query_oid_list, null, null, false, null).then {
             val asset_hash = it as JSONObject
             var budget_object: JSONObject? = null
             for (check_oid in query_oid_list.forin<String>()) {
@@ -1321,7 +1401,7 @@ class ChainObjectManager {
         //  当前帐号设置了代理，继续递归查询。
         //  TODO:fowallet 统计数据
         Logger.d("[Voting Proxy] Query proxy account: ${voting_account_id}, level: ${level + 1}")
-        return queryAllObjectsInfo(jsonArrayfrom(voting_account_id), null, null, true).then {
+        return queryAllObjectsInfo(jsonArrayfrom(voting_account_id), null, null, true, null).then {
             val data_hash = it as JSONObject
             var proxy_account_data = data_hash.getJSONObject(voting_account_id)
             return@then _queryAccountVotingInfosCore(proxy_account_data, resultHash, level + 1, checked_hash)

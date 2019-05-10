@@ -56,6 +56,7 @@ class ActivityProposal : BtsppActivity() {
             val proposal_marked = JSONObject()
             //  查询依赖
             val query_ids = JSONObject()
+            val skip_cache_ids = JSONObject()
             //  遍历所有提案
             array_list.forEach<Any> {
                 val proposals = it as? JSONArray
@@ -74,10 +75,22 @@ class ActivityProposal : BtsppActivity() {
                         }
 
                         query_ids.put(proposal.getString("proposer"), true)
-                        proposal.getJSONArray("available_active_approvals").forEach<String> { uid -> query_ids.put(uid, true) }
-                        proposal.getJSONArray("available_owner_approvals").forEach<String> { uid -> query_ids.put(uid, true) }
-                        proposal.getJSONArray("required_active_approvals").forEach<String> { uid -> query_ids.put(uid, true) }
-                        proposal.getJSONArray("required_owner_approvals").forEach<String> { uid -> query_ids.put(uid, true) }
+                        proposal.getJSONArray("available_active_approvals").forEach<String> { uid -> 
+                            query_ids.put(uid, true)
+                            skip_cache_ids.put(uid,true)
+                        }
+                        proposal.getJSONArray("available_owner_approvals").forEach<String> { uid -> 
+                            query_ids.put(uid, true)
+                            skip_cache_ids.put(uid,true)
+                        }
+                        proposal.getJSONArray("required_active_approvals").forEach<String> { uid -> 
+                            query_ids.put(uid, true)
+                            skip_cache_ids.put(uid,true)
+                        }
+                        proposal.getJSONArray("required_owner_approvals").forEach<String> { uid -> 
+                            query_ids.put(uid, true)
+                            skip_cache_ids.put(uid,true)
+                        }
 
                         val operations = proposal.getJSONObject("proposed_transaction").getJSONArray("operations")
                         operations.forEach<JSONArray> { ary ->
@@ -93,8 +106,9 @@ class ActivityProposal : BtsppActivity() {
                     }
                 }
             }
-            return@then chainMgr.queryAllGrapheneObjects(query_ids.keys().toJSONArray()).then {
+            return@then chainMgr.queryAllGrapheneObjects(query_ids.keys().toJSONArray(),skip_cache_ids).then {
                 //  二次查询依赖
+                //  1、查询提案账号权限中的多签成员/代理人等名字信息等。
                 val query_account_ids = JSONObject()
                 proposal_list.forEach<JSONObject> { proposal ->
                     proposal!!.getJSONArray("required_active_approvals").forEach<String> { uid ->
@@ -104,6 +118,10 @@ class ActivityProposal : BtsppActivity() {
                             assert(item!!.length() == 2)
                             query_account_ids.put(item.getString(0), true)
                         }
+                        val voting_account = account.getJSONObject("options").getString("voting_account")
+                        if (!voting_account.equals(BTS_GRAPHENE_PROXY_TO_SELF)){
+                            query_account_ids.put(voting_account, true)
+                        }
                     }
                     proposal.getJSONArray("required_owner_approvals").forEach<String> { uid ->
                         val account = chainMgr.getChainObjectByID(uid!!)
@@ -112,12 +130,76 @@ class ActivityProposal : BtsppActivity() {
                             assert(item!!.length() == 2)
                             query_account_ids.put(item.getString(0), true)
                         }
+                        val voting_account = account.getJSONObject("options").getString("voting_account")
+                        if (!voting_account.equals(BTS_GRAPHENE_PROXY_TO_SELF)){
+                            query_account_ids.put(voting_account, true)
+                        }
                     }
                 }
-                return@then chainMgr.queryAllAccountsInfo(query_account_ids.keys().toJSONArray()).then {
-                    mask.dismiss()
-                    onQueryAllProposalsResponse(proposal_list)
-                    return@then null
+
+                //  2、更新账号信息时候查询投票信息
+                //  新vote_id
+                val new_vote_id_hash = JSONObject()
+                proposal_list.forEach<JSONObject> { proposal ->
+                    val operations = proposal!!.getJSONObject("proposed_transaction").getJSONArray("operations")
+                    operations.forEach<JSONArray> { it ->
+                        val ary = it!!
+                        assert(ary.length() == 2)
+                        val opcode = ary.getInt(0)
+                        if (opcode == EBitsharesOperations.ebo_account_update.value){
+                            val opdata = ary.getJSONObject(1)
+                            val new_options = opdata.optJSONObject("new_options")
+                            if (new_options != null) {
+                                val votes = new_options.optJSONArray("votes")
+                                if (votes != null && votes.length() > 0){
+                                    votes.forEach<String>() { vote_id ->
+                                        new_vote_id_hash.put(vote_id, true)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                //  老vote_id
+                skip_cache_ids.keys().toJSONArray().forEach<String> { it ->
+                    val account_id = it!!
+                    val account = chainMgr.getChainObjectByID(account_id)
+                    assert(account != null)
+                    val options = account.getJSONObject("options")
+                    val votes = options.optJSONArray("votes")
+                    if (votes != null && votes.length() > 0){
+                        votes.forEach<String> { vote_id ->
+                            new_vote_id_hash.put(vote_id, true)
+                        }
+                    }
+                }
+
+                val vote_id_list = new_vote_id_hash.keys().toJSONArray()
+
+                val p1 = chainMgr.queryAllGrapheneObjects(query_account_ids.keys().toJSONArray())
+                val p2 = chainMgr.queryAllVoteIds(vote_id_list)
+
+                return@then Promise.all(p1,p2).then { data ->
+                    //  第三次查询依赖（投票信息中的见证人理事会成员名字等）
+                    val query_ids_3rd = JSONObject()
+                    vote_id_list.forEach<String>(){ it ->
+                        val vote_id = it!!
+                        val vote_info = chainMgr.getVoteInfoByVoteID(vote_id)
+                        val committee_member_account = vote_info!!.optString("committee_member_account",null)
+                        if (committee_member_account != null){
+                            query_ids_3rd.put(committee_member_account,true)
+                        } else {
+                            val witness_account = vote_info!!.optString("witness_account")
+                            if (witness_account != null){
+                                query_ids_3rd.put(witness_account,true)
+                            }
+                        }
+                    }
+                    return@then chainMgr.queryAllGrapheneObjects(query_ids_3rd.keys().toJSONArray()).then { data ->
+                        mask.dismiss()
+                        onQueryAllProposalsResponse(proposal_list)
+                        return@then null
+                    }
                 }
             }
         }.catch {
@@ -496,7 +578,14 @@ class ActivityProposal : BtsppActivity() {
 
         val newOperations = proposalProcessedData.getJSONArray("newOperations")
         newOperations.forEach<JSONObject> {
-            layout5_opinfos.addView(ViewUtils.createProposalOpInfoCell(this, it!!.getJSONObject("uidata"), useBuyColorForTitle = true))
+            val operation = it!!
+            when(operation.getString("opcode").toInt()){
+                EBitsharesOperations.ebo_account_update.value ->
+                    layout5_opinfos.addView(ViewProposalAccountUpdate(this, operation, true))
+                else -> {
+                    layout5_opinfos.addView(ViewUtils.createProposalOpInfoCell(this, operation.getJSONObject("uidata"), useBuyColorForTitle = true))
+                }
+            }
             val lv_line = View(this)
             lv_line.setBackgroundColor(resources.getColor(R.color.theme01_bottomLineColor))
             val lv_line_layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1.dp)

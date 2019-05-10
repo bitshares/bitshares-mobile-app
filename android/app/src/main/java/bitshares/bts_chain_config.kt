@@ -125,6 +125,12 @@ const val BTS_GLOBAL_PROPERTIES_ID: String = "2.0.0"
 //  0:理事会账号
 const val BTS_GRAPHENE_COMMITTEE_ACCOUNT = "1.2.0"
 
+//  4:空账号（隐私交易可能需要由该账号支付手续费等）
+const val BTS_GRAPHENE_TEMP_ACCOUNT = "1.2.4"
+
+//  5:代理给自己
+const val BTS_GRAPHENE_PROXY_TO_SELF = "1.2.5"
+
 //  BTS网络动态全局信息对象ID号
 //  格式：
 //    {"id"=>"2.1.0",
