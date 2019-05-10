@@ -955,7 +955,7 @@ class ChainObjectManager {
             var pAppCache = AppCacheManager.sharedAppCacheManager()
             val now_ts = Utils.now_ts()
             for (object_id in object_id_array.forin<String>()) {
-                if (skipCacheIdHash != null && skipCacheIdHash.optString(object_id) != null){
+                if (skipCacheIdHash != null && skipCacheIdHash.optString(object_id, null) != null){
                     //  部分ID跳过缓存
                     queryArray.put(object_id)
                 } else {
