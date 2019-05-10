@@ -145,9 +145,13 @@ class Utils {
             if (preimage.length < 20){ //TODO:fowallet cfg
                 return false
             }
-            val regular_list = arrayOf(".*[A-Z]+.*",".*[0-9]+.*")
-            regular_list.forEach {
-                if (!Regex(it).containsMatchIn(preimage)){
+
+            //  大写、数字检测
+            val format1 = ".*[A-Z]+.*"
+            val format3 = ".*[0-9]+.*"
+
+            for (format in arrayOf(format1, format3)) {
+                if (!isRegularMatch(preimage, format)) {
                     return false
                 }
             }
@@ -165,8 +169,8 @@ class Utils {
                 return false
             }
             //  A-F、a-f、0-9 组成
-            val pre = "^[A-Fa-f0-0]+$"
-            if (!Regex(pre).containsMatchIn(hexstring)) {
+            val pre = "^[A-Fa-f0-9]+$"
+            if (!isRegularMatch(hexstring, pre)) {
                 return false
             }
             return true
@@ -326,7 +330,7 @@ class Utils {
             if (time == "") {
                 return "00-00 00:00"
             }
-            var ts = parseBitsharesTimeString(time)
+            val ts = parseBitsharesTimeString(time)
             val d = Date(ts * 1000)
             val f = SimpleDateFormat("MM-dd HH:mm")
             val s = f.format(d)
@@ -337,8 +341,8 @@ class Utils {
          *  格式化：交易历史时间显示格式  24小时内，直接显示时分秒，24小时以外了则显示 x天前。REMARK：以当前时区格式化，BTS默认时间是UTC。北京时间当前时区会+8。
          */
         fun fmtTradeHistoryTimeShowString(ctx: Context, time: String): String {
-            var ts = parseBitsharesTimeString(time)
-            var now_ts = now_ts()
+            val ts = parseBitsharesTimeString(time)
+            val now_ts = now_ts()
             val diff_ts = now_ts - ts
             if (diff_ts < 86400) {
                 val d = Date(ts * 1000)
@@ -353,7 +357,7 @@ class Utils {
          * 格式化：限价单过期日期显示格式。REMARK：以当前时区格式化，BTS默认时间是UTC。北京时间当前时区会+8。
          */
         fun fmtLimitOrderTimeShowString(time: String): String {
-            var ts = parseBitsharesTimeString(time)
+            val ts = parseBitsharesTimeString(time)
             val d = Date(ts * 1000)
             val f = SimpleDateFormat("yyyy/MM/dd")
             val s = f.format(d)
@@ -580,6 +584,21 @@ class Utils {
                 return true
             }
             return false
+        }
+
+        /**
+         * 读取剪贴板内容
+         */
+        fun readFromClipboard(ctx: Context):String{
+            val mgr = ctx.getSystemService(CLIPBOARD_SERVICE) as? ClipboardManager
+            if (mgr != null && mgr.hasPrimaryClip()){
+                val data = mgr.primaryClip
+                if (data != null){
+                    val item = data.getItemAt(0)
+                    return item.coerceToText(ctx).toString()
+                }
+            }
+            return ""
         }
     }
 }

@@ -7,7 +7,6 @@
     android:background="@color/theme01.appBackColor"
     tools:context="com.btsplusplus.fowallet.ActivityAdvancedFeature">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -15,12 +14,10 @@
         android:padding="10dp"
         android:orientation="vertical">
 
-
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:orientation="horizontal">
-
 
             <LinearLayout
                 android:id="@+id/layout_back_from_advanced_feature"
@@ -47,11 +44,10 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="@string/kSettingEx"
+                android:text="@string/kVcTitleDepositAdvFunction"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
-
 
         <!-- HTLC合约（原像创建） -->
         <LinearLayout
@@ -62,11 +58,12 @@
             android:orientation="horizontal">
 
             <ImageView
+                android:id="@+id/img_icon_preimage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/icon_transfer"/>
+                android:src="@drawable/icon_htlc_preimage"/>
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -88,7 +85,7 @@
 
         </LinearLayout>
 
-        <!-- HTLC合约（原像创建） -->
+        <!-- HTLC合约（哈希创建） -->
         <LinearLayout
             android:id="@+id/layout_htlc_hash_of_advanced_feature"
             android:layout_width="match_parent"
@@ -97,11 +94,12 @@
             android:orientation="horizontal">
 
             <ImageView
+                android:id="@+id/img_icon_hashcode"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/icon_transfer"/>
+                android:src="@drawable/icon_htlc_hashcode"/>
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"

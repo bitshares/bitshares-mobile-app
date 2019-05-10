@@ -431,7 +431,7 @@ class OrgUtils {
             if (prikey == null) {
                 return null
             }
-            return NativeInterface.sharedNativeInterface().bts_gen_address_from_private_key32(prikey)?.utf8String()
+            return NativeInterface.sharedNativeInterface().bts_gen_address_from_private_key32(prikey, ChainObjectManager.sharedChainObjectManager().grapheneAddressPrefix.utf8String())?.utf8String()
         }
 
         /**
@@ -442,7 +442,7 @@ class OrgUtils {
             if (prikey == null) {
                 return null
             }
-            return NativeInterface.sharedNativeInterface().bts_gen_address_from_private_key32(prikey)?.utf8String()
+            return NativeInterface.sharedNativeInterface().bts_gen_address_from_private_key32(prikey, ChainObjectManager.sharedChainObjectManager().grapheneAddressPrefix.utf8String())?.utf8String()
         }
 
         /**
@@ -1072,9 +1072,12 @@ class OrgUtils {
                     }
                 }
                 EBitsharesOperations.ebo_htlc_redeem.value -> {
-                    //  TODO:2.2 fowallet 未完成
                     name = R.string.kOpType_htlc_redeem.xmlstring(ctx)
-                    desc = "提取HTLC。"
+                    val hex_preimage = opdata.getString("preimage")
+                    assert(Utils.isValidHexString(hex_preimage))
+                    val raw_preimage = hex_preimage.hexDecode()
+                    val redeemer = chainMgr.getChainObjectByID(opdata.getString("redeemer")).getString("name")
+                    desc = String.format(R.string.kOpDesc_htlc_redeem.xmlstring(ctx), redeemer, raw_preimage.utf8String(), opdata.getString("htlc_id"))
                 }
                 EBitsharesOperations.ebo_htlc_redeemed.value -> {
                     name = R.string.kOpType_htlc_redeemed.xmlstring(ctx)

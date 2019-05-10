@@ -239,6 +239,7 @@
     <string name="kProposalSubmitTipTxOK">创建提案成功。</string>
     <string name="kProposalBtnSubmit">提交</string>
     <string name="kProposalTipsNoAnyProposals">没有任何提案信息</string>
+    <string name="kProposalSubmitTipsBlockedApprovedForBlackList">危险账号 %s，为了您的账号和资金安全，系统已阻止了该操作。</string>
     <string name="kProposalSubmitTipsInReview">提案处于审核中，不能添加授权。</string>
     <string name="kProposalSubmitTipsNoPermissionApprove">您没有任何权限，没法执行批准操作。</string>
     <string name="kProposalSubmitTipsYouAlreadyApproved">您已经批准，不用重复操作。</string>
@@ -484,8 +485,8 @@
     <string name="kVcHtlcListHashTypeValueUnknown">未知类型 %s</string>
     <string name="kVcHtlcListHashValue">原像哈希 </string>
     <string name="kVcHtlcListBtnExtend">延长有效期</string>
-    <string name="kVcHtlcListBtnRedeem">提取</string>
-    <string name="kVcHtlcListBtnCreate">部署</string>
+    <string name="kVcHtlcListBtnRedeem">赎回合约</string>
+    <string name="kVcHtlcListBtnCreate">部署副合约</string>
     <string name="kVcHtlcListTipsErrorMissParams">HTLC相关参数理事会尚未配置，请稍后再试。</string>
     <string name="kVcHtlcListTipsErrorMaxExpire">已经达到最长有效期，不能再延长了。</string>
     <string name="kVcHtlcListTipsSelectExtendDays">请选择延长天数</string>
@@ -540,6 +541,7 @@
     <string name="kVcVoteTipTxOK">%s成功，但刷新界面失败，请稍后再试。</string>
     <string name="kVcVoteCellTotalVotes">总票数 </string>
     <string name="kVcVoteCellMissed">丢块数 </string>
+    <string name="kVcVoteCellWorkerID">编号 </string>
     <string name="kVcVoteCellCreator">创建者 </string>
     <string name="kVcVoteCellDailyPay">每日预算 </string>
     <string name="kVcVoteCellWPDatePeriod">有效期 </string>
@@ -636,7 +638,7 @@
     <string name="kOpType_fill_order">订单成交</string>
     <string name="kOpType_account_create">创建账号</string>
     <string name="kOpType_account_update">更新账号</string>
-    <string name="kOpType_account_whitelist">更新白名单</string>
+    <string name="kOpType_account_whitelist">更新黑白名单</string>
     <string name="kOpType_account_upgrade">升级账号</string>
     <string name="kOpType_account_transfer">转移账号</string>
     <string name="kOpType_asset_create">资产创建</string>
@@ -694,7 +696,10 @@
     <string name="kOpDesc_fill_order_buy">%s 以 %s 的价格买入 %s。</string>
     <string name="kOpDesc_account_create">%s 创建账号 %s。</string>
     <string name="kOpDesc_account_update">%s 更新账户信息。</string>
-    <string name="kOpDesc_account_whitelist">更新白名单。</string>
+    <string name="kOpDesc_account_whitelist_white">%s 添加 %s 到白名单列表。</string>
+    <string name="kOpDesc_account_whitelist_black">%s 添加 %s 到黑名单列表。</string>
+    <string name="kOpDesc_account_whitelist_both">%s 添加 %s 到白名单和黑名单列表。</string>
+    <string name="kOpDesc_account_whitelist_none">%s 从黑白名单列表移除 %s。</string>
     <string name="kOpDesc_account_upgrade">%s 升级账户。</string>
     <string name="kOpDesc_account_upgrade_member">%s 升级终身会员。</string>
     <string name="kOpDesc_account_transfer">转移账号。</string>
@@ -830,6 +835,7 @@
     <!-- 部分石墨烯错误信息 -->
     <string name="kGPErrorAccountNotExist">账号不存在。</string>
     <string name="kGPErrorInsufficientBalance">手续费不足。</string>
+    <string name="kGPErrorRedeemInvalidPreimage">原像不正确。</string>
     <!-- 特殊用途字符串KEY -->
     <string name="serverWssLangKey">cn</string>
     <string name="appDepositWithdrawDefaultGateway">GDEX</string>

@@ -37,6 +37,7 @@ class ActivityIndexServices : BtsppActivity() {
         img_icon_voting.setColorFilter(iconcolor)
         img_icon_feedprice.setColorFilter(iconcolor)
         img_icon_deposit_withdraw.setColorFilter(iconcolor)
+        img_icon_advfunction.setColorFilter(iconcolor)
         img_icon_game.setColorFilter(iconcolor)
 
         layout_account_query_from_services.setOnClickListener {

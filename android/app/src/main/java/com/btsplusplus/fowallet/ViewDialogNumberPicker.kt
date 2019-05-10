@@ -12,6 +12,9 @@ import android.widget.*
 import bitshares.LLAYOUT_MATCH
 import bitshares.LLAYOUT_WARP
 import bitshares.dp
+import bitshares.forEach
+import org.json.JSONArray
+import org.json.JSONObject
 import kotlin.math.max
 
 class BtsppNumberPicker : NumberPicker {
@@ -57,7 +60,19 @@ class BtsppNumberPicker : NumberPicker {
 
 class ViewDialogNumberPicker : Dialog {
 
-    constructor(ctx: Context, title:String?, array_data: Array<String>, default_selected:Int, callback: (index: Int, result: String) -> Unit) : super(ctx) {
+    constructor(ctx: Context, title:String?, source_list: JSONArray, itemkey:String?, default_selected:Int, callback: (index: Int, result: String) -> Unit) : super(ctx) {
+        val string_list = mutableListOf<String>()
+        if (itemkey != null){
+            source_list.forEach<JSONObject> {
+                string_list.add(it!!.getString(itemkey))
+            }
+        }else{
+            source_list.forEach<String> {
+                string_list.add(it!!)
+            }
+        }
+        val array_data = string_list.toTypedArray()
+
         //  外层 Layout
         val layout = LinearLayout(context)
         val layout_params = LinearLayout.LayoutParams(100.dp, 100.dp)
