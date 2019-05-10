@@ -1085,8 +1085,18 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
         case ebo_account_whitelist:
         {
             name = NSLocalizedString(@"kOpType_account_whitelist", @"账号白名单");
-            desc = NSLocalizedString(@"kOpDesc_account_whitelist", @"更新账号白名单。");
-            //  TODO:待细化
+            NSInteger new_listing_flag = [[opdata objectForKey:@"new_listing"] integerValue];
+            BOOL in_white_list = (new_listing_flag & ebwlf_white_listed) != 0;
+            BOOL in_black_list = (new_listing_flag & ebwlf_black_listed) != 0;
+            if (in_white_list && in_black_list){
+                desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_account_whitelist_both", @"%@ 添加 %@ 到白名单和黑名单列表。"), GRAPHENE_NAME(@"authorizing_account"), GRAPHENE_NAME(@"account_to_list")];
+            }else if (in_white_list){
+                desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_account_whitelist_white", @"%@ 添加 %@ 到白名单列表。"), GRAPHENE_NAME(@"authorizing_account"), GRAPHENE_NAME(@"account_to_list")];
+            }else if (in_black_list){
+                desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_account_whitelist_black", @"%@ 添加 %@ 到黑名单列表。"), GRAPHENE_NAME(@"authorizing_account"), GRAPHENE_NAME(@"account_to_list")];
+            }else{
+                desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_account_whitelist_none", @"%@ 从黑白名单列表移除 %@。"), GRAPHENE_NAME(@"authorizing_account"), GRAPHENE_NAME(@"account_to_list")];
+            }
         }
             break;
         case ebo_account_upgrade:

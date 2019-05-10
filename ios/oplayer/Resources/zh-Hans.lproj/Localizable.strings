@@ -255,6 +255,7 @@
 "kProposalSubmitTipTxOK" = "创建提案成功。";
 "kProposalBtnSubmit" = "提交";
 "kProposalTipsNoAnyProposals" = "没有任何提案信息";
+"kProposalSubmitTipsBlockedApprovedForBlackList" = "危险账号 %@，为了您的账号和资金安全，系统已阻止了该操作。";
 "kProposalSubmitTipsInReview" = "提案处于审核中，不能添加授权。";
 "kProposalSubmitTipsNoPermissionApprove" = "您没有任何权限，没法执行批准操作。";
 "kProposalSubmitTipsYouAlreadyApproved" = "您已经批准，不用重复操作。";
@@ -666,7 +667,7 @@
 "kOpType_fill_order" = "订单成交";
 "kOpType_account_create" = "创建账号";
 "kOpType_account_update" = "更新账号";
-"kOpType_account_whitelist" = "更新白名单";
+"kOpType_account_whitelist" = "更新黑白名单";
 "kOpType_account_upgrade" = "升级账号";
 "kOpType_account_transfer" = "转移账号";
 "kOpType_asset_create" = "资产创建";
@@ -725,7 +726,10 @@
 "kOpDesc_fill_order_buy" = "%@ 以 %@ 的价格买入 %@。";
 "kOpDesc_account_create" = "%@ 创建账号 %@。";
 "kOpDesc_account_update" = "%@ 更新账户信息。";
-"kOpDesc_account_whitelist" = "更新白名单。";
+"kOpDesc_account_whitelist_white" = "%@ 添加 %@ 到白名单列表。";
+"kOpDesc_account_whitelist_black" = "%@ 添加 %@ 到黑名单列表。";
+"kOpDesc_account_whitelist_both" = "%@ 添加 %@ 到白名单和黑名单列表。";
+"kOpDesc_account_whitelist_none" = "%@ 从黑白名单列表移除 %@。";
 "kOpDesc_account_upgrade" = "%@ 升级账户。";
 "kOpDesc_account_upgrade_member" = "%@ 升级终身会员。";
 "kOpDesc_account_transfer" = "转移账号。";

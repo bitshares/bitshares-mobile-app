@@ -255,6 +255,7 @@
 "kProposalSubmitTipTxOK" = "提案を創建して成功します。";
 "kProposalBtnSubmit" = "提出します";
 "kProposalTipsNoAnyProposals" = "提案情報はありません";
+"kProposalSubmitTipsBlockedApprovedForBlackList" = "危険なアカウント %@、システムはこの操作をあなたのアカウントと財務上のセキュリティのためにブロックしました。";
 "kProposalSubmitTipsInReview" = "提案は審査中であって、授権を添加することはできません。";
 "kProposalSubmitTipsNoPermissionApprove" = "あなたはいかなる権限がなくて、実行して操作を許可することができません。";
 "kProposalSubmitTipsYouAlreadyApproved" = "あなたはすでに許可して、反復処理を使いません。";
@@ -666,7 +667,7 @@
 "kOpType_fill_order" = "執行注文";
 "kOpType_account_create" = "アカウントを創建します";
 "kOpType_account_update" = "アカウントを更新します";
-"kOpType_account_whitelist" = "白い名簿を更新します";
+"kOpType_account_whitelist" = "白黒リストを更新します";
 "kOpType_account_upgrade" = "アカウントをアップグレードします";
 "kOpType_account_transfer" = "アカウントを移転します";
 "kOpType_asset_create" = "資産は創建します";
@@ -725,7 +726,10 @@
 "kOpDesc_fill_order_buy" = "%@ を %@ の価格で購入 %@。";
 "kOpDesc_account_create" = "%@ アカウントを創建します %@。";
 "kOpDesc_account_update" = "%@ アカウント情報を更新する。";
-"kOpDesc_account_whitelist" = "ホワイトリストを更新する。";
+"kOpDesc_account_whitelist_white" = "%@ 白リストに %@ を追加します。";
+"kOpDesc_account_whitelist_black" = "%@ 黒リストに %@ を追加します。";
+"kOpDesc_account_whitelist_both" = "%@ 白リストと黒リストに %@ を追加します。";
+"kOpDesc_account_whitelist_none" = "%@ 白黒リストから %@ を削除します。";
 "kOpDesc_account_upgrade" = "%@ アカウントをアップグレードする。";
 "kOpDesc_account_upgrade_member" = "%@ 終身会員をアップグレードする。";
 "kOpDesc_account_transfer" = "アカウントの移転。";
