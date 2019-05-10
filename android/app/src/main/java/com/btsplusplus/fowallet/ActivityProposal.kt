@@ -189,7 +189,7 @@ class ActivityProposal : BtsppActivity() {
                         if (committee_member_account != null){
                             query_ids_3rd.put(committee_member_account,true)
                         } else {
-                            val witness_account = vote_info!!.optString("witness_account")
+                            val witness_account = vote_info!!.optString("witness_account",null)
                             if (witness_account != null){
                                 query_ids_3rd.put(witness_account,true)
                             }
