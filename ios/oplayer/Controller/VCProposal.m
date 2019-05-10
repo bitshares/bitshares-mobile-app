@@ -634,6 +634,29 @@
     id proposal = [_dataArray objectAtIndex:button.tag];
     assert(proposal);
     
+    //  REMARK：查询提案发起者是否处于黑名单中，黑名单中不可批准。
+    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    [[[chainMgr queryAllGrapheneObjectsSkipCache:@[BTS_GRAPHENE_ACCOUNT_BTSPP_TEAM]] then:(^id(id data) {
+        [self hideBlockView];
+        id account = [chainMgr getChainObjectByID:BTS_GRAPHENE_ACCOUNT_BTSPP_TEAM];
+        id blacklisted_accounts = [account objectForKey:@"blacklisted_accounts"];
+        id proposer = [proposal objectForKey:@"proposer"];
+        if (blacklisted_accounts && [blacklisted_accounts count] > 0 && [blacklisted_accounts containsObject:proposer]){
+            [OrgUtils showMessage:[NSString stringWithFormat:NSLocalizedString(@"kProposalSubmitTipsBlockedApprovedForBlackList", @"危险账号 %@，为了您的账号和资金安全，系统已阻止了该操作。"), [[chainMgr getChainObjectByID:proposer] objectForKey:@"name"]]];
+        }else{
+            [self _gotoApproveCore:proposal];
+        }
+        return nil;
+    })] catch:(^id(id error) {
+        [self hideBlockView];
+        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+        return nil;
+    })];
+}
+
+- (void)_gotoApproveCore:(id)proposal
+{
     //  审核中：仅可移除授权，不可添加授权。
     id kProcessedData = [proposal objectForKey:@"kProcessedData"];
     assert(kProcessedData);
@@ -642,6 +665,7 @@
         return;
     }
     
+    //  解锁钱包
     [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
         if (unlocked){
             [self gotoVcApproveCore:proposal];

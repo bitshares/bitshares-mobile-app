@@ -20,6 +20,17 @@ typedef enum EBitsharesHtlcHashType
 } EBitsharesHtlcHashType;
 
 /**
+ *  石墨烯账号黑白名单标记
+ */
+typedef enum EBitsharesWhiteListFlag
+{
+    ebwlf_no_listing = 0x0,                                                 //  无
+    ebwlf_white_listed = 0x1,                                               //  在白名单，不在黑名单中。
+    ebwlf_black_listed = 0x2,                                               //  在黑名单，不在白名单中。
+    ebwlf_white_and_black_listed = ebwlf_white_listed | ebwlf_black_listed  //  同时在黑白名单中
+} EBitsharesWhiteListFlag;
+
+/**
  *  石墨烯网络投票类型定义
  */
 typedef enum EBitsharesVoteType
@@ -155,6 +166,8 @@ typedef enum EBitsharesOperations
 //  5:代理给自己
 #define BTS_GRAPHENE_PROXY_TO_SELF          @"1.2.5"
 
+//  黑名单意见账号：btspp-team
+#define BTS_GRAPHENE_ACCOUNT_BTSPP_TEAM     @"1.2.1031560"
 
 //  BTS网络动态全局信息对象ID号
 //  格式：

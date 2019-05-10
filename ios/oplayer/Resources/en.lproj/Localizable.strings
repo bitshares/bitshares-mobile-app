@@ -255,6 +255,7 @@
 "kProposalSubmitTipTxOK" = "The proposal was created successfully.";
 "kProposalBtnSubmit" = "Ok";
 "kProposalTipsNoAnyProposals" = "No proposal";
+"kProposalSubmitTipsBlockedApprovedForBlackList" = "Dangerous account %@, the system has blocked this operation for your account and financial security.";
 "kProposalSubmitTipsInReview" = "The proposal is in review. cannot add approval.";
 "kProposalSubmitTipsNoPermissionApprove" = "You do not have any permissions to perform an approval operation.";
 "kProposalSubmitTipsYouAlreadyApproved" = "You have already approved.";
@@ -725,7 +726,10 @@
 "kOpDesc_fill_order_buy" = "%1$@ buys %3$@ at %2$@.";
 "kOpDesc_account_create" = "%@ create an account %@.";
 "kOpDesc_account_update" = "%@ update account.";
-"kOpDesc_account_whitelist" = "update the whitelist.";
+"kOpDesc_account_whitelist_white" = "%@ add %@ to the whitelist.";
+"kOpDesc_account_whitelist_black" = "%@ add %@ to the blacklist.";
+"kOpDesc_account_whitelist_both" = "%@ add %@ to the whitelist and blacklist.";
+"kOpDesc_account_whitelist_none" = "%@ remove %@ from the black and white list.";
 "kOpDesc_account_upgrade" = "%@ upgrade account.";
 "kOpDesc_account_upgrade_member" = "%@ upgrade lifetime membership.";
 "kOpDesc_account_transfer" = "transfer account.";
