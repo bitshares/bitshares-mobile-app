@@ -128,7 +128,9 @@ class ActivityMyAssets : BtsppActivity() {
                 val pos = tab.position
                 view_pager!!.setCurrentItem(pos, true)
                 fragmens[pos].let {
-                    if (it is FragmentVestingBalance){
+                    if (it is FragmentAssetsHtlcList){
+                        it.queryUserHTLCs()
+                    }else if (it is FragmentVestingBalance){
                         it.queryVestingBalance()
                     }
                 }

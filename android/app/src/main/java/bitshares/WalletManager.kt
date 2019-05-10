@@ -616,7 +616,7 @@ class WalletManager {
         }
 
         //  接收方的公钥
-        val public_key = NativeInterface.sharedNativeInterface().bts_gen_public_key_from_b58address(to_public.utf8String())
+        val public_key = NativeInterface.sharedNativeInterface().bts_gen_public_key_from_b58address(to_public.utf8String(), ChainObjectManager.sharedChainObjectManager().grapheneAddressPrefix.utf8String())
         //  公钥无效
         if (public_key == null) {
             return null

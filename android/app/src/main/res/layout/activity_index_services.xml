@@ -292,12 +292,12 @@
             android:layout_marginTop="40dp"
             android:orientation="horizontal">
             <ImageView
-                android:id="@+id/img_icon_deposit_withdraw"
+                android:id="@+id/img_icon_advfunction"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/icon_depositwithdraw"/>
+                android:src="@drawable/icon_advfunction"/>
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -306,7 +306,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="高级功能"/>
+                android:text="@string/kServicesCellLabelAdvFunction"/>
 
             <ImageView
                 android:layout_width="0dp"

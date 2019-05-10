@@ -24,13 +24,13 @@ class NativeInterface {
 
     external fun bts_private_key_to_wif(private_key32: ByteArray): String?
 
-    external fun bts_public_key_to_address(public_key: ByteArray): ByteArray?
+    external fun bts_public_key_to_address(public_key: ByteArray, address_prefix: ByteArray): ByteArray?
 
-    external fun bts_gen_address_from_private_key32(private_key32: ByteArray): ByteArray?
+    external fun bts_gen_address_from_private_key32(private_key32: ByteArray, address_prefix: ByteArray): ByteArray?
 
     external fun bts_gen_private_key_from_wif_privatekey(wif_privatekey: ByteArray): ByteArray?
 
-    external fun bts_gen_public_key_from_b58address(address: ByteArray): ByteArray?
+    external fun bts_gen_public_key_from_b58address(address: ByteArray, address_prefix: ByteArray): ByteArray?
 
     external fun bts_save_wallet(wallet_jsonbin: ByteArray, password: ByteArray, entropy: ByteArray): ByteArray?
 

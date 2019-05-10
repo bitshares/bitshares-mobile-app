@@ -242,10 +242,7 @@ class ActivityKLine : BtsppActivity() {
             ++idx
         }
 
-        val nameList = JSONArray()
-        more_list.forEach<JSONObject> { nameList.put(it!!.getString("name")) }
-
-        ViewDialogNumberPicker(this, null, nameList.toList<String>().toTypedArray(), defaultIndex){ _index: Int, txt: String ->
+        ViewDialogNumberPicker(this, null, more_list, "name", defaultIndex){ _index: Int, txt: String ->
             tab_more.text = "$txt${resources.getString(R.string.kLabelEkdptMoreSuffix)}"
             tab_more.tag = more_list.getJSONObject(_index).get("value")
             if (tab_more.isSelected){

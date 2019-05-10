@@ -230,6 +230,12 @@ fun android.app.Activity.showGrapheneError(error: Any?) {
                     showToast(resources.getString(R.string.kGPErrorInsufficientBalance))
                     return
                 }
+                //  "Preimage size mismatch." or ""Provided preimage does not generate correct hash."
+                val lowermsg = msg.toLowerCase()
+                if (lowermsg.indexOf("preimage size") > 0 || lowermsg.indexOf("provided preimage") > 0){
+                    showToast(resources.getString(R.string.kGPErrorRedeemInvalidPreimage))
+                    return
+                }
             }
         } catch (e: Exception) {
         }

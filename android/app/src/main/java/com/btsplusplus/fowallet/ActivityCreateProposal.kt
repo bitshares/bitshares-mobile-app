@@ -182,7 +182,7 @@ class ActivityCreateProposal : BtsppActivity() {
             }
             day_strings.put(_fmtNday(day))
         }
-        ViewDialogNumberPicker(this, resources.getString(R.string.kProposalLabelApprovePeriod), day_strings.toList<String>().toTypedArray(), default_select){ _index: Int, txt: String ->
+        ViewDialogNumberPicker(this, resources.getString(R.string.kProposalLabelApprovePeriod), day_strings, null, default_select){ _index: Int, txt: String ->
             val sec = 3600 * 24 * ARR_DEFAULT_APPROVE_PERIOD_DAYS[_index]
             if (sec != _iProposalLifetime){
                 _iProposalLifetime = sec
@@ -210,7 +210,7 @@ class ActivityCreateProposal : BtsppActivity() {
             day_strings.put(_fmtFromSec(sec))
         }
 
-        ViewDialogNumberPicker(this, resources.getString(R.string.kProposalLabelReviewPeriod), day_strings.toList<String>().toTypedArray(), default_select){ _index: Int, txt: String ->
+        ViewDialogNumberPicker(this, resources.getString(R.string.kProposalLabelReviewPeriod), day_strings, null, default_select){ _index: Int, txt: String ->
             val sec = 3600 * 24 * day_list.getInt(_index)
             if (sec != _iProposalReviewtime){
                 _iProposalReviewtime = sec

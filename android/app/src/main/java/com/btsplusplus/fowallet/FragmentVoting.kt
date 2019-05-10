@@ -402,7 +402,7 @@ class FragmentVoting : BtsppFragment() {
         checkbox.buttonDrawable = checkbox_drawable
 
         //  第一行 name
-        var worker_name = data.getString("name")
+        val worker_name = data.getString("name")
         val tv1_line1 = ViewUtils.createTextView(ctx, "${index + 1}. $worker_name", 13f, R.color.theme01_textColorNormal, true)
         tv1_line1.setSingleLine(true)
         tv1_line1.maxLines = 1
@@ -424,11 +424,24 @@ class FragmentVoting : BtsppFragment() {
 
         //  第二行 creator
         val account_id = data.getString("worker_account")
-        var name = ChainObjectManager.sharedChainObjectManager().getChainObjectByID(account_id).getString("name")
-        val tv1_line2 = ViewUtils.createTextView(ctx, "${ctx.resources.getString(R.string.kVcVoteCellCreator)} ", 11f, R.color.theme01_textColorNormal, true)
-        val tv2_line2 = ViewUtils.createTextView(ctx, name, 11f, R.color.theme01_textColorNormal, true)
-        tv1_line2.tag = "tv1_line2.$index"
-        tv2_line2.tag = "tv2_line2.$index"
+        val name = ChainObjectManager.sharedChainObjectManager().getChainObjectByID(account_id).getString("name")
+        val worker_id = data.getString("id")
+
+        val tv1_line2 = ViewUtils.createTextView(ctx, "${ctx.resources.getString(R.string.kVcVoteCellWorkerID)} ", 11f, R.color.theme01_textColorNormal, true)
+        val tv2_line2 = ViewUtils.createTextView(ctx, worker_id, 11f, R.color.theme01_textColorNormal, true)
+        val tv3_line2 = ViewUtils.createTextView(ctx, "${ctx.resources.getString(R.string.kVcVoteCellCreator)} ", 11f, R.color.theme01_textColorNormal, true)
+        val tv4_line2 = ViewUtils.createTextView(ctx, name, 11f, R.color.theme01_textColorNormal, true)
+        tv3_line2.gravity = Gravity.RIGHT
+        tv4_line2.gravity = Gravity.RIGHT
+        val ly1_line2 = ViewUtils.createLinearLayout(ctx, LinearLayout.LayoutParams.WRAP_CONTENT, Utils.toDp(25f, ctx.resources), 1f, Gravity.CENTER_VERTICAL, LinearLayout.HORIZONTAL).apply {
+            addView(tv1_line2)
+            addView(tv2_line2)
+        }
+        val ly2_line2 = ViewUtils.createLinearLayout(ctx, LinearLayout.LayoutParams.WRAP_CONTENT, Utils.toDp(25f, ctx.resources), 1f, Gravity.CENTER_VERTICAL, LinearLayout.HORIZONTAL).apply {
+            gravity = Gravity.RIGHT
+            addView(tv3_line2)
+            addView(tv4_line2)
+        }
 
         //  第三行 votes & daily_pay
         val ly1_line3 = ViewUtils.createLinearLayout(ctx, LinearLayout.LayoutParams.WRAP_CONTENT, Utils.toDp(25f, ctx.resources), 1f, Gravity.CENTER_VERTICAL, LinearLayout.HORIZONTAL)
@@ -486,6 +499,7 @@ class FragmentVoting : BtsppFragment() {
             }
             tv1_line1.setTextColor(color)
             tv2_line2.setTextColor(color)
+            tv4_line2.setTextColor(color)
             tv2_line3.setTextColor(color)
             tv4_line3.setTextColor(color)
             tv2_line4.setTextColor(color)
@@ -523,8 +537,8 @@ class FragmentVoting : BtsppFragment() {
 
         ly_line1.addView(tv1_line1)
         ly_line1.addView(tv2_line1)
-        ly_line2.addView(tv1_line2)
-        ly_line2.addView(tv2_line2)
+        ly_line2.addView(ly1_line2)
+        ly_line2.addView(ly2_line2)
         ly_line3.addView(ly1_line3)
         ly_line3.addView(ly2_line3)
         ly1_line4.addView(tv1_line4)

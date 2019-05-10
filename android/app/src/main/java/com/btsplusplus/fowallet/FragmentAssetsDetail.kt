@@ -30,6 +30,7 @@ class FragmentAssetsDetail : BtsppFragment() {
     private var listener: OnFragmentInteractionListener? = null
 
     private var _ctx: Context? = null
+    private var _view: View? = null
     private var _loadStartID: Int = 0
     private var _full_account_data: JSONObject? = null
     private var _loading: Boolean = true
@@ -130,9 +131,12 @@ class FragmentAssetsDetail : BtsppFragment() {
     }
 
     private fun refreshUI() {
+        if (_loading || _view == null){
+            return
+        }
         val act = this.activity
         if (act != null) {
-            val container: LinearLayout = act.findViewById(R.id.layout_my_assets_detail_from_my_fragment)
+            val container: LinearLayout = _view!!.findViewById(R.id.layout_my_assets_detail_from_my_fragment)
             container.removeAllViews()
             if (_dataArray.size > 0) {
                 val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
@@ -211,8 +215,9 @@ class FragmentAssetsDetail : BtsppFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         _ctx = inflater.context
-        val v: View = inflater.inflate(R.layout.fragment_assets_detail, container, false)
-        return v
+        _view = inflater.inflate(R.layout.fragment_assets_detail, container, false)
+        refreshUI()
+        return _view
     }
 
     // TODO: Rename method, update argument and hook method into UI event
