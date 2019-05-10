@@ -641,12 +641,29 @@
         [self hideBlockView];
         id account = [chainMgr getChainObjectByID:BTS_GRAPHENE_ACCOUNT_BTSPP_TEAM];
         id blacklisted_accounts = [account objectForKey:@"blacklisted_accounts"];
-        id proposer = [proposal objectForKey:@"proposer"];
-        if (blacklisted_accounts && [blacklisted_accounts count] > 0 && [blacklisted_accounts containsObject:proposer]){
-            [OrgUtils showMessage:[NSString stringWithFormat:NSLocalizedString(@"kProposalSubmitTipsBlockedApprovedForBlackList", @"危险账号 %@，为了您的账号和资金安全，系统已阻止了该操作。"), [[chainMgr getChainObjectByID:proposer] objectForKey:@"name"]]];
+        
+        id proposer_uid = [proposal objectForKey:@"proposer"];
+        id proposer_account = [chainMgr getChainObjectByID:proposer_uid];
+        id proposer_registrar = [proposer_account objectForKey:@"registrar"];
+        assert(proposer_uid && proposer_account && proposer_registrar);
+        
+        BOOL in_blacklist = NO;
+        if (blacklisted_accounts && [blacklisted_accounts count] > 0){
+            for (id uid in blacklisted_accounts) {
+                //  发起账号 or 发起账号的注册者 在黑名单种，均存在风险。
+                if (uid == proposer_uid || uid == proposer_registrar){
+                    in_blacklist = YES;
+                    break;
+                }
+            }
+        }
+        
+        if (in_blacklist){
+            [OrgUtils showMessage:[NSString stringWithFormat:NSLocalizedString(@"kProposalSubmitTipsBlockedApprovedForBlackList", @"危险账号 %@，为了您的账号和资金安全，系统已阻止了该操作。"), [proposer_account objectForKey:@"name"]]];
         }else{
             [self _gotoApproveCore:proposal];
         }
+        
         return nil;
     })] catch:(^id(id error) {
         [self hideBlockView];
