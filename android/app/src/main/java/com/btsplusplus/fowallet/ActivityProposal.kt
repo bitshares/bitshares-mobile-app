@@ -662,6 +662,46 @@ class ActivityProposal : BtsppActivity() {
      * 事件 - 批准按钮点击
      */
     private fun onApproveClicked(proposal: JSONObject) {
+        //  REMARK：查询提案发起者是否处于黑名单中，黑名单中不可批准。
+        val chainMgr = ChainObjectManager.sharedChainObjectManager()
+
+        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
+        mask.show()
+
+        chainMgr.queryAllGrapheneObjectsSkipCache(jsonArrayfrom(BTS_GRAPHENE_ACCOUNT_BTSPP_TEAM)).then {
+            mask.dismiss()
+            val account = chainMgr.getChainObjectByID(BTS_GRAPHENE_ACCOUNT_BTSPP_TEAM)
+            val blacklisted_accounts = account.optJSONArray("blacklisted_accounts")
+            val proposer_uid = proposal.getString("proposer")
+            val proposer_account = chainMgr.getChainObjectByID(proposer_uid)
+            val proposer_registrar = proposer_account.getString("registrar")
+
+            var in_blacklist = false
+            if (blacklisted_accounts != null && blacklisted_accounts.length() > 0){
+                for (uid in blacklisted_accounts.forin<String>()){
+                    //  发起账号 or 发起账号的注册者 在黑名单种，均存在风险。
+                    if (uid!! == proposer_uid || uid == proposer_registrar){
+                        in_blacklist = true
+                        break
+                    }
+                }
+            }
+
+            if (in_blacklist){
+                UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kWarmTips), String.format(R.string.kProposalSubmitTipsBlockedApprovedForBlackList.xmlstring(this), proposer_account.getString("name")), btn_cancel = null).then {
+                    return@then null
+                }
+            }else{
+                _gotoApproveCore(proposal)
+            }
+            return@then null
+        }.catch {
+            mask.dismiss()
+            showToast(R.string.tip_network_error.xmlstring(this))
+        }
+    }
+
+    private fun _gotoApproveCore(proposal: JSONObject){
         //  审核中：仅可移除授权，不可添加授权。
         val kProcessedData = proposal.getJSONObject("kProcessedData")
         if (kProcessedData.getBoolean("inReview")) {

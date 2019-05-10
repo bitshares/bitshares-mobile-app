@@ -842,8 +842,23 @@ class OrgUtils {
                 }
                 EBitsharesOperations.ebo_account_whitelist.value -> {
                     name = R.string.kOpType_account_whitelist.xmlstring(ctx)
-                    desc = R.string.kOpDesc_account_whitelist.xmlstring(ctx)
-                    //  TODO:待细化
+
+                    val new_listing_flag = opdata.getInt("new_listing")
+                    val in_white_list = new_listing_flag.and(EBitsharesWhiteListFlag.ebwlf_white_listed.value) != 0
+                    val in_black_list = new_listing_flag.and(EBitsharesWhiteListFlag.ebwlf_black_listed.value) != 0
+
+                    val authorizing_account = chainMgr.getChainObjectByID(opdata.getString("authorizing_account")).getString("name")
+                    val account_to_list = chainMgr.getChainObjectByID(opdata.getString("account_to_list")).getString("name")
+
+                    if (in_white_list && in_black_list){
+                        desc = String.format(R.string.kOpDesc_account_whitelist_both.xmlstring(ctx), authorizing_account, account_to_list)
+                    }else if (in_white_list){
+                        desc = String.format(R.string.kOpDesc_account_whitelist_white.xmlstring(ctx), authorizing_account, account_to_list)
+                    }else if (in_black_list){
+                        desc = String.format(R.string.kOpDesc_account_whitelist_black.xmlstring(ctx), authorizing_account, account_to_list)
+                    }else{
+                        desc = String.format(R.string.kOpDesc_account_whitelist_none.xmlstring(ctx), authorizing_account, account_to_list)
+                    }
                 }
                 EBitsharesOperations.ebo_account_upgrade.value -> {
                     name = R.string.kOpType_account_upgrade.xmlstring(ctx)

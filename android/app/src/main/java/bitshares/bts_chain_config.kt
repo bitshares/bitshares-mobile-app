@@ -1,6 +1,16 @@
 package bitshares
 
 /**
+ *  石墨烯账号黑白名单标记
+ */
+enum class EBitsharesWhiteListFlag(val value: Int) {
+    ebwlf_no_listing(0x0),                                          //  无
+    ebwlf_white_listed(0x1),                                        //  在白名单，不在黑名单中。
+    ebwlf_black_listed(0x2),                                        //  在黑名单，不在白名单中。
+    ebwlf_white_and_black_listed(ebwlf_white_listed.value.or(ebwlf_black_listed.value)) //  同时在黑白名单中
+}
+
+/**
  *  区块数据对象类型ID号定义
  */
 enum class EBitsharesObjectType(val value: Int) {
@@ -130,6 +140,9 @@ const val BTS_GRAPHENE_TEMP_ACCOUNT = "1.2.4"
 
 //  5:代理给自己
 const val BTS_GRAPHENE_PROXY_TO_SELF = "1.2.5"
+
+//  黑名单意见账号：btspp-team
+const val BTS_GRAPHENE_ACCOUNT_BTSPP_TEAM  = "1.2.1031560"
 
 //  BTS网络动态全局信息对象ID号
 //  格式：
