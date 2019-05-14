@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import bitshares.LLAYOUT_MATCH
@@ -39,6 +40,7 @@ class ViewProposalAccountUpdateMemoKey : LinearLayout {
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
                 setSingleLine(true)
                 setEllipsize(TextUtils.TruncateAt.valueOf("END"))
+                paint.isFakeBoldText = true
                 text = name
             }
             val tv_result = TextView(_ctx).apply {
@@ -48,6 +50,7 @@ class ViewProposalAccountUpdateMemoKey : LinearLayout {
                 gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
                 setTextColor(resources.getColor(color_result))
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
+                paint.isFakeBoldText = true
                 text = result
             }
             addView(tv_name)
@@ -60,6 +63,15 @@ class ViewProposalAccountUpdateMemoKey : LinearLayout {
         addView(genLineLables(title,R.string.kOpDetailSubTitleOperate.xmlstring(_ctx), R.color.theme01_textColorGray, R.color.theme01_textColorGray))
         addView(genLineLables("* ${old_memokey}",R.string.kOpDetailSubOpDelete.xmlstring(_ctx), R.color.theme01_textColorNormal, R.color.theme01_sellColor))
         addView(genLineLables("* ${new_memokey}",R.string.kOpDetailSubOpAdd.xmlstring(_ctx), R.color.theme01_textColorNormal, R.color.theme01_buyColor))
+
+        //  线
+        val lv_line = View(_ctx)
+        lv_line.setBackgroundColor(resources.getColor(R.color.theme01_bottomLineColor))
+        lv_line.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1.dp).apply {
+            topMargin = 6.dp
+        }
+        addView(lv_line)
+
         return this
     }
 }

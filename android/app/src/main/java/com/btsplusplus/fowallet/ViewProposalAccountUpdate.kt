@@ -17,8 +17,9 @@ class ViewProposalAccountUpdate : LinearLayout {
     var _ctx: Context
     var _item: JSONObject
     var _useBuyColorForTitle: Boolean
+    var _useNormalDescLabel = true          //  是否使用普通的desc描述字段
 
-    val content_fontsize = 11.0f
+    private val content_fontsize = 11.0f
 
     constructor(ctx: Context, item: JSONObject, useBuyColorForTitle: Boolean) : super(ctx) {
         _ctx = ctx
@@ -32,7 +33,7 @@ class ViewProposalAccountUpdate : LinearLayout {
         createUI()
     }
 
-    fun createUI(): LinearLayout {
+    private fun createUI(): LinearLayout {
 
         val opdata = _item.getJSONObject("opdata")
         val opaccount = ChainObjectManager.sharedChainObjectManager().getChainObjectByID(opdata.getString("account"))
@@ -59,10 +60,11 @@ class ViewProposalAccountUpdate : LinearLayout {
                     setTextColor(resources.getColor(_color))
                 }
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
+                paint.isFakeBoldText = true
                 text = uidata.getString("name")
             }
             addView(tv1)
-
+            //  危险提示标签
             if (new_owner != null || new_active != null){
                 val tv2 = TextView(_ctx).apply {
                     layoutParams = LinearLayout.LayoutParams(LLAYOUT_WARP, LLAYOUT_WARP).apply {
@@ -74,6 +76,7 @@ class ViewProposalAccountUpdate : LinearLayout {
                     setTextColor(resources.getColor(R.color.theme01_textColorMain))
                     setBackgroundColor(resources.getColor(R.color.theme01_sellColor))
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10.0f)
+                    paint.isFakeBoldText = true
                     text = R.string.kOpDetailFlagDangerous.xmlstring(_ctx)
                 }
                 addView(tv2)
@@ -104,24 +107,31 @@ class ViewProposalAccountUpdate : LinearLayout {
             //  3、备注权限
             val old_memo_key = old_options.getString("memo_key")
             val new_memo_key = new_options.getString("memo_key")
-            if (!old_memo_key.equals(new_memo_key)){
+            if (old_memo_key != new_memo_key){
                 _viewPermissionMemoKey = ViewProposalAccountUpdateMemoKey(_ctx).initWithOldMemo(old_memo_key, new_memo_key, R.string.kOpDetailPermissionMemo.xmlstring(_ctx))
                 addView(_viewPermissionMemoKey)
             }
 
             //  4、投票信息（包括代理）
-            _viewVotingInfos = ViewProposalAccountUpdateVoting(_ctx).initWithOptions(old_options,new_options)
-            if (_viewVotingInfos != null){
+            val showLinesInfos = ViewProposalAccountUpdateVoting.calcLineInfos(old_options, new_options)
+            if (showLinesInfos.length() > 0){
+                _viewVotingInfos = ViewProposalAccountUpdateVoting(_ctx).initWithOptions(showLinesInfos)
                 addView(_viewVotingInfos)
             }
         }
 
         if (_viewPermissionOwner != null || _viewPermissionActive != null || _viewPermissionMemoKey != null || _viewVotingInfos != null){
-            // REMARK ios 有初始化需要隐藏 ，安卓没初始化
+            //  REMARK ios 有初始化需要隐藏 ，安卓没初始化
+            _useNormalDescLabel = false
         }else{
-            addView(ViewUtils.createProposalOpInfoCell(_ctx, uidata, useBuyColorForTitle = true))
+            //  normal desc line
+            val tv2 = TextView(_ctx)
+            tv2.text = uidata.getString("desc")
+            tv2.setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
+            tv2.setTextColor(_ctx.resources.getColor(R.color.theme01_textColorNormal))
+            tv2.setPadding(0, 10, 0, 0)
+            addView(tv2)
         }
-
 
         return this
     }

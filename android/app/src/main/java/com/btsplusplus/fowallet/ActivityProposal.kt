@@ -119,7 +119,7 @@ class ActivityProposal : BtsppActivity() {
                             query_account_ids.put(item.getString(0), true)
                         }
                         val voting_account = account.getJSONObject("options").getString("voting_account")
-                        if (!voting_account.equals(BTS_GRAPHENE_PROXY_TO_SELF)){
+                        if (voting_account != BTS_GRAPHENE_PROXY_TO_SELF){
                             query_account_ids.put(voting_account, true)
                         }
                     }
@@ -131,7 +131,7 @@ class ActivityProposal : BtsppActivity() {
                             query_account_ids.put(item.getString(0), true)
                         }
                         val voting_account = account.getJSONObject("options").getString("voting_account")
-                        if (!voting_account.equals(BTS_GRAPHENE_PROXY_TO_SELF)){
+                        if (voting_account != BTS_GRAPHENE_PROXY_TO_SELF){
                             query_account_ids.put(voting_account, true)
                         }
                     }
@@ -152,9 +152,13 @@ class ActivityProposal : BtsppActivity() {
                             if (new_options != null) {
                                 val votes = new_options.optJSONArray("votes")
                                 if (votes != null && votes.length() > 0){
-                                    votes.forEach<String>() { vote_id ->
+                                    votes.forEach<String> { vote_id ->
                                         new_vote_id_hash.put(vote_id, true)
                                     }
+                                }
+                                val voting_account = new_options.getString("voting_account")
+                                if (voting_account != BTS_GRAPHENE_PROXY_TO_SELF){
+                                    query_account_ids.put(voting_account, true)
                                 }
                             }
                         }
@@ -164,9 +168,8 @@ class ActivityProposal : BtsppActivity() {
                 skip_cache_ids.keys().toJSONArray().forEach<String> { it ->
                     val account_id = it!!
                     val account = chainMgr.getChainObjectByID(account_id)
-                    assert(account != null)
-                    val options = account.getJSONObject("options")
-                    val votes = options.optJSONArray("votes")
+                    val options = account.optJSONObject("options")
+                    val votes = options?.optJSONArray("votes")
                     if (votes != null && votes.length() > 0){
                         votes.forEach<String> { vote_id ->
                             new_vote_id_hash.put(vote_id, true)
@@ -182,14 +185,14 @@ class ActivityProposal : BtsppActivity() {
                 return@then Promise.all(p1,p2).then { data ->
                     //  第三次查询依赖（投票信息中的见证人理事会成员名字等）
                     val query_ids_3rd = JSONObject()
-                    vote_id_list.forEach<String>(){ it ->
+                    vote_id_list.forEach<String>{ it ->
                         val vote_id = it!!
                         val vote_info = chainMgr.getVoteInfoByVoteID(vote_id)
                         val committee_member_account = vote_info!!.optString("committee_member_account",null)
                         if (committee_member_account != null){
                             query_ids_3rd.put(committee_member_account,true)
                         } else {
-                            val witness_account = vote_info!!.optString("witness_account",null)
+                            val witness_account = vote_info.optString("witness_account",null)
                             if (witness_account != null){
                                 query_ids_3rd.put(witness_account,true)
                             }
@@ -264,7 +267,7 @@ class ActivityProposal : BtsppActivity() {
 
             //  获取当前授权状态（有哪些实体已授权、哪些未授权）
             var currThreshold = 0
-            var passThreshold = permissions!!.getInt("weight_threshold")
+            val passThreshold = permissions!!.getInt("weight_threshold")
             assert(passThreshold > 0)
             val availableHash = JSONObject()
             proposal.getJSONArray("available_active_approvals").forEach<String> { key ->
@@ -514,8 +517,8 @@ class ActivityProposal : BtsppActivity() {
         val bApprovalPassed = currThreshold >= passThreshold
         val bInReview = proposalProcessedData.getBoolean("inReview")
 
-        var status: String
-        var statusColor: Int
+        val status: String
+        val statusColor: Int
         if (bApprovalPassed) {
             if (proposal.has("review_period_time")) {
                 if (bInReview) {
@@ -579,19 +582,27 @@ class ActivityProposal : BtsppActivity() {
         val newOperations = proposalProcessedData.getJSONArray("newOperations")
         newOperations.forEach<JSONObject> {
             val operation = it!!
-            when(operation.getString("opcode").toInt()){
-                EBitsharesOperations.ebo_account_update.value ->
-                    layout5_opinfos.addView(ViewProposalAccountUpdate(this, operation, true))
-                else -> {
+            val bNormalDesc:Boolean
+            when(operation.getInt("opcode")){
+                EBitsharesOperations.ebo_account_update.value ->{
+                    val view = ViewProposalAccountUpdate(this, operation, true)
+                    bNormalDesc = view._useNormalDescLabel
+                    layout5_opinfos.addView(view)
+                }
+                else ->{
+                    bNormalDesc = true
                     layout5_opinfos.addView(ViewUtils.createProposalOpInfoCell(this, operation.getJSONObject("uidata"), useBuyColorForTitle = true))
                 }
             }
-            val lv_line = View(this)
-            lv_line.setBackgroundColor(resources.getColor(R.color.theme01_bottomLineColor))
-            val lv_line_layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1.dp)
-            lv_line_layoutParams.topMargin = 6.dp
-            lv_line.layoutParams = lv_line_layoutParams
-            layout5_opinfos.addView(lv_line)
+            if (bNormalDesc){
+                val lv_line = View(this)
+                lv_line.setBackgroundColor(resources.getColor(R.color.theme01_bottomLineColor))
+                lv_line.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1.dp).apply {
+                    topMargin = 6.dp
+                }
+                layout5_opinfos.addView(lv_line)
+            }
+
         }
 
         // 第六话  批准   否决
@@ -601,20 +612,18 @@ class ActivityProposal : BtsppActivity() {
         layout6_actions.orientation = LinearLayout.HORIZONTAL
         layout6_params.setMargins(0, 10, 0, 10)
 
-        val tv6_left_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+        val tv6_left_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f)
         val tv6_left = TextView(this)
         tv6_left.layoutParams = tv6_left_params
-        // tv6_left.gravity = Gravity.LEFT
         tv6_left.text = R.string.kProposalCellBtnApprove.xmlstring(this)
-        tv6_left.gravity = Gravity.CENTER
+        tv6_left.gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL
         tv6_left.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
         tv6_left.setTextColor(resources.getColor(R.color.theme01_textColorHighlight))
 
         val tv6_right = TextView(this)
         tv6_right.layoutParams = tv6_left_params
-        // tv6_right.gravity = Gravity.LEFT
         tv6_right.text = R.string.kProposalCellBtnNotApprove.xmlstring(this)
-        tv6_right.gravity = Gravity.CENTER
+        tv6_right.gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL
         tv6_right.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
         tv6_right.setTextColor(resources.getColor(R.color.theme01_textColorHighlight))
 
