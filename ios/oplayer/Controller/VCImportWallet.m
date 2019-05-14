@@ -386,8 +386,7 @@
             //  导入成功 直接解锁。
             id unlockInfos = [walletMgr unLock:wallet_password];
             assert(unlockInfos &&
-                   [[unlockInfos objectForKey:@"unlockSuccess"] boolValue] &&
-                   [[unlockInfos objectForKey:@"haveActivePermission"] boolValue]);
+                   [[unlockInfos objectForKey:@"unlockSuccess"] boolValue]);
             //  [统计]
             [Answers logCustomEventWithName:@"loginEvent" customAttributes:@{@"mode":@(kwmFullWalletMode), @"desc":@"wallet"}];
             

@@ -172,6 +172,10 @@
                                     [new_vote_id_hash setObject:@YES forKey:vote_id];
                                 }
                             }
+                            id voting_account = [new_options objectForKey:@"voting_account"];
+                            if (![voting_account isEqualToString:BTS_GRAPHENE_PROXY_TO_SELF]){
+                                [query_account_ids setObject:@YES forKey:voting_account];
+                            }
                         }
                     }
                 }
