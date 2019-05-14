@@ -898,7 +898,7 @@ class ChainObjectManager {
         }
         //  从网络查询。
         val api = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
-        return api.async_exec_db("lookup_vote_ids",JSONArray().apply { put(queryArray) }).then{
+        return api.async_exec_db("lookup_vote_ids", jsonArrayfrom(queryArray)).then{
             val data_array = it as JSONArray
 
             data_array.forEach<JSONObject?> {
@@ -908,7 +908,7 @@ class ChainObjectManager {
                     if (vid != null){
                         pAppCache.update_object_cache(vid,obj)
                         _cacheVoteIdInfoHash[vid] = obj           //  add to memory cache: id hash
-                        resultHash.put("vid", obj)
+                        resultHash.put(vid, obj)
                     } else {
                         val vote_for = obj.getString("vote_for")
                         val vote_against = obj.getString("vote_against")
@@ -939,10 +939,10 @@ class ChainObjectManager {
      */
     fun queryAllObjectsInfo(object_id_array: JSONArray, cache: MutableMap<String, JSONObject>?, key: String?, skipQueryCache: Boolean, skipCacheIdHash: JSONObject?): Promise {
 
-        var resultHash = JSONObject()
+        val resultHash = JSONObject()
 
         //  要查询的数据为空，则返回空的 Hash。
-        if (object_id_array == null || object_id_array.length() <= 0) {
+        if (object_id_array.length() <= 0) {
             return Promise._resolve(resultHash)
         }
 
@@ -952,10 +952,10 @@ class ChainObjectManager {
             queryArray.putAll(object_id_array)
         } else {
             //  从缓存加载
-            var pAppCache = AppCacheManager.sharedAppCacheManager()
+            val pAppCache = AppCacheManager.sharedAppCacheManager()
             val now_ts = Utils.now_ts()
             for (object_id in object_id_array.forin<String>()) {
-                if (skipCacheIdHash != null && skipCacheIdHash.optString(object_id, null) != null){
+                if (skipCacheIdHash != null && skipCacheIdHash.has(object_id)){
                     //  部分ID跳过缓存
                     queryArray.put(object_id)
                 } else {
@@ -985,7 +985,7 @@ class ChainObjectManager {
             val json_array = data_array as JSONArray
 
             //  更新缓存 和 结果
-            var pAppCache = AppCacheManager.sharedAppCacheManager()
+            val pAppCache = AppCacheManager.sharedAppCacheManager()
             for (obj in json_array) {
                 if (obj == null) {
                     continue

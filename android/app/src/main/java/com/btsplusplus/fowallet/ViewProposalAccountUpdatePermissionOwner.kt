@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import bitshares.*
@@ -39,6 +40,7 @@ class ViewProposalAccountUpdatePermissionOwner : LinearLayout {
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
                 setSingleLine(true)
                 ellipsize = TextUtils.TruncateAt.valueOf("END")
+                paint.isFakeBoldText = true
                 text = name
             }
             val tv_change = TextView(_ctx).apply {
@@ -48,6 +50,7 @@ class ViewProposalAccountUpdatePermissionOwner : LinearLayout {
                 gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
                 setTextColor(resources.getColor(R.color.theme01_textColorNormal))
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
+                paint.isFakeBoldText = true
                 text = new_value.toString()
             }
             val tv_result = TextView(_ctx).apply {
@@ -57,6 +60,7 @@ class ViewProposalAccountUpdatePermissionOwner : LinearLayout {
                 gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
                 setTextColor(resources.getColor(R.color.theme01_textColorNormal))
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
+                paint.isFakeBoldText = true
             }
 
             if (old_value == new_value){
@@ -80,9 +84,6 @@ class ViewProposalAccountUpdatePermissionOwner : LinearLayout {
 
     fun initWithPermission(old_permission_json: JSONObject, new_permission_json: JSONObject, title: String): LinearLayout {
 
-        val _old_permission_json = old_permission_json
-        val _new_permission_json = new_permission_json
-
         // 第一行标题行: 权限 新阈值/新权重 变化量
         val layout_permission_title = LinearLayout(_ctx)
         layout_permission_title.layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP)
@@ -94,6 +95,7 @@ class ViewProposalAccountUpdatePermissionOwner : LinearLayout {
                 gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
                 setTextColor(resources.getColor(R.color.theme01_textColorGray))
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
+                paint.isFakeBoldText = true
                 text = title
             }
             val tv_change = TextView(_ctx).apply {
@@ -103,6 +105,7 @@ class ViewProposalAccountUpdatePermissionOwner : LinearLayout {
                 gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
                 setTextColor(resources.getColor(R.color.theme01_textColorGray))
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
+                paint.isFakeBoldText = true
                 text = R.string.kOpDetailSubTitleNewWeightOrThreshold.xmlstring(_ctx)
             }
             val tv_result = TextView(_ctx).apply {
@@ -112,6 +115,7 @@ class ViewProposalAccountUpdatePermissionOwner : LinearLayout {
                 gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
                 setTextColor(resources.getColor(R.color.theme01_textColorGray))
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
+                paint.isFakeBoldText = true
                 text = R.string.kOpDetailSubTitleChangeValue.xmlstring(_ctx)
             }
 
@@ -161,8 +165,8 @@ class ViewProposalAccountUpdatePermissionOwner : LinearLayout {
         total_keys.keys().toJSONArray().forEach<String> { it ->
             val key = it!!
             val info = total_keys.getJSONObject(key)
-            var name: String
-            if (info.optBoolean("isaccount") == true) {
+            val name: String
+            if (info.optBoolean("isaccount")) {
                 name = String.format("* %s", chainMgr.getChainObjectByID(key).getString("name"))
             } else {
                 name = String.format("* %s", key)
@@ -181,6 +185,15 @@ class ViewProposalAccountUpdatePermissionOwner : LinearLayout {
 
             addView(genLineLables(name, iOldWeight, iNewWeight))
         }
+
+        //  线
+        val lv_line = View(_ctx)
+        lv_line.setBackgroundColor(resources.getColor(R.color.theme01_bottomLineColor))
+        lv_line.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1.dp).apply {
+            topMargin = 6.dp
+        }
+        addView(lv_line)
+
         return this
     }
 }
