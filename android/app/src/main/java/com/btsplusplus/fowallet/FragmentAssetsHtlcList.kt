@@ -167,10 +167,14 @@ class FragmentAssetsHtlcList : BtsppFragment() {
 
     private fun refreshUI(ctx:Context){
         _layout_wrap.removeAllViews()
-        val chainMgr = ChainObjectManager.sharedChainObjectManager()
-        _data_array.forEachIndexed { index, htlc ->
-            val view = createCell(ctx, htlc, chainMgr, index)
-            _layout_wrap.addView(view)
+        if (_data_array.size > 0){
+            val chainMgr = ChainObjectManager.sharedChainObjectManager()
+            _data_array.forEachIndexed { index, htlc ->
+                val view = createCell(ctx, htlc, chainMgr, index)
+                _layout_wrap.addView(view)
+            }
+        }else{
+            _layout_wrap.addView(ViewUtils.createEmptyCenterLabel(ctx, ctx.resources.getString(R.string.kVcHtlcNoAnyObjects)))
         }
     }
 
