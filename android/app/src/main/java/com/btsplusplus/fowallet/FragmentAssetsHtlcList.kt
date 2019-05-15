@@ -141,7 +141,7 @@ class FragmentAssetsHtlcList : BtsppFragment() {
         _data_array.clear()
 
         if ( data_array != null && data_array.length() >0 ){
-            val my_id = WalletManager.sharedWalletManager().getWalletAccountInfo()!!.getJSONObject("account").optString("id")
+            val my_id = WalletManager.sharedWalletManager().getWalletAccountInfo()?.optJSONObject("account")?.optString("id", null)
             data_array.forEach<JSONObject> { htlc ->
                 val transfer = htlc!!.getJSONObject("transfer")
                 var side = kMySideOther
