@@ -141,6 +141,9 @@ class FragmentOrderHistory : BtsppFragment() {
         if (_view == null) {
             return
         }
+        if (this.activity == null){
+            return
+        }
         val container: LinearLayout = _view!!.findViewById(R.id.layout_my_order_history_from_my_fragment)
         container.removeAllViews()
 

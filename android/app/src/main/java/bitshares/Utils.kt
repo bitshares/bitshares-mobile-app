@@ -423,7 +423,7 @@ class Utils {
                 return package_info.versionName
             } catch (e: PackageManager.NameNotFoundException) {
                 //  TODO:代码里内置版本号，每次都要修改，虽然仅仅在获取异常的时候才会用到，考虑放到config。？
-                return "2.0"
+                return "2.2"
             }
         }
 
