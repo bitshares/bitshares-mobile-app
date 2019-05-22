@@ -1564,6 +1564,8 @@ enum
          //  请求网络广播
          [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
          [[[[BitsharesClientManager sharedBitsharesClientManager] createLimitOrder:op] then:(^id(id tx_data) {
+             // 刷新UI（清除输入框）
+             _tfNumber.text = @"";
              //  获取新的限价单ID号
              id new_order_id = [OrgUtils extractNewObjectID:tx_data];
              [[[[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:seller] then:(^id(id full_data) {
@@ -1609,7 +1611,7 @@ enum
              return nil;
          })] catch:(^id(id error) {
              [_owner hideBlockView];
-             [OrgUtils makeToast:NSLocalizedString(@"kTipsTxRequestFailed", @"请求失败，请稍后再试。")];
+             [OrgUtils showGrapheneError:error];
              //  [统计]
              [OrgUtils logEvents:@"txCreateLimitOrderFailed"
                             params:@{@"account":seller, @"isbuy":@(_isbuy), @"base":_base[@"symbol"], @"quote":_quote[@"symbol"]}];
@@ -1636,17 +1638,17 @@ enum
     [_owner GuardWalletUnlocked:NO body:^(BOOL unlocked) {
         if (unlocked){
             //  TODO:fowallet !!! 取消订单是否二次确认。
-            [self processCancelOrderCore:order];
+            [self processCancelOrderCore:order fee_item:fee_item];
         }
     }];
 }
 
-- (void)processCancelOrderCore:(id)order
+- (void)processCancelOrderCore:(id)order fee_item:(id)fee_item
 {
     assert(order);
     assert(_balanceData);
     id order_id = order[@"id"];
-    id fee_asset_id = [[_balanceData objectForKey:@"fee_item"] objectForKey:@"fee_asset_id"];
+    id fee_asset_id = [fee_item objectForKey:@"fee_asset_id"];
     id account = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
     id account_id = [account objectForKey:@"id"];
     id op = @{
@@ -1686,7 +1688,7 @@ enum
              return nil;
          })] catch:(^id(id error) {
              [_owner hideBlockView];
-             [OrgUtils makeToast:NSLocalizedString(@"kTipsTxRequestFailed", @"请求失败，请稍后再试。")];
+             [OrgUtils showGrapheneError:error];
              //  [统计]
              [OrgUtils logEvents:@"txCancelLimitOrderFailed" params:@{@"account":account_id}];
              return nil;
