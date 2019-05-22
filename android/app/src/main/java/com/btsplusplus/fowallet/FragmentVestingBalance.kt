@@ -282,10 +282,9 @@ class FragmentVestingBalance : BtsppFragment() {
                 //  刷新
                 queryVestingBalance()
                 return@then null
-            }.catch {
+            }.catch { err ->
                 mask.dismiss()
-                //  TODO:多语言key
-                showToast(R.string.kTipsTxRequestFailed.xmlstring(_ctx!!))
+                showGrapheneError(err)
                 //  [统计]
                 fabricLogCustom("txVestingBalanceWithdrawFailed", jsonObjectfromKVS("account", uid))
             }

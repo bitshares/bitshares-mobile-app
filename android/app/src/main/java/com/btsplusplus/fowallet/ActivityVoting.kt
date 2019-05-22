@@ -245,9 +245,9 @@ class ActivityVoting : BtsppActivity() {
                     fabricLogCustom("txVotingOK", jsonObjectfromKVS("account", account_id))
                 }
                 return@then null
-            }.catch {
+            }.catch { err ->
                 mask.dismiss()
-                showToast(resources.getString(R.string.kTipsTxRequestFailed))
+                showGrapheneError(err)
                 //  [统计]
                 fabricLogCustom("txVotingFailed", jsonObjectfromKVS("account", account_id))
             }
