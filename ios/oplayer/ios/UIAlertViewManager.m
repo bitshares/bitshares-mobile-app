@@ -103,8 +103,7 @@ static UIAlertViewManager *_sharedUIAlertViewManager = nil;
 {
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     
-    UIWindow* currKeyWindow = [UIApplication sharedApplication].keyWindow;
-    currKeyWindow = [NativeAppDelegate sharedAppDelegate].lockScreenWindow == currKeyWindow ? currKeyWindow : [NativeAppDelegate sharedAppDelegate].window;
+    UIWindow* currKeyWindow = [NativeAppDelegate sharedAppDelegate].window;
     
     SCLAlertView* alert = [[SCLAlertView alloc] init];
     

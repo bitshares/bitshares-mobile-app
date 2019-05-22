@@ -19,8 +19,6 @@
     NSString*               _currLanguage;
     NetworkStatus           _currNetStatus;
     Reachability*           _reach;
-    
-    UIWindow*               _splash_window;
 }
 
 +(BOOL)isJailbroken;
@@ -32,8 +30,6 @@
 
 @property (retain, nonatomic) UIWindow*     window;             //  应用普通窗口
 @property (retain, nonatomic) UIWindow*     alertViewWindow;    //  AlertView 窗口
-@property (retain, nonatomic) UIWindow*     lockScreenWindow;   //  锁屏窗口
-@property (retain, nonatomic) UIWindow*     adWindow;           //  广告窗口
 
 @property (nonatomic, copy) NSString*       currLanguage;
 @property (nonatomic, assign) NetworkStatus currNetStatus;
@@ -46,17 +42,8 @@
 + (NSString*)appShortVersion;
 
 + (NSString*)deviceInfo;
-+ (NSDictionary*)deviceInfoHash;
-
-- (BOOL)isAdOrIntrlShowing;
-- (void)resetViewController;
-
-- (void)closeAdWindow;
 
 - (UIViewController*)getAlertViewWindowViewController;
-
-- (UIViewController*)getLockScreenRootVC;
-- (void)hideLockScreenWindow;
 
 -(MyNavigationController*)newNavigationController:(UIViewController*)vc;
 -(MyNavigationController*)newNavigationControllerWithoutRelease:(UIViewController*)vc;
@@ -68,8 +55,6 @@
 -(int)currNetworkStatus;
 -(CGFloat)getRequestTimeout;
 -(NSString*)getNetworkStatusDesc;
-
--(void)enter;
 
 //  switch
 - (void)switchTheme;

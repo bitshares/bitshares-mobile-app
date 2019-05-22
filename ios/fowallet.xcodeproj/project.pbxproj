@@ -116,7 +116,6 @@
 		3FB8F8B021CE66C200DA88E2 /* MyTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = ED75E629186C63C9009BEF5E /* MyTabBarController.m */; };
 		3FB8F8B121CE66C200DA88E2 /* SCLTimerDisplay.m in Sources */ = {isa = PBXBuildFile; fileRef = B782F0BD1D6E94C600F61571 /* SCLTimerDisplay.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		3FB8F8B221CE66C200DA88E2 /* MySearchBar.m in Sources */ = {isa = PBXBuildFile; fileRef = B7973E0820E5D7970052A5F5 /* MySearchBar.m */; };
-		3FB8F8B321CE66C200DA88E2 /* RecommendScrollCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B7ED5E2D1D6BF6EB0043338B /* RecommendScrollCell.m */; };
 		3FB8F8B421CE66C200DA88E2 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = B7A13B731CA1443A0096A6A4 /* unzip.c */; };
 		3FB8F8B521CE66C200DA88E2 /* Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B8810F20C4E38400DBCD45 /* Extension.m */; };
 		3FB8F8B621CE66C200DA88E2 /* CurveSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FEA46E6216F812800127CA5 /* CurveSlider.m */; };
@@ -135,7 +134,6 @@
 		3FB8F8C321CE66C200DA88E2 /* ViewProposalInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC43A212196EF90004DFFA5 /* ViewProposalInfoCell.m */; };
 		3FB8F8C421CE66C200DA88E2 /* SCLButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B782F0B61D6E94C600F61571 /* SCLButton.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		3FB8F8C521CE66C200DA88E2 /* UIDevice+Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = ED696ACF182B8425007053BA /* UIDevice+Helper.m */; };
-		3FB8F8C621CE66C200DA88E2 /* ViewEnterApp.m in Sources */ = {isa = PBXBuildFile; fileRef = B7ED5E311D6BF6EB0043338B /* ViewEnterApp.m */; };
 		3FB8F8C721CE66C200DA88E2 /* HtmlColor.m in Sources */ = {isa = PBXBuildFile; fileRef = ED96A080186C62AD002181D4 /* HtmlColor.m */; };
 		3FB8F8C821CE66C200DA88E2 /* ViewCallOrderInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B741A76820DFE1A0000FBC00 /* ViewCallOrderInfoCell.m */; };
 		3FB8F8C921CE66C200DA88E2 /* VCSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E783111C50839500C94B58 /* VCSetting.m */; };
@@ -180,12 +178,10 @@
 		3FB8F8F021CE66C200DA88E2 /* VCVote.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C0410F21081D7200848CBC /* VCVote.m */; };
 		3FB8F8F121CE66C200DA88E2 /* GrapheneWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = B741A76520DCA45D000FBC00 /* GrapheneWebSocket.m */; };
 		3FB8F8F221CE66C200DA88E2 /* XzCrc64Opt.c in Sources */ = {isa = PBXBuildFile; fileRef = B7BDAA7520B3C77400738F12 /* XzCrc64Opt.c */; };
-		3FB8F8F321CE66C200DA88E2 /* VCAdIntro.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B1E32D1DBF0EA1000B9635 /* VCAdIntro.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		3FB8F8F421CE66C200DA88E2 /* VCWalletManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0AE340219319BD00E4144C /* VCWalletManager.m */; };
 		3FB8F8F521CE66C200DA88E2 /* Lzma2DecMt.c in Sources */ = {isa = PBXBuildFile; fileRef = B7BDAA5420B3C77400738F12 /* Lzma2DecMt.c */; };
 		3FB8F8F621CE66C200DA88E2 /* MtCoder.c in Sources */ = {isa = PBXBuildFile; fileRef = B7BDAA6120B3C77400738F12 /* MtCoder.c */; };
 		3FB8F8F721CE66C200DA88E2 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = ED96A084186C62AD002181D4 /* MBProgressHUD.m */; };
-		3FB8F8F821CE66C200DA88E2 /* VCAdDetailInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B1E32B1DBF0EA1000B9635 /* VCAdDetailInfo.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		3FB8F8F921CE66C200DA88E2 /* Lzma86Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = B7BDAA5920B3C77400738F12 /* Lzma86Dec.c */; };
 		3FB8F8FA21CE66C200DA88E2 /* NJKWebViewProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = B76133011DBE0EE100F61A37 /* NJKWebViewProgressView.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		3FB8F8FB21CE66C200DA88E2 /* XzCrc64.c in Sources */ = {isa = PBXBuildFile; fileRef = B7BDAA7320B3C77400738F12 /* XzCrc64.c */; };
@@ -193,7 +189,6 @@
 		3FB8F8FD21CE66C200DA88E2 /* SCLAlertViewResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = B782F0B21D6E94C600F61571 /* SCLAlertViewResponder.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		3FB8F8FE21CE66C200DA88E2 /* SGQRCodeObtainConfigure.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0DA36021884011006E1004 /* SGQRCodeObtainConfigure.m */; };
 		3FB8F8FF21CE66C200DA88E2 /* GCDWebServerStreamedResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = B72A847D20CCD18B00D92A25 /* GCDWebServerStreamedResponse.m */; };
-		3FB8F90021CE66C200DA88E2 /* AdManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B72C39D31DC05FE100D6A737 /* AdManager.m */; };
 		3FB8F90121CE66C200DA88E2 /* CWStatusBarNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = F5A426591DC323B300B56635 /* CWStatusBarNotification.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		3FB8F90221CE66C200DA88E2 /* VCMarketInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = B74D4BC920A2B834009DD9B0 /* VCMarketInfo.m */; };
 		3FB8F90321CE66C200DA88E2 /* VCUnlockAccount.m in Sources */ = {isa = PBXBuildFile; fileRef = B741A75920DB4C2F000FBC00 /* VCUnlockAccount.m */; };
@@ -280,7 +275,6 @@
 		3FB8F95421CE66C200DA88E2 /* CpuArch.c in Sources */ = {isa = PBXBuildFile; fileRef = B7BDAA4920B3C77400738F12 /* CpuArch.c */; };
 		3FB8F95521CE66C200DA88E2 /* VCKLine.m in Sources */ = {isa = PBXBuildFile; fileRef = B737850020FF7DA5001EEA8C /* VCKLine.m */; };
 		3FB8F95621CE66C200DA88E2 /* VerticalAlignmentLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = B741A75620DA2AD5000FBC00 /* VerticalAlignmentLabel.m */; };
-		3FB8F95721CE66C200DA88E2 /* VCFirstLaunch.m in Sources */ = {isa = PBXBuildFile; fileRef = B7ED5E2F1D6BF6EB0043338B /* VCFirstLaunch.m */; };
 		3FB8F95821CE66C200DA88E2 /* UITableViewBase.m in Sources */ = {isa = PBXBuildFile; fileRef = B730510F1C5BABED00F4DB4F /* UITableViewBase.m */; };
 		3FB8F95921CE66C200DA88E2 /* Xz.c in Sources */ = {isa = PBXBuildFile; fileRef = B7BDAA7120B3C77400738F12 /* Xz.c */; };
 		3FB8F95A21CE66C200DA88E2 /* GCDWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B72A846120CCD18B00D92A25 /* GCDWebServer.m */; };
@@ -686,7 +680,6 @@
 		B72A84A720D3755300D92A25 /* VCTradeVertical.m in Sources */ = {isa = PBXBuildFile; fileRef = B72A84A520D3755200D92A25 /* VCTradeVertical.m */; };
 		B72A84AA20D4D4CE00D92A25 /* VCTradeHor.m in Sources */ = {isa = PBXBuildFile; fileRef = B72A84A920D4D4CE00D92A25 /* VCTradeHor.m */; };
 		B72A84B020D5156300D92A25 /* ViewBidAskCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B72A84AF20D5156200D92A25 /* ViewBidAskCell.m */; };
-		B72C39D41DC05FE100D6A737 /* AdManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B72C39D31DC05FE100D6A737 /* AdManager.m */; };
 		B73051101C5BABED00F4DB4F /* UITableViewBase.m in Sources */ = {isa = PBXBuildFile; fileRef = B730510F1C5BABED00F4DB4F /* UITableViewBase.m */; };
 		B73784FC20FE2449001EEA8C /* iconAvatar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B73784FA20FE2448001EEA8C /* iconAvatar@2x.png */; };
 		B73784FD20FE2449001EEA8C /* iconAvatar@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = B73784FB20FE2448001EEA8C /* iconAvatar@3x.png */; };
@@ -807,8 +800,6 @@
 		B7A837A81C0CB35D00CBA6D0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B7A837A51C0CB35D00CBA6D0 /* Localizable.strings */; };
 		B7A8E4F61DBDE30F00CFD9E8 /* abouticon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B7A8E4F51DBDE30F00CFD9E8 /* abouticon@2x.png */; };
 		B7B1D9D21C154EB80059E71A /* AsyncTaskManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B1D9D11C154EB80059E71A /* AsyncTaskManager.m */; };
-		B7B1E32E1DBF0EA1000B9635 /* VCAdDetailInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B1E32B1DBF0EA1000B9635 /* VCAdDetailInfo.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
-		B7B1E32F1DBF0EA1000B9635 /* VCAdIntro.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B1E32D1DBF0EA1000B9635 /* VCAdIntro.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		B7B1E3321DBF3E1C000B9635 /* VCBaseWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B1E3311DBF3E1C000B9635 /* VCBaseWebView.m */; };
 		B7B8810820C3D75000DBCD45 /* base58.c in Sources */ = {isa = PBXBuildFile; fileRef = B7B8810620C3D75000DBCD45 /* base58.c */; };
 		B7B8810C20C3D9BE00DBCD45 /* rmd160.c in Sources */ = {isa = PBXBuildFile; fileRef = B7B8810A20C3D9BE00DBCD45 /* rmd160.c */; };
@@ -891,9 +882,6 @@
 		B7E7564C1C5CDAAE00DCCB6F /* ThemeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E7564B1C5CDAAE00DCCB6F /* ThemeManager.m */; };
 		B7E783121C50839500C94B58 /* VCSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E783111C50839500C94B58 /* VCSetting.m */; };
 		B7E90D3520A6A493004D2D8C /* libsecp256k1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7E90D3320A6A493004D2D8C /* libsecp256k1.a */; };
-		B7ED5E321D6BF6EB0043338B /* RecommendScrollCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B7ED5E2D1D6BF6EB0043338B /* RecommendScrollCell.m */; };
-		B7ED5E331D6BF6EB0043338B /* VCFirstLaunch.m in Sources */ = {isa = PBXBuildFile; fileRef = B7ED5E2F1D6BF6EB0043338B /* VCFirstLaunch.m */; };
-		B7ED5E341D6BF6EB0043338B /* ViewEnterApp.m in Sources */ = {isa = PBXBuildFile; fileRef = B7ED5E311D6BF6EB0043338B /* ViewEnterApp.m */; };
 		B7ED5E391D6BF6FD0043338B /* first1.png in Resources */ = {isa = PBXBuildFile; fileRef = B7ED5E351D6BF6FD0043338B /* first1.png */; };
 		B7ED5E3A1D6BF6FD0043338B /* first2.png in Resources */ = {isa = PBXBuildFile; fileRef = B7ED5E361D6BF6FD0043338B /* first2.png */; };
 		B7ED5E3B1D6BF6FD0043338B /* first3.png in Resources */ = {isa = PBXBuildFile; fileRef = B7ED5E371D6BF6FD0043338B /* first3.png */; };
@@ -1364,8 +1352,6 @@
 		B72A84A920D4D4CE00D92A25 /* VCTradeHor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCTradeHor.m; path = Controller/VCTradeHor.m; sourceTree = "<group>"; };
 		B72A84AE20D5156200D92A25 /* ViewBidAskCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewBidAskCell.h; path = View/ViewBidAskCell.h; sourceTree = "<group>"; };
 		B72A84AF20D5156200D92A25 /* ViewBidAskCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewBidAskCell.m; path = View/ViewBidAskCell.m; sourceTree = "<group>"; };
-		B72C39D21DC05FE100D6A737 /* AdManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AdManager.h; path = AdWindow/AdManager.h; sourceTree = "<group>"; };
-		B72C39D31DC05FE100D6A737 /* AdManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AdManager.m; path = AdWindow/AdManager.m; sourceTree = "<group>"; };
 		B730510E1C5BABED00F4DB4F /* UITableViewBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UITableViewBase.h; path = View/UITableViewBase.h; sourceTree = "<group>"; };
 		B730510F1C5BABED00F4DB4F /* UITableViewBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UITableViewBase.m; path = View/UITableViewBase.m; sourceTree = "<group>"; };
 		B73784FA20FE2448001EEA8C /* iconAvatar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconAvatar@2x.png"; path = "Images/iconAvatar@2x.png"; sourceTree = "<group>"; };
@@ -1552,10 +1538,6 @@
 		B7A8E4F51DBDE30F00CFD9E8 /* abouticon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "abouticon@2x.png"; path = "Images/abouticon@2x.png"; sourceTree = "<group>"; };
 		B7B1D9D01C154EB80059E71A /* AsyncTaskManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AsyncTaskManager.h; path = ios/AsyncTaskManager.h; sourceTree = "<group>"; };
 		B7B1D9D11C154EB80059E71A /* AsyncTaskManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AsyncTaskManager.m; path = ios/AsyncTaskManager.m; sourceTree = "<group>"; };
-		B7B1E32A1DBF0EA1000B9635 /* VCAdDetailInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAdDetailInfo.h; path = AdWindow/VCAdDetailInfo.h; sourceTree = "<group>"; };
-		B7B1E32B1DBF0EA1000B9635 /* VCAdDetailInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAdDetailInfo.m; path = AdWindow/VCAdDetailInfo.m; sourceTree = "<group>"; };
-		B7B1E32C1DBF0EA1000B9635 /* VCAdIntro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAdIntro.h; path = AdWindow/VCAdIntro.h; sourceTree = "<group>"; };
-		B7B1E32D1DBF0EA1000B9635 /* VCAdIntro.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAdIntro.m; path = AdWindow/VCAdIntro.m; sourceTree = "<group>"; };
 		B7B1E3301DBF3E1C000B9635 /* VCBaseWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCBaseWebView.h; path = Controller/VCBaseWebView.h; sourceTree = "<group>"; };
 		B7B1E3311DBF3E1C000B9635 /* VCBaseWebView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCBaseWebView.m; path = Controller/VCBaseWebView.m; sourceTree = "<group>"; };
 		B7B8810420B9087F00DBCD45 /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = types.h; path = bitshares/types.h; sourceTree = "<group>"; };
@@ -1714,12 +1696,6 @@
 		B7E783111C50839500C94B58 /* VCSetting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCSetting.m; path = Controller/VCSetting.m; sourceTree = "<group>"; };
 		B7E90D3320A6A493004D2D8C /* libsecp256k1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsecp256k1.a; sourceTree = "<group>"; };
 		B7E90D3420A6A493004D2D8C /* secp256k1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = secp256k1.h; sourceTree = "<group>"; };
-		B7ED5E2C1D6BF6EB0043338B /* RecommendScrollCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecommendScrollCell.h; path = FirstLaunch/RecommendScrollCell.h; sourceTree = "<group>"; };
-		B7ED5E2D1D6BF6EB0043338B /* RecommendScrollCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecommendScrollCell.m; path = FirstLaunch/RecommendScrollCell.m; sourceTree = "<group>"; };
-		B7ED5E2E1D6BF6EB0043338B /* VCFirstLaunch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCFirstLaunch.h; path = FirstLaunch/VCFirstLaunch.h; sourceTree = "<group>"; };
-		B7ED5E2F1D6BF6EB0043338B /* VCFirstLaunch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCFirstLaunch.m; path = FirstLaunch/VCFirstLaunch.m; sourceTree = "<group>"; };
-		B7ED5E301D6BF6EB0043338B /* ViewEnterApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewEnterApp.h; path = FirstLaunch/ViewEnterApp.h; sourceTree = "<group>"; };
-		B7ED5E311D6BF6EB0043338B /* ViewEnterApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewEnterApp.m; path = FirstLaunch/ViewEnterApp.m; sourceTree = "<group>"; };
 		B7ED5E351D6BF6FD0043338B /* first1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = first1.png; path = Images/first1.png; sourceTree = "<group>"; };
 		B7ED5E361D6BF6FD0043338B /* first2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = first2.png; path = Images/first2.png; sourceTree = "<group>"; };
 		B7ED5E371D6BF6FD0043338B /* first3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = first3.png; path = Images/first3.png; sourceTree = "<group>"; };
@@ -2926,19 +2902,6 @@
 			name = en.lproj;
 			sourceTree = "<group>";
 		};
-		B7B1E3291DBF0E17000B9635 /* AdWindow */ = {
-			isa = PBXGroup;
-			children = (
-				B72C39D21DC05FE100D6A737 /* AdManager.h */,
-				B72C39D31DC05FE100D6A737 /* AdManager.m */,
-				B7B1E32A1DBF0EA1000B9635 /* VCAdDetailInfo.h */,
-				B7B1E32B1DBF0EA1000B9635 /* VCAdDetailInfo.m */,
-				B7B1E32C1DBF0EA1000B9635 /* VCAdIntro.h */,
-				B7B1E32D1DBF0EA1000B9635 /* VCAdIntro.m */,
-			);
-			name = AdWindow;
-			sourceTree = "<group>";
-		};
 		B7B8810520C3D75000DBCD45 /* base58 */ = {
 			isa = PBXGroup;
 			children = (
@@ -3145,19 +3108,6 @@
 			path = libs/secp256k1;
 			sourceTree = "<group>";
 		};
-		B7ED5E2B1D6BF6E00043338B /* FirstLaunch */ = {
-			isa = PBXGroup;
-			children = (
-				B7ED5E2C1D6BF6EB0043338B /* RecommendScrollCell.h */,
-				B7ED5E2D1D6BF6EB0043338B /* RecommendScrollCell.m */,
-				B7ED5E2E1D6BF6EB0043338B /* VCFirstLaunch.h */,
-				B7ED5E2F1D6BF6EB0043338B /* VCFirstLaunch.m */,
-				B7ED5E301D6BF6EB0043338B /* ViewEnterApp.h */,
-				B7ED5E311D6BF6EB0043338B /* ViewEnterApp.m */,
-			);
-			name = FirstLaunch;
-			sourceTree = "<group>";
-		};
 		ED3776731654A8E90016EC64 = {
 			isa = PBXGroup;
 			children = (
@@ -3222,8 +3172,6 @@
 			children = (
 				B737850A21002607001EEA8C /* Model */,
 				B7BDA95320B114CD00738F12 /* Bitshares */,
-				B7B1E3291DBF0E17000B9635 /* AdWindow */,
-				B7ED5E2B1D6BF6E00043338B /* FirstLaunch */,
 				B729E48F1C2D56B400CE3623 /* TabBarControllers */,
 				18FF068617E00B110088405E /* Controllers */,
 				18FF069017E00C5C0088405E /* View */,
@@ -4045,7 +3993,6 @@
 				3FB8F8B021CE66C200DA88E2 /* MyTabBarController.m in Sources */,
 				3FB8F8B121CE66C200DA88E2 /* SCLTimerDisplay.m in Sources */,
 				3FB8F8B221CE66C200DA88E2 /* MySearchBar.m in Sources */,
-				3FB8F8B321CE66C200DA88E2 /* RecommendScrollCell.m in Sources */,
 				3FB8F8B421CE66C200DA88E2 /* unzip.c in Sources */,
 				3FB8F8B521CE66C200DA88E2 /* Extension.m in Sources */,
 				3FB8F8B621CE66C200DA88E2 /* CurveSlider.m in Sources */,
@@ -4066,7 +4013,6 @@
 				3FB8F8C421CE66C200DA88E2 /* SCLButton.m in Sources */,
 				3FB8F8C521CE66C200DA88E2 /* UIDevice+Helper.m in Sources */,
 				3F7ED8F42277F24700082680 /* ViewPermissionCell.m in Sources */,
-				3FB8F8C621CE66C200DA88E2 /* ViewEnterApp.m in Sources */,
 				3FB8F8C721CE66C200DA88E2 /* HtmlColor.m in Sources */,
 				3FB8F8C821CE66C200DA88E2 /* ViewCallOrderInfoCell.m in Sources */,
 				3FB8F8C921CE66C200DA88E2 /* VCSetting.m in Sources */,
@@ -4116,12 +4062,10 @@
 				3FB8F8F021CE66C200DA88E2 /* VCVote.m in Sources */,
 				3FB8F8F121CE66C200DA88E2 /* GrapheneWebSocket.m in Sources */,
 				3FB8F8F221CE66C200DA88E2 /* XzCrc64Opt.c in Sources */,
-				3FB8F8F321CE66C200DA88E2 /* VCAdIntro.m in Sources */,
 				3FB8F8F421CE66C200DA88E2 /* VCWalletManager.m in Sources */,
 				3FB8F8F521CE66C200DA88E2 /* Lzma2DecMt.c in Sources */,
 				3FB8F8F621CE66C200DA88E2 /* MtCoder.c in Sources */,
 				3FB8F8F721CE66C200DA88E2 /* MBProgressHUD.m in Sources */,
-				3FB8F8F821CE66C200DA88E2 /* VCAdDetailInfo.m in Sources */,
 				3FB8F8F921CE66C200DA88E2 /* Lzma86Dec.c in Sources */,
 				3FB8F8FA21CE66C200DA88E2 /* NJKWebViewProgressView.m in Sources */,
 				3FB8F8FB21CE66C200DA88E2 /* XzCrc64.c in Sources */,
@@ -4129,7 +4073,6 @@
 				3FB8F8FD21CE66C200DA88E2 /* SCLAlertViewResponder.m in Sources */,
 				3FB8F8FE21CE66C200DA88E2 /* SGQRCodeObtainConfigure.m in Sources */,
 				3FB8F8FF21CE66C200DA88E2 /* GCDWebServerStreamedResponse.m in Sources */,
-				3FB8F90021CE66C200DA88E2 /* AdManager.m in Sources */,
 				3FB8F90121CE66C200DA88E2 /* CWStatusBarNotification.m in Sources */,
 				3FB8F90221CE66C200DA88E2 /* VCMarketInfo.m in Sources */,
 				3FB8F90321CE66C200DA88E2 /* VCUnlockAccount.m in Sources */,
@@ -4229,7 +4172,6 @@
 				3FB8F95421CE66C200DA88E2 /* CpuArch.c in Sources */,
 				3FB8F95521CE66C200DA88E2 /* VCKLine.m in Sources */,
 				3FB8F95621CE66C200DA88E2 /* VerticalAlignmentLabel.m in Sources */,
-				3FB8F95721CE66C200DA88E2 /* VCFirstLaunch.m in Sources */,
 				3FB8F95821CE66C200DA88E2 /* UITableViewBase.m in Sources */,
 				3FDD7FFF21D728DF00DA61FC /* ViewVestingBalanceCell.m in Sources */,
 				3FB8F95921CE66C200DA88E2 /* Xz.c in Sources */,
@@ -4332,7 +4274,6 @@
 				ED75E62B186C63C9009BEF5E /* MyTabBarController.m in Sources */,
 				B782F0C61D6E94C600F61571 /* SCLTimerDisplay.m in Sources */,
 				B7973E0920E5D7980052A5F5 /* MySearchBar.m in Sources */,
-				B7ED5E321D6BF6EB0043338B /* RecommendScrollCell.m in Sources */,
 				B7A13B791CA1443A0096A6A4 /* unzip.c in Sources */,
 				B7B8811020C4E38500DBCD45 /* Extension.m in Sources */,
 				3FEA46E8216F812800127CA5 /* CurveSlider.m in Sources */,
@@ -4353,7 +4294,6 @@
 				B782F0C31D6E94C600F61571 /* SCLButton.m in Sources */,
 				ED696AD0182B8425007053BA /* UIDevice+Helper.m in Sources */,
 				3F7ED8F32277F24700082680 /* ViewPermissionCell.m in Sources */,
-				B7ED5E341D6BF6EB0043338B /* ViewEnterApp.m in Sources */,
 				ED96A090186C62AD002181D4 /* HtmlColor.m in Sources */,
 				B741A76920DFE1A0000FBC00 /* ViewCallOrderInfoCell.m in Sources */,
 				B7E783121C50839500C94B58 /* VCSetting.m in Sources */,
@@ -4403,12 +4343,10 @@
 				B7C0411121081D7200848CBC /* VCVote.m in Sources */,
 				B741A76620DCA45D000FBC00 /* GrapheneWebSocket.m in Sources */,
 				B7BDAAA020B3C77500738F12 /* XzCrc64Opt.c in Sources */,
-				B7B1E32F1DBF0EA1000B9635 /* VCAdIntro.m in Sources */,
 				3F0AE342219319BE00E4144C /* VCWalletManager.m in Sources */,
 				B7BDAA9020B3C77500738F12 /* Lzma2DecMt.c in Sources */,
 				B7BDAA9720B3C77500738F12 /* MtCoder.c in Sources */,
 				ED96A092186C62AD002181D4 /* MBProgressHUD.m in Sources */,
-				B7B1E32E1DBF0EA1000B9635 /* VCAdDetailInfo.m in Sources */,
 				B7BDAA9220B3C77500738F12 /* Lzma86Dec.c in Sources */,
 				B76133031DBE0EE100F61A37 /* NJKWebViewProgressView.m in Sources */,
 				B7BDAA9F20B3C77500738F12 /* XzCrc64.c in Sources */,
@@ -4416,7 +4354,6 @@
 				B782F0C11D6E94C600F61571 /* SCLAlertViewResponder.m in Sources */,
 				3F0DA36521884011006E1004 /* SGQRCodeObtainConfigure.m in Sources */,
 				B72A848C20CCD18B00D92A25 /* GCDWebServerStreamedResponse.m in Sources */,
-				B72C39D41DC05FE100D6A737 /* AdManager.m in Sources */,
 				F5A4265A1DC323B300B56635 /* CWStatusBarNotification.m in Sources */,
 				B74D4BCA20A2B835009DD9B0 /* VCMarketInfo.m in Sources */,
 				B741A75A20DB4C30000FBC00 /* VCUnlockAccount.m in Sources */,
@@ -4516,7 +4453,6 @@
 				B7BDAA8B20B3C77500738F12 /* CpuArch.c in Sources */,
 				B737850220FF7DA6001EEA8C /* VCKLine.m in Sources */,
 				B741A75720DA2AD5000FBC00 /* VerticalAlignmentLabel.m in Sources */,
-				B7ED5E331D6BF6EB0043338B /* VCFirstLaunch.m in Sources */,
 				B73051101C5BABED00F4DB4F /* UITableViewBase.m in Sources */,
 				3FDD7FFE21D728DF00DA61FC /* ViewVestingBalanceCell.m in Sources */,
 				B7BDAA9E20B3C77500738F12 /* Xz.c in Sources */,

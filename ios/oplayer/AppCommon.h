@@ -27,8 +27,6 @@
 
 //  配置：[默认值]
 
-#define uDownloadManagerThreadNumber        8
-
 //  UI - 用户资产 默认显示数量（多余的资产不显示）
 #define kAppUserAssetDefaultShowNum         10
 

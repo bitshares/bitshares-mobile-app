@@ -19,8 +19,6 @@
 #import "secp256k1.h"
 #import "secp256k1_recovery.h"
 
-#import "AdManager.h"
-
 #import "VCTest.h"
 
 #import "VCSearchNetwork.h"
@@ -125,12 +123,7 @@
 
 //  事件：已经进入前台
 - (void)onUIApplicationDidBecomeActiveNotification
-{
-    //  广告 or 介绍界面显示中 不处理锁屏，因为这2个界面显示结束之后会唤起锁屏。
-    if ([[NativeAppDelegate sharedAppDelegate] isAdOrIntrlShowing]){
-        return;
-    }
-    
+{    
     //  检测语言是否发生变化，变化后重新初始化jsb。并删除之前多config缓存。
     BOOL langChanged = NO;
     NSString* lang = [NativeAppDelegate getSystemLanguage];
