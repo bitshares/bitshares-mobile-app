@@ -339,13 +339,13 @@ class FragmentTradeMainPage : BtsppFragment() {
         //  --- 参数校验完毕开始执行请求 ---
         activity!!.guardWalletUnlocked(false) { unlocked ->
             if (unlocked) {
-                processCancelOrderCore(order_id)
+                processCancelOrderCore(fee_item, order_id)
             }
         }
     }
 
-    private fun processCancelOrderCore(order_id: String) {
-        val fee_asset_id = _balanceData!!.getJSONObject("fee_item").getString("fee_asset_id")
+    private fun processCancelOrderCore(fee_item: JSONObject, order_id: String) {
+        val fee_asset_id = fee_item.getString("fee_asset_id")
         val account_data = WalletManager.sharedWalletManager().getWalletAccountInfo()!!.getJSONObject("account")
         val account_id = account_data.getString("id")
 
@@ -377,9 +377,9 @@ class FragmentTradeMainPage : BtsppFragment() {
                     fabricLogCustom("txCancelLimitOrderOK", jsonObjectfromKVS("account", account_id))
                 }
                 return@then null
-            }.catch {
+            }.catch { err ->
                 mask.dismiss()
-                showToast(resources.getString(R.string.kTipsTxRequestFailed))
+                showGrapheneError(err)
                 //  [统计]
                 fabricLogCustom("txCancelLimitOrderFailed", jsonObjectfromKVS("account", account_id))
             }
@@ -576,21 +576,10 @@ class FragmentTradeMainPage : BtsppFragment() {
             val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
             mask.show()
             BitsharesClientManager.sharedBitsharesClientManager().createLimitOrder(op).then {
+                //  刷新UI（清除输入框）
+                _tf_amount_watcher.clear()
                 //  获取新的限价单ID号（考虑到数据结构可能变更，加各种safe判断。）
-                var new_order_id = ""
-                val tx_data = it as? JSONArray
-                if (tx_data != null && tx_data.length() > 0) {
-                    val trx = tx_data.getJSONObject(0).optJSONObject("trx")
-                    if (trx != null) {
-                        val operation_results = trx.optJSONArray("operation_results")
-                        if (operation_results != null && operation_results.length() > 0) {
-                            val tmp = operation_results.optJSONArray(0)
-                            if (tmp != null) {
-                                new_order_id = tmp.optString(1, "")
-                            }
-                        }
-                    }
-                }
+                val new_order_id = OrgUtils.extractNewObjectID(it as? JSONArray)
                 ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(seller).then {
                     mask.dismiss()
                     //  刷新（调用owner的方法刷新、买/卖界面都需要刷新。）
@@ -605,9 +594,9 @@ class FragmentTradeMainPage : BtsppFragment() {
                             }
                         }
                     }
-                    if (new_order != null || new_order_id == "") {
+                    if (new_order != null || new_order_id == null) {
                         //  尚未成交则添加到监控
-                        if (new_order_id != "") {
+                        if (new_order_id != null) {
                             val account_id = WalletManager.sharedWalletManager().getWalletAccountInfo()!!.getJSONObject("account").getString("id")
                             ScheduleManager.sharedScheduleManager().sub_market_monitor_orders(_tradingPair, jsonArrayfrom(new_order_id), account_id)
                         }
@@ -621,7 +610,7 @@ class FragmentTradeMainPage : BtsppFragment() {
                     return@then null
                 }.catch {
                     //  刷新失败也添加到监控
-                    if (new_order_id != "") {
+                    if (new_order_id != null) {
                         val account_id = WalletManager.sharedWalletManager().getWalletAccountInfo()!!.getJSONObject("account").getString("id")
                         ScheduleManager.sharedScheduleManager().sub_market_monitor_orders(_tradingPair, jsonArrayfrom(new_order_id), account_id)
                     }
@@ -632,9 +621,9 @@ class FragmentTradeMainPage : BtsppFragment() {
                             "base", _tradingPair._baseAsset.getString("symbol"), "quote", _tradingPair._quoteAsset.getString("symbol")))
                 }
                 return@then null
-            }.catch {
+            }.catch { err ->
                 mask.dismiss()
-                showToast(resources.getString(R.string.kTipsTxRequestFailed))
+                showGrapheneError(err)
                 //  [统计]
                 fabricLogCustom("txCreateLimitOrderFailed", jsonObjectfromKVS("account", seller, "isbuy", _isbuy,
                         "base", _tradingPair._baseAsset.getString("symbol"), "quote", _tradingPair._quoteAsset.getString("symbol")))

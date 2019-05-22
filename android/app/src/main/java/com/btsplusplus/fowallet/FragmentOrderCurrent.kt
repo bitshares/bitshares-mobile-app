@@ -329,9 +329,9 @@ class FragmentOrderCurrent : BtsppFragment() {
                     fabricLogCustom("txCancelLimitOrderOK", jsonObjectfromKVS("account", account_id))
                 }
                 return@then null
-            }.catch {
+            }.catch { err ->
                 mask.dismiss()
-                showToast(_ctx!!.resources.getString(R.string.kTipsTxRequestFailed))
+                showGrapheneError(err)
                 //  [统计]
                 fabricLogCustom("txCancelLimitOrderFailed", jsonObjectfromKVS("account", account_id))
             }
@@ -339,7 +339,7 @@ class FragmentOrderCurrent : BtsppFragment() {
     }
 
     private fun createLayout(gr: Int): LinearLayout.LayoutParams {
-        var layout = LinearLayout.LayoutParams(0.dp, 24.dp, 1.0f)
+        val layout = LinearLayout.LayoutParams(0.dp, 24.dp, 1.0f)
         layout.gravity = gr
         return layout
     }

@@ -240,9 +240,9 @@ class ActivityIndexCollateral : BtsppActivity() {
                     fabricLogCustom("txCallOrderUpdateOK", jsonObjectfromKVS("account", funding_account, "debt_asset", _debtPair!!._baseAsset.getString("symbol")))
                 }
                 return@then null
-            }.catch {
+            }.catch { err ->
                 mask.dismiss()
-                showToast(resources.getString(R.string.kTipsTxRequestFailed))
+                showGrapheneError(err)
                 //  [统计]
                 fabricLogCustom("txCallOrderUpdateFailed", jsonObjectfromKVS("account", funding_account, "debt_asset", _debtPair!!._baseAsset.getString("symbol")))
             }
