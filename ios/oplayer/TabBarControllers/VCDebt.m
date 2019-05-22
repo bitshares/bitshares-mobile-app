@@ -1581,7 +1581,7 @@ enum
              return nil;
          })] catch:(^id(id error) {
              [self hideBlockView];
-             [OrgUtils makeToast:NSLocalizedString(@"kTipsTxRequestFailed", @"请求失败，请稍后再试。")];
+             [OrgUtils showGrapheneError:error];
              //  [统计]
              [OrgUtils logEvents:@"txCallOrderUpdateFailed"
                             params:@{@"account":funding_account, @"debt_asset":_debtPair.baseAsset[@"symbol"]}];
