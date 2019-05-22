@@ -85,14 +85,14 @@
 - (void)onSkipButtonClick
 {
     //  [统计]
-    [Answers logCustomEventWithName:@"buttonEvents" customAttributes:@{@"kind":@"firstIntroSkip"}];
+    [OrgUtils logEvents:@"buttonEvents" params:@{@"kind":@"firstIntroSkip"}];
     [self enterAppCore];
 }
 
 - (void)enterApp
 {
     //  [统计]
-    [Answers logCustomEventWithName:@"buttonEvents" customAttributes:@{@"kind":@"firstIntroEnter"}];
+    [OrgUtils logEvents:@"buttonEvents" params:@{@"kind":@"firstIntroEnter"}];
     [self enterAppCore];
 }
 

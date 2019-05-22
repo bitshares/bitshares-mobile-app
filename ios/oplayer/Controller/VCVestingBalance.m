@@ -347,7 +347,7 @@
              [_owner hideBlockView];
              [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVestingTipTxVestingBalanceWithdrawFullOK", @"待解冻金额 %@ 提取成功。"), balance_id]];
              //  [统计]
-             [Answers logCustomEventWithName:@"txVestingBalanceWithdrawFullOK" customAttributes:@{@"account":uid}];
+             [OrgUtils logEvents:@"txVestingBalanceWithdrawFullOK" params:@{@"account":uid}];
              //  刷新
              [self queryVestingBalance];
              return nil;
@@ -355,7 +355,7 @@
              [_owner hideBlockView];
              [OrgUtils makeToast:NSLocalizedString(@"kTipsTxRequestFailed", @"请求失败，请稍后再试。")];
              //  [统计]
-             [Answers logCustomEventWithName:@"txVestingBalanceWithdrawFailed" customAttributes:@{@"account":uid}];
+             [OrgUtils logEvents:@"txVestingBalanceWithdrawFailed" params:@{@"account":uid}];
              return nil;
          })];
      }];

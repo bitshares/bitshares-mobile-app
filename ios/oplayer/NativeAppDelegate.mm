@@ -39,6 +39,7 @@
 #import <objc/runtime.h>
 
 #import "GrapheneSerializer.h"
+#import <Flurry/Flurry.h>
 
 @interface NativeAppDelegate()
 {
@@ -596,7 +597,7 @@
 void uncaughtExceptionHandler(NSException *exception)
 {
     //  [统计]
-    [Answers logCustomEventWithName:@"crash" customAttributes:@{@"name":exception.name, @"reason":exception.reason}];
+    [OrgUtils logEvents:@"crash" params:@{@"name":exception.name, @"reason":exception.reason}];
 }
 
 - (void)initLanguageInfo
@@ -618,14 +619,20 @@ void uncaughtExceptionHandler(NSException *exception)
     
     //  Crashlytics
     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);   //  REMARK：must before init crashlytics
-    [Fabric with:@[[Answers class]]];                           //  REMARK：改用 answer 包含崩溃和统计。
+    [Fabric with:@[[Crashlytics class]]];
     
     NSString* uuid = [NativeAppDelegate deviceUniqueID];
     CLS_LOG(@"%@",uuid);
     CLS_LOG(@"UserDeviceInfo: %@", [NativeAppDelegate deviceInfo]);
     
     [CrashlyticsKit setUserIdentifier:uuid];
-
+    
+    [Flurry startSession:@"WY5BMPMSZTXNCC2X986X" withSessionBuilder:[[[[[FlurrySessionBuilder new]
+                                                                        withLogLevel:FlurryLogLevelAll]
+                                                                       withCrashReporting:YES]
+                                                                      withSessionContinueSeconds:10]
+                                                                     withAppVersion:[[self class] appVersion]]];
+    
     //  初始化石墨烯对象序列化类
     [T_Base registerAllType];
     
@@ -651,7 +658,11 @@ void uncaughtExceptionHandler(NSException *exception)
     }];
     
     //  [统计]
-    [Answers logCustomEventWithName:@"startSession" customAttributes:@{@"uuid":uuid, @"lang":self.currLanguage ? : @""}];
+    id login_account_id = [[WalletManager sharedWalletManager] getWalletAccountName];
+    if (login_account_id && ![login_account_id isEqualToString:@""]){
+        [Flurry setUserID:login_account_id];
+    }
+    [OrgUtils logEvents:@"startSession" params:@{@"uuid":uuid, @"lang":self.currLanguage ? : @""}];
     
     //  LOG
 #ifndef DEBUG

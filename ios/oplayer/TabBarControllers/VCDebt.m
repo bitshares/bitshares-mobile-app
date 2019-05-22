@@ -869,7 +869,7 @@ enum
 - (void)onTipFeedPriceButtonClicked:(UIButton*)sender
 {
     //  [统计]
-    [Answers logCustomEventWithName:@"qa_tip_click" customAttributes:@{@"qa":@"qa_feed_settlement"}];
+    [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_feed_settlement"}];
     VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"http://btspp.io/qam.html#qa_feed_settlement"];
     vc.title = NSLocalizedString(@"kDebtTipTitleFeedAndCallPrice", @"喂价和强平触发价");
     [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
@@ -880,7 +880,7 @@ enum
         case kVcSubRateValue:
         {
             //  [统计]
-            [Answers logCustomEventWithName:@"qa_tip_click" customAttributes:@{@"qa":@"qa_ratio"}];
+            [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_ratio"}];
             VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"http://btspp.io/qam.html#qa_ratio"];
             vc.title = NSLocalizedString(@"kDebtTipTitleWhatIsRatio", @"什么是抵押率？");
             [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
@@ -889,7 +889,7 @@ enum
         case kVcSubTargetRateValue:
         {
             //  [统计]
-            [Answers logCustomEventWithName:@"qa_tip_click" customAttributes:@{@"qa":@"qa_target_ratio"}];
+            [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_target_ratio"}];
             VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"http://btspp.io/qam.html#qa_target_ratio"];
             vc.title = NSLocalizedString(@"kDebtTipTitleWhatIsTargetRatio", @"什么是目标抵押率？");
             [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
@@ -1567,15 +1567,15 @@ enum
                  [self refreshUI:YES new_feed_price_data:nil];
                  [OrgUtils makeToast:NSLocalizedString(@"kDebtTipTxUpdatePositionFullOK", @"债仓调整完毕。")];
                  //  [统计]
-                 [Answers logCustomEventWithName:@"txCallOrderUpdateFullOK"
-                                customAttributes:@{@"account":funding_account, @"debt_asset":_debtPair.baseAsset[@"symbol"]}];
+                 [OrgUtils logEvents:@"txCallOrderUpdateFullOK"
+                                params:@{@"account":funding_account, @"debt_asset":_debtPair.baseAsset[@"symbol"]}];
                  return nil;
              })] catch:(^id(id error) {
                  [self hideBlockView];
                  [OrgUtils makeToast:NSLocalizedString(@"kDebtTipTxUpdatePositionOK", @"债仓调整完毕，但刷新界面数据失败，请稍后再试。")];
                  //  [统计]
-                 [Answers logCustomEventWithName:@"txCallOrderUpdateOK"
-                                customAttributes:@{@"account":funding_account, @"debt_asset":_debtPair.baseAsset[@"symbol"]}];
+                 [OrgUtils logEvents:@"txCallOrderUpdateOK"
+                                params:@{@"account":funding_account, @"debt_asset":_debtPair.baseAsset[@"symbol"]}];
                  return nil;
              })];
              return nil;
@@ -1583,8 +1583,8 @@ enum
              [self hideBlockView];
              [OrgUtils makeToast:NSLocalizedString(@"kTipsTxRequestFailed", @"请求失败，请稍后再试。")];
              //  [统计]
-             [Answers logCustomEventWithName:@"txCallOrderUpdateFailed"
-                            customAttributes:@{@"account":funding_account, @"debt_asset":_debtPair.baseAsset[@"symbol"]}];
+             [OrgUtils logEvents:@"txCallOrderUpdateFailed"
+                            params:@{@"account":funding_account, @"debt_asset":_debtPair.baseAsset[@"symbol"]}];
              return nil;
          })];
      }];

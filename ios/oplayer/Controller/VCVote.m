@@ -245,13 +245,13 @@ enum
                  [self _refresh_ui:vote_info];
                  [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcVoteTipTxFullOK", @"%@成功。"), title]];
                  //  [统计]
-                 [Answers logCustomEventWithName:@"txVotingFullOK" customAttributes:@{@"account":account_id}];
+                 [OrgUtils logEvents:@"txVotingFullOK" params:@{@"account":account_id}];
                  return nil;
              })] catch:(^id(id error) {
                  [self hideBlockView];
                  [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcVoteTipTxOK", @"%@成功，但刷新界面失败，请稍后再试。"), title]];
                  //  [统计]
-                 [Answers logCustomEventWithName:@"txVotingOK" customAttributes:@{@"account":account_id}];
+                 [OrgUtils logEvents:@"txVotingOK" params:@{@"account":account_id}];
                  return nil;
              })];
              return nil;
@@ -259,7 +259,7 @@ enum
              [self hideBlockView];
              [OrgUtils makeToast:NSLocalizedString(@"kTipsTxRequestFailed", @"请求失败，请稍后再试。")];
              //  [统计]
-             [Answers logCustomEventWithName:@"txVotingFailed" customAttributes:@{@"account":account_id}];
+             [OrgUtils logEvents:@"txVotingFailed" params:@{@"account":account_id}];
              return nil;
          })];
      }];
@@ -1035,7 +1035,7 @@ enum
         case kSecTypeCommitteeActive:
         {
             //  [统计]
-            [Answers logCustomEventWithName:@"qa_tip_click" customAttributes:@{@"qa":@"qa_committee"}];
+            [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_committee"}];
             url = @"http://btspp.io/qam.html#qa_committee";
             title = NSLocalizedString(@"kVcVoteWhatIsActiveCommittee", @"什么是活跃理事会？");
         }
@@ -1043,7 +1043,7 @@ enum
         case kSecTypeCommitteeCandidate:
         {
             //  [统计]
-            [Answers logCustomEventWithName:@"qa_tip_click" customAttributes:@{@"qa":@"qa_committee_c"}];
+            [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_committee_c"}];
             url = @"http://btspp.io/qam.html#qa_committee_c";
             title = NSLocalizedString(@"kVcVoteWhatIsStandbyCommittee", @"什么是候选理事会？");
         }
@@ -1051,7 +1051,7 @@ enum
         case kSecTypeWitnessActive:
         {
             //  [统计]
-            [Answers logCustomEventWithName:@"qa_tip_click" customAttributes:@{@"qa":@"qa_witness"}];
+            [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_witness"}];
             url = @"http://btspp.io/qam.html#qa_witness";
             title = NSLocalizedString(@"kVcVoteWhatIsActiveWitness", @"什么是活跃见证人？");
         }
@@ -1059,7 +1059,7 @@ enum
         case kSecTypeWitnessCandidate:
         {
             //  [统计]
-            [Answers logCustomEventWithName:@"qa_tip_click" customAttributes:@{@"qa":@"qa_witness_c"}];
+            [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_witness_c"}];
             url = @"http://btspp.io/qam.html#qa_witness_c";
             title = NSLocalizedString(@"kVcVoteWhatIsStandbyWitness", @"什么是候选见证人？");
         }
@@ -1067,7 +1067,7 @@ enum
         case kBtnTagProxyHelp:
         {
             //  [统计]
-            [Answers logCustomEventWithName:@"qa_tip_click" customAttributes:@{@"qa":@"qa_proxy"}];
+            [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_proxy"}];
             url = @"http://btspp.io/qam.html#qa_proxy";
             title = NSLocalizedString(@"kVcVoteWhatIsProxy", @"什么是代理人？");
         }

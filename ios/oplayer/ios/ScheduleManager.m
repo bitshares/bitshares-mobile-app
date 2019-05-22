@@ -69,8 +69,8 @@ static ScheduleManager *_sharedScheduleManager = nil;
         //  重新订阅
         [self _sub_market_notify_core:s];
         //  [统计]
-        [Answers logCustomEventWithName:@"event_resubscribe_to_market"
-                       customAttributes:@{@"base":s.tradingPair.baseAsset[@"symbol"], @"quote":s.tradingPair.quoteAsset[@"symbol"]}];
+        [OrgUtils logEvents:@"event_resubscribe_to_market"
+                       params:@{@"base":s.tradingPair.baseAsset[@"symbol"], @"quote":s.tradingPair.quoteAsset[@"symbol"]}];
     }
 }
 
@@ -470,8 +470,8 @@ static ScheduleManager *_sharedScheduleManager = nil;
         s.querying = NO;
         s.subscribed = NO;
         //  [统计]
-        [Answers logCustomEventWithName:@"event_subscribe_to_market_disconnect"
-                       customAttributes:@{@"base":s.tradingPair.baseAsset[@"symbol"], @"quote":s.tradingPair.quoteAsset[@"symbol"]}];
+        [OrgUtils logEvents:@"event_subscribe_to_market_disconnect"
+                       params:@{@"base":s.tradingPair.baseAsset[@"symbol"], @"quote":s.tradingPair.quoteAsset[@"symbol"]}];
     }
 }
 

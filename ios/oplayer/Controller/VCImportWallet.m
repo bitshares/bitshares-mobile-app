@@ -79,8 +79,8 @@
         [fileManager createDirectoryAtPath:_importDir withIntermediateDirectories:YES attributes:nil error:&error];
         if (error){
             //  [统计]
-            [Answers logCustomEventWithName:@"system_error"
-                           customAttributes:@{@"message":[NSString stringWithFormat:@"createDirectoryAtPath %@", error]}];
+            [OrgUtils logEvents:@"system_error"
+                           params:@{@"message":[NSString stringWithFormat:@"createDirectoryAtPath %@", error]}];
             NSLog(@"createDirectoryAtPath error:%@", error);
             tip_message = NSLocalizedString(@"kLoginTipsImportInitError", @"发生未知错误，不能导入钱包，请稍后再试。");
         }else{
@@ -388,7 +388,7 @@
             assert(unlockInfos &&
                    [[unlockInfos objectForKey:@"unlockSuccess"] boolValue]);
             //  [统计]
-            [Answers logCustomEventWithName:@"loginEvent" customAttributes:@{@"mode":@(kwmFullWalletMode), @"desc":@"wallet"}];
+            [OrgUtils logEvents:@"loginEvent" params:@{@"mode":@(kwmFullWalletMode), @"desc":@"wallet"}];
             
             //  返回之前先关闭webserver
             [self stopWebServer];

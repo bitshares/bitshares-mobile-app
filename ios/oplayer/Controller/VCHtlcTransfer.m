@@ -757,13 +757,13 @@ enum
                  [self refreshUI:full_data];
                  [OrgUtils makeToast:NSLocalizedString(@"kVcHtlcSubmitTipsFullOK", @"创建HTLC成功，可在我的资产界面查看HTLC详细信息。")];
                  //  [统计]
-                 [Answers logCustomEventWithName:@"txHtlcCreateFullOK" customAttributes:@{@"from":opaccount_id, @"htlc_id":new_htlc_id ?: @""}];
+                 [OrgUtils logEvents:@"txHtlcCreateFullOK" params:@{@"from":opaccount_id, @"htlc_id":new_htlc_id ?: @""}];
                  return nil;
              })] catch:(^id(id error) {
                  [self hideBlockView];
                  [OrgUtils makeToast:NSLocalizedString(@"kVcHtlcSubmitTipsOK", @"创建HTLC成功，但刷新界面失败，可在我的资产界面查看HTLC详细信息。")];
                  //  [统计]
-                 [Answers logCustomEventWithName:@"txHtlcCreateOK" customAttributes:@{@"from":opaccount_id, @"htlc_id":new_htlc_id ?: @""}];
+                 [OrgUtils logEvents:@"txHtlcCreateOK" params:@{@"from":opaccount_id, @"htlc_id":new_htlc_id ?: @""}];
                  return nil;
              })];
              return nil;
@@ -771,7 +771,7 @@ enum
              [self hideBlockView];
              [OrgUtils showGrapheneError:error];
              //  [统计]
-             [Answers logCustomEventWithName:@"txHtlcCreateFailed" customAttributes:@{@"from":opaccount_id}];
+             [OrgUtils logEvents:@"txHtlcCreateFailed" params:@{@"from":opaccount_id}];
              return nil;
          })];
      }];

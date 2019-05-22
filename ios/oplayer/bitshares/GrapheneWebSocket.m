@@ -9,6 +9,7 @@
 #import "OrgUtils.h"
 
 #import <Crashlytics/Crashlytics.h>
+#import <Flurry/Flurry.h>
 
 #define kGwsKeepAliveINterval   5000
 #define kGwsMaxSendLife         4
@@ -260,12 +261,12 @@
                         if (!log_err && log_data){
                             log_str = [[NSString alloc] initWithData:log_data encoding:NSUTF8StringEncoding];
                         }
-                        [Answers logCustomEventWithName:[NSString stringWithFormat:@"api_error_%@", error_code]
-                                       customAttributes:@{@"last_stack":[error_stack lastObject],
-                                                          @"message":error_message,
-                                                          @"detail_message":detail_error_message ? : @"",
-                                                          @"error":log_str ? : @""
-                                                          }];
+                        [OrgUtils logEvents:[NSString stringWithFormat:@"api_error_%@", error_code]
+                                     params:@{@"last_stack":[error_stack lastObject],
+                                              @"message":error_message,
+                                              @"detail_message":detail_error_message ? : @"",
+                                              @"error":log_str ? : @""
+                                              }];
                     }
                 }
                 if (detail_error_message){

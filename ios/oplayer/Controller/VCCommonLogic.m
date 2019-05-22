@@ -17,7 +17,7 @@
 + (void)viewUserLimitOrders:(VCBase*)this account:(NSString*)account_id tradingPair:(TradingPair*)tradingPair
 {
     //  [统计]
-    [Answers logCustomEventWithName:@"event_view_userlimitorders" customAttributes:@{@"account":account_id}];
+    [OrgUtils logEvents:@"event_view_userlimitorders" params:@{@"account":account_id}];
     
     [this showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     
@@ -84,7 +84,7 @@
 + (void)viewUserAssets:(VCBase*)this account:(NSString*)account_name_or_id
 {
     //  [统计]
-    [Answers logCustomEventWithName:@"event_view_userassets" customAttributes:@{@"account":account_name_or_id}];
+    [OrgUtils logEvents:@"event_view_userassets" params:@{@"account":account_name_or_id}];
     
     [this showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     

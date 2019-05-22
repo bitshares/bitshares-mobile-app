@@ -238,7 +238,7 @@
            [[unlockInfos objectForKey:@"haveActivePermission"] boolValue]);
     
     //  [统计]
-    [Answers logCustomEventWithName:@"convertEvent" customAttributes:@{@"mode":@(kwmPasswordWithWallet), @"desc":@"password+wallet"}];
+    [OrgUtils logEvents:@"convertEvent" params:@{@"mode":@(kwmPasswordWithWallet), @"desc":@"password+wallet"}];
     
     //  转换成功 - 关闭界面
     [self.myNavigationController tempDisableDragBack];

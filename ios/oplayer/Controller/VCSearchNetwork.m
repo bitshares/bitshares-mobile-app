@@ -604,16 +604,16 @@
         [[pAppCache set_custom_markets:quote
                                   base:[base objectForKey:@"symbol"]] saveCustomMarketsToFile];
         //  [统计]
-        [Answers logCustomEventWithName:@"event_custommarket_add"
-                       customAttributes:@{@"base":[base objectForKey:@"symbol"], @"quote":[quote objectForKey:@"symbol"]}];
+        [OrgUtils logEvents:@"event_custommarket_add"
+                       params:@{@"base":[base objectForKey:@"symbol"], @"quote":[quote objectForKey:@"symbol"]}];
     }else{
         id quote = [linedata objectForKey:@"quote"];
         id base = [linedata objectForKey:@"base"];
         [[pAppCache remove_custom_markets:[quote objectForKey:@"symbol"]
                                      base:[base objectForKey:@"symbol"]] saveCustomMarketsToFile];
         //  [统计]
-        [Answers logCustomEventWithName:@"event_custommarket_remove"
-                       customAttributes:@{@"base":[base objectForKey:@"symbol"], @"quote":[quote objectForKey:@"symbol"]}];
+        [OrgUtils logEvents:@"event_custommarket_remove"
+                       params:@{@"base":[base objectForKey:@"symbol"], @"quote":[quote objectForKey:@"symbol"]}];
     }
     
     //  刷新 mainTableView

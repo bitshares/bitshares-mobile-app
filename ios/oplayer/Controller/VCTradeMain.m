@@ -1589,8 +1589,8 @@ enum
                      [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcTradeTipTxCreateFullOKWithID", @"下单成功，订单 #%@ 已成交。"), new_order_id]];
                  }
                  //  [统计]
-                 [Answers logCustomEventWithName:@"txCreateLimitOrderFullOK"
-                                customAttributes:@{@"account":seller, @"isbuy":@(_isbuy), @"base":_base[@"symbol"], @"quote":_quote[@"symbol"]}];
+                 [OrgUtils logEvents:@"txCreateLimitOrderFullOK"
+                                params:@{@"account":seller, @"isbuy":@(_isbuy), @"base":_base[@"symbol"], @"quote":_quote[@"symbol"]}];
                  return nil;
              })] catch:(^id(id error) {
                  //  刷新失败也添加到监控
@@ -1602,8 +1602,8 @@ enum
                  [_owner hideBlockView];
                  [OrgUtils makeToast:NSLocalizedString(@"kVcTradeTipTxCreateOK", @"下单成功，但刷新失败，请稍后再试。")];
                  //  [统计]
-                 [Answers logCustomEventWithName:@"txCreateLimitOrderOK"
-                                customAttributes:@{@"account":seller, @"isbuy":@(_isbuy), @"base":_base[@"symbol"], @"quote":_quote[@"symbol"]}];
+                 [OrgUtils logEvents:@"txCreateLimitOrderOK"
+                                params:@{@"account":seller, @"isbuy":@(_isbuy), @"base":_base[@"symbol"], @"quote":_quote[@"symbol"]}];
                  return nil;
              })];
              return nil;
@@ -1611,8 +1611,8 @@ enum
              [_owner hideBlockView];
              [OrgUtils makeToast:NSLocalizedString(@"kTipsTxRequestFailed", @"请求失败，请稍后再试。")];
              //  [统计]
-             [Answers logCustomEventWithName:@"txCreateLimitOrderFailed"
-                            customAttributes:@{@"account":seller, @"isbuy":@(_isbuy), @"base":_base[@"symbol"], @"quote":_quote[@"symbol"]}];
+             [OrgUtils logEvents:@"txCreateLimitOrderFailed"
+                            params:@{@"account":seller, @"isbuy":@(_isbuy), @"base":_base[@"symbol"], @"quote":_quote[@"symbol"]}];
              return nil;
          })];
      }];
@@ -1674,13 +1674,13 @@ enum
                  [_owner onFullAccountInfoResponsed:full_data];
                  [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcOrderTipTxCancelFullOK", @"订单 #%@ 已取消。"), order_id]];
                  //  [统计]
-                 [Answers logCustomEventWithName:@"txCancelLimitOrderFullOK" customAttributes:@{@"account":account_id}];
+                 [OrgUtils logEvents:@"txCancelLimitOrderFullOK" params:@{@"account":account_id}];
                  return nil;
              })] catch:(^id(id error) {
                  [_owner hideBlockView];
                  [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcOrderTipTxCancelOK", @"订单 #%@ 已取消，但刷新界面失败，请稍后再试。"), order_id]];
                  //  [统计]
-                 [Answers logCustomEventWithName:@"txCancelLimitOrderOK" customAttributes:@{@"account":account_id}];
+                 [OrgUtils logEvents:@"txCancelLimitOrderOK" params:@{@"account":account_id}];
                  return nil;
              })];
              return nil;
@@ -1688,7 +1688,7 @@ enum
              [_owner hideBlockView];
              [OrgUtils makeToast:NSLocalizedString(@"kTipsTxRequestFailed", @"请求失败，请稍后再试。")];
              //  [统计]
-             [Answers logCustomEventWithName:@"txCancelLimitOrderFailed" customAttributes:@{@"account":account_id}];
+             [OrgUtils logEvents:@"txCancelLimitOrderFailed" params:@{@"account":account_id}];
              return nil;
          })];
      }];

@@ -84,13 +84,13 @@
         [self showRightImageButton:@"iconFav" action:@selector(onRightButtonClicked) color:[ThemeManager sharedThemeManager].textColorGray];
         [OrgUtils makeToast:NSLocalizedString(@"kTipsUnfollowed", @"已取消关注")];
         //  [统计]
-        [Answers logCustomEventWithName:@"event_account_remove_fav" customAttributes:@{@"account":account_name}];
+        [OrgUtils logEvents:@"event_account_remove_fav" params:@{@"account":account_name}];
     }else{
         [pAppCache set_fav_account:@{@"name":account_name, @"id":[account objectForKey:@"id"]}];
         [self showRightImageButton:@"iconFav" action:@selector(onRightButtonClicked) color:[ThemeManager sharedThemeManager].textColorHighlight];
         [OrgUtils makeToast:NSLocalizedString(@"kTipsFollowed", @"关注成功")];
         //  [统计]
-        [Answers logCustomEventWithName:@"event_account_add_fav" customAttributes:@{@"account":account_name}];
+        [OrgUtils logEvents:@"event_account_add_fav" params:@{@"account":account_name}];
     }
     [pAppCache saveFavAccountsToFile];
 }

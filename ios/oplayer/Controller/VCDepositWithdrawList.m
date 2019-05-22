@@ -349,7 +349,7 @@ enum
 - (void)onTipButtonClicked:(UIButton*)sender
 {
     //  [统计]
-    [Answers logCustomEventWithName:@"qa_tip_click" customAttributes:@{@"qa":@"qa_deposit_withdraw"}];
+    [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_deposit_withdraw"}];
     VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"http://btspp.io/qam.html#qa_deposit_withdraw"];
     vc.title = NSLocalizedString(@"kVcTitleWhatIsGatewayAssets", @"什么是网关资产？");
     [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
