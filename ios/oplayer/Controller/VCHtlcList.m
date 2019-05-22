@@ -565,7 +565,7 @@ enum
              [_owner hideBlockView];
              [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcHtlcListTipsRedeemOK", @"HTLC合约 %@ 提取成功。"), htlc_id]];
              //  [统计]
-             [Answers logCustomEventWithName:@"txHtlcRedeemFullOK" customAttributes:@{@"redeemer":account_id, @"htlc_id":htlc_id}];
+             [OrgUtils logEvents:@"txHtlcRedeemFullOK" params:@{@"redeemer":account_id, @"htlc_id":htlc_id}];
              //  刷新
              [self queryUserHTLCs];
              return nil;
@@ -573,7 +573,7 @@ enum
              [_owner hideBlockView];
              [OrgUtils showGrapheneError:error];
              //  [统计]
-             [Answers logCustomEventWithName:@"txHtlcRedeemFailed" customAttributes:@{@"redeemer":account_id, @"htlc_id":htlc_id}];
+             [OrgUtils logEvents:@"txHtlcRedeemFailed" params:@{@"redeemer":account_id, @"htlc_id":htlc_id}];
              return nil;
          })];
      }];
@@ -634,7 +634,7 @@ enum
              [_owner hideBlockView];
              [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcHtlcListTipsExtendOK", @"HTLC合约 %@ 延长有效期成功。"), htlc_id]];
              //  [统计]
-             [Answers logCustomEventWithName:@"txHtlcExtendFullOK" customAttributes:@{@"update_issuer":account_id, @"htlc_id":htlc_id}];
+             [OrgUtils logEvents:@"txHtlcExtendFullOK" params:@{@"update_issuer":account_id, @"htlc_id":htlc_id}];
              //  刷新
              [self queryUserHTLCs];
              return nil;
@@ -642,7 +642,7 @@ enum
              [_owner hideBlockView];
              [OrgUtils showGrapheneError:error];
              //  [统计]
-             [Answers logCustomEventWithName:@"txHtlcExtendFailed" customAttributes:@{@"update_issuer":account_id, @"htlc_id":htlc_id}];
+             [OrgUtils logEvents:@"txHtlcExtendFailed" params:@{@"update_issuer":account_id, @"htlc_id":htlc_id}];
              return nil;
          })];
      }];

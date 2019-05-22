@@ -34,6 +34,10 @@
 		3F3E5849218310E900F1DC24 /* iconFeedDetail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F3E5847218310E800F1DC24 /* iconFeedDetail@2x.png */; };
 		3F475CDF21945A12009DD5C1 /* VCScanNormalString.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F475CDE21945A12009DD5C1 /* VCScanNormalString.m */; };
 		3F475CE221946712009DD5C1 /* VCScanPrivateKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F475CE021946712009DD5C1 /* VCScanPrivateKey.m */; };
+		3F4D9A562294E476000BFD82 /* FlurryEmpty.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4D9A532294E476000BFD82 /* FlurryEmpty.m */; };
+		3F4D9A572294E476000BFD82 /* FlurryEmpty.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4D9A532294E476000BFD82 /* FlurryEmpty.m */; };
+		3F4D9A582294E476000BFD82 /* libFlurry_9.3.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F4D9A552294E476000BFD82 /* libFlurry_9.3.1.a */; };
+		3F4D9A592294E476000BFD82 /* libFlurry_9.3.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F4D9A552294E476000BFD82 /* libFlurry_9.3.1.a */; };
 		3F6C357A21E86C9E008E2903 /* ViewAddrMemoInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6C357821E86C9D008E2903 /* ViewAddrMemoInfoCell.m */; };
 		3F6C357B21E86C9E008E2903 /* ViewAddrMemoInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6C357821E86C9D008E2903 /* ViewAddrMemoInfoCell.m */; };
 		3F6C35AD21EC83AB008E2903 /* GatewayBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6C35AB21EC83AA008E2903 /* GatewayBase.m */; };
@@ -1152,6 +1156,11 @@
 		3F475CDE21945A12009DD5C1 /* VCScanNormalString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCScanNormalString.m; sourceTree = "<group>"; };
 		3F475CE021946712009DD5C1 /* VCScanPrivateKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCScanPrivateKey.m; sourceTree = "<group>"; };
 		3F475CE121946712009DD5C1 /* VCScanPrivateKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VCScanPrivateKey.h; sourceTree = "<group>"; };
+		3F4D9A512294E476000BFD82 /* Flurry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
+		3F4D9A522294E476000BFD82 /* FlurryConsent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlurryConsent.h; sourceTree = "<group>"; };
+		3F4D9A532294E476000BFD82 /* FlurryEmpty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlurryEmpty.m; sourceTree = "<group>"; };
+		3F4D9A542294E476000BFD82 /* FlurrySessionBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlurrySessionBuilder.h; sourceTree = "<group>"; };
+		3F4D9A552294E476000BFD82 /* libFlurry_9.3.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry_9.3.1.a; sourceTree = "<group>"; };
 		3F6C357821E86C9D008E2903 /* ViewAddrMemoInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewAddrMemoInfoCell.m; path = View/ViewAddrMemoInfoCell.m; sourceTree = "<group>"; };
 		3F6C357921E86C9E008E2903 /* ViewAddrMemoInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewAddrMemoInfoCell.h; path = View/ViewAddrMemoInfoCell.h; sourceTree = "<group>"; };
 		3F6C35AB21EC83AA008E2903 /* GatewayBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GatewayBase.m; path = Controller/Gateway/GatewayBase.m; sourceTree = "<group>"; };
@@ -1968,6 +1977,7 @@
 				3FB8F99C21CE66C200DA88E2 /* AudioToolbox.framework in Frameworks */,
 				3FB8F99D21CE66C200DA88E2 /* AddressBook.framework in Frameworks */,
 				3FB8F99E21CE66C200DA88E2 /* Foundation.framework in Frameworks */,
+				3F4D9A592294E476000BFD82 /* libFlurry_9.3.1.a in Frameworks */,
 				3FB8F99F21CE66C200DA88E2 /* AVFoundation.framework in Frameworks */,
 				3FB8F9A021CE66C200DA88E2 /* WebKit.framework in Frameworks */,
 				3FB8F9A121CE66C200DA88E2 /* CoreLocation.framework in Frameworks */,
@@ -2009,6 +2019,7 @@
 				ED3776891654A8E90016EC64 /* AudioToolbox.framework in Frameworks */,
 				B794F6611D5ACAA5002C3702 /* AddressBook.framework in Frameworks */,
 				ED37768F1654A8E90016EC64 /* Foundation.framework in Frameworks */,
+				3F4D9A582294E476000BFD82 /* libFlurry_9.3.1.a in Frameworks */,
 				ED37768B1654A8E90016EC64 /* AVFoundation.framework in Frameworks */,
 				B7A149CF1CE84C7100E2B3E8 /* WebKit.framework in Frameworks */,
 				F532AAE31C3386450081F32C /* CoreLocation.framework in Frameworks */,
@@ -2535,6 +2546,19 @@
 			);
 			name = ScanResult;
 			path = Controller/ScanResult;
+			sourceTree = "<group>";
+		};
+		3F4D9A502294E476000BFD82 /* Flurry */ = {
+			isa = PBXGroup;
+			children = (
+				3F4D9A512294E476000BFD82 /* Flurry.h */,
+				3F4D9A522294E476000BFD82 /* FlurryConsent.h */,
+				3F4D9A532294E476000BFD82 /* FlurryEmpty.m */,
+				3F4D9A542294E476000BFD82 /* FlurrySessionBuilder.h */,
+				3F4D9A552294E476000BFD82 /* libFlurry_9.3.1.a */,
+			);
+			name = Flurry;
+			path = libs/Flurry;
 			sourceTree = "<group>";
 		};
 		3F6C35AA21EC8399008E2903 /* Gateway */ = {
@@ -3234,6 +3258,7 @@
 		ED3776AB1654A8EA0016EC64 /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				3F4D9A502294E476000BFD82 /* Flurry */,
 				3FB8F88821CA4BA000DA88E2 /* Reachability */,
 				3F0DA35A21884011006E1004 /* SGQRCode */,
 				B7D586272115A9FA00FED7B0 /* SAMKeychain */,
@@ -4195,6 +4220,7 @@
 				3FB8F94D21CE66C200DA88E2 /* ViewKLine.m in Sources */,
 				3F3847372223AC7500B55914 /* VCKlineIndexSetting.m in Sources */,
 				3FB8F94E21CE66C200DA88E2 /* Bcj2.c in Sources */,
+				3F4D9A572294E476000BFD82 /* FlurryEmpty.m in Sources */,
 				3FB8F94F21CE66C200DA88E2 /* SAMKeychainQuery.m in Sources */,
 				3FB8F95021CE66C200DA88E2 /* GCDWebServerFunctions.m in Sources */,
 				3FB8F95121CE66C200DA88E2 /* XzIn.c in Sources */,
@@ -4481,6 +4507,7 @@
 				B737850920FF88EE001EEA8C /* ViewKLine.m in Sources */,
 				3F3847362223AC7500B55914 /* VCKlineIndexSetting.m in Sources */,
 				B7BDAA8620B3C77500738F12 /* Bcj2.c in Sources */,
+				3F4D9A562294E476000BFD82 /* FlurryEmpty.m in Sources */,
 				B7D5862D2115A9FA00FED7B0 /* SAMKeychainQuery.m in Sources */,
 				B72A848220CCD18B00D92A25 /* GCDWebServerFunctions.m in Sources */,
 				B7BDAAA320B3C77500738F12 /* XzIn.c in Sources */,
@@ -4659,6 +4686,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)",
 					"$(PROJECT_DIR)/oplayer/libs/secp256k1",
+					"$(PROJECT_DIR)/oplayer/libs/Flurry",
 				);
 				OTHER_LDFLAGS = (
 					"-lxml2",
@@ -4716,6 +4744,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)",
 					"$(PROJECT_DIR)/oplayer/libs/secp256k1",
+					"$(PROJECT_DIR)/oplayer/libs/Flurry",
 				);
 				OTHER_LDFLAGS = (
 					"-lxml2",
@@ -4832,6 +4861,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)",
 					"$(PROJECT_DIR)/oplayer/libs/secp256k1",
+					"$(PROJECT_DIR)/oplayer/libs/Flurry",
 				);
 				OTHER_LDFLAGS = (
 					"-lxml2",
@@ -4889,6 +4919,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)",
 					"$(PROJECT_DIR)/oplayer/libs/secp256k1",
+					"$(PROJECT_DIR)/oplayer/libs/Flurry",
 				);
 				OTHER_LDFLAGS = (
 					"-lxml2",

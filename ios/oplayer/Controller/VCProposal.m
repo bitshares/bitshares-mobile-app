@@ -950,7 +950,7 @@
                 [OrgUtils makeToast:NSLocalizedString(@"kProposalSubmitTxTipsAddApprovalOK", @"添加授权成功。")];
             }
             //  [统计]
-            [Answers logCustomEventWithName:@"txProposalUpdateFullOK" customAttributes:@{@"account":fee_paying_account}];
+            [OrgUtils logEvents:@"txProposalUpdateFullOK" params:@{@"account":fee_paying_account}];
             //  刷新
             [self queryAllProposals:nil];
             return nil;
@@ -958,7 +958,7 @@
             [self hideBlockView];
             [OrgUtils showGrapheneError:error];
             //  [统计]
-            [Answers logCustomEventWithName:@"txProposalUpdateFailed" customAttributes:@{@"account":fee_paying_account}];
+            [OrgUtils logEvents:@"txProposalUpdateFailed" params:@{@"account":fee_paying_account}];
             return nil;
         })];
     }

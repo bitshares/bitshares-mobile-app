@@ -39,6 +39,8 @@
 #import "GrapheneConnectionManager.h"
 
 #import "SCLAlertView.h"
+#import "OrgUtils.h"
+#import <Flurry/Flurry.h>
 
 @interface VCBase : UIViewController<UITextFieldDelegate,UITableViewDelegate>
 {

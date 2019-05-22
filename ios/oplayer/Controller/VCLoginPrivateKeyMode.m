@@ -303,7 +303,7 @@ enum
                        [[unlockInfos objectForKey:@"unlockSuccess"] boolValue] &&
                        [[unlockInfos objectForKey:@"haveActivePermission"] boolValue]);
                 //  [统计]
-                [Answers logCustomEventWithName:@"loginEvent" customAttributes:@{@"mode":@(kwmPrivateKeyWithWallet), @"desc":@"privatekey"}];
+                [OrgUtils logEvents:@"loginEvent" params:@{@"mode":@(kwmPrivateKeyWithWallet), @"desc":@"privatekey"}];
                 
                 //  返回
                 [_owner.myNavigationController tempDisableDragBack];
@@ -483,7 +483,7 @@ enum
         case kVcSubUserActivePrivateKey:
         {
             //  [统计]
-            [Answers logCustomEventWithName:@"qa_tip_click" customAttributes:@{@"qa":@"qa_active_privatekey"}];
+            [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_active_privatekey"}];
             VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"http://btspp.io/qam.html#qa_active_privatekey"];
             vc.title = NSLocalizedString(@"kVcTitleWhatIsActivePrivateKey", @"什么是资金私钥？");
             [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
@@ -492,7 +492,7 @@ enum
         case kVcSubUserTradingPassword:
         {
             //  [统计]
-            [Answers logCustomEventWithName:@"qa_tip_click" customAttributes:@{@"qa":@"qa_trading_password"}];
+            [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_trading_password"}];
             VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"http://btspp.io/qam.html#qa_trading_password"];
             vc.title = NSLocalizedString(@"kVcTitleWhatIsTradePassowrd", @"什么是交易密码？");
             [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];

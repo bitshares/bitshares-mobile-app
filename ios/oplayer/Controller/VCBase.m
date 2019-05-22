@@ -117,7 +117,7 @@ static NSInteger gen_notify_unique_id()
     NSString *className = [NSString stringWithUTF8String:object_getClassName(self)];
     CLS_LOG(@"viewDidLoad: %@", className);
     //  [统计]
-    [Answers logCustomEventWithName:@"viewDidLoad" customAttributes:@{@"view":className}];
+    [OrgUtils logEvents:@"viewDidLoad" params:@{@"view":className}];
     
 	// Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor whiteColor];
@@ -726,13 +726,13 @@ static NSInteger gen_notify_unique_id()
             [OrgUtils makeToast:NSLocalizedString(@"kProposalSubmitTipTxOK", @"创建提案成功。")];
         }
         //  [统计]
-        [Answers logCustomEventWithName:@"txProposalCreateOK" customAttributes:@{@"opcode":@(opcode), @"account":fee_paying_account_id}];
+        [OrgUtils logEvents:@"txProposalCreateOK" params:@{@"opcode":@(opcode), @"account":fee_paying_account_id}];
         return nil;
     })] catch:(^id(id error) {
         [self hideBlockView];
         [OrgUtils showGrapheneError:error];
         //  [统计]
-        [Answers logCustomEventWithName:@"txProposalCreateFailed" customAttributes:@{@"opcode":@(opcode), @"account":fee_paying_account_id}];
+        [OrgUtils logEvents:@"txProposalCreateFailed" params:@{@"opcode":@(opcode), @"account":fee_paying_account_id}];
         return nil;
     })];
 }

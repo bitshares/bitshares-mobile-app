@@ -250,7 +250,7 @@ enum
             if (!response || [[response objectForKey:@"status"] integerValue] != 0){
                 [_owner hideBlockView];
                 //  [统计]
-                [Answers logCustomEventWithName:@"faucetFailed" customAttributes:response ? : @{}];
+                [OrgUtils logEvents:@"faucetFailed" params:response ? : @{}];
                 [VCRegisterWalletMode showFaucetRegisterError:response];
                 return nil;
             }
@@ -280,7 +280,7 @@ enum
                        [[unlockInfos objectForKey:@"haveActivePermission"] boolValue]);
                 
                 //  [统计]
-                [Answers logCustomEventWithName:@"registerEvent" customAttributes:@{@"mode":@(kwmPasswordOnlyMode), @"desc":@"password"}];
+                [OrgUtils logEvents:@"registerEvent" params:@{@"mode":@(kwmPasswordOnlyMode), @"desc":@"password"}];
                 
                 //  修改导航栏（直接返回最外层，跳过注册界面。）
                 UIViewController* root = [_owner.navigationController.viewControllers firstObject];
@@ -375,7 +375,7 @@ enum
             break;
         case kVcSubRefCode:
         {
-            [Answers logCustomEventWithName:@"qa_tip_click" customAttributes:@{@"qa":@"qa_refcode"}];
+            [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_refcode"}];
             VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"http://btspp.io/qam.html#qa_refcode"];
             vc.title = NSLocalizedString(@"kVcTitleWhatIsRefcode", @"什么是推荐码？");
             [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];

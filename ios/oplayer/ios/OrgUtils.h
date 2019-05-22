@@ -17,6 +17,11 @@ typedef void (^YklUserCallback)(id data);
 @interface OrgUtils : NSObject
 
 /**
+ *  日志统计
+ */
++ (void)logEvents:(NSString*)eventname params:(NSDictionary*)params;
+
+/**
  *  示石墨烯网络错误信息（部分错误特殊处理）
  */
 + (void)showGrapheneError:(id)error;

@@ -312,7 +312,7 @@
     
     NSLog(@"intro clicked: %@", @(sender.tag));
     //  [统计]
-    [Answers logCustomEventWithName:@"qa_tip_click" customAttributes:@{@"qa":@"qa_gateway"}];
+    [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_gateway"}];
     VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"http://btspp.io/qam.html#qa_gateway"];
     vc.title = NSLocalizedString(@"kVcTitleWhatIsGateway", @"什么是网关？");
     [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];

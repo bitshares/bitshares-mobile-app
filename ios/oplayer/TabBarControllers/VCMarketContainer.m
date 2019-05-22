@@ -167,7 +167,7 @@
 {
     CLS_LOG(@"will enter background");
     //  [统计]
-    [Answers logCustomEventWithName:@"enterBackground" customAttributes:@{}];
+    [OrgUtils logEvents:@"enterBackground" params:@{}];
     //  处理逻辑
     [[AppCacheManager sharedAppCacheManager] saveToFile];
     //  记录即将进入后台的时间
@@ -187,7 +187,7 @@
 {
     CLS_LOG(@"will enter foreground");
     //  [统计]
-    [Answers logCustomEventWithName:@"enterForeground" customAttributes:@{}];
+    [OrgUtils logEvents:@"enterForeground" params:@{}];
 }
 
 - (void)onAddMarketInfos

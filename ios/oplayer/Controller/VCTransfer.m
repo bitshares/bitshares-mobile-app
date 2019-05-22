@@ -554,13 +554,13 @@ enum
             [self refreshUI:full_data];
             [OrgUtils makeToast:NSLocalizedString(@"kVcTransferTipTxTransferFullOK", @"发送成功。")];
             //  [统计]
-            [Answers logCustomEventWithName:@"txTransferFullOK" customAttributes:@{@"account":account_id, @"asset":asset[@"symbol"]}];
+            [OrgUtils logEvents:@"txTransferFullOK" params:@{@"account":account_id, @"asset":asset[@"symbol"]}];
             return nil;
         })] catch:(^id(id error) {
             [self hideBlockView];
             [OrgUtils makeToast:NSLocalizedString(@"kVcTransferTipTxTransferOK", @"发送成功，但刷新界面数据失败，请稍后再试。")];
             //  [统计]
-            [Answers logCustomEventWithName:@"txTransferOK" customAttributes:@{@"account":account_id, @"asset":asset[@"symbol"]}];
+            [OrgUtils logEvents:@"txTransferOK" params:@{@"account":account_id, @"asset":asset[@"symbol"]}];
             return nil;
         })];
         return nil;
@@ -568,7 +568,7 @@ enum
         [self hideBlockView];
         [OrgUtils makeToast:NSLocalizedString(@"kTipsTxRequestFailed", @"请求失败，请稍后再试。")];
         //  [统计]
-        [Answers logCustomEventWithName:@"txTransferFailed" customAttributes:@{@"asset":asset[@"symbol"]}];
+        [OrgUtils logEvents:@"txTransferFailed" params:@{@"asset":asset[@"symbol"]}];
         return nil;
     })];
 }
