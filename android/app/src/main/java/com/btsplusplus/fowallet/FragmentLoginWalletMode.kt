@@ -103,7 +103,7 @@ class FragmentLoginWalletMode : Fragment() {
                 }
             }
         } catch (e: Exception) {
-            fabricLogCustom("webserver_scandir_error", jsonObjectfromKVS("message", e.message
+            btsppLogCustom("webserver_scandir_error", jsonObjectfromKVS("message", e.message
                     ?: "unknown"))
         }
     }
@@ -193,7 +193,7 @@ class FragmentLoginWalletMode : Fragment() {
                 processFileUpload(request)
                 on_response(200, _ctx!!.resources.getString(R.string.registerLoginPageUploadSuccessPleaseContinueForPhone), response)
             } catch (e: Exception) {
-                fabricLogCustom("webserver_upload_error", jsonObjectfromKVS("message", e.message
+                btsppLogCustom("webserver_upload_error", jsonObjectfromKVS("message", e.message
                         ?: "unknown"))
                 on_response(500, _ctx!!.resources.getString(R.string.registerLoginPageServerInternalError), response)
             }
@@ -263,7 +263,7 @@ class FragmentLoginWalletMode : Fragment() {
             }
 
             override fun onError(e: Exception) {
-                fabricLogCustom("webserver_upload_init_error", jsonObjectfromKVS("message", e.message
+                btsppLogCustom("webserver_upload_init_error", jsonObjectfromKVS("message", e.message
                         ?: "unknown"))
                 _address = _ctx!!.resources.getString(R.string.registerLoginWebServerErrorInit)
                 _view!!.findViewById<TextView>(R.id.text_ip_of_back_wallet).text = _address!!
@@ -399,7 +399,7 @@ class FragmentLoginWalletMode : Fragment() {
                 _webserver = null
 
                 //  [统计]
-                fabricLogCustom("loginEvent", jsonObjectfromKVS("mode", AppCacheManager.EWalletMode.kwmFullWalletMode.value, "desc", "wallet"))
+                btsppLogCustom("loginEvent", jsonObjectfromKVS("mode", AppCacheManager.EWalletMode.kwmFullWalletMode.value, "desc", "wallet"))
 
                 //  返回
                 showToast(_ctx!!.resources.getString(R.string.kLoginTipsLoginOK))

@@ -11,7 +11,6 @@ import android.widget.TextView
 import bitshares.*
 import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_my_assets.*
-import org.json.JSONArray
 import org.json.JSONObject
 import java.lang.reflect.Field
 
@@ -82,13 +81,13 @@ class ActivityMyAssets : BtsppActivity() {
             btn.setColorFilter(resources.getColor(R.color.theme01_textColorGray))
             showToast(resources.getString(R.string.kTipsUnfollowed))
             //  [统计]
-            fabricLogCustom("event_account_remove_fav", jsonObjectfromKVS("account", account_name))
+            btsppLogCustom("event_account_remove_fav", jsonObjectfromKVS("account", account_name))
         } else {
             pAppCache.set_fav_account(jsonObjectfromKVS("name", account_name, "id", account.getString("id")))
             btn.setColorFilter(resources.getColor(R.color.theme01_textColorHighlight))
             showToast(resources.getString(R.string.kTipsFollowed))
             //  [统计]
-            fabricLogCustom("event_account_add_fav", jsonObjectfromKVS("account", account_name))
+            btsppLogCustom("event_account_add_fav", jsonObjectfromKVS("account", account_name))
         }
         pAppCache.saveFavAccountsToFile()
     }

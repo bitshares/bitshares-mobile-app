@@ -137,7 +137,7 @@ class FragmentLoginAccountMode : Fragment() {
                     assert(unlockInfos.getBoolean("unlockSuccess") && unlockInfos.optBoolean("haveActivePermission"))
                 }
                 //  [统计]
-                fabricLogCustom("loginEvent", jsonObjectfromKVS("mode", AppCacheManager.EWalletMode.kwmPasswordWithWallet.value, "desc", "password+wallet"))
+                btsppLogCustom("loginEvent", jsonObjectfromKVS("mode", AppCacheManager.EWalletMode.kwmPasswordWithWallet.value, "desc", "password+wallet"))
                 //  返回 - 登录成功
                 showToast(_ctx!!.resources.getString(R.string.kLoginTipsLoginOK))
                 activity!!.finish()
@@ -192,7 +192,7 @@ class FragmentLoginAccountMode : Fragment() {
         }
         v.findViewById<ImageView>(R.id.tip_link_trading_password).setOnClickListener {
             //  [统计]
-            fabricLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_trading_password"))
+            btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_trading_password"))
             activity!!.goToWebView(_ctx!!.resources.getString(R.string.kVcTitleWhatIsTradePassowrd), "http://btspp.io/qam.html#qa_trading_password")
         }
         //  导入到已有钱包：隐藏交易密码。

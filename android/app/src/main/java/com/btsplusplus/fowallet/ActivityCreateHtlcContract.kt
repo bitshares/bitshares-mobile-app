@@ -1,9 +1,5 @@
 package com.btsplusplus.fowallet
 
-import android.content.ClipboardManager
-import android.content.Context
-import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -13,17 +9,12 @@ import com.fowallet.walletcore.bts.BitsharesClientManager
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_create_htlc_contract.*
-import kotlinx.android.synthetic.main.activity_transfer.*
 import org.json.JSONArray
 import org.json.JSONObject
 import kotlin.math.pow
-import android.content.ClipData
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import android.view.View
-import android.widget.Toast
-import org.w3c.dom.Text
-import java.math.BigDecimal
 
 
 class ActivityCreateHtlcContract : BtsppActivity() {
@@ -567,20 +558,20 @@ class ActivityCreateHtlcContract : BtsppActivity() {
                     _refreshUI_onSendDone(full_data)
                     showToast(R.string.kVcHtlcSubmitTipsFullOK.xmlstring(this))
                     //  [统计]
-                    fabricLogCustom("txHtlcCreateFullOK", jsonObjectfromKVS("from", opaccount_id, "htlc_id", new_htlc_id ?: ""))
+                    btsppLogCustom("txHtlcCreateFullOK", jsonObjectfromKVS("from", opaccount_id, "htlc_id", new_htlc_id ?: ""))
                     return@then null
                 }.catch {
                     mask.dismiss()
                     showToast(R.string.kVcHtlcSubmitTipsOK.xmlstring(this))
                     //  [统计]
-                    fabricLogCustom("txHtlcCreateOK", jsonObjectfromKVS("from", opaccount_id, "htlc_id", new_htlc_id ?: ""))
+                    btsppLogCustom("txHtlcCreateOK", jsonObjectfromKVS("from", opaccount_id, "htlc_id", new_htlc_id ?: ""))
                 }
                 return@then null
             }.catch { err ->
                 mask.dismiss()
                 showGrapheneError(err)
                 //  [统计]
-                fabricLogCustom("txHtlcCreateFailed", jsonObjectfromKVS("from", opaccount_id))
+                btsppLogCustom("txHtlcCreateFailed", jsonObjectfromKVS("from", opaccount_id))
             }
         }
     }

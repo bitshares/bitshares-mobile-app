@@ -90,7 +90,7 @@ class ActivityUpgradeToWalletMode : BtsppActivity() {
         assert(unlockInfos.getBoolean("unlockSuccess") && unlockInfos.optBoolean("haveActivePermission"))
 
         //  [统计]
-        fabricLogCustom("convertEvent", jsonObjectfromKVS("desc", "password+wallet", "account", accountName))
+        btsppLogCustom("convertEvent", jsonObjectfromKVS("desc", "password+wallet", "account", accountName))
 
         //  转换成功 - 关闭界面
 

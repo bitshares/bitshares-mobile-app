@@ -49,7 +49,7 @@ class ActivityVoting : BtsppActivity() {
         current_proxy_name_of_voting.text = ""
         current_proxy_help_of_voting.setOnClickListener {
             //  [统计]
-            fabricLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_proxy"))
+            btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_proxy"))
             //  TODO:多语言
             goToWebView("什么是代理人？", "http://btspp.io/qam.html#qa_proxy")
         }
@@ -236,20 +236,20 @@ class ActivityVoting : BtsppActivity() {
                     _refreshUI(it as JSONObject)
                     showToast(String.format(resources.getString(R.string.kVcVoteTipTxFullOK), title))
                     //  [统计]
-                    fabricLogCustom("txVotingFullOK", jsonObjectfromKVS("account", account_id))
+                    btsppLogCustom("txVotingFullOK", jsonObjectfromKVS("account", account_id))
                     return@then null
                 }.catch {
                     mask.dismiss()
                     showToast(String.format(resources.getString(R.string.kVcVoteTipTxOK), title))
                     //  [统计]
-                    fabricLogCustom("txVotingOK", jsonObjectfromKVS("account", account_id))
+                    btsppLogCustom("txVotingOK", jsonObjectfromKVS("account", account_id))
                 }
                 return@then null
             }.catch { err ->
                 mask.dismiss()
                 showGrapheneError(err)
                 //  [统计]
-                fabricLogCustom("txVotingFailed", jsonObjectfromKVS("account", account_id))
+                btsppLogCustom("txVotingFailed", jsonObjectfromKVS("account", account_id))
             }
         }
     }

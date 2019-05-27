@@ -2,7 +2,6 @@ package com.btsplusplus.fowallet
 
 import android.app.Activity
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.text.TextUtils
@@ -14,8 +13,6 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import bitshares.*
-import com.btsplusplus.fowallet.ViewEx.ViewLine
-import com.crashlytics.android.answers.Answers
 import com.fowallet.walletcore.bts.BitsharesClientManager
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
@@ -609,14 +606,14 @@ class FragmentAssetsHtlcList : BtsppFragment() {
                 mask.dismiss()
                 showToast( String.format(R.string.kVcHtlcListTipsRedeemOK.xmlstring(ctx), htlc_id))
                 //  [统计]
-                fabricLogCustom("txHtlcRedeemFullOK", jsonObjectfromKVS("redeemer", account_id, "htlc_id", htlc_id))
+                btsppLogCustom("txHtlcRedeemFullOK", jsonObjectfromKVS("redeemer", account_id, "htlc_id", htlc_id))
                 //  刷新当前 Activity
                 queryUserHTLCs()
                 return@then null
             }.catch { err ->
                 mask.dismiss()
                 showGrapheneError(err)
-                fabricLogCustom("txHtlcRedeemFailed", jsonObjectfromKVS("redeemer", account_id, "htlc_id", htlc_id))
+                btsppLogCustom("txHtlcRedeemFailed", jsonObjectfromKVS("redeemer", account_id, "htlc_id", htlc_id))
             }
         }
     }
@@ -667,14 +664,14 @@ class FragmentAssetsHtlcList : BtsppFragment() {
                 mask.dismiss()
                 showToast(String.format(R.string.kVcHtlcListTipsExtendOK.xmlstring(ctx), htlc_id))
                 //  [统计]
-                fabricLogCustom("txHtlcExtendFullOK", jsonObjectfromKVS("update_issuer", account_id, "htlc_id", htlc_id))
+                btsppLogCustom("txHtlcExtendFullOK", jsonObjectfromKVS("update_issuer", account_id, "htlc_id", htlc_id))
                 //  刷新当前 Activity
                 queryUserHTLCs()
                 return@then null
             }.catch { err ->
                 mask.dismiss()
                 showGrapheneError(err)
-                fabricLogCustom("txHtlcExtendFailed", jsonObjectfromKVS("update_issuer", account_id, "htlc_id", htlc_id))
+                btsppLogCustom("txHtlcExtendFailed", jsonObjectfromKVS("update_issuer", account_id, "htlc_id", htlc_id))
             }
         }
     }

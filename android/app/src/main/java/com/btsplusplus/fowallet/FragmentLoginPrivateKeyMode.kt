@@ -134,7 +134,7 @@ class FragmentLoginPrivateKeyMode : Fragment() {
                     val unlockInfos = WalletManager.sharedWalletManager().unLock(trade_password, _ctx!!)
                     assert(unlockInfos.getBoolean("unlockSuccess") && unlockInfos.optBoolean("haveActivePermission"))
                     //  [统计]
-                    fabricLogCustom("loginEvent", jsonObjectfromKVS("mode", AppCacheManager.EWalletMode.kwmPrivateKeyWithWallet.value, "desc", "privatekey"))
+                    btsppLogCustom("loginEvent", jsonObjectfromKVS("mode", AppCacheManager.EWalletMode.kwmPrivateKeyWithWallet.value, "desc", "privatekey"))
                     //  返回 - 登录成功
                     showToast(_ctx!!.resources.getString(R.string.kLoginTipsLoginOK))
                     activity!!.finish()
@@ -177,12 +177,12 @@ class FragmentLoginPrivateKeyMode : Fragment() {
         }
         v.findViewById<ImageView>(R.id.tip_link_active_privatekey).setOnClickListener {
             //  [统计]
-            fabricLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_active_privatekey"))
+            btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_active_privatekey"))
             activity!!.goToWebView(_ctx!!.resources.getString(R.string.kVcTitleWhatIsActivePrivateKey), "http://btspp.io/qam.html#qa_active_privatekey")
         }
         v.findViewById<ImageView>(R.id.tip_link_trading_password).setOnClickListener {
             //  [统计]
-            fabricLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_trading_password"))
+            btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_trading_password"))
             activity!!.goToWebView(_ctx!!.resources.getString(R.string.kVcTitleWhatIsTradePassowrd), "http://btspp.io/qam.html#qa_trading_password")
         }
         //  导入到已有钱包：隐藏交易密码。

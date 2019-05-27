@@ -9,6 +9,7 @@ import bitshares.*
 import bitshares.serializer.T_Base
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.answers.Answers
+import com.flurry.android.FlurryAgent
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
 import io.fabric.sdk.android.Fabric
@@ -25,6 +26,9 @@ class ActivityLaunch : BtsppActivity() {
 
         //  初始化 Fabric
         Fabric.with(this, Crashlytics(), Answers())
+
+        //  初始化Flurry
+        FlurryAgent.Builder().withLogEnabled(true).build(this, "H45RRHMWCPMKZNNKR5SR")
 
         //  初始化启动界面
         setFullScreen()
@@ -44,6 +48,7 @@ class ActivityLaunch : BtsppActivity() {
         val accountName = WalletManager.sharedWalletManager().getWalletAccountName()
         if (accountName != null && accountName != "") {
             Crashlytics.setUserName(accountName)
+            FlurryAgent.setUserId(accountName)
         }
 
         //  初始化配置
@@ -51,7 +56,7 @@ class ActivityLaunch : BtsppActivity() {
         initCustomConfig()
 
         //  启动日志
-        fabricLogCustom("event_app_start", jsonObjectfromKVS("ver", _appNativeVersion))
+        btsppLogCustom("event_app_start", jsonObjectfromKVS("ver", _appNativeVersion))
 
         //  初始化完毕后启动。
         startInit(true)

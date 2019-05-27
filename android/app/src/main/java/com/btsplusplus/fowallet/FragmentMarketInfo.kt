@@ -215,7 +215,7 @@ class FragmentMarketInfo : BtsppFragment() {
                     inmain.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12f)
                     inmain.setOnClickListener {
                         //  [统计]
-                        fabricLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_gateway"))
+                        btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_gateway"))
                         activity!!.goToWebView(_context!!.resources.getString(R.string.kVcTitleWhatIsGateway), "http://btspp.io/qam.html#qa_gateway")
                     }
                     flmain.addView(inmain, inmain_layout_params)

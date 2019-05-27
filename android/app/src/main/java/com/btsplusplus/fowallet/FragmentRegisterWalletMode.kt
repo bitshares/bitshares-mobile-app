@@ -89,7 +89,7 @@ class FragmentRegisterWalletMode : Fragment() {
                 if (response.getInt("status") != 0) {
                     mask.dismiss()
                     //  [统计]
-                    fabricLogCustom("faucetFailed", response)
+                    btsppLogCustom("faucetFailed", response)
                     activity!!.showFaucetRegisterError(response)
                     return@then null
                 }
@@ -110,7 +110,7 @@ class FragmentRegisterWalletMode : Fragment() {
                     val unlockInfos = WalletManager.sharedWalletManager().unLock(password, _ctx!!)
                     assert(unlockInfos.getBoolean("unlockSuccess") && unlockInfos.optBoolean("haveActivePermission"))
                     //  [统计]
-                    fabricLogCustom("registerEvent", jsonObjectfromKVS("mode", AppCacheManager.EWalletMode.kwmFullWalletMode.value, "desc", "wallet"))
+                    btsppLogCustom("registerEvent", jsonObjectfromKVS("mode", AppCacheManager.EWalletMode.kwmFullWalletMode.value, "desc", "wallet"))
                     showToast(R.string.kLoginTipsRegFullOK.xmlstring(_ctx!!))
                     activity!!.goTo(ActivityIndexMy::class.java, true, back = true)
                     return@then null
@@ -143,7 +143,7 @@ class FragmentRegisterWalletMode : Fragment() {
         view.findViewById<ImageView>(R.id.tip_account_name).setOnClickListener { UtilsAlert.showMessageBox(activity!!, R.string.kLoginRegTipsAccountFormat.xmlstring(_ctx!!)) }
         view.findViewById<ImageView>(R.id.tip_password).setOnClickListener { UtilsAlert.showMessageBox(activity!!, R.string.kLoginRegTipsWalletPasswordFormat.xmlstring(_ctx!!)) }
         view.findViewById<ImageView>(R.id.tip_refcode).setOnClickListener {
-            fabricLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_refcode"))
+            btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_refcode"))
             activity!!.goToWebView(_ctx!!.resources.getString(R.string.kVcTitleWhatIsRefcode), "http://btspp.io/qam.html#qa_refcode")
         }
         return view

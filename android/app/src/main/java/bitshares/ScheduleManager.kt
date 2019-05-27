@@ -470,7 +470,7 @@ class ScheduleManager {
             s.querying = false
             s.subscribed = false
             //  [统计]
-            fabricLogCustom("event_subscribe_to_market_disconnect",
+            btsppLogCustom("event_subscribe_to_market_disconnect",
                     jsonObjectfromKVS("base", s.tradingPair!!._baseAsset.getString("symbol"),
                             "quote", s.tradingPair!!._quoteAsset.getString("symbol")))
         }

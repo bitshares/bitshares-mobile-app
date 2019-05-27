@@ -868,7 +868,7 @@ class ActivityProposal : BtsppActivity() {
                     showToast(R.string.kProposalSubmitTxTipsAddApprovalOK.xmlstring(this))
                 }
                 //  [统计]
-                fabricLogCustom("txProposalUpdateFullOK", jsonObjectfromKVS("account", fee_paying_account))
+                btsppLogCustom("txProposalUpdateFullOK", jsonObjectfromKVS("account", fee_paying_account))
                 //  刷新
                 queryAllProposals()
                 return@then null
@@ -876,7 +876,7 @@ class ActivityProposal : BtsppActivity() {
                 mask.dismiss()
                 showGrapheneError(err)
                 //  [统计]
-                fabricLogCustom("txProposalUpdateFailed", jsonObjectfromKVS("account", fee_paying_account))
+                btsppLogCustom("txProposalUpdateFailed", jsonObjectfromKVS("account", fee_paying_account))
             }
         }
     }

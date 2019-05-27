@@ -239,7 +239,7 @@ class FragmentMarginRanking : BtsppFragment() {
         val v: View = inflater.inflate(R.layout.fragment_margin_ranking, container, false)
         v.findViewById<ImageView>(R.id.tip_link_feedprice).setOnClickListener {
             //  [统计]
-            fabricLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_feedprice"))
+            btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_feedprice"))
             activity!!.goToWebView(_ctx!!.resources.getString(R.string.kVcTitleWhatIsFeedPrice), "http://btspp.io/qam.html#qa_feedprice")
         }
         _currentView = v

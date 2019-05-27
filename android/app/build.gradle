@@ -60,4 +60,6 @@ dependencies {
     implementation files('libs/x86.jar')
     //  for gen qrcode
     implementation 'com.github.qingmei2:QrCodeScannerView-Android:1.1.2'
+    //  for flurry
+    implementation 'com.flurry.android:analytics:11.6.0@aar'
 }

@@ -223,7 +223,7 @@ class FragmentVoting : BtsppFragment() {
                 val link_url = auxArgs.getString("kURL")
                 tv_header_link.setOnClickListener {
                     //  [统计]
-                    fabricLogCustom("qa_tip_click", jsonObjectfromKVS("qa", link_url.split('#').last()))
+                    btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", link_url.split('#').last()))
                     activity!!.goToWebView(link_title, link_url)
                 }
                 ly_header.addView(tv_header_link)
