@@ -71,7 +71,7 @@ class ActivitySettingCurrency : BtsppActivity() {
                     currEstimateAssetSymbol = symbol
                     SettingManager.sharedSettingManager().setUseConfig(kSettingKey_EstimateAssetSymbol, currEstimateAssetSymbol)
                     //  [统计]
-                    fabricLogCustom("selectEstimateAsset", jsonObjectfromKVS("symbol", currEstimateAssetSymbol))
+                    btsppLogCustom("selectEstimateAsset", jsonObjectfromKVS("symbol", currEstimateAssetSymbol))
                 }
             }
         }

@@ -73,7 +73,7 @@ class ActivitySettingLanguage : BtsppActivity() {
                     (langCodeMarkHash.get(currLangCode) as View).visibility = View.INVISIBLE
                     (langCodeMarkHash.get(langCode) as View).visibility = View.VISIBLE
                     //  [统计]
-                    fabricLogCustom("selectLanguage", jsonObjectfromKVS("langCode", currLangCode))
+                    btsppLogCustom("selectLanguage", jsonObjectfromKVS("langCode", currLangCode))
                     //  变更设置
                     currLangCode = langCode
                     onChangeLanguage(currLangCode)

@@ -111,13 +111,13 @@ class ActivityAddAssetPairsResult : BtsppActivity() {
                 val quote = data.getJSONObject("quote")
                 pAppCache.set_custom_markets(quote, base.getString("symbol")).saveCustomMarketsToFile()
                 //  [统计]
-                fabricLogCustom("event_custommarket_add", jsonObjectfromKVS("base", base.getString("symbol"), "quote", quote.getString("symbol")))
+                btsppLogCustom("event_custommarket_add", jsonObjectfromKVS("base", base.getString("symbol"), "quote", quote.getString("symbol")))
             } else {
                 val base = data.getJSONObject("base")
                 val quote = data.getJSONObject("quote")
                 pAppCache.remove_custom_markets(quote.getString("symbol"), base.getString("symbol")).saveCustomMarketsToFile()
                 //  [统计]
-                fabricLogCustom("event_custommarket_remove", jsonObjectfromKVS("base", base.getString("symbol"), "quote", quote.getString("symbol")))
+                btsppLogCustom("event_custommarket_remove", jsonObjectfromKVS("base", base.getString("symbol"), "quote", quote.getString("symbol")))
             }
 
             //  标记：自定义交易对发生变化，市场列表需要更新。

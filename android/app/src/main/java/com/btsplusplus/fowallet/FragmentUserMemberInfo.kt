@@ -1,7 +1,6 @@
 package com.btsplusplus.fowallet
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
@@ -12,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import bitshares.*
 import com.fowallet.walletcore.bts.BitsharesClientManager
 import com.fowallet.walletcore.bts.ChainObjectManager
@@ -145,17 +143,17 @@ class FragmentUserMemberInfo : BtsppFragment() {
                     refreshUILefttimeMember(full_data.getJSONObject("account"))
 
                     showToast(resources.getString(R.string.kAccountUpgradeMemberSubmitTxFullOK))
-                    fabricLogCustom("txUpgradeToLifetimeMemberFullOK", jsonObjectfromKVS("account", account_id))
+                    btsppLogCustom("txUpgradeToLifetimeMemberFullOK", jsonObjectfromKVS("account", account_id))
                 }.catch {
                     mask.dismiss()
                     showToast(resources.getString(R.string.kAccountUpgradeMemberSubmitTxOK))
-                    fabricLogCustom("txUpgradeToLifetimeMemberOK", jsonObjectfromKVS("account", account_id))
+                    btsppLogCustom("txUpgradeToLifetimeMemberOK", jsonObjectfromKVS("account", account_id))
                 }
             }.catch { err ->
                 mask.dismiss()
                 showGrapheneError(err)
                 //  [统计]
-                fabricLogCustom("txUpgradeToLifetimeMemberFailed", jsonObjectfromKVS("account", account_id))
+                btsppLogCustom("txUpgradeToLifetimeMemberFailed", jsonObjectfromKVS("account", account_id))
             }
         }
     }

@@ -407,20 +407,20 @@ class ActivityGatewayWithdraw : BtsppActivity() {
                 _refreshUI(it as JSONObject)
                 showToast(R.string.kVcDWSubmitTxFullOK.xmlstring(this))
                 //  [统计]
-                fabricLogCustom("txGatewayWithdrawFullOK", jsonObjectfromKVS("account", account_id, "asset", _asset!!.getString("symbol")))
+                btsppLogCustom("txGatewayWithdrawFullOK", jsonObjectfromKVS("account", account_id, "asset", _asset!!.getString("symbol")))
                 return@then null
             }.catch {
                 mask.dismiss()
                 showToast(R.string.kVcDWSubmitTxOK.xmlstring(this))
                 //  [统计]
-                fabricLogCustom("txGatewayWithdrawOK", jsonObjectfromKVS("account", account_id, "asset", _asset!!.getString("symbol")))
+                btsppLogCustom("txGatewayWithdrawOK", jsonObjectfromKVS("account", account_id, "asset", _asset!!.getString("symbol")))
             }
             return@then null
         }.catch { err ->
             mask.dismiss()
             showGrapheneError(err)
             //  [统计]
-            fabricLogCustom("txGatewayWithdrawFailed", jsonObjectfromKVS("account", account_id, "asset", _asset!!.getString("symbol")))
+            btsppLogCustom("txGatewayWithdrawFailed", jsonObjectfromKVS("account", account_id, "asset", _asset!!.getString("symbol")))
         }
 
     }

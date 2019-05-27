@@ -84,7 +84,7 @@ fun android.app.Activity.alerShowMessageConfirm(title: String?, message: String)
 
 fun android.app.Activity.viewUserLimitOrders(account_id: String, tradingPair: TradingPair?) {
     //  [统计]
-    fabricLogCustom("event_view_userlimitorders", jsonObjectfromKVS("account", account_id))
+    btsppLogCustom("event_view_userlimitorders", jsonObjectfromKVS("account", account_id))
 
     val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
     mask.show()
@@ -146,7 +146,7 @@ fun android.app.Activity.viewUserLimitOrders(account_id: String, tradingPair: Tr
 
 fun android.app.Activity.viewUserAssets(account_name_or_id: String) {
     //  [统计]
-    fabricLogCustom("event_view_userassets", jsonObjectfromKVS("account", account_name_or_id))
+    btsppLogCustom("event_view_userassets", jsonObjectfromKVS("account", account_name_or_id))
 
     val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
     mask.show()
@@ -289,12 +289,12 @@ fun android.app.Activity.onExecuteCreateProposalCore(opcode: EBitsharesOperation
         } else {
             showToast(R.string.kProposalSubmitTipTxOK.xmlstring(this))
         }
-        fabricLogCustom("txProposalCreateOK", jsonObjectfromKVS("opcode", opcode.value, "account", fee_paying_account_id))
+        btsppLogCustom("txProposalCreateOK", jsonObjectfromKVS("opcode", opcode.value, "account", fee_paying_account_id))
         return@then null
     }.catch { err ->
         mask.dismiss()
         showGrapheneError(err)
-        fabricLogCustom("txProposalCreateFailed", jsonObjectfromKVS("opcode", opcode.value, "account", fee_paying_account_id))
+        btsppLogCustom("txProposalCreateFailed", jsonObjectfromKVS("opcode", opcode.value, "account", fee_paying_account_id))
     }
 }
 
@@ -500,7 +500,7 @@ fun AppCompatActivity.setAutoLayoutContentView(layoutResID: Int, navigationBarCo
     setContentView(layoutResID)
     adjustWindowSizeForNavigationBar(navigationBarColor)
     //  [统计]
-    fabricLogCustom("setAutoLayoutContentView", jsonObjectfromKVS("activity", this::class.java.name))
+    btsppLogCustom("setAutoLayoutContentView", jsonObjectfromKVS("activity", this::class.java.name))
 }
 
 /**

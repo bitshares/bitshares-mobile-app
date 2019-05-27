@@ -368,20 +368,20 @@ class FragmentTradeMainPage : BtsppFragment() {
 
                     showToast(String.format(resources.getString(R.string.kVcOrderTipTxCancelFullOK), order_id))
                     //  [统计]
-                    fabricLogCustom("txCancelLimitOrderFullOK", jsonObjectfromKVS("account", account_id))
+                    btsppLogCustom("txCancelLimitOrderFullOK", jsonObjectfromKVS("account", account_id))
                     return@then null
                 }.catch {
                     mask.dismiss()
                     showToast(String.format(resources.getString(R.string.kVcOrderTipTxCancelOK), order_id))
                     //  [统计]
-                    fabricLogCustom("txCancelLimitOrderOK", jsonObjectfromKVS("account", account_id))
+                    btsppLogCustom("txCancelLimitOrderOK", jsonObjectfromKVS("account", account_id))
                 }
                 return@then null
             }.catch { err ->
                 mask.dismiss()
                 showGrapheneError(err)
                 //  [统计]
-                fabricLogCustom("txCancelLimitOrderFailed", jsonObjectfromKVS("account", account_id))
+                btsppLogCustom("txCancelLimitOrderFailed", jsonObjectfromKVS("account", account_id))
             }
         }
     }
@@ -605,7 +605,7 @@ class FragmentTradeMainPage : BtsppFragment() {
                         showToast(String.format(resources.getString(R.string.kVcTradeTipTxCreateFullOKWithID), new_order_id))
                     }
                     //  [统计]
-                    fabricLogCustom("txCreateLimitOrderFullOK", jsonObjectfromKVS("account", seller, "isbuy", _isbuy,
+                    btsppLogCustom("txCreateLimitOrderFullOK", jsonObjectfromKVS("account", seller, "isbuy", _isbuy,
                             "base", _tradingPair._baseAsset.getString("symbol"), "quote", _tradingPair._quoteAsset.getString("symbol")))
                     return@then null
                 }.catch {
@@ -617,7 +617,7 @@ class FragmentTradeMainPage : BtsppFragment() {
                     mask.dismiss()
                     showToast(resources.getString(R.string.kVcTradeTipTxCreateOK))
                     //  [统计]
-                    fabricLogCustom("txCreateLimitOrderOK", jsonObjectfromKVS("account", seller, "isbuy", _isbuy,
+                    btsppLogCustom("txCreateLimitOrderOK", jsonObjectfromKVS("account", seller, "isbuy", _isbuy,
                             "base", _tradingPair._baseAsset.getString("symbol"), "quote", _tradingPair._quoteAsset.getString("symbol")))
                 }
                 return@then null
@@ -625,7 +625,7 @@ class FragmentTradeMainPage : BtsppFragment() {
                 mask.dismiss()
                 showGrapheneError(err)
                 //  [统计]
-                fabricLogCustom("txCreateLimitOrderFailed", jsonObjectfromKVS("account", seller, "isbuy", _isbuy,
+                btsppLogCustom("txCreateLimitOrderFailed", jsonObjectfromKVS("account", seller, "isbuy", _isbuy,
                         "base", _tradingPair._baseAsset.getString("symbol"), "quote", _tradingPair._quoteAsset.getString("symbol")))
             }
         }

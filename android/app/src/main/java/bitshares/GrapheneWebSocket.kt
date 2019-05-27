@@ -292,7 +292,7 @@ class GrapheneWebSocket {
             //  移除第一个 callback 参数
             val sub_params_mutable = JSONArray()
             var idx = 0
-            for (obj in old_sub_params) {
+            for (obj in old_sub_params.forin<Any>()) {
                 if (idx != 0) {
                     sub_params_mutable.put(obj)
                 }
@@ -368,7 +368,7 @@ class GrapheneWebSocket {
                     val error_stack = error_data.optJSONArray("stack")
                     if (error_message != "" && error_code != "" && error_stack != null && error_stack.length() > 0) {
                         val stack_str = error_stack.last<JSONObject>().toString()
-                        fabricLogCustom("api_error_${error_code}",
+                        btsppLogCustom("api_error_${error_code}",
                                 jsonObjectfromKVS("message", error_message, "detail_message", detail_error_message, "stack_str", stack_str))
                     }
                 }

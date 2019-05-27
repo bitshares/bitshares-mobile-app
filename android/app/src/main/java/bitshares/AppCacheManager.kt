@@ -425,7 +425,7 @@ class AppCacheManager {
         val fullpath = "${OrgUtils.getAppDirWebServerImport()}${filename}"
 
         //  [统计]
-        fabricLogCustom("auto_backupwallet", jsonObjectfromKVS("final_wallet_name", final_wallet_name, "has_prefix", hasDatePrefix))
+        btsppLogCustom("auto_backupwallet", jsonObjectfromKVS("final_wallet_name", final_wallet_name, "has_prefix", hasDatePrefix))
         return OrgUtils.write_file(fullpath, wallet_bin)
     }
 }

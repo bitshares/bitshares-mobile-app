@@ -320,20 +320,20 @@ class FragmentOrderCurrent : BtsppFragment() {
                     refreshUI()
                     showToast(String.format(_ctx!!.resources.getString(R.string.kVcOrderTipTxCancelFullOK), order_id))
                     //  [统计]
-                    fabricLogCustom("txCancelLimitOrderFullOK", jsonObjectfromKVS("account", account_id))
+                    btsppLogCustom("txCancelLimitOrderFullOK", jsonObjectfromKVS("account", account_id))
                     return@then null
                 }.catch {
                     mask.dismiss()
                     showToast(String.format(_ctx!!.resources.getString(R.string.kVcOrderTipTxCancelOK), order_id))
                     //  [统计]
-                    fabricLogCustom("txCancelLimitOrderOK", jsonObjectfromKVS("account", account_id))
+                    btsppLogCustom("txCancelLimitOrderOK", jsonObjectfromKVS("account", account_id))
                 }
                 return@then null
             }.catch { err ->
                 mask.dismiss()
                 showGrapheneError(err)
                 //  [统计]
-                fabricLogCustom("txCancelLimitOrderFailed", jsonObjectfromKVS("account", account_id))
+                btsppLogCustom("txCancelLimitOrderFailed", jsonObjectfromKVS("account", account_id))
             }
         }
     }

@@ -190,20 +190,20 @@ class ActivityTransfer : BtsppActivity() {
                 _refreshUI_onSendDone(it as JSONObject)
                 showToast(resources.getString(R.string.kVcTransferTipTxTransferFullOK))
                 //  [统计]
-                fabricLogCustom("txTransferFullOK", jsonObjectfromKVS("account", account_id, "asset", asset.getString("symbol")))
+                btsppLogCustom("txTransferFullOK", jsonObjectfromKVS("account", account_id, "asset", asset.getString("symbol")))
                 return@then null
             }.catch {
                 mask.dismiss()
                 showToast(resources.getString(R.string.kVcTransferTipTxTransferOK))
                 //  [统计]
-                fabricLogCustom("txTransferOK", jsonObjectfromKVS("account", account_id, "asset", asset.getString("symbol")))
+                btsppLogCustom("txTransferOK", jsonObjectfromKVS("account", account_id, "asset", asset.getString("symbol")))
             }
             return@then null
         }.catch { err ->
             mask.dismiss()
             showGrapheneError(err)
             //  [统计]
-            fabricLogCustom("txTransferFailed", jsonObjectfromKVS("asset", asset.getString("symbol")))
+            btsppLogCustom("txTransferFailed", jsonObjectfromKVS("asset", asset.getString("symbol")))
         }
     }
 

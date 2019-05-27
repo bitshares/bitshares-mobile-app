@@ -71,18 +71,18 @@ class ActivityIndexCollateral : BtsppActivity() {
         //  帮助按钮
         findViewById<ImageView>(R.id.tip_link_curr_feed).setOnClickListener {
             //  [统计]
-            fabricLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_feed_settlement"))
-            goToWebView("喂价和强平触发价", "http://btspp.io/qam.html#qa_feed_settlement")
+            btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_feed_settlement"))
+            goToWebView(resources.getString(R.string.kDebtTipTitleFeedAndCallPrice), "http://btspp.io/qam.html#qa_feed_settlement")
         }
         findViewById<ImageView>(R.id.tip_link_ratio).setOnClickListener {
             //  [统计]
-            fabricLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_ratio"))
-            goToWebView("什么是抵押率？", "http://btspp.io/qam.html#qa_ratio")
+            btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_ratio"))
+            goToWebView(resources.getString(R.string.kDebtTipTitleWhatIsRatio), "http://btspp.io/qam.html#qa_ratio")
         }
         findViewById<ImageView>(R.id.tip_link_target_ratio).setOnClickListener {
             //  [统计]
-            fabricLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_target_ratio"))
-            goToWebView("什么是目标抵押率？", "http://btspp.io/qam.html#qa_target_ratio")
+            btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_target_ratio"))
+            goToWebView(resources.getString(R.string.kDebtTipTitleWhatIsTargetRatio), "http://btspp.io/qam.html#qa_target_ratio")
         }
 
         //  监听事件
@@ -231,20 +231,20 @@ class ActivityIndexCollateral : BtsppActivity() {
                     _refreshUI(true, null)
                     showToast(resources.getString(R.string.kDebtTipTxUpdatePositionFullOK))
                     //  [统计]
-                    fabricLogCustom("txCallOrderUpdateFullOK", jsonObjectfromKVS("account", funding_account, "debt_asset", _debtPair!!._baseAsset.getString("symbol")))
+                    btsppLogCustom("txCallOrderUpdateFullOK", jsonObjectfromKVS("account", funding_account, "debt_asset", _debtPair!!._baseAsset.getString("symbol")))
                     return@then null
                 }.catch {
                     mask.dismiss()
                     showToast(resources.getString(R.string.kDebtTipTxUpdatePositionOK))
                     //  [统计]
-                    fabricLogCustom("txCallOrderUpdateOK", jsonObjectfromKVS("account", funding_account, "debt_asset", _debtPair!!._baseAsset.getString("symbol")))
+                    btsppLogCustom("txCallOrderUpdateOK", jsonObjectfromKVS("account", funding_account, "debt_asset", _debtPair!!._baseAsset.getString("symbol")))
                 }
                 return@then null
             }.catch { err ->
                 mask.dismiss()
                 showGrapheneError(err)
                 //  [统计]
-                fabricLogCustom("txCallOrderUpdateFailed", jsonObjectfromKVS("account", funding_account, "debt_asset", _debtPair!!._baseAsset.getString("symbol")))
+                btsppLogCustom("txCallOrderUpdateFailed", jsonObjectfromKVS("account", funding_account, "debt_asset", _debtPair!!._baseAsset.getString("symbol")))
             }
         }
     }

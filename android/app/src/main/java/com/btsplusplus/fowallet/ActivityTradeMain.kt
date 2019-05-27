@@ -145,14 +145,14 @@ class ActivityTradeMain : BtsppActivity() {
             btn_fav.setColorFilter(resources.getColor(R.color.theme01_textColorGray))
             showToast(resources.getString(R.string.kTipsAddFavDelete))
             //  [统计]
-            fabricLogCustom("event_market_remove_fav", jsonObjectfromKVS("base", base_symbol, "quote", quote_symbol))
+            btsppLogCustom("event_market_remove_fav", jsonObjectfromKVS("base", base_symbol, "quote", quote_symbol))
         } else {
             //  添加自选、高亮五星、提示信息
             pAppCache.set_fav_markets(quote_symbol, base_symbol)
             btn_fav.setColorFilter(resources.getColor(R.color.theme01_textColorHighlight))
             showToast(resources.getString(R.string.kTipsAddFavSuccess))
             //  [统计]
-            fabricLogCustom("event_market_add_fav", jsonObjectfromKVS("base", base_symbol, "quote", quote_symbol))
+            btsppLogCustom("event_market_add_fav", jsonObjectfromKVS("base", base_symbol, "quote", quote_symbol))
         }
         pAppCache.saveFavMarketsToFile()
         //  标记：自选列表需要更新
