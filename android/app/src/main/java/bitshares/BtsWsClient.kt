@@ -16,22 +16,22 @@ class BtsWsClient : WebSocketClient {
     }
 
     override fun onOpen(handshakedata: ServerHandshake) {
-        gw.webSocketDidOpen()
+        delay_main { gw.webSocketDidOpen() }
     }
 
     override fun onClose(code: Int, reason: String, remote: Boolean) {
-        gw.process_websocket_error_or_close("websocket events closed...")
+        delay_main { gw.process_websocket_error_or_close("websocket events closed...") }
     }
 
     override fun onMessage(message: String) {
-        gw.didReceiveMessage(message)
+        delay_main { gw.didReceiveMessage(message) }
     }
 
     override fun onMessage(message: ByteBuffer) {
-        gw.didReceiveMessage(message)
+        delay_main { gw.didReceiveMessage(message) }
     }
 
     override fun onError(ex: Exception) {
-        gw.didFailWithError(ex)
+        delay_main { gw.didFailWithError(ex) }
     }
 }
