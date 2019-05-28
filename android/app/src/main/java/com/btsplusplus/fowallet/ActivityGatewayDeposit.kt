@@ -3,7 +3,6 @@ package com.btsplusplus.fowallet
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
-import bitshares.TempManager
 import bitshares.Utils
 import bitshares.xmlstring
 import kotlinx.android.synthetic.main.activity_gateway_recharge.*

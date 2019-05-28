@@ -71,7 +71,7 @@ class ActivityIndexMarkets : BtsppActivity() {
     private fun startTickerRefreshTimer() {
         if (_tickerRefreshTimer == null) {
             _tickerRefreshTimer = Timer()
-            _tickerRefreshTimer!!.schedule(object : TimerTask(){
+            _tickerRefreshTimer!!.schedule(object : TimerTask() {
                 override fun run() {
                     delay_main {
                         onTimerTickerRefresh()

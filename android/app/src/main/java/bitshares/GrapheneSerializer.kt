@@ -478,7 +478,7 @@ class Tm_optional(optype: T_Base_companion) : T_Base_companion() {
 class Tm_static_variant(optypearray: JSONArray) : T_Base_companion() {
     private var _optypearray = optypearray
 
-    override fun to_byte_buffer(io: BinSerializer, opdata: Any?){
+    override fun to_byte_buffer(io: BinSerializer, opdata: Any?) {
         assert(opdata != null && opdata is JSONArray)
         val _opdata = opdata as JSONArray
         assert(opdata.length() == 2)
@@ -488,7 +488,7 @@ class Tm_static_variant(optypearray: JSONArray) : T_Base_companion() {
 
         //  1、write typeid  2、write opdata
         io.write_varint32(type_id)
-        encode_to_bytes_with_type(optype,opdata.last(),io)
+        encode_to_bytes_with_type(optype, opdata.last(), io)
     }
 
     override fun to_object(opdata: Any?): Any? {
@@ -501,7 +501,7 @@ class Tm_static_variant(optypearray: JSONArray) : T_Base_companion() {
 
         return JSONArray().apply {
             put(type_id)
-            put(encode_to_object_with_type(optype,opdata.last()))
+            put(encode_to_object_with_type(optype, opdata.last()))
         }
     }
 }
@@ -726,11 +726,11 @@ class T_htlc_create : T_Base() {
 class T_htlc_redeem : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
-            add_field("fee",T_asset)
-            add_field("htlc_id",Tm_protocol_id_type("htlc"))
-            add_field("redeemer",Tm_protocol_id_type("account"))
-            add_field("preimage",Tm_bytes())
-            add_field("extensions",Tm_set(T_future_extensions))
+            add_field("fee", T_asset)
+            add_field("htlc_id", Tm_protocol_id_type("htlc"))
+            add_field("redeemer", Tm_protocol_id_type("account"))
+            add_field("preimage", Tm_bytes())
+            add_field("extensions", Tm_set(T_future_extensions))
         }
     }
 }
@@ -738,11 +738,11 @@ class T_htlc_redeem : T_Base() {
 class T_htlc_extend : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
-            add_field("fee",T_asset)
-            add_field("htlc_id",Tm_protocol_id_type("htlc"))
-            add_field("update_issuer",Tm_protocol_id_type("account"))
-            add_field("seconds_to_add",T_uint32)
-            add_field("extensions",Tm_set(T_future_extensions))
+            add_field("fee", T_asset)
+            add_field("htlc_id", Tm_protocol_id_type("htlc"))
+            add_field("update_issuer", Tm_protocol_id_type("account"))
+            add_field("seconds_to_add", T_uint32)
+            add_field("extensions", Tm_set(T_future_extensions))
         }
     }
 }

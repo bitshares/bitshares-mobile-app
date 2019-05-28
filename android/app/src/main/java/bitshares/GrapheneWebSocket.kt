@@ -395,7 +395,7 @@ class GrapheneWebSocket {
     private fun startKeepAliveTimer() {
         if (_keepAliveTimer == null) {
             _keepAliveTimer = Timer()
-            _keepAliveTimer!!.schedule(object : TimerTask(){
+            _keepAliveTimer!!.schedule(object : TimerTask() {
                 override fun run() {
                     delay_main {
                         onKeepAliveTimerTick()
@@ -486,7 +486,7 @@ class GrapheneWebSocket {
 
         //  通讯中或登录中异常：则当前的所有待完成promise全部reject
         if (_cbs.isNotEmpty()) {
-            for ((_, v) in _cbs.toMap()){
+            for ((_, v) in _cbs.toMap()) {
                 v.reject(message)
             }
             _cbs.clear()

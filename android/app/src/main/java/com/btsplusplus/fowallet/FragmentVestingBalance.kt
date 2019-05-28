@@ -42,7 +42,7 @@ class FragmentVestingBalance : BtsppFragment() {
     }
 
     fun queryVestingBalance() {
-        if (_full_account_data == null){
+        if (_full_account_data == null) {
             return
         }
 
@@ -70,10 +70,11 @@ class FragmentVestingBalance : BtsppFragment() {
                 val data_witness = all_data.optJSONObject(2)
                 data_workers?.forEach<JSONObject> { nullable_worker ->
                     val worker = nullable_worker!!
-                    if (OrgUtils.getWorkerType(worker) == EBitsharesWorkType.ebwt_vesting.value){
+                    if (OrgUtils.getWorkerType(worker) == EBitsharesWorkType.ebwt_vesting.value) {
                         val balance = worker.getJSONArray("worker").getJSONObject(1).optString("balance", null)
                         if (balance != null) {
-                            val name = worker.optString("name", null) ?: R.string.kVestingCellNameWorkerFunds.xmlstring(_ctx!!)
+                            val name = worker.optString("name", null)
+                                    ?: R.string.kVestingCellNameWorkerFunds.xmlstring(_ctx!!)
                             vesting_balance_name_hash.put(balance, name)
                         }
                     }
@@ -85,7 +86,7 @@ class FragmentVestingBalance : BtsppFragment() {
                     }
                 }
                 val cashback_vb = account.optString("cashback_vb", null)
-                if (cashback_vb != null){
+                if (cashback_vb != null) {
                     vesting_balance_name_hash.put(cashback_vb, R.string.kVestingCellNameCashbackFunds.xmlstring(_ctx!!))
                 }
 
@@ -112,20 +113,21 @@ class FragmentVestingBalance : BtsppFragment() {
         _data_array.clear()
 
         if (data_array.length() > 0) {
-            for (it in data_array.forin<JSONObject>()){
+            for (it in data_array.forin<JSONObject>()) {
                 val vesting = it!!
                 val oid = vesting.getString("id")
                 //  略过总金额为 0 的待解冻金额对象。
-                if (vesting.getJSONObject("balance").getString("amount").toLong() == 0L){
+                if (vesting.getJSONObject("balance").getString("amount").toLong() == 0L) {
                     continue
                 }
                 //  linear_vesting_policy = 0,
                 //  cdd_vesting_policy
                 if (vesting.getJSONArray("policy").getInt(0) == 1) {
-                    val name = nameHash.optString(oid, null) ?: R.string.kVestingCellNameCustomVBO.xmlstring(_ctx!!)
+                    val name = nameHash.optString(oid, null)
+                            ?: R.string.kVestingCellNameCustomVBO.xmlstring(_ctx!!)
                     vesting.put("kName", name)
                     _data_array.add(vesting)
-                }else{
+                } else {
                     //  TODO:fowallet 1.7 暂时不支持 linear_vesting_policy
                 }
             }
@@ -138,15 +140,15 @@ class FragmentVestingBalance : BtsppFragment() {
         _view?.let { view ->
             val container: LinearLayout = view.findViewById(R.id.layout_vesting_balance_cell)
             container.removeAllViews()
-            if (_data_array.size > 0){
+            if (_data_array.size > 0) {
                 refreshUI(container)
-            }else{
+            } else {
                 container.addView(ViewUtils.createEmptyCenterLabel(_ctx!!, R.string.kVestingTipsNoData.xmlstring(_ctx!!)))
             }
         }
     }
 
-    private fun refreshUI(container: LinearLayout){
+    private fun refreshUI(container: LinearLayout) {
         _data_array.forEachIndexed { idx, vesting ->
             val name = vesting.getString("kName")
 
@@ -167,25 +169,25 @@ class FragmentVestingBalance : BtsppFragment() {
             //  line1 name & button
             val layout_line1 = LinearLayout(_ctx)
             val layout_line1_params = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP)
-            layout_line1_params.setMargins(0,10.dp,0,0)
+            layout_line1_params.setMargins(0, 10.dp, 0, 0)
             layout_line1.layoutParams = layout_line1_params
-            val tv_balance = TextViewEx(_ctx!!,"${idx + 1}. $name", dp_size = 13.0f, bold = true, color = R.color.theme01_textColorMain, gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL)
+            val tv_balance = TextViewEx(_ctx!!, "${idx + 1}. $name", dp_size = 13.0f, bold = true, color = R.color.theme01_textColorMain, gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL)
             layout_line1.addView(tv_balance)
             if (_isSelfAccount) {
                 val tv_pickup = TextViewEx(_ctx!!, R.string.kVestingCellBtnWithdrawal.xmlstring(_ctx!!), dp_size = 13.0f, color = R.color.theme01_textColorHighlight, gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL, width = LLAYOUT_MATCH)
                 layout_line1.addView(tv_pickup)
                 // click event
-                tv_pickup.setOnClickListener{ onWithdrawButtonClicked(vesting) }
+                tv_pickup.setOnClickListener { onWithdrawButtonClicked(vesting) }
             }
 
             //  line2 title
             val layout_line2 = LinearLayout(_ctx)
             val layout_line2_params = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP)
-            layout_line2_params.setMargins(0,10.dp,0,0)
+            layout_line2_params.setMargins(0, 10.dp, 0, 0)
             layout_line2.layoutParams = layout_line2_params
-            val tv_total_amount = TextViewEx(_ctx!!,"${R.string.kVestingCellTotal.xmlstring(_ctx!!)}($balance_asset_symbol)", dp_size = 11.0f, color = R.color.theme01_textColorGray ,width = 0.dp, weight = 1.0f,gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL)
-            val tv_unfreeze_amount = TextViewEx(_ctx!!,"${R.string.kVestingCellVesting.xmlstring(_ctx!!)}($balance_asset_symbol)", dp_size = 11.0f, color = R.color.theme01_textColorGray ,width = 0.dp, weight = 1.0f,gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL)
-            val tv_unfreeze_cycle = TextViewEx(_ctx!!, R.string.kVestingCellPeriod.xmlstring(_ctx!!), dp_size = 11.0f, color = R.color.theme01_textColorGray ,width = 0.dp, weight = 1.0f,gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL)
+            val tv_total_amount = TextViewEx(_ctx!!, "${R.string.kVestingCellTotal.xmlstring(_ctx!!)}($balance_asset_symbol)", dp_size = 11.0f, color = R.color.theme01_textColorGray, width = 0.dp, weight = 1.0f, gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL)
+            val tv_unfreeze_amount = TextViewEx(_ctx!!, "${R.string.kVestingCellVesting.xmlstring(_ctx!!)}($balance_asset_symbol)", dp_size = 11.0f, color = R.color.theme01_textColorGray, width = 0.dp, weight = 1.0f, gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL)
+            val tv_unfreeze_cycle = TextViewEx(_ctx!!, R.string.kVestingCellPeriod.xmlstring(_ctx!!), dp_size = 11.0f, color = R.color.theme01_textColorGray, width = 0.dp, weight = 1.0f, gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL)
             layout_line2.addView(tv_total_amount)
             layout_line2.addView(tv_unfreeze_amount)
             layout_line2.addView(tv_unfreeze_cycle)
@@ -193,11 +195,11 @@ class FragmentVestingBalance : BtsppFragment() {
             //  line3 value
             val layout_line3 = LinearLayout(_ctx)
             val layout_line3_params = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP)
-            layout_line3_params.setMargins(0,10.dp,0,10.dp)
+            layout_line3_params.setMargins(0, 10.dp, 0, 10.dp)
             layout_line3.layoutParams = layout_line3_params
-            val tv_total_amount_value = TextViewEx(_ctx!!,total_amount, dp_size = 12.0f, color = R.color.theme01_textColorNormal ,width = 0.dp, weight = 1.0f,gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL)
-            val tv_unfreeze_amount_value = TextViewEx(_ctx!!,unfreeze_number, dp_size = 12.0f, color = R.color.theme01_textColorNormal ,width = 0.dp, weight = 1.0f,gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL)
-            val tv_unfreeze_cycle_value = TextViewEx(_ctx!!,unfreeze_cycle, dp_size = 12.0f, color = R.color.theme01_textColorNormal ,width = 0.dp, weight = 1.0f,gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL)
+            val tv_total_amount_value = TextViewEx(_ctx!!, total_amount, dp_size = 12.0f, color = R.color.theme01_textColorNormal, width = 0.dp, weight = 1.0f, gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL)
+            val tv_unfreeze_amount_value = TextViewEx(_ctx!!, unfreeze_number, dp_size = 12.0f, color = R.color.theme01_textColorNormal, width = 0.dp, weight = 1.0f, gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL)
+            val tv_unfreeze_cycle_value = TextViewEx(_ctx!!, unfreeze_cycle, dp_size = 12.0f, color = R.color.theme01_textColorNormal, width = 0.dp, weight = 1.0f, gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL)
             layout_line3.addView(tv_total_amount_value)
             layout_line3.addView(tv_unfreeze_amount_value)
             layout_line3.addView(tv_unfreeze_cycle_value)
@@ -219,7 +221,7 @@ class FragmentVestingBalance : BtsppFragment() {
         val start_claim = policy_data.getString("start_claim")
         val start_claim_ts = Utils.parseBitsharesTimeString(start_claim)
         val now_ts = Utils.now_ts()
-        if (now_ts <= start_claim_ts){
+        if (now_ts <= start_claim_ts) {
             val d = Date(start_claim_ts * 1000)
             val f = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
             val s = f.format(d)
@@ -229,7 +231,7 @@ class FragmentVestingBalance : BtsppFragment() {
 
         //  计算可提取数量
         val withdraw_available = Utils.calcVestingBalanceAmount(vesting)
-        if (withdraw_available <= 0){
+        if (withdraw_available <= 0) {
             showToast(R.string.kVestingTipsAvailableZero.xmlstring(_ctx!!))
             return
         }

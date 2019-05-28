@@ -37,7 +37,7 @@ class FragmentAssetsDetail : BtsppFragment() {
     private var _dataArray = mutableListOf<JSONObject>()
 
     override fun onInitParams(args: Any?) {
-        if ( args != null ) {
+        if (args != null) {
             _full_account_data = args as JSONObject
             queryAccountHistory()
         }
@@ -131,7 +131,7 @@ class FragmentAssetsDetail : BtsppFragment() {
     }
 
     private fun refreshUI() {
-        if (_loading || _view == null){
+        if (_loading || _view == null) {
             return
         }
         val act = this.activity

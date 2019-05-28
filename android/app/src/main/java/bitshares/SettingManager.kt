@@ -1,7 +1,6 @@
 package bitshares
 
 import com.fowallet.walletcore.bts.ChainObjectManager
-import org.json.JSONArray
 import org.json.JSONObject
 
 class SettingManager {
@@ -78,7 +77,7 @@ class SettingManager {
      *  获取K线指标参数配置信息
      */
 
-    fun getKLineIndexInfos() : JSONObject {
+    fun getKLineIndexInfos(): JSONObject {
         val settings = _load_setting_hash()
         val value = settings.optJSONObject(kSettingKey_KLineIndexInfo)
         if (value == null) {

@@ -1,25 +1,16 @@
 package com.btsplusplus.fowallet
 
-import android.app.Activity
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.LinearLayout
 import android.widget.TextView
 import bitshares.AppCacheManager
-import bitshares.SettingManager
-import com.btsplusplus.fowallet.kline.TradingPair
 import com.fowallet.walletcore.bts.WalletManager
-
-import org.json.JSONArray
-import org.json.JSONObject
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

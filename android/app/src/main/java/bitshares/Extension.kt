@@ -156,11 +156,11 @@ inline fun <reified T> List<T>.toJsonArray(): JSONArray {
  * 计算摘要信息
  */
 fun rmd160(buffer: ByteArray): ByteArray {
-    return  NativeInterface.sharedNativeInterface().rmd160(buffer)
+    return NativeInterface.sharedNativeInterface().rmd160(buffer)
 }
 
 fun sha1(buffer: ByteArray): ByteArray {
-    return  NativeInterface.sharedNativeInterface().sha1(buffer)
+    return NativeInterface.sharedNativeInterface().sha1(buffer)
 }
 
 fun sha256(buffer: ByteArray): ByteArray {
@@ -273,16 +273,16 @@ fun btsppLogCustom(event_name: String, args: JSONObject? = null) {
 
     //  统计Flurry日志
     try {
-        if (args != null){
+        if (args != null) {
             val event_args = mutableMapOf<String, String>()
             args.keys().forEach { key ->
                 event_args[key] = args.get(key).toString()
             }
             FlurryAgent.logEvent(event_name, event_args)
-        }else{
+        } else {
             FlurryAgent.logEvent(event_name)
         }
-    }catch (e: Exception){
+    } catch (e: Exception) {
         //  ...
     }
 }

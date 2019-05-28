@@ -58,7 +58,7 @@ class ActivityIndexMy : BtsppActivity() {
             val result_promise = Promise()
             goTo(ActivitySetting::class.java, true, args = jsonObjectfromKVS("result_promise", result_promise))
             result_promise.then {
-                if (LangManager.sharedLangManager().currLangCode != saveCurrLangCode){
+                if (LangManager.sharedLangManager().currLangCode != saveCurrLangCode) {
                     recreate()
                 }
             }

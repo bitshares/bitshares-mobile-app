@@ -8,7 +8,10 @@ import android.view.View
 import android.view.animation.OvershootInterpolator
 import android.widget.ImageButton
 import android.widget.TextView
-import bitshares.*
+import bitshares.AppCacheManager
+import bitshares.btsppLogCustom
+import bitshares.jsonArrayfrom
+import bitshares.jsonObjectfromKVS
 import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_my_assets.*
 import org.json.JSONObject
@@ -127,9 +130,9 @@ class ActivityMyAssets : BtsppActivity() {
                 val pos = tab.position
                 view_pager!!.setCurrentItem(pos, true)
                 fragmens[pos].let {
-                    if (it is FragmentAssetsHtlcList){
+                    if (it is FragmentAssetsHtlcList) {
                         it.queryUserHTLCs()
-                    }else if (it is FragmentVestingBalance){
+                    } else if (it is FragmentVestingBalance) {
                         it.queryVestingBalance()
                     }
                 }

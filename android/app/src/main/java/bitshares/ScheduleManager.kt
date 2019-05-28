@@ -93,7 +93,7 @@ class ScheduleManager {
     fun startTimer() {
         if (_timer_per_seconds == null) {
             _timer_per_seconds = Timer()
-            _timer_per_seconds!!.schedule(object : TimerTask(){
+            _timer_per_seconds!!.schedule(object : TimerTask() {
                 override fun run() {
                     delay_main {
                         onTimerTick()

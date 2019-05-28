@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import android.webkit.WebSettings.LOAD_NO_CACHE
 import android.webkit.WebViewClient
-import bitshares.TempManager
 import kotlinx.android.synthetic.main.activity_webview.*
 
 class ActivityWebView : BtsppActivity() {

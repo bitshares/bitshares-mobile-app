@@ -1,12 +1,14 @@
 package com.btsplusplus.fowallet
 
 import android.os.Bundle
-import bitshares.*
+import bitshares.Promise
+import bitshares.TempManager
+import bitshares.jsonArrayfrom
+import bitshares.xmlstring
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_index_services.*
 import org.json.JSONArray
-import org.json.JSONObject
 
 class ActivityIndexServices : BtsppActivity() {
 

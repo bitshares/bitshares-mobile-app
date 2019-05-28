@@ -138,11 +138,11 @@ class Utils {
          *  (public) 原像格式是否正确　TODO:fowallet 格式细节
          *  格式：20位以上，包含大写字母和数字。
          */
-        fun isValidHTCLPreimageFormat(preimage: String?) : Boolean {
+        fun isValidHTCLPreimageFormat(preimage: String?): Boolean {
             if (preimage == null) {
                 return false
             }
-            if (preimage.length < 20){ //TODO:fowallet cfg
+            if (preimage.length < 20) { //TODO:fowallet cfg
                 return false
             }
 
@@ -161,11 +161,11 @@ class Utils {
         /**
          *  是否是有效的16进制字符串检测。
          */
-        fun isValidHexString(hexstring: String?) : Boolean {
+        fun isValidHexString(hexstring: String?): Boolean {
             if (hexstring == null) {
                 return false
             }
-            if (hexstring.length % 2 != 0){
+            if (hexstring.length % 2 != 0) {
                 return false
             }
             //  A-F、a-f、0-9 组成
@@ -281,7 +281,7 @@ class Utils {
         /**
          *  (public) 计算已经解冻的余额数量。（可提取的）
          */
-        fun calcVestingBalanceAmount(vesting: JSONObject) : Long {
+        fun calcVestingBalanceAmount(vesting: JSONObject): Long {
             val policy = vesting.getJSONArray("policy")
             //  TODO:fowallet 其他的类型不支持。
             assert(policy.getInt(0) == 1)
@@ -372,29 +372,29 @@ class Utils {
             //  REMARK：本地时间不准确的情况下该差值可能为负数，故取 MAX。
             val diff_ts = max(now_ts() - ts, 0L)
             if (diff_ts < 60) {
-                return String.format(R.string.kVcFeedNsecAgo.xmlstring(ctx),diff_ts)
+                return String.format(R.string.kVcFeedNsecAgo.xmlstring(ctx), diff_ts)
             } else if (diff_ts < 3600) {
-                return String.format(R.string.kVcFeedNminAgo.xmlstring(ctx),(diff_ts / 60).toInt())
+                return String.format(R.string.kVcFeedNminAgo.xmlstring(ctx), (diff_ts / 60).toInt())
             } else if (diff_ts < 86400) {
-                return String.format(R.string.kVcFeedNhourAgo.xmlstring(ctx),(diff_ts / 3600).toInt())
+                return String.format(R.string.kVcFeedNhourAgo.xmlstring(ctx), (diff_ts / 3600).toInt())
             } else {
-                return String.format(R.string.kVcFeedNDayAgo.xmlstring(ctx),(diff_ts / 86400).toInt())
+                return String.format(R.string.kVcFeedNDayAgo.xmlstring(ctx), (diff_ts / 86400).toInt())
             }
         }
 
         /**
          *  格式化：解冻周期。
          */
-        fun fmtVestingPeriodDateString(ctx: Context, seconds: Long) : String {
-            if (seconds < 60){
+        fun fmtVestingPeriodDateString(ctx: Context, seconds: Long): String {
+            if (seconds < 60) {
                 return String.format(R.string.kVestingCellPeriodSec.xmlstring(ctx), seconds.toString())
-            } else if (seconds < 3600){
+            } else if (seconds < 3600) {
                 val min = (seconds / 60).toInt()
                 return String.format(R.string.kVestingCellPeriodMin.xmlstring(ctx), min.toString())
-            } else if (seconds < 86400){
+            } else if (seconds < 86400) {
                 val hour = (seconds / 3600).toInt()
                 return String.format(R.string.kVestingCellPeriodHour.xmlstring(ctx), hour.toString())
-            }else{
+            } else {
                 val day = (seconds / 86400).toInt()
                 return String.format(R.string.kVestingCellPeriodDay.xmlstring(ctx), day.toString())
             }
@@ -589,11 +589,11 @@ class Utils {
         /**
          * 读取剪贴板内容
          */
-        fun readFromClipboard(ctx: Context):String{
+        fun readFromClipboard(ctx: Context): String {
             val mgr = ctx.getSystemService(CLIPBOARD_SERVICE) as? ClipboardManager
-            if (mgr != null && mgr.hasPrimaryClip()){
+            if (mgr != null && mgr.hasPrimaryClip()) {
                 val data = mgr.primaryClip
-                if (data != null){
+                if (data != null) {
                     val item = data.getItemAt(0)
                     return item.coerceToText(ctx).toString()
                 }

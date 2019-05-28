@@ -192,7 +192,7 @@ class OrgUtils {
          * call_price = (collateral × MCR) ÷ debt
          */
         fun calcSettlementTriggerPrice(debt_amount: String, collateral_amount: String, debt_precision: Int, collateral_precision: Int, n_mcr: BigDecimal, roundingMode: Int?, precision: Int?): BigDecimal {
-            val n_debt = bigDecimalfromAmount(debt_amount,debt_precision)
+            val n_debt = bigDecimalfromAmount(debt_amount, debt_precision)
             val n_collateral = bigDecimalfromAmount(collateral_amount, collateral_precision)
 
             var n: BigDecimal = n_debt.multiply(n_mcr)
@@ -510,9 +510,9 @@ class OrgUtils {
         /**
          *  获取 worker 类型。0:refund 1:vesting 2:burn
          */
-        fun getWorkerType(worker_json_object: JSONObject) : Int {
+        fun getWorkerType(worker_json_object: JSONObject): Int {
             val worker = worker_json_object.optJSONArray("worker")
-            if (worker != null && worker.length() > 0){
+            if (worker != null && worker.length() > 0) {
                 return worker.getInt(0)
             }
             //  default is vesting worker
@@ -522,8 +522,8 @@ class OrgUtils {
         /**
          *  从操作的结果结构体中提取新对象ID。
          */
-        fun extractNewObjectIDFromOperationResult(operation_result: JSONArray?) : String? {
-            if (operation_result != null && operation_result.length() == 2 && operation_result.getInt(0) == 1){
+        fun extractNewObjectIDFromOperationResult(operation_result: JSONArray?): String? {
+            if (operation_result != null && operation_result.length() == 2 && operation_result.getInt(0) == 1) {
                 return operation_result.getString(1)
             }
             return null
@@ -534,7 +534,7 @@ class OrgUtils {
          *  考虑到数据结构可能变更，加各种safe判断。
          *  REMARK：仅考虑一个 op 的情况，如果一个交易包含多个 op 则不支持。
          */
-        fun extractNewObjectID(transaction_confirmation_list: JSONArray?) : String? {
+        fun extractNewObjectID(transaction_confirmation_list: JSONArray?): String? {
             val new_object_id = null
             if (transaction_confirmation_list != null && transaction_confirmation_list.length() > 0) {
                 val trx = transaction_confirmation_list.getJSONObject(0).optJSONObject("trx")
@@ -589,7 +589,7 @@ class OrgUtils {
                 EBitsharesOperations.ebo_account_update.value -> {
                     container.put(opdata.getString("account"), true)
                     val owner = opdata.optJSONObject("owner")
-                    if (owner != null){
+                    if (owner != null) {
                         owner.getJSONArray("account_auths").forEach<JSONArray> { item ->
                             assert(item!!.length() == 2)
                             val account_id = item.getString(0)
@@ -597,7 +597,7 @@ class OrgUtils {
                         }
                     }
                     val active = opdata.optJSONObject("active")
-                    if (active != null){
+                    if (active != null) {
                         active.getJSONArray("account_auths").forEach<JSONArray> { item ->
                             assert(item!!.length() == 2)
                             val account_id = item.getString(0)
@@ -730,23 +730,23 @@ class OrgUtils {
                     //  TODO:
                 }
                 EBitsharesOperations.ebo_htlc_create.value -> {
-                    container.put(opdata.getString("from"),true)
-                    container.put(opdata.getString("to"),true)
-                    container.put(opdata.getJSONObject("amount").getString("asset_id"),true)
+                    container.put(opdata.getString("from"), true)
+                    container.put(opdata.getString("to"), true)
+                    container.put(opdata.getJSONObject("amount").getString("asset_id"), true)
                 }
                 EBitsharesOperations.ebo_htlc_redeem.value -> {
-                    container.put(opdata.getString("redeemer"),true)
+                    container.put(opdata.getString("redeemer"), true)
                 }
                 EBitsharesOperations.ebo_htlc_redeemed.value -> {
-                    container.put(opdata.getString("redeemer"),true)
-                    container.put(opdata.getString("to"),true)
-                    container.put(opdata.getJSONObject("amount").getString("asset_id"),true)
+                    container.put(opdata.getString("redeemer"), true)
+                    container.put(opdata.getString("to"), true)
+                    container.put(opdata.getJSONObject("amount").getString("asset_id"), true)
                 }
                 EBitsharesOperations.ebo_htlc_extend.value -> {
-                    container.put(opdata.getString("update_issuer"),true)
+                    container.put(opdata.getString("update_issuer"), true)
                 }
                 EBitsharesOperations.ebo_htlc_refund.value -> {
-                    container.put(opdata.getString("to"),true)
+                    container.put(opdata.getString("to"), true)
                 }
                 else -> {
                 }
@@ -756,7 +756,7 @@ class OrgUtils {
         /**
          *  转换OP数据为UI显示数据。
          */
-        fun processOpdata2UiData(opcode: Int, opdata: JSONObject, opresult:JSONArray?, isproposal: Boolean, ctx: Context): JSONObject {
+        fun processOpdata2UiData(opcode: Int, opdata: JSONObject, opresult: JSONArray?, isproposal: Boolean, ctx: Context): JSONObject {
             val chainMgr = ChainObjectManager.sharedChainObjectManager()
 
             var name = R.string.kOpType_unknown_op.xmlstring(ctx)
@@ -850,13 +850,13 @@ class OrgUtils {
                     val authorizing_account = chainMgr.getChainObjectByID(opdata.getString("authorizing_account")).getString("name")
                     val account_to_list = chainMgr.getChainObjectByID(opdata.getString("account_to_list")).getString("name")
 
-                    if (in_white_list && in_black_list){
+                    if (in_white_list && in_black_list) {
                         desc = String.format(R.string.kOpDesc_account_whitelist_both.xmlstring(ctx), authorizing_account, account_to_list)
-                    }else if (in_white_list){
+                    } else if (in_white_list) {
                         desc = String.format(R.string.kOpDesc_account_whitelist_white.xmlstring(ctx), authorizing_account, account_to_list)
-                    }else if (in_black_list){
+                    } else if (in_black_list) {
                         desc = String.format(R.string.kOpDesc_account_whitelist_black.xmlstring(ctx), authorizing_account, account_to_list)
-                    }else{
+                    } else {
                         desc = String.format(R.string.kOpDesc_account_whitelist_none.xmlstring(ctx), authorizing_account, account_to_list)
                     }
                 }
@@ -938,9 +938,9 @@ class OrgUtils {
                     name = R.string.kOpType_proposal_create.xmlstring(ctx)
                     val user = chainMgr.getChainObjectByID(opdata.getString("fee_paying_account")).getString("name")
                     val new_proposal_id = extractNewObjectIDFromOperationResult(opresult)
-                    if (new_proposal_id != null){
+                    if (new_proposal_id != null) {
                         desc = String.format(R.string.kOpDesc_proposal_create_with_id.xmlstring(ctx), user, new_proposal_id)
-                    }else{
+                    } else {
                         desc = String.format(R.string.kOpDesc_proposal_create.xmlstring(ctx), user)
                     }
                 }
@@ -1080,9 +1080,9 @@ class OrgUtils {
                     val to = chainMgr.getChainObjectByID(opdata.getString("to")).getString("name")
                     val str_amount = formatAssetAmountItem(opdata.getJSONObject("amount"))
                     val new_htlc_id = extractNewObjectIDFromOperationResult(opresult)
-                    if (new_htlc_id != null){
+                    if (new_htlc_id != null) {
                         desc = String.format(R.string.kOpDesc_htlc_create_with_id.xmlstring(ctx), from, str_amount, to, new_htlc_id)
-                    }else{
+                    } else {
                         desc = String.format(R.string.kOpDesc_htlc_create.xmlstring(ctx), from, str_amount, to)
                     }
                 }
@@ -1109,7 +1109,7 @@ class OrgUtils {
                 EBitsharesOperations.ebo_htlc_refund.value -> {
                     name = R.string.kOpType_htlc_refund.xmlstring(ctx)
                     val to = chainMgr.getChainObjectByID(opdata.getString("to")).getString("name")
-                    desc = String.format(R.string.kOpDesc_htlc_refund.xmlstring(ctx),to, opdata.getString("htlc_id"))
+                    desc = String.format(R.string.kOpDesc_htlc_refund.xmlstring(ctx), to, opdata.getString("htlc_id"))
                 }
                 else -> {
                 }

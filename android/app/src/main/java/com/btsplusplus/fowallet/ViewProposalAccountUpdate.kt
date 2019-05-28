@@ -40,7 +40,7 @@ class ViewProposalAccountUpdate : LinearLayout {
 
         val new_owner = opdata.optJSONObject("owner")
         val new_active = opdata.optJSONObject("active")
-        val new_options =  opdata.optJSONObject("new_options")
+        val new_options = opdata.optJSONObject("new_options")
 
         val uidata = _item.getJSONObject("uidata")
 
@@ -53,7 +53,7 @@ class ViewProposalAccountUpdate : LinearLayout {
             val tv1 = TextView(_ctx).apply {
                 layoutParams = LinearLayout.LayoutParams(LLAYOUT_WARP, LLAYOUT_WARP)
                 gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
-                if (_useBuyColorForTitle){
+                if (_useBuyColorForTitle) {
                     setTextColor(resources.getColor(R.color.theme01_buyColor))
                 } else {
                     val _color = uidata.getInt("color")
@@ -65,11 +65,11 @@ class ViewProposalAccountUpdate : LinearLayout {
             }
             addView(tv1)
             //  危险提示标签
-            if (new_owner != null || new_active != null){
+            if (new_owner != null || new_active != null) {
                 val tv2 = TextView(_ctx).apply {
                     layoutParams = LinearLayout.LayoutParams(LLAYOUT_WARP, LLAYOUT_WARP).apply {
-                        setMargins(5.dp,0.dp,0.dp,0.dp)
-                        setPadding(5.dp,0,5.dp,0)
+                        setMargins(5.dp, 0.dp, 0.dp, 0.dp)
+                        setPadding(5.dp, 0, 5.dp, 0)
                         gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
                     }
                     gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
@@ -90,40 +90,40 @@ class ViewProposalAccountUpdate : LinearLayout {
         var _viewPermissionActive: LinearLayout? = null
         var _viewPermissionMemoKey: LinearLayout? = null
         var _viewVotingInfos: LinearLayout? = null
-        if (new_owner != null){
+        if (new_owner != null) {
             _viewPermissionOwner = ViewProposalAccountUpdatePermissionOwner(_ctx).initWithPermission(opaccount.getJSONObject("owner"), new_owner, R.string.kOpDetailPermissionOwner.xmlstring(_ctx))
             addView(_viewPermissionOwner)
         }
 
         //  2、资金权限
-        if (new_active != null){
+        if (new_active != null) {
             _viewPermissionActive = ViewProposalAccountUpdatePermissionOwner(_ctx).initWithPermission(opaccount.getJSONObject("active"), new_active, R.string.kOpDetailPermissionActive.xmlstring(_ctx))
             addView(_viewPermissionActive)
         }
 
-        if (new_options != null){
+        if (new_options != null) {
             val old_options = opaccount.getJSONObject("options")
-            
+
             //  3、备注权限
             val old_memo_key = old_options.getString("memo_key")
             val new_memo_key = new_options.getString("memo_key")
-            if (old_memo_key != new_memo_key){
+            if (old_memo_key != new_memo_key) {
                 _viewPermissionMemoKey = ViewProposalAccountUpdateMemoKey(_ctx).initWithOldMemo(old_memo_key, new_memo_key, R.string.kOpDetailPermissionMemo.xmlstring(_ctx))
                 addView(_viewPermissionMemoKey)
             }
 
             //  4、投票信息（包括代理）
             val showLinesInfos = ViewProposalAccountUpdateVoting.calcLineInfos(old_options, new_options)
-            if (showLinesInfos.length() > 0){
+            if (showLinesInfos.length() > 0) {
                 _viewVotingInfos = ViewProposalAccountUpdateVoting(_ctx).initWithOptions(showLinesInfos)
                 addView(_viewVotingInfos)
             }
         }
 
-        if (_viewPermissionOwner != null || _viewPermissionActive != null || _viewPermissionMemoKey != null || _viewVotingInfos != null){
+        if (_viewPermissionOwner != null || _viewPermissionActive != null || _viewPermissionMemoKey != null || _viewVotingInfos != null) {
             //  REMARK ios 有初始化需要隐藏 ，安卓没初始化
             _useNormalDescLabel = false
-        }else{
+        } else {
             //  normal desc line
             val tv2 = TextView(_ctx)
             tv2.text = uidata.getString("desc")

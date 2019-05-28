@@ -44,15 +44,15 @@ class LangManager {
         })
     }
 
-    fun onAttach(ctx: Context):Context{
+    fun onAttach(ctx: Context): Context {
         return _onAttach(ctx, _getCurrentLanguageCode(ctx))
     }
 
     /**
      * change language
      */
-    fun setLocale(ctx: Context, langCode: String, save:Boolean):Context{
-        if (save){
+    fun setLocale(ctx: Context, langCode: String, save: Boolean): Context {
+        if (save) {
             _saveLangCode(ctx, langCode)
         }
 
@@ -67,25 +67,25 @@ class LangManager {
      * get current language display name
      */
     fun getCurrentLanguageName(ctx: Context): String {
-        for (langInfo in data_array.forin<JSONObject>()){
-            if (langInfo!!.getString("langCode") == this.currLangCode){
+        for (langInfo in data_array.forin<JSONObject>()) {
+            if (langInfo!!.getString("langCode") == this.currLangCode) {
                 return langInfo.getInt("langNameKey").xmlstring(ctx)
             }
         }
         return ""
     }
 
-    private fun _getCurrentLanguageCode(ctx: Context):String {
-        if (this.currLangCode.isEmpty()){
+    private fun _getCurrentLanguageCode(ctx: Context): String {
+        if (this.currLangCode.isEmpty()) {
             var currentLanguage = PreferenceManager.getDefaultSharedPreferences(ctx).getString(kCurrentLanguageKey, null)
-            if (currentLanguage == null){
+            if (currentLanguage == null) {
                 //  default lang is english
                 currentLanguage = "en"
                 val localeLang = Locale.getDefault().language
-                if (localeLang != null){
-                    if (localeLang.toLowerCase().indexOf("zh") == 0){
+                if (localeLang != null) {
+                    if (localeLang.toLowerCase().indexOf("zh") == 0) {
                         currentLanguage = "zh-Hans"
-                    }else if (localeLang.toLowerCase().indexOf("ja") == 0){
+                    } else if (localeLang.toLowerCase().indexOf("ja") == 0) {
                         currentLanguage = "ja"
                     }
                 }
@@ -101,16 +101,16 @@ class LangManager {
         PreferenceManager.getDefaultSharedPreferences(ctx).edit().putString(kCurrentLanguageKey, langCode).apply()
     }
 
-    private fun _getLocalByLangCode(langCode: String):Locale{
-        for (langInfo in data_array.forin<JSONObject>()){
-            if (langInfo!!.getString("langCode") == langCode){
+    private fun _getLocalByLangCode(langCode: String): Locale {
+        for (langInfo in data_array.forin<JSONObject>()) {
+            if (langInfo!!.getString("langCode") == langCode) {
                 return langInfo.get("langLocale") as Locale
             }
         }
         return Locale.ENGLISH
     }
 
-    private fun _onAttach(ctx: Context, langCode: String):Context{
+    private fun _onAttach(ctx: Context, langCode: String): Context {
         return setLocale(ctx, langCode, false)
     }
 
@@ -118,20 +118,20 @@ class LangManager {
      * only for android 7.0+
      */
     @TargetApi(Build.VERSION_CODES.N)
-    private fun _updateResources(ctx: Context, langCode: String):Context{
+    private fun _updateResources(ctx: Context, langCode: String): Context {
         val locale = _getLocalByLangCode(langCode)
         Locale.setDefault(locale)
 
         val configuration = ctx.resources.configuration
         configuration.setLocale(locale)
-        configuration.locales =  LocaleList(locale)
+        configuration.locales = LocaleList(locale)
         configuration.setLayoutDirection(locale)
 
         return ctx.createConfigurationContext(configuration)
     }
 
     @SuppressWarnings("deprecation")
-    private fun _updateResourcesLegacy(ctx: Context, langCode: String):Context{
+    private fun _updateResourcesLegacy(ctx: Context, langCode: String): Context {
         val locale = _getLocalByLangCode(langCode)
         Locale.setDefault(locale)
 

@@ -131,9 +131,9 @@ class AppCacheManager {
      * for native KV caches
      */
     fun getPref(key: String, default_value: Any? = null): Any? {
-        if (_native_caches.has(key)){
-            return  _native_caches.get(key)
-        }else{
+        if (_native_caches.has(key)) {
+            return _native_caches.get(key)
+        } else {
             return default_value
         }
     }
@@ -143,7 +143,7 @@ class AppCacheManager {
         return this
     }
 
-    fun  deletePref(key: String): AppCacheManager {
+    fun deletePref(key: String): AppCacheManager {
         _native_caches.remove(key)
         return this
     }

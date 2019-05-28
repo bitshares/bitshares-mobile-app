@@ -5,7 +5,6 @@ import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
 import android.view.animation.OvershootInterpolator
-import bitshares.TempManager
 import com.btsplusplus.fowallet.kline.TradingPair
 import kotlinx.android.synthetic.main.activity_my_orders.*
 import org.json.JSONArray

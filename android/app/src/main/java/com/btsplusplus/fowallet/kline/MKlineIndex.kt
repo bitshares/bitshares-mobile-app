@@ -2,7 +2,6 @@ package com.btsplusplus.fowallet.kline
 
 import java.math.BigDecimal
 import java.math.BigDecimal.ROUND_HALF_UP
-import java.math.RoundingMode
 
 class MKlineIndex {
 
@@ -11,14 +10,14 @@ class MKlineIndex {
         /**
          *  (public) calc MA index
          */
-        fun calc_ma_index(n: Int, data_arr: MutableList<MKlineItemData>, ceil_handler: Array<Int>, getter: (MKlineItemData) -> BigDecimal?, setter: (MKlineItemData, BigDecimal?) -> Unit){
-            if (n <= 0){
+        fun calc_ma_index(n: Int, data_arr: MutableList<MKlineItemData>, ceil_handler: Array<Int>, getter: (MKlineItemData) -> BigDecimal?, setter: (MKlineItemData, BigDecimal?) -> Unit) {
+            if (n <= 0) {
                 return
             }
 
             val n_n = BigDecimal(n)
             var sum = BigDecimal.ZERO
-            var ma:BigDecimal?
+            var ma: BigDecimal?
 
             val scale = ceil_handler[0]
             val rounding = ceil_handler[1]
@@ -28,13 +27,13 @@ class MKlineIndex {
 
                 sum = sum.add(value)
 
-                if (dataIndex >= n - 1){
-                    if (dataIndex >= n){
+                if (dataIndex >= n - 1) {
+                    if (dataIndex >= n) {
                         val last_value = getter(data_arr[dataIndex - n])
                         sum = sum.subtract(last_value)
                     }
                     ma = sum.divide(n_n, scale, rounding)
-                }else{
+                } else {
                     ma = null
                 }
 
@@ -45,9 +44,9 @@ class MKlineIndex {
         /**
          *  (public) calc EMA index
          */
-        fun calc_ema_index(n: Int, data_arr: MutableList<MKlineItemData>, ceil_handler: Array<Int>, getter: (MKlineItemData) -> BigDecimal?, setter: (MKlineItemData, BigDecimal?) -> Unit){
+        fun calc_ema_index(n: Int, data_arr: MutableList<MKlineItemData>, ceil_handler: Array<Int>, getter: (MKlineItemData) -> BigDecimal?, setter: (MKlineItemData, BigDecimal?) -> Unit) {
 
-            if (n <= 0){
+            if (n <= 0) {
                 return
             }
 
@@ -64,15 +63,15 @@ class MKlineIndex {
 
             data_arr.forEachIndexed { dataIndex, m ->
                 val value = getter(m)
-                if (value != null){
+                if (value != null) {
                     //  calc
-                    if (ema_yesterday != null){
+                    if (ema_yesterday != null) {
                         ema_today = value.subtract(ema_yesterday).multiply(alpha).add(ema_yesterday).setScale(scale, rounding)
-                    }else{
+                    } else {
                         sum = sum.add(value)
-                        if (dataIndex < n - 1){
+                        if (dataIndex < n - 1) {
                             ema_today = null
-                        }else{
+                        } else {
                             //  calc MA as ema
                             ema_today = sum.divide(n_n, scale, rounding)
                         }
@@ -88,7 +87,7 @@ class MKlineIndex {
         /**
          * (public) calc Bollinger Bands index
          */
-        fun calc_boll_index(n: Int, p: Int, data_arr: MutableList<MKlineItemData>, ceil_handler: Array<Int>, getter: (MKlineItemData) -> BigDecimal?){
+        fun calc_boll_index(n: Int, p: Int, data_arr: MutableList<MKlineItemData>, ceil_handler: Array<Int>, getter: (MKlineItemData) -> BigDecimal?) {
             calc_ma_index(n, data_arr, ceil_handler, getter) { m, new_index_value ->
                 m.main_index01 = new_index_value
             }
@@ -98,7 +97,7 @@ class MKlineIndex {
             val rounding = ceil_handler[1]
 
             data_arr.forEachIndexed { dataIndex, m ->
-                if (m.main_index01 != null){
+                if (m.main_index01 != null) {
                     //  data = close(n)
                     //  ma = data.sum / data.size
                     //  md = sqrt(data.map{|v| (v-ma)**2}.sum/data.size)
@@ -108,7 +107,7 @@ class MKlineIndex {
 
                     var sum_of_variance = BigDecimal.ZERO
 
-                    for (i in dataIndex + 1 - n..dataIndex){
+                    for (i in dataIndex + 1 - n..dataIndex) {
                         val variance = m.main_index01!!.subtract(getter(data_arr[i])).pow(2)
                         sum_of_variance = sum_of_variance.add(variance)
                     }

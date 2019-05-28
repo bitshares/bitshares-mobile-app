@@ -142,7 +142,7 @@ const val BTS_GRAPHENE_TEMP_ACCOUNT = "1.2.4"
 const val BTS_GRAPHENE_PROXY_TO_SELF = "1.2.5"
 
 //  黑名单意见账号：btspp-team
-const val BTS_GRAPHENE_ACCOUNT_BTSPP_TEAM  = "1.2.1031560"
+const val BTS_GRAPHENE_ACCOUNT_BTSPP_TEAM = "1.2.1031560"
 
 //  BTS网络动态全局信息对象ID号
 //  格式：
