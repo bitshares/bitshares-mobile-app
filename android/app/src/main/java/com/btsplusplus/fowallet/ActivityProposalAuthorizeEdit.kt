@@ -34,7 +34,7 @@ class ActivityProposalAuthorizeEdit : BtsppActivity() {
         setFullScreen()
 
         //  获取参数 / get params
-        val authorize_args = TempManager.sharedTempManager().get_args_as_JSONObject()
+        val authorize_args = btspp_args_as_JSONObject()
         _proposal = authorize_args.getJSONObject("proposal")
         _data_array = authorize_args.getJSONArray("data_array")
         _isremove = authorize_args.getBoolean("isremove")

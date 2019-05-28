@@ -20,7 +20,7 @@ class ActivitySettingLanguage : BtsppActivity() {
         setAutoLayoutContentView(R.layout.activity_setting_language)
 
         //  获取参数 / get params
-        val args = TempManager.sharedTempManager().get_args_as_JSONObject()
+        val args = btspp_args_as_JSONObject()
         _result_promise = args.get("result_promise") as Promise
 
         setFullScreen()

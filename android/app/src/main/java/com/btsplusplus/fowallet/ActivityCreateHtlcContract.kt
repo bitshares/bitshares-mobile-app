@@ -54,7 +54,7 @@ class ActivityCreateHtlcContract : BtsppActivity() {
         setContentView(R.layout.activity_create_htlc_contract)
 
         //  获取参数val
-        val args = TempManager.sharedTempManager().get_args_as_JSONObject()
+        val args = btspp_args_as_JSONObject()
         _full_account_data = args.getJSONObject("full_userdata")
 
         _mode = args.getInt("mode")

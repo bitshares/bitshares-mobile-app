@@ -31,7 +31,7 @@ class ActivityTransfer : BtsppActivity() {
         setAutoLayoutContentView(R.layout.activity_transfer)
 
         //  获取参数
-        var args = TempManager.sharedTempManager().get_args_as_JSONArray()
+        var args = btspp_args_as_JSONArray()
         _full_account_data = args[0] as JSONObject
         if (args.length() >= 2) {
             _default_asset = args[1] as JSONObject

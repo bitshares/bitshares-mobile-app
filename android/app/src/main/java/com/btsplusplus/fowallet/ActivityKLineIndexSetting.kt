@@ -31,7 +31,7 @@ class ActivityKLineIndexSetting : BtsppActivity() {
 
         //  get params
         _picker_data_array = mutableListOf()
-        val args = TempManager.sharedTempManager().get_args_as_JSONObject()
+        val args = btspp_args_as_JSONObject()
         _result_promise = args.get("result_promise") as Promise
 
         _configValueHash = JSONObject(SettingManager.sharedSettingManager().getKLineIndexInfos().toString())

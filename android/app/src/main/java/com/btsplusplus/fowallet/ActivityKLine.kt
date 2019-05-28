@@ -65,7 +65,7 @@ class ActivityKLine : BtsppActivity() {
         setAutoLayoutContentView(R.layout.activity_kline)
 
         //  获取参数
-        val params = TempManager.sharedTempManager().get_args() as JSONArray
+        val params = btspp_args_as_JSONArray()
         val base = params.getJSONObject(0)
         val quote = params.getJSONObject(1)
 

@@ -45,7 +45,7 @@ class ActivityGatewayWithdraw : BtsppActivity() {
         setContentView(R.layout.activity_gateway_withdraw)
 
         //  获取参数 / get params
-        _withdraw_args = TempManager.sharedTempManager().get_args_as_JSONObject()
+        _withdraw_args = btspp_args_as_JSONObject()
         _fullAccountData = _withdraw_args.getJSONObject("fullAccountData")
         _intermediateAccount = _withdraw_args.getJSONObject("intermediateAccount")
         _withdrawAssetItem = _withdraw_args.getJSONObject("withdrawAssetItem")

@@ -96,3 +96,6 @@ const val kBTS_KLINE_MAX_SHOW_CANDLE_NUM = 200
 
 //  K线中指向最低价格、最高价格的短横线长度
 val kBTS_KLINE_HL_PRICE_SHORT_LINE_LENGTH = 12.dp
+
+//  startActivity传递参数时的ID
+const val BTSPP_START_ACTIVITY_PARAM_ID = "btspp_start_activity_param_id"
