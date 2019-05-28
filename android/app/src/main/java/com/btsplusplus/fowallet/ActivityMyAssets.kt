@@ -28,7 +28,7 @@ class ActivityMyAssets : BtsppActivity() {
         setAutoLayoutContentView(R.layout.activity_my_assets)
 
         //  获取参数
-        var args = TempManager.sharedTempManager().get_args_as_JSONArray()
+        val args = btspp_args_as_JSONArray()
         _userAssetDetailInfos = args[0] as JSONObject
         _full_account_data = args[1] as JSONObject
 

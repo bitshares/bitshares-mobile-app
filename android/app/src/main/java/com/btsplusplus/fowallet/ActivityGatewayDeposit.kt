@@ -21,7 +21,7 @@ class ActivityGatewayDeposit : BtsppActivity() {
         setContentView(R.layout.activity_gateway_recharge)
 
         //  获取参数 / get params
-        val args = TempManager.sharedTempManager().get_args_as_JSONObject()
+        val args = btspp_args_as_JSONObject()
         _fullAccountData = args.getJSONObject("fullAccountData")
         _depositAddrItem = args.getJSONObject("depositAddrItem")
         _depositAssetItem = args.getJSONObject("depositAssetItem")

@@ -376,9 +376,9 @@ class FragmentMarketInfo : BtsppFragment() {
         //  点击cell进入K线界面
         fl.setOnClickListener {
             Crashlytics.log("ready to kline, base: $base, quote: $quote")
-            TempManager.sharedTempManager().set_args(jsonArrayfrom(base, quote))
             val intent = Intent()
             intent.setClass(ctx, ActivityKLine::class.java)
+            intent.putExtra(BTSPP_START_ACTIVITY_PARAM_ID, ParametersManager.sharedParametersManager().genParams(jsonArrayfrom(base, quote)))
             startActivity(intent)
         }
     }

@@ -13,7 +13,7 @@ class ActivityWebView : BtsppActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val params = TempManager.sharedTempManager().get_args() as Array<String>
+        val params = _btspp_params as Array<String>
         assert(params.size == 2)
 
         setAutoLayoutContentView(R.layout.activity_webview)

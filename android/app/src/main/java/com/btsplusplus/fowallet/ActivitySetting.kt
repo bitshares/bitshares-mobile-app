@@ -4,6 +4,7 @@ import android.os.Bundle
 import bitshares.*
 import com.fowallet.walletcore.bts.ChainObjectManager
 import kotlinx.android.synthetic.main.activity_setting.*
+import org.json.JSONObject
 
 class ActivitySetting : BtsppActivity() {
 
@@ -25,7 +26,7 @@ class ActivitySetting : BtsppActivity() {
         setAutoLayoutContentView(R.layout.activity_setting)
 
         //  获取参数 / get params
-        val args = TempManager.sharedTempManager().get_args_as_JSONObject()
+        val args = btspp_args_as_JSONObject()
         _result_promise = args.get("result_promise") as Promise
 
         // 设置全屏(隐藏状态栏和虚拟导航栏)
@@ -40,7 +41,6 @@ class ActivitySetting : BtsppActivity() {
             result_promise.then {
                 if (LangManager.sharedLangManager().currLangCode != saveCurrLangCode){
                     //  reset arguments
-                    TempManager.sharedTempManager().set_args(args)
                     recreate()
                 }
             }

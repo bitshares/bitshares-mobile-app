@@ -24,7 +24,7 @@ class ActivityTransferConfirm : BtsppActivity() {
         }
 
         // 获取参数
-        val transfer_args = TempManager.sharedTempManager().get_args_as_JSONObject()
+        val transfer_args = btspp_args_as_JSONObject()
 
         // 设置页面的6个字段
         val asset = transfer_args.getJSONObject("asset")

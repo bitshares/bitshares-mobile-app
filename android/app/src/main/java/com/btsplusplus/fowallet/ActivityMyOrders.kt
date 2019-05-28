@@ -28,7 +28,7 @@ class ActivityMyOrders : BtsppActivity() {
         setAutoLayoutContentView(R.layout.activity_my_orders)
 
         //  获取参数
-        var args = TempManager.sharedTempManager().get_args_as_JSONArray()
+        var args = btspp_args_as_JSONArray()
         _full_account_data = args[0] as JSONObject
         _tradeHistory = args[1] as JSONArray
         _tradingPair = args[2] as? TradingPair

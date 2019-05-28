@@ -13,24 +13,6 @@ class TempManager {
         }
     }
 
-    private var args: Any? = null                    //  界面跳转的参数信息(直接保存在这里）
-
-    fun set_args(value: Any?) {
-        args = value
-    }
-
-    fun get_args(): Any? {
-        return args
-    }
-
-    fun get_args_as_JSONArray(): JSONArray {
-        return get_args() as JSONArray
-    }
-
-    fun get_args_as_JSONObject(): JSONObject {
-        return get_args() as JSONObject
-    }
-
     //  ---- 账号搜索 callback ----
     private var _callback_query_account: ((activity: AppCompatActivity, account_info: JSONObject) -> Unit)? = null
 

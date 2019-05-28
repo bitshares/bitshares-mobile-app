@@ -46,7 +46,7 @@ class ActivityTradeMain : BtsppActivity() {
         setAutoLayoutContentView(R.layout.activity_main)
 
         //  获取参数
-        val params = TempManager.sharedTempManager().get_args() as JSONArray
+        val params = btspp_args_as_JSONArray()
         _tradingPair = params.get(0) as TradingPair
         _defaultSelectBuy = params.getBoolean(1)
         //  REMARK：在初始化的时候判断帐号信息

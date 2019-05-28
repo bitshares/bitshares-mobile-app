@@ -26,7 +26,7 @@ class ActivityLogin : BtsppActivity() {
         setAutoLayoutContentView(R.layout.activity_login)
 
         //  读取参数
-        var args = TempManager.sharedTempManager().get_args() as? JSONObject
+        val args = _btspp_params as? JSONObject
         if (args != null) {
             _checkActivePermission = args.getBoolean("checkActivePermission")
             _result_promise = args.get("result_promise") as Promise

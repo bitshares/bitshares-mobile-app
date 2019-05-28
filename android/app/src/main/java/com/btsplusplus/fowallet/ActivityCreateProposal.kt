@@ -38,7 +38,7 @@ class ActivityCreateProposal : BtsppActivity() {
         setFullScreen()
 
         //  获取参数 / get params
-        val proposal_args = TempManager.sharedTempManager().get_args_as_JSONObject()
+        val proposal_args = btspp_args_as_JSONObject()
         _opcode = proposal_args.get("opcode") as EBitsharesOperations
         _opdata = proposal_args.getJSONObject("opdata")
         _opaccount = proposal_args.getJSONObject("opaccount")

@@ -138,7 +138,6 @@ class ChainObjectManager {
      */
     private fun auxCalcGroupInfo(quote_asset: JSONObject): JSONObject {
         assert(_defaultGroupList != null)
-        assert(quote_asset != null)
 
         val quote_issuer = quote_asset.getString("issuer")
         for (group in _defaultGroupList!!) {
@@ -341,7 +340,6 @@ class ChainObjectManager {
      *  (public) 根据计价货币symbol获取计价单位配置信息
      */
     fun getEstimateUnitBySymbol(symbol: String): JSONObject {
-        assert(_estimate_unit_hash != null)
         return _estimate_unit_hash[symbol]!!
     }
 
@@ -374,7 +372,6 @@ class ChainObjectManager {
      *  (public) 获取最终的市场列表信息（默认 + 自定义）
      */
     fun getMergedMarketInfos(): MutableList<JSONObject> {
-        assert(_mergedMarketInfoList != null)
         return _mergedMarketInfoList
     }
 
@@ -390,7 +387,6 @@ class ChainObjectManager {
      *  (public) 根据 base_symbol 获取 market 信息。
      */
     fun getDefaultMarketInfoByBaseSymbol(base_symbol: String): JSONObject {
-        assert(_defaultMarketBaseHash != null)
         return _defaultMarketBaseHash[base_symbol]!!
     }
 
@@ -409,7 +405,7 @@ class ChainObjectManager {
         return _cacheObjectID2ObjectHash[BTS_GLOBAL_PROPERTIES_ID]!!
     }
 
-    fun updateObjectGlobalProperties(gp: JSONObject) {
+    fun updateObjectGlobalProperties(gp: JSONObject?) {
         if (gp != null) {
             _cacheObjectID2ObjectHash[BTS_GLOBAL_PROPERTIES_ID] = gp
         }
