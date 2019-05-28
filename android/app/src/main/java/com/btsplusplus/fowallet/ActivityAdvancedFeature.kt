@@ -1,7 +1,9 @@
 package com.btsplusplus.fowallet
 
 import android.os.Bundle
-import bitshares.*
+import bitshares.EHtlcDeployMode
+import bitshares.Promise
+import bitshares.xmlstring
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_advanced_feature.*
@@ -28,10 +30,10 @@ class ActivityAdvancedFeature : BtsppActivity() {
         layout_htlc_hash_of_advanced_feature.setOnClickListener { onClickCreateHtlc(EHtlcDeployMode.EDM_HASHCODE.value) }
     }
 
-    private fun onClickCreateHtlc(mode: Int){
-        if (mode == EHtlcDeployMode.EDM_HASHCODE.value){
-           ViewSelector.show(this,"", arrayOf(resources.getString(R.string.kVcHtlcMenuPassiveCreate), resources.getString(R.string.kVcHtlcMenuProactivelyCreate))) { index: Int, result: String ->
-               val havePreimage = index == 1
+    private fun onClickCreateHtlc(mode: Int) {
+        if (mode == EHtlcDeployMode.EDM_HASHCODE.value) {
+            ViewSelector.show(this, "", arrayOf(resources.getString(R.string.kVcHtlcMenuPassiveCreate), resources.getString(R.string.kVcHtlcMenuProactivelyCreate))) { index: Int, result: String ->
+                val havePreimage = index == 1
                 _gotoHtlcActivity(mode, havePreimage)
             }
         } else {
@@ -39,7 +41,7 @@ class ActivityAdvancedFeature : BtsppActivity() {
         }
     }
 
-    private fun _gotoHtlcActivity(mode: Int, havePreimage: Boolean){
+    private fun _gotoHtlcActivity(mode: Int, havePreimage: Boolean) {
         guardWalletExist {
             val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
             mask.show()
@@ -50,10 +52,10 @@ class ActivityAdvancedFeature : BtsppActivity() {
                 val data_array = it as JSONArray
                 val send_data = JSONObject().apply {
                     put("full_userdata", data_array.getJSONObject(0))
-                    put("mode",mode)
-                    put("havePreimage",havePreimage)
-                    put("ref_htlc",null)
-                    put("ref_to",null)
+                    put("mode", mode)
+                    put("havePreimage", havePreimage)
+                    put("ref_htlc", null)
+                    put("ref_to", null)
                 }
                 goTo(ActivityCreateHtlcContract::class.java, true, args = send_data)
                 return@then null

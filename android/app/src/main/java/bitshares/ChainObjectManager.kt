@@ -411,7 +411,7 @@ class ChainObjectManager {
         }
     }
 
-    fun queryGlobalProperties() : Promise {
+    fun queryGlobalProperties(): Promise {
         val api = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
         return api.async_exec_db("get_global_properties").then {
             val global_data = it as JSONObject
@@ -507,7 +507,7 @@ class ChainObjectManager {
         if (data_array != null && data_array.length() > 0) {
             val pAppCache = AppCacheManager.sharedAppCacheManager()
             data_array.forEach<JSONObject> { obj ->
-                if (obj != null){
+                if (obj != null) {
                     val oid = obj.optString("id")
                     if (oid != "") {
                         pAppCache.update_object_cache(oid, obj)
@@ -861,7 +861,7 @@ class ChainObjectManager {
     /**
      *  (public) 查询所有投票ID信息
      */
-    fun queryAllVoteIds(vote_id_array: JSONArray) : Promise {
+    fun queryAllVoteIds(vote_id_array: JSONArray): Promise {
 
         //  TODO:分批查询？
         assert(vote_id_array.length() < 1000)
@@ -881,7 +881,7 @@ class ChainObjectManager {
 
         vote_id_array.forEach<String> {
             val vote_id = it!!
-            val obj = pAppCache.get_object_cache_ts(vote_id,now_ts)
+            val obj = pAppCache.get_object_cache_ts(vote_id, now_ts)
             if (obj != null) {
                 _cacheVoteIdInfoHash[vote_id] = obj     //  add to memory cache: id hash
                 resultHash.put(vote_id, obj)
@@ -889,33 +889,33 @@ class ChainObjectManager {
                 queryArray.put(vote_id)
             }
         }
-        if (queryArray.length() == 0){
+        if (queryArray.length() == 0) {
             return Promise._resolve(resultHash)
         }
         //  从网络查询。
         val api = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
-        return api.async_exec_db("lookup_vote_ids", jsonArrayfrom(queryArray)).then{
+        return api.async_exec_db("lookup_vote_ids", jsonArrayfrom(queryArray)).then {
             val data_array = it as JSONArray
 
             data_array.forEach<JSONObject?> {
                 val obj = it
-                if (obj != null){
+                if (obj != null) {
                     val vid = obj.optString("vote_id", null)
-                    if (vid != null){
-                        pAppCache.update_object_cache(vid,obj)
+                    if (vid != null) {
+                        pAppCache.update_object_cache(vid, obj)
                         _cacheVoteIdInfoHash[vid] = obj           //  add to memory cache: id hash
                         resultHash.put(vid, obj)
                     } else {
                         val vote_for = obj.getString("vote_for")
                         val vote_against = obj.getString("vote_against")
 
-                        pAppCache.update_object_cache(vote_for,obj)
+                        pAppCache.update_object_cache(vote_for, obj)
                         _cacheVoteIdInfoHash[vote_for] = obj      //  add to memory cache: id hash
-                        resultHash.put(vote_for,obj)
+                        resultHash.put(vote_for, obj)
 
-                        pAppCache.update_object_cache(vote_against,obj)
+                        pAppCache.update_object_cache(vote_against, obj)
                         _cacheVoteIdInfoHash[vote_against] = obj  //  add to memory cache: id hash
-                        resultHash.put(vote_against,obj)
+                        resultHash.put(vote_against, obj)
                     }
                 }
             }
@@ -951,7 +951,7 @@ class ChainObjectManager {
             val pAppCache = AppCacheManager.sharedAppCacheManager()
             val now_ts = Utils.now_ts()
             for (object_id in object_id_array.forin<String>()) {
-                if (skipCacheIdHash != null && skipCacheIdHash.has(object_id)){
+                if (skipCacheIdHash != null && skipCacheIdHash.has(object_id)) {
                     //  部分ID跳过缓存
                     queryArray.put(object_id)
                 } else {

@@ -63,13 +63,13 @@ class FragmentAssetsHtlcList : BtsppFragment() {
 
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
 
-        if (_full_account_data!!.optJSONArray("htlcs") != null){
+        if (_full_account_data!!.optJSONArray("htlcs") != null) {
             //  3.0.1 之后版本添加了获取HTLC相关API，full accounts也包含了HTLC对象信息。直接查询账号信息即可。
             return chainMgr.queryFullAccountInfo(uid).then {
                 val full_data = it as JSONObject
                 return@then full_data.getJSONArray("htlcs")
             }
-        }else{
+        } else {
             //  3.0.1 及其之前版本，获取HTLC的接口尚未完成。full accounts也未包含HTLC对象信息。这里直接从账号明细里获取。但存在缺陷。
             //  TODO：特别注意：如果API节点配置的账户历史明细太低，可能漏掉部分HTLC对象。又或者用户的账号交易记录太多，HTLC对象也可能被漏掉 。
 
@@ -81,10 +81,10 @@ class FragmentAssetsHtlcList : BtsppFragment() {
 
             return api_history.then { data_array ->
                 val htlc_id_hash = JSONObject()
-                if (data_array != null && data_array is JSONArray && data_array.length() > 0){
+                if (data_array != null && data_array is JSONArray && data_array.length() > 0) {
                     data_array.forEach<JSONObject> { op_history ->
                         val new_object_id = OrgUtils.extractNewObjectIDFromOperationResult(op_history!!.optJSONArray("result"))
-                        if (new_object_id != null){
+                        if (new_object_id != null) {
                             htlc_id_hash.put(new_object_id, true)
                         }
                     }
@@ -98,7 +98,7 @@ class FragmentAssetsHtlcList : BtsppFragment() {
         }
     }
 
-    fun queryUserHTLCs(){
+    fun queryUserHTLCs() {
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
 
         activity?.let { ctx ->
@@ -111,9 +111,9 @@ class FragmentAssetsHtlcList : BtsppFragment() {
 
                 htlc_list?.forEach<JSONObject> { htlc ->
                     val transfer = htlc!!.getJSONObject("transfer")
-                    query_ids.put(transfer.getString("from"),true)
-                    query_ids.put(transfer.getString("to"),true)
-                    query_ids.put(transfer.getString("asset_id"),true)
+                    query_ids.put(transfer.getString("from"), true)
+                    query_ids.put(transfer.getString("to"), true)
+                    query_ids.put(transfer.getString("asset_id"), true)
                 }
 
                 //  查询 & 缓存
@@ -133,24 +133,24 @@ class FragmentAssetsHtlcList : BtsppFragment() {
         }
     }
 
-    private fun onQueryUserHTLCsResponsed(ctx:Context, data_array: JSONArray?){
+    private fun onQueryUserHTLCsResponsed(ctx: Context, data_array: JSONArray?) {
         //  更新数据
         _data_array.clear()
 
-        if ( data_array != null && data_array.length() >0 ){
+        if (data_array != null && data_array.length() > 0) {
             val my_id = WalletManager.sharedWalletManager().getWalletAccountInfo()?.optJSONObject("account")?.optString("id", null)
             data_array.forEach<JSONObject> { htlc ->
                 val transfer = htlc!!.getJSONObject("transfer")
                 var side = kMySideOther
-                if (my_id != null){
-                    if (my_id.equals(transfer.getString("from"))){
+                if (my_id != null) {
+                    if (my_id.equals(transfer.getString("from"))) {
                         side = kMySideFrom
-                    } else if (my_id.equals(transfer.getString("to"))){
+                    } else if (my_id.equals(transfer.getString("to"))) {
                         side = kMySideTo
                     }
                 }
                 val m_htlc = JSONObject(htlc.toString())
-                m_htlc.put("kSide",side)
+                m_htlc.put("kSide", side)
                 _data_array.add(JSONObject(m_htlc.toString()))
             }
         }
@@ -162,20 +162,20 @@ class FragmentAssetsHtlcList : BtsppFragment() {
         refreshUI(ctx)
     }
 
-    private fun refreshUI(ctx:Context){
+    private fun refreshUI(ctx: Context) {
         _layout_wrap.removeAllViews()
-        if (_data_array.size > 0){
+        if (_data_array.size > 0) {
             val chainMgr = ChainObjectManager.sharedChainObjectManager()
             _data_array.forEachIndexed { index, htlc ->
                 val view = createCell(ctx, htlc, chainMgr, index)
                 _layout_wrap.addView(view)
             }
-        }else{
+        } else {
             _layout_wrap.addView(ViewUtils.createEmptyCenterLabel(ctx, ctx.resources.getString(R.string.kVcHtlcNoAnyObjects)))
         }
     }
 
-    private fun createCell(ctx:Context, htlc: JSONObject, chainMgr: ChainObjectManager,index: Int) : LinearLayout{
+    private fun createCell(ctx: Context, htlc: JSONObject, chainMgr: ChainObjectManager, index: Int): LinearLayout {
         val id = htlc.getString("id")
         val transfer = htlc.getJSONObject("transfer")
         val conditions = htlc.getJSONObject("conditions")
@@ -193,11 +193,11 @@ class FragmentAssetsHtlcList : BtsppFragment() {
 
         val size = hash_lock.getInt("preimage_size")
         val hash_type = hash_lock.getJSONArray("preimage_hash").getInt(0)
-        val hash_type_str = when(hash_type){
+        val hash_type_str = when (hash_type) {
             EBitsharesHtlcHashType.EBHHT_RMD160.value -> "RIPEMD160"
             EBitsharesHtlcHashType.EBHHT_SHA1.value -> "SHA1"
             EBitsharesHtlcHashType.EBHHT_SHA256.value -> "SHA256"
-            else -> String.format(R.string.kVcHtlcListHashTypeValueUnknown.xmlstring(ctx),hash_type)
+            else -> String.format(R.string.kVcHtlcListHashTypeValueUnknown.xmlstring(ctx), hash_type)
         }
 
         val hash_value = hash_lock.getJSONArray("preimage_hash").getString(1).toUpperCase()
@@ -205,8 +205,8 @@ class FragmentAssetsHtlcList : BtsppFragment() {
         // 父级 layout
         val layout_parent = LinearLayout(ctx)
         layout_parent.layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP).apply {
-            if (index > 0){
-                setMargins(0, 8.dp,0, 0)
+            if (index > 0) {
+                setMargins(0, 8.dp, 0, 0)
             }
         }
         layout_parent.orientation = LinearLayout.VERTICAL
@@ -223,7 +223,7 @@ class FragmentAssetsHtlcList : BtsppFragment() {
         layout_wrap01.gravity = Gravity.CENTER_VERTICAL
         layout_wrap01.apply {
             val tv1 = TextView(ctx).apply {
-                layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP,1f)
+                layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 1f)
                 gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
                 setTextColor(resources.getColor(R.color.theme01_textColorMain))
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.0f)
@@ -231,13 +231,13 @@ class FragmentAssetsHtlcList : BtsppFragment() {
                 paint.isFakeBoldText = true
             }
             val tv2 = TextView(ctx).apply {
-                layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP,1f).apply {
+                layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 1f).apply {
                     gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
                 }
                 gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
                 setTextColor(resources.getColor(R.color.theme01_textColorGray))
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, font_size)
-                text = String.format(R.string.kVcOrderExpired.xmlstring(ctx),Utils.fmtLimitOrderTimeShowString(expiration))
+                text = String.format(R.string.kVcOrderExpired.xmlstring(ctx), Utils.fmtLimitOrderTimeShowString(expiration))
             }
             addView(tv1)
             addView(tv2)
@@ -470,8 +470,8 @@ class FragmentAssetsHtlcList : BtsppFragment() {
         }
 
         //  actions row
-        var layout_wrap06:LinearLayout? = null
-        if (kSide == kMySideFrom || kSide == kMySideTo){
+        var layout_wrap06: LinearLayout? = null
+        if (kSide == kMySideFrom || kSide == kMySideTo) {
             layout_wrap06 = LinearLayout(ctx)
             layout_wrap06.layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, height_actions).apply {
                 setMargins(0, 0, 0, 0)
@@ -494,7 +494,7 @@ class FragmentAssetsHtlcList : BtsppFragment() {
                 }
                 if (kSide == kMySideTo) {
                     val button_redeem = TextView(ctx).apply {
-                        layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP,1f).apply {
+                        layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 1f).apply {
                             gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL
                         }
                         gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL
@@ -506,7 +506,7 @@ class FragmentAssetsHtlcList : BtsppFragment() {
                         _onHtlcActionRedeemClicked(ctx, htlc)
                     }
                     val button_create = TextView(ctx).apply {
-                        layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP,1f).apply {
+                        layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 1f).apply {
                             gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL
                         }
                         gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL
@@ -530,20 +530,20 @@ class FragmentAssetsHtlcList : BtsppFragment() {
         layout_parent.addView(layout_wrap04)
         layout_parent.addView(layout_wrap05)
         layout_parent.addView(ViewLine(ctx, 0.dp, 0.dp))
-        if (layout_wrap06 != null){
+        if (layout_wrap06 != null) {
             layout_parent.addView(layout_wrap06)
             layout_parent.addView(ViewLine(ctx, 0.dp, 0.dp))
         }
         return layout_parent
     }
 
-    private fun _gotoCreateHTLC(ctx: Context, htlc: JSONObject, fullaccountdata: JSONObject){
+    private fun _gotoCreateHTLC(ctx: Context, htlc: JSONObject, fullaccountdata: JSONObject) {
         val to_id = htlc.getJSONObject("transfer").getString("from")
         val to_name = ChainObjectManager.sharedChainObjectManager().getChainObjectByID(to_id).getString("name")
         val send_data = JSONObject().apply {
             put("full_userdata", fullaccountdata)
             put("mode", EHtlcDeployMode.EDM_HASHCODE.value)
-            put("havePreimage",false)
+            put("havePreimage", false)
             put("ref_htlc", htlc)
             put("ref_to", JSONObject().apply {
                 put("id", to_id)
@@ -556,9 +556,9 @@ class FragmentAssetsHtlcList : BtsppFragment() {
     /**
      * (private) 部署副合约点击
      */
-    private fun _onHtlcActionCreateClicked(ctx: Context, htlc: JSONObject){
-        if (WalletManager.sharedWalletManager().isMyselfAccount(_full_account_data!!.getJSONObject("account").getString("name"))){
-            _gotoCreateHTLC(ctx, htlc,_full_account_data!!)
+    private fun _onHtlcActionCreateClicked(ctx: Context, htlc: JSONObject) {
+        if (WalletManager.sharedWalletManager().isMyselfAccount(_full_account_data!!.getJSONObject("account").getString("name"))) {
+            _gotoCreateHTLC(ctx, htlc, _full_account_data!!)
         } else {
             val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
             mask.show()
@@ -589,22 +589,22 @@ class FragmentAssetsHtlcList : BtsppFragment() {
 
         val op = JSONObject().apply {
             put("fee", JSONObject().apply {
-                put("amount",0)
-                put("asset_id",ChainObjectManager.sharedChainObjectManager().grapheneCoreAssetID)
+                put("amount", 0)
+                put("asset_id", ChainObjectManager.sharedChainObjectManager().grapheneCoreAssetID)
             })
-            put("htlc_id",htlc_id)
-            put("redeemer",account_id)
-            put("preimage",preimage.utf8String())
+            put("htlc_id", htlc_id)
+            put("redeemer", account_id)
+            put("preimage", preimage.utf8String())
         }
 
-        (ctx as Activity).GuardProposalOrNormalTransaction(EBitsharesOperations.ebo_htlc_redeem,false,false,op, opaccount) { isProposal: Boolean, proposal_create_args: JSONObject? ->
+        (ctx as Activity).GuardProposalOrNormalTransaction(EBitsharesOperations.ebo_htlc_redeem, false, false, op, opaccount) { isProposal: Boolean, proposal_create_args: JSONObject? ->
             assert(!isProposal)
             //  请求网络广播
             val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
             mask.show()
             BitsharesClientManager.sharedBitsharesClientManager().htlcRedeem(op).then {
                 mask.dismiss()
-                showToast( String.format(R.string.kVcHtlcListTipsRedeemOK.xmlstring(ctx), htlc_id))
+                showToast(String.format(R.string.kVcHtlcListTipsRedeemOK.xmlstring(ctx), htlc_id))
                 //  [统计]
                 btsppLogCustom("txHtlcRedeemFullOK", jsonObjectfromKVS("redeemer", account_id, "htlc_id", htlc_id))
                 //  刷新当前 Activity
@@ -625,7 +625,7 @@ class FragmentAssetsHtlcList : BtsppFragment() {
         UtilsAlert.showInputBox(ctx, R.string.kVcHtlcListAskTitleRedeem.xmlstring(ctx), R.string.kVcHtlcListAskPlaceholderRedeem.xmlstring(ctx), is_password = false).then {
             if (it != null && it is String) {
                 val tfvalue = it
-                (ctx as Activity).guardWalletUnlocked(false){ unlocked ->
+                (ctx as Activity).guardWalletUnlocked(false) { unlocked ->
                     if (unlocked) {
                         _onHtlcActionRedeemClicked(ctx, htlc, tfvalue)
                     }
@@ -646,21 +646,21 @@ class FragmentAssetsHtlcList : BtsppFragment() {
         val htlc_id = htlc.getString("id")
 
         val op = JSONObject().apply {
-            put("fee",JSONObject().apply {
+            put("fee", JSONObject().apply {
                 put("amount", 0)
                 put("asset_id", ChainObjectManager.sharedChainObjectManager().grapheneCoreAssetID)
             })
-            put("htlc_id",htlc_id)
-            put("update_issuer",account_id)
-            put("seconds_to_add",seconds)
+            put("htlc_id", htlc_id)
+            put("update_issuer", account_id)
+            put("seconds_to_add", seconds)
         }
 
-        (ctx as Activity).GuardProposalOrNormalTransaction(EBitsharesOperations.ebo_htlc_extend,false,false, op, opaccount) { isProposal: Boolean, proposal_create_args: JSONObject? ->
+        (ctx as Activity).GuardProposalOrNormalTransaction(EBitsharesOperations.ebo_htlc_extend, false, false, op, opaccount) { isProposal: Boolean, proposal_create_args: JSONObject? ->
             assert(!isProposal)
             //  请求网络广播
             val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
             mask.show()
-            BitsharesClientManager.sharedBitsharesClientManager().htlcExtend(op).then{
+            BitsharesClientManager.sharedBitsharesClientManager().htlcExtend(op).then {
                 mask.dismiss()
                 showToast(String.format(R.string.kVcHtlcListTipsExtendOK.xmlstring(ctx), htlc_id))
                 //  [统计]
@@ -682,7 +682,7 @@ class FragmentAssetsHtlcList : BtsppFragment() {
     private fun _onHtlcActionExtendExpiryClicked(ctx: Context, htlc: JSONObject) {
         val gp = ChainObjectManager.sharedChainObjectManager().getObjectGlobalProperties()
         val extensions = gp.getJSONObject("parameters").opt("extensions")
-        if (extensions == null || !(extensions is JSONObject)){
+        if (extensions == null || !(extensions is JSONObject)) {
             showToast(R.string.kVcHtlcListTipsErrorMissParams.xmlstring(ctx))
             return
         }
@@ -694,31 +694,31 @@ class FragmentAssetsHtlcList : BtsppFragment() {
         val max_timeout_secs = updatable_htlc_options.getInt("max_timeout_secs")
         val now_ts = Utils.now_ts()
         val htlc_expiration = Utils.parseBitsharesTimeString(htlc.getJSONObject("conditions").getJSONObject("time_lock").getString("expiration"))
-        val max_add_seconds = max_timeout_secs -  (htlc_expiration - now_ts)
+        val max_add_seconds = max_timeout_secs - (htlc_expiration - now_ts)
         val max_add_days = max_add_seconds / 86400
 
-        if (max_add_days <= 0){
+        if (max_add_days <= 0) {
             showToast(R.string.kVcHtlcListTipsErrorMaxExpire.xmlstring(ctx))
             return
         }
 
         val list = JSONArray()
-        for (day in 1..max_add_days ) {
+        for (day in 1..max_add_days) {
             val name = String.format(R.string.kVcHtlcListExtendNDayFmt.xmlstring(ctx), day.toString())
             list.put(JSONObject().apply {
                 put("name", name)
-                put("value",day.toInt())
+                put("value", day.toInt())
             })
         }
 
-        ViewDialogNumberPicker(ctx, R.string.kVcHtlcListTipsSelectExtendDays.xmlstring(ctx), list, "name", 0){ _index: Int, txt: String ->
+        ViewDialogNumberPicker(ctx, R.string.kVcHtlcListTipsSelectExtendDays.xmlstring(ctx), list, "name", 0) { _index: Int, txt: String ->
             val extend_day = list.getJSONObject(_index).getInt("value")
             val message = String.format(R.string.kVcHtlcListTipsExtendConfirm.xmlstring(ctx), extend_day.toString())
             UtilsAlert.showMessageConfirm(ctx, R.string.kWarmTips.xmlstring(ctx), message).then {
                 if (it != null && it as Boolean) {
-                    (ctx as Activity).guardWalletUnlocked(false){ unlocked ->
+                    (ctx as Activity).guardWalletUnlocked(false) { unlocked ->
                         if (unlocked) {
-                            _onHtlcActionExtendExpiryClicked(ctx, htlc,extend_day * 3600 * 24)
+                            _onHtlcActionExtendExpiryClicked(ctx, htlc, extend_day * 3600 * 24)
                         }
                     }
                 }

@@ -1,6 +1,9 @@
 package com.btsplusplus.fowallet
 
 import android.os.Bundle
+import android.text.SpannableStringBuilder
+import android.text.TextUtils
+import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -12,9 +15,6 @@ import kotlinx.android.synthetic.main.activity_create_htlc_contract.*
 import org.json.JSONArray
 import org.json.JSONObject
 import kotlin.math.pow
-import android.text.SpannableStringBuilder
-import android.text.TextUtils
-import android.view.View
 
 
 class ActivityCreateHtlcContract : BtsppActivity() {
@@ -68,7 +68,7 @@ class ActivityCreateHtlcContract : BtsppActivity() {
         _tv_preimage_or_hash = if (_mode == EHtlcDeployMode.EDM_PREIMAGE.value) tv_preimage else tv_hashcode
 
         //  设置标题栏标题
-        if (_lock_field){
+        if (_lock_field) {
             title_from_create_htlc_contract.text = R.string.kVcTitleCreateSubHTLC.xmlstring(this)
         } else {
             title_from_create_htlc_contract.text = R.string.kVcTitleCreateHTLC.xmlstring(this)
@@ -80,16 +80,16 @@ class ActivityCreateHtlcContract : BtsppActivity() {
         //  1、初始化：哈希类型列表 和 当前默认哈希算法
         _const_hashtype_list = JSONArray().apply {
             put(JSONObject().apply {
-                put("name","RIPEMD160")
-                put("value",EBitsharesHtlcHashType.EBHHT_RMD160.value)
+                put("name", "RIPEMD160")
+                put("value", EBitsharesHtlcHashType.EBHHT_RMD160.value)
             })
             put(JSONObject().apply {
-                put("name","SHA1")
-                put("value",EBitsharesHtlcHashType.EBHHT_SHA1.value)
+                put("name", "SHA1")
+                put("value", EBitsharesHtlcHashType.EBHHT_SHA1.value)
             })
             put(JSONObject().apply {
-                put("name","SHA256")
-                put("value",EBitsharesHtlcHashType.EBHHT_SHA256.value)
+                put("name", "SHA256")
+                put("value", EBitsharesHtlcHashType.EBHHT_SHA256.value)
             })
         }
         _currHashType = _const_hashtype_list!!.getJSONObject(2)
@@ -99,72 +99,72 @@ class ActivityCreateHtlcContract : BtsppActivity() {
 
         //  3、初始化默认有效期
         //  TODO:fowallet 最大时间不能超过理事会 parameters.extensions.value.updatable_htlc_options; 配置。
-        if (_mode == EHtlcDeployMode.EDM_PREIMAGE.value || _have_preimage){
+        if (_mode == EHtlcDeployMode.EDM_PREIMAGE.value || _have_preimage) {
             //  主动创建时候的合约有效期（先创建）
             _const_expire_list = JSONArray().apply {
                 put(JSONObject().apply {
-                    put("name", String.format(resources.getString(R.string.kVcHtlcCellValueNDayFmt),"3"))
-                    put("value",3600*24*3)
+                    put("name", String.format(resources.getString(R.string.kVcHtlcCellValueNDayFmt), "3"))
+                    put("value", 3600 * 24 * 3)
                 })
                 put(JSONObject().apply {
-                    put("name",String.format(resources.getString(R.string.kVcHtlcCellValueNDayFmt),"5"))
-                    put("value",3600*24*5)
+                    put("name", String.format(resources.getString(R.string.kVcHtlcCellValueNDayFmt), "5"))
+                    put("value", 3600 * 24 * 5)
                 })
                 put(JSONObject().apply {
-                    put("name",String.format(resources.getString(R.string.kVcHtlcCellValueNDayFmt),"7"))
-                    put("value",3600*24*7)
+                    put("name", String.format(resources.getString(R.string.kVcHtlcCellValueNDayFmt), "7"))
+                    put("value", 3600 * 24 * 7)
                 })
                 put(JSONObject().apply {
-                    put("name",String.format(resources.getString(R.string.kVcHtlcCellValueNDayFmt),"15"))
-                    put("value",3600*24*15)
+                    put("name", String.format(resources.getString(R.string.kVcHtlcCellValueNDayFmt), "15"))
+                    put("value", 3600 * 24 * 15)
                 })
             }
             _currExpire = _const_expire_list!!.getJSONObject(1)
-        }else{
+        } else {
             //  被动创建时候的合约有效期（后创建）
             _const_expire_list = JSONArray().apply {
                 put(JSONObject().apply {
-                    put("name",String.format(resources.getString(R.string.kVcHtlcCellValueNHourFmt),"6"))
-                    put("value",3600*6)
+                    put("name", String.format(resources.getString(R.string.kVcHtlcCellValueNHourFmt), "6"))
+                    put("value", 3600 * 6)
                 })
                 put(JSONObject().apply {
-                    put("name",String.format(resources.getString(R.string.kVcHtlcCellValueNHourFmt),"12"))
-                    put("value",3600*12)
+                    put("name", String.format(resources.getString(R.string.kVcHtlcCellValueNHourFmt), "12"))
+                    put("value", 3600 * 12)
                 })
                 put(JSONObject().apply {
-                    put("name",String.format(resources.getString(R.string.kVcHtlcCellValueNDayFmt),"1"))
-                    put("value",3600*24*1)
+                    put("name", String.format(resources.getString(R.string.kVcHtlcCellValueNDayFmt), "1"))
+                    put("value", 3600 * 24 * 1)
                 })
                 put(JSONObject().apply {
-                    put("name",String.format(resources.getString(R.string.kVcHtlcCellValueNDayFmt),"2"))
-                    put("value",3600*24*2)
+                    put("name", String.format(resources.getString(R.string.kVcHtlcCellValueNDayFmt), "2"))
+                    put("value", 3600 * 24 * 2)
                 })
                 put(JSONObject().apply {
-                    put("name",String.format(resources.getString(R.string.kVcHtlcCellValueNDayFmt),"3"))
-                    put("value",3600*24*3)
+                    put("name", String.format(resources.getString(R.string.kVcHtlcCellValueNDayFmt), "3"))
+                    put("value", 3600 * 24 * 3)
                 })
             }
             _currExpire = _const_expire_list!!.getJSONObject(2)
 
             //  ※ 根据合约部署时修订默认有效期（必须小于对方合约）
-            if (_lock_field){
+            if (_lock_field) {
                 val now_ts = Utils.now_ts()
                 _htlc_a_expiration = Utils.parseBitsharesTimeString(_ref_htlc!!.getJSONObject("conditions").getJSONObject("time_lock").getString("expiration"))
                 //  REMARK：预留至少一天。
                 //  如果后部署的用户的有效期接近合约A的有效期，那么后部署的用户可能存在资金分享。（用户A在合约B即将到期的时候提取，那么用户B来不及提取合约A。）
                 _htlc_b_reserved_time = 3600 * 24
                 val mutable_list = JSONArray()
-                for (it in _const_expire_list!!.forin<JSONObject>()){
+                for (it in _const_expire_list!!.forin<JSONObject>()) {
                     val item = it!!
                     val seconds = item.getInt("value")
                     if (now_ts + seconds <= _htlc_a_expiration - _htlc_b_reserved_time) {
                         mutable_list.put(item)
-                    }else{
+                    } else {
                         break
                     }
                 }
                 //  REMARK：没有满足条件的时间周期，默认第一个。但提示用户不可部署合约。
-                if (mutable_list.length() <= 0){
+                if (mutable_list.length() <= 0) {
                     mutable_list.put(_const_expire_list!!.getJSONObject(0))
                 }
                 _const_expire_list = JSONArray().apply { putAll(mutable_list) }
@@ -173,7 +173,7 @@ class ActivityCreateHtlcContract : BtsppActivity() {
         }
 
         //  返回
-        layout_back_from_create_htlc_contract.setOnClickListener{ finish() }
+        layout_back_from_create_htlc_contract.setOnClickListener { finish() }
 
         //  TO
         findViewById<LinearLayout>(R.id.cell_to_account).setOnClickListener {
@@ -224,15 +224,15 @@ class ActivityCreateHtlcContract : BtsppActivity() {
     /**
      *  随机生成安全的原像
      */
-    private fun _randomSecurePreimage() : String {
+    private fun _randomSecurePreimage(): String {
         //  TODO:fowallet 最大原像不能超过 o.preimage_size <= htlc_options->max_preimage_size
-        return String.format("BTSPP%sPREIMAGE",WalletManager.randomPrivateKeyWIF()).toUpperCase()
+        return String.format("BTSPP%sPREIMAGE", WalletManager.randomPrivateKeyWIF()).toUpperCase()
     }
 
     /**
      *  复制原像
      */
-    private fun onCopyButtonClicked(){
+    private fun onCopyButtonClicked() {
         val preimage = _tv_preimage_or_hash.text.toString()
         if (Utils.copyToClipboard(this, preimage)) {
             showToast(String.format(R.string.kVcHtlcTipsPreimageCopied.xmlstring(this), preimage))
@@ -242,25 +242,25 @@ class ActivityCreateHtlcContract : BtsppActivity() {
     /**
      *  粘贴哈希
      */
-    private fun onPasteButtonClicked(){
+    private fun onPasteButtonClicked() {
         val hashcode = Utils.readFromClipboard(this)
-        if (Utils.isValidHexString(hashcode)){
+        if (Utils.isValidHexString(hashcode)) {
             _tv_preimage_or_hash.setText(hashcode)
         }
     }
 
-    private fun initDefaultStatus(){
+    private fun initDefaultStatus() {
         //  初始化原像和哈希模式控件默认状态
-        if (_mode == EHtlcDeployMode.EDM_PREIMAGE.value){
+        if (_mode == EHtlcDeployMode.EDM_PREIMAGE.value) {
             //  from 原像
             layout_hashcode.visibility = View.GONE
             layout_preimage_length.visibility = View.GONE
-            switch_advance_setting_of_create_htlc_contract.setOnCheckedChangeListener{ _, isChecked: Boolean ->
+            switch_advance_setting_of_create_htlc_contract.setOnCheckedChangeListener { _, isChecked: Boolean ->
                 layout_hashtype_and_expiry_group.visibility = if (isChecked) View.VISIBLE else View.GONE
             }
             //  默认原像
             _tv_preimage_or_hash.text = SpannableStringBuilder(_randomSecurePreimage())
-        }else{
+        } else {
             //  from 原像哈希
             layout_preimage.visibility = View.GONE
             layout_moresetting.visibility = View.GONE
@@ -276,7 +276,7 @@ class ActivityCreateHtlcContract : BtsppActivity() {
             assert(preimage_hash.length() == 2)
             val lock_hashtype = preimage_hash.getInt(0)
             _currHashType = null
-            for (item in _const_hashtype_list!!.forin<JSONObject>()){
+            for (item in _const_hashtype_list!!.forin<JSONObject>()) {
                 val hash_type = item!!
                 if (hash_type.getInt("value") == lock_hashtype) {
                     _currHashType = hash_type
@@ -311,9 +311,9 @@ class ActivityCreateHtlcContract : BtsppActivity() {
 
             // 设置提交参数 to
             _transfer_args!!.put("to", _ref_to)
-        }else{
+        } else {
             //  复制 or 粘贴按钮事件
-            if ( _mode == EHtlcDeployMode.EDM_PREIMAGE.value ) {
+            if (_mode == EHtlcDeployMode.EDM_PREIMAGE.value) {
                 tv_copy_preimage.setOnClickListener { onCopyButtonClicked() }
             } else {
                 tv_paste_preimage_value.setOnClickListener { onPasteButtonClicked() }
@@ -323,8 +323,8 @@ class ActivityCreateHtlcContract : BtsppActivity() {
             layout_preimage_length.setOnClickListener {
                 var defaultIndex = 0
                 val list = JSONArray()
-                for (i in 1..256){
-                    if (i == _currPreimageLength){
+                for (i in 1..256) {
+                    if (i == _currPreimageLength) {
                         defaultIndex = list.length()
                     }
                     list.put(JSONObject().apply {
@@ -339,18 +339,18 @@ class ActivityCreateHtlcContract : BtsppActivity() {
             }
 
             //  哈希算法
-            layout_hashtype.setOnClickListener{
+            layout_hashtype.setOnClickListener {
                 var defaultIndex = 0
                 val currValue = _currHashType!!.getInt("value")
                 var idx = 0
-                for (item in _const_hashtype_list!!.forin<JSONObject>()){
-                    if (item!!.getInt("value") == currValue){
+                for (item in _const_hashtype_list!!.forin<JSONObject>()) {
+                    if (item!!.getInt("value") == currValue) {
                         defaultIndex = idx
                         break
                     }
                     ++idx
                 }
-                ViewDialogNumberPicker(this, R.string.kVcHtlcPlaceholderInputHashType.xmlstring(this), _const_hashtype_list!!, "name", defaultIndex){ _index: Int, txt: String ->
+                ViewDialogNumberPicker(this, R.string.kVcHtlcPlaceholderInputHashType.xmlstring(this), _const_hashtype_list!!, "name", defaultIndex) { _index: Int, txt: String ->
                     tv_hashtype.text = txt
                     _currHashType = _const_hashtype_list!!.getJSONObject(_index)
                 }.show()
@@ -358,18 +358,18 @@ class ActivityCreateHtlcContract : BtsppActivity() {
         }
 
         //  有效期
-        layout_expiry.setOnClickListener{
+        layout_expiry.setOnClickListener {
             var defaultIndex = 0
             val currValue = _currExpire!!.getInt("value")
             var idx = 0
-            for (item in _const_expire_list!!.forin<JSONObject>()){
-                if (item!!.getInt("value") == currValue){
+            for (item in _const_expire_list!!.forin<JSONObject>()) {
+                if (item!!.getInt("value") == currValue) {
                     defaultIndex = idx
                     break
                 }
                 ++idx
             }
-            ViewDialogNumberPicker(this, R.string.kVcHtlcPlaceholderInputExpire.xmlstring(this), _const_expire_list!!, "name", defaultIndex){ _index: Int, txt: String ->
+            ViewDialogNumberPicker(this, R.string.kVcHtlcPlaceholderInputExpire.xmlstring(this), _const_expire_list!!, "name", defaultIndex) { _index: Int, txt: String ->
                 tv_expiry.text = txt
                 _currExpire = _const_expire_list!!.getJSONObject(_index)
             }.show()
@@ -381,14 +381,14 @@ class ActivityCreateHtlcContract : BtsppActivity() {
         tv_preimage_length.text = _currPreimageLength.toString()
 
         //  创建按钮
-        btn_create_htlc.setOnClickListener{ gotoCreateHTLC() }
+        btn_create_htlc.setOnClickListener { gotoCreateHTLC() }
     }
 
     /**
      *  (private) 根据当前哈希算法获取对应的哈希值字节数。
      */
-    private fun _calcHashValueByteSize() : Int {
-        return when(_currHashType!!.getInt("value")){
+    private fun _calcHashValueByteSize(): Int {
+        return when (_currHashType!!.getInt("value")) {
             EBitsharesHtlcHashType.EBHHT_RMD160.value -> 20   //  160 bits
             EBitsharesHtlcHashType.EBHHT_SHA1.value -> 20     //  160 bits
             EBitsharesHtlcHashType.EBHHT_SHA256.value -> 32   //  256 bits
@@ -399,8 +399,8 @@ class ActivityCreateHtlcContract : BtsppActivity() {
     /**
      *  (private) 根据当前哈希算法计算原像哈希值。
      */
-    private fun _calcPreimageHashCode(preimage: ByteArray) : ByteArray? {
-        return when(_currHashType!!.getInt("value")){
+    private fun _calcPreimageHashCode(preimage: ByteArray): ByteArray? {
+        return when (_currHashType!!.getInt("value")) {
             EBitsharesHtlcHashType.EBHHT_RMD160.value ->
                 rmd160(preimage)
             EBitsharesHtlcHashType.EBHHT_SHA1.value ->
@@ -411,7 +411,7 @@ class ActivityCreateHtlcContract : BtsppActivity() {
         }
     }
 
-    private fun gotoCreateHTLC(){
+    private fun gotoCreateHTLC() {
         //  === 转账基本参数有效性检测 ===
         //  TODO:fowallet 不足的时候否直接提示显示？？？
         if (!_fee_item!!.getBoolean("sufficient")) {
@@ -432,28 +432,28 @@ class ActivityCreateHtlcContract : BtsppActivity() {
 
         //  TODO:fowallet to在黑名单中 风险提示。
         val str_amount = _tv_amount.text.toString()
-        if (str_amount == ""){
+        if (str_amount == "") {
             showToast(R.string.kVcTransferSubmitTipPleaseInputAmount.xmlstring(this))
             return
         }
 
         val n_amount = Utils.auxGetStringDecimalNumberValue(str_amount).toDouble()
         //  <= 0 判断
-        if ( n_amount <= 0 ){
+        if (n_amount <= 0) {
             showToast(R.string.kVcTransferSubmitTipPleaseInputAmount.xmlstring(this))
             return
         }
 
-        if ( _n_available < n_amount ) {
+        if (_n_available < n_amount) {
             showToast(resources.getString(R.string.kVcTransferSubmitTipAmountNotEnough))
             return
         }
 
         //  提取有效期
         val claim_period_seconds = _currExpire!!.getInt("value")
-        if (_lock_field){
+        if (_lock_field) {
             val now_ts = Utils.now_ts()
-            if (now_ts + claim_period_seconds > _htlc_a_expiration - _htlc_b_reserved_time){
+            if (now_ts + claim_period_seconds > _htlc_a_expiration - _htlc_b_reserved_time) {
                 showToast(R.string.kVcHtlcTipsExpireIsTooShort.xmlstring(this))
                 return
             }
@@ -461,12 +461,12 @@ class ActivityCreateHtlcContract : BtsppActivity() {
 
         //  === 风险提示 ===
         val preimage_hash: ByteArray?
-        val preimage_length:Int
+        val preimage_length: Int
         val message: String
         var title = resources.getString(R.string.kWarmTips)
-        if (_mode == EHtlcDeployMode.EDM_PREIMAGE.value){
+        if (_mode == EHtlcDeployMode.EDM_PREIMAGE.value) {
             val preimage = _tv_preimage_or_hash.text.toString().trim()
-            if (!Utils.isValidHTCLPreimageFormat(preimage)){
+            if (!Utils.isValidHTCLPreimageFormat(preimage)) {
                 showToast(R.string.kVcHtlcTipsPreimageForm.xmlstring(this))
                 return
             }
@@ -495,20 +495,20 @@ class ActivityCreateHtlcContract : BtsppActivity() {
                 message = R.string.kVcHtlcMessageCreateFromHashHavePreimage.xmlstring(this)
             } else {
                 title = R.string.kVcHtlcMessageTipsTitle.xmlstring(this)
-                message = if (_lock_field){
+                message = if (_lock_field) {
                     R.string.kVcHtlcMessageCreateFromHtlcObject.xmlstring(this)
-                }else{
+                } else {
                     R.string.kVcHtlcMessageCreateFromHashNoPreimage.xmlstring(this)
                 }
             }
         }
 
-        UtilsAlert.showMessageConfirm(this, title, message ).then {
+        UtilsAlert.showMessageConfirm(this, title, message).then {
             if (it != null && it as Boolean) {
                 //  --- 参数大部分检测合法 执行请求 ---
                 guardWalletUnlocked(false) { unlocked ->
-                    if(unlocked){
-                        _gotoCreateHTLCCore(from, to, asset, n_amount, preimage_hash!!, preimage_length,_currHashType!!.getInt("value"), claim_period_seconds)
+                    if (unlocked) {
+                        _gotoCreateHTLCCore(from, to, asset, n_amount, preimage_hash!!, preimage_length, _currHashType!!.getInt("value"), claim_period_seconds)
                     }
                 }
             }
@@ -519,36 +519,36 @@ class ActivityCreateHtlcContract : BtsppActivity() {
     /**
      *  (private) 创建合约核心。
      */
-    private fun _gotoCreateHTLCCore(from: JSONObject, to: JSONObject, asset: JSONObject, amount: Double, preimage_hash: ByteArray, preimage_length: Int, hashtype: Int, claim_period_seconds: Int){
+    private fun _gotoCreateHTLCCore(from: JSONObject, to: JSONObject, asset: JSONObject, amount: Double, preimage_hash: ByteArray, preimage_length: Int, hashtype: Int, claim_period_seconds: Int) {
         val n_amount_pow = amount * 10.0.pow(asset.getInt("precision"))
         val fee_asset_id = _fee_item!!.getString("fee_asset_id")
 
         val op = JSONObject().apply {
-            put("fee",JSONObject().apply {
-                put("amount",0)
-                put("asset_id",fee_asset_id)
+            put("fee", JSONObject().apply {
+                put("amount", 0)
+                put("asset_id", fee_asset_id)
             })
-            put("from",from.getString("id"))
-            put("to",to.getString("id"))
+            put("from", from.getString("id"))
+            put("to", to.getString("id"))
             put("amount", JSONObject().apply {
-                put("amount",n_amount_pow.toLong())
-                put("asset_id",asset.getString("id"))
+                put("amount", n_amount_pow.toLong())
+                put("asset_id", asset.getString("id"))
             })
-            put("preimage_hash",JSONArray().apply {
+            put("preimage_hash", JSONArray().apply {
                 put(hashtype)
                 put(preimage_hash)
             })
-            put("preimage_size",preimage_length)
-            put("claim_period_seconds",claim_period_seconds)
+            put("preimage_size", preimage_length)
+            put("claim_period_seconds", claim_period_seconds)
         }
         val opaccount = _full_account_data!!.getJSONObject("account")
         val opaccount_id = opaccount.getString("id")
 
         //  确保有权限发起普通交易，否则作为提案交易处理。
-        GuardProposalOrNormalTransaction(EBitsharesOperations.ebo_htlc_create,false,false, op, opaccount){ isProposal : Boolean, proposal_create_args: JSONObject? ->
+        GuardProposalOrNormalTransaction(EBitsharesOperations.ebo_htlc_create, false, false, op, opaccount) { isProposal: Boolean, proposal_create_args: JSONObject? ->
             assert(!isProposal)
             //  请求网络广播
-            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this),this)
+            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
             mask.show()
             BitsharesClientManager.sharedBitsharesClientManager().htlcCreate(op).then { transaction_confirmation ->
                 val new_htlc_id = OrgUtils.extractNewObjectID(transaction_confirmation as? JSONArray)
@@ -558,13 +558,15 @@ class ActivityCreateHtlcContract : BtsppActivity() {
                     _refreshUI_onSendDone(full_data)
                     showToast(R.string.kVcHtlcSubmitTipsFullOK.xmlstring(this))
                     //  [统计]
-                    btsppLogCustom("txHtlcCreateFullOK", jsonObjectfromKVS("from", opaccount_id, "htlc_id", new_htlc_id ?: ""))
+                    btsppLogCustom("txHtlcCreateFullOK", jsonObjectfromKVS("from", opaccount_id, "htlc_id", new_htlc_id
+                            ?: ""))
                     return@then null
                 }.catch {
                     mask.dismiss()
                     showToast(R.string.kVcHtlcSubmitTipsOK.xmlstring(this))
                     //  [统计]
-                    btsppLogCustom("txHtlcCreateOK", jsonObjectfromKVS("from", opaccount_id, "htlc_id", new_htlc_id ?: ""))
+                    btsppLogCustom("txHtlcCreateOK", jsonObjectfromKVS("from", opaccount_id, "htlc_id", new_htlc_id
+                            ?: ""))
                 }
                 return@then null
             }.catch { err ->

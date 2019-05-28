@@ -25,16 +25,16 @@ class ViewProposalAccountUpdatePermissionOwner : LinearLayout {
         this.orientation = LinearLayout.VERTICAL
     }
 
-    private fun genLineLables(name: String, old_value: Int, new_value: Int) : LinearLayout {
+    private fun genLineLables(name: String, old_value: Int, new_value: Int): LinearLayout {
         val layout = LinearLayout(_ctx)
         layout.layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP).apply {
-            setMargins(0,2.dp,0, 2.dp)
+            setMargins(0, 2.dp, 0, 2.dp)
         }
         layout.orientation = LinearLayout.HORIZONTAL
         layout.gravity = Gravity.CENTER_VERTICAL
         layout.apply {
             val tv_name = TextView(_ctx).apply {
-                layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP,5f)
+                layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 5f)
                 gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
                 setTextColor(resources.getColor(R.color.theme01_textColorNormal))
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
@@ -44,7 +44,7 @@ class ViewProposalAccountUpdatePermissionOwner : LinearLayout {
                 text = name
             }
             val tv_change = TextView(_ctx).apply {
-                layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP,2f).apply {
+                layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 2f).apply {
                     gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
                 }
                 gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
@@ -54,7 +54,7 @@ class ViewProposalAccountUpdatePermissionOwner : LinearLayout {
                 text = new_value.toString()
             }
             val tv_result = TextView(_ctx).apply {
-                layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP,1.5f).apply {
+                layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 1.5f).apply {
                     gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
                 }
                 gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
@@ -63,13 +63,13 @@ class ViewProposalAccountUpdatePermissionOwner : LinearLayout {
                 paint.isFakeBoldText = true
             }
 
-            if (old_value == new_value){
+            if (old_value == new_value) {
                 tv_result.text = "0"
-            }else if (new_value > old_value){
+            } else if (new_value > old_value) {
                 //  变化 +
                 tv_result.text = "+${new_value - old_value}"
                 tv_change.setTextColor(resources.getColor(R.color.theme01_buyColor))
-            }else{
+            } else {
                 //  变化 -
                 tv_result.text = (new_value - old_value).toString()
                 tv_change.setTextColor(resources.getColor(R.color.theme01_sellColor))
@@ -91,7 +91,7 @@ class ViewProposalAccountUpdatePermissionOwner : LinearLayout {
         layout_permission_title.gravity = Gravity.CENTER_VERTICAL
         layout_permission_title.apply {
             val tv_name = TextView(_ctx).apply {
-                layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP,5f)
+                layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 5f)
                 gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
                 setTextColor(resources.getColor(R.color.theme01_textColorGray))
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
@@ -99,7 +99,7 @@ class ViewProposalAccountUpdatePermissionOwner : LinearLayout {
                 text = title
             }
             val tv_change = TextView(_ctx).apply {
-                layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP,2f).apply {
+                layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 2f).apply {
                     gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
                 }
                 gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
@@ -109,7 +109,7 @@ class ViewProposalAccountUpdatePermissionOwner : LinearLayout {
                 text = R.string.kOpDetailSubTitleNewWeightOrThreshold.xmlstring(_ctx)
             }
             val tv_result = TextView(_ctx).apply {
-                layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP,1.5f).apply {
+                layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 1.5f).apply {
                     gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
                 }
                 gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
@@ -127,9 +127,9 @@ class ViewProposalAccountUpdatePermissionOwner : LinearLayout {
 
         // 第二行 阈值 权重(值) 变化量(值)
         addView(genLineLables(R.string.kOpDetailSubPrefixThreshold.xmlstring(_ctx), old_permission_json.getInt("weight_threshold"), new_permission_json.getInt("weight_threshold")))
-        
+
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
-        
+
         val old_weights_hash = JSONObject()
         val new_weights_hash = JSONObject()
         val total_keys = JSONObject()
@@ -139,28 +139,28 @@ class ViewProposalAccountUpdatePermissionOwner : LinearLayout {
             assert(item.length() == 2)
             val account_id = item.getString(0)
             old_weights_hash.put(account_id, item.getInt(1))
-            total_keys.put(account_id, JSONObject().apply{put("isaccount",true)})
+            total_keys.put(account_id, JSONObject().apply { put("isaccount", true) })
         }
         old_permission_json.getJSONArray("key_auths").forEach<JSONArray> { it ->
             val item = it!!
             assert(item.length() == 2)
             val key = item.getString(0)
             old_weights_hash.put(key, item.getInt(1))
-            total_keys.put(key, JSONObject().apply{put("iskey",true)})
+            total_keys.put(key, JSONObject().apply { put("iskey", true) })
         }
         new_permission_json.getJSONArray("account_auths").forEach<JSONArray> { it ->
             val item = it!!
             assert(item.length() == 2)
             val account_id = item.getString(0)
             new_weights_hash.put(account_id, item.getInt(1))
-            total_keys.put(account_id, JSONObject().apply{put("isaccount",true)})
+            total_keys.put(account_id, JSONObject().apply { put("isaccount", true) })
         }
         new_permission_json.getJSONArray("key_auths").forEach<JSONArray> { it ->
             val item = it!!
             assert(item.length() == 2)
             val key = item.getString(0)
             new_weights_hash.put(key, item.getInt(1))
-            total_keys.put(key, JSONObject().apply{put("iskey",true)})
+            total_keys.put(key, JSONObject().apply { put("iskey", true) })
         }
         total_keys.keys().toJSONArray().forEach<String> { it ->
             val key = it!!
@@ -175,11 +175,11 @@ class ViewProposalAccountUpdatePermissionOwner : LinearLayout {
             var iOldWeight = 0
             var iNewWeight = 0
             val old_weight = old_weights_hash.optInt(key)
-            if (old_weight != null){
+            if (old_weight != null) {
                 iOldWeight = old_weight
             }
             val new_weight = new_weights_hash.optInt(key)
-            if (new_weight != null){
+            if (new_weight != null) {
                 iNewWeight = new_weight
             }
 

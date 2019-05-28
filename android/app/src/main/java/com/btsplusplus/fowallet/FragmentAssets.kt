@@ -1,6 +1,5 @@
 package com.btsplusplus.fowallet
 
-import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
@@ -126,7 +125,7 @@ class FragmentAssets : BtsppFragment() {
                 val collateral_precision = collateral_asset.getInt("precision")
                 val mcr = chainMgr.getChainObjectByID(asset_detail.getString("bitasset_data_id")).getJSONObject("current_feed").getString("maintenance_collateral_ratio")
                 val _mcr = bigDecimalfromAmount(mcr, 3)
-                val trigger_price = OrgUtils.calcSettlementTriggerPrice(asset_call_order.getString("debt"), asset_call_order.getString("collateral"), debt_precision, collateral_precision,_mcr,null,null)
+                val trigger_price = OrgUtils.calcSettlementTriggerPrice(asset_call_order.getString("debt"), asset_call_order.getString("collateral"), debt_precision, collateral_precision, _mcr, null, null)
 
                 optional_number++
                 asset_final.put("trigger_price", trigger_price.toPriceAmountString())
@@ -259,7 +258,7 @@ class FragmentAssets : BtsppFragment() {
     }
 
     private fun refreshUI_TotalValue(textView: TextView? = null) {
-        if (!isAdded){
+        if (!isAdded) {
             return
         }
         _total_estimate_value?.let { total_estimate_value ->
@@ -534,7 +533,7 @@ class FragmentAssets : BtsppFragment() {
     }
 
     private fun refreshUI() {
-        if (!isAdded){
+        if (!isAdded) {
             return
         }
         val lay: LinearLayout = _view!!.findViewById(R.id.layout_my_assets_from_my_fragment)

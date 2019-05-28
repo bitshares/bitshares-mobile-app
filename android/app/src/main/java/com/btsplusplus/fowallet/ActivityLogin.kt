@@ -8,7 +8,6 @@ import android.view.View
 import android.view.animation.OvershootInterpolator
 import android.widget.Button
 import bitshares.Promise
-import bitshares.TempManager
 import kotlinx.android.synthetic.main.activity_login.*
 import org.json.JSONObject
 import java.lang.reflect.Field

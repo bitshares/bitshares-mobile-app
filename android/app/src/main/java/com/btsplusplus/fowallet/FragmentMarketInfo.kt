@@ -279,7 +279,7 @@ class FragmentMarketInfo : BtsppFragment() {
         return jsonObjectfromKVS("price_str", latest, "volume_str", "${_context!!.resources.getString(R.string.kLabelHeader24HVol)} ${quote_volume}", "percent_str", percent_str, "percent_color", percent_color)
     }
 
-    private fun _refreshDrawOnCell(group_info:JSONObject?, ctx: Context, ly: LinearLayout, quote_symbol: String, base_symbol: String) {
+    private fun _refreshDrawOnCell(group_info: JSONObject?, ctx: Context, ly: LinearLayout, quote_symbol: String, base_symbol: String) {
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
 
         //  获取资产信息
@@ -289,7 +289,7 @@ class FragmentMarketInfo : BtsppFragment() {
         var quote_name = quote_symbol
 
         //  REMARK：如果是网关资产、则移除网关前缀。自选市场没有分组信息，网关资产也显示全称。
-        if (group_info != null && group_info.optBoolean("gateway")){
+        if (group_info != null && group_info.optBoolean("gateway")) {
             val group_prefix = group_info.optString("prefix")
             if (quote_name.indexOf(group_prefix) == 0) {
                 val ary = quote_name.split(".")

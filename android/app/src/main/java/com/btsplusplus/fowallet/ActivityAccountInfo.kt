@@ -5,11 +5,7 @@ import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
 import android.view.animation.OvershootInterpolator
-import android.widget.TextView
-import bitshares.AppCacheManager
-import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_account_info.*
-import kotlinx.android.synthetic.main.activity_my_orders.*
 import java.lang.reflect.Field
 
 class ActivityAccountInfo : BtsppActivity() {

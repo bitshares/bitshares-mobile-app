@@ -1,10 +1,12 @@
 package com.btsplusplus.fowallet
 
 import android.os.Bundle
-import bitshares.*
+import bitshares.LangManager
+import bitshares.Promise
+import bitshares.SettingManager
+import bitshares.jsonObjectfromKVS
 import com.fowallet.walletcore.bts.ChainObjectManager
 import kotlinx.android.synthetic.main.activity_setting.*
-import org.json.JSONObject
 
 class ActivitySetting : BtsppActivity() {
 
@@ -39,7 +41,7 @@ class ActivitySetting : BtsppActivity() {
             val result_promise = Promise()
             goTo(ActivitySettingLanguage::class.java, true, args = jsonObjectfromKVS("result_promise", result_promise))
             result_promise.then {
-                if (LangManager.sharedLangManager().currLangCode != saveCurrLangCode){
+                if (LangManager.sharedLangManager().currLangCode != saveCurrLangCode) {
                     //  reset arguments
                     recreate()
                 }

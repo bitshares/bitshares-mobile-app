@@ -329,7 +329,7 @@ class ViewKLineCross : ViewBase {
         drawAdvancedIndex_values(canvas, _model)
     }
 
-    private fun drawIndexMACD_values(canvas: Canvas, m: MKlineItemData){
+    private fun drawIndexMACD_values(canvas: Canvas, m: MKlineItemData) {
         //  MACD指标
         //  adv_index01 - MACD
         //  adv_index02 - DIFF
@@ -354,10 +354,11 @@ class ViewKLineCross : ViewBase {
         }
     }
 
-    private fun drawAdvancedIndex_values(canvas: Canvas, m: MKlineItemData){
+    private fun drawAdvancedIndex_values(canvas: Canvas, m: MKlineItemData) {
         when (_kline!!._kSubIndexType) {
             ViewKLine.EKLineSubIndexType.eksit_show_macd -> drawIndexMACD_values(canvas, m)
-            else -> {}
+            else -> {
+            }
         }
     }
 

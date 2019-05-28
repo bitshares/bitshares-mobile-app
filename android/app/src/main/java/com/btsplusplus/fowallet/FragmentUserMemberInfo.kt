@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +17,6 @@ import com.fowallet.walletcore.bts.BitsharesClientManager
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
 import org.json.JSONObject
-import android.util.Base64
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -77,12 +77,12 @@ class FragmentUserMemberInfo : BtsppFragment() {
         return v
     }
 
-    private fun _encodeMyRefCode(account_id: String) : String{
+    private fun _encodeMyRefCode(account_id: String): String {
         val uid = account_id.split(".").last()
         return Base64.encodeToString(uid.toByteArray(), Base64.URL_SAFE or Base64.NO_WRAP)
     }
 
-    private fun refreshUILefttimeMember(account_data: JSONObject){
+    private fun refreshUILefttimeMember(account_data: JSONObject) {
         _myReferrerCode = _encodeMyRefCode(account_data.getString("id"))
         tv_account_status.text = resources.getString(R.string.kLblMembershipLifetime)
         tv_my_referrer_code.text = _myReferrerCode
@@ -93,7 +93,7 @@ class FragmentUserMemberInfo : BtsppFragment() {
         //  copy ref code
         _view?.let {
             it.findViewById<LinearLayout>(R.id.id_my_referrer_code_layout).setOnClickListener {
-                if (_myReferrerCode != null){
+                if (_myReferrerCode != null) {
                     if (Utils.copyToClipboard(activity!!, _myReferrerCode!!)) {
                         showToast(resources.getString(R.string.kAccountMembershipMyRefCodeCopyOK))
                     }
@@ -102,7 +102,7 @@ class FragmentUserMemberInfo : BtsppFragment() {
         }
     }
 
-    private fun refreshUINormalMember(){
+    private fun refreshUINormalMember() {
         tv_account_status.text = resources.getString(R.string.kLblMembershipBasic)
         tv_my_referrer_code.text = resources.getString(R.string.kAccountMembershipNoRefCode)
         tv_my_referrer_code.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
@@ -111,11 +111,11 @@ class FragmentUserMemberInfo : BtsppFragment() {
         btn_upgrade.visibility = View.VISIBLE
     }
 
-    private fun upgradeMemberButtonOnClick(){
+    private fun upgradeMemberButtonOnClick() {
         upgradeToLifetimeMember()
     }
 
-    private fun gotoUpgradeToLifetimeMemberCore(op_data: JSONObject, fee_item: JSONObject, account_data: JSONObject ){
+    private fun gotoUpgradeToLifetimeMemberCore(op_data: JSONObject, fee_item: JSONObject, account_data: JSONObject) {
         //  adjust fee
         op_data.put("fee", fee_item)
 
@@ -130,9 +130,9 @@ class FragmentUserMemberInfo : BtsppFragment() {
             val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), _ctx)
             mask.show()
 
-            BitsharesClientManager.sharedBitsharesClientManager().accountUpgrde(op_data).then{
+            BitsharesClientManager.sharedBitsharesClientManager().accountUpgrde(op_data).then {
                 //  升级成功、继续请求、刷新界面。
-                ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(account_id).then{
+                ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(account_id).then {
                     mask.dismiss()
 
                     //  升级会员成功，保存新数据。
@@ -163,12 +163,12 @@ class FragmentUserMemberInfo : BtsppFragment() {
         val account_info = full_account_data.getJSONObject("account")
 
         val op_data = JSONObject().apply {
-            put("fee",JSONObject().apply {
-                put("amount",0)
-                put("asset_id",BTS_NETWORK_CORE_ASSET_ID)
+            put("fee", JSONObject().apply {
+                put("amount", 0)
+                put("asset_id", BTS_NETWORK_CORE_ASSET_ID)
             })
             put("account_to_upgrade", account_info.getString("id"))
-            put("upgrade_to_lifetime_member",true)
+            put("upgrade_to_lifetime_member", true)
         }
 
         val act = _ctx as Activity

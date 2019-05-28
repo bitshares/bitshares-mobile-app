@@ -18,7 +18,6 @@ import org.json.JSONObject
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.*
 
 /**
@@ -196,7 +195,7 @@ class ViewKLine : ViewBase {
 
         //  成交量柱子底部Y坐标
         var fVolumeGraphBottomY = _view_size.height
-        if (_kSubIndexType != EKLineSubIndexType.eksit_show_none){
+        if (_kSubIndexType != EKLineSubIndexType.eksit_show_none) {
             fVolumeGraphBottomY -= fSecondMAHeight + fSecondGraphHeight
         }
 
@@ -260,7 +259,7 @@ class ViewKLine : ViewBase {
         }
 
         //  REMARK：显示MACD等高级指标区域多一条线。
-        if (_kSubIndexType != EKLineSubIndexType.eksit_show_none){
+        if (_kSubIndexType != EKLineSubIndexType.eksit_show_none) {
             val fSecondHeightAll = fSecondGraphHeight + fSecondMAHeight
             val fSubOffsetY = frameY + fOneCellHeight * (kBTS_KLINE_ROW_NUM - 1) + fMainMAHeight
             framePath.moveTo(frameX, fSubOffsetY + fSecondHeightAll)
@@ -354,36 +353,37 @@ class ViewKLine : ViewBase {
             EKLineMainIndexType.ekmit_show_ma -> {
                 val ma_value_config = kline_index_values.getJSONArray("ma_value")
                 assert(ma_value_config.length() == 3)
-                MKlineIndex.calc_ma_index(ma_value_config.getInt(0), _kdataArrayAll, ceilHandler, {m -> m.nPriceClose}) {m, new_index_value ->
+                MKlineIndex.calc_ma_index(ma_value_config.getInt(0), _kdataArrayAll, ceilHandler, { m -> m.nPriceClose }) { m, new_index_value ->
                     m.main_index01 = new_index_value
                 }
-                MKlineIndex.calc_ma_index(ma_value_config.getInt(1), _kdataArrayAll, ceilHandler, {m -> m.nPriceClose}) {m, new_index_value ->
+                MKlineIndex.calc_ma_index(ma_value_config.getInt(1), _kdataArrayAll, ceilHandler, { m -> m.nPriceClose }) { m, new_index_value ->
                     m.main_index02 = new_index_value
                 }
-                MKlineIndex.calc_ma_index(ma_value_config.getInt(2), _kdataArrayAll, ceilHandler, {m -> m.nPriceClose}) {m, new_index_value ->
+                MKlineIndex.calc_ma_index(ma_value_config.getInt(2), _kdataArrayAll, ceilHandler, { m -> m.nPriceClose }) { m, new_index_value ->
                     m.main_index03 = new_index_value
                 }
             }
             EKLineMainIndexType.ekmit_show_ema -> {
                 val ema_value_config = kline_index_values.getJSONArray("ema_value")
                 assert(ema_value_config.length() == 3)
-                MKlineIndex.calc_ema_index(ema_value_config.getInt(0), _kdataArrayAll, ceilHandler, {m -> m.nPriceClose}) {m, new_index_value ->
+                MKlineIndex.calc_ema_index(ema_value_config.getInt(0), _kdataArrayAll, ceilHandler, { m -> m.nPriceClose }) { m, new_index_value ->
                     m.main_index01 = new_index_value
                 }
-                MKlineIndex.calc_ema_index(ema_value_config.getInt(1), _kdataArrayAll, ceilHandler, {m -> m.nPriceClose}) {m, new_index_value ->
+                MKlineIndex.calc_ema_index(ema_value_config.getInt(1), _kdataArrayAll, ceilHandler, { m -> m.nPriceClose }) { m, new_index_value ->
                     m.main_index02 = new_index_value
                 }
-                MKlineIndex.calc_ema_index(ema_value_config.getInt(2), _kdataArrayAll, ceilHandler, {m -> m.nPriceClose}) {m, new_index_value ->
+                MKlineIndex.calc_ema_index(ema_value_config.getInt(2), _kdataArrayAll, ceilHandler, { m -> m.nPriceClose }) { m, new_index_value ->
                     m.main_index03 = new_index_value
                 }
             }
             EKLineMainIndexType.ekmit_show_boll -> {
                 val boll_value_config = kline_index_values.getJSONObject("boll_value")
-                MKlineIndex.calc_boll_index(boll_value_config.getInt("n"), boll_value_config.getInt("p"), _kdataArrayAll, ceilHandler) { m->
+                MKlineIndex.calc_boll_index(boll_value_config.getInt("n"), boll_value_config.getInt("p"), _kdataArrayAll, ceilHandler) { m ->
                     m.nPriceClose
                 }
             }
-            else -> {}
+            else -> {
+            }
         }
 
         //  计算高级指标
@@ -394,41 +394,42 @@ class ViewKLine : ViewBase {
                 //  adv_index01 - MACD
                 //  adv_index02 - DIFF
                 //  adv_index03 - DEA
-                MKlineIndex.calc_ema_index(macd_value.getInt("s"), _kdataArrayAll, ceilHandler, {m -> m.nPriceClose}) {m, new_index_value ->
+                MKlineIndex.calc_ema_index(macd_value.getInt("s"), _kdataArrayAll, ceilHandler, { m -> m.nPriceClose }) { m, new_index_value ->
                     //  EMA(short)
                     m.adv_index01 = new_index_value
                 }
-                MKlineIndex.calc_ema_index(macd_value.getInt("l"), _kdataArrayAll, ceilHandler, {m -> m.nPriceClose}) {m, new_index_value ->
+                MKlineIndex.calc_ema_index(macd_value.getInt("l"), _kdataArrayAll, ceilHandler, { m -> m.nPriceClose }) { m, new_index_value ->
                     //  EMA(long)
                     m.adv_index03 = new_index_value
                 }
                 _kdataArrayAll.forEach { m ->
-                    if (m.adv_index01 != null && m.adv_index03 != null){
+                    if (m.adv_index01 != null && m.adv_index03 != null) {
                         //  DIFF = EMA(short) - EMA(long)
                         m.adv_index02 = m.adv_index01!!.subtract(m.adv_index03).setScale(scale, rounding)
-                    }else{
+                    } else {
                         m.adv_index02 = null
                     }
                     m.adv_index01 = null
                     m.adv_index03 = null
                 }
-                MKlineIndex.calc_ema_index(macd_value.getInt("m"), _kdataArrayAll, ceilHandler, {m -> m.adv_index02}) {m, new_index_value ->
+                MKlineIndex.calc_ema_index(macd_value.getInt("m"), _kdataArrayAll, ceilHandler, { m -> m.adv_index02 }) { m, new_index_value ->
                     //  DEA
                     m.adv_index03 = new_index_value
                 }
                 val two = BigDecimal(2)
                 _kdataArrayAll.forEach { m ->
-                    if (m.adv_index02 != null && m.adv_index03 != null){
+                    if (m.adv_index02 != null && m.adv_index03 != null) {
                         //  MACD = (DIFF - DEA) * 2
                         m.adv_index01 = m.adv_index02!!.subtract(m.adv_index03).multiply(two).setScale(scale, rounding)
-                    }else{
+                    } else {
                         m.adv_index01 = null
                         m.adv_index02 = null
                         m.adv_index03 = null
                     }
                 }
             }
-            else -> {}
+            else -> {
+            }
         }
     }
 
@@ -557,7 +558,7 @@ class ViewKLine : ViewBase {
                     max_price = h
                     price_max_item = m
                 }
-                if (_kMainIndexType == EKLineMainIndexType.ekmit_show_ma || _kMainIndexType == EKLineMainIndexType.ekmit_show_ema){
+                if (_kMainIndexType == EKLineMainIndexType.ekmit_show_ma || _kMainIndexType == EKLineMainIndexType.ekmit_show_ema) {
                     if (main_index01 != null && main_index01.compareTo(max_price) == NSOrderedDescending) {
                         max_price = main_index01
                         price_max_item = m
@@ -570,7 +571,7 @@ class ViewKLine : ViewBase {
                         max_price = main_index03
                         price_max_item = m
                     }
-                }else if (_kMainIndexType == EKLineMainIndexType.ekmit_show_boll){
+                } else if (_kMainIndexType == EKLineMainIndexType.ekmit_show_boll) {
                     //  main_index02 is boll ub
                     if (main_index02 != null && main_index02.compareTo(max_price) == NSOrderedDescending) {
                         max_price = main_index02
@@ -589,7 +590,7 @@ class ViewKLine : ViewBase {
                     price_min_item = m
                 }
 
-                if (_kMainIndexType == EKLineMainIndexType.ekmit_show_ma || _kMainIndexType == EKLineMainIndexType.ekmit_show_ema){
+                if (_kMainIndexType == EKLineMainIndexType.ekmit_show_ma || _kMainIndexType == EKLineMainIndexType.ekmit_show_ema) {
                     if (main_index01 != null && main_index01.compareTo(min_price) == NSOrderedAscending) {
                         min_price = main_index01
                         price_min_item = m
@@ -602,7 +603,7 @@ class ViewKLine : ViewBase {
                         min_price = main_index03
                         price_min_item = m
                     }
-                }else if (_kMainIndexType == EKLineMainIndexType.ekmit_show_boll){
+                } else if (_kMainIndexType == EKLineMainIndexType.ekmit_show_boll) {
                     //  main_index03 is boll lb
                     if (main_index03 != null && main_index03.compareTo(min_price) == NSOrderedAscending) {
                         min_price = main_index03
@@ -795,43 +796,44 @@ class ViewKLine : ViewBase {
         }
     }
 
-    private fun drawAdvancedIndex(maxShowNum: Int, candle_width: Float){
-        when (_kSubIndexType){
+    private fun drawAdvancedIndex(maxShowNum: Int, candle_width: Float) {
+        when (_kSubIndexType) {
             EKLineSubIndexType.eksit_show_macd -> drawIndexMACD(maxShowNum, candle_width)
-            else -> {}
+            else -> {
+            }
         }
     }
 
-    private fun drawIndexMACD(maxShowNum: Int, candle_width: Float){
-        var max_value:BigDecimal? = null
-        var min_value:BigDecimal? = null
+    private fun drawIndexMACD(maxShowNum: Int, candle_width: Float) {
+        var max_value: BigDecimal? = null
+        var min_value: BigDecimal? = null
 
-        for (m in _kdataArrayShowing){
-            if (m.adv_index01 == null || m.adv_index02 == null || m.adv_index03 == null){
+        for (m in _kdataArrayShowing) {
+            if (m.adv_index01 == null || m.adv_index02 == null || m.adv_index03 == null) {
                 continue
             }
-            if (max_value == null || m.adv_index01!! > max_value){
+            if (max_value == null || m.adv_index01!! > max_value) {
                 max_value = m.adv_index01
             }
-            if (max_value == null || m.adv_index02!! > max_value){
+            if (max_value == null || m.adv_index02!! > max_value) {
                 max_value = m.adv_index02
             }
-            if (max_value == null || m.adv_index03!! > max_value){
+            if (max_value == null || m.adv_index03!! > max_value) {
                 max_value = m.adv_index03
             }
 
-            if (min_value == null || m.adv_index01!! < min_value){
+            if (min_value == null || m.adv_index01!! < min_value) {
                 min_value = m.adv_index01
             }
-            if (min_value == null || m.adv_index02!! < min_value){
+            if (min_value == null || m.adv_index02!! < min_value) {
                 min_value = m.adv_index02
             }
-            if (min_value == null || m.adv_index03!! < min_value){
+            if (min_value == null || m.adv_index03!! < min_value) {
                 min_value = m.adv_index03
             }
         }
 
-        if (min_value == null || max_value == null){
+        if (min_value == null || max_value == null) {
             return
         }
 
@@ -854,10 +856,10 @@ class ViewKLine : ViewBase {
         val fZeroLineOffset = -1.0f * min_value!!.toDouble() * fSecondViewHeight / f_diff_value
 
         _kdataArrayShowing.forEach { m ->
-            if (m.adv_index02 != null){
+            if (m.adv_index02 != null) {
                 m.fOffsetAdvIndex02 = (m.adv_index02!!.subtract(min_value).toDouble() * fSecondViewHeight / f_diff_value).toFloat()
             }
-            if (m.adv_index03 != null){
+            if (m.adv_index03 != null) {
                 m.fOffsetAdvIndex03 = (m.adv_index03!!.subtract(min_value).toDouble() * fSecondViewHeight / f_diff_value).toFloat()
             }
         }
@@ -873,10 +875,10 @@ class ViewKLine : ViewBase {
         val ceilHandlerScale: Int = _base_precision
         val ceilHandlerRounding: Int = BigDecimal.ROUND_UP
 
-        for (i in 0..2){
-            val txtOffsetY:Float
-            val value:BigDecimal
-            when (i){
+        for (i in 0..2) {
+            val txtOffsetY: Float
+            val value: BigDecimal
+            when (i) {
                 0 -> {
                     value = min_value
                     txtOffsetY = _view_size.height - 2.dp
@@ -899,16 +901,16 @@ class ViewKLine : ViewBase {
 
         //  3、描绘MACD柱
         val zero = BigDecimal.ZERO
-        for (m in _kdataArrayShowing){
-            if (m.adv_index01 == null){
+        for (m in _kdataArrayShowing) {
+            if (m.adv_index01 == null) {
                 continue
             }
             val x = m.showIndex * candleSpaceW + candle_width
             val isPositive = m.adv_index01!! >= zero
-            if (isPositive){
+            if (isPositive) {
                 val y = max((m.adv_index01!!.toDouble() * fSecondViewHeight / f_diff_value).toFloat(), 1.0f)
                 m_canvas.drawLine(x, fZeroLinePointY, x, fZeroLinePointY - y, m_paint_buycolor)
-            }else{
+            } else {
                 val y = min((m.adv_index01!!.toDouble() * fSecondViewHeight / f_diff_value).toFloat(), -1.0f)
                 m_canvas.drawLine(x, fZeroLinePointY, x, fZeroLinePointY - y, m_paint_sellcolor)
             }
@@ -1018,7 +1020,7 @@ class ViewKLine : ViewBase {
         //  3、描绘中间主区域蜡烛图影线和成交量
         var candle_max_price_model: MKlineItemData? = null
         var candle_min_price_model: MKlineItemData? = null
-        for ((idx, m) in _kdataArrayShowing.withIndex()){
+        for ((idx, m) in _kdataArrayShowing.withIndex()) {
             m.showIndex = idx
 
             //  非分时图的情况下描绘蜡烛图
@@ -1072,7 +1074,7 @@ class ViewKLine : ViewBase {
             }
             //  成交量移动均线描绘
             var fVolumeGraphBottomY = _view_size.height
-            if (_kSubIndexType != EKLineSubIndexType.eksit_show_none){
+            if (_kSubIndexType != EKLineSubIndexType.eksit_show_none) {
                 fVolumeGraphBottomY -= fSecondMAHeight + fSecondGraphHeight
             }
             if (m.vol_ma5 != null) {
@@ -1234,7 +1236,7 @@ class ViewKLine : ViewBase {
     /**
      *  刷新主图指标和高级指标显示类型
      */
-    private fun _refreshMainAndAdvIndexShowType(){
+    private fun _refreshMainAndAdvIndexShowType() {
         val kline_index_values = SettingManager.sharedSettingManager().getKLineIndexInfos()
 
         //  主图指标
@@ -1247,20 +1249,20 @@ class ViewKLine : ViewBase {
 
         //  高级指标
         val sub_type = kline_index_values.getString("kSub")
-        val subIndexType = if (sub_type == "macd"){
+        val subIndexType = if (sub_type == "macd") {
             EKLineSubIndexType.eksit_show_macd
-        }else{
+        } else {
             EKLineSubIndexType.eksit_show_none
         }
 
         //  刷新
         if ((_kSubIndexType == EKLineSubIndexType.eksit_show_none && subIndexType != EKLineSubIndexType.eksit_show_none) ||
-                (_kSubIndexType != EKLineSubIndexType.eksit_show_none && subIndexType == EKLineSubIndexType.eksit_show_none)){
+                (_kSubIndexType != EKLineSubIndexType.eksit_show_none && subIndexType == EKLineSubIndexType.eksit_show_none)) {
             //  refresh sub type and reset canvas
             _kSubIndexType = subIndexType
             //  重置画图区域
             setMainSubAdvAreaArgs(_view_size.width)
-        }else{
+        } else {
             //  only refresh sub type
             _kSubIndexType = subIndexType
         }
@@ -1320,7 +1322,7 @@ class ViewKLine : ViewBase {
         init()
     }
 
-    private fun setMainSubAdvAreaArgs(width: Float){
+    private fun setMainSubAdvAreaArgs(width: Float) {
         fOneCellHeight = width / kBTS_KLINE_ROW_NUM
         fMainGraphHeight = fOneCellHeight * (kBTS_KLINE_ROW_NUM - 1)
         fMainMAHeight = fOneCellHeight * kBTS_KLINE_MA_HEIGHT
@@ -1330,7 +1332,7 @@ class ViewKLine : ViewBase {
         fSecondGraphHeight = fSecondGraphTotal - fSecondMAHeight
 
         //  有高级指标显示的情况下重新计算高度
-        if (_kSubIndexType != EKLineSubIndexType.eksit_show_none){
+        if (_kSubIndexType != EKLineSubIndexType.eksit_show_none) {
             fMainGraphHeight -= fSecondGraphTotal
             fOneCellHeight = fMainGraphHeight / (kBTS_KLINE_ROW_NUM - 1)
         }

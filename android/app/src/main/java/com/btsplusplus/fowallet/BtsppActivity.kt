@@ -18,20 +18,20 @@ abstract class BtsppActivity : AppCompatActivity() {
         return _btspp_params as JSONArray
     }
 
-    fun btspp_args_as_JSONObject(): JSONObject{
+    fun btspp_args_as_JSONObject(): JSONObject {
         return _btspp_params as JSONObject
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             _btspp_param_id = savedInstanceState.getInt(ARG_PARAM_ID)
             //  [统计]
             btsppLogCustom("onBtsppParamsRestore", jsonObjectfromKVS("activity", this::class.java.name, "param_id", _btspp_param_id))
-        }else{
+        } else {
             _btspp_param_id = intent.getIntExtra(BTSPP_START_ACTIVITY_PARAM_ID, -1)
         }
-        if (_btspp_param_id > 0){
+        if (_btspp_param_id > 0) {
             _btspp_params = ParametersManager.sharedParametersManager().getParams(_btspp_param_id)
         }
     }
@@ -45,7 +45,7 @@ abstract class BtsppActivity : AppCompatActivity() {
     }
 
     override fun finish() {
-        if (_btspp_param_id > 0){
+        if (_btspp_param_id > 0) {
             btsppLogCustom("onFinishDeleteParams", jsonObjectfromKVS("activity", this::class.java.name, "param_id", _btspp_param_id))
             ParametersManager.sharedParametersManager().delParams(_btspp_param_id)
         }

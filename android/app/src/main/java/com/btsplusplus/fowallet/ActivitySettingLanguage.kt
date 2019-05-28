@@ -13,7 +13,7 @@ import org.json.JSONObject
 
 class ActivitySettingLanguage : BtsppActivity() {
 
-    private lateinit var _result_promise:Promise
+    private lateinit var _result_promise: Promise
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

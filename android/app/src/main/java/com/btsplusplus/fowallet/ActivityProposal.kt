@@ -75,21 +75,21 @@ class ActivityProposal : BtsppActivity() {
                         }
 
                         query_ids.put(proposal.getString("proposer"), true)
-                        proposal.getJSONArray("available_active_approvals").forEach<String> { uid -> 
+                        proposal.getJSONArray("available_active_approvals").forEach<String> { uid ->
                             query_ids.put(uid, true)
-                            skip_cache_ids.put(uid,true)
+                            skip_cache_ids.put(uid, true)
                         }
-                        proposal.getJSONArray("available_owner_approvals").forEach<String> { uid -> 
+                        proposal.getJSONArray("available_owner_approvals").forEach<String> { uid ->
                             query_ids.put(uid, true)
-                            skip_cache_ids.put(uid,true)
+                            skip_cache_ids.put(uid, true)
                         }
-                        proposal.getJSONArray("required_active_approvals").forEach<String> { uid -> 
+                        proposal.getJSONArray("required_active_approvals").forEach<String> { uid ->
                             query_ids.put(uid, true)
-                            skip_cache_ids.put(uid,true)
+                            skip_cache_ids.put(uid, true)
                         }
-                        proposal.getJSONArray("required_owner_approvals").forEach<String> { uid -> 
+                        proposal.getJSONArray("required_owner_approvals").forEach<String> { uid ->
                             query_ids.put(uid, true)
-                            skip_cache_ids.put(uid,true)
+                            skip_cache_ids.put(uid, true)
                         }
 
                         val operations = proposal.getJSONObject("proposed_transaction").getJSONArray("operations")
@@ -106,7 +106,7 @@ class ActivityProposal : BtsppActivity() {
                     }
                 }
             }
-            return@then chainMgr.queryAllGrapheneObjects(query_ids.keys().toJSONArray(),skip_cache_ids).then {
+            return@then chainMgr.queryAllGrapheneObjects(query_ids.keys().toJSONArray(), skip_cache_ids).then {
                 //  二次查询依赖
                 //  1、查询提案账号权限中的多签成员/代理人等名字信息等。
                 val query_account_ids = JSONObject()
@@ -119,7 +119,7 @@ class ActivityProposal : BtsppActivity() {
                             query_account_ids.put(item.getString(0), true)
                         }
                         val voting_account = account.getJSONObject("options").getString("voting_account")
-                        if (voting_account != BTS_GRAPHENE_PROXY_TO_SELF){
+                        if (voting_account != BTS_GRAPHENE_PROXY_TO_SELF) {
                             query_account_ids.put(voting_account, true)
                         }
                     }
@@ -131,7 +131,7 @@ class ActivityProposal : BtsppActivity() {
                             query_account_ids.put(item.getString(0), true)
                         }
                         val voting_account = account.getJSONObject("options").getString("voting_account")
-                        if (voting_account != BTS_GRAPHENE_PROXY_TO_SELF){
+                        if (voting_account != BTS_GRAPHENE_PROXY_TO_SELF) {
                             query_account_ids.put(voting_account, true)
                         }
                     }
@@ -146,18 +146,18 @@ class ActivityProposal : BtsppActivity() {
                         val ary = it!!
                         assert(ary.length() == 2)
                         val opcode = ary.getInt(0)
-                        if (opcode == EBitsharesOperations.ebo_account_update.value){
+                        if (opcode == EBitsharesOperations.ebo_account_update.value) {
                             val opdata = ary.getJSONObject(1)
                             val new_options = opdata.optJSONObject("new_options")
                             if (new_options != null) {
                                 val votes = new_options.optJSONArray("votes")
-                                if (votes != null && votes.length() > 0){
+                                if (votes != null && votes.length() > 0) {
                                     votes.forEach<String> { vote_id ->
                                         new_vote_id_hash.put(vote_id, true)
                                     }
                                 }
                                 val voting_account = new_options.getString("voting_account")
-                                if (voting_account != BTS_GRAPHENE_PROXY_TO_SELF){
+                                if (voting_account != BTS_GRAPHENE_PROXY_TO_SELF) {
                                     query_account_ids.put(voting_account, true)
                                 }
                             }
@@ -170,7 +170,7 @@ class ActivityProposal : BtsppActivity() {
                     val account = chainMgr.getChainObjectByID(account_id)
                     val options = account.optJSONObject("options")
                     val votes = options?.optJSONArray("votes")
-                    if (votes != null && votes.length() > 0){
+                    if (votes != null && votes.length() > 0) {
                         votes.forEach<String> { vote_id ->
                             new_vote_id_hash.put(vote_id, true)
                         }
@@ -182,19 +182,19 @@ class ActivityProposal : BtsppActivity() {
                 val p1 = chainMgr.queryAllGrapheneObjects(query_account_ids.keys().toJSONArray())
                 val p2 = chainMgr.queryAllVoteIds(vote_id_list)
 
-                return@then Promise.all(p1,p2).then { data ->
+                return@then Promise.all(p1, p2).then { data ->
                     //  第三次查询依赖（投票信息中的见证人理事会成员名字等）
                     val query_ids_3rd = JSONObject()
-                    vote_id_list.forEach<String>{ it ->
+                    vote_id_list.forEach<String> { it ->
                         val vote_id = it!!
                         val vote_info = chainMgr.getVoteInfoByVoteID(vote_id)
-                        val committee_member_account = vote_info!!.optString("committee_member_account",null)
-                        if (committee_member_account != null){
-                            query_ids_3rd.put(committee_member_account,true)
+                        val committee_member_account = vote_info!!.optString("committee_member_account", null)
+                        if (committee_member_account != null) {
+                            query_ids_3rd.put(committee_member_account, true)
                         } else {
-                            val witness_account = vote_info.optString("witness_account",null)
-                            if (witness_account != null){
-                                query_ids_3rd.put(witness_account,true)
+                            val witness_account = vote_info.optString("witness_account", null)
+                            if (witness_account != null) {
+                                query_ids_3rd.put(witness_account, true)
                             }
                         }
                     }
@@ -582,19 +582,19 @@ class ActivityProposal : BtsppActivity() {
         val newOperations = proposalProcessedData.getJSONArray("newOperations")
         newOperations.forEach<JSONObject> {
             val operation = it!!
-            val bNormalDesc:Boolean
-            when(operation.getInt("opcode")){
-                EBitsharesOperations.ebo_account_update.value ->{
+            val bNormalDesc: Boolean
+            when (operation.getInt("opcode")) {
+                EBitsharesOperations.ebo_account_update.value -> {
                     val view = ViewProposalAccountUpdate(this, operation, true)
                     bNormalDesc = view._useNormalDescLabel
                     layout5_opinfos.addView(view)
                 }
-                else ->{
+                else -> {
                     bNormalDesc = true
                     layout5_opinfos.addView(ViewUtils.createProposalOpInfoCell(this, operation.getJSONObject("uidata"), useBuyColorForTitle = true))
                 }
             }
-            if (bNormalDesc){
+            if (bNormalDesc) {
                 val lv_line = View(this)
                 lv_line.setBackgroundColor(resources.getColor(R.color.theme01_bottomLineColor))
                 lv_line.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1.dp).apply {
@@ -686,21 +686,21 @@ class ActivityProposal : BtsppActivity() {
             val proposer_registrar = proposer_account.getString("registrar")
 
             var in_blacklist = false
-            if (blacklisted_accounts != null && blacklisted_accounts.length() > 0){
-                for (uid in blacklisted_accounts.forin<String>()){
+            if (blacklisted_accounts != null && blacklisted_accounts.length() > 0) {
+                for (uid in blacklisted_accounts.forin<String>()) {
                     //  发起账号 or 发起账号的注册者 在黑名单种，均存在风险。
-                    if (uid!! == proposer_uid || uid == proposer_registrar){
+                    if (uid!! == proposer_uid || uid == proposer_registrar) {
                         in_blacklist = true
                         break
                     }
                 }
             }
 
-            if (in_blacklist){
+            if (in_blacklist) {
                 UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kWarmTips), String.format(R.string.kProposalSubmitTipsBlockedApprovedForBlackList.xmlstring(this), proposer_account.getString("name")), btn_cancel = null).then {
                     return@then null
                 }
-            }else{
+            } else {
                 _gotoApproveCore(proposal)
             }
             return@then null
@@ -710,7 +710,7 @@ class ActivityProposal : BtsppActivity() {
         }
     }
 
-    private fun _gotoApproveCore(proposal: JSONObject){
+    private fun _gotoApproveCore(proposal: JSONObject) {
         //  审核中：仅可移除授权，不可添加授权。
         val kProcessedData = proposal.getJSONObject("kProcessedData")
         if (kProcessedData.getBoolean("inReview")) {
@@ -906,7 +906,7 @@ class ActivityProposal : BtsppActivity() {
         availableHash.keys().forEach { key ->
             //  REMARK：批准之后被刷掉了，无权限了，则不存在于需要授权列表了。
             val item = needAuthorizeHash.optJSONObject(key)
-            if (item != null){
+            if (item != null) {
                 if (item.optBoolean("isaccount")) {
                     val account_data = idAccountDataHash.optJSONObject(key)
                     if (account_data != null) {

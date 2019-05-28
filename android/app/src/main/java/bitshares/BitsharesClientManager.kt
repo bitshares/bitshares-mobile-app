@@ -119,7 +119,7 @@ class BitsharesClientManager {
     /**
      *  OP - 创建待解冻金额
      */
-    fun vestingBalanceCreate(opdata: JSONObject): Promise{
+    fun vestingBalanceCreate(opdata: JSONObject): Promise {
         val tr = TransactionBuilder()
         tr.add_operation(EBitsharesOperations.ebo_vesting_balance_create, opdata)
         tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("creator")))
@@ -129,7 +129,7 @@ class BitsharesClientManager {
     /**
      *  OP - 提取待解冻金额
      */
-    fun vestingBalanceWithdraw(opdata: JSONObject): Promise{
+    fun vestingBalanceWithdraw(opdata: JSONObject): Promise {
         val tr = TransactionBuilder()
         tr.add_operation(EBitsharesOperations.ebo_vesting_balance_withdraw, opdata)
         tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("owner")))
@@ -187,7 +187,7 @@ class BitsharesClientManager {
             assert(opaccount.getString("id") != BTS_GRAPHENE_COMMITTEE_ACCOUNT || kReviewPeriod > 0)
 
             //  添加审核期
-            if (kReviewPeriod > 0){
+            if (kReviewPeriod > 0) {
                 op.put("review_period_seconds", review_period_seconds)
             }
 
@@ -267,7 +267,7 @@ class BitsharesClientManager {
     /**
      *  OP - 创建HTLC合约
      */
-    fun htlcCreate(opdata: JSONObject) : Promise {
+    fun htlcCreate(opdata: JSONObject): Promise {
         val tr = TransactionBuilder()
         tr.add_operation(EBitsharesOperations.ebo_htlc_create, opdata)
         tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("from")))
@@ -277,7 +277,7 @@ class BitsharesClientManager {
     /**
      *  OP - 提取HTLC合约
      */
-    fun htlcRedeem(opdata: JSONObject) : Promise {
+    fun htlcRedeem(opdata: JSONObject): Promise {
         val tr = TransactionBuilder()
         tr.add_operation(EBitsharesOperations.ebo_htlc_redeem, opdata)
         tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("redeemer")))
@@ -287,7 +287,7 @@ class BitsharesClientManager {
     /**
      *  OP - 扩展HTLC合约有效期
      */
-    fun htlcExtend(opdata: JSONObject) : Promise {
+    fun htlcExtend(opdata: JSONObject): Promise {
         val tr = TransactionBuilder()
         tr.add_operation(EBitsharesOperations.ebo_htlc_extend, opdata)
         tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("update_issuer")))

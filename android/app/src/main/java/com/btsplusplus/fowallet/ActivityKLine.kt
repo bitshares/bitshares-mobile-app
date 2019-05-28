@@ -200,17 +200,17 @@ class ActivityKLine : BtsppActivity() {
         setFullScreen()
     }
 
-    private fun _onIndexButtonClicked(){
+    private fun _onIndexButtonClicked() {
         val result_promise = Promise()
-        goTo(ActivityKLineIndexSetting::class.java,true, args = jsonObjectfromKVS("result_promise", result_promise))
+        goTo(ActivityKLineIndexSetting::class.java, true, args = jsonObjectfromKVS("result_promise", result_promise))
         result_promise.then {
-            if (it != null && it as Boolean){
+            if (it != null && it as Boolean) {
                 _viewKLine.refreshUI()
             }
         }
     }
 
-    private fun _onMoreButtonClicked(tab_more: TabLayout.Tab){
+    private fun _onMoreButtonClicked(tab_more: TabLayout.Tab) {
         val more_list = JSONArray().apply {
             put(JSONObject().apply {
                 put("name", resources.getString(R.string.kLabelEkdpt1min))
@@ -233,22 +233,22 @@ class ActivityKLine : BtsppActivity() {
         val currentType = _viewKLine.ekdptType
         var defaultIndex = 0
         var idx = 0
-        for (item in more_list){
+        for (item in more_list) {
             val value = item!!.get("value") as ViewKLine.EKlineDatePeriodType
-            if (currentType != null && value == currentType){
+            if (currentType != null && value == currentType) {
                 defaultIndex = idx
                 break
             }
             ++idx
         }
 
-        ViewDialogNumberPicker(this, null, more_list, "name", defaultIndex){ _index: Int, txt: String ->
+        ViewDialogNumberPicker(this, null, more_list, "name", defaultIndex) { _index: Int, txt: String ->
             tab_more.text = "$txt${resources.getString(R.string.kLabelEkdptMoreSuffix)}"
             tab_more.tag = more_list.getJSONObject(_index).get("value")
-            if (tab_more.isSelected){
+            if (tab_more.isSelected) {
                 val current_type = tab_more.tag as ViewKLine.EKlineDatePeriodType
                 queryKdata(getDatePeriodSeconds(current_type.value), current_type)
-            }else{
+            } else {
                 tab_more.select()   //  select will trigger `onTabSelected` event
             }
         }.show()
@@ -258,9 +258,9 @@ class ActivityKLine : BtsppActivity() {
         //  More Tab
         val tab_more_index = tablayout_of_kline.tabCount - 1
         val tab_more = tablayout_of_kline.getTabAt(tab_more_index)
-        if (tab_more != null){
+        if (tab_more != null) {
             (tab_more.view as View).setOnTouchListener { _, event ->
-                if (event.action == MotionEvent.ACTION_DOWN){
+                if (event.action == MotionEvent.ACTION_DOWN) {
                     _onMoreButtonClicked(tab_more)
                 }
                 return@setOnTouchListener true
@@ -275,11 +275,11 @@ class ActivityKLine : BtsppActivity() {
         tablayout_of_kline.getTabAt(kline_period_default_index)!!.select()
         tablayout_of_kline!!.setOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-                val current_type = if (tab.position == tab_more_index){
+                val current_type = if (tab.position == tab_more_index) {
                     tab.tag as ViewKLine.EKlineDatePeriodType
-                }else{
+                } else {
                     tablayout_of_kline.getTabAt(tab_more_index)!!.text = resources.getString(R.string.kLabelEkdptBtnMore)
-                    when(tab.position) {
+                    when (tab.position) {
                         0 -> ViewKLine.EKlineDatePeriodType.ekdpt_timeline
                         1 -> ViewKLine.EKlineDatePeriodType.ekdpt_15m
                         2 -> ViewKLine.EKlineDatePeriodType.ekdpt_1h
@@ -372,7 +372,7 @@ class ActivityKLine : BtsppActivity() {
             label_txt_low_value.text = "${model.nPriceLow}"
             label_txt_24h_value.text = "${model.n24Vol}"
             _refreshCurrentTickerData()
-        }else{
+        } else {
             label_txt_24h_value.text = "0"
         }
     }

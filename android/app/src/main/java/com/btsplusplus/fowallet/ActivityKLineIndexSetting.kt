@@ -47,8 +47,8 @@ class ActivityKLineIndexSetting : BtsppActivity() {
         //  refresh ui
         refreshIndexAll()
 
-        layout_back_from_kline_quota_setting.setOnClickListener{ onBackClicked(false) }
-        layout_main.setOnClickListener{ onMainViewClick() }
+        layout_back_from_kline_quota_setting.setOnClickListener { onBackClicked(false) }
+        layout_main.setOnClickListener { onMainViewClick() }
         layout_sub.setOnClickListener { onSubViewClick() }
         button_commit.setOnClickListener { onCommitClicked() }
 
@@ -61,56 +61,56 @@ class ActivityKLineIndexSetting : BtsppActivity() {
         layout_sub_index03.setOnClickListener { onSubIndexClicked(2) }
     }
 
-    private fun onCommitClicked(){
+    private fun onCommitClicked() {
         SettingManager.sharedSettingManager().setUseConfig(kSettingKey_KLineIndexInfo, _configValueHash)
         _result_promise.resolve(true)
         finish()
     }
 
-    private fun onMainIndexClicked(row: Int){
+    private fun onMainIndexClicked(row: Int) {
         val value_type = _configValueHash.optString("kMain")
-        if (value_type == "ma"){
+        if (value_type == "ma") {
             onSelectIndexMA(row)
-        }else if (value_type == "ema"){
+        } else if (value_type == "ema") {
             onSelectIndexEMA(row)
-        }else if (value_type == "boll"){
+        } else if (value_type == "boll") {
             onSelectIndexBOLL(row)
         }
     }
 
-    private fun onSubIndexClicked(row: Int){
+    private fun onSubIndexClicked(row: Int) {
         val value_type = _configValueHash.optString("kSub")
-        if (value_type == "macd"){
+        if (value_type == "macd") {
             onSelectIndexMACD(row)
         }
     }
 
-    private fun onSelectNumberFromRange(title:String, bgn: Int, end: Int, current_value:Int): Promise{
+    private fun onSelectNumberFromRange(title: String, bgn: Int, end: Int, current_value: Int): Promise {
         val p = Promise()
 
         val nameList = JSONArray()
         val valueList = JSONArray()
         var default_select = -1
         for (i in bgn..end) {
-            if (i == 0){
+            if (i == 0) {
                 nameList.put(resources.getString(R.string.kKlineIndexCellHide))
-            }else{
+            } else {
                 nameList.put(i.toString())
             }
-            if (i == current_value){
+            if (i == current_value) {
                 default_select = nameList.length() - 1
             }
             valueList.put(i)
         }
 
-        ViewDialogNumberPicker(this, title, nameList, null, default_select){ _index: Int, _: String ->
+        ViewDialogNumberPicker(this, title, nameList, null, default_select) { _index: Int, _: String ->
             p.resolve(valueList.getInt(_index))
         }.show()
 
         return p
     }
 
-    private fun onSelectIndexMA(row: Int){
+    private fun onSelectIndexMA(row: Int) {
         onSelectNumberFromRange("MA${row + 1}", 0, 120, _configValueHash.getJSONArray("ma_value").getInt(row)).then {
             val value = it as Int
             _configValueHash.getJSONArray("ma_value").put(row, value)
@@ -123,7 +123,7 @@ class ActivityKLineIndexSetting : BtsppActivity() {
         }
     }
 
-    private fun onSelectIndexEMA(row: Int){
+    private fun onSelectIndexEMA(row: Int) {
         onSelectNumberFromRange("EMA${row + 1}", 0, 120, _configValueHash.getJSONArray("ema_value").getInt(row)).then {
             val value = it as Int
             _configValueHash.getJSONArray("ema_value").put(row, value)
@@ -136,17 +136,17 @@ class ActivityKLineIndexSetting : BtsppActivity() {
         }
     }
 
-    private fun onSelectIndexBOLL(row: Int){
+    private fun onSelectIndexBOLL(row: Int) {
         val key: String
         val title: String
         val bgn: Int
         val end: Int
-        if (row == 0){
+        if (row == 0) {
             key = "n"
             title = resources.getString(R.string.kKlineIndexCellBollN)
             bgn = 1
             end = 120
-        }else{
+        } else {
             key = "p"
             title = resources.getString(R.string.kKlineIndexCellBollP)
             bgn = 1
@@ -163,7 +163,7 @@ class ActivityKLineIndexSetting : BtsppActivity() {
         }
     }
 
-    private fun onSelectIndexMACD(row: Int){
+    private fun onSelectIndexMACD(row: Int) {
         val title = when (row) {
             0 -> resources.getString(R.string.kKlineIndexCellMacdS)
             1 -> resources.getString(R.string.kKlineIndexCellMacdL)
@@ -194,32 +194,32 @@ class ActivityKLineIndexSetting : BtsppActivity() {
         }
     }
 
-    private fun refreshIndexAll(){
+    private fun refreshIndexAll() {
         refreshMainIndexAll()
         refreshSubIndexAll()
     }
 
-    private fun refreshIndexValueLabel(label: TextView, value: Int){
-        if (value > 0){
+    private fun refreshIndexValueLabel(label: TextView, value: Int) {
+        if (value > 0) {
             label.text = value.toString()
-        }else{
+        } else {
             label.text = resources.getString(R.string.kKlineIndexCellHide)
         }
     }
 
-    private fun refreshMainIndexAll(){
+    private fun refreshMainIndexAll() {
         layout_main_index01.visibility = View.GONE
         layout_main_index02.visibility = View.GONE
         layout_main_index03.visibility = View.GONE
 
         val value_type = _configValueHash.optString("kMain")
-        if (value_type == ""){
+        if (value_type == "") {
             layout_main_index_all.visibility = View.GONE
             layout_main_value.text = resources.getString(R.string.kKlineIndexCellHide)
-        }else{
+        } else {
             layout_main_index_all.visibility = View.VISIBLE
             layout_main_value.text = value_type.toUpperCase()
-            if (value_type == "ma"){
+            if (value_type == "ma") {
                 val value_values = _configValueHash.getJSONArray("${value_type}_value")
                 assert(value_values.length() == 3)
                 layout_main_index01.visibility = View.VISIBLE
@@ -234,7 +234,7 @@ class ActivityKLineIndexSetting : BtsppActivity() {
                 refreshIndexValueLabel(main_index01_value, value_values.getInt(0))
                 refreshIndexValueLabel(main_index02_value, value_values.getInt(1))
                 refreshIndexValueLabel(main_index03_value, value_values.getInt(2))
-            }else if (value_type == "ema"){
+            } else if (value_type == "ema") {
                 val value_values = _configValueHash.getJSONArray("${value_type}_value")
                 assert(value_values.length() == 3)
                 layout_main_index01.visibility = View.VISIBLE
@@ -249,7 +249,7 @@ class ActivityKLineIndexSetting : BtsppActivity() {
                 refreshIndexValueLabel(main_index01_value, value_values.getInt(0))
                 refreshIndexValueLabel(main_index02_value, value_values.getInt(1))
                 refreshIndexValueLabel(main_index03_value, value_values.getInt(2))
-            }else if (value_type == "boll"){
+            } else if (value_type == "boll") {
                 val value_values = _configValueHash.getJSONObject("${value_type}_value")
                 assert(value_values.length() == 2)
                 layout_main_index01.visibility = View.VISIBLE
@@ -260,25 +260,25 @@ class ActivityKLineIndexSetting : BtsppActivity() {
                 main_index02_name.setTextColor(resources.getColor(R.color.theme01_textColorMain))
                 main_index01_value.text = value_values.getInt("n").toString()
                 main_index02_value.text = value_values.getInt("p").toString()
-            }else{
+            } else {
                 assert(false)
             }
         }
     }
 
-    private fun refreshSubIndexAll(){
+    private fun refreshSubIndexAll() {
         layout_sub_index01.visibility = View.GONE
         layout_sub_index02.visibility = View.GONE
         layout_sub_index03.visibility = View.GONE
 
         val value_type = _configValueHash.optString("kSub")
-        if (value_type == ""){
+        if (value_type == "") {
             layout_sub_index_all.visibility = View.GONE
             layout_sub_value.text = resources.getString(R.string.kKlineIndexCellHide)
-        }else{
+        } else {
             layout_sub_index_all.visibility = View.VISIBLE
             layout_sub_value.text = value_type.toUpperCase()
-            if (value_type == "macd"){
+            if (value_type == "macd") {
                 val value_values = _configValueHash.getJSONObject("${value_type}_value")
                 assert(value_values.length() == 3)
                 layout_sub_index01.visibility = View.VISIBLE
@@ -290,26 +290,26 @@ class ActivityKLineIndexSetting : BtsppActivity() {
                 sub_index01_value.text = value_values.getInt("s").toString()
                 sub_index02_value.text = value_values.getInt("l").toString()
                 sub_index03_value.text = value_values.getInt("m").toString()
-            }else{
+            } else {
                 assert(false)
             }
         }
     }
 
-    private fun onMainViewClick(){
+    private fun onMainViewClick() {
         val list = JSONArray()
         _main_index_type_array.forEach<JSONObject> { list.put(it!!.getString("name")) }
-        ViewSelector.show(this, resources.getString(R.string.kKlineIndexSelectMainIndex), list.toList<String>().toTypedArray()){ index: Int, result: String ->
+        ViewSelector.show(this, resources.getString(R.string.kKlineIndexSelectMainIndex), list.toList<String>().toTypedArray()) { index: Int, result: String ->
             layout_main_value.text = result
             _configValueHash.put("kMain", _main_index_type_array.getJSONObject(index).getString("value"))
             refreshMainIndexAll()
         }
     }
 
-    private fun onSubViewClick(){
+    private fun onSubViewClick() {
         val list = JSONArray()
         _sub_index_type_array.forEach<JSONObject> { list.put(it!!.getString("name")) }
-        ViewSelector.show(this, resources.getString(R.string.kKlineIndexSelectSubIndex), list.toList<String>().toTypedArray()){ index: Int, result: String ->
+        ViewSelector.show(this, resources.getString(R.string.kKlineIndexSelectSubIndex), list.toList<String>().toTypedArray()) { index: Int, result: String ->
             layout_sub_value.text = result
             _configValueHash.put("kSub", _sub_index_type_array.getJSONObject(index).getString("value"))
             refreshSubIndexAll()

@@ -156,7 +156,7 @@ fun android.app.Activity.viewUserAssets(account_name_or_id: String) {
         val full_account_data = it as JSONObject
         val userAssetDetailInfos = OrgUtils.calcUserAssetDetailInfos(full_account_data)
         val debtValuesHashKeys = userAssetDetailInfos.getJSONObject("debtValuesHash").keys().toJSONArray()
-        var debt_asset_ids = Array(debtValuesHashKeys.length()){ return@Array "" }
+        var debt_asset_ids = Array(debtValuesHashKeys.length()) { return@Array "" }
         var i = 0
         debtValuesHashKeys.forEach<String> {
             debt_asset_ids.set(i, it!!)
@@ -174,7 +174,7 @@ fun android.app.Activity.viewUserAssets(account_name_or_id: String) {
                 return@then null
             }
         }
-    }.catch{
+    }.catch {
         mask.dismiss()
         showToast(resources.getString(R.string.tip_network_error))
     }
@@ -232,7 +232,7 @@ fun android.app.Activity.showGrapheneError(error: Any?) {
                 }
                 //  "Preimage size mismatch." or ""Provided preimage does not generate correct hash."
                 val lowermsg = msg.toLowerCase()
-                if (lowermsg.indexOf("preimage size") > 0 || lowermsg.indexOf("provided preimage") > 0){
+                if (lowermsg.indexOf("preimage size") > 0 || lowermsg.indexOf("provided preimage") > 0) {
                     showToast(resources.getString(R.string.kGPErrorRedeemInvalidPreimage))
                     return
                 }
@@ -318,7 +318,7 @@ fun android.app.Activity.askForCreateProposal(opcode: EBitsharesOperations, usin
             val args = jsonObjectfromKVS("opcode", opcode, "opaccount", opaccount, "opdata", opdata, "result_promise", result_promise)
             goTo(ActivityCreateProposal::class.java, true, args = args)
             result_promise.then { result ->
-                if (result != null){
+                if (result != null) {
                     val proposal_create_args = result as? JSONObject
                     if (proposal_create_args != null) {
                         if (invoke_proposal_callback) {
@@ -465,7 +465,7 @@ fun android.app.Activity.goTo(cls: Class<*>, transition_animation: Boolean = fal
     }
 
     //  设置参数
-    if (args != null){
+    if (args != null) {
         intent.putExtra(BTSPP_START_ACTIVITY_PARAM_ID, ParametersManager.sharedParametersManager().genParams(args))
     }
 

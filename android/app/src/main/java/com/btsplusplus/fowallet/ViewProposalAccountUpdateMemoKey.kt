@@ -25,16 +25,16 @@ class ViewProposalAccountUpdateMemoKey : LinearLayout {
         this.orientation = LinearLayout.VERTICAL
     }
 
-    private fun genLineLables(name: String, result: String, color_name: Int, color_result: Int) : LinearLayout {
+    private fun genLineLables(name: String, result: String, color_name: Int, color_result: Int): LinearLayout {
         val layout = LinearLayout(_ctx)
         layout.layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP).apply {
-            setMargins(0,2.dp,0, 2.dp)
+            setMargins(0, 2.dp, 0, 2.dp)
         }
         layout.orientation = LinearLayout.HORIZONTAL
         layout.gravity = Gravity.CENTER_VERTICAL
         layout.apply {
             val tv_name = TextView(_ctx).apply {
-                layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP,6f)
+                layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 6f)
                 gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
                 setTextColor(resources.getColor(color_name))
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
@@ -44,7 +44,7 @@ class ViewProposalAccountUpdateMemoKey : LinearLayout {
                 text = name
             }
             val tv_result = TextView(_ctx).apply {
-                layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP,1f).apply {
+                layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 1f).apply {
                     gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
                 }
                 gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
@@ -60,9 +60,9 @@ class ViewProposalAccountUpdateMemoKey : LinearLayout {
     }
 
     fun initWithOldMemo(old_memokey: String, new_memokey: String, title: String): LinearLayout {
-        addView(genLineLables(title,R.string.kOpDetailSubTitleOperate.xmlstring(_ctx), R.color.theme01_textColorGray, R.color.theme01_textColorGray))
-        addView(genLineLables("* ${old_memokey}",R.string.kOpDetailSubOpDelete.xmlstring(_ctx), R.color.theme01_textColorNormal, R.color.theme01_sellColor))
-        addView(genLineLables("* ${new_memokey}",R.string.kOpDetailSubOpAdd.xmlstring(_ctx), R.color.theme01_textColorNormal, R.color.theme01_buyColor))
+        addView(genLineLables(title, R.string.kOpDetailSubTitleOperate.xmlstring(_ctx), R.color.theme01_textColorGray, R.color.theme01_textColorGray))
+        addView(genLineLables("* ${old_memokey}", R.string.kOpDetailSubOpDelete.xmlstring(_ctx), R.color.theme01_textColorNormal, R.color.theme01_sellColor))
+        addView(genLineLables("* ${new_memokey}", R.string.kOpDetailSubOpAdd.xmlstring(_ctx), R.color.theme01_textColorNormal, R.color.theme01_buyColor))
 
         //  线
         val lv_line = View(_ctx)

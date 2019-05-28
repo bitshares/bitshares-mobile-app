@@ -27,7 +27,7 @@ class UtilsAlert {
         /**
          * 显示输入对话框
          */
-        fun showInputBox(ctx: Context, title: String, placeholder: String, btn_ok: String = ctx.resources.getString(R.string.kBtnOK), btn_cancel: String = ctx.resources.getString(R.string.kBtnCancel), is_password:Boolean = true): Promise {
+        fun showInputBox(ctx: Context, title: String, placeholder: String, btn_ok: String = ctx.resources.getString(R.string.kBtnOK), btn_cancel: String = ctx.resources.getString(R.string.kBtnCancel), is_password: Boolean = true): Promise {
             val p = Promise()
 
             //  输入框
@@ -35,9 +35,9 @@ class UtilsAlert {
             val padding = Utils.toDp(20.0f, ctx.resources)
             edit.setPadding(padding, padding, padding, padding)
             edit.hint = placeholder
-            if (is_password){
+            if (is_password) {
                 edit.inputType = InputType.TYPE_CLASS_TEXT.or(InputType.TYPE_TEXT_VARIATION_PASSWORD)
-            }else{
+            } else {
                 edit.inputType = InputType.TYPE_CLASS_TEXT
             }
             //  对话框

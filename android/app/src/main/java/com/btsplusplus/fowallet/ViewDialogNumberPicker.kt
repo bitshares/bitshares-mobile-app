@@ -7,8 +7,14 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.AttributeSet
 import android.util.TypedValue
-import android.view.*
-import android.widget.*
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.NumberPicker
+import android.widget.TextView
 import bitshares.LLAYOUT_MATCH
 import bitshares.LLAYOUT_WARP
 import bitshares.dp
@@ -60,13 +66,13 @@ class BtsppNumberPicker : NumberPicker {
 
 class ViewDialogNumberPicker : Dialog {
 
-    constructor(ctx: Context, title:String?, source_list: JSONArray, itemkey:String?, default_selected:Int, callback: (index: Int, result: String) -> Unit) : super(ctx) {
+    constructor(ctx: Context, title: String?, source_list: JSONArray, itemkey: String?, default_selected: Int, callback: (index: Int, result: String) -> Unit) : super(ctx) {
         val string_list = mutableListOf<String>()
-        if (itemkey != null){
+        if (itemkey != null) {
             source_list.forEach<JSONObject> {
                 string_list.add(it!!.getString(itemkey))
             }
-        }else{
+        } else {
             source_list.forEach<String> {
                 string_list.add(it!!)
             }
@@ -92,7 +98,7 @@ class ViewDialogNumberPicker : Dialog {
         }
 
         val tv_cancel = TextView(ctx).apply {
-            layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP,1f).apply {
+            layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 1f).apply {
                 gravity = Gravity.CENTER_VERTICAL
             }
             gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
@@ -102,8 +108,8 @@ class ViewDialogNumberPicker : Dialog {
             setPadding(10.dp, 0, 0, 0)
         }
 
-        var tv_title:TextView? = null
-        if (title != null && title.isNotEmpty()){
+        var tv_title: TextView? = null
+        if (title != null && title.isNotEmpty()) {
             tv_title = TextView(ctx).apply {
                 layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 2f).apply {
                     gravity = Gravity.CENTER_VERTICAL
@@ -140,15 +146,15 @@ class ViewDialogNumberPicker : Dialog {
                 it.isAccessible = true
                 try {
                     it.set(picker, ColorDrawable(ctx.resources.getColor(R.color.theme01_bottomLineColor)))
-                } catch ( e: Exception ) {
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
-            if (it.name == "mSelectionDividerHeight"){
+            if (it.name == "mSelectionDividerHeight") {
                 it.isAccessible = true
                 try {
                     it.set(picker, 1.dp)
-                } catch ( e: Exception ) {
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
@@ -167,12 +173,12 @@ class ViewDialogNumberPicker : Dialog {
         v?.visibility = View.GONE
 
         //  取消点击
-        tv_cancel.setOnClickListener{
+        tv_cancel.setOnClickListener {
             dismiss()
         }
 
         //  确认点击
-        tv_ok.setOnClickListener{
+        tv_ok.setOnClickListener {
             val selected = picker.value
             callback.invoke(selected, array_data[selected])
             dismiss()
@@ -186,7 +192,7 @@ class ViewDialogNumberPicker : Dialog {
         window.setGravity(Gravity.BOTTOM)
         //  full screen
         window.decorView.setPadding(0, 0, 0, 0)
-        val params: WindowManager.LayoutParams  = window.attributes
+        val params: WindowManager.LayoutParams = window.attributes
         params.width = WindowManager.LayoutParams.MATCH_PARENT
         params.height = WindowManager.LayoutParams.WRAP_CONTENT
         window.attributes = params

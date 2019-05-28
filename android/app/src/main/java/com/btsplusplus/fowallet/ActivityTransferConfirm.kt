@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
 import bitshares.OrgUtils
-import bitshares.TempManager
 import kotlinx.android.synthetic.main.activity_transfer_confirm.*
 
 class ActivityTransferConfirm : BtsppActivity() {
