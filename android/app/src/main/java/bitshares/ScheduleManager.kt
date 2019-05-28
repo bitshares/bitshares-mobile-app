@@ -363,6 +363,9 @@ class ScheduleManager {
     fun unsub_market_notify(tradingPair: TradingPair) {
         //  没在订阅中
         val s = _sub_market_infos[tradingPair._pair] ?: return
+        if (!s.subscribed || s.callback == null){
+            return
+        }
 
         //  降低引用计数
         s.refCount -= 1
@@ -381,10 +384,10 @@ class ScheduleManager {
 
         // 取消订阅
         conn.async_exec_db("unsubscribe_from_market", jsonArrayfrom(s.callback!!, tradingPair._baseId, tradingPair._quoteId)).then { data ->
-            Logger.d("[Unsubscribe] %s/%s successful.", tradingPair._quoteAsset["symbol"], tradingPair._baseAsset["symbol"])
+            Logger.d("[Unsubscribe] %s/%s successful.", tradingPair._quoteAsset.getString("symbol"), tradingPair._baseAsset.getString("symbol"))
             return@then null
         }.catch {
-            Logger.d("[Unsubscribe] %s/%s successful.", tradingPair._quoteAsset["symbol"], tradingPair._baseAsset["symbol"])
+            Logger.d("[Unsubscribe] %s/%s successful.", tradingPair._quoteAsset.getString("symbol"), tradingPair._baseAsset.getString("symbol"))
         }
     }
 
@@ -502,11 +505,11 @@ class ScheduleManager {
         val tradingPair = s.tradingPair
         conn.async_exec_db("subscribe_to_market", jsonArrayfrom(s.callback!!, tradingPair!!._baseId, tradingPair._quoteId)).then { data ->
             s.subscribed = true
-            Logger.d(String.format("[Subscribe] %s/%s successful.", tradingPair._quoteAsset["symbol"], tradingPair._baseAsset["symbol"]))
+            Logger.d(String.format("[Subscribe] %s/%s successful.", tradingPair._quoteAsset.getString("symbol"), tradingPair._baseAsset.getString("symbol")))
             return@then null
         }.catch {
             s.subscribed = false
-            Logger.d(String.format("[Subscribe] %s/%s failed..", tradingPair._quoteAsset["symbol"], tradingPair._baseAsset["symbol"]))
+            Logger.d(String.format("[Subscribe] %s/%s failed..", tradingPair._quoteAsset.getString("symbol"), tradingPair._baseAsset.getString("symbol")))
         }
     }
 
