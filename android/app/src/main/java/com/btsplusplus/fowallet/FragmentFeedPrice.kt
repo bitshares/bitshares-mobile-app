@@ -45,7 +45,7 @@ class FragmentFeedPrice : BtsppFragment() {
      */
     fun onQueryFeedInfoResponsed(asset: JSONObject, infos: JSONObject, data_array: JSONArray, active_witnesses: JSONArray) {
         //  REMARK：数据返回的时候界面尚未创建完毕先保存
-        if (_currentView == null) {
+        if (_currentView == null || this.activity == null) {
             _waiting_draw_infos = jsonObjectfromKVS("asset", asset, "infos", infos, "data_array", data_array, "active_witnesses", active_witnesses)
             return
         }
