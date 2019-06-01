@@ -28,8 +28,6 @@
 
 @interface NSString (Format)
 
-- (NSString*)removeCommaCharacter;
-
 @end
 
 typedef id (^RubyFilterMapFunction)(id src);

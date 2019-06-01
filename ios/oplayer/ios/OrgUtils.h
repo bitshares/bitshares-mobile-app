@@ -197,7 +197,6 @@ typedef void (^YklUserCallback)(id data);
  *  格式化资产显示字符串，保留指定有效精度。带逗号分隔。
  */
 + (NSString*)formatAssetString:(id)amount precision:(NSInteger)precision;
-+ (NSString*)formatAssetString:(id)amount precision:(NSInteger)precision withceil:(BOOL)ceil;
 + (NSString*)formatAssetString:(id)amount asset:(id)asset;
 
 /**
@@ -217,13 +216,6 @@ typedef void (^YklUserCallback)(id data);
 + (NSString*)formatFloatValue:(double)value precision:(NSInteger)precision;
 + (NSString*)formatFloatValue:(NSDecimalNumber*)value usesGroupingSeparator:(BOOL)usesGroupingSeparator;
 + (NSString*)formatFloatValue:(NSDecimalNumber*)value;
-
-/**
- *  格式化浮点数，保留指定有效精度。带逗号分隔。
- *  ceil    - 是否向上取整，否则向下取整。例子：1.332324，保留4位，向上则为：1.3324，向下则为 1.3323。
- *  REMARK：格式化详细说明 https://www.jianshu.com/p/29ef372c65d3
- */
-+ (NSString*)formatFloatValue:(double)value precision:(NSInteger)precision withceil:(BOOL)ceil;
 
 /**
  *  根据 get_full_accounts 接口返回的所有用户信息计算用户所有资产信息、挂单信息、抵押信息、债务信息等。

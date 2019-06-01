@@ -52,7 +52,7 @@ static LangManager *_sharedLangManager = nil;
 
 @implementation LangManager
 
-@synthesize appDecimalSeparator, appGroupingSeparator;
+@synthesize appLocale, appDecimalSeparator, appGroupingSeparator;
 @synthesize dataArray;
 @synthesize currLangCode = _currLangCode;
 
@@ -79,8 +79,17 @@ static LangManager *_sharedLangManager = nil;
                            @{@"langNameKey":@"kLangKeyEn", @"langCode":@"en"},
                            @{@"langNameKey":@"kLangKeyJa", @"langCode":@"ja"},
                            ];
-        //  初始化数字点小数点和组分割符
+        //  初始化App格式化用Locale以及数字点小数点和组分割符
+        self.appLocale = nil;
+        UITextInputMode* tim = [UIApplication sharedApplication].textInputMode;
+        if (tim && tim.primaryLanguage){
+            self.appLocale = [NSLocale localeWithLocaleIdentifier:tim.primaryLanguage];
+        }
+        if (!self.appLocale){
+            self.appLocale = [NSLocale currentLocale];
+        }
         NSNumberFormatter* formatter = [[NSNumberFormatter alloc] init];
+        formatter.locale = self.appLocale;
         self.appDecimalSeparator = formatter.decimalSeparator;
         self.appGroupingSeparator = formatter.groupingSeparator;
     }

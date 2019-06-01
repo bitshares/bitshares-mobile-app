@@ -59,14 +59,6 @@
 
 @implementation NSString (Format)
 
-/**
- *  移除逗号
- */
-- (NSString*)removeCommaCharacter
-{
-    return [[self componentsSeparatedByString:@","] componentsJoinedByString:@""];
-}
-
 - (unsigned long long)unsignedLongLongValue
 {
     return [[[[NSNumberFormatter alloc] init] numberFromString:self] unsignedLongLongValue];

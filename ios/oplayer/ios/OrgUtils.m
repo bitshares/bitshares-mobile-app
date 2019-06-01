@@ -1637,16 +1637,6 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     return [self formatFloatValue:value precision:precision];
 }
 
-+ (NSString*)formatAssetString:(id)amount precision:(NSInteger)precision withceil:(BOOL)ceil
-{
-    //  unsigned long long d = [amount unsignedLongLongValue];
-    long long d = [amount longLongValue];
-    double fPrecision = pow(10, precision);
-    double value = d / fPrecision;
-    
-    return [self formatFloatValue:value precision:precision withceil:ceil];
-}
-
 + (NSString*)formatAssetString:(id)amount asset:(id)asset
 {
     assert(amount);
@@ -1706,6 +1696,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 + (NSString*)formatFloatValue:(double)value precision:(NSInteger)precision usesGroupingSeparator:(BOOL)usesGroupingSeparator
 {
     NSNumberFormatter* asset_formatter = [[NSNumberFormatter alloc] init];
+    [asset_formatter setLocale:[LangManager sharedLangManager].appLocale];
     [asset_formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [asset_formatter setMaximumFractionDigits:precision];
     [asset_formatter setUsesGroupingSeparator:usesGroupingSeparator];
@@ -1720,6 +1711,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 + (NSString*)formatFloatValue:(NSDecimalNumber*)value usesGroupingSeparator:(BOOL)usesGroupingSeparator
 {
     NSNumberFormatter* asset_formatter = [[NSNumberFormatter alloc] init];
+    [asset_formatter setLocale:[LangManager sharedLangManager].appLocale];
     [asset_formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     //  REMARK：大部分NSDecimalNumber在计算的时候就已经制定了小数点精度和四舍五入模式等，故这里直接设置一个最大小数位数即可。
     [asset_formatter setMaximumFractionDigits:14];
@@ -1730,26 +1722,6 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 + (NSString*)formatFloatValue:(NSDecimalNumber*)value
 {
     return [self formatFloatValue:value usesGroupingSeparator:YES];
-}
-
-/**
- *  格式化浮点数，保留指定有效精度。带逗号分隔。
- *  ceil    - 是否向上取整，否则向下取整。例子：1.332324，保留4位，向上则为：1.3324，向下则为 1.3323。
- *  REMARK：格式化详细说明 https://www.jianshu.com/p/29ef372c65d3
- */
-+ (NSString*)formatFloatValue:(double)value precision:(NSInteger)precision withceil:(BOOL)ceil
-{
-    NSNumberFormatter* asset_formatter = [[NSNumberFormatter alloc] init];
-    [asset_formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-    [asset_formatter setMaximumFractionDigits:precision];
-    if (ceil){
-        //  +向上
-        asset_formatter.roundingMode = NSNumberFormatterRoundCeiling;
-    }else{
-        //  -向下
-        asset_formatter.roundingMode = NSNumberFormatterRoundFloor;
-    }
-    return [asset_formatter stringFromNumber:@(value)];
 }
 
 /**
