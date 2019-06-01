@@ -357,7 +357,7 @@ enum
 
 - (void)onAmountAllButtonClicked:(UIButton*)sender
 {
-    _tf_amount.text = [NSString stringWithFormat:@"%@", _n_available];
+    _tf_amount.text = [OrgUtils formatFloatValue:_n_available usesGroupingSeparator:NO];
     [self onAmountChanged];
 }
 
@@ -515,7 +515,7 @@ enum
                                                    isNegative:NO];
     
     //  更新可用余额
-    _cellAssetAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@%@", _n_available, [new_asset objectForKey:@"symbol"]];
+    _cellAssetAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@%@", [OrgUtils formatFloatValue:_n_available], [new_asset objectForKey:@"symbol"]];
     
     //  切换资产清除当前输入的数量
     _tf_amount.text = @"";
@@ -610,7 +610,7 @@ enum
         return;
     }
     
-    id n_amount = [self auxGetStringDecimalNumberValue:str_amount];
+    id n_amount = [OrgUtils auxGetStringDecimalNumberValue:str_amount];
     
     //  <= 0 判断，只有 大于 才为 NSOrderedDescending。
     NSDecimalNumber* n_zero = [NSDecimalNumber zero];
@@ -807,18 +807,6 @@ enum
 }
 
 /**
- *  (private) 辅助 - 根据字符串获取 NSDecimalNumber 对象，如果字符串以小数点结尾，则默认添加0。
- */
-- (NSDecimalNumber*)auxGetStringDecimalNumberValue:(NSString*)str
-{
-    //  以小数点结尾则在默认添加0。
-    if ([str rangeOfString:@"."].location == [str length] - 1){
-        str = [NSString stringWithFormat:@"%@0", str];
-    }
-    return [NSDecimalNumber decimalNumberWithString:str];
-}
-
-/**
  *  (private) 转账数量发生变化。
  */
 - (void)onAmountChanged
@@ -830,21 +818,21 @@ enum
     
     //  无效输入
     if (!str_amount || [str_amount isEqualToString:@""]){
-        _cellAssetAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@%@", _n_available, [asset objectForKey:@"symbol"]];
+        _cellAssetAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@%@", [OrgUtils formatFloatValue:_n_available], [asset objectForKey:@"symbol"]];
         _cellAssetAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
         return;
     }
     
     //  获取输入的数量
-    id n_amount = [self auxGetStringDecimalNumberValue:str_amount];
+    id n_amount = [OrgUtils auxGetStringDecimalNumberValue:str_amount];
     
     //  _n_available < n_amount
     if ([_n_available compare:n_amount] == NSOrderedAscending){
         //  数量不足
-        _cellAssetAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@%@(%@)", _n_available, [asset objectForKey:@"symbol"], NSLocalizedString(@"kVcTransferTipAmountNotEnough", @"数量不足")];
+        _cellAssetAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@%@(%@)", [OrgUtils formatFloatValue:_n_available], [asset objectForKey:@"symbol"], NSLocalizedString(@"kVcTransferTipAmountNotEnough", @"数量不足")];
         _cellAssetAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].tintColor;
     }else{
-        _cellAssetAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@%@", _n_available, [asset objectForKey:@"symbol"]];
+        _cellAssetAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@%@", [OrgUtils formatFloatValue:_n_available], [asset objectForKey:@"symbol"]];
         _cellAssetAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
     }
 }

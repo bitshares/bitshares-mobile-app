@@ -189,6 +189,35 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 }
 
 /**
+ *  辅助 - 根据字符串获取 NSDecimalNumber 对象，如果字符串以小数点结尾，则默认添加0。
+ */
++ (NSDecimalNumber*)auxGetStringDecimalNumberValue:(NSString*)str
+{
+    if (!str || [str isEqualToString:@""]){
+        return [NSDecimalNumber zero];
+    }
+    
+    LangManager* langMgr = [LangManager sharedLangManager];
+    NSString* decimalSeparator = langMgr.appDecimalSeparator;
+    NSString* groupingSeparator = langMgr.appGroupingSeparator;
+    
+    //  去除组分割符
+    str = [[str componentsSeparatedByString:groupingSeparator] componentsJoinedByString:@""];
+    
+    //  以小数点结尾则在默认添加0。
+    if ([str rangeOfString:decimalSeparator].location == [str length] - 1){
+        str = [NSString stringWithFormat:@"%@0", str];
+    }
+    
+    //  替换小数点
+    if (![decimalSeparator isEqualToString:@"."]){
+        str = [str stringByReplacingOccurrencesOfString:decimalSeparator withString:@"."];
+    }
+    
+    return [NSDecimalNumber decimalNumberWithString:str];
+}
+
+/**
  *  对于价格 or 数量类型的输入，判断是否是有效输入等。
  *  规则：
  *  1、不能有多个小数点
@@ -198,26 +227,30 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
  */
 + (BOOL)isValidAmountOrPriceInput:(NSString*)origin_string range:(NSRange)range new_string:(NSString*)new_string precision:(NSInteger)precision
 {
+    //  获取小数点符号
+    NSString* decimalSeparator = [LangManager sharedLangManager].appDecimalSeparator;
+    unichar decimalSeparatorUnichar = [decimalSeparator characterAtIndex:0];
+    
     //  REMARK：限制输入 第一个字母不能是小数点，并且总共只能有1个小数点。
     BOOL isHaveDian = NO;
-    if (origin_string && [origin_string rangeOfString:@"."].location != NSNotFound){
+    if (origin_string && [origin_string rangeOfString:decimalSeparator].location != NSNotFound){
         isHaveDian = YES;
     }
     if (new_string && [new_string length] > 0){
         //  当前输入的字符
         unichar single = [new_string characterAtIndex:0];
         //  数据格式正确
-        if ((single >= '0' && single <= '9') || single == '.'){
+        if ((single >= '0' && single <= '9') || single == decimalSeparatorUnichar){
             //  首字母
             if ([origin_string length] == 0){
                 //  REMARK：不能小数点开头
-                if (single == '.'){
+                if (single == decimalSeparatorUnichar){
                     return NO;
                 }
                 return YES;
             }
             //  非首字母-小数点
-            if (single == '.'){
+            if (single == decimalSeparatorUnichar){
                 //  REMARK：不能包含多个小数点
                 if (isHaveDian)
                 {
@@ -227,7 +260,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
             }else{
                 if (isHaveDian){
                     NSString* test_string = [origin_string stringByReplacingCharactersInRange:range withString:new_string];
-                    NSRange new_range = [test_string rangeOfString:@"."];
+                    NSRange new_range = [test_string rangeOfString:decimalSeparator];
                     if (new_range.location != NSNotFound){
                         int fraction_digits = (int)test_string.length - ((int)new_range.location + 1);
                         //  REMARK：限制小数位数
@@ -1001,8 +1034,8 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
             id quote_asset = infos[@"quote"];
             id n_price = infos[@"n_price"];
             id n_quote = infos[@"n_quote"];
-            id str_price = [NSString stringWithFormat:@"%@%@/%@", n_price, base_asset[@"symbol"], quote_asset[@"symbol"]];
-            id str_amount = [NSString stringWithFormat:@"%@%@", n_quote, quote_asset[@"symbol"]];
+            id str_price = [NSString stringWithFormat:@"%@%@/%@", [self formatFloatValue:n_price], base_asset[@"symbol"], quote_asset[@"symbol"]];
+            id str_amount = [NSString stringWithFormat:@"%@%@", [self formatFloatValue:n_quote], quote_asset[@"symbol"]];
             
             if ([infos[@"issell"] boolValue]){
                 name = NSLocalizedString(@"kOpType_limit_order_create_sell", @"创建卖单");
@@ -1064,8 +1097,8 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
             id quote_asset = infos[@"quote"];
             id n_price = infos[@"n_price"];
             id n_quote = infos[@"n_quote"];
-            id str_price = [NSString stringWithFormat:@"%@%@/%@", n_price, base_asset[@"symbol"], quote_asset[@"symbol"]];
-            id str_amount = [NSString stringWithFormat:@"%@%@", n_quote, quote_asset[@"symbol"]];
+            id str_price = [NSString stringWithFormat:@"%@%@/%@", [self formatFloatValue:n_price], base_asset[@"symbol"], quote_asset[@"symbol"]];
+            id str_amount = [NSString stringWithFormat:@"%@%@", [self formatFloatValue:n_quote], quote_asset[@"symbol"]];
             
             if ([infos[@"issell"] boolValue]){
                 desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_fill_order_sell", @"%@ 以 %@ 的价格卖出 %@。"),
@@ -1667,15 +1700,36 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 }
 
 /**
- *  格式化浮点数，保留指定有效精度。带逗号分隔。
+ *  格式化浮点数，保留指定有效精度。可指定是否带组分割符。
  *  REMARK：格式化详细说明 https://www.jianshu.com/p/29ef372c65d3
  */
-+ (NSString*)formatFloatValue:(double)value precision:(NSInteger)precision
++ (NSString*)formatFloatValue:(double)value precision:(NSInteger)precision usesGroupingSeparator:(BOOL)usesGroupingSeparator
 {
     NSNumberFormatter* asset_formatter = [[NSNumberFormatter alloc] init];
     [asset_formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [asset_formatter setMaximumFractionDigits:precision];
+    [asset_formatter setUsesGroupingSeparator:usesGroupingSeparator];
     return [asset_formatter stringFromNumber:@(value)];
+}
+
++ (NSString*)formatFloatValue:(double)value precision:(NSInteger)precision
+{
+    return [self formatFloatValue:value precision:precision usesGroupingSeparator:YES];
+}
+
++ (NSString*)formatFloatValue:(NSDecimalNumber*)value usesGroupingSeparator:(BOOL)usesGroupingSeparator
+{
+    NSNumberFormatter* asset_formatter = [[NSNumberFormatter alloc] init];
+    [asset_formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    //  REMARK：大部分NSDecimalNumber在计算的时候就已经制定了小数点精度和四舍五入模式等，故这里直接设置一个最大小数位数即可。
+    [asset_formatter setMaximumFractionDigits:14];
+    [asset_formatter setUsesGroupingSeparator:usesGroupingSeparator];
+    return [asset_formatter stringFromNumber:value];
+}
+
++ (NSString*)formatFloatValue:(NSDecimalNumber*)value
+{
+    return [self formatFloatValue:value usesGroupingSeparator:YES];
 }
 
 /**

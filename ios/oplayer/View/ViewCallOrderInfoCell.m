@@ -183,13 +183,13 @@
                                                                                  n_mcr:self.mcr ceil_handler:nil];
   
     _lbTriggerPrice.attributedText = [self genAndColorAttributedText:NSLocalizedString(@"kVcRankCallPrice", @"强平触发价 ")
-                                                                  value:[NSString stringWithFormat:@"%@", n_settlement_trigger_price]
+                                                                  value:[OrgUtils formatFloatValue:n_settlement_trigger_price]
                                                              titleColor:theme.textColorNormal
                                                              valueColor:theme.textColorMain];
     _lbTriggerPrice.frame = CGRectMake(fOffsetX, fOffsetY, fWidth - fOffsetX_2x, 28);
     
     _lbRate.attributedText = [self genAndColorAttributedText:NSLocalizedString(@"kVcRankRatio", @"抵押率 ")
-                                                       value:[NSString stringWithFormat:@"%0.2f%%", rate_percent100]
+                                                       value:[NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:rate_percent100 precision:2]]
                                                   titleColor:theme.textColorNormal
                                                   valueColor:theme.tintColor];
     _lbRate.frame = CGRectMake(fOffsetX, fOffsetY, fWidth - fOffsetX_2x, 28);

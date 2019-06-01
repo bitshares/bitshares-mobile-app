@@ -157,8 +157,8 @@ enum
                                                       exponent:-_debtPair.basePrecision isNegative:NO];
         id n_coll = [NSDecimalNumber decimalNumberWithMantissa:[debt_callorder[@"collateral"] unsignedLongLongValue]
                                                       exponent:-_debtPair.quotePrecision isNegative:NO];
-        _tfDebtValue.text = [NSString stringWithFormat:@"%@", n_debt];
-        _tfCollateralValue.text = [NSString stringWithFormat:@"%@", n_coll];
+        _tfDebtValue.text = [OrgUtils formatFloatValue:n_debt usesGroupingSeparator:NO];
+        _tfCollateralValue.text = [OrgUtils formatFloatValue:n_coll usesGroupingSeparator:NO];
         
         //  计算抵押率
         if (_nCurrFeedPrice){
@@ -398,7 +398,7 @@ enum
     _cellDebtAvailable.accessoryType = UITableViewCellAccessoryNone;
     _cellDebtAvailable.selectionStyle = UITableViewCellSelectionStyleNone;
     if (_callOrderHash){
-        _cellDebtAvailable.textLabel.text = [NSString stringWithFormat:@"%@ %@%@", NSLocalizedString(@"kDebtLableAvailable", @"可用余额"), [self _getDebtBalance], _debtPair.baseAsset[@"symbol"]];
+        _cellDebtAvailable.textLabel.text = [NSString stringWithFormat:@"%@ %@%@", NSLocalizedString(@"kDebtLableAvailable", @"可用余额"), [OrgUtils formatFloatValue:[self _getDebtBalance]], _debtPair.baseAsset[@"symbol"]];
     }else{
         _cellDebtAvailable.textLabel.text = [NSString stringWithFormat:@"%@ --%@", NSLocalizedString(@"kDebtLableAvailable", @"可用余额"), _debtPair.baseAsset[@"symbol"]];
     }
@@ -416,7 +416,7 @@ enum
         id n = [NSDecimalNumber decimalNumberWithMantissa:[_collateralBalance[@"amount"] unsignedLongLongValue]
                                                  exponent:-_debtPair.quotePrecision
                                                isNegative:NO];
-        _cellCollAvailable.textLabel.text = [NSString stringWithFormat:@"%@ %@%@", NSLocalizedString(@"kDebtLableAvailable", @"可用余额"), n, _debtPair.quoteAsset[@"symbol"]];
+        _cellCollAvailable.textLabel.text = [NSString stringWithFormat:@"%@ %@%@", NSLocalizedString(@"kDebtLableAvailable", @"可用余额"), [OrgUtils formatFloatValue:n], _debtPair.quoteAsset[@"symbol"]];
     }else{
         _cellCollAvailable.textLabel.text = [NSString stringWithFormat:@"%@ --%@", NSLocalizedString(@"kDebtLableAvailable", @"可用余额"), _debtPair.quoteAsset[@"symbol"]];
     }
@@ -755,7 +755,7 @@ enum
     //  UI - 喂价
     if (_nCurrFeedPrice){
         _currFeedPriceTitle.text = [NSString stringWithFormat:@"%@ %@%@/%@",
-                                    NSLocalizedString(@"kDebtLableFeedPrice", @"当前喂价"), _nCurrFeedPrice, _debtPair.baseAsset[@"symbol"], _debtPair.quoteAsset[@"symbol"]];
+                                    NSLocalizedString(@"kDebtLableFeedPrice", @"当前喂价"), [OrgUtils formatFloatValue:_nCurrFeedPrice], _debtPair.baseAsset[@"symbol"], _debtPair.quoteAsset[@"symbol"]];
     }else{
         _currFeedPriceTitle.text = [NSString stringWithFormat:@"%@ --%@/%@",
                                     NSLocalizedString(@"kDebtLableFeedPrice", @"当前喂价"), _debtPair.baseAsset[@"symbol"], _debtPair.quoteAsset[@"symbol"]];
@@ -842,7 +842,7 @@ enum
             if ([new_debt compare:[NSDecimalNumber zero]] == NSOrderedSame){
                 _tfDebtValue.text = @"";
             }else{
-                _tfDebtValue.text = [NSString stringWithFormat:@"%@", new_debt];
+                _tfDebtValue.text = [OrgUtils formatFloatValue:new_debt usesGroupingSeparator:NO];
             }
             [self onTfDebtChanged:_tfDebtValue];
         }
@@ -853,7 +853,7 @@ enum
             if ([n_total compare:[NSDecimalNumber zero]] == NSOrderedSame){
                 _tfCollateralValue.text = @"";
             }else{
-                _tfCollateralValue.text = [NSString stringWithFormat:@"%@", n_total];
+                _tfCollateralValue.text = [OrgUtils formatFloatValue:n_total usesGroupingSeparator:NO];
             }
             [self onTfCollChanged:_tfCollateralValue];
         }
@@ -901,22 +901,6 @@ enum
 }
 
 /**
- *  (private) 辅助 - 根据字符串获取 NSDecimalNumber 对象，如果字符串以小数点结尾，则默认添加0。
- */
-- (NSDecimalNumber*)auxGetStringDecimalNumberValue:(NSString*)str
-{
-    if (!str || [str isEqualToString:@""]){
-        return [NSDecimalNumber zero];
-    }else{
-        //  以小数点结尾则在默认添加0。
-        if ([str rangeOfString:@"."].location == [str length] - 1){
-            str = [NSString stringWithFormat:@"%@0", str];
-        }
-        return [NSDecimalNumber decimalNumberWithString:str];
-    }
-}
-
-/**
  *  (private) 输入框值变化 - 借款数量
  */
 - (void)onTfDebtChanged:(UITextField*)textField
@@ -928,7 +912,7 @@ enum
     if (!textField){
         textField = _tfDebtValue;
     }
-    NSDecimalNumber* n_debt = [self auxGetStringDecimalNumberValue:textField.text];
+    NSDecimalNumber* n_debt = [OrgUtils auxGetStringDecimalNumberValue:textField.text];
     id n_coll = [self _calcCollNumber:n_debt rate:_nCurrMortgageRate];
     [self _refreshUI_debt_available:n_debt update_textfield:NO];
     [self _refreshUI_coll_available:n_coll update_textfield:YES];
@@ -946,7 +930,7 @@ enum
     if (!textField){
         textField = _tfCollateralValue;
     }
-    NSDecimalNumber* n_coll = [self auxGetStringDecimalNumberValue:textField.text];
+    NSDecimalNumber* n_coll = [OrgUtils auxGetStringDecimalNumberValue:textField.text];
     id n_debt = [self _calcDebtNumber:n_coll rate:_nCurrMortgageRate];
     [self _refreshUI_coll_available:n_coll update_textfield:NO];
     [self _refreshUI_debt_available:n_debt update_textfield:YES];
@@ -968,7 +952,7 @@ enum
                 return;
             }
             assert(_nCurrMortgageRate);
-            NSDecimalNumber* n_debt = [self auxGetStringDecimalNumberValue:_tfDebtValue.text];
+            NSDecimalNumber* n_debt = [OrgUtils auxGetStringDecimalNumberValue:_tfDebtValue.text];
             id n_coll = [self _calcCollNumber:n_debt rate:_nCurrMortgageRate];
             [self _refreshUI_coll_available:n_coll update_textfield:YES];
             [self _refreshUI_SettlementTriggerPrice];
@@ -998,7 +982,7 @@ enum
 //                return;
 //            }
 //            assert(_nCurrMortgageRate);
-//            NSDecimalNumber* n_debt = [self auxGetStringDecimalNumberValue:_tfDebtValue.text];
+//            NSDecimalNumber* n_debt = [OrgUtils auxGetStringDecimalNumberValue:_tfDebtValue.text];
 //            id n_coll = [self _calcCollNumber:n_debt rate:_nCurrMortgageRate];
 //            [self _refreshUI_coll_available:n_coll update_textfield:YES];
 //            [self _refreshUI_SettlementTriggerPrice];
@@ -1026,7 +1010,7 @@ enum
         if ([new_tf_value compare:[NSDecimalNumber zero]] == NSOrderedSame){
             _tfCollateralValue.text = @"";
         }else{
-            _tfCollateralValue.text = [NSString stringWithFormat:@"%@", new_tf_value];
+            _tfCollateralValue.text = [OrgUtils formatFloatValue:new_tf_value usesGroupingSeparator:NO];
         }
     }
     
@@ -1035,7 +1019,7 @@ enum
     
     _cellCollAvailable.textLabel.text = [NSString stringWithFormat:@"%@ %@%@",
                                          NSLocalizedString(@"kDebtLableAvailable", @"可用余额"),
-                                         n_available, _debtPair.quoteAsset[@"symbol"]];
+                                         [OrgUtils formatFloatValue:n_available], _debtPair.quoteAsset[@"symbol"]];
     
     //  变化量
     NSDecimalNumber* n_balance = [NSDecimalNumber zero];
@@ -1049,10 +1033,10 @@ enum
     if (result != NSOrderedSame){
         //  n_diff < 0
         if (result == NSOrderedAscending){
-            _cellCollAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@", n_diff];
+            _cellCollAvailable.detailTextLabel.text = [OrgUtils formatFloatValue:n_diff];
             _cellCollAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].sellColor;
         }else{
-            _cellCollAvailable.detailTextLabel.text = [NSString stringWithFormat:@"+%@", n_diff];
+            _cellCollAvailable.detailTextLabel.text = [NSString stringWithFormat:@"+%@", [OrgUtils formatFloatValue:n_diff]];
             _cellCollAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].buyColor;
         }
     }else{
@@ -1076,7 +1060,7 @@ enum
         if ([new_tf_value compare:[NSDecimalNumber zero]] == NSOrderedSame){
             _tfDebtValue.text = @"";
         }else{
-            _tfDebtValue.text = [NSString stringWithFormat:@"%@", new_tf_value];
+            _tfDebtValue.text = [OrgUtils formatFloatValue:new_tf_value usesGroupingSeparator:NO];
         }
     }
     
@@ -1092,17 +1076,17 @@ enum
     //  可用余额
     id n_available = [[self _getDebtBalance] decimalNumberByAdding:n_add_debt];
     _cellDebtAvailable.textLabel.text = [NSString stringWithFormat:@"%@ %@%@",
-                                         NSLocalizedString(@"kDebtLableAvailable", @"可用余额"), n_available, _debtPair.baseAsset[@"symbol"]];
+                                         NSLocalizedString(@"kDebtLableAvailable", @"可用余额"), [OrgUtils formatFloatValue:n_available], _debtPair.baseAsset[@"symbol"]];
     
     //  变化量
     NSComparisonResult result = [n_add_debt compare:[NSDecimalNumber zero]];
     if (result != NSOrderedSame){
         //  n_add_debt < 0
         if (result == NSOrderedAscending){
-            _cellDebtAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@", n_add_debt];
+            _cellDebtAvailable.detailTextLabel.text = [OrgUtils formatFloatValue:n_add_debt];
             _cellDebtAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].sellColor;
         }else{
-            _cellDebtAvailable.detailTextLabel.text = [NSString stringWithFormat:@"+%@", n_add_debt];
+            _cellDebtAvailable.detailTextLabel.text = [NSString stringWithFormat:@"+%@", [OrgUtils formatFloatValue:n_add_debt]];
             _cellDebtAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].buyColor;
         }
     }else{
@@ -1169,7 +1153,7 @@ enum
         _cellLabelTargetRate.textLabel.text = NSLocalizedString(@"kDebtTipTargetRatioNotSet", @"目标抵押率 未设置");
     }else{
         _cellLabelTargetRate.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-        _cellLabelTargetRate.textLabel.text = [NSString stringWithFormat:@"%@ %0.2f", NSLocalizedString(@"kDebtTipTargetRatio", @"目标抵押率"), value];
+        _cellLabelTargetRate.textLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kDebtTipTargetRatio", @"目标抵押率"), [OrgUtils formatFloatValue:value precision:2]];
     }
 }
 
@@ -1182,7 +1166,7 @@ enum
     _cellLabelRate.textLabel.textColor = [self _getCollateralRatioColor];
     if (_nCurrMortgageRate){
         float value = [_nCurrMortgageRate floatValue];
-        _cellLabelRate.textLabel.text = [NSString stringWithFormat:@"%@ %0.2f", NSLocalizedString(@"kDebtLableRatio", @"抵押率"), value];
+        _cellLabelRate.textLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kDebtLableRatio", @"抵押率"), [OrgUtils formatFloatValue:value precision:2]];
         if (reset_slider){
             id parameters = [[ChainObjectManager sharedChainObjectManager] getDefaultParameters];
             assert(parameters);
@@ -1209,8 +1193,8 @@ enum
     id price_title = NSLocalizedString(@"kDebtLableCallPrice", @"强平价格");
     id suffix = [NSString stringWithFormat:@"%@/%@", _debtPair.baseAsset[@"symbol"], _debtPair.quoteAsset[@"symbol"]];
     
-    NSDecimalNumber* n_debt = [self auxGetStringDecimalNumberValue:_tfDebtValue.text];
-    NSDecimalNumber* n_coll = [self auxGetStringDecimalNumberValue:_tfCollateralValue.text];
+    NSDecimalNumber* n_debt = [OrgUtils auxGetStringDecimalNumberValue:_tfDebtValue.text];
+    NSDecimalNumber* n_coll = [OrgUtils auxGetStringDecimalNumberValue:_tfCollateralValue.text];
     
     NSDecimalNumber* n_zero = [NSDecimalNumber zero];
     if ([n_debt compare:n_zero] == NSOrderedSame || [n_coll compare:n_zero] == NSOrderedSame){
@@ -1226,9 +1210,8 @@ enum
                                                                                        raiseOnDivideByZero:NO];
         id n = [n_debt decimalNumberByMultiplyingBy:_nMaintenanceCollateralRatio];
         n = [n decimalNumberByDividingBy:n_coll withBehavior:ceilHandler];
-        NSString* price_formatter = [NSString stringWithFormat:@"%%0.%@f", @(_debtPair.basePrecision)];
         _triggerSettlementPriceTitle.text = [NSString stringWithFormat:@"%@ %@%@", price_title,
-                                             [NSString stringWithFormat:price_formatter, [n doubleValue]], suffix];
+                                             [OrgUtils formatFloatValue:n], suffix];
         _triggerSettlementPriceTitle.textColor = [self _getCollateralRatioColor];
     }
 }
@@ -1444,8 +1427,8 @@ enum
     //  --- 检查参数有效性 ---
     id zero = [NSDecimalNumber zero];
     
-    NSDecimalNumber* n_new_debt = [self auxGetStringDecimalNumberValue:_tfDebtValue.text];
-    NSDecimalNumber* n_new_coll = [self auxGetStringDecimalNumberValue:_tfCollateralValue.text];
+    NSDecimalNumber* n_new_debt = [OrgUtils auxGetStringDecimalNumberValue:_tfDebtValue.text];
+    NSDecimalNumber* n_new_coll = [OrgUtils auxGetStringDecimalNumberValue:_tfCollateralValue.text];
     
     NSDecimalNumber* n_old_debt = zero;
     NSDecimalNumber* n_old_coll = zero;

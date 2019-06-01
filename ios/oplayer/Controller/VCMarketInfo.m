@@ -399,9 +399,9 @@
     id item;
     NSDictionary* ticker_data = [chainMgr getTickerData:base_symbol quote:quote_symbol];
     if (ticker_data){
-        item = @{@"quote":[quote objectForKey:@"symbol"], @"base_asset":base, @"base_market_name":base_market_name, @"ticker_data":ticker_data};
+        item = @{@"quote":quote, @"base":base, @"base_market_name":base_market_name, @"ticker_data":ticker_data};
     }else{
-        item = @{@"quote":[quote objectForKey:@"symbol"], @"base_asset":base, @"base_market_name":base_market_name};
+        item = @{@"quote":quote, @"base":base, @"base_market_name":base_market_name};
     }
     
     [cell setGroupInfo:group_info];

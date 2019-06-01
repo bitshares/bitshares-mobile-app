@@ -173,14 +173,9 @@
         }
         else
         {
-            //  TODO:fowallet 精度问题
             _lbID.text = [NSString stringWithFormat:@"%@", @(_row_id)];
-            
-            NSString* num_formatter = [NSString stringWithFormat:@"%%0.%@f", @(self.numPrecision)];
-            _lbNum.text = [NSString stringWithFormat:num_formatter, [[_item objectForKey:@"quote"] doubleValue]];
-            
-            NSString* price_formatter = [NSString stringWithFormat:@"%%0.%@f", @(self.displayPrecision)];
-            _lbPrice.text = [NSString stringWithFormat:price_formatter, [[_item objectForKey:@"price"] doubleValue]];
+            _lbNum.text = [OrgUtils formatFloatValue:[[_item objectForKey:@"quote"] doubleValue] precision:self.numPrecision];
+            _lbPrice.text = [OrgUtils formatFloatValue:[[_item objectForKey:@"price"] doubleValue] precision:self.displayPrecision];
         }
     }
     //  _item:

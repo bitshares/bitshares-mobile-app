@@ -229,7 +229,7 @@ enum
     NSDictionary* ticker_data = [[ChainObjectManager sharedChainObjectManager] getTickerData:[_base objectForKey:@"symbol"]
                                                                                        quote:[_quote objectForKey:@"symbol"]];
     if (ticker_data){
-        latest = [[OrgUtils formatFloatValue:[ticker_data[@"latest"] doubleValue] precision:_base_precision] removeCommaCharacter];
+        latest = [OrgUtils formatFloatValue:[ticker_data[@"latest"] doubleValue] precision:_base_precision];
         percent_change = [ticker_data objectForKey:@"percent_change"];
     }else{
         latest = @"--";
@@ -255,13 +255,13 @@ enum
         double percent = [percent_change doubleValue];
         if (percent > 0.0f){
             _lbHeaderPercent.textColor = [ThemeManager sharedThemeManager].buyColor;
-            _lbHeaderPercent.text = [NSString stringWithFormat:@"+%@%%", percent_change];
+            _lbHeaderPercent.text = [NSString stringWithFormat:@"+%@%%", [OrgUtils formatFloatValue:percent precision:2]];
         }else if (percent < 0){
             _lbHeaderPercent.textColor = [ThemeManager sharedThemeManager].sellColor;
-            _lbHeaderPercent.text = [NSString stringWithFormat:@"%@%%", percent_change];
+            _lbHeaderPercent.text = [NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:percent precision:2]];
         } else {
             _lbHeaderPercent.textColor = [ThemeManager sharedThemeManager].zeroColor;
-            _lbHeaderPercent.text = [NSString stringWithFormat:@"%@%%", percent_change];
+            _lbHeaderPercent.text = [NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:percent precision:2]];
         }
     }
 }
@@ -283,7 +283,7 @@ enum
         id str_price = _tfPrice.text;
         if (str_price && ![str_price isEqualToString:@""]){
             //  获取单价（<=0则不处理）
-            NSDecimalNumber* n_price = [self auxGetStringDecimalNumberValue:str_price];
+            NSDecimalNumber* n_price = [OrgUtils auxGetStringDecimalNumberValue:str_price];
             //  n_price > 0 判断
             if ([n_price compare:[NSDecimalNumber zero]] == NSOrderedDescending){
                 //  !!! 精确计算 !!!
@@ -299,7 +299,7 @@ enum
                 buy_amount = [buy_amount decimalNumberByMultiplyingBy:n_percent withBehavior:floorHandler];
                 
                 //  设置数量
-                _tfNumber.text = [NSString stringWithFormat:@"%@", buy_amount];
+                _tfNumber.text = [OrgUtils formatFloatValue:buy_amount usesGroupingSeparator:NO];
                 [self onPriceOrAmountChanged];
             }
         }
@@ -318,7 +318,7 @@ enum
         id sell_amount = [_quote_amount_n decimalNumberByMultiplyingBy:n_percent withBehavior:floorHandler];
         
         //  设置数量
-        _tfNumber.text = [NSString stringWithFormat:@"%@", sell_amount];
+        _tfNumber.text = [OrgUtils formatFloatValue:sell_amount usesGroupingSeparator:NO];
         [self onPriceOrAmountChanged];
     }
 }
@@ -330,8 +330,9 @@ enum
         {
             id data = [_bidDataArray safeObjectAtIndex:0];
             if (data){
-                _tfPrice.text = [[OrgUtils formatFloatValue:[[data objectForKey:@"price"] doubleValue]
-                                                  precision:_displayPrecision] removeCommaCharacter];
+                _tfPrice.text = [OrgUtils formatFloatValue:[[data objectForKey:@"price"] doubleValue]
+                                                  precision:_displayPrecision
+                                     usesGroupingSeparator:NO];
                 [self onPriceOrAmountChanged];
             }
         }
@@ -340,8 +341,9 @@ enum
         {
             id data = [_askDataArray safeObjectAtIndex:0];
             if (data){
-                _tfPrice.text = [[OrgUtils formatFloatValue:[[data objectForKey:@"price"] doubleValue]
-                                                  precision:_displayPrecision] removeCommaCharacter];
+                _tfPrice.text = [OrgUtils formatFloatValue:[[data objectForKey:@"price"] doubleValue]
+                                                  precision:_displayPrecision
+                                     usesGroupingSeparator:NO];
                 [self onPriceOrAmountChanged];
             }
         }
@@ -886,8 +888,9 @@ enum
             data = [_bidDataArray safeObjectAtIndex:0];
         }
         if (data){
-            _tfPrice.text = [[OrgUtils formatFloatValue:[[data objectForKey:@"price"] doubleValue]
-                                              precision:_displayPrecision] removeCommaCharacter];
+            _tfPrice.text = [OrgUtils formatFloatValue:[[data objectForKey:@"price"] doubleValue]
+                                              precision:_displayPrecision
+                                 usesGroupingSeparator:NO];
             [self onPriceOrAmountChanged];
         }
     }
@@ -967,18 +970,6 @@ enum
 }
 
 /**
- *  (private) 辅助 - 根据字符串获取 NSDecimalNumber 对象，如果字符串以小数点结尾，则默认添加0。
- */
-- (NSDecimalNumber*)auxGetStringDecimalNumberValue:(NSString*)str
-{
-    //  以小数点结尾则在默认添加0。
-    if ([str rangeOfString:@"."].location == [str length] - 1){
-        str = [NSString stringWithFormat:@"%@0", str];
-    }
-    return [NSDecimalNumber decimalNumberWithString:str];
-}
-
-/**
  *  (private) 输入的价格 or 数量发生变化，评估交易额。
  */
 - (void)onPriceOrAmountChanged
@@ -1001,8 +992,8 @@ enum
     //  获取单价、数量、总价
     
     //  !!! 精确计算 !!!
-    NSDecimalNumber* n_price = [self auxGetStringDecimalNumberValue:str_price];
-    NSDecimalNumber* n_amount = [self auxGetStringDecimalNumberValue:str_amount];
+    NSDecimalNumber* n_price = [OrgUtils auxGetStringDecimalNumberValue:str_price];
+    NSDecimalNumber* n_amount = [OrgUtils auxGetStringDecimalNumberValue:str_amount];
     //  保留小数位数 买入行为：总金额向上取整 卖出行为：向下取整
     NSDecimalNumberHandler* roundHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:_isbuy ? NSRoundUp : NSRoundDown
                                                                                                   scale:_base_precision
@@ -1018,11 +1009,11 @@ enum
         //  _base_amount_n < n_total
         if ([_base_amount_n compare:n_total] == NSOrderedAscending){
             //  上升（小于）
-            _cellTotalPrice.detailTextLabel.text = [NSString stringWithFormat:@"%@%@(%@)", n_total, [_base objectForKey:@"symbol"], NSLocalizedString(@"kVcTradeTipAvailableNotEnough", @"金额不足")];
+            _cellTotalPrice.detailTextLabel.text = [NSString stringWithFormat:@"%@%@(%@)", [OrgUtils formatFloatValue:n_total], [_base objectForKey:@"symbol"], NSLocalizedString(@"kVcTradeTipAvailableNotEnough", @"金额不足")];
             _cellTotalPrice.detailTextLabel.textColor = [ThemeManager sharedThemeManager].tintColor;
         }else{
             //  下降 or 相等（大于等于）
-            _cellTotalPrice.detailTextLabel.text = [NSString stringWithFormat:@"%@%@", n_total, [_base objectForKey:@"symbol"]];
+            _cellTotalPrice.detailTextLabel.text = [NSString stringWithFormat:@"%@%@", [OrgUtils formatFloatValue:n_total], [_base objectForKey:@"symbol"]];
             _cellTotalPrice.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
         }
     }else{
@@ -1031,15 +1022,15 @@ enum
         if ([_quote_amount_n compare:n_amount] == NSOrderedAscending){
             //  上升（小于）
             //  数量不足
-            _cellAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@%@(%@)", _quote_amount_n, [_quote objectForKey:@"symbol"], NSLocalizedString(@"kVcTradeTipAmountNotEnough", @"数量不足")];
+            _cellAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@%@(%@)", [OrgUtils formatFloatValue:_quote_amount_n], [_quote objectForKey:@"symbol"], NSLocalizedString(@"kVcTradeTipAmountNotEnough", @"数量不足")];
             _cellAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].tintColor;
         }else{
             //  下降 or 相等（大于等于）
-            _cellAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@%@", _quote_amount_n, [_quote objectForKey:@"symbol"]];
+            _cellAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@%@", [OrgUtils formatFloatValue:_quote_amount_n], [_quote objectForKey:@"symbol"]];
             _cellAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
         }
         //  总金额
-        _cellTotalPrice.detailTextLabel.text = [NSString stringWithFormat:@"%@%@", n_total, [_base objectForKey:@"symbol"]];
+        _cellTotalPrice.detailTextLabel.text = [NSString stringWithFormat:@"%@%@", [OrgUtils formatFloatValue:n_total], [_base objectForKey:@"symbol"]];
     }
 }
 
@@ -1348,8 +1339,9 @@ enum
         if (indexPath.row != 0){
             id data = [_bidDataArray safeObjectAtIndex:indexPath.row - 1];
             if (data){
-                _tfPrice.text = [[OrgUtils formatFloatValue:[[data objectForKey:@"price"] doubleValue]
-                                                  precision:_displayPrecision] removeCommaCharacter];
+                _tfPrice.text = [OrgUtils formatFloatValue:[[data objectForKey:@"price"] doubleValue]
+                                                  precision:_displayPrecision
+                                     usesGroupingSeparator:NO];
                 [self onPriceOrAmountChanged];
                 NSLog(@"bid click: %@", [_bidDataArray safeObjectAtIndex:indexPath.row - 1]);
             }
@@ -1361,8 +1353,9 @@ enum
         if (indexPath.row != 0){
             id data = [_askDataArray safeObjectAtIndex:indexPath.row - 1];
             if (data){
-                _tfPrice.text = [[OrgUtils formatFloatValue:[[data objectForKey:@"price"] doubleValue]
-                                                  precision:_displayPrecision] removeCommaCharacter];
+                _tfPrice.text = [OrgUtils formatFloatValue:[[data objectForKey:@"price"] doubleValue]
+                                                  precision:_displayPrecision
+                                     usesGroupingSeparator:NO];
                 [self onPriceOrAmountChanged];
                 NSLog(@"ask click: %@", [_askDataArray safeObjectAtIndex:indexPath.row - 1]);
             }
@@ -1421,8 +1414,8 @@ enum
     //  获取单价、数量、总价
     
     //  !!! 精确计算 !!!
-    NSDecimalNumber* n_price = [self auxGetStringDecimalNumberValue:str_price];
-    NSDecimalNumber* n_amount = [self auxGetStringDecimalNumberValue:str_amount];
+    NSDecimalNumber* n_price = [OrgUtils auxGetStringDecimalNumberValue:str_price];
+    NSDecimalNumber* n_amount = [OrgUtils auxGetStringDecimalNumberValue:str_amount];
     
     //  <= 0 判断，只有 大于 才为 NSOrderedDescending。
     NSDecimalNumber* n_zero = [NSDecimalNumber zero];
