@@ -852,6 +852,8 @@
 "kUpgradeNow" = "立即升级";
 "kRemindMeLatter" = "稍后提醒";
 "tip_network_error" = "网络异常，请稍后再试。";
+"kAppFirstInitNetworkFailed" = "APP网络初始化异常了，请按照以下步骤处理：\n1、如果是首次启动，请允许应用使用无线数据。\n2、其他情况请检查您的设备网络是否正常。";
+"kAppBtnReInit" = "重试";
 "Cancel" = "取消";
 "faq" = "常见问题";
 "tip_click_to_login" = "点此登录";
