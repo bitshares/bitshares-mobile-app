@@ -52,6 +52,7 @@ static LangManager *_sharedLangManager = nil;
 
 @implementation LangManager
 
+@synthesize appDecimalSeparator, appGroupingSeparator;
 @synthesize dataArray;
 @synthesize currLangCode = _currLangCode;
 
@@ -78,6 +79,10 @@ static LangManager *_sharedLangManager = nil;
                            @{@"langNameKey":@"kLangKeyEn", @"langCode":@"en"},
                            @{@"langNameKey":@"kLangKeyJa", @"langCode":@"ja"},
                            ];
+        //  初始化数字点小数点和组分割符
+        NSNumberFormatter* formatter = [[NSNumberFormatter alloc] init];
+        self.appDecimalSeparator = formatter.decimalSeparator;
+        self.appGroupingSeparator = formatter.groupingSeparator;
     }
     return self;
 }

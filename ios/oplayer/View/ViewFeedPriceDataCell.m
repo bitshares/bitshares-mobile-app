@@ -148,19 +148,19 @@
         }else{
             _lbWitnessName.textColor = theme.textColorMain;
             
-            _lbFeedPrice.text = [NSString stringWithFormat:@"%@", [_item objectForKey:@"price"]];
+            _lbFeedPrice.text = [OrgUtils formatFloatValue:[_item objectForKey:@"price"]];
             _lbFeedPrice.textColor = theme.textColorMain;
             
             id diff = [_item objectForKey:@"diff"];
             NSComparisonResult result = [diff compare:[NSDecimalNumber zero]];
             if (result == NSOrderedDescending){
-                _lbDiff.text = [NSString stringWithFormat:@"+%@%%", diff];
+                _lbDiff.text = [NSString stringWithFormat:@"+%@%%", [OrgUtils formatFloatValue:diff]];
                 _lbDiff.textColor = theme.buyColor;
             }else if (result == NSOrderedAscending){
-                _lbDiff.text = [NSString stringWithFormat:@"%@%%", diff];
+                _lbDiff.text = [NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:diff]];
                 _lbDiff.textColor = theme.sellColor;
             }else{
-                _lbDiff.text = [NSString stringWithFormat:@"%@%%", diff];
+                _lbDiff.text = [NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:diff]];
                 _lbDiff.textColor = theme.textColorMain;
             }
             

@@ -1014,15 +1014,16 @@
     NSArray* value_ary = nil;
     NSArray* title_ary = nil;
     if ([self isDrawTimeLine]){
-        value_ary = @[date_str, model.nPriceClose, model.n24Vol];
+        value_ary = @[date_str, [OrgUtils formatFloatValue:model.nPriceClose], [OrgUtils formatFloatValue:model.n24Vol]];
         title_ary = @[NSLocalizedString(@"kLabelKLineDate", @"时间"),
                       NSLocalizedString(@"kLabelKLinePrice", @"价格"),
                       NSLocalizedString(@"kLabelKLineVol", @"成交量")];
     }else{
         value_ary = @[date_str,
-                      model.nPriceOpen, model.nPriceHigh, model.nPriceLow, model.nPriceClose,
-                      model.change, model.change_percent,
-                      model.n24Vol];
+                      [OrgUtils formatFloatValue:model.nPriceOpen], [OrgUtils formatFloatValue:model.nPriceHigh],
+                      [OrgUtils formatFloatValue:model.nPriceLow], [OrgUtils formatFloatValue:model.nPriceClose],
+                      [OrgUtils formatFloatValue:model.change], [OrgUtils formatFloatValue:model.change_percent],
+                      [OrgUtils formatFloatValue:model.n24Vol]];
         title_ary = @[NSLocalizedString(@"kLabelKLineDate", @"时间"),
                       NSLocalizedString(@"kLabelKLineOpen", @"开"),
                       NSLocalizedString(@"kLabelKLineHigh", @"高"),
@@ -1036,13 +1037,12 @@
     NSInteger lineIndex = 0;
     for (id value in value_ary) {
         UIColor* txtColor;
-        NSString* str;
+        NSString* str = value;
         if (lineIndex == 5 || lineIndex == 6){
             if (model.isRise){
                 str = [NSString stringWithFormat:@"+%@", value];
                 txtColor = [ThemeManager sharedThemeManager].buyColor;
             }else{
-                str = [NSString stringWithFormat:@"%@", value];
                 txtColor = [ThemeManager sharedThemeManager].sellColor;
             }
             //  涨跌幅增加百分号显示。
@@ -1050,7 +1050,6 @@
                 str = [NSString stringWithFormat:@"%@%%", str];
             }
         }else{
-            str = [NSString stringWithFormat:@"%@", value];
             txtColor = [ThemeManager sharedThemeManager].textColorMain;
         }
         CATextLayer* txt = [self getTextLayerWithString:str
@@ -1098,7 +1097,7 @@
     [_layerCross addSublayer:bottom_date_txt];
     
     //  5、横轴
-    NSString* tailer_str = [NSString stringWithFormat:@"%@", model.nPriceClose];
+    NSString* tailer_str = [OrgUtils formatFloatValue:model.nPriceClose];
     CGSize tailer_str_size = [self auxSizeWithText:tailer_str font:_font
                                            maxsize:CGSizeMake(self.bounds.size.width, 9999)];
     CGFloat fHorTailerX;
@@ -1145,9 +1144,9 @@
 /**
  *  描绘一条 MA(n) 指标，返回指标占据的宽度。
  */
-- (CGFloat)drawOneMaValue:(NSString*)title ma:(id)ma offset_x:(CGFloat)offset_x offset_y:(CGFloat)offset_y color:(UIColor*)color
+- (CGFloat)drawOneMaValue:(NSString*)title ma:(NSDecimalNumber*)ma offset_x:(CGFloat)offset_x offset_y:(CGFloat)offset_y color:(UIColor*)color
 {
-    id str = [NSString stringWithFormat:@"%@:%@", title, ma];
+    id str = [NSString stringWithFormat:@"%@:%@", title, [OrgUtils formatFloatValue:ma]];
     CGSize str_size = [self auxSizeWithText:str font:_font
                                     maxsize:CGSizeMake(self.bounds.size.width, 9999)];
     CATextLayer* txt = [self getTextLayerWithString:str
@@ -1409,7 +1408,7 @@
             value = max_value;
             txtOffsetY = self.fSquareHeight - (self.fSecondMAHeight + self.fSecondGraphHeight);
         }
-        id str = [NSString stringWithFormat:@"%@", value];
+        id str = [OrgUtils formatFloatValue:value];
 
         CATextLayer* txt = [self getTextLayerWithString:str
                                               textColor:theme.textColorNormal
@@ -1576,7 +1575,7 @@
             currStep = price;
             txtOffsetY = self.fMainGraphHeight + self.fMainMAHeight - _f10NumberSize.height - self.fOneCellHeight * i;
         }
-        id str = [NSString stringWithFormat:@"%@", price];
+        id str = [OrgUtils formatFloatValue:price];
         
         CATextLayer* txt = [self getTextLayerWithString:str
                                               textColor:theme.textColorNormal
@@ -1727,7 +1726,7 @@
     }
     //  6、描绘副图最大成交量、主图最大价格、最小价格
     if (_currMaxVolume){
-        CATextLayer* txt = [self getTextLayerWithString:[NSString stringWithFormat:@"%@", _currMaxVolume]
+        CATextLayer* txt = [self getTextLayerWithString:[OrgUtils formatFloatValue:_currMaxVolume]
                                               textColor:theme.textColorNormal
                                                    font:_font backgroundColor:nil
                                                   frame:CGRectMake(0, self.fMainGraphHeight + self.fMainMAHeight,
@@ -1737,7 +1736,7 @@
         [_caTextLayerArray addObject:txt];
     }
     if (candle_max_price_model){
-        id str = [NSString stringWithFormat:@"%@", candle_max_price_model.nPriceHigh];
+        id str = [OrgUtils formatFloatValue:candle_max_price_model.nPriceHigh];
         CGSize str_size = [self auxSizeWithText:str font:_font
                                         maxsize:CGSizeMake(self.bounds.size.width, 9999)];
         
@@ -1782,7 +1781,7 @@
         [_caTextLayerArray addObject:layer];
     }
     if (candle_min_price_model){
-        id str = [NSString stringWithFormat:@"%@", candle_min_price_model.nPriceLow];
+        id str = [OrgUtils formatFloatValue:candle_min_price_model.nPriceLow];
         CGSize str_size = [self auxSizeWithText:str font:_font
                                         maxsize:CGSizeMake(self.bounds.size.width, 9999)];
         

@@ -349,6 +349,9 @@ static ScheduleManager *_sharedScheduleManager = nil;
     if (!s){
         return;
     }
+    if (!s.subscribed || !s.callback){
+        return;
+    }
     
     //  降低引用计数
     s.refCount -= 1;

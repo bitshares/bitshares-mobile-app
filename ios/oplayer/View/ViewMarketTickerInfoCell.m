@@ -144,13 +144,16 @@
     //            "base_volume"=>"16413477.773",
     //            "quote_volume"=>"9977701.34304"}}
     
-    id base_asset = [_item objectForKey:@"base_asset"];
+    id base_asset = [_item objectForKey:@"base"];
     assert(base_asset);
+    id quote_asset = [_item objectForKey:@"quote"];
+    assert(quote_asset);
     
     NSInteger base_precision = [[base_asset objectForKey:@"precision"] integerValue];
     
     //  第一行
-    id quote_name = [_item objectForKey:@"quote"];
+    id quote_name = [quote_asset objectForKey:@"symbol"];
+    NSInteger quote_precision = [[quote_asset objectForKey:@"precision"] integerValue];
     
     //  REMARK：如果是网关资产、则移除网关前缀。自选市场没有分组信息，网关资产也显示全称。
     if (_group_info && [[_group_info objectForKey:@"gateway"] boolValue]){
@@ -202,7 +205,8 @@
         }
         latest = [NSString stringWithFormat:@"%@%@", sym, [OrgUtils formatFloatValue:[[ticker_data objectForKey:@"latest"] doubleValue]
                                                                            precision:base_precision]];
-        quote_volume = [ticker_data objectForKey:@"quote_volume"];
+        quote_volume = [OrgUtils formatFloatValue:[[ticker_data objectForKey:@"quote_volume"] doubleValue]
+                                        precision:quote_precision];
         percent_change = [ticker_data objectForKey:@"percent_change"];
     }else{
         latest = @"--";
@@ -227,17 +231,17 @@
         UIColor* backColor = [ThemeManager sharedThemeManager].buyColor;
         _lbPercent.layer.borderColor = backColor.CGColor;
         _lbPercent.layer.backgroundColor = backColor.CGColor;
-        _lbPercent.text = [NSString stringWithFormat:@"+%@%%", percent_change];
+        _lbPercent.text = [NSString stringWithFormat:@"+%@%%", [OrgUtils formatFloatValue:percent precision:2]];
     }else if (percent < 0){
         UIColor* backColor = [ThemeManager sharedThemeManager].sellColor;
         _lbPercent.layer.borderColor = backColor.CGColor;
         _lbPercent.layer.backgroundColor = backColor.CGColor;
-        _lbPercent.text = [NSString stringWithFormat:@"%@%%", percent_change];
+        _lbPercent.text = [NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:percent precision:2]];
     } else {
         UIColor* backColor = [ThemeManager sharedThemeManager].zeroColor;
         _lbPercent.layer.borderColor = backColor.CGColor;
         _lbPercent.layer.backgroundColor = backColor.CGColor;
-        _lbPercent.text = [NSString stringWithFormat:@"%@%%", percent_change];
+        _lbPercent.text = [NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:percent precision:2]];
     }
     _lbPercent.frame = CGRectMake(fWidth - 12 - percent_label_width, 9, percent_label_width, 32);
 }

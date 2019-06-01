@@ -42,6 +42,8 @@
 #import "OrgUtils.h"
 #import <Flurry/Flurry.h>
 
+#import "LangManager.h"
+
 @interface VCBase : UIViewController<UITextFieldDelegate,UITableViewDelegate>
 {
     NSMutableDictionary* _e;

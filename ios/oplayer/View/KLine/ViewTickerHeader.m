@@ -196,14 +196,14 @@
         if (feedPrice){
             _lbFeedPriceTitle.hidden = NO;
             _lbFeedPrice.hidden = NO;
-            _lbFeedPrice.text = [NSString stringWithFormat:@"%@", feedPrice];
+            _lbFeedPrice.text = [OrgUtils formatFloatValue:feedPrice];
         }else{
             _lbFeedPriceTitle.hidden = YES;
             _lbFeedPrice.hidden = YES;
         }
-        _lbLow.text = [NSString stringWithFormat:@"%@", model.nPriceLow];
-        _lbHigh.text = [NSString stringWithFormat:@"%@", model.nPriceHigh];
-        _lb24Vol.text = [NSString stringWithFormat:@"%@", model.n24Vol];
+        _lbLow.text = [OrgUtils formatFloatValue:model.nPriceLow];
+        _lbHigh.text = [OrgUtils formatFloatValue:model.nPriceHigh];
+        _lb24Vol.text = [OrgUtils formatFloatValue:model.n24Vol];
     }else{
         _lb24Vol.text = @"0";
     }
@@ -244,15 +244,15 @@
     if (percent > 0.0f){
         _lbCurrPrice.textColor = [ThemeManager sharedThemeManager].buyColor;
         _lbPricePercent.textColor = [ThemeManager sharedThemeManager].buyColor;
-        _lbPricePercent.text = [NSString stringWithFormat:@"+%@%%", percent_change];
+        _lbPricePercent.text = [NSString stringWithFormat:@"+%@%%", [OrgUtils formatFloatValue:percent precision:2]];
     }else if (percent < 0){
         _lbCurrPrice.textColor = [ThemeManager sharedThemeManager].sellColor;
         _lbPricePercent.textColor = [ThemeManager sharedThemeManager].sellColor;
-        _lbPricePercent.text = [NSString stringWithFormat:@"%@%%", percent_change];
+        _lbPricePercent.text = [NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:percent precision:2]];
     } else {
         _lbCurrPrice.textColor = [ThemeManager sharedThemeManager].zeroColor;
         _lbPricePercent.textColor = [ThemeManager sharedThemeManager].zeroColor;
-        _lbPricePercent.text = [NSString stringWithFormat:@"%@%%", percent_change];
+        _lbPricePercent.text = [NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:percent precision:2]];
     }
 }
 
@@ -266,7 +266,8 @@
     NSDictionary* ticker_data = [[ChainObjectManager sharedChainObjectManager] getTickerData:[_tradingPair.baseAsset objectForKey:@"symbol"]
                                                                                        quote:[_tradingPair.quoteAsset objectForKey:@"symbol"]];
     if (ticker_data){
-        latest = [[OrgUtils formatFloatValue:[ticker_data[@"latest"] doubleValue] precision:_tradingPair.basePrecision] removeCommaCharacter];
+        latest = [OrgUtils formatFloatValue:[ticker_data[@"latest"] doubleValue]
+                                  precision:_tradingPair.basePrecision];
         percent = [ticker_data objectForKey:@"percent_change"];
     }else{
         latest = @"--";

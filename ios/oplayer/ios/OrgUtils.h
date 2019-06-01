@@ -43,6 +43,11 @@ typedef void (^YklUserCallback)(id data);
 + (BOOL)isMutilSignPermission:(NSDictionary*)raw_permission_json;
 
 /**
+ *  辅助 - 根据字符串获取 NSDecimalNumber 对象，如果字符串以小数点结尾，则默认添加0。
+ */
++ (NSDecimalNumber*)auxGetStringDecimalNumberValue:(NSString*)str;
+
+/**
  *  对于价格 or 数量类型的输入，判断是否是有效输入等。
  *  规则：
  *  1、不能有多个小数点
@@ -206,9 +211,13 @@ typedef void (^YklUserCallback)(id data);
 + (NSDecimalNumber*)genAssetAmountDecimalNumber:(id)amount asset:(id)asset;
 
 /**
- *  格式化浮点数，保留指定有效精度。带逗号分隔。
+ *  格式化浮点数，保留指定有效精度，可指定是否带组分割符。
  */
++ (NSString*)formatFloatValue:(double)value precision:(NSInteger)precision usesGroupingSeparator:(BOOL)usesGroupingSeparator;
 + (NSString*)formatFloatValue:(double)value precision:(NSInteger)precision;
++ (NSString*)formatFloatValue:(NSDecimalNumber*)value usesGroupingSeparator:(BOOL)usesGroupingSeparator;
++ (NSString*)formatFloatValue:(NSDecimalNumber*)value;
+
 /**
  *  格式化浮点数，保留指定有效精度。带逗号分隔。
  *  ceil    - 是否向上取整，否则向下取整。例子：1.332324，保留4位，向上则为：1.3324，向下则为 1.3323。

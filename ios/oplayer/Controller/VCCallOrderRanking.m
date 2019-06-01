@@ -278,7 +278,7 @@
         
         id asset = [[ChainObjectManager sharedChainObjectManager] getAssetBySymbol:[_asset objectForKey:@"symbol"]];
         assert(asset);
-        titleLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kVcRankCurrentFeedPrice", @"当前喂价"), _feedPriceInfo];
+        titleLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kVcRankCurrentFeedPrice", @"当前喂价"), [OrgUtils formatFloatValue:_feedPriceInfo]];
         
         [myView addSubview:titleLabel];
         

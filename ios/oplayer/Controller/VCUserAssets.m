@@ -284,7 +284,7 @@
                                                                                                       exponent:-3 isNegative:NO]
                                                        ceil_handler:nil];
             optional_number++;
-            [asset_final setObject:[NSString stringWithFormat:@"%@", trigger_price] forKey:@"trigger_price"];
+            [asset_final setObject:[OrgUtils formatFloatValue:trigger_price] forKey:@"trigger_price"];
         }
         
         //  设置优先级   1-BTS   2-智能货币（CNY等）    3-有抵押等（其实目前只有BTS可抵押，不排除以后有其他可抵押货币。） 4-其他资产

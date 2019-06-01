@@ -28,6 +28,9 @@
  */
 @interface LangManager : NSObject
 
+@property (nonatomic, copy) NSString* appDecimalSeparator;
+@property (nonatomic, copy) NSString* appGroupingSeparator;
+
 @property (nonatomic, strong) NSArray* dataArray;
 @property (nonatomic, strong) NSString* currLangCode;
 
