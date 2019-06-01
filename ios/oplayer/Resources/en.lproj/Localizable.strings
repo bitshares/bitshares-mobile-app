@@ -852,6 +852,8 @@
 "kUpgradeNow" = "Update";
 "kRemindMeLatter" = "Remind later";
 "tip_network_error" = "Network error, please try again later.";
+"kAppFirstInitNetworkFailed" = "The APP network init failed. please follow the steps below: \n1. If you are starting up for the first time, please allow the application to use wireless data. \n2. other cases. please check the device network.";
+"kAppBtnReInit" = "Try again";
 "Cancel" = "Cancel";
 "faq" = "FAQ";
 "tip_click_to_login" = "Click here to login";

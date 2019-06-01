@@ -255,6 +255,19 @@
     [self checkUpdate:NO];
 }
 
+- (void)onFirstInitFailed
+{
+    [[UIAlertViewManager sharedUIAlertViewManager] showMessageEx:NSLocalizedString(@"kAppFirstInitNetworkFailed", @"APP网络初始化异常了，请按照以下步骤处理：\n1、如果是首次启动，请允许应用使用无线数据。\n2、其他情况请检查您的设备网络是否正常。")
+                                                       withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                    cancelButton:nil
+                                                    otherButtons:@[NSLocalizedString(@"kAppBtnReInit", @"重试")]
+                                                      completion:^(NSInteger buttonIndex)
+     {
+         [OrgUtils logEvents:@"appReInitNetwork" params:@{}];
+         [self startInitGrapheneNetwork];
+     }];
+}
+
 /**
  *  (private) 初始化 Bitshares 网络
  */
@@ -295,21 +308,21 @@
                 _grapheneInitDone = YES;
                 //  添加ticker更新任务
                 [[ScheduleManager sharedScheduleManager] autoRefreshTickerScheduleByMergedMarketInfos];
+                //  初始化网络成功
+                [OrgUtils logEvents:@"appInitNetworkDone" params:@{}];
                 return nil;
             })];
         })] catch:(^id(id error) {
             [self hideBlockView];
             CLS_LOG(@"InitNetworkError02: %@", error);
-            //  TODO:fowalelt 是否重试
-            [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+            [self onFirstInitFailed];
             return nil;
         })];
         return nil;
     })] catch:(^id(id error) {
         [self hideBlockView];
         CLS_LOG(@"InitNetworkError01: %@", error);
-        //  TODO:fowallet 连接所有结点都失败
-        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+        [self onFirstInitFailed];
         return nil;
     })];
 }

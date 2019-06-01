@@ -852,6 +852,8 @@
 "kUpgradeNow" = "アップグレードします";
 "kRemindMeLatter" = "少しの後で気づかせてください";
 "tip_network_error" = "ネットワークが異常で、少しの後でまた試みてください。";
+"kAppFirstInitNetworkFailed" = "APPネットワークの初期化は異常です。 以下の手順に従ってください。\n1、初めて起動する場合は、アプリがワイヤレスデータを使用できるようにしてください。 \n2、他の場合。 問題がないかデバイスのネットワークを確認してください。";
+"kAppBtnReInit" = "もう一度初期化する";
 "Cancel" = "キャンセル";
 "faq" = "Q&A";
 "tip_click_to_login" = "点をログインする";
