@@ -37,6 +37,8 @@
 
 + (LangManager*)sharedLangManager;
 
+- (NSString*)queryDecimalSeparatorByLannguage:(NSString*)lang;
+
 - (NSString*)getCurrentLanguageName;
 - (void)initCurrentLanguage;
 - (void)saveLanguage:(NSString*)langCode;

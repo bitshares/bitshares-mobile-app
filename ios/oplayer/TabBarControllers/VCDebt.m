@@ -795,13 +795,8 @@ enum
     }
     
     id asset = textField == _tfDebtValue ? _debtPair.baseAsset : _debtPair.quoteAsset;
-    BOOL result = [OrgUtils isValidAmountOrPriceInput:textField.text range:range new_string:string
-                                            precision:[[asset objectForKey:@"precision"] integerValue]];
-    if (!result){
-        [textField.text stringByReplacingCharactersInRange:range withString:@""];
-    }
-    
-    return result;
+    return [OrgUtils isValidAmountOrPriceInput:textField.text range:range new_string:string
+                                     precision:[[asset objectForKey:@"precision"] integerValue]];
 }
 
 /**
@@ -809,10 +804,19 @@ enum
  */
 - (void)onTextFieldDidChange:(UITextField*)textField
 {
+    if (textField != _tfDebtValue && textField != _tfCollateralValue){
+        return;
+    }
+    
+    //  更新小数点为APP默认小数点样式（可能和输入法中下小数点不同，比如APP里是`.`号，而输入法则是`,`号。
+    [OrgUtils correctTextFieldDecimalSeparatorDisplayStyle:textField];
+    
     if (textField == _tfDebtValue){
         [self onTfDebtChanged:textField];
     }else if (textField == _tfCollateralValue){
         [self onTfCollChanged:textField];
+    }else{
+        assert(false);
     }
 }
 

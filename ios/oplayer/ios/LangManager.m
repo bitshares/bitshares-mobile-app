@@ -46,7 +46,8 @@ static LangManager *_sharedLangManager = nil;
 
 @interface LangManager()
 {
-    NSString*   _currLangCode;
+    NSString*               _currLangCode;
+    NSMutableDictionary*    _langDecimalSeparatorHash;
 }
 @end
 
@@ -79,15 +80,9 @@ static LangManager *_sharedLangManager = nil;
                            @{@"langNameKey":@"kLangKeyEn", @"langCode":@"en"},
                            @{@"langNameKey":@"kLangKeyJa", @"langCode":@"ja"},
                            ];
+        _langDecimalSeparatorHash = [NSMutableDictionary dictionary];
         //  初始化App格式化用Locale以及数字点小数点和组分割符
-        self.appLocale = nil;
-        UITextInputMode* tim = [UIApplication sharedApplication].textInputMode;
-        if (tim && tim.primaryLanguage){
-            self.appLocale = [NSLocale localeWithLocaleIdentifier:tim.primaryLanguage];
-        }
-        if (!self.appLocale){
-            self.appLocale = [NSLocale currentLocale];
-        }
+        self.appLocale = [NSLocale currentLocale];
         NSNumberFormatter* formatter = [[NSNumberFormatter alloc] init];
         formatter.locale = self.appLocale;
         self.appDecimalSeparator = formatter.decimalSeparator;
@@ -100,6 +95,21 @@ static LangManager *_sharedLangManager = nil;
 {
     self.dataArray = nil;
     self.currLangCode = nil;
+    _langDecimalSeparatorHash = nil;
+}
+
+- (NSString*)queryDecimalSeparatorByLannguage:(NSString*)lang
+{
+    assert(lang);
+    id decimalSeparator = [_langDecimalSeparatorHash objectForKey:lang];
+    if (!decimalSeparator){
+        NSNumberFormatter* formatter = [[NSNumberFormatter alloc] init];
+        formatter.locale = [NSLocale localeWithLocaleIdentifier:lang];
+        decimalSeparator = formatter.decimalSeparator;
+        assert(decimalSeparator);
+        [_langDecimalSeparatorHash setObject:decimalSeparator forKey:lang];
+    }
+    return decimalSeparator;
 }
 
 - (NSString*)getCurrentLanguageName
