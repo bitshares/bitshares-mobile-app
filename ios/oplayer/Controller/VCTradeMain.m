@@ -950,15 +950,12 @@ enum
     if (textField != _tfPrice && textField != _tfNumber){
         return YES;
     }
+    
     //  根据输入框不同，限制不同小数点位数。
-    BOOL result = [OrgUtils isValidAmountOrPriceInput:textField.text
-                                                range:range
-                                           new_string:string
-                                            precision:textField == _tfPrice ? _displayPrecision : _numPrecision];
-    if (!result){
-        [textField.text stringByReplacingCharactersInRange:range withString:@""];
-    }
-    return result;
+    return [OrgUtils isValidAmountOrPriceInput:textField.text
+                                         range:range
+                                    new_string:string
+                                     precision:textField == _tfPrice ? _displayPrecision : _numPrecision];
 }
 
 - (void)onTextFieldDidChange:(UITextField*)textField
@@ -966,6 +963,10 @@ enum
     if (textField != _tfPrice && textField != _tfNumber){
         return;
     }
+    
+    //  更新小数点为APP默认小数点样式（可能和输入法中下小数点不同，比如APP里是`.`号，而输入法则是`,`号。
+    [OrgUtils correctTextFieldDecimalSeparatorDisplayStyle:textField];
+    
     [self onPriceOrAmountChanged];
 }
 

@@ -48,6 +48,11 @@ typedef void (^YklUserCallback)(id data);
 + (NSDecimalNumber*)auxGetStringDecimalNumberValue:(NSString*)str;
 
 /**
+ *  更新小数点为APP默认小数点样式（可能和输入法中下小数点不同，比如APP里是`.`号，而输入法则是`,`号。
+ */
++ (void)correctTextFieldDecimalSeparatorDisplayStyle:(UITextField*)textField;
+
+/**
  *  对于价格 or 数量类型的输入，判断是否是有效输入等。
  *  规则：
  *  1、不能有多个小数点

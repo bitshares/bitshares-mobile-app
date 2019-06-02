@@ -218,6 +218,19 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 }
 
 /**
+ *  更新小数点为APP默认小数点样式（可能和输入法中下小数点不同，比如APP里是`.`号，而输入法则是`,`号。
+ */
++ (void)correctTextFieldDecimalSeparatorDisplayStyle:(UITextField*)textField
+{
+    LangManager* langMgr = [LangManager sharedLangManager];
+    NSString* imeDecimalSeparator = [langMgr queryDecimalSeparatorByLannguage:[UIApplication sharedApplication].textInputMode.primaryLanguage];
+    NSString* appDecimalSeparator = langMgr.appDecimalSeparator;
+    if (![imeDecimalSeparator isEqualToString:appDecimalSeparator]){
+        textField.text = [textField.text stringByReplacingOccurrencesOfString:imeDecimalSeparator withString:appDecimalSeparator];
+    }
+}
+
+/**
  *  对于价格 or 数量类型的输入，判断是否是有效输入等。
  *  规则：
  *  1、不能有多个小数点
@@ -228,29 +241,34 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 + (BOOL)isValidAmountOrPriceInput:(NSString*)origin_string range:(NSRange)range new_string:(NSString*)new_string precision:(NSInteger)precision
 {
     //  获取小数点符号
-    NSString* decimalSeparator = [LangManager sharedLangManager].appDecimalSeparator;
-    unichar decimalSeparatorUnichar = [decimalSeparator characterAtIndex:0];
+    LangManager* langMgr = [LangManager sharedLangManager];
+    
+    NSString* imeDecimalSeparator = [langMgr queryDecimalSeparatorByLannguage:[UIApplication sharedApplication].textInputMode.primaryLanguage];
+    NSString* appDecimalSeparator = langMgr.appDecimalSeparator;
+    
+    unichar appDecimalSeparatorUnichar = [appDecimalSeparator characterAtIndex:0];
+    unichar imeDecimalSeparatorUnichar = [imeDecimalSeparator characterAtIndex:0];
     
     //  REMARK：限制输入 第一个字母不能是小数点，并且总共只能有1个小数点。
     BOOL isHaveDian = NO;
-    if (origin_string && [origin_string rangeOfString:decimalSeparator].location != NSNotFound){
+    if (origin_string && [origin_string rangeOfString:appDecimalSeparator].location != NSNotFound){
         isHaveDian = YES;
     }
     if (new_string && [new_string length] > 0){
         //  当前输入的字符
         unichar single = [new_string characterAtIndex:0];
         //  数据格式正确
-        if ((single >= '0' && single <= '9') || single == decimalSeparatorUnichar){
+        if ((single >= '0' && single <= '9') || single == appDecimalSeparatorUnichar || single == imeDecimalSeparatorUnichar){
             //  首字母
             if ([origin_string length] == 0){
                 //  REMARK：不能小数点开头
-                if (single == decimalSeparatorUnichar){
+                if (single == appDecimalSeparatorUnichar || single == imeDecimalSeparatorUnichar){
                     return NO;
                 }
                 return YES;
             }
             //  非首字母-小数点
-            if (single == decimalSeparatorUnichar){
+            if (single == appDecimalSeparatorUnichar || single == imeDecimalSeparatorUnichar){
                 //  REMARK：不能包含多个小数点
                 if (isHaveDian)
                 {
@@ -259,8 +277,12 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
                 return YES;
             }else{
                 if (isHaveDian){
-                    NSString* test_string = [origin_string stringByReplacingCharactersInRange:range withString:new_string];
-                    NSRange new_range = [test_string rangeOfString:decimalSeparator];
+                    NSString* dst_string = new_string;
+                    if (appDecimalSeparatorUnichar != imeDecimalSeparatorUnichar){
+                        dst_string = [new_string stringByReplacingOccurrencesOfString:imeDecimalSeparator withString:appDecimalSeparator];
+                    }
+                    NSString* test_string = [origin_string stringByReplacingCharactersInRange:range withString:dst_string];
+                    NSRange new_range = [test_string rangeOfString:appDecimalSeparator];
                     if (new_range.location != NSNotFound){
                         int fraction_digits = (int)test_string.length - ((int)new_range.location + 1);
                         //  REMARK：限制小数位数
