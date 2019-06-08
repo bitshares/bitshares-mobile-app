@@ -16,6 +16,6 @@
 
 - (id)initWithTradingPair:(TradingPair*)tradingPair;
 
-- (void)onQueryLimitOrderResponsed:(id)limit_order_infos;
+- (void)onQueryOrderBookResponsed:(id)limit_order_infos;
 
 @end

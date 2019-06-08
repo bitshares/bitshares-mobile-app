@@ -1541,33 +1541,176 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 }
 
 /**
+ *  (public) 计算在爆仓时最少需要卖出的资产数量，如果没设置目标抵押率则全部卖出。如果有设置则根据目标抵押率计算。
+ */
++ (NSDecimalNumber*)calcSettlementSellNumbers:(id)call_order
+                               debt_precision:(NSInteger)debt_precision
+                         collateral_precision:(NSInteger)collateral_precision
+                                   feed_price:(NSDecimalNumber*)feed_price
+                                          mcr:(NSDecimalNumber*)mcr
+                                         mssr:(NSDecimalNumber*)mssr
+{
+    assert(call_order);
+    assert(feed_price);
+    assert(mcr);
+    assert(mssr);
+    
+    id collateral = [call_order objectForKey:@"collateral"];
+    assert(collateral);
+    NSDecimalNumber* n_collateral = [NSDecimalNumber decimalNumberWithMantissa:[collateral unsignedLongLongValue]
+                                                                      exponent:-collateral_precision isNegative:NO];
+    
+    id target_collateral_ratio = [call_order objectForKey:@"target_collateral_ratio"];
+    if (target_collateral_ratio){
+        //  sell partial
+        //  =============================================================
+        //  公式：n为最低卖出数量
+        //  即 新抵押率 = 新总估值 / 新总负债
+        //
+        //  (collateral - n) * feed_price
+        //  -----------------------------  >= target_collateral_ratio
+        //  (debt - n * feed_price / mssr)
+        //
+        //  即:
+        //          target_collateral_ratio * debt - feed_price * collateral
+        //  n >= --------------------------------------------------------------
+        //          feed_price * (target_collateral_ratio / mssr - 1)
+        //  =============================================================
+        
+        id n_target_collateral_ratio = [NSDecimalNumber decimalNumberWithMantissa:[target_collateral_ratio unsignedLongLongValue]
+                                                                         exponent:-3 isNegative:NO];
+        
+        id debt = [call_order objectForKey:@"debt"];
+        assert(debt);
+        NSDecimalNumber* n_debt = [NSDecimalNumber decimalNumberWithMantissa:[debt unsignedLongLongValue]
+                                                                    exponent:-debt_precision isNegative:NO];
+        
+        
+        //  开始计算
+        id n1 = [[n_target_collateral_ratio decimalNumberByMultiplyingBy:n_debt] decimalNumberBySubtracting:[feed_price decimalNumberByMultiplyingBy:n_collateral]];
+        
+        id n2 = [feed_price decimalNumberByMultiplyingBy:[[n_target_collateral_ratio decimalNumberByDividingBy:mssr] decimalNumberBySubtracting:[NSDecimalNumber one]]];
+        
+        NSDecimalNumberHandler* ceil_handler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundUp
+                                                                                                      scale:collateral_precision
+                                                                                           raiseOnExactness:NO
+                                                                                            raiseOnOverflow:NO
+                                                                                           raiseOnUnderflow:NO
+                                                                                        raiseOnDivideByZero:NO];
+        
+        return [n1 decimalNumberByDividingBy:n2 withBehavior:ceil_handler];
+    }else{
+        //  sell all
+        return n_collateral;
+    }
+}
+
+/**
  *  (public) 计算强平触发价格。
- *  call_price = (collateral × MCR) ÷ debt
+ *  call_price = (debt × MCR) ÷ collateral
  */
 + (NSDecimalNumber*)calcSettlementTriggerPrice:(id)debt_amount
                                     collateral:(id)collateral_amount
                                 debt_precision:(NSInteger)debt_precision
                           collateral_precision:(NSInteger)collateral_precision
                                          n_mcr:(id)n_mcr
+                                       reverse:(BOOL)reverse
                                   ceil_handler:(NSDecimalNumberHandler*)ceil_handler
+                          set_divide_precision:(BOOL)set_divide_precision
 {
     NSDecimalNumber* n_debt = [NSDecimalNumber decimalNumberWithMantissa:[debt_amount unsignedLongLongValue]
                                                                 exponent:-debt_precision isNegative:NO];
     NSDecimalNumber* n_collateral = [NSDecimalNumber decimalNumberWithMantissa:[collateral_amount unsignedLongLongValue]
                                                                       exponent:-collateral_precision isNegative:NO];
     
-    if (!ceil_handler){
-        ceil_handler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundUp
-                                                                              scale:debt_precision
-                                                                   raiseOnExactness:NO
-                                                                    raiseOnOverflow:NO
-                                                                   raiseOnUnderflow:NO
-                                                                raiseOnDivideByZero:NO];
+    id n = [n_debt decimalNumberByMultiplyingBy:n_mcr];
+    if (set_divide_precision){
+        if (!ceil_handler){
+            ceil_handler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundUp
+                                                                                  scale:reverse ? collateral_precision : debt_precision
+                                                                       raiseOnExactness:NO
+                                                                        raiseOnOverflow:NO
+                                                                       raiseOnUnderflow:NO
+                                                                    raiseOnDivideByZero:NO];
+        }
+        if (reverse){
+            n = [[NSDecimalNumber one] decimalNumberByDividingBy:[n decimalNumberByDividingBy:n_collateral] withBehavior:ceil_handler];
+        }else{
+            n = [n decimalNumberByDividingBy:n_collateral withBehavior:ceil_handler];
+        }
+    }else{
+        if (reverse){
+            n = [[NSDecimalNumber one] decimalNumberByDividingBy:[n decimalNumberByDividingBy:n_collateral]];
+        }else{
+            n = [n decimalNumberByDividingBy:n_collateral];
+        }
     }
     
-    id n = [n_debt decimalNumberByMultiplyingBy:n_mcr];
-    n = [n decimalNumberByDividingBy:n_collateral withBehavior:ceil_handler];
     return n;
+}
+
+/**
+ *  (public) 合并普通盘口信息和爆仓单信息。
+ */
++ (NSDictionary*)mergeOrderBook:(NSDictionary*)normal_order_book settlement_data:(NSDictionary*)settlement_data
+{
+    assert(normal_order_book);
+    
+    if (settlement_data && [[settlement_data objectForKey:@"settlement_account_number"] integerValue] > 0){
+        id bidArray = [normal_order_book objectForKey:@"bids"];
+        id askArray = [normal_order_book objectForKey:@"asks"];
+        
+        id n_call_price = [settlement_data objectForKey:@"call_price"];
+        double f_call_price = [n_call_price doubleValue];
+        
+        NSMutableArray* new_array = [NSMutableArray array];
+        double new_amount_sum = 0;
+        BOOL inserted = NO;
+        BOOL invert = [[settlement_data objectForKey:@"invert"] boolValue];
+        
+        for (id order in invert ? bidArray : askArray) {
+            id price = [order objectForKey:@"price"];
+            id quote = [order objectForKey:@"quote"];
+            double f_price = [price doubleValue];
+            double f_quote = [quote doubleValue];
+            BOOL keep;
+            if (invert){
+                keep = f_price > f_call_price;
+            }else{
+                keep = f_price < f_call_price;
+            }
+            if (keep){
+                new_amount_sum += f_quote;
+                [new_array addObject:order];
+                continue;
+            }
+            
+            if (!inserted){
+                //  insert
+                double total_sell_amount = [[settlement_data objectForKey:@"total_sell_amount"] doubleValue];
+                new_amount_sum += total_sell_amount;
+                [new_array addObject:@{@"price":@(f_call_price),
+                                       @"quote":@(total_sell_amount),
+                                       @"base":@(total_sell_amount * f_call_price),
+                                       @"sum":@(new_amount_sum), @"iscall":@YES}];
+                inserted = YES;
+            }
+            
+            new_amount_sum += f_quote;
+            id base = [order objectForKey:@"base"];
+            [new_array addObject:@{@"price":price, @"quote":quote, @"base":base, @"sum":@(new_amount_sum)}];
+        }
+        if (invert){
+            bidArray = new_array;
+        }else{
+            askArray = new_array;
+        }
+        
+        //  返回新的 order book
+        return @{@"bids":bidArray, @"asks":askArray};
+    }else{
+        return normal_order_book;
+    }
 }
 
 /**
@@ -1603,29 +1746,35 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
         quote = item01;
     }
     
-    id n_base = [NSDecimalNumber decimalNumberWithMantissa:[[base objectForKey:@"amount"] unsignedLongLongValue]
-                                                  exponent:-base_precision isNegative:NO];
-    id n_quote = [NSDecimalNumber decimalNumberWithMantissa:[[quote objectForKey:@"amount"] unsignedLongLongValue]
-                                                   exponent:-quote_precision isNegative:NO];
-    //  REMARK：12几乎是不可能达到的精度。
-    NSInteger precision = 12;
-    if (set_divide_precision){
-        if (invert){
-            precision = base_precision;
-        }else{
-            precision = quote_precision;
-        }
+    unsigned long long i_base_amount = [[base objectForKey:@"amount"] unsignedLongLongValue];
+    unsigned long long i_quote_amount = [[quote objectForKey:@"amount"] unsignedLongLongValue];
+    //  REMARK：价格失效（比如喂价过期等情况）
+    if (i_base_amount == 0 || i_quote_amount == 0){
+        return nil;
     }
-    NSDecimalNumberHandler* handler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:roundingMode
-                                                                                             scale:precision
-                                                                                  raiseOnExactness:NO
-                                                                                   raiseOnOverflow:NO
-                                                                                  raiseOnUnderflow:NO
-                                                                               raiseOnDivideByZero:NO];
-    if (invert){
-        return [n_base decimalNumberByDividingBy:n_quote withBehavior:handler];
+    
+    id n_base = [NSDecimalNumber decimalNumberWithMantissa:i_base_amount exponent:-base_precision isNegative:NO];
+    id n_quote = [NSDecimalNumber decimalNumberWithMantissa:i_quote_amount exponent:-quote_precision isNegative:NO];
+
+    if (set_divide_precision){
+        NSInteger precision = invert ? base_precision : quote_precision;
+        NSDecimalNumberHandler* handler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:roundingMode
+                                                                                                 scale:precision
+                                                                                      raiseOnExactness:NO
+                                                                                       raiseOnOverflow:NO
+                                                                                      raiseOnUnderflow:NO
+                                                                                   raiseOnDivideByZero:NO];
+        if (invert){
+            return [n_base decimalNumberByDividingBy:n_quote withBehavior:handler];
+        }else{
+            return [n_quote decimalNumberByDividingBy:n_base withBehavior:handler];
+        }
     }else{
-        return [n_quote decimalNumberByDividingBy:n_base withBehavior:handler];
+        if (invert){
+            return [n_base decimalNumberByDividingBy:n_quote];
+        }else{
+            return [n_quote decimalNumberByDividingBy:n_base];
+        }
     }
 }
 

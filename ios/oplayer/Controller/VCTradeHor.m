@@ -180,30 +180,38 @@
     
     //  get_market_history
     //  get_fill_order_history
-    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
-    GrapheneApi* api_db = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
     
-    WalletManager* wallet_mgr = [WalletManager sharedWalletManager];
-    id p0_full_info = [NSNull null];
-    if ([wallet_mgr isWalletExist]){
-        p0_full_info = [chainMgr queryUserLimitOrders:[wallet_mgr getWalletAccountInfo][@"account"][@"id"]];
-    }
-    
-    id p1 = [chainMgr queryLimitOrders:_tradingPair number:20];
-    id p2 = [api_db exec:@"get_ticker" params:@[[_base objectForKey:@"id"], [_quote objectForKey:@"id"]]];
-    id p3 = [chainMgr queryFeeAssetListDynamicInfo];   //  查询手续费兑换比例、手续费池等信息
-    
-    //  这里面引用的变量必须是 weak 的，不然该 vc 没法释放。
     [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     __weak typeof(self) weak_self = self;
-    [[[WsPromise all:@[p0_full_info, p1, p2, p3]] then:(^id(id data) {
-        [self hideBlockView];
-        if (weak_self){
-            [weak_self onInitPromiseResponse:data];
-            //  继续订阅
-            [[ScheduleManager sharedScheduleManager] sub_market_notify:_tradingPair];
+    
+    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+    //  优先查询智能背书资产信息（之后才考虑是否查询喂价、爆仓单等信息）
+    [[[chainMgr queryShortBackingAssetInfos:@[_tradingPair.baseId, _tradingPair.quoteId]] then:(^id(id sba_hash) {
+        //  更新智能资产信息
+        [_tradingPair RefreshCoreMarketFlag:sba_hash];
+        
+        GrapheneApi* api_db = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
+        
+        WalletManager* wallet_mgr = [WalletManager sharedWalletManager];
+        id p0_full_info = [NSNull null];
+        if ([wallet_mgr isWalletExist]){
+            p0_full_info = [chainMgr queryUserLimitOrders:[wallet_mgr getWalletAccountInfo][@"account"][@"id"]];
         }
-        return nil;
+        
+        id p1 = [chainMgr queryLimitOrders:_tradingPair number:20];
+        id p2 = [api_db exec:@"get_ticker" params:@[[_base objectForKey:@"id"], [_quote objectForKey:@"id"]]];
+        id p3 = [chainMgr queryFeeAssetListDynamicInfo];   //  查询手续费兑换比例、手续费池等信息
+        id p4 = [chainMgr queryCallOrders:_tradingPair number:50];
+        
+        return [[WsPromise all:@[p0_full_info, p1, p2, p3, p4]] then:(^id(id data) {
+            [self hideBlockView];
+            if (weak_self){
+                [weak_self onInitPromiseResponse:data];
+                //  继续订阅
+                [[ScheduleManager sharedScheduleManager] sub_market_notify:_tradingPair];
+            }
+            return nil;
+        })];
     })] catch:(^id(id error) {
         [self hideBlockView];
         if (weak_self){
@@ -249,7 +257,8 @@
         return;
     }
     //  更新限价单
-    [self onQueryOrderBookResponse:[userinfo objectForKey:@"kLimitOrders"]];
+    id settlement_data = [userinfo objectForKey:@"kSettlementData"];
+    [self onQueryOrderBookResponse:[userinfo objectForKey:@"kLimitOrders"] settlement_data:settlement_data];
     //  更新成交历史和Ticker
     [self onQueryFillOrderHistoryResponsed:[userinfo objectForKey:@"kFillOrders"]];
     //  更新帐号信息
@@ -278,8 +287,8 @@
         [self onQueryTickerDataResponse:get_ticker_data];
     }
     
-    //  3、更新限价单
-    [self onQueryOrderBookResponse:data[1]];
+    //  3、更新盘口信息（普通盘口+爆仓单）
+    [self onQueryOrderBookResponse:data[1] settlement_data:data[4]];
 }
 
 - (void)onFullAccountInfoResponsed:(NSDictionary*)full_account_info
@@ -304,15 +313,16 @@
     }
 }
 
-- (void)onQueryOrderBookResponse:(id)data
+- (void)onQueryOrderBookResponse:(id)normal_order_book settlement_data:(id)settlement_data
 {
     //  订阅市场返回的数据可能为 nil。
-    if (!data){
+    if (!normal_order_book){
         return;
     }
     if (_subvcArrays){
+        id merged_order_book = [OrgUtils mergeOrderBook:normal_order_book settlement_data:settlement_data];
         for (VCTradeMain* vc in _subvcArrays) {
-            [vc onQueryOrderBookResponse:data];
+            [vc onQueryOrderBookResponse:merged_order_book];
         }
     }
 }

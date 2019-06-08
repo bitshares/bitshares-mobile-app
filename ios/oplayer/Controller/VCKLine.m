@@ -337,61 +337,55 @@ enum
     
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     
-    //  1、查询K线基本数据
-    id parameters = [chainMgr getDefaultParameters];
-    id kline_period_ary = parameters[@"kline_period_ary"];
-    assert(kline_period_ary);
-    NSInteger kline_period_default = [parameters[@"kline_period_default"] integerValue];
-    assert(kline_period_default >= 0 && kline_period_default < [kline_period_ary count]);
-    NSInteger kline_period_default_value = [[kline_period_ary objectAtIndex:kline_period_default] integerValue];
-    NSInteger default_query_seconds = [self getDatePeriodSeconds:(EKlineDatePeriodType)kline_period_default_value];
-    NSInteger now = [[NSDate date] timeIntervalSince1970];
-    id snow = [OrgUtils formatBitsharesTimeString:now];
-    id sbgn = [OrgUtils formatBitsharesTimeString:now-default_query_seconds*kBTS_KLINE_MAX_SHOW_CANDLE_NUM];
-    //    id sbgn = [OrgUtils formatBitsharesTimeString:now-86400*200];
-    
-    id api_history = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_history;
-    //  TODO:fowallet 这个方法一次最多返回200条数据，如果 kBTS_KLINE_MAX_SHOW_CANDLE_NUM 设置为300，那么返回的数据可能不包含近期100条。需要多次请求
-    WsPromise* initKdata = [api_history exec:@"get_market_history" params:@[_tradingPair.baseId, _tradingPair.quoteId, @(default_query_seconds), sbgn, snow]];
-    
-    id sbgn1 = [OrgUtils formatBitsharesTimeString:now-86400*1];
-    
-    //  2、查询最高最低价格等信息
-    WsPromise* initToday = [api_history exec:@"get_market_history" params:@[_tradingPair.baseId, _tradingPair.quoteId, @86400, sbgn1, snow]];
-    
-    //  3、查询成交记录信息
-    WsPromise* promiseHistory = [chainMgr queryFillOrderHistory:_tradingPair number:20];
-    
-    //  4、查询限价单信息
-    WsPromise* promiseLimitOrders = [chainMgr queryLimitOrders:_tradingPair number:200];//   TODO:fowallet
-    
-    //  5、查询喂价信息（如果需要）
-    id promsie_bitasset_data_id;
-    NSMutableArray* tmp_ary = [NSMutableArray array];
-    if (_tradingPair.baseIsSmart){
-        [tmp_ary addObject:[_tradingPair.baseAsset objectForKey:@"bitasset_data_id"]];
-    }
-    if (_tradingPair.quoteIsSmart){
-        [tmp_ary addObject:[_tradingPair.quoteAsset objectForKey:@"bitasset_data_id"]];
-    }
-    if ([tmp_ary count] > 0){
-        id api_db = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
-        promsie_bitasset_data_id = [api_db exec:@"get_objects" params:@[tmp_ary]];
-    }else{
-        promsie_bitasset_data_id = [NSNull null];
-    }
-    
-    //  执行查询
-    [[[WsPromise all:@[initKdata, initToday, promiseHistory, promiseLimitOrders, promsie_bitasset_data_id]] then:(^id(id data_array) {
-        [self hideBlockView];
-        [self onQueryFeedPriceInfoResponsed:data_array[4]];
-        [self onQueryTodayInfoResponsed:data_array[1]];
-        [self onQueryKdataResponsed:data_array[0]];
-        [self onQueryLimitOrderResponsed:data_array[3]];
-        [self onQueryFillOrderHistoryResponsed:data_array[2]];
-        //  继续订阅
-        [[ScheduleManager sharedScheduleManager] sub_market_notify:_tradingPair];
-        return nil;
+    //  优先查询智能背书资产信息（之后才考虑是否查询喂价、爆仓单等信息）
+    [[[chainMgr queryShortBackingAssetInfos:@[_tradingPair.baseId, _tradingPair.quoteId]] then:(^id(id sba_hash) {
+        //  更新智能资产信息
+        [_tradingPair RefreshCoreMarketFlag:sba_hash];
+        
+        //  1、查询K线基本数据
+        id parameters = [chainMgr getDefaultParameters];
+        id kline_period_ary = parameters[@"kline_period_ary"];
+        assert(kline_period_ary);
+        NSInteger kline_period_default = [parameters[@"kline_period_default"] integerValue];
+        assert(kline_period_default >= 0 && kline_period_default < [kline_period_ary count]);
+        NSInteger kline_period_default_value = [[kline_period_ary objectAtIndex:kline_period_default] integerValue];
+        NSInteger default_query_seconds = [self getDatePeriodSeconds:(EKlineDatePeriodType)kline_period_default_value];
+        NSInteger now = [[NSDate date] timeIntervalSince1970];
+        id snow = [OrgUtils formatBitsharesTimeString:now];
+        id sbgn = [OrgUtils formatBitsharesTimeString:now-default_query_seconds*kBTS_KLINE_MAX_SHOW_CANDLE_NUM];
+        //    id sbgn = [OrgUtils formatBitsharesTimeString:now-86400*200];
+        
+        id api_history = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_history;
+        //  TODO:fowallet 这个方法一次最多返回200条数据，如果 kBTS_KLINE_MAX_SHOW_CANDLE_NUM 设置为300，那么返回的数据可能不包含近期100条。需要多次请求
+        WsPromise* initKdata = [api_history exec:@"get_market_history" params:@[_tradingPair.baseId, _tradingPair.quoteId, @(default_query_seconds), sbgn, snow]];
+        
+        id sbgn1 = [OrgUtils formatBitsharesTimeString:now-86400*1];
+        
+        //  2、查询最高最低价格等信息
+        WsPromise* initToday = [api_history exec:@"get_market_history" params:@[_tradingPair.baseId, _tradingPair.quoteId, @86400, sbgn1, snow]];
+        
+        //  3、查询成交记录信息
+        WsPromise* promiseHistory = [chainMgr queryFillOrderHistory:_tradingPair number:20];
+        
+        //  4、查询限价单信息
+        WsPromise* promiseLimitOrders = [chainMgr queryLimitOrders:_tradingPair number:200];
+        
+        //  5、查询爆仓单和喂价信息
+        WsPromise* promiseCallOrders = [chainMgr queryCallOrders:_tradingPair number:50];
+        
+        //  执行查询
+        return [[WsPromise all:@[initKdata, initToday, promiseHistory, promiseLimitOrders, promiseCallOrders]] then:(^id(id data_array) {
+            [self hideBlockView];
+            id settlement_data = data_array[4];
+            [self onQueryFeedPriceInfoResponsed:settlement_data];
+            [self onQueryTodayInfoResponsed:data_array[1]];
+            [self onQueryKdataResponsed:data_array[0]];
+            [self onQueryOrderBookResponsed:data_array[3] settlement_data:settlement_data];
+            [self onQueryFillOrderHistoryResponsed:data_array[2]];
+            //  继续订阅
+            [[ScheduleManager sharedScheduleManager] sub_market_notify:_tradingPair];
+            return nil;
+        })];
     })] catch:(^id(id error) {
         [self hideBlockView];
         [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
@@ -440,8 +434,11 @@ enum
     if (!userinfo){
         return;
     }
+    id settlement_data = [userinfo objectForKey:@"kSettlementData"];
+    //  更新喂价信息
+    [self onQueryFeedPriceInfoResponsed:settlement_data];
     //  更新限价单
-    [self onQueryLimitOrderResponsed:[userinfo objectForKey:@"kLimitOrders"]];
+    [self onQueryOrderBookResponsed:[userinfo objectForKey:@"kLimitOrders"] settlement_data:settlement_data];
     //  更新成交历史
     id fillOrders = [userinfo objectForKey:@"kFillOrders"];
     if (fillOrders){
@@ -452,25 +449,26 @@ enum
 
 - (void)onQueryFeedPriceInfoResponsed:(id)feed_infos
 {
-    //  计算喂价（可能为 nil）
-    _feedPriceInfo = [_tradingPair calcShowFeedInfo:feed_infos];
+    //  获取显示用喂价信息（可能为nil）
+    _feedPriceInfo = [feed_infos objectForKey:@"feed_price_market"];
     NSLog(@"Current Feed price: %@%@/%@", [NSString stringWithFormat:@"%@", _feedPriceInfo],
           _tradingPair.baseAsset[@"symbol"], _tradingPair.quoteAsset[@"symbol"]);
 }
 
-- (void)onQueryLimitOrderResponsed:(NSDictionary*)data
+- (void)onQueryOrderBookResponsed:(NSDictionary*)normal_order_book settlement_data:(id)settlement_data
 {
     //  订阅市场返回的数据可能为 nil。
-    if (!data){
+    if (!normal_order_book){
         return;
     }
     
     //  初始化显示精度
-    [_tradingPair dynamicUpdateDisplayPrecision:data];
+    [_tradingPair dynamicUpdateDisplayPrecision:normal_order_book];
     
     //  刷新深度图和盘口信息
-    [_viewDeepGraph refreshDeepGraph:data];
-    [_viewOrderBookCell onQueryLimitOrderResponsed:data];
+    id merged_order_book = [OrgUtils mergeOrderBook:normal_order_book settlement_data:settlement_data];
+    [_viewDeepGraph refreshDeepGraph:merged_order_book];
+    [_viewOrderBookCell onQueryOrderBookResponsed:merged_order_book];
 }
 
 - (void)onQueryFillOrderHistoryResponsed:(NSArray*)data_array

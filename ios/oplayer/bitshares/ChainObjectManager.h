@@ -189,6 +189,10 @@
  */
 - (WsPromise*)queryFeeAssetListDynamicInfo;
 /**
+ *  (public) 查询智能资产信息（非智能资产返回nil）
+ */
+- (WsPromise*)queryShortBackingAssetInfos:(NSArray*)asset_id_list;
+/**
  *  (public) 查询所有投票ID信息
  */
 - (WsPromise*)queryAllVoteIds:(NSArray*)vote_id_array;
@@ -220,6 +224,11 @@
  *  (public) 查询最近成交记录
  */
 - (WsPromise*)queryFillOrderHistory:(TradingPair*)tradingPair number:(NSInteger)number;
+
+/**
+ *  (public) 查询爆仓单
+ */
+- (WsPromise*)queryCallOrders:(TradingPair*)tradingPair number:(NSInteger)number;
 
 /**
  *  (public) 查询限价单

@@ -183,15 +183,32 @@ typedef void (^YklUserCallback)(id data);
                         set_divide_precision:(BOOL)set_divide_precision;
 
 /**
+ *  (public) 计算在爆仓时最少需要卖出的资产数量，如果没设置目标抵押率则全部卖出。如果有设置则根据目标抵押率计算。
+ */
++ (NSDecimalNumber*)calcSettlementSellNumbers:(id)call_order
+                               debt_precision:(NSInteger)debt_precision
+                         collateral_precision:(NSInteger)collateral_precision
+                                   feed_price:(NSDecimalNumber*)feed_price
+                                          mcr:(NSDecimalNumber*)mcr
+                                         mssr:(NSDecimalNumber*)mssr;
+
+/**
  *  (public) 计算强平触发价格。
- *  call_price = (collateral × MCR) ÷ debt
+ *  call_price = (debt × MCR) ÷ collateral
  */
 + (NSDecimalNumber*)calcSettlementTriggerPrice:(id)debt_amount
                                     collateral:(id)collateral_amount
                                 debt_precision:(NSInteger)debt_precision
                           collateral_precision:(NSInteger)collateral_precision
                                          n_mcr:(id)n_mcr
-                                  ceil_handler:(NSDecimalNumberHandler*)ceil_handler;
+                                       reverse:(BOOL)reverse
+                                  ceil_handler:(NSDecimalNumberHandler*)ceil_handler
+                          set_divide_precision:(BOOL)set_divide_precision;
+
+/**
+ *  (public) 合并普通盘口信息和爆仓单信息。
+ */
++ (NSDictionary*)mergeOrderBook:(NSDictionary*)normal_order_book settlement_data:(NSDictionary*)settlement_data;
 
 /**
  *  (public) 格式化ASSET_JSON对象为价格字符串，例：2323.32BTS
