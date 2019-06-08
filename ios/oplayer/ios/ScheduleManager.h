@@ -41,7 +41,7 @@
 //  [通知]
 #define kBtsSubMarketNotifyNewData  @"kBtsSubMarketNotifyNewData"
 
-//  订阅交易对信息最小更新间隔（即在这个间隔内不管是否有notify都不会更新。）
+//  订阅交易对信息最小更新间隔（即在这个间隔内不管是否有notify都不会更新。）REMARK：目前这个值实际最低在3s左右，因为3s是一个区块的生成最短间隔。
 #define kScheduleSubMarketIntervalMin  500.0f
 
 //  订阅交易对信息最大更新间隔（即超过这间隔不管是否有notify都会更新。）

@@ -18,7 +18,9 @@
     BOOL            _baseIsSmart;
     BOOL            _quoteIsSmart;
     
-//    BOOL            _isCoreMarket;
+    BOOL            _isCoreMarket;              //  是否是智能资产市场（该标记需要后期更新）
+    NSString*       _smartAssetId;              //  智能资产ID
+    NSString*       _sbaAssetId;                //  背书资产ID
     
     NSString*       _baseId;
     NSString*       _quoteId;
@@ -43,7 +45,9 @@
 @synthesize quoteAsset = _quoteAsset;
 @synthesize baseIsSmart = _baseIsSmart;
 @synthesize quoteIsSmart = _quoteIsSmart;
-//@synthesize isCoreMarket = _isCoreMarket;
+@synthesize isCoreMarket = _isCoreMarket;
+@synthesize smartAssetId = _smartAssetId;
+@synthesize sbaAssetId = _sbaAssetId;
 @synthesize baseId = _baseId;
 @synthesize quoteId = _quoteId;
 @synthesize basePrecision = _basePrecision;
@@ -60,6 +64,9 @@
     self.quoteAsset = nil;
     self.baseId = nil;
     self.quoteId = nil;
+    
+    self.smartAssetId = nil;
+    self.sbaAssetId = nil;
 }
 
 - (id)initWithBaseID:(NSString*)baseId quoteId:(NSString*)quoteId
@@ -96,7 +103,9 @@
         _baseIsSmart = [self _is_smart:_baseAsset];
         _quoteIsSmart = [self _is_smart:_quoteAsset];
         
-//        _isCoreMarket = [self _is_core_market:_baseAsset quoteAsset:_quoteAsset];
+        _isCoreMarket = NO;
+        _smartAssetId = nil;
+        _sbaAssetId = nil;
         
         _baseId = [baseAsset objectForKey:@"id"];
         _quoteId = [quoteAsset objectForKey:@"id"];
@@ -122,13 +131,33 @@
     return bitasset_data_id && ![bitasset_data_id isEqualToString:@""];
 }
 
-//- (BOOL)_is_core_market:(NSDictionary*)baseAsset quoteAsset:(NSDictionary*)quoteAsset
-//{
-//    assert(baseAsset);
-//    assert(quoteAsset);
-//
-//    return NO;
-//}
+/**
+ *  (public) 刷新智能资产交易对（市场）标记。即：quote是base的背书资产，或者base是quote的背书资产。
+ */
+- (void)RefreshCoreMarketFlag:(NSDictionary*)sba_hash
+{
+    assert(sba_hash);
+    
+    _isCoreMarket = NO;
+    _smartAssetId = nil;
+    _sbaAssetId = nil;
+    
+    id base_sba = [sba_hash objectForKey:_baseId];
+    if (base_sba && [base_sba isEqualToString:_quoteId]){
+        _isCoreMarket = YES;
+        _smartAssetId = _baseId;
+        _sbaAssetId = _quoteId;
+        return;
+    }
+    
+    id quote_sba = [sba_hash objectForKey:_quoteId];
+    if (quote_sba && [quote_sba isEqualToString:_baseId]){
+        _isCoreMarket = YES;
+        _smartAssetId = _quoteId;
+        _sbaAssetId = _baseId;
+        return;
+    }
+}
 
 /**
  *  (public) 计算需要显示的喂价信息，不需要显示喂价则返回 nil。
@@ -188,7 +217,7 @@
     unsigned long long amount01_amount = [asset01[@"amount"] unsignedLongLongValue];
     unsigned long long amount02_amount = [asset02[@"amount"] unsignedLongLongValue];
     
-    //  喂价数据异常
+    //  喂价数据（过期or未设置）
     if (amount01_amount == 0 || amount02_amount == 0){
         return nil;
     }

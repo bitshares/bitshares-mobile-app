@@ -282,7 +282,9 @@
                                                collateral_precision:collateral_precision
                                                               n_mcr:[NSDecimalNumber decimalNumberWithMantissa:[mcr unsignedLongLongValue]
                                                                                                       exponent:-3 isNegative:NO]
-                                                       ceil_handler:nil];
+                                                            reverse:NO
+                                                       ceil_handler:nil
+                                               set_divide_precision:YES];
             optional_number++;
             [asset_final setObject:[OrgUtils formatFloatValue:trigger_price] forKey:@"trigger_price"];
         }

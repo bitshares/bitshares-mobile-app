@@ -103,15 +103,15 @@
     [super layoutSubviews];
 }
 
-- (void)onQueryLimitOrderResponsed:(id)limit_order_infos
+- (void)onQueryOrderBookResponsed:(id)order_book
 {
-    assert(limit_order_infos);
+    assert(order_book);
     
     [_bidDataArray removeAllObjects];
-    [_bidDataArray addObjectsFromArray:[limit_order_infos objectForKey:@"bids"]];
+    [_bidDataArray addObjectsFromArray:[order_book objectForKey:@"bids"]];
     
     [_askDataArray removeAllObjects];
-    [_askDataArray addObjectsFromArray:[limit_order_infos objectForKey:@"asks"]];
+    [_askDataArray addObjectsFromArray:[order_book objectForKey:@"asks"]];
     
     [_bidTableView reloadData];
     [_askTableView reloadData];

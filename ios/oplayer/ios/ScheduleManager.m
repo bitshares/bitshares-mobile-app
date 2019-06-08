@@ -573,9 +573,10 @@ static ScheduleManager *_sharedScheduleManager = nil;
                 }
             }
             id p4 = updateMonitorOrder && account_id ? [chainMgr queryFullAccountInfo:account_id] : [NSNull null];
-            //  TODO:fowallet 爆仓单、强清单 ！！！！尚未处理
+            //  TODO:fowallet 2.4 p5 updateCallOrder??
+            WsPromise* p5 = [chainMgr queryCallOrders:s.tradingPair number:50];
             s.querying = YES;
-            [[[WsPromise all:@[p1, p2, p3, p4]] then:(^id(id data_array) {
+            [[[WsPromise all:@[p1, p2, p3, p4, p5]] then:(^id(id data_array) {
                 s.querying = NO;
                 //  获取结果
                 NSMutableDictionary* result = [NSMutableDictionary dictionary];
@@ -590,6 +591,7 @@ static ScheduleManager *_sharedScheduleManager = nil;
                 if (updateMonitorOrder && account_id){
                     [result setObject:data_array[3] forKey:@"kFullAccountData"];
                 }
+                [result setObject:data_array[4] forKey:@"kSettlementData"];
                 //  更新成功、清除标记、累积时间清零。
                 s.accumulated_milliseconds = 0;
                 //  通知

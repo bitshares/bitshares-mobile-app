@@ -17,7 +17,9 @@
 @property (nonatomic, assign) BOOL baseIsSmart;
 @property (nonatomic, assign) BOOL quoteIsSmart;
 
-//@property (nonatomic, assign) BOOL isCoreMarket;
+@property (nonatomic, assign) BOOL isCoreMarket;
+@property (nonatomic, strong) NSString* smartAssetId;
+@property (nonatomic, strong) NSString* sbaAssetId;
 
 @property (nonatomic, strong) NSString* baseId;
 @property (nonatomic, strong) NSString* quoteId;
@@ -34,6 +36,11 @@
 - (id)initWithBaseID:(NSString*)baseId quoteId:(NSString*)quoteId;
 - (id)initWithBaseSymbol:(NSString*)baseSymbol quoteSymbol:(NSString*)quoteSymbol;
 - (id)initWithBaseAsset:(NSDictionary*)baseAsset quoteAsset:(NSDictionary*)quoteAsset;
+
+/**
+ *  (public) 刷新智能资产交易对（市场）标记。即：quote是base的背书资产，或者base是quote的背书资产。
+ */
+- (void)RefreshCoreMarketFlag:(NSDictionary*)sba_hash;
 
 /**
  *  (public) 计算需要显示的喂价信息，不需要显示喂价则返回 nil。

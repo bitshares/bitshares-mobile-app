@@ -180,7 +180,10 @@
                                                                             collateral:_item[@"collateral"]
                                                                         debt_precision:self.debt_precision
                                                                   collateral_precision:self.collateral_precision
-                                                                                 n_mcr:self.mcr ceil_handler:nil];
+                                                                                 n_mcr:self.mcr
+                                                                               reverse:NO
+                                                                          ceil_handler:nil
+                                                                  set_divide_precision:YES];
   
     _lbTriggerPrice.attributedText = [self genAndColorAttributedText:NSLocalizedString(@"kVcRankCallPrice", @"强平触发价 ")
                                                                   value:[OrgUtils formatFloatValue:n_settlement_trigger_price]

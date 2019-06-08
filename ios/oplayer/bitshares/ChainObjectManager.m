@@ -897,6 +897,42 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
 }
 
 /**
+ *  (public) 查询智能资产的信息（非智能资产返回nil）
+ */
+- (WsPromise*)queryShortBackingAssetInfos:(NSArray*)asset_id_list
+{
+    return [[self queryAllAssetsInfo:asset_id_list] then:(^id(id asset_hash) {
+        NSMutableDictionary* asset_bitasset_hash = [NSMutableDictionary dictionary];
+        
+        NSMutableArray* bitasset_id_list = [NSMutableArray array];
+        for (id asset_id in asset_id_list) {
+            id asset = [asset_hash objectForKey:asset_id];
+            assert(asset);
+            id bitasset_data_id = [asset objectForKey:@"bitasset_data_id"];
+            if (bitasset_data_id && ![bitasset_data_id isEqualToString:@""]){
+                [bitasset_id_list addObject:bitasset_data_id];
+                [asset_bitasset_hash setObject:bitasset_data_id forKey:asset_id];
+            }
+        }
+        
+        return [[self queryAllGrapheneObjects:bitasset_id_list] then:(^id(id bitasset_hash) {
+            
+            NSMutableDictionary* sba_hash = [NSMutableDictionary dictionary];
+            for (id asset_id in asset_bitasset_hash) {
+                id bitasset_data_id = [asset_bitasset_hash objectForKey:asset_id];
+                assert(bitasset_data_id);
+                id bitasset_data = [bitasset_hash objectForKey:bitasset_data_id];
+                id short_backing_asset = [[bitasset_data objectForKey:@"options"] objectForKey:@"short_backing_asset"];
+                assert(short_backing_asset);
+                [sba_hash setObject:short_backing_asset forKey:asset_id];
+            }
+            
+            return [sba_hash copy];
+        })];
+    })];
+}
+
+/**
  *  (public) 查询所有投票ID信息
  */
 - (WsPromise*)queryAllVoteIds:(NSArray*)vote_id_array
@@ -1234,6 +1270,138 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
         
         //  返回
         return fillOrders;
+    })];
+}
+
+/**
+ *  (public) 查询爆仓单
+ */
+- (WsPromise*)queryCallOrders:(TradingPair*)tradingPair number:(NSInteger)number
+{
+    if (!tradingPair.isCoreMarket){
+        return [WsPromise resolve:@{}];
+    }
+    
+    GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
+    
+    id bitasset_data_id = [[self getChainObjectByID:tradingPair.smartAssetId] objectForKey:@"bitasset_data_id"];
+    assert(bitasset_data_id);
+    
+    id p1 = [[api exec:@"get_objects" params:@[@[bitasset_data_id]]] then:(^id(id data) {
+        return [data objectAtIndex:0];
+    })];
+    id p2 = [api exec:@"get_call_orders" params:@[tradingPair.smartAssetId, @(number)]];
+    
+    return [[WsPromise all:@[p1, p2]] then:(^id(id data_array) {
+        id bitasset = [data_array objectAtIndex:0];
+        id callorders = [data_array objectAtIndex:1];
+        
+        //  准备参数
+        NSInteger debt_precision;
+        NSInteger collateral_precision;
+        NSRoundingMode roundingMode;
+        BOOL invert;
+        if ([tradingPair.smartAssetId isEqualToString:tradingPair.baseId]){
+            debt_precision = tradingPair.basePrecision;
+            collateral_precision = tradingPair.quotePrecision;
+            invert = NO;
+            roundingMode = NSRoundDown;
+        }else{
+            debt_precision = tradingPair.quotePrecision;
+            collateral_precision = tradingPair.basePrecision;
+            invert = YES;   //  force sell `quote` is force buy action
+            roundingMode = NSRoundUp;
+        }
+        
+        //  计算喂价
+        id current_feed = [bitasset objectForKey:@"current_feed"];
+        assert(current_feed);
+        id settlement_price = [current_feed objectForKey:@"settlement_price"];
+        assert(settlement_price);
+        NSDecimalNumber* feed_price = [OrgUtils calcPriceFromPriceObject:settlement_price
+                                                                 base_id:tradingPair.sbaAssetId
+                                                          base_precision:collateral_precision
+                                                         quote_precision:debt_precision
+                                                                  invert:NO
+                                                            roundingMode:roundingMode
+                                                    set_divide_precision:NO];
+        
+        //  REMARK：没人喂价 or 所有喂价都过期，则存在 base和quote 都为 0 的情况。即：无喂价。
+        NSDecimalNumber* feed_price_market = nil;
+        NSDecimalNumber* call_price = [NSDecimalNumber zero];
+        NSDecimalNumber* total_sell_amount = [NSDecimalNumber zero];
+        NSDecimalNumber* n_mcr = nil;
+        NSDecimalNumber* n_mssr = nil;
+        NSInteger settlement_account_number = 0;
+        if (feed_price){
+            feed_price_market = [OrgUtils calcPriceFromPriceObject:settlement_price
+                                                           base_id:tradingPair.quoteId
+                                                    base_precision:tradingPair.quotePrecision
+                                                   quote_precision:tradingPair.basePrecision
+                                                            invert:NO
+                                                      roundingMode:roundingMode
+                                              set_divide_precision:YES];
+            
+            id mssr = [current_feed objectForKey:@"maximum_short_squeeze_ratio"];
+            id mcr = [current_feed objectForKey:@"maintenance_collateral_ratio"];
+            
+            n_mcr = [NSDecimalNumber decimalNumberWithMantissa:[mcr unsignedLongLongValue] exponent:-3 isNegative:NO];
+            n_mssr = [NSDecimalNumber decimalNumberWithMantissa:[mssr unsignedLongLongValue] exponent:-3 isNegative:NO];
+            
+            //  1、计算爆仓成交价   feed / mssr
+            call_price = [feed_price decimalNumberByDividingBy:n_mssr];
+            if (invert){
+                call_price = [[NSDecimalNumber one] decimalNumberByDividingBy:call_price];
+            }
+            
+            //  2、计算爆仓单数量
+            id zero = [NSDecimalNumber zero];
+            NSDecimalNumberHandler* settlement_handler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundUp
+                                                                                                                scale:debt_precision
+                                                                                                     raiseOnExactness:NO
+                                                                                                      raiseOnOverflow:NO
+                                                                                                     raiseOnUnderflow:NO
+                                                                                                  raiseOnDivideByZero:NO];
+            for (id callorder in callorders) {
+                NSDecimalNumber* n_settlement_trigger_price = [OrgUtils calcSettlementTriggerPrice:callorder[@"debt"]
+                                                                                        collateral:callorder[@"collateral"]
+                                                                                    debt_precision:debt_precision
+                                                                              collateral_precision:collateral_precision
+                                                                                             n_mcr:n_mcr
+                                                                                           reverse:NO
+                                                                                      ceil_handler:settlement_handler
+                                                                              set_divide_precision:NO];
+                //  强制平仓
+                if ([feed_price compare:n_settlement_trigger_price] < 0){
+                    id sell_amount = [OrgUtils calcSettlementSellNumbers:callorder
+                                                          debt_precision:debt_precision
+                                                    collateral_precision:collateral_precision
+                                                              feed_price:feed_price
+                                                                     mcr:n_mcr
+                                                                    mssr:n_mssr];
+                    //  小数点精度可能有细微误差
+                    if ([sell_amount compare:zero] <= 0){
+                        continue;
+                    }
+                    total_sell_amount = [total_sell_amount decimalNumberByAdding:sell_amount];
+                    ++settlement_account_number;
+                }
+            }
+        }
+        //  返回
+        if (feed_price_market){
+            assert(n_mssr && n_mcr);
+            return @{@"feed_price_market":feed_price_market,
+                     @"feed_price":feed_price,                  //  需要手动翻转价格
+                     @"call_price":call_price,
+                     @"total_sell_amount":total_sell_amount,
+                     @"invert":@(invert),
+                     @"mcr":n_mcr,
+                     @"mssr":n_mssr,
+                     @"settlement_account_number":@(settlement_account_number)};
+        }else{
+            return @{};
+        }
     })];
 }
 
