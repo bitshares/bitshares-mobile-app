@@ -14,6 +14,7 @@
 @interface ViewTickerHeader : UITableViewCellBase
 
 - (id)initWithTradingPair:(TradingPair*)tradingPair;
+- (void)refreshFeedPrice:(NSDecimalNumber*)feedPrice;
 - (void)refreshInfos:(MKlineItemData*)model feedPrice:(NSDecimalNumber*)feedPrice;
 - (void)refreshTickerData;
 

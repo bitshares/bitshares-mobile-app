@@ -190,17 +190,22 @@
     return self;
 }
 
+- (void)refreshFeedPrice:(NSDecimalNumber*)feedPrice
+{
+    if (feedPrice){
+        _lbFeedPriceTitle.hidden = NO;
+        _lbFeedPrice.hidden = NO;
+        _lbFeedPrice.text = [OrgUtils formatFloatValue:feedPrice];
+    }else{
+        _lbFeedPriceTitle.hidden = YES;
+        _lbFeedPrice.hidden = YES;
+    }
+}
+
 - (void)refreshInfos:(MKlineItemData*)model feedPrice:(NSDecimalNumber*)feedPrice
 {
+    [self refreshFeedPrice:feedPrice];
     if (model){
-        if (feedPrice){
-            _lbFeedPriceTitle.hidden = NO;
-            _lbFeedPrice.hidden = NO;
-            _lbFeedPrice.text = [OrgUtils formatFloatValue:feedPrice];
-        }else{
-            _lbFeedPriceTitle.hidden = YES;
-            _lbFeedPrice.hidden = YES;
-        }
         _lbLow.text = [OrgUtils formatFloatValue:model.nPriceLow];
         _lbHigh.text = [OrgUtils formatFloatValue:model.nPriceHigh];
         _lb24Vol.text = [OrgUtils formatFloatValue:model.n24Vol];

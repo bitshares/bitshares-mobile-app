@@ -357,12 +357,14 @@ enum
         
         id api_history = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_history;
         //  TODO:fowallet 这个方法一次最多返回200条数据，如果 kBTS_KLINE_MAX_SHOW_CANDLE_NUM 设置为300，那么返回的数据可能不包含近期100条。需要多次请求
-        WsPromise* initKdata = [api_history exec:@"get_market_history" params:@[_tradingPair.baseId, _tradingPair.quoteId, @(default_query_seconds), sbgn, snow]];
+        WsPromise* initKdata = [api_history exec:@"get_market_history"
+                                          params:@[_tradingPair.baseId, _tradingPair.quoteId, @(default_query_seconds), sbgn, snow]];
         
         id sbgn1 = [OrgUtils formatBitsharesTimeString:now-86400*1];
         
         //  2、查询最高最低价格等信息
-        WsPromise* initToday = [api_history exec:@"get_market_history" params:@[_tradingPair.baseId, _tradingPair.quoteId, @86400, sbgn1, snow]];
+        WsPromise* initToday = [api_history exec:@"get_market_history"
+                                          params:@[_tradingPair.baseId, _tradingPair.quoteId, @86400, sbgn1, snow]];
         
         //  3、查询成交记录信息
         WsPromise* promiseHistory = [chainMgr queryFillOrderHistory:_tradingPair number:20];
@@ -451,8 +453,7 @@ enum
 {
     //  获取显示用喂价信息（可能为nil）
     _feedPriceInfo = [feed_infos objectForKey:@"feed_price_market"];
-    NSLog(@"Current Feed price: %@%@/%@", [NSString stringWithFormat:@"%@", _feedPriceInfo],
-          _tradingPair.baseAsset[@"symbol"], _tradingPair.quoteAsset[@"symbol"]);
+    [_viewTickerHeader refreshFeedPrice:_feedPriceInfo];
 }
 
 - (void)onQueryOrderBookResponsed:(NSDictionary*)normal_order_book settlement_data:(id)settlement_data
@@ -479,7 +480,8 @@ enum
     }
     [_dataArrayHistory removeAllObjects];
     [_dataArrayHistory addObjectsFromArray:data_array];
-    [_mainTableView reloadData];
+    //  刷新
+    [self _reloadDeepAndHistorySection];
 }
 
 - (void)queryKdata:(NSInteger)seconds ekdptType:(EKlineDatePeriodType)ekdptType
@@ -637,8 +639,17 @@ enum
     NSInteger tag = sender.tag;
     if (tag != _currSecondPartyShowIndex){
         _currSecondPartyShowIndex = tag;
-        [_mainTableView reloadData];
+        [self _reloadDeepAndHistorySection];
     }
+}
+
+- (void)_reloadDeepAndHistorySection
+{
+    [UIView performWithoutAnimation:(^{
+        CGPoint old_offset = _mainTableView.contentOffset;
+        [_mainTableView reloadSections:[NSIndexSet indexSetWithIndex:kVcDeepOrHistory] withRowAnimation:UITableViewRowAnimationNone];
+        [_mainTableView setContentOffset:old_offset animated:NO];
+    })];
 }
 
 #pragma mark- TableView delegate method
