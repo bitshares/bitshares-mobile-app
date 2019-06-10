@@ -232,12 +232,18 @@ enum
     return @{@"button_list":buttonArray, @"default_value":@([[kline_period_ary objectAtIndex:kline_period_default] integerValue])};
 }
 
+//- (void)onFLipMarketClicked
+//{
+//      TODO:flip pairs and request again...
+//    [self _queryInitData];
+//}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
-    
+  
     CGFloat safeHeight = [self heightForBottomSafeArea];
     CGFloat fBottomViewHeight = 60.0f;
     
@@ -333,6 +339,13 @@ enum
     
     //  TODO:fowallet 开始加载测试数据
     _viewKLine.ekdptType = ekdpt_15m;   //  TODO:fowallet 900s 15m
+    
+    //  查询数据
+    [self _queryInitData];
+}
+
+- (void)_queryInitData
+{
     [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
@@ -366,14 +379,20 @@ enum
         WsPromise* initToday = [api_history exec:@"get_market_history"
                                           params:@[_tradingPair.baseId, _tradingPair.quoteId, @86400, sbgn1, snow]];
         
+        //  获取参数
+        NSInteger n_callorder = [parameters[@"kline_query_callorder_number"] integerValue];
+        NSInteger n_limitorder = [parameters[@"kline_query_limitorder_number"] integerValue];
+        NSInteger n_fillorder = [parameters[@"kline_query_fillorder_number"] integerValue];
+        assert(n_callorder > 0 && n_limitorder > 0 && n_fillorder > 0);
+        
         //  3、查询成交记录信息
-        WsPromise* promiseHistory = [chainMgr queryFillOrderHistory:_tradingPair number:20];
+        WsPromise* promiseHistory = [chainMgr queryFillOrderHistory:_tradingPair number:n_fillorder];
         
         //  4、查询限价单信息
-        WsPromise* promiseLimitOrders = [chainMgr queryLimitOrders:_tradingPair number:200];
+        WsPromise* promiseLimitOrders = [chainMgr queryLimitOrders:_tradingPair number:n_limitorder];
         
         //  5、查询爆仓单和喂价信息
-        WsPromise* promiseCallOrders = [chainMgr queryCallOrders:_tradingPair number:50];
+        WsPromise* promiseCallOrders = [chainMgr queryCallOrders:_tradingPair number:n_callorder];
         
         //  执行查询
         return [[WsPromise all:@[initKdata, initToday, promiseHistory, promiseLimitOrders, promiseCallOrders]] then:(^id(id data_array) {
@@ -385,7 +404,10 @@ enum
             [self onQueryOrderBookResponsed:data_array[3] settlement_data:settlement_data];
             [self onQueryFillOrderHistoryResponsed:data_array[2]];
             //  继续订阅
-            [[ScheduleManager sharedScheduleManager] sub_market_notify:_tradingPair];
+            [[ScheduleManager sharedScheduleManager] sub_market_notify:_tradingPair
+                                                           n_callorder:n_callorder
+                                                          n_limitorder:n_limitorder
+                                                           n_fillorder:n_fillorder];
             return nil;
         })];
     })] catch:(^id(id error) {
