@@ -18,6 +18,10 @@ class TradingPair {
     var _baseIsSmart: Boolean = false
     var _quoteIsSmart: Boolean = false
 
+    var _isCoreMarket = false                       //  是否是智能资产市场（该标记需要后期更新）
+    var _smartAssetId = ""                          //  智能资产ID
+    var _sbaAssetId = ""                            //  背书资产ID
+
     var _baseId: String = ""
     var _quoteId: String = ""
 
@@ -88,11 +92,34 @@ class TradingPair {
      *  (private) 是否是智能货币判断
      */
     private fun _is_smart(asset: JSONObject): Boolean {
-        assert(asset != null)
         val bitasset_data_id = asset.optString("bitasset_data_id")
-        return bitasset_data_id != null && bitasset_data_id != ""
+        return bitasset_data_id != ""
     }
 
+    /**
+     *  (public) 刷新智能资产交易对（市场）标记。即：quote是base的背书资产，或者base是quote的背书资产。
+     */
+    fun refreshCoreMarketFlag(sba_hash: JSONObject) {
+        _isCoreMarket = false
+        _smartAssetId = ""
+        _sbaAssetId = ""
+
+        val base_sba = sba_hash.optString(_baseId, null)
+        if (base_sba != null && base_sba == _quoteId) {
+            _isCoreMarket = true
+            _smartAssetId = _baseId
+            _sbaAssetId = _quoteId
+            return
+        }
+
+        val quote_sba = sba_hash.optString(_quoteId, null)
+        if (quote_sba != null && quote_sba == _baseId) {
+            _isCoreMarket = true
+            _smartAssetId = _quoteId
+            _sbaAssetId = _baseId
+            return
+        }
+    }
 
     /**
      *  (public) 计算需要显示的喂价信息，不需要显示喂价则返回 nil。
@@ -149,14 +176,14 @@ class TradingPair {
         val amount01_amount = asset01.getString("amount")
         val amount02_amount = asset02.getString("amount")
 
-        //  喂价数据异常
+        //  喂价数据（过期or未设置）
         if (amount01_amount.toLong() == 0L || amount02_amount.toLong() == 0L) {
             return null
         }
 
         //  REMARK：喂价往下取（因为如果往上，那么抵押的时候评估抵押物价值可能略微偏高，在175贴现抵押的时候可能出现误差。）
         //  price = base / quote
-        var n_base: BigDecimal
+        val n_base: BigDecimal
         val n_quote: BigDecimal
         if (asset01.getString("asset_id") == _quoteId) {
             n_base = bigDecimalfromAmount(amount02_amount, _basePrecision)

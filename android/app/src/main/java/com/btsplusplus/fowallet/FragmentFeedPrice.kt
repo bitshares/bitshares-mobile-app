@@ -65,7 +65,7 @@ class FragmentFeedPrice : BtsppFragment() {
 
         //  刷新UI
         //  喂价
-        _currentView!!.findViewById<TextView>(R.id.label_txt_curr_feed).text = "${_ctx!!.resources.getString(R.string.kVcFeedCurrentFeedPrice)} ${n_curr_feed_price.toPriceAmountString()}"
+        _currentView!!.findViewById<TextView>(R.id.label_txt_curr_feed).text = "${_ctx!!.resources.getString(R.string.kVcFeedCurrentFeedPrice)} ${n_curr_feed_price!!.toPriceAmountString()}"
 
         //  列表
         val line_height = 28.0f
@@ -88,7 +88,7 @@ class FragmentFeedPrice : BtsppFragment() {
             val feed_data = feed_info_ary.getJSONObject(1)
 
             val name = chainMgr.getChainObjectByID(publisher_account_id).getString("name")
-            val n_price = OrgUtils.calcPriceFromPriceObject(feed_data.getJSONObject("settlement_price"), short_backing_asset_id, sba_asset_precision, asset_precision)
+            val n_price = OrgUtils.calcPriceFromPriceObject(feed_data.getJSONObject("settlement_price"), short_backing_asset_id, sba_asset_precision, asset_precision)!!
             val change = n_price.divide(n_curr_feed_price, 4, BigDecimal.ROUND_DOWN).subtract(BigDecimal.ONE).scaleByPowerOfTen(2)
 
             list.add(jsonObjectfromKVS("name", name, "price", n_price, "diff", change, "date", publish_date))

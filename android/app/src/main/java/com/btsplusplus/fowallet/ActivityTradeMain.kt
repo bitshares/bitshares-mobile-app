@@ -77,11 +77,7 @@ class ActivityTradeMain : BtsppActivity() {
         //  添加 fargments
         setFragments()
         //  设置 viewPager 并配置滚动速度
-        setViewPager(if (_defaultSelectBuy) {
-            0
-        } else {
-            1
-        }, R.id.view_pager_of_main_buy_and_sell, R.id.tablayout_of_main_buy_and_sell, fragmens)
+        setViewPager(if (_defaultSelectBuy) 0 else 1, R.id.view_pager_of_main_buy_and_sell, R.id.tablayout_of_main_buy_and_sell, fragmens)
         //  监听 tab 并设置选中 item
         setTabListener(R.id.tablayout_of_main_buy_and_sell, R.id.view_pager_of_main_buy_and_sell)
         //  设置全屏(隐藏状态栏和虚拟导航栏)
@@ -90,24 +86,40 @@ class ActivityTradeMain : BtsppActivity() {
         //  请求数据
         val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), this)
         mask.show()
-        val promise_map = JSONObject()
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
-        val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
-        val walletMgr = WalletManager.sharedWalletManager()
-        if (walletMgr.isWalletExist()) {
-            promise_map.put("kUserLimit", chainMgr.queryUserLimitOrders(walletMgr.getWalletAccountInfo()!!.getJSONObject("account").getString("id")))
-        }
-        promise_map.put("kLimitOrder", chainMgr.queryLimitOrders(_tradingPair, 20))
-        promise_map.put("kTickerData", conn.async_exec_db("get_ticker", jsonArrayfrom(_tradingPair._baseId, _tradingPair._quoteId)))
-        promise_map.put("kFee", chainMgr.queryFeeAssetListDynamicInfo())    //  查询手续费兑换比例、手续费池等信息
-        //  执行查询
-        Promise.map(promise_map).then {
-            mask.dismiss()
-            onInitPromiseResponse(it as JSONObject)
-            //  继续订阅
-            ScheduleManager.sharedScheduleManager().sub_market_notify(_tradingPair)
-            return@then null
-        }.catch { error ->
+        //  优先查询智能背书资产信息（之后才考虑是否查询喂价、爆仓单等信息）
+        chainMgr.queryShortBackingAssetInfos(jsonArrayfrom(_tradingPair._baseId, _tradingPair._quoteId)).then {
+            //  更新智能资产信息
+            val sba_hash = it as JSONObject
+            _tradingPair.refreshCoreMarketFlag(sba_hash)
+
+            //  获取参数
+            val parameters = chainMgr.getDefaultParameters()
+            val n_callorder = parameters.getInt("trade_query_callorder_number")
+            val n_limitorder = parameters.getInt("trade_query_limitorder_number")
+            val n_fillorder = parameters.getInt("trade_query_fillorder_number")
+            assert(n_callorder > 0 && n_limitorder > 0 && n_fillorder > 0)
+
+            val promise_map = JSONObject()
+
+            val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
+            val walletMgr = WalletManager.sharedWalletManager()
+            if (walletMgr.isWalletExist()) {
+                promise_map.put("kUserLimit", chainMgr.queryUserLimitOrders(walletMgr.getWalletAccountInfo()!!.getJSONObject("account").getString("id")))
+            }
+            promise_map.put("kLimitOrder", chainMgr.queryLimitOrders(_tradingPair, n_limitorder))
+            promise_map.put("kTickerData", conn.async_exec_db("get_ticker", jsonArrayfrom(_tradingPair._baseId, _tradingPair._quoteId)))
+            promise_map.put("kFee", chainMgr.queryFeeAssetListDynamicInfo())    //  查询手续费兑换比例、手续费池等信息
+            promise_map.put("kSettlementData", chainMgr.queryCallOrders(_tradingPair, n_callorder))
+
+            return@then Promise.map(promise_map).then {
+                mask.dismiss()
+                onInitPromiseResponse(it as JSONObject)
+                //  继续订阅
+                ScheduleManager.sharedScheduleManager().sub_market_notify(_tradingPair, n_callorder, n_limitorder, n_fillorder)
+                return@then null
+            }
+        }.catch {
             mask.dismiss()
             showToast(resources.getString(R.string.tip_network_error))
         }
@@ -122,7 +134,8 @@ class ActivityTradeMain : BtsppActivity() {
             return
         }
         //  更新限价单
-        onQueryOrderBookResponse(userinfo.optJSONObject("kLimitOrders"))
+        val settlement_data = userinfo.optJSONObject("kSettlementData")
+        onQueryOrderBookResponse(userinfo.optJSONObject("kLimitOrders"), settlement_data)
         //  更新成交历史和Ticker
         onQueryFillOrderHistoryResponsed(userinfo.optJSONArray("kFillOrders"))
         //  更新帐号信息
@@ -175,7 +188,7 @@ class ActivityTradeMain : BtsppActivity() {
         onQueryTickerDataResponse(ticker_data)
 
         //  3、更新限价单
-        onQueryOrderBookResponse(datamap.getJSONObject("kLimitOrder"))
+        onQueryOrderBookResponse(datamap.getJSONObject("kLimitOrder"), datamap.optJSONObject("kSettlementData"))
     }
 
     /**
@@ -249,10 +262,11 @@ class ActivityTradeMain : BtsppActivity() {
         }
     }
 
-    private fun onQueryOrderBookResponse(limit_orders: JSONObject?) {
-        if (limit_orders != null) {
+    private fun onQueryOrderBookResponse(normal_order_book: JSONObject?, settlement_data: JSONObject?) {
+        if (normal_order_book != null) {
+            val merged_order_book = OrgUtils.mergeOrderBook(normal_order_book, settlement_data)
             fragmens.forEach {
-                (it as FragmentTradeMainPage).onQueryOrderBookResponse(limit_orders)
+                (it as FragmentTradeMainPage).onQueryOrderBookResponse(merged_order_book)
             }
         }
     }

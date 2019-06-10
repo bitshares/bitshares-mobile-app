@@ -120,64 +120,6 @@ class ActivityKLine : BtsppActivity() {
         _viewTradeHistory = ViewTradeHistory(this).initView(24f, 20, _tradingPair)
         layout_volume_from_kline.addView(_viewTradeHistory)
 
-        //  请求数据
-        val chainMgr = ChainObjectManager.sharedChainObjectManager()
-        val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), this)
-        mask.show()
-
-        //  1、查询K线基本数据
-        val parameters = chainMgr.getDefaultParameters()
-        val kline_period_ary = parameters.getJSONArray("kline_period_ary")
-        val kline_period_default_index = parameters.getInt("kline_period_default")
-        assert(kline_period_default_index >= 0 && kline_period_default_index < kline_period_ary.length())
-        val default_query_seconds = getDatePeriodSeconds(kline_period_ary.getInt(kline_period_default_index))
-        val now: Long = Utils.now_ts()
-        val snow = Utils.formatBitsharesTimeString(now)
-        val sbgn = Utils.formatBitsharesTimeString(now - default_query_seconds * kBTS_KLINE_MAX_SHOW_CANDLE_NUM)
-
-        val api_conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
-        val initKdata = api_conn.async_exec_history("get_market_history", jsonArrayfrom(_tradingPair._baseId, _tradingPair._quoteId, default_query_seconds, sbgn, snow))
-        val sbgn1 = Utils.formatBitsharesTimeString(now - 86400 * 1)
-
-        //  2、查询最高最低价格等信息
-        val initToday = api_conn.async_exec_history("get_market_history", jsonArrayfrom(_tradingPair._baseId, _tradingPair._quoteId, 86400, sbgn1, snow))
-        //  3、查询成交记录信息
-        val promiseHistory = chainMgr.queryFillOrderHistory(_tradingPair, 20)
-        // 4、查询限价单信息
-        val promiseLimitOrders = chainMgr.queryLimitOrders(_tradingPair, 200)
-        //  5、查询喂价信息（如果需要）
-        val tmp_ary = JSONArray()
-        if (_tradingPair._baseIsSmart) {
-            tmp_ary.put(_tradingPair._baseAsset.getString("bitasset_data_id"))
-        }
-        if (_tradingPair._quoteIsSmart) {
-            tmp_ary.put(_tradingPair._quoteAsset.getString("bitasset_data_id"))
-        }
-        val promise_map = JSONObject()
-        promise_map.put("kKlineData", initKdata)
-        promise_map.put("kToday", initToday)
-        promise_map.put("kHistory", promiseHistory)
-        promise_map.put("kLimitOrder", promiseLimitOrders)
-        if (tmp_ary.length() > 0) {
-            promise_map.put("kBitAsset", api_conn.async_exec_db("get_objects", jsonArrayfrom(tmp_ary)))
-        }
-        //  执行查询
-        Promise.map(promise_map).then {
-            mask.dismiss()
-            val datamap = it as JSONObject
-            onQueryFeedPriceInfoResponsed(datamap.optJSONArray("kBitAsset"))
-            onQueryTodayInfoResponsed(datamap.getJSONArray("kToday"))
-            onQueryKdataResponsed(datamap.getJSONArray("kKlineData"))
-            onQueryLimitOrderResponsed(datamap.getJSONObject("kLimitOrder"))
-            onQueryFillOrderHistoryResponsed(datamap.getJSONArray("kHistory"))
-            //  继续订阅
-            ScheduleManager.sharedScheduleManager().sub_market_notify(_tradingPair)
-            return@then null
-        }.catch {
-            mask.dismiss()
-            showToast(resources.getString(R.string.tip_network_error))
-        }
-
         //  买
         btn_buy_of_kline.setOnClickListener {
             goTo(ActivityTradeMain::class.java, true, args = jsonArrayfrom(_tradingPair, true))
@@ -198,6 +140,75 @@ class ActivityKLine : BtsppActivity() {
         btn_index.setOnClickListener { _onIndexButtonClicked() }
 
         setFullScreen()
+
+        //  查询
+        _queryInitData()
+    }
+
+    private fun _queryInitData() {
+        //  请求数据
+        val chainMgr = ChainObjectManager.sharedChainObjectManager()
+        val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), this)
+        mask.show()
+
+        chainMgr.queryShortBackingAssetInfos(jsonArrayfrom(_tradingPair._baseId, _tradingPair._quoteId)).then {
+            //  更新智能资产信息
+            val sba_hash = it as JSONObject
+            _tradingPair.refreshCoreMarketFlag(sba_hash)
+
+            //  1、查询K线基本数据
+            val parameters = chainMgr.getDefaultParameters()
+            val kline_period_ary = parameters.getJSONArray("kline_period_ary")
+            val kline_period_default_index = parameters.getInt("kline_period_default")
+            assert(kline_period_default_index >= 0 && kline_period_default_index < kline_period_ary.length())
+            val default_query_seconds = getDatePeriodSeconds(kline_period_ary.getInt(kline_period_default_index))
+            val now: Long = Utils.now_ts()
+            val snow = Utils.formatBitsharesTimeString(now)
+            val sbgn = Utils.formatBitsharesTimeString(now - default_query_seconds * kBTS_KLINE_MAX_SHOW_CANDLE_NUM)
+
+            val api_conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
+            val initKdata = api_conn.async_exec_history("get_market_history", jsonArrayfrom(_tradingPair._baseId, _tradingPair._quoteId, default_query_seconds, sbgn, snow))
+            val sbgn1 = Utils.formatBitsharesTimeString(now - 86400 * 1)
+
+            //  获取参数
+            val n_callorder = parameters.getInt("kline_query_callorder_number")
+            val n_limitorder = parameters.getInt("kline_query_limitorder_number")
+            val n_fillorder = parameters.getInt("kline_query_fillorder_number")
+            assert(n_callorder > 0 && n_limitorder > 0 && n_fillorder > 0)
+
+            //  2、查询最高最低价格等信息
+            val initToday = api_conn.async_exec_history("get_market_history", jsonArrayfrom(_tradingPair._baseId, _tradingPair._quoteId, 86400, sbgn1, snow))
+            //  3、查询成交记录信息
+            val promiseHistory = chainMgr.queryFillOrderHistory(_tradingPair, n_fillorder)
+            //  4、查询限价单信息
+            val promiseLimitOrders = chainMgr.queryLimitOrders(_tradingPair, n_limitorder)
+            //  5、查询爆仓单和喂价信息
+            val promiseCallOrders = chainMgr.queryCallOrders(_tradingPair, n_callorder)
+
+            val promise_map = JSONObject()
+            promise_map.put("kKlineData", initKdata)
+            promise_map.put("kToday", initToday)
+            promise_map.put("kHistory", promiseHistory)
+            promise_map.put("kLimitOrder", promiseLimitOrders)
+            promise_map.put("kSettlementData", promiseCallOrders)
+
+            return@then Promise.map(promise_map).then {
+                mask.dismiss()
+                val datamap = it as JSONObject
+                val settlement_data = datamap.optJSONObject("kSettlementData")
+                onQueryFeedPriceInfoResponsed(settlement_data)
+                onQueryTodayInfoResponsed(datamap.getJSONArray("kToday"))
+                onQueryKdataResponsed(datamap.getJSONArray("kKlineData"))
+                onQueryOrderBookResponsed(datamap.getJSONObject("kLimitOrder"), settlement_data)
+                onQueryFillOrderHistoryResponsed(datamap.getJSONArray("kHistory"))
+                //  继续订阅
+                ScheduleManager.sharedScheduleManager().sub_market_notify(_tradingPair, n_callorder, n_limitorder, n_fillorder)
+                return@then null
+            }
+        }.catch {
+            mask.dismiss()
+            showToast(resources.getString(R.string.tip_network_error))
+        }
     }
 
     private fun _onIndexButtonClicked() {
@@ -334,8 +345,11 @@ class ActivityKLine : BtsppActivity() {
         if (userinfo == null) {
             return
         }
+        val settlement_data = userinfo.optJSONObject("kSettlementData")
+        //  更新喂价信息
+        onQueryFeedPriceInfoResponsed(settlement_data)
         //  更新限价单
-        onQueryLimitOrderResponsed(userinfo.optJSONObject("kLimitOrders"))
+        onQueryOrderBookResponsed(userinfo.optJSONObject("kLimitOrders"), settlement_data)
         //  更新成交历史
         val fillOrders = userinfo.optJSONArray("kFillOrders")
         if (fillOrders != null) {
@@ -344,10 +358,9 @@ class ActivityKLine : BtsppActivity() {
         }
     }
 
-    private fun onQueryFeedPriceInfoResponsed(feed_infos: JSONArray?) {
+    private fun onQueryFeedPriceInfoResponsed(settlement_data: JSONObject?) {
         //  计算喂价（可能为 nil）
-        _feedPriceInfo = _tradingPair.calcShowFeedInfo(feed_infos)
-
+        _feedPriceInfo = settlement_data?.opt("feed_price_market") as? BigDecimal
         //  显示喂价
         if (_feedPriceInfo != null) {
             field_feedprice.visibility = View.VISIBLE
@@ -408,17 +421,18 @@ class ActivityKLine : BtsppActivity() {
         _viewKLine.refreshCandleLayerPrepare(data_array)
     }
 
-    private fun onQueryLimitOrderResponsed(data: JSONObject?) {
+    private fun onQueryOrderBookResponsed(normal_order_book: JSONObject?, settlement_data: JSONObject?) {
         //  订阅市场返回的数据可能为 nil。
-        if (data == null) {
+        if (normal_order_book == null) {
             return
         }
         //  初始化显示精度
-        _tradingPair.dynamicUpdateDisplayPrecision(data)
+        _tradingPair.dynamicUpdateDisplayPrecision(normal_order_book)
         // 刷新深度图和盘口信息
-        _viewDeepGraph.refreshDeepGraph(data)
+        val merged_order_book = OrgUtils.mergeOrderBook(normal_order_book, settlement_data)
+        _viewDeepGraph.refreshDeepGraph(merged_order_book)
         // 刷新盘口信息
-        _viewBidAsk.refreshWithData(data)
+        _viewBidAsk.refreshWithData(merged_order_book)
     }
 
     private fun onQueryFillOrderHistoryResponsed(data_array: JSONArray?) {

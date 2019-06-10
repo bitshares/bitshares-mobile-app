@@ -49,25 +49,26 @@ class ScheduleTickerUpdate {
 class ScheduleSubMarket {
 
 
-    var refCount = 0                                               //  K线界面、交易界面都会订阅（需要添加计数）
+    var refCount = 0                                                //  K线界面、交易界面都会订阅（需要添加计数）
     var callback: ((Boolean, Any) -> Boolean)? = null
     var tradingPair: TradingPair? = null
-    var subscribed: Boolean = false                                //  是否订阅中
+    var subscribed: Boolean = false                                 //  是否订阅中
 
-    var querying: Boolean = false                                  //  是否正在执行请求中
+    var querying: Boolean = false                                   //  是否正在执行请求中
 
-    var monitorOrderStatus: MutableMap<String, String>? = null         //  监控指定订单状态
+    var monitorOrderStatus: MutableMap<String, String>? = null      //  监控指定订单状态
 
-    var updateMonitorOrder: Boolean = false                        // 是否有监控中订单更新（新增、更新、删除）
-    var updateLimitOrder: Boolean = false                          // 是否有限价单更新（新增、更新、删除）
-    var updateCallOrder: Boolean = false                           // 是否有抵押单更新（新增、更新、删除）
-    var hasFillOrder: Boolean = false                              // 是否有新的成交记录
+    var updateMonitorOrder: Boolean = false                         // 是否有监控中订单更新（新增、更新、删除）
+    var updateLimitOrder: Boolean = false                           // 是否有限价单更新（新增、更新、删除）
+    var updateCallOrder: Boolean = false                            // 是否有抵押单更新（新增、更新、删除）
+    var hasFillOrder: Boolean = false                               // 是否有新的成交记录
 
     var accumulated_milliseconds: Long = 0L
 
     //  部分配置参数
-    var cfgLimitOrderNum: Int = 0                                  //  [配置] 每次更新时获取限价单数量
-    var cfgFillOrderNum: Int = 0                                   //  [配置] 每次更新时获取成交记录数量
+    var cfgCallOrderNum: Int = 0                                    //  [配置] 每次更新时获取限价爆仓单量
+    var cfgLimitOrderNum: Int = 0                                   //  [配置] 每次更新时获取限价单数量
+    var cfgFillOrderNum: Int = 0                                    //  [配置] 每次更新时获取成交记录数量
 }
 
 class ScheduleManager {
@@ -328,7 +329,7 @@ class ScheduleManager {
     /**
      *  订阅市场的通知信息
      */
-    fun sub_market_notify(tradingPair: TradingPair): Boolean {
+    fun sub_market_notify(tradingPair: TradingPair, n_callorder: Int, n_limitorder: Int, n_fillorder: Int): Boolean {
         assert(tradingPair != null)
         var s = _sub_market_infos[tradingPair._pair]
         if (s != null) {
@@ -349,8 +350,9 @@ class ScheduleManager {
         s.updateCallOrder = false
         s.hasFillOrder = false
         s.accumulated_milliseconds = 0
-        s.cfgLimitOrderNum = 200           //  TODO:fowallet 配置
-        s.cfgFillOrderNum = 20             //  TODO:fowallet 配置
+        s.cfgCallOrderNum = n_callorder
+        s.cfgLimitOrderNum = n_limitorder
+        s.cfgFillOrderNum = n_fillorder
         _sub_market_infos[tradingPair._pair] = s
 
         //  执行订阅
@@ -363,7 +365,7 @@ class ScheduleManager {
     fun unsub_market_notify(tradingPair: TradingPair) {
         //  没在订阅中
         val s = _sub_market_infos[tradingPair._pair] ?: return
-        if (!s.subscribed || s.callback == null){
+        if (!s.subscribed || s.callback == null) {
             return
         }
 
@@ -562,10 +564,10 @@ class ScheduleManager {
                 s.hasFillOrder = false
 
                 val promise_map = JSONObject()
-                if (updateLimitOrder) {
+                if (updateLimitOrder && s.cfgLimitOrderNum > 0) {
                     promise_map.put("kLimitOrders", chainMgr.queryLimitOrders(s.tradingPair!!, s.cfgLimitOrderNum))
                 }
-                if (hasFillOrder) {
+                if (hasFillOrder && s.cfgLimitOrderNum > 0) {
                     promise_map.put("kFillOrders", chainMgr.queryFillOrderHistory(s.tradingPair!!, s.cfgLimitOrderNum))
                 }
                 if (hasFillOrder) {
@@ -582,13 +584,15 @@ class ScheduleManager {
                 if (updateMonitorOrder && account_id != null) {
                     promise_map.put("kFullAccountData", chainMgr.queryFullAccountInfo(account_id))
                 }
-                //  TODO:fowallet 爆仓单、强清单 ！！！！尚未处理
+                //  TODO:fowallet 2.4 p5 updateCallOrder??
+                assert(s.cfgCallOrderNum > 0)
+                promise_map.put("kSettlementData", chainMgr.queryCallOrders(s.tradingPair!!, s.cfgCallOrderNum))
                 s.querying = true
                 Promise.map(promise_map).then {
                     val hashdata = it as JSONObject
                     s.querying = false
                     //  获取结果
-                    var result = JSONObject()
+                    val result = JSONObject()
                     if (updateLimitOrder) {
                         result.put("kLimitOrders", hashdata.getJSONObject("kLimitOrders"))
                     }
@@ -600,6 +604,7 @@ class ScheduleManager {
                     if (updateMonitorOrder && account_id != null) {
                         result.put("kFullAccountData", hashdata.getJSONObject("kFullAccountData"))
                     }
+                    result.put("kSettlementData", hashdata.getJSONObject("kSettlementData"))
                     //  更新成功、清除标记、累积时间清零。
                     s.accumulated_milliseconds = 0
                     //  通知
