@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Looper
 import com.btsplusplus.fowallet.NativeInterface
 import com.btsplusplus.fowallet.R
+import com.btsplusplus.fowallet.utils.BigDecimalHandler
 import com.crashlytics.android.Crashlytics
 import com.fowallet.walletcore.bts.ChainObjectManager
 import org.json.JSONArray
@@ -188,20 +189,147 @@ class OrgUtils {
         }
 
         /**
-         * (public) 计算强平触发价格。
-         * call_price = (collateral × MCR) ÷ debt
+         *  (public) 计算在爆仓时最少需要卖出的资产数量，如果没设置目标抵押率则全部卖出。如果有设置则根据目标抵押率计算。
          */
-        fun calcSettlementTriggerPrice(debt_amount: String, collateral_amount: String, debt_precision: Int, collateral_precision: Int, n_mcr: BigDecimal, roundingMode: Int?, precision: Int?): BigDecimal {
+        fun calcSettlementSellNumbers(call_order: JSONObject, debt_precision: Int, collateral_precision: Int, feed_price: BigDecimal, call_price: BigDecimal, mcr: BigDecimal, mssr: BigDecimal): BigDecimal {
+            val collateral = call_order.getString("collateral")
+            val debt = call_order.getString("debt")
+            val n_collateral = bigDecimalfromAmount(collateral, collateral_precision)
+            val n_debt = bigDecimalfromAmount(debt, debt_precision)
+
+            val ceil_handler = BigDecimalHandler(BigDecimal.ROUND_UP, collateral_precision)
+
+            val target_collateral_ratio = call_order.optString("target_collateral_ratio", null)
+            if (target_collateral_ratio != null) {
+                //  卖出部分，只要抵押率回到目标抵押率即可。
+                //  =============================================================
+                //  公式：n为最低卖出数量
+                //  即 新抵押率 = 新总估值 / 新总负债
+                //
+                //  (collateral - n) * feed_price
+                //  -----------------------------  >= target_collateral_ratio
+                //  (debt - n * feed_price / mssr)
+                //
+                //  即:
+                //          target_collateral_ratio * debt - feed_price * collateral
+                //  n >= --------------------------------------------------------------
+                //          feed_price * (target_collateral_ratio / mssr - 1)
+                //  =============================================================
+                val n_target_collateral_ratio = bigDecimalfromAmount(target_collateral_ratio, 3)
+
+                //  开始计算
+                val n1 = n_target_collateral_ratio.multiply(n_debt).subtract(feed_price.multiply(n_collateral))
+                val n2 = feed_price.multiply(n_target_collateral_ratio.divide(mssr, kBigDecimalDefaultMaxPrecision, kBigDecimalDefaultRoundingMode).subtract(BigDecimal.ONE))
+                return n1.divide(n2, ceil_handler.scale, ceil_handler.roundingMode)
+            } else {
+                //  卖出部分，覆盖所有债务即可。
+                return n_debt.divide(call_price, ceil_handler.scale, ceil_handler.roundingMode)
+            }
+        }
+
+        /**
+         * (public) 计算强平触发价格。
+         * call_price = (debt × MCR) ÷ collateral
+         */
+        fun calcSettlementTriggerPrice(debt_amount: String, collateral_amount: String, debt_precision: Int, collateral_precision: Int, n_mcr: BigDecimal, invert: Boolean, handler: BigDecimalHandler?, set_divide_precision: Boolean): BigDecimal {
             val n_debt = bigDecimalfromAmount(debt_amount, debt_precision)
             val n_collateral = bigDecimalfromAmount(collateral_amount, collateral_precision)
 
-            var n: BigDecimal = n_debt.multiply(n_mcr)
-            if (roundingMode == null || precision == null) {
-                n = n.divide(n_collateral, debt_precision, BigDecimal.ROUND_UP)
+            var n = n_debt.multiply(n_mcr)
+            if (set_divide_precision) {
+                val cell_hanndler = handler ?: BigDecimalHandler(BigDecimal.ROUND_UP, if (invert) collateral_precision else debt_precision)
+                n = if (invert) {
+                    BigDecimal.ONE.divide(n.divide(n_collateral, kBigDecimalDefaultMaxPrecision, kBigDecimalDefaultRoundingMode), cell_hanndler.scale, cell_hanndler.roundingMode)
+                } else {
+                    n.divide(n_collateral, cell_hanndler.scale, cell_hanndler.roundingMode)
+                }
             } else {
-                n = n.divide(n_collateral, precision, roundingMode)
+                n = n.divide(n_collateral, kBigDecimalDefaultMaxPrecision, kBigDecimalDefaultRoundingMode)
+                if (invert) {
+                    n = BigDecimal.ONE.divide(n, kBigDecimalDefaultMaxPrecision, kBigDecimalDefaultRoundingMode)
+                }
             }
+
             return n
+        }
+
+        /**
+         *  (public) 合并普通盘口信息和爆仓单信息。
+         */
+        fun mergeOrderBook(normal_order_book: JSONObject, settlement_data: JSONObject?): JSONObject {
+            if (settlement_data != null && settlement_data.optInt("settlement_account_number") > 0) {
+                var bidArray = normal_order_book.getJSONArray("bids")
+                var askArray = normal_order_book.getJSONArray("asks")
+
+                val n_call_price = settlement_data.get("call_price_market") as BigDecimal
+                val f_call_price = n_call_price.toDouble()
+
+                val new_array = JSONArray()
+                var new_amount_sum = 0.0
+                var inserted = false
+                val invert = settlement_data.getBoolean("invert")
+
+                for (item in (if (invert) bidArray else askArray).forin<JSONObject>()) {
+                    val order = item!!
+                    val f_price = order.getDouble("price")
+                    val f_quote = order.getDouble("quote")
+                    val keep = if (invert) {
+                        f_price > f_call_price
+                    } else {
+                        f_price < f_call_price
+                    }
+                    if (keep) {
+                        new_amount_sum += f_quote
+                        new_array.put(order)
+                        continue
+                    }
+                    if (!inserted) {
+                        //  insert
+                        val quote_amount: Double
+                        val base_amount: Double
+                        val total_sell_amount = (settlement_data.get("total_sell_amount") as BigDecimal).toDouble()
+                        val total_buy_amount = (settlement_data.get("total_buy_amount") as BigDecimal).toDouble()
+                        if (invert) {
+                            quote_amount = total_buy_amount
+                            base_amount = total_sell_amount
+                        } else {
+                            quote_amount = total_sell_amount
+                            base_amount = total_buy_amount
+                        }
+                        new_amount_sum += quote_amount
+
+                        new_array.put(JSONObject().apply {
+                            put("price", f_call_price)
+                            put("quote", quote_amount)
+                            put("base", base_amount)
+                            put("sum", new_amount_sum)
+                            put("iscall", true)
+                        })
+
+                        inserted = true
+                    }
+
+                    new_amount_sum += f_quote
+                    val base = order.get("base")
+                    new_array.put(JSONObject().apply {
+                        put("price", f_price)
+                        put("quote", f_quote)
+                        put("base", base)
+                        put("sum", new_amount_sum)
+                    })
+                }
+
+                if (invert) {
+                    bidArray = new_array
+                } else {
+                    askArray = new_array
+                }
+
+                //  返回新的 order book
+                return jsonObjectfromKVS("bids", bidArray, "asks", askArray)
+            } else {
+                return normal_order_book
+            }
         }
 
         /**
@@ -216,11 +344,11 @@ class OrgUtils {
         /**
          * 根据 price_item 计算价格。REMARK：price_item 包含 base 和 quote 对象，base 和 quote 包含 asset_id 和 amount 字段。
          */
-        fun calcPriceFromPriceObject(price_item: JSONObject, base_id: String, base_precision: Int, quote_precision: Int, invert: Boolean = false, roundingMode: Int = BigDecimal.ROUND_HALF_UP, set_divide_precision: Boolean = true): BigDecimal {
+        fun calcPriceFromPriceObject(price_item: JSONObject, base_id: String, base_precision: Int, quote_precision: Int, invert: Boolean = false, roundingMode: Int = BigDecimal.ROUND_HALF_UP, set_divide_precision: Boolean = true): BigDecimal? {
             val item01 = price_item.getJSONObject("base")
             val item02 = price_item.getJSONObject("quote")
-            var base: JSONObject
-            var quote: JSONObject
+            val base: JSONObject
+            val quote: JSONObject
             if (item01.getString("asset_id") == base_id) {
                 base = item01
                 quote = item02
@@ -228,20 +356,28 @@ class OrgUtils {
                 base = item02
                 quote = item01
             }
-            val n_base = bigDecimalfromAmount(base.getString("amount"), base_precision)
-            val n_quote = bigDecimalfromAmount(quote.getString("amount"), quote_precision)
-            //  REMARK：12几乎是不可能达到的精度。
-            if (invert) {
-                if (set_divide_precision) {
-                    return n_base.divide(n_quote, base_precision, roundingMode)
+
+            val s_base_amount = base.getString("amount")
+            val s_quote_amount = quote.getString("amount")
+            //  REMARK：价格失效（比如喂价过期等情况）
+            if (s_base_amount.toLong() == 0L || s_quote_amount.toLong() == 0L){
+                return null
+            }
+
+            val n_base = bigDecimalfromAmount(s_base_amount, base_precision)
+            val n_quote = bigDecimalfromAmount(s_quote_amount, quote_precision)
+
+            return if (set_divide_precision) {
+                if (invert) {
+                    n_base.divide(n_quote, base_precision, roundingMode)
                 } else {
-                    return n_base.divide(n_quote, 12, roundingMode)
+                    n_quote.divide(n_base, quote_precision, roundingMode)
                 }
             } else {
-                if (set_divide_precision) {
-                    return n_quote.divide(n_base, quote_precision, roundingMode)
+                if (invert) {
+                    n_base.divide(n_quote, kBigDecimalDefaultMaxPrecision, roundingMode)
                 } else {
-                    return n_quote.divide(n_base, 12, roundingMode)
+                    n_quote.divide(n_base, kBigDecimalDefaultMaxPrecision, roundingMode)
                 }
             }
         }

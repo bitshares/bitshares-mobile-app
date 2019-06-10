@@ -202,7 +202,7 @@ class FragmentMarginRanking : BtsppFragment() {
         val n_ratio = BigDecimal.valueOf(100.0).multiply(n_coll).multiply(_feedPriceInfo!!).divide(n_debt, 2, BigDecimal.ROUND_UP)
 
         //  强平触发价 高精度计算
-        tv2.text = OrgUtils.calcSettlementTriggerPrice(str_debt, str_collateral, debt_precision, collateral_precision, _mcr!!, null, null).toPriceAmountString()
+        tv2.text = OrgUtils.calcSettlementTriggerPrice(str_debt, str_collateral, debt_precision, collateral_precision, _mcr!!, false, null, true).toPriceAmountString()
         tv4.text = "${n_ratio.toPlainString()}%"
         tv6.text = OrgUtils.formatAssetString(str_collateral, collateral_precision)
         tv8.text = OrgUtils.formatAssetString(str_debt, debt_precision)

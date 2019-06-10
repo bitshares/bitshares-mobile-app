@@ -54,7 +54,7 @@ fun ByteArray.utf8String() = String(this, Charsets.UTF_8)
  * 快速构造JSONArray
  */
 fun jsonArrayfrom(vararg args: Any): JSONArray {
-    var ary = JSONArray()
+    val ary = JSONArray()
     for (obj in args) {
         ary.put(obj)
     }
@@ -65,7 +65,7 @@ fun jsonArrayfrom(vararg args: Any): JSONArray {
  * 快速构造JSONObject
  */
 fun jsonObjectfromKVS(vararg args: Any): JSONObject {
-    var retv = JSONObject()
+    val retv = JSONObject()
     assert(args.size % 2 == 0)
     for (i in 0 until args.size step 2) {
         val key = args[i] as String

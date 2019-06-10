@@ -3,9 +3,11 @@ package com.fowallet.walletcore.bts
 import android.content.Context
 import bitshares.*
 import com.btsplusplus.fowallet.kline.TradingPair
+import com.btsplusplus.fowallet.utils.BigDecimalHandler
 import com.orhanobut.logger.Logger
 import org.json.JSONArray
 import org.json.JSONObject
+import java.math.BigDecimal
 import kotlin.math.floor
 
 
@@ -859,6 +861,37 @@ class ChainObjectManager {
     }
 
     /**
+     *  (public) 查询智能资产的信息（非智能资产返回nil）
+     */
+    fun queryShortBackingAssetInfos(asset_id_list: JSONArray): Promise {
+        return queryAllAssetsInfo(asset_id_list).then {
+            val asset_hash = it as JSONObject
+            val asset_bitasset_hash = JSONObject()
+            val bitasset_id_list = JSONArray()
+            asset_id_list.forEach<String> { item ->
+                val asset_id = item!!
+                val asset = asset_hash.getJSONObject(asset_id)
+                val bitasset_data_id = asset.optString("bitasset_data_id")
+                if (bitasset_data_id != "") {
+                    bitasset_id_list.put(bitasset_data_id)
+                    asset_bitasset_hash.put(asset_id, bitasset_data_id)
+                }
+            }
+            return@then queryAllGrapheneObjects(bitasset_id_list).then { resultHash ->
+                val bitasset_hash = resultHash as JSONObject
+                val sba_hash = JSONObject()
+                asset_bitasset_hash.keys().forEach { asset_id ->
+                    val bitasset_data_id = asset_bitasset_hash.getString(asset_id)
+                    val bitasset_data = bitasset_hash.getJSONObject(bitasset_data_id)
+                    val short_backing_asset = bitasset_data.getJSONObject("options").getString("short_backing_asset")
+                    sba_hash.put(asset_id, short_backing_asset)
+                }
+                return@then sba_hash
+            }
+        }
+    }
+
+    /**
      *  (public) 查询所有投票ID信息
      */
     fun queryAllVoteIds(vote_id_array: JSONArray): Promise {
@@ -1127,7 +1160,7 @@ class ChainObjectManager {
 
                     if (fill_price != null) {
                         val n_price = OrgUtils.calcPriceFromPriceObject(fill_price, tradingPair._quoteId, tradingPair._quotePrecision, tradingPair._basePrecision, set_divide_precision = false)
-                        price = n_price.toDouble()
+                        price = n_price!!.toDouble()
                     } else {
                         val cost_amount = pays.getLong("amount")
                         val cost_real: Double = cost_amount / tradingPair._basePrecisionPow
@@ -1147,7 +1180,7 @@ class ChainObjectManager {
 
                     if (fill_price != null) {
                         val n_price = OrgUtils.calcPriceFromPriceObject(fill_price, tradingPair._quoteId, tradingPair._quotePrecision, tradingPair._basePrecision, set_divide_precision = false)
-                        price = n_price.toDouble()
+                        price = n_price!!.toDouble()
                     } else {
                         val gain_amount = op.getJSONObject("receives").getLong("amount")
                         val gain_real: Double = gain_amount / tradingPair._basePrecisionPow
@@ -1161,6 +1194,115 @@ class ChainObjectManager {
     }
 
     /**
+     *  (public) 查询爆仓单
+     */
+    fun queryCallOrders(tradingPair: TradingPair, number: Int): Promise {
+        if (!tradingPair._isCoreMarket) {
+            return Promise._resolve(JSONObject())
+        }
+        val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
+
+        val bitasset_data_id = getChainObjectByID(tradingPair._smartAssetId).getString("bitasset_data_id")
+        val p1 = conn.async_exec_db("get_objects", jsonArrayfrom(jsonArrayfrom(bitasset_data_id))).then {
+            return@then (it as JSONArray).getJSONObject(0)
+        }
+        val p2 = conn.async_exec_db("get_call_orders", jsonArrayfrom(tradingPair._smartAssetId, number))
+
+        return Promise.all(p1, p2).then { json_array ->
+            val data_array = json_array as JSONArray
+            val bitasset = data_array.getJSONObject(0)
+            val callorders = data_array.getJSONArray(1)
+
+            //  准备参数
+            val debt_precision: Int
+            val collateral_precision: Int
+            val invert: Boolean
+            val roundingMode: Int
+            if (tradingPair._smartAssetId == tradingPair._baseId) {
+                debt_precision = tradingPair._basePrecision
+                collateral_precision = tradingPair._quotePrecision
+                invert = false
+                roundingMode = BigDecimal.ROUND_DOWN
+            } else {
+                debt_precision = tradingPair._quotePrecision
+                collateral_precision = tradingPair._basePrecision
+                invert = true   //  force sell `quote` is force buy action
+                roundingMode = BigDecimal.ROUND_UP
+            }
+
+            //  计算喂价
+            val current_feed = bitasset.getJSONObject("current_feed")
+            val settlement_price = current_feed.getJSONObject("settlement_price")
+            val feed_price = OrgUtils.calcPriceFromPriceObject(settlement_price, tradingPair._sbaAssetId, collateral_precision, debt_precision, false, roundingMode, false)
+
+            //  REMARK：没人喂价 or 所有喂价都过期，则存在 base和quote 都为 0 的情况。即：无喂价。
+            var feed_price_market: BigDecimal? = null
+            var call_price_market: BigDecimal? = null
+            var call_price = BigDecimal.ZERO
+            var total_sell_amount = BigDecimal.ZERO
+            var n_mcr: BigDecimal? = null
+            var n_mssr: BigDecimal? = null
+            var settlement_account_number = 0
+
+            if (feed_price != null) {
+                feed_price_market = OrgUtils.calcPriceFromPriceObject(settlement_price, tradingPair._quoteId, tradingPair._quotePrecision, tradingPair._basePrecision, false, roundingMode, true)
+
+                n_mssr = bigDecimalfromAmount(current_feed.getString("maximum_short_squeeze_ratio"), 3)
+                n_mcr = bigDecimalfromAmount(current_feed.getString("maintenance_collateral_ratio"), 3)
+
+                //  1、计算爆仓成交价   feed / mssr
+                call_price = feed_price.divide(n_mssr, kBigDecimalDefaultMaxPrecision, kBigDecimalDefaultRoundingMode)
+                call_price_market = call_price
+                if (invert){
+                    call_price_market = BigDecimal.ONE.divide(call_price, kBigDecimalDefaultMaxPrecision, kBigDecimalDefaultRoundingMode)
+                }
+
+                //  2、计算爆仓单数量
+                val zero = BigDecimal.ZERO
+                val settlement_handler = BigDecimalHandler(BigDecimal.ROUND_UP, debt_precision)
+
+                for (item in callorders.forin<JSONObject>()) {
+                    val callorder = item!!
+                    val n_settlement_trigger_price = OrgUtils.calcSettlementTriggerPrice(callorder.getString("debt"),
+                            callorder.getString("collateral"), debt_precision, collateral_precision,
+                            n_mcr, false, settlement_handler, false)
+                    //  强制平仓
+                    if (feed_price < n_settlement_trigger_price) {
+                        val sell_amount = OrgUtils.calcSettlementSellNumbers(callorder, debt_precision, collateral_precision, feed_price, call_price, n_mcr, n_mssr)
+                        //  小数点精度可能有细微误差
+                        if (sell_amount < zero) {
+                            continue
+                        }
+                        total_sell_amount = total_sell_amount.add(sell_amount)
+                        ++settlement_account_number;
+                    }
+                }
+            }
+
+            if (feed_price_market != null) {
+                assert(n_mssr != null && n_mcr != null && call_price_market != null)
+                return@then JSONObject().apply {
+                    put("feed_price_market", feed_price_market)
+                    put("feed_price", feed_price)               //  需要手动翻转价格
+
+                    put("call_price_market", call_price_market)
+                    put("call_price", call_price)               //  需要手动翻转价格
+
+                    put("total_sell_amount", total_sell_amount)
+                    put("total_buy_amount", total_sell_amount.multiply(call_price))
+
+                    put("invert", invert)
+                    put("mcr", n_mcr)
+                    put("mssr", n_mssr)
+                    put("settlement_account_number", settlement_account_number)
+                }
+            } else {
+                return@then JSONObject()
+            }
+        }
+    }
+
+    /**
      *  (public) 查询限价单
      */
     fun queryLimitOrders(tradingPair: TradingPair, number: Int): Promise {
@@ -1168,8 +1310,8 @@ class ChainObjectManager {
 
         return conn.async_exec_db("get_limit_orders", jsonArrayfrom(tradingPair._baseId, tradingPair._quoteId, number)).then { data_array ->
 
-            var bidArray = JSONArray()
-            var askArray = JSONArray()
+            val bidArray = JSONArray()
+            val askArray = JSONArray()
 
             val base_id = tradingPair._baseId
 
@@ -1178,7 +1320,7 @@ class ChainObjectManager {
 
             val data_array = data_array as JSONArray
             for (i in 0 until data_array.length()) {
-                var limitOrder = data_array.getJSONObject(i)
+                val limitOrder = data_array.getJSONObject(i)
                 val sell_price = limitOrder.getJSONObject("sell_price")
                 val base = sell_price.getJSONObject("base")
                 val quote = sell_price.getJSONObject("quote")
