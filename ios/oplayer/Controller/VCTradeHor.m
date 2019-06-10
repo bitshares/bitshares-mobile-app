@@ -198,17 +198,27 @@
             p0_full_info = [chainMgr queryUserLimitOrders:[wallet_mgr getWalletAccountInfo][@"account"][@"id"]];
         }
         
-        id p1 = [chainMgr queryLimitOrders:_tradingPair number:20];
+        //  获取参数
+        id parameters = [chainMgr getDefaultParameters];
+        NSInteger n_callorder = [parameters[@"trade_query_callorder_number"] integerValue];
+        NSInteger n_limitorder = [parameters[@"trade_query_limitorder_number"] integerValue];
+        NSInteger n_fillorder = [parameters[@"trade_query_fillorder_number"] integerValue];
+        assert(n_callorder > 0 && n_limitorder > 0 && n_fillorder > 0);
+        
+        id p1 = [chainMgr queryLimitOrders:_tradingPair number:n_limitorder];
         id p2 = [api_db exec:@"get_ticker" params:@[[_base objectForKey:@"id"], [_quote objectForKey:@"id"]]];
         id p3 = [chainMgr queryFeeAssetListDynamicInfo];   //  查询手续费兑换比例、手续费池等信息
-        id p4 = [chainMgr queryCallOrders:_tradingPair number:50];
+        id p4 = [chainMgr queryCallOrders:_tradingPair number:n_callorder];
         
         return [[WsPromise all:@[p0_full_info, p1, p2, p3, p4]] then:(^id(id data) {
             [self hideBlockView];
             if (weak_self){
                 [weak_self onInitPromiseResponse:data];
                 //  继续订阅
-                [[ScheduleManager sharedScheduleManager] sub_market_notify:_tradingPair];
+                [[ScheduleManager sharedScheduleManager] sub_market_notify:_tradingPair
+                                                               n_callorder:n_callorder
+                                                              n_limitorder:n_limitorder
+                                                               n_fillorder:n_fillorder];
             }
             return nil;
         })];

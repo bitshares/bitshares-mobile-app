@@ -29,7 +29,7 @@
 @synthesize monitorOrderStatus, updateMonitorOrder;
 @synthesize updateLimitOrder, updateCallOrder, hasFillOrder;
 @synthesize accumulated_milliseconds;
-@synthesize cfgLimitOrderNum, cfgFillOrderNum;
+@synthesize cfgCallOrderNum, cfgLimitOrderNum, cfgFillOrderNum;
 @end
 
 static ScheduleManager *_sharedScheduleManager = nil;
@@ -309,6 +309,9 @@ static ScheduleManager *_sharedScheduleManager = nil;
  *  订阅市场的通知信息
  */
 - (BOOL)sub_market_notify:(TradingPair*)tradingPair
+              n_callorder:(NSInteger)n_callorder
+             n_limitorder:(NSInteger)n_limitorder
+              n_fillorder:(NSInteger)n_fillorder
 {
     assert(tradingPair);
     //  已经订阅（不重复添加）
@@ -331,8 +334,9 @@ static ScheduleManager *_sharedScheduleManager = nil;
     s.updateCallOrder = NO;
     s.hasFillOrder = NO;
     s.accumulated_milliseconds = 0;
-    s.cfgLimitOrderNum = 200;           //  TODO:fowallet 配置
-    s.cfgFillOrderNum = 20;             //  TODO:fowallet 配置
+    s.cfgCallOrderNum = n_callorder;
+    s.cfgLimitOrderNum = n_limitorder;
+    s.cfgFillOrderNum = n_fillorder;
     [_sub_market_infos setObject:s forKey:tradingPair.pair];
     
     //  执行订阅
@@ -561,8 +565,8 @@ static ScheduleManager *_sharedScheduleManager = nil;
             s.updateLimitOrder = NO;
             s.updateCallOrder = NO;
             s.hasFillOrder = NO;
-            id p1 = updateLimitOrder ? [chainMgr queryLimitOrders:s.tradingPair number:s.cfgLimitOrderNum] : [NSNull null];
-            id p2 = hasFillOrder ? [chainMgr queryFillOrderHistory:s.tradingPair number:s.cfgFillOrderNum] : [NSNull null];
+            id p1 = updateLimitOrder && s.cfgLimitOrderNum > 0 ? [chainMgr queryLimitOrders:s.tradingPair number:s.cfgLimitOrderNum] : [NSNull null];
+            id p2 = hasFillOrder && s.cfgFillOrderNum > 0 ? [chainMgr queryFillOrderHistory:s.tradingPair number:s.cfgFillOrderNum] : [NSNull null];
             id p3 = hasFillOrder ? [api exec:@"get_ticker" params:@[s.tradingPair.baseId, s.tradingPair.quoteId]] : [NSNull null];
             //  REMARK：monitorOrderStatus 的 Key 是 order_id，Value 是 account_id。
             id account_id = nil;
@@ -574,7 +578,8 @@ static ScheduleManager *_sharedScheduleManager = nil;
             }
             id p4 = updateMonitorOrder && account_id ? [chainMgr queryFullAccountInfo:account_id] : [NSNull null];
             //  TODO:fowallet 2.4 p5 updateCallOrder??
-            WsPromise* p5 = [chainMgr queryCallOrders:s.tradingPair number:50];
+            assert(s.cfgCallOrderNum > 0);
+            WsPromise* p5 = [chainMgr queryCallOrders:s.tradingPair number:s.cfgCallOrderNum];
             s.querying = YES;
             [[[WsPromise all:@[p1, p2, p3, p4, p5]] then:(^id(id data_array) {
                 s.querying = NO;
