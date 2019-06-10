@@ -1328,6 +1328,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
         
         //  REMARK：没人喂价 or 所有喂价都过期，则存在 base和quote 都为 0 的情况。即：无喂价。
         NSDecimalNumber* feed_price_market = nil;
+        NSDecimalNumber* call_price_market = nil;
         NSDecimalNumber* call_price = [NSDecimalNumber zero];
         NSDecimalNumber* total_sell_amount = [NSDecimalNumber zero];
         NSDecimalNumber* n_mcr = nil;
@@ -1349,9 +1350,9 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
             n_mssr = [NSDecimalNumber decimalNumberWithMantissa:[mssr unsignedLongLongValue] exponent:-3 isNegative:NO];
             
             //  1、计算爆仓成交价   feed / mssr
-            call_price = [feed_price decimalNumberByDividingBy:n_mssr];
+            call_price_market = call_price = [feed_price decimalNumberByDividingBy:n_mssr];
             if (invert){
-                call_price = [[NSDecimalNumber one] decimalNumberByDividingBy:call_price];
+                call_price_market = [[NSDecimalNumber one] decimalNumberByDividingBy:call_price];
             }
             
             //  2、计算爆仓单数量
@@ -1377,6 +1378,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
                                                           debt_precision:debt_precision
                                                     collateral_precision:collateral_precision
                                                               feed_price:feed_price
+                                                              call_price:call_price
                                                                      mcr:n_mcr
                                                                     mssr:n_mssr];
                     //  小数点精度可能有细微误差
@@ -1390,11 +1392,13 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
         }
         //  返回
         if (feed_price_market){
-            assert(n_mssr && n_mcr);
+            assert(n_mssr && n_mcr && call_price_market);
             return @{@"feed_price_market":feed_price_market,
                      @"feed_price":feed_price,                  //  需要手动翻转价格
-                     @"call_price":call_price,
+                     @"call_price_market":call_price_market,
+                     @"call_price":call_price,                  //  需要手动翻转价格
                      @"total_sell_amount":total_sell_amount,
+                     @"total_buy_amount":[total_sell_amount decimalNumberByMultiplyingBy:call_price],
                      @"invert":@(invert),
                      @"mcr":n_mcr,
                      @"mssr":n_mssr,

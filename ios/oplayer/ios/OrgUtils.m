@@ -1547,6 +1547,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
                                debt_precision:(NSInteger)debt_precision
                          collateral_precision:(NSInteger)collateral_precision
                                    feed_price:(NSDecimalNumber*)feed_price
+                                   call_price:(NSDecimalNumber*)call_price
                                           mcr:(NSDecimalNumber*)mcr
                                          mssr:(NSDecimalNumber*)mssr
 {
@@ -1557,12 +1558,24 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     
     id collateral = [call_order objectForKey:@"collateral"];
     assert(collateral);
+    id debt = [call_order objectForKey:@"debt"];
+    assert(debt);
+    
     NSDecimalNumber* n_collateral = [NSDecimalNumber decimalNumberWithMantissa:[collateral unsignedLongLongValue]
                                                                       exponent:-collateral_precision isNegative:NO];
+    NSDecimalNumber* n_debt = [NSDecimalNumber decimalNumberWithMantissa:[debt unsignedLongLongValue]
+                                                                exponent:-debt_precision isNegative:NO];
+    
+    NSDecimalNumberHandler* ceil_handler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundUp
+                                                                                                  scale:collateral_precision
+                                                                                       raiseOnExactness:NO
+                                                                                        raiseOnOverflow:NO
+                                                                                       raiseOnUnderflow:NO
+                                                                                    raiseOnDivideByZero:NO];
     
     id target_collateral_ratio = [call_order objectForKey:@"target_collateral_ratio"];
     if (target_collateral_ratio){
-        //  sell partial
+        //  卖出部分，只要抵押率回到目标抵押率即可。
         //  =============================================================
         //  公式：n为最低卖出数量
         //  即 新抵押率 = 新总估值 / 新总负债
@@ -1580,28 +1593,15 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
         id n_target_collateral_ratio = [NSDecimalNumber decimalNumberWithMantissa:[target_collateral_ratio unsignedLongLongValue]
                                                                          exponent:-3 isNegative:NO];
         
-        id debt = [call_order objectForKey:@"debt"];
-        assert(debt);
-        NSDecimalNumber* n_debt = [NSDecimalNumber decimalNumberWithMantissa:[debt unsignedLongLongValue]
-                                                                    exponent:-debt_precision isNegative:NO];
-        
-        
         //  开始计算
         id n1 = [[n_target_collateral_ratio decimalNumberByMultiplyingBy:n_debt] decimalNumberBySubtracting:[feed_price decimalNumberByMultiplyingBy:n_collateral]];
         
         id n2 = [feed_price decimalNumberByMultiplyingBy:[[n_target_collateral_ratio decimalNumberByDividingBy:mssr] decimalNumberBySubtracting:[NSDecimalNumber one]]];
         
-        NSDecimalNumberHandler* ceil_handler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundUp
-                                                                                                      scale:collateral_precision
-                                                                                           raiseOnExactness:NO
-                                                                                            raiseOnOverflow:NO
-                                                                                           raiseOnUnderflow:NO
-                                                                                        raiseOnDivideByZero:NO];
-        
         return [n1 decimalNumberByDividingBy:n2 withBehavior:ceil_handler];
     }else{
-        //  sell all
-        return n_collateral;
+        //  卖出部分，覆盖所有债务即可。
+        return [n_debt decimalNumberByDividingBy:call_price withBehavior:ceil_handler];
     }
 }
 
@@ -1660,7 +1660,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
         id bidArray = [normal_order_book objectForKey:@"bids"];
         id askArray = [normal_order_book objectForKey:@"asks"];
         
-        id n_call_price = [settlement_data objectForKey:@"call_price"];
+        id n_call_price = [settlement_data objectForKey:@"call_price_market"];
         double f_call_price = [n_call_price doubleValue];
         
         NSMutableArray* new_array = [NSMutableArray array];
@@ -1687,11 +1687,21 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
             
             if (!inserted){
                 //  insert
+                double quote_amount;
+                double base_amount;
                 double total_sell_amount = [[settlement_data objectForKey:@"total_sell_amount"] doubleValue];
-                new_amount_sum += total_sell_amount;
+                double total_buy_amount = [[settlement_data objectForKey:@"total_buy_amount"] doubleValue];
+                if (invert){
+                    quote_amount = total_buy_amount;
+                    base_amount = total_sell_amount;
+                }else{
+                    quote_amount = total_sell_amount;
+                    base_amount = total_buy_amount;
+                }
+                new_amount_sum += quote_amount;
                 [new_array addObject:@{@"price":@(f_call_price),
-                                       @"quote":@(total_sell_amount),
-                                       @"base":@(total_sell_amount * f_call_price),
+                                       @"quote":@(quote_amount),
+                                       @"base":@(base_amount),
                                        @"sum":@(new_amount_sum), @"iscall":@YES}];
                 inserted = YES;
             }

@@ -189,6 +189,7 @@ typedef void (^YklUserCallback)(id data);
                                debt_precision:(NSInteger)debt_precision
                          collateral_precision:(NSInteger)collateral_precision
                                    feed_price:(NSDecimalNumber*)feed_price
+                                   call_price:(NSDecimalNumber*)call_price
                                           mcr:(NSDecimalNumber*)mcr
                                          mssr:(NSDecimalNumber*)mssr;
 
