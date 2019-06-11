@@ -16,8 +16,8 @@ android {
         applicationId "org.bitshares.app"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 201905291
-        versionName "2.3"
+        versionCode 201906111
+        versionName "2.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
