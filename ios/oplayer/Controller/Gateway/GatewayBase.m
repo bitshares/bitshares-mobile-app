@@ -254,24 +254,21 @@
             assert(balanceHash);
             id balance_item = [balanceHash objectForKey:symbol] ?: @{@"iszero":@YES};
             
-            id appext = @{
-                          @"enableDeposit":@(enableDeposit),
-                          @"enableWithdraw":@(enableWithdraw),
-                          @"symbol":symbol,
-                          @"backSymbol":[backingCoinItem[@"symbol"] uppercaseString],
-                          @"name":item[@"name"],
-                          @"intermediateAccount":item[@"intermediateAccount"],  //  name or id
-                          @"balance":balance_item,
-                          @"depositMinAmount":[NSString stringWithFormat:@"%@", item[@"minAmount"] ?: @""],
-                          @"withdrawMinAmount":[NSString stringWithFormat:@"%@", backingCoinItem[@"minAmount"] ?: @""],
-                          @"withdrawGateFee":[NSString stringWithFormat:@"%@", backingCoinItem[@"gateFee"] ?: @""],
-                          @"supportMemo":@([[item objectForKey:@"supportsOutputMemos"] boolValue]),
-                          
-                          @"coinType":item[@"coinType"],
-                          @"backingCoinType":backingCoinType,
-                          
-                          @"backingCoinItem":backingCoinItem,
-                          };
+            GatewayAssetItemData* appext = [[GatewayAssetItemData alloc] init];
+            appext.enableWithdraw = enableWithdraw;
+            appext.enableDeposit = enableDeposit;
+            appext.symbol = symbol;
+            appext.backSymbol = [backingCoinItem[@"symbol"] uppercaseString];
+            appext.name = item[@"name"];
+            appext.intermediateAccount = item[@"intermediateAccount"];
+            appext.balance = balance_item;
+            appext.depositMinAmount = [NSString stringWithFormat:@"%@", item[@"minAmount"] ?: @""];
+            appext.withdrawMinAmount = [NSString stringWithFormat:@"%@", backingCoinItem[@"minAmount"] ?: @""];
+            appext.withdrawGateFee = [NSString stringWithFormat:@"%@", backingCoinItem[@"gateFee"] ?: @""];
+            appext.supportMemo = [[item objectForKey:@"supportsOutputMemos"] boolValue];
+            appext.coinType = item[@"coinType"];
+            appext.backingCoinType = backingCoinType;
+            appext.gdex_backingCoinItem = backingCoinItem;
             
             id new_item = [item mutableCopy];
             [new_item setObject:appext forKey:@"kAppExt"];
@@ -287,7 +284,7 @@
  *  成功返回json，失败返回err。
  */
 - (WsPromise*)requestDepositAddressCore:(id)item
-                                 appext:(id)appext
+                                 appext:(GatewayAssetItemData*)appext
             request_deposit_address_url:(id)request_deposit_address_url
                       full_account_data:(id)full_account_data
                                      vc:(VCBase*)vc
@@ -299,8 +296,8 @@
         //  查询充值地址
         assert(full_account_data);
         id account_data = [full_account_data objectForKey:@"account"];
-        id backingCoinType = [[appext objectForKey:@"backingCoinType"] lowercaseString];
-        id coinType = [[appext objectForKey:@"coinType"] lowercaseString];
+        id backingCoinType = [appext.backingCoinType lowercaseString];
+        id coinType = [appext.coinType lowercaseString];
         id outputAddress = [account_data objectForKey:@"name"];
         id post_args = @{
                          @"inputCoinType":backingCoinType,
@@ -366,7 +363,7 @@
 - (WsPromise*)requestDepositAddress:(id)item fullAccountData:(id)fullAccountData vc:(VCBase*)vc
 {
     assert(item);
-    id appext = [item objectForKey:@"kAppExt"];
+    GatewayAssetItemData* appext = [item objectForKey:@"kAppExt"];
     assert(appext);
     return [self requestDepositAddressCore:item
                                     appext:appext
@@ -376,11 +373,14 @@
 }
 
 /**
- *  验证地址是否有效
+ *  验证地址、备注、数量是否有效
  */
-- (WsPromise*)checkAddress:(id)item address:(NSString*)address
+- (WsPromise*)checkAddress:(id)item address:(NSString*)address memo:(NSString*)memo amount:(NSString*)amount
 {
-    id walletType = [[[item objectForKey:@"kAppExt"] objectForKey:@"backingCoinItem"] objectForKey:@"walletType"];
+    //  TODO:仅验证地址
+    
+    GatewayAssetItemData* appext = [item objectForKey:@"kAppExt"];
+    id walletType = [appext.gdex_backingCoinItem objectForKey:@"walletType"];
     assert(walletType);
     
     id check_address_base = [self.api_config_json objectForKey:@"check_address"];
@@ -402,6 +402,59 @@
             return nil;
         })];
     }];
+}
+
+/**
+ *  (public) 查询提币网关中间账号以及转账需要备注的memo信息。
+ */
+- (WsPromise*)queryWithdrawIntermediateAccountAndFinalMemo:(GatewayAssetItemData*)appext
+                                                   address:(NSString*)address
+                                                      memo:(NSString*)memo
+                                   intermediateAccountData:(NSDictionary*)intermediateAccountData
+{
+    //  GDEX & RUDEX 格式
+    assert(intermediateAccountData);
+    
+    //  TODO:fowallet 很多特殊处理
+    //  useFullAssetName        - 部分网关提币备注资产名需要 网关.资产
+    //  assetWithdrawlAlias     - 部分网关部分币种提币备注和bts上资产名字不同。
+    NSString* assetName = appext.backSymbol;
+    assert(assetName);
+    NSString* final_memo;
+    if (memo && ![memo isEqualToString:@""]){
+        final_memo = [NSString stringWithFormat:@"%@:%@:%@", assetName, address, memo];
+    }else{
+        final_memo = [NSString stringWithFormat:@"%@:%@", assetName, address];
+    }
+    return [WsPromise resolve:@{@"intermediateAccount":appext.intermediateAccount,
+                                @"finalMemo":final_memo,
+                                @"intermediateAccountData":intermediateAccountData}];
+}
+
+/**
+ *  辅助 - 根据json的value获取对应的数字字符串。
+ */
+- (NSString*)auxValueToNumberString:(id)json_value zero_as_nil:(BOOL)zero_as_nil
+{
+    NSDecimalNumber* value = [NSDecimalNumber decimalNumberWithString:[NSString stringWithFormat:@"%@", json_value]];
+    if (zero_as_nil && [value compare:[NSDecimalNumber zero]] == NSOrderedSame){
+        return nil;
+    }
+    return [NSString stringWithFormat:@"%@", value];
+}
+
+/**
+ *  辅助 - 根据json的value获取对应的数字字符串，并返回两者中较小的值。
+ */
+- (NSString*)auxMinValue:(id)json_value01 value02:(id)json_value02 zero_as_nil:(BOOL)zero_as_nil
+{
+    NSDecimalNumber* value01 = [NSDecimalNumber decimalNumberWithString:[NSString stringWithFormat:@"%@", json_value01]];
+    NSDecimalNumber* value02 = [NSDecimalNumber decimalNumberWithString:[NSString stringWithFormat:@"%@", json_value02]];
+    NSDecimalNumber* minValue = [value01 compare:value02] <= 0 ? value01 : value02;
+    if (zero_as_nil && [minValue compare:[NSDecimalNumber zero]] == NSOrderedSame){
+        return nil;
+    }
+    return [NSString stringWithFormat:@"%@", minValue];
 }
 
 @end

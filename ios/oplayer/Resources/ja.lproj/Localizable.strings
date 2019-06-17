@@ -100,6 +100,7 @@
 "kVcDWTipsFindCustomService" = "何か問題があれば，ゲートウェイの顾客サービスにご連絡。";
 "kVcDWErrTipsRequestDepositAddrFailed" = "取得入金アドレス異常，ゲートウェイの顾客サービスにご連絡ください。";
 "kVcDWErrTipsRequestDepositAddrFailed2" = "取得入金アドレス異常，フィールド'%@'チェックに失敗する，ゲートウェイの顾客サービスにご連絡ください。";
+"kVcDWErrTipsRequestWithdrawAddrFailed" = "取得出金アドレス異常，ゲートウェイの顾客サービスにご連絡ください。";
 "kVcDWHelpTitleSupport" = "サポートを助ける";
 "kVcDWHelpTitleQQ" = "サービスQQ";
 "kVcDWHelpTitleTelegram" = "Telegram";
@@ -112,6 +113,8 @@
 "kVcDWCellMinWithdrawNumber" = "最小コイン数";
 "kVcDWCellWithdrawFee" = "出金の手数料";
 "kVcDWCellWithdrawGatewayAccount" = "ゲートウェイ账号";
+"kVcDWCellMaxWithdrawNumberOnce" = "最大コイン数";
+"kVcDWCellMaxWithdrawNumber24Hours" = "最大コイン数(24時)";
 "kVcDWCellWithdrawFinalValue" = "実際に帳簿";
 "kVcDWWithdrawSubmitButton" = "出金";
 "kVcDWSubmitTipsAddressCannotBeEmpty" = "出金アドレスを空けることはできません。";
