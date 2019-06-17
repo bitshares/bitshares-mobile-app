@@ -24,6 +24,8 @@
 		3F0DA369218851FF006E1004 /* VCQrScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0DA367218851FF006E1004 /* VCQrScan.m */; };
 		3F216571226FEF5500AB5A3D /* ViewActionsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F216570226FEF5500AB5A3D /* ViewActionsCell.m */; };
 		3F216572226FEF5500AB5A3D /* ViewActionsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F216570226FEF5500AB5A3D /* ViewActionsCell.m */; };
+		3F291BD922B48EFB002E0CBD /* GatewayAssetItemData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F291BD722B48EFA002E0CBD /* GatewayAssetItemData.m */; };
+		3F291BDA22B48EFB002E0CBD /* GatewayAssetItemData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F291BD722B48EFA002E0CBD /* GatewayAssetItemData.m */; };
 		3F3847322222686400B55914 /* VCMemberShip.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F3847312222686300B55914 /* VCMemberShip.m */; };
 		3F3847332222686400B55914 /* VCMemberShip.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F3847312222686300B55914 /* VCMemberShip.m */; };
 		3F3847362223AC7500B55914 /* VCKlineIndexSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F3847342223AC7400B55914 /* VCKlineIndexSetting.m */; };
@@ -76,6 +78,8 @@
 		3F7ED8F42277F24700082680 /* ViewPermissionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F7ED8F22277F24700082680 /* ViewPermissionCell.m */; };
 		3F7ED8F72278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F7ED8F62278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.m */; };
 		3F7ED8F82278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F7ED8F62278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.m */; };
+		3F89DE4022B20CF800B052CB /* OpenLedger.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F89DE3F22B20CF800B052CB /* OpenLedger.m */; };
+		3F89DE4122B20CF800B052CB /* OpenLedger.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F89DE3F22B20CF800B052CB /* OpenLedger.m */; };
 		3F9A730821E59FF300DAF7A2 /* VCDepositWithdrawList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9A730721E59FF300DAF7A2 /* VCDepositWithdrawList.m */; };
 		3F9A730921E59FF300DAF7A2 /* VCDepositWithdrawList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9A730721E59FF300DAF7A2 /* VCDepositWithdrawList.m */; };
 		3F9A730C21E5C20500DAF7A2 /* ViewGatewayCoinInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9A730B21E5C20500DAF7A2 /* ViewGatewayCoinInfoCell.m */; };
@@ -1132,6 +1136,8 @@
 		3F0DA368218851FF006E1004 /* VCQrScan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCQrScan.h; path = Controller/VCQrScan.h; sourceTree = "<group>"; };
 		3F21656F226FEF5400AB5A3D /* ViewActionsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewActionsCell.h; path = View/ViewActionsCell.h; sourceTree = "<group>"; };
 		3F216570226FEF5500AB5A3D /* ViewActionsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewActionsCell.m; path = View/ViewActionsCell.m; sourceTree = "<group>"; };
+		3F291BD722B48EFA002E0CBD /* GatewayAssetItemData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GatewayAssetItemData.m; sourceTree = "<group>"; };
+		3F291BD822B48EFB002E0CBD /* GatewayAssetItemData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GatewayAssetItemData.h; sourceTree = "<group>"; };
 		3F3847302222686300B55914 /* VCMemberShip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCMemberShip.h; path = Controller/VCMemberShip.h; sourceTree = "<group>"; };
 		3F3847312222686300B55914 /* VCMemberShip.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCMemberShip.m; path = Controller/VCMemberShip.m; sourceTree = "<group>"; };
 		3F3847342223AC7400B55914 /* VCKlineIndexSetting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCKlineIndexSetting.m; path = Controller/VCKlineIndexSetting.m; sourceTree = "<group>"; };
@@ -1177,6 +1183,8 @@
 		3F7ED8F22277F24700082680 /* ViewPermissionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewPermissionCell.m; sourceTree = "<group>"; };
 		3F7ED8F52278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewProposalOpInfoCell_AccountUpdate.h; path = View/ViewProposalOpInfoCell_AccountUpdate.h; sourceTree = "<group>"; };
 		3F7ED8F62278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewProposalOpInfoCell_AccountUpdate.m; path = View/ViewProposalOpInfoCell_AccountUpdate.m; sourceTree = "<group>"; };
+		3F89DE3E22B20CF700B052CB /* OpenLedger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenLedger.h; path = Controller/Gateway/OpenLedger.h; sourceTree = "<group>"; };
+		3F89DE3F22B20CF800B052CB /* OpenLedger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OpenLedger.m; path = Controller/Gateway/OpenLedger.m; sourceTree = "<group>"; };
 		3F9A730621E59FF300DAF7A2 /* VCDepositWithdrawList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCDepositWithdrawList.h; path = Controller/VCDepositWithdrawList.h; sourceTree = "<group>"; };
 		3F9A730721E59FF300DAF7A2 /* VCDepositWithdrawList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCDepositWithdrawList.m; path = Controller/VCDepositWithdrawList.m; sourceTree = "<group>"; };
 		3F9A730A21E5C20400DAF7A2 /* ViewGatewayCoinInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewGatewayCoinInfoCell.h; path = View/ViewGatewayCoinInfoCell.h; sourceTree = "<group>"; };
@@ -2540,6 +2548,8 @@
 		3F6C35AA21EC8399008E2903 /* Gateway */ = {
 			isa = PBXGroup;
 			children = (
+				3F89DE3E22B20CF700B052CB /* OpenLedger.h */,
+				3F89DE3F22B20CF800B052CB /* OpenLedger.m */,
 				3F6C35AF21EC864F008E2903 /* RuDEX.h */,
 				3F6C35B021EC864F008E2903 /* RuDEX.m */,
 				3F6C35AC21EC83AA008E2903 /* GatewayBase.h */,
@@ -2815,6 +2825,8 @@
 		B737850A21002607001EEA8C /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				3F291BD822B48EFB002E0CBD /* GatewayAssetItemData.h */,
+				3F291BD722B48EFA002E0CBD /* GatewayAssetItemData.m */,
 				3F9F2C3C2229051600D49165 /* MKlineIndex.h */,
 				3F9F2C3D2229051600D49165 /* MKlineIndex.m */,
 				3F3847382227752300B55914 /* MKlineIndexBoll.h */,
@@ -3388,6 +3400,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				"zh-Hans",
 				en,
 				Base,
@@ -4101,6 +4114,7 @@
 				3FB8F91721CE66C200DA88E2 /* SphereMenu.m in Sources */,
 				3FDD800F21D8C68600DA61FC /* VCProposalAuthorizeEdit.m in Sources */,
 				3FB8F91821CE66C200DA88E2 /* NJKWebViewProgress.m in Sources */,
+				3F291BDA22B48EFB002E0CBD /* GatewayAssetItemData.m in Sources */,
 				3FB8F91921CE66C200DA88E2 /* AFURLResponseSerialization.m in Sources */,
 				3FB8F91A21CE66C200DA88E2 /* XzEnc.c in Sources */,
 				3FB8F91B21CE66C200DA88E2 /* WjCryptLib_AesOfb.c in Sources */,
@@ -4218,6 +4232,7 @@
 				3FB8F98121CE66C200DA88E2 /* SRRandom.m in Sources */,
 				3FB8F98221CE66C200DA88E2 /* UIImage+Template.m in Sources */,
 				3FB8F98321CE66C200DA88E2 /* ViewTradeHistoryCell.m in Sources */,
+				3F89DE4122B20CF800B052CB /* OpenLedger.m in Sources */,
 				3FB8F98421CE66C200DA88E2 /* SRIOConsumerPool.m in Sources */,
 				3FB8F98521CE66C200DA88E2 /* ViewBlockLabel.m in Sources */,
 				3FB8F98621CE66C200DA88E2 /* VCTransactionConfirm.m in Sources */,
@@ -4382,6 +4397,7 @@
 				F5666A3B1D631D2800ADA3C6 /* SphereMenu.m in Sources */,
 				3FDD800E21D8C68600DA61FC /* VCProposalAuthorizeEdit.m in Sources */,
 				B76133021DBE0EE100F61A37 /* NJKWebViewProgress.m in Sources */,
+				3F291BD922B48EFB002E0CBD /* GatewayAssetItemData.m in Sources */,
 				F531ECBE1D670895009328A4 /* AFURLResponseSerialization.m in Sources */,
 				B7BDAAA220B3C77500738F12 /* XzEnc.c in Sources */,
 				B7BDA9A520B3A3D100738F12 /* WjCryptLib_AesOfb.c in Sources */,
@@ -4499,6 +4515,7 @@
 				B714094720A31CC300003311 /* SRRandom.m in Sources */,
 				B707E5971C5D09BE003B652F /* UIImage+Template.m in Sources */,
 				B741A75420D9FFE0000FBC00 /* ViewTradeHistoryCell.m in Sources */,
+				3F89DE4022B20CF800B052CB /* OpenLedger.m in Sources */,
 				B714093D20A31CC300003311 /* SRIOConsumerPool.m in Sources */,
 				B724F6421C5C59730022EA3B /* ViewBlockLabel.m in Sources */,
 				B741A76020DBB5BA000FBC00 /* VCTransactionConfirm.m in Sources */,

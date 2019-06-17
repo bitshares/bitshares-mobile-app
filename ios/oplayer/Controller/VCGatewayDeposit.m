@@ -13,6 +13,7 @@
 #import "ScheduleManager.h"
 #import "MyPopviewManager.h"
 #import "SGQRCodeObtain.h"
+#import "GatewayAssetItemData.h"
 
 enum
 {
@@ -110,20 +111,20 @@ enum
     _qrImageView.frame = CGRectMake((fWidth - _fQrSize) / 2, 0, _fQrSize, _fQrSize);
     
     //  UI - 提示信息
-    id appext = [_depositAssetItem objectForKey:@"kAppExt"];
+    GatewayAssetItemData* appext = [_depositAssetItem objectForKey:@"kAppExt"];
     assert(appext);
     NSMutableArray* msgArray = [NSMutableArray array];
     [msgArray addObject:NSLocalizedString(@"kVcDWTipsImportantTitle", @"【重要】")];
     //  min deposit value
     id inputCoinType = [[_depositAddrItem objectForKey:@"inputCoinType"] uppercaseString];
-    id minAmount = [appext objectForKey:@"depositMinAmount"];
+    id minAmount = appext.depositMinAmount;
     if (minAmount && ![minAmount isEqualToString:@""]){
         [msgArray addObject:[NSString stringWithFormat:NSLocalizedString(@"kVcDWTipsMinDepositAmount", @"最小充币数量：%@%@。小于最小数量将无法入账且无法退回。\n"), minAmount, inputCoinType]];
     }
     //  sec tips
     [msgArray addObject:[NSString stringWithFormat:NSLocalizedString(@"kVcDWTipsDepositMatchAsset", @"请将您的%@资产充入上述地址，禁止向上述地址充入非%@资产，否则资产将不可找回。"), inputCoinType, inputCoinType]];
     //  confirm tips
-    id confirm_block_number = [appext objectForKey:@"confirm_block_number"];
+    id confirm_block_number = appext.confirm_block_number;
     if (confirm_block_number && ![confirm_block_number isEqualToString:@""]){
         [msgArray addObject:[NSString stringWithFormat:NSLocalizedString(@"kVcDWTipsNetworkConfirmWithN", @"您充币到上述地址后，需要等待网络确认，%@次网络确认后到账。\n"), confirm_block_number]];
     }else{

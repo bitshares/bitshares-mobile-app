@@ -100,6 +100,7 @@
 "kVcDWTipsFindCustomService" = "If you have any questions, please contact the gateway customer service.";
 "kVcDWErrTipsRequestDepositAddrFailed" = "Request deposits address is abnormal, please contact the gateway customer service.";
 "kVcDWErrTipsRequestDepositAddrFailed2" = "Request deposits address is abnormal, the field \"%@\" verification failed, please contact the gateway customer service.";
+"kVcDWErrTipsRequestWithdrawAddrFailed" = "Request withdraw address is abnormal, please contact the gateway customer service.";
 "kVcDWHelpTitleSupport" = "Support";
 "kVcDWHelpTitleQQ" = "QQ";
 "kVcDWHelpTitleTelegram" = "Telegram";
@@ -112,6 +113,8 @@
 "kVcDWCellMinWithdrawNumber" = "Minimum amount";
 "kVcDWCellWithdrawFee" = "Gateway fee";
 "kVcDWCellWithdrawGatewayAccount" = "Intermediate account";
+"kVcDWCellMaxWithdrawNumberOnce" = "Maximum amount";
+"kVcDWCellMaxWithdrawNumber24Hours" = "Maximum amount(24H)";
 "kVcDWCellWithdrawFinalValue" = "Actual amount";
 "kVcDWWithdrawSubmitButton" = "Withdraw now";
 "kVcDWSubmitTipsAddressCannotBeEmpty" = "The withdraw address cannot be empty.";

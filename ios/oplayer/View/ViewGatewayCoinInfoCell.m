@@ -12,6 +12,7 @@
 #import "ThemeManager.h"
 #import "OrgUtils.h"
 #import "SettingManager.h"
+#import "GatewayAssetItemData.h"
 
 @interface ViewGatewayCoinInfoCell()
 {
@@ -170,11 +171,11 @@
     CGFloat fOffsetY = 0.0f;
     CGFloat fLineHeight = 28;
     
-    id appext = [_item objectForKey:@"kAppExt"];
+    GatewayAssetItemData* appext = [_item objectForKey:@"kAppExt"];
     assert(appext);
     
     //  第一行
-    _lbTitle.text = [appext objectForKey:@"symbol"];
+    _lbTitle.text = appext.symbol;
     _lbTitle.frame = CGRectMake(xOffset, fOffsetY, fCellWidth, fLineHeight);
     
     //  第一行 按钮
@@ -185,7 +186,7 @@
     //  充币按钮色调
     UIColor* btnTextColor;
     UIColor* btnBackColor;
-    if ([[appext objectForKey:@"enableDeposit"] boolValue]){
+    if (appext.enableDeposit){
         btnTextColor = [ThemeManager sharedThemeManager].textColorMain;
         btnBackColor = [ThemeManager sharedThemeManager].textColorHighlight;
     }else{
@@ -197,7 +198,7 @@
     [_lbDeposit setTitleColor:btnTextColor forState:UIControlStateNormal];
     
     //  提币按钮色调
-    if ([[appext objectForKey:@"enableWithdraw"] boolValue]){
+    if (appext.enableWithdraw){
         btnTextColor = [ThemeManager sharedThemeManager].textColorMain;
         btnBackColor = [ThemeManager sharedThemeManager].textColorHighlight;
     }else{
@@ -210,7 +211,7 @@
     fOffsetY += 40;
     
     //  第二行     可用资产    冻结资产
-    id balance = [appext objectForKey:@"balance"];
+    id balance = appext.balance;
     assert(balance);
     NSString* strFreeValue = @"0";
     NSString* strOrderValue = @"0";

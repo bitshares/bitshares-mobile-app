@@ -70,27 +70,21 @@
             assert(balanceHash);
             id balance_item = [balanceHash objectForKey:symbol] ?: @{@"iszero":@YES};
             
-            id appext = @{
-                          @"enableDeposit":@(enableDeposit),
-                          @"enableWithdraw":@(enableWithdraw),
-                          @"symbol":symbol,
-                          @"backSymbol":[item[@"backingCoin"] uppercaseString],
-                          @"name":item[@"name"],
-                          @"intermediateAccount":item[@"issuerId"] ?: item[@"issuer"],  //  name or id
-                          @"balance":balance_item,
-                          @"depositMinAmount":[NSString stringWithFormat:@"%@", n_minAmount],
-                          @"withdrawMinAmount":[NSString stringWithFormat:@"%@", n_minAmount],
-                          @"withdrawGateFee":@"",
-                          @"supportMemo":@([[item objectForKey:@"memoSupport"] boolValue]),
-                          
-                          @"confirm_block_number":confirm_block_number,
-                          
-                          @"coinType":item[@"symbol"],
-                          @"backingCoinType":item[@"backingCoin"],
-                          
-                          //    TODO:
-                          //                                  @"backingCoinItem":backingCoinItem
-                          };
+            GatewayAssetItemData* appext = [[GatewayAssetItemData alloc] init];
+            appext.enableWithdraw = enableWithdraw;
+            appext.enableDeposit = enableDeposit;
+            appext.symbol = symbol;
+            appext.backSymbol = [item[@"backingCoin"] uppercaseString];
+            appext.name = item[@"name"];
+            appext.intermediateAccount = item[@"issuerId"] ?: item[@"issuer"];
+            appext.balance = balance_item;
+            appext.depositMinAmount = [NSString stringWithFormat:@"%@", n_minAmount];
+            appext.withdrawMinAmount = [NSString stringWithFormat:@"%@", n_minAmount];
+            appext.withdrawGateFee = @"";
+            appext.supportMemo = [[item objectForKey:@"memoSupport"] boolValue];
+            appext.confirm_block_number = confirm_block_number;
+            appext.coinType = item[@"symbol"];
+            appext.backingCoinType = item[@"backingCoin"];
             
             id new_item = [item mutableCopy];
             [new_item setObject:appext forKey:@"kAppExt"];
@@ -103,7 +97,7 @@
 - (WsPromise*)requestDepositAddress:(id)item fullAccountData:(id)fullAccountData vc:(VCBase*)vc
 {
     assert(item);
-    id appext = [item objectForKey:@"kAppExt"];
+    GatewayAssetItemData* appext = [item objectForKey:@"kAppExt"];
     assert(appext);
     
     id account_data = [fullAccountData objectForKey:@"account"];
@@ -135,10 +129,10 @@
         if (inputAddress){
             id depositItem = @{
                                @"inputAddress":inputAddress,
-                               @"inputCoinType":[[appext objectForKey:@"backingCoinType"] lowercaseString],
+                               @"inputCoinType":[appext.backingCoinType lowercaseString],
                                @"inputMemo":inputMemo,
                                @"outputAddress":account_name,
-                               @"outputCoinType":[[appext objectForKey:@"coinType"] lowercaseString],
+                               @"outputCoinType":[appext.coinType lowercaseString],
                                };
             resolve(depositItem);
         }else{
@@ -148,10 +142,12 @@
 }
 
 /**
- *  验证地址是否有效
+ *  验证地址、备注、数量是否有效
  */
-- (WsPromise*)checkAddress:(id)item address:(NSString*)address
+- (WsPromise*)checkAddress:(id)item address:(NSString*)address memo:(NSString*)memo amount:(NSString*)amount
 {
+    //  TODO:仅验证地址
+    
     id walletType = [item objectForKey:@"walletType"];
     assert(walletType);
     
