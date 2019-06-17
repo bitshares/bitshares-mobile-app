@@ -89,6 +89,7 @@
     <string name="kVcDWTipsFindCustomService">If you have any questions, please contact the gateway customer service.</string>
     <string name="kVcDWErrTipsRequestDepositAddrFailed">Request deposits address is abnormal, please contact the gateway customer service.</string>
     <string name="kVcDWErrTipsRequestDepositAddrFailed2">Request deposits address is abnormal, the field \"%s\" verification failed, please contact the gateway customer service.</string>
+    <string name="kVcDWErrTipsRequestWithdrawAddrFailed">Request withdraw address is abnormal, please contact the gateway customer service.</string>
     <string name="kVcDWHelpTitleSupport">Support</string>
     <string name="kVcDWHelpTitleQQ">QQ</string>
     <string name="kVcDWHelpTitleTelegram">Telegram</string>
@@ -101,6 +102,8 @@
     <string name="kVcDWCellMinWithdrawNumber">Minimum amount</string>
     <string name="kVcDWCellWithdrawFee">Gateway fee</string>
     <string name="kVcDWCellWithdrawGatewayAccount">Intermediate account</string>
+    <string name="kVcDWCellMaxWithdrawNumberOnce">Maximum amount</string>
+    <string name="kVcDWCellMaxWithdrawNumber24Hours">Maximum amount(24H)</string>
     <string name="kVcDWCellWithdrawFinalValue">Actual amount</string>
     <string name="kVcDWWithdrawSubmitButton">Withdraw now</string>
     <string name="kVcDWSubmitTipsAddressCannotBeEmpty">The withdraw address cannot be empty.</string>
@@ -820,6 +823,8 @@
     <string name="kUpgradeNow">Update</string>
     <string name="kRemindMeLatter">Remind later</string>
     <string name="tip_network_error">Network error, please try again later.</string>
+    <string name="kAppFirstInitNetworkFailed">The APP network init failed. please follow the steps below: \n1. If you are starting up for the first time, please allow the application to use wireless data. \n2. other cases. please check the device network.</string>
+    <string name="kAppBtnReInit">Try again</string>
     <string name="Cancel">Cancel</string>
     <string name="faq">FAQ</string>
     <string name="tip_click_to_login">Click here to login</string>

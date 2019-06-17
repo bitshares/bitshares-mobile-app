@@ -89,6 +89,7 @@
     <string name="kVcDWTipsFindCustomService">何か問題があれば，ゲートウェイの顾客サービスにご連絡。</string>
     <string name="kVcDWErrTipsRequestDepositAddrFailed">取得入金アドレス異常，ゲートウェイの顾客サービスにご連絡ください。</string>
     <string name="kVcDWErrTipsRequestDepositAddrFailed2">取得入金アドレス異常，フィールド'%s'チェックに失敗する，ゲートウェイの顾客サービスにご連絡ください。</string>
+    <string name="kVcDWErrTipsRequestWithdrawAddrFailed">取得出金アドレス異常，ゲートウェイの顾客サービスにご連絡ください。</string>
     <string name="kVcDWHelpTitleSupport">サポートを助ける</string>
     <string name="kVcDWHelpTitleQQ">サービスQQ</string>
     <string name="kVcDWHelpTitleTelegram">Telegram</string>
@@ -101,6 +102,8 @@
     <string name="kVcDWCellMinWithdrawNumber">最小コイン数</string>
     <string name="kVcDWCellWithdrawFee">出金の手数料</string>
     <string name="kVcDWCellWithdrawGatewayAccount">ゲートウェイ账号</string>
+    <string name="kVcDWCellMaxWithdrawNumberOnce">最大コイン数</string>
+    <string name="kVcDWCellMaxWithdrawNumber24Hours">最大コイン数(24時)</string>
     <string name="kVcDWCellWithdrawFinalValue">実際に帳簿</string>
     <string name="kVcDWWithdrawSubmitButton">出金</string>
     <string name="kVcDWSubmitTipsAddressCannotBeEmpty">出金アドレスを空けることはできません。</string>
@@ -819,6 +822,8 @@
     <string name="kUpgradeNow">アップグレードします</string>
     <string name="kRemindMeLatter">少しの後で気づかせてください</string>
     <string name="tip_network_error">ネットワークが異常で、少しの後でまた試みてください。</string>
+    <string name="kAppFirstInitNetworkFailed">APPネットワークの初期化は異常です。 以下の手順に従ってください。\n1、初めて起動する場合は、アプリがワイヤレスデータを使用できるようにしてください。 \n2、他の場合。 問題がないかデバイスのネットワークを確認してください。</string>
+    <string name="kAppBtnReInit">もう一度初期化する</string>
     <string name="Cancel">キャンセル</string>
     <string name="faq">Q&amp;A</string>
     <string name="tip_click_to_login">点をログインする</string>
