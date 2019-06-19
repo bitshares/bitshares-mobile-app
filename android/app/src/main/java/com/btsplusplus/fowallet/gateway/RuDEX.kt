@@ -52,25 +52,21 @@ class RuDEX : GatewayBase() {
             val balance_item = balanceHash.optJSONObject(symbol)
                     ?: jsonObjectfromKVS("iszero", true)
 
-            val appext = JSONObject().apply {
-                put("enableDeposit", enableDeposit)
-                put("enableWithdraw", enableWithdraw)
-                put("symbol", symbol)
-                put("backSymbol", item.getString("backingCoin").toUpperCase())
-
-                put("name", item.getString("name"))
-                put("intermediateAccount", item.optString("issuerId", item.getString("issuer")))
-                put("balance", balance_item)
-
-                put("depositMinAmount", n_minAmount.toPriceAmountString())
-                put("withdrawMinAmount", n_minAmount.toPriceAmountString())
-                put("withdrawGateFee", "")
-
-                put("supportMemo", item.isTrue("memoSupport"))
-                put("confirm_block_number", confirm_block_number)
-                put("coinType", item.getString("symbol"))
-                put("backingCoinType", item.getString("backingCoin"))
-            }
+            val appext = GatewayAssetItemData()
+            appext.enableWithdraw = enableWithdraw
+            appext.enableDeposit = enableDeposit
+            appext.symbol = symbol
+            appext.backSymbol = item.getString("backingCoin").toUpperCase()
+            appext.name = item.getString("name")
+            appext.intermediateAccount = item.optString("issuerId") ?: item.optString("issuer")
+            appext.balance = balance_item
+            appext.depositMinAmount = n_minAmount.toString()
+            appext.withdrawMinAmount = n_minAmount.toString()
+            appext.withdrawGateFee = ""
+            appext.supportMemo = item.getBoolean("memoSupport")
+            appext.confirm_block_number = confirm_block_number
+            appext.coinType = item.getString("symbol")
+            appext.backingCoinType = item.getString("backingCoin")
 
             item.put("kAppExt", appext)
             result.put(item)
@@ -82,7 +78,7 @@ class RuDEX : GatewayBase() {
      *  请求充值地址
      */
     override fun requestDepositAddress(item: JSONObject, fullAccountData: JSONObject, ctx: Context): Promise {
-        val appext = item.getJSONObject("kAppExt")
+        val appext = item.get("kAppExt") as GatewayAssetItemData
         val account_data = fullAccountData.getJSONObject("account")
 
         //  if memo not supported - should request deposit address
@@ -105,10 +101,10 @@ class RuDEX : GatewayBase() {
         if (inputAddress != null) {
             val depositItem = JSONObject().apply {
                 put("inputAddress", inputAddress)
-                put("inputCoinType", appext.getString("backingCoinType").toLowerCase())
+                put("inputCoinType", appext.backingCoinType.toLowerCase())
                 put("inputMemo", inputMemo)
                 put("outputAddress", account_name)
-                put("outputCoinType", appext.getString("coinType").toLowerCase())
+                put("outputCoinType", appext.coinType.toLowerCase())
             }
             p.resolve(depositItem)
         } else {
@@ -120,7 +116,9 @@ class RuDEX : GatewayBase() {
     /**
      *  验证地址是否有效
      */
-    override fun checkAddress(item: JSONObject, address: String): Promise {
+    override fun checkAddress(item: JSONObject, address: String, memo: String?, amount: String): Promise {
+
+        //  TODO:仅验证地址
         val walletType = item.getString("walletType")
 
         val check_address_base = _api_config_json.getString("check_address")
