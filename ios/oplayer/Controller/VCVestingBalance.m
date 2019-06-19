@@ -73,14 +73,33 @@
                 continue;
             }
             //  linear_vesting_policy = 0,
-            //  cdd_vesting_policy
-            if ([[[vesting objectForKey:@"policy"] objectAtIndex:0] integerValue] == 1){
-                id name = [nameHash objectForKey:oid] ?: NSLocalizedString(@"kVestingCellNameCustomVBO", @"自定义解冻金额");
-                id m_vesting = [vesting mutableCopy];
-                [m_vesting setObject:name forKey:@"kName"];
-                [_dataArray addObject:[m_vesting copy]];
-            }else{
-                //  TODO:fowallet 1.7 暂时不支持 linear_vesting_policy
+            //  cdd_vesting_policy = 1,
+            //  instant_vesting_policy = 2,
+            switch ([[[vesting objectForKey:@"policy"] objectAtIndex:0] integerValue]) {
+                case ebvp_cdd_vesting_policy:
+                case ebvp_instant_vesting_policy:
+                {
+                    id name = [nameHash objectForKey:oid];
+                    if (!name){
+                        id balance_type = [vesting objectForKey:@"balance_type"];
+                        if (balance_type && [[balance_type lowercaseString] isEqualToString:@"market_fee_sharing"]){
+                            name = NSLocalizedString(@"kVestingCellNameMarketFeeSharing", @"交易手续费返现");
+                        }
+                    }
+                    if (!name){
+                        name = NSLocalizedString(@"kVestingCellNameCustomVBO", @"自定义解冻金额");
+                    }
+                    id m_vesting = [vesting mutableCopy];
+                    [m_vesting setObject:name forKey:@"kName"];
+                    [_dataArray addObject:[m_vesting copy]];
+                }
+                    break;
+                default:
+                {
+                    //  TODO:ebvp_linear_vesting_policy
+                    //  TODO:fowallet 1.7 暂时不支持 linear_vesting_policy
+                }
+                    break;
             }
         }
     }
@@ -221,14 +240,30 @@
 }
 
 /**
- *  (public) 计算已经解冻的余额数量。（可提取的）
+ *  (private) 计算已经解冻的余额数量。（可提取的）REMARK：按照币龄解冻策略
  */
-+ (unsigned long long)calcVestingBalanceAmount:(id)vesting
++ (unsigned long long)_calcVestingBalanceAmount_cdd_vesting_policy:(id)policy vesting:(id)vesting
 {
-    id policy = [vesting objectForKey:@"policy"];
-    assert(policy);
-    //  TODO:fowallet 其他的类型不支持。
-    assert([[policy objectAtIndex:0] integerValue] == 1);
+    //{
+    //    balance =     {
+    //        amount = 434673148;
+    //        "asset_id" = "1.3.0";
+    //    };
+    //    "balance_type" = cashback;
+    //    id = "1.13.894";
+    //    owner = "1.2.114363";
+    //    policy =     (
+    //                  1,
+    //                  {
+    //                      "coin_seconds_earned" = 3380018398848000;
+    //                      "coin_seconds_earned_last_update" = "2019-06-19T02:00:00";
+    //                      "start_claim" = "1970-01-01T00:00:00";
+    //                      "vesting_seconds" = 7776000;
+    //                  }
+    //                  );
+    //}
+    assert(policy && vesting);
+    assert([[policy objectAtIndex:0] integerValue] == ebvp_cdd_vesting_policy);
     id policy_data = [policy objectAtIndex:1];
     assert(policy_data);
     
@@ -259,6 +294,50 @@
 }
 
 /**
+ *  (private) 计算已经解冻的余额数量。（可提取的）REMARK：立即解冻策略
+ */
++ (unsigned long long)_calcVestingBalanceAmount_instant_vesting_policy:(id)policy vesting:(id)vesting
+{
+    //{
+    //    balance =     {
+    //        amount = 109944860;
+    //        "asset_id" = "1.3.4072";
+    //    };
+    //    "balance_type" = "market_fee_sharing";
+    //    id = "1.13.24212";
+    //    owner = "1.2.114363";
+    //    policy =     (
+    //                  2,
+    //                  {
+    //                  }
+    //                  );
+    //}
+    return [[[vesting objectForKey:@"balance"] objectForKey:@"amount"] unsignedLongLongValue];
+}
+
+/**
+ *  (public) 计算已经解冻的余额数量。（可提取的）
+ */
++ (unsigned long long)calcVestingBalanceAmount:(id)vesting
+{
+    assert(vesting);
+    id policy = [vesting objectForKey:@"policy"];
+    assert(policy);
+    switch ([[policy objectAtIndex:0] integerValue]) {
+        case ebvp_cdd_vesting_policy:
+            return [self _calcVestingBalanceAmount_cdd_vesting_policy:policy vesting:vesting];
+        case ebvp_instant_vesting_policy:
+            return [self _calcVestingBalanceAmount_instant_vesting_policy:policy vesting:vesting];
+        default:
+            //  TODO:ebvp_linear_vesting_policy
+            assert(false);
+            break;
+    }
+    //  not reached...
+    return 0;
+}
+
+/**
  *  事件 - 提取待解冻金额
  */
 - (void)onButtonClicked_Withdraw:(UIButton*)button
@@ -270,16 +349,26 @@
     
     id policy = [vesting objectForKey:@"policy"];
     assert(policy);
-    //  TODO:fowallet 其他的类型不支持。
-    assert([[policy objectAtIndex:0] integerValue] == 1);
-    id policy_data = [policy objectAtIndex:1];
-    id start_claim = [policy_data objectForKey:@"start_claim"];
-    NSTimeInterval start_claim_ts = [OrgUtils parseBitsharesTimeString:start_claim];
-    NSTimeInterval now_ts = [[NSDate date] timeIntervalSince1970];
-    if (now_ts <= start_claim_ts){
-        id s = [OrgUtils getDateTimeLocaleString:[NSDate dateWithTimeIntervalSince1970:start_claim_ts]];
-        [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVestingTipsStartClaim", @"该笔金额在 %@ 之后方可提取。"), s]];
-        return;
+    
+    switch ([[policy objectAtIndex:0] integerValue]) {
+        case ebvp_cdd_vesting_policy:       //  验证提取日期
+        {
+            id policy_data = [policy objectAtIndex:1];
+            id start_claim = [policy_data objectForKey:@"start_claim"];
+            NSTimeInterval start_claim_ts = [OrgUtils parseBitsharesTimeString:start_claim];
+            NSTimeInterval now_ts = [[NSDate date] timeIntervalSince1970];
+            if (now_ts <= start_claim_ts){
+                id s = [OrgUtils getDateTimeLocaleString:[NSDate dateWithTimeIntervalSince1970:start_claim_ts]];
+                [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVestingTipsStartClaim", @"该笔金额在 %@ 之后方可提取。"), s]];
+                return;
+            }
+        }
+            break;
+        case ebvp_instant_vesting_policy:   //  不用额外验证
+            break;
+        default:
+            assert(false);//TODO:ebvp_linear_vesting_policy 不支持
+            break;
     }
     
     //  计算可提取数量

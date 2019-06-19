@@ -355,9 +355,11 @@
 "kVestingCellPeriodMin" = "%@分";
 "kVestingCellPeriodHour" = "%@时";
 "kVestingCellPeriodDay" = "%@日";
+"kVestingCellPeriodInstant" = "インスタント";
 "kVestingCellNameWorkerFunds" = "予算プロジェクトの給料";
 "kVestingCellNameWitnessFunds" = "証人の給料";
 "kVestingCellNameCashbackFunds" = "一生会員の手数料は戻す";
+"kVestingCellNameMarketFeeSharing" = "マーケットの手数料は戻す";
 "kVestingCellNameCustomVBO" = "ユーザー定義解凍金額";
 
 /* K线界面各种字符串 */
