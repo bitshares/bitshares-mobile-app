@@ -219,10 +219,27 @@
     //  第三行 数量和价格
     unsigned long long withdraw_available = [VCVestingBalance calcVestingBalanceAmount:_item];
     
-    id policy = [[_item objectForKey:@"policy"] objectAtIndex:1];
-    assert(policy);
-    //  REMARK：解冻周期最低1秒
-    NSUInteger vesting_seconds = MAX([[policy objectForKey:@"vesting_seconds"] unsignedIntegerValue], 1L);
+    NSString* vestingPeriodValue = @"--";
+    switch ([[[_item objectForKey:@"policy"] objectAtIndex:0] integerValue]) {
+        case ebvp_cdd_vesting_policy:
+        {
+            //  REMARK：解冻周期最低1秒
+            id policy_data = [[_item objectForKey:@"policy"] objectAtIndex:1];
+            assert(policy_data);
+            NSUInteger vesting_seconds = MAX([[policy_data objectForKey:@"vesting_seconds"] unsignedIntegerValue], 1L);
+            vestingPeriodValue = [OrgUtils fmtVestingPeriodDateString:vesting_seconds];
+        }
+            break;
+        case ebvp_instant_vesting_policy:
+        {
+            vestingPeriodValue = NSLocalizedString(@"kVestingCellPeriodInstant", @"立即解冻");
+        }
+            break;
+        default:
+            //  TODO:ebvp_linear_vesting_policy
+            assert(false);
+            break;
+    }
     
     _lbTotalValue.text = [NSString stringWithFormat:@"%@", [OrgUtils formatAssetString:balance[@"amount"] asset:balance_asset]];
     _lbTotalValue.textColor = theme.textColorNormal;
@@ -230,7 +247,7 @@
     _lbAmountValue.text = [NSString stringWithFormat:@"%@", [OrgUtils formatAssetString:@(withdraw_available) asset:balance_asset]];
     _lbAmountValue.textColor = theme.textColorNormal;
     
-    _lbVestingPeriodValue.text = [OrgUtils fmtVestingPeriodDateString:vesting_seconds];
+    _lbVestingPeriodValue.text = vestingPeriodValue;
     _lbVestingPeriodValue.textColor = theme.textColorNormal;
     
     _lbTotalValue.frame = CGRectMake(xOffset, yOffset, fWidth, 24);

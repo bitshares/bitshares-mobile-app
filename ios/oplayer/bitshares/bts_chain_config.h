@@ -31,6 +31,16 @@ typedef enum EBitsharesWhiteListFlag
 } EBitsharesWhiteListFlag;
 
 /**
+ *  待解冻金额解禁策略
+ */
+typedef enum EBitsharesVestingPolicy
+{
+    ebvp_linear_vesting_policy = 0,         //  线性解禁
+    ebvp_cdd_vesting_policy,                //  按币龄解禁
+    ebvp_instant_vesting_policy             //  立即解禁
+} EBitsharesVestingPolicy;
+
+/**
  *  石墨烯网络投票类型定义
  */
 typedef enum EBitsharesVoteType

@@ -355,9 +355,11 @@
 "kVestingCellPeriodMin" = "%@ mins";
 "kVestingCellPeriodHour" = "%@ hours";
 "kVestingCellPeriodDay" = "%@ days";
+"kVestingCellPeriodInstant" = "instant";
 "kVestingCellNameWorkerFunds" = "Worker proposal funds";
 "kVestingCellNameWitnessFunds" = "Witness funds";
 "kVestingCellNameCashbackFunds" = "Lifetime membership fee cashback";
+"kVestingCellNameMarketFeeSharing" = "Market fee sharing";
 "kVestingCellNameCustomVBO" = "Custom vesting balance";
 
 /* K线界面各种字符串 */
