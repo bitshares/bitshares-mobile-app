@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import bitshares.Utils
 import bitshares.xmlstring
+import com.btsplusplus.fowallet.gateway.GatewayAssetItemData
 import kotlinx.android.synthetic.main.activity_gateway_recharge.*
 import org.json.JSONObject
 
@@ -65,20 +66,20 @@ class ActivityGatewayDeposit : BtsppActivity() {
     }
 
     private fun drawDepositTipMessages() {
-        val appext = _depositAssetItem.getJSONObject("kAppExt")
+        val appext = _depositAssetItem.get("kAppExt") as GatewayAssetItemData
         val msgArray = mutableListOf<String>()
         msgArray.add(R.string.kVcDWTipsImportantTitle.xmlstring(this))
         //  min deposit value
         val inputCoinType = _depositAddrItem.getString("inputCoinType").toUpperCase()
-        val minAmount = appext.optString("depositMinAmount")
-        if (minAmount.isNotEmpty()) {
+        val minAmount = appext.depositMinAmount
+        if (minAmount != null) {
             msgArray.add(String.format(R.string.kVcDWTipsMinDepositAmount.xmlstring(this), minAmount, inputCoinType))
         }
         //  sec tips
         msgArray.add(String.format(R.string.kVcDWTipsDepositMatchAsset.xmlstring(this), inputCoinType, inputCoinType))
         //  confirm tips
-        val confirm_block_number = appext.optString("confirm_block_number")
-        if (confirm_block_number.isNotEmpty()) {
+        val confirm_block_number = appext.confirm_block_number
+        if (confirm_block_number != null) {
             msgArray.add(String.format(R.string.kVcDWTipsNetworkConfirmWithN.xmlstring(this), confirm_block_number))
         } else {
             msgArray.add(R.string.kVcDWTipsNetworkConfirm.xmlstring(this))

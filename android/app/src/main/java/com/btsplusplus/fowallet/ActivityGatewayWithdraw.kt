@@ -8,6 +8,7 @@ import android.widget.TextView
 import bitshares.*
 import com.btsplusplus.fowallet.ViewEx.EditTextEx
 import com.btsplusplus.fowallet.ViewEx.TextViewEx
+import com.btsplusplus.fowallet.gateway.GatewayAssetItemData
 import com.btsplusplus.fowallet.gateway.GatewayBase
 import com.fowallet.walletcore.bts.BitsharesClientManager
 import com.fowallet.walletcore.bts.ChainObjectManager
@@ -47,41 +48,56 @@ class ActivityGatewayWithdraw : BtsppActivity() {
         //  获取参数 / get params
         _withdraw_args = btspp_args_as_JSONObject()
         _fullAccountData = _withdraw_args.getJSONObject("fullAccountData")
-        _intermediateAccount = _withdraw_args.getJSONObject("intermediateAccount")
+        _intermediateAccount = _withdraw_args.optJSONObject("intermediateAccount")
         _withdrawAssetItem = _withdraw_args.getJSONObject("withdrawAssetItem")
         _result_promise = _withdraw_args.get("result_promise") as Promise
         _gateway = _withdraw_args.getJSONObject("gateway")
-        val appext = _withdrawAssetItem.getJSONObject("kAppExt")
-        val balance = appext.getJSONObject("balance")
+        val appext = _withdrawAssetItem.get("kAppExt") as GatewayAssetItemData
+        val balance = appext.balance
         if (!balance.optBoolean("iszero")) {
             _asset = ChainObjectManager.sharedChainObjectManager().getChainObjectByID(balance.getString("asset_id"))
             _precision_amount = _asset!!.getInt("precision")
             _refreshWithdrawAssetBalance(null)
         }
-        _bSupportMemo = appext.optBoolean("supportMemo")
+        _bSupportMemo = appext.supportMemo
         val ctx = this
         //  附加信息数据
-        val symbol = appext.getString("symbol")
-        val withdrawMinAmount = appext.optString("withdrawMinAmount")
-        if (withdrawMinAmount != "") {
-            _n_withdrawMinAmount = BigDecimal(withdrawMinAmount.fixComma())
+        val symbol = appext.symbol
+        val withdrawMinAmount = appext.withdrawMinAmount
+        if (withdrawMinAmount != null && withdrawMinAmount != "") {
+            _n_withdrawMinAmount = BigDecimal(withdrawMinAmount!!.fixComma())
             _aux_data_array.put(JSONObject().apply {
                 put("title", R.string.kVcDWCellMinWithdrawNumber.xmlstring(ctx))
                 put("value", "$withdrawMinAmount $symbol")
             })
         }
-        val withdrawGateFee = appext.optString("withdrawGateFee")
-        if (withdrawGateFee != "") {
-            _n_withdrawGateFee = BigDecimal(withdrawGateFee.fixComma())
+        val withdrawGateFee = appext.withdrawGateFee
+        if (withdrawGateFee != null && withdrawGateFee != "") {
+            _n_withdrawGateFee = BigDecimal(withdrawGateFee!!.fixComma())
             _aux_data_array.put(JSONObject().apply {
                 put("title", R.string.kVcDWCellWithdrawFee.xmlstring(ctx))
                 put("value", "$withdrawGateFee $symbol")
             })
         }
-        _aux_data_array.put(JSONObject().apply {
-            put("title", R.string.kVcDWCellWithdrawGatewayAccount.xmlstring(ctx))
-            put("value", _intermediateAccount.getJSONObject("account").getString("name"))
-        })
+
+        if (_intermediateAccount != null) {
+            _aux_data_array.put(JSONObject().apply {
+                put("title", R.string.kVcDWCellWithdrawGatewayAccount.xmlstring(ctx))
+                put("value", _intermediateAccount.getJSONObject("account").getString("name"))
+            })
+        }
+        if (appext.withdrawMaxAmountOnce != null && appext.withdrawMaxAmountOnce != ""){
+            _aux_data_array.put(JSONObject().apply {
+                put("title", R.string.kVcDWCellMaxWithdrawNumberOnce.xmlstring(ctx))
+                put("value", "${appext.withdrawMaxAmountOnce} ${symbol}")
+            })
+        }
+        if (appext.withdrawMaxAmount24Hours != null && appext.withdrawMaxAmount24Hours != ""){
+            _aux_data_array.put(JSONObject().apply {
+                put("title", R.string.kVcDWCellMaxWithdrawNumber24Hours.xmlstring(ctx))
+                put("value", "${appext.withdrawMaxAmount24Hours} ${symbol}")
+            })
+        }
 
         //  设置全屏(隐藏状态栏和虚拟导航栏)
         setFullScreen()
@@ -143,7 +159,7 @@ class ActivityGatewayWithdraw : BtsppActivity() {
      */
     private fun _refreshFinalValueUI(amount: BigDecimal) {
         _cell_final_value?.let {
-            it.text = "${_calcFinalValue(amount).toPlainString()} ${_withdrawAssetItem.getJSONObject("kAppExt").getString("backSymbol")}"
+            it.text = "${_calcFinalValue(amount).toPlainString()} ${(_withdrawAssetItem.get("kAppExt") as GatewayAssetItemData).backSymbol}"
         }
     }
 
@@ -151,7 +167,7 @@ class ActivityGatewayWithdraw : BtsppActivity() {
      *  (private) 转账数量发生变化。
      */
     private fun onAmountChanged(str_amount: String) {
-        val symbol = _withdrawAssetItem.getJSONObject("kAppExt").getString("symbol")
+        val symbol = (_withdrawAssetItem.get("kAppExt") as GatewayAssetItemData).symbol
 
         //  无效输入
         if (str_amount == "") {
@@ -189,7 +205,7 @@ class ActivityGatewayWithdraw : BtsppActivity() {
         findViewById<TextView>(R.id.id_title).text = _withdraw_args.getString("title")
 
         //  可用
-        available_of_withdraw_page.text = "${_n_available.toPlainString()} ${_withdrawAssetItem.getJSONObject("kAppExt").getString("symbol")}"
+        available_of_withdraw_page.text = "${_n_available.toPlainString()} ${(_withdrawAssetItem.get("kAppExt") as GatewayAssetItemData).symbol}"
 
         //  备注信息
         var label_memo_title: TextViewEx? = null
@@ -311,19 +327,33 @@ class ActivityGatewayWithdraw : BtsppActivity() {
                         tipMessage = R.string.kVcDWSubmitSecondConfirmMsg03.xmlstring(this)
                     }
                     UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kWarmTips), tipMessage, btn_ok = R.string.kVcDWSubmitSecondBtnContinue.xmlstring(this)).then {
-                        if (it != null && it as Boolean) {
+                        if ( it != null && it as Boolean ) {
                             //  b、继续提币确认
                             val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
                             mask.show()
-                            (_gateway.get("api") as GatewayBase).checkAddress(_withdrawAssetItem, address).then { valid ->
-                                if (valid as Boolean) {
+
+                            val appext = _withdrawAssetItem.get("kAppExt") as GatewayAssetItemData
+                            val intermediateAccountData = if (_intermediateAccount != null) { _intermediateAccount.getJSONObject("account") } else { null }
+
+                            (_gateway.get("api") as GatewayBase).queryWithdrawIntermediateAccountAndFinalMemo(appext,address,str_memo,intermediateAccountData).then {
+                                val withdraw_info = it as JSONObject
+                                val final_account = withdraw_info.getString("intermediateAccount")
+                                val final_memo = withdraw_info.getString("finalMemo")
+                                val final_account_data = withdraw_info.getJSONObject("intermediateAccountData")
+
+                                (_gateway.get("api") as GatewayBase).checkAddress(_withdrawAssetItem, address,final_memo,n_amount.toString()).then { valid ->
+                                    if ((valid as Boolean) == false) {
+                                        mask.dismiss()
+                                        showToast(R.string.kVcDWSubmitTipsInvalidAddress.xmlstring(this))
+                                        return@then null
+                                    }
                                     //  c、地址验证通过继续提币
-                                    _processWithdrawCore(mask, address, n_amount, str_memo, from_public_memo)
-                                } else {
-                                    mask.dismiss()
-                                    showToast(R.string.kVcDWSubmitTipsInvalidAddress.xmlstring(this))
+                                    _processWithdrawCore(mask, address, n_amount, final_memo, final_account_data, from_public_memo)
+                                    return@then null
                                 }
-                                return@then null
+                            }.catch { err ->
+                                mask.dismiss()
+                                showToast(R.string.kVcDWErrTipsRequestWithdrawAddrFailed.xmlstring(this))
                             }
                         }
                         return@then null
@@ -346,7 +376,7 @@ class ActivityGatewayWithdraw : BtsppActivity() {
 
         //  刷新UI
         available_of_withdraw_page.let {
-            it.text = "${_n_available.toPlainString()} ${_withdrawAssetItem.getJSONObject("kAppExt").getString("symbol")}"
+            it.text = "${_n_available.toPlainString()} ${(_withdrawAssetItem.get("kAppExt") as GatewayAssetItemData).symbol}"
             it.setTextColor(resources.getColor(R.color.theme01_textColorMain))
         }
         _refreshFinalValueUI(BigDecimal.ZERO)
@@ -355,22 +385,22 @@ class ActivityGatewayWithdraw : BtsppActivity() {
     /**
      *  (private) 各种参数校验通过，处理提币转账请求。
      */
-    private fun _processWithdrawCore(mask: ViewMesk, address: String, n_amount: BigDecimal, memo: String, from_public_memo: String) {
+    private fun _processWithdrawCore(mask: ViewMesk, address: String, n_amount: BigDecimal, final_memo: String, final_intermediate_account: JSONObject, from_public_memo: String) {
         assert(_asset != null)
 
         //  TODO:fowallet 很多特殊处理
         //  useFullAssetName        - 部分网关提币备注资产名需要 网关.资产
         //  assetWithdrawlAlias     - 部分网关部分币种提币备注和bts上资产名字不同。
-        val assetName = _withdrawAssetItem.getJSONObject("kAppExt").getString("backSymbol")
+        // val assetName = (_withdrawAssetItem.get("kAppExt") as GatewayAssetItemData).backSymbol
 
-        var final_memo: String
-        if (memo.isNotEmpty()) {
-            final_memo = "$assetName:$address:$memo"
-        } else {
-            final_memo = "$assetName:$address"
-        }
+        // var final_memo: String
+        // if (memo.isNotEmpty()) {
+        //     final_memo = "$assetName:$address:$memo"
+        // } else {
+        //     final_memo = "$assetName:$address"
+        // }
 
-        val to_account = _intermediateAccount.getJSONObject("account")
+        val to_account = final_intermediate_account
         val to_public = to_account.getJSONObject("options").getString("memo_key")
         val memo_object = WalletManager.sharedWalletManager().genMemoObject(final_memo, from_public_memo, to_public)
         if (memo_object == null) {
