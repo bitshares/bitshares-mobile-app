@@ -50,8 +50,8 @@ class ActivityDepositAndWithdraw : BtsppActivity() {
                     put("base", "https://gateway.openledger.io")
                     put("assets", "/assets")
                     put("exchanges", "/exchanges")
-                    put("request_deposit_address", "/exchanges/%@/transfer/source/prototype")
-                    put("validate", "/exchanges/%@/transfer/destination")
+                    put("request_deposit_address", "/exchanges/%s/transfer/source/prototype")
+                    put("validate", "/exchanges/%s/transfer/destination")
                 }))
                 put("helps", JSONArray().apply {
                     put(JSONObject().apply {
