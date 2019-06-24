@@ -26,7 +26,7 @@ class ActivityGatewayDeposit : BtsppActivity() {
         _depositAddrItem = args.getJSONObject("depositAddrItem")
         _depositAssetItem = args.getJSONObject("depositAssetItem")
         //  获取 memo
-        _depositMemoData = _depositAddrItem.get("inputMemo") as? String
+        _depositMemoData = _depositAddrItem.opt("inputMemo") as? String
         if (_depositMemoData != null && _depositMemoData!!.isEmpty()) {
             _depositMemoData = null
         }

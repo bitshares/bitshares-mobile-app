@@ -336,9 +336,11 @@
     <string name="kVestingCellPeriodMin">%s mins</string>
     <string name="kVestingCellPeriodHour">%s hours</string>
     <string name="kVestingCellPeriodDay">%s days</string>
+    <string name="kVestingCellPeriodInstant">instant</string>
     <string name="kVestingCellNameWorkerFunds">Worker proposal funds</string>
     <string name="kVestingCellNameWitnessFunds">Witness funds</string>
     <string name="kVestingCellNameCashbackFunds">Lifetime membership fee cashback</string>
+    <string name="kVestingCellNameMarketFeeSharing">Market fee sharing</string>
     <string name="kVestingCellNameCustomVBO">Custom vesting balance</string>
     <!-- K线界面各种字符串 -->
     <string name="kLabelHeaderFeedPrice">Feed price</string>
@@ -367,6 +369,8 @@
     <string name="kLabelKLineChangePercent">Change%</string>
     <string name="kLabelKLineVol">Vol</string>
     <string name="kLabelKLinePrice">Price</string>
+    <string name="kLabelKLineTotalAmount">Total</string>
+    <string name="kLabelKLineAvgPrice">AvgPrice</string>
     <string name="kLabelBtnDepth">Depth</string>
     <string name="kLabelBtnMarketTrades">Market Trades</string>
     <string name="kLabelDepthSideBuy">Buy</string>

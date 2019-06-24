@@ -22,7 +22,7 @@ class ActivityGatewayWithdraw : BtsppActivity() {
 
     private lateinit var _withdraw_args: JSONObject
     private lateinit var _fullAccountData: JSONObject
-    private lateinit var _intermediateAccount: JSONObject
+    private var _intermediateAccount: JSONObject? = null
     private lateinit var _withdrawAssetItem: JSONObject
     private lateinit var _result_promise: Promise
     private lateinit var _gateway: JSONObject
@@ -83,19 +83,19 @@ class ActivityGatewayWithdraw : BtsppActivity() {
         if (_intermediateAccount != null) {
             _aux_data_array.put(JSONObject().apply {
                 put("title", R.string.kVcDWCellWithdrawGatewayAccount.xmlstring(ctx))
-                put("value", _intermediateAccount.getJSONObject("account").getString("name"))
+                put("value", _intermediateAccount!!.getJSONObject("account").getString("name"))
             })
         }
         if (appext.withdrawMaxAmountOnce != null && appext.withdrawMaxAmountOnce != ""){
             _aux_data_array.put(JSONObject().apply {
                 put("title", R.string.kVcDWCellMaxWithdrawNumberOnce.xmlstring(ctx))
-                put("value", "${appext.withdrawMaxAmountOnce} ${symbol}")
+                put("value", "${appext.withdrawMaxAmountOnce} $symbol")
             })
         }
         if (appext.withdrawMaxAmount24Hours != null && appext.withdrawMaxAmount24Hours != ""){
             _aux_data_array.put(JSONObject().apply {
                 put("title", R.string.kVcDWCellMaxWithdrawNumber24Hours.xmlstring(ctx))
-                put("value", "${appext.withdrawMaxAmount24Hours} ${symbol}")
+                put("value", "${appext.withdrawMaxAmount24Hours} $symbol")
             })
         }
 
@@ -333,7 +333,7 @@ class ActivityGatewayWithdraw : BtsppActivity() {
                             mask.show()
 
                             val appext = _withdrawAssetItem.get("kAppExt") as GatewayAssetItemData
-                            val intermediateAccountData = if (_intermediateAccount != null) { _intermediateAccount.getJSONObject("account") } else { null }
+                            val intermediateAccountData = _intermediateAccount?.getJSONObject("account")
 
                             (_gateway.get("api") as GatewayBase).queryWithdrawIntermediateAccountAndFinalMemo(appext,address,str_memo,intermediateAccountData).then {
                                 val withdraw_info = it as JSONObject
@@ -351,6 +351,7 @@ class ActivityGatewayWithdraw : BtsppActivity() {
                                     _processWithdrawCore(mask, address, n_amount, final_memo, final_account_data, from_public_memo)
                                     return@then null
                                 }
+                                return@then null
                             }.catch { err ->
                                 mask.dismiss()
                                 showToast(R.string.kVcDWErrTipsRequestWithdrawAddrFailed.xmlstring(this))

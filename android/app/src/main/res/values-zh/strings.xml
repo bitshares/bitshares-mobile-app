@@ -336,9 +336,11 @@
     <string name="kVestingCellPeriodMin">%s分</string>
     <string name="kVestingCellPeriodHour">%s小时</string>
     <string name="kVestingCellPeriodDay">%s天</string>
+    <string name="kVestingCellPeriodInstant">立即解冻</string>
     <string name="kVestingCellNameWorkerFunds">预算项目薪资</string>
     <string name="kVestingCellNameWitnessFunds">见证人薪资</string>
     <string name="kVestingCellNameCashbackFunds">终身会员手续费返现</string>
+    <string name="kVestingCellNameMarketFeeSharing">市场手续费返现</string>
     <string name="kVestingCellNameCustomVBO">自定义解冻金额</string>
     <!-- K线界面各种字符串 -->
     <string name="kLabelHeaderFeedPrice">喂价</string>
@@ -367,6 +369,8 @@
     <string name="kLabelKLineChangePercent">涨跌幅</string>
     <string name="kLabelKLineVol">成交量</string>
     <string name="kLabelKLinePrice">价格</string>
+    <string name="kLabelKLineTotalAmount">成交额</string>
+    <string name="kLabelKLineAvgPrice">成交均价</string>
     <string name="kLabelBtnDepth">深度</string>
     <string name="kLabelBtnMarketTrades">成交</string>
     <string name="kLabelDepthSideBuy">买盘</string>
