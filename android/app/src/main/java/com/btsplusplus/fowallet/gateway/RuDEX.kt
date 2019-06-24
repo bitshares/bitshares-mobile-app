@@ -49,8 +49,7 @@ class RuDEX : GatewayBase() {
             }
 
             val symbol = item.getString("symbol").toUpperCase()
-            val balance_item = balanceHash.optJSONObject(symbol)
-                    ?: jsonObjectfromKVS("iszero", true)
+            val balance_item = balanceHash.optJSONObject(symbol) ?: jsonObjectfromKVS("iszero", true)
 
             val appext = GatewayAssetItemData()
             appext.enableWithdraw = enableWithdraw

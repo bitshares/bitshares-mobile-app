@@ -374,11 +374,10 @@ open class GatewayBase {
         //  useFullAssetName        - 部分网关提币备注资产名需要 网关.资产
         //  assetWithdrawlAlias     - 部分网关部分币种提币备注和bts上资产名字不同。
         val assetName = appext.backSymbol
-        var final_memo: String
-        if (memo !=null && memo != ""){
-            final_memo = String.format("%s:%s:%s",assetName,address,memo)
+        val final_memo = if (memo !=null && memo != ""){
+            String.format("%s:%s:%s",assetName,address,memo)
         } else {
-            final_memo = String.format("%s:%s",assetName,address)
+            String.format("%s:%s",assetName,address)
         }
         return Promise._resolve(JSONObject().apply {
             put("intermediateAccount",appext.intermediateAccount)
@@ -404,7 +403,7 @@ open class GatewayBase {
     open fun auxMinValue(json_value01: String, json_value02: String, zero_as_nil: Boolean) : String? {
         val value01 = BigDecimal(json_value01)
         val value02 = BigDecimal(json_value02)
-        val minValue = if ( value01.compareTo(value02) <= 0 ) { value01 } else { value02 }
+        val minValue = if ( value01 <= value02 ) { value01 } else { value02 }
         if (zero_as_nil && minValue.compareTo(BigDecimal.ZERO) == 0) {
             return null
         }

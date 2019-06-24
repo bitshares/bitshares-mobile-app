@@ -336,9 +336,11 @@
     <string name="kVestingCellPeriodMin">%s分</string>
     <string name="kVestingCellPeriodHour">%s时</string>
     <string name="kVestingCellPeriodDay">%s日</string>
+    <string name="kVestingCellPeriodInstant">インスタント</string>
     <string name="kVestingCellNameWorkerFunds">予算プロジェクトの給料</string>
     <string name="kVestingCellNameWitnessFunds">証人の給料</string>
     <string name="kVestingCellNameCashbackFunds">一生会員の手数料は戻す</string>
+    <string name="kVestingCellNameMarketFeeSharing">マーケットの手数料は戻す</string>
     <string name="kVestingCellNameCustomVBO">ユーザー定義解凍金額</string>
     <!-- K线界面各种字符串 -->
     <string name="kLabelHeaderFeedPrice">フィード価格</string>
@@ -367,6 +369,8 @@
     <string name="kLabelKLineChangePercent">上昇・下落幅</string>
     <string name="kLabelKLineVol">取引数量</string>
     <string name="kLabelKLinePrice">価格</string>
+    <string name="kLabelKLineTotalAmount">取引金額</string>
+    <string name="kLabelKLineAvgPrice">平均価格</string>
     <string name="kLabelBtnDepth">デプスチャート</string>
     <string name="kLabelBtnMarketTrades">取引</string>
     <string name="kLabelDepthSideBuy">買い注文</string>
