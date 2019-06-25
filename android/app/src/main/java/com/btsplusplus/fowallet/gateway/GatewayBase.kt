@@ -226,11 +226,9 @@ open class GatewayBase {
                 }
 
                 val symbol = item.getString("symbol").toUpperCase()
-                val balance_item = balanceHash.optJSONObject(symbol)
-                        ?: jsonObjectfromKVS("iszero", true)
+                val balance_item = balanceHash.optJSONObject(symbol) ?: jsonObjectfromKVS("iszero", true)
 
-
-                var appext = GatewayAssetItemData()
+                val appext = GatewayAssetItemData()
                 appext.enableWithdraw = enableWithdraw
                 appext.enableDeposit = enableDeposit
                 appext.symbol = symbol
@@ -258,22 +256,21 @@ open class GatewayBase {
      *  (protected) 从网关服务器API接口查询充值地址。（REMARK：仅需要查询时才调用。）
      *  成功返回json，失败返回err。
      */
-    protected open fun requestDepositAddressCore(item: JSONObject, appext: GatewayAssetItemData?, request_deposit_address_url: String?, fullAccountData: JSONObject, ctx: Context): Promise {
-        val appext = appext ?: (item.getJSONObject("kAppExt") as GatewayAssetItemData)
+    protected open fun requestDepositAddressCore(item: JSONObject, appext_or_null: GatewayAssetItemData?, request_deposit_address_url: String?, fullAccountData: JSONObject, ctx: Context): Promise {
+        val appext = appext_or_null ?: (item.get("kAppExt") as GatewayAssetItemData)
 
         val p = Promise()
 
         //  查询充值地址
         val account_data = fullAccountData.getJSONObject("account")
 
-        val backingCoinType = appext!!.backingCoinType.toLowerCase()
-        val coinType = appext!!.coinType.toLowerCase()
+        val backingCoinType = appext.backingCoinType.toLowerCase()
+        val coinType = appext.coinType.toLowerCase()
 
         val outputAddress = account_data.getString("name")
 
         //  获取默认的地址请求URL
-        val final_url = request_deposit_address_url
-                ?: ("${_api_config_json.getString("base")}${_api_config_json.getString("request_deposit_address")}")
+        val final_url = request_deposit_address_url ?: "${_api_config_json.getString("base")}${_api_config_json.getString("request_deposit_address")}"
         val post_args = JSONObject().apply {
             put("inputCoinType", backingCoinType)
             put("outputCoinType", coinType)
@@ -369,7 +366,8 @@ open class GatewayBase {
  *  (public) 查询提币网关中间账号以及转账需要备注的memo信息。
  */
     open fun queryWithdrawIntermediateAccountAndFinalMemo(appext: GatewayAssetItemData, address: String, memo: String?, intermediateAccountData: JSONObject?) : Promise {
-        
+        //  GDEX & RUDEX 格式
+        assert(intermediateAccountData != null)
         //  TODO:fowallet 很多特殊处理
         //  useFullAssetName        - 部分网关提币备注资产名需要 网关.资产
         //  assetWithdrawlAlias     - 部分网关部分币种提币备注和bts上资产名字不同。
@@ -394,7 +392,7 @@ open class GatewayBase {
         if (zero_as_nil && value.compareTo(BigDecimal.ZERO) == 0) {
             return null
         }
-        return value.toString()
+        return value.toPlainString()
     }
 
 /**
@@ -407,7 +405,7 @@ open class GatewayBase {
         if (zero_as_nil && minValue.compareTo(BigDecimal.ZERO) == 0) {
             return null
         }
-        return minValue.toString()
+        return minValue.toPlainString()
     }
 
 }

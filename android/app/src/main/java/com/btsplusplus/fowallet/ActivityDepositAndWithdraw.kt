@@ -541,25 +541,26 @@ class ActivityDepositAndWithdraw : BtsppActivity() {
 
     private fun _queryGatewayIntermediateAccountInfo(appext: GatewayAssetItemData) : Promise {
         val ctx = this
-        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
         val intermediateAccount = appext.intermediateAccount
         val p = Promise()
         if (intermediateAccount != null && intermediateAccount != ""){
+            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
             mask.show()
             ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(intermediateAccount).then {
-                val full_data = it as? JSONObject
                 mask.dismiss()
+                val full_data = it as? JSONObject
                 if (full_data == null) {
                     p.resolve(R.string.kVcDWWithdrawQueryGatewayAccountFailed.xmlstring(ctx))
                     return@then null
                 }
                 p.resolve(full_data)
                 return@then null
-            }.catch { err ->
+            }.catch {
                 mask.dismiss()
                 showToast(R.string.tip_network_error.xmlstring(ctx))
             }
         } else {
+            //  null full account data
             p.resolve(null)
         }
         return p

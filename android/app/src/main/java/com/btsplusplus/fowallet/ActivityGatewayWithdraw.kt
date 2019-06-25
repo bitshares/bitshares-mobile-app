@@ -109,7 +109,7 @@ class ActivityGatewayWithdraw : BtsppActivity() {
         initAllUI()
 
         //  events
-        var tf = findViewById<EditText>(R.id.tf_withdraw_amount)
+        val tf = findViewById<EditText>(R.id.tf_withdraw_amount)
         _tf_amount_watcher = UtilsDigitTextWatcher().set_tf(tf).set_precision(_precision_amount)
         tf.addTextChangedListener(_tf_amount_watcher!!)
         _tf_amount_watcher!!.on_value_changed(::onAmountChanged)
@@ -267,8 +267,8 @@ class ActivityGatewayWithdraw : BtsppActivity() {
     }
 
     private fun gotoWithdrawCore() {
-        val address = tf_withdraw_address.text.toString()
-        if (address == "" || address.isEmpty()) {
+        val str_address = tf_withdraw_address.text.toString()
+        if (str_address == "" || str_address.isEmpty()) {
             showToast(R.string.kVcDWSubmitTipsAddressCannotBeEmpty.xmlstring(this))
             return
         }
@@ -316,15 +316,14 @@ class ActivityGatewayWithdraw : BtsppActivity() {
                     //  安全提示（二次确认）：
                     //  1、没有填写备注时提示是否缺失。
                     //  2、填写了备注提示二次确认是否正确。
-                    var tipMessage: String
-                    if (_bSupportMemo) {
+                    val tipMessage: String = if (_bSupportMemo) {
                         if (str_memo != "" && str_memo.isNotEmpty()) {
-                            tipMessage = R.string.kVcDWSubmitSecondConfirmMsg01.xmlstring(this)
+                            R.string.kVcDWSubmitSecondConfirmMsg01.xmlstring(this)
                         } else {
-                            tipMessage = R.string.kVcDWSubmitSecondConfirmMsg02.xmlstring(this)
+                            R.string.kVcDWSubmitSecondConfirmMsg02.xmlstring(this)
                         }
                     } else {
-                        tipMessage = R.string.kVcDWSubmitSecondConfirmMsg03.xmlstring(this)
+                        R.string.kVcDWSubmitSecondConfirmMsg03.xmlstring(this)
                     }
                     UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kWarmTips), tipMessage, btn_ok = R.string.kVcDWSubmitSecondBtnContinue.xmlstring(this)).then {
                         if ( it != null && it as Boolean ) {
@@ -335,26 +334,31 @@ class ActivityGatewayWithdraw : BtsppActivity() {
                             val appext = _withdrawAssetItem.get("kAppExt") as GatewayAssetItemData
                             val intermediateAccountData = _intermediateAccount?.getJSONObject("account")
 
-                            (_gateway.get("api") as GatewayBase).queryWithdrawIntermediateAccountAndFinalMemo(appext,address,str_memo,intermediateAccountData).then {
-                                val withdraw_info = it as JSONObject
+                            //  REMARK：查询提币所需信息（账号、memo等）该接口返回都promise不会发生reject，不用catch。
+                            (_gateway.get("api") as GatewayBase).queryWithdrawIntermediateAccountAndFinalMemo(appext, str_address, str_memo, intermediateAccountData).then {
+                                val withdraw_info = it as? JSONObject
+                                if (withdraw_info == null){
+                                    mask.dismiss()
+                                    showToast(R.string.kVcDWErrTipsRequestWithdrawAddrFailed.xmlstring(this))
+                                    return@then null
+                                }
+
                                 val final_account = withdraw_info.getString("intermediateAccount")
                                 val final_memo = withdraw_info.getString("finalMemo")
                                 val final_account_data = withdraw_info.getJSONObject("intermediateAccountData")
 
-                                (_gateway.get("api") as GatewayBase).checkAddress(_withdrawAssetItem, address,final_memo,n_amount.toString()).then { valid ->
-                                    if ((valid as Boolean) == false) {
+                                //  REMARK：验证提币地址、数量、备注等是否合法。不用catch。
+                                (_gateway.get("api") as GatewayBase).checkAddress(_withdrawAssetItem, str_address, final_memo, n_amount.toString()).then { valid ->
+                                    if (valid != null && valid as Boolean){
+                                        //  c、地址验证通过继续提币
+                                        _processWithdrawCore(mask, str_address, n_amount, final_memo, final_account_data, from_public_memo)
+                                    }else{
                                         mask.dismiss()
                                         showToast(R.string.kVcDWSubmitTipsInvalidAddress.xmlstring(this))
-                                        return@then null
                                     }
-                                    //  c、地址验证通过继续提币
-                                    _processWithdrawCore(mask, address, n_amount, final_memo, final_account_data, from_public_memo)
                                     return@then null
                                 }
                                 return@then null
-                            }.catch { err ->
-                                mask.dismiss()
-                                showToast(R.string.kVcDWErrTipsRequestWithdrawAddrFailed.xmlstring(this))
                             }
                         }
                         return@then null
