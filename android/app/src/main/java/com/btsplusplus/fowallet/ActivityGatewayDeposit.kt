@@ -72,14 +72,14 @@ class ActivityGatewayDeposit : BtsppActivity() {
         //  min deposit value
         val inputCoinType = _depositAddrItem.getString("inputCoinType").toUpperCase()
         val minAmount = appext.depositMinAmount
-        if (minAmount != null) {
+        if (minAmount != null && minAmount.isNotEmpty()) {
             msgArray.add(String.format(R.string.kVcDWTipsMinDepositAmount.xmlstring(this), minAmount, inputCoinType))
         }
         //  sec tips
         msgArray.add(String.format(R.string.kVcDWTipsDepositMatchAsset.xmlstring(this), inputCoinType, inputCoinType))
         //  confirm tips
         val confirm_block_number = appext.confirm_block_number
-        if (confirm_block_number != null) {
+        if (confirm_block_number != null && confirm_block_number.isNotEmpty()) {
             msgArray.add(String.format(R.string.kVcDWTipsNetworkConfirmWithN.xmlstring(this), confirm_block_number))
         } else {
             msgArray.add(R.string.kVcDWTipsNetworkConfirm.xmlstring(this))
