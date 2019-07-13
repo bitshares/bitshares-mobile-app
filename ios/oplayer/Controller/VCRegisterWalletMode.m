@@ -425,7 +425,7 @@ enum
         case kVcSubRefCode:
         {
             [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_refcode"}];
-            VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"http://btspp.io/qam.html#qa_refcode"];
+            VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"https://btspp.io/qam.html#qa_refcode"];
             vc.title = NSLocalizedString(@"kVcTitleWhatIsRefcode", @"什么是推荐码？");
             [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
         }

@@ -450,9 +450,9 @@
     NSString* pNativeVersion = [NativeAppDelegate appShortVersion];
     NSString* flags = @"0";
 #if APPSTORE_CHANNEL
-    id version_url = [NSString stringWithFormat:@"http://btspp.io/app/a_%@/version.json?f=%@", pNativeVersion, flags];
+    id version_url = [NSString stringWithFormat:@"https://btspp.io/app/a_%@/version.json?f=%@", pNativeVersion, flags];
 #else
-    id version_url = [NSString stringWithFormat:@"http://btspp.io/app/e_%@/version.json?f=%@", pNativeVersion, flags];
+    id version_url = [NSString stringWithFormat:@"https://btspp.io/app/e_%@/version.json?f=%@", pNativeVersion, flags];
 #endif  //  APPSTORE_CHANNEL
     [OrgUtils asyncFetchJson:version_url
                      timeout:[[NativeAppDelegate sharedAppDelegate] getRequestTimeout]

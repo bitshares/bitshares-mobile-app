@@ -295,7 +295,7 @@
     }
     //  [统计]
     [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_feedprice"}];
-    VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"http://btspp.io/qam.html#qa_feedprice"];
+    VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"https://btspp.io/qam.html#qa_feedprice"];
     vc.title = NSLocalizedString(@"kVcTitleWhatIsFeedPrice", @"什么是喂价？");
     [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
 }

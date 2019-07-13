@@ -811,7 +811,7 @@
 "skip" = "Skip";
 "kAppName" = "Bitshares";
 "kAccount" = "Account";
-"kAboutMainDesc" ="\nBitshares Mobile App is a decentralized exchange (DEX) product based on Bitshares graphene technology, developed from the product experience and developed with native technology comparable to the first-class centralized exchange. \n\nContact us\nWeChat: bts-pp\nE-mail: contact@btsplusplus.com\nTelegram: https://t.me/btsplusplus\nWebsite: http://btspp.io\n";
+"kAboutMainDesc" ="\nBitshares Mobile App is a decentralized exchange (DEX) product based on Bitshares graphene technology, developed from the product experience and developed with native technology comparable to the first-class centralized exchange. \n\nContact us\nWeChat: bts-pp\nE-mail: contact@btsplusplus.com\nTelegram: https://t.me/btsplusplus\nWebsite: https://btspp.io\n";
 "kAboutChannelAppStore" = "(AppStore Version & Channel %@)";
 "kAboutChannelWebsite" = "(Website Version & Channel %@)";
 "kAboutDebugVersion" = "(Debug Version)";
