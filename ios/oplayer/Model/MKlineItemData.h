@@ -22,7 +22,9 @@
 @property (nonatomic, strong) NSDecimalNumber* nPriceClose;
 @property (nonatomic, strong) NSDecimalNumber* nPriceHigh;
 @property (nonatomic, strong) NSDecimalNumber* nPriceLow;
-@property (nonatomic, strong) NSDecimalNumber* n24Vol;
+@property (nonatomic, strong) NSDecimalNumber* n24Vol;          //  成交量
+@property (nonatomic, strong) NSDecimalNumber* n24TotalAmount;  //  成交额
+@property (nonatomic, strong) NSDecimalNumber* nAvgPrice;       //  成交均价
 
 @property (nonatomic, strong) NSDecimalNumber* ma60;            //  分时图需要显示
 

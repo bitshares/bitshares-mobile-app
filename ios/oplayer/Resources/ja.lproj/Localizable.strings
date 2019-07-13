@@ -389,6 +389,8 @@
 "kLabelKLineChangePercent" = "上昇・下落幅";
 "kLabelKLineVol" = "取引数量";
 "kLabelKLinePrice" = "価格";
+"kLabelKLineTotalAmount" = "取引金額";
+"kLabelKLineAvgPrice" = "平均価格";
 "kLabelBtnDepth" = "デプスチャート";
 "kLabelBtnMarketTrades" = "取引";
 "kLabelDepthSideBuy" = "買い注文";

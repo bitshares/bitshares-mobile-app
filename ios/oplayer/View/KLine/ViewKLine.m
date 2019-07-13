@@ -982,12 +982,47 @@
     _layerCross.fillColor = [UIColor clearColor].CGColor;
     [self.layer addSublayer:_layerCross];
     
+    //  分时图和蜡烛图十字叉详情显示不同数据。
+    NSString* date_str = [self formatDateString:model.date];
+    
+    NSArray* value_ary = nil;
+    NSArray* title_ary = nil;
+    if ([self isDrawTimeLine]){
+        value_ary = @[date_str,
+                      [OrgUtils formatFloatValue:model.nPriceClose],
+                      [OrgUtils formatFloatValue:model.n24Vol],
+                      [OrgUtils formatFloatValue:model.n24TotalAmount],
+                      model.nAvgPrice ? [OrgUtils formatFloatValue:model.nAvgPrice] : @"--"];
+        title_ary = @[NSLocalizedString(@"kLabelKLineDate", @"时间"),
+                      NSLocalizedString(@"kLabelKLinePrice", @"价格"),
+                      NSLocalizedString(@"kLabelKLineVol", @"成交量"),
+                      NSLocalizedString(@"kLabelKLineTotalAmount", @"成交额"),
+                      NSLocalizedString(@"kLabelKLineAvgPrice", @"成交均价")];
+    }else{
+        value_ary = @[date_str,
+                      [OrgUtils formatFloatValue:model.nPriceOpen], [OrgUtils formatFloatValue:model.nPriceHigh],
+                      [OrgUtils formatFloatValue:model.nPriceLow], [OrgUtils formatFloatValue:model.nPriceClose],
+                      [OrgUtils formatFloatValue:model.change], [OrgUtils formatFloatValue:model.change_percent],
+                      [OrgUtils formatFloatValue:model.n24Vol], [OrgUtils formatFloatValue:model.n24TotalAmount],
+                      model.nAvgPrice ? [OrgUtils formatFloatValue:model.nAvgPrice] : @"--"];
+        title_ary = @[NSLocalizedString(@"kLabelKLineDate", @"时间"),
+                      NSLocalizedString(@"kLabelKLineOpen", @"开"),
+                      NSLocalizedString(@"kLabelKLineHigh", @"高"),
+                      NSLocalizedString(@"kLabelKLineLow", @"低"),
+                      NSLocalizedString(@"kLabelKLineClose", @"收"),
+                      NSLocalizedString(@"kLabelKLineChange", @"涨跌额"),
+                      NSLocalizedString(@"kLabelKLineChangePercent", @"涨跌幅"),
+                      NSLocalizedString(@"kLabelKLineVol", @"成交量"),
+                      NSLocalizedString(@"kLabelKLineTotalAmount", @"成交额"),
+                      NSLocalizedString(@"kLabelKLineAvgPrice", @"成交均价")];
+    }
+    
     //  3、描绘详情
     CGFloat fDetailX;
     CGFloat fDetailY;
     CGFloat fDetailLineHeight = 18;
     CGFloat fDetailWidth = 130;
-    CGFloat fDetailLineNumber = [self isDrawTimeLine] ? 3 : 8;
+    CGFloat fDetailLineNumber = [title_ary count];
     CGFloat fDetailHeight = fDetailLineHeight * fDetailLineNumber + 4;
     if (model.showIndex >= _maxShowNumber/2){
         //  十字叉详情：靠左边显示
@@ -1008,31 +1043,6 @@
     detailLayer.fillColor = [ThemeManager sharedThemeManager].appBackColor.CGColor;
     [_layerCross addSublayer:detailLayer];
     
-    //  分时图和蜡烛图十字叉详情显示不同数据。
-    NSString* date_str = [self formatDateString:model.date];
-    
-    NSArray* value_ary = nil;
-    NSArray* title_ary = nil;
-    if ([self isDrawTimeLine]){
-        value_ary = @[date_str, [OrgUtils formatFloatValue:model.nPriceClose], [OrgUtils formatFloatValue:model.n24Vol]];
-        title_ary = @[NSLocalizedString(@"kLabelKLineDate", @"时间"),
-                      NSLocalizedString(@"kLabelKLinePrice", @"价格"),
-                      NSLocalizedString(@"kLabelKLineVol", @"成交量")];
-    }else{
-        value_ary = @[date_str,
-                      [OrgUtils formatFloatValue:model.nPriceOpen], [OrgUtils formatFloatValue:model.nPriceHigh],
-                      [OrgUtils formatFloatValue:model.nPriceLow], [OrgUtils formatFloatValue:model.nPriceClose],
-                      [OrgUtils formatFloatValue:model.change], [OrgUtils formatFloatValue:model.change_percent],
-                      [OrgUtils formatFloatValue:model.n24Vol]];
-        title_ary = @[NSLocalizedString(@"kLabelKLineDate", @"时间"),
-                      NSLocalizedString(@"kLabelKLineOpen", @"开"),
-                      NSLocalizedString(@"kLabelKLineHigh", @"高"),
-                      NSLocalizedString(@"kLabelKLineLow", @"低"),
-                      NSLocalizedString(@"kLabelKLineClose", @"收"),
-                      NSLocalizedString(@"kLabelKLineChange", @"涨跌额"),
-                      NSLocalizedString(@"kLabelKLineChangePercent", @"涨跌幅"),
-                      NSLocalizedString(@"kLabelKLineVol", @"成交量")];
-    }
     //  3.2、详情 Value
     NSInteger lineIndex = 0;
     for (id value in value_ary) {

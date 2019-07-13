@@ -389,6 +389,8 @@
 "kLabelKLineChangePercent" = "Change%";
 "kLabelKLineVol" = "Vol";
 "kLabelKLinePrice" = "Price";
+"kLabelKLineTotalAmount" = "Total";
+"kLabelKLineAvgPrice" = "AvgPrice";
 "kLabelBtnDepth" = "Depth";
 "kLabelBtnMarketTrades" = "Market Trades";
 "kLabelDepthSideBuy" = "Buy";
