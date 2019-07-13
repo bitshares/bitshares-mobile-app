@@ -1036,7 +1036,7 @@ enum
         {
             //  [统计]
             [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_committee"}];
-            url = @"http://btspp.io/qam.html#qa_committee";
+            url = @"https://btspp.io/qam.html#qa_committee";
             title = NSLocalizedString(@"kVcVoteWhatIsActiveCommittee", @"什么是活跃理事会？");
         }
             break;
@@ -1044,7 +1044,7 @@ enum
         {
             //  [统计]
             [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_committee_c"}];
-            url = @"http://btspp.io/qam.html#qa_committee_c";
+            url = @"https://btspp.io/qam.html#qa_committee_c";
             title = NSLocalizedString(@"kVcVoteWhatIsStandbyCommittee", @"什么是候选理事会？");
         }
             break;
@@ -1052,7 +1052,7 @@ enum
         {
             //  [统计]
             [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_witness"}];
-            url = @"http://btspp.io/qam.html#qa_witness";
+            url = @"https://btspp.io/qam.html#qa_witness";
             title = NSLocalizedString(@"kVcVoteWhatIsActiveWitness", @"什么是活跃见证人？");
         }
             break;
@@ -1060,7 +1060,7 @@ enum
         {
             //  [统计]
             [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_witness_c"}];
-            url = @"http://btspp.io/qam.html#qa_witness_c";
+            url = @"https://btspp.io/qam.html#qa_witness_c";
             title = NSLocalizedString(@"kVcVoteWhatIsStandbyWitness", @"什么是候选见证人？");
         }
             break;
@@ -1068,7 +1068,7 @@ enum
         {
             //  [统计]
             [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_proxy"}];
-            url = @"http://btspp.io/qam.html#qa_proxy";
+            url = @"https://btspp.io/qam.html#qa_proxy";
             title = NSLocalizedString(@"kVcVoteWhatIsProxy", @"什么是代理人？");
         }
             break;

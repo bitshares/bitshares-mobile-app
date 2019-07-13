@@ -358,7 +358,7 @@
 "kVestingCellPeriodInstant" = "立即解冻";
 "kVestingCellNameWorkerFunds" = "预算项目薪资";
 "kVestingCellNameWitnessFunds" = "见证人薪资";
-"kVestingCellNameCashbackFunds" = "终身会员手续费返现";
+"kVestingCellNameCashbackFunds" = "网络手续费返现";
 "kVestingCellNameMarketFeeSharing" = "市场手续费返现";
 "kVestingCellNameCustomVBO" = "自定义解冻金额";
 
@@ -811,7 +811,7 @@
 "skip" = "跳过";
 "kAppName" = "比特股";
 "kAccount" = "账号";
-"kAboutMainDesc" ="\n比特股移动端钱包是基于石墨烯技术，从产品体验出发，采用原生技术开发的一款可媲美一流中心化交易所的去中心化交易所（DEX）产品。\n\n联系我们\n微信：bts-pp\n邮箱：contact@btsplusplus.com\n电报：https://t.me/btsplusplus\n官网：http://btspp.io\n";
+"kAboutMainDesc" ="\n比特股移动端钱包是基于石墨烯技术，从产品体验出发，采用原生技术开发的一款可媲美一流中心化交易所的去中心化交易所（DEX）产品。\n\n联系我们\n微信：bts-pp\n邮箱：contact@btsplusplus.com\n电报：https://t.me/btsplusplus\n官网：https://btspp.io\n";
 "kAboutChannelAppStore" = "(商店版 & 渠道 %@)";
 "kAboutChannelWebsite" = "(官网版 & 渠道 %@)";
 "kAboutDebugVersion" = "(调试版)";

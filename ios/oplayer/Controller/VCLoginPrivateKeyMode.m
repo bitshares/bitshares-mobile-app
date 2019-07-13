@@ -484,7 +484,7 @@ enum
         {
             //  [统计]
             [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_active_privatekey"}];
-            VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"http://btspp.io/qam.html#qa_active_privatekey"];
+            VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"https://btspp.io/qam.html#qa_active_privatekey"];
             vc.title = NSLocalizedString(@"kVcTitleWhatIsActivePrivateKey", @"什么是资金私钥？");
             [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
         }
@@ -493,7 +493,7 @@ enum
         {
             //  [统计]
             [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_trading_password"}];
-            VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"http://btspp.io/qam.html#qa_trading_password"];
+            VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"https://btspp.io/qam.html#qa_trading_password"];
             vc.title = NSLocalizedString(@"kVcTitleWhatIsTradePassowrd", @"什么是交易密码？");
             [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
         }

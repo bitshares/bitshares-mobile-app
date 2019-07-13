@@ -68,7 +68,7 @@
     NSMutableArray* lines = [NSMutableArray array];
     
     //  介绍&主程序版本号
-    [lines addObject:NSLocalizedString(@"kAboutMainDesc", @"\n比特股移动端钱包是基于石墨烯技术，从产品体验出发，采用原生技术开发的一款可媲美一流中心化交易所的去中心化交易所（DEX）产品。\n\n联系我们\n微信：bts-pp\n邮箱：contact@btsplusplus.com\n电报：https://t.me/btsplusplus\n官网：http://btspp.io\n")];
+    [lines addObject:NSLocalizedString(@"kAboutMainDesc", @"\n比特股移动端钱包是基于石墨烯技术，从产品体验出发，采用原生技术开发的一款可媲美一流中心化交易所的去中心化交易所（DEX）产品。\n\n联系我们\n微信：bts-pp\n邮箱：contact@btsplusplus.com\n电报：https://t.me/btsplusplus\n官网：https://btspp.io\n")];
     [lines addObject:[NSString stringWithFormat:@"%@ v%@", NSLocalizedString(@"kAppName", @"BTS++"), [NativeAppDelegate appVersion]]];
     
 #if APPSTORE_CHANNEL

@@ -27,7 +27,7 @@ enum
     kVcSubAccount,              //  帐号名字
     kVcSubMemberStatus,         //  会员状态
     kVcSubRefCode,              //  我的推荐码
-    kVcSubMemberDesc,           //  会员返现描述
+    //    kVcSubMemberDesc,           //  会员返现描述//TODO:2.5考虑完善改进会员用途展示
     
     kVcSubBasicInfoMax
 };
@@ -151,9 +151,10 @@ enum
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == kVcBasicInfo && indexPath.row == kVcSubMemberDesc){
-        return 24.0f;
-    }
+    //TODO:2.5考虑完善改进会员用途展示
+//    if (indexPath.section == kVcBasicInfo && indexPath.row == kVcSubMemberDesc){
+//        return 24.0f;
+//    }
     return tableView.rowHeight;
 }
 
@@ -239,18 +240,18 @@ enum
                     }
                 }
                     break;
-                case kVcSubMemberDesc:
-                    cell.showCustomBottomLine = NO;
-                    if (_bIsLifetimeMemberShip){
-                        cell.detailTextLabel.text = NSLocalizedString(@"kAccountUpgradeTipsMember", @"尊敬的终身会员，您已享受80%的手续费返现奖励。");
-                        cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].buyColor;
-                    }else{
-                        cell.detailTextLabel.text = NSLocalizedString(@"kAccountUpgradeTipsNotMember", @"现在升级终身会员，立享80%手续费返现奖励。");
-                        cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
-                    }
-                    cell.detailTextLabel.font = [UIFont systemFontOfSize:12.0f];
-                    cell.detailTextLabel.adjustsFontSizeToFitWidth = YES;
-                    break;
+//                case kVcSubMemberDesc://TODO:2.5考虑完善改进会员用途展示
+//                    cell.showCustomBottomLine = NO;
+//                    if (_bIsLifetimeMemberShip){
+//                        cell.detailTextLabel.text = NSLocalizedString(@"kAccountUpgradeTipsMember", @"尊敬的终身会员，您已享受80%的手续费返现奖励。");
+//                        cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].buyColor;
+//                    }else{
+//                        cell.detailTextLabel.text = NSLocalizedString(@"kAccountUpgradeTipsNotMember", @"现在升级终身会员，立享80%手续费返现奖励。");
+//                        cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+//                    }
+//                    cell.detailTextLabel.font = [UIFont systemFontOfSize:12.0f];
+//                    cell.detailTextLabel.adjustsFontSizeToFitWidth = YES;
+//                    break;
                 default:
                     break;
             }
