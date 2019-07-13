@@ -24,7 +24,7 @@ git clone https://github.com/bitcoin-core/secp256k1.git $SOURCE_DIR_ANDROID && c
 OUTPUT_DIR="btspp_output"
 
 #   2.2、配置：需要编译的架构。 / configuration: The archs that needs to be compiled.
-ARCHS="armv7 x86"
+ARCHS="arm64 armv7 x86"
 
 # 2.3、配置：NDK所在路径 / configuration: NDK path
 NDKROOT=$ANDROID_NDK_ROOT
@@ -54,6 +54,7 @@ do
     # x86
     # x86_64
     MYARCH=arm
+    MYHOST=arm-linux-androideabi #  fetch value: gcc -v 2>&1 | grep ^Targ
     # 可选值：/ Available options:
     # arm-linux-androideabi
     # aarch64-linux-android
@@ -77,15 +78,27 @@ do
     # -mx32
     GCC_MARGS="-marm"
     # 可选值：/ Available options:
+    # arm64-v8a
     # armeabi-v7a
     # x86
     INSTALL_ARCH_DIR="armeabi-v7a"
   else
-    MYARCH=x86
-    PREBUILD_PREFIX=x86
-    BIN_PREFIX=i686-linux-android
-    GCC_MARGS="-m32"
-    INSTALL_ARCH_DIR="x86"
+    if test "$CURR_ARCH" = "arm64"
+    then
+      MYARCH=arm64
+      MYHOST=aarch64-linux-android
+      PREBUILD_PREFIX=aarch64-linux-android
+      BIN_PREFIX=aarch64-linux-android
+      GCC_MARGS="" # -m64 error??
+      INSTALL_ARCH_DIR="arm64-v8a"
+    else
+      MYARCH=x86
+      MYHOST=i686-linux-android
+      PREBUILD_PREFIX=x86
+      BIN_PREFIX=i686-linux-android
+      GCC_MARGS="-m32"
+      INSTALL_ARCH_DIR="x86"
+    fi
   fi
 
   SYSROOT=$NDKROOT/platforms/android-21/arch-$MYARCH/usr/
@@ -103,7 +116,7 @@ do
 
   CONFIGURE_FLAGS="--disable-shared --enable-module-recovery"
 
-  $CWD/configure $CONFIGURE_FLAGS --prefix=$PREFIX --host=$MYARCH CFLAGS="$CFLAGS" CC="$CC" LDFLAGS="$LDFLAGS" CPP="$CPP"
+  $CWD/configure $CONFIGURE_FLAGS --prefix=$PREFIX --host="$MYHOST" CFLAGS="$CFLAGS" CC="$CC" LDFLAGS="$LDFLAGS" CPP="$CPP"
 
   make -j3 install
 
