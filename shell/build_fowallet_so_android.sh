@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# 编译android的native的库。[armeabi-v7a.jar / x86.jar] / Compile android native library.
+# 编译android的native的库。[arm64-v8a.jar / armeabi-v7a.jar / x86.jar] / Compile android native library.
 #
 # ※ 注意：执行该脚本之前得先执行 ./build_secp256k1_android.sh 编译 secp256k1 依赖库。
 # ※ Tips: Before executing this script, you must first execute ./build_secp256k1_android.sh to compile the secp256k1 dependency library.
@@ -10,7 +10,7 @@
 # 1、配置所有参数 / configure all parameters
 NATIVE_DIR="android_native_output"
 
-JNI_ABI="armeabi-v7a x86"
+JNI_ABI="arm64-v8a armeabi-v7a x86"
 
 # 2、清理 / Clean
 rm -rf $NATIVE_DIR
