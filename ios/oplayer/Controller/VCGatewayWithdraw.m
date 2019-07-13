@@ -434,14 +434,23 @@ enum
                          [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
                          GatewayAssetItemData* appext = [_withdrawAssetItem objectForKey:@"kAppExt"];
                          id intermediateAccountData = _intermediateAccount ? [_intermediateAccount objectForKey:@"account"] : nil;
-                         [[[[_gateway objectForKey:@"api"] queryWithdrawIntermediateAccountAndFinalMemo:appext
-                                                                                                address:str_address
-                                                                                                   memo:str_memo
-                                                                                intermediateAccountData:intermediateAccountData] then:(^id(id withdraw_info) {
+                         
+                         // REMARK：查询提币所需信息（账号、memo等）该接口返回都promise不会发生reject，不用catch。
+                         [[[_gateway objectForKey:@"api"] queryWithdrawIntermediateAccountAndFinalMemo:appext
+                                                                                               address:str_address
+                                                                                                  memo:str_memo
+                                                                               intermediateAccountData:intermediateAccountData] then:(^id(id withdraw_info) {
+                             if (!withdraw_info){
+                                 [self hideBlockView];
+                                 [OrgUtils makeToast:NSLocalizedString(@"kVcDWErrTipsRequestWithdrawAddrFailed", @"获取提币地址异常，请联系网关客服。")];
+                                 return nil;
+                             }
+                             
                              id final_account = [withdraw_info objectForKey:@"intermediateAccount"];
                              id final_memo = [withdraw_info objectForKey:@"finalMemo"];
                              id final_account_data = [withdraw_info objectForKey:@"intermediateAccountData"];
                              assert(final_account && final_memo && final_account_data);
+                             
                              // 继续验证用户输入的提币地址、数量、备注等是否正确。
                              [[[_gateway objectForKey:@"api"] checkAddress:_withdrawAssetItem address:str_address
                                                                       memo:final_memo
@@ -459,10 +468,6 @@ enum
                                            from_public_memo:from_public_memo];
                                  return nil;
                              })];
-                             return nil;
-                         })] catch:(^id(id error) {
-                             [self hideBlockView];
-                             [OrgUtils makeToast:NSLocalizedString(@"kVcDWErrTipsRequestWithdrawAddrFailed", @"获取提币地址异常，请联系网关客服。")];
                              return nil;
                          })];
                      }

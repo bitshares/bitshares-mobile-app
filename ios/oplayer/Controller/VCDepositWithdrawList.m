@@ -571,7 +571,6 @@ enum
         vc.title = [NSString stringWithFormat:NSLocalizedString(@"kVcTitleWithdraw", @"%@提币"), appext.symbol];
         [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
         return nil;
-        return nil;
     })];
 }
 
