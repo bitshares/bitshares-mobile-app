@@ -178,8 +178,7 @@
         BOOL enableDeposit = [[deposit_options objectForKey:@"healthy"] boolValue] && [[deposit_options objectForKey:@"status"] integerValue] != 0;
         
         //  细节参考: https://github.com/bitshares/bitshares-ui/pull/2573/commits/8cc40ece6026b24a9becd0bf305b858e6d0d66c5
-        //  TODO:各种destination & source待确认。
-        id deposit_amount = [[deposit_item objectForKey:@"amount"] objectForKey:@"destination"];
+        id deposit_amount = [[deposit_item objectForKey:@"amount"] objectForKey:@"source"];
         id withdraw_amount = [[withdraw_item objectForKey:@"amount"] objectForKey:@"destination"];
         id deposit_limit = [[deposit_item objectForKey:@"limit"] objectForKey:@"source"];
         id withdraw_limit = [[withdraw_item objectForKey:@"limit"] objectForKey:@"source"];
