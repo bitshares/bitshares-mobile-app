@@ -21,7 +21,7 @@
 @synthesize showIndex;
 @synthesize isRise, isMaxPrice, isMinPrice, isMax24Vol;
 @synthesize nPriceOpen, nPriceClose, nPriceHigh, nPriceLow;
-@synthesize n24Vol;
+@synthesize n24Vol, n24TotalAmount, nAvgPrice;
 @synthesize ma60;
 @synthesize main_index01, main_index02, main_index03, fOffsetMainIndex01, fOffsetMainIndex02, fOffsetMainIndex03;
 @synthesize adv_index01, adv_index02, adv_index03, fOffsetAdvIndex01, fOffsetAdvIndex02, fOffsetAdvIndex03;
@@ -53,6 +53,8 @@
     self.nPriceLow = nil;
     
     self.n24Vol = nil;
+    self.n24TotalAmount = nil;
+    self.nAvgPrice = nil;
     
     self.ma60 = nil;
     
@@ -162,7 +164,9 @@
         id n_close_price = [n_close_base decimalNumberByDividingBy:n_close_quote withBehavior:ceilHandler];
         
         fillto.n24Vol = [NSDecimalNumber decimalNumberWithMantissa:[[data objectForKey:@"quote_volume"] unsignedLongLongValue]
-                                                         exponent:-quote_precision isNegative:NO];;
+                                                          exponent:-quote_precision isNegative:NO];
+        fillto.n24TotalAmount = [NSDecimalNumber decimalNumberWithMantissa:[[data objectForKey:@"base_volume"] unsignedLongLongValue]
+                                                                  exponent:-base_precision isNegative:NO];
         
         //  n_open_price <= n_close_price
         fillto.isRise = [n_open_price compare:n_close_price] != NSOrderedDescending;
@@ -192,7 +196,9 @@
         id n_close_price = [n_close_quote decimalNumberByDividingBy:n_close_base withBehavior:ceilHandler];
         
         fillto.n24Vol = [NSDecimalNumber decimalNumberWithMantissa:[[data objectForKey:@"base_volume"] unsignedLongLongValue]
-                                                         exponent:-quote_precision isNegative:NO];;
+                                                          exponent:-quote_precision isNegative:NO];
+        fillto.n24TotalAmount = [NSDecimalNumber decimalNumberWithMantissa:[[data objectForKey:@"quote_volume"] unsignedLongLongValue]
+                                                                  exponent:-base_precision isNegative:NO];
         
         //  n_open_price <= n_close_price
         fillto.isRise = [n_open_price compare:n_close_price] != NSOrderedDescending;
@@ -202,6 +208,13 @@
         fillto.nPriceClose = n_close_price;
         fillto.nPriceHigh = n_low_price;
         fillto.nPriceLow = n_high_price;
+    }
+    
+    //  成交均价
+    if ([fillto.n24Vol compare:[NSDecimalNumber zero]] > 0){
+        fillto.nAvgPrice = [fillto.n24TotalAmount decimalNumberByDividingBy:fillto.n24Vol withBehavior:ceilHandler];
+    }else{
+        fillto.nAvgPrice = nil;
     }
     
     //  计算涨跌额和涨跌幅

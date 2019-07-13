@@ -389,6 +389,8 @@
 "kLabelKLineChangePercent" = "涨跌幅";
 "kLabelKLineVol" = "成交量";
 "kLabelKLinePrice" = "价格";
+"kLabelKLineTotalAmount" = "成交额";
+"kLabelKLineAvgPrice" = "成交均价";
 "kLabelBtnDepth" = "深度";
 "kLabelBtnMarketTrades" = "成交";
 "kLabelDepthSideBuy" = "买盘";
