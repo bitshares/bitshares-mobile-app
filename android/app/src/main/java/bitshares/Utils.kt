@@ -270,21 +270,20 @@ class Utils {
          *  是否是BTS终身会员判断
          */
         fun isBitsharesVIP(membership_expiration_date_string: String?): Boolean {
-            if (membership_expiration_date_string != null && membership_expiration_date_string != "") {
+            return if (membership_expiration_date_string != null && membership_expiration_date_string != "") {
                 //  会员过期日期为 -1 则为终身会员。
-                return parseBitsharesTimeString(membership_expiration_date_string) < 0
+                parseBitsharesTimeString(membership_expiration_date_string) < 0
             } else {
-                return false
+                false
             }
         }
 
         /**
-         *  (public) 计算已经解冻的余额数量。（可提取的）
+         *  (private) 计算已经解冻的余额数量。（可提取的）REMARK：按照币龄解冻策略
          */
-        fun calcVestingBalanceAmount(vesting: JSONObject): Long {
-            val policy = vesting.getJSONArray("policy")
+        private fun _calcVestingBalanceAmount_cdd_vesting_policy(policy: JSONArray, vesting: JSONObject): Long {
             //  TODO:fowallet 其他的类型不支持。
-            assert(policy.getInt(0) == 1)
+            assert(policy.getInt(0) == EBitsharesVestingPolicy.ebvp_cdd_vesting_policy.value)
             val policy_data = policy.getJSONObject(1)
 
             //  vesting seconds     REMARK：解冻周期最低1秒。
@@ -311,6 +310,43 @@ class Utils {
             assert(withdraw_max <= total_balance_amount)
 
             return withdraw_max
+        }
+
+        /**
+         *  (private) 计算已经解冻的余额数量。（可提取的）REMARK：立即解冻策略
+         */
+        private fun _calcVestingBalanceAmount_instant_vesting_policy(policy: JSONArray, vesting: JSONObject): Long {
+            //{
+            //    balance =     {
+            //        amount = 109944860;
+            //        "asset_id" = "1.3.4072";
+            //    };
+            //    "balance_type" = "market_fee_sharing";
+            //    id = "1.13.24212";
+            //    owner = "1.2.114363";
+            //    policy =     (
+            //                  2,
+            //                  {
+            //                  }
+            //                  );
+            //}
+            return vesting.getJSONObject("balance").getString("amount").toLong()
+        }
+
+        /**
+         *  (public) 计算已经解冻的余额数量。（可提取的）
+         */
+        fun calcVestingBalanceAmount(vesting: JSONObject): Long {
+            val policy = vesting.getJSONArray("policy")
+            return when (policy.getInt(0)) {
+                EBitsharesVestingPolicy.ebvp_cdd_vesting_policy.value -> _calcVestingBalanceAmount_cdd_vesting_policy(policy, vesting)
+                EBitsharesVestingPolicy.ebvp_instant_vesting_policy.value -> _calcVestingBalanceAmount_instant_vesting_policy(policy, vesting)
+                else -> {
+                    //  TODO:ebvp_linear_vesting_policy
+                    assert(false)
+                    0
+                }
+            }
         }
 
         /**
@@ -423,7 +459,7 @@ class Utils {
                 return package_info.versionName
             } catch (e: PackageManager.NameNotFoundException) {
                 //  TODO:代码里内置版本号，每次都要修改，虽然仅仅在获取异常的时候才会用到，考虑放到config。？
-                return "2.4"
+                return "2.5"
             }
         }
 

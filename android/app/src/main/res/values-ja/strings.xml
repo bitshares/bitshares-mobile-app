@@ -778,7 +778,7 @@
     <string name="skip">PASS</string>
     <string name="kAppName">BitShares</string>
     <string name="kAccount">アカウント</string>
-    <string name="kAboutMainDesc">\nBitSharesモバイルサイドのウオレットは石墨のアルケン技術に基づくので、製品から出発を体験して、採用します原生の技術開発の1モデル匹敵する一流センター化取る引く所のDEX。\n\n私達に連絡します\nWeChat：bts-pp\nE-mail：contactsbtsplusplus.com\nTelegram：https://t.me/btsplusplus\n公式サイト：http://btspp.io\n</string>
+    <string name="kAboutMainDesc">\nBitSharesモバイルサイドのウオレットは石墨のアルケン技術に基づくので、製品から出発を体験して、採用します原生の技術開発の1モデル匹敵する一流センター化取る引く所のDEX。\n\n私達に連絡します\nWeChat：bts-pp\nE-mail：contactsbtsplusplus.com\nTelegram：https://t.me/btsplusplus\n公式サイト：https://btspp.io\n</string>
     <string name="kAboutChannelAppStore">(商店版 &amp; 渠道 %s)</string>
     <string name="kAboutChannelWebsite">(官网版 &amp; 渠道 %s)</string>
     <string name="kAboutDebugVersion">(调试版)</string>
