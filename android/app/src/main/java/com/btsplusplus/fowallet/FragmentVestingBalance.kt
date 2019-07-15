@@ -121,14 +121,28 @@ class FragmentVestingBalance : BtsppFragment() {
                     continue
                 }
                 //  linear_vesting_policy = 0,
-                //  cdd_vesting_policy
-                if (vesting.getJSONArray("policy").getInt(0) == 1) {
-                    val name = nameHash.optString(oid, null)
-                            ?: R.string.kVestingCellNameCustomVBO.xmlstring(_ctx!!)
-                    vesting.put("kName", name)
-                    _data_array.add(vesting)
-                } else {
-                    //  TODO:fowallet 1.7 暂时不支持 linear_vesting_policy
+                //  cdd_vesting_policy = 1,
+                //  instant_vesting_policy = 2,
+                when (vesting.getJSONArray("policy").getInt(0)) {
+                    EBitsharesVestingPolicy.ebvp_cdd_vesting_policy.value,
+                    EBitsharesVestingPolicy.ebvp_instant_vesting_policy.value -> {
+                        var name = nameHash.optString(oid, null)
+                        if (name == null){
+                            val balance_type = vesting.optString("balance_type", null)
+                            if (balance_type != null && balance_type.toLowerCase() == "market_fee_sharing") {
+                                name = R.string.kVestingCellNameMarketFeeSharing.xmlstring(_ctx!!)
+                            }
+                        }
+                        if (name == null) {
+                            name = R.string.kVestingCellNameCustomVBO.xmlstring(_ctx!!)
+                        }
+                        vesting.put("kName", name)
+                        _data_array.add(vesting)
+                    }
+                    else -> {
+                        //  TODO:ebvp_linear_vesting_policy
+                        //  TODO:fowallet 1.7 暂时不支持 linear_vesting_policy
+                    }
                 }
             }
         }
@@ -156,15 +170,29 @@ class FragmentVestingBalance : BtsppFragment() {
             val balance_asset = ChainObjectManager.sharedChainObjectManager().getChainObjectByID(balance.getString("asset_id"))
             val balance_asset_symbol = balance_asset.getString("symbol")
 
-            val policy = vesting.getJSONArray("policy").getJSONObject(1)
-            val vesting_seconds = max(policy.getLong("vesting_seconds"), 1L)
+            var vestingPeriodValue = "--"
+            when (vesting.getJSONArray("policy").getInt(0)) {
+                EBitsharesVestingPolicy.ebvp_cdd_vesting_policy.value -> {
+                    //  REMARK：解冻周期最低1秒
+                    val policy_data = vesting.getJSONArray("policy").getJSONObject(1)
+                    val vesting_seconds = max(policy_data.getLong("vesting_seconds"), 1L)
+                    vestingPeriodValue = Utils.fmtVestingPeriodDateString(_ctx!!, vesting_seconds)
+                }
+                EBitsharesVestingPolicy.ebvp_instant_vesting_policy.value -> {
+                    vestingPeriodValue = R.string.kVestingCellPeriodInstant.xmlstring(_ctx!!)
+                }
+                EBitsharesVestingPolicy.ebvp_linear_vesting_policy.value -> {
+                    //  TODO:不支持
+                    assert(false)
+                }
+            }
 
             val precision = balance_asset.getInt("precision")
 
             //  format values
             val total_amount = OrgUtils.formatAssetString(balance.getString("amount"), precision)
             val unfreeze_number = OrgUtils.formatAssetString(Utils.calcVestingBalanceAmount(vesting).toString(), precision)
-            val unfreeze_cycle = Utils.fmtVestingPeriodDateString(_ctx!!, vesting_seconds)
+            val unfreeze_cycle = vestingPeriodValue
 
             //  line1 name & button
             val layout_line1 = LinearLayout(_ctx)
@@ -215,18 +243,27 @@ class FragmentVestingBalance : BtsppFragment() {
 
     private fun onWithdrawButtonClicked(vesting: JSONObject) {
         val policy = vesting.getJSONArray("policy")
-        //  TODO:fowallet 其他的类型不支持。
-        assert(policy.getInt(0) == 1)
-        val policy_data = policy.getJSONObject(1)
-        val start_claim = policy_data.getString("start_claim")
-        val start_claim_ts = Utils.parseBitsharesTimeString(start_claim)
-        val now_ts = Utils.now_ts()
-        if (now_ts <= start_claim_ts) {
-            val d = Date(start_claim_ts * 1000)
-            val f = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-            val s = f.format(d)
-            showToast(String.format(R.string.kVestingTipsStartClaim.xmlstring(_ctx!!), s))
-            return
+
+        when (policy.getInt(0)) {
+            //  验证提取日期
+            EBitsharesVestingPolicy.ebvp_cdd_vesting_policy.value -> {
+                val policy_data = policy.getJSONObject(1)
+                val start_claim = policy_data.getString("start_claim")
+                val start_claim_ts = Utils.parseBitsharesTimeString(start_claim)
+                val now_ts = Utils.now_ts()
+                if (now_ts <= start_claim_ts) {
+                    val d = Date(start_claim_ts * 1000)
+                    val f = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                    val s = f.format(d)
+                    showToast(String.format(R.string.kVestingTipsStartClaim.xmlstring(_ctx!!), s))
+                    return
+                }
+            }
+            //  不用额外验证
+            EBitsharesVestingPolicy.ebvp_instant_vesting_policy.value -> {}
+            EBitsharesVestingPolicy.ebvp_linear_vesting_policy.value -> {
+                assert(false)   //  TODO:不支持
+            }
         }
 
         //  计算可提取数量

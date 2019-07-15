@@ -336,10 +336,10 @@
     <string name="kVestingCellPeriodMin">%s分</string>
     <string name="kVestingCellPeriodHour">%s小时</string>
     <string name="kVestingCellPeriodDay">%s天</string>
-    <string name="kVestingCellPeriodInstant">立即解冻</string>
+    <string name="kVestingCellPeriodInstant">立即</string>
     <string name="kVestingCellNameWorkerFunds">预算项目薪资</string>
     <string name="kVestingCellNameWitnessFunds">见证人薪资</string>
-    <string name="kVestingCellNameCashbackFunds">终身会员手续费返现</string>
+    <string name="kVestingCellNameCashbackFunds">网络手续费返现</string>
     <string name="kVestingCellNameMarketFeeSharing">市场手续费返现</string>
     <string name="kVestingCellNameCustomVBO">自定义解冻金额</string>
     <!-- K线界面各种字符串 -->
@@ -779,7 +779,7 @@
     <string name="skip">跳过</string>
     <string name="kAppName">比特股</string>
     <string name="kAccount">账号</string>
-    <string name="kAboutMainDesc">\n比特股移动端钱包是基于石墨烯技术，从产品体验出发，采用原生技术开发的一款可媲美一流中心化交易所的去中心化交易所（DEX）产品。\n\n联系我们\n微信：bts-pp\n邮箱：contactsbtsplusplus.com\n电报：https://t.me/btsplusplus\n官网：http://btspp.io\n</string>
+    <string name="kAboutMainDesc">\n比特股移动端钱包是基于石墨烯技术，从产品体验出发，采用原生技术开发的一款可媲美一流中心化交易所的去中心化交易所（DEX）产品。\n\n联系我们\n微信：bts-pp\n邮箱：contactsbtsplusplus.com\n电报：https://t.me/btsplusplus\n官网：https://btspp.io\n</string>
     <string name="kAboutChannelAppStore">(商店版 &amp; 渠道 %s)</string>
     <string name="kAboutChannelWebsite">(官网版 &amp; 渠道 %s)</string>
     <string name="kAboutDebugVersion">(调试版)</string>

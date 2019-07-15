@@ -11,6 +11,15 @@ enum class EBitsharesWhiteListFlag(val value: Int) {
 }
 
 /**
+ *  待解冻金额解禁策略
+ */
+enum class EBitsharesVestingPolicy(val value: Int) {
+    ebvp_linear_vesting_policy(0),          //  线性解禁
+    ebvp_cdd_vesting_policy(1),             //  按币龄解禁
+    ebvp_instant_vesting_policy(2)          //  立即解禁
+}
+
+/**
  *  区块数据对象类型ID号定义
  */
 enum class EBitsharesObjectType(val value: Int) {
