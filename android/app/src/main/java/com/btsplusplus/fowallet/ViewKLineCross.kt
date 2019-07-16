@@ -94,17 +94,60 @@ class ViewKLineCross : ViewBase {
         paint.color = resources.getColor(R.color.theme01_textColorMain)
         canvas.drawPath(path, paint)
 
-        //  3、描绘详情
-        var fDetailX: Float
-        var fDetailY: Float
-        var fDetailLineHeight: Float = 14.0f.dp
-        var fDetailWidth: Float = 112.0f.dp
-        var fDetailLineNumber: Float = if (_kline!!.isDrawTimeLine()) {
-            3.0f
+        //  分时图和蜡烛图十字叉详情显示不同数据。
+        val date_str: String = _kline!!.formatDateString(model.date)
+        val value_ary: Array<String>?
+        val title_ary: Array<String>?
+
+        if (_kline!!.isDrawTimeLine()) {
+            value_ary = arrayOf(date_str,
+                    model.nPriceClose!!.toPlainString(),
+                    model.n24Vol!!.toPlainString(),
+                    model.n24TotalAmount!!.toPlainString(),
+                    if (model.nAvgPrice != null) model.nAvgPrice!!.toPlainString() else "--"
+            )
+            title_ary = arrayOf(
+                    R.string.kLabelKLineDate.xmlstring(_ctx),
+                    R.string.kLabelKLinePrice.xmlstring(_ctx),
+                    R.string.kLabelKLineVol.xmlstring(_ctx),
+                    R.string.kLabelKLineTotalAmount.xmlstring(_ctx),
+                    R.string.kLabelKLineAvgPrice.xmlstring(_ctx)
+            )
+
         } else {
-            8.0f
+            value_ary = arrayOf(
+                    date_str,
+                    model.nPriceOpen!!.toPlainString(),
+                    model.nPriceHigh!!.toPlainString(),
+                    model.nPriceLow!!.toPlainString(),
+                    model.nPriceClose!!.toPlainString(),
+                    model.change!!.toPlainString(),
+                    model.change_percent!!.toPriceAmountString(),
+                    model.n24Vol!!.toPlainString(),
+                    model.n24TotalAmount!!.toPlainString(),
+                    if (model.nAvgPrice != null) model.nAvgPrice!!.toPlainString() else "--"
+            )
+            title_ary = arrayOf(
+                    R.string.kLabelKLineDate.xmlstring(_ctx),
+                    R.string.kLabelKLineOpen.xmlstring(_ctx),
+                    R.string.kLabelKLineHigh.xmlstring(_ctx),
+                    R.string.kLabelKLineLow.xmlstring(_ctx),
+                    R.string.kLabelKLineClose.xmlstring(_ctx),
+                    R.string.kLabelKLineChange.xmlstring(_ctx),
+                    R.string.kLabelKLineChangePercent.xmlstring(_ctx),
+                    R.string.kLabelKLineVol.xmlstring(_ctx),
+                    R.string.kLabelKLineTotalAmount.xmlstring(_ctx),
+                    R.string.kLabelKLineAvgPrice.xmlstring(_ctx)
+            )
         }
-        var fDetailHeight: Float = fDetailLineHeight * fDetailLineNumber + 4.dp
+
+        //  3、描绘详情
+        val fDetailX: Float
+        val fDetailY: Float
+        val fDetailLineHeight: Float = 14.0f.dp
+        val fDetailWidth: Float = 112.0f.dp
+        val fDetailLineNumber: Float = title_ary.size.toFloat()
+        val fDetailHeight: Float = fDetailLineHeight * fDetailLineNumber + 4.dp
 
         if (model.showIndex >= _kline!!._maxShowNumber / 2) {
             //  十字叉详情：靠左边显示
@@ -129,38 +172,6 @@ class ViewKLineCross : ViewBase {
         paint.color = resources.getColor(R.color.theme01_textColorNormal)
         paint.style = Paint.Style.STROKE
         canvas.drawRect(x1, y1, x2, y2, paint)
-
-        //  分时图和蜡烛图十字叉详情显示不同数据。
-        val date_str: String = _kline!!.formatDateString(model.date)
-        val value_ary: Array<String>?
-        val title_ary: Array<String>?
-
-        if (_kline!!.isDrawTimeLine()) {
-            value_ary = arrayOf(date_str, model.nPriceClose!!.toPlainString(), model.n24Vol!!.toPlainString())
-            title_ary = arrayOf(R.string.kLabelKLineDate.xmlstring(_ctx), R.string.kLabelKLinePrice.xmlstring(_ctx), R.string.kLabelKLineVol.xmlstring(_ctx))
-
-        } else {
-            value_ary = arrayOf(
-                    date_str,
-                    model.nPriceOpen!!.toPlainString(),
-                    model.nPriceHigh!!.toPlainString(),
-                    model.nPriceLow!!.toPlainString(),
-                    model.nPriceClose!!.toPlainString(),
-                    model.change!!.toPlainString(),
-                    model.change_percent!!.toPriceAmountString(),
-                    model.n24Vol!!.toPlainString()
-            )
-            title_ary = arrayOf(
-                    R.string.kLabelKLineDate.xmlstring(_ctx),
-                    R.string.kLabelKLineOpen.xmlstring(_ctx),
-                    R.string.kLabelKLineHigh.xmlstring(_ctx),
-                    R.string.kLabelKLineLow.xmlstring(_ctx),
-                    R.string.kLabelKLineClose.xmlstring(_ctx),
-                    R.string.kLabelKLineChange.xmlstring(_ctx),
-                    R.string.kLabelKLineChangePercent.xmlstring(_ctx),
-                    R.string.kLabelKLineVol.xmlstring(_ctx)
-            )
-        }
 
         //  3.2、详情 Value
         for ((lineIndex, value: String) in value_ary.withIndex()) {
