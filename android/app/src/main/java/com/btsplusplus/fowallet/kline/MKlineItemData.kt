@@ -21,7 +21,9 @@ class MKlineItemData {
     var nPriceHigh: BigDecimal? = null
     var nPriceLow: BigDecimal? = null
 
-    var n24Vol: BigDecimal? = null
+    var n24Vol: BigDecimal? = null              //  成交量
+    var n24TotalAmount: BigDecimal? = null      //  成交额
+    var nAvgPrice: BigDecimal? = null           //  成交均价
 
     var ma60: BigDecimal? = null                //  分时图需要显示 / for timeline
 
@@ -73,6 +75,8 @@ class MKlineItemData {
         nPriceLow = null
 
         n24Vol = null
+        n24TotalAmount = null
+        nAvgPrice = null
 
         ma60 = null
 
@@ -195,6 +199,7 @@ class MKlineItemData {
                 val n_close_price = n_close_base.divide(n_close_quote, cell_scale, cell_rounding)
 
                 _fillto.n24Vol = bigDecimalfromAmount(data.getString("quote_volume"), n_quote_precision)
+                _fillto.n24TotalAmount = bigDecimalfromAmount(data.getString("base_volume"), n_base_precision)
                 _fillto.isRise = n_open_price <= n_close_price
 
                 //  REMARK：完全一致、高低也相同
@@ -224,6 +229,7 @@ class MKlineItemData {
                 val n_close_price = n_close_quote.divide(n_close_base, cell_scale, cell_rounding)
 
                 _fillto.n24Vol = bigDecimalfromAmount(data.getString("base_volume"), n_quote_precision)
+                _fillto.n24TotalAmount = bigDecimalfromAmount(data.getString("quote_volume"), n_base_precision)
                 _fillto.isRise = n_open_price <= n_close_price
 
                 //  REMARK：开收相同、高低反向
@@ -231,6 +237,13 @@ class MKlineItemData {
                 _fillto.nPriceClose = n_close_price
                 _fillto.nPriceHigh = n_low_price
                 _fillto.nPriceLow = n_high_price
+            }
+
+            //  成交均价
+            if (_fillto.n24Vol!! > BigDecimal.ZERO) {
+                _fillto.nAvgPrice = _fillto.n24TotalAmount!!.divide(_fillto.n24Vol, cell_scale, cell_rounding)
+            } else {
+                _fillto.nAvgPrice = null
             }
 
             //  计算涨跌额和涨跌幅
