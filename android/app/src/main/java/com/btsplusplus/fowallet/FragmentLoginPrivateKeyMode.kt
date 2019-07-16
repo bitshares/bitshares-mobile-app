@@ -82,7 +82,7 @@ class FragmentLoginPrivateKeyMode : Fragment() {
             return
         }
 
-        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
+        val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
         mask.show()
         ChainObjectManager.sharedChainObjectManager().queryAccountDataHashFromKeys(jsonArrayfrom(calc_bts_active_address)).then {
             val account_data_hash = it as JSONObject

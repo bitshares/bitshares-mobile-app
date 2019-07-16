@@ -88,7 +88,7 @@ class ActivityWalletManager : BtsppActivity() {
             return
         }
         //  查询要导入的账号信息。
-        val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), this)
+        val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this)
         mask.show()
         ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(accountName).then {
             mask.dismiss()
@@ -161,7 +161,7 @@ class ActivityWalletManager : BtsppActivity() {
             return
         }
         val accountName = data.getString("name")
-        val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), this)
+        val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this)
         mask.show()
         ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(accountName).then {
             mask.dismiss()
@@ -253,7 +253,7 @@ class ActivityWalletManager : BtsppActivity() {
 
     private fun removeAccountCore(accountName: String, pubkeyList: JSONArray, newCurrentName: String?) {
         if (newCurrentName != null) {
-            val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), this)
+            val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this)
             mask.show()
             ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(newCurrentName).then {
                 mask.dismiss()
@@ -530,7 +530,7 @@ class ActivityWalletManager : BtsppActivity() {
         val account_namelist = WalletManager.sharedWalletManager().getWalletAccountNameList()
         assert(account_namelist.length() > 0)
 
-        val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), this)
+        val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this)
         mask.show()
 
         val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()

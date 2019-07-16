@@ -86,13 +86,13 @@ class ActivityGatewayWithdraw : BtsppActivity() {
                 put("value", _intermediateAccount!!.getJSONObject("account").getString("name"))
             })
         }
-        if (appext.withdrawMaxAmountOnce != null && appext.withdrawMaxAmountOnce != ""){
+        if (appext.withdrawMaxAmountOnce != null && appext.withdrawMaxAmountOnce != "") {
             _aux_data_array.put(JSONObject().apply {
                 put("title", R.string.kVcDWCellMaxWithdrawNumberOnce.xmlstring(ctx))
                 put("value", "${appext.withdrawMaxAmountOnce} $symbol")
             })
         }
-        if (appext.withdrawMaxAmount24Hours != null && appext.withdrawMaxAmount24Hours != ""){
+        if (appext.withdrawMaxAmount24Hours != null && appext.withdrawMaxAmount24Hours != "") {
             _aux_data_array.put(JSONObject().apply {
                 put("title", R.string.kVcDWCellMaxWithdrawNumber24Hours.xmlstring(ctx))
                 put("value", "${appext.withdrawMaxAmount24Hours} $symbol")
@@ -326,9 +326,9 @@ class ActivityGatewayWithdraw : BtsppActivity() {
                         R.string.kVcDWSubmitSecondConfirmMsg03.xmlstring(this)
                     }
                     UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kWarmTips), tipMessage, btn_ok = R.string.kVcDWSubmitSecondBtnContinue.xmlstring(this)).then {
-                        if ( it != null && it as Boolean ) {
+                        if (it != null && it as Boolean) {
                             //  b、继续提币确认
-                            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
+                            val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this), this)
                             mask.show()
 
                             val appext = _withdrawAssetItem.get("kAppExt") as GatewayAssetItemData
@@ -337,7 +337,7 @@ class ActivityGatewayWithdraw : BtsppActivity() {
                             //  REMARK：查询提币所需信息（账号、memo等）该接口返回都promise不会发生reject，不用catch。
                             (_gateway.get("api") as GatewayBase).queryWithdrawIntermediateAccountAndFinalMemo(appext, str_address, str_memo, intermediateAccountData).then {
                                 val withdraw_info = it as? JSONObject
-                                if (withdraw_info == null){
+                                if (withdraw_info == null) {
                                     mask.dismiss()
                                     showToast(R.string.kVcDWErrTipsRequestWithdrawAddrFailed.xmlstring(this))
                                     return@then null
@@ -349,10 +349,10 @@ class ActivityGatewayWithdraw : BtsppActivity() {
 
                                 //  REMARK：验证提币地址、数量、备注等是否合法。不用catch。
                                 (_gateway.get("api") as GatewayBase).checkAddress(_withdrawAssetItem, str_address, final_memo, n_amount.toString()).then { valid ->
-                                    if (valid != null && valid as Boolean){
+                                    if (valid != null && valid as Boolean) {
                                         //  c、地址验证通过继续提币
                                         _processWithdrawCore(mask, str_address, n_amount, final_memo, final_account_data, from_public_memo)
-                                    }else{
+                                    } else {
                                         mask.dismiss()
                                         showToast(R.string.kVcDWSubmitTipsInvalidAddress.xmlstring(this))
                                     }
@@ -390,7 +390,7 @@ class ActivityGatewayWithdraw : BtsppActivity() {
     /**
      *  (private) 各种参数校验通过，处理提币转账请求。
      */
-    private fun _processWithdrawCore(mask: ViewMesk, address: String, n_amount: BigDecimal, final_memo: String, final_intermediate_account: JSONObject, from_public_memo: String) {
+    private fun _processWithdrawCore(mask: ViewMask, address: String, n_amount: BigDecimal, final_memo: String, final_intermediate_account: JSONObject, from_public_memo: String) {
         assert(_asset != null)
 
         //  TODO:fowallet 很多特殊处理

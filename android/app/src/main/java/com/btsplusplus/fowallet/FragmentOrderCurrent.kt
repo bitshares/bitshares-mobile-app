@@ -305,7 +305,7 @@ class FragmentOrderCurrent : BtsppFragment() {
                 op, account_data) { isProposal, _ ->
             assert(!isProposal)
             //  请求网络广播
-            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
+            val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
             mask.show()
             BitsharesClientManager.sharedBitsharesClientManager().cancelLimitOrders(jsonArrayfrom(op)).then {
                 //  订单取消了：设置待更新标记

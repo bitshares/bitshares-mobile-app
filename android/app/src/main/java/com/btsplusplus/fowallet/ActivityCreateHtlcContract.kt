@@ -548,7 +548,7 @@ class ActivityCreateHtlcContract : BtsppActivity() {
         GuardProposalOrNormalTransaction(EBitsharesOperations.ebo_htlc_create, false, false, op, opaccount) { isProposal: Boolean, proposal_create_args: JSONObject? ->
             assert(!isProposal)
             //  请求网络广播
-            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
+            val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this), this)
             mask.show()
             BitsharesClientManager.sharedBitsharesClientManager().htlcCreate(op).then { transaction_confirmation ->
                 val new_htlc_id = OrgUtils.extractNewObjectID(transaction_confirmation as? JSONArray)

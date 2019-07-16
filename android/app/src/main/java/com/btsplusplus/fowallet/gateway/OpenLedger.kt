@@ -3,7 +3,7 @@ package com.btsplusplus.fowallet.gateway
 import android.content.Context
 import bitshares.*
 import com.btsplusplus.fowallet.R
-import com.btsplusplus.fowallet.ViewMesk
+import com.btsplusplus.fowallet.ViewMask
 import com.fowallet.walletcore.bts.ChainObjectManager
 import org.json.JSONArray
 import org.json.JSONObject
@@ -76,7 +76,8 @@ class OpenLedger : GatewayBase() {
             val withdraw_limit = withdraw_item.getJSONObject("limit").getJSONObject("source")
 
             val symbol = asset_symbol.toUpperCase()
-            val balance_item = balanceHash.optJSONObject(symbol) ?: jsonObjectfromKVS("iszero", true)
+            val balance_item = balanceHash.optJSONObject(symbol)
+                    ?: jsonObjectfromKVS("iszero", true)
 
             val backingCoin = withdraw_item.getJSONObject("destination").getString("asset").toUpperCase()
 
@@ -127,7 +128,7 @@ class OpenLedger : GatewayBase() {
         }
 
         val p = Promise()
-        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
+        val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
         mask.show()
         OrgUtils.asyncJsonGet(final_url, args).then {
             mask.dismiss()

@@ -61,7 +61,7 @@ class FragmentRegisterWalletMode : Fragment() {
         }
 
         //   --- 开始注册 ---
-        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
+        val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
         mask.show()
         //  1、查询名字是否被占用。
         val username = account_name.toLowerCase()

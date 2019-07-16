@@ -51,7 +51,7 @@ class ActivityMarginRanking : BtsppActivity() {
     }
 
     private fun queryCallOrderData(pos: Int) {
-        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
+        val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this), this)
         mask.show()
         val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
         val chainMgr = ChainObjectManager.sharedChainObjectManager()

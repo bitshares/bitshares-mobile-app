@@ -181,7 +181,7 @@ class ActivityTransfer : BtsppActivity() {
         val asset = _transfer_args!!.getJSONObject("asset")
         val op_data = _transfer_args!!.getJSONObject("kOpData")
         //  请求网络广播
-        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
+        val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this), this)
         mask.show()
         BitsharesClientManager.sharedBitsharesClientManager().transfer(op_data).then {
             val account_id = _full_account_data!!.getJSONObject("account").getString("id")
@@ -208,7 +208,7 @@ class ActivityTransfer : BtsppActivity() {
     }
 
     private fun _processTransferCore(from: JSONObject, to: JSONObject, asset: JSONObject, amount: Double, memo: String?, from_public_memo: String?) {
-        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
+        val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this), this)
         mask.show()
 
         val promise_map = JSONObject()

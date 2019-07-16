@@ -57,7 +57,7 @@ class ActivityDepositAndWithdraw : BtsppActivity() {
                     put(JSONObject().apply {
                         put("title", R.string.kVcDWHelpTitleSupport.xmlstring(ctx))
                         put("value", "https://openledger.freshdesk.com")
-                        put("url",true)
+                        put("url", true)
                     })
                 })
             })
@@ -160,7 +160,7 @@ class ActivityDepositAndWithdraw : BtsppActivity() {
     private fun queryFullAccountDataAndCoinList() {
         val account_data = _fullAccountData.getJSONObject("account")
 
-        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
+        val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this), this)
         mask.show()
 
         val p1 = ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(account_data.getString("id"))
@@ -477,7 +477,7 @@ class ActivityDepositAndWithdraw : BtsppActivity() {
 
         //  获取充币地址
         val ctx = this
-        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
+        val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
         mask.show()
         (_currGateway.get("api") as GatewayBase).requestDepositAddress(item, _fullAccountData, this).then {
             //  错误处理
@@ -539,12 +539,12 @@ class ActivityDepositAndWithdraw : BtsppActivity() {
         }
     }
 
-    private fun _queryGatewayIntermediateAccountInfo(appext: GatewayAssetItemData) : Promise {
+    private fun _queryGatewayIntermediateAccountInfo(appext: GatewayAssetItemData): Promise {
         val ctx = this
         val intermediateAccount = appext.intermediateAccount
         val p = Promise()
-        if (intermediateAccount != null && intermediateAccount != ""){
-            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
+        if (intermediateAccount != null && intermediateAccount != "") {
+            val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this), this)
             mask.show()
             ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(intermediateAccount).then {
                 mask.dismiss()

@@ -93,7 +93,7 @@ class ActivityVoting : BtsppActivity() {
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
         val p4 = chainMgr.queryLastBudgetObject()
         val p5 = chainMgr.queryAccountVotingInfos(WalletManager.sharedWalletManager().getWalletAccountInfo()!!.getJSONObject("account").getString("id"))
-        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
+        val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this), this)
         mask.show()
         Promise.all(p0, p1, p2, p3, p4, p5).then {
             var data_array = it as JSONArray
@@ -226,7 +226,7 @@ class ActivityVoting : BtsppActivity() {
                 op_data, account_data) { isProposal, _ ->
             assert(!isProposal)
             //  请求网络广播
-            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
+            val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this), this)
             mask.show()
             BitsharesClientManager.sharedBitsharesClientManager().accountUpdate(op_data).then {
                 //  投票成功、继续请求、刷新界面。

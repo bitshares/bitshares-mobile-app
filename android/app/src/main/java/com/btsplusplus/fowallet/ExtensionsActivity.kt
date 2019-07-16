@@ -86,7 +86,7 @@ fun android.app.Activity.viewUserLimitOrders(account_id: String, tradingPair: Tr
     //  [统计]
     btsppLogCustom("event_view_userlimitorders", jsonObjectfromKVS("account", account_id))
 
-    val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
+    val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this), this)
     mask.show()
     //  1、查账号数据
     val p1 = ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(account_id)
@@ -148,7 +148,7 @@ fun android.app.Activity.viewUserAssets(account_name_or_id: String) {
     //  [统计]
     btsppLogCustom("event_view_userassets", jsonObjectfromKVS("account", account_name_or_id))
 
-    val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
+    val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this), this)
     mask.show()
 
     val chainMgr = ChainObjectManager.sharedChainObjectManager()
@@ -280,7 +280,7 @@ fun android.app.Activity.onExecuteCreateProposalCore(opcode: EBitsharesOperation
     val fee_paying_account_id = fee_paying_account.getString("id")
 
     //  请求
-    val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
+    val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this), this)
     mask.show()
     BitsharesClientManager.sharedBitsharesClientManager().proposalCreate(opcode, opdata, opaccount, proposal_create_args).then {
         mask.dismiss()

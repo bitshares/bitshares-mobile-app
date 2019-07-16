@@ -102,7 +102,7 @@ class FragmentAssetsHtlcList : BtsppFragment() {
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
 
         activity?.let { ctx ->
-            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
+            val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
             mask.show()
 
             _queryUserHTLCObjectList().then {
@@ -560,7 +560,7 @@ class FragmentAssetsHtlcList : BtsppFragment() {
         if (WalletManager.sharedWalletManager().isMyselfAccount(_full_account_data!!.getJSONObject("account").getString("name"))) {
             _gotoCreateHTLC(ctx, htlc, _full_account_data!!)
         } else {
-            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
+            val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
             mask.show()
             val p1 = (ctx as Activity).get_full_account_data_and_asset_hash(WalletManager.sharedWalletManager().getWalletAccountName()!!)
             val p2 = ChainObjectManager.sharedChainObjectManager().queryFeeAssetListDynamicInfo()  //  查询手续费兑换比例、手续费池等信息
@@ -600,7 +600,7 @@ class FragmentAssetsHtlcList : BtsppFragment() {
         (ctx as Activity).GuardProposalOrNormalTransaction(EBitsharesOperations.ebo_htlc_redeem, false, false, op, opaccount) { isProposal: Boolean, proposal_create_args: JSONObject? ->
             assert(!isProposal)
             //  请求网络广播
-            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
+            val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
             mask.show()
             BitsharesClientManager.sharedBitsharesClientManager().htlcRedeem(op).then {
                 mask.dismiss()
@@ -658,7 +658,7 @@ class FragmentAssetsHtlcList : BtsppFragment() {
         (ctx as Activity).GuardProposalOrNormalTransaction(EBitsharesOperations.ebo_htlc_extend, false, false, op, opaccount) { isProposal: Boolean, proposal_create_args: JSONObject? ->
             assert(!isProposal)
             //  请求网络广播
-            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
+            val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
             mask.show()
             BitsharesClientManager.sharedBitsharesClientManager().htlcExtend(op).then {
                 mask.dismiss()

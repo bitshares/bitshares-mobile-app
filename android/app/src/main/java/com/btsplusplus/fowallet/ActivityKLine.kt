@@ -148,7 +148,7 @@ class ActivityKLine : BtsppActivity() {
     private fun _queryInitData() {
         //  请求数据
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
-        val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), this)
+        val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this)
         mask.show()
 
         chainMgr.queryShortBackingAssetInfos(jsonArrayfrom(_tradingPair._baseId, _tradingPair._quoteId)).then {
@@ -446,7 +446,7 @@ class ActivityKLine : BtsppActivity() {
     }
 
     fun queryKdata(seconds: Int, ekdptType: ViewKLine.EKlineDatePeriodType) {
-        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
+        val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this), this)
         mask.show()
 
         val now = Utils.now_ts()

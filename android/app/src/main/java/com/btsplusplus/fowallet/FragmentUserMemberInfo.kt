@@ -127,7 +127,7 @@ class FragmentUserMemberInfo : BtsppFragment() {
             assert(!isProposal)
 
             //  请求网络广播
-            val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), _ctx)
+            val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), _ctx)
             mask.show()
 
             BitsharesClientManager.sharedBitsharesClientManager().accountUpgrde(op_data).then {
@@ -173,7 +173,7 @@ class FragmentUserMemberInfo : BtsppFragment() {
 
         val act = _ctx as Activity
 
-        val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), _ctx)
+        val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), _ctx)
         mask.show()
 
         BitsharesClientManager.sharedBitsharesClientManager().calcOperationFee(op_data, EBitsharesOperations.ebo_account_upgrade).then {
