@@ -124,7 +124,7 @@ class ActivityCreateProposal : BtsppActivity() {
         val ids = container.keys().toJSONArray()
 
         //  查询
-        val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), this)
+        val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this)
         mask.show()
         ChainObjectManager.sharedChainObjectManager().queryAllGrapheneObjects(ids).then {
             mask.dismiss()

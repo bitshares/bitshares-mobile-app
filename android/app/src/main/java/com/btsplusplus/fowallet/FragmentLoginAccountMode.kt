@@ -81,7 +81,7 @@ class FragmentLoginAccountMode : Fragment() {
 
         //  开始请求
         val username = account_name.toLowerCase()
-        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
+        val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
         mask.show()
         ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(username).then {
             mask.dismiss()

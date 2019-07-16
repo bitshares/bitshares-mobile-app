@@ -61,7 +61,7 @@ class FragmentRegisterAccountMode : Fragment() {
         }
 
         //  --- 开始注册 ---
-        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
+        val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
         mask.show()
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
         val username = account_name.toLowerCase()

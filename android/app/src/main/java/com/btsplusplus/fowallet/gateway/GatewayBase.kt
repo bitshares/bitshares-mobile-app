@@ -1,13 +1,11 @@
 package com.btsplusplus.fowallet.gateway
 
 import android.content.Context
-import android.text.style.TtsSpan
 import bitshares.*
 import com.btsplusplus.fowallet.R
 import org.json.JSONArray
 import org.json.JSONObject
 import java.math.BigDecimal
-import java.text.DecimalFormat
 
 open class GatewayBase {
 
@@ -226,7 +224,8 @@ open class GatewayBase {
                 }
 
                 val symbol = item.getString("symbol").toUpperCase()
-                val balance_item = balanceHash.optJSONObject(symbol) ?: jsonObjectfromKVS("iszero", true)
+                val balance_item = balanceHash.optJSONObject(symbol)
+                        ?: jsonObjectfromKVS("iszero", true)
 
                 val appext = GatewayAssetItemData()
                 appext.enableWithdraw = enableWithdraw
@@ -270,7 +269,8 @@ open class GatewayBase {
         val outputAddress = account_data.getString("name")
 
         //  获取默认的地址请求URL
-        val final_url = request_deposit_address_url ?: "${_api_config_json.getString("base")}${_api_config_json.getString("request_deposit_address")}"
+        val final_url = request_deposit_address_url
+                ?: "${_api_config_json.getString("base")}${_api_config_json.getString("request_deposit_address")}"
         val post_args = JSONObject().apply {
             put("inputCoinType", backingCoinType)
             put("outputCoinType", coinType)
@@ -362,32 +362,32 @@ open class GatewayBase {
         return p
     }
 
-/**
- *  (public) 查询提币网关中间账号以及转账需要备注的memo信息。
- */
-    open fun queryWithdrawIntermediateAccountAndFinalMemo(appext: GatewayAssetItemData, address: String, memo: String?, intermediateAccountData: JSONObject?) : Promise {
+    /**
+     *  (public) 查询提币网关中间账号以及转账需要备注的memo信息。
+     */
+    open fun queryWithdrawIntermediateAccountAndFinalMemo(appext: GatewayAssetItemData, address: String, memo: String?, intermediateAccountData: JSONObject?): Promise {
         //  GDEX & RUDEX 格式
         assert(intermediateAccountData != null)
         //  TODO:fowallet 很多特殊处理
         //  useFullAssetName        - 部分网关提币备注资产名需要 网关.资产
         //  assetWithdrawlAlias     - 部分网关部分币种提币备注和bts上资产名字不同。
         val assetName = appext.backSymbol
-        val final_memo = if (memo !=null && memo != ""){
-            String.format("%s:%s:%s",assetName,address,memo)
+        val final_memo = if (memo != null && memo != "") {
+            String.format("%s:%s:%s", assetName, address, memo)
         } else {
-            String.format("%s:%s",assetName,address)
+            String.format("%s:%s", assetName, address)
         }
         return Promise._resolve(JSONObject().apply {
-            put("intermediateAccount",appext.intermediateAccount)
-            put("finalMemo",final_memo)
-            put("intermediateAccountData",intermediateAccountData)
+            put("intermediateAccount", appext.intermediateAccount)
+            put("finalMemo", final_memo)
+            put("intermediateAccountData", intermediateAccountData)
         })
     }
 
-/**
- *  辅助 - 根据json的value获取对应的数字字符串。
- */
-    open fun auxValueToNumberString(json_value: String, zero_as_nil: Boolean) : String? {
+    /**
+     *  辅助 - 根据json的value获取对应的数字字符串。
+     */
+    open fun auxValueToNumberString(json_value: String, zero_as_nil: Boolean): String? {
         val value = BigDecimal(json_value)
         if (zero_as_nil && value.compareTo(BigDecimal.ZERO) == 0) {
             return null
@@ -395,13 +395,17 @@ open class GatewayBase {
         return value.toPlainString()
     }
 
-/**
- *  辅助 - 根据json的value获取对应的数字字符串，并返回两者中较小的值。
- */
-    open fun auxMinValue(json_value01: String, json_value02: String, zero_as_nil: Boolean) : String? {
+    /**
+     *  辅助 - 根据json的value获取对应的数字字符串，并返回两者中较小的值。
+     */
+    open fun auxMinValue(json_value01: String, json_value02: String, zero_as_nil: Boolean): String? {
         val value01 = BigDecimal(json_value01)
         val value02 = BigDecimal(json_value02)
-        val minValue = if ( value01 <= value02 ) { value01 } else { value02 }
+        val minValue = if (value01 <= value02) {
+            value01
+        } else {
+            value02
+        }
         if (zero_as_nil && minValue.compareTo(BigDecimal.ZERO) == 0) {
             return null
         }

@@ -356,7 +356,7 @@ class FragmentLoginWalletMode : Fragment() {
         }
 
         //  查询 Key 详情
-        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
+        val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
         mask.show()
         ChainObjectManager.sharedChainObjectManager().queryAccountDataHashFromKeys(pubkey_list).then {
             val account_data_hash = it as JSONObject

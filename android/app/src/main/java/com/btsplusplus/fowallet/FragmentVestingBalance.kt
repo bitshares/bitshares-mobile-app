@@ -49,7 +49,7 @@ class FragmentVestingBalance : BtsppFragment() {
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
 
         activity?.let { ctx ->
-            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
+            val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
             mask.show()
 
             val account = _full_account_data!!.getJSONObject("account")
@@ -127,7 +127,7 @@ class FragmentVestingBalance : BtsppFragment() {
                     EBitsharesVestingPolicy.ebvp_cdd_vesting_policy.value,
                     EBitsharesVestingPolicy.ebvp_instant_vesting_policy.value -> {
                         var name = nameHash.optString(oid, null)
-                        if (name == null){
+                        if (name == null) {
                             val balance_type = vesting.optString("balance_type", null)
                             if (balance_type != null && balance_type.toLowerCase() == "market_fee_sharing") {
                                 name = R.string.kVestingCellNameMarketFeeSharing.xmlstring(_ctx!!)
@@ -260,7 +260,8 @@ class FragmentVestingBalance : BtsppFragment() {
                 }
             }
             //  不用额外验证
-            EBitsharesVestingPolicy.ebvp_instant_vesting_policy.value -> {}
+            EBitsharesVestingPolicy.ebvp_instant_vesting_policy.value -> {
+            }
             EBitsharesVestingPolicy.ebvp_linear_vesting_policy.value -> {
                 assert(false)   //  TODO:不支持
             }
@@ -308,7 +309,7 @@ class FragmentVestingBalance : BtsppFragment() {
         activity!!.GuardProposalOrNormalTransaction(EBitsharesOperations.ebo_vesting_balance_withdraw, false, false,
                 op, account) { isProposal, _ ->
             assert(!isProposal)
-            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
+            val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
             mask.show()
             BitsharesClientManager.sharedBitsharesClientManager().vestingBalanceWithdraw(op).then {
                 mask.dismiss()

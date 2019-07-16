@@ -237,7 +237,8 @@ class OrgUtils {
 
             var n = n_debt.multiply(n_mcr)
             if (set_divide_precision) {
-                val cell_hanndler = handler ?: BigDecimalHandler(BigDecimal.ROUND_UP, if (invert) collateral_precision else debt_precision)
+                val cell_hanndler = handler
+                        ?: BigDecimalHandler(BigDecimal.ROUND_UP, if (invert) collateral_precision else debt_precision)
                 n = if (invert) {
                     BigDecimal.ONE.divide(n.divide(n_collateral, kBigDecimalDefaultMaxPrecision, kBigDecimalDefaultRoundingMode), cell_hanndler.scale, cell_hanndler.roundingMode)
                 } else {
@@ -360,7 +361,7 @@ class OrgUtils {
             val s_base_amount = base.getString("amount")
             val s_quote_amount = quote.getString("amount")
             //  REMARK：价格失效（比如喂价过期等情况）
-            if (s_base_amount.toLong() == 0L || s_quote_amount.toLong() == 0L){
+            if (s_base_amount.toLong() == 0L || s_quote_amount.toLong() == 0L) {
                 return null
             }
 

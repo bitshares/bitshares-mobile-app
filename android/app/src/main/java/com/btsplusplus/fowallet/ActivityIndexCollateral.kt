@@ -222,7 +222,7 @@ class ActivityIndexCollateral : BtsppActivity() {
                 op, opaccount) { isProposal, _ ->
             assert(!isProposal)
             //  请求网络广播
-            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
+            val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this), this)
             mask.show()
             BitsharesClientManager.sharedBitsharesClientManager().callOrderUpdate(op).then {
                 ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(funding_account).then {
@@ -358,7 +358,7 @@ class ActivityIndexCollateral : BtsppActivity() {
         //  获取背书资产
         val newDebtAsset = ChainObjectManager.sharedChainObjectManager().getAssetBySymbol(newDebtAssetSymbol)
         //  获取当前资产喂价信息
-        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
+        val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this), this)
         mask.show()
         _asyncQueryFeedPrice(newDebtAsset).then {
             mask.dismiss()
@@ -711,7 +711,7 @@ class ActivityIndexCollateral : BtsppActivity() {
             val account_id = WalletManager.sharedWalletManager().getWalletAccountInfo()!!.getJSONObject("account").getString("id")
             promise_map.put("kFullAccountData", ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(account_id))
         }
-        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
+        val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this), this)
         mask.show()
         Promise.map(promise_map).then {
             mask.dismiss()

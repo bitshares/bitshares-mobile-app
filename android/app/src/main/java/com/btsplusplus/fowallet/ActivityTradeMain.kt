@@ -84,7 +84,7 @@ class ActivityTradeMain : BtsppActivity() {
         setFullScreen()
 
         //  请求数据
-        val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), this)
+        val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this)
         mask.show()
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
         //  优先查询智能背书资产信息（之后才考虑是否查询喂价、爆仓单等信息）

@@ -74,6 +74,9 @@ class FragmentTradeMainPage : BtsppFragment() {
      *  事件 - 成交历史数据更新
      */
     fun onQueryFillOrderHistoryResponsed(data_array: JSONArray?) {
+        if (!isAdded) {
+            return
+        }
         if (data_array != null && data_array.length() > 0) {
             //  更新最新成交价
             _refreshLatestPrice(!data_array.first<JSONObject>()!!.getBoolean("issell"))
@@ -144,6 +147,9 @@ class FragmentTradeMainPage : BtsppFragment() {
     }
 
     fun onFullAccountDataResponsed(full_account_data: JSONObject?) {
+        if (!isAdded) {
+            return
+        }
         //  未登录的情况，待处理。
         if (full_account_data == null) {
             return
@@ -183,10 +189,16 @@ class FragmentTradeMainPage : BtsppFragment() {
      * 事件 - ticker数据更新
      */
     fun onQueryTickerDataResponse(ticker_data: JSONObject) {
+        if (!isAdded) {
+            return
+        }
         _refreshLatestPrice(true)
     }
 
     fun onQueryOrderBookResponse(limit_orders: JSONObject) {
+        if (!isAdded) {
+            return
+        }
         //  保存
         _currLimitOrders = limit_orders
         //  更新显示精度
@@ -358,7 +370,7 @@ class FragmentTradeMainPage : BtsppFragment() {
                 op, account_data) { isProposal, _ ->
             assert(!isProposal)
             //  请求网络广播
-            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
+            val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
             mask.show()
             BitsharesClientManager.sharedBitsharesClientManager().cancelLimitOrders(jsonArrayfrom(op)).then {
                 ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(account_id).then {
@@ -572,7 +584,7 @@ class FragmentTradeMainPage : BtsppFragment() {
                 op, account_data) { isProposal, _ ->
             assert(!isProposal)
             //  请求网络广播
-            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
+            val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this.activity!!), this.activity!!)
             mask.show()
             BitsharesClientManager.sharedBitsharesClientManager().createLimitOrder(op).then {
                 //  刷新UI（清除输入框）

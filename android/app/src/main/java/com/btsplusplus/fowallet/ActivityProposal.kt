@@ -39,7 +39,7 @@ class ActivityProposal : BtsppActivity() {
         val account_name_list = WalletManager.sharedWalletManager().getWalletAccountNameList()
         assert(account_name_list.length() > 0)
 
-        val mask = ViewMesk(resources.getString(R.string.kTipsBeRequesting), this)
+        val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this)
         mask.show()
 
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
@@ -674,7 +674,7 @@ class ActivityProposal : BtsppActivity() {
         //  REMARK：查询提案发起者是否处于黑名单中，黑名单中不可批准。
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
 
-        val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
+        val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this), this)
         mask.show()
 
         chainMgr.queryAllGrapheneObjectsSkipCache(jsonArrayfrom(BTS_GRAPHENE_ACCOUNT_BTSPP_TEAM)).then {
@@ -858,7 +858,7 @@ class ActivityProposal : BtsppActivity() {
             }
         } else {
             //  普通交易：请求网络广播
-            val mask = ViewMesk(R.string.kTipsBeRequesting.xmlstring(this), this)
+            val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this), this)
             mask.show()
             BitsharesClientManager.sharedBitsharesClientManager().proposalUpdate(opdata).then {
                 mask.dismiss()

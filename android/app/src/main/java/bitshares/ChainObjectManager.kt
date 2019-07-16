@@ -1253,7 +1253,7 @@ class ChainObjectManager {
                 //  1、计算爆仓成交价   feed / mssr
                 call_price = feed_price.divide(n_mssr, kBigDecimalDefaultMaxPrecision, kBigDecimalDefaultRoundingMode)
                 call_price_market = call_price
-                if (invert){
+                if (invert) {
                     call_price_market = BigDecimal.ONE.divide(call_price, kBigDecimalDefaultMaxPrecision, kBigDecimalDefaultRoundingMode)
                 }
 

@@ -1,5 +1,6 @@
 package com.btsplusplus.fowallet
 
+import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.graphics.drawable.ClipDrawable
@@ -11,10 +12,13 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 
+class ViewMask : Dialog {
 
-class ViewMesk : Dialog {
+    private var _owner: Context? = null
 
     constructor(loading_text: String, context: Context?) : super(context) {
+        _owner = context
+
         val textView = TextView(context!!)
         textView.text = loading_text
         textView.setTextColor(context.resources.getColor(R.color.theme01_textColorMain))
@@ -60,6 +64,17 @@ class ViewMesk : Dialog {
                 return@setOnKeyListener false
             }
             return@setOnKeyListener true
+        }
+    }
+
+    override fun dismiss() {
+        val v = _owner as? Activity
+        if (v != null) {
+            if (!v.isFinishing) {
+                super.dismiss()
+            }
+        } else {
+            super.dismiss()
         }
     }
 
