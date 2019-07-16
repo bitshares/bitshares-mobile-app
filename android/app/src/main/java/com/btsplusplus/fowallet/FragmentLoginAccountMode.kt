@@ -193,7 +193,7 @@ class FragmentLoginAccountMode : Fragment() {
         v.findViewById<ImageView>(R.id.tip_link_trading_password).setOnClickListener {
             //  [统计]
             btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_trading_password"))
-            activity!!.goToWebView(_ctx!!.resources.getString(R.string.kVcTitleWhatIsTradePassowrd), "http://btspp.io/qam.html#qa_trading_password")
+            activity!!.goToWebView(_ctx!!.resources.getString(R.string.kVcTitleWhatIsTradePassowrd), "https://btspp.io/qam.html#qa_trading_password")
         }
         //  导入到已有钱包：隐藏交易密码。
         if (!_checkActivePermission) {

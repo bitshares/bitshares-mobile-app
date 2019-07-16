@@ -141,7 +141,7 @@ class ActivityLaunch : BtsppActivity() {
     private fun checkUpdate(): Promise {
         val p = Promise()
         Utils.now_ts()
-        val version_url = "http://btspp.io/app/android/o_${_appNativeVersion}/version.json?t=${Date().time}"
+        val version_url = "https://btspp.io/app/android/o_${_appNativeVersion}/version.json?t=${Date().time}"
         OrgUtils.asyncJsonGet(version_url).then {
             p.resolve(it as? JSONObject)
             return@then null

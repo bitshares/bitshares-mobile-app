@@ -109,7 +109,7 @@ class ActivityIndexMy : BtsppActivity() {
         }
 
         layout_faq_from_my.setOnClickListener {
-            goToWebView(resources.getString(R.string.faq), "http://btspp.io/qa.html")
+            goToWebView(resources.getString(R.string.faq), "https://btspp.io/qa.html")
         }
 
         layout_about_from_my.setOnClickListener {

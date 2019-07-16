@@ -72,17 +72,17 @@ class ActivityIndexCollateral : BtsppActivity() {
         findViewById<ImageView>(R.id.tip_link_curr_feed).setOnClickListener {
             //  [统计]
             btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_feed_settlement"))
-            goToWebView(resources.getString(R.string.kDebtTipTitleFeedAndCallPrice), "http://btspp.io/qam.html#qa_feed_settlement")
+            goToWebView(resources.getString(R.string.kDebtTipTitleFeedAndCallPrice), "https://btspp.io/qam.html#qa_feed_settlement")
         }
         findViewById<ImageView>(R.id.tip_link_ratio).setOnClickListener {
             //  [统计]
             btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_ratio"))
-            goToWebView(resources.getString(R.string.kDebtTipTitleWhatIsRatio), "http://btspp.io/qam.html#qa_ratio")
+            goToWebView(resources.getString(R.string.kDebtTipTitleWhatIsRatio), "https://btspp.io/qam.html#qa_ratio")
         }
         findViewById<ImageView>(R.id.tip_link_target_ratio).setOnClickListener {
             //  [统计]
             btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_target_ratio"))
-            goToWebView(resources.getString(R.string.kDebtTipTitleWhatIsTargetRatio), "http://btspp.io/qam.html#qa_target_ratio")
+            goToWebView(resources.getString(R.string.kDebtTipTitleWhatIsTargetRatio), "https://btspp.io/qam.html#qa_target_ratio")
         }
 
         //  监听事件
