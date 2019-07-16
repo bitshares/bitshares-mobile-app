@@ -141,7 +141,7 @@ class ActivityDepositAndWithdraw : BtsppActivity() {
     private fun onGatewayAssetsFAQClicked() {
         //  [统计]
         btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_deposit_withdraw"))
-        goToWebView(resources.getString(R.string.kVcTitleWhatIsGatewayAssets), "http://btspp.io/qam.html#qa_deposit_withdraw")
+        goToWebView(resources.getString(R.string.kVcTitleWhatIsGatewayAssets), "https://btspp.io/qam.html#qa_deposit_withdraw")
     }
 
     private fun onCurrentGatewayClicked() {

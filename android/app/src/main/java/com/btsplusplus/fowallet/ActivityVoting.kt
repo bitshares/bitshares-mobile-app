@@ -50,8 +50,7 @@ class ActivityVoting : BtsppActivity() {
         current_proxy_help_of_voting.setOnClickListener {
             //  [统计]
             btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_proxy"))
-            //  TODO:多语言
-            goToWebView("什么是代理人？", "http://btspp.io/qam.html#qa_proxy")
+            goToWebView(resources.getString(R.string.kVcVoteWhatIsProxy), "https://btspp.io/qam.html#qa_proxy")
         }
 
         //  底部按钮

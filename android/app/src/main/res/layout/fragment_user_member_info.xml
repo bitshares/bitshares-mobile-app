@@ -144,8 +144,9 @@
         </LinearLayout>
         <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-        <!-- 升级提示 -->
+        <!-- 升级提示 or 会员提示 TODO:2.5考虑完善改进会员用途展示 -->
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="34dp"
             android:layout_marginTop="15dp"

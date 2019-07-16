@@ -411,9 +411,8 @@ class FragmentTradeMainPage : BtsppFragment() {
 
     private fun _onTailerButtonClicked_percent(percent: BigDecimal) {
         if (_balanceData == null) {
-            //  TODO:多语言
             if (!WalletManager.sharedWalletManager().isWalletExist()) {
-                showToast("请先登录。")
+                showToast(resources.getString(R.string.kVcTradeTipPleaseLoginFirst))
             }
             return
         }

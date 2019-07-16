@@ -667,22 +667,22 @@ class FragmentVoting : BtsppFragment() {
                 kSecTypeCommitteeActive -> {
                     segtitle = String.format(_ctx!!.resources.getString(R.string.kLabelVotingActiveCommittees), n.toString())
                     auxArgs.put("kTitle", _ctx!!.resources.getString(R.string.kVcVoteWhatIsActiveCommittee))
-                    auxArgs.put("kURL", "http://btspp.io/qam.html#qa_committee")
+                    auxArgs.put("kURL", "https://btspp.io/qam.html#qa_committee")
                 }
                 kSecTypeCommitteeCandidate -> {
                     segtitle = String.format(_ctx!!.resources.getString(R.string.kLabelVotingStandbyCommittees), n.toString())
                     auxArgs.put("kTitle", _ctx!!.resources.getString(R.string.kVcVoteWhatIsStandbyCommittee))
-                    auxArgs.put("kURL", "http://btspp.io/qam.html#qa_committee_c")
+                    auxArgs.put("kURL", "https://btspp.io/qam.html#qa_committee_c")
                 }
                 kSecTypeWitnessActive -> {
                     segtitle = String.format(_ctx!!.resources.getString(R.string.kLabelVotingActiveWitnesses), n.toString())
                     auxArgs.put("kTitle", _ctx!!.resources.getString(R.string.kVcVoteWhatIsActiveWitness))
-                    auxArgs.put("kURL", "http://btspp.io/qam.html#qa_witness")
+                    auxArgs.put("kURL", "https://btspp.io/qam.html#qa_witness")
                 }
                 kSecTypeWitnessCandidate -> {
                     segtitle = String.format(_ctx!!.resources.getString(R.string.kLabelVotingStandbyWitnesses), n.toString())
                     auxArgs.put("kTitle", _ctx!!.resources.getString(R.string.kVcVoteWhatIsStandbyWitness))
-                    auxArgs.put("kURL", "http://btspp.io/qam.html#qa_witness_c")
+                    auxArgs.put("kURL", "https://btspp.io/qam.html#qa_witness_c")
                 }
                 kSecTypeWorkerExpired -> {
                     segtitle = String.format(_ctx!!.resources.getString(R.string.kLabelVotingExpiredWP), n.toString())

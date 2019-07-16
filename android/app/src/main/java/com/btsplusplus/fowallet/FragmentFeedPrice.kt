@@ -196,7 +196,7 @@ class FragmentFeedPrice : BtsppFragment() {
         v.findViewById<ImageView>(R.id.tip_link_feedprice).setOnClickListener {
             //  [统计]
             btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_feedprice"))
-            activity!!.goToWebView(_ctx!!.resources.getString(R.string.kVcTitleWhatIsFeedPrice), "http://btspp.io/qam.html#qa_feedprice")
+            activity!!.goToWebView(_ctx!!.resources.getString(R.string.kVcTitleWhatIsFeedPrice), "https://btspp.io/qam.html#qa_feedprice")
         }
         _currentView = v
         //  refresh UI
