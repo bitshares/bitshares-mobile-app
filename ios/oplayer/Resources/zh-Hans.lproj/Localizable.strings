@@ -355,7 +355,7 @@
 "kVestingCellPeriodMin" = "%@分";
 "kVestingCellPeriodHour" = "%@小时";
 "kVestingCellPeriodDay" = "%@天";
-"kVestingCellPeriodInstant" = "立即解冻";
+"kVestingCellPeriodInstant" = "立即";
 "kVestingCellNameWorkerFunds" = "预算项目薪资";
 "kVestingCellNameWitnessFunds" = "见证人薪资";
 "kVestingCellNameCashbackFunds" = "网络手续费返现";
