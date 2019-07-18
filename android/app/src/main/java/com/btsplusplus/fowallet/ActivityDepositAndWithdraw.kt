@@ -43,24 +43,25 @@ class ActivityDepositAndWithdraw : BtsppActivity() {
         //  TODO:1.6 动态加载配置数据
         val ctx = this
         _gatewayArray = JSONArray().apply {
-            // OpenLedger   API reference: https://github.com/bitshares/bitshares-ui/files/3068123/OL-gateways-api.pdf
-            put(JSONObject().apply {
-                put("name", "OpenLedger")
-                put("api", OpenLedger().initWithApiConfig(JSONObject().apply {
-                    put("base", "https://gateway.openledger.io")
-                    put("assets", "/assets")
-                    put("exchanges", "/exchanges")
-                    put("request_deposit_address", "/exchanges/%s/transfer/source/prototype")
-                    put("validate", "/exchanges/%s/transfer/destination")
-                }))
-                put("helps", JSONArray().apply {
-                    put(JSONObject().apply {
-                        put("title", R.string.kVcDWHelpTitleSupport.xmlstring(ctx))
-                        put("value", "https://openledger.freshdesk.com")
-                        put("url", true)
-                    })
-                })
-            })
+            //  TODO:2.5 open的新api还存在部分bug，open那边再进行修复，待修复完毕之后再开放该功能。
+//            // OpenLedger   API reference: https://github.com/bitshares/bitshares-ui/files/3068123/OL-gateways-api.pdf
+//            put(JSONObject().apply {
+//                put("name", "OpenLedger")
+//                put("api", OpenLedger().initWithApiConfig(JSONObject().apply {
+//                    put("base", "https://gateway.openledger.io")
+//                    put("assets", "/assets")
+//                    put("exchanges", "/exchanges")
+//                    put("request_deposit_address", "/exchanges/%s/transfer/source/prototype")
+//                    put("validate", "/exchanges/%s/transfer/destination")
+//                }))
+//                put("helps", JSONArray().apply {
+//                    put(JSONObject().apply {
+//                        put("title", R.string.kVcDWHelpTitleSupport.xmlstring(ctx))
+//                        put("value", "https://openledger.freshdesk.com")
+//                        put("url", true)
+//                    })
+//                })
+//            })
             //  GDEX
             put(JSONObject().apply {
                 put("name", "GDEX")
