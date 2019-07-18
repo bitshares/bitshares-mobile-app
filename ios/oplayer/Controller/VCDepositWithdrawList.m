@@ -215,20 +215,21 @@ enum
     
     //  TODO:1.6 动态加载配置数据
     _gatewayArray = @[
-                      @{
-                          //    API reference: https://github.com/bitshares/bitshares-ui/files/3068123/OL-gateways-api.pdf
-                          @"name":@"OpenLedger",
-                          @"api":[[OpenLedger alloc] initWithApiConfig:@{
-                                                                         @"base":@"https://gateway.openledger.io",
-                                                                         @"assets":@"/assets",
-                                                                         @"exchanges":@"/exchanges",
-                                                                         @"request_deposit_address":@"/exchanges/%@/transfer/source/prototype",
-                                                                         @"validate":@"/exchanges/%@/transfer/destination",
-                                                                         }],
-                          @"helps":@[
-                                  @{@"title":NSLocalizedString(@"kVcDWHelpTitleSupport", @"帮助"), @"value":@"https://openledger.freshdesk.com", @"url":@YES},
-                                  ],
-                          },
+                      //    TODO:2.5 open的新api还存在部分bug，open那边再进行修复，待修复完毕之后再开放该功能。
+//                      @{
+//                          //    API reference: https://github.com/bitshares/bitshares-ui/files/3068123/OL-gateways-api.pdf
+//                          @"name":@"OpenLedger",
+//                          @"api":[[OpenLedger alloc] initWithApiConfig:@{
+//                                                                         @"base":@"https://gateway.openledger.io",
+//                                                                         @"assets":@"/assets",
+//                                                                         @"exchanges":@"/exchanges",
+//                                                                         @"request_deposit_address":@"/exchanges/%@/transfer/source/prototype",
+//                                                                         @"validate":@"/exchanges/%@/transfer/destination",
+//                                                                         }],
+//                          @"helps":@[
+//                                  @{@"title":NSLocalizedString(@"kVcDWHelpTitleSupport", @"帮助"), @"value":@"https://openledger.freshdesk.com", @"url":@YES},
+//                                  ],
+//                          },
                       @{
                           @"name":@"GDEX",
                           @"api":[[GatewayBase alloc] initWithApiConfig:@{
