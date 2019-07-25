@@ -745,9 +745,9 @@
 "kOpDesc_asset_update_bitasset" = "更新智能币。";
 "kOpDesc_asset_update_feed_producers" = "%@ 资产更新发布喂价的账号信息。";
 "kOpDesc_asset_issue" = "资产发行。";
-"kOpDesc_asset_reserve" = "资产销毁。";
+"kOpDesc_asset_reserve" = "%@ 销毁 %@。";
 "kOpDesc_asset_fund_fee_pool" = "注资手续费池。";
-"kOpDesc_asset_settle" = "资产强清。";
+"kOpDesc_asset_settle" = "%@ 强制清算 %@。";
 "kOpDesc_asset_global_settle" = "资产全局清算。";
 "kOpDesc_asset_publish_feed" = "发布喂价。";
 "kOpDesc_witness_create" = "创建见证人。";
@@ -774,7 +774,7 @@
 "kOpDesc_blind_transfer" = "隐私转账。";
 "kOpDesc_transfer_from_blind" = "从隐私账户转出。";
 "kOpDesc_asset_settle_cancel" = "取消清算。";
-"kOpDesc_asset_claim_fees" = "提取资产手续费。";
+"kOpDesc_asset_claim_fees" = "%@ 提取 %@ 资产手续费。";
 "kOpDesc_fba_distribute" = "FBA分发。";
 "kOpDesc_bid_collateral" = "黑天鹅竞价。";
 "kOpDesc_execute_bid" = "竞价成功。";

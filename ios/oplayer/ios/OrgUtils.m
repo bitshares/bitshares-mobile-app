@@ -954,7 +954,8 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
             break;
         case ebo_asset_claim_fees:
         {
-            //  TODO:
+            [container setObject:@YES forKey:[opdata objectForKey:@"issuer"]];
+            [container setObject:@YES forKey:[[opdata objectForKey:@"amount_to_claim"] objectForKey:@"asset_id"]];
         }
             break;
         case ebo_fba_distribute:
@@ -1220,8 +1221,9 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
         case ebo_asset_reserve:
         {
             name = NSLocalizedString(@"kOpType_asset_reserve", @"资产销毁");
-            desc = NSLocalizedString(@"kOpDesc_asset_reserve", @"销毁资产。");
-            //  TODO:待细化
+            desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_asset_reserve", @"%@ 销毁 %@。"),
+                    GRAPHENE_NAME(@"payer"),
+                    GRAPHENE_ASSET_N(@"amount_to_reserve")];
         }
             break;
         case ebo_asset_fund_fee_pool:
@@ -1233,9 +1235,10 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
             break;
         case ebo_asset_settle:
         {
-            name = NSLocalizedString(@"kOpType_asset_settle", @"资产清算");
-            desc = NSLocalizedString(@"kOpDesc_asset_settle", @"清算资产。");
-            //  TODO:待细化
+            name = NSLocalizedString(@"kOpType_asset_settle", @"资产强清");
+            desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_asset_settle", @"%@ 强清 %@。"),
+                    GRAPHENE_NAME(@"account"),
+                    GRAPHENE_ASSET_N(@"amount")];
         }
             break;
         case ebo_asset_global_settle:
@@ -1421,8 +1424,9 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
         case ebo_asset_claim_fees:
         {
             name = NSLocalizedString(@"kOpType_asset_claim_fees", @"提取资产手续费");
-            desc = NSLocalizedString(@"kOpDesc_asset_claim_fees", @"提取资产手续费。");
-            //  TODO:待细化
+            desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_asset_claim_fees", @"%@ 提取 %@ 资产手续费。"),
+                    GRAPHENE_NAME(@"issuer"),
+                    GRAPHENE_ASSET_N(@"amount_to_claim")];
         }
             break;
         case ebo_fba_distribute:

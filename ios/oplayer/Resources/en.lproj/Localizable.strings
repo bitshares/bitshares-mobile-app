@@ -745,9 +745,9 @@
 "kOpDesc_asset_update_bitasset" = "update bitasset.";
 "kOpDesc_asset_update_feed_producers" = "%@ update feed publisher.";
 "kOpDesc_asset_issue" = "issue assets.";
-"kOpDesc_asset_reserve" = "reserve assets.";
+"kOpDesc_asset_reserve" = "%@ reserves %@.";
 "kOpDesc_asset_fund_fee_pool" = "fund the fee pool.";
-"kOpDesc_asset_settle" = "settle assets.";
+"kOpDesc_asset_settle" = "%@ settles %@.";
 "kOpDesc_asset_global_settle" = "global settle assets.";
 "kOpDesc_asset_publish_feed" = "publish feed price.";
 "kOpDesc_witness_create" = "create a witness.";
@@ -774,7 +774,7 @@
 "kOpDesc_blind_transfer" = "blind transfer.";
 "kOpDesc_transfer_from_blind" = "transfer asset from a blind account.";
 "kOpDesc_asset_settle_cancel" = "cancel the settlement.";
-"kOpDesc_asset_claim_fees" = "claim the asset fees.";
+"kOpDesc_asset_claim_fees" = "%@ claims %@ asset fees.";
 "kOpDesc_fba_distribute" = "FBA distribute.";
 "kOpDesc_bid_collateral" = "bid collateral.";
 "kOpDesc_execute_bid" = "bidding collateral success.";
