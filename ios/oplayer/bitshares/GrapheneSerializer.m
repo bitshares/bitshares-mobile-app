@@ -95,6 +95,8 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [T_proposal_update performSelector:@selector(register_subfields)];
     [T_proposal_delete performSelector:@selector(register_subfields)];
     
+    [T_asset_update_issuer performSelector:@selector(register_subfields)];
+    
     [T_htlc_create performSelector:@selector(register_subfields)];
     [T_htlc_redeem performSelector:@selector(register_subfields)];
     [T_htlc_extend performSelector:@selector(register_subfields)];
@@ -699,6 +701,8 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
             return [T_proposal_update class];
         case ebo_proposal_delete:
             return [T_proposal_delete class];
+        case ebo_asset_update_issuer:
+            return [T_asset_update_issuer class];
         case ebo_htlc_create:
             return [T_htlc_create class];
         case ebo_htlc_redeem:
@@ -958,6 +962,19 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [self add_field:@"fee_paying_account" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
     [self add_field:@"using_owner_authority" class:[T_bool class]];
     [self add_field:@"proposal" class:[[Tm_protocol_id_type alloc] initWithName:@"proposal"]];
+    [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
+}
+
+@end
+
+@implementation T_asset_update_issuer
+
++ (void)register_subfields
+{
+    [self add_field:@"fee" class:[T_asset class]];
+    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"asset_to_update" class:[[Tm_protocol_id_type alloc] initWithName:@"asset"]];
+    [self add_field:@"new_issuer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
 

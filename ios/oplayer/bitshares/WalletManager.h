@@ -129,6 +129,7 @@ typedef enum EAccountPermissionStatus
  *  根据手续费支付账号ID获取本地钱包中需要参与签名的 公钥列表。
  */
 - (NSArray*)getSignKeysFromFeePayingAccount:(NSString*)fee_paying_account;
+- (NSArray*)getSignKeysFromFeePayingAccount:(NSString*)fee_paying_account requireOwnerPermission:(BOOL)requireOwnerPermission;
 
 /**
  *  是否有足够的权限状态判断。（本地钱包中的私钥是否足够签署交易，否则视为提案交易。）

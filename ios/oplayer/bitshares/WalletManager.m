@@ -688,12 +688,18 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
  */
 - (NSArray*)getSignKeysFromFeePayingAccount:(NSString*)fee_paying_account
 {
+    return [self getSignKeysFromFeePayingAccount:fee_paying_account requireOwnerPermission:NO];
+}
+- (NSArray*)getSignKeysFromFeePayingAccount:(NSString*)fee_paying_account requireOwnerPermission:(BOOL)requireOwnerPermission
+{
+    NSString* permissionKey = requireOwnerPermission ? @"owner" : @"active";
+    
     assert(fee_paying_account);
     id accountDataList = [[self getWalletInfo] objectForKey:@"kAccountDataList"];
     if (accountDataList && [accountDataList count] > 0){
         for (id accountData in accountDataList) {
             if ([[accountData objectForKey:@"id"] isEqualToString:fee_paying_account]){
-                return [self getSignKeys:[accountData objectForKey:@"active"]];
+                return [self getSignKeys:[accountData objectForKey:permissionKey]];
             }
         }
     }
@@ -703,7 +709,7 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
     if (currentFullData){
         id accountData = [currentFullData objectForKey:@"account"];
         if (accountData && [[accountData objectForKey:@"id"] isEqualToString:fee_paying_account]){
-            return [self getSignKeys:[accountData objectForKey:@"active"]];
+            return [self getSignKeys:[accountData objectForKey:permissionKey]];
         }
     }
     

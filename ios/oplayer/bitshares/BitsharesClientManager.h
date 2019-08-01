@@ -70,6 +70,11 @@
 - (WsPromise*)proposalUpdate:(NSDictionary*)opdata;
 
 /**
+ *  OP - 更新资产发行者
+ */
+- (WsPromise*)assetUpdateIssuer:(NSDictionary*)opdata;
+
+/**
  *  OP - 创建HTLC合约
  */
 - (WsPromise*)htlcCreate:(NSDictionary*)opdata;

@@ -980,7 +980,9 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
             break;
         case ebo_asset_update_issuer:
         {
-            //  TODO:2.1 fowallet 未完成
+            [container setObject:@YES forKey:[opdata objectForKey:@"issuer"]];
+            [container setObject:@YES forKey:[opdata objectForKey:@"asset_to_update"]];
+            [container setObject:@YES forKey:[opdata objectForKey:@"new_issuer"]];
         }
             break;
         case ebo_htlc_create:
@@ -1460,8 +1462,11 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
         case ebo_asset_update_issuer:
         {
             name = NSLocalizedString(@"kOpType_asset_update_issuer", @"更新资产发行账号");
-            desc = NSLocalizedString(@"kOpDesc_asset_update_issuer", @"更改资产发行账号。");
-            //  TODO:待细化
+            id issuer = GRAPHENE_NAME(@"issuer");
+            id asset_to_update = GRAPHENE_ASSET_SYMBOL(@"asset_to_update");
+            id new_issuer = GRAPHENE_NAME(@"new_issuer");
+            desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_asset_update_issuer", @"%@ 更新 %@ 资产的所有者账号为 %@。"),
+                    issuer, asset_to_update, new_issuer];
         }
             break;
         case ebo_htlc_create:

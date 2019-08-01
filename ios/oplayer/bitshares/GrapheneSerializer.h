@@ -185,6 +185,12 @@
 @end
 
 /**
+ *  OP - 资产相关操作
+ */
+@interface T_asset_update_issuer : T_Base
+@end
+
+/**
  *  OP - HTLC相关
  */
 @interface T_htlc_create : T_Base
