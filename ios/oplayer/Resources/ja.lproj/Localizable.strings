@@ -162,6 +162,7 @@
 
 /* 登录&注册&备份 */
 "kLoginPageModePassword" = "アカウントモード";
+"kLoginPageModeBrainKey" = "ブレインキー";
 "kLoginPageModePrivateKey" = "キーファイルモード";
 "kLoginPageModeWallet" = "ウオレットモード";
 "kLoginTipsPlaceholderAccount" = "アカウントを入力してください";
@@ -779,7 +780,7 @@
 "kOpDesc_bid_collateral" = "黑天鹅竞价。";
 "kOpDesc_execute_bid" = "竞价成功。";
 "kOpDesc_asset_claim_pool" = "提取手续费池资产。";
-"kOpDesc_asset_update_issuer" = "更改资产发行账号。";
+"kOpDesc_asset_update_issuer" = "%@ は %@ の所有者を %@ に更新します。";
 "kOpDesc_htlc_create_with_id" = "%@ 准备转账 %@ 到 %@。#%@";
 "kOpDesc_htlc_create" = "%@ 准备转账 %@ 到 %@。";
 "kOpDesc_htlc_redeem" = "%@ 使用原像 %@ 赎回HTLC。#%@";

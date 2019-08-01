@@ -162,6 +162,7 @@
 
 /* 登录&注册&备份 */
 "kLoginPageModePassword" = "Normal";
+"kLoginPageModeBrainKey" = "Brain Key";
 "kLoginPageModePrivateKey" = "Private Key";
 "kLoginPageModeWallet" = "Wallet";
 "kLoginTipsPlaceholderAccount" = "Please input bitshares account";
@@ -779,7 +780,7 @@
 "kOpDesc_bid_collateral" = "bid collateral.";
 "kOpDesc_execute_bid" = "bidding collateral success.";
 "kOpDesc_asset_claim_pool" = "claim the asset pool.";
-"kOpDesc_asset_update_issuer" = "update asset issuer account.";
+"kOpDesc_asset_update_issuer" = "%@ update %@ asset owner to %@.";
 "kOpDesc_htlc_create_with_id" = "%@ ready to transfer %@ to %@. #%@";
 "kOpDesc_htlc_create" = "%@ ready to transfer %@ to %@.";
 "kOpDesc_htlc_redeem" = "%@ redeem HTLC with preimage %@. #%@";
