@@ -61,8 +61,6 @@ enum
 
 @implementation VCLoginPasswordMode
 
-@synthesize tmpUsername, tmpPassword;
-
 -(void)dealloc
 {
     _owner = nil;
@@ -163,17 +161,6 @@ enum
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    if (self.tmpUsername)
-    {
-        _tf_username.text = self.tmpUsername;
-        self.tmpUsername = nil;
-    }
-    if (self.tmpPassword)
-    {
-        _tf_password.text = self.tmpPassword;
-        self.tmpPassword = nil;
-    }
-    //  TODO:fowallet _tf_trade_password
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -313,9 +300,7 @@ enum
                 assert(owner_private_wif);
                 assert(active_private_wif);
                 id full_wallet_bin = [[WalletManager sharedWalletManager] genFullWalletData:pUsername
-                                                                                     active:active_private_wif
-                                                                                      owner:owner_private_wif
-                                                                                       memo:nil
+                                                                           private_wif_keys:@[active_private_wif, owner_private_wif]
                                                                             wallet_password:trade_password];
                 
                 //  保存钱包信息

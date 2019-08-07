@@ -105,9 +105,8 @@
             placeHolder = NSLocalizedString(@"unlockTipsPleaseInputAccountPassword", @"请输入帐号密码");
             break;
         case kwmPasswordWithWallet:
-            placeHolder = NSLocalizedString(@"unlockTipsPleaseInputTradePassword", @"请输入交易密码");
-            break;
         case kwmPrivateKeyWithWallet:
+        case kwmBrainKeyWithWallet:
             placeHolder = NSLocalizedString(@"unlockTipsPleaseInputTradePassword", @"请输入交易密码");
             break;
         case kwmFullWalletMode:

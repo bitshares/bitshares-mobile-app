@@ -166,6 +166,7 @@
 "kLoginPageModePrivateKey" = "キーファイルモード";
 "kLoginPageModeWallet" = "ウオレットモード";
 "kLoginTipsPlaceholderAccount" = "アカウントを入力してください";
+"kLoginTipsPlaceholderBrainKey" = "各言葉の間にスペースを入れて、ニーモニックを入力してください。";
 "kLoginTipsPlaceholderTradePassword" = "取引パスワードを入力してください";
 "kLoginTipsPlaceholderActiveKey" = "資金キーファイルを入力してください";
 "kLoginTipsPlaceholderConfirmPassword" =  "パスワードを確認してください";

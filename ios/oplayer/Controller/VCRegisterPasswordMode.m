@@ -352,9 +352,6 @@ enum
 
 - (nullable NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    //    if ([self getSectionType:section] == kVcFastLogin){
-    //        return NSLocalizedString(@"tip_click_account_to_login", @"点击以下账号可直接快速登录、滑动可删除。");
-    //    }
     return nil;
 }
 

@@ -166,6 +166,7 @@
 "kLoginPageModePrivateKey" = "Private Key";
 "kLoginPageModeWallet" = "Wallet";
 "kLoginTipsPlaceholderAccount" = "Please input bitshares account";
+"kLoginTipsPlaceholderBrainKey" = "Please enter a mnemonic, separated by spaces between each word.";
 "kLoginTipsPlaceholderTradePassword" = "Please input wallet password";
 "kLoginTipsPlaceholderActiveKey" = "Please input active private key";
 "kLoginTipsPlaceholderConfirmPassword" =  "Please confirm password";

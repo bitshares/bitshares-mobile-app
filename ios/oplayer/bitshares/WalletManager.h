@@ -174,18 +174,14 @@ typedef enum EAccountPermissionStatus
  *  直接返回二进制bin。
  */
 - (NSData*)genFullWalletData:(NSString*)account_name
-                      active:(NSString*)active_private_wif
-                       owner:(NSString*)owner_private_wif
-                        memo:(NSString*)memo_private_wif
+            private_wif_keys:(NSArray*)private_wif_keys
              wallet_password:(NSString*)wallet_password;
 
 /**
  *  (public) 创建完整钱包对象。
  */
 - (NSDictionary*)genFullWalletObject:(NSString*)account_name
-                              active:(NSString*)active_private_wif
-                               owner:(NSString*)owner_private_wif
-                                memo:(NSString*)memo_private_wif
+                    private_wif_keys:(NSArray*)private_wif_keys
                      wallet_password:(NSString*)wallet_password;
 
 /**
@@ -201,12 +197,17 @@ typedef enum EAccountPermissionStatus
 /**
  *  (public) 根据脑密钥单词字符串 和 HD子密钥索引编号 生成WIF格式私钥。REMARK：sha512(brainKey + " " + seq)作为seed。
  */
-- (NSString*)genPrivateKeyFromBrainKey:(NSString*)brainKeyPlainText sequence:(NSInteger)sequence;
++ (NSString*)genPrivateKeyFromBrainKey:(NSString*)brainKeyPlainText sequence:(NSInteger)sequence;
 
 /**
  *  (public) 随机生成脑密钥
  */
 - (NSString*)suggestBrainKey;
+
+/**
+ *  (public) 归一化脑密钥，按照不可见字符切分字符串，然后用标准空格连接。
+ */
++ (NSString*)normalizeBrainKey:(NSString*)brainKey;
 
 /**
  *  (public) 辅助 - Aes256加密，并返回16进制字符串，密钥 seed。

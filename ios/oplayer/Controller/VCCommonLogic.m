@@ -128,6 +128,142 @@
     })];
 }
 
+/**
+ *  根据私钥登录（导入）区块链账号。
+ */
++ (void)onLoginWithKeysHash:(VCBase*)this
+                       keys:(NSDictionary*)pub_pri_keys_hash
+      checkActivePermission:(BOOL)checkActivePermission
+             trade_password:(NSString*)pTradePassword
+                 login_mode:(EWalletMode)login_mode
+                 login_desc:(NSString*)login_desc
+    errMsgInvalidPrivateKey:(NSString*)errMsgInvalidPrivateKey errMsgActivePermissionNotEnough:(NSString*)errMsgActivePermissionNotEnough
+{
+    assert([pub_pri_keys_hash count] > 0);
+    
+    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+    
+    [this showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    [[[chainMgr queryAccountDataHashFromKeys:[pub_pri_keys_hash allKeys]] then:(^id(id account_data_hash) {
+        if ([account_data_hash count] <= 0){
+            [this hideBlockView];
+            [OrgUtils makeToast:errMsgInvalidPrivateKey];
+            return nil;
+        }
+        id account_data_list = [account_data_hash allValues];
+        //  TODO:一个私钥关联多个账号
+#ifndef DEBUG
+        if ([account_data_list count] >= 2){
+            NSString* name_join_strings = [[account_data_list ruby_map:(^id(id src) {
+                return [src objectForKey:@"name"];
+            })] componentsJoinedByString:@","];
+            CLS_LOG(@"ONE KEY %@ ACCOUNTS: %@", @([account_data_list count]), name_join_strings);
+        }
+#endif
+        //  默认选择第一个账号 TODO:弹框选择一个
+        id account_data = [account_data_list firstObject];
+        return [[chainMgr queryFullAccountInfo:account_data[@"id"]] then:(^id(id full_data) {
+            [this hideBlockView];
+            
+            if (!full_data || [full_data isKindOfClass:[NSNull class]])
+            {
+                //  这里的帐号信息应该存在，因为帐号ID是通过 get_key_references 返回的。
+                [OrgUtils makeToast:NSLocalizedString(@"kLoginImportTipsQueryAccountFailed", @"查询帐号信息失败，请稍后再试。")];
+                return nil;
+            }
+            
+            //  获取账号数据
+            id account = [full_data objectForKey:@"account"];
+            NSString* accountName = account[@"name"];
+            
+            //  验证Active权限，导入钱包时不验证。
+            if (checkActivePermission){
+                //  获取active权限数据
+                id account_active = [account objectForKey:@"active"];
+                assert(account_active);
+                
+                //  检测权限是否足够签署需要active权限的交易。
+                EAccountPermissionStatus status = [WalletManager calcPermissionStatus:account_active
+                                                                      privateKeysHash:pub_pri_keys_hash];
+                if (status == EAPS_NO_PERMISSION){
+                    [OrgUtils makeToast:errMsgInvalidPrivateKey];
+                    return nil;
+                }else if (status == EAPS_PARTIAL_PERMISSION){
+                    [OrgUtils makeToast:errMsgActivePermissionNotEnough];
+                    return nil;
+                }
+            }
+            
+            //  筛选账号 account 所有公钥对应的私钥。（即：有效私钥）
+            NSMutableDictionary* account_all_pubkeys = [WalletManager getAllPublicKeyFromAccountData:account result:nil];
+            NSMutableArray* valid_private_wif_keys = [NSMutableArray array];
+            for (NSString* pubkey in pub_pri_keys_hash) {
+                if ([[account_all_pubkeys objectForKey:pubkey] boolValue]){
+                    [valid_private_wif_keys addObject:[pub_pri_keys_hash objectForKey:pubkey]];
+                }
+            }
+            assert([valid_private_wif_keys count] > 0);
+            
+            if (!checkActivePermission){
+                //  导入账号到现有钱包BIN文件中
+                id full_wallet_bin = [[WalletManager sharedWalletManager] walletBinImportAccount:accountName
+                                                                               privateKeyWifList:[valid_private_wif_keys copy]];
+                assert(full_wallet_bin);
+                [[AppCacheManager sharedAppCacheManager] updateWalletBin:full_wallet_bin];
+                [[AppCacheManager sharedAppCacheManager] autoBackupWalletToWebdir:NO];
+                //  重新解锁（即刷新解锁后的账号信息）。
+                id unlockInfos = [[WalletManager sharedWalletManager] reUnlock];
+                assert(unlockInfos && [[unlockInfos objectForKey:@"unlockSuccess"] boolValue]);
+                
+                //  返回
+                [TempManager sharedTempManager].importToWalletDirty = YES;
+                [this.myNavigationController tempDisableDragBack];
+                [OrgUtils showMessageUseHud:NSLocalizedString(@"kWalletImportSuccess", @"导入完成")
+                                       time:1
+                                     parent:this.navigationController.view
+                            completionBlock:^{
+                                [this.myNavigationController tempEnableDragBack];
+                                [this.navigationController popViewControllerAnimated:YES];
+                            }];
+            }else{
+                //  创建完整钱包模式
+                id full_wallet_bin = [[WalletManager sharedWalletManager] genFullWalletData:accountName
+                                                                           private_wif_keys:[valid_private_wif_keys copy]
+                                                                            wallet_password:pTradePassword];
+                
+                //  保存钱包信息
+                [[AppCacheManager sharedAppCacheManager] setWalletInfo:login_mode
+                                                           accountInfo:full_data
+                                                           accountName:accountName
+                                                         fullWalletBin:full_wallet_bin];
+                [[AppCacheManager sharedAppCacheManager] autoBackupWalletToWebdir:NO];
+                //  导入成功 用交易密码 直接解锁。
+                id unlockInfos = [[WalletManager sharedWalletManager] unLock:pTradePassword];
+                assert(unlockInfos &&
+                       [[unlockInfos objectForKey:@"unlockSuccess"] boolValue] &&
+                       [[unlockInfos objectForKey:@"haveActivePermission"] boolValue]);
+                //  [统计]
+                [OrgUtils logEvents:@"loginEvent" params:@{@"mode":@(login_mode), @"desc":login_desc ?: @"unknown"}];
+                
+                //  返回
+                [this.myNavigationController tempDisableDragBack];
+                [OrgUtils showMessageUseHud:NSLocalizedString(@"kLoginTipsLoginOK", @"登录成功。")
+                                       time:1
+                                     parent:this.navigationController.view
+                            completionBlock:^{
+                                [this.myNavigationController tempEnableDragBack];
+                                [this.navigationController popViewControllerAnimated:YES];
+                            }];
+            }
+            return nil;
+        })];
+    })] catch:(^id(id error) {
+        [this hideBlockView];
+        [OrgUtils showGrapheneError:error];
+        return nil;
+    })];
+}
+
 + (void)showPicker:(VCBase*)this selectAsset:(NSArray*)assets title:(NSString*)title callback:(void (^)(id selectItem))callback
 {
     NSArray* itemlist = [assets ruby_map:(^id(id src) {

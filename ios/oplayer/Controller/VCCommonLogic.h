@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "MyPopviewManager.h"
 #import "TradingPair.h"
+#import "AppCacheManager.h"
 
 @class VCBase;
 @interface VCCommonLogic : NSObject
@@ -22,6 +23,17 @@
  *  查询&显示用户资产信息
  */
 + (void)viewUserAssets:(VCBase*)this_ account:(NSString*)account_name_or_id;
+
+/**
+ *  根据私钥登录（导入）区块链账号。
+ */
++ (void)onLoginWithKeysHash:(VCBase*)this_
+                       keys:(NSDictionary*)pub_pri_keys_hash
+      checkActivePermission:(BOOL)checkActivePermission
+             trade_password:(NSString*)pTradePassword
+                 login_mode:(EWalletMode)login_mode
+                 login_desc:(NSString*)login_desc
+    errMsgInvalidPrivateKey:(NSString*)errMsgInvalidPrivateKey errMsgActivePermissionNotEnough:(NSString*)errMsgActivePermissionNotEnough;
 
 /**
  *  弹框让用户选择要转账的资产类型

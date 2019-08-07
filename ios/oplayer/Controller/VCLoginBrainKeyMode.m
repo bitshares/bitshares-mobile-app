@@ -1,5 +1,5 @@
 //
-//  VCLoginPrivateKeyMode.m
+//  VCLoginBrainKeyMode.m
 //  oplayer
 //
 //  Created by SYALON on 13-10-23.
@@ -7,7 +7,7 @@
 //
 #import <QuartzCore/QuartzCore.h>
 
-#import "VCLoginPrivateKeyMode.h"
+#import "VCLoginBrainKeyMode.h"
 #import "BitsharesClientManager.h"
 
 #import "MBProgressHUD.h"
@@ -19,10 +19,13 @@
 #import "WalletManager.h"
 
 #import "VCBtsaiWebView.h"
+#import "MyTextView.h"
 
 #import <Crashlytics/Crashlytics.h>
 
-//  ［账号+密码] + [登录]
+#import "HDWallet.h"
+
+//  ［助记词+钱包密码] + [登录]
 enum
 {
     kVcUser = 0,
@@ -33,36 +36,38 @@ enum
 
 enum
 {
-    kVcSubUserActivePrivateKey = 0,     //  资金私钥（私钥模式不需要帐号名）
+    kVcSubUserBrainKeyWorkds = 0,       //  助记词
     kVcSubUserTradingPassword,          //  交易密码（私钥模式必须启用）
     
     kVcSubUserMax
 };
 
-@interface VCLoginPrivateKeyMode ()
+@interface VCLoginBrainKeyMode ()
 {
     __weak VCBase*          _owner;                 //  REMARK：声明为 weak，否则会导致循环引用。
     BOOL                    _checkActivePermission; //  登录时验证active权限。
     
     UITableView *           _mainTableView;
     
-    MyTextField*            _tf_private_key;
+    MyTextView*             _tv_brain_key;
     MyTextField*            _tf_trade_password;
+    
     ViewBlockLabel*         _lbLogin;
 }
 
 @end
 
-@implementation VCLoginPrivateKeyMode
+@implementation VCLoginBrainKeyMode
 
 -(void)dealloc
 {
     _owner = nil;
     
-    if (_tf_private_key){
-        _tf_private_key.delegate = nil;
-        _tf_private_key = nil;
+    if (_tv_brain_key){
+        _tv_brain_key.delegate = nil;
+        _tv_brain_key = nil;
     }
+
     if (_tf_trade_password){
         _tf_trade_password.delegate = nil;
         _tf_trade_password = nil;
@@ -94,11 +99,19 @@ enum
     
     self.view.backgroundColor = [UIColor clearColor];
     
-    CGRect rect = [self makeTextFieldRect];
+    ThemeManager* theme = [ThemeManager sharedThemeManager];
     
-    _tf_private_key = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault
-                                 placeholder:NSLocalizedString(@"kLoginTipsPlaceholderActiveKey", @"请输入资金权限私钥")
-                                      action:@selector(onTipButtonClicked:) tag:kVcSubUserActivePrivateKey];
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    _tv_brain_key = [[MyTextView alloc] initWithFrame:CGRectMake(0, 0, screenRect.size.width  - 32, 28 * 4)];
+    _tv_brain_key.dataDetectorTypes = UIDataDetectorTypeAll;
+    [_tv_brain_key setFont:[UIFont systemFontOfSize:16]];
+    _tv_brain_key.placeholder = NSLocalizedString(@"kLoginTipsPlaceholderBrainKey", @"请输入助记词，每个单词之间按空格分割。");
+    _tv_brain_key.backgroundColor = [UIColor clearColor];
+    _tv_brain_key.dataDetectorTypes = UIDataDetectorTypeNone;
+    _tv_brain_key.textColor = theme.textColorMain;
+    _tv_brain_key.tintColor = theme.tintColor;
+    
+    CGRect rect = [self makeTextFieldRect];
     if (_checkActivePermission){
         _tf_trade_password = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault
                                         placeholder:NSLocalizedString(@"kLoginTipsPlaceholderTradePassword", @"请输入交易密码")
@@ -108,17 +121,11 @@ enum
         _tf_trade_password = nil;
     }
     
-    //  颜色字号下划线
-    _tf_private_key.updateClearButtonTintColor = YES;
-    _tf_private_key.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    _tf_private_key.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_private_key.placeholder
-                                                                         attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                      NSFontAttributeName:[UIFont systemFontOfSize:17]}];
     if (_tf_trade_password){
         _tf_trade_password.updateClearButtonTintColor = YES;
-        _tf_trade_password.textColor = [ThemeManager sharedThemeManager].textColorMain;
+        _tf_trade_password.textColor = theme.textColorMain;
         _tf_trade_password.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_trade_password.placeholder
-                                                                                   attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
+                                                                                   attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
                                                                                                 NSFontAttributeName:[UIFont systemFontOfSize:17]}];
     }
     
@@ -164,8 +171,7 @@ enum
 {
     [self.view endEditing:YES];
     
-    [_tf_private_key safeResignFirstResponder];
-//    [_tf_username safeResignFirstResponder];
+    [_tv_brain_key safeResignFirstResponder];
     if (_tf_trade_password){
         [_tf_trade_password safeResignFirstResponder];
     }
@@ -176,10 +182,16 @@ enum
  */
 - (void)loginBitshares_AccountMode
 {
-    NSString* pPrivateKey = [NSString trim:_tf_private_key.text];
-    NSString* pTradePassword = @"";
-    
     //  检测参数有效性
+    NSString* pBrainKey = [NSString trim:_tv_brain_key.text];
+    if ([self isStringEmpty:pBrainKey]){
+        [OrgUtils makeToast:@"助记词无效，请重新输入。"];//TODO:
+        return;
+    }
+    pBrainKey = [WalletManager normalizeBrainKey:pBrainKey];
+    
+    //  校验：交易密码
+    NSString* pTradePassword = @"";
     if (_checkActivePermission){
         pTradePassword = [NSString trim:_tf_trade_password.text];
         if (![OrgUtils isValidBitsharesWalletPassword:pTradePassword]){
@@ -189,27 +201,46 @@ enum
     }
     
     [self.view endEditing:YES];
-    [_tf_private_key safeResignFirstResponder];
+    [_tv_brain_key safeResignFirstResponder];
     if (_tf_trade_password){
         [_tf_trade_password safeResignFirstResponder];
     }
     
     //  开始登录
-    pPrivateKey = pPrivateKey ? pPrivateKey : @"";
-    NSString* pPublicKey = [OrgUtils genBtsAddressFromWifPrivateKey:pPrivateKey];
-    if (!pPublicKey){
-        [OrgUtils makeToast:NSLocalizedString(@"kLoginSubmitTipsInvalidPrivateKey", @"私钥数据无效，请重新输入。")];
-        return;
-    }
     
+    NSMutableDictionary* pub_pri_keys_hash = [NSMutableDictionary dictionary];
+    
+    //  根据BIP32、BIP39、BIP44规范，从助记词生成种子、和各种子私钥。
+    HDWallet* hdk = [HDWallet fromMnemonic:pBrainKey];
+    HDWallet* new_key_owner = [hdk deriveBitshares:EHDBPT_OWNER];
+    HDWallet* new_key_active = [hdk deriveBitshares:EHDBPT_ACTIVE];
+    HDWallet* new_key_memo = [hdk deriveBitshares:EHDBPT_MEMO];
+    NSString* pri_key_owner = [new_key_owner toWifPrivateKey];
+    NSString* pri_key_active = [new_key_active toWifPrivateKey];
+    NSString* pri_key_memo = [new_key_memo toWifPrivateKey];
+    NSString* pub_key_owner = [OrgUtils genBtsAddressFromWifPrivateKey:pri_key_owner];
+    NSString* pub_key_active = [OrgUtils genBtsAddressFromWifPrivateKey:pri_key_active];
+    NSString* pub_key_memo = [OrgUtils genBtsAddressFromWifPrivateKey:pri_key_memo];
+    [pub_pri_keys_hash setObject:pri_key_owner forKey:pub_key_owner];
+    [pub_pri_keys_hash setObject:pri_key_active forKey:pub_key_active];
+    [pub_pri_keys_hash setObject:pri_key_memo forKey:pub_key_memo];
+    
+    //  REMARK：兼容轻钱包，根据序列生成私钥匙。
+    for (NSInteger i = 0; i < 10; ++i) {
+        NSString* pri_key = [WalletManager genPrivateKeyFromBrainKey:pBrainKey sequence:i];
+        NSString* pub_key = [OrgUtils genBtsAddressFromWifPrivateKey:pri_key];
+        [pub_pri_keys_hash setObject:pri_key forKey:pub_key];
+    }
+
+    //  从各种私钥登录。
     [VCCommonLogic onLoginWithKeysHash:_owner
-                                  keys:@{pPublicKey:pPrivateKey}
+                                  keys:[pub_pri_keys_hash copy]
                  checkActivePermission:_checkActivePermission
                         trade_password:pTradePassword ?: @""
-                            login_mode:kwmPrivateKeyWithWallet
-                            login_desc:@"login with privatekey"
-               errMsgInvalidPrivateKey:NSLocalizedString(@"kLoginSubmitTipsPrivateKeyIncorrect", @"私钥不正确，请重新输入。")
-       errMsgActivePermissionNotEnough:NSLocalizedString(@"kLoginSubmitTipsPrivateKeyPermissionNotEnough", @"该私钥权限不足。")];
+                            login_mode:kwmBrainKeyWithWallet
+                            login_desc:@"login with brainkey"
+               errMsgInvalidPrivateKey:@"助记词不正确，请重新输入。"//TODO:多语言
+       errMsgActivePermissionNotEnough:@"资金权限不足，不可导入。"];//TODO:多语言
 }
 
 - (void)didReceiveMemoryWarning
@@ -223,19 +254,11 @@ enum
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    if (textField == _tf_private_key && _tf_trade_password)
-    {
-        [_tf_trade_password becomeFirstResponder];
+    [self.view endEditing:YES];
+    [_tv_brain_key safeResignFirstResponder];
+    if (_tf_trade_password){
+        [_tf_trade_password safeResignFirstResponder];
     }
-    else
-    {
-        [self.view endEditing:YES];
-        [_tf_private_key safeResignFirstResponder];
-        if (_tf_trade_password){
-            [_tf_trade_password safeResignFirstResponder];
-        }
-    }
-    //  TODO:fowallet _tf_trade_password
     return YES;
 }
 
@@ -265,6 +288,9 @@ enum
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (indexPath.section == kVcUser && indexPath.row == 0){
+        return _tv_brain_key.bounds.size.height;
+    }
     return tableView.rowHeight;
 }
 
@@ -295,16 +321,14 @@ enum
     if (indexPath.section == kVcUser)
     {
         switch (indexPath.row) {
-            case kVcSubUserActivePrivateKey:
+            case kVcSubUserBrainKeyWorkds:
             {
                 UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
                 cell.backgroundColor = [UIColor clearColor];
                 cell.showCustomBottomLine = YES;
                 cell.accessoryType = UITableViewCellAccessoryNone;
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.textLabel.text = NSLocalizedString(@"kLoginCellActivePrivateKey", @"资金私钥 ");
-                cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                cell.accessoryView = _tf_private_key;
+                cell.accessoryView = _tv_brain_key;
                 return cell;
             }
                 break;
@@ -355,7 +379,7 @@ enum
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
     [self.view endEditing:YES];
-    [_tf_private_key safeResignFirstResponder];
+    [_tv_brain_key safeResignFirstResponder];
     if (_tf_trade_password){
         [_tf_trade_password safeResignFirstResponder];
     }
@@ -365,15 +389,6 @@ enum
 - (void)onTipButtonClicked:(UIButton*)button
 {
     switch (button.tag) {
-        case kVcSubUserActivePrivateKey:
-        {
-            //  [统计]
-            [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_active_privatekey"}];
-            VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"https://btspp.io/qam.html#qa_active_privatekey"];
-            vc.title = NSLocalizedString(@"kVcTitleWhatIsActivePrivateKey", @"什么是资金私钥？");
-            [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-        }
-            break;
         case kVcSubUserTradingPassword:
         {
             //  [统计]

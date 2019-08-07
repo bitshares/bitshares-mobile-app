@@ -300,9 +300,7 @@ enum
             
             //  3、注册成功
             id full_wallet_bin = [[WalletManager sharedWalletManager] genFullWalletData:username
-                                                                                 active:private_active
-                                                                                  owner:private_owner
-                                                                                   memo:private_active
+                                                                       private_wif_keys:@[private_active, private_owner]
                                                                         wallet_password:password];
             //  查询完整帐号信息
             [[[chainMgr queryFullAccountInfo:username] then:(^id(id new_full_account_data) {

@@ -35,3 +35,13 @@
 - (void)safeResignFirstResponder;
 
 @end
+
+#pragma mark- UITextView
+/**
+ *  扩展UITextView类方法
+ */
+@interface UITextView(MethodExtension)
+
+- (void)safeResignFirstResponder;
+
+@end
