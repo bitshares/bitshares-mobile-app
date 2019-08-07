@@ -166,6 +166,7 @@
 "kLoginPageModePrivateKey" = "私钥模式";
 "kLoginPageModeWallet" = "钱包模式";
 "kLoginTipsPlaceholderAccount" = "请输入 Bitshares 账号名";
+"kLoginTipsPlaceholderBrainKey" = "请输入助记词，每个单词之间按空格分割。";
 "kLoginTipsPlaceholderTradePassword" = "请输入交易密码";
 "kLoginTipsPlaceholderActiveKey" = "请输入资金权限私钥";
 "kLoginTipsPlaceholderConfirmPassword" =  "请确认密码";

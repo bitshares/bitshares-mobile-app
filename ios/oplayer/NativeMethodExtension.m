@@ -42,3 +42,15 @@
 }
 
 @end
+
+#pragma mark- UITextView
+@implementation UITextView(MethodExtension)
+
+- (void)safeResignFirstResponder
+{
+    if ([self isFirstResponder]){
+        [self resignFirstResponder];
+    }
+}
+
+@end

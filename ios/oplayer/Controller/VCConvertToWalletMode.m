@@ -218,9 +218,7 @@
     assert(owner_private_wif);
     assert(active_private_wif);
     id full_wallet_bin = [walletMgr genFullWalletData:accountName
-                                               active:active_private_wif
-                                                owner:owner_private_wif
-                                                 memo:nil
+                                     private_wif_keys:@[active_private_wif, owner_private_wif]
                                       wallet_password:wallet_password];
     assert(full_wallet_bin);
     

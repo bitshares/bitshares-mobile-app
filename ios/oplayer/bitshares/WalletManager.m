@@ -338,15 +338,8 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
         }
             break;
         case kwmPasswordWithWallet:
-        {
-            return [self _unLockFullWallet:password];
-        }
-            break;
         case kwmPrivateKeyWithWallet:
-        {
-            return [self _unLockFullWallet:password];
-        }
-            break;
+        case kwmBrainKeyWithWallet:
         case kwmFullWalletMode:
         {
             return [self _unLockFullWallet:password];
@@ -1099,16 +1092,12 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
  *  (public) 创建完整钱包对象。直接返回二进制bin。
  */
 - (NSData*)genFullWalletData:(NSString*)account_name
-                      active:(NSString*)active_private_wif
-                       owner:(NSString*)owner_private_wif
-                        memo:(NSString*)memo_private_wif
+            private_wif_keys:(NSArray*)private_wif_keys
              wallet_password:(NSString*)wallet_password
 {
     //  生成json格式钱包
     id full_wallet_object = [self genFullWalletObject:account_name
-                                               active:active_private_wif
-                                                owner:owner_private_wif
-                                                 memo:memo_private_wif
+                                     private_wif_keys:private_wif_keys
                                       wallet_password:wallet_password];
     if (!full_wallet_object){
         NSLog(@"gen full wallet failed...");
@@ -1123,9 +1112,7 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
  *  (public) 创建完整钱包对象。
  */
 - (NSDictionary*)genFullWalletObject:(NSString*)account_name
-                              active:(NSString*)active_private_wif
-                               owner:(NSString*)owner_private_wif
-                                memo:(NSString*)memo_private_wif
+                    private_wif_keys:(NSArray*)private_wif_keys
                      wallet_password:(NSString*)wallet_password
 {
     assert(account_name);
@@ -1150,48 +1137,17 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
     //  part1
     NSMutableArray* private_keys = [NSMutableArray array];
     unsigned char private_key32_array[32];
-    if (active_private_wif){
-        id pubkey = [OrgUtils genBtsAddressFromWifPrivateKey:active_private_wif];
+    for (NSString* private_wif in private_wif_keys) {
+        if (!private_wif || [private_wif isEqualToString:@""]){
+            continue;
+        }
+        id pubkey = [OrgUtils genBtsAddressFromWifPrivateKey:private_wif];
         assert(pubkey);
         if (!pubkey){
             return nil;
         }
-        if (!__bts_gen_private_key_from_wif_privatekey((const unsigned char*)[active_private_wif UTF8String],
-                                                       (const size_t)active_private_wif.length, private_key32_array)){
-            return nil;
-        }
-        id encrypted_key = [self auxAesEncryptToHex:encryption_buffer32
-                                               data:[[NSData alloc] initWithBytes:private_key32_array length:sizeof(private_key32_array)]];
-        if (!encrypted_key){
-            return nil;
-        }
-        [private_keys addObject:@{@"id":@([private_keys count] + 1), @"encrypted_key":encrypted_key, @"pubkey":pubkey}];
-    }
-    if (owner_private_wif){
-        id pubkey = [OrgUtils genBtsAddressFromWifPrivateKey:owner_private_wif];
-        assert(pubkey);
-        if (!pubkey){
-            return nil;
-        }
-        if (!__bts_gen_private_key_from_wif_privatekey((const unsigned char*)[owner_private_wif UTF8String],
-                                                       (const size_t)owner_private_wif.length, private_key32_array)){
-            return nil;
-        }
-        id encrypted_key = [self auxAesEncryptToHex:encryption_buffer32
-                                               data:[[NSData alloc] initWithBytes:private_key32_array length:sizeof(private_key32_array)]];
-        if (!encrypted_key){
-            return nil;
-        }
-        [private_keys addObject:@{@"id":@([private_keys count] + 1), @"encrypted_key":encrypted_key, @"pubkey":pubkey}];
-    }
-    if (memo_private_wif){
-        id pubkey = [OrgUtils genBtsAddressFromWifPrivateKey:memo_private_wif];
-        assert(pubkey);
-        if (!pubkey){
-            return nil;
-        }
-        if (!__bts_gen_private_key_from_wif_privatekey((const unsigned char*)[memo_private_wif UTF8String],
-                                                       (const size_t)memo_private_wif.length, private_key32_array)){
+        if (!__bts_gen_private_key_from_wif_privatekey((const unsigned char*)[private_wif UTF8String],
+                                                       (const size_t)private_wif.length, private_key32_array)){
             return nil;
         }
         id encrypted_key = [self auxAesEncryptToHex:encryption_buffer32
@@ -1280,21 +1236,23 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
 - (NSString*)genBrainKeyPrivateWIF:(NSString*)brainKeyPlainText
 {
     assert(brainKeyPlainText);
-    brainKeyPlainText = [self _normalize_brainKey:brainKeyPlainText];
+    brainKeyPlainText = [[self class] normalizeBrainKey:brainKeyPlainText];
     return [OrgUtils genBtsWifPrivateKey:brainKeyPlainText];
 }
 
 /**
  *  (public) 根据脑密钥单词字符串 和 HD子密钥索引编号 生成WIF格式私钥。REMARK：sha512(brainKey + " " + seq)作为seed。
  */
-- (NSString*)genPrivateKeyFromBrainKey:(NSString*)brainKeyPlainText sequence:(NSInteger)sequence
++ (NSString*)genPrivateKeyFromBrainKey:(NSString*)brainKeyPlainText sequence:(NSInteger)sequence
 {
     assert(sequence >= 0);
-    brainKeyPlainText = [self _normalize_brainKey:brainKeyPlainText];
-    id str = [NSString stringWithFormat:@"%@ %@", brainKeyPlainText, @(sequence)];
+    brainKeyPlainText = [self normalizeBrainKey:brainKeyPlainText];
+    NSString* str = [NSString stringWithFormat:@"%@ %@", brainKeyPlainText, @(sequence)];
+    
+    NSData* str_data = [str dataUsingEncoding:NSUTF8StringEncoding];
     
     unsigned char digest64[64] = {0, };
-    sha512((const unsigned char*)[str UTF8String], (const size_t)[str length], digest64);
+    sha512((const unsigned char*)[str_data bytes], (const size_t)[str_data length], digest64);
     
     return [OrgUtils genBtsWifPrivateKey:digest64 size:sizeof(digest64)];
 }
@@ -1324,13 +1282,13 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
         assert(wordIndex < [dictionary count]);
         [brainkey addObject:[dictionary objectAtIndex:wordIndex]];
     }
-    return [self _normalize_brainKey:[brainkey componentsJoinedByString:@" "]];
+    return [[self class] normalizeBrainKey:[brainkey componentsJoinedByString:@" "]];
 }
 
 /**
- *  (private) 归一化脑密钥，按照不可见字符切分字符串，然后用标准空格连接。
+ *  (public) 归一化脑密钥，按照不可见字符切分字符串，然后用标准空格连接。
  */
-- (NSString*)_normalize_brainKey:(NSString*)brainKey
++ (NSString*)normalizeBrainKey:(NSString*)brainKey
 {
     assert(brainKey);
     
@@ -1348,7 +1306,7 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
             [words addObject:word];
         }
     }else{
-        assert(0);
+        assert(NO);
     }
     
     //  返回

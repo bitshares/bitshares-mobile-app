@@ -631,6 +631,28 @@ bool __bts_gen_public_key_from_b58address(const unsigned char* address, const si
     return true;
 }
 
+bool __bts_privkey_tweak_add(unsigned char seckey[], const unsigned char tweak[])
+{
+    int ret = secp256k1_ec_privkey_tweak_add(get_static_context(), seckey, tweak);
+    
+    if (!ret){
+        return false;
+    }
+    
+    return true;
+}
+
+bool __bts_pubkey_tweak_add(secp256k1_pubkey* pubkey, const unsigned char tweak[])
+{
+    int ret = secp256k1_ec_pubkey_tweak_add(get_static_context(), pubkey, tweak);
+    
+    if (!ret){
+        return false;
+    }
+    
+    return true;
+}
+
 /**
  *  保存：序列化钱包对象JSON字符串为二进制流。
  *  entropy     - 外部生成随机字符串的熵（根据系统也许不同，比如各种时间戳、随机数、系统信息、securerandom等）
