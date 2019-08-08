@@ -273,7 +273,7 @@ enum
     UIButton* btn100 = [UIButton buttonWithType:UIButtonTypeSystem];
     btn100.titleLabel.font = [UIFont systemFontOfSize:13];
     [btn100 setTitle:NSLocalizedString(@"kLabelSendAll", @"全部") forState:UIControlStateNormal];
-    [btn100 setTitleColor:[ThemeManager sharedThemeManager].textColorNormal forState:UIControlStateNormal];
+    [btn100 setTitleColor:[ThemeManager sharedThemeManager].textColorHighlight forState:UIControlStateNormal];
     btn100.userInteractionEnabled = YES;
     [btn100 addTarget:self action:@selector(onAmountAllButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     btn100.frame = CGRectMake(6, 2, 40, 27);
