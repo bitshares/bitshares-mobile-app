@@ -16,7 +16,7 @@
 - (void)resignAllFirstResponder;
 
 - (void)onFullAccountDataResponsed:(id)full_account_data;
-- (void)onQueryOrderBookResponse:(id)data;
+- (void)onQueryOrderBookResponse:(id)merged_order_book;
 - (void)onQueryTickerDataResponse:(id)data;
 - (void)onQueryFillOrderHistoryResponsed:(id)data;
 - (void)onRefreshLoginStatus;

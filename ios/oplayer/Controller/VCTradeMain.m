@@ -70,8 +70,6 @@ enum
     TradingPair*            _tradingPair;
     NSDictionary*           _base;
     NSDictionary*           _quote;
-    NSInteger               _base_precision;
-    NSInteger               _quote_precision;
     
     BOOL                    _isbuy;
     NSInteger               _showOrderMaxNumber;    //  盘口 显示挂单行数
@@ -99,10 +97,6 @@ enum
     NSDecimalNumber*        _quote_amount_n;        //  -> quote 总资产数量
     
     NSMutableArray*         _userOrderDataArray;    //  用户当前委托数组
-    
-    NSInteger               _displayPrecision;      //  价格显示精度：资产买盘、卖盘显示精度、出价精度。默认值 -1，需要初始化。
-    BOOL                    _displayPrecisionDynamic;   //  动态参数是否动态计算完毕（每次进入交易界面计算一次，之后每次更新盘口数据不在重新计算。）
-    NSInteger               _numPrecision;          //  数量显示精度：num_price_total_max_precision - _displayPrecision
 }
 
 @end
@@ -155,19 +149,6 @@ enum
     _quote_amount_n = nil;
 }
 
-- (void)_set_display_precision:(NSInteger)precision
-{
-    //  更新价格精度
-    _displayPrecision = precision;
-    
-    //  更新数量精度（最小0，最大不能超过quote资产本身的precision精度信息。）
-    id max_precision = [[ChainObjectManager sharedChainObjectManager] getDefaultParameters][@"num_price_total_max_precision"];
-    int n = (int)[max_precision integerValue] - (int)_displayPrecision;
-    n = (int)fmin(fmax(n, 0), (int)_quote_precision);
-    
-    _numPrecision = n;
-}
-
 - (id)initWithOwner:(VCTradeHor*)owner baseInfo:(NSDictionary*)base quoteInfo:(NSDictionary*)quote isbuy:(BOOL)isbuy
 {
     self = [super init];
@@ -179,10 +160,6 @@ enum
         
         _base = base;
         _quote = quote;
-        _base_precision = [[_base objectForKey:@"precision"] integerValue];
-        _quote_precision = [[_quote objectForKey:@"precision"] integerValue];
-//        _base_precision_pow = pow(10, _base_precision);
-//        _quote_precision_pow = pow(10, _quote_precision);
         
         _isbuy = isbuy;
         
@@ -198,9 +175,6 @@ enum
         _askDataArray = [NSMutableArray array];
         
         _userOrderDataArray = [NSMutableArray array];
-        
-        //  默认显示精度
-        [self _set_display_precision:[[parameters objectForKey:@"display_precision"] integerValue]];
     }
     return self;
 }
@@ -229,7 +203,7 @@ enum
     NSDictionary* ticker_data = [[ChainObjectManager sharedChainObjectManager] getTickerData:[_base objectForKey:@"symbol"]
                                                                                        quote:[_quote objectForKey:@"symbol"]];
     if (ticker_data){
-        latest = [OrgUtils formatFloatValue:[ticker_data[@"latest"] doubleValue] precision:_base_precision];
+        latest = [OrgUtils formatFloatValue:[ticker_data[@"latest"] doubleValue] precision:_tradingPair.basePrecision];
         percent_change = [ticker_data objectForKey:@"percent_change"];
     }else{
         latest = @"--";
@@ -290,7 +264,7 @@ enum
                 
                 //  保留小数位数 向下取整
                 NSDecimalNumberHandler* floorHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundDown
-                                                                                                              scale:_numPrecision
+                                                                                                              scale:_tradingPair.numPrecision
                                                                                                    raiseOnExactness:NO
                                                                                                     raiseOnOverflow:NO
                                                                                                    raiseOnUnderflow:NO
@@ -310,7 +284,7 @@ enum
         
         //  保留小数位数 向下取整
         NSDecimalNumberHandler* floorHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundDown
-                                                                                                      scale:_numPrecision
+                                                                                                      scale:_tradingPair.numPrecision
                                                                                            raiseOnExactness:NO
                                                                                             raiseOnOverflow:NO
                                                                                            raiseOnUnderflow:NO
@@ -331,7 +305,7 @@ enum
             id data = [_bidDataArray safeObjectAtIndex:0];
             if (data){
                 _tfPrice.text = [OrgUtils formatFloatValue:[[data objectForKey:@"price"] doubleValue]
-                                                  precision:_displayPrecision
+                                                  precision:_tradingPair.displayPrecision
                                      usesGroupingSeparator:NO];
                 [self onPriceOrAmountChanged];
             }
@@ -342,7 +316,7 @@ enum
             id data = [_askDataArray safeObjectAtIndex:0];
             if (data){
                 _tfPrice.text = [OrgUtils formatFloatValue:[[data objectForKey:@"price"] doubleValue]
-                                                  precision:_displayPrecision
+                                                  precision:_tradingPair.displayPrecision
                                      usesGroupingSeparator:NO];
                 [self onPriceOrAmountChanged];
             }
@@ -755,19 +729,19 @@ enum
     _balanceData = [self genBalanceInfos:full_account_data];
     //  !!! 一定要同步更新 ！！！
     _base_amount_n = [NSDecimalNumber decimalNumberWithMantissa:[[[_balanceData objectForKey:@"base"] objectForKey:@"amount"] unsignedLongLongValue]
-                                                       exponent:-_base_precision isNegative:NO];
+                                                       exponent:-_tradingPair.basePrecision isNegative:NO];
     _quote_amount_n = [NSDecimalNumber decimalNumberWithMantissa:[[[_balanceData objectForKey:@"quote"] objectForKey:@"amount"] unsignedLongLongValue]
-                                                        exponent:-_quote_precision isNegative:NO];
+                                                        exponent:-_tradingPair.quotePrecision isNegative:NO];
     
     if (_isbuy){
         //  买的情况：显示 base 的余额
         _cellAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@%@",
-                                               [OrgUtils formatAssetString:[[_balanceData objectForKey:@"base"] objectForKey:@"amount"] precision:_base_precision],
+                                               [OrgUtils formatAssetString:[[_balanceData objectForKey:@"base"] objectForKey:@"amount"] precision:_tradingPair.basePrecision],
                                                [_base objectForKey:@"symbol"]];
     }else{
         //  卖的情况：显示 quote 的余额
         _cellAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@%@",
-                                               [OrgUtils formatAssetString:[[_balanceData objectForKey:@"quote"] objectForKey:@"amount"] precision:_quote_precision],
+                                               [OrgUtils formatAssetString:[[_balanceData objectForKey:@"quote"] objectForKey:@"amount"] precision:_tradingPair.quotePrecision],
                                                [_quote objectForKey:@"symbol"]];
     }
     
@@ -792,88 +766,16 @@ enum
     [_mainTableView reloadData];
 }
 
-/**
- *  (private) 动态更新显示精度（每次进入交易界面仅初始化一次）
- */
-- (void)dynamicUpdateDisplayPrecision:(id)data
+- (void)onQueryOrderBookResponse:(id)merged_order_book
 {
-    if (!_displayPrecisionDynamic){
-        _displayPrecisionDynamic = YES;
-        
-        //  获取参考出价信息
-        id bids_array = [data objectForKey:@"bids"];
-        id asks_array = [data objectForKey:@"asks"];
-        id ref_item = nil;
-        if (bids_array && [bids_array count] > 0){
-            ref_item = [bids_array firstObject];
-        } else if (asks_array && [asks_array count] > 0){
-            ref_item = [asks_array firstObject];
-        }else{
-            //  没有深度信息，不用计算了，直接返回。
-            return;
-        }
-        //  计算有效精度
-        //{
-        //    base = "1233.8661";
-        //    price = "1.100001101078906";
-        //    quote = "1121.695331749937";
-        //    sum = "1121.695331749937";
-        //}
-        NSInteger display_min_fraction = [[[[ChainObjectManager sharedChainObjectManager] getDefaultParameters] objectForKey:@"display_min_fraction"] integerValue];
-        //  REMARK：这里用 %f 格式化代理 %@，否则对于部分小数会格式化出 1e-06 等不可期的数据。
-        NSString* price = [NSString stringWithFormat:@"%f", [[ref_item objectForKey:@"price"] doubleValue]];
-        NSRange range = [price rangeOfString:@"."];
-        if (range.location != NSNotFound){
-            id ary = [price componentsSeparatedByString:@"."];
-            NSString* part1 = ary[0];       //  整数部分
-            if ([part1 intValue] > 0){
-                _displayPrecision = (NSInteger)fmax((int)_displayPrecision - (int)[part1 length], display_min_fraction);
-            }else{
-                NSString* part2 = ary[1];   //  小数部分
-                NSString* temp;
-                NSInteger precision = 0;
-                for (NSUInteger i = 0; i < part2.length; ++i) {
-                    temp = [part2 substringWithRange:NSMakeRange(i, 1)];
-                    //  非0
-                    if (![temp isEqualToString:@"0"]){
-                        _displayPrecision = precision + _displayPrecision;
-                        break;
-                    }else{
-                        precision += 1;
-                    }
-                }
-                //  如果 part04 全位0，则 _displayPrecision 不会赋值，则为默认值。
-            }
-        }else{
-            //  没有小数点，则默认取2位小数点即可。
-            _displayPrecision = display_min_fraction;
-        }
-        //  更新 num 显示精度
-        [self _set_display_precision:_displayPrecision];
-        NSLog(@"%@ - displayPrecision: %@", price, @(_displayPrecision));
-    }
-}
-
-- (void)onQueryOrderBookResponse:(id)data
-{
-    //  TODO:fowallet 爆仓单信息没添加？？？!!!!!
-    
     //  更新显示精度
-    [self dynamicUpdateDisplayPrecision:data];
-    
-    //  !!! TODO:fowallet !!! 合并盘口？？？
-    
-//    //  格式化买盘卖盘信息，并且合并相同价格买卖信息。
-//    id bids_array = [data objectForKey:@"bids"];
-//    id asks_array = [data objectForKey:@"asks"];
-    
-    //  TODO: 计算显示精度...
+    [_tradingPair dynamicUpdateDisplayPrecision:merged_order_book];
     
     [_bidDataArray removeAllObjects];
-    [_bidDataArray addObjectsFromArray:[data objectForKey:@"bids"]];
+    [_bidDataArray addObjectsFromArray:[merged_order_book objectForKey:@"bids"]];
     
     [_askDataArray removeAllObjects];
-    [_askDataArray addObjectsFromArray:[data objectForKey:@"asks"]];
+    [_askDataArray addObjectsFromArray:[merged_order_book objectForKey:@"asks"]];
     
     [_bidTableView reloadData];
     [_askTableView reloadData];
@@ -889,7 +791,7 @@ enum
         }
         if (data){
             _tfPrice.text = [OrgUtils formatFloatValue:[[data objectForKey:@"price"] doubleValue]
-                                              precision:_displayPrecision
+                                              precision:_tradingPair.displayPrecision
                                  usesGroupingSeparator:NO];
             [self onPriceOrAmountChanged];
         }
@@ -955,7 +857,7 @@ enum
     return [OrgUtils isValidAmountOrPriceInput:textField.text
                                          range:range
                                     new_string:string
-                                     precision:textField == _tfPrice ? _displayPrecision : _numPrecision];
+                                     precision:textField == _tfPrice ? _tradingPair.displayPrecision : _tradingPair.numPrecision];
 }
 
 - (void)onTextFieldDidChange:(UITextField*)textField
@@ -997,7 +899,7 @@ enum
     NSDecimalNumber* n_amount = [OrgUtils auxGetStringDecimalNumberValue:str_amount];
     //  保留小数位数 买入行为：总金额向上取整 卖出行为：向下取整
     NSDecimalNumberHandler* roundHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:_isbuy ? NSRoundUp : NSRoundDown
-                                                                                                  scale:_base_precision
+                                                                                                  scale:_tradingPair.basePrecision
                                                                                        raiseOnExactness:NO
                                                                                         raiseOnOverflow:NO
                                                                                        raiseOnUnderflow:NO
@@ -1314,8 +1216,8 @@ enum
     }else if ([_askDataArray count] > 0){
         _ask_max_sum = [[[_askDataArray lastObject] objectForKey:@"sum"] doubleValue];
     }
-    cell.numPrecision = _numPrecision;
-    cell.displayPrecision = _displayPrecision;
+    cell.numPrecision = _tradingPair.numPrecision;
+    cell.displayPrecision = _tradingPair.displayPrecision;
     [cell setRowID:indexPath.row maxSum:fmax(_bid_max_sum, _ask_max_sum)];
     if (indexPath.row != 0){
         NSDictionary* data = [[self getDataArrayFromTableView:tableView] safeObjectAtIndex:indexPath.row - 1];
@@ -1341,7 +1243,7 @@ enum
             id data = [_bidDataArray safeObjectAtIndex:indexPath.row - 1];
             if (data){
                 _tfPrice.text = [OrgUtils formatFloatValue:[[data objectForKey:@"price"] doubleValue]
-                                                  precision:_displayPrecision
+                                                  precision:_tradingPair.displayPrecision
                                      usesGroupingSeparator:NO];
                 [self onPriceOrAmountChanged];
                 NSLog(@"bid click: %@", [_bidDataArray safeObjectAtIndex:indexPath.row - 1]);
@@ -1355,7 +1257,7 @@ enum
             id data = [_askDataArray safeObjectAtIndex:indexPath.row - 1];
             if (data){
                 _tfPrice.text = [OrgUtils formatFloatValue:[[data objectForKey:@"price"] doubleValue]
-                                                  precision:_displayPrecision
+                                                  precision:_tradingPair.displayPrecision
                                      usesGroupingSeparator:NO];
                 [self onPriceOrAmountChanged];
                 NSLog(@"ask click: %@", [_askDataArray safeObjectAtIndex:indexPath.row - 1]);
@@ -1434,7 +1336,7 @@ enum
     //  买入行为：总金额向上取整
     //  卖出行为：向下取整
     NSDecimalNumberHandler* roundHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:_isbuy ? NSRoundUp : NSRoundDown
-                                                                                                  scale:_base_precision
+                                                                                                  scale:_tradingPair.basePrecision
                                                                                        raiseOnExactness:NO
                                                                                         raiseOnOverflow:NO
                                                                                        raiseOnUnderflow:NO
@@ -1507,21 +1409,21 @@ enum
         //  执行买入    base减少 -> quote增加
         
         //  得到数量（向上取整）
-        id n_gain_total = [n_amount decimalNumberByMultiplyingByPowerOf10:_quote_precision withBehavior:ceilHandler];
+        id n_gain_total = [n_amount decimalNumberByMultiplyingByPowerOf10:_tradingPair.quotePrecision withBehavior:ceilHandler];
         min_to_receive = @{@"asset_id":_quote[@"id"], @"amount":[NSString stringWithFormat:@"%@", n_gain_total]};
 
         //  卖出数量等于 买的总花费金额 = 单价*买入数量（向下取整）  REMARK：这里 n_total <= _base_amount_n
-        id n_buy_total = [n_total decimalNumberByMultiplyingByPowerOf10:_base_precision withBehavior:floorHandler];
+        id n_buy_total = [n_total decimalNumberByMultiplyingByPowerOf10:_tradingPair.basePrecision withBehavior:floorHandler];
         amount_to_sell = @{@"asset_id":_base[@"id"], @"amount":[NSString stringWithFormat:@"%@", n_buy_total]};
     }else{
         //  执行卖出    quote减少 -> base增加
         
         //  卖出数量不能超过总数量（向下取整）                   REMARK：这里 n_amount <= _quote_amount_n
-        id n_sell_amount = [n_amount decimalNumberByMultiplyingByPowerOf10:_quote_precision withBehavior:floorHandler];
+        id n_sell_amount = [n_amount decimalNumberByMultiplyingByPowerOf10:_tradingPair.quotePrecision withBehavior:floorHandler];
         amount_to_sell = @{@"asset_id":_quote[@"id"], @"amount":[NSString stringWithFormat:@"%@", n_sell_amount]};
         
         //  得到数量等于 单价*卖出数量（向上取整）
-        id n_gain_total = [n_total decimalNumberByMultiplyingByPowerOf10:_base_precision withBehavior:ceilHandler];
+        id n_gain_total = [n_total decimalNumberByMultiplyingByPowerOf10:_tradingPair.basePrecision withBehavior:ceilHandler];
         min_to_receive = @{@"asset_id":_base[@"id"], @"amount":[NSString stringWithFormat:@"%@", n_gain_total]};
     }
     
