@@ -139,7 +139,7 @@ enum
     UIButton* btn = [UIButton buttonWithType:UIButtonTypeSystem];
     btn.titleLabel.font = [UIFont systemFontOfSize:13];
     [btn setTitle:percent_name forState:UIControlStateNormal];
-    [btn setTitleColor:[ThemeManager sharedThemeManager].textColorNormal forState:UIControlStateNormal];
+    [btn setTitleColor:[ThemeManager sharedThemeManager].textColorHighlight forState:UIControlStateNormal];
     btn.userInteractionEnabled = YES;
     [btn addTarget:self action:@selector(onTailerButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     btn.frame = frame;

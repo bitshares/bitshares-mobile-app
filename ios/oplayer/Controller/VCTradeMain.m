@@ -340,7 +340,7 @@ enum
     UIButton* btn = [UIButton buttonWithType:UIButtonTypeSystem];
     btn.titleLabel.font = [UIFont systemFontOfSize:13];
     [btn setTitle:percent_name forState:UIControlStateNormal];
-    [btn setTitleColor:[ThemeManager sharedThemeManager].textColorNormal forState:UIControlStateNormal]; //  TODO:fowallet color
+    [btn setTitleColor:[ThemeManager sharedThemeManager].textColorHighlight forState:UIControlStateNormal]; //  TODO:fowallet color
     btn.userInteractionEnabled = YES;
     [btn addTarget:self action:@selector(onAmountPercentButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
 //    btn.layer.borderWidth = 1;
