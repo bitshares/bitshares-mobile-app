@@ -565,8 +565,14 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
 #pragma mark- aux method
 /**
  *  (public) 获取手续费对象
+ *  extra_balance   - key: asset_type   value: balance amount
  */
 - (NSDictionary*)getFeeItem:(EBitsharesOperations)op_code full_account_data:(NSDictionary*)full_account_data
+{
+    return [self getFeeItem:op_code full_account_data:full_account_data extra_balance:nil];
+}
+
+- (NSDictionary*)getFeeItem:(EBitsharesOperations)op_code full_account_data:(NSDictionary*)full_account_data extra_balance:(NSDictionary*)extra_balance
 {
     if (!full_account_data){
         id wallet_account_info = [[WalletManager sharedWalletManager] getWalletAccountInfo];
@@ -577,19 +583,39 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
             full_account_data = wallet_account_info;
         }
     }
-    return [self estimateFeeObject:op_code full_account_data:full_account_data];
+    return [self estimateFeeObject:op_code full_account_data:full_account_data extra_balance:extra_balance];
 }
 
 /**
  *  (public) 评估指定交易操作所需要的手续费信息
  */
 - (NSDictionary*)estimateFeeObject:(EBitsharesOperations)op full_account_data:(NSDictionary*)full_account_data
+                     extra_balance:(NSDictionary*)extra_balance
 {
     assert(full_account_data);
-    id balances_list = [[full_account_data objectForKey:@"balances"] ruby_map:(^id(id balance_object) {
-        return @{@"asset_id":balance_object[@"asset_type"], @"amount":balance_object[@"balance"]};
-    })];
-    return [self estimateFeeObject:op balances:balances_list];
+    id balances_hash = [NSMutableDictionary dictionary];
+    for (id balance_object in [full_account_data objectForKey:@"balances"]) {
+        id asset_type = [balance_object objectForKey:@"asset_type"];
+        id balance = [balance_object objectForKey:@"balance"];
+        //  合并额外的金额
+        if (extra_balance){
+            id extra_amount = [extra_balance objectForKey:asset_type];
+            if (extra_amount){
+                balance = @([balance unsignedLongLongValue] + [extra_amount unsignedLongLongValue]);
+            }
+        }
+        [balances_hash setObject:@{@"asset_id":asset_type, @"amount":balance} forKey:asset_type];
+    }
+    //  合并
+    if (extra_balance){
+        for (id asset_type in extra_balance) {
+            if (![balances_hash objectForKey:asset_type]){
+                id extra_amount = [extra_balance objectForKey:asset_type];
+                [balances_hash setObject:@{@"asset_id":asset_type, @"amount":extra_amount} forKey:asset_type];
+            }
+        }
+    }
+    return [self estimateFeeObject:op balances:[balances_hash allValues]];
 }
 
 - (NSDictionary*)estimateFeeObject:(EBitsharesOperations)op balances:(NSArray*)balance_list
