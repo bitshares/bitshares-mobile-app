@@ -15,6 +15,7 @@
 #import "ViewTextFieldOwner.h"
 #import "BitsharesClientManager.h"
 #import "ViewBidAskCell.h"
+#import "ViewAvailableAndFeeCell.h"
 #import "ViewLimitOrderInfoCell.h"
 #import "ViewEmptyInfoCell.h"
 #import "AppCacheManager.h"
@@ -48,8 +49,8 @@ enum
 {
     kVcSubPriceCell = 0,        //  买入价
     kVcSubNumberCell,           //  买入量
-    kVcSubAvailable,            //  可用余额
     kVcSubTotalPrice,           //  交易额
+    kVcSubAvailable,            //  可用余额
     
     kVcSubMax,
 };
@@ -65,38 +66,38 @@ enum
 
 @interface VCTradeMain ()
 {
-    __weak VCTradeHor*      _owner;                 //  REMARK：声明为 weak，否则会导致循环引用。
+    __weak VCTradeHor*          _owner;                 //  REMARK：声明为 weak，否则会导致循环引用。
     
-    TradingPair*            _tradingPair;
-    NSDictionary*           _base;
-    NSDictionary*           _quote;
+    TradingPair*                _tradingPair;
+    NSDictionary*               _base;
+    NSDictionary*               _quote;
     
-    BOOL                    _isbuy;
-    NSInteger               _showOrderMaxNumber;    //  盘口 显示挂单行数
-    CGFloat                 _showOrderLineHeight;   //  盘口 挂单行高
+    BOOL                        _isbuy;
+    NSInteger                   _showOrderMaxNumber;    //  盘口 显示挂单行数
+    CGFloat                     _showOrderLineHeight;   //  盘口 挂单行高
     
-    VerticalAlignmentLabel* _lbHeaderLatestPrice;
-    VerticalAlignmentLabel* _lbHeaderPercent;
+    VerticalAlignmentLabel*     _lbHeaderLatestPrice;
+    VerticalAlignmentLabel*     _lbHeaderPercent;
     
-    UITableViewBase*        _bidTableView;
-    UITableViewBase*        _askTableView;
+    UITableViewBase*            _bidTableView;
+    UITableViewBase*            _askTableView;
     
-    UITableViewBase*        _mainTableView;
-    MyTextField*            _tfPrice;
-    MyTextField*            _tfNumber;
-    ViewBlockLabel*         _lbBuyOrSell;
-    UITableViewCellBase*    _cellAvailable;         //  可用余额 cell
-    UITableViewCellBase*    _cellTotalPrice;        //  交易额 cell
+    UITableViewBase*            _mainTableView;
+    MyTextField*                _tfPrice;
+    MyTextField*                _tfNumber;
+    MyTextField*                _tfTotal;               //  总成交金额
+    ViewBlockLabel*             _lbBuyOrSell;
+    ViewAvailableAndFeeCell*    _cellAvailable;         //  可用余额 & 交易手续费 cell
     
-    ViewEmptyInfoCell*      _cellNoOrders;          //  无委托 cell
+    ViewEmptyInfoCell*          _cellNoOrders;          //  无委托 cell
     
-    NSMutableArray*         _bidDataArray;          //  买盘数据
-    NSMutableArray*         _askDataArray;          //  卖盘数据
-    NSDictionary*           _balanceData;           //  余额数据
-    NSDecimalNumber*        _base_amount_n;         //  -> base 总资产总数量
-    NSDecimalNumber*        _quote_amount_n;        //  -> quote 总资产数量
+    NSMutableArray*             _bidDataArray;          //  买盘数据
+    NSMutableArray*             _askDataArray;          //  卖盘数据
+    NSDictionary*               _balanceData;           //  余额数据
+    NSDecimalNumber*            _base_amount_n;         //  -> base 总资产总数量
+    NSDecimalNumber*            _quote_amount_n;        //  -> quote 总资产数量
     
-    NSMutableArray*         _userOrderDataArray;    //  用户当前委托数组
+    NSMutableArray*             _userOrderDataArray;    //  用户当前委托数组
 }
 
 @end
@@ -137,9 +138,12 @@ enum
         _tfNumber.delegate = nil;
         _tfNumber = nil;
     }
+    if (_tfTotal){
+        _tfTotal.delegate = nil;
+        _tfTotal = nil;
+    }
     
     _cellAvailable = nil;
-    _cellTotalPrice = nil;
     _cellNoOrders = nil;
     
     _bidDataArray = nil;
@@ -340,7 +344,7 @@ enum
     UIButton* btn = [UIButton buttonWithType:UIButtonTypeSystem];
     btn.titleLabel.font = [UIFont systemFontOfSize:13];
     [btn setTitle:percent_name forState:UIControlStateNormal];
-    [btn setTitleColor:[ThemeManager sharedThemeManager].textColorHighlight forState:UIControlStateNormal]; //  TODO:fowallet color
+    [btn setTitleColor:[ThemeManager sharedThemeManager].textColorHighlight forState:UIControlStateNormal];
     btn.userInteractionEnabled = YES;
     [btn addTarget:self action:@selector(onAmountPercentButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
 //    btn.layer.borderWidth = 1;
@@ -427,6 +431,8 @@ enum
         pricePlaceHolder = NSLocalizedString(@"kPlaceHolderSellPrice", @"卖出单价");
         numberPlaceHolder = NSLocalizedString(@"kPlaceHolderSellAmount", @"卖出数量");
     }
+    NSString* totalPlaceHolder = NSLocalizedString(@"kLableTotalPrice", @"交易额");
+    
     CGRect tfrect = [self makeTextFieldRectFull];
     _tfPrice = [self createTfWithRect:tfrect keyboard:UIKeyboardTypeDecimalPad placeholder:pricePlaceHolder];
     _tfPrice.textColor = [ThemeManager sharedThemeManager].textColorMain;
@@ -434,6 +440,11 @@ enum
     _tfNumber = [self createTfWithRect:tfrect keyboard:UIKeyboardTypeDecimalPad placeholder:numberPlaceHolder];
     _tfNumber.textColor = [ThemeManager sharedThemeManager].textColorMain;
     _tfNumber.showBottomLine = YES;
+    
+    _tfTotal = [self createTfWithRect:tfrect keyboard:UIKeyboardTypeDecimalPad placeholder:totalPlaceHolder];
+    _tfTotal.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    _tfTotal.showBottomLine = YES;
+    
     _tfPrice.attributedPlaceholder = [[NSAttributedString alloc] initWithString:pricePlaceHolder
                                                                      attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
                                                                                   NSFontAttributeName:[UIFont systemFontOfSize:17]}];
@@ -441,9 +452,14 @@ enum
                                                                       attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
                                                                                    NSFontAttributeName:[UIFont systemFontOfSize:17]}];
     
+    _tfTotal.attributedPlaceholder = [[NSAttributedString alloc] initWithString:totalPlaceHolder
+                                                                      attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
+                                                                                   NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    
     //  绑定输入事件（限制输入）
     [_tfPrice addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
     [_tfNumber addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+    [_tfTotal addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
     
     //  UI - 买卖价格尾部辅助按钮
     UIView* price_tailer_view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200 + 14, 31)];
@@ -487,36 +503,25 @@ enum
     _tfNumber.rightView = amount_tailer_view;
     _tfNumber.rightViewMode = UITextFieldViewModeAlways;
     
-    //  UI - 可用余额 CELL
-    _cellAvailable = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+    //  交易额末尾单位
+    UILabel* tailer_total_price = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 80, 31)];
+    tailer_total_price.lineBreakMode = NSLineBreakByTruncatingTail;
+    tailer_total_price.numberOfLines = 1;
+    tailer_total_price.textAlignment = NSTextAlignmentRight;
+    tailer_total_price.backgroundColor = [UIColor clearColor];
+    tailer_total_price.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+    tailer_total_price.font = [UIFont systemFontOfSize:14];
+    tailer_total_price.text = [_base objectForKey:@"symbol"];
+    _tfTotal.rightView = tailer_total_price;
+    _tfTotal.rightViewMode = UITextFieldViewModeAlways;
+    
+    //  UI - 可用余额 & 手续费 CELL
+    _cellAvailable = [[ViewAvailableAndFeeCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
     _cellAvailable.backgroundColor = [UIColor clearColor];
-    _cellAvailable.accessoryType = UITableViewCellAccessoryNone;
-    _cellAvailable.selectionStyle = UITableViewCellSelectionStyleNone;
-    _cellAvailable.textLabel.text = NSLocalizedString(@"kLableAvailable", @"可用");
-    _cellAvailable.textLabel.font = [UIFont systemFontOfSize:13.0f];
-    _cellAvailable.textLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
-    if (_isbuy){
-        _cellAvailable.detailTextLabel.text = [NSString stringWithFormat:@"--%@", [_base objectForKey:@"symbol"]];
-    }else{
-        _cellAvailable.detailTextLabel.text = [NSString stringWithFormat:@"--%@", [_quote objectForKey:@"symbol"]];
-    }
-    _cellAvailable.detailTextLabel.font = [UIFont systemFontOfSize:13.0f];
-    _cellAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
     _cellAvailable.hideTopLine = YES;
     _cellAvailable.hideBottomLine = YES;
-    
-    //  UI - 交易额 CELL
-    _cellTotalPrice = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-    _cellTotalPrice.backgroundColor = [UIColor clearColor];
-    _cellTotalPrice.accessoryType = UITableViewCellAccessoryNone;
-    _cellTotalPrice.selectionStyle = UITableViewCellSelectionStyleNone;
-    _cellTotalPrice.textLabel.text = NSLocalizedString(@"kLableTotalPrice", @"交易额");
-    _cellTotalPrice.textLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
-    _cellTotalPrice.detailTextLabel.text = [NSString stringWithFormat:@"--%@", [_base objectForKey:@"symbol"]];
-    _cellTotalPrice.detailTextLabel.font = [UIFont boldSystemFontOfSize:16.0f];
-    _cellTotalPrice.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    _cellTotalPrice.hideTopLine = YES;
-    _cellTotalPrice.hideBottomLine = YES;
+    [self draw_ui_available_value:nil enough:YES];
+    [_cellAvailable draw_market_fee:_isbuy ? _tradingPair.quoteAsset : _tradingPair.baseAsset account:nil];
     
     NSString* cell_btn_name = nil;
     if ([[WalletManager sharedWalletManager] isWalletExist]){
@@ -544,6 +549,11 @@ enum
     _cellNoOrders = [[ViewEmptyInfoCell alloc] initWithText:NSLocalizedString(@"kLabelNoOrder", @"暂无记录") iconName:@"iconOrders"];
     _cellNoOrders.hideTopLine = YES;
     _cellNoOrders.hideBottomLine = YES;
+}
+
+- (void)draw_ui_available_value:(NSString*)value enough:(BOOL)enough
+{
+    [_cellAvailable draw_available:value enough:enough isbuy:_isbuy tradingPair:_tradingPair];
 }
 
 #pragma mark- parent call
@@ -629,9 +639,6 @@ enum
                                @"seller": order[@"seller"]
                                }];
     }
-//    [dataArray sortUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-//        return [[obj1 objectForKey:@"time"] compare:[obj2 objectForKey:@"time"]];
-//    })];
     //  按照ID降序排列
     [dataArray sortUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
         return [[obj2 objectForKey:@"id"] compare:[obj1 objectForKey:@"id"]];
@@ -733,17 +740,19 @@ enum
     _quote_amount_n = [NSDecimalNumber decimalNumberWithMantissa:[[[_balanceData objectForKey:@"quote"] objectForKey:@"amount"] unsignedLongLongValue]
                                                         exponent:-_tradingPair.quotePrecision isNegative:NO];
     
+    //  刷新余额显示  买：显示 base 余额    卖：显示 quote 余额
     if (_isbuy){
-        //  买的情况：显示 base 的余额
-        _cellAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@%@",
-                                               [OrgUtils formatAssetString:[[_balanceData objectForKey:@"base"] objectForKey:@"amount"] precision:_tradingPair.basePrecision],
-                                               [_base objectForKey:@"symbol"]];
+        [self draw_ui_available_value:[OrgUtils formatAssetString:[[_balanceData objectForKey:@"base"] objectForKey:@"amount"] precision:_tradingPair.basePrecision]
+                               enough:YES];
     }else{
-        //  卖的情况：显示 quote 的余额
-        _cellAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@%@",
-                                               [OrgUtils formatAssetString:[[_balanceData objectForKey:@"quote"] objectForKey:@"amount"] precision:_tradingPair.quotePrecision],
-                                               [_quote objectForKey:@"symbol"]];
+        [self draw_ui_available_value:[OrgUtils formatAssetString:[[_balanceData objectForKey:@"quote"] objectForKey:@"amount"] precision:_tradingPair.quotePrecision]
+                               enough:YES];
+        
     }
+    
+    //  刷新手续费信息
+    [_cellAvailable draw_market_fee:_isbuy ? _tradingPair.quoteAsset : _tradingPair.baseAsset
+                            account:[full_account_data objectForKey:@"account"]];
     
     //  2、刷新交易额、可用余额等
     [self onPriceOrAmountChanged];
@@ -837,6 +846,7 @@ enum
     [self.view endEditing:YES];
     [_tfNumber safeResignFirstResponder];
     [_tfPrice safeResignFirstResponder];
+    [_tfTotal safeResignFirstResponder];
 }
 
 - (void)didReceiveMemoryWarning
@@ -849,7 +859,7 @@ enum
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    if (textField != _tfPrice && textField != _tfNumber){
+    if (textField != _tfPrice && textField != _tfNumber && textField != _tfTotal){
         return YES;
     }
     
@@ -857,19 +867,67 @@ enum
     return [OrgUtils isValidAmountOrPriceInput:textField.text
                                          range:range
                                     new_string:string
-                                     precision:textField == _tfPrice ? _tradingPair.displayPrecision : _tradingPair.numPrecision];
+                                     precision:textField == _tfNumber ? _tradingPair.numPrecision : _tradingPair.displayPrecision];
 }
 
 - (void)onTextFieldDidChange:(UITextField*)textField
 {
-    if (textField != _tfPrice && textField != _tfNumber){
+    if (textField != _tfPrice && textField != _tfNumber && textField != _tfTotal){
         return;
     }
     
     //  更新小数点为APP默认小数点样式（可能和输入法中下小数点不同，比如APP里是`.`号，而输入法则是`,`号。
     [OrgUtils correctTextFieldDecimalSeparatorDisplayStyle:textField];
     
-    [self onPriceOrAmountChanged];
+    //  处理事件
+    if (textField != _tfTotal){
+        [self onPriceOrAmountChanged];
+    }else{
+        [self onTotalFieldChanged];
+    }
+}
+
+/**
+ *  (private) 输入交易额变化，重新计算交易数量or价格。
+ */
+- (void)onTotalFieldChanged
+{
+    if (!_balanceData){
+        return;
+    }
+    
+    id str_price = _tfPrice.text;
+    NSDecimalNumber* n_price = [OrgUtils auxGetStringDecimalNumberValue:str_price];
+    
+    //  交易额变化：固定价格，重新计算数量。
+    if ([n_price compare:[NSDecimalNumber zero]] > 0){
+        id str_total = _tfTotal.text;
+        NSDecimalNumber* n_total = [OrgUtils auxGetStringDecimalNumberValue:str_total];
+        NSDecimalNumberHandler* roundHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundDown
+                                                                                                      scale:_tradingPair.quotePrecision
+                                                                                           raiseOnExactness:NO
+                                                                                            raiseOnOverflow:NO
+                                                                                           raiseOnUnderflow:NO
+                                                                                        raiseOnDivideByZero:NO];
+        NSDecimalNumber* n_amount = [n_total decimalNumberByDividingBy:n_price withBehavior:roundHandler];
+        
+        //  刷新可用余额
+        if (_isbuy){
+            [self draw_ui_available_value:[OrgUtils formatFloatValue:_base_amount_n] enough:[_base_amount_n compare:n_total] >= 0];
+        }else{
+            [self draw_ui_available_value:[OrgUtils formatFloatValue:_quote_amount_n] enough:[_quote_amount_n compare:n_amount] >= 0];
+        }
+        
+        //  交易数量
+        if (!str_total || [str_total isEqualToString:@""]){
+            _tfNumber.text = @"";
+        }else{
+            _tfNumber.text = [OrgUtils formatFloatValue:n_amount usesGroupingSeparator:NO];
+        }
+    }else{
+        //  价格为0时，交易数量为空。
+        _tfNumber.text = @"";
+    }
 }
 
 /**
@@ -884,19 +942,12 @@ enum
     id str_price = _tfPrice.text;
     id str_amount = _tfNumber.text;
     
-    //  无效输入
-    if (!str_price || [str_price isEqualToString:@""] ||
-        !str_amount || [str_amount isEqualToString:@""]){
-        _cellTotalPrice.detailTextLabel.text = [NSString stringWithFormat:@"--%@", [_base objectForKey:@"symbol"]];
-        _cellTotalPrice.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-        return;
-    }
-    
-    //  获取单价、数量、总价
+    //  获取单价、数量，然后计算交易额总价。
     
     //  !!! 精确计算 !!!
     NSDecimalNumber* n_price = [OrgUtils auxGetStringDecimalNumberValue:str_price];
     NSDecimalNumber* n_amount = [OrgUtils auxGetStringDecimalNumberValue:str_amount];
+    
     //  保留小数位数 买入行为：总金额向上取整 卖出行为：向下取整
     NSDecimalNumberHandler* roundHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:_isbuy ? NSRoundUp : NSRoundDown
                                                                                                   scale:_tradingPair.basePrecision
@@ -906,34 +957,18 @@ enum
                                                                                     raiseOnDivideByZero:NO];
     NSDecimalNumber* n_total = [n_price decimalNumberByMultiplyingBy:n_amount withBehavior:roundHandler];
     
-    //  TODO:颜色
+    //  刷新可用余额
     if (_isbuy){
-        //  总金额
-        //  _base_amount_n < n_total
-        if ([_base_amount_n compare:n_total] == NSOrderedAscending){
-            //  上升（小于）
-            _cellTotalPrice.detailTextLabel.text = [NSString stringWithFormat:@"%@%@(%@)", [OrgUtils formatFloatValue:n_total], [_base objectForKey:@"symbol"], NSLocalizedString(@"kVcTradeTipAvailableNotEnough", @"金额不足")];
-            _cellTotalPrice.detailTextLabel.textColor = [ThemeManager sharedThemeManager].tintColor;
-        }else{
-            //  下降 or 相等（大于等于）
-            _cellTotalPrice.detailTextLabel.text = [NSString stringWithFormat:@"%@%@", [OrgUtils formatFloatValue:n_total], [_base objectForKey:@"symbol"]];
-            _cellTotalPrice.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-        }
+        [self draw_ui_available_value:[OrgUtils formatFloatValue:_base_amount_n] enough:[_base_amount_n compare:n_total] >= 0];
     }else{
-        //  可用余额
-        //  _quote_amount_n < n_amount
-        if ([_quote_amount_n compare:n_amount] == NSOrderedAscending){
-            //  上升（小于）
-            //  数量不足
-            _cellAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@%@(%@)", [OrgUtils formatFloatValue:_quote_amount_n], [_quote objectForKey:@"symbol"], NSLocalizedString(@"kVcTradeTipAmountNotEnough", @"数量不足")];
-            _cellAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].tintColor;
-        }else{
-            //  下降 or 相等（大于等于）
-            _cellAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@%@", [OrgUtils formatFloatValue:_quote_amount_n], [_quote objectForKey:@"symbol"]];
-            _cellAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
-        }
-        //  总金额
-        _cellTotalPrice.detailTextLabel.text = [NSString stringWithFormat:@"%@%@", [OrgUtils formatFloatValue:n_total], [_base objectForKey:@"symbol"]];
+        [self draw_ui_available_value:[OrgUtils formatFloatValue:_quote_amount_n] enough:[_quote_amount_n compare:n_amount] >= 0];
+    }
+    
+    //  总金额
+    if (!str_price || [str_price isEqualToString:@""] || !str_amount || [str_amount isEqualToString:@""]){
+        _tfTotal.text = @"";
+    }else{
+        _tfTotal.text = [OrgUtils formatFloatValue:n_total usesGroupingSeparator:NO];
     }
 }
 
@@ -983,7 +1018,7 @@ enum
 {
     if (tableView == _mainTableView){
         if (indexPath.section == kVcFormData && indexPath.row == kVcSubAvailable){
-            return 24.0f;               //  REMARK：可用余额
+            return tableView.rowHeight;     //  REMARK：可用余额
         }
         if (indexPath.section == kVcFormUserOrder){
             if ([_userOrderDataArray count] <= 0){
@@ -1017,6 +1052,12 @@ enum
                     {
                         CGRect old_frame = _tfNumber.frame;
                         _tfNumber.frame = CGRectMake(0, 0, self.view.bounds.size.width - left * 2, old_frame.size.height);
+                    }
+                        break;
+                    case kVcSubTotalPrice:
+                    {
+                        CGRect old_frame = _tfTotal.frame;
+                        _tfTotal.frame = CGRectMake(0, 0, self.view.bounds.size.width - left * 2, old_frame.size.height);
                     }
                         break;
                     default:
@@ -1121,7 +1162,14 @@ enum
                         break;
                     case kVcSubTotalPrice:
                     {
-                        return _cellTotalPrice;
+                        UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+                        cell.backgroundColor = [UIColor clearColor];
+                        cell.accessoryType = UITableViewCellAccessoryNone;
+                        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                        cell.textLabel.text = @" ";
+                        cell.accessoryView = _tfTotal;
+                        return cell;
+                        
                     }
                         break;
                     default:
