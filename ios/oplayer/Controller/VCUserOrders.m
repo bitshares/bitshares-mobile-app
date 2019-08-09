@@ -495,9 +495,9 @@
     id raw_order = [order objectForKey:@"raw_order"];
     id extra_balance = @{raw_order[@"sell_price"][@"base"][@"asset_id"]:raw_order[@"for_sale"]};
     
-    id fee_item = [[ChainObjectManager sharedChainObjectManager] estimateFeeObject:ebo_limit_order_cancel
-                                                                 full_account_data:_fullUserData
-                                                                     extra_balance:extra_balance];
+    id fee_item = [[ChainObjectManager sharedChainObjectManager] getFeeItem:ebo_limit_order_cancel
+                                                          full_account_data:_fullUserData
+                                                              extra_balance:extra_balance];
     assert(fee_item);
     if (![[fee_item objectForKey:@"sufficient"] boolValue]){
         [OrgUtils makeToast:NSLocalizedString(@"kTipsTxFeeNotEnough", @"手续费不足，请确保帐号有足额的 BTS/CNY/USD 用于支付网络手续费。")];
