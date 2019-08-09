@@ -616,6 +616,8 @@
 		3FE4E94A22F698DC0056A44F /* MyTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E94822F698DC0056A44F /* MyTextView.m */; };
 		3FE4E94D22F7C0480056A44F /* HDWallet.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E94C22F7C0480056A44F /* HDWallet.m */; };
 		3FE4E94E22F7C0490056A44F /* HDWallet.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E94C22F7C0480056A44F /* HDWallet.m */; };
+		3FE4E95122FBCFE60056A44F /* ViewAvailableAndFeeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E95022FBCFE60056A44F /* ViewAvailableAndFeeCell.m */; };
+		3FE4E95222FBCFE60056A44F /* ViewAvailableAndFeeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E95022FBCFE60056A44F /* ViewAvailableAndFeeCell.m */; };
 		3FEA46E8216F812800127CA5 /* CurveSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FEA46E6216F812800127CA5 /* CurveSlider.m */; };
 		3FEBEEF521DDBBE600C124CF /* iconProposal@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FEBEEF321DDBBE600C124CF /* iconProposal@2x.png */; };
 		3FEBEEF621DDBBE600C124CF /* iconProposal@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FEBEEF321DDBBE600C124CF /* iconProposal@2x.png */; };
@@ -1239,6 +1241,8 @@
 		3FE4E94822F698DC0056A44F /* MyTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MyTextView.m; path = View/MyTextView.m; sourceTree = "<group>"; };
 		3FE4E94B22F7C0480056A44F /* HDWallet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HDWallet.h; path = bitshares/HDWallet.h; sourceTree = "<group>"; };
 		3FE4E94C22F7C0480056A44F /* HDWallet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HDWallet.m; path = bitshares/HDWallet.m; sourceTree = "<group>"; };
+		3FE4E94F22FBCFE60056A44F /* ViewAvailableAndFeeCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewAvailableAndFeeCell.h; path = View/ViewAvailableAndFeeCell.h; sourceTree = "<group>"; };
+		3FE4E95022FBCFE60056A44F /* ViewAvailableAndFeeCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewAvailableAndFeeCell.m; path = View/ViewAvailableAndFeeCell.m; sourceTree = "<group>"; };
 		3FEA46E6216F812800127CA5 /* CurveSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CurveSlider.m; path = ios/CurveSlider.m; sourceTree = "<group>"; };
 		3FEA46E7216F812800127CA5 /* CurveSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CurveSlider.h; path = ios/CurveSlider.h; sourceTree = "<group>"; };
 		3FEBEEF321DDBBE600C124CF /* iconProposal@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconProposal@2x.png"; path = "Images/iconProposal@2x.png"; sourceTree = "<group>"; };
@@ -2169,6 +2173,8 @@
 		18FF069017E00C5C0088405E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				3FE4E94F22FBCFE60056A44F /* ViewAvailableAndFeeCell.h */,
+				3FE4E95022FBCFE60056A44F /* ViewAvailableAndFeeCell.m */,
 				3F7ED8F02277F24700082680 /* OPs */,
 				3F21656F226FEF5400AB5A3D /* ViewActionsCell.h */,
 				3F216570226FEF5500AB5A3D /* ViewActionsCell.m */,
@@ -4239,6 +4245,7 @@
 				3FB8F97421CE66C200DA88E2 /* 7zArcIn.c in Sources */,
 				3FB8F97521CE66C200DA88E2 /* UIAlertViewManager.m in Sources */,
 				3FB8F97621CE66C200DA88E2 /* VCImportWallet.m in Sources */,
+				3FE4E95222FBCFE60056A44F /* ViewAvailableAndFeeCell.m in Sources */,
 				3FB8F97721CE66C200DA88E2 /* OrgUtils.m in Sources */,
 				3FB8F97821CE66C200DA88E2 /* Bra86.c in Sources */,
 				3FB8F97921CE66C200DA88E2 /* SRURLUtilities.m in Sources */,
@@ -4525,6 +4532,7 @@
 				B7BDAA7B20B3C77400738F12 /* 7zArcIn.c in Sources */,
 				B714E5E81C192EF500A208B1 /* UIAlertViewManager.m in Sources */,
 				B72A848F20CCD27C00D92A25 /* VCImportWallet.m in Sources */,
+				3FE4E95122FBCFE60056A44F /* ViewAvailableAndFeeCell.m in Sources */,
 				ED048D8617E047010030D16E /* OrgUtils.m in Sources */,
 				B7BDAA8920B3C77500738F12 /* Bra86.c in Sources */,
 				B714094920A31CC300003311 /* SRURLUtilities.m in Sources */,

@@ -424,6 +424,7 @@
 "kPlaceHolderBuyAmount" = "Amount";
 "kPlaceHolderSellPrice" = "Price";
 "kPlaceHolderSellAmount" = "Amount";
+"kLabelMarketFee" = "Market fee %@";
 "kTailerBtnBid1" = "Bid1";
 "kTailerBtnAsk1" = "Ask1";
 "kLableBuyPrice" = "Price ";

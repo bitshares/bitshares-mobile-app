@@ -424,6 +424,7 @@
 "kPlaceHolderBuyAmount" = "买入数量";
 "kPlaceHolderSellPrice" = "卖出单价";
 "kPlaceHolderSellAmount" = "卖出数量";
+"kLabelMarketFee" = "手续费 %@";
 "kTailerBtnBid1" = "买一价";
 "kTailerBtnAsk1" = "卖一价";
 "kLableBuyPrice" = "买入价 ";
