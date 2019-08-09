@@ -379,9 +379,11 @@
     }
     
     //  ----- 准备提取 -----
-    
     //  1、判断手续费是否足够。
-    id fee_item =  [[ChainObjectManager sharedChainObjectManager] getFeeItem:ebo_vesting_balance_withdraw full_account_data:_fullAccountInfo];
+    id extra_balance = @{[[vesting objectForKey:@"balance"] objectForKey:@"asset_id"]:@(withdraw_available)};
+    id fee_item =  [[ChainObjectManager sharedChainObjectManager] getFeeItem:ebo_vesting_balance_withdraw
+                                                           full_account_data:_fullAccountInfo
+                                                               extra_balance:extra_balance];
     if (![[fee_item objectForKey:@"sufficient"] boolValue]){
         [OrgUtils makeToast:NSLocalizedString(@"kTipsTxFeeNotEnough", @"手续费不足，请确保帐号有足额的 BTS/CNY/USD 用于支付网络手续费。")];
         return;
