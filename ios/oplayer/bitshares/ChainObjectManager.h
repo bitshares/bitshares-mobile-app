@@ -151,12 +151,17 @@
  *  (public) 获取手续费对象
  */
 - (NSDictionary*)getFeeItem:(EBitsharesOperations)op_code full_account_data:(NSDictionary*)full_account_data;
+- (NSDictionary*)getFeeItem:(EBitsharesOperations)op_code full_account_data:(NSDictionary*)full_account_data extra_balance:(NSDictionary*)extra_balance;
 
 /**
  *  (public) 评估指定交易操作所需要的手续费信息
  */
-- (NSDictionary*)estimateFeeObject:(EBitsharesOperations)op full_account_data:(NSDictionary*)full_account_data;
-- (NSDictionary*)estimateFeeObject:(EBitsharesOperations)op balances:(NSArray*)balance_list;
+- (NSDictionary*)estimateFeeObject:(EBitsharesOperations)op
+                 full_account_data:(NSDictionary*)full_account_data
+                     extra_balance:(NSDictionary*)extra_balance;
+
+- (NSDictionary*)estimateFeeObject:(EBitsharesOperations)op
+                          balances:(NSArray*)balance_list;
 
 #pragma mark- init graphene network
 /**

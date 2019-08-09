@@ -72,7 +72,6 @@
     NSDictionary*           _assetBasePriority;                 //  asset资产作为 base 交易对的优先级。
     
     NSDictionary*           _fullUserData;                      //  用户信息
-    NSDictionary*           _ebo_limit_order_cancel_fee_item;   //  手续费对象
     
     UITableViewBase*        _mainTableView;
     NSMutableArray*         _dataArray;
@@ -153,12 +152,10 @@
                                @"base_symbol":base_sym,
                                @"quote_symbol":quote_sym,
                                @"id": order[@"id"],
-                               @"seller": order[@"seller"]
+                               @"seller": order[@"seller"],
+                               @"raw_order": order  //  原始数据
                                }];
     }
-//    [dataArray sortUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-//        return [[obj1 objectForKey:@"time"] compare:[obj2 objectForKey:@"time"]];
-//    })];
     //  按照ID降序排列
     [dataArray sortUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
         return [[obj2 objectForKey:@"id"] compare:[obj1 objectForKey:@"id"]];
@@ -274,7 +271,6 @@
         _isHistory = history;
         _tradingPair = tradingPair;
         _fullUserData = nil;
-        _ebo_limit_order_cancel_fee_item = nil;
         ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
         _assetBasePriority = [chainMgr genAssetBasePriorityHash];
         if (_isHistory){
@@ -312,8 +308,6 @@
     _dataArray = [self genCurrentLimitOrderData:[full_user_info objectForKey:@"limit_orders"]];
     //  计算手续费对象
     _fullUserData = full_user_info;
-    _ebo_limit_order_cancel_fee_item = [[ChainObjectManager sharedChainObjectManager] estimateFeeObject:ebo_limit_order_cancel
-                                                                                      full_account_data:full_user_info];
     if (reload){
         [self refreshView];
     }
@@ -429,13 +423,12 @@
 
 #pragma mark- for actions
 
-- (void)processCancelOrderCore:(id)order
+- (void)processCancelOrderCore:(id)order fee_item:(id)fee_item
 {
-    assert(_ebo_limit_order_cancel_fee_item);
     assert(_fullUserData);
     
     id order_id = order[@"id"];
-    id fee_asset_id = [_ebo_limit_order_cancel_fee_item objectForKey:@"fee_asset_id"];
+    id fee_asset_id = [fee_item objectForKey:@"fee_asset_id"];
     id account_id = [[_fullUserData objectForKey:@"account"] objectForKey:@"id"];
     id op = @{
               @"fee":@{@"amount":@0, @"asset_id":fee_asset_id},
@@ -494,18 +487,27 @@
         return;
     }
     
+    assert(_fullUserData);
+    
     id order = [_dataArray objectAtIndex:button.tag];
     NSLog(@"cancel : %@", order[@"id"]);
     
-    assert(_ebo_limit_order_cancel_fee_item);
-    if (![[_ebo_limit_order_cancel_fee_item objectForKey:@"sufficient"] boolValue]){
+    id raw_order = [order objectForKey:@"raw_order"];
+    id extra_balance = @{raw_order[@"sell_price"][@"base"][@"asset_id"]:raw_order[@"for_sale"]};
+    
+    id fee_item = [[ChainObjectManager sharedChainObjectManager] estimateFeeObject:ebo_limit_order_cancel
+                                                                 full_account_data:_fullUserData
+                                                                     extra_balance:extra_balance];
+    assert(fee_item);
+    if (![[fee_item objectForKey:@"sufficient"] boolValue]){
         [OrgUtils makeToast:NSLocalizedString(@"kTipsTxFeeNotEnough", @"手续费不足，请确保帐号有足额的 BTS/CNY/USD 用于支付网络手续费。")];
         return;
     }
+    
     [_owner GuardWalletUnlocked:NO body:^(BOOL unlocked) {
         if (unlocked){
             //  TODO:fowallet !!! 取消订单是否二次确认。
-            [self processCancelOrderCore:order];
+            [self processCancelOrderCore:order fee_item:fee_item];
         }
     }];
 }
