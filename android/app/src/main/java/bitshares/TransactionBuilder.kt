@@ -3,6 +3,7 @@ package bitshares
 import bitshares.serializer.T_operation
 import bitshares.serializer.T_signed_transaction
 import bitshares.serializer.T_transaction
+import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
 import org.json.JSONArray
 import org.json.JSONObject
@@ -105,8 +106,8 @@ class TransactionBuilder {
         val walletMgr = WalletManager.sharedWalletManager()
         assert(!walletMgr.isLocked())
 
-        var sign_buffer = ByteArrayOutputStream()
-        sign_buffer.write(BTS_NETWORK_CHAIN_ID.hexDecode())
+        val sign_buffer = ByteArrayOutputStream()
+        sign_buffer.write(ChainObjectManager.sharedChainObjectManager().grapheneChainID.hexDecode())
         sign_buffer.write(_tr_buffer)
 
         //  签名
