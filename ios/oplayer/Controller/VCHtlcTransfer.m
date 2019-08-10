@@ -885,24 +885,6 @@ enum
     return tableView.rowHeight;
 }
 
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (indexPath.section == kVcFormArgs){
-        //  REMARK：这个属性是ios7之后添加。
-        CGFloat left = tableView.separatorInset.left;
-        switch ([[_rowTypeArray objectAtIndex:indexPath.row] integerValue]) {
-            case kVcSubAssetAmountValue:
-            {
-                CGRect old_frame = _tf_amount.frame;
-                _tf_amount.frame = CGRectMake(0, 0, self.view.bounds.size.width - left * 2, old_frame.size.height);
-            }
-                break;
-            default:
-                break;
-        }
-    }
-}
-
 /**
  *  调整Header和Footer高度。REMARK：header和footer VIEW 不能为空，否则高度设置无效。
  */
@@ -1010,8 +992,7 @@ enum
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
                     cell.textLabel.text = @" ";
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                    cell.accessoryView = _tf_amount;
-                    //                cell.showCustomBottomLine = NO;
+                    [_mainTableView attachTextfieldToCell:cell tf:_tf_amount];
                     cell.hideTopLine = YES;
                     cell.hideBottomLine = YES;
                     return cell;

@@ -248,6 +248,12 @@ enum
     _tf_memo = _bSupportMemo ? [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolderMemo] : nil;
     
     //  设置属性颜色等
+    _tf_address.showBottomLine = YES;
+    _tf_amount.showBottomLine = YES;
+    if (_tf_memo){
+        _tf_memo.showBottomLine = YES;
+    }
+    
     _tf_address.updateClearButtonTintColor = YES;
     _tf_address.textColor = [ThemeManager sharedThemeManager].textColorMain;
     _tf_address.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderAddress
@@ -703,15 +709,6 @@ enum
     return @" ";
 }
 
-- (void)_attach_textfield_to_cell:(UITableView*)tableView cell:(UITableViewCell*)cell tf:(UITextField*)tf
-{
-    assert(tableView && cell && tf);
-    CGFloat old_height = tf.bounds.size.height;
-    CGFloat xOffset = tableView.layoutMargins.left;
-    tf.frame = CGRectMake(xOffset, 0, self.view.bounds.size.width - 2 * xOffset, old_height);
-    cell.accessoryView = tf;
-}
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == kVcFormData)
@@ -736,10 +733,9 @@ enum
                 cell.backgroundColor = [UIColor clearColor];
                 cell.accessoryType = UITableViewCellAccessoryNone;
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.showCustomBottomLine = YES;
                 cell.hideTopLine = YES;
                 cell.hideBottomLine = YES;
-                [self _attach_textfield_to_cell:tableView cell:cell tf:_tf_address];
+                [_mainTableView attachTextfieldToCell:cell tf:_tf_address];
                 return cell;
             }
                 break;
@@ -754,9 +750,8 @@ enum
                 cell.backgroundColor = [UIColor clearColor];
                 cell.accessoryType = UITableViewCellAccessoryNone;
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                [self _attach_textfield_to_cell:tableView cell:cell tf:_tf_amount];
+                [_mainTableView attachTextfieldToCell:cell tf:_tf_amount];
                 cell.accessoryView = _tf_amount;
-                cell.showCustomBottomLine = YES;
                 cell.hideTopLine = YES;
                 cell.hideBottomLine = YES;
                 return cell;
@@ -782,8 +777,7 @@ enum
                 cell.backgroundColor = [UIColor clearColor];
                 cell.accessoryType = UITableViewCellAccessoryNone;
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                [self _attach_textfield_to_cell:tableView cell:cell tf:_tf_memo];
-                cell.showCustomBottomLine = YES;
+                [_mainTableView attachTextfieldToCell:cell tf:_tf_memo];
                 cell.hideTopLine = YES;
                 cell.hideBottomLine = YES;
                 return cell;

@@ -1034,45 +1034,6 @@ enum
     return _showOrderLineHeight;
 }
 
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (_mainTableView == tableView){
-        switch (indexPath.section) {
-            case kVcFormData:
-            {
-                //  REMARK：这个属性是ios7之后添加。
-                CGFloat left = tableView.separatorInset.left;
-                switch (indexPath.row) {
-                    case kVcSubPriceCell:
-                    {
-                        CGRect old_frame = _tfPrice.frame;
-                        _tfPrice.frame = CGRectMake(0, 0, self.view.bounds.size.width - left * 2, old_frame.size.height);
-                    }
-                        break;
-                    case kVcSubNumberCell:
-                    {
-                        CGRect old_frame = _tfNumber.frame;
-                        _tfNumber.frame = CGRectMake(0, 0, self.view.bounds.size.width - left * 2, old_frame.size.height);
-                    }
-                        break;
-                    case kVcSubTotalPrice:
-                    {
-                        CGRect old_frame = _tfTotal.frame;
-                        _tfTotal.frame = CGRectMake(0, 0, self.view.bounds.size.width - left * 2, old_frame.size.height);
-                    }
-                        break;
-                    default:
-                        break;
-                }
-            }
-                break;
-                
-            default:
-                break;
-        }
-    }
-}
-
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     if (section == kVcFormUserOrder){
@@ -1141,7 +1102,7 @@ enum
                         cell.accessoryType = UITableViewCellAccessoryNone;
                         cell.selectionStyle = UITableViewCellSelectionStyleNone;
                         cell.textLabel.text = @" ";
-                        cell.accessoryView = _tfPrice;
+                        [_mainTableView attachTextfieldToCell:cell tf:_tfPrice];
                         return cell;
                     }
                         break;
@@ -1152,7 +1113,7 @@ enum
                         cell.accessoryType = UITableViewCellAccessoryNone;
                         cell.selectionStyle = UITableViewCellSelectionStyleNone;
                         cell.textLabel.text = @" ";
-                        cell.accessoryView = _tfNumber;
+                        [_mainTableView attachTextfieldToCell:cell tf:_tfNumber];
                         return cell;
                     }
                         break;
@@ -1168,7 +1129,7 @@ enum
                         cell.accessoryType = UITableViewCellAccessoryNone;
                         cell.selectionStyle = UITableViewCellSelectionStyleNone;
                         cell.textLabel.text = @" ";
-                        cell.accessoryView = _tfTotal;
+                        [_mainTableView attachTextfieldToCell:cell tf:_tfTotal];
                         return cell;
                         
                     }
