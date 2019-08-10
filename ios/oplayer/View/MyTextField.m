@@ -11,6 +11,7 @@
 
 @interface MyTextField()
 {
+    UILabel*    _pLeftTitleView;
     UIView*     _pBottomLine;
 }
 
@@ -23,6 +24,7 @@
 
 - (void)dealloc
 {
+    _pLeftTitleView = nil;
     _pBottomLine = nil;
 }
 
@@ -33,9 +35,33 @@
     {
         self.showBottomLine = NO;
         self.updateClearButtonTintColor = NO;
+        _pLeftTitleView = nil;
         _pBottomLine = nil;
     }
     return self;
+}
+
+- (void)setLeftTitleView:(NSString*)title frame:(CGRect)frame
+{
+    if (!_pLeftTitleView){
+        _pLeftTitleView = [[UILabel alloc] initWithFrame:frame];
+        _pLeftTitleView.lineBreakMode = NSLineBreakByTruncatingTail;
+        _pLeftTitleView.numberOfLines = 1;
+        _pLeftTitleView.textAlignment = NSTextAlignmentLeft;
+        _pLeftTitleView.backgroundColor = [UIColor clearColor];
+        _pLeftTitleView.textColor = [ThemeManager sharedThemeManager].textColorMain;
+        _pLeftTitleView.font = [UIFont systemFontOfSize:16];
+    }
+    _pLeftTitleView.text = title;
+    self.leftView = _pLeftTitleView;
+    self.leftViewMode = UITextFieldViewModeAlways;
+}
+
+- (void)setLeftTitleView:(NSString*)title
+{
+    if (_pLeftTitleView){
+        _pLeftTitleView.text = title;
+    }
 }
 
 - (void)layoutSubviews
@@ -45,11 +71,16 @@
     if (self.showBottomLine){
         if (!_pBottomLine){
             _pBottomLine = [[UIView alloc] initWithFrame:CGRectZero];
-            _pBottomLine.backgroundColor = [ThemeManager sharedThemeManager].textColorGray;
             [self addSubview:_pBottomLine];
         }
         CGRect tfFrame = self.frame;
-        _pBottomLine.frame = CGRectMake(0, tfFrame.size.height - 0.5, tfFrame.size.width, 0.5);
+        if (self.isFirstResponder){
+            _pBottomLine.frame = CGRectMake(0, tfFrame.size.height - 1, tfFrame.size.width, 1);
+            _pBottomLine.backgroundColor = [ThemeManager sharedThemeManager].textColorHighlight;
+        }else{
+            _pBottomLine.frame = CGRectMake(0, tfFrame.size.height - 0.5, tfFrame.size.width, 0.5);
+            _pBottomLine.backgroundColor = [ThemeManager sharedThemeManager].textColorGray;
+        }
     }else{
         if (_pBottomLine){
             if (_pBottomLine.superview){

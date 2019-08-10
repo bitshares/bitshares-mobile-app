@@ -13,4 +13,7 @@
 @property (nonatomic, assign) BOOL showBottomLine;
 @property (nonatomic, assign) BOOL updateClearButtonTintColor;
 
+- (void)setLeftTitleView:(NSString*)title frame:(CGRect)frame;
+- (void)setLeftTitleView:(NSString*)title;
+
 @end

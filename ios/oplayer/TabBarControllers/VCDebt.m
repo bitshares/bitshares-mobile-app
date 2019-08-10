@@ -280,7 +280,7 @@ enum
     NSString* debtPlaceHolder = NSLocalizedString(@"kDebtTipInputDebtValue", @"请输入借款金额");
     NSString* collateralPlaceHolder = NSLocalizedString(@"kDebtTipInputCollAmount", @"请输入抵押物数量");
     
-    CGRect tfrect = [self makeTextFieldRect];
+    CGRect tfrect = [self makeTextFieldRectFull];
     _tfDebtValue = [self createTfWithRect:tfrect keyboard:UIKeyboardTypeDecimalPad placeholder:debtPlaceHolder];
     _tfCollateralValue = [self createTfWithRect:tfrect keyboard:UIKeyboardTypeDecimalPad placeholder:collateralPlaceHolder];
     _tfDebtValue.textColor = [ThemeManager sharedThemeManager].textColorMain;
@@ -303,6 +303,11 @@ enum
     _tfCollateralValue.rightView = [self genButtonForTailer:NSLocalizedString(@"kDebtLableUseMax", @"全部抵押")
                                                         tag:kTailerButtonCollMax frame:CGRectMake(0, 2, 96, 27)];
     _tfCollateralValue.rightViewMode = UITextFieldViewModeAlways;
+    //  UI - 输入框标题
+    _tfCollateralValue.showBottomLine = YES;
+    [_tfCollateralValue setLeftTitleView:_debtPair.quoteAsset[@"symbol"] frame:CGRectMake(0, 0, 80, 31)];
+    _tfDebtValue.showBottomLine = YES;
+    [_tfDebtValue setLeftTitleView:_debtPair.baseAsset[@"symbol"] frame:CGRectMake(0, 0, 80, 31)];
     
     //  UI - 顶部喂价和强平触发价格 REMARK：这两个标签使用等宽字体
     CGRect screenRect = [[UIScreen mainScreen] bounds];
@@ -744,6 +749,8 @@ enum
     [self genCallOrderHash:bLogined];
     
     //  更新UI
+    [_tfDebtValue setLeftTitleView:_debtPair.baseAsset[@"symbol"]];
+    [_tfCollateralValue setLeftTitleView:_debtPair.quoteAsset[@"symbol"]];
     
     //  UI - 按钮
     if (bLogined){
@@ -1288,10 +1295,7 @@ enum
                     cell.backgroundColor = [UIColor clearColor];
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                    cell.textLabel.text = _debtPair.baseAsset[@"symbol"];
-                    cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                    cell.accessoryView = _tfDebtValue;
-                    cell.showCustomBottomLine = YES;
+                    [_mainTableView attachTextfieldToCell:cell tf:_tfDebtValue];
                     cell.hideTopLine = YES;
                     cell.hideBottomLine = YES;
                     return cell;
@@ -1308,10 +1312,7 @@ enum
                     cell.backgroundColor = [UIColor clearColor];
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                    cell.textLabel.text = _debtPair.quoteAsset[@"symbol"];
-                    cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                    cell.accessoryView = _tfCollateralValue;
-                    cell.showCustomBottomLine = YES;
+                    [_mainTableView attachTextfieldToCell:cell tf:_tfCollateralValue];
                     cell.hideTopLine = YES;
                     cell.hideBottomLine = YES;
                     return cell;

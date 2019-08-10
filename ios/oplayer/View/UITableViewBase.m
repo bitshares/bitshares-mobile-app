@@ -40,4 +40,16 @@
     }
 }
 
+/**
+ *  (public) 在CELL的附加View上关联输入框。（自动适配输入框宽度）
+ */
+- (void)attachTextfieldToCell:(UITableViewCell*)cell tf:(UITextField*)tf
+{
+    assert(cell && tf);
+    CGFloat old_height = tf.bounds.size.height;
+    CGFloat xOffset = self.layoutMargins.left;
+    tf.frame = CGRectMake(xOffset, 0, self.bounds.size.width - 2 * xOffset, old_height);
+    cell.accessoryView = tf;
+}
+
 @end

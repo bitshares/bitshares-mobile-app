@@ -13,8 +13,8 @@
 @property (nonatomic, assign) BOOL showCustomBottomLine;                //  显示用户自定义下划线
 
 @property (nonatomic, assign) BOOL disableDelayTouchesByAccessoryView;
-@property (nonatomic, assign) BOOL hideBottomLine;
-@property (nonatomic, assign) BOOL hideTopLine;
+@property (nonatomic, assign) BOOL hideBottomLine;                      //  系统CELL默认的横线
+@property (nonatomic, assign) BOOL hideTopLine;                         //  系统CELL默认的横线
 
 @property (nonatomic, assign) BOOL blockLabelVerCenter;
 
