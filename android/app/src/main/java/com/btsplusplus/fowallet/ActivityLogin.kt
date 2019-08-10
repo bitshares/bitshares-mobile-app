@@ -97,6 +97,7 @@ class ActivityLogin : BtsppActivity() {
 
     private fun setFragments() {
         fragmens.add(FragmentLoginAccountMode().initWithCheckActivePermission(_checkActivePermission, _result_promise))
+        fragmens.add(FragmentLoginBrainKeyMode().initWithCheckActivePermission(_checkActivePermission, _result_promise))
         fragmens.add(FragmentLoginPrivateKeyMode().initWithCheckActivePermission(_checkActivePermission, _result_promise))
         //  正常登录模式
         if (_checkActivePermission) {
