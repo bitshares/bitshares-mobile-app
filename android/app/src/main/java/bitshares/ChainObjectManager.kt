@@ -8,6 +8,7 @@ import com.orhanobut.logger.Logger
 import org.json.JSONArray
 import org.json.JSONObject
 import java.math.BigDecimal
+import java.math.BigInteger
 import kotlin.math.floor
 
 
@@ -523,8 +524,9 @@ class ChainObjectManager {
 
     /**
      *  (public) 获取手续费对象
+     *  extra_balance   - key: asset_type   value: balance amount
      */
-    fun getFeeItem(op_code: EBitsharesOperations, full_account_data: JSONObject?): JSONObject {
+    fun getFeeItem(op_code: EBitsharesOperations, full_account_data: JSONObject?, extra_balance: JSONObject? = null): JSONObject {
         var local_full_account_data = full_account_data
         if (local_full_account_data == null) {
             val wallet_account_info = WalletManager.sharedWalletManager().getWalletAccountInfo()!!
@@ -534,21 +536,43 @@ class ChainObjectManager {
                 local_full_account_data = wallet_account_info
             }
         }
-        return estimateFeeObject(op_code.value, local_full_account_data)
+        return estimateFeeObject(op_code.value, local_full_account_data, extra_balance)
     }
 
     /**
      *  (public) 评估指定交易操作所需要的手续费信息
      */
-    fun estimateFeeObject(op: Int, full_account_data: JSONObject): JSONObject {
-        val balances_list = JSONArray()
+    fun estimateFeeObject(op: Int, full_account_data: JSONObject, extra_balance: JSONObject? = null): JSONObject {
+        val balance_hash = JSONObject()
         for (balance_object in full_account_data.getJSONArray("balances")) {
-            val item = JSONObject()
-            item.put("asset_id", balance_object!!.getString("asset_type"))
-            item.put("amount", balance_object.getString("balance"))
-            balances_list.put(item)
+            val asset_type = balance_object!!.getString("asset_type")
+            var balance = balance_object.getString("balance")
+            if (extra_balance != null) {
+                val extra_amount = extra_balance.optString(asset_type, null)
+                if (extra_amount != null) {
+                    balance = BigInteger(balance).add(BigInteger(extra_amount)).toString()
+                }
+            }
+            balance_hash.put(asset_type, JSONObject().apply {
+                put("asset_id", asset_type)
+                put("amount", balance)
+            })
         }
-        return estimateFeeObject(op, balances_list)
+
+        //  合并
+        if (extra_balance != null) {
+            extra_balance.keys().forEach { asset_type ->
+                if (balance_hash.optJSONObject(asset_type) == null){
+                    val extra_amount = extra_balance.getString(asset_type)
+                    balance_hash.put(asset_type, JSONObject().apply {
+                        put("asset_id", asset_type)
+                        put("amount", extra_amount)
+                    })
+                }
+            }
+        }
+
+        return estimateFeeObject(op, balance_hash.values())
     }
 
     fun estimateFeeObject(op: Int, balance_list: JSONArray): JSONObject {

@@ -342,8 +342,13 @@ class FragmentTradeMainPage : BtsppFragment() {
     /**
      * 交易：取消订单
      */
-    private fun onButtonClicked_CancelOrder(order_id: String) {
-        val fee_item = ChainObjectManager.sharedChainObjectManager().getFeeItem(EBitsharesOperations.ebo_limit_order_cancel, _balanceData!!.getJSONObject("full_account_data"))
+    private fun onButtonClicked_CancelOrder(order: JSONObject) {
+        val order_id = order.getString("id")
+        val raw_order = order.getJSONObject("raw_order")
+        val extra_balance = JSONObject().apply {
+            put(raw_order.getJSONObject("sell_price").getJSONObject("base").getString("asset_id"), raw_order.getString("for_sale"))
+        }
+        val fee_item = ChainObjectManager.sharedChainObjectManager().getFeeItem(EBitsharesOperations.ebo_limit_order_cancel, _balanceData!!.getJSONObject("full_account_data"), extra_balance = extra_balance)
         if (!fee_item.getBoolean("sufficient")) {
             showToast(_ctx.resources.getString(R.string.kTipsTxFeeNotEnough))
             return
@@ -821,7 +826,8 @@ class FragmentTradeMainPage : BtsppFragment() {
                     "amount", amount_str, "total", total_str,
                     "base_symbol", base_sym, "quote_symbol", quote_sym,
                     "id", order.getString("id"),
-                    "seller", order.getString("seller"))
+                    "seller", order.getString("seller"),
+                    "raw_order", order)
             dataArray.add(data_item)
         }
         //  按照ID降序

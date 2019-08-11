@@ -110,7 +110,8 @@ class FragmentOrderCurrent : BtsppFragment() {
                     "amount", amount_str, "total", total_str,
                     "base_symbol", base_sym, "quote_symbol", quote_sym,
                     "id", order.getString("id"),
-                    "seller", order.getString("seller"))
+                    "seller", order.getString("seller"),
+                    "raw_order", order)
             _dataArray.add(data_item)
         }
         //  按照ID降序
@@ -269,16 +270,22 @@ class FragmentOrderCurrent : BtsppFragment() {
         //  设置当前订单号到按钮上
         tv_cancel.tag = data.getString("id")
         tv_cancel.setOnClickListener { v: View ->
-            onButtonClicked_CancelOrder(v.tag.toString())
+            onButtonClicked_CancelOrder(data)
         }
     }
 
     /**
      * 交易：取消订单
      */
-    private fun onButtonClicked_CancelOrder(order_id: String) {
+    private fun onButtonClicked_CancelOrder(order: JSONObject) {
+        val order_id = order.getString("id")
+        val raw_order = order.getJSONObject("raw_order")
+        val extra_balance = JSONObject().apply {
+            put(raw_order.getJSONObject("sell_price").getJSONObject("base").getString("asset_id"), raw_order.getString("for_sale"))
+        }
+
         //  计算手续费对象
-        val fee_item = ChainObjectManager.sharedChainObjectManager().estimateFeeObject(EBitsharesOperations.ebo_limit_order_cancel.value, _full_account_data)
+        val fee_item = ChainObjectManager.sharedChainObjectManager().getFeeItem(EBitsharesOperations.ebo_limit_order_cancel, _full_account_data, extra_balance = extra_balance)
         if (!fee_item.getBoolean("sufficient")) {
             showToast(_ctx!!.resources.getString(R.string.kTipsTxFeeNotEnough))
             return
