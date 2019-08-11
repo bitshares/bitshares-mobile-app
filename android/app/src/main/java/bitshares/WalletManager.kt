@@ -523,7 +523,9 @@ class WalletManager {
     /**
      * (public) 根据手续费支付账号ID获取本地钱包中需要参与签名的 公钥列表。REMARK：手续费支付账号应该在本地钱包中存在。
      */
-    fun getSignKeysFromFeePayingAccount(fee_paying_account: String): JSONArray {
+    fun getSignKeysFromFeePayingAccount(fee_paying_account: String, requireOwnerPermission: Boolean = false): JSONArray {
+        val permissionKey = if (requireOwnerPermission) "owner" else "active"
+
         val localWalletInfo = getWalletInfo()
 
         val accountDataList = localWalletInfo.optJSONArray("kAccountDataList")
@@ -531,7 +533,7 @@ class WalletManager {
             accountDataList.forEach<JSONObject> {
                 val accountData = it!!
                 if (accountData.getString("id") == fee_paying_account) {
-                    return getSignKeys(accountData.getJSONObject("active"))
+                    return getSignKeys(accountData.getJSONObject(permissionKey))
                 }
             }
         }
@@ -541,7 +543,7 @@ class WalletManager {
         if (currentFullAccountData != null) {
             val accountData = currentFullAccountData.optJSONObject("account")
             if (accountData != null && accountData.getString("id") == fee_paying_account) {
-                return getSignKeys(accountData.getJSONObject("active"))
+                return getSignKeys(accountData.getJSONObject(permissionKey))
             }
         }
 

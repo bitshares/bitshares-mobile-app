@@ -867,6 +867,11 @@ class OrgUtils {
                     container.put(opdata.getString("issuer"), true)
                     container.put(opdata.getJSONObject("amount_to_claim").getString("asset_id"), true)
                 }
+                EBitsharesOperations.ebo_asset_update_issuer.value -> {
+                    container.put(opdata.getString("issuer"), true)
+                    container.put(opdata.getString("asset_to_update"), true)
+                    container.put(opdata.getString("new_issuer"), true)
+                }
                 EBitsharesOperations.ebo_htlc_create.value -> {
                     container.put(opdata.getString("from"), true)
                     container.put(opdata.getString("to"), true)
@@ -1209,8 +1214,10 @@ class OrgUtils {
                 }
                 EBitsharesOperations.ebo_asset_update_issuer.value -> {
                     name = R.string.kOpType_asset_update_issuer.xmlstring(ctx)
-                    desc = R.string.kOpDesc_asset_update_issuer.xmlstring(ctx)
-                    //  TODO:待细化
+                    val issuer = chainMgr.getChainObjectByID(opdata.getString("issuer")).getString("name")
+                    val asset_to_update = chainMgr.getChainObjectByID(opdata.getString("asset_to_update")).getString("symbol")
+                    val new_issuer = chainMgr.getChainObjectByID(opdata.getString("new_issuer")).getString("name")
+                    desc = String.format(R.string.kOpDesc_asset_update_issuer.xmlstring(ctx), issuer, asset_to_update, new_issuer)
                 }
                 EBitsharesOperations.ebo_htlc_create.value -> {
                     name = R.string.kOpType_htlc_create.xmlstring(ctx)

@@ -265,6 +265,16 @@ class BitsharesClientManager {
     }
 
     /**
+     *  OP - 更新资产发行者
+     */
+    fun assetUpdateIssuer(opdata: JSONObject): Promise {
+        val tr = TransactionBuilder()
+        tr.add_operation(EBitsharesOperations.ebo_asset_update_issuer, opdata)
+        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("issuer"), requireOwnerPermission = true))
+        return process_transaction(tr)
+    }
+
+    /**
      *  OP - 创建HTLC合约
      */
     fun htlcCreate(opdata: JSONObject): Promise {
