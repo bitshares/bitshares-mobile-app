@@ -61,6 +61,8 @@ open class T_Base_companion {
         T_proposal_update.register_subfields()
         T_proposal_delete.register_subfields()
 
+        T_asset_update_issuer.register_subfields()
+
         T_transaction.register_subfields()
         T_signed_transaction.register_subfields()
 
@@ -704,6 +706,18 @@ class T_proposal_delete : T_Base() {
     }
 }
 
+class T_asset_update_issuer : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("fee", T_asset)
+            add_field("issuer", Tm_protocol_id_type("account"))
+            add_field("asset_to_update", Tm_protocol_id_type("asset"))
+            add_field("new_issuer", Tm_protocol_id_type("account"))
+            add_field("extensions", Tm_set(T_future_extensions))
+        }
+    }
+}
+
 class T_htlc_create : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
@@ -789,6 +803,7 @@ class T_operation : T_Base() {
                 EBitsharesOperations.ebo_proposal_create.value -> T_proposal_create
                 EBitsharesOperations.ebo_proposal_update.value -> T_proposal_update
                 EBitsharesOperations.ebo_proposal_delete.value -> T_proposal_delete
+                EBitsharesOperations.ebo_asset_update_issuer.value -> T_asset_update_issuer
                 EBitsharesOperations.ebo_htlc_create.value -> T_htlc_create
                 EBitsharesOperations.ebo_htlc_redeem.value -> T_htlc_redeem
                 EBitsharesOperations.ebo_htlc_extend.value -> T_htlc_extend
