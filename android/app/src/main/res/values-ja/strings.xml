@@ -148,9 +148,11 @@
     <string name="kAccountUpgradeMemberCostAsk">一生会員をアップグレードするには %s かかります。続行しますか？</string>
     <!-- 登录&注册&备份 -->
     <string name="kLoginPageModePassword">アカウントモード</string>
+    <string name="kLoginPageModeBrainKey">ブレインキー</string>
     <string name="kLoginPageModePrivateKey">キーファイルモード</string>
     <string name="kLoginPageModeWallet">ウオレットモード</string>
     <string name="kLoginTipsPlaceholderAccount">アカウントを入力してください</string>
+    <string name="kLoginTipsPlaceholderBrainKey">各言葉の間にスペースを入れて、ニーモニックを入力してください。</string>
     <string name="kLoginTipsPlaceholderTradePassword">取引パスワードを入力してください</string>
     <string name="kLoginTipsPlaceholderActiveKey">資金キーファイルを入力してください</string>
     <string name="kLoginTipsPlaceholderConfirmPassword">パスワードを確認してください</string>
@@ -401,6 +403,7 @@
     <string name="kPlaceHolderBuyAmount">購数量</string>
     <string name="kPlaceHolderSellPrice">売却単価</string>
     <string name="kPlaceHolderSellAmount">売数量</string>
+    <string name="kLabelMarketFee">手数料 %s</string>
     <string name="kTailerBtnBid1">購一価</string>
     <string name="kTailerBtnAsk1">売一価</string>
     <string name="kLableBuyPrice">購い单价 </string>
@@ -714,9 +717,9 @@
     <string name="kOpDesc_asset_update_bitasset">スマートマネーを更新する。</string>
     <string name="kOpDesc_asset_update_feed_producers">%s フィード者を更新します。</string>
     <string name="kOpDesc_asset_issue">資産発行。</string>
-    <string name="kOpDesc_asset_reserve">資産消却。</string>
+    <string name="kOpDesc_asset_reserve">%s は %s を資産消却。</string>
     <string name="kOpDesc_asset_fund_fee_pool">手数料池を資金注入します。</string>
-    <string name="kOpDesc_asset_settle">資産強制清算。</string>
+    <string name="kOpDesc_asset_settle">%s 強制清算 %s。</string>
     <string name="kOpDesc_asset_global_settle">資産のグローバル清算。。</string>
     <string name="kOpDesc_asset_publish_feed">発表フィード価格</string>
     <string name="kOpDesc_witness_create">証人を設ける。</string>
@@ -743,12 +746,12 @@
     <string name="kOpDesc_blind_transfer">プライバシー振込。</string>
     <string name="kOpDesc_transfer_from_blind">プライバシーアカウントから移動する。</string>
     <string name="kOpDesc_asset_settle_cancel">キャンセルして清算します。</string>
-    <string name="kOpDesc_asset_claim_fees">資産の手数料を取り出します。</string>
+    <string name="kOpDesc_asset_claim_fees">%s は %s の資産手数料を取り出します。</string>
     <string name="kOpDesc_fba_distribute">FBA分发。</string>
     <string name="kOpDesc_bid_collateral">黑天鹅竞价。</string>
     <string name="kOpDesc_execute_bid">竞价成功。</string>
     <string name="kOpDesc_asset_claim_pool">提取手续费池资产。</string>
-    <string name="kOpDesc_asset_update_issuer">更改资产发行账号。</string>
+    <string name="kOpDesc_asset_update_issuer">%s は %s の所有者を %s に更新します。</string>
     <string name="kOpDesc_htlc_create_with_id">%s 准备转账 %s 到 %s。#%s</string>
     <string name="kOpDesc_htlc_create">%s 准备转账 %s 到 %s。</string>
     <string name="kOpDesc_htlc_redeem">%s 使用原像 %s 赎回HTLC。#%s</string>

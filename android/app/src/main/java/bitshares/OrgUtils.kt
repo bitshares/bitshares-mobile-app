@@ -864,7 +864,8 @@ class OrgUtils {
                     //  TODO:
                 }
                 EBitsharesOperations.ebo_asset_claim_fees.value -> {
-                    //  TODO:
+                    container.put(opdata.getString("issuer"), true)
+                    container.put(opdata.getJSONObject("amount_to_claim").getString("asset_id"), true)
                 }
                 EBitsharesOperations.ebo_htlc_create.value -> {
                     container.put(opdata.getString("from"), true)
@@ -1038,8 +1039,8 @@ class OrgUtils {
                 }
                 EBitsharesOperations.ebo_asset_reserve.value -> {
                     name = R.string.kOpType_asset_reserve.xmlstring(ctx)
-                    desc = R.string.kOpDesc_asset_reserve.xmlstring(ctx)
-                    //  TODO:待细化
+                    val user = chainMgr.getChainObjectByID(opdata.getString("payer")).getString("name")
+                    desc = String.format(R.string.kOpDesc_asset_reserve.xmlstring(ctx), user, formatAssetAmountItem(opdata.getJSONObject("amount_to_reserve")))
                 }
                 EBitsharesOperations.ebo_asset_fund_fee_pool.value -> {
                     name = R.string.kOpType_asset_fund_fee_pool.xmlstring(ctx)
@@ -1048,8 +1049,8 @@ class OrgUtils {
                 }
                 EBitsharesOperations.ebo_asset_settle.value -> {
                     name = R.string.kOpType_asset_settle.xmlstring(ctx)
-                    desc = R.string.kOpDesc_asset_settle.xmlstring(ctx)
-                    //  TODO:待细化
+                    val user = chainMgr.getChainObjectByID(opdata.getString("account")).getString("name")
+                    desc = String.format(R.string.kOpDesc_asset_settle.xmlstring(ctx), user, formatAssetAmountItem(opdata.getJSONObject("amount")))
                 }
                 EBitsharesOperations.ebo_asset_global_settle.value -> {
                     name = R.string.kOpType_asset_global_settle.xmlstring(ctx)
@@ -1183,8 +1184,8 @@ class OrgUtils {
                 }
                 EBitsharesOperations.ebo_asset_claim_fees.value -> {
                     name = R.string.kOpType_asset_claim_fees.xmlstring(ctx)
-                    desc = R.string.kOpDesc_asset_claim_fees.xmlstring(ctx)
-                    //  TODO:待细化
+                    val user = chainMgr.getChainObjectByID(opdata.getString("issuer")).getString("name")
+                    desc = String.format(R.string.kOpDesc_asset_claim_fees.xmlstring(ctx), user, formatAssetAmountItem(opdata.getJSONObject("amount_to_claim")))
                 }
                 EBitsharesOperations.ebo_fba_distribute.value -> {
                     name = R.string.kOpType_fba_distribute.xmlstring(ctx)

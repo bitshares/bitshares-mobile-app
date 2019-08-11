@@ -148,9 +148,11 @@
     <string name="kAccountUpgradeMemberCostAsk">Upgrade lifetime membership will cost %s, do you want to continue?</string>
     <!-- 登录&注册&备份 -->
     <string name="kLoginPageModePassword">Normal</string>
+    <string name="kLoginPageModeBrainKey">Brain Key</string>
     <string name="kLoginPageModePrivateKey">Private Key</string>
     <string name="kLoginPageModeWallet">Wallet</string>
     <string name="kLoginTipsPlaceholderAccount">Please input bitshares account</string>
+    <string name="kLoginTipsPlaceholderBrainKey">Please enter a mnemonic, separated by spaces between each word.</string>
     <string name="kLoginTipsPlaceholderTradePassword">Please input wallet password</string>
     <string name="kLoginTipsPlaceholderActiveKey">Please input active private key</string>
     <string name="kLoginTipsPlaceholderConfirmPassword">Please confirm password</string>
@@ -401,6 +403,7 @@
     <string name="kPlaceHolderBuyAmount">Amount</string>
     <string name="kPlaceHolderSellPrice">Price</string>
     <string name="kPlaceHolderSellAmount">Amount</string>
+    <string name="kLabelMarketFee">Market fee %s</string>
     <string name="kTailerBtnBid1">Bid1</string>
     <string name="kTailerBtnAsk1">Ask1</string>
     <string name="kLableBuyPrice">Price </string>
@@ -715,9 +718,9 @@
     <string name="kOpDesc_asset_update_bitasset">update bitasset.</string>
     <string name="kOpDesc_asset_update_feed_producers">%s update feed publisher.</string>
     <string name="kOpDesc_asset_issue">issue assets.</string>
-    <string name="kOpDesc_asset_reserve">reserve assets.</string>
+    <string name="kOpDesc_asset_reserve">%s reserves %s.</string>
     <string name="kOpDesc_asset_fund_fee_pool">fund the fee pool.</string>
-    <string name="kOpDesc_asset_settle">settle assets.</string>
+    <string name="kOpDesc_asset_settle">%s settles %s.</string>
     <string name="kOpDesc_asset_global_settle">global settle assets.</string>
     <string name="kOpDesc_asset_publish_feed">publish feed price.</string>
     <string name="kOpDesc_witness_create">create a witness.</string>
@@ -744,12 +747,12 @@
     <string name="kOpDesc_blind_transfer">blind transfer.</string>
     <string name="kOpDesc_transfer_from_blind">transfer asset from a blind account.</string>
     <string name="kOpDesc_asset_settle_cancel">cancel the settlement.</string>
-    <string name="kOpDesc_asset_claim_fees">claim the asset fees.</string>
+    <string name="kOpDesc_asset_claim_fees">%s claims %s asset fees.</string>
     <string name="kOpDesc_fba_distribute">FBA distribute.</string>
     <string name="kOpDesc_bid_collateral">bid collateral.</string>
     <string name="kOpDesc_execute_bid">bidding collateral success.</string>
     <string name="kOpDesc_asset_claim_pool">claim the asset pool.</string>
-    <string name="kOpDesc_asset_update_issuer">update asset issuer account.</string>
+    <string name="kOpDesc_asset_update_issuer">%s update %s asset owner to %s.</string>
     <string name="kOpDesc_htlc_create_with_id">%s ready to transfer %s to %s. #%s</string>
     <string name="kOpDesc_htlc_create">%s ready to transfer %s to %s.</string>
     <string name="kOpDesc_htlc_redeem">%s redeem HTLC with preimage %s. #%s</string>
@@ -874,7 +877,4 @@
     <string name="myAssetsPageUnknowOperationContent">Unknown operation content</string>
     <string name="kWalletMemuTipsPleaseSelectCellAction">Please select the action to perform</string>
     <string name="kWalletMenuTipsPleaseSelectImportType">Please select the type of account to import</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
