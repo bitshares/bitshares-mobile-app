@@ -148,9 +148,11 @@
     <string name="kAccountUpgradeMemberCostAsk">升级终身会员需要花费 %s，是否继续？</string>
     <!-- 登录&注册&备份 -->
     <string name="kLoginPageModePassword">账号模式</string>
+    <string name="kLoginPageModeBrainKey">助记词</string>
     <string name="kLoginPageModePrivateKey">私钥模式</string>
     <string name="kLoginPageModeWallet">钱包模式</string>
     <string name="kLoginTipsPlaceholderAccount">请输入 Bitshares 账号名</string>
+    <string name="kLoginTipsPlaceholderBrainKey">请输入助记词，每个单词之间按空格分割。</string>
     <string name="kLoginTipsPlaceholderTradePassword">请输入交易密码</string>
     <string name="kLoginTipsPlaceholderActiveKey">请输入资金权限私钥</string>
     <string name="kLoginTipsPlaceholderConfirmPassword">请确认密码</string>
@@ -401,6 +403,7 @@
     <string name="kPlaceHolderBuyAmount">买入数量</string>
     <string name="kPlaceHolderSellPrice">卖出单价</string>
     <string name="kPlaceHolderSellAmount">卖出数量</string>
+    <string name="kLabelMarketFee">手续费 %s</string>
     <string name="kTailerBtnBid1">买一价</string>
     <string name="kTailerBtnAsk1">卖一价</string>
     <string name="kLableBuyPrice">买入价 </string>
@@ -715,9 +718,9 @@
     <string name="kOpDesc_asset_update_bitasset">更新智能币。</string>
     <string name="kOpDesc_asset_update_feed_producers">%s 资产更新发布喂价的账号信息。</string>
     <string name="kOpDesc_asset_issue">资产发行。</string>
-    <string name="kOpDesc_asset_reserve">资产销毁。</string>
+    <string name="kOpDesc_asset_reserve">%s 销毁 %s。</string>
     <string name="kOpDesc_asset_fund_fee_pool">注资手续费池。</string>
-    <string name="kOpDesc_asset_settle">资产强清。</string>
+    <string name="kOpDesc_asset_settle">%s 强制清算 %s。</string>
     <string name="kOpDesc_asset_global_settle">资产全局清算。</string>
     <string name="kOpDesc_asset_publish_feed">发布喂价。</string>
     <string name="kOpDesc_witness_create">创建见证人。</string>
@@ -744,12 +747,12 @@
     <string name="kOpDesc_blind_transfer">隐私转账。</string>
     <string name="kOpDesc_transfer_from_blind">从隐私账户转出。</string>
     <string name="kOpDesc_asset_settle_cancel">取消清算。</string>
-    <string name="kOpDesc_asset_claim_fees">提取资产手续费。</string>
+    <string name="kOpDesc_asset_claim_fees">%s 提取 %s 资产手续费。</string>
     <string name="kOpDesc_fba_distribute">FBA分发。</string>
     <string name="kOpDesc_bid_collateral">黑天鹅竞价。</string>
     <string name="kOpDesc_execute_bid">竞价成功。</string>
     <string name="kOpDesc_asset_claim_pool">提取手续费池资产。</string>
-    <string name="kOpDesc_asset_update_issuer">更改资产发行账号。</string>
+    <string name="kOpDesc_asset_update_issuer">%s 更新 %s 资产的所有者账号为 %s。</string>
     <string name="kOpDesc_htlc_create_with_id">%s 准备转账 %s 到 %s。#%s</string>
     <string name="kOpDesc_htlc_create">%s 准备转账 %s 到 %s。</string>
     <string name="kOpDesc_htlc_redeem">%s 使用原像 %s 赎回HTLC。#%s</string>
