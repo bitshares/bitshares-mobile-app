@@ -134,7 +134,7 @@ class ViewUtils {
             return _layout
         }
 
-        fun createCellForOrder(ctx: Context, layout_params: LinearLayout.LayoutParams, ly: LinearLayout, data: JSONObject, toast_fun: (String) -> Unit) {
+        fun createCellForOrder(ctx: Context, layout_params: LinearLayout.LayoutParams, ly: LinearLayout, data: JSONObject, toast_fun: (JSONObject) -> Unit) {
 
 
             val ly_wrap: LinearLayout = LinearLayout(ctx)
@@ -271,7 +271,7 @@ class ViewUtils {
             // 设置当前订单号到按钮上
             tv_cancel.tag = data.getString("id")
             tv_cancel.setOnClickListener { v: View ->
-                toast_fun.invoke(v.tag.toString())
+                toast_fun.invoke(data)
             }
         }
 

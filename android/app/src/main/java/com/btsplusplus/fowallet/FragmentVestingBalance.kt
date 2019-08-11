@@ -277,7 +277,10 @@ class FragmentVestingBalance : BtsppFragment() {
         //  ----- 准备提取 -----
 
         //  1、判断手续费是否足够。
-        val fee_item = ChainObjectManager.sharedChainObjectManager().getFeeItem(EBitsharesOperations.ebo_vesting_balance_withdraw, _full_account_data)
+        val extra_balance = JSONObject().apply {
+            put(vesting.getJSONObject("balance").getString("asset_id"), withdraw_available)
+        }
+        val fee_item = ChainObjectManager.sharedChainObjectManager().getFeeItem(EBitsharesOperations.ebo_vesting_balance_withdraw, _full_account_data, extra_balance = extra_balance)
         if (!fee_item.getBoolean("sufficient")) {
             showToast(resources.getString(R.string.kTipsTxFeeNotEnough))
             return
