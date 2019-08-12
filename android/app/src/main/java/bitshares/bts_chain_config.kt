@@ -1,6 +1,16 @@
 package bitshares
 
 /**
+ * BTS石墨烯私钥类型定义
+ * 参考：https://github.com/satoshilabs/slips/issues/49。
+ */
+enum class EHDBitsharesPermissionType(val value: Int) {
+    ehdbpt_owner(0x0),                      //  所有者权限
+    ehdbpt_active(0x1),                     //  资金权限
+    ehdbpt_memo(0x2),                       //  备注权限
+}
+
+/**
  *  石墨烯账号黑白名单标记
  */
 enum class EBitsharesWhiteListFlag(val value: Int) {

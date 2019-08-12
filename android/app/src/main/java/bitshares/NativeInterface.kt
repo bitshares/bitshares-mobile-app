@@ -32,6 +32,10 @@ class NativeInterface {
 
     external fun bts_gen_public_key_from_b58address(address: ByteArray, address_prefix: ByteArray): ByteArray?
 
+    external fun bts_privkey_tweak_add(seckey: ByteArray, tweak: ByteArray): ByteArray?
+
+    external fun bts_pubkey_tweak_add(pubkey: ByteArray, tweak: ByteArray): ByteArray?
+
     external fun bts_save_wallet(wallet_jsonbin: ByteArray, password: ByteArray, entropy: ByteArray): ByteArray?
 
     external fun bts_load_wallet(wallet_buffer: ByteArray, password: ByteArray): ByteArray?
