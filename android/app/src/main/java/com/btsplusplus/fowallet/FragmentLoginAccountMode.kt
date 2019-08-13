@@ -119,7 +119,7 @@ class FragmentLoginAccountMode : Fragment() {
                     val active_private_wif = OrgUtils.genBtsWifPrivateKey(active_seed.utf8String())
                     val owner_seed = "${username}owner${password}"
                     val owner_private_wif = OrgUtils.genBtsWifPrivateKey(owner_seed.utf8String())
-                    val full_wallet_bin = WalletManager.sharedWalletManager().genFullWalletData(activity!!, username, active_private_wif, owner_private_wif, null, trade_password)
+                    val full_wallet_bin = WalletManager.sharedWalletManager().genFullWalletData(activity!!, username, jsonArrayfrom(active_private_wif, owner_private_wif), trade_password)
                     assert(full_wallet_bin != null)
 
                     //  保存钱包信息

@@ -201,6 +201,37 @@ class WalletManager {
 
             return res
         }
+
+        /**
+         * (public) 归一化脑密钥，按照不可见字符切分字符串，然后用标准空格连接。
+         */
+        fun normalizeBrainKey(brainKey: String): String {
+            //  方便匹配正则，末尾添加一个空格作为不可见自负。
+            val str = "${brainKey} "
+            val reg = Regex("(\\S+)([\\s]+)", RegexOption.IGNORE_CASE)
+            val list = reg.findAll(str).map {
+                return@map it.value.trim()
+            }
+            return list.joinToString(" ")
+        }
+
+        /**
+         * (public) 根据脑密钥单词字符串生成对应的WIF格式私钥（脑密钥字符串作为seed）。
+         */
+        fun genBrainKeyPrivateWIF(brainKeyPlainText: String): String {
+            return OrgUtils.genBtsWifPrivateKey(normalizeBrainKey(brainKeyPlainText).utf8String())
+        }
+
+        /**
+         * (public) 根据脑密钥单词字符串 和 HD子密钥索引编号 生成WIF格式私钥。REMARK：sha512(brainKey + " " + seq)作为seed。
+         */
+        fun genPrivateKeyFromBrainKey(brainKeyPlainText: String, sequence: Int): String {
+            assert(sequence >= 0)
+            val str = "${normalizeBrainKey(brainKeyPlainText)} ${sequence}"
+            val digest64 = sha512(str.utf8String())
+            return OrgUtils.genBtsWifPrivateKey(digest64)
+        }
+
     }
 
     //  脑密钥字典
@@ -835,8 +866,8 @@ class WalletManager {
      * 创建完整钱包对象。
      * 直接返回二进制bin。
      */
-    fun genFullWalletData(ctx: Context, account_name: String, active_private_wif: String?, owner_private_wif: String?, memo_private_wif: String?, wallet_password: String): ByteArray? {
-        var full_wallet_object = genFullWalletObject(ctx, account_name, active_private_wif, owner_private_wif, memo_private_wif, wallet_password)
+    fun genFullWalletData(ctx: Context, account_name: String, private_wif_keys: JSONArray, wallet_password: String): ByteArray? {
+        val full_wallet_object = genFullWalletObject(ctx, account_name, private_wif_keys, wallet_password)
         if (full_wallet_object == null) {
             return null
         }
@@ -844,31 +875,34 @@ class WalletManager {
     }
 
     private fun _genFullWalletData(full_wallet_object: JSONObject, wallet_password: String): ByteArray? {
-        var data = full_wallet_object.toString()
-        var entropy = WalletManager.secureRandomByte32Hex()
+        val data = full_wallet_object.toString()
+        val entropy = WalletManager.secureRandomByte32Hex()
         return NativeInterface.sharedNativeInterface().bts_save_wallet(data.utf8String(), wallet_password.utf8String(), entropy.utf8String())
     }
 
     /**
      * (public) 创建完整钱包对象。
      */
-    fun genFullWalletObject(ctx: Context, account_name: String, active_private_wif: String?, owner_private_wif: String?, memo_private_wif: String?, wallet_password: String): JSONObject? {
+    fun genFullWalletObject(ctx: Context, account_name: String, private_wif_keys: JSONArray, wallet_password: String): JSONObject? {
         //  1、随机生成主密码
-        var encryption_buffer32 = WalletManager.secureRandomByte32()
+        val encryption_buffer32 = WalletManager.secureRandomByte32()
         //  2、主密码（用钱包密码加密）
-        var encryption_key = auxAesEncryptToHex(wallet_password.utf8String(), encryption_buffer32)
+        val encryption_key = auxAesEncryptToHex(wallet_password.utf8String(), encryption_buffer32)
         if (encryption_key == null) {
             return null
         }
         //  3、用主密码加密 owner、active、memo、brain等所有信息。
-        var private_keys = JSONArray()
-        if (active_private_wif != null) {
-            val pubkey = OrgUtils.genBtsAddressFromWifPrivateKey(active_private_wif)
+        val private_keys = JSONArray()
+        for (private_wif in private_wif_keys.forin<String>()) {
+            if (private_wif == null) {
+                continue
+            }
+            val pubkey = OrgUtils.genBtsAddressFromWifPrivateKey(private_wif)
             assert(pubkey != null)
             if (pubkey == null) {
                 return null
             }
-            val prikey32 = NativeInterface.sharedNativeInterface().bts_gen_private_key_from_wif_privatekey(active_private_wif.utf8String())
+            val prikey32 = NativeInterface.sharedNativeInterface().bts_gen_private_key_from_wif_privatekey(private_wif.utf8String())
             if (prikey32 == null) {
                 return null
             }
@@ -878,38 +912,7 @@ class WalletManager {
             }
             private_keys.put(jsonObjectfromKVS("id", private_keys.length() + 1, "encrypted_key", encrypted_key, "pubkey", pubkey))
         }
-        if (owner_private_wif != null) {
-            val pubkey = OrgUtils.genBtsAddressFromWifPrivateKey(owner_private_wif)
-            assert(pubkey != null)
-            if (pubkey == null) {
-                return null
-            }
-            val prikey32 = NativeInterface.sharedNativeInterface().bts_gen_private_key_from_wif_privatekey(owner_private_wif.utf8String())
-            if (prikey32 == null) {
-                return null
-            }
-            val encrypted_key = auxAesEncryptToHex(encryption_buffer32, prikey32)
-            if (encrypted_key == null) {
-                return null
-            }
-            private_keys.put(jsonObjectfromKVS("id", private_keys.length() + 1, "encrypted_key", encrypted_key, "pubkey", pubkey))
-        }
-        if (memo_private_wif != null) {
-            val pubkey = OrgUtils.genBtsAddressFromWifPrivateKey(memo_private_wif)
-            assert(pubkey != null)
-            if (pubkey == null) {
-                return null
-            }
-            val prikey32 = NativeInterface.sharedNativeInterface().bts_gen_private_key_from_wif_privatekey(memo_private_wif.utf8String())
-            if (prikey32 == null) {
-                return null
-            }
-            val encrypted_key = auxAesEncryptToHex(encryption_buffer32, prikey32)
-            if (encrypted_key == null) {
-                return null
-            }
-            private_keys.put(jsonObjectfromKVS("id", private_keys.length() + 1, "encrypted_key", encrypted_key, "pubkey", pubkey))
-        }
+
         //  4、生成脑密钥
         val brainkey_plaintext = suggestBrainKey(ctx)
         val brainkey_pubkey = OrgUtils.genBtsAddressFromPrivateKeySeed(brainkey_plaintext)
@@ -970,23 +973,6 @@ class WalletManager {
     }
 
     /**
-     * (public) 根据脑密钥单词字符串生成对应的WIF格式私钥（脑密钥字符串作为seed）。
-     */
-    fun genBrainKeyPrivateWIF(brainKeyPlainText: String): String {
-        return OrgUtils.genBtsWifPrivateKey(_normalize_brainKey(brainKeyPlainText).utf8String())
-    }
-
-    /**
-     * (public) 根据脑密钥单词字符串 和 HD子密钥索引编号 生成WIF格式私钥。REMARK：sha512(brainKey + " " + seq)作为seed。
-     */
-    fun genPrivateKeyFromBrainKey(brainKeyPlainText: String, sequence: Int): String {
-        assert(sequence >= 0)
-        val str = "${_normalize_brainKey(brainKeyPlainText)} ${sequence}"
-        val digest64 = sha512(str.utf8String())
-        return OrgUtils.genBtsWifPrivateKey(digest64)
-    }
-
-    /**
      * (public) 随机生成脑密钥
      */
     fun suggestBrainKey(ctx: Context): String {
@@ -1006,21 +992,7 @@ class WalletManager {
             assert(wordIndex >= 0 && wordIndex < dictionary.size)
             brainkey.add(dictionary[wordIndex])
         }
-        return _normalize_brainKey(brainkey.joinToString(" "))
-    }
-
-    /**
-     * (private) 归一化脑密钥，按照不可见字符切分字符串，然后用标准空格连接。
-     */
-    private fun _normalize_brainKey(brainKey: String): String {
-        //  方便匹配正则，末尾添加一个空格作为不可见自负。
-        var str = "${brainKey} "
-        val reg = Regex("(\\S+)([\\s]+)", RegexOption.IGNORE_CASE)
-        val list = reg.findAll(str).map {
-            return@map it.value.trim()
-        }
-        val ret = list.joinToString(" ")
-        return ret
+        return WalletManager.normalizeBrainKey(brainkey.joinToString(" "))
     }
 
     /**

@@ -54,7 +54,7 @@ class HDWallet {
 
                 for (j in 1 until iterations) {
                     U = hmacSHA512(U, password)!!
-                    for (k in 0 until hLen){
+                    for (k in 0 until hLen) {
                         T[k] = T[k].xor(U[k])
                     }
                 }
@@ -71,7 +71,7 @@ class HDWallet {
                 val mac = Mac.getInstance("HmacSHA512")
                 mac.init(secretKey)
                 return mac.doFinal(data)
-            } catch (e: Exception){
+            } catch (e: Exception) {
                 return null
             }
         }
