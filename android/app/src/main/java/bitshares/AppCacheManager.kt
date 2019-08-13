@@ -14,6 +14,7 @@ class AppCacheManager {
         kwmPasswordWithWallet(2),       //  密码登录+钱包模式
         kwmPrivateKeyWithWallet(3),     //  活跃私钥+钱包模式
         kwmFullWalletMode(4),           //  完整钱包模式（兼容官方客户端的钱包格式）
+        kwmBrainKeyWithWallet(5),       //  助记词+钱包模式
     }
 
     companion object {

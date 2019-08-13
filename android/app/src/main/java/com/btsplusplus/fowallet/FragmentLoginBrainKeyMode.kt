@@ -8,9 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import bitshares.Promise
-import bitshares.btsppLogCustom
-import bitshares.jsonObjectfromKVS
+import bitshares.*
+import com.btsplusplus.fowallet.utils.CommonLogic
+import com.fowallet.walletcore.bts.WalletManager
+import org.json.JSONObject
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -27,6 +28,7 @@ private const val ARG_PARAM2 = "param2"
  *
  */
 class FragmentLoginBrainKeyMode : Fragment() {
+
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -71,27 +73,73 @@ class FragmentLoginBrainKeyMode : Fragment() {
             v.findViewById<LinearLayout>(R.id.cell_trade_password_from_brain_key_mode).visibility = View.GONE
         }
 
-        _button_login.setOnClickListener({
+        _button_login.setOnClickListener {
             onLoginClicked()
-        })
+        }
 
-        v.findViewById<ImageView>(R.id.tip_link_trading_password_from_brain_key_mode).setOnClickListener({
+        v.findViewById<ImageView>(R.id.tip_link_trading_password_from_brain_key_mode).setOnClickListener {
             //  [统计]
             btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_trading_password"))
             activity!!.goToWebView(_ctx!!.resources.getString(R.string.kVcTitleWhatIsTradePassowrd), "https://btspp.io/qam.html#qa_trading_password")
-        })
+        }
 
         return v
     }
 
     private fun onLoginClicked() {
-        val bran_key = _tf_bran_key!!.text
-        val trade_password = _tf_trade_password!!.text
-        if (_checkActivePermission){
 
-        } else {
-
+        var bran_key = _tf_bran_key!!.text.toString()
+        if (bran_key == "") {
+            showToast("助记词无效，请重新输入。")//TODO:
+            return
         }
+        bran_key = WalletManager.normalizeBrainKey(bran_key)
+
+        //  仅正常登录是才需要验证交易密码，导入到已有钱包不用验证。
+        var trade_password = ""
+        if (_checkActivePermission) {
+            trade_password = _tf_trade_password!!.text.toString()
+            if (!Utils.isValidBitsharesWalletPassword(trade_password)){
+                showToast(_ctx!!.resources.getString(R.string.kLoginSubmitTipsTradePasswordFmtIncorrect))
+                return
+            }
+        }
+
+        //  开始登录
+        val pub_pri_keys_hash = JSONObject()
+
+        //  根据BIP32、BIP39、BIP44规范，从助记词生成种子、和各种子私钥。
+        val hdk = HDWallet.fromMnemonic(bran_key)
+        val new_key_owner = hdk.deriveBitshares(EHDBitsharesPermissionType.ehdbpt_owner)
+        val new_key_active = hdk.deriveBitshares(EHDBitsharesPermissionType.ehdbpt_active)
+        val new_key_memo = hdk.deriveBitshares(EHDBitsharesPermissionType.ehdbpt_memo)
+
+        val pri_key_owner = new_key_owner.toWifPrivateKey()
+        val pri_key_active = new_key_active.toWifPrivateKey()
+        val pri_key_memo = new_key_memo.toWifPrivateKey()
+
+        val pub_key_owner = OrgUtils.genBtsAddressFromWifPrivateKey(pri_key_owner)
+        val pub_key_active = OrgUtils.genBtsAddressFromWifPrivateKey(pri_key_active)
+        val pub_key_memo = OrgUtils.genBtsAddressFromWifPrivateKey(pri_key_memo)
+
+        pub_pri_keys_hash.put(pub_key_owner, pri_key_owner)
+        pub_pri_keys_hash.put(pub_key_active, pri_key_active)
+        pub_pri_keys_hash.put(pub_key_memo, pri_key_memo)
+
+        //  REMARK：兼容轻钱包，根据序列生成私钥匙。
+        for (i in 0 until 10) {
+            val pri_key = WalletManager.genPrivateKeyFromBrainKey(bran_key, i)
+            val pub_key = OrgUtils.genBtsAddressFromWifPrivateKey(pri_key)
+            pub_pri_keys_hash.put(pub_key, pri_key)
+        }
+
+        //  从各种私钥登录。//TODO:多语言
+        CommonLogic.loginWithKeyHashs(activity!!, pub_pri_keys_hash, _checkActivePermission, trade_password,
+                AppCacheManager.EWalletMode.kwmBrainKeyWithWallet.value,
+                "login with brainkey",
+                "助记词不正确，请重新输入。",
+                "资金权限不足，不可导入。",
+                _result_promise)
     }
 
     override fun onDetach() {

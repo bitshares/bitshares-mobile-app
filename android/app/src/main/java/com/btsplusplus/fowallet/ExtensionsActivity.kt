@@ -357,11 +357,15 @@ fun android.app.Activity.GuardProposalOrNormalTransaction(opcode: EBitsharesOper
 fun android.app.Activity.guardWalletUnlocked(checkActivePermission: Boolean, body: (unlocked: Boolean) -> Unit) {
     val walletMgr = WalletManager.sharedWalletManager()
     if (walletMgr.isLocked()) {
-        var title = if (walletMgr.getWalletMode() == AppCacheManager.EWalletMode.kwmPasswordOnlyMode.value) R.string.unlockTipsUnlockAccount.xmlstring(this) else R.string.unlockTipsUnlockWallet.xmlstring(this)
+        val title = if (walletMgr.getWalletMode() == AppCacheManager.EWalletMode.kwmPasswordOnlyMode.value) R.string.unlockTipsUnlockAccount.xmlstring(this) else R.string.unlockTipsUnlockWallet.xmlstring(this)
         val placeholder = when (walletMgr.getWalletMode()) {
+            //  账号密码
             AppCacheManager.EWalletMode.kwmPasswordOnlyMode.value -> resources.getString(R.string.unlockTipsPleaseInputAccountPassword)
+            //  交易密码
             AppCacheManager.EWalletMode.kwmPasswordWithWallet.value -> resources.getString(R.string.kLoginTipsPlaceholderTradePassword)
             AppCacheManager.EWalletMode.kwmPrivateKeyWithWallet.value -> resources.getString(R.string.unlockTipsPleaseInputTradePassword)
+            AppCacheManager.EWalletMode.kwmBrainKeyWithWallet.value -> resources.getString(R.string.unlockTipsPleaseInputTradePassword)
+            //  钱包密码
             AppCacheManager.EWalletMode.kwmFullWalletMode.value -> resources.getString(R.string.registerLoginPagePleaseInputWalletPws)
             else -> resources.getString(R.string.kLoginImportTipsPleaseInputPassword)
         }

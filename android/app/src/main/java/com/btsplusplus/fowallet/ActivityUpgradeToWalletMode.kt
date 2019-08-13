@@ -77,7 +77,7 @@ class ActivityUpgradeToWalletMode : BtsppActivity() {
         val active_private_wif = OrgUtils.genBtsWifPrivateKey(active_seed.utf8String())
         val owner_seed = "${accountName}owner${password}"
         val owner_private_wif = OrgUtils.genBtsWifPrivateKey(owner_seed.utf8String())
-        val full_wallet_bin = walletMgr.genFullWalletData(this, accountName, active_private_wif, owner_private_wif, null, wallet_password)!!
+        val full_wallet_bin = walletMgr.genFullWalletData(this, accountName, jsonArrayfrom(active_private_wif, owner_private_wif), wallet_password)!!
 
         //  3、保存钱包信息
         AppCacheManager.sharedAppCacheManager().apply {

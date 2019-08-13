@@ -562,7 +562,7 @@ class ChainObjectManager {
         //  合并
         if (extra_balance != null) {
             extra_balance.keys().forEach { asset_type ->
-                if (balance_hash.optJSONObject(asset_type) == null){
+                if (balance_hash.optJSONObject(asset_type) == null) {
                     val extra_amount = extra_balance.getString(asset_type)
                     balance_hash.put(asset_type, JSONObject().apply {
                         put("asset_id", asset_type)
