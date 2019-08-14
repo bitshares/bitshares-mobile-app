@@ -106,7 +106,7 @@
                         android:background="#00000000"
                         android:text="@string/kTailerBtnBid1"
                         android:textAllCaps="false"
-                        android:textColor="@color/theme01.textColorNormal" />
+                        android:textColor="@color/theme01.textColorHighlight" />
 
                     <Button
                         android:id="@+id/btn_tailer_ask1"
@@ -117,7 +117,7 @@
                         android:background="#00000000"
                         android:text="@string/kTailerBtnAsk1"
                         android:textAllCaps="false"
-                        android:textColor="@color/theme01.textColorNormal" />
+                        android:textColor="@color/theme01.textColorHighlight" />
                 </LinearLayout>
 
                 <View android:layout_height="1dp" android:background="@color/theme01.textColorGray" android:layout_width="fill_parent"></View>
@@ -164,7 +164,7 @@
                         android:background="#00000000"
                         android:text="25%"
                         android:textSize="13dp"
-                        android:textColor="@color/theme01.textColorNormal" />
+                        android:textColor="@color/theme01.textColorHighlight" />
 
                     <Button
                         android:id="@+id/btn_tailer_percent50"
@@ -174,7 +174,7 @@
                         android:background="#00000000"
                         android:text="50%"
                         android:textSize="13dp"
-                        android:textColor="@color/theme01.textColorNormal" />
+                        android:textColor="@color/theme01.textColorHighlight" />
                     <Button
                         android:id="@+id/btn_tailer_percent100"
                         android:layout_width="50dp"
@@ -183,7 +183,7 @@
                         android:background="#00000000"
                         android:text="100%"
                         android:textSize="13dp"
-                        android:textColor="@color/theme01.textColorNormal" />
+                        android:textColor="@color/theme01.textColorHighlight" />
 
 
                 </LinearLayout>

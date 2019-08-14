@@ -198,7 +198,8 @@
     <string name="kLoginSubmitTipsAccountPasswordPermissionNotEnough">The password has insufficient permissions.</string>
     <string name="kLoginSubmitTipsInvalidPrivateKey">The private key is invalid. Please re-enter.</string>
     <string name="kLoginSubmitTipsPrivateKeyIncorrect">The private key is incorrect. Please re-enter.</string>
-    <string name="kLoginSubmitTipsPrivateKeyPermissionNotEnough">The private key has insufficient permissions.</string>
+    <string name="kLoginSubmitTipsBrainKeyIncorrect">The brain key is incorrect. Please re-enter.</string>
+    <string name="kLoginSubmitTipsPermissionNotEnoughAndCannotBeImported">Insufficient active permission, can not be imported.</string>
     <string name="kLoginSubmitTipsAccountFmtIncorrect">The account format is incorrect. Please re-enter.</string>
     <string name="kLoginRegTipsRegOK">Registration is successful, but the refresh fails. You can log in directly later.</string>
     <string name="kLoginTipsWalletModeRegOK">The registration is successful, but query account data failed. Please restart the app.</string>
