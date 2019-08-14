@@ -209,7 +209,7 @@ enum
                             login_mode:kwmPrivateKeyWithWallet
                             login_desc:@"login with privatekey"
                errMsgInvalidPrivateKey:NSLocalizedString(@"kLoginSubmitTipsPrivateKeyIncorrect", @"私钥不正确，请重新输入。")
-       errMsgActivePermissionNotEnough:NSLocalizedString(@"kLoginSubmitTipsPrivateKeyPermissionNotEnough", @"该私钥权限不足。")];
+       errMsgActivePermissionNotEnough:NSLocalizedString(@"kLoginSubmitTipsPermissionNotEnoughAndCannotBeImported", @"资金权限不足，不可导入。")];
 }
 
 - (void)didReceiveMemoryWarning

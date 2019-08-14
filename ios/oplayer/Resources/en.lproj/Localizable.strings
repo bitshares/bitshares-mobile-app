@@ -212,7 +212,8 @@
 "kLoginSubmitTipsAccountPasswordPermissionNotEnough" = "The password has insufficient permissions.";
 "kLoginSubmitTipsInvalidPrivateKey" = "The private key is invalid. Please re-enter.";
 "kLoginSubmitTipsPrivateKeyIncorrect" = "The private key is incorrect. Please re-enter.";
-"kLoginSubmitTipsPrivateKeyPermissionNotEnough" = "The private key has insufficient permissions.";
+"kLoginSubmitTipsBrainKeyIncorrect" = "The brain key is incorrect. Please re-enter.";
+"kLoginSubmitTipsPermissionNotEnoughAndCannotBeImported" = "Insufficient active permission, can not be imported.";
 "kLoginSubmitTipsAccountFmtIncorrect" = "The account format is incorrect. Please re-enter.";
 "kLoginRegTipsRegOK" = "Registration is successful, but the refresh fails. You can log in directly later.";
 "kLoginTipsWalletModeRegOK" = "The registration is successful, but query account data failed. Please restart the app.";

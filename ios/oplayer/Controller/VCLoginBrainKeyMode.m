@@ -185,7 +185,7 @@ enum
     //  检测参数有效性
     NSString* pBrainKey = [NSString trim:_tv_brain_key.text];
     if ([self isStringEmpty:pBrainKey]){
-        [OrgUtils makeToast:@"助记词无效，请重新输入。"];//TODO:
+        [OrgUtils makeToast:NSLocalizedString(@"kLoginSubmitTipsBrainKeyIncorrect", @"助记词不正确，请重新输入。")];
         return;
     }
     pBrainKey = [WalletManager normalizeBrainKey:pBrainKey];
@@ -239,8 +239,8 @@ enum
                         trade_password:pTradePassword ?: @""
                             login_mode:kwmBrainKeyWithWallet
                             login_desc:@"login with brainkey"
-               errMsgInvalidPrivateKey:@"助记词不正确，请重新输入。"//TODO:多语言
-       errMsgActivePermissionNotEnough:@"资金权限不足，不可导入。"];//TODO:多语言
+               errMsgInvalidPrivateKey:NSLocalizedString(@"kLoginSubmitTipsBrainKeyIncorrect", @"助记词不正确，请重新输入。")
+       errMsgActivePermissionNotEnough:NSLocalizedString(@"kLoginSubmitTipsPermissionNotEnoughAndCannotBeImported", @"资金权限不足，不可导入。")];
 }
 
 - (void)didReceiveMemoryWarning
