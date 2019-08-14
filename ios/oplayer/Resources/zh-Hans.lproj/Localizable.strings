@@ -212,7 +212,8 @@
 "kLoginSubmitTipsAccountPasswordPermissionNotEnough" = "该密码权限不足。";
 "kLoginSubmitTipsInvalidPrivateKey" = "私钥数据无效，请重新输入。";
 "kLoginSubmitTipsPrivateKeyIncorrect" = "私钥不正确，请重新输入。";
-"kLoginSubmitTipsPrivateKeyPermissionNotEnough" = "该私钥权限不足。";
+"kLoginSubmitTipsBrainKeyIncorrect" = "助记词不正确，请重新输入。";
+"kLoginSubmitTipsPermissionNotEnoughAndCannotBeImported" = "资金权限不足，不可导入。";
 "kLoginSubmitTipsAccountFmtIncorrect" = "账号格式不正确，请重新输入。";
 "kLoginRegTipsRegOK" = "注册成功，但刷新失败，稍后直接登录即可。";
 "kLoginTipsWalletModeRegOK" = "注册成功，但获取账号信息失败，请重新启动APP。";

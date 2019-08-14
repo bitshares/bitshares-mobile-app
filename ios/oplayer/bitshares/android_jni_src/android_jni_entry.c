@@ -571,6 +571,69 @@ java_jni_entry_bts_gen_public_key_from_b58address(JNIEnv* env, jobject self,
 }
 
 /**
+ *  加法调整公私钥
+ */
+JNIEXPORT jbyteArray
+java_jni_entry_bts_privkey_tweak_add(JNIEnv* env, jobject self,
+    jbyteArray seckey, jbyteArray tweak)
+{
+    //  检查参数
+    if (!seckey || !tweak){
+        return NULL;
+    }
+
+    //  获取数据
+    jbyte* seckey_ptr = (*env)->GetByteArrayElements(env, seckey, 0);
+    jsize seckey_size = (*env)->GetArrayLength(env, seckey);
+    jbyte* tweak_ptr = (*env)->GetByteArrayElements(env, tweak, 0);
+
+    jbyteArray retv = NULL;
+    if (__bts_privkey_tweak_add((unsigned char*)seckey_ptr, (const unsigned char*)tweak_ptr)) {
+        retv = (*env)->NewByteArray(env, seckey_size);
+        (*env)->SetByteArrayRegion(env, retv, 0, seckey_size, (const jbyte*)seckey_ptr);
+    }
+
+    //  释放参数数据
+    (*env)->ReleaseByteArrayElements(env, seckey, seckey_ptr, JNI_ABORT);
+    (*env)->ReleaseByteArrayElements(env, tweak, tweak_ptr, JNI_ABORT);
+
+    return retv;
+}
+
+JNIEXPORT jbyteArray
+java_jni_entry_bts_pubkey_tweak_add(JNIEnv* env, jobject self,
+    jbyteArray pubkey, jbyteArray tweak)
+{
+    //  检查参数
+    if (!pubkey || !tweak){
+        return NULL;
+    }
+
+    //  获取数据
+    jbyte* pubkey_ptr = (*env)->GetByteArrayElements(env, pubkey, 0);
+    jsize pubkey_size = (*env)->GetArrayLength(env, pubkey);
+    jbyte* tweak_ptr = (*env)->GetByteArrayElements(env, tweak, 0);
+
+    //  构造publick key结构体
+    secp256k1_pubkey public_key_s = {0, };
+    assert(pubkey_size == sizeof(public_key_s.data));
+    memcpy(&public_key_s.data, pubkey_ptr, sizeof(public_key_s.data));
+
+    jbyteArray retv = NULL;
+    if (__bts_pubkey_tweak_add(&public_key_s, (const unsigned char*)tweak_ptr)) {
+        //  拷贝整个结构体
+        retv = (*env)->NewByteArray(env, sizeof(public_key_s.data));
+        (*env)->SetByteArrayRegion(env, retv, 0, sizeof(public_key_s.data), (const jbyte*)public_key_s.data);
+    }
+
+    //  释放参数数据
+    (*env)->ReleaseByteArrayElements(env, pubkey, pubkey_ptr, JNI_ABORT);
+    (*env)->ReleaseByteArrayElements(env, tweak, tweak_ptr, JNI_ABORT);
+    
+    return retv;
+}
+
+/**
  *  保存：序列化钱包对象JSON字符串为二进制流。
  *  entropy     - 外部生成随机字符串的熵（根据系统也许不同，比如各种时间戳、随机数、系统信息、securerandom等）
  *
@@ -773,6 +836,14 @@ java_jni_entry_bts_gen_public_key_from_b58address(JNIEnv* env, jobject self,
     jbyteArray address, jbyteArray address_prefix);
 
 JNIEXPORT jbyteArray
+java_jni_entry_bts_privkey_tweak_add(JNIEnv* env, jobject self,
+    jbyteArray seckey, jbyteArray tweak);
+
+JNIEXPORT jbyteArray
+java_jni_entry_bts_pubkey_tweak_add(JNIEnv* env, jobject self,
+    jbyteArray pubkey, jbyteArray tweak);
+
+JNIEXPORT jbyteArray
 java_jni_entry_bts_save_wallet(JNIEnv* env, jobject self,
     jbyteArray wallet_jsonbin, jbyteArray password, jbyteArray entropy);
 
@@ -801,6 +872,8 @@ static JNINativeMethod jni_methods_table[] =
     {"bts_gen_address_from_private_key32",      "([B[B)[B",                 (void*)java_jni_entry_bts_gen_address_from_private_key32},
     {"bts_gen_private_key_from_wif_privatekey", "([B)[B",                   (void*)java_jni_entry_bts_gen_private_key_from_wif_privatekey},
     {"bts_gen_public_key_from_b58address",      "([B[B)[B",                 (void*)java_jni_entry_bts_gen_public_key_from_b58address},
+    {"bts_privkey_tweak_add",                   "([B[B)[B",                 (void*)java_jni_entry_bts_privkey_tweak_add},
+    {"bts_pubkey_tweak_add",                    "([B[B)[B",                 (void*)java_jni_entry_bts_pubkey_tweak_add},
     {"bts_save_wallet",                         "([B[B[B)[B",               (void*)java_jni_entry_bts_save_wallet},
     {"bts_load_wallet",                         "([B[B)[B",                 (void*)java_jni_entry_bts_load_wallet},
     {"bts_sign_buffer",                         "([B[B)[B",                 (void*)java_jni_entry_bts_sign_buffer},

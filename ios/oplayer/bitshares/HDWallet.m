@@ -171,6 +171,7 @@
     //  TODO:不支持
     //  HMAC-SHA512(Key = cpar, Data = serP(point(kpar)) || ser32(i))
     NSAssert(NO, @"暂不支持");
+    return nil;
 }
 
 /**

@@ -14,8 +14,8 @@ typedef enum EWalletMode
     kwmPasswordOnlyMode,        //  普通密码模式
     kwmPasswordWithWallet,      //  密码登录+钱包模式
     kwmPrivateKeyWithWallet,    //  活跃私钥+钱包模式
-    kwmBrainKeyWithWallet,      //  助记词+钱包模式
-    kwmFullWalletMode           //  完整钱包模式（兼容官方客户端的钱包格式）
+    kwmFullWalletMode,          //  完整钱包模式（兼容官方客户端的钱包格式）
+    kwmBrainKeyWithWallet       //  助记词+钱包模式
 } EWalletMode;
 
 @interface AppCacheManager : NSObject

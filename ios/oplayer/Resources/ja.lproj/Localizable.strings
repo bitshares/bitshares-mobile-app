@@ -212,7 +212,8 @@
 "kLoginSubmitTipsAccountPasswordPermissionNotEnough" = "キーファイルパスワードの権限は不足します。";
 "kLoginSubmitTipsInvalidPrivateKey" = "キーファイルが無効ですので、再入力してください。";
 "kLoginSubmitTipsPrivateKeyIncorrect" = "不正なキーファイル，再入力してください。";
-"kLoginSubmitTipsPrivateKeyPermissionNotEnough" = "このキーファイルの権限は不足します。";
+"kLoginSubmitTipsBrainKeyIncorrect" = "ニーモニックが正しくありません。再入力してください。";
+"kLoginSubmitTipsPermissionNotEnoughAndCannotBeImported" = "資金権限が不十分で、インポートできません。";
 "kLoginSubmitTipsAccountFmtIncorrect" = "アカウントの書式は正しくありません，再入力してください。";
 "kLoginRegTipsRegOK" = "新規登録成功，失敗を更新して、少しの後でまた試みてください。";
 "kLoginTipsWalletModeRegOK" = "新規登録成功，アカウントの情報を得て失敗します，APPに再起動してください。";
