@@ -19,7 +19,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
                 android:gravity="start"
-                android:hint="请输入助记词，每个单词之间按空格分隔。"
+                android:hint="@string/kLoginTipsPlaceholderBrainKey"
                 android:textColor="@color/theme01.textColorMain"
                 android:textSize="16dp"
                 android:background="@null"

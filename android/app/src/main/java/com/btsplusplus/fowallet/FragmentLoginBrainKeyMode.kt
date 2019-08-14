@@ -90,7 +90,7 @@ class FragmentLoginBrainKeyMode : Fragment() {
 
         var bran_key = _tf_bran_key!!.text.toString()
         if (bran_key == "") {
-            showToast("助记词无效，请重新输入。")//TODO:
+            showToast(_ctx!!.resources.getString(R.string.kLoginSubmitTipsBrainKeyIncorrect))
             return
         }
         bran_key = WalletManager.normalizeBrainKey(bran_key)
@@ -133,12 +133,12 @@ class FragmentLoginBrainKeyMode : Fragment() {
             pub_pri_keys_hash.put(pub_key, pri_key)
         }
 
-        //  从各种私钥登录。//TODO:多语言
+        //  从各种私钥登录。
         CommonLogic.loginWithKeyHashs(activity!!, pub_pri_keys_hash, _checkActivePermission, trade_password,
                 AppCacheManager.EWalletMode.kwmBrainKeyWithWallet.value,
                 "login with brainkey",
-                "助记词不正确，请重新输入。",
-                "资金权限不足，不可导入。",
+                _ctx!!.resources.getString(R.string.kLoginSubmitTipsBrainKeyIncorrect),
+                _ctx!!.resources.getString(R.string.kLoginSubmitTipsPermissionNotEnoughAndCannotBeImported),
                 _result_promise)
     }
 
