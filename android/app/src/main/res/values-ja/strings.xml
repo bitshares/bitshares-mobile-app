@@ -198,7 +198,8 @@
     <string name="kLoginSubmitTipsAccountPasswordPermissionNotEnough">キーファイルパスワードの権限は不足します。</string>
     <string name="kLoginSubmitTipsInvalidPrivateKey">キーファイルが無効ですので、再入力してください。</string>
     <string name="kLoginSubmitTipsPrivateKeyIncorrect">不正なキーファイル，再入力してください。</string>
-    <string name="kLoginSubmitTipsPrivateKeyPermissionNotEnough">このキーファイルの権限は不足します。</string>
+    <string name="kLoginSubmitTipsBrainKeyIncorrect">ニーモニックが正しくありません。再入力してください。</string>
+    <string name="kLoginSubmitTipsPermissionNotEnoughAndCannotBeImported">資金権限が不十分で、インポートできません。</string>
     <string name="kLoginSubmitTipsAccountFmtIncorrect">アカウントの書式は正しくありません，再入力してください。</string>
     <string name="kLoginRegTipsRegOK">新規登録成功，失敗を更新して、少しの後でまた試みてください。</string>
     <string name="kLoginTipsWalletModeRegOK">新規登録成功，アカウントの情報を得て失敗します，APPに再起動してください。</string>

@@ -88,7 +88,7 @@ class FragmentLoginPrivateKeyMode : Fragment() {
                 AppCacheManager.EWalletMode.kwmPrivateKeyWithWallet.value,
                 "login with privatekey",
                 R.string.kLoginSubmitTipsPrivateKeyIncorrect.xmlstring(_ctx!!),
-                R.string.kLoginSubmitTipsPrivateKeyPermissionNotEnough.xmlstring(_ctx!!),
+                R.string.kLoginSubmitTipsPermissionNotEnoughAndCannotBeImported.xmlstring(_ctx!!),
                 _result_promise)
     }
 

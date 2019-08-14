@@ -198,7 +198,8 @@
     <string name="kLoginSubmitTipsAccountPasswordPermissionNotEnough">该密码权限不足。</string>
     <string name="kLoginSubmitTipsInvalidPrivateKey">私钥数据无效，请重新输入。</string>
     <string name="kLoginSubmitTipsPrivateKeyIncorrect">私钥不正确，请重新输入。</string>
-    <string name="kLoginSubmitTipsPrivateKeyPermissionNotEnough">该私钥权限不足。</string>
+    <string name="kLoginSubmitTipsBrainKeyIncorrect">助记词不正确，请重新输入。</string>
+    <string name="kLoginSubmitTipsPermissionNotEnoughAndCannotBeImported">资金权限不足，不可导入。</string>
     <string name="kLoginSubmitTipsAccountFmtIncorrect">账号格式不正确，请重新输入。</string>
     <string name="kLoginRegTipsRegOK">注册成功，但刷新失败，稍后直接登录即可。</string>
     <string name="kLoginTipsWalletModeRegOK">注册成功，但获取账号信息失败，请重新启动APP。</string>
