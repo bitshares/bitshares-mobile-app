@@ -1602,6 +1602,11 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
         id n_target_collateral_ratio = [NSDecimalNumber decimalNumberWithMantissa:[target_collateral_ratio unsignedLongLongValue]
                                                                          exponent:-3 isNegative:NO];
         
+        //  目标抵押率和MCR之间取最大值
+        if ([n_target_collateral_ratio compare:mcr] < 0) {
+            n_target_collateral_ratio = mcr;
+        }
+        
         //  开始计算
         id n1 = [[n_target_collateral_ratio decimalNumberByMultiplyingBy:n_debt] decimalNumberBySubtracting:[feed_price decimalNumberByMultiplyingBy:n_collateral]];
         
