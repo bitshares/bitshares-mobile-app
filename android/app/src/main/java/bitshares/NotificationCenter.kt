@@ -20,9 +20,9 @@ class NotificationCenter {
      * 订阅
      */
     fun addObserver(name: String, handler: Handler) {
-        val handler_list = _msg_handlers.get(name)
+        val handler_list = _msg_handlers[name]
         if (handler_list == null) {
-            _msg_handlers.put(name, arrayListOf(handler))
+            _msg_handlers[name] = arrayListOf(handler)
         } else {
             handler_list.add(handler)
         }
@@ -32,21 +32,20 @@ class NotificationCenter {
      * 移出订阅
      */
     fun removeObserver(name: String, handler: Handler) {
-        val handler_list = _msg_handlers.get(name)
-        if (handler_list != null) {
-            handler_list.remove(handler)
-        }
+        _msg_handlers[name]?.remove(handler)
     }
 
     /**
      * 投递信息给接受订阅者
      */
     fun postNotificationName(name: String, data: Any) {
-        val handler_list = _msg_handlers.get(name)
+        val handler_list = _msg_handlers[name]
         if (handler_list != null && handler_list.size > 0) {
-            val msg = Message.obtain()
-            msg.obj = data
-            handler_list.forEach { it.sendMessage(msg) }
+            handler_list.forEach {
+                val msg = Message.obtain()
+                msg.obj = data
+                it.sendMessage(msg)
+            }
         }
     }
 }
