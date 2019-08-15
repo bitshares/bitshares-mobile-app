@@ -21,6 +21,7 @@ import com.fowallet.walletcore.bts.WalletManager
 import org.json.JSONArray
 import org.json.JSONObject
 import java.math.BigDecimal
+import kotlin.math.pow
 
 /**
  * A simple [Fragment] subclass.
@@ -38,16 +39,17 @@ class FragmentTradeMainPage : BtsppFragment() {
     private var _isbuy: Boolean = true
     lateinit var _view: View
     lateinit var _ctx: Context
-    lateinit var _viewBidAsk: ViewBidAsk
+    private lateinit var _viewBidAsk: ViewBidAsk
     lateinit var _tradingPair: TradingPair
     private var _balanceData: JSONObject? = null
-    lateinit var _base_amount_n: BigDecimal
-    lateinit var _quote_amount_n: BigDecimal
+    private lateinit var _base_amount_n: BigDecimal
+    private lateinit var _quote_amount_n: BigDecimal
     private var _currLimitOrders: JSONObject? = null
     private var _userOrderDataArray: List<JSONObject>? = null
 
-    lateinit var _tf_price_watcher: UtilsDigitTextWatcher
-    lateinit var _tf_amount_watcher: UtilsDigitTextWatcher
+    private lateinit var _tf_price_watcher: UtilsDigitTextWatcher
+    private lateinit var _tf_amount_watcher: UtilsDigitTextWatcher
+    private lateinit var _tf_total_watcher: UtilsDigitTextWatcher
 
     override fun onInitParams(args: Any?) {
         val json_array = args as JSONArray
@@ -163,11 +165,14 @@ class FragmentTradeMainPage : BtsppFragment() {
 
         if (_isbuy) {
             //  买的情况：显示 base 的余额
-            _view.findViewById<TextView>(R.id.label_txt_available_n).text = "${_base_amount_n.toPriceAmountString()}${_tradingPair._baseAsset.getString("symbol")}"
+            _draw_ui_available(_base_amount_n.toPriceAmountString(), true, _isbuy)
         } else {
             //  卖的情况：显示 quote 的余额
-            _view.findViewById<TextView>(R.id.label_txt_available_n).text = "${_quote_amount_n.toPriceAmountString()}${_tradingPair._quoteAsset.getString("symbol")}"
+            _draw_ui_available(_quote_amount_n.toPriceAmountString(), true, _isbuy)
         }
+
+        //  刷新手续费信息
+        _draw_market_fee(if (_isbuy) _tradingPair._quoteAsset else _tradingPair._baseAsset, full_account_data.getJSONObject("account"))
 
         //  2、刷新交易额、可用余额等
         _onPriceOrAmountChanged()
@@ -232,15 +237,6 @@ class FragmentTradeMainPage : BtsppFragment() {
         val str_price = _tf_price_watcher.get_tf_string()
         val str_amount = _tf_amount_watcher.get_tf_string()
 
-        //  无效输入
-        if (str_price == "" || str_amount == "") {
-            _view.findViewById<TextView>(R.id.label_txt_total_price).tap {
-                it.text = "--${_tradingPair._baseAsset.getString("symbol")}"
-                it.setTextColor(resources.getColor(R.color.theme01_textColorMain))
-            }
-            return
-        }
-
         //  获取单价、数量、总价
 
         //  !!! 精确计算 !!!
@@ -253,35 +249,57 @@ class FragmentTradeMainPage : BtsppFragment() {
         })
 
         if (_isbuy) {
-            //  总金额
-            //  _base_amount_n < n_total
-            if (_base_amount_n.compareTo(n_total) < 0) {
-                _view.findViewById<TextView>(R.id.label_txt_total_price).tap {
-                    it.text = "${n_total.toPriceAmountString()}${_tradingPair._baseAsset.getString("symbol")}(金额不足)"
-                    it.setTextColor(resources.getColor(R.color.theme01_tintColor))
-                }
-            } else {
-                _view.findViewById<TextView>(R.id.label_txt_total_price).tap {
-                    it.text = "${n_total.toPriceAmountString()}${_tradingPair._baseAsset.getString("symbol")}"
-                    it.setTextColor(resources.getColor(R.color.theme01_textColorMain))
-                }
-            }
+            _draw_ui_available(_base_amount_n.toPriceAmountString(), _base_amount_n >= n_total, _isbuy)
         } else {
-            //  可用余额
-            //  _quote_amount_n < n_amount
-            if (_quote_amount_n.compareTo(n_amount) < 0) {
-                _view.findViewById<TextView>(R.id.label_txt_available_n).tap {
-                    it.text = "${_quote_amount_n.toPriceAmountString()}${_tradingPair._quoteAsset.getString("symbol")}(数量不足)"
-                    it.setTextColor(resources.getColor(R.color.theme01_tintColor))
-                }
-            } else {
-                _view.findViewById<TextView>(R.id.label_txt_available_n).tap {
-                    it.text = "${_quote_amount_n.toPriceAmountString()}${_tradingPair._quoteAsset.getString("symbol")}"
-                    it.setTextColor(resources.getColor(R.color.theme01_textColorMain))
-                }
-            }
-            //  总金额
-            _view.findViewById<TextView>(R.id.label_txt_total_price).text = "${n_total.toPriceAmountString()}${_tradingPair._baseAsset.getString("symbol")}"
+            _draw_ui_available(_quote_amount_n.toPriceAmountString(), _quote_amount_n >= n_amount, _isbuy)
+        }
+
+        //  总金额
+        if (str_price == "" || str_amount == "") {
+            _tf_total_watcher.clear()
+        } else {
+            _tf_total_watcher.set_new_text(OrgUtils.formatFloatValue(n_total.toDouble(), _tradingPair._displayPrecision, false))
+        }
+    }
+
+    private fun _draw_market_fee(asset: JSONObject, account: JSONObject? = null) {
+        val market_fee_percent = asset.optJSONObject("options")?.optString("market_fee_percent", null)
+        if (market_fee_percent != null) {
+            val n_market_fee_percent = bigDecimalfromAmount(market_fee_percent, BigDecimal.valueOf(10.0.pow(2)))
+//            if (account != null && Utils.isBitsharesVIP(account.optString("membership_expiration_date", null))) {
+//            } else {
+//            }
+            _view.findViewById<TextView>(R.id.label_txt_market_fee).text = String.format(resources.getString(R.string.kLabelMarketFee), "${n_market_fee_percent.toPlainString()}%")
+        } else {
+            _view.findViewById<TextView>(R.id.label_txt_market_fee).text = String.format(resources.getString(R.string.kLabelMarketFee), "0%")
+        }
+    }
+
+    private fun _draw_ui_available(value: String?, enough: Boolean, isbuy: Boolean) {
+        val symbol: String
+        val not_enough_str: String
+        val value_str: String
+        val value_color: Int
+
+        if (isbuy) {
+            symbol = _tradingPair._baseAsset.getString("symbol")
+            not_enough_str = resources.getString(R.string.kVcTradeTipAvailableNotEnough)
+        } else {
+            symbol = _tradingPair._quoteAsset.getString("symbol")
+            not_enough_str = resources.getString(R.string.kVcTradeTipAmountNotEnough)
+        }
+
+        if (enough) {
+            value_str = "${value ?: "--"}$symbol"
+            value_color = R.color.theme01_textColorNormal
+        } else {
+            value_str = "${value ?: "--"}$symbol($not_enough_str)"
+            value_color = R.color.theme01_tintColor
+        }
+
+        _view.findViewById<TextView>(R.id.label_txt_available_n).tap {
+            it.text = "${resources.getString(R.string.kLableAvailable)} $value_str"
+            it.setTextColor(resources.getColor(value_color))
         }
     }
 
@@ -482,7 +500,7 @@ class FragmentTradeMainPage : BtsppFragment() {
         }
 
         val str_price = _tf_price_watcher.get_tf_string()
-        var str_amount = _tf_amount_watcher.get_tf_string()
+        val str_amount = _tf_amount_watcher.get_tf_string()
         if (str_price == "") {
             showToast(resources.getString(R.string.kVcTradeSubmitTipPleaseInputPrice))
             return
@@ -545,8 +563,8 @@ class FragmentTradeMainPage : BtsppFragment() {
      * 处理买卖核心
      */
     private fun processBuyOrSellActionCore(n_price: BigDecimal, n_amount: BigDecimal, n_total: BigDecimal) {
-        var amount_to_sell: JSONObject
-        var min_to_receive: JSONObject
+        val amount_to_sell: JSONObject
+        val min_to_receive: JSONObject
 
         if (_isbuy) {
             //  执行买入    base减少 -> quote增加
@@ -661,18 +679,53 @@ class FragmentTradeMainPage : BtsppFragment() {
         _onPriceOrAmountChanged()
     }
 
+    /**
+     * 交易额输入框：文本变化
+     */
+    private fun _onTfTotalChanged(str: String) {
+        if (_balanceData == null) {
+            return
+        }
+        val str_price = _tf_price_watcher.get_tf_string()
+        val n_price = Utils.auxGetStringDecimalNumberValue(str_price)
+
+        if (n_price > BigDecimal.ZERO) {
+            val str_total = _tf_total_watcher.get_tf_string()
+            val n_total = Utils.auxGetStringDecimalNumberValue(str_total)
+            val n_amount = n_total.divide(n_price, _tradingPair._quotePrecision, BigDecimal.ROUND_DOWN)
+
+            //  刷新可用余额
+            if (_isbuy){
+                _draw_ui_available(_base_amount_n.toPriceAmountString(), _base_amount_n >= n_total, _isbuy)
+            }else{
+                _draw_ui_available(_quote_amount_n.toPriceAmountString(), _quote_amount_n >= n_amount, _isbuy)
+            }
+
+            //  交易数量
+            if (str_total == "") {
+                _tf_amount_watcher.clear()
+            } else {
+                _tf_amount_watcher.set_new_text(OrgUtils.formatFloatValue(n_amount.toDouble(), _tradingPair._quotePrecision, false))
+            }
+        } else{
+            //  价格为0时，交易数量为空。
+            _tf_amount_watcher.clear()
+        }
+    }
+
     private fun refreshUI() {
         //  第一排涨跌文字
         _refreshLatestPrice(true)
 
-        //  子界面 买卖盘口信息
-        _viewBidAsk = ViewBidAsk(_ctx).initView(20.0f, 6, _tradingPair)
+        //  子界面 买卖盘口信息 TODO:常量5
+        _viewBidAsk = ViewBidAsk(_ctx).initView(20.0f, 5, _tradingPair)
         val table_wrap_layout: LinearLayout = _view.findViewById(R.id.table_wrap_of_buy)
         table_wrap_layout.addView(_viewBidAsk)
 
         //  输入框占位符
         val tf_price = _view.findViewById<EditText>(R.id.tf_price)
         val tf_amount = _view.findViewById<EditText>(R.id.tf_amount)
+        val tf_total = _view.findViewById<EditText>(R.id.tf_total)
         if (_isbuy) {
             tf_price.hint = _ctx.resources.getString(R.string.kPlaceHolderBuyPrice)
             tf_amount.hint = _ctx.resources.getString(R.string.kPlaceHolderBuyAmount)
@@ -689,6 +742,10 @@ class FragmentTradeMainPage : BtsppFragment() {
         tf_amount.addTextChangedListener(_tf_amount_watcher)
         _tf_amount_watcher.on_value_changed(::_onTfAmountChanged)
 
+        _tf_total_watcher = UtilsDigitTextWatcher().set_tf(tf_total).set_precision(_tradingPair._displayPrecision)
+        tf_total.addTextChangedListener(_tf_total_watcher)
+        _tf_total_watcher.on_value_changed(::_onTfTotalChanged)
+
         //  价格输入框尾部信息
         val label_txt_tf_price_tailer = _view.findViewById<TextView>(R.id.label_txt_tf_price_tailer)
         label_txt_tf_price_tailer.text = _tradingPair._baseAsset.getString("symbol")
@@ -702,14 +759,13 @@ class FragmentTradeMainPage : BtsppFragment() {
         _view.findViewById<TextView>(R.id.btn_tailer_percent50).setOnClickListener { _onTailerButtonClicked_percent(BigDecimal.valueOf(0.5)) }
         _view.findViewById<TextView>(R.id.btn_tailer_percent100).setOnClickListener { _onTailerButtonClicked_percent(BigDecimal.ONE) }
 
+        //  交易额输入框尾部信息
+        val label_txt_tf_total_tailer = _view.findViewById<TextView>(R.id.label_txt_tf_total_tailer)
+        label_txt_tf_total_tailer.text = _tradingPair._baseAsset.getString("symbol")
+
         //  可用
-        if (_isbuy) {
-            _view.findViewById<TextView>(R.id.label_txt_available_n).text = "--${_tradingPair._baseAsset.getString("symbol")}"
-        } else {
-            _view.findViewById<TextView>(R.id.label_txt_available_n).text = "--${_tradingPair._quoteAsset.getString("symbol")}"
-        }
-        //  交易额
-        _view.findViewById<TextView>(R.id.label_txt_total_price).text = "--${_tradingPair._baseAsset.getString("symbol")}"
+        _draw_ui_available(null, true, _isbuy)
+        _draw_market_fee(if (_isbuy) _tradingPair._quoteAsset else _tradingPair._baseAsset)
 
         //  登录 or 买入 or 卖出
         val _confirmation_btn_of_buy = _view.findViewById<TextView>(R.id.confirmation_btn_of_buy)
