@@ -215,7 +215,12 @@ class OrgUtils {
                 //  n >= --------------------------------------------------------------
                 //          feed_price * (target_collateral_ratio / mssr - 1)
                 //  =============================================================
-                val n_target_collateral_ratio = bigDecimalfromAmount(target_collateral_ratio, 3)
+                var n_target_collateral_ratio = bigDecimalfromAmount(target_collateral_ratio, 3)
+
+                //  目标抵押率和MCR之间取最大值
+                if (n_target_collateral_ratio < mcr) {
+                    n_target_collateral_ratio = mcr
+                }
 
                 //  开始计算
                 val n1 = n_target_collateral_ratio.multiply(n_debt).subtract(feed_price.multiply(n_collateral))
