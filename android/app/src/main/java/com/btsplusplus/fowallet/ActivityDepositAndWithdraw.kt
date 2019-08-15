@@ -8,7 +8,6 @@ import android.widget.TextView
 import bitshares.*
 import com.btsplusplus.fowallet.gateway.GatewayAssetItemData
 import com.btsplusplus.fowallet.gateway.GatewayBase
-import com.btsplusplus.fowallet.gateway.OpenLedger
 import com.btsplusplus.fowallet.gateway.RuDEX
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager

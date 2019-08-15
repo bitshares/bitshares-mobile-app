@@ -13,9 +13,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import bitshares.*
 import com.btsplusplus.fowallet.utils.CommonLogic
-import com.fowallet.walletcore.bts.ChainObjectManager
-import com.fowallet.walletcore.bts.WalletManager
-import org.json.JSONObject
 
 
 // TODO: Rename parameter arguments, choose names that match
