@@ -7,7 +7,10 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
 import bitshares.*
 import com.btsplusplus.fowallet.utils.CommonLogic
 import com.fowallet.walletcore.bts.WalletManager
@@ -99,7 +102,7 @@ class FragmentLoginBrainKeyMode : Fragment() {
         var trade_password = ""
         if (_checkActivePermission) {
             trade_password = _tf_trade_password!!.text.toString()
-            if (!Utils.isValidBitsharesWalletPassword(trade_password)){
+            if (!Utils.isValidBitsharesWalletPassword(trade_password)) {
                 showToast(_ctx!!.resources.getString(R.string.kLoginSubmitTipsTradePasswordFmtIncorrect))
                 return
             }

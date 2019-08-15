@@ -695,9 +695,9 @@ class FragmentTradeMainPage : BtsppFragment() {
             val n_amount = n_total.divide(n_price, _tradingPair._quotePrecision, BigDecimal.ROUND_DOWN)
 
             //  刷新可用余额
-            if (_isbuy){
+            if (_isbuy) {
                 _draw_ui_available(_base_amount_n.toPriceAmountString(), _base_amount_n >= n_total, _isbuy)
-            }else{
+            } else {
                 _draw_ui_available(_quote_amount_n.toPriceAmountString(), _quote_amount_n >= n_amount, _isbuy)
             }
 
@@ -707,7 +707,7 @@ class FragmentTradeMainPage : BtsppFragment() {
             } else {
                 _tf_amount_watcher.set_new_text(OrgUtils.formatFloatValue(n_amount.toDouble(), _tradingPair._quotePrecision, false))
             }
-        } else{
+        } else {
             //  价格为0时，交易数量为空。
             _tf_amount_watcher.clear()
         }

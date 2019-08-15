@@ -70,7 +70,7 @@ class ViewMask : Dialog {
     override fun dismiss() {
         val v = _owner as? Activity
         if (v != null) {
-            if (!v.isFinishing) {
+            if (!v.isFinishing && !v.isDestroyed) {
                 super.dismiss()
             }
         } else {
