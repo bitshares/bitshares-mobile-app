@@ -466,7 +466,7 @@
         [self.launchWindow setRootViewController:rootVC];
     }
     self.launchWindow.hidden = NO;
-    self.launchWindow.windowLevel = UIWindowLevelNormal + 70;
+    self.launchWindow.windowLevel = UIWindowLevelNormal + 10;
     return self.launchWindow;
 }
 
