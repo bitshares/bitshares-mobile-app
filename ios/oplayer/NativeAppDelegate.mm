@@ -12,6 +12,7 @@
 #import "ThemeManager.h"
 #import "LangManager.h"
 
+#import "VCLaunch.h"
 #import "VCMarketContainer.h"
 #import "VCDebt.h"
 #import "VCServices.h"
@@ -48,6 +49,7 @@
 
 @implementation NativeAppDelegate
 
+@synthesize launchWindow;
 @synthesize alertViewWindow;
 @synthesize currLanguage = _currLanguage;
 @synthesize currNetStatus = _currNetStatus;
@@ -450,6 +452,46 @@
     return self.window;
 }
 
+/**
+ *  创建启动界面窗口
+ */
+- (UIWindow*)createLaunchWindow
+{
+    if (!self.launchWindow)
+    {
+        self.launchWindow = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+        self.launchWindow.backgroundColor = [UIColor whiteColor];
+        VCLaunch* rootVC = [[VCLaunch alloc] init];
+        rootVC.view.backgroundColor = [UIColor whiteColor];
+        [self.launchWindow setRootViewController:rootVC];
+    }
+    self.launchWindow.hidden = NO;
+    self.launchWindow.windowLevel = UIWindowLevelNormal + 70;
+    return self.launchWindow;
+}
+
+/**
+ *  关闭启动界面窗口
+ */
+- (void)closeLaunchWindow
+{
+    if (!self.launchWindow){
+        return;
+    }
+    
+    //  淡出当前窗口
+    UIWindow* w = self.launchWindow;
+    [UIView animateWithDuration:0.8 animations:^{
+        w.alpha = 0.0;
+    } completion:^(BOOL finished) {
+        [w setRootViewController:nil];
+        [w resignKeyWindow];
+        [w removeFromSuperview];
+        w.hidden = YES;
+        self.launchWindow = nil;
+    }];
+}
+
 - (UIViewController*)getAlertViewWindowViewController
 {
     if (!self.alertViewWindow)
@@ -555,8 +597,11 @@ void uncaughtExceptionHandler(NSException *exception)
     [_reach startNotifier];
     _currNetStatus = [_reach currentReachabilityStatus];
     
-    //  初始化窗口
+    //  初始化APP主窗口
     [[self createMainWindow] makeKeyAndVisible];
+    
+    //  初始化启动界面窗口
+    [[self createLaunchWindow] makeKeyAndVisible];
     
     return YES;
 }

@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		18FF06C517E03C170088405E /* share_line.png in Resources */ = {isa = PBXBuildFile; fileRef = 18FF06C317E03C170088405E /* share_line.png */; };
 		18FF06C617E03C170088405E /* share_line@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18FF06C417E03C170088405E /* share_line@2x.png */; };
+		3F05DDBD230B7D76002934DA /* VCLaunch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F05DDBB230B7D75002934DA /* VCLaunch.m */; };
+		3F05DDBE230B7D76002934DA /* VCLaunch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F05DDBB230B7D75002934DA /* VCLaunch.m */; };
 		3F0AE33A2192C97800E4144C /* iconWallet@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F0AE3342192C97700E4144C /* iconWallet@3x.png */; };
 		3F0AE33B2192C97800E4144C /* iconGame@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F0AE3352192C97800E4144C /* iconGame@2x.png */; };
 		3F0AE33C2192C97800E4144C /* iconGame@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F0AE3362192C97800E4144C /* iconGame@3x.png */; };
@@ -1122,6 +1124,8 @@
 /* Begin PBXFileReference section */
 		18FF06C317E03C170088405E /* share_line.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = share_line.png; path = Images/share_line.png; sourceTree = "<group>"; };
 		18FF06C417E03C170088405E /* share_line@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "share_line@2x.png"; path = "Images/share_line@2x.png"; sourceTree = "<group>"; };
+		3F05DDBB230B7D75002934DA /* VCLaunch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCLaunch.m; path = Controller/VCLaunch.m; sourceTree = "<group>"; };
+		3F05DDBC230B7D75002934DA /* VCLaunch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCLaunch.h; path = Controller/VCLaunch.h; sourceTree = "<group>"; };
 		3F0AE3342192C97700E4144C /* iconWallet@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconWallet@3x.png"; path = "Images/iconWallet@3x.png"; sourceTree = "<group>"; };
 		3F0AE3352192C97800E4144C /* iconGame@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconGame@2x.png"; path = "Images/iconGame@2x.png"; sourceTree = "<group>"; };
 		3F0AE3362192C97800E4144C /* iconGame@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconGame@3x.png"; path = "Images/iconGame@3x.png"; sourceTree = "<group>"; };
@@ -2055,6 +2059,8 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3F05DDBC230B7D75002934DA /* VCLaunch.h */,
+				3F05DDBB230B7D75002934DA /* VCLaunch.m */,
 				3F78E07822637E22007D41A3 /* VCAdvancedFeatures.h */,
 				3F78E07922637E22007D41A3 /* VCAdvancedFeatures.m */,
 				3FC4D44B226F2EEB00787082 /* VCHtlcList.h */,
@@ -4079,6 +4085,7 @@
 				3F9A730D21E5C20500DAF7A2 /* ViewGatewayCoinInfoCell.m in Sources */,
 				3FB8F8DE21CE66C200DA88E2 /* NativeAppDelegate.mm in Sources */,
 				3FB8F8DF21CE66C200DA88E2 /* MyLabel.m in Sources */,
+				3F05DDBE230B7D76002934DA /* VCLaunch.m in Sources */,
 				3FB8F8E021CE66C200DA88E2 /* DirectionPanGestureRecognizer.m in Sources */,
 				3FB8F8E121CE66C200DA88E2 /* mztools.c in Sources */,
 				3FB8F8E221CE66C200DA88E2 /* 7zAlloc.c in Sources */,
@@ -4366,6 +4373,7 @@
 				3F9A730C21E5C20500DAF7A2 /* ViewGatewayCoinInfoCell.m in Sources */,
 				EDDB1BF717AA093000E892BA /* NativeAppDelegate.mm in Sources */,
 				B7F9DA71212A6A1300185503 /* MyLabel.m in Sources */,
+				3F05DDBD230B7D76002934DA /* VCLaunch.m in Sources */,
 				B737851321017782001EEA8C /* DirectionPanGestureRecognizer.m in Sources */,
 				B7A13B781CA1443A0096A6A4 /* mztools.c in Sources */,
 				B7BDAA7A20B3C77400738F12 /* 7zAlloc.c in Sources */,

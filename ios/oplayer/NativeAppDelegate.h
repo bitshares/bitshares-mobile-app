@@ -28,6 +28,7 @@
 +(NSInteger)systemVersion;
 +(NativeAppDelegate*)sharedAppDelegate;
 
+@property (retain, nonatomic) UIWindow*     launchWindow;       //  启动界面窗口
 @property (retain, nonatomic) UIWindow*     window;             //  应用普通窗口
 @property (retain, nonatomic) UIWindow*     alertViewWindow;    //  AlertView 窗口
 
@@ -42,6 +43,9 @@
 + (NSString*)appShortVersion;
 
 + (NSString*)deviceInfo;
+
+- (UIWindow*)createLaunchWindow;
+- (void)closeLaunchWindow;
 
 - (UIViewController*)getAlertViewWindowViewController;
 
