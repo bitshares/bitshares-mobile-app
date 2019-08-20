@@ -19,6 +19,9 @@
 //  【系统通知】网络重连成功后发送
 #define kBtsWebsocketReconnectSuccess       @"kBtsWebsocketReconnectSuccess"
 
+//  【系统通知】APP初始化成功之后发送
+#define kBtsAppEventInitDone                @"kBtsAppEventInitDone"
+
 //  BTS 对象本地缓存过期时间
 #define kBTSObjectCacheExpireTime           86400
 
