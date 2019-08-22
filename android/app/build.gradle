@@ -25,6 +25,33 @@ android {
             }
         }
         vectorDrawables.useSupportLibrary = true
+
+        //  默认值
+        buildConfigField "boolean", "kAppModuleEnableTabMarket", "true"
+        buildConfigField "boolean", "kAppModuleEnableTabDebt", "true"
+        buildConfigField "boolean", "kAppModuleEnableRank", "true"
+        buildConfigField "boolean", "kAppModuleEnableFeedPrice", "true"
+        buildConfigField "boolean", "kAppModuleEnableGateway", "true"
+        buildConfigField "boolean", "kAppCheckUpdate", "true"
+
+        //  不区分维度
+        flavorDimensions "default"
+    }
+    productFlavors {
+        bitshares {
+        }
+        baichenglian {
+            applicationId "cn.btser.shop"
+            versionCode 201908221
+            versionName "1.0"
+
+            buildConfigField "boolean", "kAppModuleEnableTabMarket", "false"
+            buildConfigField "boolean", "kAppModuleEnableTabDebt", "false"
+            buildConfigField "boolean", "kAppModuleEnableRank", "false"
+            buildConfigField "boolean", "kAppModuleEnableFeedPrice", "false"
+            buildConfigField "boolean", "kAppModuleEnableGateway", "false"
+            buildConfigField "boolean", "kAppCheckUpdate", "false"
+        }
     }
     buildTypes {
         release {

@@ -58,8 +58,18 @@ fun AppCompatActivity.setBottomNavigationStyle(position: Int) {
             bottom_nav_image_view_my.setColorFilter(color)
         }
     }
-    bottom_nav_markets_frame.setOnClickListener { goTo(ActivityIndexMarkets::class.java) }
-    bottom_nav_diya_frame.setOnClickListener { goTo(ActivityIndexCollateral::class.java) }
+    if (BuildConfig.kAppModuleEnableTabMarket) {
+        bottom_nav_markets_frame.visibility = View.VISIBLE
+        bottom_nav_markets_frame.setOnClickListener { goTo(ActivityIndexMarkets::class.java) }
+    } else {
+        bottom_nav_markets_frame.visibility = View.GONE
+    }
+    if (BuildConfig.kAppModuleEnableTabDebt) {
+        bottom_nav_markets_frame.visibility = View.VISIBLE
+        bottom_nav_diya_frame.setOnClickListener { goTo(ActivityIndexCollateral::class.java) }
+    } else {
+        bottom_nav_diya_frame.visibility = View.GONE
+    }
     bottom_nav_services_frame.setOnClickListener { goTo(ActivityIndexServices::class.java) }
     bottom_nav_my_frame.setOnClickListener { goTo(ActivityIndexMy::class.java) }
 }

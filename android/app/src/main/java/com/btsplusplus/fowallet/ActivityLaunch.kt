@@ -130,8 +130,15 @@ class ActivityLaunch : BtsppActivity() {
      * 进入主界面
      */
     private fun _enterToMain() {
+        var homeClass:Class<*> = ActivityIndexMarkets::class.java
+        if (!BuildConfig.kAppModuleEnableTabMarket) {
+            homeClass = ActivityIndexCollateral::class.java
+        }
+        if (!BuildConfig.kAppModuleEnableTabDebt) {
+            homeClass = ActivityIndexServices::class.java
+        }
         val intent = Intent()
-        intent.setClass(this, ActivityIndexMarkets::class.java)
+        intent.setClass(this, homeClass)
         startActivity(intent)
     }
 
@@ -139,16 +146,19 @@ class ActivityLaunch : BtsppActivity() {
      * 检测更新
      */
     private fun checkUpdate(): Promise {
-        val p = Promise()
-        Utils.now_ts()
-        val version_url = "https://btspp.io/app/android/o_${_appNativeVersion}/version.json?t=${Date().time}"
-        OrgUtils.asyncJsonGet(version_url).then {
-            p.resolve(it as? JSONObject)
-            return@then null
-        }.catch {
-            p.resolve(null)
+        if (BuildConfig.kAppCheckUpdate) {
+            val p = Promise()
+            val version_url = "https://btspp.io/app/android/o_$_appNativeVersion/version.json?t=${Date().time}"
+            OrgUtils.asyncJsonGet(version_url).then {
+                p.resolve(it as? JSONObject)
+                return@then null
+            }.catch {
+                p.resolve(null)
+            }
+            return p
+        } else {
+            return Promise._resolve(null)
         }
-        return p
     }
 
     /**
