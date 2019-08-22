@@ -12,6 +12,7 @@ import android.net.wifi.WifiManager
 import android.telephony.TelephonyManager
 import android.util.TypedValue
 import android.widget.ImageView
+import com.btsplusplus.fowallet.BuildConfig
 import com.btsplusplus.fowallet.R
 import com.qingmei2.library.encode.QRCodeEncoder
 import org.json.JSONArray
@@ -454,13 +455,7 @@ class Utils {
          * 获取APP版本号
          */
         fun appVersionName(ctx: Context): String {
-            try {
-                val package_info = ctx.packageManager.getPackageInfo(ctx.packageName, 0)
-                return package_info.versionName
-            } catch (e: PackageManager.NameNotFoundException) {
-                //  TODO:代码里内置版本号，每次都要修改，虽然仅仅在获取异常的时候才会用到，考虑放到config。？
-                return "2.6"
-            }
+            return BuildConfig.VERSION_NAME
         }
 
         /**

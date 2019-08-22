@@ -1,6 +1,7 @@
 package com.btsplusplus.fowallet
 
 import android.os.Bundle
+import android.view.View
 import bitshares.Promise
 import bitshares.TempManager
 import bitshares.jsonArrayfrom
@@ -31,6 +32,23 @@ class ActivityIndexServices : BtsppActivity() {
         // 设置底部导航栏样式
         setBottomNavigationStyle(2)
 
+        //  设置模块可见性
+        if (BuildConfig.kAppModuleEnableRank) {
+            layout_diya_ranking_from_services.visibility = View.VISIBLE
+        } else {
+            layout_diya_ranking_from_services.visibility = View.GONE
+        }
+        if (BuildConfig.kAppModuleEnableFeedPrice) {
+            layout_feed_price.visibility = View.VISIBLE
+        } else {
+            layout_feed_price.visibility = View.GONE
+        }
+        if (BuildConfig.kAppModuleEnableGateway) {
+            layout_recharge_and_withdraw_of_service.visibility = View.VISIBLE
+        } else {
+            layout_recharge_and_withdraw_of_service.visibility = View.GONE
+        }
+
         //  设置图标颜色
         val iconcolor = resources.getColor(R.color.theme01_textColorNormal)
         img_icon_transfer.setColorFilter(iconcolor)
@@ -50,8 +68,10 @@ class ActivityIndexServices : BtsppActivity() {
             goTo(ActivityAccountQueryBase::class.java, true)
         }
 
-        layout_diya_ranking_from_services.setOnClickListener {
-            goTo(ActivityMarginRanking::class.java, true)
+        if (BuildConfig.kAppModuleEnableRank) {
+            layout_diya_ranking_from_services.setOnClickListener {
+                goTo(ActivityMarginRanking::class.java, true)
+            }
         }
 
         layout_transfer_from_services.setOnClickListener {
@@ -77,12 +97,16 @@ class ActivityIndexServices : BtsppActivity() {
             guardWalletExist { goTo(ActivityVoting::class.java, true) }
         }
 
-        layout_feed_price.setOnClickListener {
-            goTo(ActivityFeedPrice::class.java, true)
+        if (BuildConfig.kAppModuleEnableFeedPrice) {
+            layout_feed_price.setOnClickListener {
+                goTo(ActivityFeedPrice::class.java, true)
+            }
         }
 
-        layout_recharge_and_withdraw_of_service.setOnClickListener {
-            guardWalletExist { goTo(ActivityDepositAndWithdraw::class.java, true) }
+        if (BuildConfig.kAppModuleEnableGateway) {
+            layout_recharge_and_withdraw_of_service.setOnClickListener {
+                guardWalletExist { goTo(ActivityDepositAndWithdraw::class.java, true) }
+            }
         }
 
         layout_advanced_feature_of_service.setOnClickListener {
