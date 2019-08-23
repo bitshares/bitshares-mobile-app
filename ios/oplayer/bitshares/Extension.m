@@ -176,3 +176,13 @@
 }
 
 @end
+
+@implementation NSObject (ScopingFunctions)
+
+- (id)ruby_apply:(RubyApplyBody)func
+{
+    func(self);
+    return self;
+}
+
+@end

@@ -23,36 +23,18 @@
 
 enum
 {
-//    kVcQrCode = 0,          //  扫一扫区域
-    kVcTransfer = 0,        //  转账区域
-    kVcQuery,               //  数据查询区域（账号、抵押信息、喂价信息）
-    kVcGateway,             //  网关/充提
-    kVcAdvanced,            //  更多高级功能(HTLC等）
-    
-    kVcMax
-};
-
-enum
-{
     kVcSubQrScan = 0,       //  扫一扫
-};
-
-enum
-{
-    kVcSubTransfer = 0,     //  转账
+    
+    kVcSubTransfer,         //  转账
     kVcSubVote,             //  投票
-};
-
-enum
-{
-    kVcSubAccountQuery = 0, //  帐号查询
+    
+    kVcSubAccountQuery,     //  帐号查询
     kVcSubCallRanking,      //  抵押排行
     kVcSubFeedPriceDetail,  //  喂价详情
-};
-
-enum
-{
-    kVcSubDepositWithdraw = 0,  //  充币&提币
+    
+    kVcSubDepositWithdraw,  //  充币&提币
+    
+    kVcSubAdvanced,         //  更多高级功能(HTLC等）
 };
 
 @interface VCServices ()
@@ -80,32 +62,52 @@ enum
 	// Do any additional setup after loading the view.
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
-
-//    //  TODO:fowallet 多语言
-//    NSArray* pSection1 = [NSArray arrayWithObjects:
-//                          @"扫一扫",
-//                          nil];
     
-    NSArray* pSection2 = [NSArray arrayWithObjects:
-                          @"kServicesCellLabelTransfer",        //  转账
-                          @"kServicesCellLabelVoting",          //  投票
-                          nil];
-    
-    NSArray* pSection3 = [NSArray arrayWithObjects:
-                          @"kServicesCellLabelAccountSearch",   //  帐号查询
-                          @"kServicesCellLabelRank",            //  抵押排行
-                          @"kServicesCellLabelFeedPrice",       //  喂价详情
-                          nil];
-    
-    NSArray* pSection4 = [NSArray arrayWithObjects:
-                          @"kServicesCellLabelDepositWithdraw", //  充币提币
-                          nil];
-    
-    NSArray* pSection5 = @[
-                           @"kServicesCellLabelAdvFunction"     //  高级功能
-                           ];
-    
-    _dataArray = [[NSArray alloc] initWithObjects:pSection2, pSection3, pSection4, pSection5, nil];
+    //  初始化数据
+    _dataArray = [[[NSMutableArray array] ruby_apply:(^(id ary) {
+        //    //  TODO:fowallet 多语言
+        //    NSArray* pSection1 = [NSArray arrayWithObjects:
+        //                          @"扫一扫",
+        //                          nil];
+        
+        NSArray* pSection2 = [NSArray arrayWithObjects:
+                              @[@(kVcSubTransfer),          @"kServicesCellLabelTransfer"],         //  转账
+                              @[@(kVcSubVote),              @"kServicesCellLabelVoting"],           //  投票
+                              nil];
+        if ([pSection2 count] > 0) {
+            [ary addObject:pSection2];
+        }
+        
+        NSArray* pSection3 = [[[NSMutableArray array] ruby_apply:(^(id obj) {
+            [obj addObject:@[@(kVcSubAccountQuery),      @"kServicesCellLabelAccountSearch"]];      //  帐号查询
+#if kAppModuleEnableRank
+            [obj addObject:@[@(kVcSubCallRanking),       @"kServicesCellLabelRank"]];               //  抵押排行
+#endif  //  kAppModuleEnableRank
+#if kAppModuleEnableFeedPrice
+            [obj addObject:@[@(kVcSubFeedPriceDetail),   @"kServicesCellLabelFeedPrice"]];          //  喂价详情
+#endif  //  kAppModuleEnableFeedPrice
+        })] copy];
+        if ([pSection3 count] > 0) {
+            [ary addObject:pSection3];
+        }
+        
+        NSArray* pSection4 = [[[NSMutableArray array] ruby_apply:(^(id obj) {
+#if kAppModuleEnableGateway
+            [obj addObject:@[@(kVcSubDepositWithdraw),   @"kServicesCellLabelDepositWithdraw"]];    //  充币提币
+#endif  //  kAppModuleEnableGateway
+        })] copy];
+        if ([pSection4 count] > 0) {
+            [ary addObject:pSection4];
+        }
+        
+        NSArray* pSection5 = @[
+                               @[@(kVcSubAdvanced),         @"kServicesCellLabelAdvFunction"]       //  高级功能
+                               ];
+        if ([pSection5 count] > 0) {
+            [ary addObject:pSection5];
+        }
+        
+    })] copy];
     
     _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutNaviAndTab] style:UITableViewStyleGrouped];
     _mainTableView.delegate = self;
@@ -171,101 +173,49 @@ enum
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.selectionStyle = UITableViewCellSelectionStyleBlue;
 
-    id ary = [_dataArray objectAtIndex:indexPath.section];
+    id item = [[_dataArray objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     
     cell.backgroundColor = [UIColor clearColor];
     
     cell.showCustomBottomLine = YES;
     
-    cell.textLabel.text = NSLocalizedString([ary objectAtIndex:indexPath.row], @"");
+    cell.textLabel.text = NSLocalizedString([item lastObject], @"");
     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
     
-    switch (indexPath.section) {
-//        case kVcQrCode:
-//        {
-//            switch (indexPath.row) {
-//                case kVcSubQrScan:
-//                {
-//                    cell.imageView.image = [UIImage templateImageNamed:@"iconScan"];
-//                    cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
-//                }
-//                    break;
-//                    
-//                default:
-//                    break;
-//            }
-//        }
-//            break;
-        case kVcTransfer:
-        {
-            switch (indexPath.row) {
-                case kVcSubTransfer:
-                {
-                    cell.imageView.image = [UIImage templateImageNamed:@"iconTransfer"];
-                    cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
-                }
-                    break;
-                case kVcSubVote:
-                {
-                    cell.imageView.image = [UIImage templateImageNamed:@"iconVote"];
-                    cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
-                }
-                    break;
-                default:
-                    break;
-            }
-        }
+    switch ([[item firstObject] integerValue]) {
+        case kVcSubQrScan:
+            cell.imageView.image = [UIImage templateImageNamed:@"iconScan"];
             break;
-        case kVcQuery:
-        {
-            switch (indexPath.row) {
-                case kVcSubAccountQuery:
-                {
-                    cell.imageView.image = [UIImage templateImageNamed:@"iconQuery"];
-                    cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
-                }
-                    break;
-                case kVcSubCallRanking:
-                {
-                    cell.imageView.image = [UIImage templateImageNamed:@"iconDebtRank"];
-                    cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
-                }
-                    break;
-                case kVcSubFeedPriceDetail:
-                {
-                    cell.imageView.image = [UIImage templateImageNamed:@"iconFeedDetail"];
-                    cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
-                }
-                    break;
-                default:
-                    break;
-            }
-        }
+            
+        case kVcSubTransfer:
+            cell.imageView.image = [UIImage templateImageNamed:@"iconTransfer"];
             break;
-        case kVcGateway:
-        {
-            switch (indexPath.row) {
-                case kVcSubDepositWithdraw:
-                {
-                    cell.imageView.image = [UIImage templateImageNamed:@"iconDepositWithdraw"];
-                    cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
-                }
-                    break;
-                    
-                default:
-                    break;
-            }
-        }
+        case kVcSubVote:
+            cell.imageView.image = [UIImage templateImageNamed:@"iconVote"];
             break;
-        case kVcAdvanced:
-        {
+            
+        case kVcSubAccountQuery:
+            cell.imageView.image = [UIImage templateImageNamed:@"iconQuery"];
+            break;
+        case kVcSubCallRanking:
+            cell.imageView.image = [UIImage templateImageNamed:@"iconDebtRank"];
+            break;
+        case kVcSubFeedPriceDetail:
+            cell.imageView.image = [UIImage templateImageNamed:@"iconFeedDetail"];
+            break;
+            
+        case kVcSubDepositWithdraw:
+            cell.imageView.image = [UIImage templateImageNamed:@"iconDepositWithdraw"];
+            break;
+            
+        case kVcSubAdvanced:
             cell.imageView.image = [UIImage templateImageNamed:@"iconAdvFunction"];
-            cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
-        }
             break;
         default:
             break;
     }
+    
+    cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
     
     return cell;
     
@@ -278,115 +228,101 @@ enum
     [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
         UIViewController* vc = nil;
         
-        switch (indexPath.section) {
-//            case kVcQrCode:
-//            {
-//                [[[OrgUtils authorizationForCamera] then:(^id(id data) {
-//                    //  TODO:fowallet 多语言
-//                    VCQrScan* vc = [[VCQrScan alloc] init];
-//                    vc.title = @"扫一扫";
-//                    [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-//                    return nil;
-//                })] catch:(^id(id error) {
-//                    [OrgUtils showMessage:[error reason]];
-//                    return nil;
-//                })];
-//            }
-//                break;
-            case kVcTransfer:
+        id item = [[_dataArray objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+        
+        switch ([[item firstObject] integerValue]) {
+            case kVcSubQrScan:      //  扫一扫
+            {
+                [[[OrgUtils authorizationForCamera] then:(^id(id data) {
+                    //  TODO:fowallet 多语言
+                    VCQrScan* vc = [[VCQrScan alloc] init];
+                    vc.title = @"扫一扫";
+                    [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+                    return nil;
+                })] catch:(^id(id error) {
+                    [OrgUtils showMessage:[error reason]];
+                    return nil;
+                })];
+                break;
+            }
+                
+            case kVcSubTransfer:    //  转账（需要登录）
             {
                 [self GuardWalletExist:^{
-                    switch (indexPath.row) {
-                        case kVcSubTransfer:    //  转账
-                        {
-                            [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-                            id p1 = [self get_full_account_data_and_asset_hash:[[WalletManager sharedWalletManager] getWalletAccountName]];
-                            id p2 = [[ChainObjectManager sharedChainObjectManager] queryFeeAssetListDynamicInfo];   //  查询手续费兑换比例、手续费池等信息
-                            [[[WsPromise all:@[p1, p2]] then:(^id(id data) {
-                                [self hideBlockView];
-                                id full_userdata = [data objectAtIndex:0];
-                                VCTransfer* vc = [[VCTransfer alloc] initWithUserFullInfo:full_userdata defaultAsset:nil];
-                                vc.title = NSLocalizedString(@"kVcTitleTransfer", @"转账");
-                                [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-                                return nil;
-                            })] catch:(^id(id error) {
-                                [self hideBlockView];
-                                [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
-                                return nil;
-                            })];
-                        }
-                            break;
-                        case kVcSubVote:        //  投票
-                        {
-                            VCVote* vc = [[VCVote alloc] init];
-                            vc.title = NSLocalizedString(@"kVcTitleVoting", @"投票");
-                            [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-                        }
-                        default:
-                            break;
+                    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+                    id p1 = [self get_full_account_data_and_asset_hash:[[WalletManager sharedWalletManager] getWalletAccountName]];
+                    id p2 = [[ChainObjectManager sharedChainObjectManager] queryFeeAssetListDynamicInfo];   //  查询手续费兑换比例、手续费池等信息
+                    [[[WsPromise all:@[p1, p2]] then:(^id(id data) {
+                        [self hideBlockView];
+                        id full_userdata = [data objectAtIndex:0];
+                        VCTransfer* vc = [[VCTransfer alloc] initWithUserFullInfo:full_userdata defaultAsset:nil];
+                        vc.title = NSLocalizedString(@"kVcTitleTransfer", @"转账");
+                        [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+                        return nil;
+                    })] catch:(^id(id error) {
+                        [self hideBlockView];
+                        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+                        return nil;
+                    })];
+                }];
+                break;
+            }
+                
+            case kVcSubVote:        //  投票（需要登录）
+            {
+                [self GuardWalletExist:^{
+                    VCVote* vc = [[VCVote alloc] init];
+                    vc.title = NSLocalizedString(@"kVcTitleVoting", @"投票");
+                    [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+                }];
+                break;
+            }
+                
+            case kVcSubAccountQuery:    //  账号查询
+            {
+                vc = [[VCSearchNetwork alloc] initWithSearchType:enstAccount callback:^(id account_info) {
+                    if (account_info){
+                        [VCCommonLogic viewUserAssets:self account:[account_info objectForKey:@"name"]];
                     }
                 }];
-            }
+                vc.title = NSLocalizedString(@"kVcTitleAccountSearch", @"帐号查询");
                 break;
-            case kVcQuery:
+            }
+            case kVcSubCallRanking:     //  抵押排行
             {
-                switch (indexPath.row) {
-                    case kVcSubAccountQuery:
-                    {
-                        vc = [[VCSearchNetwork alloc] initWithSearchType:enstAccount callback:^(id account_info) {
-                            if (account_info){
-                                [VCCommonLogic viewUserAssets:self account:[account_info objectForKey:@"name"]];
-                            }
-                        }];
-                        vc.title = NSLocalizedString(@"kVcTitleAccountSearch", @"帐号查询");
-                    }
-                        break;
-                    case kVcSubCallRanking:
-                    {
-                        vc = [[VCCallOrderRanking alloc] init];
-                        vc.title = NSLocalizedString(@"kVcTitleRank", @"抵押排行");
-                        //  TODO:page:50
-                        //  get_call_orders && get_full_accounts
-                        // TODO:其他点击
-                        //  vc = [[VCBtsaiWebView alloc] initWithUrl:@"http://bts.ai/a/cny"];
-                        //  vc.title = @"资产查询";
-                    }
-                        break;
-                    case kVcSubFeedPriceDetail:
-                    {
-                        vc = [[VCFeedPriceDetail alloc] init];
-                        vc.title = NSLocalizedString(@"kVcTitleFeedPrice", @"喂价详情");
-                    }
-                        break;
-                    default:
-                        break;
-                }
-            }
+                vc = [[VCCallOrderRanking alloc] init];
+                vc.title = NSLocalizedString(@"kVcTitleRank", @"抵押排行");
+                //  TODO:page:50
+                //  get_call_orders && get_full_accounts
+                // TODO:其他点击
+                //  vc = [[VCBtsaiWebView alloc] initWithUrl:@"http://bts.ai/a/cny"];
+                //  vc.title = @"资产查询";
                 break;
-            case kVcGateway:
+            }
+                
+            case kVcSubFeedPriceDetail: //  喂价详情
             {
-                switch (indexPath.row) {
-                    case kVcSubDepositWithdraw:
-                    {
-                        [self GuardWalletExist:^{
-                            VCDepositWithdrawList* vc = [[VCDepositWithdrawList alloc] init];
-                            vc.title = NSLocalizedString(@"kVcTitleDepositWithdraw", @"冲币提币");
-                            [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-                        }];
-                    }
-                        break;
-                        
-                    default:
-                        break;
-                }
-            }
+                vc = [[VCFeedPriceDetail alloc] init];
+                vc.title = NSLocalizedString(@"kVcTitleFeedPrice", @"喂价详情");
                 break;
-            case kVcAdvanced:
+            }
+                
+            case kVcSubDepositWithdraw: //  充提（需要登录）
+            {
+                [self GuardWalletExist:^{
+                    VCDepositWithdrawList* vc = [[VCDepositWithdrawList alloc] init];
+                    vc.title = NSLocalizedString(@"kVcTitleDepositWithdraw", @"冲币提币");
+                    [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+                }];
+                break;
+            }
+                
+            case kVcSubAdvanced:        //  高级功能
             {
                 vc = [[VCAdvancedFeatures alloc] init];
                 vc.title = NSLocalizedString(@"kVcTitleDepositAdvFunction", @"高级功能");
-            }
                 break;
+            }
             default:
                 break;
         }

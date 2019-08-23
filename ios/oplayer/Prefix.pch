@@ -30,4 +30,24 @@
 #define GRAPHENE_BITSHARES_TESTNET  1
 #endif
 
+#ifdef APP_TARGET_BAICHENGLIAN
+
+#define kAppModuleEnableTabMarket   0
+#define kAppModuleEnableTabDebt     0
+#define kAppModuleEnableRank        0
+#define kAppModuleEnableFeedPrice   0
+#define kAppModuleEnableGateway     0
+#define kAppCheckUpdate             0
+
+#else
+
+#define kAppModuleEnableTabMarket   1
+#define kAppModuleEnableTabDebt     1
+#define kAppModuleEnableRank        1
+#define kAppModuleEnableFeedPrice   1
+#define kAppModuleEnableGateway     1
+#define kAppCheckUpdate             1
+
+#endif
+
 #import "CompileTimeMacro.h"

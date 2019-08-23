@@ -50,3 +50,10 @@ typedef void (^RubyFilterEachWithIndexFunction)(id src, NSInteger idx);
 - (id)safeObjectAtIndex:(NSUInteger)index;
 
 @end
+
+typedef void (^RubyApplyBody)(id obj);
+@interface NSObject (ScopingFunctions)
+
+- (id)ruby_apply:(RubyApplyBody)func;
+
+@end

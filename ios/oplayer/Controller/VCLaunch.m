@@ -128,6 +128,9 @@
 
 - (WsPromise*)checkUpdate
 {
+#if kAppCheckUpdate
+    
+    //  检测更新
     return [WsPromise promise:(^(WsResolveHandler resolve, WsRejectHandler reject) {
 #if DEBUG && !TEST_UPDATE
         //  调试模式：直接加载本地version.json
@@ -154,6 +157,12 @@
          }];
 #endif
     })];
+#else
+    
+    //  不检测更新
+    return [WsPromise resolve:@{}];
+#endif  //  kAppCheckUpdate
+
 }
 
 //  从bundle加载version.json
@@ -188,7 +197,7 @@
 - (void)_onLoadVersionJsonFinish:(NSDictionary*)pConfig
 {
     //  检测app是否可以更新
-    if (pConfig) {
+    if (pConfig && [pConfig count] > 0) {
         NSString* pNativeVersion = [NativeAppDelegate appShortVersion];
         NSString* pNewestVersion = [pConfig objectForKey:@"version"];
         if (pNewestVersion)
