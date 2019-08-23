@@ -400,24 +400,33 @@
     
     ///<    初始化tabBar和各子视图
     _mainTabController = [[MyTabBarController alloc] init];
+    GRCustomUITabBarItem* tabarItem = nil;
+    NSMutableArray* tabControllers = [NSMutableArray array];
     
+#if kAppModuleEnableTabMarket
     VCMarketContainer* vcMarketContainer = [[VCMarketContainer alloc] init];
     vcMarketContainer.title = NSLocalizedString(@"kTabBarNameMarkets", @"行情");
-    GRCustomUITabBarItem *tabarItem = [[GRCustomUITabBarItem alloc]initWithTitle:NSLocalizedString(@"kTabBarNameMarkets", @"行情") tag:0];
+    tabarItem = [[GRCustomUITabBarItem alloc]initWithTitle:NSLocalizedString(@"kTabBarNameMarkets", @"行情") tag:0];
     tabarItem.imageString = @"tabMarket";
     vcMarketContainer.tabBarItem = tabarItem;
- 
+    [tabControllers addObject:vcMarketContainer];
+#endif  //  kAppModuleEnableTabMarket
+    
+#if kAppModuleEnableTabDebt
     VCDebt* vcDebt = [[VCDebt alloc] init];
     vcDebt.title = NSLocalizedString(@"kVcTitleMarginPosition", @"抵押借贷");
     tabarItem = [[GRCustomUITabBarItem alloc]initWithTitle:NSLocalizedString(@"kTabBarNameCollateral", @"抵押") tag:0];
     tabarItem.imageString = @"tabDebt";
     vcDebt.tabBarItem = tabarItem;
+    [tabControllers addObject:vcDebt];
+#endif  //  kAppModuleEnableTabDebt
     
     VCServices* vcServices = [[VCServices alloc] init];
     vcServices.title = NSLocalizedString(@"kTabBarNameServices", @"服务");
     tabarItem = [[GRCustomUITabBarItem alloc]initWithTitle:NSLocalizedString(@"kTabBarNameServices", @"服务") tag:0];
     tabarItem.imageString = @"tabService";
     vcServices.tabBarItem = tabarItem;
+    [tabControllers addObject:vcServices];
     
 //    //  占位VC（空）
 //    VCBase* tmpVC = [[[VCBase alloc] init] autorelease];
@@ -430,13 +439,13 @@
     tabarItem = [[GRCustomUITabBarItem alloc]initWithTitle:NSLocalizedString(@"kTabBarNameMy", @"我的") tag:0];
     tabarItem.imageString = @"tabMyself";
     vcMyself.tabBarItem = tabarItem;
+    [tabControllers addObject:vcMyself];
     
     //  初始化tabvc对应的navibar
-    NSArray* controllers = [NSArray arrayWithObjects:vcMarketContainer, vcDebt, vcServices, vcMyself, nil];
-    NSMutableArray *navControllers = [[NSMutableArray alloc] init];
-    for (int i=0; i<[controllers count]; i++)
+    NSMutableArray* navControllers = [[NSMutableArray alloc] init];
+    for (int i=0; i<[tabControllers count]; i++)
     {
-        UIViewController* vc = [controllers objectAtIndex:i];
+        UIViewController* vc = [tabControllers objectAtIndex:i];
         MyNavigationController* vcNav = [[MyNavigationController alloc]initWithRootViewController:vc];
         [self setupNavigationAttribute:vcNav];
         [navControllers addObject:vcNav];
