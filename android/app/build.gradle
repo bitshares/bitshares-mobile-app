@@ -34,11 +34,21 @@ android {
         buildConfigField "boolean", "kAppModuleEnableGateway", "true"
         buildConfigField "boolean", "kAppCheckUpdate", "true"
 
+        buildConfigField "String", "kAppCommunityFaucetAddress", "\"\""
+
         //  不区分维度
         flavorDimensions "default"
     }
     productFlavors {
-        bitshares {
+        btspp {
+            //  0:iOS企业版 1:AppStore版 10:btspp 20:community(bbf) 100:baichenglian
+            buildConfigField "int", "kAppChannelID", "10"
+            buildConfigField "boolean", "kUseCommunityFaucet", "false"
+        }
+        community_bbf {
+            buildConfigField "int", "kAppChannelID", "20"
+            buildConfigField "boolean", "kUseCommunityFaucet", "true"
+            buildConfigField "String", "kAppCommunityFaucetAddress", "\"https://faucet.bitshares.eu/onboarding/api/v1/accounts\""
         }
         baichenglian {
             applicationId "cn.btser.shop"
@@ -51,6 +61,9 @@ android {
             buildConfigField "boolean", "kAppModuleEnableFeedPrice", "false"
             buildConfigField "boolean", "kAppModuleEnableGateway", "false"
             buildConfigField "boolean", "kAppCheckUpdate", "false"
+
+            buildConfigField "int", "kAppChannelID", "100"
+            buildConfigField "boolean", "kUseCommunityFaucet", "false"
         }
     }
     buildTypes {

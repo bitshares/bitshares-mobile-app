@@ -1,9 +1,13 @@
 package bitshares
 
+import android.app.Activity
 import android.content.Context
+import android.os.Build
 import android.os.Looper
+import com.btsplusplus.fowallet.BuildConfig
 import com.btsplusplus.fowallet.NativeInterface
 import com.btsplusplus.fowallet.R
+import com.btsplusplus.fowallet.showToast
 import com.btsplusplus.fowallet.utils.BigDecimalHandler
 import com.crashlytics.android.Crashlytics
 import com.fowallet.walletcore.bts.ChainObjectManager
@@ -422,6 +426,91 @@ class OrgUtils {
         fun asyncWait(ms: Long): Promise {
             val p = Promise()
             android.os.Handler(Looper.getMainLooper()).postDelayed({ p.resolve(true) }, ms)
+            return p
+        }
+
+        /**
+         * 通过水龙头注册账号，成功 resolve null，失败 resolve 错误信息。不会 reject。
+         */
+        fun asyncCreateAccountFromFaucet(ctx: Context, name: String, owner_key: String, active_key: String, memo_key: String, refcode: String = "", chid: Int = BuildConfig.kAppChannelID): Promise {
+            val p = Promise()
+            if (BuildConfig.kUseCommunityFaucet) {
+                //  參考：https://bitshares.eu/referral/info/api
+                val args = JSONObject().apply {
+                    put("account", JSONObject().apply {
+                        put("name", name)
+                        put("owner_key", owner_key)
+                        put("active_key", active_key)
+                        put("memo_key", memo_key)
+                        put("refcode", refcode)
+                    })
+                }
+                asyncPost_jsonBody(BuildConfig.kAppCommunityFaucetAddress, args).then {
+                    val response = it as? JSONObject
+                    var err_msg: String? = null
+                    if (response == null) {
+                        err_msg = R.string.tip_network_error.xmlstring(ctx)
+                    } else {
+                        val error = response.optJSONObject("error")
+                        if (error != null) {
+                            val server_error = error.optJSONArray("base")?.optString(0, null)
+                            if (server_error != null) {
+                                val lowermsg = server_error.toLowerCase()
+                                //  特化错误信息
+                                err_msg = if (lowermsg.indexOf("account exists") >= 0) {
+                                    R.string.kLoginFaucetTipsAccountAlreadyExist.xmlstring(ctx)
+                                } else if (lowermsg.indexOf("only one account per ip") >= 0) {
+                                    R.string.kLoginFaucetTipsDeviceRegTooFast.xmlstring(ctx)
+                                } else if (lowermsg.indexOf("creating more accounts") >= 0) {
+                                    R.string.kLoginFaucetTipsDeviceRegTooMany.xmlstring(ctx)
+                                } else {
+                                    server_error
+                                }
+                            } else {
+                                err_msg = R.string.kLoginFaucetTipsUnknownError.xmlstring(ctx)
+                            }
+                        }
+                    }
+                    p.resolve(err_msg)
+                    return@then null
+                }.catch {
+                    p.resolve(R.string.tip_network_error.xmlstring(ctx))
+                }
+            } else {
+                val args = JSONObject().apply {
+                    put("account_name", name)
+                    put("owner_key", owner_key)
+                    put("active_key", active_key)
+                    put("memo_key", memo_key)
+                    put("chid", chid)
+                    put("referrer_code", refcode)
+                }
+                asyncPost(ChainObjectManager.sharedChainObjectManager().getFinalFaucetURL(), args).then {
+                    val response = it as? JSONObject
+                    var err_msg: String? = null
+                    if (response == null) {
+                        err_msg = R.string.tip_network_error.xmlstring(ctx)
+                    } else {
+                        val status = response.getInt("status")
+                        if (status != 0) {
+                            err_msg = when (status) {
+                                10 -> R.string.kLoginFaucetTipsInvalidArguments.xmlstring(ctx)
+                                20 -> R.string.kLoginFaucetTipsInvalidAccountFmt.xmlstring(ctx)
+                                30 -> R.string.kLoginFaucetTipsAccountAlreadyExist.xmlstring(ctx)
+                                40 -> R.string.kLoginFaucetTipsUnknownError.xmlstring(ctx)
+                                41 -> R.string.kLoginFaucetTipsDeviceRegTooMany.xmlstring(ctx)
+                                42 -> R.string.kLoginFaucetTipsDeviceRegTooFast.xmlstring(ctx)
+                                999 -> R.string.kLoginFaucetTipsServerMaintence.xmlstring(ctx)
+                                else -> response.getString("msg")
+                            }
+                        }
+                    }
+                    p.resolve(err_msg)
+                    return@then null
+                }.catch {
+                    p.resolve(R.string.tip_network_error.xmlstring(ctx))
+                }
+            }
             return p
         }
 
