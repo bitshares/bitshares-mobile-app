@@ -232,17 +232,17 @@ fun android.app.Activity.showGrapheneError(error: Any?) {
             if (msg != "") {
                 //  特化错误信息
                 //  "Assert Exception: account: no such account"
-                if (msg.indexOf("no such account") > 0) {
+                if (msg.indexOf("no such account") >= 0) {
                     showToast(resources.getString(R.string.kGPErrorAccountNotExist))
                     return
                 }
-                if (msg.indexOf("Insufficient Balance") > 0) {
+                if (msg.indexOf("Insufficient Balance") >= 0) {
                     showToast(resources.getString(R.string.kGPErrorInsufficientBalance))
                     return
                 }
                 //  "Preimage size mismatch." or ""Provided preimage does not generate correct hash."
                 val lowermsg = msg.toLowerCase()
-                if (lowermsg.indexOf("preimage size") > 0 || lowermsg.indexOf("provided preimage") > 0) {
+                if (lowermsg.indexOf("preimage size") >= 0 || lowermsg.indexOf("provided preimage") >= 0) {
                     showToast(resources.getString(R.string.kGPErrorRedeemInvalidPreimage))
                     return
                 }
@@ -257,30 +257,6 @@ fun android.app.Activity.showGrapheneError(error: Any?) {
 fun Fragment.showGrapheneError(error: Any?) {
     this.activity?.showGrapheneError(error)
 }
-
-/**
- * (public) 辅助 - 显示水龙头的时的错误信息，根据 code 进行错误显示便于处理多语言。
- */
-fun android.app.Activity.showFaucetRegisterError(response: JSONObject?) {
-    if (response != null) {
-        val code = response.getInt("status")
-        if (code != 0) {
-            when (code) {
-                10 -> showToast(resources.getString(R.string.kLoginFaucetTipsInvalidArguments))
-                20 -> showToast(resources.getString(R.string.kLoginFaucetTipsInvalidAccountFmt))
-                30 -> showToast(resources.getString(R.string.kLoginFaucetTipsAccountAlreadyExist))
-                40 -> showToast(resources.getString(R.string.kLoginFaucetTipsUnknownError))
-                41 -> showToast(resources.getString(R.string.kLoginFaucetTipsDeviceRegTooMany))
-                42 -> showToast(resources.getString(R.string.kLoginFaucetTipsDeviceRegTooFast))
-                999 -> showToast(resources.getString(R.string.kLoginFaucetTipsServerMaintence))
-                else -> showToast(response.getString("msg"))
-            }
-        }
-    } else {
-        showToast(resources.getString(R.string.tip_network_error))
-    }
-}
-
 
 /**
  *  (private) 创建提案请求

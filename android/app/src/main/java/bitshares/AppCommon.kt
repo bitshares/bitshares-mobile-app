@@ -2,9 +2,6 @@ package bitshares
 
 import java.math.BigDecimal
 
-//  渠道ID编号（0:iOS企业版 1:AppStore版 10:android官方版）
-const val kAppChannelID = 10
-
 //  【系统通知】网络重连成功后发送
 const val kBtsWebsocketReconnectSuccess = "kBtsWebsocketReconnectSuccess"
 
