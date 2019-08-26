@@ -236,22 +236,19 @@ enum
         id seed_active = [NSString stringWithFormat:@"%@active%@", username, password];
         id owner_key = [OrgUtils genBtsAddressFromPrivateKeySeed:seed_owner];
         id active_key = [OrgUtils genBtsAddressFromPrivateKeySeed:seed_active];
-        id args = @{
-                    @"account_name":username,
-                    @"owner_key":owner_key,
-                    @"active_key":active_key,
-                    @"memo_key":active_key,
-                    @"chid":@(kAppChannelID),
-                    @"referrer_code":refcode
-                    };
-        [[OrgUtils asyncPostUrl:[chainMgr getFinalFaucetURL]
-                           args:args] then:(^id(id response) {
+        
+        [[OrgUtils asyncCreateAccountFromFaucet:username
+                                          owner:owner_key
+                                         active:active_key
+                                           memo:active_key
+                                        refcode:refcode
+                                           chid:kAppChannelID] then:(^id(id err_msg) {
             //  注册失败
-            if (!response || [[response objectForKey:@"status"] integerValue] != 0){
+            if (err_msg && [err_msg isKindOfClass:[NSString class]]) {
                 [_owner hideBlockView];
                 //  [统计]
-                [OrgUtils logEvents:@"faucetFailed" params:response ? : @{}];
-                [VCRegisterWalletMode showFaucetRegisterError:response];
+                [OrgUtils logEvents:@"faucetFailed" params:@{@"err":err_msg}];
+                [OrgUtils makeToast:err_msg];
                 return nil;
             }
             

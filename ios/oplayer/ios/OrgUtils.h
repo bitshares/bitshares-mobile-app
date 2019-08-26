@@ -347,6 +347,15 @@ typedef void (^YklUserCallback)(id data);
 +(void)asyncFetchJson:(NSString*)pURL timeout:(NSTimeInterval)seconds completionBlock:(void (^)(id json))completion;
 +(WsPromise*)asyncPostUrl:(NSString*)pURL args:(NSDictionary*)kvhash;
 +(WsPromise*)asyncPostUrl_jsonBody:(NSString*)pURL args:(NSDictionary*)json;
+/**
+ * 通过水龙头注册账号，成功 resolve null，失败 resolve 错误信息。不会 reject。
+ */
++ (WsPromise*)asyncCreateAccountFromFaucet:(NSString*)name
+                                     owner:(NSString*)owner_key
+                                    active:(NSString*)active_key
+                                      memo:(NSString*)memo_key
+                                   refcode:(NSString*)refcode
+                                      chid:(NSInteger)chid;
 
 +(NSString*)md5:(NSString*)utf8string;
 +(NSString*)calcFileMD5:(NSString*)pFilePath;

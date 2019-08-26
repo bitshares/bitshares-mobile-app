@@ -2562,6 +2562,109 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 }
 
 /**
+ * 通过水龙头注册账号，成功 resolve null，失败 resolve 错误信息。不会 reject。
+ */
++ (WsPromise*)asyncCreateAccountFromFaucet:(NSString*)name
+                                     owner:(NSString*)owner_key
+                                    active:(NSString*)active_key
+                                      memo:(NSString*)memo_key
+                                   refcode:(NSString*)refcode
+                                      chid:(NSInteger)chid
+{
+    return [WsPromise promise:(^(WsResolveHandler resolve, WsRejectHandler reject) {
+#if kUseCommunityFaucet
+        //  參考：https://bitshares.eu/referral/info/api
+        id args = @{
+                    @"account":@{
+                            @"name":name,
+                            @"owner_key":owner_key,
+                            @"active_key":active_key,
+                            @"memo_key":active_key,
+                            @"refcode":refcode
+                            }
+                    };
+        [[self asyncPostUrl_jsonBody:kAppCommunityFaucetAddress args:args] then:(^id(id response) {
+            NSString* err_msg = nil;
+            if (!response) {
+                err_msg = NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。");
+            } else {
+                id base = [[response objectForKey:@"error"] objectForKey:@"base"];
+                if (base && [base isKindOfClass:[NSArray class]] && [base count] > 0) {
+                    id server_error = [base objectAtIndex:0];
+                    if (server_error && [server_error isKindOfClass:[NSString class]]) {
+                        id lowermsg = [server_error lowercaseString];
+                        //  特化错误信息
+                        if ([lowermsg rangeOfString:@"account exists"].location != NSNotFound) {
+                            err_msg = NSLocalizedString(@"kLoginFaucetTipsAccountAlreadyExist", @"帐号已经存在。");
+                        } else if ([lowermsg rangeOfString:@"only one account per ip"].location != NSNotFound) {
+                            err_msg = NSLocalizedString(@"kLoginFaucetTipsDeviceRegTooFast", @"注册太频繁，请稍后再试。");
+                        } else if ([lowermsg rangeOfString:@"creating more accounts"].location != NSNotFound) {
+                            err_msg = NSLocalizedString(@"kLoginFaucetTipsDeviceRegTooMany", @"该设备注册帐号数量过多。");
+                        } else {
+                            err_msg = server_error;
+                        }
+                    } else {
+                        err_msg = NSLocalizedString(@"kLoginFaucetTipsUnknownError", @"未知错误，广播失败。");
+                    }
+                }
+            }
+            //  返回
+            resolve(err_msg);
+            return nil;
+        })];
+#else
+        id args = @{
+                    @"account_name":name,
+                    @"owner_key":owner_key,
+                    @"active_key":active_key,
+                    @"memo_key":active_key,
+                    @"chid":@(chid),
+                    @"referrer_code":refcode
+                    };
+        [[self asyncPostUrl:[[ChainObjectManager sharedChainObjectManager] getFinalFaucetURL] args:args] then:(^id(id response) {
+            NSString* err_msg = nil;
+            if (!response) {
+                err_msg = NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。");
+            } else {
+                NSInteger status = [[response objectForKey:@"status"] integerValue];
+                if (status != 0) {
+                    switch (status) {
+                        case 10:
+                            err_msg = NSLocalizedString(@"kLoginFaucetTipsInvalidArguments", @"参数无效。");
+                            break;
+                        case 20:
+                            err_msg = NSLocalizedString(@"kLoginFaucetTipsInvalidAccountFmt", @"帐号格式无效。");
+                            break;
+                        case 30:
+                            err_msg = NSLocalizedString(@"kLoginFaucetTipsAccountAlreadyExist", @"帐号已经存在。");
+                            break;
+                        case 40:
+                            err_msg = NSLocalizedString(@"kLoginFaucetTipsUnknownError", @"未知错误，广播失败。");
+                            break;
+                        case 41:
+                            err_msg = NSLocalizedString(@"kLoginFaucetTipsDeviceRegTooMany", @"该设备注册帐号数量过多。");
+                            break;
+                        case 42:
+                            err_msg = NSLocalizedString(@"kLoginFaucetTipsDeviceRegTooFast", @"注册太频繁，请稍后再试。");
+                            break;
+                        case 999:
+                            err_msg = NSLocalizedString(@"kLoginFaucetTipsServerMaintence", @"服务器维护中。");
+                            break;
+                        default:
+                            err_msg = [response objectForKey:@"msg"];
+                            break;
+                    }
+                }
+            }
+            //  返回
+            resolve(err_msg);
+            return nil;
+        })];
+#endif  //  kUseCommunityFaucet
+    })];
+}
+
+/**
  *  异步POST抓取网页。
  */
 +(WsPromise*)asyncPostUrl:(NSString*)pURL args:(NSDictionary*)kvhash

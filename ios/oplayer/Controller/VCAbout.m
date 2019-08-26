@@ -71,14 +71,14 @@
     [lines addObject:NSLocalizedString(@"kAboutMainDesc", @"\n比特股移动端钱包是基于石墨烯技术，从产品体验出发，采用原生技术开发的一款可媲美一流中心化交易所的去中心化交易所（DEX）产品。\n\n联系我们\n微信：bts-pp\n邮箱：contact@btsplusplus.com\n电报：https://t.me/btsplusplus\n官网：https://btspp.io\n")];
     [lines addObject:[NSString stringWithFormat:@"%@ v%@", NSLocalizedString(@"kAppName", @"BTS++"), [NativeAppDelegate appVersion]]];
     
-#if APPSTORE_CHANNEL
+#if kAppChannelID == 1
     [lines addObject:[NSString stringWithFormat:NSLocalizedString(@"kAboutChannelAppStore", @"(商店版 & 渠道 %@)"), @(kAppChannelID)]];
 #else
     [lines addObject:[NSString stringWithFormat:NSLocalizedString(@"kAboutChannelWebsite", @"(官网版 & 渠道 %@)"), @(kAppChannelID)]];
-#endif  //  APPSTORE_CHANNEL
+#endif
     
     //  是否调试版
-#if DEBUG
+#ifdef DEBUG
     [lines addObject:NSLocalizedString(@"kAboutDebugVersion", @"(调试版)")];
 #endif
     if ([ChainObjectManager sharedChainObjectManager].isTestNetwork){
