@@ -9,13 +9,6 @@
 #ifndef oplayer_AppCommon_h
 #define oplayer_AppCommon_h
 
-//  渠道ID编号（0:iOS企业版 1:AppStore 10:android官方版）
-#if APPSTORE_CHANNEL
-#define kAppChannelID                       1
-#else
-#define kAppChannelID                       0
-#endif  //  APPSTORE_CHANNEL
-
 //  【系统通知】网络重连成功后发送
 #define kBtsWebsocketReconnectSuccess       @"kBtsWebsocketReconnectSuccess"
 
@@ -84,13 +77,6 @@
 
 //  UITableViewCell 中的 UITextField 宽度占屏幕宽度的百分比。
 #define kAppTextFieldWidthFactor            0.70f
-
-//  从后台回到前台，超过该时间则检测更新。
-#if TEST_UPDATE
-#define kBackToForegroundCheckupdateTimespace   1.0f
-#else
-#define kBackToForegroundCheckupdateTimespace   3600.0f
-#endif //TEST_UPDATE
 
 //  事件
 #define kNoticeOnModelViewControllerClosed  @"kNoticeOnModelViewControllerClosed"

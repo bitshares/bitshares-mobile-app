@@ -5847,10 +5847,7 @@
 					DEBUG,
 					USE_FILE32API,
 					TARGET_OS_IPHONE,
-					"TEST_UPDATE=0",
-					"ANTI_DEBUG=0",
-					"APPSTORE_CHANNEL=0",
-					APP_TARGET_BAICHENGLIAN,
+					"kAppChannelID=100",
 				);
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
 				HEADER_SEARCH_PATHS = (
@@ -5905,9 +5902,7 @@
 					NDEBUG,
 					USE_FILE32API,
 					TARGET_OS_IPHONE,
-					"ANTI_DEBUG=1",
-					"APPSTORE_CHANNEL=0",
-					APP_TARGET_BAICHENGLIAN,
+					"kAppChannelID=100",
 				);
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
 				HEADER_SEARCH_PATHS = (
@@ -5964,9 +5959,7 @@
 					DEBUG,
 					USE_FILE32API,
 					TARGET_OS_IPHONE,
-					"TEST_UPDATE=0",
-					"ANTI_DEBUG=0",
-					"APPSTORE_CHANNEL=0",
+					"kAppChannelID=0",
 				);
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
 				HEADER_SEARCH_PATHS = (
@@ -6021,8 +6014,7 @@
 					NDEBUG,
 					USE_FILE32API,
 					TARGET_OS_IPHONE,
-					"ANTI_DEBUG=1",
-					"APPSTORE_CHANNEL=0",
+					"kAppChannelID=0",
 				);
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
 				HEADER_SEARCH_PATHS = (
@@ -6135,9 +6127,7 @@
 					DEBUG,
 					USE_FILE32API,
 					TARGET_OS_IPHONE,
-					"TEST_UPDATE=0",
-					"ANTI_DEBUG=0",
-					"APPSTORE_CHANNEL=1",
+					"kAppChannelID=1",
 				);
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
 				HEADER_SEARCH_PATHS = (
@@ -6192,8 +6182,7 @@
 					NDEBUG,
 					USE_FILE32API,
 					TARGET_OS_IPHONE,
-					"ANTI_DEBUG=1",
-					"APPSTORE_CHANNEL=1",
+					"kAppChannelID=1",
 				);
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
 				HEADER_SEARCH_PATHS = (

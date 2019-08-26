@@ -30,8 +30,43 @@
 #define GRAPHENE_BITSHARES_TESTNET  1
 #endif
 
-#ifdef APP_TARGET_BAICHENGLIAN
+/**
+ *  渠道编号
+ *  0       - iOS企业版
+ *  1       - AppStore版
+ *  10      - 安卓 btspp
+ *  20      - 安卓 community(bbf)
+ *  100     - baichenglian
+ */
+#if kAppChannelID == 0
 
+//  iOS企业版参数
+#define kAppModuleEnableTabMarket   1
+#define kAppModuleEnableTabDebt     1
+#define kAppModuleEnableRank        1
+#define kAppModuleEnableFeedPrice   1
+#define kAppModuleEnableGateway     1
+#define kAppCheckUpdate             1
+
+#define kUseCommunityFaucet         0
+#define kAppCommunityFaucetAddress  @""
+
+#elif kAppChannelID == 1
+
+//  AppStore版参数
+#define kAppModuleEnableTabMarket   1
+#define kAppModuleEnableTabDebt     1
+#define kAppModuleEnableRank        1
+#define kAppModuleEnableFeedPrice   1
+#define kAppModuleEnableGateway     1
+#define kAppCheckUpdate             1
+
+#define kUseCommunityFaucet         1
+#define kAppCommunityFaucetAddress  @"https://faucet.bitshares.eu/onboarding/api/v1/accounts"
+
+#elif kAppChannelID == 100
+
+//  百城链参数
 #define kAppModuleEnableTabMarket   0
 #define kAppModuleEnableTabDebt     0
 #define kAppModuleEnableRank        0
@@ -39,14 +74,12 @@
 #define kAppModuleEnableGateway     0
 #define kAppCheckUpdate             0
 
+#define kUseCommunityFaucet         0
+#define kAppCommunityFaucetAddress  @""
+
 #else
 
-#define kAppModuleEnableTabMarket   1
-#define kAppModuleEnableTabDebt     1
-#define kAppModuleEnableRank        1
-#define kAppModuleEnableFeedPrice   1
-#define kAppModuleEnableGateway     1
-#define kAppCheckUpdate             1
+#error "unknown kAppChannelID macro."
 
 #endif
 

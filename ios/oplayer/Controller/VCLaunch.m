@@ -128,11 +128,13 @@
 
 - (WsPromise*)checkUpdate
 {
+    
+    
 #if kAppCheckUpdate
     
     //  检测更新
     return [WsPromise promise:(^(WsResolveHandler resolve, WsRejectHandler reject) {
-#if DEBUG && !TEST_UPDATE
+#ifdef DEBUG
         //  调试模式：直接加载本地version.json
         NSDictionary* pVersionJson = [self loadBundleVersionJson];
         resolve(pVersionJson);
@@ -140,11 +142,7 @@
         //  正式环境 or 测试更新模式下 从服务器加载。
         NSString* pNativeVersion = [NativeAppDelegate appShortVersion];
         NSString* flags = @"0";
-#if APPSTORE_CHANNEL
-        id version_url = [NSString stringWithFormat:@"https://btspp.io/app/a_%@/version.json?f=%@", pNativeVersion, flags];
-#else
-        id version_url = [NSString stringWithFormat:@"https://btspp.io/app/e_%@/version.json?f=%@", pNativeVersion, flags];
-#endif  //  APPSTORE_CHANNEL
+        id version_url = [NSString stringWithFormat:@"https://btspp.io/app/ios/%@_%@/version.json?f=%@", @(kAppChannelID), pNativeVersion, flags];
         [OrgUtils asyncFetchJson:version_url
                          timeout:[[NativeAppDelegate sharedAppDelegate] getRequestTimeout]
                  completionBlock:^(id pVersionJson)

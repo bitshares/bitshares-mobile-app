@@ -186,46 +186,6 @@ enum
 }
 
 /**
- *  (public) 辅助 - 显示水龙头的时的错误信息，根据 code 进行错误显示便于处理语言国际化。
- */
-+ (void)showFaucetRegisterError:(id)response
-{
-    if (!response){
-        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
-        return;
-    }
-    NSInteger code = [[response objectForKey:@"status"] integerValue];
-    if (code != 0){
-        switch (code) {
-            case 10:
-                [OrgUtils makeToast:NSLocalizedString(@"kLoginFaucetTipsInvalidArguments", @"参数无效。")];
-                break;
-            case 20:
-                [OrgUtils makeToast:NSLocalizedString(@"kLoginFaucetTipsInvalidAccountFmt", @"帐号格式无效。")];
-                break;
-            case 30:
-                [OrgUtils makeToast:NSLocalizedString(@"kLoginFaucetTipsAccountAlreadyExist", @"帐号已经存在。")];
-                break;
-            case 40:
-                [OrgUtils makeToast:NSLocalizedString(@"kLoginFaucetTipsUnknownError", @"未知错误，广播失败。")];
-                break;
-            case 41:
-                [OrgUtils makeToast:NSLocalizedString(@"kLoginFaucetTipsDeviceRegTooMany", @"该设备注册帐号数量过多。")];
-                break;
-            case 42:
-                [OrgUtils makeToast:NSLocalizedString(@"kLoginFaucetTipsDeviceRegTooFast", @"注册太频繁，请稍后再试。")];
-                break;
-            case 999:
-                [OrgUtils makeToast:NSLocalizedString(@"kLoginFaucetTipsServerMaintence", @"服务器维护中。")];
-                break;
-            default:
-                [OrgUtils makeToast:[response objectForKey:@"msg"]];
-                break;
-        }
-    }
-}
-
-/**
  *  (private) 帐号模式注册。
  */
 - (void)process_register
@@ -279,22 +239,18 @@ enum
         id active_key = [OrgUtils genBtsAddressFromWifPrivateKey:private_active];
 //        id memo_key = [OrgUtils genBtsAddressFromWifPrivateKey:private_memo];
         
-        id args = @{
-                    @"account_name":username,
-                    @"owner_key":owner_key,
-                    @"active_key":active_key,
-                    @"memo_key":active_key,
-                    @"chid":@(kAppChannelID),
-                    @"referrer_code":refcode
-                    };
-        [[OrgUtils asyncPostUrl:[chainMgr getFinalFaucetURL]
-                           args:args] then:(^id(id response) {
+        [[OrgUtils asyncCreateAccountFromFaucet:username
+                                          owner:owner_key
+                                         active:active_key
+                                           memo:active_key
+                                        refcode:refcode
+                                           chid:kAppChannelID] then:(^id(id err_msg) {
             //  注册失败
-            if (!response || [[response objectForKey:@"status"] integerValue] != 0){
+            if (err_msg && [err_msg isKindOfClass:[NSString class]]) {
                 [_owner hideBlockView];
                 //  [统计]
-                [OrgUtils logEvents:@"faucetFailed" params:response ? : @{}];
-                [[self class] showFaucetRegisterError:response];
+                [OrgUtils logEvents:@"faucetFailed" params:@{@"err":err_msg}];
+                [OrgUtils makeToast:err_msg];
                 return nil;
             }
             
