@@ -18,7 +18,7 @@ class ActivityScanResultPrivateKey : BtsppActivity() {
 
         val tv_account_id = findViewById<TextView>(R.id.txt_account_id)
         val tv_account_name = findViewById<TextView>(R.id.txt_account_name)
-        val tv_private_type = findViewById<TextView>(R.id.txt_private_type)
+        val tv_private_key_type = findViewById<TextView>(R.id.txt_private_key_type)
         val btn_import = findViewById<Button>(R.id.button_import_private_key)
         val iv_tip_password = findViewById<ImageView>(R.id.tip_password)
 

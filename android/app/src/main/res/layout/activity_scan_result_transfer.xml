@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.btsplusplus.fowallet.ActivityScanResultTransfer"
+    android:background="@color/theme01.appBackColor">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp"
+        android:padding="10dp"
+        android:orientation="vertical">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+
+            <LinearLayout
+                android:id="@+id/layout_back_from_scan_result_transfer"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_btn_back"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/kBtnBack"
+                    style="@style/kNavigationBarTextStyle"
+                    android:gravity="center_vertical"
+                    />
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:text="支付"
+                style="@style/kNavigationBarTextStyle" />
+
+        </FrameLayout>
+
+        <!-- 账号名称 && ID-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/account_name_from_scan_result_transfer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="18dp"
+                android:textColor="@color/theme01.buyColor"
+                android:text="Saya07"/>
+
+            <TextView
+                android:id="@+id/account_id_from_scan_result_transfer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="11dp"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="#12345678"/>
+
+        </LinearLayout>
+
+        <!-- 转账金额自动读取 -->
+        <LinearLayout
+            android:id="@+id/layout_transfer_amount_auto_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:visibility="gone"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:layout_weight="9"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="转账金额"/>
+
+                <TextView
+                    android:id="@+id/txt_transfer_amount_from_scan_result_transfer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical|right"
+                    android:textSize="16dp"
+                    android:layout_weight="9"
+                    android:textColor="@color/theme01.buyColor"
+                    android:text="placeholder"/>
+
+            </LinearLayout>
+            <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+        </LinearLayout>
+
+
+        <!-- 转账金额手动输入 -->
+        <LinearLayout
+            android:id="@+id/layout_transfer_amount_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:visibility="gone"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="40dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:textSize="12dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="转账金额"/>
+
+                <TextView
+                    android:id="@+id/txt_value_avaiable_from_scan_result_transfer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|right"
+                    android:textSize="16dp"
+                    android:textColor="@color/theme01.textColorNormal"
+                    android:text="4.969999CNY"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="40dp">
+
+                <EditText
+                    android:id="@+id/tf_amount_from_scan_result_transfer"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:digits=".1234567890"
+                    android:inputType="phone|number"
+                    android:maxLength="24"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:background="@null"
+                    android:textColorHint="@color/theme01.textColorGray"
+                    android:hint="@string/kVcTransferSubmitTipPleaseInputAmount"/>
+
+                <TextView
+                    android:id="@+id/btn_transfer_asset"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|right"
+                    android:textSize="16dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="BTS"/>
+
+            </LinearLayout>
+
+            <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+        </LinearLayout>
+
+        <!-- 备注信息自动读取 -->
+        <LinearLayout
+            android:id="@+id/layout_memo_info_auto_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:visibility="gone"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:layout_weight="9"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="备注信息"/>
+
+                <TextView
+                    android:id="@+id/txt_memo_info_from_scan_result_transfer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical|right"
+                    android:textSize="16dp"
+                    android:layout_weight="9"
+                    android:textColor="@color/theme01.buyColor"
+                    android:text="placeholder"/>
+
+            </LinearLayout>
+            <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+        </LinearLayout>
+
+
+        <!-- 备注信息手动输入 -->
+        <LinearLayout
+            android:id="@+id/layout_memo_info_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:visibility="gone"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="40dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:textSize="12dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="备注信息"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="40dp">
+
+
+                <EditText
+                    android:id="@+id/tf_memo_from_scan_result_transfer"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:background="@null"
+                    android:textColorHint="@color/theme01.textColorGray"
+                    android:hint="@string/kVcTransferTipInputMemo"/>
+
+
+            </LinearLayout>
+
+            <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/button_payment_from_scan_result"
+                android:layout_width="match_parent"
+                style="@style/kMainButtonStyle"
+                android:gravity="center|center_vertical"
+                android:textAllCaps="false"
+                android:text="立即支付" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>
