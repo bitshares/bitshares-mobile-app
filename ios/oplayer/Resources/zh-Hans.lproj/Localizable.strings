@@ -13,6 +13,7 @@
 
 "kLabelMarketFavorites" = "自选";
 "kLabelGroupNameMain" = "主区";
+"kLabelGroupNameCommunity" = "社区";
 "kLabelGroupNameGDEX" = "GDEX(网关)";
 "kLabelGroupNameWWW" = "WWW(网关)";
 "kLabelGroupNameOPEN" = "OPEN(网关)";
@@ -50,6 +51,7 @@
 "kDebtWarmTips" = "【温馨提示】\n当喂价下降到强平触发价时，系统将会自动出售您的抵押资产用于归还借款。请注意调整抵押率控制风险。";
 
 /* 服务界面 */
+"kServicesCellLabelQrScan" = "扫一扫";
 "kServicesCellLabelTransfer" = "转账";
 "kServicesCellLabelAccountSearch" = "账号查询";
 "kServicesCellLabelRank" = "抵押排行";
@@ -57,6 +59,16 @@
 "kServicesCellLabelFeedPrice" = "喂价详情";
 "kServicesCellLabelDepositWithdraw" = "充币提币";
 "kServicesCellLabelAdvFunction" = "高级功能";
+
+/* 扫一扫相关字符串 */
+"kVcScanNaviTitleRightAlbum" = "相册";
+"kVcScanAutoScanTips" = "将二维码放入框内, 即可自动扫描。";
+"kVcScanProcessingResult" = "正在处理...";
+"kVcScanNoQrCode" = "未发现二维码。";
+"kVcScanResultPriKeyTypeTitle" = "私钥类型";
+"kVcScanResultPriKeyTypeOwner" = "账号私钥";
+"kVcScanResultPriKeyTypeActive" = "资金私钥";
+"kVcScanResultPriKeyTypeMemo" = "备注私钥";
 
 /* 抵押排行 */
 "kVcRankCurrentFeedPrice" = "当前喂价";
@@ -600,6 +612,11 @@
 "kVcTitleLogin" = "登录";
 "kVcTitleImportAccount" = "导入账号";
 "kVcTitleRegister" = "注册";
+"kVcTitleQrScan" = "扫一扫";
+"kVcTitleQrScanResultNormal" = "扫描结果";
+"kVcTitleQrScanResultPriKey" = "导入私钥";
+"kVcTitleQrScanResultAccount" = "账号信息";
+"kVcTitleQrScanResultPay" = "支付";
 "kVcTitleTransfer" = "转账";
 "kVcTitleConfirmTransaction" = "请确认交易";
 "kVcTitleCreateProposal" = "请确认提案";

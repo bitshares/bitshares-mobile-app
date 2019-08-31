@@ -26,7 +26,7 @@
 /**
  *  临时缓冲区（不大于该缓冲区的临时buffer都可以使用）
  */
-static unsigned char __bts_wallet_core_temp_buffer[2048];
+static unsigned char __bts_wallet_core_temp_buffer[2048 * 4];
 
 struct __aes256_context
 {
@@ -654,6 +654,42 @@ bool __bts_pubkey_tweak_add(secp256k1_pubkey* pubkey, const unsigned char tweak[
 }
 
 /**
+ *  解码商人协议发票数据。
+ */
+unsigned char* __bts_merchant_invoice_decode(const unsigned char* b58str_ptr, const size_t b58str_size, size_t* output_size)
+{
+    //  REMARK：base58解码后的大小在1.38倍附近。
+    unsigned char lzma_buffer[b58str_size * 2];
+    size_t lzma_output_size = sizeof(lzma_buffer);
+    const unsigned char* pLzmaBuffer = base58_decode(b58str_ptr, b58str_size, lzma_buffer, &lzma_output_size);
+    if (!pLzmaBuffer){
+        return 0;
+    }
+    
+    uint64_t uncompressed_size = 0;
+    memcpy(&uncompressed_size, &pLzmaBuffer[LZMA_PROPS_SIZE], sizeof(uint64_t));
+    if (UINT64_MAX != uncompressed_size && uncompressed_size > sizeof(__bts_wallet_core_temp_buffer)) {
+        return 0;
+    }
+    size_t uncompressed_buffer_size = sizeof(__bts_wallet_core_temp_buffer);
+    size_t compressed_size = lzma_output_size - LZMA_PROPS_SIZE - sizeof(uint64_t) ;
+    
+    int result = LzmaUncompress(__bts_wallet_core_temp_buffer, &uncompressed_buffer_size,
+                                &pLzmaBuffer[LZMA_PROPS_SIZE + sizeof(uint64_t)], &compressed_size,
+                                pLzmaBuffer, LZMA_PROPS_SIZE);
+    if (result != SZ_OK){
+        //  TODO:uncompress failed...，是否需要统计。
+        return 0;
+    }
+    if (output_size) {
+        *output_size = uncompressed_buffer_size;
+    }
+    
+    __bts_wallet_core_temp_buffer[uncompressed_buffer_size] = 0;
+    return __bts_wallet_core_temp_buffer;
+}
+
+/**
  *  保存：序列化钱包对象JSON字符串为二进制流。
  *  entropy     - 外部生成随机字符串的熵（根据系统也许不同，比如各种时间戳、随机数、系统信息、securerandom等）
  *
@@ -688,6 +724,8 @@ unsigned char* __bts_save_wallet(const unsigned char* wallet_jsonbin, const size
     //    +------------+----+----+----+----+--+--+--+--+--+--+--+--+
     //    | Properties |  Dictionary Size  |   Uncompressed Size   |
     //    +------------+----+----+----+----+--+--+--+--+--+--+--+--+
+    //  Uncompressed Size is stored as unsigned 64-bit little endian integer.
+    //  A special value of 0xFFFF_FFFF_FFFF_FFFF indicates that Uncompressed Size is unknown
     const size_t compressHeaderSize = LZMA_PROPS_SIZE + sizeof(uint64_t);
     size_t destLen = wallet_jsonbin_size + 256;
     dstBuffer = malloc(compressHeaderSize + destLen);
@@ -843,6 +881,8 @@ unsigned char* __bts_load_wallet(const unsigned char* wallet_buffer, const size_
     //    +------------+----+----+----+----+--+--+--+--+--+--+--+--+
     //    | Properties |  Dictionary Size  |   Uncompressed Size   |
     //    +------------+----+----+----+----+--+--+--+--+--+--+--+--+
+    //  Uncompressed Size is stored as unsigned 64-bit little endian integer.
+    //  A special value of 0xFFFF_FFFF_FFFF_FFFF indicates that Uncompressed Size is unknown
     uint64_t uncompressed_size = 0;
     memcpy(&uncompressed_size, &compressed_buffer_ptr[LZMA_PROPS_SIZE], sizeof(uint64_t));
     unsigned char* uncompressed_buffer = malloc(uncompressed_size + 1);

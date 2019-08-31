@@ -9,6 +9,15 @@
 #import "VCScanPrivateKey.h"
 #import "BitsharesClientManager.h"
 
+enum
+{
+    kVcSectionBaseInfo = 0,
+    kVcsectionWalletPassword,
+    kVcSectionSubmit,
+    
+    kVcSectionMax
+};
+
 @interface VCScanPrivateKey ()
 {
     NSString*               _priKey;
@@ -17,6 +26,8 @@
     
     UITableViewBase*        _mainTableView;
     ViewBlockLabel*         _btnCommit;
+    
+    MyTextField*            _tf_wallet_password;
     
     NSArray*                _dataArray;
 }
@@ -27,6 +38,10 @@
 
 -(void)dealloc
 {
+    if (_tf_wallet_password){
+        _tf_wallet_password.delegate = nil;
+        _tf_wallet_password = nil;
+    }
     if (_mainTableView){
         [[IntervalManager sharedIntervalManager] releaseLock:_mainTableView];
         _mainTableView.delegate = nil;
@@ -47,6 +62,14 @@
     return self;
 }
 
+#pragma mark- tip button
+- (void)onTipButtonClicked:(UIButton*)button
+{
+    if (button.tag == 1) {
+        [OrgUtils showMessage:NSLocalizedString(@"kLoginRegTipsWalletPasswordFormat", @"8位以上字符，且必须包含大小写和数字。")];
+    }
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -65,7 +88,7 @@
             assert([pair count] == 2);
             id key = [pair firstObject];
             if ([key isEqualToString:_pubKey]){
-                [priKeyTypeArray addObject:@"账号私钥"];
+                [priKeyTypeArray addObject:NSLocalizedString(@"kVcScanResultPriKeyTypeOwner", @"账号私钥")];
                 break;
             }
         }
@@ -76,37 +99,36 @@
             assert([pair count] == 2);
             id key = [pair firstObject];
             if ([key isEqualToString:_pubKey]){
-                [priKeyTypeArray addObject:@"资金私钥"];
+                [priKeyTypeArray addObject:NSLocalizedString(@"kVcScanResultPriKeyTypeActive", @"资金私钥")];
                 break;
             }
         }
     }
     id memo_key = [[account objectForKey:@"options"] objectForKey:@"memo_key"];
     if (memo_key && [memo_key isEqualToString:_pubKey]){
-        [priKeyTypeArray addObject:@"备注私钥"];
+        [priKeyTypeArray addObject:NSLocalizedString(@"kVcScanResultPriKeyTypeMemo", @"备注私钥")];
     }
     assert([priKeyTypeArray count] > 0);
     
     _dataArray = @[
                    @{@"name":@"ID", @"value":[account objectForKey:@"id"]},
-                   @{@"name":@"账号", @"value":[account objectForKey:@"name"]},
-                   @{@"name":@"私钥类型", @"value":[priKeyTypeArray componentsJoinedByString:@" "], @"highlight":@YES},
+                   @{@"name":NSLocalizedString(@"kAccount", @"账号"), @"value":[account objectForKey:@"name"]},
+                   @{@"name":NSLocalizedString(@"kVcScanResultPriKeyTypeTitle", @"私钥类型"), @"value":[priKeyTypeArray componentsJoinedByString:@" "], @"highlight":@YES},
                    ];
     
-//    CGRect screenRect = [[UIScreen mainScreen] bounds];
-//    UILabel* headerAccountName = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenRect.size.width, 44)];
-//    headerAccountName.lineBreakMode = NSLineBreakByWordWrapping;
-//    headerAccountName.numberOfLines = 1;
-//    headerAccountName.contentMode = UIViewContentModeCenter;
-//    headerAccountName.backgroundColor = [UIColor clearColor];
-//    headerAccountName.textColor = [ThemeManager sharedThemeManager].buyColor;
-//    headerAccountName.textAlignment = NSTextAlignmentCenter;
-//    headerAccountName.font = [UIFont boldSystemFontOfSize:26];
-//    headerAccountName.text = @"转账";//TODO:fowallet 交易类型
-//    [self.view addSubview:headerAccountName];
-//    [self rectWithoutNavi]
-//    CGFloat offfset = headerAccountName.bounds.size.height;
-//    CGRect rect = CGRectMake(0, 0, screenRect.size.width, screenRect.size.height - [self heightForStatusAndNaviBar] - offfset);
+    CGRect rect = [self makeTextFieldRect];
+    
+    //  wallet password
+    _tf_wallet_password = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault
+                                     placeholder:NSLocalizedString(@"kLoginTipsPlaceholderWalletPassword", @"8位以上钱包文件密码")
+                                          action:@selector(onTipButtonClicked:) tag:1];
+    _tf_wallet_password.secureTextEntry = YES;
+    _tf_wallet_password.updateClearButtonTintColor = YES;
+    _tf_wallet_password.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    _tf_wallet_password.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_wallet_password.placeholder
+                                                                                attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
+                                                                                             NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    
     _mainTableView = [[UITableViewBase alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];
     _mainTableView.delegate = self;
     _mainTableView.dataSource = self;
@@ -114,8 +136,42 @@
     _mainTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:_mainTableView];
     
+    //  点击事件
+    UITapGestureRecognizer* pTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTap:)];
+    pTap.cancelsTouchesInView = NO; //  IOS 5.0系列导致按钮没响应
+    [self.view addGestureRecognizer:pTap];
+    
     //  TODO:fowallet多语言
+    //  多种情况：
+    //  1 - 尚未登录（直接采用私钥+钱包密码登录）
+    //  2 - 已经用密码模式登录（升级到钱包模式并导入）
+    //  3 - 已经钱包模式（直接导入）
+    //  4 - 私钥已经存在（不处理）
+    switch ([[WalletManager sharedWalletManager] getWalletMode]) {
+        case kwmNoWallet:
+            
+            break;
+        case kwmPasswordOnlyMode:
+            break;
+            
+        default:
+            break;
+    }
+    
+//    kwmNoWallet = 0,            //  无钱包
+//    kwmPasswordOnlyMode,        //  普通密码模式
+//    kwmPasswordWithWallet,      //  密码登录+钱包模式
+//    kwmPrivateKeyWithWallet,    //  活跃私钥+钱包模式
+//    kwmFullWalletMode,          //  完整钱包模式（兼容官方客户端的钱包格式）
+//    kwmBrainKeyWithWallet       //  助记词+钱包模式
+    
+    //  TODO:多语言
     _btnCommit = [self createCellLableButton:@"立即导入"];
+}
+
+-(void)onTap:(UITapGestureRecognizer*)pTap
+{
+    [self endInput];
 }
 
 /**
@@ -123,6 +179,8 @@
  */
 -(void)onCommitCore
 {
+    [self endInput];
+    
     //  确认界面由于时间经过可能又被 lock 了。
     [self GuardWalletUnlocked:^(BOOL unlocked) {
 //        if (unlocked){
@@ -142,12 +200,12 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 2;
+    return kVcSectionMax;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (section == 0)
+    if (section == kVcSectionBaseInfo)
         return [_dataArray count];
     else
         return 1;
@@ -155,30 +213,53 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == 0)
-    {
-        id item = [_dataArray objectAtIndex:indexPath.row];
-        UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-        cell.backgroundColor = [UIColor clearColor];
-        cell.showCustomBottomLine = YES;
-        cell.accessoryType = UITableViewCellAccessoryNone;
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        cell.textLabel.text = [item objectForKey:@"name"];
-        cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-        cell.detailTextLabel.text = [item objectForKey:@"value"];
-        if ([[item objectForKey:@"highlight"] boolValue]){
-            cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].buyColor;
-        }else{
-            cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    switch (indexPath.section) {
+        case kVcSectionBaseInfo:
+        {
+            id item = [_dataArray objectAtIndex:indexPath.row];
+            UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+            cell.backgroundColor = [UIColor clearColor];
+            cell.showCustomBottomLine = YES;
+            cell.accessoryType = UITableViewCellAccessoryNone;
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.textLabel.text = [item objectForKey:@"name"];
+            cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+            cell.detailTextLabel.text = [item objectForKey:@"value"];
+            if ([[item objectForKey:@"highlight"] boolValue]){
+                cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].buyColor;
+            }else{
+                cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+            }
+            return cell;
         }
-        return cell;
-    }else{
-        UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-        cell.accessoryType = UITableViewCellAccessoryNone;
-        cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-        cell.backgroundColor = [UIColor clearColor];
-        [self addLabelButtonToCell:_btnCommit cell:cell leftEdge:tableView.layoutMargins.left];
-        return cell;
+            break;
+        case kVcsectionWalletPassword:
+        {
+            UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+            cell.backgroundColor = [UIColor clearColor];
+            cell.showCustomBottomLine = YES;
+            cell.hideTopLine = YES;
+            cell.hideBottomLine = YES;
+            cell.accessoryType = UITableViewCellAccessoryNone;
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.textLabel.text = NSLocalizedString(@"kLoginCellWalletPassword", @"钱包密码 ");
+            cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+            cell.accessoryView = _tf_wallet_password;
+            return cell;
+        }
+            break;
+        case kVcSectionSubmit:
+        {
+            UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+            cell.accessoryType = UITableViewCellAccessoryNone;
+            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+            cell.backgroundColor = [UIColor clearColor];
+            [self addLabelButtonToCell:_btnCommit cell:cell leftEdge:tableView.layoutMargins.left];
+            return cell;
+        }
+            break;
+        default:
+            break;
     }
     
     //  not reached...
@@ -189,11 +270,28 @@
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    if (indexPath.section == 1){
+    if (indexPath.section == kVcSectionSubmit){
         [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
             [self onCommitCore];
         }];
     }
+}
+
+- (void)endInput
+{
+    [self.view endEditing:YES];
+    [_tf_wallet_password safeResignFirstResponder];
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField*)textField
+{
+    [self endInput];
+    return YES;
+}
+
+-(void)scrollViewDidScroll:(UIScrollView*)scrollView
+{
+    [self endInput];
 }
 
 @end

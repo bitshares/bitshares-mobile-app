@@ -9,10 +9,11 @@
 #import "VCQrScan.h"
 #import "SGQRCode.h"
 #import "OrgUtils.h"
-//#import "ScanSuccessJumpVC.h"
 
 #import "VCScanNormalString.h"
+#import "VCScanAccountName.h"
 #import "VCScanPrivateKey.h"
+#import "VCScanTransfer.h"
 #import "ChainObjectManager.h"
 
 @interface VCQrScan () {
@@ -29,8 +30,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-
-    /// 二维码开启方法
+    //  二维码开启方法
     [obtain startRunningWithBefore:nil completion:nil];
 }
 
@@ -48,7 +48,6 @@
 }
 
 - (void)dealloc {
-    NSLog(@"VCQrScan - dealloc");
     [self removeScanningView];
 }
 
@@ -58,15 +57,13 @@
     // Do any additional setup after loading the view from its nib.
     self.view.backgroundColor = [UIColor blackColor];
     
-    [self showRightButton:@"相册" action:@selector(rightBarButtonItenAction)];
+    [self showRightButton:NSLocalizedString(@"kVcScanNaviTitleRightAlbum", @"相册") action:@selector(rightBarButtonItenAction)];
     
     obtain = [SGQRCodeObtain QRCodeObtain];
     
     [self setupQRCodeScan];
-//    [self setupNavigationBar];
     [self.view addSubview:self.scanView];
     [self.view addSubview:self.promptLabel];
-    /// 为了 UI 效果
     [self.view addSubview:self.bottomView];
 }
 
@@ -77,7 +74,7 @@
 {
     [self hideBlockView];
     VCScanNormalString* vc = [[VCScanNormalString alloc] initWithResult:result];
-    [self clearPushViewController:vc vctitle:@"扫描结果" backtitle:kVcDefaultBackTitleName];
+    [self clearPushViewController:vc vctitle:NSLocalizedString(@"kVcTitleQrScanResultNormal", @"扫描结果") backtitle:kVcDefaultBackTitleName];
 }
 
 /**
@@ -88,20 +85,20 @@
     [[[self bapi_db_exec:@"get_key_references" params:@[@[pubkey]]] then:(^id(id data) {
         id account_id_ary = [data safeObjectAtIndex:0];
         if (!account_id_ary || [account_id_ary count] <= 0){
-            NSLog(@"私钥不正确，请重新输入。");
+            //  私钥没在区块链注册过。
             [self _gotoNormalResult:privateKey];
             return nil;
         }
         return [[[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:[account_id_ary objectAtIndex:0]] then:(^id(id full_data) {
             if (!full_data || [full_data isKindOfClass:[NSNull class]]){
-                NSLog(@"查询帐号信息失败，请稍后再试。");
+                //  查询帐号信息失败，请稍后再试。
                 [self _gotoNormalResult:privateKey];
                 return nil;
             }
             //  转到私钥导入界面。
             [self hideBlockView];
             VCBase* vc = [[VCScanPrivateKey alloc] initWithPriKey:privateKey pubKey:pubkey fullAccountData:full_data];
-            [self clearPushViewController:vc vctitle:@"私钥信息" backtitle:kVcDefaultBackTitleName];
+            [self clearPushViewController:vc vctitle:NSLocalizedString(@"kVcTitleQrScanResultPriKey", @"导入私钥") backtitle:kVcDefaultBackTitleName];
             return nil;
         })];
     })] catch:(^id(id error) {
@@ -109,14 +106,158 @@
         return nil;
     })];
 }
+
+/**
+ *  二维码结果：商家收款发票情况处理。
+ */
+- (void)_processScanResultAsMerchantInvoice:(NSDictionary*)invoice raw:(NSString*)raw_string
+{
+    [[self _queryInvoiceDependencyData:[[invoice objectForKey:@"currency"] uppercaseString]
+                                    to:[[invoice objectForKey:@"to"] lowercaseString]] then:(^id(id data_array) {
+        id accountData = nil;
+        id assetData = nil;
+        if (data_array && [data_array count] == 2) {
+            accountData = [data_array objectAtIndex:0];
+            assetData = [data_array objectAtIndex:1];
+        }
+        if (!accountData || [accountData isKindOfClass:[NSNull class]] ||
+            !assetData || [assetData isKindOfClass:[NSNull class]]) {
+            //  查询依赖数据失败：转到普通界面。
+            [self _gotoNormalResult:[NSString stringWithFormat:@"%@", invoice]];
+        } else {
+            //  转到账号名界面。
+            [self hideBlockView];
+            
+            //  计算付款金额
+            NSString* str_amount = nil;
+            id line_items = [invoice objectForKey:@"line_items"];
+            if (line_items && [line_items isKindOfClass:[NSArray class]]) {
+                for (id item in line_items) {
+                    id price = [item objectForKey:@"price"];
+                    id quantity = [item objectForKey:@"quantity"];
+                    if (price && quantity) {
+                        id n_price = [NSDecimalNumber decimalNumberWithString:[NSString stringWithFormat:@"%@", price]];
+                        id n_quantity = [NSDecimalNumber decimalNumberWithString:[NSString stringWithFormat:@"%@", quantity]];
+                        if ([n_price compare:[NSDecimalNumber notANumber]] != 0 && [n_quantity compare:[NSDecimalNumber notANumber]] != 0) {
+                            str_amount = [NSString stringWithFormat:@"%@", [n_price decimalNumberByMultiplyingBy:n_quantity]];
+                        }
+                    }
+                }
+            }
+            //  TODO:登录？guard
+            [self GuardWalletExist:^{
+                VCBase* vc = [[VCScanTransfer alloc] initWithTo:accountData asset:assetData amount:str_amount memo:[invoice objectForKey:@"memo"]];
+                [self clearPushViewController:vc vctitle:NSLocalizedString(@"kVcTitleQrScanResultPay", @"支付") backtitle:kVcDefaultBackTitleName];
+            }];
+        }
+        return nil;
+    })];
+}
+
+//-(void)onGotoTransfer
+//{
+//    [self GuardWalletExist:^{
+//        [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+//        id p1 = [self get_full_account_data_and_asset_hash:[[WalletManager sharedWalletManager] getWalletAccountName]];
+//        id p2 = [[ChainObjectManager sharedChainObjectManager] queryFeeAssetListDynamicInfo];   //  查询手续费兑换比例、手续费池等信息
+//        [[[WsPromise all:@[p1, p2]] then:(^id(id data) {
+//            [self hideBlockView];
+//            id full_userdata = [data objectAtIndex:0];
+//            VCTransfer* vc = [[VCTransfer alloc] initWithUserFullInfo:full_userdata defaultAsset:nil defaultTo:_accountData];
+//            vc.title = NSLocalizedString(@"kVcTitleTransfer", @"转账");
+//            [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+//            return nil;
+//        })] catch:(^id(id error) {
+//            [self hideBlockView];
+//            [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+//            return nil;
+//        })];
+//    }];
+//}
+
+/**
+ *  二维码结果：鼓鼓收款情况处理。
+ */
+- (void)_processScanResultAsMagicWalletReceive:(NSString*)result pay_string:(NSString*)pay_string
+{
+    id ary = [pay_string componentsSeparatedByString:@"/"];
+    NSString* account_id = [ary safeObjectAtIndex:0];
+    NSString* asset_name = [ary safeObjectAtIndex:1];
+    NSString* asset_amount = [ary safeObjectAtIndex:2];
+    NSString* memo = [ary safeObjectAtIndex:3];
+    
+    [[self _queryInvoiceDependencyData:asset_name
+                                    to:account_id] then:(^id(id data_array) {
+        id accountData = nil;
+        id assetData = nil;
+        if (data_array && [data_array count] == 2) {
+            accountData = [data_array objectAtIndex:0];
+            assetData = [data_array objectAtIndex:1];
+        }
+        if (!accountData || [accountData isKindOfClass:[NSNull class]] ||
+            !assetData || [assetData isKindOfClass:[NSNull class]]) {
+            //  查询依赖数据失败：转到普通界面。
+            [self _gotoNormalResult:result];
+        } else {
+            //  转到账号名界面。
+            [self hideBlockView];
+            
+            //  TODO:登录？guard
+            [self GuardWalletExist:^{
+                VCBase* vc = [[VCScanTransfer alloc] initWithTo:accountData asset:assetData amount:asset_amount memo:memo];
+                [self clearPushViewController:vc vctitle:NSLocalizedString(@"kVcTitleQrScanResultPay", @"支付") backtitle:kVcDefaultBackTitleName];
+            }];
+        }
+        return nil;
+    })];
+}
+
+/**
+ *  (private) 是否是有效的账号数据判断。
+ */
+- (BOOL)_isValidAccountData:(NSDictionary*)accountData
+{
+    return accountData && [accountData objectForKey:@"id"] && [accountData objectForKey:@"name"];
+}
+
+/**
+ *  (private) 查询收款依赖数据。
+ */
+- (WsPromise*)_queryInvoiceDependencyData:(NSString*)asset to:(NSString*)to
+{
+    return [WsPromise promise:(^(WsResolveHandler resolve, WsRejectHandler reject) {
+        NSString* currency = asset;
+        //  去掉bit前缀
+        if (currency && currency.length > 3 && [currency rangeOfString:@"BIT"].location == 0) {
+            currency = [currency substringFromIndex:3];
+        }
+        if (currency && to) {
+            ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+            id p1 = [chainMgr queryAccountData:to];
+            id p2 = [chainMgr queryAssetData:currency];
+            [[WsPromise all:@[p1, p2]] then:(^id(id data) {
+                resolve(data);
+                return nil;
+            })];
+        } else {
+            resolve(nil);
+        }
+    })];
+}
+
 /**
  *  处理二维码识别or扫描的结果。
  */
 - (void)processScanResult:(NSString*)result
 {
     assert(result);
-    //  TODO:fowallet 多语言
-    [self showBlockViewWithTitle:@"正在处理..."];
+    result = [NSString trim:result];
+    //  空字符串
+    if (!result || result.length <= 0) {
+        [self _gotoNormalResult:result];
+        return;
+    }
+    [self showBlockViewWithTitle:NSLocalizedString(@"kVcScanProcessingResult", @"正在处理...")];
     [self delay:^{
         //  1、判断是否是BTS私钥。
         NSString* btsAddress = [OrgUtils genBtsAddressFromWifPrivateKey:result];
@@ -124,8 +265,36 @@
             [self _processScanResultAsPrivateKey:result pubkey:btsAddress];
             return;
         }
-        //  其他：普通字符串
-        [self _gotoNormalResult:result];
+        
+        //  2、是不是比特股商家收款协议发票
+        id invoice = [OrgUtils merchantInvoiceDecode:result];
+        if (invoice) {
+            [self _processScanResultAsMerchantInvoice:invoice raw:result];
+            return;
+        }
+        
+        //  3、是不是鼓鼓收款码  bts://r/1/#{account_id}/#{asset_name}/#{asset_amount}/#{memo}
+        NSRange prefix_range = [result rangeOfString:@"bts://r/1/" options:NSCaseInsensitiveSearch];
+        if (prefix_range.location == 0) {
+            [self _processScanResultAsMagicWalletReceive:result pay_string:[result substringFromIndex:prefix_range.length]];
+            return;
+        }
+        
+        //  4、查询是不是比特股账号名or账号ID
+        [[[ChainObjectManager sharedChainObjectManager] queryAccountData:result] then:(^id(id accountData) {
+            if ([self _isValidAccountData:accountData]) {
+                //  转到账号名界面。
+                [self hideBlockView];
+                VCBase* vc = [[VCScanAccountName alloc] initWithAccountData:accountData];
+                [self clearPushViewController:vc
+                                      vctitle:NSLocalizedString(@"kVcTitleQrScanResultAccount", @"账号信息")
+                                    backtitle:kVcDefaultBackTitleName];
+            } else {
+                //  其他：普通字符串
+                [self _gotoNormalResult:result];
+            }
+            return nil;
+        })];
     }];
 }
 
@@ -137,23 +306,9 @@
     [obtain establishQRCodeObtainScanWithController:self configure:configure];
     [obtain setBlockWithQRCodeObtainScanResult:^(SGQRCodeObtain *obtain, NSString *result) {
         if (result) {
-//            [weakSelf showBlockViewWithTitle:@"正在处理..."];
-//            [MBProgressHUD SG_showMBProgressHUDWithModifyStyleMessage:@"正在处理..." toView:weakSelf.view];
             [obtain stopRunning];
             [obtain playSoundName:@"SGQRCode.bundle/sound.caf"];
-
             [weakSelf processScanResult:result];
-//
-//            //  TODO:
-////            ScanSuccessJumpVC *jumpVC = [[ScanSuccessJumpVC alloc] init];
-////            jumpVC.comeFromVC = ScanSuccessJumpComeFromWC;
-////            jumpVC.jump_URL = result;
-//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//                [weakSelf hideBlockView];
-//                [OrgUtils showMessage:result];
-////                [MBProgressHUD SG_hideHUDForView:weakSelf.view];
-////                [weakSelf.navigationController pushViewController:jumpVC animated:YES];
-//            });
         }
     }];
     [obtain setBlockWithQRCodeObtainScanBrightness:^(SGQRCodeObtain *obtain, CGFloat brightness) {
@@ -167,11 +322,6 @@
     }];
 }
 
-//- (void)setupNavigationBar {
-//    self.navigationItem.title = @"扫一扫";
-//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"相册" style:(UIBarButtonItemStyleDone) target:self action:@selector(rightBarButtonItenAction)];
-//}
-
 - (void)rightBarButtonItenAction {
     __weak typeof(self) weakSelf = self;
     
@@ -183,29 +333,10 @@
         [weakSelf.view addSubview:weakSelf.scanView];
     }];
     [obtain setBlockWithQRCodeObtainAlbumResult:^(SGQRCodeObtain *obtain, NSString *result) {
-        //  TODO:
-//        [weakSelf showBlockViewWithTitle:@"正在处理..."];
-//        [MBProgressHUD SG_showMBProgressHUDWithModifyStyleMessage:@"正在处理..." toView:weakSelf.view];
         if (result == nil) {
-            NSLog(@"暂未识别出二维码");
-            [OrgUtils makeToast:@"未发现二维码。" position:@"CSToastPositionCenter"];
-//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//                [MBProgressHUD SG_hideHUDForView:weakSelf.view];
-//                [MBProgressHUD SG_showMBProgressHUDWithOnlyMessage:@"未发现二维码/条形码" delayTime:1.0];
-//            });
+            [OrgUtils makeToast:NSLocalizedString(@"kVcScanNoQrCode", @"未发现二维码。") position:@"CSToastPositionCenter"];
         } else {
-            [OrgUtils showMessage:result];
-//            ScanSuccessJumpVC *jumpVC = [[ScanSuccessJumpVC alloc] init];
-//            jumpVC.comeFromVC = ScanSuccessJumpComeFromWC;
-//            if ([result hasPrefix:@"http"]) {
-//                jumpVC.jump_URL = result;
-//            } else {
-//                jumpVC.jump_bar_code = result;
-//            }
-//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//                [MBProgressHUD SG_hideHUDForView:weakSelf.view];
-//                [weakSelf.navigationController pushViewController:jumpVC animated:YES];
-//            });
+            [weakSelf processScanResult:result];
         }
     }];
 }
@@ -234,7 +365,7 @@
         _promptLabel.textAlignment = NSTextAlignmentCenter;
         _promptLabel.font = [UIFont boldSystemFontOfSize:13.0];
         _promptLabel.textColor = [[UIColor whiteColor] colorWithAlphaComponent:0.6];
-        _promptLabel.text = @"将二维码放入框内, 即可自动扫描。";
+        _promptLabel.text = NSLocalizedString(@"kVcScanAutoScanTips", @"将二维码放入框内, 即可自动扫描。");
     }
     return _promptLabel;
 }

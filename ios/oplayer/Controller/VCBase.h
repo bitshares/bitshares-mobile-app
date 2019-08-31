@@ -160,6 +160,7 @@
  *  确保钱包已经存在
  */
 - (void)GuardWalletExist:(void (^)())body;
+
 /**
  *  延迟调用，tableview的cell中执行很多页面跳转行为有延迟，需要ui主线程处理。比如：presentViewController 延迟很大。
  */

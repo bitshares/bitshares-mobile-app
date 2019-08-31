@@ -41,6 +41,7 @@ enum
 @interface VCTransfer ()
 {
     NSDictionary*           _default_asset;     //  默认转账资产
+    NSDictionary*           _default_to;        //  默认收款人
     NSDictionary*           _full_account_data; //  数据 - 帐号全数据（包含帐号、资产、挂单、债仓等所有信息）
     NSArray*                _asset_list;        //  数据 - 用户不为0的所有资产列表
     NSMutableDictionary*    _balances_hash;     //  数据 - 资产ID和对应的余额信息Hash。
@@ -87,14 +88,17 @@ enum
         _mainTableView.delegate = nil;
         _mainTableView = nil;
     }
+    _default_asset = nil;
+    _default_to = nil;
 }
 
-- (id)initWithUserFullInfo:(NSDictionary*)full_account_data defaultAsset:(NSDictionary*)defaultAsset
+- (id)initWithUserFullInfo:(NSDictionary*)full_account_data defaultAsset:(NSDictionary*)defaultAsset defaultTo:(NSDictionary*)defaultTo
 {
     self = [super init];
     if (self) {
         // Custom initialization
         _default_asset = defaultAsset;
+        _default_to = defaultTo;
         _full_account_data = full_account_data;
         _transfer_args = nil;
         _balances_hash = nil;
@@ -102,6 +106,11 @@ enum
         _asset_list = nil;
     }
     return self;
+}
+
+- (id)initWithUserFullInfo:(NSDictionary*)full_account_data defaultAsset:(NSDictionary*)defaultAsset
+{
+    return [self initWithUserFullInfo:full_account_data defaultAsset:defaultAsset defaultTo:nil];
 }
 
 /**
@@ -168,6 +177,9 @@ enum
     _transfer_args = [NSMutableDictionary dictionary];
     id account_info = [_full_account_data objectForKey:@"account"];
     [_transfer_args setObject:@{@"id":account_info[@"id"], @"name":account_info[@"name"]} forKey:@"from"];
+    if (_default_to) {
+        [_transfer_args setObject:[_default_to copy] forKey:@"to"];
+    }
     if (!_default_asset){
         //  TODO:fowallet 默认值，优先选择CNY、没CNY选择BTS。TODO：USD呢？？
         _default_asset = [_asset_list ruby_find:(^BOOL(id src) {
@@ -715,8 +727,14 @@ enum
                 cell.backgroundColor = [UIColor clearColor];
                 cell.textLabel.text = NSLocalizedString(@"kVcTransferCellTo", @"发往帐号");
                 cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-                cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+                if (_default_to) {
+                    //  锁定：不可编辑
+                    cell.accessoryType = UITableViewCellAccessoryNone;
+                    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                } else {
+                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                    cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+                }
                 cell.hideTopLine = YES;
                 cell.hideBottomLine = YES;
                 
@@ -825,16 +843,18 @@ enum
         switch (indexPath.row) {
             case kVcSubTo:
             {
-                VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:enstAccount callback:^(id account_info) {
-                    if (account_info){
-                        //  TODO:fowallet
-                        NSLog(@"select: %@", account_info);
-                        [_transfer_args setObject:account_info forKey:@"to"];
-                        [_mainTableView reloadData];
-                    }
-                }];
-                [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleSelectToAccount", @"搜索目标帐号") backtitle:kVcDefaultBackTitleName];
-                //  TODO:log
+                if (!_default_to) {
+                    VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:enstAccount callback:^(id account_info) {
+                        if (account_info){
+                            //  TODO:fowallet
+                            NSLog(@"select: %@", account_info);
+                            [_transfer_args setObject:account_info forKey:@"to"];
+                            [_mainTableView reloadData];
+                        }
+                    }];
+                    [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleSelectToAccount", @"搜索目标帐号") backtitle:kVcDefaultBackTitleName];
+                    //  TODO:log
+                }
             }
                 break;
             case kVcSubAssetID:
