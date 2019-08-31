@@ -278,6 +278,11 @@ typedef void (^YklUserCallback)(id data);
  */
 + (NSString*)genBtsAddressFromWifPrivateKey:(NSString*)wif_private_key;
 
+/**
+ *  (public) 解码商人协议发票数据。成功返回 json，失败返回 nil。
+ */
++ (NSDictionary*)merchantInvoiceDecode:(NSString*)encoded_invoice;
+
 + (BOOL)writeFileAny:(id)data withFullPath:(NSString*)fullpath withDirPath:(NSString*)dirpath;
 
 + (BOOL)writeFile:(NSData*)data withFullPath:(NSString*)fullpath withDirPath:(NSString*)dirpath;

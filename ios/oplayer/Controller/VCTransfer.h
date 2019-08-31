@@ -12,5 +12,6 @@
 @interface VCTransfer : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
 - (id)initWithUserFullInfo:(NSDictionary*)full_account_data defaultAsset:(NSDictionary*)defaultAsset;
+- (id)initWithUserFullInfo:(NSDictionary*)full_account_data defaultAsset:(NSDictionary*)defaultAsset defaultTo:(NSDictionary*)defaultTo;
 
 @end

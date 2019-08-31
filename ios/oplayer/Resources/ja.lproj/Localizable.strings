@@ -13,6 +13,7 @@
 
 "kLabelMarketFavorites" = "自選";
 "kLabelGroupNameMain" = "メイン";
+"kLabelGroupNameCommunity" = "コミュニティ";
 "kLabelGroupNameGDEX" = "GDEX(ゲートウェイ)";
 "kLabelGroupNameWWW" = "WWW(ゲートウェイ)";
 "kLabelGroupNameOPEN" = "OPEN(ゲートウェイ)";
@@ -50,6 +51,7 @@
 "kDebtWarmTips" = "【暖かいヒント】\nあなたの担保比率は1.75に近いです。そのため、価格が下落した場合、このポジションにマージンコールがかかる危険性があります。";
 
 /* 服务界面 */
+"kServicesCellLabelQrScan" = "スキャン";
 "kServicesCellLabelTransfer" = "送金";
 "kServicesCellLabelAccountSearch" = "アカウントを検索";
 "kServicesCellLabelRank" = "担保の順序";
@@ -57,6 +59,16 @@
 "kServicesCellLabelFeedPrice" = "詳しいフィード価格";
 "kServicesCellLabelDepositWithdraw" = "入金出金";
 "kServicesCellLabelAdvFunction" = "高度な機能";
+
+/* 扫一扫相关字符串 */
+"kVcScanNaviTitleRightAlbum" = "相册";                    //TODO
+"kVcScanAutoScanTips" = "将二维码放入框内, 即可自动扫描。";  //  TODO
+"kVcScanProcessingResult" = "正在处理...";  //  TODO
+"kVcScanNoQrCode" = "未发现二维码。";          //  TODO
+"kVcScanResultPriKeyTypeTitle" = "私钥类型";  //  TODO
+"kVcScanResultPriKeyTypeOwner" = "账号私钥";  //  TODO
+"kVcScanResultPriKeyTypeActive" = "资金私钥"; //  TODO
+"kVcScanResultPriKeyTypeMemo" = "备注私钥"; //  TODO
 
 /* 抵押排行 */
 "kVcRankCurrentFeedPrice" = "現在のフィード価格";
@@ -600,6 +612,11 @@
 "kVcTitleLogin" = "ログイン";
 "kVcTitleImportAccount" = "アカウント導入";
 "kVcTitleRegister" = "新規登録";
+"kVcTitleQrScan" = "スキャン";
+"kVcTitleQrScanResultNormal" = "扫描结果";  //  TODO:
+"kVcTitleQrScanResultPriKey" = "导入私钥";  //  TODO:
+"kVcTitleQrScanResultAccount" = "账号信息";  //  TODO:
+"kVcTitleQrScanResultPay" = "支付";  //  TODO:
 "kVcTitleTransfer" = "送金";
 "kVcTitleConfirmTransaction" = "取引の確認をお願いします。";
 "kVcTitleCreateProposal" = "提案を確認してください。";

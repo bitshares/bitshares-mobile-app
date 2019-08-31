@@ -1146,6 +1146,12 @@
 		3FC4D44C226F2EEB00787082 /* VCHtlcList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D44A226F2EEA00787082 /* VCHtlcList.m */; };
 		3FC4D44D226F2EEB00787082 /* VCHtlcList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D44A226F2EEA00787082 /* VCHtlcList.m */; };
 		3FCA2DC9219EC45900A5F4E9 /* VCProposalConfirm.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FCA2DC8219EC45900A5F4E9 /* VCProposalConfirm.m */; };
+		3FD3DD2E2316A579009760A0 /* VCScanAccountName.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD3DD2C2316A578009760A0 /* VCScanAccountName.m */; };
+		3FD3DD2F2316A579009760A0 /* VCScanAccountName.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD3DD2C2316A578009760A0 /* VCScanAccountName.m */; };
+		3FD3DD302316A579009760A0 /* VCScanAccountName.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD3DD2C2316A578009760A0 /* VCScanAccountName.m */; };
+		3FD3DD332317B8FC009760A0 /* VCScanTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD3DD312317B8FC009760A0 /* VCScanTransfer.m */; };
+		3FD3DD342317B8FC009760A0 /* VCScanTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD3DD312317B8FC009760A0 /* VCScanTransfer.m */; };
+		3FD3DD352317B8FC009760A0 /* VCScanTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD3DD312317B8FC009760A0 /* VCScanTransfer.m */; };
 		3FDD7FFA21D46F9800DA61FC /* VCVestingBalance.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FDD7FF821D46F9700DA61FC /* VCVestingBalance.m */; };
 		3FDD7FFB21D46F9800DA61FC /* VCVestingBalance.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FDD7FF821D46F9700DA61FC /* VCVestingBalance.m */; };
 		3FDD7FFE21D728DF00DA61FC /* ViewVestingBalanceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FDD7FFD21D728DF00DA61FC /* ViewVestingBalanceCell.m */; };
@@ -1784,6 +1790,10 @@
 		3FC4D44B226F2EEB00787082 /* VCHtlcList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCHtlcList.h; path = Controller/VCHtlcList.h; sourceTree = "<group>"; };
 		3FCA2DC7219EC45800A5F4E9 /* VCProposalConfirm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCProposalConfirm.h; path = Controller/VCProposalConfirm.h; sourceTree = "<group>"; };
 		3FCA2DC8219EC45900A5F4E9 /* VCProposalConfirm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCProposalConfirm.m; path = Controller/VCProposalConfirm.m; sourceTree = "<group>"; };
+		3FD3DD2C2316A578009760A0 /* VCScanAccountName.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCScanAccountName.m; sourceTree = "<group>"; };
+		3FD3DD2D2316A579009760A0 /* VCScanAccountName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VCScanAccountName.h; sourceTree = "<group>"; };
+		3FD3DD312317B8FC009760A0 /* VCScanTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCScanTransfer.m; sourceTree = "<group>"; };
+		3FD3DD322317B8FC009760A0 /* VCScanTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VCScanTransfer.h; sourceTree = "<group>"; };
 		3FDD7FF821D46F9700DA61FC /* VCVestingBalance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCVestingBalance.m; path = Controller/VCVestingBalance.m; sourceTree = "<group>"; };
 		3FDD7FF921D46F9800DA61FC /* VCVestingBalance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCVestingBalance.h; path = Controller/VCVestingBalance.h; sourceTree = "<group>"; };
 		3FDD7FFC21D728DF00DA61FC /* ViewVestingBalanceCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewVestingBalanceCell.h; path = View/ViewVestingBalanceCell.h; sourceTree = "<group>"; };
@@ -3148,6 +3158,10 @@
 		3F475CDC21945A12009DD5C1 /* ScanResult */ = {
 			isa = PBXGroup;
 			children = (
+				3FD3DD322317B8FC009760A0 /* VCScanTransfer.h */,
+				3FD3DD312317B8FC009760A0 /* VCScanTransfer.m */,
+				3FD3DD2D2316A579009760A0 /* VCScanAccountName.h */,
+				3FD3DD2C2316A578009760A0 /* VCScanAccountName.m */,
 				3F475CE121946712009DD5C1 /* VCScanPrivateKey.h */,
 				3F475CE021946712009DD5C1 /* VCScanPrivateKey.m */,
 				3F475CDD21945A12009DD5C1 /* VCScanNormalString.h */,
@@ -4959,6 +4973,7 @@
 				3F676833230E9EC100E98C14 /* VCSelectLanguage.m in Sources */,
 				3F676834230E9EC100E98C14 /* WalletManager.m in Sources */,
 				3F676835230E9EC100E98C14 /* Bra.c in Sources */,
+				3FD3DD352317B8FC009760A0 /* VCScanTransfer.m in Sources */,
 				3F676836230E9EC100E98C14 /* MKlineItemData.m in Sources */,
 				3F676837230E9EC100E98C14 /* ViewRightTextAndCellButton.m in Sources */,
 				3F676838230E9EC100E98C14 /* SRProxyConnect.m in Sources */,
@@ -5093,6 +5108,7 @@
 				3F6768B9230E9EC100E98C14 /* ViewTickerHeader.m in Sources */,
 				3F6768BA230E9EC100E98C14 /* GRCustomUITabBarItem.m in Sources */,
 				3F6768BB230E9EC100E98C14 /* VCSearchNetwork.m in Sources */,
+				3FD3DD302316A579009760A0 /* VCScanAccountName.m in Sources */,
 				3F6768BC230E9EC100E98C14 /* GatewayBase.m in Sources */,
 				3F6768BD230E9EC100E98C14 /* Lzma2Dec.c in Sources */,
 				3F6768BE230E9EC100E98C14 /* SRHash.m in Sources */,
@@ -5247,6 +5263,7 @@
 				3FF3550B21FED340008EF213 /* VCSelectLanguage.m in Sources */,
 				3FB8F8CA21CE66C200DA88E2 /* WalletManager.m in Sources */,
 				3FB8F8CB21CE66C200DA88E2 /* Bra.c in Sources */,
+				3FD3DD342317B8FC009760A0 /* VCScanTransfer.m in Sources */,
 				3FB8F8CC21CE66C200DA88E2 /* MKlineItemData.m in Sources */,
 				3FB8F8CD21CE66C200DA88E2 /* ViewRightTextAndCellButton.m in Sources */,
 				3FB8F8CE21CE66C200DA88E2 /* SRProxyConnect.m in Sources */,
@@ -5381,6 +5398,7 @@
 				3FB8F94221CE66C200DA88E2 /* ViewTickerHeader.m in Sources */,
 				3FB8F94321CE66C200DA88E2 /* GRCustomUITabBarItem.m in Sources */,
 				3FB8F94421CE66C200DA88E2 /* VCSearchNetwork.m in Sources */,
+				3FD3DD2F2316A579009760A0 /* VCScanAccountName.m in Sources */,
 				3F6C35AE21EC83AB008E2903 /* GatewayBase.m in Sources */,
 				3FB8F94521CE66C200DA88E2 /* Lzma2Dec.c in Sources */,
 				3FB8F94621CE66C200DA88E2 /* SRHash.m in Sources */,
@@ -5535,6 +5553,7 @@
 				3FF3550A21FED340008EF213 /* VCSelectLanguage.m in Sources */,
 				B737A72420F9E42E00818BBA /* WalletManager.m in Sources */,
 				B7BDAA8820B3C77500738F12 /* Bra.c in Sources */,
+				3FD3DD332317B8FC009760A0 /* VCScanTransfer.m in Sources */,
 				B737850D21002608001EEA8C /* MKlineItemData.m in Sources */,
 				B7D8D9451C19578E003ED58F /* ViewRightTextAndCellButton.m in Sources */,
 				B714093E20A31CC300003311 /* SRProxyConnect.m in Sources */,
@@ -5669,6 +5688,7 @@
 				B737850620FF8547001EEA8C /* ViewTickerHeader.m in Sources */,
 				ED96A08F186C62AD002181D4 /* GRCustomUITabBarItem.m in Sources */,
 				B72A845020CA776900D92A25 /* VCSearchNetwork.m in Sources */,
+				3FD3DD2E2316A579009760A0 /* VCScanAccountName.m in Sources */,
 				3F6C35AD21EC83AB008E2903 /* GatewayBase.m in Sources */,
 				B7BDAA8F20B3C77500738F12 /* Lzma2Dec.c in Sources */,
 				B714094320A31CC300003311 /* SRHash.m in Sources */,

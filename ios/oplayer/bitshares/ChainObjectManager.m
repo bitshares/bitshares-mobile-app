@@ -1533,6 +1533,46 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
 }
 
 /**
+ * (public) 查询账号基本信息
+ */
+- (WsPromise*)queryAccountData:(NSString*)account_name_or_id
+{
+    GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
+    return [[[api exec:@"get_accounts" params:@[@[account_name_or_id]]] then:(^id(id data_array) {
+        if (!data_array || [data_array isKindOfClass:[NSNull class]]) {
+            return nil;
+        }
+        if ([data_array count] <= 0) {
+            return nil;
+        }
+        return [data_array firstObject];
+    })] catch:(^id(id error) {
+        NSLog(@"%@", error);
+        return nil;
+    })];
+}
+
+/**
+ * (public) 查询资产基本信息
+ */
+- (WsPromise*)queryAssetData:(NSString*)asset_symbol_or_id
+{
+    GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
+    return [[[api exec:@"get_assets" params:@[@[asset_symbol_or_id]]] then:(^id(id data_array) {
+        if (!data_array || [data_array isKindOfClass:[NSNull class]]) {
+            return nil;
+        }
+        if ([data_array count] <= 0) {
+            return nil;
+        }
+        return [data_array firstObject];
+    })] catch:(^id(id error) {
+        NSLog(@"%@", error);
+        return nil;
+    })];
+}
+
+/**
  * (public) 账号是否存在于区块链上
  */
 - (WsPromise*)isAccountExistOnBlockChain:(NSString*)account_name

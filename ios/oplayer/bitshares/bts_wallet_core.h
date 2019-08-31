@@ -115,6 +115,11 @@ extern "C"
     extern bool __bts_pubkey_tweak_add(secp256k1_pubkey* pubkey, const unsigned char tweak[]);
     
     /**
+     *  解码商人协议发票数据。
+     */
+    extern unsigned char* __bts_merchant_invoice_decode(const unsigned char* b58str_ptr, const size_t b58str_size, size_t* output_size);
+    
+    /**
      *  保存：序列化钱包对象JSON字符串为二进制流。
      *  entropy     - 外部生成随机字符串的熵（根据系统也许不同，比如各种时间戳、随机数、系统信息、securerandom等）
      *

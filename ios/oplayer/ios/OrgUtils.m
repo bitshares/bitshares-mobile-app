@@ -2139,6 +2139,34 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 }
 
 /**
+ *  (public) 解码商人协议发票数据。成功返回 json，失败返回 nil。
+ */
++ (NSDictionary*)merchantInvoiceDecode:(NSString*)encoded_invoice
+{
+    if (!encoded_invoice || encoded_invoice.length == 0) {
+        return nil;
+    }
+    
+    NSData* encoded_invoice_data = [encoded_invoice dataUsingEncoding:NSUTF8StringEncoding];
+    
+    size_t output_size = 0;
+    unsigned char* pInvoice = __bts_merchant_invoice_decode(encoded_invoice_data.bytes, encoded_invoice_data.length, &output_size);
+    if (!pInvoice || output_size == 0) {
+        return nil;
+    }
+    NSData* decoded_invoice_data = [[NSData alloc] initWithBytes:pInvoice length:output_size];
+    
+    NSError* err = nil;
+    id json = [NSJSONSerialization JSONObjectWithData:decoded_invoice_data options:NSJSONReadingAllowFragments error:&err];
+    if (err || !json){
+        NSLog(@"decode json error: %@", err);
+        return nil;
+    }
+    
+    return json;
+}
+
+/**
  *  防止数据备份到itunes或者icloud
  */
 + (BOOL)addSkipBackupAttributeToItemAtPath:(NSString *) filePathString
