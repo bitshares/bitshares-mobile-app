@@ -69,6 +69,14 @@
 "kVcScanResultPriKeyTypeOwner" = "账号私钥";  //  TODO
 "kVcScanResultPriKeyTypeActive" = "资金私钥"; //  TODO
 "kVcScanResultPriKeyTypeMemo" = "备注私钥"; //  TODO
+"kVcScanResultPayLabelAmount" = "金额";//TODO
+"kVcScanResultPayLabelMemo" = "备注";//TODO
+"kVcScanResultPlaceholderInputPayAmount" = "请输入付款金额"; //  TODO
+"kVcScanResultBtnPayNow" = "立即支付";  //  TODO
+"kVcScanResultTipsPaySuccess" = "支付成功";//TODO
+"kVcScanResultPaySuccessLabelTo" = "收款方";//TODO:
+"kVcScanResultPaySuccessLabelTrxID" = "交易ID";//TODO:
+"kVcScanResultPaySuccessBtnDone" = "完成";//TODO
 
 /* 抵押排行 */
 "kVcRankCurrentFeedPrice" = "現在のフィード価格";

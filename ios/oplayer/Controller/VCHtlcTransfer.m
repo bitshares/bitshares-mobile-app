@@ -10,7 +10,6 @@
 #import "BitsharesClientManager.h"
 
 #import "VCSearchNetwork.h"
-#import "VCTransactionConfirm.h"
 
 #import "MBProgressHUD.h"
 #import "OrgUtils.h"

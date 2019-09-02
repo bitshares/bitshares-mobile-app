@@ -69,6 +69,14 @@
 "kVcScanResultPriKeyTypeOwner" = "账号私钥";  //  TODO
 "kVcScanResultPriKeyTypeActive" = "资金私钥"; //  TODO
 "kVcScanResultPriKeyTypeMemo" = "备注私钥"; //  TODO
+"kVcScanResultPayLabelAmount" = "Amount";
+"kVcScanResultPayLabelMemo" = "Memo";
+"kVcScanResultPlaceholderInputPayAmount" = "Please enter the payment amount";
+"kVcScanResultBtnPayNow" = "Pay now";
+"kVcScanResultTipsPaySuccess" = "Payment completed";
+"kVcScanResultPaySuccessLabelTo" = "Receiver";
+"kVcScanResultPaySuccessLabelTrxID" = "Trx ID";
+"kVcScanResultPaySuccessBtnDone" = "Done";
 
 /* 抵押排行 */
 "kVcRankCurrentFeedPrice" = "Feed price";

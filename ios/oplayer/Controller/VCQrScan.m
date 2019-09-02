@@ -144,36 +144,14 @@
                     }
                 }
             }
-            //  TODO:登录？guard
-            [self GuardWalletExist:^{
-                VCBase* vc = [[VCScanTransfer alloc] initWithTo:accountData asset:assetData amount:str_amount memo:[invoice objectForKey:@"memo"]];
-                [self clearPushViewController:vc vctitle:NSLocalizedString(@"kVcTitleQrScanResultPay", @"支付") backtitle:kVcDefaultBackTitleName];
-            }];
+            
+            //  可以不用登录（在支付界面再登录即可。）
+            VCBase* vc = [[VCScanTransfer alloc] initWithTo:accountData asset:assetData amount:str_amount memo:[invoice objectForKey:@"memo"]];
+            [self clearPushViewController:vc vctitle:NSLocalizedString(@"kVcTitleQrScanResultPay", @"支付") backtitle:kVcDefaultBackTitleName];
         }
         return nil;
     })];
 }
-
-//-(void)onGotoTransfer
-//{
-//    [self GuardWalletExist:^{
-//        [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-//        id p1 = [self get_full_account_data_and_asset_hash:[[WalletManager sharedWalletManager] getWalletAccountName]];
-//        id p2 = [[ChainObjectManager sharedChainObjectManager] queryFeeAssetListDynamicInfo];   //  查询手续费兑换比例、手续费池等信息
-//        [[[WsPromise all:@[p1, p2]] then:(^id(id data) {
-//            [self hideBlockView];
-//            id full_userdata = [data objectAtIndex:0];
-//            VCTransfer* vc = [[VCTransfer alloc] initWithUserFullInfo:full_userdata defaultAsset:nil defaultTo:_accountData];
-//            vc.title = NSLocalizedString(@"kVcTitleTransfer", @"转账");
-//            [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-//            return nil;
-//        })] catch:(^id(id error) {
-//            [self hideBlockView];
-//            [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
-//            return nil;
-//        })];
-//    }];
-//}
 
 /**
  *  二维码结果：鼓鼓收款情况处理。
@@ -202,11 +180,9 @@
             //  转到账号名界面。
             [self hideBlockView];
             
-            //  TODO:登录？guard
-            [self GuardWalletExist:^{
-                VCBase* vc = [[VCScanTransfer alloc] initWithTo:accountData asset:assetData amount:asset_amount memo:memo];
-                [self clearPushViewController:vc vctitle:NSLocalizedString(@"kVcTitleQrScanResultPay", @"支付") backtitle:kVcDefaultBackTitleName];
-            }];
+            //  可以不用登录（在支付界面再登录即可。）
+            VCBase* vc = [[VCScanTransfer alloc] initWithTo:accountData asset:assetData amount:asset_amount memo:memo];
+            [self clearPushViewController:vc vctitle:NSLocalizedString(@"kVcTitleQrScanResultPay", @"支付") backtitle:kVcDefaultBackTitleName];
         }
         return nil;
     })];
