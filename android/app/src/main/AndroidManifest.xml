@@ -243,6 +243,10 @@
             android:name=".ActivityScanResultTransfer"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ActivityScanResultPaySuccess"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
