@@ -7,6 +7,8 @@
 //
 
 #import "VCScanTransfer.h"
+#import "VCTransactionConfirm.h"
+#import "VCPaySuccess.h"
 #import "BitsharesClientManager.h"
 
 enum
@@ -87,14 +89,6 @@ enum
     return self;
 }
 
-#pragma mark- tip button
-- (void)onTipButtonClicked:(UIButton*)button
-{
-    if (button.tag == 1) {
-        [OrgUtils showMessage:NSLocalizedString(@"kLoginRegTipsWalletPasswordFormat", @"8位以上字符，且必须包含大小写和数字。")];
-    }
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -105,7 +99,7 @@ enum
     //  背景颜色
     self.view.backgroundColor = theme.appBackColor;
     
-    //  account basic infos
+    //  收款账号信息
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     
     UILabel* headerAccountName = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenRect.size.width, 44)];
@@ -132,50 +126,54 @@ enum
     [self.view addSubview:headerViewId];
     
     //  初始化UI
-    NSString* placeHolderAmount = NSLocalizedString(@"kVcTransferTipInputSendAmount", @"请输入转账金额");
-//    CGRect rect = [self makeTextFieldRect];
-    _tf_amount = [self createTfWithRect:[self makeTextFieldRectFull] keyboard:UIKeyboardTypeDecimalPad placeholder:placeHolderAmount];
-    _tf_amount.showBottomLine = YES;
+    _tf_amount = nil;
+    _tf_memo = nil;
     
-    _tf_amount.updateClearButtonTintColor = YES;
-    _tf_amount.textColor = theme.textColorMain;
-    _tf_amount.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderAmount
-                                                                       attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
-                                                                                    NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    BOOL bLockAmount = _default_amount && ![_default_amount isEqualToString:@""];
+    BOOL bLockMemo = _default_memo && ![_default_memo isEqualToString:@""];
     
-    //  绑定输入事件（限制输入）
-    [_tf_amount addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+    //  - 金额输入框
+    if (!bLockAmount) {
+        NSString* placeHolderAmount = NSLocalizedString(@"kVcScanResultPlaceholderInputPayAmount", @"请输入付款金额");
+        _tf_amount = [self createTfWithRect:[self makeTextFieldRectFull] keyboard:UIKeyboardTypeDecimalPad placeholder:placeHolderAmount];
+        _tf_amount.showBottomLine = YES;
+        
+        _tf_amount.updateClearButtonTintColor = YES;
+        _tf_amount.textColor = theme.textColorMain;
+        _tf_amount.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderAmount
+                                                                           attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
+                                                                                        NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+        
+        [_tf_amount addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+        
+        UILabel* tailer_total_price = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 80, 31)];
+        tailer_total_price.lineBreakMode = NSLineBreakByTruncatingTail;
+        tailer_total_price.numberOfLines = 1;
+        tailer_total_price.textAlignment = NSTextAlignmentRight;
+        tailer_total_price.backgroundColor = [UIColor clearColor];
+        tailer_total_price.textColor = [ThemeManager sharedThemeManager].textColorMain;
+        tailer_total_price.font = [UIFont systemFontOfSize:14];
+        tailer_total_price.text = [_asset objectForKey:@"symbol"];
+        _tf_amount.rightView = tailer_total_price;
+        _tf_amount.rightViewMode = UITextFieldViewModeAlways;
+    }
     
-    //  UI - 转账数量尾部辅助按钮
-    
-    UILabel* tailer_total_price = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 80, 31)];
-    tailer_total_price.lineBreakMode = NSLineBreakByTruncatingTail;
-    tailer_total_price.numberOfLines = 1;
-    tailer_total_price.textAlignment = NSTextAlignmentRight;
-    tailer_total_price.backgroundColor = [UIColor clearColor];
-    tailer_total_price.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    tailer_total_price.font = [UIFont systemFontOfSize:14];
-    tailer_total_price.text = [_asset objectForKey:@"symbol"];
-    
-    _tf_amount.rightView = tailer_total_price;
-    _tf_amount.rightViewMode = UITextFieldViewModeAlways;
-    
-    
-    NSString* placeHolderMemo = NSLocalizedString(@"kVcTransferTipInputMemo", @"请输入备注信息（可选）");
-    CGRect rect = [self makeTextFieldRect];
-    _tf_memo = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolderMemo];
-    
-    //  设置属性颜色等
-    _tf_memo.updateClearButtonTintColor = YES;
-    _tf_memo.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    _tf_memo.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderMemo
-                                                                     attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                  NSFontAttributeName:[UIFont systemFontOfSize:17]}];
-    _tf_memo.showBottomLine = YES;
+    //  - 备注输入框
+    if (!bLockMemo) {
+        NSString* placeHolderMemo = NSLocalizedString(@"kVcTransferTipInputMemo", @"请输入备注信息（可选）");
+        CGRect rect = [self makeTextFieldRect];
+        _tf_memo = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolderMemo];
+        _tf_memo.updateClearButtonTintColor = YES;
+        _tf_memo.textColor = [ThemeManager sharedThemeManager].textColorMain;
+        _tf_memo.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderMemo
+                                                                         attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
+                                                                                      NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+        _tf_memo.showBottomLine = YES;
+    }
     
     _dataArray = [[[NSMutableArray array] ruby_apply:(^(id obj) {
         //  amount
-        if (_default_amount && ![_default_amount isEqualToString:@""]) {
+        if (bLockAmount) {
             [obj addObject:@(kVcSubAmountLocked)];
         } else {
             [obj addObject:@(kVcSubAmountTitle)];
@@ -183,7 +181,7 @@ enum
             [obj addObject:@(kVcSubEmpty)];
         }
         //  memo
-        if (_default_memo && ![_default_memo isEqualToString:@""]) {
+        if (bLockMemo) {
             [obj addObject:@(kVcSubMemoLocked)];
         } else {
             [obj addObject:@(kVcSubMemoTitle)];
@@ -206,21 +204,14 @@ enum
     pTap.cancelsTouchesInView = NO; //  IOS 5.0系列导致按钮没响应
     [self.view addGestureRecognizer:pTap];
     
-    
-    
-    _btnCommit = [self createCellLableButton:@"立即支付"];
+    //  按钮
+    _btnCommit = [self createCellLableButton:NSLocalizedString(@"kVcScanResultBtnPayNow", @"立即支付")];
 }
 
 -(void)onTap:(UITapGestureRecognizer*)pTap
 {
     [self endInput];
 }
-
-//- (void)onAmountAllButtonClicked:(UIButton*)sender
-//{
-//    _tf_amount.text = @"33";//TODO: [OrgUtils formatFloatValue:_n_available usesGroupingSeparator:NO];
-//    [self onAmountChanged];
-//}
 
 #pragma mark- for UITextFieldDelegate
 
@@ -229,16 +220,11 @@ enum
     if (textField != _tf_amount){
         return YES;
     }
-    
-    return YES;
-    //  TODO:
-//    id asset = [_transfer_args objectForKey:@"asset"];
-//    assert(asset);
-//
-//    return [OrgUtils isValidAmountOrPriceInput:textField.text
-//                                         range:range
-//                                    new_string:string
-//                                     precision:[[asset objectForKey:@"precision"] integerValue]];
+
+    return [OrgUtils isValidAmountOrPriceInput:textField.text
+                                         range:range
+                                    new_string:string
+                                     precision:[[_asset objectForKey:@"precision"] integerValue]];
 }
 
 - (void)onTextFieldDidChange:(UITextField*)textField
@@ -249,41 +235,6 @@ enum
     
     //  更新小数点为APP默认小数点样式（可能和输入法中下小数点不同，比如APP里是`.`号，而输入法则是`,`号。
     [OrgUtils correctTextFieldDecimalSeparatorDisplayStyle:textField];
-    
-    [self onAmountChanged];
-}
-
-/**
- *  (private) 转账数量发生变化。
- */
-- (void)onAmountChanged
-{
-    //  TODO：xxx
-    
-//    id asset = [_transfer_args objectForKey:@"asset"];
-//    assert(asset);
-//
-//    id str_amount = _tf_amount.text;
-//
-//    //  无效输入
-//    if (!str_amount || [str_amount isEqualToString:@""]){
-//        _cellAssetAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@%@", [OrgUtils formatFloatValue:_n_available], [asset objectForKey:@"symbol"]];
-//        _cellAssetAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-//        return;
-//    }
-//
-//    //  获取输入的数量
-//    id n_amount = [OrgUtils auxGetStringDecimalNumberValue:str_amount];
-//
-//    //  _n_available < n_amount
-//    if ([_n_available compare:n_amount] == NSOrderedAscending){
-//        //  数量不足
-//        _cellAssetAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@%@(%@)", [OrgUtils formatFloatValue:_n_available], [asset objectForKey:@"symbol"], NSLocalizedString(@"kVcTransferTipAmountNotEnough", @"数量不足")];
-//        _cellAssetAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].tintColor;
-//    }else{
-//        _cellAssetAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@%@", [OrgUtils formatFloatValue:_n_available], [asset objectForKey:@"symbol"]];
-//        _cellAssetAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-//    }
 }
 
 #pragma mark-
@@ -291,18 +242,14 @@ enum
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    [self endInput];
-    //  TODO:memo tf
-//    if (textField == _tf_amount)
-//    {
-//        [_tf_preimage_or_hash becomeFirstResponder];
-//    }
-//    else
-//    {
-//        [self.view endEditing:YES];
-//        [_tf_amount safeResignFirstResponder];
-//        [_tf_preimage_or_hash safeResignFirstResponder];
-//    }
+    if (textField == _tf_amount && _tf_memo)
+    {
+        [_tf_memo becomeFirstResponder];
+    }
+    else
+    {
+        [self endInput];
+    }
     return YES;
 }
 
@@ -313,13 +260,250 @@ enum
 {
     [self endInput];
     
-    //  确认界面由于时间经过可能又被 lock 了。
-    [self GuardWalletUnlocked:^(BOOL unlocked) {
-//        if (unlocked){
-//            _bResultCannelled = NO;
-//            [self closeModelViewController:nil];
-//        }
+    [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
+        if (unlocked) {
+            [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+            id p1 = [self get_full_account_data_and_asset_hash:[[WalletManager sharedWalletManager] getWalletAccountName]];
+            id p2 = [[ChainObjectManager sharedChainObjectManager] queryFeeAssetListDynamicInfo];   //  查询手续费兑换比例、手续费池等信息
+            [[[WsPromise all:@[p1, p2]] then:(^id(id data) {
+//                [self hideBlockView];
+                id full_userdata = [data objectAtIndex:0];
+                if (![self _onPayCoreWithMask:full_userdata]) {
+                    [self hideBlockView];
+                }
+                return nil;
+            })] catch:(^id(id error) {
+                [self hideBlockView];
+                [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+                return nil;
+            })];
+        }
     }];
+}
+
+/**
+ *  (private) 辅助 - 判断手续费是否足够，足够则返回需要消耗的手续费，不足则返回 nil。TODO:考虑重构
+ *  fee_price_item      - 服务器返回的需要手续费值
+ *  fee_asset_id        - 当前手续费资产ID
+ *  asset               - 正在转账的资产
+ *  n_amount            - 正在转账的数量
+ */
+- (id)_isFeeSufficient:(id)fee_price_item fee_asset:(id)fee_asset asset:(id)asset amount:(id)n_amount full_account_data:(id)full_account_data
+{
+    assert(fee_price_item);
+    assert(fee_asset);
+    assert(asset);
+    assert(n_amount);
+    id fee_asset_id = [fee_asset objectForKey:@"id"];
+    assert([fee_asset_id isEqualToString:[fee_price_item objectForKey:@"asset_id"]]);
+    
+    //  1、转账消耗资产值（只有转账资产和手续费资产相同时候才设置）
+    NSDecimalNumber* n_transfer_cost = [NSDecimalNumber zero];
+    if ([asset[@"id"] isEqualToString:fee_asset_id]){
+        n_transfer_cost = n_amount;
+    }
+    
+    //  2、手续费消耗值
+    NSDecimalNumber* n_fee_cost = [NSDecimalNumber decimalNumberWithMantissa:[[fee_price_item objectForKey:@"amount"] unsignedLongLongValue]
+                                                                    exponent:-[fee_asset[@"precision"] integerValue]
+                                                                  isNegative:NO];
+    
+    //  3、总消耗值
+    id n_total_cost = [n_transfer_cost decimalNumberByAdding:n_fee_cost];
+    
+    //  4、获取手续费资产总的可用余额
+    id n_available = [NSDecimalNumber zero];
+    for (id balance_object in [full_account_data objectForKey:@"balances"]) {
+        id asset_type = [balance_object objectForKey:@"asset_type"];
+        if ([asset_type isEqualToString:fee_asset_id]){
+            n_available = [NSDecimalNumber decimalNumberWithMantissa:[balance_object[@"balance"] unsignedLongLongValue]
+                                                            exponent:-[fee_asset[@"precision"] integerValue]
+                                                          isNegative:NO];
+            break;
+        }
+    }
+    
+    //  5、判断：n_available < n_total_cost
+    if ([n_available compare:n_total_cost] == NSOrderedAscending){
+        //  不足：返回 nil。
+        return nil;
+    }
+    
+    //  足够（返回手续费值）
+    return n_fee_cost;
+}
+
+- (BOOL)_onPayCoreWithMask:(NSDictionary*)full_account_data
+{
+    //  TODO:多语言
+    
+    assert(full_account_data);
+    id from_account = [full_account_data objectForKey:@"account"];
+    assert(from_account);
+    
+    //  1、检测付款金额参数是否正确、账户余额是否足够。
+    id str_amount = _tf_amount ? _tf_amount.text : _default_amount;
+    if (!str_amount || [str_amount isEqualToString:@""]){
+        [OrgUtils makeToast:@"请输入付款金额。"];
+        return NO;
+    }
+    id n_amount = [OrgUtils auxGetStringDecimalNumberValue:str_amount];
+    
+    //  n_amount <= 0
+    NSDecimalNumber* n_zero = [NSDecimalNumber zero];
+    if ([n_amount compare:n_zero] <= 0){
+        [OrgUtils makeToast:@"请输入付款金额。"];
+        return NO;
+    }
+    
+    id pay_asset_id = [_asset objectForKey:@"id"];
+    NSInteger pay_asset_precision = [_asset[@"precision"] integerValue];
+    
+    id balances_hash = [NSMutableDictionary dictionary];
+    for (id balance_object in [full_account_data objectForKey:@"balances"]) {
+        id asset_type = [balance_object objectForKey:@"asset_type"];
+        id balance = [balance_object objectForKey:@"balance"];
+        if ([pay_asset_id isEqualToString:asset_type]) {
+            id n_balance = [NSDecimalNumber decimalNumberWithMantissa:[balance unsignedLongLongValue] exponent:-pay_asset_precision isNegative:NO];
+            if ([n_balance compare:n_amount] < 0) {
+                [OrgUtils makeToast:@"余额不足。"];//TODO:
+                return NO;
+            }
+            id n_left = [n_balance decimalNumberBySubtracting:n_amount];
+            id n_left_pow = [NSString stringWithFormat:@"%@", [n_left decimalNumberByMultiplyingByPowerOf10:pay_asset_precision]];
+            [balances_hash setObject:@{@"asset_id":asset_type, @"amount":n_left_pow} forKey:asset_type];
+        } else {
+            [balances_hash setObject:@{@"asset_id":asset_type, @"amount":balance} forKey:asset_type];
+        }
+    }
+    id balances_list = [balances_hash allValues];
+    id fee_item = [[ChainObjectManager sharedChainObjectManager] estimateFeeObject:ebo_transfer balances:balances_list];
+    
+    //  2、检测备注信息
+    NSString* str_memo = _tf_memo ? _tf_memo.text : _default_memo;
+    if (!str_memo || str_memo.length == 0){
+        str_memo = nil;
+    }
+    
+    //  检测备注私钥相关信息
+    id memo_object = [NSNull null];
+    if (str_memo){
+        id from_public_memo = [[from_account objectForKey:@"options"] objectForKey:@"memo_key"];
+        if (!from_public_memo || [from_public_memo isEqualToString:@""]){
+            [OrgUtils makeToast:NSLocalizedString(@"kVcTransferSubmitTipAccountNoMemoKey", @"帐号没有备注私钥，不支持填写备注信息。")];
+            return NO;
+        }
+        id to_public = [[_to_account objectForKey:@"options"] objectForKey:@"memo_key"];
+        memo_object = [[WalletManager sharedWalletManager] genMemoObject:str_memo from_public:from_public_memo to_public:to_public];
+        if (!memo_object){
+            [OrgUtils makeToast:NSLocalizedString(@"kVcTransferSubmitTipWalletNoMemoKey", @"没有备注私钥信息，不支持填写备注。")];
+            return NO;
+        }
+    }
+
+    //  --- 开始构造OP ---
+    id n_amount_pow = [NSString stringWithFormat:@"%@", [n_amount decimalNumberByMultiplyingByPowerOf10:pay_asset_precision]];
+    id fee_asset_id = [fee_item objectForKey:@"fee_asset_id"];
+    id op = @{
+              @"fee":@{
+                      @"amount":@0,
+                      @"asset_id":fee_asset_id,
+                      },
+              @"from":from_account[@"id"],
+              @"to":_to_account[@"id"],
+              @"amount":@{
+                      @"amount":@([n_amount_pow unsignedLongLongValue]),
+                      @"asset_id":_asset[@"id"],
+                      },
+              @"memo":memo_object
+              };
+    //  --- 开始评估手续费 ---
+    [[[[BitsharesClientManager sharedBitsharesClientManager] calcOperationFee:ebo_transfer opdata:op] then:(^id(id fee_price_item) {
+        [self hideBlockView];
+        //  判断手续费是否足够。
+        id fee_asset = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:fee_asset_id];
+        id n_fee_cost = [self _isFeeSufficient:fee_price_item
+                                     fee_asset:fee_asset
+                                         asset:_asset amount:n_amount full_account_data:full_account_data];
+        if (!n_fee_cost){
+            [OrgUtils makeToast:NSLocalizedString(@"kTipsTxFeeNotEnough", @"手续费不足，请确保帐号有足额的 BTS/CNY/USD 用于支付网络手续费。")];
+            return nil;
+        }
+        //  --- 弹框确认转账行为 ---
+        //  弹确认框之前 设置参数
+        NSMutableDictionary* transfer_args = [NSMutableDictionary dictionary];
+        
+        [transfer_args setObject:from_account forKey:@"from"];
+        [transfer_args setObject:_to_account forKey:@"to"];
+        [transfer_args setObject:_asset forKey:@"asset"];
+        [transfer_args setObject:fee_asset forKey:@"fee_asset"];
+        
+        [transfer_args setObject:n_amount forKey:@"kAmount"];
+        [transfer_args setObject:n_fee_cost forKey:@"kFeeCost"];
+
+        id op_with_fee = [op mutableCopy];
+        [op_with_fee setObject:fee_price_item forKey:@"fee"];
+        [transfer_args setObject:[op_with_fee copy] forKey:@"kOpData"];            //  传递过去，避免再次构造。
+        if (str_memo){
+            [transfer_args setObject:str_memo forKey:@"kMemo"];
+        }else{
+            [transfer_args removeObjectForKey:@"kMemo"];
+        }
+        
+        //  确保有权限发起普通交易，否则作为提案交易处理。
+        [self GuardProposalOrNormalTransaction:ebo_transfer
+                         using_owner_authority:NO
+                      invoke_proposal_callback:NO
+                                        opdata:[transfer_args objectForKey:@"kOpData"]
+                                     opaccount:[full_account_data objectForKey:@"account"]
+                                          body:^(BOOL isProposal, NSDictionary *proposal_create_args)
+         {
+             assert(!isProposal);
+             // 有权限：转到交易确认界面。
+             VCTransactionConfirm* vc = [[VCTransactionConfirm alloc] initWithTransferArgs:[transfer_args copy] callback:(^(BOOL isOk) {
+                 if (isOk){
+                     [self _processTransferCore:transfer_args full_account_data:full_account_data];
+                 }else{
+                     NSLog(@"cancel...");
+                 }
+             })];
+             vc.title = NSLocalizedString(@"kVcTitleConfirmTransaction", @"请确认交易");
+             vc.hidesBottomBarWhenPushed = YES;
+             [self showModelViewController:vc tag:0];
+         }];
+        return nil;
+    })] catch:(^id(id error) {
+        [self hideBlockView];
+        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+        return nil;
+    })];
+    return YES;
+}
+
+/**
+ *  (private) 用户确认完毕 最后提交请求。
+ */
+- (void)_processTransferCore:(NSDictionary*)transfer_args full_account_data:(NSDictionary*)full_account_data
+{
+    id asset = [transfer_args objectForKey:@"asset"];
+    assert(asset);
+    id op_data = [transfer_args objectForKey:@"kOpData"];
+    assert(op_data);
+    //  请求网络广播
+    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    [[[[BitsharesClientManager sharedBitsharesClientManager] transfer:op_data] then:(^id(id tx_data) {
+        [self hideBlockView];
+        [OrgUtils logEvents:@"txPayTransferFullOK" params:@{@"asset":asset[@"symbol"]}];
+        id amount_string = [NSString stringWithFormat:@"%@ %@", [transfer_args objectForKey:@"kAmount"], asset[@"symbol"]];
+        VCPaySuccess* vc = [[VCPaySuccess alloc] initWithResult:tx_data to_account:_to_account amount_string:amount_string];
+        [self clearPushViewController:vc vctitle:@"" backtitle:kVcDefaultBackTitleName];
+        return nil;
+    })] catch:(^id(id error) {
+        [self hideBlockView];
+        [OrgUtils showGrapheneError:error];
+        [OrgUtils logEvents:@"txPayTransferFailed" params:@{@"asset":asset[@"symbol"]}];
+        return nil;
+    })];
 }
 
 - (void)didReceiveMemoryWarning
@@ -359,27 +543,6 @@ enum
     return tableView.rowHeight;
 }
 
-///**
-// *  调整Header和Footer高度。REMARK：header和footer VIEW 不能为空，否则高度设置无效。
-// */
-//- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-//{
-//    return 10.0f;
-//}
-//- (nullable NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-//{
-//    return @" ";
-//}
-//
-//- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
-//{
-//    return 10.0f;
-//}
-//- (nullable NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
-//{
-//    return @" ";
-//}
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     switch (indexPath.section) {
@@ -393,18 +556,15 @@ enum
                     cell.hideBottomLine = YES;
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                    cell.textLabel.text = @"金额";//TODO: NSLocalizedString(@"kVcDWCellWithdrawAddress", @"提币地址");
+                    cell.textLabel.text = NSLocalizedString(@"kVcScanResultPayLabelAmount", @"金额");
                     cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                    
-                    cell.detailTextLabel.font = [UIFont systemFontOfSize:13.0f];
-                    cell.detailTextLabel.text = @"可用 33CNY";
-                    cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
                     return cell;
                 }
                     break;
                 case kVcSubAmountTextField:
                 {
+                    assert(_tf_amount);
                     UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
                     cell.backgroundColor = [UIColor clearColor];
                     cell.accessoryType = UITableViewCellAccessoryNone;
@@ -425,10 +585,9 @@ enum
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                    cell.textLabel.text = @"金额";
+                    cell.textLabel.text = NSLocalizedString(@"kVcScanResultPayLabelAmount", @"金额");
                     cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@", _default_amount, _asset[@"symbol"]];
                     cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].buyColor;
-                    
                     return cell;
                 }
                     break;
@@ -453,15 +612,15 @@ enum
                     cell.hideBottomLine = YES;
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                    cell.textLabel.text = @"备注";//TODO: NSLocalizedString(@"kVcDWCellWithdrawAddress", @"提币地址");
+                    cell.textLabel.text = NSLocalizedString(@"kVcScanResultPayLabelMemo", @"备注");
                     cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                     return cell;
-
                 }
                     break;
                 case kVcSubMemoTextField:
                 {
+                    assert(_tf_memo);
                     UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
                     cell.backgroundColor = [UIColor clearColor];
                     cell.accessoryType = UITableViewCellAccessoryNone;
@@ -482,10 +641,9 @@ enum
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                    cell.textLabel.text = @"备注";
+                    cell.textLabel.text = NSLocalizedString(@"kVcScanResultPayLabelMemo", @"备注");
                     cell.detailTextLabel.text = _default_memo;
                     cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].buyColor;
-                    
                     return cell;
                 }
                     break;
@@ -526,15 +684,13 @@ enum
 - (void)endInput
 {
     [self.view endEditing:YES];
-    [_tf_amount safeResignFirstResponder];
-    [_tf_memo safeResignFirstResponder];
+    if (_tf_amount) {
+        [_tf_amount safeResignFirstResponder];
+    }
+    if (_tf_memo) {
+        [_tf_memo safeResignFirstResponder];
+    }
 }
-
-//- (BOOL)textFieldShouldReturn:(UITextField*)textField
-//{
-//    [self endInput];
-//    return YES;
-//}
 
 -(void)scrollViewDidScroll:(UIScrollView*)scrollView
 {

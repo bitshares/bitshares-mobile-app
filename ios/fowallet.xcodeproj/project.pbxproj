@@ -26,6 +26,15 @@
 		3F0DA369218851FF006E1004 /* VCQrScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0DA367218851FF006E1004 /* VCQrScan.m */; };
 		3F216571226FEF5500AB5A3D /* ViewActionsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F216570226FEF5500AB5A3D /* ViewActionsCell.m */; };
 		3F216572226FEF5500AB5A3D /* ViewActionsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F216570226FEF5500AB5A3D /* ViewActionsCell.m */; };
+		3F23B77E231CCC7000EEEE78 /* paysuccess@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F23B77C231CCC7000EEEE78 /* paysuccess@3x.png */; };
+		3F23B77F231CCC7000EEEE78 /* paysuccess@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F23B77C231CCC7000EEEE78 /* paysuccess@3x.png */; };
+		3F23B780231CCC7000EEEE78 /* paysuccess@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F23B77C231CCC7000EEEE78 /* paysuccess@3x.png */; };
+		3F23B781231CCC7000EEEE78 /* paysuccess@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F23B77D231CCC7000EEEE78 /* paysuccess@2x.png */; };
+		3F23B782231CCC7000EEEE78 /* paysuccess@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F23B77D231CCC7000EEEE78 /* paysuccess@2x.png */; };
+		3F23B783231CCC7000EEEE78 /* paysuccess@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F23B77D231CCC7000EEEE78 /* paysuccess@2x.png */; };
+		3F23B786231CCCCA00EEEE78 /* VCPaySuccess.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F23B785231CCCCA00EEEE78 /* VCPaySuccess.m */; };
+		3F23B787231CCCCA00EEEE78 /* VCPaySuccess.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F23B785231CCCCA00EEEE78 /* VCPaySuccess.m */; };
+		3F23B788231CCCCA00EEEE78 /* VCPaySuccess.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F23B785231CCCCA00EEEE78 /* VCPaySuccess.m */; };
 		3F291BD922B48EFB002E0CBD /* GatewayAssetItemData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F291BD722B48EFA002E0CBD /* GatewayAssetItemData.m */; };
 		3F291BDA22B48EFB002E0CBD /* GatewayAssetItemData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F291BD722B48EFA002E0CBD /* GatewayAssetItemData.m */; };
 		3F3847322222686400B55914 /* VCMemberShip.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F3847312222686300B55914 /* VCMemberShip.m */; };
@@ -1708,6 +1717,10 @@
 		3F0DA368218851FF006E1004 /* VCQrScan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCQrScan.h; path = Controller/VCQrScan.h; sourceTree = "<group>"; };
 		3F21656F226FEF5400AB5A3D /* ViewActionsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewActionsCell.h; path = View/ViewActionsCell.h; sourceTree = "<group>"; };
 		3F216570226FEF5500AB5A3D /* ViewActionsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewActionsCell.m; path = View/ViewActionsCell.m; sourceTree = "<group>"; };
+		3F23B77C231CCC7000EEEE78 /* paysuccess@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "paysuccess@3x.png"; path = "Images/paysuccess@3x.png"; sourceTree = "<group>"; };
+		3F23B77D231CCC7000EEEE78 /* paysuccess@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "paysuccess@2x.png"; path = "Images/paysuccess@2x.png"; sourceTree = "<group>"; };
+		3F23B784231CCCCA00EEEE78 /* VCPaySuccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCPaySuccess.h; path = Controller/VCPaySuccess.h; sourceTree = "<group>"; };
+		3F23B785231CCCCA00EEEE78 /* VCPaySuccess.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCPaySuccess.m; path = Controller/VCPaySuccess.m; sourceTree = "<group>"; };
 		3F291BD722B48EFA002E0CBD /* GatewayAssetItemData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GatewayAssetItemData.m; sourceTree = "<group>"; };
 		3F291BD822B48EFB002E0CBD /* GatewayAssetItemData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GatewayAssetItemData.h; sourceTree = "<group>"; };
 		3F3847302222686300B55914 /* VCMemberShip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCMemberShip.h; path = Controller/VCMemberShip.h; sourceTree = "<group>"; };
@@ -2666,6 +2679,8 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3F23B784231CCCCA00EEEE78 /* VCPaySuccess.h */,
+				3F23B785231CCCCA00EEEE78 /* VCPaySuccess.m */,
 				3F05DDBC230B7D75002934DA /* VCLaunch.h */,
 				3F05DDBB230B7D75002934DA /* VCLaunch.m */,
 				3F78E07822637E22007D41A3 /* VCAdvancedFeatures.h */,
@@ -2873,6 +2888,8 @@
 		18FF069417E00D870088405E /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				3F23B77D231CCC7000EEEE78 /* paysuccess@2x.png */,
+				3F23B77C231CCC7000EEEE78 /* paysuccess@3x.png */,
 				3F7ED8E02276937D00082680 /* iconHtlcHashcode@2x.png */,
 				3F7ED8E12276937D00082680 /* iconHtlcHashcode@3x.png */,
 				3F7ED8DF2276937D00082680 /* iconHtlcPreimage@2x.png */,
@@ -4213,6 +4230,7 @@
 				3F6769B6230E9EC100E98C14 /* Enter@2x.png in Resources */,
 				3F6769B7230E9EC100E98C14 /* Close Window-50@2x.png in Resources */,
 				3F6769B8230E9EC100E98C14 /* Hearts Filled-50@2x.png in Resources */,
+				3F23B783231CCC7000EEEE78 /* paysuccess@2x.png in Resources */,
 				3F6769B9230E9EC100E98C14 /* share_line@2x.png in Resources */,
 				3F6769BA230E9EC100E98C14 /* iconTransfer@3x.png in Resources */,
 				3F6769BB230E9EC100E98C14 /* Filter-44@2x.png in Resources */,
@@ -4296,6 +4314,7 @@
 				3F676A09230E9EC100E98C14 /* Home@2x.png in Resources */,
 				3F676A0A230E9EC100E98C14 /* Info-50@2x.png in Resources */,
 				3F676A0B230E9EC100E98C14 /* Leaving Geo Fence@2x.png in Resources */,
+				3F23B780231CCC7000EEEE78 /* paysuccess@3x.png in Resources */,
 				3F676A0C230E9EC100E98C14 /* share_wechat_friend@2x.png in Resources */,
 				3F676A0D230E9EC100E98C14 /* Calendar@2x.png in Resources */,
 				3F676A0E230E9EC100E98C14 /* Find User@2x.png in Resources */,
@@ -4448,6 +4467,7 @@
 				3FB8FA2A21CE66C200DA88E2 /* Enter@2x.png in Resources */,
 				3FB8FA2B21CE66C200DA88E2 /* Close Window-50@2x.png in Resources */,
 				3FB8FA2C21CE66C200DA88E2 /* Hearts Filled-50@2x.png in Resources */,
+				3F23B782231CCC7000EEEE78 /* paysuccess@2x.png in Resources */,
 				3FB8FA2D21CE66C200DA88E2 /* share_line@2x.png in Resources */,
 				3FB8FA2E21CE66C200DA88E2 /* iconTransfer@3x.png in Resources */,
 				3FB8FA2F21CE66C200DA88E2 /* Filter-44@2x.png in Resources */,
@@ -4531,6 +4551,7 @@
 				3FB8FA7C21CE66C200DA88E2 /* Home@2x.png in Resources */,
 				3FB8FA7D21CE66C200DA88E2 /* Info-50@2x.png in Resources */,
 				3FB8FA7E21CE66C200DA88E2 /* Leaving Geo Fence@2x.png in Resources */,
+				3F23B77F231CCC7000EEEE78 /* paysuccess@3x.png in Resources */,
 				3FB8FA7F21CE66C200DA88E2 /* share_wechat_friend@2x.png in Resources */,
 				3FB8FA8021CE66C200DA88E2 /* Calendar@2x.png in Resources */,
 				3FB8FA8121CE66C200DA88E2 /* Find User@2x.png in Resources */,
@@ -4663,6 +4684,7 @@
 				B786D51A20EB793500427C08 /* iconQuery@3x.png in Resources */,
 				F5BF57B91E307A0B00DEDE38 /* sns_comment@2x.png in Resources */,
 				F553259B1C075D3200EC3F95 /* Businesswoman@2x.png in Resources */,
+				3F23B781231CCC7000EEEE78 /* paysuccess@2x.png in Resources */,
 				F56C4B541C11924000DB4396 /* share_to_weixin.png in Resources */,
 				F55325A31C075D3200EC3F95 /* City Railway Station@2x.png in Resources */,
 				B7973C6020E4EACD0052A5F5 /* tabService_b@3x.png in Resources */,
@@ -4758,6 +4780,7 @@
 				F55325C71C075D3200EC3F95 /* User Female@2x.png in Resources */,
 				3F3E5848218310E900F1DC24 /* iconFeedDetail@3x.png in Resources */,
 				F55325C81C075D3200EC3F95 /* User Group@2x.png in Resources */,
+				3F23B77E231CCC7000EEEE78 /* paysuccess@3x.png in Resources */,
 				3F7ED8E42276937D00082680 /* iconHtlcPreimage@2x.png in Resources */,
 				B78F251F1C5B4CF200B3D087 /* TrainRoute@2x.png in Resources */,
 				B7973C3820E205560052A5F5 /* tabDebt_b@2x.png in Resources */,
@@ -5144,6 +5167,7 @@
 				3F6768DC230E9EC100E98C14 /* VCTradeMain.m in Sources */,
 				3F6768DD230E9EC100E98C14 /* SGQRCodeScanView.m in Sources */,
 				3F6768DE230E9EC100E98C14 /* Reachability.m in Sources */,
+				3F23B788231CCCCA00EEEE78 /* VCPaySuccess.m in Sources */,
 				3F6768DF230E9EC100E98C14 /* VCBtsaiWebView.m in Sources */,
 				3F6768E0230E9EC100E98C14 /* VCNotice.m in Sources */,
 				3F6768E1230E9EC100E98C14 /* VCWebView.m in Sources */,
@@ -5434,6 +5458,7 @@
 				3FB8F96021CE66C200DA88E2 /* VCTradeMain.m in Sources */,
 				3FB8F96121CE66C200DA88E2 /* SGQRCodeScanView.m in Sources */,
 				3FB8F96221CE66C200DA88E2 /* Reachability.m in Sources */,
+				3F23B787231CCCCA00EEEE78 /* VCPaySuccess.m in Sources */,
 				3FB8F96321CE66C200DA88E2 /* VCBtsaiWebView.m in Sources */,
 				3FB8F96421CE66C200DA88E2 /* VCNotice.m in Sources */,
 				3FB8F96521CE66C200DA88E2 /* VCWebView.m in Sources */,
@@ -5724,6 +5749,7 @@
 				B7BDA98720B2FE3800738F12 /* VCTradeMain.m in Sources */,
 				3F0DA36621884011006E1004 /* SGQRCodeScanView.m in Sources */,
 				3FB8F88E21CA4BA000DA88E2 /* Reachability.m in Sources */,
+				3F23B786231CCCCA00EEEE78 /* VCPaySuccess.m in Sources */,
 				B72A844820CA628800D92A25 /* VCBtsaiWebView.m in Sources */,
 				B79FC2D41A45E8A0000D49D5 /* VCNotice.m in Sources */,
 				B7BEC2821A4601440049EB1F /* VCWebView.m in Sources */,
