@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.btsplusplus.fowallet.ActivityScanResultPaySuccess"
+    android:background="@color/theme01.appBackColor">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp"
+        android:padding="10dp"
+        android:orientation="vertical">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+
+            <LinearLayout
+                android:id="@+id/layout_back_from_scan_result_pay_success"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_btn_back"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/kBtnBack"
+                    style="@style/kNavigationBarTextStyle"
+                    android:gravity="center_vertical"
+                    />
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- 支付成功icon -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_checkbox_check"/>
+        </LinearLayout>
+
+        <!-- 支付成功Text -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="14dp"
+                android:textColor="@color/theme01.textColorNormal"
+                android:text="支付成功"/>
+        </LinearLayout>
+
+        <!-- 支付成功金额 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/tv_pay_amount_from_scan_result_pay_success"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="18dp"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="placeholder"/>
+        </LinearLayout>
+
+        <!-- 收款方 -->
+        <LinearLayout
+            android:id="@+id/layout_receiver_account_from_scan_result_pay_success"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:textSize="16dp"
+                android:layout_weight="2"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="收款方"/>
+
+            <TextView
+                android:id="@+id/tv_receiver_account_from_scan_result_pay_success"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical|right"
+                android:textSize="16dp"
+                android:layout_weight="8"
+                android:textColor="@color/theme01.buyColor"
+                android:text="placeholder"/>
+
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_weight="0.8"
+
+                android:foregroundGravity="right"
+                android:src="@drawable/ic_btn_right_arrow" />
+
+        </LinearLayout>
+        <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+        <!-- 交易ID -->
+        <LinearLayout
+            android:id="@+id/layout_transaction_id_from_scan_result_pay_success"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:textSize="16dp"
+                android:layout_weight="2"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="交易ID"/>
+
+            <TextView
+                android:id="@+id/tv_transaction_id_from_scan_result_pay_success"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical|right"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="16dp"
+                android:layout_weight="8"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="placeholder"/>
+
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_weight="0.8"
+
+                android:foregroundGravity="right"
+                android:src="@drawable/ic_btn_right_arrow" />
+
+        </LinearLayout>
+        <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+        <!-- 完成按钮 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/button_finish_from_scan_result_pay_success"
+                android:layout_width="match_parent"
+                style="@style/kMainButtonStyle"
+                android:gravity="center|center_vertical"
+                android:textAllCaps="false"
+                android:text="完成" />
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
