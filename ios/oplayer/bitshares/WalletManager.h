@@ -26,7 +26,7 @@ typedef enum EAccountPermissionStatus
 typedef enum EImportToWalletStatus
 {
     EITWS_OK = 0,                   //  导入成功
-    EITWS_NO_PERMISSION = 0,        //  无任何权限
+    EITWS_NO_PERMISSION,            //  无任何权限
     EITWS_PARTIAL_PERMISSION,       //  有部分权限
 } EImportToWalletStatus;
 
@@ -86,17 +86,22 @@ typedef enum EImportToWalletStatus
 - (BOOL)isLocked;
 
 /**
- *  (public) 导入私钥到已有钱包or创建新钱包。
- *  REMARK：append_memory_key、pWalletPassword、login_mode、login_desc仅在 checkActivePermission 为 YES 时才有效。
- *  append_memory_key - 把内存中已经解锁的私钥全部一起添加到新钱包。（需要钱包提前解锁。）
+ *  (public) 创建新钱包。
+ *  current_full_account_data   - 钱包当前账号  REMARK：创建后的当前账号，需要有完整的active权限。
+ *  pub_pri_keys_hash           - 需要导入的私钥Hash
+ *  append_memory_key           - 导入内存中已经存在的私钥 REMARK：需要钱包已解锁。
+ *  extra_account_name_list     - 除了当前账号外的其他需要同时导入的账号名。
+ *  pWalletPassword             - 新钱包的密码。
+ *  login_mode                  - 模式。
+ *  login_desc                  - 描述信息。
  */
-- (EImportToWalletStatus)importToExistOrNewWallet:(id)full_account_data
-                            checkActivePermission:(BOOL)checkActivePermission
-                                             keys:(NSDictionary*)pub_pri_keys_hash
-                                append_memory_key:(BOOL)append_memory_key
-                                  wallet_password:(NSString*)pWalletPassword
-                                       login_mode:(EWalletMode)login_mode
-                                       login_desc:(NSString*)login_desc;
+- (EImportToWalletStatus)createNewWallet:(NSDictionary*)current_full_account_data
+                             import_keys:(NSDictionary*)pub_pri_keys_hash
+                       append_memory_key:(BOOL)append_memory_key
+                 extra_account_name_list:(NSArray*)extra_account_name_list
+                         wallet_password:(NSString*)pWalletPassword
+                              login_mode:(EWalletMode)login_mode
+                              login_desc:(NSString*)login_desc;
 
 /**
  *  (public) 锁定和解锁帐号
@@ -196,14 +201,14 @@ typedef enum EImportToWalletStatus
  *  创建完整钱包对象。
  *  直接返回二进制bin。
  */
-- (NSData*)genFullWalletData:(NSString*)account_name
+- (NSData*)genFullWalletData:(id)account_name_or_namelist
             private_wif_keys:(NSArray*)private_wif_keys
              wallet_password:(NSString*)wallet_password;
 
 /**
  *  (public) 创建完整钱包对象。
  */
-- (NSDictionary*)genFullWalletObject:(NSString*)account_name
+- (NSDictionary*)genFullWalletObject:(NSArray*)account_name_list
                     private_wif_keys:(NSArray*)private_wif_keys
                      wallet_password:(NSString*)wallet_password;
 
