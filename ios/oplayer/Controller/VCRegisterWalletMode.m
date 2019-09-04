@@ -293,15 +293,7 @@ enum
                 _owner.navigationController.viewControllers = [NSArray arrayWithObjects:root, _owner, nil];
                 
                 //  返回
-                [_owner.myNavigationController tempDisableDragBack];
-                [OrgUtils showMessageUseHud:NSLocalizedString(@"kLoginTipsRegFullOK", @"注册成功。")
-                                       time:1
-                                     parent:_owner.navigationController.view
-                            completionBlock:^{
-                                [_owner.myNavigationController tempEnableDragBack];
-                                [_owner.navigationController popViewControllerAnimated:YES];
-                            }];
-                
+                [_owner showMessageAndClose:NSLocalizedString(@"kLoginTipsRegFullOK", @"注册成功。")];
                 return nil;
             })] catch:(^id(id error) {
                 [_owner hideBlockView];

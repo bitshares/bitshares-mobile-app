@@ -394,15 +394,7 @@
             [self stopWebServer];
             
             //  返回
-            [_owner.myNavigationController tempDisableDragBack];
-            [OrgUtils showMessageUseHud:NSLocalizedString(@"kLoginTipsLoginOK", @"登录成功。")
-                                   time:1
-                                 parent:_owner.navigationController.view
-                        completionBlock:^{
-                            [_owner.myNavigationController tempEnableDragBack];
-                            [_owner.navigationController popViewControllerAnimated:YES];
-                        }];
-            
+            [_owner showMessageAndClose:NSLocalizedString(@"kLoginTipsLoginOK", @"登录成功。")];
             return nil;
         })];
     })] catch:(^id(id error) {

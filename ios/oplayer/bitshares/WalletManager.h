@@ -19,7 +19,17 @@ typedef enum EAccountPermissionStatus
     EAPS_ENOUGH_PERMISSION,         //  有足够的权限
     EAPS_FULL_PERMISSION,           //  有所有权限
 } EAccountPermissionStatus;
-    
+
+/**
+ *  导入钱包结果
+ */
+typedef enum EImportToWalletStatus
+{
+    EITWS_OK = 0,                   //  导入成功
+    EITWS_NO_PERMISSION = 0,        //  无任何权限
+    EITWS_PARTIAL_PERMISSION,       //  有部分权限
+} EImportToWalletStatus;
+
 @interface WalletManager : NSObject
 
 /**
@@ -74,6 +84,19 @@ typedef enum EAccountPermissionStatus
 - (NSDictionary*)getWalletAccountInfo;
 - (NSString*)getWalletAccountName;
 - (BOOL)isLocked;
+
+/**
+ *  (public) 导入私钥到已有钱包or创建新钱包。
+ *  REMARK：append_memory_key、pWalletPassword、login_mode、login_desc仅在 checkActivePermission 为 YES 时才有效。
+ *  append_memory_key - 把内存中已经解锁的私钥全部一起添加到新钱包。（需要钱包提前解锁。）
+ */
+- (EImportToWalletStatus)importToExistOrNewWallet:(id)full_account_data
+                            checkActivePermission:(BOOL)checkActivePermission
+                                             keys:(NSDictionary*)pub_pri_keys_hash
+                                append_memory_key:(BOOL)append_memory_key
+                                  wallet_password:(NSString*)pWalletPassword
+                                       login_mode:(EWalletMode)login_mode
+                                       login_desc:(NSString*)login_desc;
 
 /**
  *  (public) 锁定和解锁帐号

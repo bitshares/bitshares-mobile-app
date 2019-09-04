@@ -9,6 +9,15 @@
 #import "VCScanAccountName.h"
 #import "VCTransfer.h"
 
+enum
+{
+    kVcSectionBase = 0,
+    kVcSectionBtnTransfer,
+    kVcSectionBtnAccountDetail,
+    
+    kVcMax
+};
+
 @interface VCScanAccountName ()
 {
     NSDictionary*           _accountData;
@@ -58,9 +67,8 @@
     _mainTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:_mainTableView];
     
-    //  TODO:多语言
-    _lbGotoTransfer = [self createCellLableButton:@"转账"];
-    _lbViewDetail = [self createCellLableButton:@"查看详情"];
+    _lbGotoTransfer = [self createCellLableButton:NSLocalizedString(@"kVcScanResultAccountBtnTransfer", @"转账")];
+    _lbViewDetail = [self createCellLableButton:NSLocalizedString(@"kVcScanResultAccountBtnViewDetail", @"查看详情")];
     UIColor* backColor = [ThemeManager sharedThemeManager].textColorGray;
     _lbViewDetail.layer.borderColor = backColor.CGColor;
     _lbViewDetail.layer.backgroundColor = backColor.CGColor;
@@ -68,7 +76,7 @@
 
 
 /**
- *  (private) 核心 确认交易，发送。
+ *  (private) 按钮：去转账。
  */
 -(void)onGotoTransfer
 {
@@ -91,27 +99,24 @@
     }];
 }
 
+/**
+ *  (private) 按钮：查看详情。
+ */
 - (void)onViewDetail
 {
     [VCCommonLogic viewUserAssets:self account:[_accountData objectForKey:@"name"]];
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 #pragma mark- TableView delegate method
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 3;
+    return kVcMax;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (section == 0)
+    if (section == kVcSectionBase)
         return 2;
     else
         return 1;
@@ -141,7 +146,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     switch (indexPath.section) {
-        case 0:
+        case kVcSectionBase:
         {
             UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
             cell.backgroundColor = [UIColor clearColor];
@@ -165,7 +170,7 @@
             return cell;
         }
             break;
-        case 1:
+        case kVcSectionBtnTransfer:
         {
             UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
             cell.accessoryType = UITableViewCellAccessoryNone;
@@ -175,7 +180,7 @@
             return cell;
         }
             break;
-        case 2:
+        case kVcSectionBtnAccountDetail:
         {
             UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
             cell.accessoryType = UITableViewCellAccessoryNone;
@@ -198,9 +203,9 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
-        if (indexPath.section == 1){
+        if (indexPath.section == kVcSectionBtnTransfer){
             [self onGotoTransfer];
-        } else if (indexPath.section == 2) {
+        } else if (indexPath.section == kVcSectionBtnAccountDetail) {
             [self onViewDetail];
         }
     }];

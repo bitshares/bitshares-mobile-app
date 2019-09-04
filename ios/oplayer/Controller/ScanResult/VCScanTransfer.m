@@ -335,8 +335,6 @@ enum
 
 - (BOOL)_onPayCoreWithMask:(NSDictionary*)full_account_data
 {
-    //  TODO:多语言
-    
     assert(full_account_data);
     id from_account = [full_account_data objectForKey:@"account"];
     assert(from_account);
@@ -344,7 +342,7 @@ enum
     //  1、检测付款金额参数是否正确、账户余额是否足够。
     id str_amount = _tf_amount ? _tf_amount.text : _default_amount;
     if (!str_amount || [str_amount isEqualToString:@""]){
-        [OrgUtils makeToast:@"请输入付款金额。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcScanResultPaySubmitTipsInputPayAmount", @"请输入付款金额。")];
         return NO;
     }
     id n_amount = [OrgUtils auxGetStringDecimalNumberValue:str_amount];
@@ -352,7 +350,7 @@ enum
     //  n_amount <= 0
     NSDecimalNumber* n_zero = [NSDecimalNumber zero];
     if ([n_amount compare:n_zero] <= 0){
-        [OrgUtils makeToast:@"请输入付款金额。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcScanResultPaySubmitTipsInputPayAmount", @"请输入付款金额。")];
         return NO;
     }
     
@@ -366,7 +364,7 @@ enum
         if ([pay_asset_id isEqualToString:asset_type]) {
             id n_balance = [NSDecimalNumber decimalNumberWithMantissa:[balance unsignedLongLongValue] exponent:-pay_asset_precision isNegative:NO];
             if ([n_balance compare:n_amount] < 0) {
-                [OrgUtils makeToast:@"余额不足。"];//TODO:
+                [OrgUtils makeToast:NSLocalizedString(@"kVcScanResultPaySubmitTipsNotEnough", @"余额不足。")];
                 return NO;
             }
             id n_left = [n_balance decimalNumberBySubtracting:n_amount];
@@ -506,12 +504,6 @@ enum
     })];
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 #pragma mark- TableView delegate method
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -643,7 +635,7 @@ enum
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                     cell.textLabel.text = NSLocalizedString(@"kVcScanResultPayLabelMemo", @"备注");
                     cell.detailTextLabel.text = _default_memo;
-                    cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].buyColor;
+                    cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                     return cell;
                 }
                     break;

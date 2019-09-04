@@ -217,36 +217,21 @@
     id owner_private_wif = [OrgUtils genBtsWifPrivateKey:owner_seed];
     assert(owner_private_wif);
     assert(active_private_wif);
-    id full_wallet_bin = [walletMgr genFullWalletData:accountName
-                                     private_wif_keys:@[active_private_wif, owner_private_wif]
-                                      wallet_password:wallet_password];
-    assert(full_wallet_bin);
+    NSString* pub_key_owner = [OrgUtils genBtsAddressFromWifPrivateKey:owner_private_wif];
+    NSString* pub_key_active = [OrgUtils genBtsAddressFromWifPrivateKey:active_private_wif];
     
-    //  3、保存钱包信息
-    [[AppCacheManager sharedAppCacheManager] setWalletInfo:kwmPasswordWithWallet
-                                               accountInfo:fullAccountData
-                                               accountName:accountName
-                                             fullWalletBin:full_wallet_bin];
-    [[AppCacheManager sharedAppCacheManager] autoBackupWalletToWebdir:NO];
-    
-    //  4、导入成功 用钱包密码 直接解锁。
-    id unlockInfos = [walletMgr unLock:wallet_password];
-    assert(unlockInfos &&
-           [[unlockInfos objectForKey:@"unlockSuccess"] boolValue] &&
-           [[unlockInfos objectForKey:@"haveActivePermission"] boolValue]);
-    
-    //  [统计]
-    [OrgUtils logEvents:@"convertEvent" params:@{@"mode":@(kwmPasswordWithWallet), @"desc":@"password+wallet"}];
+    //  3、创建钱包
+    EImportToWalletStatus status = [walletMgr importToExistOrNewWallet:fullAccountData
+                                                 checkActivePermission:YES
+                                                                  keys:@{pub_key_owner:owner_private_wif, pub_key_active:active_private_wif}
+                                                     append_memory_key:NO
+                                                       wallet_password:wallet_password
+                                                            login_mode:kwmPasswordWithWallet
+                                                            login_desc:@"upgrade password+wallet"];
+    assert(status == EITWS_OK);
     
     //  转换成功 - 关闭界面
-    [self.myNavigationController tempDisableDragBack];
-    [OrgUtils showMessageUseHud:NSLocalizedString(@"kLblTipsConvertToWalletModeDone", @"创建钱包完毕。")
-                           time:1
-                         parent:self.navigationController.view
-                completionBlock:^{
-                    [self.myNavigationController tempEnableDragBack];
-                    [self.navigationController popViewControllerAnimated:YES];
-                }];
+    [self showMessageAndClose:NSLocalizedString(@"kLblTipsConvertToWalletModeDone", @"创建钱包完毕。")];
 }
 
 #pragma mark-

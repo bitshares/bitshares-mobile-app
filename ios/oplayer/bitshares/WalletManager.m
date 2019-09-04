@@ -291,6 +291,100 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
     return [[self getWalletInfo] objectForKey:@"kAccountName"];
 }
 
+/**
+ *  (public) 导入私钥到已有钱包or创建新钱包。
+ *  REMARK：append_memory_key、pWalletPassword、login_mode、login_desc仅在 checkActivePermission 为 YES 时才有效。
+ *  append_memory_key - 把内存中已经解锁的私钥全部一起添加到新钱包。（需要钱包提前解锁。）
+ */
+- (EImportToWalletStatus)importToExistOrNewWallet:(id)full_account_data
+                            checkActivePermission:(BOOL)checkActivePermission
+                                             keys:(NSDictionary*)pub_pri_keys_hash
+                                append_memory_key:(BOOL)append_memory_key
+                                  wallet_password:(NSString*)pWalletPassword
+                                       login_mode:(EWalletMode)login_mode
+                                       login_desc:(NSString*)login_desc
+{
+    assert(full_account_data);
+    
+    //  获取账号数据
+    id account = [full_account_data objectForKey:@"account"];
+    NSString* accountName = account[@"name"];
+    
+    //  验证Active权限，导入钱包时不验证。
+    if (checkActivePermission){
+        //  获取active权限数据
+        id account_active = [account objectForKey:@"active"];
+        assert(account_active);
+        //  检测权限是否足够签署需要active权限的交易。
+        EAccountPermissionStatus status = [WalletManager calcPermissionStatus:account_active privateKeysHash:pub_pri_keys_hash];
+        if (status == EAPS_NO_PERMISSION){
+            return EITWS_NO_PERMISSION;
+        }else if (status == EAPS_PARTIAL_PERMISSION){
+            return EITWS_PARTIAL_PERMISSION;
+        }
+    }
+    
+    //  筛选账号 account 所有公钥对应的私钥。（即：有效私钥）
+    NSMutableDictionary* account_all_pubkeys = [WalletManager getAllPublicKeyFromAccountData:account result:nil];
+    NSMutableArray* valid_private_wif_keys = [NSMutableArray array];
+    for (NSString* pubkey in pub_pri_keys_hash) {
+        if ([[account_all_pubkeys objectForKey:pubkey] boolValue]){
+            [valid_private_wif_keys addObject:[pub_pri_keys_hash objectForKey:pubkey]];
+        }
+    }
+    assert([valid_private_wif_keys count] > 0);
+    
+    AppCacheManager* pAppCache = [AppCacheManager sharedAppCacheManager];
+    if (checkActivePermission){
+        //  导入内存中的私钥，需要提前解锁。
+        NSArray* private_key_wif_list = nil;
+        if (append_memory_key) {
+            assert(![self isLocked]);
+            NSMutableDictionary* tmpPrivateKeyHash = [NSMutableDictionary dictionary];
+            for (id prikey in valid_private_wif_keys) {
+                [tmpPrivateKeyHash setObject:@YES forKey:prikey];
+            }
+            for (id pubkey in _private_keys_hash) {
+                id prikey = [_private_keys_hash objectForKey:pubkey];
+                [tmpPrivateKeyHash setObject:@YES forKey:prikey];
+            }
+            private_key_wif_list = [tmpPrivateKeyHash allKeys];
+        } else {
+            private_key_wif_list = [valid_private_wif_keys copy];
+        }
+        //  创建完整钱包模式
+        id full_wallet_bin = [self genFullWalletData:accountName
+                                    private_wif_keys:private_key_wif_list
+                                     wallet_password:pWalletPassword];
+        //  保存钱包信息
+        [pAppCache setWalletInfo:login_mode
+                     accountInfo:full_account_data
+                     accountName:accountName
+                   fullWalletBin:full_wallet_bin];
+        [pAppCache autoBackupWalletToWebdir:NO];
+        //  导入成功 用交易密码 直接解锁。
+        id unlockInfos = [self unLock:pWalletPassword];
+        assert(unlockInfos &&
+               [[unlockInfos objectForKey:@"unlockSuccess"] boolValue] &&
+               [[unlockInfos objectForKey:@"haveActivePermission"] boolValue]);
+        //  [统计]
+        [OrgUtils logEvents:@"loginEvent" params:@{@"mode":@(login_mode), @"desc":login_desc ?: @"unknown"}];
+    }else{
+        assert(![self isLocked]);
+        //  导入账号到现有钱包BIN文件中
+        id full_wallet_bin = [self walletBinImportAccount:accountName privateKeyWifList:[valid_private_wif_keys copy]];
+        assert(full_wallet_bin);
+        [pAppCache updateWalletBin:full_wallet_bin];
+        [pAppCache autoBackupWalletToWebdir:NO];
+        //  重新解锁（即刷新解锁后的账号信息）。
+        id unlockInfos = [self reUnlock];
+        assert(unlockInfos && [[unlockInfos objectForKey:@"unlockSuccess"] boolValue]);
+    }
+    
+    //  成功
+    return EITWS_OK;
+}
+
 - (BOOL)isLocked
 {
     //  无钱包

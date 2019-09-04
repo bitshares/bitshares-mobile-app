@@ -61,22 +61,28 @@
 "kServicesCellLabelAdvFunction" = "高度な機能";
 
 /* 扫一扫相关字符串 */
-"kVcScanNaviTitleRightAlbum" = "相册";                    //TODO
-"kVcScanAutoScanTips" = "将二维码放入框内, 即可自动扫描。";  //  TODO
-"kVcScanProcessingResult" = "正在处理...";  //  TODO
-"kVcScanNoQrCode" = "未发现二维码。";          //  TODO
-"kVcScanResultPriKeyTypeTitle" = "私钥类型";  //  TODO
-"kVcScanResultPriKeyTypeOwner" = "账号私钥";  //  TODO
-"kVcScanResultPriKeyTypeActive" = "资金私钥"; //  TODO
-"kVcScanResultPriKeyTypeMemo" = "备注私钥"; //  TODO
-"kVcScanResultPayLabelAmount" = "金额";//TODO
-"kVcScanResultPayLabelMemo" = "备注";//TODO
-"kVcScanResultPlaceholderInputPayAmount" = "请输入付款金额"; //  TODO
-"kVcScanResultBtnPayNow" = "立即支付";  //  TODO
-"kVcScanResultTipsPaySuccess" = "支付成功";//TODO
-"kVcScanResultPaySuccessLabelTo" = "收款方";//TODO:
-"kVcScanResultPaySuccessLabelTrxID" = "交易ID";//TODO:
-"kVcScanResultPaySuccessBtnDone" = "完成";//TODO
+"kVcScanNaviTitleRightAlbum" = "アルバム";
+"kVcScanAutoScanTips" = "ボックスにQRコードを入れます。";
+"kVcScanProcessingResult" = "処理中...";
+"kVcScanNoQrCode" = "QRコードが見つかりません。";
+"kVcScanResultPriKeyTypeTitle" = "キータイプ";
+"kVcScanResultPriKeyTypeOwner" = "オーナー";
+"kVcScanResultPriKeyTypeActive" = "アクティブ";
+"kVcScanResultPriKeyTypeMemo" = "メモ";
+"kVcScanResultPriKeyBtnCreateAndImport" = "インポートキー";
+"kVcScanResultPriKeyBtnImportNow" = "今すぐインポート";
+"kVcScanResultAccountBtnTransfer" = "送金";
+"kVcScanResultAccountBtnViewDetail" = "アカウントの詳細";
+"kVcScanResultPayLabelAmount" = "金額";
+"kVcScanResultPayLabelMemo" = "付注";
+"kVcScanResultPlaceholderInputPayAmount" = "支払い金額を入力してください";
+"kVcScanResultPaySubmitTipsInputPayAmount" = "支払い金額を入力してください。";
+"kVcScanResultPaySubmitTipsNotEnough" = "バランスが不十分です。";
+"kVcScanResultBtnPayNow" = "今すぐ支払う";
+"kVcScanResultTipsPaySuccess" = "お支払い完了";
+"kVcScanResultPaySuccessLabelTo" = "受取人";
+"kVcScanResultPaySuccessLabelTrxID" = "取引番号";
+"kVcScanResultPaySuccessBtnDone" = "完了";
 
 /* 抵押排行 */
 "kVcRankCurrentFeedPrice" = "現在のフィード価格";
@@ -621,10 +627,10 @@
 "kVcTitleImportAccount" = "アカウント導入";
 "kVcTitleRegister" = "新規登録";
 "kVcTitleQrScan" = "スキャン";
-"kVcTitleQrScanResultNormal" = "扫描结果";  //  TODO:
-"kVcTitleQrScanResultPriKey" = "导入私钥";  //  TODO:
-"kVcTitleQrScanResultAccount" = "账号信息";  //  TODO:
-"kVcTitleQrScanResultPay" = "支付";  //  TODO:
+"kVcTitleQrScanResultNormal" = "スキャン結果";
+"kVcTitleQrScanResultPriKey" = "インポートキー";
+"kVcTitleQrScanResultAccount" = "アカウント情報";
+"kVcTitleQrScanResultPay" = "支払う";
 "kVcTitleTransfer" = "送金";
 "kVcTitleConfirmTransaction" = "取引の確認をお願いします。";
 "kVcTitleCreateProposal" = "提案を確認してください。";
