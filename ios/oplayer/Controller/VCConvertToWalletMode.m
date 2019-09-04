@@ -221,13 +221,13 @@
     NSString* pub_key_active = [OrgUtils genBtsAddressFromWifPrivateKey:active_private_wif];
     
     //  3、创建钱包
-    EImportToWalletStatus status = [walletMgr importToExistOrNewWallet:fullAccountData
-                                                 checkActivePermission:YES
-                                                                  keys:@{pub_key_owner:owner_private_wif, pub_key_active:active_private_wif}
-                                                     append_memory_key:NO
-                                                       wallet_password:wallet_password
-                                                            login_mode:kwmPasswordWithWallet
-                                                            login_desc:@"upgrade password+wallet"];
+    EImportToWalletStatus status = [walletMgr createNewWallet:fullAccountData
+                                                  import_keys:@{pub_key_owner:owner_private_wif, pub_key_active:active_private_wif}
+                                            append_memory_key:NO
+                                      extra_account_name_list:nil
+                                              wallet_password:wallet_password
+                                                   login_mode:kwmPasswordWithWallet
+                                                   login_desc:@"upgrade password+wallet"];
     assert(status == EITWS_OK);
     
     //  转换成功 - 关闭界面

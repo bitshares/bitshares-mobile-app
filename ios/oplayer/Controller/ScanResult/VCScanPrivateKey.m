@@ -206,13 +206,13 @@ enum
         case kwmNoWallet:
         {
             assert(pTradePassword);
-            EImportToWalletStatus status = [[WalletManager sharedWalletManager] importToExistOrNewWallet:_fullAccountData
-                                                                                   checkActivePermission:YES
-                                                                                                    keys:@{_pubKey:_priKey}
-                                                                                       append_memory_key:NO
-                                                                                         wallet_password:pTradePassword
-                                                                                              login_mode:kwmPrivateKeyWithWallet
-                                                                                              login_desc:@"private key with wallet"];
+            EImportToWalletStatus status = [[WalletManager sharedWalletManager] createNewWallet:_fullAccountData
+                                                                                    import_keys:@{_pubKey:_priKey}
+                                                                              append_memory_key:NO
+                                                                        extra_account_name_list:nil
+                                                                                wallet_password:pTradePassword
+                                                                                     login_mode:kwmPrivateKeyWithWallet
+                                                                                     login_desc:@"private key with wallet"];
             if (status == EITWS_NO_PERMISSION) {
                 [OrgUtils makeToast:NSLocalizedString(@"kLoginSubmitTipsPrivateKeyIncorrect", @"私钥不正确，请重新输入。")];
             } else if (status == EITWS_PARTIAL_PERMISSION) {
@@ -228,13 +228,15 @@ enum
         {
             [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
                 if (unlocked){
-                    EImportToWalletStatus status = [[WalletManager sharedWalletManager] importToExistOrNewWallet:_fullAccountData
-                                                                                           checkActivePermission:YES
-                                                                                                            keys:@{_pubKey:_priKey}
-                                                                                               append_memory_key:YES
-                                                                                                 wallet_password:pTradePassword
-                                                                                                      login_mode:kwmPasswordWithWallet
-                                                                                                      login_desc:@"scan upgrade password+wallet"];
+                    id current_account_data = [[WalletManager sharedWalletManager] getWalletAccountInfo];
+                    assert(current_account_data);
+                    EImportToWalletStatus status = [[WalletManager sharedWalletManager] createNewWallet:current_account_data
+                                                                                            import_keys:@{_pubKey:_priKey}
+                                                                                      append_memory_key:YES
+                                                                                extra_account_name_list:@[_fullAccountData[@"account"][@"name"]]
+                                                                                        wallet_password:pTradePassword
+                                                                                             login_mode:kwmPasswordWithWallet
+                                                                                             login_desc:@"scan upgrade password+wallet"];
                     assert(status == EITWS_OK);
                     [self showMessageAndClose:NSLocalizedString(@"kWalletImportSuccess", @"导入完成")];
                 }
@@ -246,13 +248,19 @@ enum
             //  钱包模式 or 交易密码模式，直接解锁然后导入私钥匙。
             [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
                 if (unlocked){
-                    [[WalletManager sharedWalletManager] importToExistOrNewWallet:_fullAccountData
-                                                            checkActivePermission:NO
-                                                                             keys:@{_pubKey:_priKey}
-                                                                append_memory_key:NO
-                                                                  wallet_password:nil
-                                                                       login_mode:nil
-                                                                       login_desc:nil];
+                    WalletManager* walletMgr = [WalletManager sharedWalletManager];
+                    AppCacheManager* pAppCache = [AppCacheManager sharedAppCacheManager];
+                    
+                    //  导入账号到现有钱包BIN文件中
+                    id full_wallet_bin = [walletMgr walletBinImportAccount:[[_fullAccountData objectForKey:@"account"] objectForKey:@"name"]
+                                                         privateKeyWifList:@[_priKey]];
+                    assert(full_wallet_bin);
+                    [pAppCache updateWalletBin:full_wallet_bin];
+                    [pAppCache autoBackupWalletToWebdir:NO];
+                    //  重新解锁（即刷新解锁后的账号信息）。
+                    id unlockInfos = [walletMgr reUnlock];
+                    assert(unlockInfos && [[unlockInfos objectForKey:@"unlockSuccess"] boolValue]);
+                    
                     //  REMARK：导入到现有钱包不用判断导入结果，总是成功。
                     [self showMessageAndClose:NSLocalizedString(@"kWalletImportSuccess", @"导入完成")];
                 }

@@ -828,10 +828,18 @@ static NSInteger gen_notify_unique_id()
 {
     [self GuardWalletExist:^{
         if ([[WalletManager sharedWalletManager] isLocked]){
-            id title = kwmPasswordOnlyMode == [[WalletManager sharedWalletManager] getWalletMode] ? NSLocalizedString(@"unlockTipsUnlockAccount", @"解锁帐号") : NSLocalizedString(@"unlockTipsUnlockWallet", @"解锁钱包");
+            NSString* title;
+            NSString* placeHolder;
+            if ([[WalletManager sharedWalletManager] isPasswordMode]) {
+                title = NSLocalizedString(@"unlockTipsUnlockAccount", @"解锁帐号");
+                placeHolder = NSLocalizedString(@"unlockTipsPleaseInputAccountPassword", @"请输入帐号密码");
+            } else {
+                title = NSLocalizedString(@"unlockTipsUnlockWallet", @"解锁钱包");
+                placeHolder = NSLocalizedString(@"unlockTipsPleaseInputWalletPassword", @"请输入钱包密码");
+            }
             [[UIAlertViewManager sharedUIAlertViewManager] showInputBox:title
                                                               withTitle:nil
-                                                            placeholder:NSLocalizedString(@"unlockTipsPleaseInputWalletPassword", @"请输入钱包密码")
+                                                            placeholder:placeHolder
                                                              ispassword:YES
                                                                      ok:NSLocalizedString(@"unlockBtnUnlock", @"解锁") completion:^(NSInteger buttonIndex, NSString *tfvalue)
              {
