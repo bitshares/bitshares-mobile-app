@@ -69,9 +69,15 @@
 "kVcScanResultPriKeyTypeOwner" = "账号私钥";
 "kVcScanResultPriKeyTypeActive" = "资金私钥";
 "kVcScanResultPriKeyTypeMemo" = "备注私钥";
+"kVcScanResultPriKeyBtnCreateAndImport" = "升级钱包模式并导入私钥";
+"kVcScanResultPriKeyBtnImportNow" = "立即导入";
+"kVcScanResultAccountBtnTransfer" = "转账";
+"kVcScanResultAccountBtnViewDetail" = "查看详情";
 "kVcScanResultPayLabelAmount" = "金额";
 "kVcScanResultPayLabelMemo" = "备注";
 "kVcScanResultPlaceholderInputPayAmount" = "请输入付款金额";
+"kVcScanResultPaySubmitTipsInputPayAmount" = "请输入付款金额。";
+"kVcScanResultPaySubmitTipsNotEnough" = "余额不足。";
 "kVcScanResultBtnPayNow" = "立即支付";
 "kVcScanResultTipsPaySuccess" = "支付成功";
 "kVcScanResultPaySuccessLabelTo" = "收款方";

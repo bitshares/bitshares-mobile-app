@@ -217,14 +217,7 @@
                 
                 //  返回
                 [TempManager sharedTempManager].importToWalletDirty = YES;
-                [this.myNavigationController tempDisableDragBack];
-                [OrgUtils showMessageUseHud:NSLocalizedString(@"kWalletImportSuccess", @"导入完成")
-                                       time:1
-                                     parent:this.navigationController.view
-                            completionBlock:^{
-                                [this.myNavigationController tempEnableDragBack];
-                                [this.navigationController popViewControllerAnimated:YES];
-                            }];
+                [this showMessageAndClose:NSLocalizedString(@"kWalletImportSuccess", @"导入完成")];
             }else{
                 //  创建完整钱包模式
                 id full_wallet_bin = [[WalletManager sharedWalletManager] genFullWalletData:accountName
@@ -246,14 +239,7 @@
                 [OrgUtils logEvents:@"loginEvent" params:@{@"mode":@(login_mode), @"desc":login_desc ?: @"unknown"}];
                 
                 //  返回
-                [this.myNavigationController tempDisableDragBack];
-                [OrgUtils showMessageUseHud:NSLocalizedString(@"kLoginTipsLoginOK", @"登录成功。")
-                                       time:1
-                                     parent:this.navigationController.view
-                            completionBlock:^{
-                                [this.myNavigationController tempEnableDragBack];
-                                [this.navigationController popViewControllerAnimated:YES];
-                            }];
+                [this showMessageAndClose:NSLocalizedString(@"kLoginTipsLoginOK", @"登录成功。")];
             }
             return nil;
         })];

@@ -12,7 +12,7 @@
 enum
 {
     kVcSectionBaseInfo = 0,
-    kVcsectionWalletPassword,
+    kVcSectionWalletPassword,   //  [可选] 钱包密码、交易解密、解锁密码
     kVcSectionSubmit,
     
     kVcSectionMax
@@ -30,6 +30,7 @@ enum
     MyTextField*            _tf_wallet_password;
     
     NSArray*                _dataArray;
+    NSMutableArray*         _secTypeArray;
 }
 
 @end
@@ -48,6 +49,7 @@ enum
         _mainTableView = nil;
     }
     _dataArray = nil;
+    _secTypeArray = nil;
     _btnCommit = nil;
 }
 
@@ -110,25 +112,34 @@ enum
     }
     assert([priKeyTypeArray count] > 0);
     
+    _secTypeArray = [NSMutableArray array];
     _dataArray = @[
                    @{@"name":@"ID", @"value":[account objectForKey:@"id"]},
                    @{@"name":NSLocalizedString(@"kAccount", @"账号"), @"value":[account objectForKey:@"name"]},
                    @{@"name":NSLocalizedString(@"kVcScanResultPriKeyTypeTitle", @"私钥类型"), @"value":[priKeyTypeArray componentsJoinedByString:@" "], @"highlight":@YES},
                    ];
+    [_secTypeArray addObject:@(kVcSectionBaseInfo)];
     
     CGRect rect = [self makeTextFieldRect];
     
     //  wallet password
-    _tf_wallet_password = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault
-                                     placeholder:NSLocalizedString(@"kLoginTipsPlaceholderWalletPassword", @"8位以上钱包文件密码")
-                                          action:@selector(onTipButtonClicked:) tag:1];
-    _tf_wallet_password.secureTextEntry = YES;
-    _tf_wallet_password.updateClearButtonTintColor = YES;
-    _tf_wallet_password.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    _tf_wallet_password.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_wallet_password.placeholder
-                                                                                attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                             NSFontAttributeName:[UIFont systemFontOfSize:17]}];
-    
+    if ([self _needWalletPasswordField]) {
+        [_secTypeArray addObject:@(kVcSectionWalletPassword)];
+        _tf_wallet_password = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault
+                                         placeholder:NSLocalizedString(@"kLoginTipsPlaceholderWalletPassword", @"8位以上钱包文件密码")
+                                              action:@selector(onTipButtonClicked:) tag:1];
+        _tf_wallet_password.secureTextEntry = YES;
+        _tf_wallet_password.updateClearButtonTintColor = YES;
+        _tf_wallet_password.textColor = [ThemeManager sharedThemeManager].textColorMain;
+        _tf_wallet_password.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_wallet_password.placeholder
+                                                                                    attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
+                                                                                                 NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    } else {
+        //  已经是钱包模式（or交易密码的模式）下不用在再次设置。
+        _tf_wallet_password = nil;
+    }
+
+    [_secTypeArray addObject:@(kVcSectionSubmit)];
     _mainTableView = [[UITableViewBase alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];
     _mainTableView.delegate = self;
     _mainTableView.dataSource = self;
@@ -141,32 +152,14 @@ enum
     pTap.cancelsTouchesInView = NO; //  IOS 5.0系列导致按钮没响应
     [self.view addGestureRecognizer:pTap];
     
-    //  TODO:fowallet多语言
-    //  多种情况：
-    //  1 - 尚未登录（直接采用私钥+钱包密码登录）
-    //  2 - 已经用密码模式登录（升级到钱包模式并导入）
-    //  3 - 已经钱包模式（直接导入）
-    //  4 - 私钥已经存在（不处理）
-    switch ([[WalletManager sharedWalletManager] getWalletMode]) {
-        case kwmNoWallet:
-            
-            break;
-        case kwmPasswordOnlyMode:
-            break;
-            
-        default:
-            break;
+    //  按钮
+    NSString* btn_str;
+    if ([[WalletManager sharedWalletManager] isPasswordMode]) {
+        btn_str = NSLocalizedString(@"kVcScanResultPriKeyBtnCreateAndImport", @"升级钱包模式并导入私钥");
+    } else {
+        btn_str = NSLocalizedString(@"kVcScanResultPriKeyBtnImportNow", @"立即导入");
     }
-    
-//    kwmNoWallet = 0,            //  无钱包
-//    kwmPasswordOnlyMode,        //  普通密码模式
-//    kwmPasswordWithWallet,      //  密码登录+钱包模式
-//    kwmPrivateKeyWithWallet,    //  活跃私钥+钱包模式
-//    kwmFullWalletMode,          //  完整钱包模式（兼容官方客户端的钱包格式）
-//    kwmBrainKeyWithWallet       //  助记词+钱包模式
-    
-    //  TODO:多语言
-    _btnCommit = [self createCellLableButton:@"立即导入"];
+    _btnCommit = [self createCellLableButton:btn_str];
 }
 
 -(void)onTap:(UITapGestureRecognizer*)pTap
@@ -175,37 +168,110 @@ enum
 }
 
 /**
+ *  (private) 是否需要钱包密码字段
+ */
+- (BOOL)_needWalletPasswordField
+{
+    EWalletMode mode = [[WalletManager sharedWalletManager] getWalletMode];
+    if (mode == kwmNoWallet || mode == kwmPasswordOnlyMode) {
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
+/**
  *  (private) 核心 确认交易，发送。
  */
 -(void)onCommitCore
 {
+    //  验证交易密码有效性（如果存在）
+    NSString* pTradePassword = nil;
+    if (_tf_wallet_password) {
+        pTradePassword = [NSString trim:_tf_wallet_password.text];
+        if (![OrgUtils isValidBitsharesWalletPassword:pTradePassword]){
+            [OrgUtils makeToast:NSLocalizedString(@"kLoginSubmitTipsTradePasswordFmtIncorrect", @"交易密码格式不正确，请重新输入。")];
+            return;
+        }
+    }
+
     [self endInput];
     
-    //  确认界面由于时间经过可能又被 lock 了。
-    [self GuardWalletUnlocked:^(BOOL unlocked) {
-//        if (unlocked){
-//            _bResultCannelled = NO;
-//            [self closeModelViewController:nil];
-//        }
-    }];
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    //  多种情况：
+    //  1 - 尚未登录（直接采用私钥+钱包密码登录）     * 设置钱包密码   REMARK：check完整active权限。
+    //  2 - 已经用密码模式登录（升级到钱包模式并导入） * 设置钱包密码
+    //  3 - 已经钱包模式（直接导入）                * 不设置钱包密码，直接解锁即可。
+    //  4 - 私钥已经存在（同直接导入，会自动过滤。）   * 不设置钱包密码，直接解锁即可。
+    switch ([[WalletManager sharedWalletManager] getWalletMode]) {
+        case kwmNoWallet:
+        {
+            assert(pTradePassword);
+            EImportToWalletStatus status = [[WalletManager sharedWalletManager] importToExistOrNewWallet:_fullAccountData
+                                                                                   checkActivePermission:YES
+                                                                                                    keys:@{_pubKey:_priKey}
+                                                                                       append_memory_key:NO
+                                                                                         wallet_password:pTradePassword
+                                                                                              login_mode:kwmPrivateKeyWithWallet
+                                                                                              login_desc:@"private key with wallet"];
+            if (status == EITWS_NO_PERMISSION) {
+                [OrgUtils makeToast:NSLocalizedString(@"kLoginSubmitTipsPrivateKeyIncorrect", @"私钥不正确，请重新输入。")];
+            } else if (status == EITWS_PARTIAL_PERMISSION) {
+                [OrgUtils makeToast:NSLocalizedString(@"kLoginSubmitTipsPermissionNotEnoughAndCannotBeImported", @"资金权限不足，不可导入。")];
+            } else if (status == EITWS_OK) {
+                [self showMessageAndClose:NSLocalizedString(@"kWalletImportSuccess", @"导入完成")];
+            } else {
+                assert(NO);
+            }
+        }
+            break;
+        case kwmPasswordOnlyMode:
+        {
+            [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
+                if (unlocked){
+                    EImportToWalletStatus status = [[WalletManager sharedWalletManager] importToExistOrNewWallet:_fullAccountData
+                                                                                           checkActivePermission:YES
+                                                                                                            keys:@{_pubKey:_priKey}
+                                                                                               append_memory_key:YES
+                                                                                                 wallet_password:pTradePassword
+                                                                                                      login_mode:kwmPasswordWithWallet
+                                                                                                      login_desc:@"scan upgrade password+wallet"];
+                    assert(status == EITWS_OK);
+                    [self showMessageAndClose:NSLocalizedString(@"kWalletImportSuccess", @"导入完成")];
+                }
+            }];
+        }
+            break;
+        default:
+        {
+            //  钱包模式 or 交易密码模式，直接解锁然后导入私钥匙。
+            [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
+                if (unlocked){
+                    [[WalletManager sharedWalletManager] importToExistOrNewWallet:_fullAccountData
+                                                            checkActivePermission:NO
+                                                                             keys:@{_pubKey:_priKey}
+                                                                append_memory_key:NO
+                                                                  wallet_password:nil
+                                                                       login_mode:nil
+                                                                       login_desc:nil];
+                    //  REMARK：导入到现有钱包不用判断导入结果，总是成功。
+                    [self showMessageAndClose:NSLocalizedString(@"kWalletImportSuccess", @"导入完成")];
+                }
+            }];
+        }
+            break;
+    }
 }
 
 #pragma mark- TableView delegate method
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return kVcSectionMax;
+    return [_secTypeArray count];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (section == kVcSectionBaseInfo)
+    if ([[_secTypeArray objectAtIndex:section] integerValue] == kVcSectionBaseInfo)
         return [_dataArray count];
     else
         return 1;
@@ -213,7 +279,7 @@ enum
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    switch (indexPath.section) {
+    switch ([[_secTypeArray objectAtIndex:indexPath.section] integerValue]) {
         case kVcSectionBaseInfo:
         {
             id item = [_dataArray objectAtIndex:indexPath.row];
@@ -233,7 +299,7 @@ enum
             return cell;
         }
             break;
-        case kVcsectionWalletPassword:
+        case kVcSectionWalletPassword:
         {
             UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
             cell.backgroundColor = [UIColor clearColor];
@@ -270,7 +336,7 @@ enum
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    if (indexPath.section == kVcSectionSubmit){
+    if ([[_secTypeArray objectAtIndex:indexPath.section] integerValue] == kVcSectionSubmit){
         [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
             [self onCommitCore];
         }];
@@ -280,7 +346,9 @@ enum
 - (void)endInput
 {
     [self.view endEditing:YES];
-    [_tf_wallet_password safeResignFirstResponder];
+    if (_tf_wallet_password) {
+        [_tf_wallet_password safeResignFirstResponder];
+    }
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField*)textField

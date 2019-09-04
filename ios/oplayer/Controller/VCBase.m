@@ -881,6 +881,22 @@ static NSInteger gen_notify_unique_id()
     }
 }
 
+/**
+ *  显示信息并返回。
+ */
+- (void)showMessageAndClose:(NSString*)close_message
+{
+    assert(close_message);
+    [self.myNavigationController tempDisableDragBack];
+    [OrgUtils showMessageUseHud:close_message
+                           time:1
+                         parent:self.navigationController.view
+                completionBlock:^{
+                    [self.myNavigationController tempEnableDragBack];
+                    [self.navigationController popViewControllerAnimated:YES];
+                }];
+}
+
 #pragma mark - delay
 - (void)delay:(void (^)())body
 {

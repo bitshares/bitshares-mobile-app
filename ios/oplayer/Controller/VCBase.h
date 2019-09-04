@@ -162,6 +162,11 @@
 - (void)GuardWalletExist:(void (^)())body;
 
 /**
+ *  显示信息并返回。
+ */
+- (void)showMessageAndClose:(NSString*)close_message;
+
+/**
  *  延迟调用，tableview的cell中执行很多页面跳转行为有延迟，需要ui主线程处理。比如：presentViewController 延迟很大。
  */
 - (void)delay:(void (^)())body;
