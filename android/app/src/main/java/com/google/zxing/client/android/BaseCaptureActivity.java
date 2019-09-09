@@ -23,6 +23,7 @@ import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.btsplusplus.fowallet.BtsppActivity;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
 import com.btsplusplus.fowallet.R;
@@ -38,7 +39,7 @@ import java.util.Map;
  * Created by yangxixi on 16/11/21.
  */
 
-public abstract class BaseCaptureActivity extends Activity implements SurfaceHolder.Callback {
+public abstract class BaseCaptureActivity extends BtsppActivity implements SurfaceHolder.Callback {
 
     private static final String TAG = BaseCaptureActivity.class.getSimpleName();
 

@@ -52,8 +52,6 @@ public class PicDecode {
 
         try {
             scanBitmap = getBitmapFormUri(context, uri, 0);
-            //  TODO:3.0
-//            WeChatCaptureActivity.bitmap = scanBitmap;
         } catch (Exception e) {
             e.printStackTrace();
             Log.e(tag, e.getMessage());
@@ -108,9 +106,6 @@ public class PicDecode {
 //            hints.put(DecodeHintType.POSSIBLE_FORMATS, BarcodeFormat.QR_CODE);
             try {
                 scanBitmap = getBitmapFormUri(context, uri, 1);
-//                scanBitmap=decodeSampledBitmapFromFile(getRealFilePathFromUri(context,uri),1024,1024);
-//                TODO:3.0
-//                WeChatCaptureActivity.bitmap = scanBitmap;
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.e(tag, e.getMessage());

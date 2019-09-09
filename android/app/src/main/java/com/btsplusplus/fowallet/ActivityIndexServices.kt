@@ -1,5 +1,6 @@
 package com.btsplusplus.fowallet
 
+import android.Manifest
 import android.os.Bundle
 import android.view.View
 import bitshares.Promise
@@ -12,8 +13,6 @@ import kotlinx.android.synthetic.main.activity_index_services.*
 import org.json.JSONArray
 
 class ActivityIndexServices : BtsppActivity() {
-
-    val REQUEST_CODE_QR_SCAN = 101
 
     /**
      * 重载 - 返回键按下
@@ -99,8 +98,14 @@ class ActivityIndexServices : BtsppActivity() {
         }
 
         layout_saoyisao_from_services.setOnClickListener {
-            //  TODO:3.0
-            goTo(ActivityQrScan::class.java, true, request_code = 101)
+            this.guardPermissions(Manifest.permission.CAMERA).then {
+                when (it as Int) {
+                    EBtsppPermissionResult.GRANTED.value -> { goTo(ActivityQrScan::class.java, true, request_code = 101) }
+                    EBtsppPermissionResult.SHOW_RATIONALE.value -> { showToast("获取摄像头权限失败：${it}") }
+                    EBtsppPermissionResult.DONT_ASK_AGAIN.value -> {showToast("获取摄像头权限失败：${it}")}
+                }
+                return@then null
+            }
         }
 
         if (BuildConfig.kAppModuleEnableFeedPrice) {
