@@ -17,11 +17,12 @@ import com.google.zxing.utils.PicDecode
 import kotlinx.android.synthetic.main.activity_qr_scan.*
 
 /**
- * 模仿微信的扫描界面
+ * 二维码扫描界面
  */
 class ActivityQrScan : BaseCaptureActivity() {
     private var surfaceView: SurfaceView? = null
     private var autoScannerView: AutoScannerView? = null
+    private val kRequestCodeFromAlbum = 1001
 
     private fun _auto_identify_qrcode(data: Intent?): Promise {
         val p = Promise()
@@ -43,7 +44,7 @@ class ActivityQrScan : BaseCaptureActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK && requestCode == kRequestCodeFromAlbum) {
             _auto_identify_qrcode(data).then {
                 val result = it as? String
                 if (result != null) {
@@ -58,7 +59,8 @@ class ActivityQrScan : BaseCaptureActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_qr_scan)
+        setAutoLayoutContentView(R.layout.activity_qr_scan)
+        setFullScreen()
 
         surfaceView = findViewById<View>(R.id.preview_view) as SurfaceView
         autoScannerView = findViewById<View>(R.id.autoscanner_view) as AutoScannerView
@@ -89,10 +91,14 @@ class ActivityQrScan : BaseCaptureActivity() {
                     }
                     innerIntent.type = "image/*"
                     val wrapperIntent = Intent.createChooser(innerIntent, "选择二维码图片")
-                    startActivityForResult(wrapperIntent, 1002)
+                    startActivityForResult(wrapperIntent, kRequestCodeFromAlbum)
                 }
-                EBtsppPermissionResult.SHOW_RATIONALE.value -> { showToast("请允许访问相册：${it}") }
-                EBtsppPermissionResult.DONT_ASK_AGAIN.value -> {showToast("请允许访问相册：${it}")}
+                EBtsppPermissionResult.SHOW_RATIONALE.value -> {
+                    showToast("请允许访问相册：${it}")
+                }
+                EBtsppPermissionResult.DONT_ASK_AGAIN.value -> {
+                    showToast("请允许访问相册：${it}")
+                }
             }
             return@then null
         }

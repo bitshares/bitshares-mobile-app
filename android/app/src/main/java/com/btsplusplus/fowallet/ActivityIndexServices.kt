@@ -100,9 +100,15 @@ class ActivityIndexServices : BtsppActivity() {
         layout_saoyisao_from_services.setOnClickListener {
             this.guardPermissions(Manifest.permission.CAMERA).then {
                 when (it as Int) {
-                    EBtsppPermissionResult.GRANTED.value -> { goTo(ActivityQrScan::class.java, true, request_code = 101) }
-                    EBtsppPermissionResult.SHOW_RATIONALE.value -> { showToast("获取摄像头权限失败：${it}") }
-                    EBtsppPermissionResult.DONT_ASK_AGAIN.value -> {showToast("获取摄像头权限失败：${it}")}
+                    EBtsppPermissionResult.GRANTED.value -> {
+                        goTo(ActivityQrScan::class.java, true, request_code = 101)
+                    }
+                    EBtsppPermissionResult.SHOW_RATIONALE.value -> {
+                        showToast("获取摄像头权限失败：${it}")
+                    }
+                    EBtsppPermissionResult.DONT_ASK_AGAIN.value -> {
+                        showToast("获取摄像头权限失败：${it}")
+                    }
                 }
                 return@then null
             }

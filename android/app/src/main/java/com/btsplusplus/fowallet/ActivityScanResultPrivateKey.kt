@@ -1,10 +1,8 @@
 package com.btsplusplus.fowallet
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import bitshares.btsppLogCustom
 import bitshares.jsonObjectfromKVS
@@ -39,7 +37,6 @@ class ActivityScanResultPrivateKey : BtsppActivity() {
             goToWebView(resources.getString(R.string.kVcTitleWhatIsTradePassowrd), "https://btspp.io/qam.html#qa_trading_password")
 
         }
-
 
 
     }

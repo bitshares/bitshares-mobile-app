@@ -1,6 +1,5 @@
 package com.btsplusplus.fowallet
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.activity_scan_result_transfer.*
@@ -28,7 +27,7 @@ class ActivityScanResultTransfer : BtsppActivity() {
         tv_memo_info.text = "PPxsxxxxxxxxx"
 
         // 可用
-        val tv_value_avaiable= txt_value_avaiable_from_scan_result_transfer
+        val tv_value_avaiable = txt_value_avaiable_from_scan_result_transfer
         tv_value_avaiable.text = "可用 33CNY"
 
         // 输入转账金额
