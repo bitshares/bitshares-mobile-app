@@ -8,7 +8,12 @@ class ActivityScanResultTransfer : BtsppActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_scan_result_transfer)
+
+        // 设置自动布局
+        setAutoLayoutContentView(R.layout.activity_scan_result_transfer)
+
+        // 设置全屏(隐藏状态栏和虚拟导航栏)
+        setFullScreen()
 
         // 账号名称
         val tv_account_name = account_name_from_scan_result_transfer

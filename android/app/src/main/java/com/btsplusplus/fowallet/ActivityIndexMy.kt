@@ -113,8 +113,7 @@ class ActivityIndexMy : BtsppActivity() {
         }
 
         layout_about_from_my.setOnClickListener {
-            goTo(ActivityScanResultTransfer::class.java, true)
-            // goTo(ActivityAbout::class.java, true)
+            goTo(ActivityAbout::class.java, true)
         }
     }
 

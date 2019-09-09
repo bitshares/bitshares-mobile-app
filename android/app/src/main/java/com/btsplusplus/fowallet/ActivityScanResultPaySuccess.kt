@@ -7,8 +7,12 @@ class ActivityScanResultPaySuccess : BtsppActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_scan_result_pay_success)
 
+        // 设置自动布局
+        setAutoLayoutContentView(R.layout.activity_scan_result_pay_success)
+
+        // 设置全屏(隐藏状态栏和虚拟导航栏)
+        setFullScreen()
 
         val tv_pay_amount = tv_pay_amount_from_scan_result_pay_success
         val tv_receiver_account = tv_receiver_account_from_scan_result_pay_success

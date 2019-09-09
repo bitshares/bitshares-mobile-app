@@ -9,8 +9,12 @@ class ActivityScanAccountName : BtsppActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_scan_account_name)
 
+        // 设置自动布局
+        setAutoLayoutContentView(R.layout.activity_scan_account_name)
+
+        // 设置全屏(隐藏状态栏和虚拟导航栏)
+        setFullScreen()
 
         val tv_account_id = findViewById<TextView>(R.id.txt_account_id)
         val tv_account_name = findViewById<TextView>(R.id.txt_account_name)
