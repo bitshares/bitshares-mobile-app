@@ -8,6 +8,7 @@
     <string name="kLable24HVol">24h量</string>
     <string name="kLabelMarketFavorites">自选</string>
     <string name="kLabelGroupNameMain">主区</string>
+    <string name="kLabelGroupNameCommunity">社区</string>
     <string name="kLabelGroupNameGDEX">GDEX(网关)</string>
     <string name="kLabelGroupNameWWW">WWW(网关)</string>
     <string name="kLabelGroupNameOPEN">OPEN(网关)</string>
@@ -42,6 +43,7 @@
     <string name="kDebtTipTxUpdatePositionOK">债仓调整完毕，但刷新界面数据失败，请稍后再试。</string>
     <string name="kDebtWarmTips">【温馨提示】\n当喂价下降到强平触发价时，系统将会自动出售您的抵押资产用于归还借款。请注意调整抵押率控制风险。</string>
     <!-- 服务界面 -->
+    <string name="kServicesCellLabelQrScan">扫一扫</string>
     <string name="kServicesCellLabelTransfer">转账</string>
     <string name="kServicesCellLabelAccountSearch">账号查询</string>
     <string name="kServicesCellLabelRank">抵押排行</string>
@@ -49,6 +51,29 @@
     <string name="kServicesCellLabelFeedPrice">喂价详情</string>
     <string name="kServicesCellLabelDepositWithdraw">充币提币</string>
     <string name="kServicesCellLabelAdvFunction">高级功能</string>
+    <!-- 扫一扫相关字符串 -->
+    <string name="kVcScanNaviTitleRightAlbum">相册</string>
+    <string name="kVcScanAutoScanTips">将二维码放入框内, 即可自动扫描。</string>
+    <string name="kVcScanProcessingResult">正在处理...</string>
+    <string name="kVcScanNoQrCode">未发现二维码。</string>
+    <string name="kVcScanResultPriKeyTypeTitle">私钥类型</string>
+    <string name="kVcScanResultPriKeyTypeOwner">账号私钥</string>
+    <string name="kVcScanResultPriKeyTypeActive">资金私钥</string>
+    <string name="kVcScanResultPriKeyTypeMemo">备注私钥</string>
+    <string name="kVcScanResultPriKeyBtnCreateAndImport">升级钱包模式并导入私钥</string>
+    <string name="kVcScanResultPriKeyBtnImportNow">立即导入</string>
+    <string name="kVcScanResultAccountBtnTransfer">转账</string>
+    <string name="kVcScanResultAccountBtnViewDetail">查看详情</string>
+    <string name="kVcScanResultPayLabelAmount">金额</string>
+    <string name="kVcScanResultPayLabelMemo">备注</string>
+    <string name="kVcScanResultPlaceholderInputPayAmount">请输入付款金额</string>
+    <string name="kVcScanResultPaySubmitTipsInputPayAmount">请输入付款金额。</string>
+    <string name="kVcScanResultPaySubmitTipsNotEnough">余额不足。</string>
+    <string name="kVcScanResultBtnPayNow">立即支付</string>
+    <string name="kVcScanResultTipsPaySuccess">支付成功</string>
+    <string name="kVcScanResultPaySuccessLabelTo">收款方</string>
+    <string name="kVcScanResultPaySuccessLabelTrxID">交易ID</string>
+    <string name="kVcScanResultPaySuccessBtnDone">完成</string>
     <!-- 抵押排行 -->
     <string name="kVcRankCurrentFeedPrice">当前喂价</string>
     <string name="kVcTipsNoCallOrder">还没有用户进行抵押</string>
@@ -573,6 +598,11 @@
     <string name="kVcTitleLogin">登录</string>
     <string name="kVcTitleImportAccount">导入账号</string>
     <string name="kVcTitleRegister">注册</string>
+    <string name="kVcTitleQrScan">扫一扫</string>
+    <string name="kVcTitleQrScanResultNormal">扫描结果</string>
+    <string name="kVcTitleQrScanResultPriKey">导入私钥</string>
+    <string name="kVcTitleQrScanResultAccount">账号信息</string>
+    <string name="kVcTitleQrScanResultPay">支付</string>
     <string name="kVcTitleTransfer">转账</string>
     <string name="kVcTitleConfirmTransaction">请确认交易</string>
     <string name="kVcTitleCreateProposal">请确认提案</string>

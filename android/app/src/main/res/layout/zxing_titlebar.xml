@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/titlebar_background"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:background="@color/colorPrimary">
+
+    <!-- 标题 -->
+    <TextView
+        android:id="@+id/titlebar_tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:singleLine="true"
+        android:text="标题"
+        android:textSize="@dimen/T2"
+        android:textColor="@android:color/white" />
+
+    <!-- 返回 -->
+    <LinearLayout
+        android:id="@+id/titlebar_ll_left"
+        android:layout_width="48dp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="visible"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <ImageView
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:scaleType="centerInside"
+            android:src="@mipmap/zxing_ic_back"/>
+
+    </LinearLayout>
+
+    <!-- 右边 -->
+    <LinearLayout
+        android:id="@+id/titlebar_ll_right"
+        android:layout_width="48dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:visibility="visible">
+
+        <!-- 右侧图片 -->
+        <ImageView
+            android:id="@+id/titlebar_iv_right"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:scaleType="centerInside"
+            android:src="@mipmap/zxing_torch"
+            />
+
+    </LinearLayout>
+
+    <!-- 右侧文字 -->
+    <TextView
+        android:id="@+id/titlebar_tv_right"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:textSize="14sp"
+        android:clickable="true"
+        android:textColor="@android:color/white"
+        android:visibility="gone" />
+
+</RelativeLayout>

@@ -8,6 +8,7 @@
     <string name="kLable24HVol">24HVol</string>
     <string name="kLabelMarketFavorites">Favorites</string>
     <string name="kLabelGroupNameMain">Main</string>
+    <string name="kLabelGroupNameCommunity">Community</string>
     <string name="kLabelGroupNameGDEX">GDEX(Gateway)</string>
     <string name="kLabelGroupNameWWW">WWW(Gateway)</string>
     <string name="kLabelGroupNameOPEN">OPEN(Gateway)</string>
@@ -42,6 +43,7 @@
     <string name="kDebtTipTxUpdatePositionOK">Update position successfully, but the refresh failed. Please try again later.</string>
     <string name="kDebtWarmTips">[Tips] \n When the feed price drops to the call price, the system will automatically sell your collateral assets for debt repayment. Please pay attention to adjusting the ratio to control the risk.</string>
     <!-- 服务界面 -->
+    <string name="kServicesCellLabelQrScan">Scan QR code</string>
     <string name="kServicesCellLabelTransfer">Transfer</string>
     <string name="kServicesCellLabelAccountSearch">Account search</string>
     <string name="kServicesCellLabelRank">Rank</string>
@@ -49,6 +51,29 @@
     <string name="kServicesCellLabelFeedPrice">Feed price details</string>
     <string name="kServicesCellLabelDepositWithdraw">Deposit &amp; Withdraw</string>
     <string name="kServicesCellLabelAdvFunction">Advanced Features</string>
+    <!-- 扫一扫相关字符串 -->
+    <string name="kVcScanNaviTitleRightAlbum">Album</string>
+    <string name="kVcScanAutoScanTips">Put the QR code inside the border.</string>
+    <string name="kVcScanProcessingResult">Processing…</string>
+    <string name="kVcScanNoQrCode">No QR code found.</string>
+    <string name="kVcScanResultPriKeyTypeTitle">Key type</string>
+    <string name="kVcScanResultPriKeyTypeOwner">Owner</string>
+    <string name="kVcScanResultPriKeyTypeActive">Active</string>
+    <string name="kVcScanResultPriKeyTypeMemo">Memo</string>
+    <string name="kVcScanResultPriKeyBtnCreateAndImport">Create wallet &amp; import key</string>
+    <string name="kVcScanResultPriKeyBtnImportNow">Import now</string>
+    <string name="kVcScanResultAccountBtnTransfer">Transfer</string>
+    <string name="kVcScanResultAccountBtnViewDetail">Account details</string>
+    <string name="kVcScanResultPayLabelAmount">Amount</string>
+    <string name="kVcScanResultPayLabelMemo">Memo</string>
+    <string name="kVcScanResultPlaceholderInputPayAmount">Please enter the payment amount</string>
+    <string name="kVcScanResultPaySubmitTipsInputPayAmount">Please enter the payment amount.</string>
+    <string name="kVcScanResultPaySubmitTipsNotEnough">Insufficient balance.</string>
+    <string name="kVcScanResultBtnPayNow">Pay now</string>
+    <string name="kVcScanResultTipsPaySuccess">Payment completed</string>
+    <string name="kVcScanResultPaySuccessLabelTo">Receiver</string>
+    <string name="kVcScanResultPaySuccessLabelTrxID">Trx ID</string>
+    <string name="kVcScanResultPaySuccessBtnDone">Done</string>
     <!-- 抵押排行 -->
     <string name="kVcRankCurrentFeedPrice">Feed price</string>
     <string name="kVcTipsNoCallOrder">No data</string>
@@ -573,6 +598,11 @@
     <string name="kVcTitleLogin">Login</string>
     <string name="kVcTitleImportAccount">Import account</string>
     <string name="kVcTitleRegister">Register</string>
+    <string name="kVcTitleQrScan">Scan QR code</string>
+    <string name="kVcTitleQrScanResultNormal">Scan result</string>
+    <string name="kVcTitleQrScanResultPriKey">Import key</string>
+    <string name="kVcTitleQrScanResultAccount">Account info</string>
+    <string name="kVcTitleQrScanResultPay">Pay</string>
     <string name="kVcTitleTransfer">Transfer</string>
     <string name="kVcTitleConfirmTransaction">Please confirm the transaction</string>
     <string name="kVcTitleCreateProposal">Please confirm the proposal</string>
