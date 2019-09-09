@@ -14,7 +14,7 @@ import android.util.TypedValue
 import android.widget.ImageView
 import com.btsplusplus.fowallet.BuildConfig
 import com.btsplusplus.fowallet.R
-import com.qingmei2.library.encode.QRCodeEncoder
+//import com.qingmei2.library.encode.QRCodeEncoder
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -584,10 +584,11 @@ class Utils {
          * 创建二维码到 ImageView
          */
         fun createQRCodeImage(ctx: Context, text: String, out_image_view: ImageView) {
-            //构造方法：
-            val qrcode = QRCodeEncoder(ctx as Activity)
-
-            qrcode.createQrCode2ImageView(text, out_image_view)
+            //  TODO:3.0
+//            //构造方法：
+//            val qrcode = QRCodeEncoder(ctx as Activity)
+//
+//            qrcode.createQrCode2ImageView(text, out_image_view)
 
             //生成带Icon的二维码
             // qrCodeEncoder.createQrCode2ImageView(textContent, ivQRCode, R.mipmap.ic_launcher)
@@ -595,9 +596,10 @@ class Utils {
 
         fun asyncCreateQRBitmap(ctx: Context, text: String, width: Int): Promise {
             val p = Promise()
-            Thread(Runnable {
-                p.resolve(QRCodeEncoder(ctx as Activity).createQrCode(text, width))
-            }).start()
+            //  TODO:3.0
+//            Thread(Runnable {
+//                p.resolve(QRCodeEncoder(ctx as Activity).createQrCode(text, width))
+//            }).start()
             return p
         }
 

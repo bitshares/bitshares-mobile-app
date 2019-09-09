@@ -1,6 +1,9 @@
 package com.btsplusplus.fowallet
 
+import android.annotation.TargetApi
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import bitshares.*
@@ -8,11 +11,19 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 private const val ARG_PARAM_ID = "btspp_activity_param_id"
+private const val ARG_RC_REQUEST_PERMISSION = 100
+
+enum class EBtsppPermissionResult(val value: Int) {
+    GRANTED(0x0),                   //  有权限
+    SHOW_RATIONALE(0x1),            //  显示原因（没勾选不再提示）
+    DONT_ASK_AGAIN(0x2),            //  不在提示（前往系统界面设置）
+}
 
 abstract class BtsppActivity : AppCompatActivity() {
 
     private var _btspp_param_id = 0
     protected var _btspp_params: Any? = null
+    private var _btspp_permission_promise: Promise? = null
 
     fun btspp_args_as_JSONArray(): JSONArray {
         return _btspp_params as JSONArray
@@ -73,5 +84,43 @@ abstract class BtsppActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         //  [统计]
         btsppLogCustom("onBtsppParamsSave", jsonObjectfromKVS("activity", this::class.java.name))
+    }
+
+    /**
+     * 权限处理
+     */
+    @TargetApi(Build.VERSION_CODES.M)
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode != ARG_RC_REQUEST_PERMISSION) {
+            return
+        }
+
+        assert(_btspp_permission_promise != null)
+        var idx = 0
+        for (result in grantResults) {
+            val permission = permissions[idx]
+            if (PackageManager.PERMISSION_GRANTED != result) {
+                if (this.shouldShowRequestPermissionRationale(permission)) {
+                    _btspp_permission_promise!!.resolve(EBtsppPermissionResult.SHOW_RATIONALE.value)
+                } else {
+                    _btspp_permission_promise!!.resolve(EBtsppPermissionResult.DONT_ASK_AGAIN.value)
+                }
+                break
+            }
+            ++idx
+        }
+
+        _btspp_permission_promise!!.resolve(EBtsppPermissionResult.GRANTED.value)
+    }
+
+    fun guardPermissions(permission: String): Promise {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            _btspp_permission_promise = Promise()
+            requestPermissions(arrayOf(permission), ARG_RC_REQUEST_PERMISSION)
+            return _btspp_permission_promise!!
+        } else {
+            return Promise._resolve(EBtsppPermissionResult.GRANTED.value)
+        }
     }
 }
