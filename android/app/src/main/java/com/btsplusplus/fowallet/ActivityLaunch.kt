@@ -130,7 +130,7 @@ class ActivityLaunch : BtsppActivity() {
      * 进入主界面
      */
     private fun _enterToMain() {
-        var homeClass:Class<*> = ActivityIndexMarkets::class.java
+        var homeClass: Class<*> = ActivityIndexMarkets::class.java
         if (!BuildConfig.kAppModuleEnableTabMarket) {
             homeClass = ActivityIndexCollateral::class.java
         }

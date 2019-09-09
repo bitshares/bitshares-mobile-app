@@ -1,14 +1,9 @@
 package com.btsplusplus.fowallet
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
-import bitshares.btsppLogCustom
-import bitshares.jsonObjectfromKVS
 import kotlinx.android.synthetic.main.activity_scan_account_name.*
-import kotlinx.android.synthetic.main.activity_scan_result_private_key.*
 
 class ActivityScanAccountName : BtsppActivity() {
 
@@ -36,7 +31,6 @@ class ActivityScanAccountName : BtsppActivity() {
         btn_detail.setOnClickListener {
 
         }
-
 
 
     }
