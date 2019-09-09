@@ -33,42 +33,6 @@
 
         </FrameLayout>
 
-        <!-- 扫一扫 TODO：未完成-->
-        <LinearLayout
-            android:id="@+id/layout_saoyisao_from_services"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="30dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/icon_transfer"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/nameSaoyisao"/>
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_weight="1"
-
-                android:foregroundGravity="right"
-                android:src="@drawable/ic_btn_right_arrow" />
-
-        </LinearLayout>
-
 
         <!-- 转账 -->
         <LinearLayout
@@ -130,6 +94,43 @@
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
                 android:text="@string/kServicesCellLabelVoting"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_weight="1"
+
+                android:foregroundGravity="right"
+                android:src="@drawable/ic_btn_right_arrow" />
+
+        </LinearLayout>
+
+        <!-- 扫一扫 -->
+        <LinearLayout
+            android:id="@+id/layout_saoyisao_from_services"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:layout_marginTop="30dp"
+            android:orientation="horizontal">
+
+            <!-- TODO:3.0 图标 -->
+            <ImageView
+                android:id="@+id/img_icon_qrscan"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/icon_transfer"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:textSize="16dp"
+                android:layout_weight="9"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="@string/nameSaoyisao"/>
 
             <ImageView
                 android:layout_width="0dp"

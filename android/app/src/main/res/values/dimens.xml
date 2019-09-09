@@ -8,4 +8,18 @@
     <dimen name="design_bottom_navigation_active_text_size">10sp</dimen>
     <dimen name="design_bottom_navigation_text_size">10sp</dimen>
 
+    <!-- for zxing -->
+    <dimen name="T0">24sp</dimen><!-- 文章标题 -->
+    <dimen name="T1">20sp</dimen><!-- 部分强调性文字 -->
+    <dimen name="T2">18sp</dimen><!-- 突出标题及底部文字按钮；阅读类文字 -->
+    <dimen name="T3">15sp</dimen><!-- 正文；常见标题；导航处文字按钮大小 -->
+    <dimen name="T3X3">45sp</dimen><!-- 常见标题导航处文字按钮大小X3 -->
+    <dimen name="T4">13sp</dimen><!-- 次级正文 -->
+    <dimen name="T5">12sp</dimen><!-- 色卡说明文字 -->
+
+    <dimen name="px1">1px</dimen>
+    <dimen name="dp8">8dp</dimen>
+    <dimen name="dp10">10dp</dimen>
+    <dimen name="dp12">12dp</dimen>
+    <dimen name="divider_height">1dp</dimen>
 </resources>

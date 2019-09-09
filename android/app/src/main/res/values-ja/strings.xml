@@ -8,6 +8,7 @@
     <string name="kLable24HVol">24H量</string>
     <string name="kLabelMarketFavorites">自選</string>
     <string name="kLabelGroupNameMain">メイン</string>
+    <string name="kLabelGroupNameCommunity">コミュニティ</string>
     <string name="kLabelGroupNameGDEX">GDEX(ゲートウェイ)</string>
     <string name="kLabelGroupNameWWW">WWW(ゲートウェイ)</string>
     <string name="kLabelGroupNameOPEN">OPEN(ゲートウェイ)</string>
@@ -42,6 +43,7 @@
     <string name="kDebtTipTxUpdatePositionOK">ポジションを更新，しかしネットワークが異常で、少しの後でまた試みてください。</string>
     <string name="kDebtWarmTips">【暖かいヒント】\nあなたの担保比率は1.75に近いです。そのため、価格が下落した場合、このポジションにマージンコールがかかる危険性があります。</string>
     <!-- 服务界面 -->
+    <string name="kServicesCellLabelQrScan">スキャン</string>
     <string name="kServicesCellLabelTransfer">送金</string>
     <string name="kServicesCellLabelAccountSearch">アカウントを検索</string>
     <string name="kServicesCellLabelRank">担保の順序</string>
@@ -49,6 +51,29 @@
     <string name="kServicesCellLabelFeedPrice">詳しいフィード価格</string>
     <string name="kServicesCellLabelDepositWithdraw">入金出金</string>
     <string name="kServicesCellLabelAdvFunction">高度な機能</string>
+    <!-- 扫一扫相关字符串 -->
+    <string name="kVcScanNaviTitleRightAlbum">アルバム</string>
+    <string name="kVcScanAutoScanTips">ボックスにQRコードを入れます。</string>
+    <string name="kVcScanProcessingResult">処理中...</string>
+    <string name="kVcScanNoQrCode">QRコードが見つかりません。</string>
+    <string name="kVcScanResultPriKeyTypeTitle">キータイプ</string>
+    <string name="kVcScanResultPriKeyTypeOwner">オーナー</string>
+    <string name="kVcScanResultPriKeyTypeActive">アクティブ</string>
+    <string name="kVcScanResultPriKeyTypeMemo">メモ</string>
+    <string name="kVcScanResultPriKeyBtnCreateAndImport">インポートキー</string>
+    <string name="kVcScanResultPriKeyBtnImportNow">今すぐインポート</string>
+    <string name="kVcScanResultAccountBtnTransfer">送金</string>
+    <string name="kVcScanResultAccountBtnViewDetail">アカウントの詳細</string>
+    <string name="kVcScanResultPayLabelAmount">金額</string>
+    <string name="kVcScanResultPayLabelMemo">付注</string>
+    <string name="kVcScanResultPlaceholderInputPayAmount">支払い金額を入力してください</string>
+    <string name="kVcScanResultPaySubmitTipsInputPayAmount">支払い金額を入力してください。</string>
+    <string name="kVcScanResultPaySubmitTipsNotEnough">バランスが不十分です。</string>
+    <string name="kVcScanResultBtnPayNow">今すぐ支払う</string>
+    <string name="kVcScanResultTipsPaySuccess">お支払い完了</string>
+    <string name="kVcScanResultPaySuccessLabelTo">受取人</string>
+    <string name="kVcScanResultPaySuccessLabelTrxID">取引番号</string>
+    <string name="kVcScanResultPaySuccessBtnDone">完了</string>
     <!-- 抵押排行 -->
     <string name="kVcRankCurrentFeedPrice">現在のフィード価格</string>
     <string name="kVcTipsNoCallOrder">まだユーザーが担保を入れていない</string>
@@ -572,6 +597,11 @@
     <string name="kVcTitleLogin">ログイン</string>
     <string name="kVcTitleImportAccount">アカウント導入</string>
     <string name="kVcTitleRegister">新規登録</string>
+    <string name="kVcTitleQrScan">スキャン</string>
+    <string name="kVcTitleQrScanResultNormal">スキャン結果</string>
+    <string name="kVcTitleQrScanResultPriKey">インポートキー</string>
+    <string name="kVcTitleQrScanResultAccount">アカウント情報</string>
+    <string name="kVcTitleQrScanResultPay">支払う</string>
     <string name="kVcTitleTransfer">送金</string>
     <string name="kVcTitleConfirmTransaction">取引の確認をお願いします。</string>
     <string name="kVcTitleCreateProposal">提案を確認してください。</string>

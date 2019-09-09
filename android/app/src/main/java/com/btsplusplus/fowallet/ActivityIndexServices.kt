@@ -52,6 +52,7 @@ class ActivityIndexServices : BtsppActivity() {
         //  设置图标颜色
         val iconcolor = resources.getColor(R.color.theme01_textColorNormal)
         img_icon_transfer.setColorFilter(iconcolor)
+        img_icon_qrscan.setColorFilter(iconcolor)
         img_icon_account_search.setColorFilter(iconcolor)
         img_icon_rank.setColorFilter(iconcolor)
         img_icon_voting.setColorFilter(iconcolor)
@@ -79,7 +80,7 @@ class ActivityIndexServices : BtsppActivity() {
                 val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this), this)
                 mask.show()
                 val p1 = get_full_account_data_and_asset_hash(WalletManager.sharedWalletManager().getWalletAccountName()!!)
-                var p2 = ChainObjectManager.sharedChainObjectManager().queryFeeAssetListDynamicInfo()
+                val p2 = ChainObjectManager.sharedChainObjectManager().queryFeeAssetListDynamicInfo()
                 Promise.all(p1, p2).then {
                     mask.dismiss()
                     val data_array = it as JSONArray
@@ -95,6 +96,11 @@ class ActivityIndexServices : BtsppActivity() {
 
         layout_voting_from_services.setOnClickListener {
             guardWalletExist { goTo(ActivityVoting::class.java, true) }
+        }
+
+        layout_saoyisao_from_services.setOnClickListener {
+            //  TODO:3.0
+            goTo(ActivityQrScan::class.java, true, request_code = 101)
         }
 
         if (BuildConfig.kAppModuleEnableFeedPrice) {
