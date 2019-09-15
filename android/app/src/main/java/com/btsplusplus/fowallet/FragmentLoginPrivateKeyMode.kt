@@ -96,8 +96,8 @@ class FragmentLoginPrivateKeyMode : Fragment() {
         val v = inflater.inflate(R.layout.fragment_login_private_key_mode, container, false)
         val _button_login: Button = v.findViewById(R.id.button_login)
         _button_login.setOnClickListener {
-            val active_privatekey = v.findViewById<EditText>(R.id.tf_active_privatekey).text.toString()
-            val trade_password = if (_checkActivePermission) v.findViewById<EditText>(R.id.tf_trade_password).text.toString() else ""
+            val active_privatekey = v.findViewById<EditText>(R.id.tf_active_privatekey).text.toString().trim()
+            val trade_password = if (_checkActivePermission) v.findViewById<EditText>(R.id.tf_trade_password).text.toString().trim() else ""
             loginBitshares_PrivateKeyMode(active_privatekey, trade_password)
         }
         v.findViewById<ImageView>(R.id.tip_link_active_privatekey).setOnClickListener {

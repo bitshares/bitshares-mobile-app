@@ -7,8 +7,6 @@
     tools:context="com.btsplusplus.fowallet.ActivityScanAccountName"
     android:background="@color/theme01.appBackColor">
 
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,12 +14,10 @@
         android:padding="10dp"
         android:orientation="vertical">
 
-
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:orientation="horizontal">
-
 
             <LinearLayout
                 android:id="@+id/layout_back_from_scan_result_account_name"
@@ -42,19 +38,16 @@
                     />
             </LinearLayout>
 
-
             <TextView
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="账号信息"
+                android:text="@string/kVcTitleQrScanResultAccount"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
-
-
 
         <!-- ID -->
         <LinearLayout
@@ -94,7 +87,6 @@
             android:layout_marginTop="15dp"
             android:orientation="horizontal">
 
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -103,7 +95,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/kLoginCellAccountName"/>
+                android:text="@string/kAccLabelAccount"/>
 
             <TextView
                 android:id="@+id/txt_account_name"
@@ -115,12 +107,9 @@
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorNormal"
                 android:text="placeholder"/>
-
-
         </LinearLayout>
+
         <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
-
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -128,15 +117,16 @@
             android:layout_marginTop="20dp"
             android:orientation="vertical">
 
+            <!-- 转账 -->
             <Button
                 android:id="@+id/button_transfer"
                 android:layout_width="match_parent"
                 style="@style/kMainButtonStyle"
                 android:gravity="center|center_vertical"
                 android:textAllCaps="false"
-                android:text="@string/kVcAssetBtnTransfer" />
+                android:text="@string/kVcScanResultAccountBtnTransfer" />
 
-
+            <!-- 查看详情 -->
             <Button
                 android:id="@+id/button_view_detail"
                 android:layout_width="match_parent"
@@ -144,7 +134,7 @@
                 android:layout_marginTop="20dp"
                 android:gravity="center|center_vertical"
                 android:background="@color/theme01.textColorGray"
-                android:text="查看详情"
+                android:text="@string/kVcScanResultAccountBtnViewDetail"
                 android:textColor="@color/theme01.mainButtonTextColor"
                 android:textAllCaps="false"
                 android:textSize="16dp" />

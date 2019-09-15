@@ -52,6 +52,10 @@
     <string name="kServicesCellLabelDepositWithdraw">入金出金</string>
     <string name="kServicesCellLabelAdvFunction">高度な機能</string>
     <!-- 扫一扫相关字符串 -->
+    <string name="kVcScanPermissionNoCamera">カメラが検出されません。</string>
+    <string name="kVcScanPermissionSystemLimit">システム上の理由により、アルバムにアクセスできませんでした。</string>
+    <string name="kVcScanPermissionGotoSetting">設定インターフェイスに移動して、アプリがカメラにアクセスできるようにしてください。</string>
+    <string name="kVcScanPermissionUserRejected">この機能は、カメラの許可がないとサポートされません。</string>
     <string name="kVcScanNaviTitleRightAlbum">アルバム</string>
     <string name="kVcScanAutoScanTips">ボックスにQRコードを入れます。</string>
     <string name="kVcScanProcessingResult">処理中...</string>

@@ -445,12 +445,14 @@ fun android.app.Activity.openURL(url: String) {
     }
 }
 
-fun android.app.Activity.goTo(cls: Class<*>, transition_animation: Boolean = false, back: Boolean = false, args: Any? = null, request_code: Int = -1) {
+fun android.app.Activity.goTo(cls: Class<*>, transition_animation: Boolean = false, back: Boolean = false, args: Any? = null, request_code: Int = -1, close_self: Boolean = false) {
     val intent = Intent()
     intent.setClass(this, cls)
 
     if (back) {
+        //  清理堆栈
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        //  保留目标堆栈（不重新生成），否则会生成一个新的activity。
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
     }
 
@@ -468,6 +470,10 @@ fun android.app.Activity.goTo(cls: Class<*>, transition_animation: Boolean = fal
 
     if (!transition_animation) {
         overridePendingTransition(0, 0)
+    }
+
+    if (close_self) {
+        finish()
     }
 }
 

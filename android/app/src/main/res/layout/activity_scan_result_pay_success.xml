@@ -68,7 +68,7 @@
                 android:gravity="center"
                 android:textSize="14dp"
                 android:textColor="@color/theme01.textColorNormal"
-                android:text="支付成功"/>
+                android:text="@string/kVcScanResultTipsPaySuccess"/>
         </LinearLayout>
 
         <!-- 支付成功金额 -->
@@ -102,7 +102,7 @@
                 android:textSize="16dp"
                 android:layout_weight="2"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="收款方"/>
+                android:text="@string/kVcScanResultPaySuccessLabelTo"/>
 
             <TextView
                 android:id="@+id/tv_receiver_account_from_scan_result_pay_success"
@@ -145,7 +145,7 @@
                 android:textSize="16dp"
                 android:layout_weight="2"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="交易ID"/>
+                android:text="@string/kVcScanResultPaySuccessLabelTrxID"/>
 
             <TextView
                 android:id="@+id/tv_transaction_id_from_scan_result_pay_success"
@@ -188,7 +188,7 @@
                 style="@style/kMainButtonStyle"
                 android:gravity="center|center_vertical"
                 android:textAllCaps="false"
-                android:text="完成" />
+                android:text="@string/kVcScanResultPaySuccessBtnDone" />
 
 
         </LinearLayout>

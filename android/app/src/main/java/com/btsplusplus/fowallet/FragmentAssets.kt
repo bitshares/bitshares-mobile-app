@@ -451,7 +451,7 @@ class FragmentAssets : BtsppFragment() {
      */
     private fun _onTransferClicked(clicked_asset_id: String) {
         val default_asset = ChainObjectManager.sharedChainObjectManager().getChainObjectByID(clicked_asset_id)
-        activity!!.goTo(ActivityTransfer::class.java, true, args = jsonArrayfrom(_full_account_data!!, default_asset))
+        activity!!.goTo(ActivityTransfer::class.java, true, args = jsonObjectfromKVS("full_account_data", _full_account_data!!, "default_asset", default_asset))
     }
 
     /**

@@ -2,6 +2,7 @@ package com.btsplusplus.fowallet
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import bitshares.*
@@ -17,6 +18,7 @@ class ActivityTransfer : BtsppActivity() {
 
     private var _full_account_data: JSONObject? = null
     private var _default_asset: JSONObject? = null
+    private var _default_to: JSONObject? = null
 
     private var _balances_hash: JSONObject? = null
     private var _fee_item: JSONObject? = null
@@ -29,27 +31,30 @@ class ActivityTransfer : BtsppActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setAutoLayoutContentView(R.layout.activity_transfer)
-
-        //  获取参数
-        var args = btspp_args_as_JSONArray()
-        _full_account_data = args[0] as JSONObject
-        if (args.length() >= 2) {
-            _default_asset = args[1] as JSONObject
-        }
-
         setFullScreen()
 
-        layout_back_from_transfer.setOnClickListener {
-            finish()
-        }
+        //  获取参数
+        val args = btspp_args_as_JSONObject()
+        _full_account_data = args.getJSONObject("full_account_data")
+        _default_asset = args.optJSONObject("default_asset")
+        _default_to = args.optJSONObject("default_to")
 
-        cell_to_account.setOnClickListener {
-            TempManager.sharedTempManager().set_query_account_callback { last_activity, it ->
-                last_activity.goTo(ActivityTransfer::class.java, true, back = true)
-                _transfer_args!!.put("to", it)
-                refreshUI()
+        //  事件
+        layout_back_from_transfer.setOnClickListener { finish() }
+
+        //  没有默认收款人：则对收款人字段添加点击事件。
+        if (_default_to == null) {
+            cell_to_account_tailer_arrow.visibility = View.VISIBLE
+            cell_to_account.setOnClickListener {
+                TempManager.sharedTempManager().set_query_account_callback { last_activity, it ->
+                    last_activity.goTo(ActivityTransfer::class.java, true, back = true)
+                    _transfer_args!!.put("to", it)
+                    refreshUI()
+                }
+                goTo(ActivityAccountQueryBase::class.java, true)
             }
-            goTo(ActivityAccountQueryBase::class.java, true)
+        } else {
+            cell_to_account_tailer_arrow.visibility = View.GONE
         }
 
         cell_transfer_asset.setOnClickListener {
@@ -413,6 +418,9 @@ class ActivityTransfer : BtsppActivity() {
         _transfer_args = JSONObject()
         val account_info = _full_account_data!!.getJSONObject("account")
         _transfer_args!!.put("from", jsonObjectfromKVS("id", account_info.getString("id"), "name", account_info.getString("name")))
+        if (_default_to != null) {
+            _transfer_args!!.put("to", _default_to!!)
+        }
         if (_default_asset == null) {
             //  TODO:fowallet 默认值，优先选择CNY、没CNY选择BTS。TODO：USD呢？？
             for (asset in _asset_list!!) {

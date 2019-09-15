@@ -1412,6 +1412,46 @@ class ChainObjectManager {
     }
 
     /**
+     * (public) 查询账号基本信息
+     */
+    fun queryAccountData(account_name_or_id: String): Promise {
+        val p = Promise()
+        val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
+        conn.async_exec_db("get_accounts", jsonArrayfrom(jsonArrayfrom(account_name_or_id))).then {
+            val data_array = it as JSONArray?
+            if (data_array == null || data_array.length() <= 0) {
+                p.resolve(null)
+                return@then null
+            }
+            p.resolve(data_array.getJSONObject(0))
+            return@then null
+        }.catch {
+            p.resolve(null)
+        }
+        return p
+    }
+
+    /**
+     * (public) 查询资产基本信息
+     */
+    fun queryAssetData(asset_symbol_or_id: String): Promise {
+        val p = Promise()
+        val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
+        conn.async_exec_db("get_assets", jsonArrayfrom(jsonArrayfrom(asset_symbol_or_id))).then {
+            val data_array = it as JSONArray?
+            if (data_array == null || data_array.length() <= 0) {
+                p.resolve(null)
+                return@then null
+            }
+            p.resolve(data_array.getJSONObject(0))
+            return@then null
+        }.catch {
+            p.resolve(null)
+        }
+        return p
+    }
+
+    /**
      * (public) 账号是否存在于区块链上
      */
     fun isAccountExistOnBlockChain(account_name: String): Promise {

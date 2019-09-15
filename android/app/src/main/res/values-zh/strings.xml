@@ -52,6 +52,10 @@
     <string name="kServicesCellLabelDepositWithdraw">充币提币</string>
     <string name="kServicesCellLabelAdvFunction">高级功能</string>
     <!-- 扫一扫相关字符串 -->
+    <string name="kVcScanPermissionNoCamera">未检测到您的摄像头。</string>
+    <string name="kVcScanPermissionSystemLimit">因为系统原因, 无法访问相册。</string>
+    <string name="kVcScanPermissionGotoSetting">请前往设置界面配置，允许APP访问相机。</string>
+    <string name="kVcScanPermissionUserRejected">没有相机权限，不支持该功能。</string>
     <string name="kVcScanNaviTitleRightAlbum">相册</string>
     <string name="kVcScanAutoScanTips">将二维码放入框内, 即可自动扫描。</string>
     <string name="kVcScanProcessingResult">正在处理...</string>

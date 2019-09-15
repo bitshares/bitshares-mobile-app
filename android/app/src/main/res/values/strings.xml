@@ -52,6 +52,10 @@
     <string name="kServicesCellLabelDepositWithdraw">Deposit &amp; Withdraw</string>
     <string name="kServicesCellLabelAdvFunction">Advanced Features</string>
     <!-- 扫一扫相关字符串 -->
+    <string name="kVcScanPermissionNoCamera">Your camera is not detected.</string>
+    <string name="kVcScanPermissionSystemLimit">The album could not be accessed for system reasons.</string>
+    <string name="kVcScanPermissionGotoSetting">Please go to the settings interface to allow the app to access the camera.</string>
+    <string name="kVcScanPermissionUserRejected">This feature is not supported without camera permissions.</string>
     <string name="kVcScanNaviTitleRightAlbum">Album</string>
     <string name="kVcScanAutoScanTips">Put the QR code inside the border.</string>
     <string name="kVcScanProcessingResult">Processing…</string>
