@@ -3,10 +3,7 @@ package com.btsplusplus.fowallet
 import android.Manifest
 import android.os.Bundle
 import android.view.View
-import bitshares.Promise
-import bitshares.TempManager
-import bitshares.jsonArrayfrom
-import bitshares.xmlstring
+import bitshares.*
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_index_services.*
@@ -84,7 +81,7 @@ class ActivityIndexServices : BtsppActivity() {
                     mask.dismiss()
                     val data_array = it as JSONArray
                     val full_userdata = data_array.getJSONObject(0)
-                    goTo(ActivityTransfer::class.java, true, args = jsonArrayfrom(full_userdata))
+                    goTo(ActivityTransfer::class.java, true, args = jsonObjectfromKVS("full_account_data", full_userdata))
                     return@then null
                 }.catch {
                     mask.dismiss()

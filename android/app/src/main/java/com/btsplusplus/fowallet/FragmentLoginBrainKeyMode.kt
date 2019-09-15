@@ -91,7 +91,7 @@ class FragmentLoginBrainKeyMode : Fragment() {
 
     private fun onLoginClicked() {
 
-        var bran_key = _tf_bran_key!!.text.toString()
+        var bran_key = _tf_bran_key!!.text.toString().trim()
         if (bran_key == "") {
             showToast(_ctx!!.resources.getString(R.string.kLoginSubmitTipsBrainKeyIncorrect))
             return

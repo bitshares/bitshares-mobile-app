@@ -48,7 +48,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="导入私钥"
+                android:text="@string/kVcTitleQrScanResultPriKey"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
@@ -102,7 +102,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/kLoginCellAccountName"/>
+                android:text="@string/kAccount"/>
 
             <TextView
                 android:id="@+id/txt_account_name"
@@ -136,7 +136,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="私钥类型"/>
+                android:text="@string/kVcScanResultPriKeyTypeTitle"/>
 
             <TextView
                 android:id="@+id/txt_private_key_type"
@@ -165,7 +165,7 @@
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:text="@string/kLoginPassword"
+                android:text="@string/kLoginCellWalletPassword"
                 android:textSize="16dp"
                 android:textColor="@color/theme01.textColorMain"/>
 
@@ -177,7 +177,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:hint="@string/tip_placeholder_password"
+                android:hint="@string/kLoginTipsPlaceholderWalletPassword"
                 android:textColor="@color/theme01.textColorMain"
                 android:textSize="16dp"
                 android:background="@null"

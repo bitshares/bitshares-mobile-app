@@ -48,7 +48,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="支付"
+                android:text="@string/kVcTitleQrScanResultPay"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
@@ -101,7 +101,7 @@
                     android:textSize="16dp"
                     android:layout_weight="9"
                     android:textColor="@color/theme01.textColorMain"
-                    android:text="转账金额"/>
+                    android:text="@string/kVcScanResultPayLabelAmount"/>
 
                 <TextView
                     android:id="@+id/txt_transfer_amount_from_scan_result_transfer"
@@ -140,7 +140,7 @@
                     android:gravity="center_vertical"
                     android:textSize="12dp"
                     android:textColor="@color/theme01.textColorMain"
-                    android:text="转账金额"/>
+                    android:text="@string/kVcScanResultPayLabelAmount"/>
 
                 <TextView
                     android:id="@+id/txt_value_avaiable_from_scan_result_transfer"
@@ -174,7 +174,7 @@
                     android:textColor="@color/theme01.textColorMain"
                     android:background="@null"
                     android:textColorHint="@color/theme01.textColorGray"
-                    android:hint="@string/kVcTransferSubmitTipPleaseInputAmount"/>
+                    android:hint="@string/kVcScanResultPlaceholderInputPayAmount"/>
 
                 <TextView
                     android:id="@+id/btn_transfer_asset"
@@ -213,7 +213,7 @@
                     android:textSize="16dp"
                     android:layout_weight="9"
                     android:textColor="@color/theme01.textColorMain"
-                    android:text="备注信息"/>
+                    android:text="@string/kVcScanResultPayLabelMemo"/>
 
                 <TextView
                     android:id="@+id/txt_memo_info_from_scan_result_transfer"
@@ -251,7 +251,7 @@
                     android:gravity="center_vertical"
                     android:textSize="12dp"
                     android:textColor="@color/theme01.textColorMain"
-                    android:text="备注信息"/>
+                    android:text="@string/kVcScanResultPayLabelMemo"/>
 
 
             </LinearLayout>
@@ -295,7 +295,7 @@
                 style="@style/kMainButtonStyle"
                 android:gravity="center|center_vertical"
                 android:textAllCaps="false"
-                android:text="立即支付" />
+                android:text="@string/kVcScanResultBtnPayNow" />
 
 
         </LinearLayout>

@@ -179,14 +179,14 @@ class FragmentLoginAccountMode : Fragment() {
         val v: View = inflater.inflate(R.layout.fragment_login_account_mode, container, false)
         val _button_login: Button = v.findViewById(R.id.button_login)
         _button_login.setOnClickListener {
-            var tf_account_name: EditText = v.findViewById(R.id.tf_account_name)
-            val account_name = tf_account_name.text.toString()
-            var tf_password: EditText = v.findViewById(R.id.tf_password)
-            val password = tf_password.text.toString()
+            val tf_account_name: EditText = v.findViewById(R.id.tf_account_name)
+            val account_name = tf_account_name.text.toString().trim()
+            val tf_password: EditText = v.findViewById(R.id.tf_password)
+            val password = tf_password.text.toString().trim()
             var trade_password = ""
             if (_checkActivePermission) {
-                var tf_trade_password: EditText = v.findViewById(R.id.tf_trade_password)
-                trade_password = tf_trade_password.text.toString()
+                val tf_trade_password: EditText = v.findViewById(R.id.tf_trade_password)
+                trade_password = tf_trade_password.text.toString().trim()
             }
             loginBitshares_AccountMode(account_name, password, trade_password)
         }

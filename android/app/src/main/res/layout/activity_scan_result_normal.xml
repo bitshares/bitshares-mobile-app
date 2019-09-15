@@ -14,7 +14,6 @@
         android:padding="10dp"
         android:orientation="vertical">
 
-
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -40,13 +39,12 @@
                     />
             </LinearLayout>
 
-
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="扫描结果"
+                android:text="@string/kVcTitleQrScanResultNormal"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
@@ -72,6 +70,5 @@
     </LinearLayout>
 
     <!-- 扫描结果原始字符串 -->
-
 
 </android.support.constraint.ConstraintLayout>
