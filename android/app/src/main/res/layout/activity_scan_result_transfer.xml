@@ -92,7 +92,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="34dp"
                 android:orientation="horizontal">
-
+                <!-- 金额 -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -102,7 +102,7 @@
                     android:layout_weight="9"
                     android:textColor="@color/theme01.textColorMain"
                     android:text="@string/kVcScanResultPayLabelAmount"/>
-
+                <!-- 值 -->
                 <TextView
                     android:id="@+id/txt_transfer_amount_from_scan_result_transfer"
                     android:layout_width="wrap_content"
@@ -141,16 +141,6 @@
                     android:textSize="12dp"
                     android:textColor="@color/theme01.textColorMain"
                     android:text="@string/kVcScanResultPayLabelAmount"/>
-
-                <TextView
-                    android:id="@+id/txt_value_avaiable_from_scan_result_transfer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical|right"
-                    android:textSize="16dp"
-                    android:textColor="@color/theme01.textColorNormal"
-                    android:text="4.969999CNY"/>
 
             </LinearLayout>
 
@@ -223,7 +213,7 @@
                     android:gravity="center_vertical|right"
                     android:textSize="16dp"
                     android:layout_weight="9"
-                    android:textColor="@color/theme01.buyColor"
+                    android:textColor="@color/theme01.textColorMain"
                     android:text="placeholder"/>
 
             </LinearLayout>

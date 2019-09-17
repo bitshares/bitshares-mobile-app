@@ -56,6 +56,7 @@
     <string name="kVcScanPermissionSystemLimit">The album could not be accessed for system reasons.</string>
     <string name="kVcScanPermissionGotoSetting">Please go to the settings interface to allow the app to access the camera.</string>
     <string name="kVcScanPermissionUserRejected">This feature is not supported without camera permissions.</string>
+    <string name="kVcScanAlbumClickedTips">Select QR code image</string>
     <string name="kVcScanNaviTitleRightAlbum">Album</string>
     <string name="kVcScanAutoScanTips">Put the QR code inside the border.</string>
     <string name="kVcScanProcessingResult">Processing…</string>
@@ -70,6 +71,7 @@
     <string name="kVcScanResultAccountBtnViewDetail">Account details</string>
     <string name="kVcScanResultPayLabelAmount">Amount</string>
     <string name="kVcScanResultPayLabelMemo">Memo</string>
+    <string name="kVcScanResultPaySubmitTipsToIsMyself">The payee is the same as the payment account.</string>
     <string name="kVcScanResultPlaceholderInputPayAmount">Please enter the payment amount</string>
     <string name="kVcScanResultPaySubmitTipsInputPayAmount">Please enter the payment amount.</string>
     <string name="kVcScanResultPaySubmitTipsNotEnough">Insufficient balance.</string>

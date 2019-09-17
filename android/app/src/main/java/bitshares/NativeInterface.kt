@@ -36,6 +36,8 @@ class NativeInterface {
 
     external fun bts_pubkey_tweak_add(pubkey: ByteArray, tweak: ByteArray): ByteArray?
 
+    external fun bts_merchant_invoice_decode(b58str: ByteArray): ByteArray?
+
     external fun bts_save_wallet(wallet_jsonbin: ByteArray, password: ByteArray, entropy: ByteArray): ByteArray?
 
     external fun bts_load_wallet(wallet_buffer: ByteArray, password: ByteArray): ByteArray?

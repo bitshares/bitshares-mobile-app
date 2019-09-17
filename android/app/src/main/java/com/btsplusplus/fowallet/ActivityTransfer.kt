@@ -145,8 +145,8 @@ class ActivityTransfer : BtsppActivity() {
         if (str_memo != null) {
             val walletMgr = WalletManager.sharedWalletManager()
             val full_account_data = walletMgr.getWalletAccountInfo()!!
-            from_public_memo = full_account_data.getJSONObject("account").getJSONObject("options").optString("memo_key")
-            if (from_public_memo == null || from_public_memo == "") {
+            from_public_memo = full_account_data.getJSONObject("account").optJSONObject("options")?.optString("memo_key", null)
+            if (from_public_memo == null) {
                 showToast(resources.getString(R.string.kVcTransferSubmitTipAccountNoMemoKey))
                 return
             }

@@ -56,6 +56,7 @@
     <string name="kVcScanPermissionSystemLimit">因为系统原因, 无法访问相册。</string>
     <string name="kVcScanPermissionGotoSetting">请前往设置界面配置，允许APP访问相机。</string>
     <string name="kVcScanPermissionUserRejected">没有相机权限，不支持该功能。</string>
+    <string name="kVcScanAlbumClickedTips">选择二维码图片</string>
     <string name="kVcScanNaviTitleRightAlbum">相册</string>
     <string name="kVcScanAutoScanTips">将二维码放入框内, 即可自动扫描。</string>
     <string name="kVcScanProcessingResult">正在处理...</string>
@@ -70,6 +71,7 @@
     <string name="kVcScanResultAccountBtnViewDetail">查看详情</string>
     <string name="kVcScanResultPayLabelAmount">金额</string>
     <string name="kVcScanResultPayLabelMemo">备注</string>
+    <string name="kVcScanResultPaySubmitTipsToIsMyself">收款方和支付账号相同。</string>
     <string name="kVcScanResultPlaceholderInputPayAmount">请输入付款金额</string>
     <string name="kVcScanResultPaySubmitTipsInputPayAmount">请输入付款金额。</string>
     <string name="kVcScanResultPaySubmitTipsNotEnough">余额不足。</string>

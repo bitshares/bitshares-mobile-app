@@ -213,6 +213,14 @@ fun BigDecimal.toPriceAmountString(precision: Int = -1): String {
 }
 
 /**
+ * 乘以 10 的 power 次方。等价于小数点右移 power 位。
+ */
+fun BigDecimal.multiplyByPowerOf10(power: Int): BigDecimal {
+    assert(power >= 0)
+    return this.movePointRight(power)
+}
+
+/**
  * 列表转换
  */
 fun Iterator<String>.toJSONArray(): JSONArray {
