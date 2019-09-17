@@ -306,6 +306,72 @@ class WalletManager {
     }
 
     /**
+     *  (public) 创建新钱包。
+     *  current_full_account_data   - 钱包当前账号  REMARK：创建后的当前账号，需要有完整的active权限。
+     *  pub_pri_keys_hash           - 需要导入的私钥Hash
+     *  append_memory_key           - 导入内存中已经存在的私钥 REMARK：需要钱包已解锁。
+     *  extra_account_name_list     - 除了当前账号外的其他需要同时导入的账号名。
+     *  pWalletPassword             - 新钱包的密码。
+     *  login_mode                  - 模式。
+     *  login_desc                  - 描述信息。
+     */
+    fun createNewWallet(ctx: Context, current_full_account_data: JSONObject, pub_pri_keys_hash: JSONObject, append_memory_key: Boolean,
+                        extra_account_name_list: JSONArray?, pWalletPassword: String, login_mode: AppCacheManager.EWalletMode, login_desc: String? = null): EImportToWalletStatus {
+        val account = current_full_account_data.getJSONObject("account")
+        val currentAccountName = account.getString("name")
+
+        //  合并所有KEY（参数中和内存中）
+        if (append_memory_key) {
+            assert(!isLocked())
+            _private_keys_hash.keys().forEach { pubkey ->
+                val prikey = _private_keys_hash.getString(pubkey)
+                pub_pri_keys_hash.put(pubkey, prikey)
+            }
+        }
+
+        //  检测当前账号是否有完整的active权限。
+        val account_active = account.getJSONObject("active")
+        val status = WalletManager.calcPermissionStatus(account_active, pub_pri_keys_hash)
+        if (status == EAccountPermissionStatus.EAPS_NO_PERMISSION) {
+            return EImportToWalletStatus.eitws_no_permission
+        } else if (status == EAccountPermissionStatus.EAPS_PARTIAL_PERMISSION) {
+            return EImportToWalletStatus.eitws_partial_permission
+        }
+
+        val pAppCache = AppCacheManager.sharedAppCacheManager()
+
+        //  获取所有需要导入到钱包中的账号名列表。
+        val account_name_list = JSONArray()
+        account_name_list.put(currentAccountName)
+        if (extra_account_name_list != null && extra_account_name_list.length() > 0) {
+            val extraNameHash = JSONObject()
+            extra_account_name_list.forEach<String> { name->
+                if (name!! != currentAccountName) {
+                    extraNameHash.put(name, true)
+                }
+            }
+            account_name_list.putAll(extraNameHash.keys().toJSONArray())
+        }
+
+        //  创建钱包
+        val full_wallet_bin = genFullWalletData(ctx, account_name_list, pub_pri_keys_hash.values(), pWalletPassword)
+
+        //  保存钱包信息
+        pAppCache.setWalletInfo(login_mode.value, current_full_account_data, currentAccountName, full_wallet_bin)
+        pAppCache.autoBackupWalletToWebdir(false)
+
+        //  导入成功 用交易密码 直接解锁。
+        val unlockInfos = unLock(pWalletPassword, ctx)
+        assert(unlockInfos.getBoolean("unlockSuccess") && unlockInfos.optBoolean("haveActivePermission"))
+
+        //  [统计]
+        btsppLogCustom("loginEvent", jsonObjectfromKVS("mode", login_mode.value, "desc", login_desc ?: "unknown"))
+
+        //  成功
+        return EImportToWalletStatus.eitws_ok
+    }
+
+    /**
      * (public) 锁定和解锁帐号
      */
     fun isLocked(): Boolean {
@@ -866,8 +932,16 @@ class WalletManager {
      * 创建完整钱包对象。
      * 直接返回二进制bin。
      */
-    fun genFullWalletData(ctx: Context, account_name: String, private_wif_keys: JSONArray, wallet_password: String): ByteArray? {
-        val full_wallet_object = genFullWalletObject(ctx, account_name, private_wif_keys, wallet_password)
+    fun genFullWalletData(ctx: Context, account_name_or_namelist: Any, private_wif_keys: JSONArray, wallet_password: String): ByteArray? {
+        var account_name_list: JSONArray? = null
+        if (account_name_or_namelist is String) {
+            account_name_list = jsonArrayfrom(account_name_or_namelist)
+        } else if (account_name_or_namelist is JSONArray) {
+            account_name_list = account_name_or_namelist
+        } else {
+            assert(false)
+        }
+        val full_wallet_object = genFullWalletObject(ctx, account_name_list!!, private_wif_keys, wallet_password)
         if (full_wallet_object == null) {
             return null
         }
@@ -883,7 +957,9 @@ class WalletManager {
     /**
      * (public) 创建完整钱包对象。
      */
-    fun genFullWalletObject(ctx: Context, account_name: String, private_wif_keys: JSONArray, wallet_password: String): JSONObject? {
+    fun genFullWalletObject(ctx: Context, account_name_list: JSONArray, private_wif_keys: JSONArray, wallet_password: String): JSONObject? {
+        assert(account_name_list.length() > 0)
+
         //  1、随机生成主密码
         val encryption_buffer32 = WalletManager.secureRandomByte32()
         //  2、主密码（用钱包密码加密）
@@ -927,13 +1003,15 @@ class WalletManager {
         }
         val created_time = genWalletTimeString(Utils.now_ts())
 
-        //  part02
-        var linked_account = JSONObject()
-        linked_account.put("chainId", ChainObjectManager.sharedChainObjectManager().grapheneChainID)
-        linked_account.put("name", account_name)
+        //  part2
+        val chain_id = ChainObjectManager.sharedChainObjectManager().grapheneChainID
+        val linked_account_list = JSONArray()
+        account_name_list.forEach<String> { name ->
+            linked_account_list.put(jsonObjectfromKVS("chainId", chain_id, "name", name!!))
+        }
 
         //  part3
-        var wallet = JSONObject()
+        val wallet = JSONObject()
         wallet.put("public_name", "default")
         wallet.put("created", created_time)
         wallet.put("last_modified", created_time)
@@ -950,8 +1028,8 @@ class WalletManager {
         wallet.put("author", "BTS++")
 
         //  返回最终对象
-        var final_object = JSONObject()
-        final_object.put("linked_accounts", jsonArrayfrom(linked_account))
+        val final_object = JSONObject()
+        final_object.put("linked_accounts", linked_account_list)
         final_object.put("private_keys", private_keys)
         final_object.put("wallet", jsonArrayfrom(wallet))
         return final_object

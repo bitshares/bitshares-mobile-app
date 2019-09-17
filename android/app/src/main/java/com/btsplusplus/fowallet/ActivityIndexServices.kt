@@ -101,10 +101,10 @@ class ActivityIndexServices : BtsppActivity() {
                         goTo(ActivityQrScan::class.java, true, request_code = 101)
                     }
                     EBtsppPermissionResult.SHOW_RATIONALE.value -> {
-                        showToast("获取摄像头权限失败：${it}")
+                        showToast(resources.getString(R.string.kVcScanPermissionUserRejected))
                     }
                     EBtsppPermissionResult.DONT_ASK_AGAIN.value -> {
-                        showToast("获取摄像头权限失败：${it}")
+                        showToast(resources.getString(R.string.kVcScanPermissionGotoSetting))
                     }
                 }
                 return@then null

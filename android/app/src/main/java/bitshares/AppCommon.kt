@@ -104,3 +104,22 @@ val kBigDecimalDefaultRoundingMode = BigDecimal.ROUND_HALF_UP
 
 //  startActivity传递参数时的ID
 const val BTSPP_START_ACTIVITY_PARAM_ID = "btspp_start_activity_param_id"
+
+/**
+ *  钱包中存在的私钥对指定权限状态枚举。
+ */
+enum class EAccountPermissionStatus(val value: Int) {
+    EAPS_NO_PERMISSION(0),      //  无任何权限
+    EAPS_PARTIAL_PERMISSION(1), //  有部分权限
+    EAPS_ENOUGH_PERMISSION(2),  //  有足够的权限
+    EAPS_FULL_PERMISSION(3)     //  有所有权限
+}
+
+/**
+ *  导入钱包结果
+ */
+enum class EImportToWalletStatus(val value: Int) {
+    eitws_ok(0),                    //  导入成功
+    eitws_no_permission(1),         //  无任何权限
+    eitws_partial_permission(2)     //  有部分权限
+}
