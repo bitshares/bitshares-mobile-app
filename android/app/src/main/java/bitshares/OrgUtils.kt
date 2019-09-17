@@ -677,6 +677,26 @@ class OrgUtils {
         }
 
         /**
+         *  (public) 解码商人协议发票数据。成功返回 json，失败返回 nil。
+         */
+        fun merchantInvoiceDecode(encoded_invoice: String?): JSONObject? {
+            if (encoded_invoice == null || encoded_invoice.isEmpty()) {
+                return null
+            }
+
+            val pInvoice = NativeInterface.sharedNativeInterface().bts_merchant_invoice_decode(encoded_invoice.utf8String())
+            if (pInvoice == null) {
+                return null
+            }
+
+            return try {
+                JSONObject(pInvoice.utf8String())
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+        /**
          * (public) 根据【失去】和【得到】的资产信息计算订单方向行为（买卖、价格、数量等）
          */
         fun calcOrderDirectionInfos(priority_hash_args: JSONObject?, pay_asset_info: JSONObject, receive_asset_info: JSONObject): JSONObject {

@@ -56,6 +56,7 @@
     <string name="kVcScanPermissionSystemLimit">システム上の理由により、アルバムにアクセスできませんでした。</string>
     <string name="kVcScanPermissionGotoSetting">設定インターフェイスに移動して、アプリがカメラにアクセスできるようにしてください。</string>
     <string name="kVcScanPermissionUserRejected">この機能は、カメラの許可がないとサポートされません。</string>
+    <string name="kVcScanAlbumClickedTips">QRコード画像を選択</string>
     <string name="kVcScanNaviTitleRightAlbum">アルバム</string>
     <string name="kVcScanAutoScanTips">ボックスにQRコードを入れます。</string>
     <string name="kVcScanProcessingResult">処理中...</string>
@@ -70,6 +71,7 @@
     <string name="kVcScanResultAccountBtnViewDetail">アカウントの詳細</string>
     <string name="kVcScanResultPayLabelAmount">金額</string>
     <string name="kVcScanResultPayLabelMemo">付注</string>
+    <string name="kVcScanResultPaySubmitTipsToIsMyself">受取人は支払人と同じです。</string>
     <string name="kVcScanResultPlaceholderInputPayAmount">支払い金額を入力してください</string>
     <string name="kVcScanResultPaySubmitTipsInputPayAmount">支払い金額を入力してください。</string>
     <string name="kVcScanResultPaySubmitTipsNotEnough">バランスが不十分です。</string>

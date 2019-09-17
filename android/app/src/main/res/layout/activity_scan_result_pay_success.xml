@@ -44,16 +44,17 @@
         <!-- 支付成功icon -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="34dp"
+            android:layout_height="64dp"
             android:layout_marginTop="15dp"
             android:gravity="center"
             android:orientation="horizontal">
-
+            <!-- TOOD:3.0图标 -->
             <ImageView
+                android:id="@+id/img_pay_success"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_checkbox_check"/>
+                android:src="@drawable/avatar"/>
         </LinearLayout>
 
         <!-- 支付成功Text -->
@@ -75,14 +76,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="35dp"
             android:orientation="vertical">
             <TextView
                 android:id="@+id/tv_pay_amount_from_scan_result_pay_success"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textSize="18dp"
+                android:textSize="32dp"
                 android:textColor="@color/theme01.textColorMain"
                 android:text="placeholder"/>
         </LinearLayout>
@@ -92,6 +93,7 @@
             android:id="@+id/layout_receiver_account_from_scan_result_pay_success"
             android:layout_width="match_parent"
             android:layout_height="34dp"
+            android:layout_marginTop="35dp"
             android:orientation="horizontal">
 
             <TextView
@@ -179,7 +181,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="35dp"
             android:orientation="vertical">
 
             <Button
