@@ -120,16 +120,6 @@ enum class EBitsharesWorkType(val value: Int) {
     ebwt_burn(2),
 }
 
-/**
- *  钱包中存在的私钥对指定权限状态枚举。
- */
-enum class EAccountPermissionStatus(val value: Int) {
-    EAPS_NO_PERMISSION(0),      //  无任何权限
-    EAPS_PARTIAL_PERMISSION(1), //  有部分权限
-    EAPS_ENOUGH_PERMISSION(2),  //  有足够的权限
-    EAPS_FULL_PERMISSION(3)     //  有所有权限
-}
-
 const val BTS_ADDRESS_PREFIX: String = "BTS"
 
 //  BTS公钥地址前缀长度 = strlen(BTS_ADDRESS_PREFIX)

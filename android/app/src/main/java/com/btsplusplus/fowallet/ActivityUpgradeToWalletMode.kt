@@ -6,6 +6,7 @@ import android.widget.TextView
 import bitshares.*
 import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_upgrade_to_wallet_mode.*
+import org.json.JSONObject
 
 class ActivityUpgradeToWalletMode : BtsppActivity() {
 
@@ -73,24 +74,20 @@ class ActivityUpgradeToWalletMode : BtsppActivity() {
         }
 
         //  2、验证通过，开始创建钱包文件。
-        val active_seed = "${accountName}active${password}"
+        val active_seed = "${accountName}active$password"
         val active_private_wif = OrgUtils.genBtsWifPrivateKey(active_seed.utf8String())
-        val owner_seed = "${accountName}owner${password}"
+        val owner_seed = "${accountName}owner$password"
         val owner_private_wif = OrgUtils.genBtsWifPrivateKey(owner_seed.utf8String())
-        val full_wallet_bin = walletMgr.genFullWalletData(this, accountName, jsonArrayfrom(active_private_wif, owner_private_wif), wallet_password)!!
+        val pub_key_owner = OrgUtils.genBtsAddressFromWifPrivateKey(owner_private_wif)
+        val pub_key_active = OrgUtils.genBtsAddressFromWifPrivateKey(active_private_wif)
 
-        //  3、保存钱包信息
-        AppCacheManager.sharedAppCacheManager().apply {
-            setWalletInfo(AppCacheManager.EWalletMode.kwmPasswordWithWallet.value, full_account_data, accountName, full_wallet_bin)
-            autoBackupWalletToWebdir(false)
-        }
-
-        //  4、导入成功 用钱包密码 直接解锁。
-        val unlockInfos = walletMgr.unLock(wallet_password, this)
-        assert(unlockInfos.getBoolean("unlockSuccess") && unlockInfos.optBoolean("haveActivePermission"))
-
-        //  [统计]
-        btsppLogCustom("convertEvent", jsonObjectfromKVS("desc", "password+wallet", "account", accountName))
+        //  3、创建钱包
+        val status = walletMgr.createNewWallet(this, full_account_data, JSONObject().apply {
+            put(pub_key_owner, owner_private_wif)
+            put(pub_key_active, active_private_wif)
+        }, false, null, wallet_password,
+                AppCacheManager.EWalletMode.kwmPasswordWithWallet, "upgrade password+wallet")
+        assert(status == EImportToWalletStatus.eitws_ok)
 
         //  转换成功 - 关闭界面
 

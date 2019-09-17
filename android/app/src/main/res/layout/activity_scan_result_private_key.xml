@@ -148,15 +148,12 @@
                 android:layout_weight="9"
                 android:textColor="@color/theme01.buyColor"
                 android:text="placeholder"/>
-
-
         </LinearLayout>
         <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-
-
-        <!-- 钱包密码 -->
+        <!-- 钱包密码（可选） -->
         <LinearLayout
+            android:id="@+id/lay_wallet_password"
             android:layout_width="match_parent"
             android:layout_marginTop="40dp"
             android:layout_height="40dp">
@@ -199,6 +196,7 @@
 
         </LinearLayout>
 
+        <!-- 立即导入 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
