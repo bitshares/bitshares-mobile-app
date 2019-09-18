@@ -61,6 +61,11 @@
 "kServicesCellLabelAdvFunction" = "高级功能";
 
 /* 扫一扫相关字符串 */
+"kVcScanPermissionNoCamera" = "未检测到您的摄像头。";
+"kVcScanPermissionSystemLimit" = "因为系统原因, 无法访问相册。";
+"kVcScanPermissionGotoSetting" = "请前往设置界面配置，允许APP访问相机。";
+"kVcScanPermissionUserRejected" = "没有相机权限，不支持该功能。";
+"kVcScanAlbumClickedTips" = "选择二维码图片";
 "kVcScanNaviTitleRightAlbum" = "相册";
 "kVcScanAutoScanTips" = "将二维码放入框内, 即可自动扫描。";
 "kVcScanProcessingResult" = "正在处理...";
@@ -75,6 +80,7 @@
 "kVcScanResultAccountBtnViewDetail" = "查看详情";
 "kVcScanResultPayLabelAmount" = "金额";
 "kVcScanResultPayLabelMemo" = "备注";
+"kVcScanResultPaySubmitTipsToIsMyself" = "收款方和支付账号相同。";
 "kVcScanResultPlaceholderInputPayAmount" = "请输入付款金额";
 "kVcScanResultPaySubmitTipsInputPayAmount" = "请输入付款金额。";
 "kVcScanResultPaySubmitTipsNotEnough" = "余额不足。";

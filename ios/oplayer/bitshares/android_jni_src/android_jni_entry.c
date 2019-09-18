@@ -634,6 +634,39 @@ java_jni_entry_bts_pubkey_tweak_add(JNIEnv* env, jobject self,
 }
 
 /**
+ *  解码商人协议发票数据。
+ */
+JNIEXPORT jbyteArray
+java_jni_entry_bts_merchant_invoice_decode(JNIEnv* env, jobject self,
+    jbyteArray b58str)
+{
+    //  检查参数
+    if (!b58str){
+        return NULL;
+    }
+
+    //  获取数据
+    jbyte* b58str_ptr = (*env)->GetByteArrayElements(env, b58str, 0);
+    jsize b58str_size = (*env)->GetArrayLength(env, b58str);
+
+    size_t output_size = 0;
+    unsigned char* pInvoice = __bts_merchant_invoice_decode((const unsigned char*)b58str_ptr, (const size_t)b58str_size, &output_size);
+
+    //  释放参数数据
+    (*env)->ReleaseByteArrayElements(env, b58str, b58str_ptr, JNI_ABORT);
+
+    //  返回
+    if (!pInvoice || output_size == 0) {
+        return NULL;
+    }
+
+    jbyteArray retv = (*env)->NewByteArray(env, output_size);
+    (*env)->SetByteArrayRegion(env, retv, 0, output_size, (const jbyte*)pInvoice);
+
+    return retv;
+}
+
+/**
  *  保存：序列化钱包对象JSON字符串为二进制流。
  *  entropy     - 外部生成随机字符串的熵（根据系统也许不同，比如各种时间戳、随机数、系统信息、securerandom等）
  *
@@ -844,6 +877,10 @@ java_jni_entry_bts_pubkey_tweak_add(JNIEnv* env, jobject self,
     jbyteArray pubkey, jbyteArray tweak);
 
 JNIEXPORT jbyteArray
+java_jni_entry_bts_merchant_invoice_decode(JNIEnv* env, jobject self,
+    jbyteArray b58str);
+
+JNIEXPORT jbyteArray
 java_jni_entry_bts_save_wallet(JNIEnv* env, jobject self,
     jbyteArray wallet_jsonbin, jbyteArray password, jbyteArray entropy);
 
@@ -874,6 +911,7 @@ static JNINativeMethod jni_methods_table[] =
     {"bts_gen_public_key_from_b58address",      "([B[B)[B",                 (void*)java_jni_entry_bts_gen_public_key_from_b58address},
     {"bts_privkey_tweak_add",                   "([B[B)[B",                 (void*)java_jni_entry_bts_privkey_tweak_add},
     {"bts_pubkey_tweak_add",                    "([B[B)[B",                 (void*)java_jni_entry_bts_pubkey_tweak_add},
+    {"bts_merchant_invoice_decode",             "([B)[B",                   (void*)java_jni_entry_bts_merchant_invoice_decode},
     {"bts_save_wallet",                         "([B[B[B)[B",               (void*)java_jni_entry_bts_save_wallet},
     {"bts_load_wallet",                         "([B[B)[B",                 (void*)java_jni_entry_bts_load_wallet},
     {"bts_sign_buffer",                         "([B[B)[B",                 (void*)java_jni_entry_bts_sign_buffer},

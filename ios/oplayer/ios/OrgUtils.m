@@ -129,7 +129,6 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
  */
 + (WsPromise*)authorizationForCamera
 {
-    //  TODO：fowallet 多语言
     WsPromise* promise = [WsPromise promise:^(WsResolveHandler resolve, WsRejectHandler reject) {
         AVCaptureDevice* device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
         if (device) {
@@ -140,7 +139,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
                         if (granted) {
                             resolve(@"ok01");
                         } else {
-                            reject(@"拒绝访问相机。");
+                            reject(NSLocalizedString(@"kVcScanPermissionUserRejected", @"拒绝访问相机。"));
                         }
                     }];
                     break;
@@ -150,18 +149,18 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
                     break;
                 }
                 case AVAuthorizationStatusDenied: {
-                    reject(@"请去前往【设置>隐私>相机>BTS++】打开访问开关。");
+                    reject(NSLocalizedString(@"kVcScanPermissionGotoSetting", @"请去前往【设置>隐私>相机>BTS++】打开访问开关。"));
                     break;
                 }
                 case AVAuthorizationStatusRestricted: {
-                    reject(@"因为系统原因, 无法访问相册。");
+                    reject(NSLocalizedString(@"kVcScanPermissionSystemLimit", @"因为系统原因, 无法访问相册。"));
                     break;
                 }
                 default:
                     break;
             }
         }else{
-            reject(@"未检测到您的摄像头。");
+            reject(NSLocalizedString(@"kVcScanPermissionNoCamera", @"未检测到您的摄像头。"));
         }
     }];
     return promise;

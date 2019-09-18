@@ -87,6 +87,19 @@
     return [output copy];
 }
 
+/**
+ *  URL 编码/解码
+ */
+- (NSString*)url_encode
+{
+    return (__bridge NSString*)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)self, nil, nil, kCFStringEncodingUTF8);
+}
+
+- (NSString*)url_decode
+{
+    return (__bridge NSString*)CFURLCreateStringByReplacingPercentEscapes(kCFAllocatorDefault, (CFStringRef)self, CFSTR(""));
+}
+
 @end
 
 /**

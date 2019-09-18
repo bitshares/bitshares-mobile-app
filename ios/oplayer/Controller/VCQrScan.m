@@ -163,6 +163,10 @@
     NSString* asset_name = [ary safeObjectAtIndex:1];
     NSString* asset_amount = [ary safeObjectAtIndex:2];
     NSString* memo = [ary safeObjectAtIndex:3];
+    //  REMARK：memo采用urlencode编号，需要解码，非asc字符会出错。
+    if (memo && ![memo isEqualToString:@""]) {
+        memo = [memo url_decode];
+    }
     
     [[self _queryInvoiceDependencyData:asset_name
                                     to:account_id] then:(^id(id data_array) {

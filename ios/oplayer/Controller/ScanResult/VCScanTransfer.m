@@ -339,6 +339,12 @@ enum
     id from_account = [full_account_data objectForKey:@"account"];
     assert(from_account);
     
+    //  收款方不能为自己。
+    if ([[from_account objectForKey:@"id"] isEqualToString:[_to_account objectForKey:@"id"]]){
+        [OrgUtils makeToast:NSLocalizedString(@"kVcScanResultPaySubmitTipsToIsMyself", @"收款方和支付账号相同。")];
+        return NO;
+    }
+    
     //  1、检测付款金额参数是否正确、账户余额是否足够。
     id str_amount = _tf_amount ? _tf_amount.text : _default_amount;
     if (!str_amount || [str_amount isEqualToString:@""]){
