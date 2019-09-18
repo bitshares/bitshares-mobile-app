@@ -489,7 +489,7 @@ class ActivityDepositAndWithdraw : BtsppActivity() {
             }
             val deposit_item = it as JSONObject
             //  create qrcode
-            Utils.asyncCreateQRBitmap(ctx, deposit_item.optString("inputAddress"), 150.dp).then { btm ->
+            Utils.asyncCreateQRBitmap(deposit_item.optString("inputAddress"), 150.dp).then { btm ->
                 mask.dismiss()
                 //  转到充币界面
                 goTo(ActivityGatewayDeposit::class.java, true, args = JSONObject().apply {

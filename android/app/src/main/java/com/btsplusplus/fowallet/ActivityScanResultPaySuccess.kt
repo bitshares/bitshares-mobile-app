@@ -1,8 +1,6 @@
 package com.btsplusplus.fowallet
 
 import android.os.Bundle
-import bitshares.OrgUtils
-import bitshares.Utils
 import kotlinx.android.synthetic.main.activity_scan_result_pay_success.*
 
 class ActivityScanResultPaySuccess : BtsppActivity() {

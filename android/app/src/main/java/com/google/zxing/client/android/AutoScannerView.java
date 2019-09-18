@@ -81,7 +81,7 @@ public class AutoScannerView extends View {
         canvas.drawRect(frame.right + 1, frame.top, width, frame.bottom + 1, maskPaint);
         canvas.drawRect(0, frame.bottom + 1, width, height, maskPaint);
 
-        String text = "将二维码放入框内，即可自动扫描";
+        String text = getResources().getString(R.string.kVcScanAutoScanTips);
         canvas.drawText(text, (width - textPaint.measureText(text)) / 2, frame.bottom + textMarinTop, textPaint);
 
         // 四个角落的三角

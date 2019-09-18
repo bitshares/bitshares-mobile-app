@@ -48,13 +48,12 @@
             android:layout_marginTop="15dp"
             android:gravity="center"
             android:orientation="horizontal">
-            <!-- TOOD:3.0图标 -->
             <ImageView
                 android:id="@+id/img_pay_success"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/avatar"/>
+                android:src="@drawable/paysuccess"/>
         </LinearLayout>
 
         <!-- 支付成功Text -->
