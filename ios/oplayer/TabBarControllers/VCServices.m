@@ -65,15 +65,17 @@ enum
     
     //  初始化数据
     _dataArray = [[[NSMutableArray array] ruby_apply:(^(id ary) {
-        //    //  TODO:fowallet 多语言
-        //    NSArray* pSection1 = [NSArray arrayWithObjects:
-        //                          @"扫一扫",
-        //                          nil];
-        
-        NSArray* pSection2 = [NSArray arrayWithObjects:
+        NSArray* pSection1 = [NSArray arrayWithObjects:
                               @[@(kVcSubTransfer),          @"kServicesCellLabelTransfer"],         //  转账
                               @[@(kVcSubVote),              @"kServicesCellLabelVoting"],           //  投票
                               nil];
+        if ([pSection1 count] > 0) {
+            [ary addObject:pSection1];
+        }
+        
+        NSArray* pSection2 = @[
+                               @[@(kVcSubQrScan), @"kServicesCellLabelQrScan"]                      //  扫一扫
+                               ];
         if ([pSection2 count] > 0) {
             [ary addObject:pSection2];
         }
@@ -234,9 +236,8 @@ enum
             case kVcSubQrScan:      //  扫一扫
             {
                 [[[OrgUtils authorizationForCamera] then:(^id(id data) {
-                    //  TODO:fowallet 多语言
                     VCQrScan* vc = [[VCQrScan alloc] init];
-                    vc.title = @"扫一扫";
+                    vc.title = NSLocalizedString(@"kVcTitleQrScan", @"扫一扫");
                     [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
                     return nil;
                 })] catch:(^id(id error) {

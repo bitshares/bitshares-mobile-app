@@ -61,6 +61,11 @@
 "kServicesCellLabelAdvFunction" = "Advanced Features";
 
 /* 扫一扫相关字符串 */
+"kVcScanPermissionNoCamera" = "Your camera is not detected.";
+"kVcScanPermissionSystemLimit" = "The album could not be accessed for system reasons.";
+"kVcScanPermissionGotoSetting" = "Please go to the settings interface to allow the app to access the camera.";
+"kVcScanPermissionUserRejected" = "This feature is not supported without camera permissions.";
+"kVcScanAlbumClickedTips" = "Select QR code image";
 "kVcScanNaviTitleRightAlbum" = "Album";
 "kVcScanAutoScanTips" = "Put the QR code inside the border.";
 "kVcScanProcessingResult" = "Processing…";
@@ -75,6 +80,7 @@
 "kVcScanResultAccountBtnViewDetail" = "Account details";
 "kVcScanResultPayLabelAmount" = "Amount";
 "kVcScanResultPayLabelMemo" = "Memo";
+"kVcScanResultPaySubmitTipsToIsMyself" = "The payee is the same as the payment account.";
 "kVcScanResultPlaceholderInputPayAmount" = "Please enter the payment amount";
 "kVcScanResultPaySubmitTipsInputPayAmount" = "Please enter the payment amount.";
 "kVcScanResultPaySubmitTipsNotEnough" = "Insufficient balance.";

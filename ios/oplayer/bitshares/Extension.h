@@ -28,6 +28,13 @@
 
 @interface NSString (Format)
 
+/**
+ *  URL 编码/解码
+ */
+- (NSString*)url_encode;
+
+- (NSString*)url_decode;
+
 @end
 
 typedef id (^RubyFilterMapFunction)(id src);

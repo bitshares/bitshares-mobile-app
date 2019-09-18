@@ -1538,7 +1538,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
 - (WsPromise*)queryAccountData:(NSString*)account_name_or_id
 {
     GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
-    return [[[api exec:@"get_accounts" params:@[@[account_name_or_id]]] then:(^id(id data_array) {
+    return [[[api exec:@"get_accounts" params:@[@[[account_name_or_id lowercaseString]]]] then:(^id(id data_array) {
         if (!data_array || [data_array isKindOfClass:[NSNull class]]) {
             return nil;
         }

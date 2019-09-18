@@ -61,6 +61,11 @@
 "kServicesCellLabelAdvFunction" = "高度な機能";
 
 /* 扫一扫相关字符串 */
+"kVcScanPermissionNoCamera" = "カメラが検出されません。";
+"kVcScanPermissionSystemLimit" = "システム上の理由により、アルバムにアクセスできませんでした。";
+"kVcScanPermissionGotoSetting" = "設定インターフェイスに移動して、アプリがカメラにアクセスできるようにしてください。";
+"kVcScanPermissionUserRejected" = "この機能は、カメラの許可がないとサポートされません。";
+"kVcScanAlbumClickedTips" = "QRコード画像を選択";
 "kVcScanNaviTitleRightAlbum" = "アルバム";
 "kVcScanAutoScanTips" = "ボックスにQRコードを入れます。";
 "kVcScanProcessingResult" = "処理中...";
@@ -75,6 +80,7 @@
 "kVcScanResultAccountBtnViewDetail" = "アカウントの詳細";
 "kVcScanResultPayLabelAmount" = "金額";
 "kVcScanResultPayLabelMemo" = "付注";
+"kVcScanResultPaySubmitTipsToIsMyself" = "受取人は支払人と同じです。";
 "kVcScanResultPlaceholderInputPayAmount" = "支払い金額を入力してください";
 "kVcScanResultPaySubmitTipsInputPayAmount" = "支払い金額を入力してください。";
 "kVcScanResultPaySubmitTipsNotEnough" = "バランスが不十分です。";
