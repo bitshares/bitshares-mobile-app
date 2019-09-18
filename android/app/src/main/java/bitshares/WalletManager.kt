@@ -345,7 +345,7 @@ class WalletManager {
         account_name_list.put(currentAccountName)
         if (extra_account_name_list != null && extra_account_name_list.length() > 0) {
             val extraNameHash = JSONObject()
-            extra_account_name_list.forEach<String> { name->
+            extra_account_name_list.forEach<String> { name ->
                 if (name!! != currentAccountName) {
                     extraNameHash.put(name, true)
                 }
@@ -365,7 +365,8 @@ class WalletManager {
         assert(unlockInfos.getBoolean("unlockSuccess") && unlockInfos.optBoolean("haveActivePermission"))
 
         //  [统计]
-        btsppLogCustom("loginEvent", jsonObjectfromKVS("mode", login_mode.value, "desc", login_desc ?: "unknown"))
+        btsppLogCustom("loginEvent", jsonObjectfromKVS("mode", login_mode.value, "desc", login_desc
+                ?: "unknown"))
 
         //  成功
         return EImportToWalletStatus.eitws_ok

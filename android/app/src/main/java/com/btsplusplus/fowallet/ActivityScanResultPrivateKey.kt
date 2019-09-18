@@ -63,7 +63,7 @@ class ActivityScanResultPrivateKey : BtsppActivity() {
         findViewById<TextView>(R.id.txt_account_id).text = account_data.getString("id")
         findViewById<TextView>(R.id.txt_account_name).text = account_data.getString("name")
         findViewById<TextView>(R.id.txt_private_key_type).let {
-            it.text = priKeyTypeArray.join(" ")
+            it.text = priKeyTypeArray.toList<String>().joinToString(" ")
         }
 
         //  初始化钱包密码（可选）

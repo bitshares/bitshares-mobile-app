@@ -1,13 +1,10 @@
 package bitshares
 
-import android.app.Activity
 import android.content.Context
-import android.os.Build
 import android.os.Looper
 import com.btsplusplus.fowallet.BuildConfig
 import com.btsplusplus.fowallet.NativeInterface
 import com.btsplusplus.fowallet.R
-import com.btsplusplus.fowallet.showToast
 import com.btsplusplus.fowallet.utils.BigDecimalHandler
 import com.crashlytics.android.Crashlytics
 import com.fowallet.walletcore.bts.ChainObjectManager

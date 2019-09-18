@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import bitshares.Promise
-import bitshares.jsonArrayfrom
 import bitshares.jsonObjectfromKVS
 import bitshares.xmlstring
 import com.fowallet.walletcore.bts.ChainObjectManager

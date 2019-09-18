@@ -3,7 +3,6 @@ package com.btsplusplus.fowallet
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
-import android.widget.LinearLayout
 import bitshares.*
 import com.fowallet.walletcore.bts.BitsharesClientManager
 import com.fowallet.walletcore.bts.ChainObjectManager
@@ -300,7 +299,7 @@ class ActivityScanResultTransfer : BtsppActivity() {
         return true
     }
 
-    private fun _processTransferCore(transfer_asset: JSONObject, transfer_n_amount:BigDecimal, op_data:JSONObject, full_account_data: JSONObject) {
+    private fun _processTransferCore(transfer_asset: JSONObject, transfer_n_amount: BigDecimal, op_data: JSONObject, full_account_data: JSONObject) {
         //  请求网络广播
         val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this), this)
         mask.show()
