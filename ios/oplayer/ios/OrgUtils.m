@@ -2589,6 +2589,18 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 }
 
 /**
+ * 异步等待，单位毫秒。
+ */
++ (WsPromise*)asyncWait:(NSInteger)ms
+{
+    return [WsPromise promise:^(WsResolveHandler resolve, WsRejectHandler reject) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(ms / 1000.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            resolve(@YES);
+        });
+    }];
+}
+
+/**
  * 通过水龙头注册账号，成功 resolve null，失败 resolve 错误信息。不会 reject。
  */
 + (WsPromise*)asyncCreateAccountFromFaucet:(NSString*)name

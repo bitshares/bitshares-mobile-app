@@ -253,7 +253,7 @@ enum
             }
             
             //  3、注册成功（查询full_account_data）
-            [[[chainMgr queryFullAccountInfo:username] then:(^id(id new_full_account_data) {
+            [[[chainMgr queryFullAccountInfo:username retry_num:3] then:(^id(id new_full_account_data) {
                 [_owner hideBlockView];
                 if (!new_full_account_data || [new_full_account_data isKindOfClass:[NSNull class]])
                 {
