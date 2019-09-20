@@ -92,7 +92,8 @@ class ChainObjectManager {
         if (_defaultMarketInfos != null) {
             return
         }
-        _defaultMarketInfos = Utils.readJsonToMap(ctx, "fowallet_config.json")
+
+        _defaultMarketInfos = Utils.readJsonToMap(ctx, com.btsplusplus.fowallet.BuildConfig.kAppConfigFile)
         assert(_defaultMarketInfos != null)
 
         // 获取 markets
@@ -1390,17 +1391,31 @@ class ChainObjectManager {
     }
 
     /**
-     *  (public) 查询指定帐号的完整信息
+     * (public) 查询指定帐号的完整信息
      */
     fun queryFullAccountInfo(account_name_or_id: String): Promise {
-        val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
+        return queryFullAccountInfoWithRetry(account_name_or_id, retry_num = 1)
+    }
 
-        return conn.async_exec_db("get_full_accounts", jsonArrayfrom(jsonArrayfrom(account_name_or_id), false)).then { data: Any? ->
-            val data = data as JSONArray?
+    /**
+     * (public) 查询完整账号信息，带重试。REMARK：刚注册成功的账号可能查询失败，网络尚未同步完毕。
+     */
+    fun queryFullAccountInfoWithRetry(account_name_or_id: String, retry_num: Int): Promise {
+        val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
+        return conn.async_exec_db("get_full_accounts", jsonArrayfrom(jsonArrayfrom(account_name_or_id), false)).then {
+            val data = it as? JSONArray
+            //  查询失败的情况下
             if (data == null || data.length() <= 0) {
-                return@then null
+                if (retry_num > 1) {
+                    //  等待一会 & 重试
+                    return@then OrgUtils.asyncWait(2000).then {
+                        return@then queryFullAccountInfoWithRetry(account_name_or_id, retry_num - 1)
+                    }
+                } else {
+                    //  失败
+                    return@then null
+                }
             }
-            val _data = data
             //  获取帐号信息
             val full_account_data = data.getJSONArray(0).getJSONObject(1)
             //  [缓存] 添加到缓存
