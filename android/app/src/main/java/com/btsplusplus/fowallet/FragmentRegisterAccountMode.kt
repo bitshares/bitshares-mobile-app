@@ -90,7 +90,7 @@ class FragmentRegisterAccountMode : Fragment() {
                 }
 
                 //  3、注册成功（查询full_account_data）
-                chainMgr.queryFullAccountInfo(username).then {
+                chainMgr.queryFullAccountInfoWithRetry(username, retry_num = 3).then {
                     mask.dismiss()
                     val new_full_account_data = it as? JSONObject
                     if (new_full_account_data == null) {

@@ -16,8 +16,8 @@ android {
         applicationId "org.bitshares.app"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 201908151
-        versionName "2.6"
+        versionCode 201909201
+        versionName "2.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -35,6 +35,7 @@ android {
         buildConfigField "boolean", "kAppCheckUpdate", "true"
 
         buildConfigField "String", "kAppCommunityFaucetAddress", "\"\""
+        buildConfigField "String", "kAppConfigFile", "\"fowallet_config.json\""
 
         //  不区分维度
         flavorDimensions "default"
@@ -44,8 +45,10 @@ android {
             //  0:iOS企业版 1:AppStore版 10:btspp 20:community(bbf) 100:baichenglian
             buildConfigField "int", "kAppChannelID", "10"
             buildConfigField "boolean", "kUseCommunityFaucet", "false"
+            buildConfigField "String", "kAppConfigFile", "\"fowallet_config_btspp.json\""
         }
-        community_bbf {
+        //  for community_bbf
+        bitshares {
             buildConfigField "int", "kAppChannelID", "20"
             buildConfigField "boolean", "kUseCommunityFaucet", "true"
             buildConfigField "String", "kAppCommunityFaucetAddress", "\"https://faucet.bitshares.eu/onboarding/api/v1/accounts\""
