@@ -353,6 +353,10 @@ typedef void (^YklUserCallback)(id data);
 +(WsPromise*)asyncPostUrl:(NSString*)pURL args:(NSDictionary*)kvhash;
 +(WsPromise*)asyncPostUrl_jsonBody:(NSString*)pURL args:(NSDictionary*)json;
 /**
+ * 异步等待，单位毫秒。
+ */
++ (WsPromise*)asyncWait:(NSInteger)ms;
+/**
  * 通过水龙头注册账号，成功 resolve null，失败 resolve 错误信息。不会 reject。
  */
 + (WsPromise*)asyncCreateAccountFromFaucet:(NSString*)name

@@ -259,7 +259,7 @@ enum
                                                                        private_wif_keys:@[private_active, private_owner]
                                                                         wallet_password:password];
             //  查询完整帐号信息
-            [[[chainMgr queryFullAccountInfo:username] then:(^id(id new_full_account_data) {
+            [[[chainMgr queryFullAccountInfo:username retry_num:3] then:(^id(id new_full_account_data) {
                 [_owner hideBlockView];
                 if (!new_full_account_data || [new_full_account_data isKindOfClass:[NSNull class]])
                 {
