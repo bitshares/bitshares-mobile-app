@@ -24,7 +24,7 @@ git clone https://github.com/bitcoin-core/secp256k1.git $SOURCE_DIR_ANDROID && c
 OUTPUT_DIR="btspp_output"
 
 #   2.2、配置：需要编译的架构。 / configuration: The archs that needs to be compiled.
-ARCHS="arm64 armv7 x86"
+ARCHS="arm64 armv7 x86 x86_64"
 
 # 2.3、配置：NDK所在路径 / configuration: NDK path
 NDKROOT=$ANDROID_NDK_ROOT
@@ -44,62 +44,73 @@ do
   mkdir -p $BUILD_TMPDIR
   cd $BUILD_TMPDIR
 
-  if test "$CURR_ARCH" = "armv7"
-  then
-    # 可用值：/ Available options:
-    # arm
-    # arm64
-    # mips64
-    # mips
-    # x86
-    # x86_64
-    MYARCH=arm
-    MYHOST=arm-linux-androideabi #  fetch value: gcc -v 2>&1 | grep ^Targ
-    # 可选值：/ Available options:
-    # arm-linux-androideabi
-    # aarch64-linux-android
-    # mips64el-linux-android
-    # mipsel-linux-android
-    # x86
-    # x86_64
-    PREBUILD_PREFIX=arm-linux-androideabi
-    # 可选值：/ Available options:
-    # arm-linux-androideabi
-    # aarch64-linux-android
-    # mips64el-linux-android
-    # mipsel-linux-android
-    # i686-linux-android
-    # x86_64-linux-android
-    BIN_PREFIX=arm-linux-androideabi
-    # 可选值：/ Available options:
-    # -marm
-    # -m32
-    # -m64
-    # -mx32
-    GCC_MARGS="-marm"
-    # 可选值：/ Available options:
-    # arm64-v8a
-    # armeabi-v7a
-    # x86
-    INSTALL_ARCH_DIR="armeabi-v7a"
-  else
-    if test "$CURR_ARCH" = "arm64"
-    then
+  case $CURR_ARCH in
+    armv7)
+      # 可用值：/ Available options:
+      # arm
+      # arm64
+      # mips64
+      # mips
+      # x86
+      # x86_64
+      MYARCH=arm
+      MYHOST=arm-linux-androideabi #  fetch value: gcc -v 2>&1 | grep ^Targ
+      # 可选值：/ Available options:
+      # arm-linux-androideabi
+      # aarch64-linux-android
+      # mips64el-linux-android
+      # mipsel-linux-android
+      # x86
+      # x86_64
+      PREBUILD_PREFIX=arm-linux-androideabi
+      # 可选值：/ Available options:
+      # arm-linux-androideabi
+      # aarch64-linux-android
+      # mips64el-linux-android
+      # mipsel-linux-android
+      # i686-linux-android
+      # x86_64-linux-android
+      BIN_PREFIX=arm-linux-androideabi
+      # 可选值：/ Available options:
+      # -marm
+      # -m32
+      # -m64
+      # -mx32
+      GCC_MARGS="-marm"
+      # 可选值：/ Available options:
+      # arm64-v8a
+      # armeabi-v7a
+      # x86
+      INSTALL_ARCH_DIR="armeabi-v7a"
+      ;;
+    arm64)
       MYARCH=arm64
       MYHOST=aarch64-linux-android
       PREBUILD_PREFIX=aarch64-linux-android
       BIN_PREFIX=aarch64-linux-android
       GCC_MARGS="" # -m64 error??
       INSTALL_ARCH_DIR="arm64-v8a"
-    else
+      ;;
+    x86)
       MYARCH=x86
       MYHOST=i686-linux-android
       PREBUILD_PREFIX=x86
       BIN_PREFIX=i686-linux-android
       GCC_MARGS="-m32"
       INSTALL_ARCH_DIR="x86"
-    fi
-  fi
+      ;;
+    x86_64)
+      MYARCH=x86_64
+      MYHOST=x86_64-linux-android
+      PREBUILD_PREFIX=x86_64
+      BIN_PREFIX=x86_64-linux-android
+      GCC_MARGS="-m64"
+      INSTALL_ARCH_DIR="x86_64"
+      ;;
+    *)
+      echo 'error'
+      ;;
+  esac
 
   SYSROOT=$NDKROOT/platforms/android-21/arch-$MYARCH/usr/
   PREBUILT=$NDKROOT/toolchains/$PREBUILD_PREFIX-4.9/prebuilt/darwin-x86_64
