@@ -192,6 +192,16 @@
 "kAccountUpgradeMemberSubmitTxOK" = "一生会員は正常にアップグレードされました。 ただし、更新インターフェイスが失敗しました。しばらくしてからもう一度お試しください。";
 "kAccountUpgradeMemberCostAsk" = "一生会員をアップグレードするには %@ かかります。続行しますか？";
 
+/* 权限相关 */
+"kVcPermissionEditTitleName" = "アカウント / キー";
+"kVcPermissionEditTitleWeight" = "ウェイト";
+"kVcPermissionEditTitleAction" = "操作";
+"kVcPermissionEditBtnRemove" = "削除";
+"kVcPermissionEditBtnAddOne" = "添加";
+"kVcPermissionEditBtnSubmit" = "変更の確定";
+"kVcPermissionEditCellType" = "タイプ";
+"kVcPermissionEditCellThreshold" = "しきい値";
+
 /* 登录&注册&备份 */
 "kLoginPageModePassword" = "アカウントモード";
 "kLoginPageModeBrainKey" = "ブレインキー";
@@ -836,7 +846,7 @@
 "kOpDetailPermissionMemo" = "付注権限";
 "kOpDetailSubTitleVoteTargeter" = "投票対象";
 "kOpDetailSubTitleOperate" = "タイプ";
-"kOpDetailSubTitleNewWeightOrThreshold" = "新しいしきい値/重量";
+"kOpDetailSubTitleNewWeightOrThreshold" = "新しいしきい値/ウェイト";
 "kOpDetailSubTitleChangeValue" = "変化量";
 "kOpDetailSubOpAdd" = "追加する";
 "kOpDetailSubOpDelete" = "削除する";

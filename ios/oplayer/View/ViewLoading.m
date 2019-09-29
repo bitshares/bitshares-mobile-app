@@ -73,7 +73,7 @@
     self.frame = self.superview.bounds;
     
     CGSize size = self.bounds.size;
-    size = [_lbText.text sizeWithFont:_lbText.font constrainedToSize:size lineBreakMode:UILineBreakModeWordWrap];
+    size = [_lbText.text sizeWithFont:_lbText.font constrainedToSize:size lineBreakMode:NSLineBreakByWordWrapping];
     CGFloat xoffset = (self.bounds.size.width - size.width - 32) / 2.0f;
     _activityView.frame = CGRectMake(xoffset, 0, 32, self.bounds.size.height);
 //    _activityView.center = CGPointMake(xoffset + 16, self.bounds.size.height / 2.0f);

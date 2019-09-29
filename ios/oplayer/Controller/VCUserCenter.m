@@ -8,6 +8,7 @@
 
 #import "VCUserCenter.h"
 #import "VCMemberShip.h"
+#import "VCPermissionList.h"
 #import "WalletManager.h"
 #import "VCBackupWallet.h"
 
@@ -54,7 +55,9 @@ enum
 - (NSArray*)getTitleStringArray
 {
     return @[NSLocalizedString(@"kAccountPageBasicInfo", @"基本信息"),
-             NSLocalizedString(@"kAccountPageMemberInfo", @"会员信息")];
+             NSLocalizedString(@"kAccountPageMemberInfo", @"会员信息"),
+             @"权限信息"//TODO:2.8多语言
+             ];
 }
 
 - (NSArray*)getSubPageVCArray
@@ -62,7 +65,8 @@ enum
     
     id vc01 = [[VCUserCenter alloc] initWithOwner:self];
     id vc02 = [[VCMemberShip alloc] initWithOwner:self];
-    return @[vc01, vc02];
+    id vc03 = [[VCPermissionList alloc] initWithOwner:self];
+    return @[vc01, vc02, vc03];
 }
 
 - (void)onPageChanged:(NSInteger)tag
@@ -74,14 +78,16 @@ enum
         return;
     }
     
-    //  TODO:
-//    //  query
-//    if (_subvcArrays){
-//        id vc = [_subvcArrays safeObjectAtIndex:tag - 1];
-//        if (vc && [vc isKindOfClass:[VCUserCenter class]]){
-//
-//        }
-//    }
+    //  query
+    if (_subvcArrays){
+        id vc = [_subvcArrays safeObjectAtIndex:tag - 1];
+        if (vc){
+            if ([vc isKindOfClass:[VCPermissionList class]]){
+                VCPermissionList* vc_permission_list = (VCPermissionList*)vc;
+                [vc_permission_list queryDependencyAccountName];
+            }
+        }
+    }
 }
 
 @end
@@ -155,7 +161,7 @@ enum
 	// Do any additional setup after loading the view.
     _sectionTypeArray = [[NSMutableArray alloc] init];
     
-    _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];
+    _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutNaviAndPageBar] style:UITableViewStyleGrouped];
     _mainTableView.delegate = self;
     _mainTableView.dataSource = self;
     _mainTableView.backgroundColor = [UIColor clearColor];

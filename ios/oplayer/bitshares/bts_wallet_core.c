@@ -597,13 +597,17 @@ bool __bts_gen_public_key_from_b58address(const unsigned char* address, const si
                                           const size_t address_prefix_size, secp256k1_pubkey* output_public)
 {
     assert(address_prefix_size > 0);
+    if (address_size <= address_prefix_size) {
+        return false;
+    }
     assert(address_prefix_size < address_size);
     
     //  BTS地址移除前缀之后进行base58解码
     unsigned char temp_buffer[53] = {0,};   //  REMARK:这个缓冲区大小能够容纳地址b58解码后的数据即可，基本大小只有37字节，53是地址长度。
+    
     size_t output_size = sizeof(temp_buffer);
     const unsigned char* pOutput = base58_decode(&address[address_prefix_size], address_size-address_prefix_size, temp_buffer, &output_size);
-    if (!pOutput){
+    if (!pOutput || output_size <= 4){
         return false;
     }
  

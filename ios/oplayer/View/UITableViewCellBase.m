@@ -276,13 +276,18 @@
 /**
  *  (public) 辅助计算文字尺寸
  */
-- (CGSize)auxSizeWithText:(NSString*)text font:(UIFont*)font maxsize:(CGSize)maxsize
++ (CGSize)auxSizeWithText:(NSString*)text font:(UIFont*)font maxsize:(CGSize)maxsize
 {
     assert(text);
     assert(font);
     return [text boundingRectWithSize:maxsize
                               options:NSStringDrawingUsesLineFragmentOrigin
                            attributes:@{NSFontAttributeName:font} context:nil].size;
+}
+
+- (CGSize)auxSizeWithText:(NSString*)text font:(UIFont*)font maxsize:(CGSize)maxsize
+{
+    return [[self class] auxSizeWithText:text font:font maxsize:maxsize];
 }
 
 /**

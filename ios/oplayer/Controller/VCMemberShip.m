@@ -80,7 +80,7 @@ enum
     [self _refreshMemberShipStatus];
     
 	// Do any additional setup after loading the view.
-    _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];
+    _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutNaviAndPageBar] style:UITableViewStyleGrouped];
     _mainTableView.delegate = self;
     _mainTableView.dataSource = self;
     _mainTableView.backgroundColor = [UIColor clearColor];

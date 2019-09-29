@@ -30,6 +30,7 @@
 /**
  *  (public) 辅助计算文字尺寸
  */
++ (CGSize)auxSizeWithText:(NSString*)text font:(UIFont*)font maxsize:(CGSize)maxsize;
 - (CGSize)auxSizeWithText:(NSString*)text font:(UIFont*)font maxsize:(CGSize)maxsize;
 
 /**

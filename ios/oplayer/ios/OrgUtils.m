@@ -305,6 +305,19 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 }
 
 /**
+ *  是否是有效的阈值（仅可以输入数字）
+ */
++ (BOOL)isValidAuthorityThreshold:(NSString*)new_string
+{
+    if (new_string && [new_string length] > 0){
+        unichar single = [new_string characterAtIndex:0];
+        return single >= '0' && single <= '9';
+    }else{
+        return YES;
+    }
+}
+
+/**
  *  是否是BTS终身会员判断
  */
 + (BOOL)isBitsharesVIP:(NSString*)membership_expiration_date_string
