@@ -232,7 +232,7 @@
             _btnCancel.hidden = NO;
         }
         CGSize size1 = CGSizeMake(fWidth, 9999);
-        size1 = [_lbType.attributedText.string sizeWithFont:_lbType.font constrainedToSize:size1 lineBreakMode:UILineBreakModeWordWrap];
+        size1 = [_lbType.attributedText.string sizeWithFont:_lbType.font constrainedToSize:size1 lineBreakMode:NSLineBreakByWordWrapping];
         _lbDate.text = [NSString stringWithFormat:NSLocalizedString(@"kVcOrderExpired", @"%@过期"), [OrgUtils fmtLimitOrderTimeShowString:[_item objectForKey:@"time"]]];
         _lbDate.frame = CGRectMake(xOffset + 8 + size1.width, yOffset + 1, fWidth, 28);
         _lbDate.textColor = theme.textColorGray;

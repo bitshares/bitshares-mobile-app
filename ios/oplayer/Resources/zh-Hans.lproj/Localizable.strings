@@ -192,6 +192,16 @@
 "kAccountUpgradeMemberSubmitTxOK" = "升级终身会员成功，但刷新界面失败，请稍后再试。";
 "kAccountUpgradeMemberCostAsk" = "升级终身会员需要花费 %@，是否继续？";
 
+/* 权限相关 */
+"kVcPermissionEditTitleName" = "管理者账号/公钥";
+"kVcPermissionEditTitleWeight" = "权重(百分比)";
+"kVcPermissionEditTitleAction" = "操作";
+"kVcPermissionEditBtnRemove" = "移除";
+"kVcPermissionEditBtnAddOne" = "新增";
+"kVcPermissionEditBtnSubmit" = "提交";
+"kVcPermissionEditCellType" = "类型";
+"kVcPermissionEditCellThreshold" = "阈值";
+
 /* 登录&注册&备份 */
 "kLoginPageModePassword" = "账号模式";
 "kLoginPageModeBrainKey" = "助记词";
@@ -831,7 +841,7 @@
 
 /* 交易OP细化 */
 "kOpDetailFlagDangerous" = "危险操作";
-"kOpDetailPermissionOwner" = "所有者权限";
+"kOpDetailPermissionOwner" = "账号权限";
 "kOpDetailPermissionActive" = "资金权限";
 "kOpDetailPermissionMemo" = "备注权限";
 "kOpDetailSubTitleVoteTargeter" = "投票对象";

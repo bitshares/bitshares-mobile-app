@@ -63,6 +63,11 @@ typedef void (^YklUserCallback)(id data);
 + (BOOL)isValidAmountOrPriceInput:(NSString*)origin_string range:(NSRange)range new_string:(NSString*)new_string precision:(NSInteger)precision;
 
 /**
+ *  是否是有效的阈值（仅可以输入数字）
+ */
++ (BOOL)isValidAuthorityThreshold:(NSString*)new_string;
+
+/**
  *  是否是BTS终身会员判断
  */
 + (BOOL)isBitsharesVIP:(NSString*)membership_expiration_date_string;

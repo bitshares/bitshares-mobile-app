@@ -177,7 +177,7 @@
         
         //  TODO:fowallet auxSizeWithText兼容性待测试
         size1 = [self auxSizeWithText:quote_name font:_lbName.font maxsize:size1];
-//        size1 = [quote_name sizeWithFont:_lbName.font constrainedToSize:size1 lineBreakMode:UILineBreakModeWordWrap];
+//        size1 = [quote_name sizeWithFont:_lbName.font constrainedToSize:size1 lineBreakMode:NSLineBreakByWordWrapping];
         
         _lbBaseName.text = [NSString stringWithFormat:@" / %@", base_name];
         _lbBaseName.frame = CGRectMake(12 + size1.width, 3, 120, 30);

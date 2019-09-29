@@ -192,6 +192,16 @@
 "kAccountUpgradeMemberSubmitTxOK" = "Upgrade lifetime membership is successful, but refreshing the interface failed, please try again later.";
 "kAccountUpgradeMemberCostAsk" = "Upgrade lifetime membership will cost %@, do you want to continue?";
 
+/* 权限相关 */
+"kVcPermissionEditTitleName" = "Account / key";
+"kVcPermissionEditTitleWeight" = "Weight";
+"kVcPermissionEditTitleAction" = "Action";
+"kVcPermissionEditBtnRemove" = "Remove";
+"kVcPermissionEditBtnAddOne" = "Add";
+"kVcPermissionEditBtnSubmit" = "Commit";
+"kVcPermissionEditCellType" = "Type";
+"kVcPermissionEditCellThreshold" = "Threshold";
+
 /* 登录&注册&备份 */
 "kLoginPageModePassword" = "Normal";
 "kLoginPageModeBrainKey" = "Brain Key";

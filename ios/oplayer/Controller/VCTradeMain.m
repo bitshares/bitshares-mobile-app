@@ -223,7 +223,7 @@ enum
         }
         
         CGSize size1 = CGSizeMake(self.view.bounds.size.width, 9999);
-        size1 = [latest sizeWithFont:_lbHeaderLatestPrice.font constrainedToSize:size1 lineBreakMode:UILineBreakModeWordWrap];
+        size1 = [latest sizeWithFont:_lbHeaderLatestPrice.font constrainedToSize:size1 lineBreakMode:NSLineBreakByWordWrapping];
         
         CGSize origin_size = _lbHeaderPercent.bounds.size;
         _lbHeaderPercent.frame = CGRectMake(_lbHeaderLatestPrice.frame.origin.x + size1.width + 16, 0, origin_size.width, origin_size.height);

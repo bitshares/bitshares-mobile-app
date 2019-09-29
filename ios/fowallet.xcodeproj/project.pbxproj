@@ -24,6 +24,12 @@
 		3F0DA36521884011006E1004 /* SGQRCodeObtainConfigure.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0DA36021884011006E1004 /* SGQRCodeObtainConfigure.m */; };
 		3F0DA36621884011006E1004 /* SGQRCodeScanView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0DA36221884011006E1004 /* SGQRCodeScanView.m */; };
 		3F0DA369218851FF006E1004 /* VCQrScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0DA367218851FF006E1004 /* VCQrScan.m */; };
+		3F1435ED233CC09100B97CFF /* VCPermissionList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F1435EB233CC09000B97CFF /* VCPermissionList.m */; };
+		3F1435EE233CC09100B97CFF /* VCPermissionList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F1435EB233CC09000B97CFF /* VCPermissionList.m */; };
+		3F1435EF233CC09100B97CFF /* VCPermissionList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F1435EB233CC09000B97CFF /* VCPermissionList.m */; };
+		3F1435F2233CC87900B97CFF /* ViewPermissionInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F1435F1233CC87900B97CFF /* ViewPermissionInfoCell.m */; };
+		3F1435F3233CC87900B97CFF /* ViewPermissionInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F1435F1233CC87900B97CFF /* ViewPermissionInfoCell.m */; };
+		3F1435F4233CC87900B97CFF /* ViewPermissionInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F1435F1233CC87900B97CFF /* ViewPermissionInfoCell.m */; };
 		3F216571226FEF5500AB5A3D /* ViewActionsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F216570226FEF5500AB5A3D /* ViewActionsCell.m */; };
 		3F216572226FEF5500AB5A3D /* ViewActionsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F216570226FEF5500AB5A3D /* ViewActionsCell.m */; };
 		3F23B77E231CCC7000EEEE78 /* paysuccess@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F23B77C231CCC7000EEEE78 /* paysuccess@3x.png */; };
@@ -37,6 +43,12 @@
 		3F23B788231CCCCA00EEEE78 /* VCPaySuccess.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F23B785231CCCCA00EEEE78 /* VCPaySuccess.m */; };
 		3F291BD922B48EFB002E0CBD /* GatewayAssetItemData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F291BD722B48EFA002E0CBD /* GatewayAssetItemData.m */; };
 		3F291BDA22B48EFB002E0CBD /* GatewayAssetItemData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F291BD722B48EFA002E0CBD /* GatewayAssetItemData.m */; };
+		3F2E6E27233DF5A600BF4B78 /* VCPermissionEdit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E25233DF5A600BF4B78 /* VCPermissionEdit.m */; };
+		3F2E6E28233DF5A600BF4B78 /* VCPermissionEdit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E25233DF5A600BF4B78 /* VCPermissionEdit.m */; };
+		3F2E6E29233DF5A600BF4B78 /* VCPermissionEdit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E25233DF5A600BF4B78 /* VCPermissionEdit.m */; };
+		3F2E6E2C233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E2A233E0B3500BF4B78 /* ViewPermissionInfoCellB.m */; };
+		3F2E6E2D233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E2A233E0B3500BF4B78 /* ViewPermissionInfoCellB.m */; };
+		3F2E6E2E233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E2A233E0B3500BF4B78 /* ViewPermissionInfoCellB.m */; };
 		3F3847322222686400B55914 /* VCMemberShip.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F3847312222686300B55914 /* VCMemberShip.m */; };
 		3F3847332222686400B55914 /* VCMemberShip.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F3847312222686300B55914 /* VCMemberShip.m */; };
 		3F3847362223AC7500B55914 /* VCKlineIndexSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F3847342223AC7400B55914 /* VCKlineIndexSetting.m */; };
@@ -1150,6 +1162,9 @@
 		3FB8FA9B21CE6A5000DA88E2 /* fowallet-website.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3FB8FA9A21CE6A5000DA88E2 /* fowallet-website.plist */; };
 		3FB8FAA121CF361900DA88E2 /* VCConvertToWalletMode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB8FA9F21CF361900DA88E2 /* VCConvertToWalletMode.m */; };
 		3FB8FAA221CF361900DA88E2 /* VCConvertToWalletMode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB8FA9F21CF361900DA88E2 /* VCConvertToWalletMode.m */; };
+		3FC36F142340413D00464422 /* VCPermissionAddOne.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC36F122340413C00464422 /* VCPermissionAddOne.m */; };
+		3FC36F152340413D00464422 /* VCPermissionAddOne.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC36F122340413C00464422 /* VCPermissionAddOne.m */; };
+		3FC36F162340413D00464422 /* VCPermissionAddOne.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC36F122340413C00464422 /* VCPermissionAddOne.m */; };
 		3FC43A202196E1BB004DFFA5 /* VCProposal.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC43A1E2196E1BB004DFFA5 /* VCProposal.m */; };
 		3FC43A232196EF91004DFFA5 /* ViewProposalInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC43A212196EF90004DFFA5 /* ViewProposalInfoCell.m */; };
 		3FC4D44C226F2EEB00787082 /* VCHtlcList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D44A226F2EEA00787082 /* VCHtlcList.m */; };
@@ -1715,6 +1730,10 @@
 		3F0DA36221884011006E1004 /* SGQRCodeScanView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SGQRCodeScanView.m; sourceTree = "<group>"; };
 		3F0DA367218851FF006E1004 /* VCQrScan.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCQrScan.m; path = Controller/VCQrScan.m; sourceTree = "<group>"; };
 		3F0DA368218851FF006E1004 /* VCQrScan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCQrScan.h; path = Controller/VCQrScan.h; sourceTree = "<group>"; };
+		3F1435EB233CC09000B97CFF /* VCPermissionList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCPermissionList.m; path = Controller/VCPermissionList.m; sourceTree = "<group>"; };
+		3F1435EC233CC09100B97CFF /* VCPermissionList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCPermissionList.h; path = Controller/VCPermissionList.h; sourceTree = "<group>"; };
+		3F1435F0233CC87900B97CFF /* ViewPermissionInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewPermissionInfoCell.h; path = View/ViewPermissionInfoCell.h; sourceTree = "<group>"; };
+		3F1435F1233CC87900B97CFF /* ViewPermissionInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewPermissionInfoCell.m; path = View/ViewPermissionInfoCell.m; sourceTree = "<group>"; };
 		3F21656F226FEF5400AB5A3D /* ViewActionsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewActionsCell.h; path = View/ViewActionsCell.h; sourceTree = "<group>"; };
 		3F216570226FEF5500AB5A3D /* ViewActionsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewActionsCell.m; path = View/ViewActionsCell.m; sourceTree = "<group>"; };
 		3F23B77C231CCC7000EEEE78 /* paysuccess@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "paysuccess@3x.png"; path = "Images/paysuccess@3x.png"; sourceTree = "<group>"; };
@@ -1723,6 +1742,10 @@
 		3F23B785231CCCCA00EEEE78 /* VCPaySuccess.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCPaySuccess.m; path = Controller/VCPaySuccess.m; sourceTree = "<group>"; };
 		3F291BD722B48EFA002E0CBD /* GatewayAssetItemData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GatewayAssetItemData.m; sourceTree = "<group>"; };
 		3F291BD822B48EFB002E0CBD /* GatewayAssetItemData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GatewayAssetItemData.h; sourceTree = "<group>"; };
+		3F2E6E25233DF5A600BF4B78 /* VCPermissionEdit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCPermissionEdit.m; path = Controller/VCPermissionEdit.m; sourceTree = "<group>"; };
+		3F2E6E26233DF5A600BF4B78 /* VCPermissionEdit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCPermissionEdit.h; path = Controller/VCPermissionEdit.h; sourceTree = "<group>"; };
+		3F2E6E2A233E0B3500BF4B78 /* ViewPermissionInfoCellB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewPermissionInfoCellB.m; path = View/ViewPermissionInfoCellB.m; sourceTree = "<group>"; };
+		3F2E6E2B233E0B3500BF4B78 /* ViewPermissionInfoCellB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewPermissionInfoCellB.h; path = View/ViewPermissionInfoCellB.h; sourceTree = "<group>"; };
 		3F3847302222686300B55914 /* VCMemberShip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCMemberShip.h; path = Controller/VCMemberShip.h; sourceTree = "<group>"; };
 		3F3847312222686300B55914 /* VCMemberShip.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCMemberShip.m; path = Controller/VCMemberShip.m; sourceTree = "<group>"; };
 		3F3847342223AC7400B55914 /* VCKlineIndexSetting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCKlineIndexSetting.m; path = Controller/VCKlineIndexSetting.m; sourceTree = "<group>"; };
@@ -1795,6 +1818,8 @@
 		3FB8FA9A21CE6A5000DA88E2 /* fowallet-website.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "fowallet-website.plist"; path = "Resources/fowallet-website.plist"; sourceTree = "<group>"; };
 		3FB8FA9F21CF361900DA88E2 /* VCConvertToWalletMode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCConvertToWalletMode.m; path = Controller/VCConvertToWalletMode.m; sourceTree = "<group>"; };
 		3FB8FAA021CF361900DA88E2 /* VCConvertToWalletMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCConvertToWalletMode.h; path = Controller/VCConvertToWalletMode.h; sourceTree = "<group>"; };
+		3FC36F122340413C00464422 /* VCPermissionAddOne.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCPermissionAddOne.m; path = Controller/VCPermissionAddOne.m; sourceTree = "<group>"; };
+		3FC36F132340413D00464422 /* VCPermissionAddOne.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCPermissionAddOne.h; path = Controller/VCPermissionAddOne.h; sourceTree = "<group>"; };
 		3FC43A1E2196E1BB004DFFA5 /* VCProposal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCProposal.m; path = Controller/VCProposal.m; sourceTree = "<group>"; };
 		3FC43A1F2196E1BB004DFFA5 /* VCProposal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCProposal.h; path = Controller/VCProposal.h; sourceTree = "<group>"; };
 		3FC43A212196EF90004DFFA5 /* ViewProposalInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewProposalInfoCell.m; path = View/ViewProposalInfoCell.m; sourceTree = "<group>"; };
@@ -2679,6 +2704,12 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3FC36F132340413D00464422 /* VCPermissionAddOne.h */,
+				3FC36F122340413C00464422 /* VCPermissionAddOne.m */,
+				3F2E6E26233DF5A600BF4B78 /* VCPermissionEdit.h */,
+				3F2E6E25233DF5A600BF4B78 /* VCPermissionEdit.m */,
+				3F1435EC233CC09100B97CFF /* VCPermissionList.h */,
+				3F1435EB233CC09000B97CFF /* VCPermissionList.m */,
 				3F23B784231CCCCA00EEEE78 /* VCPaySuccess.h */,
 				3F23B785231CCCCA00EEEE78 /* VCPaySuccess.m */,
 				3F05DDBC230B7D75002934DA /* VCLaunch.h */,
@@ -2801,6 +2832,10 @@
 		18FF069017E00C5C0088405E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				3F2E6E2B233E0B3500BF4B78 /* ViewPermissionInfoCellB.h */,
+				3F2E6E2A233E0B3500BF4B78 /* ViewPermissionInfoCellB.m */,
+				3F1435F0233CC87900B97CFF /* ViewPermissionInfoCell.h */,
+				3F1435F1233CC87900B97CFF /* ViewPermissionInfoCell.m */,
 				3FE4E94F22FBCFE60056A44F /* ViewAvailableAndFeeCell.h */,
 				3FE4E95022FBCFE60056A44F /* ViewAvailableAndFeeCell.m */,
 				3F7ED8F02277F24700082680 /* OPs */,
@@ -4997,6 +5032,7 @@
 				3F676834230E9EC100E98C14 /* WalletManager.m in Sources */,
 				3F676835230E9EC100E98C14 /* Bra.c in Sources */,
 				3FD3DD352317B8FC009760A0 /* VCScanTransfer.m in Sources */,
+				3F1435EF233CC09100B97CFF /* VCPermissionList.m in Sources */,
 				3F676836230E9EC100E98C14 /* MKlineItemData.m in Sources */,
 				3F676837230E9EC100E98C14 /* ViewRightTextAndCellButton.m in Sources */,
 				3F676838230E9EC100E98C14 /* SRProxyConnect.m in Sources */,
@@ -5031,6 +5067,7 @@
 				3F676855230E9EC100E98C14 /* GCDWebServerFileRequest.m in Sources */,
 				3F676856230E9EC100E98C14 /* VCImportAccount.m in Sources */,
 				3F676857230E9EC100E98C14 /* Lzma86Enc.c in Sources */,
+				3FC36F162340413D00464422 /* VCPermissionAddOne.m in Sources */,
 				3F676858230E9EC100E98C14 /* ioapi.c in Sources */,
 				3F676859230E9EC100E98C14 /* ViewKLineButtons.m in Sources */,
 				3F67685A230E9EC100E98C14 /* MySecurityFileMgr.m in Sources */,
@@ -5171,6 +5208,7 @@
 				3F6768DF230E9EC100E98C14 /* VCBtsaiWebView.m in Sources */,
 				3F6768E0230E9EC100E98C14 /* VCNotice.m in Sources */,
 				3F6768E1230E9EC100E98C14 /* VCWebView.m in Sources */,
+				3F2E6E2E233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */,
 				3F6768E2230E9EC100E98C14 /* StyledPageControl.m in Sources */,
 				3F6768E3230E9EC100E98C14 /* VCTest.m in Sources */,
 				3F6768E4230E9EC100E98C14 /* Ppmd7Enc.c in Sources */,
@@ -5185,11 +5223,13 @@
 				3F6768ED230E9EC100E98C14 /* ViewMarketTickerInfoCell.m in Sources */,
 				3F6768EE230E9EC100E98C14 /* GrapheneApi.m in Sources */,
 				3F6768EF230E9EC100E98C14 /* GCDWebServerURLEncodedFormRequest.m in Sources */,
+				3F2E6E29233DF5A600BF4B78 /* VCPermissionEdit.m in Sources */,
 				3F6768F0230E9EC100E98C14 /* SCLAlertViewStyleKit.m in Sources */,
 				3F6768F1230E9EC100E98C14 /* 7zArcIn.c in Sources */,
 				3F6768F2230E9EC100E98C14 /* UIAlertViewManager.m in Sources */,
 				3F6768F3230E9EC100E98C14 /* VCImportWallet.m in Sources */,
 				3F6768F4230E9EC100E98C14 /* ViewAvailableAndFeeCell.m in Sources */,
+				3F1435F4233CC87900B97CFF /* ViewPermissionInfoCell.m in Sources */,
 				3F6768F5230E9EC100E98C14 /* OrgUtils.m in Sources */,
 				3F6768F6230E9EC100E98C14 /* Bra86.c in Sources */,
 				3F6768F7230E9EC100E98C14 /* SRURLUtilities.m in Sources */,
@@ -5288,6 +5328,7 @@
 				3FB8F8CA21CE66C200DA88E2 /* WalletManager.m in Sources */,
 				3FB8F8CB21CE66C200DA88E2 /* Bra.c in Sources */,
 				3FD3DD342317B8FC009760A0 /* VCScanTransfer.m in Sources */,
+				3F1435EE233CC09100B97CFF /* VCPermissionList.m in Sources */,
 				3FB8F8CC21CE66C200DA88E2 /* MKlineItemData.m in Sources */,
 				3FB8F8CD21CE66C200DA88E2 /* ViewRightTextAndCellButton.m in Sources */,
 				3FB8F8CE21CE66C200DA88E2 /* SRProxyConnect.m in Sources */,
@@ -5322,6 +5363,7 @@
 				3FB8F8E721CE66C200DA88E2 /* GCDWebServerFileRequest.m in Sources */,
 				3FB8F8E821CE66C200DA88E2 /* VCImportAccount.m in Sources */,
 				3FB8F8E921CE66C200DA88E2 /* Lzma86Enc.c in Sources */,
+				3FC36F152340413D00464422 /* VCPermissionAddOne.m in Sources */,
 				3FB8F8EA21CE66C200DA88E2 /* ioapi.c in Sources */,
 				3FB8F8EB21CE66C200DA88E2 /* ViewKLineButtons.m in Sources */,
 				3FB8F8EC21CE66C200DA88E2 /* MySecurityFileMgr.m in Sources */,
@@ -5462,6 +5504,7 @@
 				3FB8F96321CE66C200DA88E2 /* VCBtsaiWebView.m in Sources */,
 				3FB8F96421CE66C200DA88E2 /* VCNotice.m in Sources */,
 				3FB8F96521CE66C200DA88E2 /* VCWebView.m in Sources */,
+				3F2E6E2D233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */,
 				3FB8F96621CE66C200DA88E2 /* StyledPageControl.m in Sources */,
 				3FB8F96721CE66C200DA88E2 /* VCTest.m in Sources */,
 				3FB8F96821CE66C200DA88E2 /* Ppmd7Enc.c in Sources */,
@@ -5476,11 +5519,13 @@
 				3FB8F97021CE66C200DA88E2 /* ViewMarketTickerInfoCell.m in Sources */,
 				3FB8F97121CE66C200DA88E2 /* GrapheneApi.m in Sources */,
 				3FB8F97221CE66C200DA88E2 /* GCDWebServerURLEncodedFormRequest.m in Sources */,
+				3F2E6E28233DF5A600BF4B78 /* VCPermissionEdit.m in Sources */,
 				3FB8F97321CE66C200DA88E2 /* SCLAlertViewStyleKit.m in Sources */,
 				3FB8F97421CE66C200DA88E2 /* 7zArcIn.c in Sources */,
 				3FB8F97521CE66C200DA88E2 /* UIAlertViewManager.m in Sources */,
 				3FB8F97621CE66C200DA88E2 /* VCImportWallet.m in Sources */,
 				3FE4E95222FBCFE60056A44F /* ViewAvailableAndFeeCell.m in Sources */,
+				3F1435F3233CC87900B97CFF /* ViewPermissionInfoCell.m in Sources */,
 				3FB8F97721CE66C200DA88E2 /* OrgUtils.m in Sources */,
 				3FB8F97821CE66C200DA88E2 /* Bra86.c in Sources */,
 				3FB8F97921CE66C200DA88E2 /* SRURLUtilities.m in Sources */,
@@ -5579,6 +5624,7 @@
 				B737A72420F9E42E00818BBA /* WalletManager.m in Sources */,
 				B7BDAA8820B3C77500738F12 /* Bra.c in Sources */,
 				3FD3DD332317B8FC009760A0 /* VCScanTransfer.m in Sources */,
+				3F1435ED233CC09100B97CFF /* VCPermissionList.m in Sources */,
 				B737850D21002608001EEA8C /* MKlineItemData.m in Sources */,
 				B7D8D9451C19578E003ED58F /* ViewRightTextAndCellButton.m in Sources */,
 				B714093E20A31CC300003311 /* SRProxyConnect.m in Sources */,
@@ -5613,6 +5659,7 @@
 				B72A848620CCD18B00D92A25 /* GCDWebServerFileRequest.m in Sources */,
 				B72A845920CBE6EC00D92A25 /* VCImportAccount.m in Sources */,
 				B7BDAA9320B3C77500738F12 /* Lzma86Enc.c in Sources */,
+				3FC36F142340413D00464422 /* VCPermissionAddOne.m in Sources */,
 				B7A13B771CA1443A0096A6A4 /* ioapi.c in Sources */,
 				B73785102100A5A2001EEA8C /* ViewKLineButtons.m in Sources */,
 				B78E84D21CCA28CB0033B258 /* MySecurityFileMgr.m in Sources */,
@@ -5753,6 +5800,7 @@
 				B72A844820CA628800D92A25 /* VCBtsaiWebView.m in Sources */,
 				B79FC2D41A45E8A0000D49D5 /* VCNotice.m in Sources */,
 				B7BEC2821A4601440049EB1F /* VCWebView.m in Sources */,
+				3F2E6E2C233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */,
 				ED96A096186C62AD002181D4 /* StyledPageControl.m in Sources */,
 				EDC7D39C1869D430009F40F1 /* VCTest.m in Sources */,
 				B7BDAA9A20B3C77500738F12 /* Ppmd7Enc.c in Sources */,
@@ -5767,11 +5815,13 @@
 				B7D68D4D20A40B8200DCBBDF /* ViewMarketTickerInfoCell.m in Sources */,
 				B7BDA95920B1163000738F12 /* GrapheneApi.m in Sources */,
 				B72A848820CCD18B00D92A25 /* GCDWebServerURLEncodedFormRequest.m in Sources */,
+				3F2E6E27233DF5A600BF4B78 /* VCPermissionEdit.m in Sources */,
 				B782F0C21D6E94C600F61571 /* SCLAlertViewStyleKit.m in Sources */,
 				B7BDAA7B20B3C77400738F12 /* 7zArcIn.c in Sources */,
 				B714E5E81C192EF500A208B1 /* UIAlertViewManager.m in Sources */,
 				B72A848F20CCD27C00D92A25 /* VCImportWallet.m in Sources */,
 				3FE4E95122FBCFE60056A44F /* ViewAvailableAndFeeCell.m in Sources */,
+				3F1435F2233CC87900B97CFF /* ViewPermissionInfoCell.m in Sources */,
 				ED048D8617E047010030D16E /* OrgUtils.m in Sources */,
 				B7BDAA8920B3C77500738F12 /* Bra86.c in Sources */,
 				B714094920A31CC300003311 /* SRURLUtilities.m in Sources */,

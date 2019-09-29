@@ -278,7 +278,7 @@
     if (new_owner){
         _viewPermissionOwner = [[ViewPermissionCell alloc] initWithPermission:opaccount[@"owner"]
                                                                             new:new_owner
-                                                                          title:NSLocalizedString(@"kOpDetailPermissionOwner", @"所有者权限")];
+                                                                          title:NSLocalizedString(@"kOpDetailPermissionOwner", @"账号权限")];
         _viewPermissionOwner.xOffset = xOffset;
         [self addSubview:_viewPermissionOwner];
         CGFloat height = [_viewPermissionOwner getViewHeight];
