@@ -648,6 +648,17 @@ SCLTimerDisplay *buttonTimer;
 
 # pragma mark - UITextFieldDelegate
 
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    if ([textField isKindOfClass:[SCLTextView class]]) {
+        SCLTextView* tf = (SCLTextView*)textField;
+        if (tf.bLimitInputThreshold) {
+            return [tf isValidAuthorityThreshold:string];
+        }
+    }
+    return YES;
+}
+
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     // If this is the last object in the inputs array, resign first responder

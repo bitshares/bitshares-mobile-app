@@ -48,7 +48,7 @@
 "kDebtTipRatioTooLow" = "The ratio is lower than %@ and you cannot borrow more.";
 "kDebtTipTxUpdatePositionFullOK" = "Update position successfully.";
 "kDebtTipTxUpdatePositionOK" = "Update position successfully, but the refresh failed. Please try again later.";
-"kDebtWarmTips" = "[Tips] \n When the feed price drops to the call price, the system will automatically sell your collateral assets for debt repayment. Please pay attention to adjusting the ratio to control the risk.";
+"kDebtWarmTips" = "[Tips]\n When the feed price drops to the call price, the system will automatically sell your collateral assets for debt repayment. Please pay attention to adjusting the ratio to control the risk.";
 
 /* 服务界面 */
 "kServicesCellLabelQrScan" = "Scan QR code";
@@ -181,6 +181,7 @@
 /* 账号信息 */
 "kAccountPageBasicInfo" = "Basic Info";
 "kAccountPageMemberInfo" = "Member Info";
+"kAccountPagePermissions" = "Permissions";
 "kAccountBtnUpgradeToLifetimeMember" = "Upgrade lifetime membership";
 "kAccountMembershipStatus" = "Status";
 "kAccountMembershipMyRefCode" = "My referrer code";
@@ -193,6 +194,10 @@
 "kAccountUpgradeMemberCostAsk" = "Upgrade lifetime membership will cost %@, do you want to continue?";
 
 /* 权限相关 */
+"kVcPermissionTypeOwner" = "Owner";
+"kVcPermissionTypeActive" = "Active";
+"kVcPermissionTypeMemo" = "Memo";
+"kVcPermissionPassThreshold" = "Threshold ";
 "kVcPermissionEditTitleName" = "Account / key";
 "kVcPermissionEditTitleWeight" = "Weight";
 "kVcPermissionEditTitleAction" = "Action";
@@ -201,6 +206,20 @@
 "kVcPermissionEditBtnSubmit" = "Commit";
 "kVcPermissionEditCellType" = "Type";
 "kVcPermissionEditCellThreshold" = "Threshold";
+"kVcPermissionEditNewPassThresholdTitle" = "New threshold";
+"kVcPermissionEditNewPassThresholdPlaceholder" = "Please enter a new threshold";
+"kVcPermissionEditTipsMaxAuthority" = "You can only add up to %@ multi-sign authorities.";
+"kVcPermissionEditHelpTips" = "[Tips]\nThreshold: The threshold is the minimum weight required to use the permission. The sum of the weights of each authority must be greater than or equal to the threshold.";
+"kVcPermissionEditTipsInvalidPassThreshold" = "Please enter a valid threshold. Range 1 - 9999999.";
+"kVcPermissionAddOneTitleAuthority" = "Authority";
+"kVcPermissionAddOneTitleWeight" = "Weight";
+"kVcPermissionAddOneBtnDone" = "Ok";
+"kVcPermissionAddOneBtnSearchAccount" = "Search";
+"kVcPermissionAddOnePlaceholderAuthority" = "Account or public key";
+"kVcPermissionAddOnePlaceholderWeight" = "Weight value (1-65535)";
+"kVcPermissionAddOneDoneTipsInvalidAuthority" = "Please enter a valid account or public key.";
+"kVcPermissionAddOneDoneTipsInvalidWeight" = "Please enter a valid weight value. Range 1 - 65535.";
+"kVcPermissionAddOneDontTipsCantAddSelf" = "Can't add your own account.";
 
 /* 登录&注册&备份 */
 "kLoginPageModePassword" = "Normal";
@@ -642,6 +661,9 @@
 "kVcTitleLogin" = "Login";
 "kVcTitleImportAccount" = "Import account";
 "kVcTitleRegister" = "Register";
+"kVcTitleChangePermission" = "Update permissions";
+"kVcTitlePermissionAddAuthority" = "Add authority";
+"kVcTitleAddOneSearchAccount" = "Search account";
 "kVcTitleQrScan" = "Scan QR code";
 "kVcTitleQrScanResultNormal" = "Scan result";
 "kVcTitleQrScanResultPriKey" = "Import key";

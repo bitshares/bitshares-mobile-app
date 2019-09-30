@@ -499,6 +499,20 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     return [_cacheObjectID2ObjectHash objectForKey:oid];
 }
 
+- (id)getChainObjectByID:(NSString*)oid searchFileCache:(BOOL)searchFileCache
+{
+    id obj = [self getChainObjectByID:oid];
+    if (!obj && searchFileCache) {
+        AppCacheManager* pAppCache = [AppCacheManager sharedAppCacheManager];
+        NSTimeInterval now_ts = [[NSDate date] timeIntervalSince1970];
+        obj = [pAppCache get_object_cache:oid now_ts:now_ts];
+        if (obj){
+            [_cacheObjectID2ObjectHash setObject:obj forKey:oid];     //  add to memory cache: id hash
+        }
+    }
+    return obj;
+}
+
 - (id)getVoteInfoByVoteID:(NSString*)vote_id
 {
     return [_cacheVoteIdInfoHash objectForKey:vote_id];

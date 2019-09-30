@@ -9,6 +9,7 @@
 #import "VCPermissionEdit.h"
 #import "ViewPermissionInfoCellB.h"
 #import "VCPermissionAddOne.h"
+#import "ViewTipsInfoCell.h"
 
 enum
 {
@@ -17,11 +18,14 @@ enum
     kVcSecBtnAddOne,        //  添加
     kVcSecBtnSubmit,        //  提交
     
+    kVcSecTips,             //  帮助说明提示
+    
     kVcSecMax
 };
 
 @interface VCPermissionEdit ()
 {
+    NSDictionary*           _permission_item;
     NSInteger               _maximum_authority_membership;  //  最大多签成员数量（理事会控制）
     
     NSInteger               _weightThreshold;
@@ -31,6 +35,8 @@ enum
     
     ViewBlockLabel*         _lbAddOne;
     ViewBlockLabel*         _lbCommit;
+    
+    ViewTipsInfoCell*       _cellTips;
 }
 
 @end
@@ -39,6 +45,8 @@ enum
 
 -(void)dealloc
 {
+    _cellTips = nil;
+    _permission_item = nil;
     _permissionList = nil;
     if (_mainTableView){
         [[IntervalManager sharedIntervalManager] releaseLock:_mainTableView];
@@ -66,19 +74,21 @@ enum
 {
     self = [super init];
     if (self) {
+        _permission_item = permission;
         _maximum_authority_membership = maximum_authority_membership;
         assert(permission);
-        _weightThreshold = [[permission objectForKey:@"weight_threshold"] integerValue];
+        id raw = [permission objectForKey:@"raw"];
+        _weightThreshold = [[raw objectForKey:@"weight_threshold"] integerValue];
         _permissionList = [NSMutableArray array];
-        for (id item in [permission objectForKey:@"account_auths"]) {
+        for (id item in [raw objectForKey:@"account_auths"]) {
             assert([item count] == 2);
             [_permissionList addObject:@{@"key":[item firstObject], @"threshold":[item lastObject], @"isaccount":@YES}];
         }
-        for (id item in [permission objectForKey:@"key_auths"]) {
+        for (id item in [raw objectForKey:@"key_auths"]) {
             assert([item count] == 2);
             [_permissionList addObject:@{@"key":[item firstObject], @"threshold":[item lastObject], @"iskey":@YES}];
         }
-        for (id item in [permission objectForKey:@"address_auths"]) {
+        for (id item in [raw objectForKey:@"address_auths"]) {
             assert([item count] == 2);
             [_permissionList addObject:@{@"key":[item firstObject], @"threshold":[item lastObject], @"isaddr":@YES}];
         }
@@ -109,6 +119,12 @@ enum
     UIColor* backColor = [ThemeManager sharedThemeManager].textColorGray;
     _lbAddOne.layer.borderColor = backColor.CGColor;
     _lbAddOne.layer.backgroundColor = backColor.CGColor;
+    
+    //  提示
+    _cellTips = [[ViewTipsInfoCell alloc] initWithText:NSLocalizedString(@"kVcPermissionEditHelpTips", @"【温馨提示】\n阈值：是使用该权限所需的最低权重值，各管理者账号/公钥的权重之和必须大于等于阈值。")];
+    _cellTips.hideBottomLine = YES;
+    _cellTips.hideTopLine = YES;
+    _cellTips.backgroundColor = [UIColor clearColor];
 }
 
 #pragma mark- TableView delegate method
@@ -131,17 +147,22 @@ enum
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == kVcSecBaseInfo) {
-        return tableView.rowHeight;
-    } else if (indexPath.section == kVcSecAuthorityList) {
-        if (indexPath.row == 0) {
-            return 28.0f;   //  title
-        } else {
-            return 32.0f;
+    switch (indexPath.section) {
+        case kVcSecAuthorityList:
+        {
+            if (indexPath.row == 0) {
+                return 28.0f;   //  title
+            } else {
+                return 32.0f;
+            }
         }
-    } else {
-        return tableView.rowHeight;
+            break;
+        case kVcSecTips:
+            return [_cellTips calcCellDynamicHeight:tableView.layoutMargins.left];
+        default:
+            break;
     }
+    return tableView.rowHeight;
 }
 
 /**
@@ -149,6 +170,9 @@ enum
  */
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
+    if (section == kVcSecTips) {
+        return 30.0f;
+    }
     return 10.0f;
 }
 - (nullable NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -167,7 +191,6 @@ enum
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    //  TODO:2.8 多语言
     switch (indexPath.section) {
         case kVcSecBaseInfo:
         {
@@ -178,7 +201,7 @@ enum
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 cell.textLabel.text = NSLocalizedString(@"kVcPermissionEditCellType", @"类型");
                 cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                cell.detailTextLabel.text = @"资金权限";
+                cell.detailTextLabel.text = [_permission_item objectForKey:@"title"];
                 cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                 cell.showCustomBottomLine = YES;
                 cell.hideTopLine = YES;
@@ -249,6 +272,8 @@ enum
 
         }
             break;
+        case kVcSecTips:
+            return _cellTips;
         default:
             break;
     }
@@ -289,24 +314,13 @@ enum
 {
     [_permissionList removeObjectAtIndex:button.tag - 1];
     [_mainTableView reloadData];
-//    id item = [_dataArray objectAtIndex:button.tag];
-//    if ([[item objectForKey:@"is_memo"] boolValue]) {
-//    [OrgUtils showMessage:[NSString stringWithFormat:@"remove:%@", @(button.tag)]];
-//        return;
-//    } else {
-//        //  TODO:多语言
-//        VCPermissionEdit* vc = [[VCPermissionEdit alloc] initWithPermissionJson:[item objectForKey:@"raw"]];
-//        [_owner pushViewController:vc
-//                           vctitle:@"修改权限"
-//                         backtitle:kVcDefaultBackTitleName];
-//    }
 }
 
 - (void)onAddOneClicked
 {
     //  限制最大多签成员数
     if ([_permissionList count] >= _maximum_authority_membership) {
-       [OrgUtils makeToast:[NSString stringWithFormat:@"最多只能添加 %@ 个多签管理者。", @(_maximum_authority_membership)]];
+       [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcPermissionEditTipsMaxAuthority", @"最多只能添加 %@ 个多签管理者。"), @(_maximum_authority_membership)]];
         return;
     }
 
@@ -316,7 +330,7 @@ enum
         WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
         VCPermissionAddOne* vc = [[VCPermissionAddOne alloc] initWithResultPromise:result_promise];
         [self pushViewController:vc
-                         vctitle:@"添加管理者"
+                         vctitle:NSLocalizedString(@"kVcTitlePermissionAddAuthority", @"添加管理者")
                        backtitle:kVcDefaultBackTitleName];
         [result_promise then:(^id(id json_data) {
             //  @{@"key":key, @"name":name, @"isaccount":@(isaccount), @"threshold":@(threshold)}
@@ -343,24 +357,34 @@ enum
 
 - (void)onSubmitClicked
 {
-    //  TODO:2.8
+    //  TODO:2.8 确定修改逻辑
 }
 
 - (void)onPassThresholdClicked
 {
-    //  TODO:
-    [[UIAlertViewManager sharedUIAlertViewManager] showInputBox:@"新阈值"
+    [[UIAlertViewManager sharedUIAlertViewManager] showInputBox:NSLocalizedString(@"kVcPermissionEditNewPassThresholdTitle", @"新阈值")
                                                       withTitle:nil
-                                                    placeholder:@"请输入新的阈值"
+                                                    placeholder:NSLocalizedString(@"kVcPermissionEditNewPassThresholdPlaceholder", @"请输入新的阈值")
                                                      ispassword:NO
                                                              ok:NSLocalizedString(@"kBtnOK", @"确定")
-                                                     completion:^(NSInteger buttonIndex, NSString *tfvalue) {
-                                                         if (buttonIndex != 0){
-                                                             // TODO:
-                                                             _weightThreshold = [tfvalue integerValue];
-                                                             [_mainTableView reloadData];
-                                                         }
-                                                     }];
+                                                          tfcfg:(^(SCLTextView *tf) {
+        tf.keyboardType = UIKeyboardTypeDecimalPad;
+        tf.bLimitInputThreshold = YES;
+    })
+                                                     completion:(^(NSInteger buttonIndex, NSString *tfvalue) {
+        if (buttonIndex != 0){
+            id n_threshold = [OrgUtils auxGetStringDecimalNumberValue:tfvalue];
+            id n_min_threshold = [NSDecimalNumber decimalNumberWithString:@"1"];
+            //  REMARK：单个 authority 的最大值是 65535，目前理事会参数最多10个 authority。这里目前配置最大范围可以容量 100+ authority。
+            id n_max_threshold = [NSDecimalNumber decimalNumberWithString:@"9999999"];
+            if ([n_threshold compare:n_min_threshold] < 0 || [n_threshold compare:n_max_threshold] > 0) {
+                [OrgUtils makeToast:NSLocalizedString(@"kVcPermissionEditTipsInvalidPassThreshold", @"请输入有效的阈值，范围 1 - 9999999。")];
+                return;
+            }
+            _weightThreshold = [n_threshold integerValue];
+            [_mainTableView reloadData];
+        }
+    })];
 }
 
 @end

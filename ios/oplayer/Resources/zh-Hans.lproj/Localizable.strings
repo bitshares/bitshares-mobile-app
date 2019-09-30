@@ -181,6 +181,7 @@
 /* 账号信息 */
 "kAccountPageBasicInfo" = "基本信息";
 "kAccountPageMemberInfo" = "会员信息";
+"kAccountPagePermissions" = "权限信息";
 "kAccountBtnUpgradeToLifetimeMember" = "升级终身会员";
 "kAccountMembershipStatus" = "状态";
 "kAccountMembershipMyRefCode" = "我的推荐码";
@@ -193,14 +194,32 @@
 "kAccountUpgradeMemberCostAsk" = "升级终身会员需要花费 %@，是否继续？";
 
 /* 权限相关 */
+"kVcPermissionTypeOwner" = "账号权限";
+"kVcPermissionTypeActive" = "资金权限";
+"kVcPermissionTypeMemo" = "备注权限";
+"kVcPermissionPassThreshold" = "阈值 ";
 "kVcPermissionEditTitleName" = "管理者账号/公钥";
-"kVcPermissionEditTitleWeight" = "权重(百分比)";
+"kVcPermissionEditTitleWeight" = "权重";
 "kVcPermissionEditTitleAction" = "操作";
 "kVcPermissionEditBtnRemove" = "移除";
 "kVcPermissionEditBtnAddOne" = "新增";
 "kVcPermissionEditBtnSubmit" = "提交";
 "kVcPermissionEditCellType" = "类型";
 "kVcPermissionEditCellThreshold" = "阈值";
+"kVcPermissionEditNewPassThresholdTitle" = "新阈值";
+"kVcPermissionEditNewPassThresholdPlaceholder" = "请输入新的阈值";
+"kVcPermissionEditTipsMaxAuthority" = "最多只能添加 %@ 个多签管理者。";
+"kVcPermissionEditHelpTips" = "【温馨提示】\n阈值：阈值是使用该权限所需的最低权重值，各管理者账号/公钥的权重之和必须大于等于阈值。";
+"kVcPermissionEditTipsInvalidPassThreshold" = "请输入有效的阈值，范围 1 - 9999999。";
+"kVcPermissionAddOneTitleAuthority" = "管理者";
+"kVcPermissionAddOneTitleWeight" = "权重";
+"kVcPermissionAddOneBtnDone" = "确定";
+"kVcPermissionAddOneBtnSearchAccount" = "搜索账号";
+"kVcPermissionAddOnePlaceholderAuthority" = "账号或公钥";
+"kVcPermissionAddOnePlaceholderWeight" = "权重（1-65535）";
+"kVcPermissionAddOneDoneTipsInvalidAuthority" = "请输入有效的账号或公钥。";
+"kVcPermissionAddOneDoneTipsInvalidWeight" = "请输入有效的权重值，范围 1 - 65535。";
+"kVcPermissionAddOneDontTipsCantAddSelf" = "不能添加自身账号。";
 
 /* 登录&注册&备份 */
 "kLoginPageModePassword" = "账号模式";
@@ -642,6 +661,9 @@
 "kVcTitleLogin" = "登录";
 "kVcTitleImportAccount" = "导入账号";
 "kVcTitleRegister" = "注册";
+"kVcTitleChangePermission" = "修改权限";
+"kVcTitlePermissionAddAuthority" = "添加管理者";
+"kVcTitleAddOneSearchAccount" = "搜索账号";
 "kVcTitleQrScan" = "扫一扫";
 "kVcTitleQrScanResultNormal" = "扫描结果";
 "kVcTitleQrScanResultPriKey" = "导入私钥";

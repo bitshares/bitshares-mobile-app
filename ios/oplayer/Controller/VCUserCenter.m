@@ -56,7 +56,7 @@ enum
 {
     return @[NSLocalizedString(@"kAccountPageBasicInfo", @"基本信息"),
              NSLocalizedString(@"kAccountPageMemberInfo", @"会员信息"),
-             @"权限信息"//TODO:2.8多语言
+             NSLocalizedString(@"kAccountPagePermissions", @"权限信息")
              ];
 }
 

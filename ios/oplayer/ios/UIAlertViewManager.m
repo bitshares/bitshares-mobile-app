@@ -7,7 +7,6 @@
 //
 
 #import "UIAlertViewManager.h"
-#import "SCLAlertView.h"
 #import "NativeAppDelegate.h"
 #import "ThemeManager.h"
 
@@ -99,6 +98,7 @@ static UIAlertViewManager *_sharedUIAlertViewManager = nil;
           otherButtons:(NSArray*)otherButtons
              textfield:(NSString*)placeholder
             ispassword:(BOOL)ispassword
+                 tfcfg:(ArgConfigTextFieldBlock)tfcfg
             completion:(Arg1CompletionBlock)completion
 {
     ThemeManager* theme = [ThemeManager sharedThemeManager];
@@ -119,7 +119,7 @@ static UIAlertViewManager *_sharedUIAlertViewManager = nil;
     [alert removeTopCircle];
     
     //  是否带文本输入框
-    UITextField* textfield = nil;
+    SCLTextView* textfield = nil;
     if (placeholder){
         //  输入框样式定制
         textfield = [alert addTextField:placeholder];
@@ -136,6 +136,10 @@ static UIAlertViewManager *_sharedUIAlertViewManager = nil;
         textfield.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeholder
                                                                           attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
                                                                                        NSFontAttributeName:[UIFont systemFontOfSize:14]}];
+        //  配置
+        if (tfcfg) {
+            tfcfg(textfield);
+        }
     }
     
     //  其它按钮（有取消按钮则其它按钮索引从1开始，否则从0开始。）
@@ -179,7 +183,14 @@ static UIAlertViewManager *_sharedUIAlertViewManager = nil;
          otherButtons:(NSArray*)otherButtons
            completion:(Arg1CompletionBlock)completion
 {
-    [self _showMessageEx:pMessage withTitle:pTitle cancelButton:cancel otherButtons:otherButtons textfield:nil ispassword:NO completion:completion];
+    [self _showMessageEx:pMessage
+               withTitle:pTitle
+            cancelButton:cancel
+            otherButtons:otherButtons
+               textfield:nil
+              ispassword:NO
+                   tfcfg:nil
+              completion:completion];
 }
 
 /**
@@ -214,6 +225,7 @@ static UIAlertViewManager *_sharedUIAlertViewManager = nil;
          placeholder:(NSString*)placeholder
           ispassword:(BOOL)ispassword
                   ok:(NSString*)okbutton
+               tfcfg:(ArgConfigTextFieldBlock)tfcfg
           completion:(ArgTextFieldCompletionBlock)completion
 {
     [self _showMessageEx:message
@@ -222,6 +234,7 @@ static UIAlertViewManager *_sharedUIAlertViewManager = nil;
             otherButtons:[NSArray arrayWithObject:okbutton]
                textfield:placeholder
               ispassword:ispassword
+                   tfcfg:tfcfg
               completion:(Arg1CompletionBlock)completion];
 }
 

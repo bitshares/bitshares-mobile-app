@@ -586,6 +586,7 @@ enum
                                                     placeholder:NSLocalizedString(@"kVcHtlcListAskPlaceholderRedeem", @"请输入合约原像")
                                                      ispassword:NO
                                                              ok:NSLocalizedString(@"kBtnOK", @"确定")
+                                                          tfcfg:nil
                                                      completion:^(NSInteger buttonIndex, NSString *tfvalue) {
                                                          if (buttonIndex != 0){
                                                              [_owner GuardWalletUnlocked:NO body:^(BOOL unlocked) {

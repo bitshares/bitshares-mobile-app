@@ -12,6 +12,8 @@
 
 @implementation SCLTextView
 
+@synthesize bLimitInputThreshold;
+
 - (instancetype)init
 {
     self = [super init];
@@ -44,6 +46,7 @@
 
 - (void)setup
 {
+    self.bLimitInputThreshold = NO;
     self.frame = CGRectMake(0.0f, 0.0f, 0.0f, MIN_HEIGHT);
     self.returnKeyType = UIReturnKeyDone;
     self.borderStyle = UITextBorderStyleRoundedRect;
@@ -51,6 +54,16 @@
     self.clearButtonMode = UITextFieldViewModeWhileEditing;
     self.layer.masksToBounds = YES;
     self.layer.borderWidth = 1.0f;
+}
+
+- (BOOL)isValidAuthorityThreshold:(NSString*)new_string
+{
+    if (new_string && [new_string length] > 0){
+        unichar single = [new_string characterAtIndex:0];
+        return single >= '0' && single <= '9';
+    }else{
+        return YES;
+    }
 }
 
 @end

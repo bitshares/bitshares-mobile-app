@@ -169,6 +169,7 @@ typedef enum EBitsharesOperations
 //  BTS石墨烯特殊账号
 //  0:理事会账号
 #define BTS_GRAPHENE_COMMITTEE_ACCOUNT      @"1.2.0"
+#define BTS_GRAPHENE_WITNESS_ACCOUNT        @"1.2.1"
 
 //  4:空账号（隐私交易可能需要由该账号支付手续费等）
 #define BTS_GRAPHENE_TEMP_ACCOUNT           @"1.2.4"

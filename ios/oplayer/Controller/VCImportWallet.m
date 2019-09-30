@@ -282,6 +282,7 @@
                                                         placeholder:NSLocalizedString(@"unlockTipsPleaseInputWalletPassword", @"请输入钱包密码")
                                                          ispassword:YES
                                                                  ok:NSLocalizedString(@"kLoginBtnImportNow", @"立即导入")
+                                                              tfcfg:nil
                                                          completion:^(NSInteger buttonIndex, NSString *tfvalue) {
                                                              if (buttonIndex != 0){
                                                                  [self processImportWalletCore:tfvalue fileitem:item];

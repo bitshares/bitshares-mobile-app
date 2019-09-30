@@ -7,10 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SCLAlertView.h"
 
 typedef void (^NoArgsCompletionBlock)();
 typedef void (^Arg1CompletionBlock)(NSInteger buttonIndex);
 typedef void (^ArgTextFieldCompletionBlock)(NSInteger buttonIndex, NSString* tfvalue);
+typedef void (^ArgConfigTextFieldBlock)(SCLTextView* tf);
 
 @interface UIAlertViewManager : NSObject
 
@@ -32,6 +34,7 @@ typedef void (^ArgTextFieldCompletionBlock)(NSInteger buttonIndex, NSString* tfv
          placeholder:(NSString*)placeholder
           ispassword:(BOOL)ispassword
                   ok:(NSString*)okbutton
+               tfcfg:(ArgConfigTextFieldBlock)tfcfg
           completion:(ArgTextFieldCompletionBlock)completion;
 
 @end
