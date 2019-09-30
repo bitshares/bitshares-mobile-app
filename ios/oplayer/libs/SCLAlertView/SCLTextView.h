@@ -14,4 +14,8 @@
 
 @interface SCLTextView : UITextField
 
+@property (nonatomic, assign) BOOL bLimitInputThreshold;
+
+- (BOOL)isValidAuthorityThreshold:(NSString*)new_string;
+
 @end

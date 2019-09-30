@@ -70,12 +70,6 @@ enum
     return self;
 }
 
-//- (void)onCancelButtonClicked:(id)sender
-//{
-//    [self endInput];
-//    [self closeModelViewController:nil];
-//}
-
 - (void)onSearchAccountClicked:(UIButton*)sender
 {
     VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:enstAccount callback:^(id account_info) {
@@ -84,7 +78,7 @@ enum
         }
     }];
     [self pushViewController:vc
-                     vctitle:@"搜索账号"//TODO:
+                     vctitle:NSLocalizedString(@"kVcTitleAddOneSearchAccount", @"搜索账号")
                    backtitle:kVcDefaultBackTitleName];
 }
 
@@ -97,14 +91,10 @@ enum
     
     self.view.backgroundColor = theme.appBackColor;
     
-    //  导航条按钮
-//    [self showLeftButton:NSLocalizedString(@"kBtnCancel", @"取消") action:@selector(onCancelButtonClicked:)];
-    
     CGRect rect = [self makeTextFieldRect];
     
-    //  TODO:
-    NSString* placeHolderAuthority = @"账号或公钥";
-    NSString* placeHolderThreshold = @"权重（1-65535）";
+    NSString* placeHolderAuthority = NSLocalizedString(@"kVcPermissionAddOnePlaceholderAuthority", @"账号或公钥");
+    NSString* placeHolderThreshold = NSLocalizedString(@"kVcPermissionAddOnePlaceholderWeight", @"权重（1-65535）");
     
     _tf_authority = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolderAuthority];
     _tf_authority.updateClearButtonTintColor = YES;
@@ -125,7 +115,7 @@ enum
     //  UI - 管理者输入框末尾按钮
     UIButton* btnSearch = [UIButton buttonWithType:UIButtonTypeSystem];
     btnSearch.titleLabel.font = [UIFont systemFontOfSize:13];
-    [btnSearch setTitle:@"搜索账号" forState:UIControlStateNormal];
+    [btnSearch setTitle:NSLocalizedString(@"kVcPermissionAddOneBtnSearchAccount", @"搜索账号") forState:UIControlStateNormal];
     [btnSearch setTitleColor:theme.textColorHighlight forState:UIControlStateNormal];
     btnSearch.userInteractionEnabled = YES;
     btnSearch.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
@@ -147,7 +137,7 @@ enum
     pTap.cancelsTouchesInView = NO; //  IOS 5.0系列导致按钮没响应
     [self.view addGestureRecognizer:pTap];
     
-    _lbCommit = [self createCellLableButton:@"确定"];
+    _lbCommit = [self createCellLableButton:NSLocalizedString(@"kVcPermissionAddOneBtnDone", @"确定")];
 }
 
 -(void)onTap:(UITapGestureRecognizer*)pTap
@@ -229,7 +219,6 @@ enum
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    //  TODO:2.8 多语言
     switch (indexPath.section) {
         case kVcSecBase:
         {
@@ -241,7 +230,7 @@ enum
                     cell.hideBottomLine = YES;
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                    cell.textLabel.text = @"管理者";
+                    cell.textLabel.text = NSLocalizedString(@"kVcPermissionAddOneTitleAuthority", @"管理者");
                     cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                     return cell;
@@ -269,7 +258,7 @@ enum
                     cell.hideBottomLine = YES;
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                    cell.textLabel.text = @"权重";
+                    cell.textLabel.text = NSLocalizedString(@"kVcPermissionAddOneTitleWeight", @"权重");
                     cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                     return cell;
@@ -326,7 +315,7 @@ enum
     
     id str_authority = [NSString trim:_tf_authority.text];
     if (!str_authority || [str_authority isEqualToString:@""]){
-        [OrgUtils makeToast:@"请输入有效的账号或公钥。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcPermissionAddOneDoneTipsInvalidAuthority", @"请输入有效的账号或公钥。")];
         return;
     }
     id str_threshold = _tf_threshold.text;
@@ -334,7 +323,7 @@ enum
     id n_min_threshold = [NSDecimalNumber decimalNumberWithString:@"1"];
     id n_max_threshold = [NSDecimalNumber decimalNumberWithString:@"65535"];
     if ([n_threshold compare:n_min_threshold] < 0 || [n_threshold compare:n_max_threshold] > 0) {
-        [OrgUtils makeToast:@"请输入有效的权重值，范围 1 - 65535"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcPermissionAddOneDoneTipsInvalidWeight", @"请输入有效的权重值，范围 1 - 65535。")];
         return;
     }
     
@@ -361,7 +350,7 @@ enum
                 id account = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
                 assert(account);
                 if ([[account objectForKey:@"id"] isEqualToString:new_oid]) {
-                    [OrgUtils makeToast:@"不能添加自身账号。"];
+                    [OrgUtils makeToast:NSLocalizedString(@"kVcPermissionAddOneDontTipsCantAddSelf", @"不能添加自身账号。")];
                 } else {
                     [self onAddOneDone:new_oid
                                   name:[accountData objectForKey:@"name"]
@@ -369,7 +358,7 @@ enum
                              threshold:i_threshold];
                 }
             } else {
-                [OrgUtils makeToast:@"请输入有效的账号或公钥。"];
+                [OrgUtils makeToast:NSLocalizedString(@"kVcPermissionAddOneDoneTipsInvalidAuthority", @"请输入有效的账号或公钥。")];
             }
             return nil;
         })];

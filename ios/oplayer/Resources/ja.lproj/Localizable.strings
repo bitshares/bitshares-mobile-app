@@ -181,6 +181,7 @@
 /* 账号信息 */
 "kAccountPageBasicInfo" = "基本情報";
 "kAccountPageMemberInfo" = "会員情報";
+"kAccountPagePermissions" = "権限情報";
 "kAccountBtnUpgradeToLifetimeMember" = "一生会員をアップグレードする";
 "kAccountMembershipStatus" = "状態";
 "kAccountMembershipMyRefCode" = "私の推薦コード";
@@ -193,6 +194,10 @@
 "kAccountUpgradeMemberCostAsk" = "一生会員をアップグレードするには %@ かかります。続行しますか？";
 
 /* 权限相关 */
+"kVcPermissionTypeOwner" = "アカウント権限";
+"kVcPermissionTypeActive" = "資金権限";
+"kVcPermissionTypeMemo" = "付注権限";
+"kVcPermissionPassThreshold" = "しきい値 ";
 "kVcPermissionEditTitleName" = "アカウント / キー";
 "kVcPermissionEditTitleWeight" = "ウェイト";
 "kVcPermissionEditTitleAction" = "操作";
@@ -201,6 +206,20 @@
 "kVcPermissionEditBtnSubmit" = "変更の確定";
 "kVcPermissionEditCellType" = "タイプ";
 "kVcPermissionEditCellThreshold" = "しきい値";
+"kVcPermissionEditNewPassThresholdTitle" = "新しいしきい値";
+"kVcPermissionEditNewPassThresholdPlaceholder" = "新しいしきい値を入力してください";
+"kVcPermissionEditTipsMaxAuthority" = "最大 %@ 個のマルチサインメンバーのみ追加できます。";
+"kVcPermissionEditHelpTips" = "【暖かいヒント】\nしきい値：しきい値は、アクセス権限を使用するために必要な最小のウェイトであり、各アカウント/公開キーのウェイトの合計は、しきい値以上である必要があります。";
+"kVcPermissionEditTipsInvalidPassThreshold" = "有効なしきい値を入力してください。 範囲1-9999999。";
+"kVcPermissionAddOneTitleAuthority" = "権限";
+"kVcPermissionAddOneTitleWeight" = "ウェイト";
+"kVcPermissionAddOneBtnDone" = "完了";
+"kVcPermissionAddOneBtnSearchAccount" = "検索";
+"kVcPermissionAddOnePlaceholderAuthority" = "アカウントまたは公開鍵";
+"kVcPermissionAddOnePlaceholderWeight" = "ウェイト（1-65535）";
+"kVcPermissionAddOneDoneTipsInvalidAuthority" = "有効なアカウントまたは公開キーを入力してください。";
+"kVcPermissionAddOneDoneTipsInvalidWeight" = "有効なウェイトを入力してください。 範囲1-65535。";
+"kVcPermissionAddOneDontTipsCantAddSelf" = "自分のアカウントを追加できません。";
 
 /* 登录&注册&备份 */
 "kLoginPageModePassword" = "アカウントモード";
@@ -582,7 +601,7 @@
 "kVcConfirmTipMemo" = "付注";
 "kVcConfirmTipFee" = "料金";
 "kVcConfirmTypeTransfer" = "送金";
-"kVcConfirmSubmitOK" = "確かですか";
+"kVcConfirmSubmitOK" = "完了";
 
 /* 投票界面 */
 "kLabelVotingIntroduction" = "紹介 >";
@@ -642,6 +661,9 @@
 "kVcTitleLogin" = "ログイン";
 "kVcTitleImportAccount" = "アカウント導入";
 "kVcTitleRegister" = "新規登録";
+"kVcTitleChangePermission" = "変更権限";
+"kVcTitlePermissionAddAuthority" = "権限を追加する";
+"kVcTitleAddOneSearchAccount" = "アカウントを検索";
 "kVcTitleQrScan" = "スキャン";
 "kVcTitleQrScanResultNormal" = "スキャン結果";
 "kVcTitleQrScanResultPriKey" = "インポートキー";

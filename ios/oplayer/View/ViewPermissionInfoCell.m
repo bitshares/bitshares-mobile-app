@@ -107,15 +107,12 @@
     CGFloat fWidth = self.bounds.size.width - xOffset * 2;
     CGFloat fLineHeight = 28;
 
-    BOOL is_memo = [[_item objectForKey:@"is_memo"] boolValue];
+    BOOL bHideThreshold = [[_item objectForKey:@"is_memo"] boolValue];
     id authorizeItems = [_item objectForKey:@"items"];
-    BOOL one_authority_control = [authorizeItems count] == 1;       //  单权限控制（此时不用显示阈值）
-//    BOOL canBeModified = [[_item objectForKey:@"canBeModified"] boolValue];
-    BOOL bHideThreshold = is_memo || one_authority_control;
     NSInteger passThreshold = [_item[@"weight_threshold"] integerValue];
     
     //  第一行 标题
-    if (is_memo) {
+    if (bHideThreshold) {
         _lbTitle.hidden = YES;
         _lbThreshold.hidden = YES;
     } else {
@@ -163,7 +160,7 @@
         //  计算该授权实体占比权重。
         NSInteger threshold = [[item objectForKey:@"threshold"] integerValue];
         CGFloat weight_percent = 0;
-        if (!is_memo) {
+        if (!bHideThreshold) {
             weight_percent = threshold * 100.0f / (CGFloat)passThreshold;
             if (threshold < passThreshold){
                 weight_percent = fminf(weight_percent, 99.0f);
@@ -187,15 +184,10 @@
         
         //  status
         UILabel* status = [_lbAuthorizeStatusList objectAtIndex:labelIndex++];
-//        if (one_authority_control) {
-//
-//        } else {
-            status.text = [NSString stringWithFormat:@"%@ (%2d%%)", @(threshold), (int)weight_percent];
-//        }
-        
+        status.text = [NSString stringWithFormat:@"%@ (%2d%%)", @(threshold), (int)weight_percent];
         status.textColor = theme.textColorMain;
         status.frame = CGRectMake(xOffset, yOffset, fWidth, fLineHeight);
-        status.hidden = is_memo;
+        status.hidden = bHideThreshold;
         yOffset += fLineHeight;
     }
 }

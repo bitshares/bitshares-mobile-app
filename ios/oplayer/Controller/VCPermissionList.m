@@ -74,11 +74,11 @@
     }
     [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     [[[[ChainObjectManager sharedChainObjectManager] queryAllAccountsInfo:[account_id_hash allKeys]] then:(^id(id data) {
-        [self hideBlockView];
+        [_owner hideBlockView];
         [self _onQueryDependencyAccountNameResponsed];
         return nil;
     })] catch:(^id(id error) {
-        [self hideBlockView];
+        [_owner hideBlockView];
         [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
         return nil;
     })];
@@ -91,6 +91,7 @@
 {
     id oid = [account objectForKey:@"id"];
     if ([oid isEqualToString:BTS_GRAPHENE_COMMITTEE_ACCOUNT] ||
+        [oid isEqualToString:BTS_GRAPHENE_WITNESS_ACCOUNT] || 
         [oid isEqualToString:BTS_GRAPHENE_TEMP_ACCOUNT] ||
         [oid isEqualToString:BTS_GRAPHENE_PROXY_TO_SELF]) {
         return NO;
@@ -114,6 +115,7 @@
     id key_auths = [permission objectForKey:@"key_auths"];
     id address_auths = [permission objectForKey:@"address_auths"];
     NSMutableArray* list = [NSMutableArray array];
+    BOOL onlyIncludeKeyAuthority = YES;
     NSInteger curr_threshold = 0;
     for (id item in account_auths) {
         assert([item count] == 2);
@@ -122,11 +124,12 @@
         curr_threshold += threshold;
         id mutable_hash = [NSMutableDictionary dictionaryWithObjectsAndKeys:oid, @"key", @YES, @"isaccount", @(threshold), @"threshold", nil];
         //  查询依赖的名字
-        id multi_sign_account = [chainMgr getChainObjectByID:oid];
+        id multi_sign_account = [chainMgr getChainObjectByID:oid searchFileCache:YES];
         if (multi_sign_account) {
             [mutable_hash setObject:multi_sign_account[@"name"] forKey:@"name"];
         }
         [list addObject:mutable_hash];
+        onlyIncludeKeyAuthority = NO;
     }
     for (id item in key_auths) {
         assert([item count] == 2);
@@ -141,6 +144,7 @@
         NSInteger threshold = [[item lastObject] integerValue];
         curr_threshold += threshold;
         [list addObject:@{@"key":addr, @"isaddr":@YES, @"threshold":@(threshold)}];
+        onlyIncludeKeyAuthority = NO;
     }
     //  根据权重降序排列
     [list sortUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
@@ -149,7 +153,9 @@
         return threshold02 - threshold01;
     })];
     if (curr_threshold >= weight_threshold) {
-        return @{@"title":title, @"weight_threshold":@(weight_threshold), @"items":list, @"canBeModified":@(canBeModified), @"raw":permission};
+        //  REMARK：仅包含一个权力实体，并且是KEY类型。不是account、address等。
+        BOOL only_one_key = onlyIncludeKeyAuthority && [list count] == 1;
+        return @{@"title":title, @"weight_threshold":@(weight_threshold), @"only_one_key":@(only_one_key), @"items":list, @"canBeModified":@(canBeModified), @"raw":permission};
     }
     //  no permission
     return nil;
@@ -162,27 +168,26 @@
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
-    //  TODO:2.8 多语言
     _dataArray = [[[NSMutableArray array] ruby_apply:(^(id ary) {
         id account = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
         assert(account);
         id owner = [account objectForKey:@"owner"];
         assert(owner);
-        id value = [self _parsePermissionJson:owner title:@"账号权限" account:account];
+        id value = [self _parsePermissionJson:owner title:NSLocalizedString(@"kVcPermissionTypeOwner", @"账号权限") account:account];
         if (value) {
             [ary addObject:value];
         }
         
         id active = [account objectForKey:@"active"];
         assert(active);
-        value = [self _parsePermissionJson:active title:@"资金权限" account:account];
+        value = [self _parsePermissionJson:active title:NSLocalizedString(@"kVcPermissionTypeActive", @"资金权限") account:account];
         if (value) {
             [ary addObject:value];
         }
         
         id memo_key = [[account objectForKey:@"options"] objectForKey:@"memo_key"];
         assert(memo_key);
-        value = [self _parsePermissionJson:memo_key title:@"备注权限" account:account];
+        value = [self _parsePermissionJson:memo_key title:NSLocalizedString(@"kVcPermissionTypeMemo", @"备注权限") account:account];
         if (value) {
             [ary addObject:value];
         }
@@ -214,7 +219,8 @@
 {
     id item = [_dataArray objectAtIndex:indexPath.section];
     NSInteger line_number = [[item objectForKey:@"items"] count];
-    if (![[item objectForKey:@"is_memo"] boolValue]) {
+    BOOL bHideThreshold = [[item objectForKey:@"is_memo"] boolValue];
+    if (!bHideThreshold) {
         line_number += 1;
     }
     //  行数 + 间隔
@@ -269,7 +275,7 @@
     if ([[item objectForKey:@"canBeModified"] boolValue]) {
         CGSize size1 = [UITableViewCellBase auxSizeWithText:titleLabel.text font:titleLabel.font maxsize:CGSizeMake(fWidth, 9999)];
         UIButton* btnModify = [UIButton buttonWithType:UIButtonTypeCustom];
-        UIImage* btn_image = [UIImage templateImageNamed:@"Help-50"];//TODO:2.8 TODO:TODO:TODO:
+        UIImage* btn_image = [UIImage templateImageNamed:@"iconEdit"];
         CGSize btn_size = btn_image.size;
         [btnModify setBackgroundImage:btn_image forState:UIControlStateNormal];
         btnModify.userInteractionEnabled = YES;
@@ -287,7 +293,7 @@
         secLabel.textAlignment = NSTextAlignmentRight;
         secLabel.backgroundColor = [UIColor clearColor];
         secLabel.font = [UIFont boldSystemFontOfSize:13];
-        secLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:@"阈值 "
+        secLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:NSLocalizedString(@"kVcPermissionPassThreshold", @"阈值 ")
                                                                            value:[NSString stringWithFormat:@"%@", item[@"weight_threshold"]]
                                                                       titleColor:theme.textColorNormal
                                                                       valueColor:theme.textColorMain];
@@ -324,6 +330,7 @@
 {
     id item = [_dataArray objectAtIndex:button.tag];
     if ([[item objectForKey:@"is_memo"] boolValue]) {
+        //  TODO:2.8 修改memo
         [OrgUtils showMessage:@"memo"];
         return;
     } else {
@@ -334,14 +341,14 @@
             id gp = [[ChainObjectManager sharedChainObjectManager] getObjectGlobalProperties];
             id parameters = [gp objectForKey:@"parameters"];
             NSInteger maximum_authority_membership = [[parameters objectForKey:@"maximum_authority_membership"] integerValue];
-            //  TODO:多语言
-            VCPermissionEdit* vc = [[VCPermissionEdit alloc] initWithPermissionJson:[item objectForKey:@"raw"] maximum_authority_membership:maximum_authority_membership];
+            
+            VCPermissionEdit* vc = [[VCPermissionEdit alloc] initWithPermissionJson:item
+                                                       maximum_authority_membership:maximum_authority_membership];
             [_owner pushViewController:vc
-                               vctitle:@"修改权限"
+                               vctitle:NSLocalizedString(@"kVcTitleChangePermission", @"修改权限")
                              backtitle:kVcDefaultBackTitleName];
             
             return nil;
-            
         })] catch:(^id(id error) {
             [_owner hideBlockView];
             [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];

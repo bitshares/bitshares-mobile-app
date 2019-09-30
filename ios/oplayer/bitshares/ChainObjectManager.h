@@ -131,6 +131,7 @@
  */
 - (id)getAssetBySymbol:(NSString*)symbol;
 - (id)getChainObjectByID:(NSString*)oid;
+- (id)getChainObjectByID:(NSString*)oid searchFileCache:(BOOL)searchFileCache;
 - (id)getVoteInfoByVoteID:(NSString*)vote_id;
 - (id)getAccountByName:(NSString*)name;
 - (id)getBlockHeaderInfoByBlockNumber:(id)block_number;

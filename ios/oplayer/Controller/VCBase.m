@@ -841,7 +841,9 @@ static NSInteger gen_notify_unique_id()
                                                               withTitle:nil
                                                             placeholder:placeHolder
                                                              ispassword:YES
-                                                                     ok:NSLocalizedString(@"unlockBtnUnlock", @"解锁") completion:^(NSInteger buttonIndex, NSString *tfvalue)
+                                                                     ok:NSLocalizedString(@"unlockBtnUnlock", @"解锁")
+                                                                  tfcfg:nil
+                                                             completion:^(NSInteger buttonIndex, NSString *tfvalue)
              {
                  if (buttonIndex != 0){
                      id unlockInfos = [[WalletManager sharedWalletManager] unLock:tfvalue];
