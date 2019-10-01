@@ -66,6 +66,7 @@ class ActivityAccountInfo : BtsppActivity() {
     private fun setFragments() {
         fragmens.add(FragmentUserBaseInfo())
         fragmens.add(FragmentUserMemberInfo())
+        fragmens.add(FragmentPermissionList())
     }
 
     private fun setTabListener() {
