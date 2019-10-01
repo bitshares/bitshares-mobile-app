@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.btsplusplus.fowallet.ActivityPermissionAddOne"
+    android:background="@color/theme01.appBackColor">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp"
+        android:padding="10dp"
+        android:orientation="vertical">
+    
+        <!-- header & navi bar -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/layout_back_from_add_one_permission"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_btn_back" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/kBtnBack"
+                    style="@style/kNavigationBarTextStyle"
+                    android:gravity="center_vertical" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/title_from_create_htlc_contract"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:text="添加管理者"
+                style="@style/kNavigationBarTextStyle" />
+
+        </FrameLayout>
+
+        <TextView
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="管理者"
+            android:textSize="14dp"
+            android:textColor="@color/theme01.textColorMain"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp">
+
+            <EditText
+                android:id="@+id/edit_account_or_public_key_from_add_one_permission"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical|right"
+                android:gravity="center_vertical|left"
+                android:layout_weight="6"
+                android:textColor="#ffffff"
+                android:textColorHint="@color/theme01.textColorGray"
+                android:hint="账号或公钥"
+                android:theme="@style/theme01.EditText"
+                android:background="@null"
+                android:textSize="16dp"/>
+
+            <TextView
+                android:id="@+id/tv_search_from_add_one_permission"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical|right"
+                android:textSize="14dp"
+                android:textColor="@color/theme01.textColorHighlight"
+                android:text="搜索账号"/>
+
+        </LinearLayout>
+
+        <View android:layout_height="1dp" android:layout_marginTop="0dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+        <TextView
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="权重"
+            android:textSize="14dp"
+            android:textColor="@color/theme01.textColorMain"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp">
+
+            <EditText
+                android:id="@+id/edit_weight_from_add_one_permission"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical|right"
+                android:gravity="center_vertical|left"
+                android:layout_weight="6"
+                android:textColor="#ffffff"
+                android:textColorHint="@color/theme01.textColorGray"
+                android:hint="权重（1-65535）"
+                android:theme="@style/theme01.EditText"
+                android:background="@null"
+                android:textSize="16dp"/>
+
+
+        </LinearLayout>
+
+        <View android:layout_height="1dp" android:layout_marginTop="0dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+        <!-- 提交按钮 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/colorPrimary"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_submitt_from_add_one_permission"
+                android:layout_width="wrap_content"
+                style="@style/kMainButtonStyle"
+                android:gravity="center|center_vertical"
+                android:layout_weight="1"
+                android:padding="5dp"
+                android:text="提交" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
