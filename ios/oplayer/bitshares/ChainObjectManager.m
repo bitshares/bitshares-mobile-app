@@ -335,6 +335,15 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
 }
 
 /**
+ *  (public) 获取喂价详情配置列表
+ */
+- (NSArray*)getDetailFeedPriceSymbolList
+{
+    assert(_defaultMarketInfos);
+    return [_defaultMarketInfos objectForKey:@"detail_feedprice_list"];
+}
+
+/**
  *  (public) 获取可借贷的资产配置列表
  */
 - (NSArray*)getDebtAssetList
@@ -1704,6 +1713,32 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
             NSLog(@"no budget object: %@", @(latest_oid));
         }
         return budget_object;
+    })];
+}
+
+/*
+    (public) 获取活跃的见证人信息列表。
+ */
+- (WsPromise*)queryActiveWitnessDataList
+{
+    GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
+    return [[api exec:@"get_global_properties" params:@[]] then:(^id(id global_data) {
+        [self updateObjectGlobalProperties:global_data];
+        id idlist = [global_data objectForKey:@"active_witnesses"];
+        return [api exec:@"get_witnesses" params:@[idlist]];
+    })];
+}
+
+/*
+   (public) 获取活跃的理事会成员信息列表。
+*/
+- (WsPromise*)queryActiveCommitteeDataList
+{
+    GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
+    return [[api exec:@"get_global_properties" params:@[]] then:(^id(id global_data) {
+        [self updateObjectGlobalProperties:global_data];
+        id idlist = [global_data objectForKey:@"active_committee_members"];
+        return [api exec:@"get_committee_members" params:@[idlist]];
     })];
 }
 

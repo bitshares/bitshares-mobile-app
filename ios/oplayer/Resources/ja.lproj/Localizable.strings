@@ -101,10 +101,13 @@
 /* 喂价详情界面 */
 "kVcFeedCurrentFeedPrice" = "現在のフィード価格";
 "kVcFeedWitnessName" = "証人";
+"kVcFeedPublisherCommitteeName" = "委員";
+"kVcFeedPublisherCustom" = "生産者";
 "kVcFeedPriceName" = "価格";
 "kVcFeedRate" = "偏差率";
 "kVcFeedPublishDate" = "最近発表";
 "kVcFeedNoData" = "未発表";
+"kVcFeedExpired" = "期限切れ";
 "kVcFeedNsecAgo" = "%@秒前";
 "kVcFeedNminAgo" = "%@分前";
 "kVcFeedNhourAgo" = "%@时前";
@@ -207,7 +210,7 @@
 "kVcPermissionEditCellType" = "タイプ";
 "kVcPermissionEditCellThreshold" = "しきい値";
 "kVcPermissionEditNewPassThresholdTitle" = "新しいしきい値";
-"kVcPermissionEditNewPassThresholdPlaceholder" = "新しいしきい値を入力してください";
+"kVcPermissionEditNewPassThresholdPlaceholder" = "新しいしきい値（1-9999999）";
 "kVcPermissionEditTipsMaxAuthority" = "最大 %@ 個のマルチサインメンバーのみ追加できます。";
 "kVcPermissionEditHelpTips" = "【暖かいヒント】\nしきい値：しきい値は、アクセス権限を使用するために必要な最小のウェイトであり、各アカウント/公開キーのウェイトの合計は、しきい値以上である必要があります。";
 "kVcPermissionEditTipsInvalidPassThreshold" = "有効なしきい値を入力してください。 範囲1-9999999。";
@@ -882,6 +885,7 @@
 "kLangKeyEn" = "English / 英語";
 "kLangKeyJa" = "日本語";
 "skip" = "PASS";
+"kNormalErrorInvalidArgs" = "無効なパラメーター。";
 "kAppName" = "BitShares";
 "kAccount" = "アカウント";
 "kAboutMainDesc" ="\nBitSharesモバイルサイドのウオレットは石墨のアルケン技術に基づくので、製品から出発を体験して、採用します原生の技術開発の1モデル匹敵する一流センター化取る引く所のDEX。\n\n私達に連絡します\nWeChat：bts-pp\nE-mail：contact@btsplusplus.com\nTelegram：https://t.me/btsplusplus\n公式サイト：https://btspp.io\n";

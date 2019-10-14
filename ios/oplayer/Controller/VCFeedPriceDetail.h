@@ -12,7 +12,9 @@
 @interface VCFeedPriceDetailSubPage : VCBase<UITableViewDelegate, UITableViewDataSource>
 
 - (id)initWithOwner:(VCBase*)owner asset:(NSDictionary*)asset;
-- (void)onQueryFeedInfoResponsed:(id)data activeWitnessIds:(NSArray*)activeWitnessIds;
+- (void)onQueryFeedInfoResponsed:(id)data
+              activePublisherIds:(NSArray*)activeWitnessIds
+                  publisher_type:(EBitsharesFeedPublisherType)publisher_type;
 
 @end
 

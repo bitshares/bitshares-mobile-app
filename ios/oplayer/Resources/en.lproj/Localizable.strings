@@ -101,10 +101,13 @@
 /* 喂价详情界面 */
 "kVcFeedCurrentFeedPrice" = "Feed price";
 "kVcFeedWitnessName" = "Witness";
+"kVcFeedPublisherCommitteeName" = "Committee";
+"kVcFeedPublisherCustom" = "Producer";
 "kVcFeedPriceName" = "Price";
 "kVcFeedRate" = "Bias";
 "kVcFeedPublishDate" = "Time";
 "kVcFeedNoData" = "no data";
+"kVcFeedExpired" = "expired";
 "kVcFeedNsecAgo" = "%@ secs ago";
 "kVcFeedNminAgo" = "%@ mins ago";
 "kVcFeedNhourAgo" = "%@ hours ago";
@@ -207,7 +210,7 @@
 "kVcPermissionEditCellType" = "Type";
 "kVcPermissionEditCellThreshold" = "Threshold";
 "kVcPermissionEditNewPassThresholdTitle" = "New threshold";
-"kVcPermissionEditNewPassThresholdPlaceholder" = "Please enter a new threshold";
+"kVcPermissionEditNewPassThresholdPlaceholder" = "New threshold (1-9999999)";
 "kVcPermissionEditTipsMaxAuthority" = "You can only add up to %@ multi-sign authorities.";
 "kVcPermissionEditHelpTips" = "[Tips]\nThreshold: The threshold is the minimum weight required to use the permission. The sum of the weights of each authority must be greater than or equal to the threshold.";
 "kVcPermissionEditTipsInvalidPassThreshold" = "Please enter a valid threshold. Range 1 - 9999999.";
@@ -882,6 +885,7 @@
 "kLangKeyEn" = "English";
 "kLangKeyJa" = "日本語 / Japanese";
 "skip" = "Skip";
+"kNormalErrorInvalidArgs" = "Invalid parameter.";
 "kAppName" = "Bitshares";
 "kAccount" = "Account";
 "kAboutMainDesc" ="\nBitshares Mobile App is a decentralized exchange (DEX) product based on Bitshares graphene technology, developed from the product experience and developed with native technology comparable to the first-class centralized exchange. \n\nContact us\nWeChat: bts-pp\nE-mail: contact@btsplusplus.com\nTelegram: https://t.me/btsplusplus\nWebsite: https://btspp.io\n";

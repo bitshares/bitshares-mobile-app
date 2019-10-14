@@ -65,6 +65,11 @@
 - (NSArray*)getCallOrderRankingSymbolList;
 
 /**
+ *  (public) 获取喂价详情配置列表
+ */
+- (NSArray*)getDetailFeedPriceSymbolList;
+
+/**
  *  (public) 获取可借贷的资产配置列表
  */
 - (NSArray*)getDebtAssetList;
@@ -280,6 +285,16 @@
  *  (public) 查询最新的预算项目
  */
 - (WsPromise*)queryLastBudgetObject;
+
+/*
+    (public) 获取活跃的见证人信息列表。
+ */
+- (WsPromise*)queryActiveWitnessDataList;
+
+/*
+   (public) 获取活跃的理事会成员信息列表。
+*/
+- (WsPromise*)queryActiveCommitteeDataList;
 
 /**
  *  (public) 查询帐号投票信息（如果帐号设置了代理帐号，则继续查询代理帐号的投票信息。代理层级过多则返回空。）

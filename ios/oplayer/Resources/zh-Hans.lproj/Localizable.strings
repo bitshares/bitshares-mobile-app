@@ -101,10 +101,13 @@
 /* 喂价详情界面 */
 "kVcFeedCurrentFeedPrice" = "当前喂价";
 "kVcFeedWitnessName" = "见证人";
+"kVcFeedPublisherCommitteeName" = "理事会";
+"kVcFeedPublisherCustom" = "喂价者";
 "kVcFeedPriceName" = "喂价";
 "kVcFeedRate" = "偏差率";
 "kVcFeedPublishDate" = "最近发布";
 "kVcFeedNoData" = "未发布";
+"kVcFeedExpired" = "已过期";
 "kVcFeedNsecAgo" = "%@秒前";
 "kVcFeedNminAgo" = "%@分前";
 "kVcFeedNhourAgo" = "%@小时前";
@@ -207,7 +210,7 @@
 "kVcPermissionEditCellType" = "类型";
 "kVcPermissionEditCellThreshold" = "阈值";
 "kVcPermissionEditNewPassThresholdTitle" = "新阈值";
-"kVcPermissionEditNewPassThresholdPlaceholder" = "请输入新的阈值";
+"kVcPermissionEditNewPassThresholdPlaceholder" = "新的阈值（1-9999999）";
 "kVcPermissionEditTipsMaxAuthority" = "最多只能添加 %@ 个多签管理者。";
 "kVcPermissionEditHelpTips" = "【温馨提示】\n阈值：阈值是使用该权限所需的最低权重值，各管理者账号/公钥的权重之和必须大于等于阈值。";
 "kVcPermissionEditTipsInvalidPassThreshold" = "请输入有效的阈值，范围 1 - 9999999。";
@@ -882,6 +885,7 @@
 "kLangKeyEn" = "English / 英文";
 "kLangKeyJa" = "日本語 / 日文";
 "skip" = "跳过";
+"kNormalErrorInvalidArgs" = "无效参数。";
 "kAppName" = "比特股";
 "kAccount" = "账号";
 "kAboutMainDesc" ="\n比特股移动端钱包是基于石墨烯技术，从产品体验出发，采用原生技术开发的一款可媲美一流中心化交易所的去中心化交易所（DEX）产品。\n\n联系我们\n微信：bts-pp\n邮箱：contact@btsplusplus.com\n电报：https://t.me/btsplusplus\n官网：https://btspp.io\n";

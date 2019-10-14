@@ -20,6 +20,22 @@ typedef enum EBitsharesHtlcHashType
 } EBitsharesHtlcHashType;
 
 /**
+    石墨烯网络资产的各种标记。
+ */
+typedef enum EBitsharesAssetFlags
+{
+    ebat_charge_market_fee    = 0x01,   //  收取交易手续费
+    ebat_white_list           = 0x02,   //  要求资产持有人预先加入白名单
+    ebat_override_authority   = 0x04,   //  发行人可将资产收回
+    ebat_transfer_restricted  = 0x08,   //  所有转账必须通过发行人审核同意
+    ebat_disable_force_settle = 0x10,   //  禁止强制清算
+    ebat_global_settle        = 0x20,   //  允许发行人进行全局强制清算
+    ebat_disable_confidential = 0x40,   //  禁止隐私交易
+    ebat_witness_fed_asset    = 0x80,   //  允许见证人提供喂价
+    ebat_committee_fed_asset  = 0x100   //  允许理事会成员提供喂价
+} EBitsharesAssetFlags;
+
+/**
  *  石墨烯账号黑白名单标记
  */
 typedef enum EBitsharesWhiteListFlag
@@ -59,6 +75,27 @@ typedef enum EBitsharesWorkType
     ebwt_vesting,                   //  vesting
     ebwt_burn                       //  burn
 } EBitsharesWorkType;
+
+/**
+ *  石墨烯权限类型
+ */
+typedef enum EBitsharesPermissionType
+{
+    ebpt_owner = 0,                 //  账号权限
+    ebpt_active,                    //  资金权限
+    ebpt_memo,                      //  备注权限
+    ebpt_custom                     //  BSIP40自定义权限
+} EBitsharesPermissionType;
+
+/*
+    喂价者类型
+ */
+typedef enum EBitsharesFeedPublisherType
+{
+    ebfpt_witness = 0,              //  由见证人喂价
+    ebfpt_committee,                //  由理事会喂价
+    ebfpt_custom                    //  指定喂价者
+} EBitsharesFeedPublisherType;
 
 /**
  *  区块数据对象类型ID号定义
