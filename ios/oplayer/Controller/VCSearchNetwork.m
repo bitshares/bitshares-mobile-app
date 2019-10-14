@@ -11,6 +11,7 @@
 #import "AppCacheManager.h"
 #import "MySearchBar.h"
 #import "OrgUtils.h"
+#import "UIImage+ImageEffects.h"
 
 @interface VCSearchNetwork ()
 {
@@ -23,7 +24,6 @@
     BOOL                        _bEnableSelectRow;
     
     //  搜索栏
-    MySearchBar*                _searchBar;
     UITableView*                _allDataTableView;
     NSString*                   _currSearchText;
 }
@@ -53,9 +53,12 @@
         _allDataTableView.delegate = nil;
         _allDataTableView = nil;
     }
-    if (_searchDisplay){
-        _searchDisplay.delegate = nil;
-        _searchDisplay = nil;
+    if (_searchController){
+        if (_searchController.searchBar){
+            _searchController.searchBar.delegate = nil;
+        }
+        _searchController.searchResultsUpdater = nil;
+        _searchController.delegate = nil;
     }
     _searchDataArray = nil;
     _array_data = nil;
@@ -145,7 +148,8 @@
     [super viewDidLoad];
     
     // Do any additional setup after loading the view.
-    self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
+    ThemeManager* theme = [ThemeManager sharedThemeManager];
+    self.view.backgroundColor = theme.appBackColor;
     
     if (_bEnableSectionIndexTitle)
     {
@@ -170,71 +174,75 @@
     {
         _pSectionTitle = nil;
     }
-    
-    CGRect screenRect = [[UIScreen mainScreen] bounds];
 
-    //  搜索条
-    _searchBar = [[MySearchBar alloc] initWithFrame:CGRectMake(0, 0, screenRect.size.width, [self heightForkSearchBar])];
-    _searchBar.showsCancelButton = YES;
-    
+    //  搜索框
+    _searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+    _searchController.searchBar.delegate = self;
     switch (_searchType) {
         case enstAccount:
-            _searchBar.placeholder = NSLocalizedString(@"kSearchPlaceholderAccount", @"请输入有效的 Bitshares 帐号名");
+            _searchController.searchBar.placeholder = NSLocalizedString(@"kSearchPlaceholderAccount", @"请输入有效的 Bitshares 帐号名");
             break;
         case enstAsset:
-            _searchBar.placeholder = NSLocalizedString(@"kSearchPlaceholderAsset", @"点击搜索新资产");
+            _searchController.searchBar.placeholder = NSLocalizedString(@"kSearchPlaceholderAsset", @"点击搜索新资产");
             break;
         default:
             break;
     }
+    //  [兼容性] REMARK：iOS13 如果用 barTintColor 设置背景色会存在黑边。直接改成 setBackgroundImage 。
+    [_searchController.searchBar setBackgroundImage:[UIImage imageWithColor:theme.appBackColor]];
+    _searchController.searchBar.tintColor = theme.textColorHighlight;
+    [_searchController.searchBar sizeToFit];
+    _searchController.searchResultsUpdater = self;
+    _searchController.delegate = self;
+    _searchController.dimsBackgroundDuringPresentation = NO;
+    _searchController.hidesNavigationBarDuringPresentation = YES;
+    _searchController.searchBar.backgroundColor = theme.appBackColor;
+    [self.view addSubview:_searchController.searchBar];
+    self.definesPresentationContext = YES;  //  REMARK：解决SearchController偏移问题
+        
+    //  [兼容性] REMARK：iOS13 采用这种方法获取 TF 对象。直接 KVC 会崩溃。设置搜索框文字颜色和占位符颜色。
+    UITextField* tf = (UITextField*)[_searchController.searchBar findSubview:[UITextField class] resursion:YES];
+    tf.textColor = theme.textColorMain;
     
-//    _searchController = [[UISearchController alloc] initWithSearchResultsController:self];
-    
-    _searchDisplay = [[UISearchDisplayController alloc] initWithSearchBar:_searchBar contentsController:self];
-    [self.view addSubview:_searchBar];
-    _searchBar.delegate = self;
-    _searchBar.showsCancelButton = NO;
-    _searchBar.tintColor = [ThemeManager sharedThemeManager].textColorHighlight;
-    
-    //  REMARK：这里强制设置下搜索框的背景、不然status bar在搜索模式下黑色背景很难看。
-    Class klass = NSClassFromString(@"UISearchBarBackground");
-    for (UIView *v1 in _searchBar.subviews)
-    {
-        for (UIView* v2 in v1.subviews) {
-            if ([v2 isKindOfClass:klass])
-            {
-                UIView* v3 = [[UIView alloc] initWithFrame:CGRectMake(0, -[self heightForStatusBar], screenRect.size.width, [self heightForStatusAndNaviBar])];
-                v3.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
-                [v2.superview insertSubview:v3 belowSubview:v2];
-                [v2 removeFromSuperview];
-                break;
-            }
-        }
-        break;
-    }
-    
-    _searchDisplay.delegate = self;
-    _searchDisplay.searchResultsDelegate = self;
-    _searchDisplay.searchResultsDataSource = self;
-    if (_searchDisplay.searchResultsTableView){
-        _searchDisplay.searchResultsTableView.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
-        _searchDisplay.searchResultsTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    }
-    
-    //  全部高度 － 搜索条和工具条高度（如果是ios6还需要减去导航条和状态栏高度64，ios7的view是全屏的。）
-    CGFloat fCutHeight = _searchBar.frame.origin.y + _searchBar.bounds.size.height ;
-    CGRect rectTableView = CGRectMake(0,
-                                      _searchBar.frame.origin.y + _searchBar.bounds.size.height,
-                                      screenRect.size.width,
-                                      screenRect.size.height - [self heightForStatusAndNaviBar] - fCutHeight);
-    
-    _allDataTableView = [[UITableView alloc] initWithFrame:rectTableView style:UITableViewStylePlain];
+    //  列表
+    _allDataTableView = [[UITableView alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStylePlain];
     _allDataTableView.delegate = self;
     _allDataTableView.dataSource = self;
     _allDataTableView.backgroundColor = [UIColor clearColor];
     _allDataTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    //  [兼容性] REMARK：iOS13 下拉背景色异常，故封装到view中。
+    UIView* containView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, [self heightForStatusAndNaviBar])];
+    containView.backgroundColor = theme.appBackColor;
+    [containView addSubview:_searchController.searchBar];
+    _allDataTableView.tableHeaderView = containView;
     [self.view addSubview:_allDataTableView];
-    _allDataTableView.tintColor = [ThemeManager sharedThemeManager].tintColor;
+    _allDataTableView.tintColor = theme.tintColor;
+}
+
+- (void)viewWillLayoutSubviews
+{
+    [super viewWillLayoutSubviews];
+    
+    //  [兼容性] REMARK：iOS13 BUG，attributedPlaceholder 在 viewDidLoad 中设置无效，改到这里修改。
+    ThemeManager* theme = [ThemeManager sharedThemeManager];
+    UITextField* tf = (UITextField*)[_searchController.searchBar findSubview:[UITextField class] resursion:YES];
+    if (tf) {
+        tf.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_searchController.searchBar.placeholder
+                                                                         attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
+                                                                                      NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    }
+    
+    //  [兼容性] REMARK：iOS13 取消按钮文字用 KVC 方式崩溃。采用以下方法设置并且不能放在 viewDidLoad 中进行设置。
+    Class klass = NSClassFromString(@"UINavigationButton");
+    if (klass) {
+        [_searchController.searchBar iterateSubview:^BOOL(UIView *view) {
+            if ([view isKindOfClass:klass]) {
+                [(UIButton*)view setTitle:NSLocalizedString(@"kBtnCancel", @"取消") forState:UIControlStateNormal];
+                return YES;
+            }
+            return NO;
+        }];
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -257,11 +265,19 @@
 
 #pragma mark- TableView delegate method
 
+/**
+    (private) 是否显示搜索结果，否则显示默认列表数据。
+ */
+- (BOOL)_showSearchResultData
+{
+    return _searchController.active && _currSearchText && ![_currSearchText isEqualToString:@""];
+}
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    if ([tableView isEqual:_searchDisplay.searchResultsTableView])
+    if ([self _showSearchResultData]) {
         return 1;
-    
+    }
     if (_bEnableSectionIndexTitle)
         return [_pSectionTitle count];
     else
@@ -270,7 +286,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if ([tableView isEqual:_searchDisplay.searchResultsTableView])
+    if ([self _showSearchResultData])
         return [_searchDataArray count];
     
     if (_bEnableSectionIndexTitle){
@@ -283,23 +299,18 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-//    return 0.01f;;
-    return 22.0f;//tableView.sectionHeaderHeight;
+    return 22.0f;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-//    if (![tableView isEqual:_searchDisplay.searchResultsTableView] && !_bEnableSectionIndexTitle){
-//        return [[UIView alloc] init];
-//    }
-    
     UIView* myView = [[UIView alloc] init];
     myView.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, 300, 22)];
     titleLabel.textColor = [ThemeManager sharedThemeManager].textColorHighlight;
     titleLabel.backgroundColor = [UIColor clearColor];
     titleLabel.font = [UIFont boldSystemFontOfSize:13];
-    if ([tableView isEqual:_searchDisplay.searchResultsTableView])
+    if ([self _showSearchResultData])
         titleLabel.text = NSLocalizedString(@"search_result", @"搜索结果");
     else if (_bEnableSectionIndexTitle)
         titleLabel.text = [_pSectionTitle objectAtIndex:section];
@@ -335,7 +346,7 @@
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         }
     }
-    if ([tableView isEqual:_searchDisplay.searchResultsTableView])
+    if ([self _showSearchResultData])
     {
         [self drawTableViewCell:cell data:[_searchDataArray objectAtIndex:indexPath.row] section:indexPath.section row:indexPath.row];
     }
@@ -360,7 +371,7 @@
         
         [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
             NSDictionary* pData = nil;
-            if ([tableView isEqual:_searchDisplay.searchResultsTableView])
+            if ([self _showSearchResultData])
             {
                 pData = [_searchDataArray objectAtIndex:indexPath.row];
             }
@@ -385,7 +396,7 @@
 
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
 {
-    if ([tableView isEqual:_searchDisplay.searchResultsTableView])
+    if ([self _showSearchResultData])
         return nil;
     
     if (_bEnableSectionIndexTitle)
@@ -396,38 +407,29 @@
 
 #pragma mark - search bar & searchdisplaycontroller
 
-- (void) searchDisplayControllerWillBeginSearch:(UISearchDisplayController *)controller
+- (void)didPresentSearchController:(UISearchController *)searchController
 {
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:0.2];
-    [UIView setAnimationCurve:UIViewAnimationCurveLinear];
-    CGFloat fMovedY = _searchBar.bounds.size.height;
-    _searchBar.frame = CGRectMake(0,
-                                  _searchBar.frame.origin.y,
-                                  _searchBar.bounds.size.width,
-                                  _searchBar.bounds.size.height);
-    _allDataTableView.frame = CGRectMake(0,
-                                         _allDataTableView.frame.origin.y,
-                                         _allDataTableView.bounds.size.width,
-                                         _allDataTableView.bounds.size.height + fMovedY);
-    [UIView commitAnimations];
+    //  [兼容性] REMARK：iOS13 搜索框取消按钮修改多语言文字之后这里重新设置下大小。
+    Class klass = NSClassFromString(@"UINavigationButton");
+    if (klass) {
+        [_searchController.searchBar iterateSubview:^BOOL(UIView *view) {
+            if ([view isKindOfClass:klass]) {
+                UIButton* btn = (UIButton*)view;
+                CGSize size1 = [UITableViewCellBase auxSizeWithText:btn.titleLabel.text
+                                                               font:btn.titleLabel.font
+                                                            maxsize:CGSizeMake(self.view.bounds.size.width, 9999)];
+                CGRect frame = btn.frame;
+                btn.frame = CGRectMake(frame.origin.x, frame.origin.y, size1.width, frame.size.height);
+                return YES;
+            }
+            return NO;
+        }];
+    }
 }
 
-- (void) searchDisplayControllerWillEndSearch:(UISearchDisplayController *)controller
+- (void)updateSearchResultsForSearchController:(UISearchController *)searchController
 {
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:0.2];
-    [UIView setAnimationCurve:UIViewAnimationCurveLinear];
-    CGFloat fMovedY = _searchBar.bounds.size.height;
-    _searchBar.frame = CGRectMake(0,
-                                  _searchBar.frame.origin.y,
-                                  _searchBar.bounds.size.width,
-                                  _searchBar.bounds.size.height);
-    _allDataTableView.frame = CGRectMake(0,
-                                         _allDataTableView.frame.origin.y,
-                                         _allDataTableView.bounds.size.width,
-                                         _allDataTableView.bounds.size.height - fMovedY);
-    [UIView commitAnimations];
+    [_allDataTableView reloadData];
 }
 
 - (BOOL)isSearchMatched:(NSString*)target match:(NSString*)match
@@ -488,7 +490,15 @@
             break;
     }
     
-    [_searchDisplay.searchResultsTableView reloadData];
+    //  更新搜索结果后刷新
+    [_allDataTableView reloadData];
+}
+
+- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar
+{
+    [_searchDataArray removeAllObjects];
+    _currSearchText = nil;
+    return YES;
 }
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText   // called when text changes (including clear)
@@ -578,7 +588,7 @@
     
     BOOL needReloadMainTableview = NO;
     id linedata;
-    if ([tableView isEqual:_searchDisplay.searchResultsTableView])
+    if ([self _showSearchResultData])
     {
         //  REMARK：在搜索结果界面点击开关按钮，此时需要刷新非搜索状态下的 maintableview。
         needReloadMainTableview = YES;
@@ -656,7 +666,6 @@
             }else{
                 cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                 cell.detailTextLabel.text = @"";
-//                cell.detailTextLabel.text = [quote objectForKey:@"issuer"];  //  资产发行者ID
                 
                 id quote_symbol = [quote objectForKey:@"symbol"];
                 id base_symbol = [base objectForKey:@"symbol"];
