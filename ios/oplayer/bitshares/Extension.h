@@ -8,6 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
+typedef BOOL (^ViewCallback)(UIView* view);
+
+@interface UIView (Aux)
+
+- (UIView*)findSubview:(Class)klass resursion:(BOOL)resursion;
+- (BOOL)iterateSubview:(ViewCallback)handler;
+
+@end
+
 @interface NSNull (JSON)
 
 @end

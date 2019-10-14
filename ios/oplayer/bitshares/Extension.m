@@ -7,6 +7,43 @@
 
 #import "Extension.h"
 
+@implementation UIView (Aux)
+
+- (UIView*)findSubview:(Class)klass resursion:(BOOL)resursion
+{
+    for (UIView *subview in self.subviews) {
+        if ([subview isKindOfClass:klass]) {
+            return subview;
+        }
+    }
+    
+    if (resursion) {
+        for (UIView *subview in self.subviews) {
+            UIView *tempView = [subview findSubview:klass resursion:resursion];
+            if (tempView) {
+                return tempView;
+            }
+        }
+    }
+    
+    return nil;
+}
+
+- (BOOL)iterateSubview:(ViewCallback)handler
+{
+    if (handler(self)) {
+        return YES;
+    }
+    for (UIView* v1 in self.subviews) {
+        if ([v1 iterateSubview:handler]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+@end
+
 @implementation NSNull (JSON)
 
 - (NSUInteger)length { return 0; }

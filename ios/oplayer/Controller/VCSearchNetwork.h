@@ -17,7 +17,7 @@ typedef enum ENetworkSearchType
 
 typedef void (^SelectAccountCallback)(id account_info);
 
-@interface VCSearchNetwork : VCBase<UITableViewDelegate, UITableViewDataSource, UISearchDisplayDelegate, UISearchBarDelegate>
+@interface VCSearchNetwork : VCBase<UITableViewDelegate, UITableViewDataSource, UISearchControllerDelegate, UISearchResultsUpdating, UISearchBarDelegate>
 {
     NSMutableDictionary*        _reg_args;
     
@@ -27,7 +27,7 @@ typedef void (^SelectAccountCallback)(id account_info);
     NSArray*                    _pSectionTitle;
     NSMutableDictionary*        _pSectionHash;
     
-    UISearchDisplayController*  _searchDisplay;
+    UISearchController*         _searchController;
 }
 
 - (id)initWithSearchType:(ENetworkSearchType)searchType callback:(SelectAccountCallback)callback;
