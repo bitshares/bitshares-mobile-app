@@ -120,7 +120,7 @@
     CGFloat fCellHeight = self.bounds.size.height;
     
     if ([[_item objectForKey:@"title"] boolValue]){
-        _lbWitnessName.text = NSLocalizedString(@"kVcFeedWitnessName", @"见证人");
+        _lbWitnessName.text = [_item objectForKey:@"name"];
         _lbWitnessName.textColor = theme.textColorNormal;
         
         _lbFeedPrice.text = NSLocalizedString(@"kVcFeedPriceName", @"喂价");
@@ -145,22 +145,41 @@
             
             _lbDate.text = NSLocalizedString(@"kVcFeedNoData", @"未发布");
             _lbDate.textColor = theme.textColorNormal;
-        }else{
+        }else if ([[_item objectForKey:@"expired"] boolValue]){
+            _lbWitnessName.textColor = theme.textColorNormal;
+            
+            _lbFeedPrice.text = [OrgUtils formatFloatValue:[_item objectForKey:@"price"] usesGroupingSeparator:NO];
+            _lbFeedPrice.textColor = theme.textColorNormal;
+            
+            id diff = [_item objectForKey:@"diff"];
+            NSComparisonResult result = [diff compare:[NSDecimalNumber zero]];
+            if (result == NSOrderedDescending){
+                _lbDiff.text = [NSString stringWithFormat:@"+%@%%", [OrgUtils formatFloatValue:diff usesGroupingSeparator:NO]];
+            }else if (result == NSOrderedAscending){
+                _lbDiff.text = [NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:diff usesGroupingSeparator:NO]];
+            }else{
+                _lbDiff.text = [NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:diff usesGroupingSeparator:NO]];
+            }
+            _lbDiff.textColor = theme.textColorNormal;
+            
+            _lbDate.text = NSLocalizedString(@"kVcFeedExpired", @"已过期");
+            _lbDate.textColor = theme.textColorNormal;
+        } else {
             _lbWitnessName.textColor = theme.textColorMain;
             
-            _lbFeedPrice.text = [OrgUtils formatFloatValue:[_item objectForKey:@"price"]];
+            _lbFeedPrice.text = [OrgUtils formatFloatValue:[_item objectForKey:@"price"] usesGroupingSeparator:NO];
             _lbFeedPrice.textColor = theme.textColorMain;
             
             id diff = [_item objectForKey:@"diff"];
             NSComparisonResult result = [diff compare:[NSDecimalNumber zero]];
             if (result == NSOrderedDescending){
-                _lbDiff.text = [NSString stringWithFormat:@"+%@%%", [OrgUtils formatFloatValue:diff]];
+                _lbDiff.text = [NSString stringWithFormat:@"+%@%%", [OrgUtils formatFloatValue:diff usesGroupingSeparator:NO]];
                 _lbDiff.textColor = theme.buyColor;
             }else if (result == NSOrderedAscending){
-                _lbDiff.text = [NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:diff]];
+                _lbDiff.text = [NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:diff usesGroupingSeparator:NO]];
                 _lbDiff.textColor = theme.sellColor;
             }else{
-                _lbDiff.text = [NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:diff]];
+                _lbDiff.text = [NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:diff usesGroupingSeparator:NO]];
                 _lbDiff.textColor = theme.textColorMain;
             }
             

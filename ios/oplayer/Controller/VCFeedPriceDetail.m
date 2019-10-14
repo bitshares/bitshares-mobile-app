@@ -50,7 +50,7 @@
 - (void)viewDidLoad
 {
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
-    _assetList = [[chainMgr getCallOrderRankingSymbolList] ruby_map:(^id(id symbol) {
+    _assetList = [[chainMgr getDetailFeedPriceSymbolList] ruby_map:(^id(id symbol) {
         return [chainMgr getAssetBySymbol:symbol];
     })];
     
@@ -72,39 +72,74 @@
     
     GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
     
-    WsPromise* queryActiveWitnessPromise = [[api exec:@"get_global_properties" params:@[]] then:(^id(id global_data) {
-        [chainMgr updateObjectGlobalProperties:global_data];
-        id active_witnesses = [global_data objectForKey:@"active_witnesses"];
-        return [api exec:@"get_witnesses" params:@[active_witnesses]];
-    })];
-    
-    WsPromise* queryFeedDataPromise = [[api exec:@"get_objects" params:@[@[[asset objectForKey:@"bitasset_data_id"]]]] then:(^id(id data) {
-        return [data objectAtIndex:0];
-    })];
-    
-    [[[WsPromise all:@[queryActiveWitnessPromise, queryFeedDataPromise]] then:(^id(id data_array) {
-        id active_witnesses_ids = [[data_array objectAtIndex:0] ruby_map:(^id(id src) {
-            return [src objectForKey:@"witness_account"];
-        })];
-        id feed_infos = [data_array objectAtIndex:1];
-        id feeds = [feed_infos objectForKey:@"feeds"];
-        NSMutableDictionary* idHash = [NSMutableDictionary dictionary];
-        for (id witness_account_id in active_witnesses_ids) {
-            [idHash setObject:@YES forKey:witness_account_id];
-        }
-        for (id ary in feeds) {
-            [idHash setObject:@YES forKey:[ary objectAtIndex:0]];
-        }
-        return [[chainMgr queryAllAccountsInfo:[idHash allKeys]] then:(^id(id accounts_hash) {
-            [self onQueryFeedInfoResponsed:feed_infos activeWitnessIds:active_witnesses_ids tag:tag];
+    [[[chainMgr queryAssetData:asset[@"id"]] then:^id(id assetData) {
+        if (!assetData || [assetData isKindOfClass:[NSNull class]]) {
             [self hideBlockView];
+            [OrgUtils makeToast:NSLocalizedString(@"kNormalErrorInvalidArgs", @"无效参数。")];
             return nil;
+        }
+        
+        //  1、查询喂价者信息
+        id queryPublisherInfo;
+        EBitsharesFeedPublisherType publisher_type;
+        NSInteger flags = [[[assetData objectForKey:@"options"] objectForKey:@"flags"] integerValue];
+        if ((flags & ebat_witness_fed_asset) != 0) {
+            //  由见证人提供喂价
+            queryPublisherInfo = [chainMgr queryActiveWitnessDataList];
+            publisher_type = ebfpt_witness;
+        } else if ((flags & ebat_committee_fed_asset) != 0) {
+            //  由理事会成员提供喂价
+            queryPublisherInfo = [chainMgr queryActiveCommitteeDataList];
+            publisher_type = ebfpt_committee;
+        } else {
+            //  由指定账号提供喂价
+            queryPublisherInfo = [NSNull null];
+            publisher_type = ebfpt_custom;
+        }
+        
+        //  2、查询喂价信息
+        WsPromise* queryFeedDataPromise = [[api exec:@"get_objects" params:@[@[[assetData objectForKey:@"bitasset_data_id"]]]] then:(^id(id data) {
+            return [data objectAtIndex:0];
         })];
-    })] catch:(^id(id error) {
+        
+        return [[WsPromise all:@[queryPublisherInfo, queryFeedDataPromise]] then:^id(id data_array) {
+            id feed_infos = [data_array objectAtIndex:1];
+            id feeds = [feed_infos objectForKey:@"feeds"];
+            
+            NSMutableDictionary* idHash = [NSMutableDictionary dictionary];
+            NSMutableArray* active_publisher_ids = [NSMutableArray array];
+            if (publisher_type == ebfpt_witness) {
+                for (id src in [data_array objectAtIndex:0]) {
+                    id account_id = [src objectForKey:@"witness_account"];
+                    [active_publisher_ids addObject:account_id];
+                    [idHash setObject:@YES forKey:account_id];
+                }
+            } else if (publisher_type == ebfpt_committee) {
+                for (id src in [data_array objectAtIndex:0]) {
+                    id account_id = [src objectForKey:@"committee_member_account"];
+                    [active_publisher_ids addObject:account_id];
+                    [idHash setObject:@YES forKey:account_id];
+                }
+            } else {
+                for (id ary in feeds) {
+                    id account_id = [ary objectAtIndex:0];
+                    [active_publisher_ids addObject:account_id];
+                    [idHash setObject:@YES forKey:account_id];
+                }
+            }
+            
+            //  查询依赖的账号信息
+            return [[chainMgr queryAllAccountsInfo:[idHash allKeys]] then:(^id(id accounts_hash) {
+                [self onQueryFeedInfoResponsed:feed_infos activePublisherIds:active_publisher_ids publisher_type:publisher_type tag:tag];
+                [self hideBlockView];
+                return nil;
+            })];
+        }];
+    }] catch:^id(id error) {
         [self hideBlockView];
         [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
         return nil;
-    })];
+    }];
 }
 
 - (void)onPageChanged:(NSInteger)tag
@@ -119,11 +154,15 @@
     [self queryDetailFeedInfos:tag];
 }
 
-- (void)onQueryFeedInfoResponsed:(id)data activeWitnessIds:(NSArray*)activeWitnessIds tag:(NSInteger)tag
+- (void)onQueryFeedInfoResponsed:(id)data
+              activePublisherIds:(NSArray*)active_publisher_ids
+                  publisher_type:(EBitsharesFeedPublisherType)publisher_type tag:(NSInteger)tag
 {
     if (_subvcArrays){
         VCFeedPriceDetailSubPage* vc = [_subvcArrays objectAtIndex:tag-1];
-        [vc onQueryFeedInfoResponsed:data activeWitnessIds:activeWitnessIds];
+        [vc onQueryFeedInfoResponsed:data
+                  activePublisherIds:active_publisher_ids
+                      publisher_type:publisher_type];
     }
 }
 
@@ -131,13 +170,14 @@
 
 @interface VCFeedPriceDetailSubPage ()
 {
-    __weak VCBase*      _owner;         //  REMARK：声明为 weak，否则会导致循环引用。
-    NSDictionary*       _asset;
+    __weak VCBase*              _owner;         //  REMARK：声明为 weak，否则会导致循环引用。
+    NSDictionary*               _asset;
+    EBitsharesFeedPublisherType _publisher_type;    //  类型
     
-    UITableViewBase*    _mainTableView;
+    UITableViewBase*            _mainTableView;
     
-    NSMutableArray*     _dataCallOrders;
-    NSDecimalNumber*    _feedPriceInfo;
+    NSMutableArray*             _dataCallOrders;
+    NSDecimalNumber*            _feedPriceInfo; //  当前喂价（可能为nil，没有达到有效的喂价人数。）
 }
 
 @end
@@ -187,20 +227,27 @@
     [self.view addSubview:_mainTableView];
 }
 
-- (void)onQueryFeedInfoResponsed:(id)bitAssetData activeWitnessIds:(NSArray*)activeWitnessIds
+- (void)onQueryFeedInfoResponsed:(id)bitAssetData
+              activePublisherIds:(NSArray*)active_publisher_ids
+                  publisher_type:(EBitsharesFeedPublisherType)publisher_type
 {
     //  clear
     [_dataCallOrders removeAllObjects];
     
+    //  type
+    _publisher_type = publisher_type;
+    
     //  calc current feed
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     
-    id short_backing_asset_id = [[bitAssetData objectForKey:@"options"] objectForKey:@"short_backing_asset"];
+    id bitAssetDataOptions = [bitAssetData objectForKey:@"options"];
+    id short_backing_asset_id = [bitAssetDataOptions objectForKey:@"short_backing_asset"];
     id asset_id = [_asset objectForKey:@"id"];
     NSInteger asset_precision = [[_asset objectForKey:@"precision"] integerValue];
     assert([[bitAssetData objectForKey:@"asset_id"] isEqualToString:asset_id]);
     id sba_asset = [chainMgr getChainObjectByID:short_backing_asset_id];
     NSInteger sba_asset_precision = [[sba_asset objectForKey:@"precision"] integerValue];
+    NSInteger feed_lifetime_sec = [[bitAssetDataOptions objectForKey:@"feed_lifetime_sec"] integerValue];
     
     id curr_feed_price_item = [[bitAssetData objectForKey:@"current_feed"] objectForKey:@"settlement_price"];
     _feedPriceInfo = [OrgUtils calcPriceFromPriceObject:curr_feed_price_item
@@ -213,6 +260,11 @@
     NSMutableDictionary* publishedAccountHash = [NSMutableDictionary dictionary];
     id feeds = [bitAssetData objectForKey:@"feeds"];
     if (feeds && [feeds count] > 0){
+        NSMutableArray* missed_list = [NSMutableArray array];
+        NSMutableArray* expired_list = [NSMutableArray array];
+        NSDate* now = [NSDate date];
+        NSTimeInterval now_ts = [now timeIntervalSince1970];
+        
         id percentHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundUp
                                                                                    scale:4
                                                                         raiseOnExactness:NO
@@ -226,6 +278,17 @@
             
             id feed_info_ary = [feed_item_ary objectAtIndex:1];
             id publish_date = [feed_info_ary objectAtIndex:0];
+            
+            //  REMARK：指定喂价者多情况下，feed中永远存在数据，需要主动判断是否过期。见证人和理事会的情况下过期会自动从feed列表剔除。
+            BOOL expired = NO;
+            if (_publisher_type == ebfpt_custom) {
+                NSTimeInterval publish_date_ts = [OrgUtils parseBitsharesTimeString:publish_date];
+                NSInteger diff_ts = (NSInteger)MAX(now_ts - publish_date_ts, 0);
+                if (diff_ts >= feed_lifetime_sec) {
+                    expired = YES;
+                }
+            }
+            
             id feed_data = [feed_info_ary objectAtIndex:1];
             
             id name = [[chainMgr getChainObjectByID:publisher_account_id] objectForKey:@"name"];
@@ -235,19 +298,41 @@
                                             quote_precision:asset_precision
                                                      invert:NO roundingMode:NSRoundDown set_divide_precision:YES];
             
-            id rate = [n_price decimalNumberByDividingBy:_feedPriceInfo withBehavior:percentHandler];
-            rate = [rate decimalNumberBySubtracting:[NSDecimalNumber one] withBehavior:percentHandler];
-            id change = [rate decimalNumberByMultiplyingByPowerOf10:2 withBehavior:percentHandler];
+            NSDecimalNumber* change;
+            if (_feedPriceInfo) {
+                id rate = [n_price decimalNumberByDividingBy:_feedPriceInfo withBehavior:percentHandler];
+                rate = [rate decimalNumberBySubtracting:[NSDecimalNumber one] withBehavior:percentHandler];
+                change = [rate decimalNumberByMultiplyingByPowerOf10:2 withBehavior:percentHandler];
+            } else {
+                //  REMARK：没有“当前喂价”信息，不计算偏移量。
+                change = [NSDecimalNumber zero];
+            }
             
-            [_dataCallOrders addObject:@{@"name":name, @"price":n_price, @"diff":change, @"date":publish_date}];
+            if (n_price) {
+                id item = @{@"name":name, @"price":n_price, @"diff":change, @"date":publish_date, @"expired":@(expired)};
+                if (expired) {
+                    [expired_list addObject:item];
+                } else {
+                    [_dataCallOrders addObject:item];
+                }
+            } else {
+                //  REMARK：手动指定喂价者，但没发布信息。计算的价格为 nil。
+                [missed_list addObject:@{@"name":name, @"miss":@YES}];
+            }
         }
         
-        //  按照价格降序排列
+        //  有效的喂价：按照价格降序排列
         [_dataCallOrders sortUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
             return [[obj2 objectForKey:@"price"] compare:[obj1 objectForKey:@"price"]];
         })];
+        
+        //  添加过期的喂价（仅手动指定发布者的时候才存在）
+        [_dataCallOrders addObjectsFromArray:expired_list];
+        
+        //  添加未发布的喂价者信息
+        [_dataCallOrders addObjectsFromArray:missed_list];
     }
-    for (id account_id in activeWitnessIds) {
+    for (id account_id in active_publisher_ids) {
         if (![[publishedAccountHash objectForKey:account_id] boolValue]){
             id name = [[chainMgr getChainObjectByID:account_id] objectForKey:@"name"];
             [_dataCallOrders addObject:@{@"name":name, @"miss":@YES}];
@@ -316,7 +401,11 @@
         
         id asset = [[ChainObjectManager sharedChainObjectManager] getAssetBySymbol:[_asset objectForKey:@"symbol"]];
         assert(asset);
-        titleLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kVcFeedCurrentFeedPrice", @"当前喂价"), [OrgUtils formatFloatValue:_feedPriceInfo]];
+        if (_feedPriceInfo) {
+             titleLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kVcFeedCurrentFeedPrice", @"当前喂价"), [OrgUtils formatFloatValue:_feedPriceInfo]];
+        } else {
+            titleLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kVcFeedCurrentFeedPrice", @"当前喂价"), [NSLocalizedString(@"kVcFeedNoData", @"未发布") uppercaseString]];
+        }
         
         [myView addSubview:titleLabel];
         
@@ -356,7 +445,15 @@
     }
     cell.showCustomBottomLine = NO;
     if (indexPath.row == 0){
-        [cell setItem:@{@"title":@YES}];
+        id name;
+        if (_publisher_type == ebfpt_witness) {
+            name = NSLocalizedString(@"kVcFeedWitnessName", @"见证人");
+        } else if (_publisher_type == ebfpt_committee) {
+            name = NSLocalizedString(@"kVcFeedPublisherCommitteeName", @"理事会");
+        } else {
+            name = NSLocalizedString(@"kVcFeedPublisherCustom", @"喂价者");
+        }
+        [cell setItem:@{@"title":@YES, @"name":name}];
     }else{
         [cell setItem:[_dataCallOrders objectAtIndex:indexPath.row - 1]];
     }
