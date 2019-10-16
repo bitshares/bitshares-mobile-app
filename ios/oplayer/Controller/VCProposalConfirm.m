@@ -84,7 +84,7 @@ enum
             //  默认第一个
             _fee_paying_account = [_permissionAccountArray firstObject];
         }
-        //  初始化默认值
+        //  初始化默认值（单位：秒）
         if (_bForceAddReviewTime){
             _iProposalLifetime = 3600 * 24 * 3;
             _iProposalReviewtime = 3600 * 24 * 2;
@@ -246,12 +246,22 @@ enum
     return @" ";
 }
 
-- (NSString*)_fmtNday:(NSInteger)days
+- (NSString*)_fmtNday:(NSInteger)hours
 {
-    if (days > 1){
-        return [NSString stringWithFormat:NSLocalizedString(@"kProposalLabelNDays", @"%@天"), @(days)];
-    }else{
-        return [NSString stringWithFormat:NSLocalizedString(@"kProposalLabel1Days", @"%@天"), @(days)];
+    if ((hours % 24) == 0) {
+        NSInteger days = hours / 24;
+        if (days > 1){
+            return [NSString stringWithFormat:NSLocalizedString(@"kProposalLabelNDays", @"%@天"), @(days)];
+        }else{
+            return [NSString stringWithFormat:NSLocalizedString(@"kProposalLabel1Days", @"%@天"), @(days)];
+        }
+    } else {
+        //  非整数”天“，按照小时显示。
+        if (hours > 1) {
+            return [NSString stringWithFormat:NSLocalizedString(@"kProposalLabelNHours", @"%@小时"), @(hours)];
+        } else {
+            return [NSString stringWithFormat:NSLocalizedString(@"kProposalLabel1Hours", @"%@小时"), @(hours)];
+        }
     }
 }
 
@@ -305,7 +315,7 @@ enum
             cell.selectionStyle = UITableViewCellSelectionStyleBlue;
             cell.textLabel.text = NSLocalizedString(@"kProposalLabelApprovePeriod", @"操作周期");
             cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-            cell.detailTextLabel.text = [self _fmtNday:_iProposalLifetime / (3600 * 24)];
+            cell.detailTextLabel.text = [self _fmtNday:_iProposalLifetime / 3600];
             cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
             return cell;
         }
@@ -322,7 +332,7 @@ enum
             if (_iProposalReviewtime == 0){
                 cell.detailTextLabel.text = NSLocalizedString(@"kProposalLabelNoReviewPeriod", @"不添加");
             }else{
-                cell.detailTextLabel.text = [self _fmtNday:_iProposalReviewtime / (3600 * 24)];
+                cell.detailTextLabel.text = [self _fmtNday:_iProposalReviewtime / 3600];
             }
             cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
             return cell;
@@ -382,14 +392,16 @@ enum
 {
     //  REMARK：目前操作周期+审核周期最大28天。
     
-    NSArray* default_list = @[@1, @2, @3, @5, @7, @15];
+    //  默认值选项：单位（小时）
+    NSArray* default_list = @[@(1 * 24), @(2 * 24), @(3 * 24), @(5 * 24), @(7 * 24), @(15 * 24)];
  
     NSMutableArray* data_array = [NSMutableArray array];
     NSInteger default_select = -1;
     for (id value in default_list) {
-        NSInteger iValue = [value integerValue];
-        id name = [self _fmtNday:iValue];
-        NSInteger sec = iValue * 3600 * 24;
+        NSInteger hours = [value integerValue];
+        assert(hours > 0);
+        id name = [self _fmtNday:hours];
+        NSInteger sec = hours * 3600;
         if (sec == _iProposalLifetime){
             default_select = [data_array count];
         }
@@ -414,7 +426,8 @@ enum
 
 - (void)onProposalReviewtimeClicked
 {
-    NSArray* default_list = @[@1, @2, @3, @7];
+    //  默认值选项：单位（小时）
+    NSArray* default_list = @[@1, @12, @(1 * 24), @(2 * 24), @(3 * 24), @(7 * 24)];
     NSMutableArray* final_list = [NSMutableArray array];
     
     //  REMARK：强制添加审核期则没有0天的选项。
@@ -426,14 +439,14 @@ enum
     NSMutableArray* data_array = [NSMutableArray array];
     NSInteger default_select = -1;
     for (id value in final_list) {
-        NSInteger iValue = [value integerValue];
+        NSInteger hours = [value integerValue];
         id name;
-        if (iValue == 0){
+        if (hours == 0){
             name = NSLocalizedString(@"kProposalLabelNoReviewPeriod", @"不添加");
         }else{
-            name = [self _fmtNday:iValue];
+            name = [self _fmtNday:hours];
         }
-        NSInteger sec = iValue * 3600 * 24;
+        NSInteger sec = hours * 3600;
         if (sec == _iProposalReviewtime){
             default_select = [data_array count];
         }

@@ -334,6 +334,8 @@
 "kProposalLabelReviewPeriod" = "レビュー期間";
 "kProposalLabel1Days" = "%@日";
 "kProposalLabelNDays" = "%@日";
+"kProposalLabel1Hours" = "%@时";
+"kProposalLabelNHours" = "%@时";
 "kProposalLabelNoReviewPeriod" = "レビュー期間なし";
 "kProposalSubmitTipsSelectCreator" = "提案創建者のアカウントを選んでください。";
 "kProposalSubmitTipTxOK" = "提案を創建して成功します。";

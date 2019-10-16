@@ -334,6 +334,8 @@
 "kProposalLabelReviewPeriod" = "审核周期";
 "kProposalLabel1Days" = "%@天";
 "kProposalLabelNDays" = "%@天";
+"kProposalLabel1Hours" = "%@小时";
+"kProposalLabelNHours" = "%@小时";
 "kProposalLabelNoReviewPeriod" = "无";
 "kProposalSubmitTipsSelectCreator" = "请选择提案创建者账号。";
 "kProposalSubmitTipTxOK" = "创建提案成功。";
