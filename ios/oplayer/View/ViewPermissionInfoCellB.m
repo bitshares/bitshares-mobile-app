@@ -138,7 +138,7 @@
             }
         }
 
-        //  获取权重所占百分比
+        //  获取权重所占百分比（最大值限制为100%）
         NSInteger threshold = [[_item objectForKey:@"threshold"] integerValue];
         CGFloat weight_percent;
         weight_percent = threshold * 100.0f / (CGFloat)self.passThreshold;
@@ -148,6 +148,7 @@
         if (threshold > 0){
             weight_percent = fmaxf(weight_percent, 1.0f);
         }
+        weight_percent = fminf(weight_percent, 100.0f);
         
         _lbAuthority.text = name;
 //        _lbThreshold.attributedText = [UITableViewCellBase genAndColorAttributedText:[NSString stringWithFormat:@"%@ ", @(threshold)]

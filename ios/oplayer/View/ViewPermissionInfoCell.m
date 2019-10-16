@@ -157,7 +157,7 @@
     }
     NSInteger labelIndex = 0;
     for (id item in authorizeItems) {
-        //  计算该授权实体占比权重。
+        //  计算该授权实体占比权重（最大值限制为100%）。
         NSInteger threshold = [[item objectForKey:@"threshold"] integerValue];
         CGFloat weight_percent = 0;
         if (!bHideThreshold) {
@@ -168,6 +168,7 @@
             if (threshold > 0){
                 weight_percent = fmaxf(weight_percent, 1.0f);
             }
+            weight_percent = fminf(weight_percent, 100.0f);
         }
         
         //  entity

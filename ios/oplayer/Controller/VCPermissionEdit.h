@@ -10,6 +10,7 @@
 
 @interface VCPermissionEdit : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
-- (id)initWithPermissionJson:(id)permission maximum_authority_membership:(NSInteger)maximum_authority_membership;
+- (id)initWithPermissionJson:(id)permission maximum_authority_membership:(NSInteger)maximum_authority_membership
+              result_promise:(WsPromiseObject*)result_promise;
 
 @end

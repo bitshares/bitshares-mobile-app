@@ -100,8 +100,12 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     if (error && [error isKindOfClass:[WsPromiseException class]]){
         WsPromiseException* excp = (WsPromiseException*)error;
         if (excp.userInfo){
-            NSString* message = [excp.userInfo objectForKey:@"message"];
-            if (message){
+            NSString* message = [excp.userInfo objectForKey:@"message"] ?: @"";
+            id stack = [[excp.userInfo objectForKey:@"data"] objectForKey:@"stack"];
+            if (stack && [stack count] > 0) {
+                message = [NSString stringWithFormat:@"%@ : %@", message, [[stack firstObject] objectForKey:@"format"] ?: @""];
+            }
+            if (message && message.length > 0){
                 //  REMARK：部分错误特化显示
                 if ([message rangeOfString:@"no such account"].location != NSNotFound){
                     [self makeToast:NSLocalizedString(@"kGPErrorAccountNotExist", @"账号不存在。")];
@@ -2148,6 +2152,27 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     }
     
     return [[NSString alloc] initWithBytes:output length:output_size encoding:NSUTF8StringEncoding];
+}
+
+/*
+ *  (public) 是否是有效的公钥字符串判断。
+ */
++ (BOOL)isValidBitsharesPublicKey:(NSString*)str_pubkey
+{
+    if (!str_pubkey || [str_pubkey isEqualToString:@""]) {
+        return NO;
+    }
+    
+    NSData* data_pubkey = [str_pubkey dataUsingEncoding:NSUTF8StringEncoding];
+    secp256k1_pubkey pubkey={0,};
+    bool ret = __bts_gen_public_key_from_b58address((const unsigned char*)data_pubkey.bytes, (const size_t)data_pubkey.length,
+                                                    [[ChainObjectManager sharedChainObjectManager].grapheneAddressPrefix length],
+                                                    &pubkey);
+    if (ret) {
+        return YES;
+    } else {
+        return NO;
+    }
 }
 
 /**

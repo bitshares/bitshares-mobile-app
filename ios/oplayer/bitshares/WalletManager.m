@@ -393,7 +393,16 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
     return YES;
 }
 
-/**
+/*
+ *  (public) 注销登录逻辑。内存钱包锁定、导入钱包删除。
+ */
+- (void)processLogout
+{
+    [self Lock];
+    [[AppCacheManager sharedAppCacheManager] removeWalletInfo];
+}
+
+/*
  *  (public) 锁定帐号
  */
 - (void)Lock

@@ -35,6 +35,8 @@ enum
     kVcSubDepositWithdraw,  //  充币&提币
     
     kVcSubAdvanced,         //  更多高级功能(HTLC等）
+    
+    kVcSubBtsExplorer,      //  BTS区块浏览器
 };
 
 @interface VCServices ()
@@ -107,6 +109,13 @@ enum
                                ];
         if ([pSection5 count] > 0) {
             [ary addObject:pSection5];
+        }
+        
+        NSArray* pSection6 = @[
+                               @[@(kVcSubBtsExplorer),      @"kServicesCellLabelBtsExplorer"]       //  BTS区块浏览器
+                               ];
+        if ([pSection6 count] > 0) {
+            [ary addObject:pSection6];
         }
         
     })] copy];
@@ -212,6 +221,10 @@ enum
             
         case kVcSubAdvanced:
             cell.imageView.image = [UIImage templateImageNamed:@"iconAdvFunction"];
+            break;
+            
+        case kVcSubBtsExplorer:
+            cell.imageView.image = [UIImage templateImageNamed:@"iconAdvFunction"];//TODO:2.8
             break;
         default:
             break;
@@ -324,6 +337,10 @@ enum
                 vc.title = NSLocalizedString(@"kVcTitleDepositAdvFunction", @"高级功能");
                 break;
             }
+                
+            case kVcSubBtsExplorer:     //  BTS区块浏览器（bts.ai）
+                [OrgUtils safariOpenURL:[NSString stringWithFormat:@"https://bts.ai?lang=%@", NSLocalizedString(@"btsaiLangKey", @"langkey")]];
+                break;
             default:
                 break;
         }

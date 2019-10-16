@@ -98,7 +98,13 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
 {
     TransactionBuilder* tr = [[TransactionBuilder alloc] init];
     [tr add_operation:ebo_account_update opdata:account_update_op_data];
-    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[account_update_op_data objectForKey:@"account"]]];
+    //  REMARK：修改 owner 需要 owner 权限。
+    BOOL requireOwnerPermission = NO;
+    if ([account_update_op_data objectForKey:@"owner"]) {
+        requireOwnerPermission = YES;
+    }
+    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[account_update_op_data objectForKey:@"account"]
+                                                                  requireOwnerPermission:requireOwnerPermission]];
     return [self process_transaction:tr];
 }
 

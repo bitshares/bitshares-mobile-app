@@ -59,6 +59,7 @@
 "kServicesCellLabelFeedPrice" = "詳しいフィード価格";
 "kServicesCellLabelDepositWithdraw" = "入金出金";
 "kServicesCellLabelAdvFunction" = "高度な機能";
+"kServicesCellLabelBtsExplorer" = "エクスプローラ";
 
 /* 扫一扫相关字符串 */
 "kVcScanPermissionNoCamera" = "カメラが検出されません。";
@@ -200,6 +201,12 @@
 "kVcPermissionTypeOwner" = "アカウント権限";
 "kVcPermissionTypeActive" = "資金権限";
 "kVcPermissionTypeMemo" = "付注権限";
+"kVcPermissionMemoKeyModifyAskTitle" = "修改备注权限";//TODO:
+"kVcPermissionMemoKeyModifyInputPlaceholder" = "请输入新的备注公钥";//TODO:
+"kVcPermissionSubmitTipsInputValidMemoKey" = "请输入有效的公钥。";//TODO:
+"kVcPermissionSubmitTipsMemoKeyNoChanged" = "备注权限没有变化。";//TODO:
+"kVcPermissionSubmitModifyMemoKeyFullOK" = "修改备注权限成功。";//TODO:
+"kVcPermissionSubmitModifyMemoKeyOK" = "修改备注权限成功，但刷新界面数据失败，请稍后再试。";//TODO:
 "kVcPermissionPassThreshold" = "しきい値 ";
 "kVcPermissionEditTitleName" = "アカウント / キー";
 "kVcPermissionEditTitleWeight" = "ウェイト";
@@ -214,6 +221,13 @@
 "kVcPermissionEditTipsMaxAuthority" = "最大 %@ 個のマルチサインメンバーのみ追加できます。";
 "kVcPermissionEditHelpTips" = "【暖かいヒント】\nしきい値：しきい値は、アクセス権限を使用するために必要な最小のウェイトであり、各アカウント/公開キーのウェイトの合計は、しきい値以上である必要があります。";
 "kVcPermissionEditTipsInvalidPassThreshold" = "有効なしきい値を入力してください。 範囲1-9999999。";
+"kVcPermissionEditSubmitTipsNoChanged" = "权限信息没有变化。";//TODO:
+"kVcPermissionEditSubmitTipsInvalidPassThreshold" = "请重新调整阈值和权重配置，所有管理者账号/公钥的权重之和必须大于等于阈值。";//TODO:
+"kVcPermissionEditSubmitSafeTipsPubkeyConfirm" = "新的管理者列表中包含公钥类型，请确认您必须持有对应的私钥。是否继续修改权限？";//TODO:
+"kVcPermissionEditSubmitSafeTipsSecurityConfrim" = "修改权限为高危操作，请仔细确认新管理者列表配置正确。是否继续修改权限？";//TODO:
+"kVcPermissionEditSubmitOkRelogin" = "权限修改成功，请重新登录。";//TODO:
+"kVcPermissionEditSubmitOK02" = "修改权限成功。";//TODO:
+"kVcPermissionEditSubmitOKAndRelaunchApp" = "修改权限成功，但刷新账号信息失败，请退出重新启动APP。";//TODO:
 "kVcPermissionAddOneTitleAuthority" = "権限";
 "kVcPermissionAddOneTitleWeight" = "ウェイト";
 "kVcPermissionAddOneBtnDone" = "完了";
@@ -959,6 +973,7 @@
 /* 特殊用途字符串KEY */
 "serverWssLangKey" = "cn";
 "appDepositWithdrawDefaultGateway" = "GDEX";
+"btsaiLangKey" = "en";
 
 /* Android专有字符串 */
 "action_settings" = "Settings";
