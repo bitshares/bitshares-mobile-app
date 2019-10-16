@@ -2155,6 +2155,35 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 }
 
 /*
+ *  (public) 生成bts地址（序列化时公钥排序会用到。）
+ */
++ (NSData*)genBtsBlockchainAddress:(NSString*)str_pubkey
+{
+    if (!str_pubkey || [str_pubkey isEqualToString:@""]) {
+        return nil;
+    }
+    
+    NSData* data_pubkey = [str_pubkey dataUsingEncoding:NSUTF8StringEncoding];
+    secp256k1_pubkey pubkey={0,};
+    bool ret = __bts_gen_public_key_from_b58address((const unsigned char*)data_pubkey.bytes, (const size_t)data_pubkey.length,
+                                                    [[ChainObjectManager sharedChainObjectManager].grapheneAddressPrefix length],
+                                                    &pubkey);
+    if (!ret) {
+        return nil;
+    }
+    
+    unsigned char compressed_pubkey[33] = {0, };
+    unsigned char digest64[64] = {0, };
+    unsigned char digest20[20] = {0, };
+    
+    __bts_gen_public_key_compressed(&pubkey, compressed_pubkey);
+    sha512(compressed_pubkey, sizeof(compressed_pubkey), digest64);
+    rmd160(digest64, sizeof(digest64), digest20);
+    
+    return [[NSData alloc] initWithBytes:digest20 length:sizeof(digest20)];
+}
+
+/*
  *  (public) 是否是有效的公钥字符串判断。
  */
 + (BOOL)isValidBitsharesPublicKey:(NSString*)str_pubkey

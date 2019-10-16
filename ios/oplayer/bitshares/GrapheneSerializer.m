@@ -145,6 +145,55 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     }
 }
 
+/*
+ *  排序：部分类型序列化需要排序。
+ *  各种类型可以通过实现：sort_by 方法自定义排序。
+ */
++ (NSArray*)sort_opdata_array:(NSArray*)array optype:(id)sort_by_optype
+{
+    //  no need to sort
+    if (!array || [array count] <= 1) {
+        return array;
+    }
+    
+    //  no sort
+    if ([sort_by_optype respondsToSelector:@selector(nosort)] && [[sort_by_optype performSelector:@selector(nosort)] boolValue]) {
+        return array;
+    }
+    
+    //  sort using custom compare func
+    SEL sel = @selector(sort_by:b:);
+    if ([sort_by_optype respondsToSelector:sel]) {
+        NSMethodSignature* signature = [sort_by_optype methodSignatureForSelector:sel];
+        NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:signature];
+        [invocation setTarget:sort_by_optype];
+        [invocation setSelector:sel];
+        return [array sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+            id a = [obj1 isKindOfClass:[NSArray class]] ? [obj1 objectAtIndex:0] : obj1;
+            id b = [obj2 isKindOfClass:[NSArray class]] ? [obj2 objectAtIndex:0] : obj2;
+            [invocation setArgument:&a atIndex:2];
+            [invocation setArgument:&b atIndex:3];
+            [invocation invoke];
+            NSInteger retv = 0;
+            [invocation getReturnValue:&retv];
+            return retv;
+        }];
+    }
+    
+    //  sort use default compare func
+    return [array sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        id a = [obj1 isKindOfClass:[NSArray class]] ? [obj1 objectAtIndex:0] : obj1;
+        id b = [obj2 isKindOfClass:[NSArray class]] ? [obj2 objectAtIndex:0] : obj2;
+        if ([a isKindOfClass:[NSNumber class]] && [b isKindOfClass:[NSNumber class]]) {
+            return [a integerValue] - [b integerValue];
+        } else if ([a isKindOfClass:[NSData class]] && [b isKindOfClass:[NSData class]]){
+            return [[a hex_encode] compare:[b hex_encode]];
+        } else {
+            return [a compare:b];
+        }
+    }];
+}
+
 @end
 
 #pragma mark- 以下为基本数据类型。
@@ -264,6 +313,13 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [io write_u32:(uint32_t)((vote_idnum << 8) | vote_type)];
 }
 
++ (NSInteger)sort_by:(id)a b:(id)b
+{
+    id ary1 = [a componentsSeparatedByString:@":"];
+    id ary2 = [b componentsSeparatedByString:@":"];
+    return [[ary1 lastObject] integerValue] - [[ary2 lastObject] integerValue];
+}
+
 @end
 
 @implementation T_public_key
@@ -272,6 +328,15 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 {
     assert([opdata isKindOfClass:[NSString class]]);
     [io write_public_key:opdata];
+}
+
++ (NSInteger)sort_by:(id)a b:(id)b
+{
+    //  参考：fc::array<char,33>
+    NSData* da = [OrgUtils genBtsBlockchainAddress:a];
+    NSData* db = [OrgUtils genBtsBlockchainAddress:b];
+    assert(da && db && da.length == db.length);
+    return (NSInteger)memcmp(da.bytes, db.bytes, da.length);
 }
 
 @end
@@ -324,6 +389,13 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 - (id)to_object:(id)opdata
 {
     return opdata;
+}
+
+- (NSInteger)sort_by:(id)a b:(id)b
+{
+    NSInteger ia = [[[a componentsSeparatedByString:@"."] lastObject] integerValue];
+    NSInteger ib = [[[b componentsSeparatedByString:@"."] lastObject] integerValue];
+    return ia - ib;
 }
 
 @end
@@ -456,6 +528,7 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 - (void)to_byte_buffer:(BinSerializer*)io opdata:(id)opdata
 {
     assert([opdata isKindOfClass:[NSArray class]]);
+    opdata = [[self class] sort_opdata_array:opdata optype:_key_type];
     [io write_varint32:(uint64_t)[opdata count]];
     for (id pair in opdata) {
         assert([pair count] == 2);
@@ -467,6 +540,7 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 - (id)to_object:(id)opdata
 {
     assert([opdata isKindOfClass:[NSArray class]]);
+    opdata = [[self class] sort_opdata_array:opdata optype:_key_type];
     NSMutableArray* ary = [NSMutableArray array];
     for (id pair in opdata) {
         assert([pair count] == 2);
@@ -606,6 +680,11 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 @end
 
 @implementation Tm_static_variant
+
+- (id)nosort
+{
+    return @YES;
+}
 
 - (id)initWithTypeArray:(id)optypearray
 {
