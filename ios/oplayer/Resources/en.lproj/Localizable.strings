@@ -334,6 +334,8 @@
 "kProposalLabelReviewPeriod" = "Review period";
 "kProposalLabel1Days" = "%@ day";
 "kProposalLabelNDays" = "%@ days";
+"kProposalLabel1Hours" = "%@ hour";
+"kProposalLabelNHours" = "%@ hours";
 "kProposalLabelNoReviewPeriod" = "No review period";
 "kProposalSubmitTipsSelectCreator" = "Please select a proposal creator account.";
 "kProposalSubmitTipTxOK" = "The proposal was created successfully.";
