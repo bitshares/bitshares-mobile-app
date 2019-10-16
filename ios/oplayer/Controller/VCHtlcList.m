@@ -214,7 +214,7 @@ enum
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
@@ -412,16 +412,16 @@ enum
                     case kMySideFrom:
                     {
                         buttons = @[
-                                    @{@"name":NSLocalizedString(@"kVcHtlcListBtnExtend", @"延长有效期"), @"type":@(kHtlcActionTypeExtendExpiry)},
-                                    ];
+                            @{@"name":NSLocalizedString(@"kVcHtlcListBtnExtend", @"延长有效期"), @"type":@(kHtlcActionTypeExtendExpiry)},
+                        ];
                     }
                         break;
                     case kMySideTo:
                     {
                         buttons = @[
-                                    @{@"name":NSLocalizedString(@"kVcHtlcListBtnRedeem", @"提取"), @"type":@(kHtlcActionTypeRedeem)},
-                                    @{@"name":NSLocalizedString(@"kVcHtlcListBtnCreate", @"部署"), @"type":@(kHtlcActionTypeCreate)},
-                                    ];
+                            @{@"name":NSLocalizedString(@"kVcHtlcListBtnRedeem", @"提取"), @"type":@(kHtlcActionTypeRedeem)},
+                            @{@"name":NSLocalizedString(@"kVcHtlcListBtnCreate", @"部署"), @"type":@(kHtlcActionTypeCreate)},
+                        ];
                     }
                         break;
                     default:
@@ -531,7 +531,7 @@ enum
         [OrgUtils makeToast:NSLocalizedString(@"kVcHtlcListTipsInputValidPreimage", @"请输入有效的原像信息。")];
         return;
     }
-
+    
     //  构造请求
     id opaccount = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
     assert(opaccount);
@@ -541,14 +541,14 @@ enum
     assert(htlc_id);
     
     id op = @{
-              @"fee":@{
-                      @"amount":@0,
-                      @"asset_id":[ChainObjectManager sharedChainObjectManager].grapheneCoreAssetID,
-                      },
-              @"htlc_id":htlc_id,
-              @"redeemer":account_id,
-              @"preimage":[preimage dataUsingEncoding:NSUTF8StringEncoding]
-              };
+        @"fee":@{
+                @"amount":@0,
+                @"asset_id":[ChainObjectManager sharedChainObjectManager].grapheneCoreAssetID,
+        },
+        @"htlc_id":htlc_id,
+        @"redeemer":account_id,
+        @"preimage":[preimage dataUsingEncoding:NSUTF8StringEncoding]
+    };
     
     //  确保有权限发起普通交易，否则作为提案交易处理。
     [_owner GuardProposalOrNormalTransaction:ebo_htlc_redeem
@@ -558,25 +558,25 @@ enum
                                    opaccount:opaccount
                                         body:^(BOOL isProposal, NSDictionary *proposal_create_args)
      {
-         assert(!isProposal);
-         //  请求网络广播
-         [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-         [[[[BitsharesClientManager sharedBitsharesClientManager] htlcRedeem:op] then:(^id(id transaction_confirmation) {
-             [_owner hideBlockView];
-             [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcHtlcListTipsRedeemOK", @"HTLC合约 %@ 提取成功。"), htlc_id]];
-             //  [统计]
-             [OrgUtils logEvents:@"txHtlcRedeemFullOK" params:@{@"redeemer":account_id, @"htlc_id":htlc_id}];
-             //  刷新
-             [self queryUserHTLCs];
-             return nil;
-         })] catch:(^id(id error) {
-             [_owner hideBlockView];
-             [OrgUtils showGrapheneError:error];
-             //  [统计]
-             [OrgUtils logEvents:@"txHtlcRedeemFailed" params:@{@"redeemer":account_id, @"htlc_id":htlc_id}];
-             return nil;
-         })];
-     }];
+        assert(!isProposal);
+        //  请求网络广播
+        [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+        [[[[BitsharesClientManager sharedBitsharesClientManager] htlcRedeem:op] then:(^id(id transaction_confirmation) {
+            [_owner hideBlockView];
+            [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcHtlcListTipsRedeemOK", @"HTLC合约 %@ 提取成功。"), htlc_id]];
+            //  [统计]
+            [OrgUtils logEvents:@"txHtlcRedeemFullOK" params:@{@"redeemer":account_id, @"htlc_id":htlc_id}];
+            //  刷新
+            [self queryUserHTLCs];
+            return nil;
+        })] catch:(^id(id error) {
+            [_owner hideBlockView];
+            [OrgUtils showGrapheneError:error];
+            //  [统计]
+            [OrgUtils logEvents:@"txHtlcRedeemFailed" params:@{@"redeemer":account_id, @"htlc_id":htlc_id}];
+            return nil;
+        })];
+    }];
 }
 
 - (void)_onHtlcActionRedeemClicked:(id)htlc
@@ -588,14 +588,14 @@ enum
                                                              ok:NSLocalizedString(@"kBtnOK", @"确定")
                                                           tfcfg:nil
                                                      completion:^(NSInteger buttonIndex, NSString *tfvalue) {
-                                                         if (buttonIndex != 0){
-                                                             [_owner GuardWalletUnlocked:NO body:^(BOOL unlocked) {
-                                                                 if (unlocked){
-                                                                     [self _onHtlcActionRedeemClicked:htlc preimage:tfvalue];
-                                                                 }
-                                                             }];
-                                                         }
-                                                     }];
+        if (buttonIndex != 0){
+            [_owner GuardWalletUnlocked:NO body:^(BOOL unlocked) {
+                if (unlocked){
+                    [self _onHtlcActionRedeemClicked:htlc preimage:tfvalue];
+                }
+            }];
+        }
+    }];
 }
 
 - (void)_onHtlcActionExtendExpiryClicked:(id)htlc seconds:(NSInteger)seconds
@@ -611,14 +611,14 @@ enum
     assert(htlc_id);
     
     id op = @{
-              @"fee":@{
-                      @"amount":@0,
-                      @"asset_id":[ChainObjectManager sharedChainObjectManager].grapheneCoreAssetID,
-                      },
-              @"htlc_id":htlc_id,
-              @"update_issuer":account_id,
-              @"seconds_to_add":@(seconds)
-              };
+        @"fee":@{
+                @"amount":@0,
+                @"asset_id":[ChainObjectManager sharedChainObjectManager].grapheneCoreAssetID,
+        },
+        @"htlc_id":htlc_id,
+        @"update_issuer":account_id,
+        @"seconds_to_add":@(seconds)
+    };
     
     //  确保有权限发起普通交易，否则作为提案交易处理。
     [_owner GuardProposalOrNormalTransaction:ebo_htlc_extend
@@ -628,25 +628,25 @@ enum
                                    opaccount:opaccount
                                         body:^(BOOL isProposal, NSDictionary *proposal_create_args)
      {
-         assert(!isProposal);
-         //  请求网络广播
-         [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-         [[[[BitsharesClientManager sharedBitsharesClientManager] htlcExtend:op] then:(^id(id transaction_confirmation) {
-             [_owner hideBlockView];
-             [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcHtlcListTipsExtendOK", @"HTLC合约 %@ 延长有效期成功。"), htlc_id]];
-             //  [统计]
-             [OrgUtils logEvents:@"txHtlcExtendFullOK" params:@{@"update_issuer":account_id, @"htlc_id":htlc_id}];
-             //  刷新
-             [self queryUserHTLCs];
-             return nil;
-         })] catch:(^id(id error) {
-             [_owner hideBlockView];
-             [OrgUtils showGrapheneError:error];
-             //  [统计]
-             [OrgUtils logEvents:@"txHtlcExtendFailed" params:@{@"update_issuer":account_id, @"htlc_id":htlc_id}];
-             return nil;
-         })];
-     }];
+        assert(!isProposal);
+        //  请求网络广播
+        [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+        [[[[BitsharesClientManager sharedBitsharesClientManager] htlcExtend:op] then:(^id(id transaction_confirmation) {
+            [_owner hideBlockView];
+            [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcHtlcListTipsExtendOK", @"HTLC合约 %@ 延长有效期成功。"), htlc_id]];
+            //  [统计]
+            [OrgUtils logEvents:@"txHtlcExtendFullOK" params:@{@"update_issuer":account_id, @"htlc_id":htlc_id}];
+            //  刷新
+            [self queryUserHTLCs];
+            return nil;
+        })] catch:(^id(id error) {
+            [_owner hideBlockView];
+            [OrgUtils showGrapheneError:error];
+            //  [统计]
+            [OrgUtils logEvents:@"txHtlcExtendFailed" params:@{@"update_issuer":account_id, @"htlc_id":htlc_id}];
+            return nil;
+        })];
+    }];
 }
 
 - (void)_onHtlcActionExtendExpiryClicked:(id)htlc
@@ -689,16 +689,16 @@ enum
                                                                    withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
                                                                   completion:^(NSInteger buttonIndex)
              {
-                 if (buttonIndex == 1)
-                 {
-                     //  --- 参数大部分检测合法 执行请求 ---
-                     [_owner GuardWalletUnlocked:NO body:^(BOOL unlocked) {
-                         if (unlocked){
-                             [self _onHtlcActionExtendExpiryClicked:htlc seconds:extend_day * 3600 * 24];
-                         }
-                     }];
-                 }
-             }];
+                if (buttonIndex == 1)
+                {
+                    //  --- 参数大部分检测合法 执行请求 ---
+                    [_owner GuardWalletUnlocked:NO body:^(BOOL unlocked) {
+                        if (unlocked){
+                            [self _onHtlcActionExtendExpiryClicked:htlc seconds:extend_day * 3600 * 24];
+                        }
+                    }];
+                }
+            }];
         }
         return nil;
     })];

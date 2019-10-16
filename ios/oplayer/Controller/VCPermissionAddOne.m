@@ -85,7 +85,7 @@ enum
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     
@@ -101,8 +101,8 @@ enum
     _tf_authority.showBottomLine = YES;
     _tf_authority.textColor = theme.textColorMain;
     _tf_authority.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderAuthority
-                                                                         attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
-                                                                                      NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+                                                                          attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
+                                                                                       NSFontAttributeName:[UIFont systemFontOfSize:17]}];
     
     _tf_threshold = [self createTfWithRect:rect keyboard:UIKeyboardTypeDecimalPad placeholder:placeHolderThreshold];
     _tf_threshold.updateClearButtonTintColor = YES;
@@ -330,12 +330,7 @@ enum
     NSInteger i_threshold = [n_threshold integerValue];
     
     //  判断输入的是账号还是公钥
-    NSData* data_authority = [str_authority dataUsingEncoding:NSUTF8StringEncoding];
-    secp256k1_pubkey pubkey={0,};
-    bool ret = __bts_gen_public_key_from_b58address((const unsigned char*)data_authority.bytes, (const size_t)data_authority.length,
-                                                    [[ChainObjectManager sharedChainObjectManager].grapheneAddressPrefix length],
-                                                    &pubkey);
-    if (ret) {
+    if ([OrgUtils isValidBitsharesPublicKey:str_authority]) {
         [self onAddOneDone:str_authority
                       name:str_authority
                  isaccount:NO

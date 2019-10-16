@@ -91,7 +91,7 @@
 {
     id oid = [account objectForKey:@"id"];
     if ([oid isEqualToString:BTS_GRAPHENE_COMMITTEE_ACCOUNT] ||
-        [oid isEqualToString:BTS_GRAPHENE_WITNESS_ACCOUNT] || 
+        [oid isEqualToString:BTS_GRAPHENE_WITNESS_ACCOUNT] ||
         [oid isEqualToString:BTS_GRAPHENE_TEMP_ACCOUNT] ||
         [oid isEqualToString:BTS_GRAPHENE_PROXY_TO_SELF]) {
         return NO;
@@ -99,14 +99,14 @@
     return YES;
 }
 
-- (id)_parsePermissionJson:(id)permission title:(NSString*)title account:(id)account
+- (id)_parsePermissionJson:(id)permission title:(NSString*)title account:(id)account type:(EBitsharesPermissionType)type
 {
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     assert(permission);
     BOOL canBeModified = [self _canBeModified:account permission:permission];
     //  memo key
     if ([permission isKindOfClass:[NSString class]]) {
-        return @{@"title":title, @"weight_threshold":@1,
+        return @{@"title":title, @"weight_threshold":@1, @"type":@(type),
                  @"is_memo":@YES, @"items":@[@{@"key":permission, @"threshold":@1}], @"canBeModified":@(canBeModified)};
     }
     //  other permission
@@ -155,44 +155,72 @@
     if (curr_threshold >= weight_threshold) {
         //  REMARK：仅包含一个权力实体，并且是KEY类型。不是account、address等。
         BOOL only_one_key = onlyIncludeKeyAuthority && [list count] == 1;
-        return @{@"title":title, @"weight_threshold":@(weight_threshold), @"only_one_key":@(only_one_key), @"items":list, @"canBeModified":@(canBeModified), @"raw":permission};
+        return @{@"title":title, @"weight_threshold":@(weight_threshold), @"type":@(type), @"only_one_key":@(only_one_key), @"items":list, @"canBeModified":@(canBeModified), @"raw":permission};
     }
     //  no permission
     return nil;
 }
 
-- (void)viewDidLoad
+/*
+ *  (private) 初始化数据
+ */
+- (void)_initDataArrayWithFullAccountData:(id)full_account_data
 {
-    [super viewDidLoad];
-	// Do any additional setup after loading the view.
-    
-    self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
-    
+    assert(full_account_data);
     _dataArray = [[[NSMutableArray array] ruby_apply:(^(id ary) {
-        id account = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
+        id account = [full_account_data objectForKey:@"account"];
         assert(account);
         id owner = [account objectForKey:@"owner"];
         assert(owner);
-        id value = [self _parsePermissionJson:owner title:NSLocalizedString(@"kVcPermissionTypeOwner", @"账号权限") account:account];
+        id value = [self _parsePermissionJson:owner
+                                        title:NSLocalizedString(@"kVcPermissionTypeOwner", @"账号权限")
+                                      account:account
+                                         type:ebpt_owner];
         if (value) {
             [ary addObject:value];
         }
         
         id active = [account objectForKey:@"active"];
         assert(active);
-        value = [self _parsePermissionJson:active title:NSLocalizedString(@"kVcPermissionTypeActive", @"资金权限") account:account];
+        value = [self _parsePermissionJson:active
+                                     title:NSLocalizedString(@"kVcPermissionTypeActive", @"资金权限")
+                                   account:account
+                                      type:ebpt_active];
         if (value) {
             [ary addObject:value];
         }
         
         id memo_key = [[account objectForKey:@"options"] objectForKey:@"memo_key"];
         assert(memo_key);
-        value = [self _parsePermissionJson:memo_key title:NSLocalizedString(@"kVcPermissionTypeMemo", @"备注权限") account:account];
+        value = [self _parsePermissionJson:memo_key
+                                     title:NSLocalizedString(@"kVcPermissionTypeMemo", @"备注权限")
+                                   account:account
+                                      type:ebpt_memo];
         if (value) {
             [ary addObject:value];
         }
     })] copy];
     assert([_dataArray count] > 0);
+}
+
+/*
+ *  (private) 刷新界面
+ */
+- (void)_refreshUI:(id)full_account_data
+{
+    [self _initDataArrayWithFullAccountData:full_account_data];
+    [_mainTableView reloadData];
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+    
+    self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
+    
+    //  初始化数据
+    [self _initDataArrayWithFullAccountData:[[WalletManager sharedWalletManager] getWalletAccountInfo]];
     
     //  UI - 列表
     CGRect rect = [self rectWithoutNaviAndPageBar];
@@ -256,7 +284,7 @@
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     ThemeManager* theme = [ThemeManager sharedThemeManager];
-
+    
     //  权限类型
     CGFloat fWidth = self.view.bounds.size.width;
     CGFloat xOffset = tableView.layoutMargins.left;
@@ -281,7 +309,7 @@
         btnModify.userInteractionEnabled = YES;
         [btnModify addTarget:self action:@selector(onButtonClicked_Modify:) forControlEvents:UIControlEventTouchUpInside];
         btnModify.frame = CGRectMake(xOffset + size1.width + 8,
-                                   (44 - btn_size.height) / 2, btn_size.width, btn_size.height);
+                                     (44 - btn_size.height) / 2, btn_size.width, btn_size.height);
         btnModify.tintColor = theme.textColorHighlight;
         btnModify.tag = section;
         [myView addSubview:btnModify];
@@ -323,6 +351,94 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
+/*
+ *  (private) 处理修改备注权限
+ */
+- (void)_onModifyMemoKeyClicked:(id)item newKey:(NSString*)newKey
+{
+    if (![OrgUtils isValidBitsharesPublicKey:newKey])
+    {
+        [OrgUtils makeToast:NSLocalizedString(@"kVcPermissionSubmitTipsInputValidMemoKey", @"请输入有效的公钥。")];
+        return;
+    }
+    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    id account_data = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
+    assert(account_data);
+    [[[ChainObjectManager sharedChainObjectManager] queryAccountData:account_data[@"id"]] then:(^id(id newestAccountData) {
+        [_owner hideBlockView];
+        if (newestAccountData && [newestAccountData objectForKey:@"id"] && [newestAccountData objectForKey:@"name"]) {
+            id account_options = [newestAccountData objectForKey:@"options"];
+            if ([[account_options objectForKey:@"memo_key"] isEqualToString:newKey]) {
+                [OrgUtils makeToast:NSLocalizedString(@"kVcPermissionSubmitTipsMemoKeyNoChanged", @"备注权限没有变化。")];
+            } else {
+                [_owner GuardWalletUnlocked:NO body:^(BOOL unlocked) {
+                    if (unlocked) {
+                        [self _onModifyMemoKeyCore:item newKey:newKey newestAccountData:newestAccountData];
+                    }
+                }];
+            }
+        } else {
+            [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+        }
+        return nil;
+    })];
+}
+
+- (void)_onModifyMemoKeyCore:(id)item newKey:(NSString*)newKey newestAccountData:(id)account_data
+{
+    assert(newKey && account_data);
+    
+    id uid = account_data[@"id"];
+    id account_options = [account_data objectForKey:@"options"];
+    
+    id op_data = @{
+        @"fee":@{@"amount":@0, @"asset_id":[ChainObjectManager sharedChainObjectManager].grapheneCoreAssetID},
+        @"account":uid,
+        @"new_options":@{
+                @"memo_key":newKey,
+                @"voting_account":[account_options objectForKey:@"voting_account"],
+                @"num_witness":[account_options objectForKey:@"num_witness"],
+                @"num_committee":[account_options objectForKey:@"num_committee"],
+                @"votes":[account_options objectForKey:@"votes"]
+        },
+    };
+    
+    //  确保有权限发起普通交易，否则作为提案交易处理。
+    [_owner GuardProposalOrNormalTransaction:ebo_account_update
+                       using_owner_authority:NO invoke_proposal_callback:NO
+                                      opdata:op_data
+                                   opaccount:account_data
+                                        body:^(BOOL isProposal, NSDictionary *proposal_create_args)
+     {
+        assert(!isProposal);
+        [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+        [[[[BitsharesClientManager sharedBitsharesClientManager] accountUpdate:op_data] then:(^id(id data) {
+            [[[[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:uid] then:(^id(id full_data) {
+                [_owner hideBlockView];
+                //  刷新
+                [self _refreshUI:full_data];
+                [OrgUtils makeToast:NSLocalizedString(@"kVcPermissionSubmitModifyMemoKeyFullOK", @"修改备注权限成功。")];
+                //  [统计]
+                [OrgUtils logEvents:@"txUpdateMemoKeyPermissionFullOK" params:@{@"account":uid}];
+                return nil;
+            })] catch:(^id(id error) {
+                [_owner hideBlockView];
+                [OrgUtils makeToast:NSLocalizedString(@"kVcPermissionSubmitModifyMemoKeyOK", @"修改备注权限成功，但刷新界面数据失败，请稍后再试。")];
+                //  [统计]
+                [OrgUtils logEvents:@"txUpdateMemoKeyPermissionOK" params:@{@"account":uid}];
+                return nil;
+            })];
+            return nil;
+        })] catch:(^id(id error) {
+            [_owner hideBlockView];
+            [OrgUtils showGrapheneError:error];
+            //  [统计]
+            [OrgUtils logEvents:@"txUpdateMemoKeyPermissionFailed" params:@{@"account":uid}];
+            return nil;
+        })];
+    }];
+}
+
 /**
  *  事件 - 修改权限
  */
@@ -330,9 +446,21 @@
 {
     id item = [_dataArray objectAtIndex:button.tag];
     if ([[item objectForKey:@"is_memo"] boolValue]) {
-        //  TODO:2.8 修改memo
-        [OrgUtils showMessage:@"memo"];
-        return;
+        [[UIAlertViewManager sharedUIAlertViewManager] showInputBox:NSLocalizedString(@"kVcPermissionMemoKeyModifyAskTitle", @"修改备注权限")
+                                                          withTitle:nil
+                                                        placeholder:NSLocalizedString(@"kVcPermissionMemoKeyModifyInputPlaceholder", @"请输入新的备注公钥")
+                                                         ispassword:NO
+                                                                 ok:NSLocalizedString(@"kBtnOK", @"确定")
+                                                              tfcfg:nil
+                                                         completion:^(NSInteger buttonIndex, NSString *tfvalue) {
+            if (buttonIndex != 0){
+                [_owner GuardWalletUnlocked:NO body:^(BOOL unlocked) {
+                    if (unlocked) {
+                        [self _onModifyMemoKeyClicked:item newKey:tfvalue];
+                    }
+                }];
+            }
+        }];
     } else {
         //  REMARK：查询最大多签成员数量
         [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
@@ -341,13 +469,18 @@
             id gp = [[ChainObjectManager sharedChainObjectManager] getObjectGlobalProperties];
             id parameters = [gp objectForKey:@"parameters"];
             NSInteger maximum_authority_membership = [[parameters objectForKey:@"maximum_authority_membership"] integerValue];
-            
+            WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
             VCPermissionEdit* vc = [[VCPermissionEdit alloc] initWithPermissionJson:item
-                                                       maximum_authority_membership:maximum_authority_membership];
+                                                       maximum_authority_membership:maximum_authority_membership
+                                                                     result_promise:result_promise];
             [_owner pushViewController:vc
                                vctitle:NSLocalizedString(@"kVcTitleChangePermission", @"修改权限")
                              backtitle:kVcDefaultBackTitleName];
-            
+            [result_promise then:^id(id full_account_data) {
+                //  重新刷新列表
+                [self _refreshUI:full_account_data];
+                return nil;
+            }];
             return nil;
         })] catch:(^id(id error) {
             [_owner hideBlockView];

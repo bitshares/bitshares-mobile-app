@@ -103,6 +103,11 @@ typedef enum EImportToWalletStatus
                               login_mode:(EWalletMode)login_mode
                               login_desc:(NSString*)login_desc;
 
+/*
+ *  (public) 注销登录逻辑。内存钱包锁定、导入钱包删除。
+ */
+- (void)processLogout;
+
 /**
  *  (public) 锁定和解锁帐号
  */

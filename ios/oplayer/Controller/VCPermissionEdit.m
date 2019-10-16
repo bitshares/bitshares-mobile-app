@@ -5,11 +5,12 @@
 //  Created by SYALON on 13-10-23.
 //
 //
-
 #import "VCPermissionEdit.h"
 #import "ViewPermissionInfoCellB.h"
 #import "VCPermissionAddOne.h"
 #import "ViewTipsInfoCell.h"
+
+#import "VCImportAccount.h"
 
 enum
 {
@@ -25,8 +26,12 @@ enum
 
 @interface VCPermissionEdit ()
 {
+    NSMutableDictionary*    _old_authority_hash;            //  修改前的权限信息（KEY：key_threshold  VALUE：BOOL）
+    NSInteger               _old_weightThreshold;           //  修改前的通过阈值
+    
     NSDictionary*           _permission_item;
     NSInteger               _maximum_authority_membership;  //  最大多签成员数量（理事会控制）
+    WsPromiseObject*        _result_promise;
     
     NSInteger               _weightThreshold;
     NSMutableArray*         _permissionList;
@@ -45,6 +50,7 @@ enum
 
 -(void)dealloc
 {
+    _result_promise = nil;
     _cellTips = nil;
     _permission_item = nil;
     _permissionList = nil;
@@ -71,26 +77,38 @@ enum
 }
 
 - (id)initWithPermissionJson:(id)permission maximum_authority_membership:(NSInteger)maximum_authority_membership
+              result_promise:(WsPromiseObject*)result_promise
 {
     self = [super init];
     if (self) {
         _permission_item = permission;
         _maximum_authority_membership = maximum_authority_membership;
+        _result_promise = result_promise;
         assert(permission);
         id raw = [permission objectForKey:@"raw"];
-        _weightThreshold = [[raw objectForKey:@"weight_threshold"] integerValue];
+        _old_authority_hash = [NSMutableDictionary dictionary];
+        _old_weightThreshold = _weightThreshold = [[raw objectForKey:@"weight_threshold"] integerValue];
         _permissionList = [NSMutableArray array];
         for (id item in [raw objectForKey:@"account_auths"]) {
             assert([item count] == 2);
-            [_permissionList addObject:@{@"key":[item firstObject], @"threshold":[item lastObject], @"isaccount":@YES}];
+            id key = [item firstObject];
+            id threshold = [item lastObject];
+            [_old_authority_hash setObject:@YES forKey:[NSString stringWithFormat:@"%@_%@", key, threshold]];
+            [_permissionList addObject:@{@"key":key, @"threshold":threshold, @"isaccount":@YES}];
         }
         for (id item in [raw objectForKey:@"key_auths"]) {
             assert([item count] == 2);
-            [_permissionList addObject:@{@"key":[item firstObject], @"threshold":[item lastObject], @"iskey":@YES}];
+            id key = [item firstObject];
+            id threshold = [item lastObject];
+            [_old_authority_hash setObject:@YES forKey:[NSString stringWithFormat:@"%@_%@", key, threshold]];
+            [_permissionList addObject:@{@"key":key, @"threshold":threshold, @"iskey":@YES}];
         }
         for (id item in [raw objectForKey:@"address_auths"]) {
             assert([item count] == 2);
-            [_permissionList addObject:@{@"key":[item firstObject], @"threshold":[item lastObject], @"isaddr":@YES}];
+            id key = [item firstObject];
+            id threshold = [item lastObject];
+            [_old_authority_hash setObject:@YES forKey:[NSString stringWithFormat:@"%@_%@", key, threshold]];
+            [_permissionList addObject:@{@"key":key, @"threshold":threshold, @"isaddr":@YES}];
         }
         //  根据权重降序排列
         [self _sort_permission_list];
@@ -101,7 +119,7 @@ enum
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
@@ -258,7 +276,6 @@ enum
             cell.backgroundColor = [UIColor clearColor];
             [self addLabelButtonToCell:_lbAddOne cell:cell leftEdge:tableView.layoutMargins.left];
             return cell;
-
         }
             break;
         case kVcSecBtnSubmit:
@@ -269,7 +286,6 @@ enum
             cell.backgroundColor = [UIColor clearColor];
             [self addLabelButtonToCell:_lbCommit cell:cell leftEdge:tableView.layoutMargins.left];
             return cell;
-
         }
             break;
         case kVcSecTips:
@@ -320,10 +336,10 @@ enum
 {
     //  限制最大多签成员数
     if ([_permissionList count] >= _maximum_authority_membership) {
-       [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcPermissionEditTipsMaxAuthority", @"最多只能添加 %@ 个多签管理者。"), @(_maximum_authority_membership)]];
+        [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcPermissionEditTipsMaxAuthority", @"最多只能添加 %@ 个多签管理者。"), @(_maximum_authority_membership)]];
         return;
     }
-
+    
     //  REMARK：在主线程调用，否则VC弹出可能存在卡顿缓慢的情况。
     [self delay:^{
         // 转到提案确认界面
@@ -355,9 +371,192 @@ enum
     }];
 }
 
+/*
+ *  (private) 判断权限信息是否发生变化。
+ */
+- (BOOL)_isModifiyed
+{
+    //  1、判断阈值是否有修改
+    if (_old_weightThreshold != _weightThreshold) {
+        return YES;
+    }
+    
+    //  2、权力实体数量发生变化（增加or减少）
+    if ([_permissionList count] != [_old_authority_hash count]) {
+        return YES;
+    }
+    
+    //  3、判断权力实体以及每个实体的权重是否有修改
+    for (id item in _permissionList) {
+        NSString* check_key = [NSString stringWithFormat:@"%@_%@", item[@"key"], item[@"threshold"]];
+        //  新KEY或新阈值在当前的权限信息中不存在，则说明已经修改。
+        if (![[_old_authority_hash objectForKey:check_key] boolValue]) {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
 - (void)onSubmitClicked
 {
-    //  TODO:2.8 确定修改逻辑
+    //  1、检测权限信息是否变化
+    if (![self _isModifiyed]) {
+        [OrgUtils makeToast:NSLocalizedString(@"kVcPermissionEditSubmitTipsNoChanged", @"权限信息没有变化。")];
+        return;
+    }
+    
+    //  2、检测阈值和权重配置是否正确。
+    assert(_weightThreshold > 0);
+    if (_weightThreshold > [self _calcAuthorityListTotalThreshold]) {
+        [OrgUtils makeToast:NSLocalizedString(@"kVcPermissionEditSubmitTipsInvalidPassThreshold", @"请重新调整阈值和权重配置，所有管理者账号/公钥的权重之和必须大于等于阈值。")];
+        return;
+    }
+    
+    //  3、公钥二次确认。
+    id keytype_authority = [_permissionList ruby_find:(^BOOL(id src) {
+        return [[src objectForKey:@"iskey"] boolValue];
+    })];
+    if (keytype_authority) {
+        [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:NSLocalizedString(@"kVcPermissionEditSubmitSafeTipsPubkeyConfirm", @"新的管理者列表中包含公钥类型，请确认您必须持有对应的私钥。是否继续修改权限？")
+                                                               withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                              completion:^(NSInteger buttonIndex)
+         {
+            if (buttonIndex == 1)
+            {
+                [self _gotoAskUpdateAccount];
+            }
+        }];
+    } else {
+        [self _gotoAskUpdateAccount];
+    }
+}
+
+/**
+ *  (private) 请求二次确认修改账号权限信息。
+ */
+- (void)_gotoAskUpdateAccount
+{
+    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:NSLocalizedString(@"kVcPermissionEditSubmitSafeTipsSecurityConfrim", @"修改权限为高危操作，请仔细确认新管理者列表配置正确。是否继续修改权限？")
+                                                           withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                          completion:^(NSInteger buttonIndex)
+     {
+        if (buttonIndex == 1)
+        {
+            // 解锁钱包or账号
+            [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
+                if (unlocked){
+                    [self _submitUpdateAccountCore];
+                }
+            }];
+        }
+    }];
+}
+
+/**
+ *  (private) 修改权限核心
+ */
+- (void)_submitUpdateAccountCore
+{
+    id account = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
+    assert(account);
+    id uid = account[@"id"];
+    
+    NSMutableArray* account_auths = [NSMutableArray array];
+    NSMutableArray* key_auths = [NSMutableArray array];
+    for (id item in _permissionList) {
+        id key = [item objectForKey:@"key"];
+        id threshold = [item objectForKey:@"threshold"];
+        if ([[item objectForKey:@"isaccount"] boolValue]) {
+            [account_auths addObject:@[key, threshold]];
+        } else {
+            [key_auths addObject:@[key, threshold]];
+        }
+    }
+    
+    id authority = @{
+        @"weight_threshold":@(_weightThreshold),
+        @"account_auths":[account_auths copy],
+        @"key_auths":[key_auths copy],
+        @"address_auths":@[],
+    };
+    
+    EBitsharesPermissionType type = (EBitsharesPermissionType)[[_permission_item objectForKey:@"type"] integerValue];
+    BOOL using_owner_authority = NO;
+    
+    id op_data = [NSMutableDictionary dictionary];
+    op_data[@"fee"] = @{@"amount":@0, @"asset_id":[ChainObjectManager sharedChainObjectManager].grapheneCoreAssetID};
+    op_data[@"account"] = uid;
+    if (type == ebpt_owner) {
+        using_owner_authority = YES;
+        [op_data setObject:authority forKey:@"owner"];
+    } else {
+        assert(type == ebpt_active);
+        using_owner_authority = NO;
+        [op_data setObject:authority forKey:@"active"];
+    }
+    
+    //  确保有权限发起普通交易，否则作为提案交易处理。
+    [self GuardProposalOrNormalTransaction:ebo_account_update
+                     using_owner_authority:using_owner_authority invoke_proposal_callback:NO
+                                    opdata:op_data
+                                 opaccount:account
+                                      body:^(BOOL isProposal, NSDictionary *proposal_create_args)
+     {
+        assert(!isProposal);
+        [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+        [[[[BitsharesClientManager sharedBitsharesClientManager] accountUpdate:op_data] then:(^id(id data) {
+            if ([[WalletManager sharedWalletManager] isPasswordMode]) {
+                //  密码模式：修改权限之后直接退出重新登录。
+                [self hideBlockView];
+                //  [统计]
+                [OrgUtils logEvents:@"txUpdateAccountPermissionFullOK" params:@{@"account":uid, @"mode":@"password"}];
+                [[UIAlertViewManager sharedUIAlertViewManager] showMessage:NSLocalizedString(@"kVcPermissionEditSubmitOkRelogin", @"权限修改成功，请重新登录。")
+                                                                 withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                                completion:^(NSInteger buttonIndex) {
+                    //  注销
+                    [[WalletManager sharedWalletManager] processLogout];
+                    //  转到重新登录界面。
+                    VCImportAccount* vc = [[VCImportAccount alloc] init];
+                    [self clearPushViewController:vc
+                                          vctitle:NSLocalizedString(@"kVcTitleLogin", @"登录")
+                                        backtitle:kVcDefaultBackTitleName];
+                }];
+            } else {
+                //  钱包模式：修改权限之后刷新账号信息即可。（可能当前账号不在拥有完整的active权限。）
+                [[[[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:uid] then:(^id(id full_data) {
+                    [self hideBlockView];
+                    //  更新账号信息
+                    [[AppCacheManager sharedAppCacheManager] updateWalletAccountInfo:full_data];
+                    //  [统计]
+                    [OrgUtils logEvents:@"txUpdateAccountPermissionFullOK" params:@{@"account":uid, @"mode":@"wallet"}];
+                    //  提示并退出
+                    [[UIAlertViewManager sharedUIAlertViewManager] showMessage:NSLocalizedString(@"kVcPermissionEditSubmitOK02", @"修改权限成功。")
+                                                                     withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                                    completion:^(NSInteger buttonIndex) {
+                        if (_result_promise) {
+                            [_result_promise resolve:full_data];
+                        }
+                        [self closeOrPopViewController];
+                    }];
+                    return nil;
+                })] catch:(^id(id error) {
+                    [self hideBlockView];
+                    [OrgUtils makeToast:NSLocalizedString(@"kVcPermissionEditSubmitOKAndRelaunchApp", @"修改权限成功，但刷新账号信息失败，请退出重新启动APP。")];
+                    //  [统计]
+                    [OrgUtils logEvents:@"txUpdateAccountPermissionOK" params:@{@"account":uid, @"mode":@"wallet"}];
+                    return nil;
+                })];
+            }
+            return nil;
+        })] catch:(^id(id error) {
+            [self hideBlockView];
+            [OrgUtils showGrapheneError:error];
+            //  [统计]
+            [OrgUtils logEvents:@"txUpdateAccountPermissionFailed" params:@{@"account":uid}];
+            return nil;
+        })];
+    }];
 }
 
 - (void)onPassThresholdClicked

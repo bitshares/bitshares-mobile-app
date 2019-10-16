@@ -30,6 +30,8 @@
 		3F1435F2233CC87900B97CFF /* ViewPermissionInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F1435F1233CC87900B97CFF /* ViewPermissionInfoCell.m */; };
 		3F1435F3233CC87900B97CFF /* ViewPermissionInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F1435F1233CC87900B97CFF /* ViewPermissionInfoCell.m */; };
 		3F1435F4233CC87900B97CFF /* ViewPermissionInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F1435F1233CC87900B97CFF /* ViewPermissionInfoCell.m */; };
+		3F1A5132235577F100632A6F /* VCPermissionEdit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E25233DF5A600BF4B78 /* VCPermissionEdit.m */; };
+		3F1A5133235577F200632A6F /* VCPermissionEdit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E25233DF5A600BF4B78 /* VCPermissionEdit.m */; };
 		3F216571226FEF5500AB5A3D /* ViewActionsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F216570226FEF5500AB5A3D /* ViewActionsCell.m */; };
 		3F216572226FEF5500AB5A3D /* ViewActionsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F216570226FEF5500AB5A3D /* ViewActionsCell.m */; };
 		3F23B77E231CCC7000EEEE78 /* paysuccess@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F23B77C231CCC7000EEEE78 /* paysuccess@3x.png */; };
@@ -44,8 +46,6 @@
 		3F291BD922B48EFB002E0CBD /* GatewayAssetItemData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F291BD722B48EFA002E0CBD /* GatewayAssetItemData.m */; };
 		3F291BDA22B48EFB002E0CBD /* GatewayAssetItemData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F291BD722B48EFA002E0CBD /* GatewayAssetItemData.m */; };
 		3F2E6E27233DF5A600BF4B78 /* VCPermissionEdit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E25233DF5A600BF4B78 /* VCPermissionEdit.m */; };
-		3F2E6E28233DF5A600BF4B78 /* VCPermissionEdit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E25233DF5A600BF4B78 /* VCPermissionEdit.m */; };
-		3F2E6E29233DF5A600BF4B78 /* VCPermissionEdit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E25233DF5A600BF4B78 /* VCPermissionEdit.m */; };
 		3F2E6E2C233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E2A233E0B3500BF4B78 /* ViewPermissionInfoCellB.m */; };
 		3F2E6E2D233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E2A233E0B3500BF4B78 /* ViewPermissionInfoCellB.m */; };
 		3F2E6E2E233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E2A233E0B3500BF4B78 /* ViewPermissionInfoCellB.m */; };
@@ -5058,6 +5058,7 @@
 				3F67683C230E9EC100E98C14 /* XzDec.c in Sources */,
 				3F67683D230E9EC100E98C14 /* GrapheneSerializer.m in Sources */,
 				3F67683E230E9EC100E98C14 /* VCSelectEstimateUnit.m in Sources */,
+				3F1A5132235577F100632A6F /* VCPermissionEdit.m in Sources */,
 				3F67683F230E9EC100E98C14 /* ViewActionsCell.m in Sources */,
 				3F676840230E9EC100E98C14 /* GCDWebServerFileResponse.m in Sources */,
 				3F676841230E9EC100E98C14 /* TempManager.m in Sources */,
@@ -5239,7 +5240,6 @@
 				3F6768ED230E9EC100E98C14 /* ViewMarketTickerInfoCell.m in Sources */,
 				3F6768EE230E9EC100E98C14 /* GrapheneApi.m in Sources */,
 				3F6768EF230E9EC100E98C14 /* GCDWebServerURLEncodedFormRequest.m in Sources */,
-				3F2E6E29233DF5A600BF4B78 /* VCPermissionEdit.m in Sources */,
 				3F6768F0230E9EC100E98C14 /* SCLAlertViewStyleKit.m in Sources */,
 				3F6768F1230E9EC100E98C14 /* 7zArcIn.c in Sources */,
 				3F6768F2230E9EC100E98C14 /* UIAlertViewManager.m in Sources */,
@@ -5354,6 +5354,7 @@
 				3FB8F8D221CE66C200DA88E2 /* XzDec.c in Sources */,
 				3FB8F8D321CE66C200DA88E2 /* GrapheneSerializer.m in Sources */,
 				3FB8F8D421CE66C200DA88E2 /* VCSelectEstimateUnit.m in Sources */,
+				3F1A5133235577F200632A6F /* VCPermissionEdit.m in Sources */,
 				3F216572226FEF5500AB5A3D /* ViewActionsCell.m in Sources */,
 				3FB8F8D521CE66C200DA88E2 /* GCDWebServerFileResponse.m in Sources */,
 				3FB8F8D621CE66C200DA88E2 /* TempManager.m in Sources */,
@@ -5535,7 +5536,6 @@
 				3FB8F97021CE66C200DA88E2 /* ViewMarketTickerInfoCell.m in Sources */,
 				3FB8F97121CE66C200DA88E2 /* GrapheneApi.m in Sources */,
 				3FB8F97221CE66C200DA88E2 /* GCDWebServerURLEncodedFormRequest.m in Sources */,
-				3F2E6E28233DF5A600BF4B78 /* VCPermissionEdit.m in Sources */,
 				3FB8F97321CE66C200DA88E2 /* SCLAlertViewStyleKit.m in Sources */,
 				3FB8F97421CE66C200DA88E2 /* 7zArcIn.c in Sources */,
 				3FB8F97521CE66C200DA88E2 /* UIAlertViewManager.m in Sources */,

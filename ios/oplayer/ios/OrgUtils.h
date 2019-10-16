@@ -283,6 +283,11 @@ typedef void (^YklUserCallback)(id data);
  */
 + (NSString*)genBtsAddressFromWifPrivateKey:(NSString*)wif_private_key;
 
+/*
+ *  (public) 是否是有效的公钥字符串判断。
+ */
++ (BOOL)isValidBitsharesPublicKey:(NSString*)str_pubkey;
+
 /**
  *  (public) 解码商人协议发票数据。成功返回 json，失败返回 nil。
  */
