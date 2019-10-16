@@ -284,6 +284,11 @@ typedef void (^YklUserCallback)(id data);
 + (NSString*)genBtsAddressFromWifPrivateKey:(NSString*)wif_private_key;
 
 /*
+ *  (public) 生成bts地址（序列化时公钥排序会用到。）
+ */
++ (NSData*)genBtsBlockchainAddress:(NSString*)str_pubkey;
+
+/*
  *  (public) 是否是有效的公钥字符串判断。
  */
 + (BOOL)isValidBitsharesPublicKey:(NSString*)str_pubkey;
