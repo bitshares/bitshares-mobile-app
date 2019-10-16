@@ -120,12 +120,13 @@
                     [active_publisher_ids addObject:account_id];
                     [idHash setObject:@YES forKey:account_id];
                 }
-            } else {
-                for (id ary in feeds) {
-                    id account_id = [ary objectAtIndex:0];
+            }
+            for (id ary in feeds) {
+                id account_id = [ary objectAtIndex:0];
+                if (publisher_type == ebfpt_custom) {
                     [active_publisher_ids addObject:account_id];
-                    [idHash setObject:@YES forKey:account_id];
                 }
+                [idHash setObject:@YES forKey:account_id];
             }
             
             //  查询依赖的账号信息
