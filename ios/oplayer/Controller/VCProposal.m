@@ -14,16 +14,27 @@
 #import "ViewProposalOpInfoCell.h"
 #import "ViewProposalOpInfoCell_AccountUpdate.h"
 #import "ViewProposalActionsCell.h"
+#import "ViewSecTipsLineCell.h"
 #import "OrgUtils.h"
 #import "ScheduleManager.h"
 #import "MyPopviewManager.h"
 
+//  安全提示UI高度
+#define kSecTipHeaderViewHeight 32.0f
+
 @interface VCProposal ()
 {
+    UIView*                 _sectipHeaderView;      //  顶部安全提示UI
+    UILabel*                _sectipHeaderLabel;     //  顶部安全提示文字
+    
     UITableViewBase*        _mainTableView;
     UILabel*                _lbEmpty;
     
-    NSMutableArray*         _dataArray;
+    NSMutableArray*         _allDataArray;          //  所有提案
+    NSMutableArray*         _safeDataArray;         //  安全的提案列表（经过了安全等级筛选的）
+    NSMutableArray*         _currSourceArrayRef;    //  当前引用
+    
+    BOOL                    _showSecTips;           //  是否显示安全提示（默认YES）
 }
 
 @end
@@ -32,12 +43,16 @@
 
 -(void)dealloc
 {
-    _dataArray = nil;
+    _allDataArray = nil;
+    _safeDataArray = nil;
+    _currSourceArrayRef = nil;
     if (_mainTableView){
         [[IntervalManager sharedIntervalManager] releaseLock:_mainTableView];
         _mainTableView.delegate = nil;
         _mainTableView = nil;
     }
+    _sectipHeaderLabel = nil;
+    _sectipHeaderView = nil;
     _lbEmpty = nil;
 }
 
@@ -45,16 +60,17 @@
 {
     self = [super init];
     if (self) {
-        _dataArray = [NSMutableArray array];
+        _allDataArray = [NSMutableArray array];
+        _safeDataArray = [NSMutableArray array];
+        _showSecTips = YES;
+        _currSourceArrayRef = _showSecTips ? _safeDataArray : _allDataArray;
     }
     return self;
 }
 
-- (void)queryAllProposals:(NSArray*)account_name_list
+- (void)queryAllProposals
 {
-    if (!account_name_list){
-        account_name_list = [[WalletManager sharedWalletManager] getWalletAccountNameList];
-    }
+    NSArray* account_name_list = [[WalletManager sharedWalletManager] getWalletAccountNameList];
     
     [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     
@@ -65,10 +81,11 @@
         [promiseList addObject:[api exec:@"get_proposed_transactions" params:@[accountId]]];
     }
     
+    //  查询钱包中所有账号的所有提案信息。
     [[[WsPromise all:promiseList] then:(^id(id data_array) {
         NSMutableArray* proposal_list = [NSMutableArray array];
         NSMutableDictionary* proposal_marked = [NSMutableDictionary dictionary];
-        //  查询依赖
+        //  分析查询依赖（提案相关的账号、资产ID等）
         NSMutableDictionary* query_ids = [NSMutableDictionary dictionary];
         NSMutableDictionary* skip_cache_ids = [NSMutableDictionary dictionary];
         for (id proposals in data_array) {
@@ -80,7 +97,7 @@
                     if ([[proposal_marked objectForKey:proposal_id] boolValue]){
                         continue;
                     }
-                    //  TODO:fowallet REMARK:需要多种权限的提案暂时不支持。
+                    //  TODO:fowallet REMARK:需要多种权限的提案暂时不支持。TODO:barter提案 两人互相转账，同时需要批准。
                     if ([[proposal objectForKey:@"required_active_approvals"] count] + [[proposal objectForKey:@"required_owner_approvals"] count] != 1){
                         continue;
                     }
@@ -119,19 +136,24 @@
                 }
             }
         }
+        //  查询提案依赖的账号、资产ID等
         return [[chainMgr queryAllGrapheneObjects:[query_ids allKeys] skipCacheIdHash:skip_cache_ids] then:(^id(id data) {
             //  二次查询依赖
             //  1、查询提案账号权限中的多签成员/代理人等名字信息等。
+            NSMutableDictionary* multi_sign_member_skip_cache_ids = [NSMutableDictionary dictionary];
             NSMutableDictionary* query_account_ids = [NSMutableDictionary dictionary];
             for (id proposal in proposal_list) {
                 for (id account_id in [proposal objectForKey:@"required_active_approvals"]) {
                     id account = [chainMgr getChainObjectByID:account_id];
                     assert(account);
+                    //  REMARK：多签成员实时查询，需要查询名字以及多签成员自身的权限信息。
                     id account_auths = [[account objectForKey:@"active"] objectForKey:@"account_auths"];
                     assert(account_auths);
                     for (id item in account_auths) {
                         assert([item count] == 2);
-                        [query_account_ids setObject:@YES forKey:[item firstObject]];
+                        id multi_sign_account_id = [item firstObject];
+                        [query_account_ids setObject:@YES forKey:multi_sign_account_id];
+                        [multi_sign_member_skip_cache_ids setObject:@YES forKey:multi_sign_account_id];
                     }
                     id voting_account = [[account objectForKey:@"options"] objectForKey:@"voting_account"];
                     if (![voting_account isEqualToString:BTS_GRAPHENE_PROXY_TO_SELF]){
@@ -141,11 +163,14 @@
                 for (id account_id in [proposal objectForKey:@"required_owner_approvals"]) {
                     id account = [chainMgr getChainObjectByID:account_id];
                     assert(account);
+                    //  REMARK：多签成员实时查询，需要查询名字以及多签成员自身的权限信息。
                     id account_auths = [[account objectForKey:@"owner"] objectForKey:@"account_auths"];
                     assert(account_auths);
                     for (id item in account_auths) {
                         assert([item count] == 2);
-                        [query_account_ids setObject:@YES forKey:[item firstObject]];
+                        id multi_sign_account_id = [item firstObject];
+                        [query_account_ids setObject:@YES forKey:multi_sign_account_id];
+                        [multi_sign_member_skip_cache_ids setObject:@YES forKey:multi_sign_account_id];
                     }
                     id voting_account = [[account objectForKey:@"options"] objectForKey:@"voting_account"];
                     if (![voting_account isEqualToString:BTS_GRAPHENE_PROXY_TO_SELF]){
@@ -195,7 +220,7 @@
             
             NSArray* vote_id_list = [new_vote_id_hash allKeys];
             
-            WsPromise* p1 = [chainMgr queryAllGrapheneObjects:[query_account_ids allKeys]];
+            WsPromise* p1 = [chainMgr queryAllGrapheneObjects:[query_account_ids allKeys] skipCacheIdHash:multi_sign_member_skip_cache_ids];
             WsPromise* p2 = [chainMgr queryAllVoteIds:vote_id_list];
             
             return [[WsPromise all:@[p1, p2]] then:(^id(id data) {
@@ -227,64 +252,85 @@
     })];
 }
 
-//  TODO:临时放在这里
-//<__NSSingleObjectArrayI 0x600001724040>(
-//{
-//    "available_active_approvals" =     (
-//    );
-//    "available_key_approvals" =     (
-//    );
-//    "available_owner_approvals" =     (
-//    );
-//    "expiration_time" = "2018-12-09T11:17:53";
-//    id = "1.10.16551";
-//    "proposed_transaction" =     {
-//        expiration = "2018-12-09T11:17:53";
-//        extensions =         (
-//        );
-//        operations =         (
-//                              (
-//                               0,
-//                               {
-//                                   amount =                     {
-//                                       amount = 3900;
-//                                       "asset_id" = "1.3.3581";
-//                                   };
-//                                   extensions =                     (
-//                                   );
-//                                   fee =                     {
-//                                       amount = 10420;
-//                                       "asset_id" = "1.3.0";
-//                                   };
-//                                   from = "1.2.1035733";
-//                                   to = "1.2.543248";
-//                               }
-//                               )
-//                              );
-//        "ref_block_num" = 0;
-//        "ref_block_prefix" = 0;
-//    };
-//    proposer = "1.2.1050990";
-//    "required_active_approvals" =     (
-//                                       "1.2.1035733"
-//                                       );
-//    "required_owner_approvals" =     (
-//    );
-//}
-//                                        )
+/*
+ *  (private) 安全等级是否属于安全范围判断。
+ */
+- (BOOL)_isSafeProposal:(EBitsharesProposalSecurityLevel)seclevel
+{
+    if (seclevel == ebpsl_whitelist || seclevel == ebpsl_multi_sign_member_lv0 || seclevel == ebpsl_multi_sign_member_lv1) {
+        return YES;
+    }
+    return NO;
+}
+
+/*
+ *  (private) 计算提案创建者的安全等级。
+ */
+- (EBitsharesProposalSecurityLevel)_calcProposalSecurityLevel:(id)proposal target_account:(id)target_account is_active:(BOOL)is_active
+{
+    assert(proposal && target_account);
+    
+    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+    
+    NSString* proposer_account_id = [proposal objectForKey:@"proposer"];
+    assert(proposer_account_id);
+    
+    //  1、计算白名单账号发起的提案。TODO:2.8 暂时不支持。
+    
+    //  2、计算多签成员发起的提案。
+    NSString* permission_key = is_active ? @"active" : @"owner";
+    id multi_sign_member_account_lv0 = [[target_account objectForKey:permission_key] objectForKey:@"account_auths"];
+    if (multi_sign_member_account_lv0 && [multi_sign_member_account_lv0 count] > 0) {
+        //  计算是不是 lv0 顶级多签成员。
+        NSMutableArray* lv0_account_id_list = [NSMutableArray array];
+        for (id item in multi_sign_member_account_lv0) {
+            assert([item count] == 2);
+            id account_id = [item firstObject];
+            assert(account_id);
+            if ([account_id isEqual:proposer_account_id]) {
+                return ebpsl_multi_sign_member_lv0;
+            } else {
+                [lv0_account_id_list addObject:account_id];
+            }
+        }
+        //  计算是不是 lv1 次级多签成员
+        for (id sub_account_id in lv0_account_id_list) {
+            id sub_account = [chainMgr getChainObjectByID:sub_account_id];
+            assert(sub_account);
+            id sub_multi_sign_member_account = [[sub_account objectForKey:permission_key] objectForKey:@"account_auths"];
+            if (sub_multi_sign_member_account && [sub_multi_sign_member_account count] > 0) {
+                for (id item in sub_multi_sign_member_account) {
+                    assert([item count] == 2);
+                    id uid = [item firstObject];
+                    assert(uid);
+                    if ([uid isEqual:proposer_account_id]) {
+                        return ebpsl_multi_sign_member_lv1;
+                    }
+                }
+            }
+        }
+    }
+    
+    //  未知账号发起的提案
+    return ebpsl_unknown;
+}
+
 - (void)onqueryAllProposalsResponse:(id)proposal_data_array
 {
     assert(proposal_data_array);
     
     //  更新列表数据
-    [_dataArray removeAllObjects];
+    [_allDataArray removeAllObjects];
+    [_safeDataArray removeAllObjects];
     
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     
     //  预处理提案原始数据
     for (id proposal in proposal_data_array) {
-        //  TODO:fowallet 需要多种权限的提案暂不支持
+        //  TODO:fowallet 需要多种权限的提案暂不支持 TODO:barter提案 两人互相转账，同时需要批准。
         assert([[proposal objectForKey:@"required_active_approvals"] count] + [[proposal objectForKey:@"required_owner_approvals"] count] == 1);
+        NSString* proposer_account = [proposal objectForKey:@"proposer"];
+        assert(proposer_account);
         
         //  获取提案执行需要批准的权限数据
         NSDictionary* require_account = nil;
@@ -305,6 +351,10 @@
             }
         }
         assert(require_account && permissions);
+        
+        //  安全等级
+        EBitsharesProposalSecurityLevel seclevel = [self _calcProposalSecurityLevel:proposal target_account:require_account is_active:is_active];
+        BOOL issafe = [self _isSafeProposal:seclevel];
         
         //  获取多签中每个权限实体详细数据（包括权重等）
         NSMutableDictionary* needAuthorizeHash = [NSMutableDictionary dictionary];
@@ -389,34 +439,81 @@
         //  添加到列表
         id mutable_proposal = [proposal mutableCopy];
         id processed_infos = @{
-                               @"inReview":@(inReview),                 //  是否进入审核期
-                               @"passThreshold":@(passThreshold),       //  通过阈值
-                               @"currThreshold":@(currThreshold),       //  当前阈值
-                               @"thresholdPercent":@(thresholdPercent), //  当前阈值百分比
-                               @"needAuthorizeHash":needAuthorizeHash,
-                               @"availableHash":availableHash,
-                               @"newOperations":new_operations
-                               };
+            @"seclevel":@(seclevel),                //  安全等级
+            @"issafe":@(issafe),                    //  安全等级是否属于安全级别（默认可见级别）
+            @"inReview":@(inReview),                //  是否进入审核期
+            @"passThreshold":@(passThreshold),      //  通过阈值
+            @"currThreshold":@(currThreshold),      //  当前阈值
+            @"thresholdPercent":@(thresholdPercent),//  当前阈值百分比
+            @"needAuthorizeHash":needAuthorizeHash,
+            @"availableHash":availableHash,
+            @"newOperations":new_operations
+        };
         [mutable_proposal setObject:processed_infos forKey:@"kProcessedData"];
-        [_dataArray addObject:[mutable_proposal copy]];
+        id final_proposal = [mutable_proposal copy];
+        if (issafe) {
+            [_safeDataArray addObject:final_proposal];
+        }
+        [_allDataArray addObject:final_proposal];
     }
     
     //  根据ID降序排列
-    [_dataArray sortUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+    [_safeDataArray sortUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        NSInteger id1 = [[[[obj1 objectForKey:@"id"] componentsSeparatedByString:@"."] lastObject] integerValue];
+        NSInteger id2 = [[[[obj2 objectForKey:@"id"] componentsSeparatedByString:@"."] lastObject] integerValue];
+        return id2 - id1;
+    })];
+    [_allDataArray sortUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
         NSInteger id1 = [[[[obj1 objectForKey:@"id"] componentsSeparatedByString:@"."] lastObject] integerValue];
         NSInteger id2 = [[[[obj2 objectForKey:@"id"] componentsSeparatedByString:@"."] lastObject] integerValue];
         return id2 - id1;
     })];
     
     //  更新UI显示
-    if ([_dataArray count] > 0){
+    [self _refreshUI:_showSecTips];
+}
+
+- (void)_refreshUI:(BOOL)showSecTips
+{
+    _showSecTips = showSecTips;
+    
+    //  没有危险提案，则不用显示安全提示了。
+    if (_showSecTips && [_allDataArray count] == [_safeDataArray count]) {
+        _showSecTips = NO;
+    }
+    
+    if (_showSecTips) {
+        _currSourceArrayRef = _safeDataArray;
+        _sectipHeaderView.hidden = NO;
+        _sectipHeaderLabel.text = [NSString stringWithFormat:NSLocalizedString(@"kProposalTipsSecTipBannerMsg", @"已为您隐藏 %@ 个危险提案，点击这里查看。"),
+                                   @([_allDataArray count] - [_safeDataArray count])];
+        CGRect screenRect = [[UIScreen mainScreen] bounds];
+        _mainTableView.frame = CGRectMake(0, kSecTipHeaderViewHeight, screenRect.size.width,
+                                          screenRect.size.height - [self heightForStatusAndNaviBar] - [self heightForBottomSafeArea] - kSecTipHeaderViewHeight);
+    } else {
+        _currSourceArrayRef = _allDataArray;
+        _sectipHeaderView.hidden = YES;
+        _mainTableView.frame = [self rectWithoutNavi];
+    }
+    
+    //  更新列表和空标记可见性
+    if ([_currSourceArrayRef count] > 0){
         _mainTableView.hidden = NO;
         [_mainTableView reloadData];
     }else{
         _mainTableView.hidden = YES;
     }
-    
     _lbEmpty.hidden = !_mainTableView.hidden;
+}
+
+/*
+ *  (private) 安全提示条点击。
+ */
+- (void)onSecTipViewClicked:(UITapGestureRecognizer*)gesture
+{
+    if (_showSecTips) {
+        [self _refreshUI:NO];
+    }
 }
 
 - (void)viewDidLoad
@@ -425,40 +522,58 @@
 	// Do any additional setup after loading the view.
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
+
+    //  UI - 顶部安全提示
+    assert(kSecTipHeaderViewHeight >= 28.0f);
+    _sectipHeaderView = [[UIView alloc] init];
+    _sectipHeaderView.backgroundColor = [ThemeManager sharedThemeManager].textColorGray;
+    _sectipHeaderView.frame = CGRectMake(0, 0, self.view.bounds.size.width, kSecTipHeaderViewHeight);
+    _sectipHeaderLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, (kSecTipHeaderViewHeight - 28) / 2.0f, self.view.bounds.size.width, 28)];
+    _sectipHeaderLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    _sectipHeaderLabel.backgroundColor = [UIColor clearColor];
+    _sectipHeaderLabel.textAlignment = NSTextAlignmentCenter;
+    _sectipHeaderLabel.font = [UIFont boldSystemFontOfSize:13];
+    [_sectipHeaderView addSubview:_sectipHeaderLabel];
+    _sectipHeaderView.hidden = YES;
+    [self.view addSubview:_sectipHeaderView];
+    UITapGestureRecognizer* pHeaderClicked = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onSecTipViewClicked:)];
+    [_sectipHeaderView addGestureRecognizer:pHeaderClicked];
     
     //  UI - 列表
-    CGRect rect = [self rectWithoutNavi];
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGRect rect = CGRectMake(0, kSecTipHeaderViewHeight, screenRect.size.width,
+                              screenRect.size.height - [self heightForStatusAndNaviBar] - [self heightForBottomSafeArea] - kSecTipHeaderViewHeight);
     _mainTableView = [[UITableViewBase alloc] initWithFrame:rect style:UITableViewStylePlain];
     _mainTableView.delegate = self;
     _mainTableView.dataSource = self;
     _mainTableView.separatorStyle = UITableViewCellSeparatorStyleNone;  //  REMARK：不显示cell间的横线。
     _mainTableView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:_mainTableView];
-    
+        
     //  UI - 空数据时的标签
     _lbEmpty = [self genCenterEmptyLabel:rect txt:NSLocalizedString(@"kProposalTipsNoAnyProposals", @"没有任何提案信息")];
     [self.view addSubview:_lbEmpty];
     
     //  开始查询
-    [self queryAllProposals:nil];
+    [self queryAllProposals];
 }
 
 #pragma mark- TableView delegate method
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return [_dataArray count];
+    return [_currSourceArrayRef count];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     //  proposal base info + authorized view + action buttons + OP-LIST
-    return 3 + [[[[_dataArray objectAtIndex:section] objectForKey:@"proposed_transaction"] objectForKey:@"operations"] count];
+    return 3 + [[[[_currSourceArrayRef objectAtIndex:section] objectForKey:@"proposed_transaction"] objectForKey:@"operations"] count];
 }
 
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    id proposal = [_dataArray objectAtIndex:section];
+    id proposal = [_currSourceArrayRef objectAtIndex:section];
     
     CGFloat fWidth = self.view.bounds.size.width;
     CGFloat xOffset = tableView.layoutMargins.left;
@@ -506,7 +621,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    id proposal = [_dataArray objectAtIndex:indexPath.section];
+    id proposal = [_currSourceArrayRef objectAtIndex:indexPath.section];
     id newOperations = [[proposal objectForKey:@"kProcessedData"] objectForKey:@"newOperations"];
     assert(newOperations);
     
@@ -537,8 +652,10 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    id proposal = [_dataArray objectAtIndex:indexPath.section];
-    id newOperations = [[proposal objectForKey:@"kProcessedData"] objectForKey:@"newOperations"];
+    id proposal = [_currSourceArrayRef objectAtIndex:indexPath.section];
+    id ext_proposal = [proposal objectForKey:@"kProcessedData"];
+    id newOperations = [ext_proposal objectForKey:@"newOperations"];
+    BOOL issafe = [[ext_proposal objectForKey:@"issafe"] boolValue];
     assert(newOperations);
     
     if (indexPath.row == 0){
@@ -569,20 +686,31 @@
         [cell setItem:proposal];
         return cell;
     }else if (indexPath.row == 2 + [newOperations count]){
-        //  action buttons: index is last, ..n]
-        static NSString* identify = @"id_proposal_actions_cell";
-        ViewProposalActionsCell* cell = (ViewProposalActionsCell *)[tableView dequeueReusableCellWithIdentifier:identify];
-        if (!cell)
-        {
-            cell = [[ViewProposalActionsCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identify vc:self];
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        if (issafe) {
+            //  各种行为按钮
+            //  action buttons: index is last, ..n]
+            static NSString* identify = @"id_proposal_actions_cell";
+            ViewProposalActionsCell* cell = (ViewProposalActionsCell *)[tableView dequeueReusableCellWithIdentifier:identify];
+            if (!cell)
+            {
+                cell = [[ViewProposalActionsCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identify vc:self];
+                cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                cell.accessoryType = UITableViewCellAccessoryNone;
+                cell.backgroundColor = [UIColor clearColor];
+            }
+            cell.showCustomBottomLine = YES;
+            [cell setTagData:indexPath.section];
+            [cell setItem:proposal];
+            return cell;
+        } else {
+            //  安全提示
+            ViewSecTipsLineCell* cell = [[ViewSecTipsLineCell alloc] init];
             cell.accessoryType = UITableViewCellAccessoryNone;
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
             cell.backgroundColor = [UIColor clearColor];
+            cell.showCustomBottomLine = YES;
+            return cell;
         }
-        cell.showCustomBottomLine = YES;
-        [cell setTagData:indexPath.section];
-        [cell setItem:proposal];
-        return cell;
     }else{
         //  proposal operations infos: index is [2...n)
         id operation = [newOperations objectAtIndex:indexPath.row - 2];
@@ -635,7 +763,7 @@
  */
 - (void)onButtonClicked_Approve:(UIButton*)button
 {
-    id proposal = [_dataArray objectAtIndex:button.tag];
+    id proposal = [_currSourceArrayRef objectAtIndex:button.tag];
     assert(proposal);
     
     //  REMARK：查询提案发起者是否处于黑名单中，黑名单中不可批准。
@@ -768,7 +896,7 @@
  */
 - (void)onButtonClicked_Reject:(UIButton*)button
 {
-    id proposal = [_dataArray objectAtIndex:button.tag];
+    id proposal = [_currSourceArrayRef objectAtIndex:button.tag];
     assert(proposal);
     [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
         if (unlocked){
@@ -936,7 +1064,7 @@
             //  提案创建成功
             [OrgUtils makeToast:NSLocalizedString(@"kProposalSubmitTipTxOK", @"创建提案成功。")];
             //  刷新界面。
-            [self queryAllProposals:nil];
+            [self queryAllProposals];
         }];
     }else{
         //  普通交易
@@ -952,7 +1080,7 @@
             //  [统计]
             [OrgUtils logEvents:@"txProposalUpdateFullOK" params:@{@"account":fee_paying_account}];
             //  刷新
-            [self queryAllProposals:nil];
+            [self queryAllProposals];
             return nil;
         })] catch:(^id(id error) {
             [self hideBlockView];
@@ -969,7 +1097,7 @@
  */
 - (void)onButtonClicked_Delete:(UIButton*)button
 {
-    id proposal = [_dataArray objectAtIndex:button.tag];
+    id proposal = [_currSourceArrayRef objectAtIndex:button.tag];
     assert(proposal);
     //  TODO:fowallet进行中
     [OrgUtils makeToast:[NSString stringWithFormat:@"delete %@", proposal[@"id"]]];

@@ -340,6 +340,8 @@
 "kProposalSubmitTipsSelectCreator" = "请选择提案创建者账号。";
 "kProposalSubmitTipTxOK" = "创建提案成功。";
 "kProposalBtnSubmit" = "提交";
+"kProposalTipsSecTipBannerMsg" = "已为您隐藏 %@ 个危险提案，点击这里查看。";
+"kProposalTipsSecTipCannotApprove" = "风险提示：该提案由陌生账号创建，不可批准。";
 "kProposalTipsNoAnyProposals" = "没有任何提案信息";
 "kProposalSubmitTipsBlockedApprovedForBlackList" = "危险账号 %@，为了您的账号和资金安全，系统已阻止了该操作。";
 "kProposalSubmitTipsInReview" = "提案处于审核中，不能添加授权。";

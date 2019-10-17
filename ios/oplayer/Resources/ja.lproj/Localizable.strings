@@ -340,6 +340,8 @@
 "kProposalSubmitTipsSelectCreator" = "提案創建者のアカウントを選んでください。";
 "kProposalSubmitTipTxOK" = "提案を創建して成功します。";
 "kProposalBtnSubmit" = "提出します";
+"kProposalTipsSecTipBannerMsg" = "%@ つの危険な提案が隠されています。";
+"kProposalTipsSecTipCannotApprove" = "リスク警告：提案は不明なアカウントによって作成されました。";
 "kProposalTipsNoAnyProposals" = "提案情報はありません";
 "kProposalSubmitTipsBlockedApprovedForBlackList" = "危険なアカウント %@、システムはこの操作をあなたのアカウントと財務上のセキュリティのためにブロックしました。";
 "kProposalSubmitTipsInReview" = "提案は審査中であって、授権を添加することはできません。";
