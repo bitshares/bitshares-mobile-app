@@ -1197,6 +1197,12 @@
 		3FDD800B21D77A0700DA61FC /* ViewProposalAuthorizedStatusCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FDD800921D77A0700DA61FC /* ViewProposalAuthorizedStatusCell.m */; };
 		3FDD800E21D8C68600DA61FC /* VCProposalAuthorizeEdit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FDD800D21D8C68600DA61FC /* VCProposalAuthorizeEdit.m */; };
 		3FDD800F21D8C68600DA61FC /* VCProposalAuthorizeEdit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FDD800D21D8C68600DA61FC /* VCProposalAuthorizeEdit.m */; };
+		3FE19E9E235858A4000D1C54 /* iconExplorer@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FE19E9C235858A3000D1C54 /* iconExplorer@2x.png */; };
+		3FE19E9F235858A4000D1C54 /* iconExplorer@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FE19E9C235858A3000D1C54 /* iconExplorer@2x.png */; };
+		3FE19EA0235858A4000D1C54 /* iconExplorer@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FE19E9C235858A3000D1C54 /* iconExplorer@2x.png */; };
+		3FE19EA1235858A4000D1C54 /* iconExplorer@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FE19E9D235858A3000D1C54 /* iconExplorer@3x.png */; };
+		3FE19EA2235858A4000D1C54 /* iconExplorer@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FE19E9D235858A3000D1C54 /* iconExplorer@3x.png */; };
+		3FE19EA3235858A4000D1C54 /* iconExplorer@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FE19E9D235858A3000D1C54 /* iconExplorer@3x.png */; };
 		3FE4E94922F698DC0056A44F /* MyTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E94822F698DC0056A44F /* MyTextView.m */; };
 		3FE4E94A22F698DC0056A44F /* MyTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E94822F698DC0056A44F /* MyTextView.m */; };
 		3FE4E94D22F7C0480056A44F /* HDWallet.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E94C22F7C0480056A44F /* HDWallet.m */; };
@@ -1857,6 +1863,8 @@
 		3FDD800921D77A0700DA61FC /* ViewProposalAuthorizedStatusCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewProposalAuthorizedStatusCell.m; path = View/ViewProposalAuthorizedStatusCell.m; sourceTree = "<group>"; };
 		3FDD800C21D8C68600DA61FC /* VCProposalAuthorizeEdit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCProposalAuthorizeEdit.h; path = Controller/VCProposalAuthorizeEdit.h; sourceTree = "<group>"; };
 		3FDD800D21D8C68600DA61FC /* VCProposalAuthorizeEdit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCProposalAuthorizeEdit.m; path = Controller/VCProposalAuthorizeEdit.m; sourceTree = "<group>"; };
+		3FE19E9C235858A3000D1C54 /* iconExplorer@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconExplorer@2x.png"; path = "Images/iconExplorer@2x.png"; sourceTree = "<group>"; };
+		3FE19E9D235858A3000D1C54 /* iconExplorer@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconExplorer@3x.png"; path = "Images/iconExplorer@3x.png"; sourceTree = "<group>"; };
 		3FE4E94722F698DC0056A44F /* MyTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MyTextView.h; path = View/MyTextView.h; sourceTree = "<group>"; };
 		3FE4E94822F698DC0056A44F /* MyTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MyTextView.m; path = View/MyTextView.m; sourceTree = "<group>"; };
 		3FE4E94B22F7C0480056A44F /* HDWallet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HDWallet.h; path = bitshares/HDWallet.h; sourceTree = "<group>"; };
@@ -2938,6 +2946,8 @@
 		18FF069417E00D870088405E /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				3FE19E9C235858A3000D1C54 /* iconExplorer@2x.png */,
+				3FE19E9D235858A3000D1C54 /* iconExplorer@3x.png */,
 				3FA72B552340BC2400EE3DC9 /* iconEdit@2x.png */,
 				3FA72B562340BC2500EE3DC9 /* iconEdit@3x.png */,
 				3F23B77D231CCC7000EEEE78 /* paysuccess@2x.png */,
@@ -4236,6 +4246,7 @@
 				3F676987230E9EC100E98C14 /* iconAvatar@2x.png in Resources */,
 				3F676988230E9EC100E98C14 /* Share@2x.png in Resources */,
 				3F676989230E9EC100E98C14 /* Back-44@2x.png in Resources */,
+				3FE19EA3235858A4000D1C54 /* iconExplorer@3x.png in Resources */,
 				3F67698A230E9EC100E98C14 /* bus order@2x.png in Resources */,
 				3F67698B230E9EC100E98C14 /* iconVote@3x.png in Resources */,
 				3F67698C230E9EC100E98C14 /* Help-50@3x.png in Resources */,
@@ -4345,6 +4356,7 @@
 				3F6769F2230E9EC100E98C14 /* page_4_b@2x.png in Resources */,
 				3F6769F3230E9EC100E98C14 /* Help-50@2x.png in Resources */,
 				3F6769F4230E9EC100E98C14 /* hotel order@2x.png in Resources */,
+				3FE19EA0235858A4000D1C54 /* iconExplorer@2x.png in Resources */,
 				3F6769F5230E9EC100E98C14 /* Taxi@2x.png in Resources */,
 				3F6769F6230E9EC100E98C14 /* sns_praised@2x.png in Resources */,
 				3F6769F7230E9EC100E98C14 /* Clock@2x.png in Resources */,
@@ -4475,6 +4487,7 @@
 				3FB8F9FD21CE66C200DA88E2 /* iconAvatar@2x.png in Resources */,
 				3FB8F9FE21CE66C200DA88E2 /* Share@2x.png in Resources */,
 				3FB8F9FF21CE66C200DA88E2 /* Back-44@2x.png in Resources */,
+				3FE19EA2235858A4000D1C54 /* iconExplorer@3x.png in Resources */,
 				3FB8FA0021CE66C200DA88E2 /* bus order@2x.png in Resources */,
 				3FB8FA0121CE66C200DA88E2 /* iconVote@3x.png in Resources */,
 				3FB8FA0221CE66C200DA88E2 /* Help-50@3x.png in Resources */,
@@ -4584,6 +4597,7 @@
 				3FB8FA6621CE66C200DA88E2 /* page_4_b@2x.png in Resources */,
 				3FB8FA6721CE66C200DA88E2 /* Help-50@2x.png in Resources */,
 				3FB8FA6821CE66C200DA88E2 /* hotel order@2x.png in Resources */,
+				3FE19E9F235858A4000D1C54 /* iconExplorer@2x.png in Resources */,
 				3FB8FA6921CE66C200DA88E2 /* Taxi@2x.png in Resources */,
 				3FB8FA6A21CE66C200DA88E2 /* sns_praised@2x.png in Resources */,
 				3FB8FA6B21CE66C200DA88E2 /* Clock@2x.png in Resources */,
@@ -4724,6 +4738,7 @@
 				F55325AD1C075D3200EC3F95 /* Entering Geo Fence@2x.png in Resources */,
 				B73784FD20FE2449001EEA8C /* iconAvatar@3x.png in Resources */,
 				3F3E5849218310E900F1DC24 /* iconFeedDetail@2x.png in Resources */,
+				3FE19EA1235858A4000D1C54 /* iconExplorer@3x.png in Resources */,
 				F55325B21C075D3200EC3F95 /* Help@2x.png in Resources */,
 				F55325AA1C075D3200EC3F95 /* Edit User@2x.png in Resources */,
 				F565D8D91C19CFF000814662 /* pay_0@3x.png in Resources */,
@@ -4861,6 +4876,7 @@
 				B7973C5A20E4EACD0052A5F5 /* tabMarket_b@3x.png in Resources */,
 				B786D51920EB793500427C08 /* iconTransfer@2x.png in Resources */,
 				B7ED5E3B1D6BF6FD0043338B /* first3.png in Resources */,
+				3FE19E9E235858A4000D1C54 /* iconExplorer@2x.png in Resources */,
 				F55325B41C075D3200EC3F95 /* Idea@2x.png in Resources */,
 				F5D935411DC6EEFA00E663FC /* Wallet-50@2x.png in Resources */,
 				B786D51620EB793500427C08 /* iconDebtRank@3x.png in Resources */,

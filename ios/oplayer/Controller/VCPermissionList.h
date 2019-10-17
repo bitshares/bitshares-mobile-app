@@ -11,6 +11,6 @@
 @interface VCPermissionList : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
 - (id)initWithOwner:(VCBase*)owner;
-- (void)queryDependencyAccountName;
+- (void)refreshCurrAccountData;
 
 @end

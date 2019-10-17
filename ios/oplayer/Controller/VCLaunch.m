@@ -269,8 +269,9 @@
                 WsPromise* initTickerData = [chainMgr marketsInitAllTickerData];
                 WsPromise* initGlobalProperties = [[connMgr last_connection].api_db exec:@"get_global_properties" params:@[]];
                 WsPromise* initFeeAssetInfo = [chainMgr queryFeeAssetListDynamicInfo];   //  查询手续费兑换比例、手续费池等信息
+                //  每次启动都刷新当前账号信息
                 id initFullUserData = [NSNull null];
-                if ([walletMgr isWalletExist] && [walletMgr isMissFullAccountData]){
+                if ([walletMgr isWalletExist]){
                     initFullUserData = [chainMgr queryFullAccountInfo:[[walletMgr getWalletInfo] objectForKey:@"kAccountName"]];
                 }
                 return [[WsPromise all:@[initTickerData, initGlobalProperties, initFeeAssetInfo, initFullUserData]] then:(^id(id data_array) {
