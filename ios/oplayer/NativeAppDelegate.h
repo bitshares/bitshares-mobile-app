@@ -51,6 +51,7 @@
 
 -(MyNavigationController*)newNavigationController:(UIViewController*)vc;
 -(MyNavigationController*)newNavigationControllerWithoutRelease:(UIViewController*)vc;
+-(void)setupNavigationAttribute:(UINavigationController*)nav;
 
 - (void)initLanguageInfo;
 

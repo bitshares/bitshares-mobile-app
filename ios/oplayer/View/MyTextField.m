@@ -53,7 +53,15 @@
         _pLeftTitleView.font = [UIFont systemFontOfSize:16];
     }
     _pLeftTitleView.text = title;
-    self.leftView = _pLeftTitleView;
+    
+    //  [兼容性] iOS13 会直接重置 label 的 frame 大小。这里套一层外部 view。
+    UIView* wrapperView = [[UIView alloc] initWithFrame:frame];
+    if (_pLeftTitleView.superview) {
+        [_pLeftTitleView removeFromSuperview];
+    }
+    [wrapperView addSubview:_pLeftTitleView];
+    
+    self.leftView = wrapperView;
     self.leftViewMode = UITextFieldViewModeAlways;
 }
 

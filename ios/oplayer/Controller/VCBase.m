@@ -641,8 +641,12 @@ static NSInteger gen_notify_unique_id()
 - (void)showModelViewController:(VCBase*)vc tag:(NSInteger)tagid
 {
     vc.model_tag_id = tagid;
-    [self presentViewController:[[NativeAppDelegate sharedAppDelegate] newNavigationController:vc] animated:YES completion:^
-    {
+    MyNavigationController* wrapper_vc = [[NativeAppDelegate sharedAppDelegate] newNavigationController:vc];
+    wrapper_vc.modalPresentationStyle = UIModalPresentationFullScreen;  //  [兼容性] iOS13 默认值改变了，需要兼容。新的风格vc生命周期不同。
+    [self presentViewController:wrapper_vc
+                       animated:YES
+                     completion:^
+     {
         vc.notify_unique_id = gen_notify_unique_id();
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(onNoticeOnModelViewControllerClosed:)
