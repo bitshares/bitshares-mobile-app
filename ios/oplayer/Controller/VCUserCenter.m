@@ -84,7 +84,7 @@ enum
         if (vc){
             if ([vc isKindOfClass:[VCPermissionList class]]){
                 VCPermissionList* vc_permission_list = (VCPermissionList*)vc;
-                [vc_permission_list queryDependencyAccountName];
+                [vc_permission_list refreshCurrAccountData];
             }
         }
     }

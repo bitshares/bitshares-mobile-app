@@ -342,7 +342,7 @@ enum
     
     //  REMARK：在主线程调用，否则VC弹出可能存在卡顿缓慢的情况。
     [self delay:^{
-        // 转到提案确认界面
+        //  转到添加权限界面
         WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
         VCPermissionAddOne* vc = [[VCPermissionAddOne alloc] initWithResultPromise:result_promise];
         [self pushViewController:vc

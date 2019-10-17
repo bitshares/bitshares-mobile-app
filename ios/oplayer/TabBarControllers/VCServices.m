@@ -224,7 +224,7 @@ enum
             break;
             
         case kVcSubBtsExplorer:
-            cell.imageView.image = [UIImage templateImageNamed:@"iconAdvFunction"];//TODO:2.8
+            cell.imageView.image = [UIImage templateImageNamed:@"iconExplorer"];
             break;
         default:
             break;

@@ -1537,7 +1537,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
  */
 - (WsPromise*)queryFullAccountInfo:(NSString*)account_name_or_id
 {
-    return [self queryFullAccountInfo:account_name_or_id retry_num:5];
+    return [self queryFullAccountInfo:account_name_or_id retry_num:1];
 }
 
 /**
@@ -1550,7 +1550,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
     return [[api exec:@"get_full_accounts" params:@[@[account_name_or_id], @FALSE]] then:(^id(id data) {
         //  查询失败的情况下
-        if (!data || [data isKindOfClass:[NSNull class]] || [data count] <= 0 || retry_num == 5){
+        if (!data || [data isKindOfClass:[NSNull class]]){
             if (retry_num > 1) {
                 //  等待一会 & 重试
                 return [[OrgUtils asyncWait:2000] then:(^id(id data) {

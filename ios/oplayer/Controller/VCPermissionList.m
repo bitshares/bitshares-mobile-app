@@ -56,32 +56,61 @@
             }
         }
     }
-    [_mainTableView reloadData];
+    [self _refreshUI:nil];
 }
 
-- (void)queryDependencyAccountName
+/*
+ *  (public) 点击权限界面TAB - 刷新当前账号信息（可能从其他地方修改了账号，比如其他APP或者提案等。）
+ */
+- (void)refreshCurrAccountData
 {
-    NSMutableDictionary* account_id_hash = [NSMutableDictionary dictionary];
-    for (id row in _dataArray) {
-        for (id item in [row objectForKey:@"items"]) {
-            if ([[item objectForKey:@"isaccount"] boolValue]) {
-                [account_id_hash setObject:@YES forKey:[item objectForKey:@"key"]];
+    id curr_full_account_data = [[WalletManager sharedWalletManager] getWalletAccountInfo];
+    assert(curr_full_account_data);
+    id curr_account_id = [[curr_full_account_data objectForKey:@"account"] objectForKey:@"id"];
+    assert(curr_account_id);
+    
+    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+    
+    //  查询最新账号信息 & 依赖的其他多签账号名
+    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    [[[chainMgr queryFullAccountInfo:curr_account_id] then:^id(id full_data) {
+        assert(full_data);
+        //  [持久化] 更新当前钱包账号信息
+        if (full_data) {
+            [[AppCacheManager sharedAppCacheManager] updateWalletAccountInfo:full_data];
+        }
+        
+        //  更新之后重新初始化 data_array 。
+        [self _initDataArrayWithFullAccountData:full_data];
+        
+        //  分析依赖
+        NSMutableDictionary* account_id_hash = [NSMutableDictionary dictionary];
+        for (id row in _dataArray) {
+            for (id item in [row objectForKey:@"items"]) {
+                if ([[item objectForKey:@"isaccount"] boolValue]) {
+                    [account_id_hash setObject:@YES forKey:[item objectForKey:@"key"]];
+                }
             }
         }
-    }
-    if ([account_id_hash count] <= 0) {
-        return;
-    }
-    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    [[[[ChainObjectManager sharedChainObjectManager] queryAllAccountsInfo:[account_id_hash allKeys]] then:(^id(id data) {
-        [_owner hideBlockView];
-        [self _onQueryDependencyAccountNameResponsed];
-        return nil;
-    })] catch:(^id(id error) {
+        
+        if ([account_id_hash count] <= 0) {
+            //  无依赖：直接用新数据刷新列表
+            [_owner hideBlockView];
+            [self _refreshUI:nil];
+            return nil;
+        } else {
+            //  查询依赖
+            return [[chainMgr queryAllAccountsInfo:[account_id_hash allKeys]] then:^id(id data) {
+                [_owner hideBlockView];
+                [self _onQueryDependencyAccountNameResponsed];
+                return nil;
+            }];
+        }
+    }] catch:^id(id error) {
         [_owner hideBlockView];
         [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
         return nil;
-    })];
+    }];
 }
 
 /**
@@ -146,13 +175,13 @@
         [list addObject:@{@"key":addr, @"isaddr":@YES, @"threshold":@(threshold)}];
         onlyIncludeKeyAuthority = NO;
     }
-    //  根据权重降序排列
-    [list sortUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-        NSInteger threshold01 = [[obj1 objectForKey:@"threshold"] integerValue];
-        NSInteger threshold02 = [[obj2 objectForKey:@"threshold"] integerValue];
-        return threshold02 - threshold01;
-    })];
     if (curr_threshold >= weight_threshold) {
+        //  根据权重降序排列
+        [list sortUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+            NSInteger threshold01 = [[obj1 objectForKey:@"threshold"] integerValue];
+            NSInteger threshold02 = [[obj2 objectForKey:@"threshold"] integerValue];
+            return threshold02 - threshold01;
+        })];
         //  REMARK：仅包含一个权力实体，并且是KEY类型。不是account、address等。
         BOOL only_one_key = onlyIncludeKeyAuthority && [list count] == 1;
         return @{@"title":title, @"weight_threshold":@(weight_threshold), @"type":@(type), @"only_one_key":@(only_one_key), @"items":list, @"canBeModified":@(canBeModified), @"raw":permission};
@@ -205,10 +234,13 @@
 
 /*
  *  (private) 刷新界面
+ *  full_account_data - 有新的账号信息则重新初始化列表，否则仅重新刷新列表。
  */
 - (void)_refreshUI:(id)full_account_data
 {
-    [self _initDataArrayWithFullAccountData:full_account_data];
+    if (full_account_data) {
+        [self _initDataArrayWithFullAccountData:full_account_data];
+    }
     [_mainTableView reloadData];
 }
 
