@@ -315,6 +315,7 @@ void soundCompleteCallback(SystemSoundID soundID, void *clientData){
     UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
     imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     imagePicker.delegate = self;
+    imagePicker.modalPresentationStyle = UIModalPresentationFullScreen;             //  [兼容性] iOS13 默认值改变了，需要兼容。新的风格vc生命周期不同。
     [_controller presentViewController:imagePicker animated:YES completion:nil];
 }
 
