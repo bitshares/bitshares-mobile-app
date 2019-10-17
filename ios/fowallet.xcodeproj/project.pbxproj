@@ -34,6 +34,9 @@
 		3F1A5133235577F200632A6F /* VCPermissionEdit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E25233DF5A600BF4B78 /* VCPermissionEdit.m */; };
 		3F216571226FEF5500AB5A3D /* ViewActionsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F216570226FEF5500AB5A3D /* ViewActionsCell.m */; };
 		3F216572226FEF5500AB5A3D /* ViewActionsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F216570226FEF5500AB5A3D /* ViewActionsCell.m */; };
+		3F21FB75235749B600CF9F20 /* ViewSecTipsLineCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F21FB74235749B600CF9F20 /* ViewSecTipsLineCell.m */; };
+		3F21FB76235749B600CF9F20 /* ViewSecTipsLineCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F21FB74235749B600CF9F20 /* ViewSecTipsLineCell.m */; };
+		3F21FB77235749B600CF9F20 /* ViewSecTipsLineCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F21FB74235749B600CF9F20 /* ViewSecTipsLineCell.m */; };
 		3F23B77E231CCC7000EEEE78 /* paysuccess@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F23B77C231CCC7000EEEE78 /* paysuccess@3x.png */; };
 		3F23B77F231CCC7000EEEE78 /* paysuccess@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F23B77C231CCC7000EEEE78 /* paysuccess@3x.png */; };
 		3F23B780231CCC7000EEEE78 /* paysuccess@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F23B77C231CCC7000EEEE78 /* paysuccess@3x.png */; };
@@ -1742,6 +1745,8 @@
 		3F1435F1233CC87900B97CFF /* ViewPermissionInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewPermissionInfoCell.m; path = View/ViewPermissionInfoCell.m; sourceTree = "<group>"; };
 		3F21656F226FEF5400AB5A3D /* ViewActionsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewActionsCell.h; path = View/ViewActionsCell.h; sourceTree = "<group>"; };
 		3F216570226FEF5500AB5A3D /* ViewActionsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewActionsCell.m; path = View/ViewActionsCell.m; sourceTree = "<group>"; };
+		3F21FB73235749B500CF9F20 /* ViewSecTipsLineCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewSecTipsLineCell.h; path = View/ViewSecTipsLineCell.h; sourceTree = "<group>"; };
+		3F21FB74235749B600CF9F20 /* ViewSecTipsLineCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewSecTipsLineCell.m; path = View/ViewSecTipsLineCell.m; sourceTree = "<group>"; };
 		3F23B77C231CCC7000EEEE78 /* paysuccess@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "paysuccess@3x.png"; path = "Images/paysuccess@3x.png"; sourceTree = "<group>"; };
 		3F23B77D231CCC7000EEEE78 /* paysuccess@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "paysuccess@2x.png"; path = "Images/paysuccess@2x.png"; sourceTree = "<group>"; };
 		3F23B784231CCCCA00EEEE78 /* VCPaySuccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCPaySuccess.h; path = Controller/VCPaySuccess.h; sourceTree = "<group>"; };
@@ -2840,6 +2845,8 @@
 		18FF069017E00C5C0088405E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				3F21FB73235749B500CF9F20 /* ViewSecTipsLineCell.h */,
+				3F21FB74235749B600CF9F20 /* ViewSecTipsLineCell.m */,
 				3F2E6E2B233E0B3500BF4B78 /* ViewPermissionInfoCellB.h */,
 				3F2E6E2A233E0B3500BF4B78 /* ViewPermissionInfoCellB.m */,
 				3F1435F0233CC87900B97CFF /* ViewPermissionInfoCell.h */,
@@ -5221,6 +5228,7 @@
 				3F6768DC230E9EC100E98C14 /* VCTradeMain.m in Sources */,
 				3F6768DD230E9EC100E98C14 /* SGQRCodeScanView.m in Sources */,
 				3F6768DE230E9EC100E98C14 /* Reachability.m in Sources */,
+				3F21FB77235749B600CF9F20 /* ViewSecTipsLineCell.m in Sources */,
 				3F23B788231CCCCA00EEEE78 /* VCPaySuccess.m in Sources */,
 				3F6768DF230E9EC100E98C14 /* VCBtsaiWebView.m in Sources */,
 				3F6768E0230E9EC100E98C14 /* VCNotice.m in Sources */,
@@ -5517,6 +5525,7 @@
 				3FB8F96021CE66C200DA88E2 /* VCTradeMain.m in Sources */,
 				3FB8F96121CE66C200DA88E2 /* SGQRCodeScanView.m in Sources */,
 				3FB8F96221CE66C200DA88E2 /* Reachability.m in Sources */,
+				3F21FB76235749B600CF9F20 /* ViewSecTipsLineCell.m in Sources */,
 				3F23B787231CCCCA00EEEE78 /* VCPaySuccess.m in Sources */,
 				3FB8F96321CE66C200DA88E2 /* VCBtsaiWebView.m in Sources */,
 				3FB8F96421CE66C200DA88E2 /* VCNotice.m in Sources */,
@@ -5813,6 +5822,7 @@
 				3F0DA36621884011006E1004 /* SGQRCodeScanView.m in Sources */,
 				3FB8F88E21CA4BA000DA88E2 /* Reachability.m in Sources */,
 				3F23B786231CCCCA00EEEE78 /* VCPaySuccess.m in Sources */,
+				3F21FB75235749B600CF9F20 /* ViewSecTipsLineCell.m in Sources */,
 				B72A844820CA628800D92A25 /* VCBtsaiWebView.m in Sources */,
 				B79FC2D41A45E8A0000D49D5 /* VCNotice.m in Sources */,
 				B7BEC2821A4601440049EB1F /* VCWebView.m in Sources */,

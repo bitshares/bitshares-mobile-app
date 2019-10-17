@@ -340,6 +340,8 @@
 "kProposalSubmitTipsSelectCreator" = "Please select a proposal creator account.";
 "kProposalSubmitTipTxOK" = "The proposal was created successfully.";
 "kProposalBtnSubmit" = "Ok";
+"kProposalTipsSecTipBannerMsg" = "%@ dangerous proposals have been hidden.";
+"kProposalTipsSecTipCannotApprove" = "Risk warning: The proposal was created by an unknown account.";
 "kProposalTipsNoAnyProposals" = "No proposal";
 "kProposalSubmitTipsBlockedApprovedForBlackList" = "Dangerous account %@, the system has blocked this operation for your account and financial security.";
 "kProposalSubmitTipsInReview" = "The proposal is in review. cannot add approval.";

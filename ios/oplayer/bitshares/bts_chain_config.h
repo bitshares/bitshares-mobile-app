@@ -88,7 +88,18 @@ typedef enum EBitsharesPermissionType
 } EBitsharesPermissionType;
 
 /*
-    喂价者类型
+ *  石墨烯提案创建者所属安全等级（仅APP客户端存在）
+ */
+typedef enum EBitsharesProposalSecurityLevel
+{
+    ebpsl_whitelist = 0,                //  白名单成员发起（TODO:2.8暂时不支持白名单。）
+    ebpsl_multi_sign_member_lv0,        //  待授权账号的直接多签成员发起的提案
+    ebpsl_multi_sign_member_lv1,        //  多签自身也是多签管理（则由子账号发起，最多支持2级。）
+    ebpsl_unknown                       //  陌生账号发起
+} EBitsharesProposalSecurityLevel;
+
+/*
+ *  喂价者类型
  */
 typedef enum EBitsharesFeedPublisherType
 {
