@@ -14,7 +14,7 @@
         android:padding="10dp"
         android:orientation="vertical">
 
-        <!-- header & navi bar -->
+        <!-- 标题导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -45,185 +45,178 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="修改权限"
+                android:text="@string/kVcTitleChangePermission"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
 
-        <LinearLayout
+        <!-- 滚动视图 -->
+        <ScrollView
             android:layout_width="match_parent"
-            android:orientation="horizontal"
-            android:layout_height="40dp"
-            android:layout_marginTop="10dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="类型"/>
-
-            <TextView
-                android:id="@+id/tv_permission_type_from_edit_permission"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical|right"
-                android:textSize="16dp"
-                android:textColor="@color/theme01.textColorMain"
-                android:text=""/>
-
-        </LinearLayout>
-
-        <View android:layout_height="1dp" android:layout_marginTop="0dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
-
-        <LinearLayout
-            android:id="@+id/ly_threshold_value_from_edit_permission"
-            android:layout_width="match_parent"
-            android:orientation="horizontal"
-            android:layout_height="40dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="阀值"/>
-
-            <TextView
-                android:id="@+id/tv_threshold_value_from_edit_permission"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical|right"
-                android:textSize="16dp"
-                android:textColor="@color/theme01.buyColor"
-                android:text="1"/>
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical|right"
-
-
-                android:foregroundGravity="right"
-                android:src="@drawable/ic_btn_right_arrow" />
-
-        </LinearLayout>
-
-        <View android:layout_height="1dp" android:layout_marginTop="0dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
-
-
-
-        <!-- 资金权限 & 账号权限 -->
-        <LinearLayout
-            android:id="@+id/ly_edit_public_key_from_edit_permission"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="20dp">
+            android:layout_height="match_parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <!-- 权限类型 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:textSize="16dp"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="@string/kVcPermissionEditCellType"/>
+
+                    <TextView
+                        android:id="@+id/tv_permission_type_from_edit_permission"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|right"
+                        android:textSize="16dp"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text=""/>
+
+                </LinearLayout>
+
+                <View android:layout_height="1dp" android:layout_marginTop="0dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+                <!-- 阈值 -->
+                <LinearLayout
+                    android:id="@+id/ly_threshold_value_from_edit_permission"
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_height="40dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:textSize="16dp"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="@string/kVcPermissionEditCellThreshold"/>
+
+                    <TextView
+                        android:id="@+id/tv_threshold_value_from_edit_permission"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|right"
+                        android:textSize="16dp"
+                        android:textColor="@color/theme01.buyColor"
+                        android:text="1"/>
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical|right"
+
+
+                        android:foregroundGravity="right"
+                        android:src="@drawable/ic_btn_right_arrow" />
+
+                </LinearLayout>
+
+                <View android:layout_height="1dp" android:layout_marginTop="0dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+                <!-- 管理者列表 -->
+                <LinearLayout
+                    android:id="@+id/ly_edit_public_key_from_edit_permission"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/kVcPermissionEditTitleName"
+                            android:layout_weight="6"
+                            android:textSize="14dp"
+                            android:textColor="@color/theme01.textColorGray"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/kVcPermissionEditTitleWeight"
+                            android:layout_weight="2"
+                            android:textSize="14dp"
+                            android:textColor="@color/theme01.textColorGray"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/kVcPermissionEditTitleAction"
+                            android:gravity="right"
+                            android:layout_weight="2"
+                            android:textSize="14dp"
+                            android:textColor="@color/theme01.textColorGray"/>
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <!-- 新增按钮 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@color/colorPrimary"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_add_one_from_edit_permission"
+                        android:layout_width="wrap_content"
+                        style="@style/kNormalButtonStyle"
+                        android:gravity="center|center_vertical"
+                        android:layout_weight="1"
+                        android:padding="5dp"
+                        android:text="@string/kVcPermissionEditBtnAddOne" />
+                </LinearLayout>
+
+                <!-- 提交按钮 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@color/colorPrimary"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_submit_from_edit_permission"
+                        android:layout_width="wrap_content"
+                        style="@style/kMainButtonStyle"
+                        android:gravity="center|center_vertical"
+                        android:layout_weight="1"
+                        android:padding="5dp"
+                        android:text="@string/kVcPermissionEditBtnSubmit" />
+                </LinearLayout>
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="管理者账号/公钥"
-                    android:layout_weight="10"
-                    android:textSize="14dp"
-                    android:textColor="@color/theme01.textColorGray"/>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="权重/百分比"
-                    android:layout_weight="4"
-                    android:textSize="14dp"
-                    android:textColor="@color/theme01.textColorGray"/>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="操作"
-                    android:gravity="right"
-                    android:layout_weight="2"
-                    android:textSize="14dp"
-                    android:textColor="@color/theme01.textColorGray"/>
+                    android:layout_marginTop="20dp"
+                    android:singleLine="false"
+                    android:textSize="12dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:padding="5dp"
+                    android:background="@color/theme01.textColorNormal"
+                    android:text="@string/kVcPermissionEditHelpTips" />
             </LinearLayout>
-
-
-        </LinearLayout>
-
-        <!-- 备注权限 -->
-        <LinearLayout
-            android:id="@+id/ly_edit_remark_from_edit_permission"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-        
-
-
-        <!-- 新增按钮 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@color/colorPrimary"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btn_add_one_from_edit_permission"
-                android:layout_width="wrap_content"
-                style="@style/kNormalButtonStyle"
-                android:gravity="center|center_vertical"
-                android:layout_weight="1"
-                android:padding="5dp"
-                android:text="新增" />
-        </LinearLayout>
-
-
-
-        <!-- 提交按钮 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@color/colorPrimary"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btn_submit_from_edit_permission"
-                android:layout_width="wrap_content"
-                style="@style/kMainButtonStyle"
-                android:gravity="center|center_vertical"
-                android:layout_weight="1"
-                android:padding="5dp"
-                android:text="提交" />
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:singleLine="false"
-            android:textSize="12dp"
-            android:textColor="@color/theme01.textColorMain"
-            android:padding="5dp"
-            android:background="@color/theme01.textColorNormal"
-            android:text="【温馨提示】:\n阀值：xxxxxxxxxxxxdkslfjdslkjfdjlkdsjlkdfsljkfdsjkdfsljkfdjlksdfkjsfjdkjksdflkdsfldfsjlksdfljkfsdljksdfljkdjlsfk" />
-
+        </ScrollView>
 
     </LinearLayout>
 

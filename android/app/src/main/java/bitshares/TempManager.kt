@@ -1,6 +1,9 @@
 package bitshares
 
+import android.app.Activity
 import android.support.v7.app.AppCompatActivity
+import com.btsplusplus.fowallet.ActivityAccountInfo
+import org.json.JSONArray
 import org.json.JSONObject
 
 class TempManager {
@@ -30,4 +33,18 @@ class TempManager {
     var customMarketDirty: Boolean = false          //  自定义交易对发生变化，需要重新加载。
     var tickerDataDirty: Boolean = false            //  交易对 ticker 数据有任意一对发生变化就会设置该标记。
     var userLimitOrderDirty: Boolean = false        //  用户限价单信息发生变化，需要重新加载。（交易界面->全部订单管理->取消订单->返回交易界面。）
+
+    /**
+     *  TODO:临时实现，临时保存，从权限编辑push到login界面，需要同时finish权限编辑和账号信息两个界面。
+     */
+    private var _tmpActivityAccountInfo: ActivityAccountInfo? = null
+    fun setActivityAccountInfo(act: ActivityAccountInfo?) {
+        _tmpActivityAccountInfo = act
+    }
+    fun finishActivityAccountInfo() {
+        if (_tmpActivityAccountInfo != null) {
+            _tmpActivityAccountInfo!!.finish()
+            _tmpActivityAccountInfo = null
+        }
+    }
 }

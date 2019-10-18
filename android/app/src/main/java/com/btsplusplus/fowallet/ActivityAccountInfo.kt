@@ -5,6 +5,7 @@ import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
 import android.view.animation.OvershootInterpolator
+import bitshares.TempManager
 import kotlinx.android.synthetic.main.activity_account_info.*
 import java.lang.reflect.Field
 
@@ -14,11 +15,19 @@ class ActivityAccountInfo : BtsppActivity() {
     private var tablayout: TabLayout? = null
     private var view_pager: ViewPager? = null
 
+    override fun onBackClicked(result: Any?) {
+        //  TODO:临时出栈
+        TempManager.sharedTempManager().setActivityAccountInfo(null)
+        super.onBackClicked(result)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setAutoLayoutContentView(R.layout.activity_account_info)
-
         setFullScreen()
+
+        //  TODO:临时入栈
+        TempManager.sharedTempManager().setActivityAccountInfo(this)
 
         // 设置 tablelayout 和 view_pager
         tablayout = tablayout_of_account_info
@@ -34,10 +43,7 @@ class ActivityAccountInfo : BtsppActivity() {
         setTabListener()
 
         //  返回
-        layout_back_from_account_detail.setOnClickListener {
-            finish()
-        }
-
+        layout_back_from_account_detail.setOnClickListener { onBackClicked(null) }
     }
 
 
@@ -72,7 +78,13 @@ class ActivityAccountInfo : BtsppActivity() {
     private fun setTabListener() {
         tablayout!!.setOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
+                val pos = tab.position
                 view_pager!!.setCurrentItem(tab.position, true)
+                fragmens[pos].let {
+                    if (it is FragmentPermissionList) {
+                        it.refreshCurrAccountData()
+                    }
+                }
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {
