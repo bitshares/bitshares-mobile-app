@@ -463,6 +463,18 @@ class ChainObjectManager {
         return _cacheObjectID2ObjectHash[oid]!!
     }
 
+    fun getChainObjectByID(oid: String, searchFileCache: Boolean): JSONObject? {
+        var obj = _cacheObjectID2ObjectHash[oid]
+        if (obj == null && searchFileCache) {
+            obj = AppCacheManager.sharedAppCacheManager().get_object_cache_ts(oid, Utils.now_ts())
+            if (obj != null) {
+                //  add to memory cache: id hash
+                _cacheObjectID2ObjectHash[oid] = obj
+            }
+        }
+        return obj
+    }
+
     fun getChainObjectByIDSafe(oid: String): JSONObject? {
         return _cacheObjectID2ObjectHash[oid]
     }

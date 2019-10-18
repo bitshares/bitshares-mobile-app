@@ -41,7 +41,7 @@
     <string name="kDebtTipRatioTooLow">The ratio is lower than %s and you cannot borrow more.</string>
     <string name="kDebtTipTxUpdatePositionFullOK">Update position successfully.</string>
     <string name="kDebtTipTxUpdatePositionOK">Update position successfully, but the refresh failed. Please try again later.</string>
-    <string name="kDebtWarmTips">[Tips] \n When the feed price drops to the call price, the system will automatically sell your collateral assets for debt repayment. Please pay attention to adjusting the ratio to control the risk.</string>
+    <string name="kDebtWarmTips">[Tips]\n When the feed price drops to the call price, the system will automatically sell your collateral assets for debt repayment. Please pay attention to adjusting the ratio to control the risk.</string>
     <!-- 服务界面 -->
     <string name="kServicesCellLabelQrScan">Scan QR code</string>
     <string name="kServicesCellLabelTransfer">Transfer</string>
@@ -51,6 +51,7 @@
     <string name="kServicesCellLabelFeedPrice">Feed price details</string>
     <string name="kServicesCellLabelDepositWithdraw">Deposit &amp; Withdraw</string>
     <string name="kServicesCellLabelAdvFunction">Advanced Features</string>
+    <string name="kServicesCellLabelBtsExplorer">Explorer</string>
     <!-- 扫一扫相关字符串 -->
     <string name="kVcScanPermissionNoCamera">Your camera is not detected.</string>
     <string name="kVcScanPermissionSystemLimit">The album could not be accessed for system reasons.</string>
@@ -90,10 +91,13 @@
     <!-- 喂价详情界面 -->
     <string name="kVcFeedCurrentFeedPrice">Feed price</string>
     <string name="kVcFeedWitnessName">Witness</string>
+    <string name="kVcFeedPublisherCommitteeName">Committee</string>
+    <string name="kVcFeedPublisherCustom">Producer</string>
     <string name="kVcFeedPriceName">Price</string>
     <string name="kVcFeedRate">Bias</string>
     <string name="kVcFeedPublishDate">Time</string>
     <string name="kVcFeedNoData">no data</string>
+    <string name="kVcFeedExpired">expired</string>
     <string name="kVcFeedNsecAgo">%s secs ago</string>
     <string name="kVcFeedNminAgo">%s mins ago</string>
     <string name="kVcFeedNhourAgo">%s hours ago</string>
@@ -167,6 +171,7 @@
     <!-- 账号信息 -->
     <string name="kAccountPageBasicInfo">Basic Info</string>
     <string name="kAccountPageMemberInfo">Member Info</string>
+    <string name="kAccountPagePermissions">Permissions</string>
     <string name="kAccountBtnUpgradeToLifetimeMember">Upgrade lifetime membership</string>
     <string name="kAccountMembershipStatus">Status</string>
     <string name="kAccountMembershipMyRefCode">My referrer code</string>
@@ -177,6 +182,46 @@
     <string name="kAccountUpgradeMemberSubmitTxFullOK">Upgrade lifetime membership success.</string>
     <string name="kAccountUpgradeMemberSubmitTxOK">Upgrade lifetime membership is successful, but refreshing the interface failed, please try again later.</string>
     <string name="kAccountUpgradeMemberCostAsk">Upgrade lifetime membership will cost %s, do you want to continue?</string>
+    <!-- 权限相关 -->
+    <string name="kVcPermissionTypeOwner">Owner</string>
+    <string name="kVcPermissionTypeActive">Active</string>
+    <string name="kVcPermissionTypeMemo">Memo</string>
+    <string name="kVcPermissionMemoKeyModifyAskTitle">Memo Key</string>
+    <string name="kVcPermissionMemoKeyModifyInputPlaceholder">New memo public key</string>
+    <string name="kVcPermissionSubmitTipsInputValidMemoKey">Please enter a valid public key.</string>
+    <string name="kVcPermissionSubmitTipsMemoKeyNoChanged">The memo key has not changed.</string>
+    <string name="kVcPermissionSubmitModifyMemoKeyFullOK">Change the memo key successfully.</string>
+    <string name="kVcPermissionSubmitModifyMemoKeyOK">Change memo key is successful, but refreshing interface data failed, please try again later.</string>
+    <string name="kVcPermissionPassThreshold">Threshold </string>
+    <string name="kVcPermissionEditTitleName">Account / key</string>
+    <string name="kVcPermissionEditTitleWeight">Weight</string>
+    <string name="kVcPermissionEditTitleAction">Action</string>
+    <string name="kVcPermissionEditBtnRemove">Remove</string>
+    <string name="kVcPermissionEditBtnAddOne">Add</string>
+    <string name="kVcPermissionEditBtnSubmit">Commit</string>
+    <string name="kVcPermissionEditCellType">Type</string>
+    <string name="kVcPermissionEditCellThreshold">Threshold</string>
+    <string name="kVcPermissionEditNewPassThresholdTitle">New threshold</string>
+    <string name="kVcPermissionEditNewPassThresholdPlaceholder">New threshold (1-9999999)</string>
+    <string name="kVcPermissionEditTipsMaxAuthority">You can only add up to %s multi-sign authorities.</string>
+    <string name="kVcPermissionEditHelpTips">[Tips]\nThreshold: The threshold is the minimum weight required to use the permission. The sum of the weights of each authority must be greater than or equal to the threshold.</string>
+    <string name="kVcPermissionEditTipsInvalidPassThreshold">Please enter a valid threshold. Range 1 - 9999999.</string>
+    <string name="kVcPermissionEditSubmitTipsNoChanged">The permission has not changed.</string>
+    <string name="kVcPermissionEditSubmitTipsInvalidPassThreshold">Please re-adjust the threshold and weight. The sum of the weights of all authority must be greater than or equal to the threshold.</string>
+    <string name="kVcPermissionEditSubmitSafeTipsPubkeyConfirm">The new authority list contains the public key type. Please confirm that you must hold the corresponding private key. Do you want to continue changing permissions?</string>
+    <string name="kVcPermissionEditSubmitSafeTipsSecurityConfrim">Change permission is a dangerous operation. Please confirm that the new authority list is configured correctly. Do you want to continue changing permissions?</string>
+    <string name="kVcPermissionEditSubmitOkRelogin">The permission change was successful. Please login again.</string>
+    <string name="kVcPermissionEditSubmitOK02">The permission change was successful.</string>
+    <string name="kVcPermissionEditSubmitOKAndRelaunchApp">The permission change was successful, but refresh account info failed. Please exit and restart the app.</string>
+    <string name="kVcPermissionAddOneTitleAuthority">Authority</string>
+    <string name="kVcPermissionAddOneTitleWeight">Weight</string>
+    <string name="kVcPermissionAddOneBtnDone">Ok</string>
+    <string name="kVcPermissionAddOneBtnSearchAccount">Search</string>
+    <string name="kVcPermissionAddOnePlaceholderAuthority">Account or public key</string>
+    <string name="kVcPermissionAddOnePlaceholderWeight">Weight value (1-65535)</string>
+    <string name="kVcPermissionAddOneDoneTipsInvalidAuthority">Please enter a valid account or public key.</string>
+    <string name="kVcPermissionAddOneDoneTipsInvalidWeight">Please enter a valid weight value. Range 1 - 65535.</string>
+    <string name="kVcPermissionAddOneDontTipsCantAddSelf">Can't add your own account.</string>
     <!-- 登录&注册&备份 -->
     <string name="kLoginPageModePassword">Normal</string>
     <string name="kLoginPageModeBrainKey">Brain Key</string>
@@ -271,10 +316,14 @@
     <string name="kProposalLabelReviewPeriod">Review period</string>
     <string name="kProposalLabel1Days">%s day</string>
     <string name="kProposalLabelNDays">%s days</string>
+    <string name="kProposalLabel1Hours">%s hour</string>
+    <string name="kProposalLabelNHours">%s hours</string>
     <string name="kProposalLabelNoReviewPeriod">No review period</string>
     <string name="kProposalSubmitTipsSelectCreator">Please select a proposal creator account.</string>
     <string name="kProposalSubmitTipTxOK">The proposal was created successfully.</string>
     <string name="kProposalBtnSubmit">Ok</string>
+    <string name="kProposalTipsSecTipBannerMsg">%s dangerous proposals have been hidden.</string>
+    <string name="kProposalTipsSecTipCannotApprove">Risk warning: The proposal was created by an unknown account.</string>
     <string name="kProposalTipsNoAnyProposals">No proposal</string>
     <string name="kProposalSubmitTipsBlockedApprovedForBlackList">Dangerous account %s, the system has blocked this operation for your account and financial security.</string>
     <string name="kProposalSubmitTipsInReview">The proposal is in review. cannot add approval.</string>
@@ -604,6 +653,9 @@
     <string name="kVcTitleLogin">Login</string>
     <string name="kVcTitleImportAccount">Import account</string>
     <string name="kVcTitleRegister">Register</string>
+    <string name="kVcTitleChangePermission">Update permissions</string>
+    <string name="kVcTitlePermissionAddAuthority">Add authority</string>
+    <string name="kVcTitleAddOneSearchAccount">Search account</string>
     <string name="kVcTitleQrScan">Scan QR code</string>
     <string name="kVcTitleQrScanResultNormal">Scan result</string>
     <string name="kVcTitleQrScanResultPriKey">Import key</string>
@@ -817,6 +869,7 @@
     <string name="kLangKeyEn">English</string>
     <string name="kLangKeyJa">日本語 / Japanese</string>
     <string name="skip">Skip</string>
+    <string name="kNormalErrorInvalidArgs">Invalid parameter.</string>
     <string name="kAppName">Bitshares</string>
     <string name="kAccount">Account</string>
     <string name="kAboutMainDesc">\nBitshares Mobile App is a decentralized exchange (DEX) product based on Bitshares graphene technology, developed from the product experience and developed with native technology comparable to the first-class centralized exchange. \n\nContact us\nWeChat: bts-pp\nE-mail: contactsbtsplusplus.com\nTelegram: https://t.me/btsplusplus\nWebsite: https://btspp.io\n</string>
@@ -888,6 +941,7 @@
     <!-- 特殊用途字符串KEY -->
     <string name="serverWssLangKey">en</string>
     <string name="appDepositWithdrawDefaultGateway">RuDEX</string>
+    <string name="btsaiLangKey">en</string>
     <!-- Android专有字符串 -->
     <string name="action_settings">Settings</string>
     <string name="title_home">Home</string>
@@ -914,7 +968,4 @@
     <string name="myAssetsPageUnknowOperationContent">Unknown operation content</string>
     <string name="kWalletMemuTipsPleaseSelectCellAction">Please select the action to perform</string>
     <string name="kWalletMenuTipsPleaseSelectImportType">Please select the type of account to import</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

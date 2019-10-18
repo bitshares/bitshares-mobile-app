@@ -1,13 +1,27 @@
 package bitshares
 
 /**
- * BTS石墨烯私钥类型定义
- * 参考：https://github.com/satoshilabs/slips/issues/49。
+ *  石墨烯网络HTLC支持的Hash类型。
  */
-enum class EHDBitsharesPermissionType(val value: Int) {
-    ehdbpt_owner(0x0),                      //  所有者权限
-    ehdbpt_active(0x1),                     //  资金权限
-    ehdbpt_memo(0x2),                       //  备注权限
+enum class EBitsharesHtlcHashType(val value: Int) {
+    EBHHT_RMD160(0),
+    EBHHT_SHA1(1),
+    EBHHT_SHA256(2)
+}
+
+/**
+ *  石墨烯网络资产的各种标记。
+ */
+enum class EBitsharesAssetFlags(val value: Int) {
+    ebat_charge_market_fee(0x01),       //  收取交易手续费
+    ebat_white_list(0x02),              //  要求资产持有人预先加入白名单
+    ebat_override_authority(0x04),      //  发行人可将资产收回
+    ebat_transfer_restricted(0x08),     //  所有转账必须通过发行人审核同意
+    ebat_disable_force_settle(0x10),    //  禁止强制清算
+    ebat_global_settle(0x20),           //  允许发行人进行全局强制清算
+    ebat_disable_confidential(0x40),    //  禁止隐私交易
+    ebat_witness_fed_asset(0x80),       //  允许见证人提供喂价
+    ebat_committee_fed_asset(0x100),    //  允许理事会成员提供喂价
 }
 
 /**
@@ -18,6 +32,16 @@ enum class EBitsharesWhiteListFlag(val value: Int) {
     ebwlf_white_listed(0x1),                                        //  在白名单，不在黑名单中。
     ebwlf_black_listed(0x2),                                        //  在黑名单，不在白名单中。
     ebwlf_white_and_black_listed(ebwlf_white_listed.value.or(ebwlf_black_listed.value)) //  同时在黑白名单中
+}
+
+/**
+ * BTS石墨烯私钥类型定义
+ * 参考：https://github.com/satoshilabs/slips/issues/49。
+ */
+enum class EHDBitsharesPermissionType(val value: Int) {
+    ehdbpt_owner(0x0),                      //  所有者权限
+    ehdbpt_active(0x1),                     //  资金权限
+    ehdbpt_memo(0x2),                       //  备注权限
 }
 
 /**
@@ -120,6 +144,35 @@ enum class EBitsharesWorkType(val value: Int) {
     ebwt_burn(2),
 }
 
+/**
+ *  石墨烯权限类型
+ */
+enum class EBitsharesPermissionType(val value: Int) {
+    ebpt_owner(0),          //  账号权限
+    ebpt_active(1),         //  资金权限
+    ebpt_memo(2),           //  备注权限
+    ebpt_custom(3),         //  BSIP40自定义权限
+}
+
+/*
+ *  石墨烯提案创建者所属安全等级（仅APP客户端存在）
+ */
+enum class EBitsharesProposalSecurityLevel(val value: Int) {
+    ebpsl_whitelist(0),                 //  白名单成员发起（TODO:2.8暂时不支持白名单。）
+    ebpsl_multi_sign_member_lv0(1),     //  待授权账号的直接多签成员发起的提案
+    ebpsl_multi_sign_member_lv1(2),     //  多签自身也是多签管理（则由子账号发起，最多支持2级。）
+    ebpsl_unknown(3),                   //  陌生账号发起
+}
+
+/*
+ *  喂价者类型
+ */
+enum class EBitsharesFeedPublisherType(val value: Int) {
+    ebfpt_witness(0),           //  由见证人喂价
+    ebfpt_committee(1),         //  由理事会喂价
+    ebfpt_custom(2),             //  指定喂价者
+}
+
 const val BTS_ADDRESS_PREFIX: String = "BTS"
 
 //  BTS公钥地址前缀长度 = strlen(BTS_ADDRESS_PREFIX)
@@ -143,6 +196,8 @@ const val BTS_GLOBAL_PROPERTIES_ID: String = "2.0.0"
 //  BTS石墨烯特殊账号
 //  0:理事会账号
 const val BTS_GRAPHENE_COMMITTEE_ACCOUNT = "1.2.0"
+
+const val BTS_GRAPHENE_WITNESS_ACCOUNT = "1.2.1"
 
 //  4:空账号（隐私交易可能需要由该账号支付手续费等）
 const val BTS_GRAPHENE_TEMP_ACCOUNT = "1.2.4"
@@ -187,13 +242,4 @@ enum class VotingTypes(val value: Int) {
 enum class EHtlcDeployMode(val value: Int) {
     EDM_PREIMAGE(0),               //  根据原像部署
     EDM_HASHCODE(1),               //  根据Hash部署
-}
-
-/**
- *  石墨烯网络HTLC支持的Hash类型。
- */
-enum class EBitsharesHtlcHashType(val value: Int) {
-    EBHHT_RMD160(0),
-    EBHHT_SHA1(1),
-    EBHHT_SHA256(2)
 }

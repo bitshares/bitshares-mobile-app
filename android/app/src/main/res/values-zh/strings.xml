@@ -51,6 +51,7 @@
     <string name="kServicesCellLabelFeedPrice">喂价详情</string>
     <string name="kServicesCellLabelDepositWithdraw">充币提币</string>
     <string name="kServicesCellLabelAdvFunction">高级功能</string>
+    <string name="kServicesCellLabelBtsExplorer">BTS浏览器</string>
     <!-- 扫一扫相关字符串 -->
     <string name="kVcScanPermissionNoCamera">未检测到您的摄像头。</string>
     <string name="kVcScanPermissionSystemLimit">因为系统原因, 无法访问相册。</string>
@@ -90,10 +91,13 @@
     <!-- 喂价详情界面 -->
     <string name="kVcFeedCurrentFeedPrice">当前喂价</string>
     <string name="kVcFeedWitnessName">见证人</string>
+    <string name="kVcFeedPublisherCommitteeName">理事会</string>
+    <string name="kVcFeedPublisherCustom">喂价者</string>
     <string name="kVcFeedPriceName">喂价</string>
     <string name="kVcFeedRate">偏差率</string>
     <string name="kVcFeedPublishDate">最近发布</string>
     <string name="kVcFeedNoData">未发布</string>
+    <string name="kVcFeedExpired">已过期</string>
     <string name="kVcFeedNsecAgo">%s秒前</string>
     <string name="kVcFeedNminAgo">%s分前</string>
     <string name="kVcFeedNhourAgo">%s小时前</string>
@@ -167,6 +171,7 @@
     <!-- 账号信息 -->
     <string name="kAccountPageBasicInfo">基本信息</string>
     <string name="kAccountPageMemberInfo">会员信息</string>
+    <string name="kAccountPagePermissions">权限信息</string>
     <string name="kAccountBtnUpgradeToLifetimeMember">升级终身会员</string>
     <string name="kAccountMembershipStatus">状态</string>
     <string name="kAccountMembershipMyRefCode">我的推荐码</string>
@@ -177,6 +182,46 @@
     <string name="kAccountUpgradeMemberSubmitTxFullOK">升级终身会员成功。</string>
     <string name="kAccountUpgradeMemberSubmitTxOK">升级终身会员成功，但刷新界面失败，请稍后再试。</string>
     <string name="kAccountUpgradeMemberCostAsk">升级终身会员需要花费 %s，是否继续？</string>
+    <!-- 权限相关 -->
+    <string name="kVcPermissionTypeOwner">账号权限</string>
+    <string name="kVcPermissionTypeActive">资金权限</string>
+    <string name="kVcPermissionTypeMemo">备注权限</string>
+    <string name="kVcPermissionMemoKeyModifyAskTitle">修改备注权限</string>
+    <string name="kVcPermissionMemoKeyModifyInputPlaceholder">请输入新的备注公钥</string>
+    <string name="kVcPermissionSubmitTipsInputValidMemoKey">请输入有效的公钥。</string>
+    <string name="kVcPermissionSubmitTipsMemoKeyNoChanged">备注权限没有变化。</string>
+    <string name="kVcPermissionSubmitModifyMemoKeyFullOK">修改备注权限成功。</string>
+    <string name="kVcPermissionSubmitModifyMemoKeyOK">修改备注权限成功，但刷新界面数据失败，请稍后再试。</string>
+    <string name="kVcPermissionPassThreshold">阈值 </string>
+    <string name="kVcPermissionEditTitleName">管理者账号/公钥</string>
+    <string name="kVcPermissionEditTitleWeight">权重</string>
+    <string name="kVcPermissionEditTitleAction">操作</string>
+    <string name="kVcPermissionEditBtnRemove">移除</string>
+    <string name="kVcPermissionEditBtnAddOne">新增</string>
+    <string name="kVcPermissionEditBtnSubmit">提交</string>
+    <string name="kVcPermissionEditCellType">类型</string>
+    <string name="kVcPermissionEditCellThreshold">阈值</string>
+    <string name="kVcPermissionEditNewPassThresholdTitle">新阈值</string>
+    <string name="kVcPermissionEditNewPassThresholdPlaceholder">新的阈值（1-9999999）</string>
+    <string name="kVcPermissionEditTipsMaxAuthority">最多只能添加 %s 个多签管理者。</string>
+    <string name="kVcPermissionEditHelpTips">【温馨提示】\n阈值：阈值是使用该权限所需的最低权重值，各管理者账号/公钥的权重之和必须大于等于阈值。</string>
+    <string name="kVcPermissionEditTipsInvalidPassThreshold">请输入有效的阈值，范围 1 - 9999999。</string>
+    <string name="kVcPermissionEditSubmitTipsNoChanged">权限信息没有变化。</string>
+    <string name="kVcPermissionEditSubmitTipsInvalidPassThreshold">请重新调整阈值和权重配置，所有管理者账号/公钥的权重之和必须大于等于阈值。</string>
+    <string name="kVcPermissionEditSubmitSafeTipsPubkeyConfirm">新的管理者列表中包含公钥类型，请确认您必须持有对应的私钥。是否继续修改权限？</string>
+    <string name="kVcPermissionEditSubmitSafeTipsSecurityConfrim">修改权限为高危操作，请仔细确认新管理者列表配置正确。是否继续修改权限？</string>
+    <string name="kVcPermissionEditSubmitOkRelogin">权限修改成功，请重新登录。</string>
+    <string name="kVcPermissionEditSubmitOK02">修改权限成功。</string>
+    <string name="kVcPermissionEditSubmitOKAndRelaunchApp">修改权限成功，但刷新账号信息失败，请退出重新启动APP。</string>
+    <string name="kVcPermissionAddOneTitleAuthority">管理者</string>
+    <string name="kVcPermissionAddOneTitleWeight">权重</string>
+    <string name="kVcPermissionAddOneBtnDone">确定</string>
+    <string name="kVcPermissionAddOneBtnSearchAccount">搜索账号</string>
+    <string name="kVcPermissionAddOnePlaceholderAuthority">账号或公钥</string>
+    <string name="kVcPermissionAddOnePlaceholderWeight">权重（1-65535）</string>
+    <string name="kVcPermissionAddOneDoneTipsInvalidAuthority">请输入有效的账号或公钥。</string>
+    <string name="kVcPermissionAddOneDoneTipsInvalidWeight">请输入有效的权重值，范围 1 - 65535。</string>
+    <string name="kVcPermissionAddOneDontTipsCantAddSelf">不能添加自身账号。</string>
     <!-- 登录&注册&备份 -->
     <string name="kLoginPageModePassword">账号模式</string>
     <string name="kLoginPageModeBrainKey">助记词</string>
@@ -271,10 +316,14 @@
     <string name="kProposalLabelReviewPeriod">审核周期</string>
     <string name="kProposalLabel1Days">%s天</string>
     <string name="kProposalLabelNDays">%s天</string>
+    <string name="kProposalLabel1Hours">%s小时</string>
+    <string name="kProposalLabelNHours">%s小时</string>
     <string name="kProposalLabelNoReviewPeriod">无</string>
     <string name="kProposalSubmitTipsSelectCreator">请选择提案创建者账号。</string>
     <string name="kProposalSubmitTipTxOK">创建提案成功。</string>
     <string name="kProposalBtnSubmit">提交</string>
+    <string name="kProposalTipsSecTipBannerMsg">已为您隐藏 %s 个危险提案，点击这里查看。</string>
+    <string name="kProposalTipsSecTipCannotApprove">风险提示：该提案由陌生账号创建，不可批准。</string>
     <string name="kProposalTipsNoAnyProposals">没有任何提案信息</string>
     <string name="kProposalSubmitTipsBlockedApprovedForBlackList">危险账号 %s，为了您的账号和资金安全，系统已阻止了该操作。</string>
     <string name="kProposalSubmitTipsInReview">提案处于审核中，不能添加授权。</string>
@@ -604,6 +653,9 @@
     <string name="kVcTitleLogin">登录</string>
     <string name="kVcTitleImportAccount">导入账号</string>
     <string name="kVcTitleRegister">注册</string>
+    <string name="kVcTitleChangePermission">修改权限</string>
+    <string name="kVcTitlePermissionAddAuthority">添加管理者</string>
+    <string name="kVcTitleAddOneSearchAccount">搜索账号</string>
     <string name="kVcTitleQrScan">扫一扫</string>
     <string name="kVcTitleQrScanResultNormal">扫描结果</string>
     <string name="kVcTitleQrScanResultPriKey">导入私钥</string>
@@ -799,7 +851,7 @@
     <string name="kOpDesc_unknown_op">未知的操作 #%s。</string>
     <!-- 交易OP细化 -->
     <string name="kOpDetailFlagDangerous">危险操作</string>
-    <string name="kOpDetailPermissionOwner">所有者权限</string>
+    <string name="kOpDetailPermissionOwner">账号权限</string>
     <string name="kOpDetailPermissionActive">资金权限</string>
     <string name="kOpDetailPermissionMemo">备注权限</string>
     <string name="kOpDetailSubTitleVoteTargeter">投票对象</string>
@@ -817,6 +869,7 @@
     <string name="kLangKeyEn">English / 英文</string>
     <string name="kLangKeyJa">日本語 / 日文</string>
     <string name="skip">跳过</string>
+    <string name="kNormalErrorInvalidArgs">无效参数。</string>
     <string name="kAppName">比特股</string>
     <string name="kAccount">账号</string>
     <string name="kAboutMainDesc">\n比特股移动端钱包是基于石墨烯技术，从产品体验出发，采用原生技术开发的一款可媲美一流中心化交易所的去中心化交易所（DEX）产品。\n\n联系我们\n微信：bts-pp\n邮箱：contactsbtsplusplus.com\n电报：https://t.me/btsplusplus\n官网：https://btspp.io\n</string>
@@ -888,6 +941,7 @@
     <!-- 特殊用途字符串KEY -->
     <string name="serverWssLangKey">cn</string>
     <string name="appDepositWithdrawDefaultGateway">GDEX</string>
+    <string name="btsaiLangKey">cn</string>
     <!-- Android专有字符串 -->
     <string name="action_settings">Settings</string>
     <string name="title_home">Home</string>
