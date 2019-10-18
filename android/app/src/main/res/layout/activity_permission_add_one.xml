@@ -117,7 +117,7 @@
                 android:id="@+id/tf_weight"
                 android:singleLine="true"
                 android:maxLines="1"
-                android:digits=".1234567890"
+                android:digits="1234567890"
                 android:inputType="phone|number"
                 android:maxLength="5"
                 android:layout_width="wrap_content"

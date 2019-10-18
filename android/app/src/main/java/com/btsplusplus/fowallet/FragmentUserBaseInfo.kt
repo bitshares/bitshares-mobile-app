@@ -81,9 +81,8 @@ class FragmentUserBaseInfo : BtsppFragment() {
     }
 
     private fun gotoLogoutCore() {
-        //  内存钱包锁定、导入钱包删除。
-        WalletManager.sharedWalletManager().Lock()
-        AppCacheManager.sharedAppCacheManager().removeWalletInfo()
+        //  注销
+        WalletManager.sharedWalletManager().processLogout()
         //  返回
         mActivity.finish()
     }

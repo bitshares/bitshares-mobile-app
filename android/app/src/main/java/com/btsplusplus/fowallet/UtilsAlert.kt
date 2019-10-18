@@ -27,7 +27,10 @@ class UtilsAlert {
         /**
          * 显示输入对话框
          */
-        fun showInputBox(ctx: Context, title: String, placeholder: String, btn_ok: String = ctx.resources.getString(R.string.kBtnOK), btn_cancel: String = ctx.resources.getString(R.string.kBtnCancel), is_password: Boolean = true): Promise {
+        fun showInputBox(ctx: Context, title: String, placeholder: String,
+                         btn_ok: String = ctx.resources.getString(R.string.kBtnOK),
+                         btn_cancel: String = ctx.resources.getString(R.string.kBtnCancel),
+                         is_password: Boolean = true, tfcfg: ((tf: EditText) -> Unit)? = null): Promise {
             val p = Promise()
 
             //  输入框
@@ -39,6 +42,10 @@ class UtilsAlert {
                 edit.inputType = InputType.TYPE_CLASS_TEXT.or(InputType.TYPE_TEXT_VARIATION_PASSWORD)
             } else {
                 edit.inputType = InputType.TYPE_CLASS_TEXT
+            }
+            //  配置输入框
+            if (tfcfg != null) {
+                tfcfg(edit)
             }
             //  对话框
             val builder = AlertDialog.Builder(ctx)

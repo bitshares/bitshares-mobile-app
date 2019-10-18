@@ -392,6 +392,14 @@ class WalletManager {
         return true
     }
 
+    /*
+     *  (public) 注销登录逻辑。内存钱包锁定、导入钱包删除。
+     */
+    fun  processLogout() {
+        Lock()
+        AppCacheManager.sharedAppCacheManager().removeWalletInfo()
+    }
+
     fun Lock() {
         _wallet_object_json = null
         _wallet_password = null
