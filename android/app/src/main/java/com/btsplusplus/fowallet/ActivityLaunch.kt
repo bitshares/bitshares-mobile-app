@@ -13,7 +13,6 @@ import com.flurry.android.FlurryAgent
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
 import io.fabric.sdk.android.Fabric
-import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
 
@@ -187,7 +186,8 @@ class ActivityLaunch : BtsppActivity() {
                     put("kInitTickerData", chainMgr.marketsInitAllTickerData())
                     put("kInitGlobalProperties", connMgr.last_connection().async_exec_db("get_global_properties"))
                     put("kInitFeeAssetInfo", chainMgr.queryFeeAssetListDynamicInfo())     //  查询手续费兑换比例、手续费池等信息
-                    if (walletMgr.isWalletExist() && walletMgr.isMissFullAccountData()) {
+                    //  每次启动都刷新当前账号信息
+                    if (walletMgr.isWalletExist()) {
                         put("kInitFullUserData", chainMgr.queryFullAccountInfo(walletMgr.getWalletInfo().getString("kAccountName")))
                     }
                 }

@@ -46,16 +46,17 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="添加管理者"
+                android:text="@string/kVcTitlePermissionAddAuthority"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
 
+        <!-- 管理者 -->
         <TextView
             android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="管理者"
+            android:text="@string/kVcPermissionAddOneTitleAuthority"
             android:textSize="14dp"
             android:textColor="@color/theme01.textColorMain"
             />
@@ -67,7 +68,7 @@
             android:layout_marginTop="5dp">
 
             <EditText
-                android:id="@+id/edit_account_or_public_key_from_add_one_permission"
+                android:id="@+id/tf_authority_name"
                 android:singleLine="true"
                 android:maxLines="1"
                 android:layout_width="wrap_content"
@@ -77,31 +78,31 @@
                 android:layout_weight="6"
                 android:textColor="#ffffff"
                 android:textColorHint="@color/theme01.textColorGray"
-                android:hint="账号或公钥"
+                android:hint="@string/kVcPermissionAddOnePlaceholderAuthority"
                 android:theme="@style/theme01.EditText"
                 android:background="@null"
                 android:textSize="16dp"/>
 
             <TextView
-                android:id="@+id/tv_search_from_add_one_permission"
+                android:id="@+id/btn_search"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center_vertical|right"
                 android:textSize="14dp"
                 android:textColor="@color/theme01.textColorHighlight"
-                android:text="搜索账号"/>
+                android:text="@string/kVcPermissionAddOneBtnSearchAccount"/>
 
         </LinearLayout>
 
         <View android:layout_height="1dp" android:layout_marginTop="0dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-
+        <!-- 权重 -->
         <TextView
             android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="权重"
+            android:text="@string/kVcPermissionAddOneTitleWeight"
             android:textSize="14dp"
             android:textColor="@color/theme01.textColorMain"
             />
@@ -113,9 +114,12 @@
             android:layout_marginTop="5dp">
 
             <EditText
-                android:id="@+id/edit_weight_from_add_one_permission"
+                android:id="@+id/tf_weight"
                 android:singleLine="true"
                 android:maxLines="1"
+                android:digits=".1234567890"
+                android:inputType="phone|number"
+                android:maxLength="5"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical|right"
@@ -123,7 +127,7 @@
                 android:layout_weight="6"
                 android:textColor="#ffffff"
                 android:textColorHint="@color/theme01.textColorGray"
-                android:hint="权重（1-65535）"
+                android:hint="@string/kVcPermissionAddOnePlaceholderWeight"
                 android:theme="@style/theme01.EditText"
                 android:background="@null"
                 android:textSize="16dp"/>
@@ -134,7 +138,7 @@
         <View android:layout_height="1dp" android:layout_marginTop="0dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
 
-        <!-- 提交按钮 -->
+        <!-- 确定按钮 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -149,7 +153,7 @@
                 android:gravity="center|center_vertical"
                 android:layout_weight="1"
                 android:padding="5dp"
-                android:text="提交" />
+                android:text="@string/kVcPermissionAddOneBtnDone" />
         </LinearLayout>
 
     </LinearLayout>

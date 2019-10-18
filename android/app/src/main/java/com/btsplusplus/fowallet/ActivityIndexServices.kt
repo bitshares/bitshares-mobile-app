@@ -58,6 +58,7 @@ class ActivityIndexServices : BtsppActivity() {
         img_icon_feedprice.setColorFilter(iconcolor)
         img_icon_deposit_withdraw.setColorFilter(iconcolor)
         img_icon_advfunction.setColorFilter(iconcolor)
+        img_icon_explorer.setColorFilter(iconcolor)
         img_icon_game.setColorFilter(iconcolor)
 
         layout_account_query_from_services.setOnClickListener {
@@ -128,6 +129,11 @@ class ActivityIndexServices : BtsppActivity() {
 
         layout_advanced_feature_of_service.setOnClickListener {
             goTo(ActivityAdvancedFeature::class.java, true)
+        }
+
+        layout_bts_explorer.setOnClickListener {
+            //  TODO:插件配置url
+            openURL("https://bts.ai?lang=${resources.getString(R.string.btsaiLangKey)}")
         }
     }
 }

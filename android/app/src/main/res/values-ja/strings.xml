@@ -51,6 +51,7 @@
     <string name="kServicesCellLabelFeedPrice">詳しいフィード価格</string>
     <string name="kServicesCellLabelDepositWithdraw">入金出金</string>
     <string name="kServicesCellLabelAdvFunction">高度な機能</string>
+    <string name="kServicesCellLabelBtsExplorer">エクスプローラ</string>
     <!-- 扫一扫相关字符串 -->
     <string name="kVcScanPermissionNoCamera">カメラが検出されません。</string>
     <string name="kVcScanPermissionSystemLimit">システム上の理由により、アルバムにアクセスできませんでした。</string>
@@ -90,10 +91,13 @@
     <!-- 喂价详情界面 -->
     <string name="kVcFeedCurrentFeedPrice">現在のフィード価格</string>
     <string name="kVcFeedWitnessName">証人</string>
+    <string name="kVcFeedPublisherCommitteeName">委員</string>
+    <string name="kVcFeedPublisherCustom">生産者</string>
     <string name="kVcFeedPriceName">価格</string>
     <string name="kVcFeedRate">偏差率</string>
     <string name="kVcFeedPublishDate">最近発表</string>
     <string name="kVcFeedNoData">未発表</string>
+    <string name="kVcFeedExpired">期限切れ</string>
     <string name="kVcFeedNsecAgo">%s秒前</string>
     <string name="kVcFeedNminAgo">%s分前</string>
     <string name="kVcFeedNhourAgo">%s时前</string>
@@ -167,6 +171,7 @@
     <!-- 账号信息 -->
     <string name="kAccountPageBasicInfo">基本情報</string>
     <string name="kAccountPageMemberInfo">会員情報</string>
+    <string name="kAccountPagePermissions">権限情報</string>
     <string name="kAccountBtnUpgradeToLifetimeMember">一生会員をアップグレードする</string>
     <string name="kAccountMembershipStatus">状態</string>
     <string name="kAccountMembershipMyRefCode">私の推薦コード</string>
@@ -177,6 +182,46 @@
     <string name="kAccountUpgradeMemberSubmitTxFullOK">一生会員は正常にアップグレードされました。</string>
     <string name="kAccountUpgradeMemberSubmitTxOK">一生会員は正常にアップグレードされました。 ただし、更新インターフェイスが失敗しました。しばらくしてからもう一度お試しください。</string>
     <string name="kAccountUpgradeMemberCostAsk">一生会員をアップグレードするには %s かかります。続行しますか？</string>
+    <!-- 权限相关 -->
+    <string name="kVcPermissionTypeOwner">アカウント権限</string>
+    <string name="kVcPermissionTypeActive">資金権限</string>
+    <string name="kVcPermissionTypeMemo">付注権限</string>
+    <string name="kVcPermissionMemoKeyModifyAskTitle">メモキーの変更</string>
+    <string name="kVcPermissionMemoKeyModifyInputPlaceholder">新しいメモの公開鍵</string>
+    <string name="kVcPermissionSubmitTipsInputValidMemoKey">有効な公開鍵を入力してください。</string>
+    <string name="kVcPermissionSubmitTipsMemoKeyNoChanged">メモキーは変更されていません。</string>
+    <string name="kVcPermissionSubmitModifyMemoKeyFullOK">メモキーが正常に変更されました。</string>
+    <string name="kVcPermissionSubmitModifyMemoKeyOK">メモキーは正常に変更されましたが、インターフェイスデータの更新に失敗しました。しばらくしてからもう一度お試しください。</string>
+    <string name="kVcPermissionPassThreshold">しきい値 </string>
+    <string name="kVcPermissionEditTitleName">アカウント / キー</string>
+    <string name="kVcPermissionEditTitleWeight">ウェイト</string>
+    <string name="kVcPermissionEditTitleAction">操作</string>
+    <string name="kVcPermissionEditBtnRemove">削除</string>
+    <string name="kVcPermissionEditBtnAddOne">添加</string>
+    <string name="kVcPermissionEditBtnSubmit">変更の確定</string>
+    <string name="kVcPermissionEditCellType">タイプ</string>
+    <string name="kVcPermissionEditCellThreshold">しきい値</string>
+    <string name="kVcPermissionEditNewPassThresholdTitle">新しいしきい値</string>
+    <string name="kVcPermissionEditNewPassThresholdPlaceholder">新しいしきい値（1-9999999）</string>
+    <string name="kVcPermissionEditTipsMaxAuthority">最大 %s 個のマルチサインメンバーのみ追加できます。</string>
+    <string name="kVcPermissionEditHelpTips">【暖かいヒント】\nしきい値：しきい値は、アクセス権限を使用するために必要な最小のウェイトであり、各アカウント/公開キーのウェイトの合計は、しきい値以上である必要があります。</string>
+    <string name="kVcPermissionEditTipsInvalidPassThreshold">有効なしきい値を入力してください。 範囲1-9999999。</string>
+    <string name="kVcPermissionEditSubmitTipsNoChanged">権限は変更されていません。</string>
+    <string name="kVcPermissionEditSubmitTipsInvalidPassThreshold">しきい値と重みの構成を再調整してください。 すべてのアカウント/キーの重みの合計は、しきい値以上である必要があります。</string>
+    <string name="kVcPermissionEditSubmitSafeTipsPubkeyConfirm">新しいリストには公開鍵タイプが含まれています。対応する秘密鍵を保持する必要があることを確認してください。 権限の変更を続行しますか？</string>
+    <string name="kVcPermissionEditSubmitSafeTipsSecurityConfrim">権限の変更は危険な操作です。新しいリストが正しく構成されていることを確認してください。 権限の変更を続行しますか？</string>
+    <string name="kVcPermissionEditSubmitOkRelogin">権限は正常に変更されました。再度ログインしてください。</string>
+    <string name="kVcPermissionEditSubmitOK02">権限は正常に変更されました。</string>
+    <string name="kVcPermissionEditSubmitOKAndRelaunchApp">権限は正常に変更されましたが、アカウント情報の更新に失敗しました。アプリを終了して再起動してください。</string>
+    <string name="kVcPermissionAddOneTitleAuthority">権限</string>
+    <string name="kVcPermissionAddOneTitleWeight">ウェイト</string>
+    <string name="kVcPermissionAddOneBtnDone">完了</string>
+    <string name="kVcPermissionAddOneBtnSearchAccount">検索</string>
+    <string name="kVcPermissionAddOnePlaceholderAuthority">アカウントまたは公開鍵</string>
+    <string name="kVcPermissionAddOnePlaceholderWeight">ウェイト（1-65535）</string>
+    <string name="kVcPermissionAddOneDoneTipsInvalidAuthority">有効なアカウントまたは公開キーを入力してください。</string>
+    <string name="kVcPermissionAddOneDoneTipsInvalidWeight">有効なウェイトを入力してください。 範囲1-65535。</string>
+    <string name="kVcPermissionAddOneDontTipsCantAddSelf">自分のアカウントを追加できません。</string>
     <!-- 登录&注册&备份 -->
     <string name="kLoginPageModePassword">アカウントモード</string>
     <string name="kLoginPageModeBrainKey">ブレインキー</string>
@@ -271,10 +316,14 @@
     <string name="kProposalLabelReviewPeriod">レビュー期間</string>
     <string name="kProposalLabel1Days">%s日</string>
     <string name="kProposalLabelNDays">%s日</string>
+    <string name="kProposalLabel1Hours">%s时</string>
+    <string name="kProposalLabelNHours">%s时</string>
     <string name="kProposalLabelNoReviewPeriod">レビュー期間なし</string>
     <string name="kProposalSubmitTipsSelectCreator">提案創建者のアカウントを選んでください。</string>
     <string name="kProposalSubmitTipTxOK">提案を創建して成功します。</string>
     <string name="kProposalBtnSubmit">提出します</string>
+    <string name="kProposalTipsSecTipBannerMsg">%s つの危険な提案が隠されています。</string>
+    <string name="kProposalTipsSecTipCannotApprove">リスク警告：提案は不明なアカウントによって作成されました。</string>
     <string name="kProposalTipsNoAnyProposals">提案情報はありません</string>
     <string name="kProposalSubmitTipsBlockedApprovedForBlackList">危険なアカウント %s、システムはこの操作をあなたのアカウントと財務上のセキュリティのためにブロックしました。</string>
     <string name="kProposalSubmitTipsInReview">提案は審査中であって、授権を添加することはできません。</string>
@@ -482,6 +531,7 @@
     <string name="kVcTransferCellMemo">付注情報</string>
     <string name="kVcTransferTipSelectToAccount">受取口座を選びください。</string>
     <string name="kVcTransferTipSelectAsset">選んで帳簿の資産を回転してください</string>
+    <!-- HTLC合约 -->
     <string name="kVcHtlcEntryFromPreimage">HTLC合约（原像创建）</string>
     <string name="kVcHtlcEntryFromHashcode">HTLC合约（哈希创建）</string>
     <string name="kVcHtlcMenuPassiveCreate">被动部署合约</string>
@@ -492,16 +542,16 @@
     <string name="kVcHtlcCellTitleClaimPeriod">有效期</string>
     <string name="kVcHtlcCellTitlePreimageHash">原像哈希</string>
     <string name="kVcHtlcCellTitlePreimageLength">原像长度</string>
-    <string name="kVcHtlcCellValueNDayFmt">%s天</string>
-    <string name="kVcHtlcCellValueNHourFmt">%s小时</string>
+    <string name="kVcHtlcCellValueNDayFmt">%s日</string>
+    <string name="kVcHtlcCellValueNHourFmt">%s时</string>
     <string name="kVcHtlcPlaceholderInputPreimage">请输入合约的原像</string>
     <string name="kVcHtlcPlaceholderInputPreimageHash">请输入原像的哈希值</string>
     <string name="kVcHtlcPlaceholderInputPreimageLength">请选择原像长度值</string>
     <string name="kVcHtlcPlaceholderInputHashType">请选择哈希算法</string>
     <string name="kVcHtlcPlaceholderInputExpire">请选择合约有效期</string>
-    <string name="kVcHtlcTailerBtnCopy">复制</string>
-    <string name="kVcHtlcTailerBtnPaste">粘贴</string>
-    <string name="kVcHtlcSubmitBtn01">创建</string>
+    <string name="kVcHtlcTailerBtnCopy">コピー</string>
+    <string name="kVcHtlcTailerBtnPaste">ペースト</string>
+    <string name="kVcHtlcSubmitBtn01">作成する</string>
     <string name="kVcHtlcTipsPreimageCopied">原像已复制：%s</string>
     <string name="kVcHtlcTipsPreimageForm">原像格式为20位以上，且必须同时包含大写字母和数字。</string>
     <string name="kVcHtlcTipsInputPreimageHash">请输入原像哈希值。</string>
@@ -537,7 +587,7 @@
     <string name="kVcHtlcListAskPlaceholderRedeem">请输入合约原像</string>
     <string name="kVcHtlcListTipsRedeemOK">HTLC合约 %s 提取成功。</string>
     <string name="kVcHtlcListTipsExtendOK">HTLC合约 %s 延长有效期成功。</string>
-    <string name="kVcHtlcListExtendNDayFmt">%s天</string>
+    <string name="kVcHtlcListExtendNDayFmt">%s日</string>
     <string name="kVcHtlcListCopyPreimageHashOK">原像哈希已复制：%s</string>
     <!-- 确认界面 -->
     <string name="kVcConfirmTipFrom">FROM</string>
@@ -546,7 +596,7 @@
     <string name="kVcConfirmTipMemo">付注</string>
     <string name="kVcConfirmTipFee">料金</string>
     <string name="kVcConfirmTypeTransfer">送金</string>
-    <string name="kVcConfirmSubmitOK">確かですか</string>
+    <string name="kVcConfirmSubmitOK">完了</string>
     <!-- 投票界面 -->
     <string name="kLabelVotingIntroduction">紹介 &gt;</string>
     <string name="kLabelVotingCommittees">委員</string>
@@ -603,6 +653,9 @@
     <string name="kVcTitleLogin">ログイン</string>
     <string name="kVcTitleImportAccount">アカウント導入</string>
     <string name="kVcTitleRegister">新規登録</string>
+    <string name="kVcTitleChangePermission">変更権限</string>
+    <string name="kVcTitlePermissionAddAuthority">権限を追加する</string>
+    <string name="kVcTitleAddOneSearchAccount">アカウントを検索</string>
     <string name="kVcTitleQrScan">スキャン</string>
     <string name="kVcTitleQrScanResultNormal">スキャン結果</string>
     <string name="kVcTitleQrScanResultPriKey">インポートキー</string>
@@ -674,7 +727,7 @@
     <string name="kWalletCellPermissionOwner">アカウント権限</string>
     <string name="kWalletCellPermissionActive">資金権限</string>
     <string name="kWalletCellPermissionMemo">付注権限</string>
-    <!-- 交易OP名字TODO:2.1kOpType_fba_distribute -->
+    <!-- 交易OP名字 -->
     <string name="kOpType_proposal_prefix">提案【%s】</string>
     <string name="kOpType_transfer">送金</string>
     <string name="kOpType_limit_order_create_sell">創建売り注文</string>
@@ -732,7 +785,7 @@
     <string name="kOpType_htlc_extend">htlc_extend</string>
     <string name="kOpType_htlc_refund">htlc_refund</string>
     <string name="kOpType_unknown_op">不明な操作</string>
-    <!-- 交易OP详细描述TODO:2.1 -->
+    <!-- 交易OP详细描述 -->
     <string name="kOpDesc_transfer">%s 送金 %s と %s。</string>
     <string name="kOpDesc_limit_order_create_sell">%s 売り出し書 %s で価格の売れる %s。</string>
     <string name="kOpDesc_limit_order_create_buy">%s 買い取り書を提出 %s で価格の購入 %s。</string>
@@ -803,7 +856,7 @@
     <string name="kOpDetailPermissionMemo">付注権限</string>
     <string name="kOpDetailSubTitleVoteTargeter">投票対象</string>
     <string name="kOpDetailSubTitleOperate">タイプ</string>
-    <string name="kOpDetailSubTitleNewWeightOrThreshold">新しいしきい値/重量</string>
+    <string name="kOpDetailSubTitleNewWeightOrThreshold">新しいしきい値/ウェイト</string>
     <string name="kOpDetailSubTitleChangeValue">変化量</string>
     <string name="kOpDetailSubOpAdd">追加する</string>
     <string name="kOpDetailSubOpDelete">削除する</string>
@@ -816,6 +869,7 @@
     <string name="kLangKeyEn">English / 英語</string>
     <string name="kLangKeyJa">日本語</string>
     <string name="skip">PASS</string>
+    <string name="kNormalErrorInvalidArgs">無効なパラメーター。</string>
     <string name="kAppName">BitShares</string>
     <string name="kAccount">アカウント</string>
     <string name="kAboutMainDesc">\nBitSharesモバイルサイドのウオレットは石墨のアルケン技術に基づくので、製品から出発を体験して、採用します原生の技術開発の1モデル匹敵する一流センター化取る引く所のDEX。\n\n私達に連絡します\nWeChat：bts-pp\nE-mail：contactsbtsplusplus.com\nTelegram：https://t.me/btsplusplus\n公式サイト：https://btspp.io\n</string>
@@ -880,13 +934,14 @@
     <string name="unlockTipsUnlockAccount">アンロックのパスワード</string>
     <string name="unlockTipsUnlockWallet">アンロックのアカウント</string>
     <string name="unlockBtnUnlock">アンロック</string>
-    <!-- 部分石墨烯错误信息TODO:2.1preimage -->
+    <!-- 部分石墨烯错误信息 -->
     <string name="kGPErrorAccountNotExist">アカウントは存在しません。</string>
     <string name="kGPErrorInsufficientBalance">手数料は不足します。</string>
     <string name="kGPErrorRedeemInvalidPreimage">元の画像が正しくありません。</string>
     <!-- 特殊用途字符串KEY -->
     <string name="serverWssLangKey">cn</string>
     <string name="appDepositWithdrawDefaultGateway">GDEX</string>
+    <string name="btsaiLangKey">en</string>
     <!-- Android专有字符串 -->
     <string name="action_settings">Settings</string>
     <string name="title_home">Home</string>

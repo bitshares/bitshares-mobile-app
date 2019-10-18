@@ -673,6 +673,36 @@ class OrgUtils {
             return NativeInterface.sharedNativeInterface().bts_gen_address_from_private_key32(prikey, ChainObjectManager.sharedChainObjectManager().grapheneAddressPrefix.utf8String())?.utf8String()
         }
 
+        /*
+         *  (public) 生成bts地址（序列化时公钥排序会用到。）
+         */
+        fun genBtsBlockchainAddress(str_pubkey: String?): ByteArray? {
+            if (str_pubkey == null || str_pubkey == "") {
+                return null
+            }
+            val native_ptr = NativeInterface.sharedNativeInterface()
+            val public_key = native_ptr.bts_gen_public_key_from_b58address(str_pubkey.utf8String(),
+                    ChainObjectManager.sharedChainObjectManager().grapheneAddressPrefix.utf8String())
+            if (public_key == null) {
+                return null
+            }
+            val output33 = native_ptr.bts_gen_public_key_compressed(public_key)
+            val digest64 = sha512(output33)
+            return rmd160(digest64)
+        }
+
+        /**
+         *  （public) 是否是有效的公钥字符串判断
+         */
+        fun isValidBitsharesPublicKey(str_pubkey: String?): Boolean {
+            if (str_pubkey == null || str_pubkey == "") {
+                return false
+            }
+            val public_key = NativeInterface.sharedNativeInterface().bts_gen_public_key_from_b58address(str_pubkey.utf8String(),
+                    ChainObjectManager.sharedChainObjectManager().grapheneAddressPrefix.utf8String())
+            return public_key != null
+        }
+
         /**
          *  (public) 解码商人协议发票数据。成功返回 json，失败返回 nil。
          */
