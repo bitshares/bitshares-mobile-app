@@ -1580,6 +1580,32 @@ class ChainObjectManager {
     }
 
     /**
+     *  (public) 获取活跃的见证人信息列表。
+     */
+    fun queryActiveWitnessDataList(): Promise {
+        val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
+        return conn.async_exec_db("get_global_properties").then {
+            val global_data = it as JSONObject
+            updateObjectGlobalProperties(global_data)
+            val idlist = global_data.getJSONArray("active_witnesses")
+            return@then conn.async_exec_db("get_witnesses", jsonArrayfrom(idlist))
+        }
+    }
+
+    /**
+     *  (public) 获取活跃的理事会成员信息列表。
+     */
+    fun queryActiveCommitteeDataList(): Promise {
+        val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
+        return conn.async_exec_db("get_global_properties").then {
+            val global_data = it as JSONObject
+            updateObjectGlobalProperties(global_data)
+            val idlist = global_data.getJSONArray("active_committee_members")
+            return@then conn.async_exec_db("get_committee_members", jsonArrayfrom(idlist))
+        }
+    }
+
+    /**
      *  (public) 查询帐号投票信息（如果帐号设置了代理帐号，则继续查询代理帐号的投票信息。代理层级过多则返回空。）
      *  account_data    - full_account_data 的 account 部分。
      *  返回值：

@@ -58,40 +58,73 @@ class ActivityFeedPrice : BtsppActivity() {
         val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
         assert(pos < _assetList.length())
-        val asset = _assetList.getJSONObject(pos)
-
-        //  query active witness
-        val p0 = conn.async_exec_db("get_global_properties").then {
-            val global_data = it as JSONObject
-            val active_witnesses = global_data.getJSONArray("active_witnesses")
-            return@then conn.async_exec_db("get_witnesses", jsonArrayfrom(active_witnesses))
-        }
-
-        //  query bitassets feed data
-        val p1 = conn.async_exec_db("get_objects", jsonArrayfrom(jsonArrayfrom(asset.getString("bitasset_data_id")))).then {
-            return@then (it as JSONArray).getJSONObject(0)
-        }
-
-        Promise.all(p0, p1).then {
-            var data_array = it as JSONArray
-
-            val active_witnesses = data_array.getJSONArray(0)
-            val infos = data_array.getJSONObject(1)
-            val feeds = infos.getJSONArray("feeds")
-
-            val idHash = JSONObject()
-            active_witnesses.forEach<JSONObject> {
-                idHash.put(it!!.getString("witness_account"), true)
-            }
-            feeds.forEach<JSONArray> {
-                val ary = it!!
-                idHash.put(ary.getString(0), true)
-            }
-
-            return@then chainMgr.queryAllAccountsInfo(idHash.keys().toJSONArray()).then {
-                onQueryFeedInfoResponsed(asset, infos, feeds, active_witnesses, pos)
+        chainMgr.queryAssetData(_assetList.getJSONObject(pos).getString("id")).then {
+            val assetData = it as? JSONObject
+            if (assetData == null) {
                 mask.dismiss()
+                showToast(resources.getString(R.string.kNormalErrorInvalidArgs))
                 return@then null
+            }
+
+            val promise_map = JSONObject()
+
+            //  1、查询喂价者信息
+            val publisher_type:EBitsharesFeedPublisherType
+            val flags = assetData.getJSONObject("options").getInt("flags")
+            if (flags.and(EBitsharesAssetFlags.ebat_witness_fed_asset.value) != 0) {
+                //  由见证人提供喂价
+                promise_map.put("kQueryWitness", chainMgr.queryActiveWitnessDataList())
+                publisher_type = EBitsharesFeedPublisherType.ebfpt_witness
+            } else if (flags.and(EBitsharesAssetFlags.ebat_committee_fed_asset.value) != 0) {
+                //  由理事会成员提供喂价
+                promise_map.put("kQueryCommittee", chainMgr.queryActiveCommitteeDataList())
+                publisher_type = EBitsharesFeedPublisherType.ebfpt_committee
+            } else {
+                //  由指定账号提供喂价
+                publisher_type = EBitsharesFeedPublisherType.ebfpt_custom
+            }
+
+            //  2、查询喂价信息
+            promise_map.put("kQueryFeedData", conn.async_exec_db("get_objects", jsonArrayfrom(jsonArrayfrom(assetData.getString("bitasset_data_id")))).then {
+                return@then (it as JSONArray).getJSONObject(0)
+            })
+
+            return@then Promise.map(promise_map).then {
+                val datamap = it as JSONObject
+
+                val feed_infos = datamap.getJSONObject("kQueryFeedData")
+                val feeds = feed_infos.getJSONArray("feeds")
+
+                val idHash = JSONObject()
+                val active_publisher_ids = JSONArray()
+
+                if (publisher_type == EBitsharesFeedPublisherType.ebfpt_witness) {
+                    datamap.getJSONArray("kQueryWitness").forEach<JSONObject> {
+                        val account_id = it!!.getString("witness_account")
+                        active_publisher_ids.put(account_id)
+                        idHash.put(account_id, true)
+                    }
+                } else if (publisher_type == EBitsharesFeedPublisherType.ebfpt_committee) {
+                    datamap.getJSONArray("kQueryCommittee").forEach<JSONObject> {
+                        val account_id = it!!.getString("committee_member_account")
+                        active_publisher_ids.put(account_id)
+                        idHash.put(account_id, true)
+                    }
+                }
+                feeds.forEach<JSONArray> {
+                    val ary = it!!
+                    val account_id = ary.getString(0)
+                    if (publisher_type == EBitsharesFeedPublisherType.ebfpt_custom) {
+                        active_publisher_ids.put(account_id)
+                    }
+                    idHash.put(account_id, true)
+                }
+
+                return@then chainMgr.queryAllAccountsInfo(idHash.keys().toJSONArray()).then {
+                    onQueryFeedInfoResponsed(assetData, feed_infos, feeds, active_publisher_ids, publisher_type, pos)
+                    mask.dismiss()
+                    return@then null
+                }
             }
         }.catch {
             mask.dismiss()
@@ -99,9 +132,10 @@ class ActivityFeedPrice : BtsppActivity() {
         }
     }
 
-    private fun onQueryFeedInfoResponsed(asset: JSONObject, infos: JSONObject, data_array: JSONArray, active_witnesses: JSONArray, pos: Int) {
+    private fun onQueryFeedInfoResponsed(asset: JSONObject, feed_infos: JSONObject, feeds: JSONArray,
+                                         active_publisher_ids: JSONArray, publisher_type: EBitsharesFeedPublisherType, pos: Int) {
         assert(pos < fragmens.size)
-        (fragmens[pos] as FragmentFeedPrice).onQueryFeedInfoResponsed(asset, infos, data_array, active_witnesses)
+        (fragmens[pos] as FragmentFeedPrice).onQueryFeedInfoResponsed(asset, feed_infos, feeds, active_publisher_ids, publisher_type)
     }
 
     private fun setViewPager() {
