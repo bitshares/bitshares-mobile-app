@@ -19,7 +19,11 @@ import kotlin.math.min
 
 class ActivityProposal : BtsppActivity() {
 
-    private var _data_array = mutableListOf<JSONObject>()
+    private var _allDataArray = mutableListOf<JSONObject>()     //  所有提案
+    private var _safeDataArray = mutableListOf<JSONObject>()    //  安全的提案列表（经过了安全等级筛选的）
+
+    private var _showSecTips = true                             //  是否显示安全提示（默认YES）
+    private var _currSourceArrayRef = _safeDataArray            //  当前引用
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +58,7 @@ class ActivityProposal : BtsppActivity() {
 
             val proposal_list = JSONArray()
             val proposal_marked = JSONObject()
-            //  查询依赖
+            //  分析查询依赖（提案相关的账号、资产ID等）
             val query_ids = JSONObject()
             val skip_cache_ids = JSONObject()
             //  遍历所有提案
@@ -69,7 +73,7 @@ class ActivityProposal : BtsppActivity() {
                             continue
                         }
 
-                        //  TODO:fowallet REMARK:需要多种权限的提案暂时不支持。
+                        //  TODO:fowallet REMARK:需要多种权限的提案暂时不支持。TODO:barter提案 两人互相转账，同时需要批准。
                         if (proposal.getJSONArray("required_active_approvals").length() + proposal.getJSONArray("required_owner_approvals").length() != 1) {
                             continue
                         }
@@ -106,17 +110,22 @@ class ActivityProposal : BtsppActivity() {
                     }
                 }
             }
+            //  查询提案依赖的账号、资产ID等
             return@then chainMgr.queryAllGrapheneObjects(query_ids.keys().toJSONArray(), skip_cache_ids).then {
                 //  二次查询依赖
                 //  1、查询提案账号权限中的多签成员/代理人等名字信息等。
+                val multi_sign_member_skip_cache_ids = JSONObject()
                 val query_account_ids = JSONObject()
                 proposal_list.forEach<JSONObject> { proposal ->
                     proposal!!.getJSONArray("required_active_approvals").forEach<String> { uid ->
                         val account = chainMgr.getChainObjectByID(uid!!)
+                        //  REMARK：多签成员实时查询，需要查询名字以及多签成员自身的权限信息。
                         val account_auths = account.getJSONObject("active").getJSONArray("account_auths")
                         account_auths.forEach<JSONArray> { item ->
                             assert(item!!.length() == 2)
-                            query_account_ids.put(item.getString(0), true)
+                            val multi_sign_account_id = item.getString(0)
+                            query_account_ids.put(multi_sign_account_id, true)
+                            multi_sign_member_skip_cache_ids.put(multi_sign_account_id, true)
                         }
                         val voting_account = account.getJSONObject("options").getString("voting_account")
                         if (voting_account != BTS_GRAPHENE_PROXY_TO_SELF) {
@@ -125,10 +134,13 @@ class ActivityProposal : BtsppActivity() {
                     }
                     proposal.getJSONArray("required_owner_approvals").forEach<String> { uid ->
                         val account = chainMgr.getChainObjectByID(uid!!)
+                        //  REMARK：多签成员实时查询，需要查询名字以及多签成员自身的权限信息。
                         val account_auths = account.getJSONObject("owner").getJSONArray("account_auths")
                         account_auths.forEach<JSONArray> { item ->
                             assert(item!!.length() == 2)
-                            query_account_ids.put(item.getString(0), true)
+                            val multi_sign_account_id = item.getString(0)
+                            query_account_ids.put(multi_sign_account_id, true)
+                            multi_sign_member_skip_cache_ids.put(multi_sign_account_id, true)
                         }
                         val voting_account = account.getJSONObject("options").getString("voting_account")
                         if (voting_account != BTS_GRAPHENE_PROXY_TO_SELF) {
@@ -179,7 +191,7 @@ class ActivityProposal : BtsppActivity() {
 
                 val vote_id_list = new_vote_id_hash.keys().toJSONArray()
 
-                val p1 = chainMgr.queryAllGrapheneObjects(query_account_ids.keys().toJSONArray())
+                val p1 = chainMgr.queryAllGrapheneObjects(query_account_ids.keys().toJSONArray(), skipCacheIdHash = multi_sign_member_skip_cache_ids)
                 val p2 = chainMgr.queryAllVoteIds(vote_id_list)
 
                 return@then Promise.all(p1, p2).then { data ->
@@ -211,15 +223,73 @@ class ActivityProposal : BtsppActivity() {
         }
     }
 
+    /**
+     *  (private) 安全等级是否属于安全范围判断。
+     */
+    private fun _isSafeProposal(seclevel: EBitsharesProposalSecurityLevel): Boolean {
+        if (seclevel == EBitsharesProposalSecurityLevel.ebpsl_whitelist ||
+                seclevel == EBitsharesProposalSecurityLevel.ebpsl_multi_sign_member_lv0 ||
+                seclevel == EBitsharesProposalSecurityLevel.ebpsl_multi_sign_member_lv1) {
+            return true
+        }
+        return false
+    }
+
+    /**
+     *  (private) 计算提案创建者的安全等级。
+     */
+    private fun _calcProposalSecurityLevel(proposal: JSONObject, target_account: JSONObject, is_active: Boolean): EBitsharesProposalSecurityLevel {
+        val chainMgr = ChainObjectManager.sharedChainObjectManager()
+
+        val proposer_account_id = proposal.getString("proposer")
+
+        //  1、计算白名单账号发起的提案。TODO:2.8 暂时不支持。
+
+        //  2、计算多签成员发起的提案。
+        val permission_key = if (is_active) "active" else "owner"
+        val multi_sign_member_account_lv0 = target_account.getJSONObject(permission_key).getJSONArray("account_auths")
+        if (multi_sign_member_account_lv0.length() > 0) {
+            //  计算是不是 lv0 顶级多签成员。
+            val lv0_account_id_list = JSONArray()
+            for (item in multi_sign_member_account_lv0.forin<JSONArray>()) {
+                assert(item!!.length() == 2)
+                val account_id = item.getString(0)
+                if (account_id == proposer_account_id) {
+                    return EBitsharesProposalSecurityLevel.ebpsl_multi_sign_member_lv0
+                } else {
+                    lv0_account_id_list.put(account_id)
+                }
+            }
+            //  计算是不是 lv1 次级多签成员
+            for (sub_account_id in lv0_account_id_list.forin<String>()) {
+                val sub_account = chainMgr.getChainObjectByID(sub_account_id!!)
+                val sub_multi_sign_member_account = sub_account.getJSONObject(permission_key).getJSONArray("account_auths")
+                if (sub_multi_sign_member_account.length() > 0) {
+                    for (item in sub_multi_sign_member_account.forin<JSONArray>()) {
+                        assert(item!!.length() == 2)
+                        val uid = item.getString(0)
+                        if (uid == proposer_account_id) {
+                            return EBitsharesProposalSecurityLevel.ebpsl_multi_sign_member_lv1
+                        }
+                    }
+                }
+            }
+        }
+        //  未知账号发起的提案
+        return EBitsharesProposalSecurityLevel.ebpsl_unknown
+    }
+
     private fun onQueryAllProposalsResponse(data_array: JSONArray) {
-        _data_array.clear()
+        _allDataArray.clear()
+        _safeDataArray.clear()
 
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
 
         data_array.forEach<JSONObject> {
             val proposal = it!!
-            //  TODO:fowallet 需要多种权限的提案暂不支持
+            //  TODO:fowallet 需要多种权限的提案暂不支持 TODO:barter提案 两人互相转账，同时需要批准。
             assert(proposal.getJSONArray("required_active_approvals").length() + proposal.getJSONArray("required_owner_approvals").length() == 1)
+
             //  获取提案执行需要批准的权限数据
             var require_account: JSONObject? = null
             var permissions: JSONObject? = null
@@ -239,6 +309,10 @@ class ActivityProposal : BtsppActivity() {
                 }
             }
             assert(require_account != null && permissions != null)
+
+            //  安全等级
+            val seclevel = _calcProposalSecurityLevel(proposal, require_account!!, is_active)
+            val issafe = _isSafeProposal(seclevel)
 
             //  获取多签中每个权限实体详细数据（包括权重等）
             val needAuthorizeHash = JSONObject()
@@ -322,36 +396,64 @@ class ActivityProposal : BtsppActivity() {
             }
 
             //  添加到列表
-            val processed_infos = jsonObjectfromKVS("inReview", inReview,
-                    "passThreshold", passThreshold,
-                    "currThreshold", currThreshold,
-                    "thresholdPercent", thresholdPercent,
-                    "needAuthorizeHash", needAuthorizeHash,
-                    "availableHash", availableHash,
-                    "newOperations", new_operations)
-            proposal.put("kProcessedData", processed_infos)
-            _data_array.add(proposal)
+            proposal.put("kProcessedData", JSONObject().apply {
+                put("seclevel", seclevel)
+                put("issafe", issafe)
+                put("inReview", inReview)
+                put("passThreshold", passThreshold)
+                put("currThreshold", currThreshold)
+                put("thresholdPercent", thresholdPercent)
+                put("needAuthorizeHash", needAuthorizeHash)
+                put("availableHash", availableHash)
+                put("newOperations", new_operations)
+            })
+            if (issafe) {
+                _safeDataArray.add(proposal)
+            }
+            _allDataArray.add(proposal)
         }
 
         //  根据ID降序排列
-        _data_array.sortByDescending { it.getString("id").split(".").last().toInt() }
+        _safeDataArray.sortByDescending {  it.getString("id").split(".").last().toInt() }
+        _allDataArray.sortByDescending { it.getString("id").split(".").last().toInt() }
 
         //  刷新UI
-        refreshUI()
+        refreshUI(_showSecTips)
     }
 
-    private fun refreshUI() {
+    /**
+     *  (private) 安全提示条点击。
+     */
+    private fun onSecTipViewClicked() {
+        if (_showSecTips) {
+            refreshUI(false)
+        }
+    }
+
+    private fun refreshUI(showSecTips: Boolean) {
+        _showSecTips = showSecTips
+
+        //  没有危险提案，则不用显示安全提示了。
+        if (_showSecTips && _allDataArray.size == _safeDataArray.size) {
+            _showSecTips = false
+        }
+
+        if (_showSecTips) {
+            _currSourceArrayRef = _safeDataArray
+            lyt_sectips.visibility = View.VISIBLE
+            lbl_sectips.text = String.format(resources.getString(R.string.kProposalTipsSecTipBannerMsg), (_allDataArray.size - _safeDataArray.size).toString())
+            lyt_sectips.setOnClickListener { onSecTipViewClicked() }
+        } else {
+            _currSourceArrayRef = _allDataArray
+            lyt_sectips.visibility = View.GONE
+        }
+
         //  清除UI
         val layout_parent = layout_list_of_process_propsal
         layout_parent.removeAllViews()
-
-        if (_data_array.size > 0) {
-            //  循环描绘所有提案
-            var index = 0
-            _data_array.forEach {
-                drawOneProposalUI(this, layout_parent, it, index)
-                index++
-            }
+        //  描绘提案 or 空列表
+        if (_currSourceArrayRef.size > 0) {
+            _currSourceArrayRef.forEachIndexed { index, proposal -> drawOneProposalUI(this, layout_parent, proposal, index) }
         } else {
             layout_parent.addView(ViewUtils.createEmptyCenterLabel(this, R.string.kProposalTipsNoAnyProposals.xmlstring(this)))
         }
@@ -606,35 +708,46 @@ class ActivityProposal : BtsppActivity() {
         }
 
         // 第六话  批准   否决
-        val layout6_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 28.dp)
         val layout6_actions = LinearLayout(this)
-        layout6_actions.layoutParams = layout6_params
+        layout6_actions.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 28.dp).apply {
+            setMargins(0, 10, 0, 10)
+        }
         layout6_actions.orientation = LinearLayout.HORIZONTAL
-        layout6_params.setMargins(0, 10, 0, 10)
+        if (proposalProcessedData.optBoolean("issafe")) {
+            val tv6_left_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f)
+            val tv6_left = TextView(this)
+            tv6_left.layoutParams = tv6_left_params
+            tv6_left.text = R.string.kProposalCellBtnApprove.xmlstring(this)
+            tv6_left.gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL
+            tv6_left.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
+            tv6_left.setTextColor(resources.getColor(R.color.theme01_textColorHighlight))
 
-        val tv6_left_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f)
-        val tv6_left = TextView(this)
-        tv6_left.layoutParams = tv6_left_params
-        tv6_left.text = R.string.kProposalCellBtnApprove.xmlstring(this)
-        tv6_left.gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL
-        tv6_left.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
-        tv6_left.setTextColor(resources.getColor(R.color.theme01_textColorHighlight))
+            val tv6_right = TextView(this)
+            tv6_right.layoutParams = tv6_left_params
+            tv6_right.text = R.string.kProposalCellBtnNotApprove.xmlstring(this)
+            tv6_right.gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL
+            tv6_right.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
+            tv6_right.setTextColor(resources.getColor(R.color.theme01_textColorHighlight))
 
-        val tv6_right = TextView(this)
-        tv6_right.layoutParams = tv6_left_params
-        tv6_right.text = R.string.kProposalCellBtnNotApprove.xmlstring(this)
-        tv6_right.gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL
-        tv6_right.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
-        tv6_right.setTextColor(resources.getColor(R.color.theme01_textColorHighlight))
+            // 批准事件
+            tv6_left.setOnClickListener { onApproveClicked(proposal) }
 
-        // 批准事件
-        tv6_left.setOnClickListener { onApproveClicked(proposal) }
+            // 否决事件
+            tv6_right.setOnClickListener { onRejectClicked(proposal) }
 
-        // 否决事件
-        tv6_right.setOnClickListener { onRejectClicked(proposal) }
-
-        layout6_actions.addView(tv6_left)
-        layout6_actions.addView(tv6_right)
+            layout6_actions.addView(tv6_left)
+            layout6_actions.addView(tv6_right)
+        } else {
+            //  不可批准的安全提示
+            val tips = TextView(this)
+            tips.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f)
+            tips.text = resources.getString(R.string.kProposalTipsSecTipCannotApprove)
+            tips.paint.isFakeBoldText = true
+            tips.gravity = Gravity.LEFT or Gravity.TOP
+            tips.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
+            tips.setTextColor(resources.getColor(R.color.theme01_sellColor))
+            layout6_actions.addView(tips)
+        }
 
         layout_proposal_cell.addView(layout1_title)
         layout_proposal_cell.addView(layout2_accounts)

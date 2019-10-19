@@ -15,7 +15,7 @@
         android:layout_marginTop="25dp"
         android:orientation="vertical">
 
-
+        <!-- 导航栏/标题 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -54,7 +54,27 @@
 
         </FrameLayout>
 
+        <!-- 安全提示 -->
+        <FrameLayout
+            android:id="@+id/lyt_sectips"
+            android:visibility="gone"
+            android:background="@color/theme01.textColorGray"
+            android:layout_width="match_parent"
+            android:layout_height="32dp">
+            <TextView
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:id="@+id/lbl_sectips"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textColor="@color/theme01.textColorMain"
+                android:text=""
+                android:textSize="13dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"/>
+        </FrameLayout>
 
+        <!-- 提案滚动视图 -->
         <ScrollView
             android:fillViewport="true"
             android:layout_width="match_parent"
