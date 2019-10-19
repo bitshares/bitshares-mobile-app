@@ -14,7 +14,6 @@ import android.widget.LinearLayout
 import android.widget.TableRow
 import android.widget.TextView
 import bitshares.*
-import com.btsplusplus.fowallet.kline.TradingPair
 import com.fowallet.walletcore.bts.ChainObjectManager
 import org.json.JSONArray
 import org.json.JSONObject

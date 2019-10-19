@@ -198,19 +198,10 @@
             android:layout_marginTop="20dp"
             android:singleLine="false"
             android:textSize="12dp"
-            android:textColor="@color/theme01.textColorNormal"
+            android:textColor="@color/theme01.textColorMain"
             android:padding="5dp"
-            android:background="@color/theme01.textColorMain"
+            android:background="@color/theme01.textColorGray"
             android:text="@string/kLoginRegTipsAccountMode"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            android:layout_weight="1"
-            android:singleLine="false"
-            android:text="placeholder"
             />
 
     </LinearLayout>

@@ -91,7 +91,7 @@ class FragmentRegisterWalletMode : Fragment() {
                 //  3、注册成功
                 val full_wallet_bin = WalletManager.sharedWalletManager().genFullWalletData(activity!!, username, jsonArrayfrom(private_active, private_owner), password)
                 //  查询完整帐号信息
-                chainMgr.queryFullAccountInfoWithRetry(username, retry_num = 3).then {
+                chainMgr.queryFullAccountInfo(username, retry_num = 3).then {
                     mask.dismiss()
                     val new_full_account_data = it as? JSONObject
                     if (new_full_account_data == null) {

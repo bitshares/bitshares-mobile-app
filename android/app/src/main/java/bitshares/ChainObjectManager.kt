@@ -1403,16 +1403,9 @@ class ChainObjectManager {
     }
 
     /**
-     * (public) 查询指定帐号的完整信息
-     */
-    fun queryFullAccountInfo(account_name_or_id: String): Promise {
-        return queryFullAccountInfoWithRetry(account_name_or_id, retry_num = 1)
-    }
-
-    /**
      * (public) 查询完整账号信息，带重试。REMARK：刚注册成功的账号可能查询失败，网络尚未同步完毕。
      */
-    fun queryFullAccountInfoWithRetry(account_name_or_id: String, retry_num: Int): Promise {
+    fun queryFullAccountInfo(account_name_or_id: String, retry_num: Int = 1): Promise {
         val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
         return conn.async_exec_db("get_full_accounts", jsonArrayfrom(jsonArrayfrom(account_name_or_id), false)).then {
             val data = it as? JSONArray
@@ -1421,7 +1414,7 @@ class ChainObjectManager {
                 if (retry_num > 1) {
                     //  等待一会 & 重试
                     return@then OrgUtils.asyncWait(2000).then {
-                        return@then queryFullAccountInfoWithRetry(account_name_or_id, retry_num - 1)
+                        return@then queryFullAccountInfo(account_name_or_id, retry_num = retry_num - 1)
                     }
                 } else {
                     //  失败
