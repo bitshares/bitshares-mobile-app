@@ -106,6 +106,60 @@ open class T_Base_companion {
             return opdata
         }
     }
+
+    /**
+     *  排序：部分类型序列化需要排序。
+     *  各种类型可以通过实现：sort_by 方法自定义排序。
+     */
+    protected fun sort_opdata_array(array: JSONArray?, optype: T_Base_companion): JSONArray? {
+        //  no need to sort
+        if (array == null || array.length() <= 1) {
+            return array
+        }
+        //  no sort
+        if (optype.nosort()) {
+            return array
+        }
+        //  调用自定义排序（子类型可重载。）
+        return optype.custom_sort_func(array)
+    }
+
+    /**
+     *  不排序，需要的类型应该重载该方法
+     */
+    open fun nosort(): Boolean {
+        return false
+    }
+
+    /**
+     *  排序核心逻辑，默认调用默认排序方法。子类可重载。
+     */
+    open fun custom_sort_func(array: JSONArray): JSONArray {
+        return default_sort_compare_fun(array)
+    }
+
+    protected fun sort_by(array: JSONArray, func: (a: Any, b: Any) -> Int): JSONArray {
+        return array.toList<Any>().sortedWith(Comparator { obj1, obj2 ->
+            val a = if (obj1 is JSONArray) obj1.get(0) else obj1
+            val b = if (obj2 is JSONArray) obj2.get(0) else obj2
+            return@Comparator func(a, b)
+        }).toJsonArray()
+    }
+
+    /**
+     *  默认排序方法。
+     */
+    private fun default_sort_compare_fun(array: JSONArray): JSONArray {
+        return sort_by(array) { a, b ->
+            if (a is Number && b is Number) {
+                return@sort_by a.toInt() - b.toInt()
+            } else if (a is ByteArray && b is ByteArray) {
+                return@sort_by a.hexEncode().compareTo(b.hexEncode())
+            } else {
+                return@sort_by a.toString().compareTo(b.toString())
+            }
+        }
+    }
 }
 
 open class T_Base {
@@ -247,6 +301,12 @@ class T_vote_id : T_Base() {
             //  v.require_range(0, 0xffffff, id, `vote id ${object}`);
             io.write_u32(vote_idnum.shl(8).or(vote_type))
         }
+
+        override fun custom_sort_func(array: JSONArray): JSONArray {
+            return sort_by(array) { obj1, obj2 ->
+                return@sort_by (obj1 as String).split(":").last().toInt() - (obj2 as String).split(":").last().toInt()
+            }
+        }
     }
 }
 
@@ -255,6 +315,16 @@ class T_public_key : T_Base() {
         override fun to_byte_buffer(io: BinSerializer, opdata: Any?) {
             assert(opdata is String)
             io.write_public_key(opdata as String)
+        }
+
+        override fun custom_sort_func(array: JSONArray): JSONArray {
+            //  参考：fc::array<char,33>
+            return sort_by(array) { obj1, obj2 ->
+                val da = OrgUtils.genBtsBlockchainAddress(obj1 as String)!!
+                val db = OrgUtils.genBtsBlockchainAddress(obj2 as String)!!
+                assert(da.size == db.size)
+                return@sort_by da.hexEncode().compareTo(db.hexEncode())
+            }
         }
     }
 }
@@ -295,6 +365,12 @@ class Tm_protocol_id_type(name: String) : T_Base_companion() {
 
     override fun to_object(opdata: Any?): Any? {
         return opdata
+    }
+
+    override fun custom_sort_func(array: JSONArray): JSONArray {
+        return sort_by(array) { obj1, obj2 ->
+            return@sort_by (obj1 as String).split(".").last().toInt() - (obj2 as String).split(".").last().toInt()
+        }
     }
 }
 
@@ -382,7 +458,7 @@ class Tm_map(key_optype: T_Base_companion, value_optype: T_Base_companion) : T_B
 
     override fun to_byte_buffer(io: BinSerializer, opdata: Any?) {
         assert(opdata is JSONArray)
-        val ary = opdata as JSONArray
+        val ary = sort_opdata_array(opdata as JSONArray, _key_optype)!!
         io.write_varint32(ary.length())
         ary.forEach<JSONArray> {
             val pair = it!!
@@ -394,7 +470,7 @@ class Tm_map(key_optype: T_Base_companion, value_optype: T_Base_companion) : T_B
 
     override fun to_object(opdata: Any?): Any? {
         assert(opdata is JSONArray)
-        val ary = opdata as JSONArray
+        val ary = sort_opdata_array(opdata as JSONArray, _key_optype)!!
         val result = JSONArray()
         ary.forEach<JSONArray> {
             val pair = it!!
@@ -505,6 +581,13 @@ class Tm_static_variant(optypearray: JSONArray) : T_Base_companion() {
             put(type_id)
             put(encode_to_object_with_type(optype, opdata.last()))
         }
+    }
+
+    /**
+     *  重载：该类型不排序
+     */
+    override fun nosort(): Boolean {
+        return true
     }
 }
 
