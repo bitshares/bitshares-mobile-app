@@ -213,7 +213,7 @@
                     android:textSize="12dp"
                     android:textColor="@color/theme01.textColorMain"
                     android:padding="5dp"
-                    android:background="@color/theme01.textColorNormal"
+                    android:background="@color/theme01.textColorGray"
                     android:text="@string/kVcPermissionEditHelpTips" />
             </LinearLayout>
         </ScrollView>

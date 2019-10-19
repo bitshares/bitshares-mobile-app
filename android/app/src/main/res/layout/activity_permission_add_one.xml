@@ -51,7 +51,7 @@
 
         </FrameLayout>
 
-        <!-- 管理者 -->
+        <!-- 管理者标题 -->
         <TextView
             android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
@@ -61,6 +61,7 @@
             android:textColor="@color/theme01.textColorMain"
             />
 
+        <!-- 管理者输入框 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
@@ -71,17 +72,20 @@
                 android:id="@+id/tf_authority_name"
                 android:singleLine="true"
                 android:maxLines="1"
+                android:maxLength="64"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical|right"
                 android:gravity="center_vertical|left"
                 android:layout_weight="6"
-                android:textColor="#ffffff"
+                android:textColor="@color/theme01.textColorMain"
                 android:textColorHint="@color/theme01.textColorGray"
+                android:cursorVisible="true"
+                android:textCursorDrawable="@null"
+                android:paddingLeft="0dp"
                 android:hint="@string/kVcPermissionAddOnePlaceholderAuthority"
                 android:theme="@style/theme01.EditText"
-                android:background="@null"
-                android:textSize="16dp"/>
+                android:textSize="16dp" />
 
             <TextView
                 android:id="@+id/btn_search"
@@ -97,7 +101,7 @@
 
         <View android:layout_height="1dp" android:layout_marginTop="0dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-        <!-- 权重 -->
+        <!-- 权重标题 -->
         <TextView
             android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
@@ -107,6 +111,7 @@
             android:textColor="@color/theme01.textColorMain"
             />
 
+        <!-- 权重输入框 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
@@ -125,13 +130,14 @@
                 android:layout_gravity="center_vertical|right"
                 android:gravity="center_vertical|left"
                 android:layout_weight="6"
-                android:textColor="#ffffff"
+                android:textColor="@color/theme01.textColorMain"
                 android:textColorHint="@color/theme01.textColorGray"
+                android:cursorVisible="true"
+                android:textCursorDrawable="@null"
+                android:paddingLeft="0dp"
                 android:hint="@string/kVcPermissionAddOnePlaceholderWeight"
                 android:theme="@style/theme01.EditText"
-                android:background="@null"
-                android:textSize="16dp"/>
-
+                android:textSize="16dp" />
 
         </LinearLayout>
 

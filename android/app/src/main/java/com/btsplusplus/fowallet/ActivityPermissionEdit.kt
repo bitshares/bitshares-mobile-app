@@ -17,7 +17,6 @@ import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_permission_edit.*
 import org.json.JSONArray
 import org.json.JSONObject
-import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
@@ -139,7 +138,7 @@ class ActivityPermissionEdit : BtsppActivity() {
     private fun _drawAuthorityLine(ctx: Context, title: String, weight: String, btn: String, authority_item: JSONObject? = null): LinearLayout {
         val is_title = authority_item == null
         return LinearLayout(ctx).apply {
-            layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP).apply {
+            layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, 28.dp).apply {
                 setMargins(0, 5.dp, 0, 0)
             }
             orientation = LinearLayout.HORIZONTAL
@@ -173,6 +172,7 @@ class ActivityPermissionEdit : BtsppActivity() {
                 gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
 
                 layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 3.0f).apply {
+                    setMargins(16.dp, 0, 0, 0)
                     gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
                 }
                 val tv_weight = TextView(ctx).apply {
@@ -192,7 +192,7 @@ class ActivityPermissionEdit : BtsppActivity() {
                 orientation = LinearLayout.HORIZONTAL
                 gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
 
-                layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 2.0f).apply {
+                layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 1.5f).apply {
                     gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
                 }
                 val tv_remove = TextView(ctx).apply {

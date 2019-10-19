@@ -1,9 +1,7 @@
 package bitshares
 
-import android.app.Activity
 import android.support.v7.app.AppCompatActivity
 import com.btsplusplus.fowallet.ActivityAccountInfo
-import org.json.JSONArray
 import org.json.JSONObject
 
 class TempManager {
@@ -38,9 +36,11 @@ class TempManager {
      *  TODO:临时实现，临时保存，从权限编辑push到login界面，需要同时finish权限编辑和账号信息两个界面。
      */
     private var _tmpActivityAccountInfo: ActivityAccountInfo? = null
+
     fun setActivityAccountInfo(act: ActivityAccountInfo?) {
         _tmpActivityAccountInfo = act
     }
+
     fun finishActivityAccountInfo() {
         if (_tmpActivityAccountInfo != null) {
             _tmpActivityAccountInfo!!.finish()

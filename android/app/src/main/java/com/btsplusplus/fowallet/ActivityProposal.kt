@@ -414,7 +414,7 @@ class ActivityProposal : BtsppActivity() {
         }
 
         //  根据ID降序排列
-        _safeDataArray.sortByDescending {  it.getString("id").split(".").last().toInt() }
+        _safeDataArray.sortByDescending { it.getString("id").split(".").last().toInt() }
         _allDataArray.sortByDescending { it.getString("id").split(".").last().toInt() }
 
         //  刷新UI

@@ -69,7 +69,7 @@ class ActivityFeedPrice : BtsppActivity() {
             val promise_map = JSONObject()
 
             //  1、查询喂价者信息
-            val publisher_type:EBitsharesFeedPublisherType
+            val publisher_type: EBitsharesFeedPublisherType
             val flags = assetData.getJSONObject("options").getInt("flags")
             if (flags.and(EBitsharesAssetFlags.ebat_witness_fed_asset.value) != 0) {
                 //  由见证人提供喂价

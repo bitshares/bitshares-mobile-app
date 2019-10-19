@@ -173,7 +173,7 @@ class FragmentPermissionList : BtsppFragment() {
                             setMargins(0, 0, 5.dp, 0)
                         }
                         gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
-                        setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
+                        setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15.0f)
                         setTextColor(resources.getColor(R.color.theme01_textColorHighlight))
                         text = "$index. ${item.getString("title")}"
                     }
@@ -224,7 +224,6 @@ class FragmentPermissionList : BtsppFragment() {
                             setPadding(2.dp, 0, 0, 0)
                             setTextColor(resources.getColor(R.color.theme01_textColorMain))
                             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
-
                         }
 
                         addView(tv_threshold_name)
@@ -296,7 +295,7 @@ class FragmentPermissionList : BtsppFragment() {
                     weight_percent = min(weight_percent, 100.0)
 
                     val layout_permission_weight = LinearLayout(_ctx).apply {
-                        layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP).apply {
+                        layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, 24.dp).apply {
                             setMargins(0, 0.dp, 0, 5.dp)
                         }
                         orientation = LinearLayout.HORIZONTAL
@@ -306,7 +305,7 @@ class FragmentPermissionList : BtsppFragment() {
                             orientation = LinearLayout.HORIZONTAL
                             gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
 
-                            layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 4.3f).apply {
+                            layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 3.0f).apply {
                                 gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
                             }
                             val tv_admin_public_key = TextView(_ctx).apply {
@@ -351,6 +350,9 @@ class FragmentPermissionList : BtsppFragment() {
                 //  备注权限单独处理
                 val first_authority_item = item.getJSONArray("items").getJSONObject(0)
                 val tv_weight = TextView(_ctx).apply {
+                    layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP).apply {
+                        setMargins(0, 10.dp, 0, 5.dp)
+                    }
                     text = first_authority_item.getString("key")
                     setTextColor(resources.getColor(R.color.theme01_textColorMain))
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
