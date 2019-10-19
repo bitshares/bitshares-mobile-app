@@ -222,13 +222,21 @@ fun Fragment.showToast(str: String, duration: Int = Toast.LENGTH_SHORT) {
 fun android.app.Activity.showGrapheneError(error: Any?) {
     if (error != null) {
         try {
-            var json: JSONObject
-            if (error is Promise.WsPromiseException) {
-                json = JSONObject(error.message.toString())
+            val json = if (error is Promise.WsPromiseException) {
+                JSONObject(error.message.toString())
             } else {
-                json = JSONObject(error.toString())
+                JSONObject(error.toString())
             }
-            val msg = json.optString("message", "")
+
+            var msg = json.optString("message", "")
+            val stack = json.optJSONObject("data")?.optJSONArray("stack")
+            if (stack != null && stack.length() > 0) {
+                val format = stack.optJSONObject(0)?.optString("format", null)
+                if (format != null) {
+                    msg = String.format("%s : %s", msg, format)
+                }
+            }
+
             if (msg != "") {
                 //  特化错误信息
                 //  "Assert Exception: account: no such account"
