@@ -329,8 +329,6 @@
     for (id proposal in proposal_data_array) {
         //  TODO:fowallet 需要多种权限的提案暂不支持 TODO:barter提案 两人互相转账，同时需要批准。
         assert([[proposal objectForKey:@"required_active_approvals"] count] + [[proposal objectForKey:@"required_owner_approvals"] count] == 1);
-        NSString* proposer_account = [proposal objectForKey:@"proposer"];
-        assert(proposer_account);
         
         //  获取提案执行需要批准的权限数据
         NSDictionary* require_account = nil;

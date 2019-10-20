@@ -300,7 +300,7 @@
                                                      invert:NO roundingMode:NSRoundDown set_divide_precision:YES];
             
             NSDecimalNumber* change;
-            if (_feedPriceInfo) {
+            if (_feedPriceInfo && n_price) {
                 id rate = [n_price decimalNumberByDividingBy:_feedPriceInfo withBehavior:percentHandler];
                 rate = [rate decimalNumberBySubtracting:[NSDecimalNumber one] withBehavior:percentHandler];
                 change = [rate decimalNumberByMultiplyingByPowerOf10:2 withBehavior:percentHandler];
