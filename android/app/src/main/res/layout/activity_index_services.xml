@@ -15,12 +15,10 @@
         android:layout_marginTop="25dp"
         android:orientation="vertical">
 
-
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:orientation="horizontal">
-
 
             <TextView
                 android:id="@+id/title"
@@ -33,365 +31,376 @@
 
         </FrameLayout>
 
-
-        <!-- 转账 -->
-        <LinearLayout
-            android:id="@+id/layout_transfer_from_services"
+        <!-- 滚动视图 -->
+        <ScrollView
+            android:paddingBottom="48dp"
             android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="30dp"
-            android:orientation="horizontal">
+            android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/img_icon_transfer"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/icon_transfer"/>
-            <TextView
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/kServicesCellLabelTransfer"/>
+                android:paddingBottom="24dp"
+                android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_weight="1"
+                <!-- 转账 -->
+                <LinearLayout
+                    android:id="@+id/layout_transfer_from_services"
+                    android:layout_width="match_parent"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="30dp"
+                    android:orientation="horizontal">
 
-                android:foregroundGravity="right"
-                android:src="@drawable/ic_btn_right_arrow" />
+                    <ImageView
+                        android:id="@+id/img_icon_transfer"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/icon_transfer"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="16dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="@string/kServicesCellLabelTransfer"/>
 
-        </LinearLayout>
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical|right"
+                        android:layout_weight="1"
 
-        <!-- 投票 -->
-        <LinearLayout
-            android:id="@+id/layout_voting_from_services"
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal">
+                        android:foregroundGravity="right"
+                        android:src="@drawable/ic_btn_right_arrow" />
 
-            <ImageView
-                android:id="@+id/img_icon_voting"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/icon_vote"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/kServicesCellLabelVoting"/>
+                </LinearLayout>
 
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_weight="1"
+                <!-- 投票 -->
+                <LinearLayout
+                    android:id="@+id/layout_voting_from_services"
+                    android:layout_width="match_parent"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
 
-                android:foregroundGravity="right"
-                android:src="@drawable/ic_btn_right_arrow" />
+                    <ImageView
+                        android:id="@+id/img_icon_voting"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/icon_vote"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="16dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="@string/kServicesCellLabelVoting"/>
 
-        </LinearLayout>
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical|right"
+                        android:layout_weight="1"
 
-        <!-- 扫一扫 -->
-        <LinearLayout
-            android:id="@+id/layout_saoyisao_from_services"
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="30dp"
-            android:orientation="horizontal">
+                        android:foregroundGravity="right"
+                        android:src="@drawable/ic_btn_right_arrow" />
 
-            <ImageView
-                android:id="@+id/img_icon_qrscan"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/icon_scan"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/nameSaoyisao"/>
+                </LinearLayout>
 
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_weight="1"
+                <!-- 扫一扫 -->
+                <LinearLayout
+                    android:id="@+id/layout_saoyisao_from_services"
+                    android:layout_width="match_parent"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="30dp"
+                    android:orientation="horizontal">
 
-                android:foregroundGravity="right"
-                android:src="@drawable/ic_btn_right_arrow" />
+                    <ImageView
+                        android:id="@+id/img_icon_qrscan"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/icon_scan"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="16dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="@string/nameSaoyisao"/>
 
-        </LinearLayout>
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical|right"
+                        android:layout_weight="1"
 
-        <!-- 账号查询 -->
-        <LinearLayout
-            android:id="@+id/layout_account_query_from_services"
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="40dp"
-            android:orientation="horizontal">
+                        android:foregroundGravity="right"
+                        android:src="@drawable/ic_btn_right_arrow" />
 
-            <ImageView
-                android:id="@+id/img_icon_account_search"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/icon_query"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/kServicesCellLabelAccountSearch"/>
+                </LinearLayout>
 
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_weight="1"
+                <!-- 账号查询 -->
+                <LinearLayout
+                    android:id="@+id/layout_account_query_from_services"
+                    android:layout_width="match_parent"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="40dp"
+                    android:orientation="horizontal">
 
-                android:foregroundGravity="right"
-                android:src="@drawable/ic_btn_right_arrow" />
+                    <ImageView
+                        android:id="@+id/img_icon_account_search"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/icon_query"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="16dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="@string/kServicesCellLabelAccountSearch"/>
 
-        </LinearLayout>
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical|right"
+                        android:layout_weight="1"
 
-        <!-- 抵押排行 -->
-        <LinearLayout
-            android:id="@+id/layout_diya_ranking_from_services"
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal">
+                        android:foregroundGravity="right"
+                        android:src="@drawable/ic_btn_right_arrow" />
 
-            <ImageView
-                android:id="@+id/img_icon_rank"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/icon_debt_rank"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/kServicesCellLabelRank"/>
+                </LinearLayout>
 
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_weight="1"
+                <!-- 抵押排行 -->
+                <LinearLayout
+                    android:id="@+id/layout_diya_ranking_from_services"
+                    android:layout_width="match_parent"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
 
-                android:foregroundGravity="right"
-                android:src="@drawable/ic_btn_right_arrow" />
+                    <ImageView
+                        android:id="@+id/img_icon_rank"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/icon_debt_rank"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="16dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="@string/kServicesCellLabelRank"/>
 
-        </LinearLayout>
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical|right"
+                        android:layout_weight="1"
 
-        <!-- 喂价详情 -->
-        <LinearLayout
-            android:id="@+id/layout_feed_price"
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal">
-            <ImageView
-                android:id="@+id/img_icon_feedprice"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/iconfeed"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/kServicesCellLabelFeedPrice"/>
+                        android:foregroundGravity="right"
+                        android:src="@drawable/ic_btn_right_arrow" />
 
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_weight="1"
+                </LinearLayout>
 
-                android:foregroundGravity="right"
-                android:src="@drawable/ic_btn_right_arrow" />
-        </LinearLayout>
+                <!-- 喂价详情 -->
+                <LinearLayout
+                    android:id="@+id/layout_feed_price"
+                    android:layout_width="match_parent"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:id="@+id/img_icon_feedprice"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/iconfeed"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="16dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="@string/kServicesCellLabelFeedPrice"/>
 
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical|right"
+                        android:layout_weight="1"
 
-        <!-- 充提 -->
-        <LinearLayout
-            android:id="@+id/layout_recharge_and_withdraw_of_service"
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="40dp"
-            android:orientation="horizontal">
-            <ImageView
-                android:id="@+id/img_icon_deposit_withdraw"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/icon_depositwithdraw"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/kServicesCellLabelDepositWithdraw"/>
+                        android:foregroundGravity="right"
+                        android:src="@drawable/ic_btn_right_arrow" />
+                </LinearLayout>
 
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_weight="1"
+                <!-- 充提 -->
+                <LinearLayout
+                    android:id="@+id/layout_recharge_and_withdraw_of_service"
+                    android:layout_width="match_parent"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="40dp"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:id="@+id/img_icon_deposit_withdraw"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/icon_depositwithdraw"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="16dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="@string/kServicesCellLabelDepositWithdraw"/>
 
-                android:foregroundGravity="right"
-                android:src="@drawable/ic_btn_right_arrow" />
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical|right"
+                        android:layout_weight="1"
 
-        </LinearLayout>
+                        android:foregroundGravity="right"
+                        android:src="@drawable/ic_btn_right_arrow" />
 
-        <!-- 高级功能 -->
-        <LinearLayout
-            android:id="@+id/layout_advanced_feature_of_service"
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="40dp"
-            android:orientation="horizontal">
-            <ImageView
-                android:id="@+id/img_icon_advfunction"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/icon_advfunction"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/kServicesCellLabelAdvFunction"/>
+                </LinearLayout>
 
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_weight="1"
-                android:foregroundGravity="right"
-                android:src="@drawable/ic_btn_right_arrow" />
+                <!-- 高级功能 -->
+                <LinearLayout
+                    android:id="@+id/layout_advanced_feature_of_service"
+                    android:layout_width="match_parent"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="40dp"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:id="@+id/img_icon_advfunction"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/icon_advfunction"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="16dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="@string/kServicesCellLabelAdvFunction"/>
 
-        </LinearLayout>
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical|right"
+                        android:layout_weight="1"
+                        android:foregroundGravity="right"
+                        android:src="@drawable/ic_btn_right_arrow" />
 
-        <!-- BTS区块浏览器 -->
-        <LinearLayout
-            android:id="@+id/layout_bts_explorer"
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="40dp"
-            android:orientation="horizontal">
-            <ImageView
-                android:id="@+id/img_icon_explorer"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/icon_explorer"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/kServicesCellLabelBtsExplorer"/>
+                </LinearLayout>
+                
+                <!-- BTS区块浏览器 -->
+                <LinearLayout
+                    android:id="@+id/layout_bts_explorer"
+                    android:layout_width="match_parent"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="40dp"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:id="@+id/img_icon_explorer"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/icon_explorer"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="16dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="@string/kServicesCellLabelBtsExplorer"/>
 
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_weight="1"
-                android:foregroundGravity="right"
-                android:src="@drawable/ic_btn_right_arrow" />
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical|right"
+                        android:layout_weight="1"
+                        android:foregroundGravity="right"
+                        android:src="@drawable/ic_btn_right_arrow" />
 
-        </LinearLayout>
+                </LinearLayout>
 
-        <!-- 小游戏 TODO：未完成 -->
-        <LinearLayout
-            android:id="@+id/layout_game_of_service"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="40dp"
-            android:orientation="horizontal">
-            <ImageView
-                android:id="@+id/img_icon_game"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/iconfeed"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/serviceMainPageGame"/>
+                <!-- 小游戏 TODO：未完成 -->
+                <LinearLayout
+                    android:id="@+id/layout_game_of_service"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="40dp"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:id="@+id/img_icon_game"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/iconfeed"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="16dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="@string/serviceMainPageGame"/>
 
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_weight="1"
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical|right"
+                        android:layout_weight="1"
 
-                android:foregroundGravity="right"
-                android:src="@drawable/ic_btn_right_arrow" />
+                        android:foregroundGravity="right"
+                        android:src="@drawable/ic_btn_right_arrow" />
 
-        </LinearLayout>
+                </LinearLayout>
 
-
-
+            </LinearLayout>
+        </ScrollView>
+        
     </LinearLayout>
-
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

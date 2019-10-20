@@ -82,7 +82,12 @@ class BitsharesClientManager {
     fun accountUpdate(account_update_op_data: JSONObject): Promise {
         val tr = TransactionBuilder()
         tr.add_operation(EBitsharesOperations.ebo_account_update, account_update_op_data)
-        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(account_update_op_data.getString("account")))
+        //  REMARK：修改 owner 需要 owner 权限。
+        var requireOwnerPermission = false
+        if (account_update_op_data.has("owner")) {
+            requireOwnerPermission = true
+        }
+        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(account_update_op_data.getString("account"), requireOwnerPermission))
         return process_transaction(tr)
     }
 
