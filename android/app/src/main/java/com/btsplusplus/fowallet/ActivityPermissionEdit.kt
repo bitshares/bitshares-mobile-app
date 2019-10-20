@@ -433,15 +433,14 @@ class ActivityPermissionEdit : BtsppActivity() {
                     mask.dismiss()
                     //  [统计]
                     btsppLogCustom("txUpdateAccountPermissionFullOK", jsonObjectfromKVS("account", uid, "mode", "password"))
-
                     UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kWarmTips), resources.getString(R.string.kVcPermissionEditSubmitOkRelogin), btn_cancel = null).then {
-                        return@then null
                         //  注销
                         WalletManager.sharedWalletManager().processLogout()
                         //  转到重新登录界面。
                         goTo(ActivityLogin::class.java, true, close_self = true)
                         //  TODO:临时实现
                         TempManager.sharedTempManager().finishActivityAccountInfo()
+                        return@then null
                     }
                 } else {
                     //  钱包模式：修改权限之后刷新账号信息即可。（可能当前账号不在拥有完整的active权限。）

@@ -7,366 +7,374 @@
     android:background="@color/theme01.appBackColor"
     tools:context=".ActivityIndexMy">
 
-    <LinearLayout
+    <!-- 滚动视图 -->
+    <ScrollView
+        android:paddingBottom="48dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="10dp"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <!-- banner -->
         <LinearLayout
-            android:id="@+id/layout_my_top"
             android:layout_width="match_parent"
-            android:layout_marginTop="50dp"
-            android:layout_height="80dp"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:paddingBottom="24dp"
+            android:orientation="vertical">
 
-            <!-- 左边头像+文字一体 -->
+            <!-- banner -->
             <LinearLayout
-                android:layout_width="0dp"
+                android:id="@+id/layout_my_top"
+                android:layout_width="match_parent"
+                android:layout_marginTop="50dp"
                 android:layout_height="80dp"
-                android:layout_weight="10"
                 android:orientation="horizontal">
-                <!-- 左边头像 -->
-                <ImageView
-                    android:id="@+id/img_icon_avatar"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:layout_weight="1"
-                    android:src="@drawable/avatar" />
 
-                <!-- 中间文字 -->
+                <!-- 左边头像+文字一体 -->
                 <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_weight="6"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_width="0dp"
+                    android:layout_height="80dp"
+                    android:layout_weight="10"
+                    android:orientation="horizontal">
+                    <!-- 左边头像 -->
+                    <ImageView
+                        android:id="@+id/img_icon_avatar"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:layout_weight="1"
+                        android:src="@drawable/avatar" />
 
-                    <TextView
-                        android:id="@+id/label_txt_accoutname"
+                    <!-- 中间文字 -->
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_weight="6"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:layout_marginStart="12dp"
-                        android:text="@string/kAccountManagement"
-                        android:textColor="@color/theme01.textColorMain"
-                        android:textSize="14dp" />
+                        android:layout_height="wrap_content">
 
-                    <TextView
-                        android:id="@+id/label_txt_status"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginStart="12dp"
-                        android:text="@string/tip_click_to_login"
-                        android:textColor="@color/theme01.textColorNormal"
-                        android:textSize="12dp" />
+                        <TextView
+                            android:id="@+id/label_txt_accoutname"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginStart="12dp"
+                            android:text="@string/kAccountManagement"
+                            android:textColor="@color/theme01.textColorMain"
+                            android:textSize="14dp" />
+
+                        <TextView
+                            android:id="@+id/label_txt_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginStart="12dp"
+                            android:text="@string/tip_click_to_login"
+                            android:textColor="@color/theme01.textColorNormal"
+                            android:textSize="12dp" />
+                    </LinearLayout>
                 </LinearLayout>
+
+                <!-- 右边箭头 -->
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical|right"
+                    android:layout_weight="1"
+                    android:foregroundGravity="right"
+                    android:src="@drawable/ic_btn_right_arrow" />
+
             </LinearLayout>
 
-            <!-- 右边箭头 -->
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_weight="1"
-                android:foregroundGravity="right"
-                android:src="@drawable/ic_btn_right_arrow" />
+            <!-- balance -->
+            <LinearLayout
+                android:id="@+id/layout_my_assets_of_my"
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
 
+                <ImageView
+                    android:id="@+id/img_icon_assets"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/assets"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:layout_weight="9"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="@string/kLblCellMyBalance"/>
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical|right"
+                    android:layout_weight="1"
+
+                    android:foregroundGravity="right"
+                    android:src="@drawable/ic_btn_right_arrow" />
+
+            </LinearLayout>
+
+            <!-- order -->
+            <LinearLayout
+                android:id="@+id/layout_order_management_of_my"
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/img_icon_orders"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/orders"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:layout_weight="9"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="@string/kVcTitleOrderManagement"/>
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical|right"
+                    android:layout_weight="1"
+
+                    android:foregroundGravity="right"
+                    android:src="@drawable/ic_btn_right_arrow" />
+
+            </LinearLayout>
+
+
+            <!-- wallet -->
+            <LinearLayout
+                android:id="@+id/layout_my_wallet_and_muti_signature"
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/img_icon_wallet"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/wallet"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:layout_weight="9"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="@string/kVcTitleWalletAndMultiSign"/>
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical|right"
+                    android:layout_weight="1"
+
+                    android:foregroundGravity="right"
+                    android:src="@drawable/ic_btn_right_arrow" />
+
+            </LinearLayout>
+
+            <!-- proposal -->
+            <LinearLayout
+                android:id="@+id/layout_my_proposal_waiting_for_process"
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/img_icon_proposal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/proposal"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:layout_weight="9"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="@string/kVcTitleMyProposal"/>
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical|right"
+                    android:layout_weight="1"
+
+                    android:foregroundGravity="right"
+                    android:src="@drawable/ic_btn_right_arrow" />
+
+            </LinearLayout>
+
+
+            <!-- TODO：待解冻金额，未完成。 -->
+            <LinearLayout
+                android:id="@+id/layout_unfreeze_amount_of_my"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/img_icon_vesting_balance"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/orders"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:layout_weight="9"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="@string/kLblCellVestingBalance"/>
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical|right"
+                    android:layout_weight="1"
+
+                    android:foregroundGravity="right"
+                    android:src="@drawable/ic_btn_right_arrow" />
+
+            </LinearLayout>
+
+            <!-- faq -->
+            <LinearLayout
+                android:id="@+id/layout_faq_from_my"
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:layout_marginTop="40dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/img_icon_faq"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/faq"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:layout_weight="9"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="@string/faq"/>
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical|right"
+                    android:layout_weight="1"
+
+                    android:foregroundGravity="right"
+                    android:src="@drawable/ic_btn_right_arrow" />
+
+            </LinearLayout>
+
+            <!-- setting -->
+            <LinearLayout
+                android:id="@+id/layout_setting_from_my"
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:layout_marginTop="40dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/img_icon_setting"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/setting"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:layout_weight="9"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="@string/kSettingEx"/>
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical|right"
+                    android:layout_weight="1"
+                    android:foregroundGravity="right"
+                    android:src="@drawable/ic_btn_right_arrow" />
+
+            </LinearLayout>
+
+            <!-- about -->
+            <LinearLayout
+                android:id="@+id/layout_about_from_my"
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/img_icon_about"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/about"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:layout_weight="9"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="@string/kLblCellAboutBtspp"/>
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical|right"
+                    android:layout_weight="1"
+
+                    android:foregroundGravity="right"
+                    android:src="@drawable/ic_btn_right_arrow" />
+
+            </LinearLayout>
+            
         </LinearLayout>
 
-        <!-- balance -->
-        <LinearLayout
-            android:id="@+id/layout_my_assets_of_my"
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/img_icon_assets"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/assets"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/kLblCellMyBalance"/>
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_weight="1"
-
-                android:foregroundGravity="right"
-                android:src="@drawable/ic_btn_right_arrow" />
-
-        </LinearLayout>
-
-        <!-- order -->
-        <LinearLayout
-            android:id="@+id/layout_order_management_of_my"
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/img_icon_orders"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/orders"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/kVcTitleOrderManagement"/>
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_weight="1"
-
-                android:foregroundGravity="right"
-                android:src="@drawable/ic_btn_right_arrow" />
-
-        </LinearLayout>
-
-
-        <!-- wallet -->
-        <LinearLayout
-            android:id="@+id/layout_my_wallet_and_muti_signature"
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/img_icon_wallet"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/wallet"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/kVcTitleWalletAndMultiSign"/>
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_weight="1"
-
-                android:foregroundGravity="right"
-                android:src="@drawable/ic_btn_right_arrow" />
-
-        </LinearLayout>
-
-        <!-- proposal -->
-        <LinearLayout
-            android:id="@+id/layout_my_proposal_waiting_for_process"
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/img_icon_proposal"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/proposal"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/kVcTitleMyProposal"/>
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_weight="1"
-
-                android:foregroundGravity="right"
-                android:src="@drawable/ic_btn_right_arrow" />
-
-        </LinearLayout>
-
-
-        <!-- TODO：待解冻金额，未完成。 -->
-        <LinearLayout
-            android:id="@+id/layout_unfreeze_amount_of_my"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/img_icon_vesting_balance"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/orders"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/kLblCellVestingBalance"/>
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_weight="1"
-
-                android:foregroundGravity="right"
-                android:src="@drawable/ic_btn_right_arrow" />
-
-        </LinearLayout>
-
-        <!-- faq -->
-        <LinearLayout
-            android:id="@+id/layout_faq_from_my"
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="40dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/img_icon_faq"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/faq"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/faq"/>
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_weight="1"
-
-                android:foregroundGravity="right"
-                android:src="@drawable/ic_btn_right_arrow" />
-
-        </LinearLayout>
-
-        <!-- setting -->
-        <LinearLayout
-            android:id="@+id/layout_setting_from_my"
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="40dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/img_icon_setting"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/setting"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/kSettingEx"/>
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_weight="1"
-                android:foregroundGravity="right"
-                android:src="@drawable/ic_btn_right_arrow" />
-
-        </LinearLayout>
-
-        <!-- about -->
-        <LinearLayout
-            android:id="@+id/layout_about_from_my"
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/img_icon_about"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/about"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:layout_weight="9"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="@string/kLblCellAboutBtspp"/>
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_weight="1"
-
-                android:foregroundGravity="right"
-                android:src="@drawable/ic_btn_right_arrow" />
-
-        </LinearLayout>
-
-
-    </LinearLayout>
+    </ScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"
