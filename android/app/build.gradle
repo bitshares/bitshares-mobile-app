@@ -55,8 +55,8 @@ android {
         }
         baichenglian {
             applicationId "cn.btser.shop"
-            versionCode 201908221
-            versionName "1.0"
+            versionCode 201910211
+            versionName "1.1"
 
             buildConfigField "boolean", "kAppModuleEnableTabMarket", "false"
             buildConfigField "boolean", "kAppModuleEnableTabDebt", "false"
