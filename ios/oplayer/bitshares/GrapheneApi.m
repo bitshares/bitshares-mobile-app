@@ -48,6 +48,9 @@
     _api_id = nil;
 }
 
+/*
+ *  初始化API，失败会触发reject。
+ */
 - (WsPromise*)api_init
 {
     //  初始化api标示符
@@ -56,6 +59,19 @@
         _api_id = (NSNumber*)data;
         return @YES;
     })];
+}
+
+/*
+ *  安全的初始化API，失败不会reject，仅返回false。
+ */
+- (WsPromise*)safe_api_init
+{
+    return [[[self api_init] then:^id(id data) {
+        return data;
+    }] catch:^id(id error) {
+        _api_id = nil;
+        return @NO;
+    }];
 }
 
 - (WsPromise*)exec:(NSString*)method

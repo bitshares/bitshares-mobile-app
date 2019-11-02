@@ -10,6 +10,14 @@
 #define __bts_chain_config__
 
 /*
+ *  石墨烯 custom OP 中数据子类型定义
+ */
+typedef enum EBitsharesCustomDataType
+{
+    ebcdt_account_map = 0,      //  账号自定义数据存储（插件）
+} EBitsharesCustomOPDataType;
+
+/*
  *  账号模式，密码语言枚举。
  */
 typedef enum EBitsharesAccountPasswordLang

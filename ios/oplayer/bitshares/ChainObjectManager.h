@@ -358,4 +358,9 @@
  */
 - (WsPromise*)queryAccountVotingInfos:(id)account_name_or_id;
 
+/*
+ * (public) 查询账号链上自定义存储的数据。
+ */
+- (WsPromise*)queryAccountStorageInfo:(NSString*)account_name_or_id catalog:(NSString*)catalog;
+
 @end

@@ -1450,6 +1450,9 @@
 		3FCC8B85237A7C1F00F5664D /* iconPmWechat@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B75237A7C1F00F5664D /* iconPmWechat@3x.png */; };
 		3FCC8B86237A7C1F00F5664D /* iconPmWechat@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B75237A7C1F00F5664D /* iconPmWechat@3x.png */; };
 		3FCC8B87237A7C1F00F5664D /* iconPmWechat@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B75237A7C1F00F5664D /* iconPmWechat@3x.png */; };
+		3FCCFB1D24B1C2F500CAF17E /* VCMyContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FCCFB1C24B1C2F500CAF17E /* VCMyContact.m */; };
+		3FCCFB1E24B1C2F500CAF17E /* VCMyContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FCCFB1C24B1C2F500CAF17E /* VCMyContact.m */; };
+		3FCCFB1F24B1C2F500CAF17E /* VCMyContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FCCFB1C24B1C2F500CAF17E /* VCMyContact.m */; };
 		3FD0AD5023C1A3F20035018E /* ViewAssetBasicInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD0AD4F23C1A3F20035018E /* ViewAssetBasicInfoCell.m */; };
 		3FD0AD5123C1A3F20035018E /* ViewAssetBasicInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD0AD4F23C1A3F20035018E /* ViewAssetBasicInfoCell.m */; };
 		3FD0AD5223C1A3F20035018E /* ViewAssetBasicInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD0AD4F23C1A3F20035018E /* ViewAssetBasicInfoCell.m */; };
@@ -2384,6 +2387,8 @@
 		3FCC8B73237A7C1F00F5664D /* iconPmAlipay@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconPmAlipay@2x.png"; path = "Images/iconPmAlipay@2x.png"; sourceTree = "<group>"; };
 		3FCC8B74237A7C1F00F5664D /* iconPmWechat@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconPmWechat@2x.png"; path = "Images/iconPmWechat@2x.png"; sourceTree = "<group>"; };
 		3FCC8B75237A7C1F00F5664D /* iconPmWechat@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconPmWechat@3x.png"; path = "Images/iconPmWechat@3x.png"; sourceTree = "<group>"; };
+		3FCCFB1B24B1C2F400CAF17E /* VCMyContact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCMyContact.h; path = Controller/VCMyContact.h; sourceTree = "<group>"; };
+		3FCCFB1C24B1C2F500CAF17E /* VCMyContact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCMyContact.m; path = Controller/VCMyContact.m; sourceTree = "<group>"; };
 		3FD0AD4E23C1A3F20035018E /* ViewAssetBasicInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewAssetBasicInfoCell.h; path = View/ViewAssetBasicInfoCell.h; sourceTree = "<group>"; };
 		3FD0AD4F23C1A3F20035018E /* ViewAssetBasicInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewAssetBasicInfoCell.m; path = View/ViewAssetBasicInfoCell.m; sourceTree = "<group>"; };
 		3FD0AD5323C1FA9D0035018E /* VCAssetDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAssetDetails.h; path = Controller/VCAssetDetails.h; sourceTree = "<group>"; };
@@ -3309,6 +3314,8 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3FCCFB1B24B1C2F400CAF17E /* VCMyContact.h */,
+				3FCCFB1C24B1C2F500CAF17E /* VCMyContact.m */,
 				3F333B0D2475071B00E43B83 /* VCTradingPairMgr.h */,
 				3F333B0E2475071B00E43B83 /* VCTradingPairMgr.m */,
 				3F333B08247223BF00E43B83 /* VCAssetInfos.h */,
@@ -6060,6 +6067,7 @@
 				3F676848230E9EC100E98C14 /* SRSIMDHelpers.m in Sources */,
 				3F676849230E9EC100E98C14 /* VCLoginBrainKeyMode.m in Sources */,
 				3F67684A230E9EC100E98C14 /* ViewGatewayCoinInfoCell.m in Sources */,
+				3FCCFB1F24B1C2F500CAF17E /* VCMyContact.m in Sources */,
 				3F2B7A5923D2E819006B1359 /* ViewTextFieldAmountCell.m in Sources */,
 				3F67684B230E9EC100E98C14 /* NativeAppDelegate.mm in Sources */,
 				3F67684C230E9EC100E98C14 /* MyLabel.m in Sources */,
@@ -6434,6 +6442,7 @@
 				3FB8F8DD21CE66C200DA88E2 /* SRSIMDHelpers.m in Sources */,
 				3F86510422EEA228000D496A /* VCLoginBrainKeyMode.m in Sources */,
 				3F9A730D21E5C20500DAF7A2 /* ViewGatewayCoinInfoCell.m in Sources */,
+				3FCCFB1E24B1C2F500CAF17E /* VCMyContact.m in Sources */,
 				3F2B7A5823D2E819006B1359 /* ViewTextFieldAmountCell.m in Sources */,
 				3FB8F8DE21CE66C200DA88E2 /* NativeAppDelegate.mm in Sources */,
 				3FB8F8DF21CE66C200DA88E2 /* MyLabel.m in Sources */,
@@ -6808,6 +6817,7 @@
 				3F86510322EEA228000D496A /* VCLoginBrainKeyMode.m in Sources */,
 				3F9A730C21E5C20500DAF7A2 /* ViewGatewayCoinInfoCell.m in Sources */,
 				EDDB1BF717AA093000E892BA /* NativeAppDelegate.mm in Sources */,
+				3FCCFB1D24B1C2F500CAF17E /* VCMyContact.m in Sources */,
 				3F2B7A5723D2E819006B1359 /* ViewTextFieldAmountCell.m in Sources */,
 				B7F9DA71212A6A1300185503 /* MyLabel.m in Sources */,
 				3F05DDBD230B7D76002934DA /* VCLaunch.m in Sources */,

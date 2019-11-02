@@ -362,6 +362,21 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
 }
 
 /**
+ *  OP - 存储账号自定义数据（REMARK：在 custom OP 的 data 字段中存储数据）
+ */
+- (WsPromise*)accountStorageMap:(NSString*)account opdata:(NSDictionary*)account_storage_map_opdata
+{
+    //  TODO: fee asset id
+    id opdata = @{
+        @"fee":@{@"amount":@0, @"asset_id":[ChainObjectManager sharedChainObjectManager].grapheneCoreAssetID},
+        @"payer":account,
+        @"id":@0,
+        @"data":[T_custom_plugin_operation encode_to_bytes:@{@"data":@[@(ebcdt_account_map), account_storage_map_opdata]}]
+    };
+    return [self runSingleTransaction:opdata opcode:ebo_custom fee_paying_account:[opdata objectForKey:@"payer"]];
+}
+
+/**
  *  (public) 从网络计算手续费
  */
 - (WsPromise*)calcOperationFee:(EBitsharesOperations)opcode opdata:(id)opdata
