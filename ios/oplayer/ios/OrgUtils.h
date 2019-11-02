@@ -440,4 +440,11 @@ typedef void (^YklUserCallback)(id data);
 
 + (id)safeGet:(NSDictionary*)dict key:(NSString*)key defaultValue:(NSObject*)defaultValue;
 + (id)safeGet:(NSDictionary*)dict key:(NSString*)key;
+
+/*
+ *  (public) JSON 的序列化和反序列化。可指定返回 NSData 还是 NSString
+ */
++ (id)to_json:(id)obj as_data:(BOOL)as_data;
++ (id)parse_json:(id)json_string;
+
 @end

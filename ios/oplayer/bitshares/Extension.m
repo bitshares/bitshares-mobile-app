@@ -6,6 +6,7 @@
 //
 
 #import "Extension.h"
+#import "OrgUtils.h"
 
 @implementation UIView (Aux)
 
@@ -94,7 +95,7 @@
 
 @end
 
-@implementation NSString (Format)
+@implementation NSString (BtsppExt)
 
 - (unsigned long long)unsignedLongLongValue
 {
@@ -227,12 +228,25 @@
 
 @end
 
-@implementation NSObject (ScopingFunctions)
+@implementation NSObject (BtsppExt)
 
 - (id)ruby_apply:(RubyApplyBody)func
 {
     func(self);
     return self;
+}
+
+/*
+ *  (public) 序列化为json字符串。
+ */
+- (id)to_json:(BOOL)as_data
+{
+    return [OrgUtils to_json:self as_data:as_data];
+}
+
+- (id)to_json
+{
+    return [self to_json:NO];
 }
 
 @end
