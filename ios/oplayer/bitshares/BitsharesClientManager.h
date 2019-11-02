@@ -104,6 +104,11 @@ enum
 - (WsPromise*)vestingBalanceWithdraw:(NSDictionary*)opdata;
 
 /**
+ *  OP - 存储账号自定义数据（REMARK：在 custom OP 的 data 字段中存储数据）
+ */
+- (WsPromise*)accountStorageMap:(NSString*)account opdata:(NSDictionary*)account_storage_map_opdata;
+
+/**
  *  计算手续费
  */
 - (WsPromise*)calcOperationFee:(EBitsharesOperations)opcode opdata:(id)opdata;

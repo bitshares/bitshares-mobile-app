@@ -27,6 +27,7 @@
 @property (nonatomic, strong) GrapheneApi* api_db;
 @property (nonatomic, strong) GrapheneApi* api_net;
 @property (nonatomic, strong) GrapheneApi* api_history;
+@property (nonatomic, strong) GrapheneApi* api_custom_operations;
 
 @property (nonatomic, assign) CFAbsoluteTime time_cost_connect; //  建立连接耗时
 @property (nonatomic, assign) CFAbsoluteTime time_cost_init;    //  初始化耗时（从连接到login请求完毕）

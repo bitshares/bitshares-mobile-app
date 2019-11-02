@@ -2128,5 +2128,21 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     })];
 }
 
+/*
+ * (public) 查询账号链上自定义存储的数据。
+ */
+- (WsPromise*)queryAccountStorageInfo:(NSString*)account_name_or_id catalog:(NSString*)catalog
+{
+    assert(account_name_or_id);
+    assert(catalog);
+    GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_custom_operations;
+    if (api && [api isInited]) {
+        //  TODO:2.9 vector<account_storage_object>
+        return [api exec:@"get_storage_info" params:@[account_name_or_id, catalog]];
+    } else {
+        //  TODO:2.9 不支持返回空，还是报错？
+        return [WsPromise resolve:@[]];
+    }
+}
 
 @end

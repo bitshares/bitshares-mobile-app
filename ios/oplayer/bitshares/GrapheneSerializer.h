@@ -184,6 +184,21 @@
 @interface T_vesting_balance_withdraw : T_Base
 @end
 
+/*
+ *  OP - 存储自定义数据
+ */
+@interface T_custom : T_Base
+@end
+
+/*
+ *  REMARK：这两个非OP对象，为 T_custom 里 data 字段的子对象。
+ */
+@interface T_account_storage_map : T_Base
+@end
+
+@interface T_custom_plugin_operation : T_Base
+@end
+
 /**
  *  OP - 提案相关
  */

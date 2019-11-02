@@ -111,6 +111,10 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [T_vesting_balance_create performSelector:@selector(register_subfields)];
     [T_vesting_balance_withdraw performSelector:@selector(register_subfields)];
     
+    [T_custom performSelector:@selector(register_subfields)];
+    [T_account_storage_map performSelector:@selector(register_subfields)];
+    [T_custom_plugin_operation performSelector:@selector(register_subfields)];
+    
     [T_op_wrapper performSelector:@selector(register_subfields)];
     [T_proposal_create performSelector:@selector(register_subfields)];
     [T_proposal_update performSelector:@selector(register_subfields)];
@@ -1025,6 +1029,8 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
             return [T_vesting_balance_create class];
         case ebo_vesting_balance_withdraw:
             return [T_vesting_balance_withdraw class];
+        case ebo_custom:
+            return [T_custom class];
         case ebo_proposal_create:
             return [T_proposal_create class];
         case ebo_proposal_update:
@@ -1281,6 +1287,40 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [self add_field:@"vesting_balance" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_vesting_balance]];
     [self add_field:@"owner" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"amount" class:[T_asset class]];
+}
+
+@end
+
+@implementation T_custom
+
++ (void)register_subfields
+{
+    [self add_field:@"fee" class:[T_asset class]];
+    [self add_field:@"payer" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"required_auths" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]]];
+    [self add_field:@"id" class:[T_uint16 class]];
+    [self add_field:@"data" class:[[Tm_bytes alloc] initWithSize:nil]];
+}
+
+@end
+
+@implementation T_account_storage_map
+
++ (void)register_subfields
+{
+    [self add_field:@"remove" class:[T_bool class]];
+    [self add_field:@"catalog" class:[T_string class]];
+    [self add_field:@"key_values" class:[[Tm_map alloc] initWithKeyType:[T_string class]
+                                                             value_type:[[Tm_optional alloc] initWithType:[T_string class]]]];
+}
+
+@end
+
+@implementation T_custom_plugin_operation
+
++ (void)register_subfields
+{
+    [self add_field:@"data" class:[[Tm_static_variant alloc] initWithTypeArray:@[[T_account_storage_map class]]]];
 }
 
 @end

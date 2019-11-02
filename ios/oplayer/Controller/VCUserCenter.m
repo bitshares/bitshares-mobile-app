@@ -9,6 +9,7 @@
 #import "VCUserCenter.h"
 #import "VCMemberShip.h"
 #import "VCPermissionList.h"
+#import "VCMyContact.h"
 #import "WalletManager.h"
 #import "VCBackupWallet.h"
 
@@ -21,6 +22,7 @@ enum
 {
     kVcBasicInfo = 0,           //  基本信息
     kVcRefererInfo,             //  引荐人等信息
+    kVcMyContact,               //  我的联系人
     kVcBackupWallet,            //  备份钱包
     kVcLogout,                  //  注销按钮
 };
@@ -140,6 +142,7 @@ enum
 
     [_sectionTypeArray addObject:@(kVcBasicInfo)];
     [_sectionTypeArray addObject:@(kVcRefererInfo)];
+//    [_sectionTypeArray addObject:@(kVcMyContact)];//TODO:6.1 hidden
     if (_lbBackupWallet){
         [_sectionTypeArray addObject:@(kVcBackupWallet)];
     }
@@ -268,6 +271,18 @@ enum
             return cell;
         }
             break;
+        case kVcMyContact:
+        {
+            UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+            cell.backgroundColor = [UIColor clearColor];
+            cell.showCustomBottomLine = YES;
+            cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+            cell.textLabel.text = @"我的联系人";//TODO:6.1 lang
+            return cell;
+        }
+            break;
         default:
         {
             UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
@@ -339,6 +354,14 @@ enum
     [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
         switch ([[_sectionTypeArray objectAtIndex:indexPath.section] integerValue])
         {
+            case kVcMyContact:
+            {
+                assert(indexPath.row == 0);
+                VCMyContact* vc = [[VCMyContact alloc] init];
+                //  TODO:TODO:6.1 lang
+                [_owner pushViewController:vc vctitle:@"我的联系人" backtitle:kVcDefaultBackTitleName];
+            }
+                break;
             case kVcLogout: //  注销
             {
                 if (indexPath.row == 0){

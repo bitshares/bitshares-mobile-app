@@ -28,6 +28,7 @@
     GrapheneApi*        _api_db;
     GrapheneApi*        _api_net;
     GrapheneApi*        _api_history;
+    GrapheneApi*        _api_custom_operations;
     
     BOOL                _init_done;         //  是否初始化完毕
 }
@@ -104,6 +105,7 @@
 @synthesize api_db = _api_db;
 @synthesize api_net = _api_net;
 @synthesize api_history = _api_history;
+@synthesize api_custom_operations = _api_custom_operations;
 
 - (id)initWithNode:(NSString*)url max_retry_num:(NSInteger)max_retry_num connect_timeout:(NSInteger)connect_timeout
 {
@@ -127,6 +129,7 @@
         _api_db = [[GrapheneApi alloc] initWithConnection:self andApi:@"database"];
         _api_net= [[GrapheneApi alloc] initWithConnection:self andApi:@"network_broadcast"];
         _api_history = [[GrapheneApi alloc] initWithConnection:self andApi:@"history"];
+        _api_custom_operations = [[GrapheneApi alloc] initWithConnection:self andApi:@"custom"];
         
         _init_done = NO;
     }
@@ -139,6 +142,7 @@
     self.api_db = nil;
     self.api_net = nil;
     self.api_history = nil;
+    self.api_custom_operations = nil;
     _url = nil;
 }
 
@@ -154,6 +158,7 @@
     [_api_db close];
     [_api_net close];
     [_api_history close];
+    [_api_custom_operations close];
     _init_done = NO;
 }
 
@@ -218,8 +223,9 @@
         WsPromise* p1 = [_api_db api_init];
         WsPromise* p2 = [_api_net api_init];
         WsPromise* p3 = [_api_history api_init];
-        
-        return [[WsPromise all:@[p1, p2, p3]] then:(^id(id success_array) {
+        //  REMARK：初始化插件，失败返回false，不会reject。
+        WsPromise* p4 = [_api_custom_operations safe_api_init];
+        return [[WsPromise all:@[p1, p2, p3, p4]] then:(^id(id success_array) {
             NSLog(@"[wsnode]: %@ init all api done: %@", _url, success_array);
             _ts_api_inited = CFAbsoluteTimeGetCurrent();
             _time_cost_init = _ts_api_inited - _ts_start;
