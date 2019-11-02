@@ -3306,8 +3306,50 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     }
     return value;
 }
+
 + (id)safeGet:(NSDictionary*)dict key:(NSString*)key
 {
     return [[self class] safeGet:dict key:key defaultValue:nil];
 }
+
+/*
+ *  (public) JSON 的序列化和反序列化。可指定返回 NSData 还是 NSString
+ */
++ (id)to_json:(id)obj as_data:(BOOL)as_data
+{
+    NSError* err = nil;
+    NSData* data = [NSJSONSerialization dataWithJSONObject:obj
+                                                   options:NSJSONReadingAllowFragments
+                                                     error:&err];
+    if (err || !data){
+        NSLog(@"to json error: %@", err);
+        return nil;
+    }
+    if (as_data) {
+        return data;
+    } else {
+        return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    }
+}
+
++ (id)parse_json:(id)json_string
+{
+    NSData* data = nil;
+    if ([json_string isKindOfClass:[NSString class]]){
+        data = [json_string dataUsingEncoding:NSUTF8StringEncoding];
+    } else if ([json_string isKindOfClass:[NSData class]]){
+        data = (NSData*)json_string;
+    } else {
+        NSLog(@"unknown json value: %@", json_string);
+        return nil;
+    }
+    NSError* err = nil;
+    id json = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&err];
+    if (err || !json){
+        NSLog(@"parse json error: %@", err);
+        return nil;
+    }
+    return json;
+}
+
 @end

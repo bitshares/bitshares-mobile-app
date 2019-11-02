@@ -35,7 +35,7 @@ typedef BOOL (^ViewCallback)(UIView* view);
 + (NSCalendar*)gregorianCalendar;
 @end
 
-@interface NSString (Format)
+@interface NSString (BtsppExt)
 
 /**
  *  URL 编码/解码
@@ -68,8 +68,14 @@ typedef void (^RubyFilterEachWithIndexFunction)(id src, NSInteger idx);
 @end
 
 typedef void (^RubyApplyBody)(id obj);
-@interface NSObject (ScopingFunctions)
+@interface NSObject (BtsppExt)
 
 - (id)ruby_apply:(RubyApplyBody)func;
+
+/*
+ *  (public) 序列化为json字符串。
+ */
+- (id)to_json:(BOOL)as_data;
+- (id)to_json;
 
 @end
