@@ -1203,6 +1203,9 @@
 		3FE19EA1235858A4000D1C54 /* iconExplorer@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FE19E9D235858A3000D1C54 /* iconExplorer@3x.png */; };
 		3FE19EA2235858A4000D1C54 /* iconExplorer@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FE19E9D235858A3000D1C54 /* iconExplorer@3x.png */; };
 		3FE19EA3235858A4000D1C54 /* iconExplorer@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FE19E9D235858A3000D1C54 /* iconExplorer@3x.png */; };
+		3FE23E33236D6A1F006BF999 /* VCOtcUserAuth.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE23E32236D6A1F006BF999 /* VCOtcUserAuth.m */; };
+		3FE23E34236D6A1F006BF999 /* VCOtcUserAuth.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE23E32236D6A1F006BF999 /* VCOtcUserAuth.m */; };
+		3FE23E35236D6A1F006BF999 /* VCOtcUserAuth.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE23E32236D6A1F006BF999 /* VCOtcUserAuth.m */; };
 		3FE4E94922F698DC0056A44F /* MyTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E94822F698DC0056A44F /* MyTextView.m */; };
 		3FE4E94A22F698DC0056A44F /* MyTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E94822F698DC0056A44F /* MyTextView.m */; };
 		3FE4E94D22F7C0480056A44F /* HDWallet.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E94C22F7C0480056A44F /* HDWallet.m */; };
@@ -1865,6 +1868,8 @@
 		3FDD800D21D8C68600DA61FC /* VCProposalAuthorizeEdit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCProposalAuthorizeEdit.m; path = Controller/VCProposalAuthorizeEdit.m; sourceTree = "<group>"; };
 		3FE19E9C235858A3000D1C54 /* iconExplorer@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconExplorer@2x.png"; path = "Images/iconExplorer@2x.png"; sourceTree = "<group>"; };
 		3FE19E9D235858A3000D1C54 /* iconExplorer@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconExplorer@3x.png"; path = "Images/iconExplorer@3x.png"; sourceTree = "<group>"; };
+		3FE23E31236D6A1F006BF999 /* VCOtcUserAuth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcUserAuth.h; path = Controller/VCOtcUserAuth.h; sourceTree = "<group>"; };
+		3FE23E32236D6A1F006BF999 /* VCOtcUserAuth.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcUserAuth.m; path = Controller/VCOtcUserAuth.m; sourceTree = "<group>"; };
 		3FE4E94722F698DC0056A44F /* MyTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MyTextView.h; path = View/MyTextView.h; sourceTree = "<group>"; };
 		3FE4E94822F698DC0056A44F /* MyTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MyTextView.m; path = View/MyTextView.m; sourceTree = "<group>"; };
 		3FE4E94B22F7C0480056A44F /* HDWallet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HDWallet.h; path = bitshares/HDWallet.h; sourceTree = "<group>"; };
@@ -2725,6 +2730,7 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3FE23E30236D6A07006BF999 /* OTC */,
 				3FC36F132340413D00464422 /* VCPermissionAddOne.h */,
 				3FC36F122340413C00464422 /* VCPermissionAddOne.m */,
 				3F2E6E26233DF5A600BF4B78 /* VCPermissionEdit.h */,
@@ -3320,6 +3326,15 @@
 			);
 			name = "zh-Hans.lproj";
 			path = "Resources/zh-Hans.lproj";
+			sourceTree = "<group>";
+		};
+		3FE23E30236D6A07006BF999 /* OTC */ = {
+			isa = PBXGroup;
+			children = (
+				3FE23E31236D6A1F006BF999 /* VCOtcUserAuth.h */,
+				3FE23E32236D6A1F006BF999 /* VCOtcUserAuth.m */,
+			);
+			name = OTC;
 			sourceTree = "<group>";
 		};
 		B714090820A31CC300003311 /* SocketRocket */ = {
@@ -5141,6 +5156,7 @@
 				3F676876230E9EC100E98C14 /* NativeMethodExtension.m in Sources */,
 				3F676877230E9EC100E98C14 /* ViewProposalOpInfoCell_AccountUpdate.m in Sources */,
 				3F676878230E9EC100E98C14 /* WsPromise.m in Sources */,
+				3FE23E35236D6A1F006BF999 /* VCOtcUserAuth.m in Sources */,
 				3F676879230E9EC100E98C14 /* VCTransfer.m in Sources */,
 				3F67687A230E9EC100E98C14 /* WjCryptLib_Sha256.c in Sources */,
 				3F67687B230E9EC100E98C14 /* WjCryptLib_Aes.c in Sources */,
@@ -5438,6 +5454,7 @@
 				3FB8F90921CE66C200DA88E2 /* NativeMethodExtension.m in Sources */,
 				3F7ED8F82278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.m in Sources */,
 				3FB8F90A21CE66C200DA88E2 /* WsPromise.m in Sources */,
+				3FE23E34236D6A1F006BF999 /* VCOtcUserAuth.m in Sources */,
 				3FB8F90B21CE66C200DA88E2 /* VCTransfer.m in Sources */,
 				3FB8F90C21CE66C200DA88E2 /* WjCryptLib_Sha256.c in Sources */,
 				3FB8F90D21CE66C200DA88E2 /* WjCryptLib_Aes.c in Sources */,
@@ -5735,6 +5752,7 @@
 				3F7ED8F72278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.m in Sources */,
 				B7BDA98420B28C7D00738F12 /* WsPromise.m in Sources */,
 				B7F99C4E20B80A740084CB56 /* VCTransfer.m in Sources */,
+				3FE23E33236D6A1F006BF999 /* VCOtcUserAuth.m in Sources */,
 				B7BDA9A920B3A3D100738F12 /* WjCryptLib_Sha256.c in Sources */,
 				B7BDA9A220B3A3D100738F12 /* WjCryptLib_Aes.c in Sources */,
 				F531ECBF1D670895009328A4 /* AFURLSessionManager.m in Sources */,
