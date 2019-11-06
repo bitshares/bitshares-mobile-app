@@ -567,7 +567,7 @@ enum
                                                      ispassword:NO
                                                              ok:NSLocalizedString(@"kBtnOK", @"确定")
                                                           tfcfg:(^(SCLTextView *tf) {
-        tf.keyboardType = UIKeyboardTypeDecimalPad;
+        tf.keyboardType = UIKeyboardTypeNumberPad;
         tf.bLimitInputThreshold = YES;
     })
                                                      completion:(^(NSInteger buttonIndex, NSString *tfvalue) {
