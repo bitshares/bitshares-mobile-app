@@ -66,6 +66,15 @@
 		3F4D9A572294E476000BFD82 /* FlurryEmpty.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4D9A532294E476000BFD82 /* FlurryEmpty.m */; };
 		3F4D9A582294E476000BFD82 /* libFlurry_9.3.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F4D9A552294E476000BFD82 /* libFlurry_9.3.1.a */; };
 		3F4D9A592294E476000BFD82 /* libFlurry_9.3.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F4D9A552294E476000BFD82 /* libFlurry_9.3.1.a */; };
+		3F4F2935237180C9007674E5 /* VCOtcAddBankCard.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4F2931237180C9007674E5 /* VCOtcAddBankCard.m */; };
+		3F4F2936237180C9007674E5 /* VCOtcAddBankCard.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4F2931237180C9007674E5 /* VCOtcAddBankCard.m */; };
+		3F4F2937237180C9007674E5 /* VCOtcAddBankCard.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4F2931237180C9007674E5 /* VCOtcAddBankCard.m */; };
+		3F4F2938237180C9007674E5 /* VCOtcPaymentMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4F2934237180C9007674E5 /* VCOtcPaymentMethods.m */; };
+		3F4F2939237180C9007674E5 /* VCOtcPaymentMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4F2934237180C9007674E5 /* VCOtcPaymentMethods.m */; };
+		3F4F293A237180C9007674E5 /* VCOtcPaymentMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4F2934237180C9007674E5 /* VCOtcPaymentMethods.m */; };
+		3F4F293D23727A83007674E5 /* VCOtcAddAlipay.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4F293B23727A83007674E5 /* VCOtcAddAlipay.m */; };
+		3F4F293E23727A83007674E5 /* VCOtcAddAlipay.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4F293B23727A83007674E5 /* VCOtcAddAlipay.m */; };
+		3F4F293F23727A83007674E5 /* VCOtcAddAlipay.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4F293B23727A83007674E5 /* VCOtcAddAlipay.m */; };
 		3F676800230E9EC100E98C14 /* VCAbout.m in Sources */ = {isa = PBXBuildFile; fileRef = EDE7B7D71869D55100D68D42 /* VCAbout.m */; };
 		3F676801230E9EC100E98C14 /* VCSelectTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D7DFEF1C5CEFBF007D13DA /* VCSelectTheme.m */; };
 		3F676802230E9EC100E98C14 /* ViewDeepGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A288A82119776F00339FAE /* ViewDeepGraph.m */; };
@@ -1783,6 +1792,12 @@
 		3F4D9A532294E476000BFD82 /* FlurryEmpty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlurryEmpty.m; sourceTree = "<group>"; };
 		3F4D9A542294E476000BFD82 /* FlurrySessionBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlurrySessionBuilder.h; sourceTree = "<group>"; };
 		3F4D9A552294E476000BFD82 /* libFlurry_9.3.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry_9.3.1.a; sourceTree = "<group>"; };
+		3F4F2931237180C9007674E5 /* VCOtcAddBankCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcAddBankCard.m; path = Controller/VCOtcAddBankCard.m; sourceTree = "<group>"; };
+		3F4F2932237180C9007674E5 /* VCOtcAddBankCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcAddBankCard.h; path = Controller/VCOtcAddBankCard.h; sourceTree = "<group>"; };
+		3F4F2933237180C9007674E5 /* VCOtcPaymentMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcPaymentMethods.h; path = Controller/VCOtcPaymentMethods.h; sourceTree = "<group>"; };
+		3F4F2934237180C9007674E5 /* VCOtcPaymentMethods.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcPaymentMethods.m; path = Controller/VCOtcPaymentMethods.m; sourceTree = "<group>"; };
+		3F4F293B23727A83007674E5 /* VCOtcAddAlipay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcAddAlipay.m; path = Controller/VCOtcAddAlipay.m; sourceTree = "<group>"; };
+		3F4F293C23727A83007674E5 /* VCOtcAddAlipay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcAddAlipay.h; path = Controller/VCOtcAddAlipay.h; sourceTree = "<group>"; };
 		3F676A27230E9EC100E98C14 /* fowallet-baichenglian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "fowallet-baichenglian.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F6C357821E86C9D008E2903 /* ViewAddrMemoInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewAddrMemoInfoCell.m; path = View/ViewAddrMemoInfoCell.m; sourceTree = "<group>"; };
 		3F6C357921E86C9E008E2903 /* ViewAddrMemoInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewAddrMemoInfoCell.h; path = View/ViewAddrMemoInfoCell.h; sourceTree = "<group>"; };
@@ -3331,6 +3346,12 @@
 		3FE23E30236D6A07006BF999 /* OTC */ = {
 			isa = PBXGroup;
 			children = (
+				3F4F293C23727A83007674E5 /* VCOtcAddAlipay.h */,
+				3F4F293B23727A83007674E5 /* VCOtcAddAlipay.m */,
+				3F4F2932237180C9007674E5 /* VCOtcAddBankCard.h */,
+				3F4F2931237180C9007674E5 /* VCOtcAddBankCard.m */,
+				3F4F2933237180C9007674E5 /* VCOtcPaymentMethods.h */,
+				3F4F2934237180C9007674E5 /* VCOtcPaymentMethods.m */,
 				3FE23E31236D6A1F006BF999 /* VCOtcUserAuth.h */,
 				3FE23E32236D6A1F006BF999 /* VCOtcUserAuth.m */,
 			);
@@ -5115,6 +5136,7 @@
 				3F67684E230E9EC100E98C14 /* DirectionPanGestureRecognizer.m in Sources */,
 				3F67684F230E9EC100E98C14 /* mztools.c in Sources */,
 				3F676850230E9EC100E98C14 /* 7zAlloc.c in Sources */,
+				3F4F293A237180C9007674E5 /* VCOtcPaymentMethods.m in Sources */,
 				3F676851230E9EC100E98C14 /* SAMKeychain.m in Sources */,
 				3F676852230E9EC100E98C14 /* 7zStream.c in Sources */,
 				3F676853230E9EC100E98C14 /* BraIA64.c in Sources */,
@@ -5194,6 +5216,7 @@
 				3F67689B230E9EC100E98C14 /* ChainObjectManager.m in Sources */,
 				3F67689C230E9EC100E98C14 /* SRSecurityPolicy.m in Sources */,
 				3F67689D230E9EC100E98C14 /* VCUserAssets.m in Sources */,
+				3F4F2937237180C9007674E5 /* VCOtcAddBankCard.m in Sources */,
 				3F67689E230E9EC100E98C14 /* ViewUserActivityInfoCell.m in Sources */,
 				3F67689F230E9EC100E98C14 /* ViewProposalOpInfoCell.m in Sources */,
 				3F6768A0230E9EC100E98C14 /* 7zBuf.c in Sources */,
@@ -5304,6 +5327,7 @@
 				3F676904230E9EC100E98C14 /* SRIOConsumerPool.m in Sources */,
 				3F676905230E9EC100E98C14 /* ViewBlockLabel.m in Sources */,
 				3F676906230E9EC100E98C14 /* VCTransactionConfirm.m in Sources */,
+				3F4F293F23727A83007674E5 /* VCOtcAddAlipay.m in Sources */,
 				3F676907230E9EC100E98C14 /* ViewProposalActionsCell.m in Sources */,
 				3F676908230E9EC100E98C14 /* MyNavigationController.mm in Sources */,
 				3F676909230E9EC100E98C14 /* ViewProposalAuthorizedStatusCell.m in Sources */,
@@ -5413,6 +5437,7 @@
 				3FB8F8E021CE66C200DA88E2 /* DirectionPanGestureRecognizer.m in Sources */,
 				3FB8F8E121CE66C200DA88E2 /* mztools.c in Sources */,
 				3FB8F8E221CE66C200DA88E2 /* 7zAlloc.c in Sources */,
+				3F4F2939237180C9007674E5 /* VCOtcPaymentMethods.m in Sources */,
 				3FB8F8E321CE66C200DA88E2 /* SAMKeychain.m in Sources */,
 				3FB8F8E421CE66C200DA88E2 /* 7zStream.c in Sources */,
 				3FB8F8E521CE66C200DA88E2 /* BraIA64.c in Sources */,
@@ -5492,6 +5517,7 @@
 				3FB8F92821CE66C200DA88E2 /* ChainObjectManager.m in Sources */,
 				3FB8F92921CE66C200DA88E2 /* SRSecurityPolicy.m in Sources */,
 				3FB8F92A21CE66C200DA88E2 /* VCUserAssets.m in Sources */,
+				3F4F2936237180C9007674E5 /* VCOtcAddBankCard.m in Sources */,
 				3FB8F92B21CE66C200DA88E2 /* ViewUserActivityInfoCell.m in Sources */,
 				3FDD800721D763C100DA61FC /* ViewProposalOpInfoCell.m in Sources */,
 				3FB8F92C21CE66C200DA88E2 /* 7zBuf.c in Sources */,
@@ -5602,6 +5628,7 @@
 				3FB8F98421CE66C200DA88E2 /* SRIOConsumerPool.m in Sources */,
 				3FB8F98521CE66C200DA88E2 /* ViewBlockLabel.m in Sources */,
 				3FB8F98621CE66C200DA88E2 /* VCTransactionConfirm.m in Sources */,
+				3F4F293E23727A83007674E5 /* VCOtcAddAlipay.m in Sources */,
 				3FDD800521D763C100DA61FC /* ViewProposalActionsCell.m in Sources */,
 				3FB8F98721CE66C200DA88E2 /* MyNavigationController.mm in Sources */,
 				3FDD800B21D77A0700DA61FC /* ViewProposalAuthorizedStatusCell.m in Sources */,
@@ -5711,6 +5738,7 @@
 				B7A13B781CA1443A0096A6A4 /* mztools.c in Sources */,
 				B7BDAA7A20B3C77400738F12 /* 7zAlloc.c in Sources */,
 				B7D5862C2115A9FA00FED7B0 /* SAMKeychain.m in Sources */,
+				3F4F2938237180C9007674E5 /* VCOtcPaymentMethods.m in Sources */,
 				B7BDAA8220B3C77400738F12 /* 7zStream.c in Sources */,
 				B7BDAA8A20B3C77500738F12 /* BraIA64.c in Sources */,
 				3F0DA369218851FF006E1004 /* VCQrScan.m in Sources */,
@@ -5790,6 +5818,7 @@
 				B714094D20A31CC300003311 /* SRSecurityPolicy.m in Sources */,
 				B72A849820CD33F700D92A25 /* VCUserAssets.m in Sources */,
 				B737A72A20FC9DF100818BBA /* ViewUserActivityInfoCell.m in Sources */,
+				3F4F2935237180C9007674E5 /* VCOtcAddBankCard.m in Sources */,
 				3FDD800621D763C100DA61FC /* ViewProposalOpInfoCell.m in Sources */,
 				B7BDAA7C20B3C77400738F12 /* 7zBuf.c in Sources */,
 				ED96A094186C62AD002181D4 /* SGFocusImageFrame.m in Sources */,
@@ -5900,6 +5929,7 @@
 				B714093D20A31CC300003311 /* SRIOConsumerPool.m in Sources */,
 				B724F6421C5C59730022EA3B /* ViewBlockLabel.m in Sources */,
 				B741A76020DBB5BA000FBC00 /* VCTransactionConfirm.m in Sources */,
+				3F4F293D23727A83007674E5 /* VCOtcAddAlipay.m in Sources */,
 				3FDD800421D763C100DA61FC /* ViewProposalActionsCell.m in Sources */,
 				ED75E62A186C63C9009BEF5E /* MyNavigationController.mm in Sources */,
 				3FDD800A21D77A0700DA61FC /* ViewProposalAuthorizedStatusCell.m in Sources */,

@@ -32,6 +32,9 @@
 #import "VCNotice.h"
 #import "VCWebView.h"
 
+#import "VCOtcUserAuth.h"//TODO:otc test
+#import "VCOtcPaymentMethods.h"//TODO:otc test
+
 enum
 {
     kVcBanner = 0,              //  账号管理登录部分banner
@@ -402,8 +405,14 @@ enum
                         break;
                     case kVcSubAbout:
                     {
-                        vc = [[VCAbout alloc] init];
-                        vc.title = NSLocalizedString(@"kVcTitleAbout", @"关于");
+//                        vc = [[VCAbout alloc] init];
+//                        vc.title = NSLocalizedString(@"kVcTitleAbout", @"关于");
+                        
+                        //  TODO:otc test
+                        vc = [[VCOtcPaymentMethods alloc] init];
+                        vc.title = @"付款方式";
+//                        vc = [[VCOtcUserAuth alloc] init];
+//                        vc.title = @"身份认证";
                     }
                         break;
                     default:
