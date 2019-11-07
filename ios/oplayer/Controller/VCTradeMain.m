@@ -642,7 +642,9 @@ enum
     }
     //  按照ID降序排列
     [dataArray sortUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-        return [[obj2 objectForKey:@"id"] compare:[obj1 objectForKey:@"id"]];
+        NSDecimalNumber* n1 = [NSDecimalNumber decimalNumberWithString:[[[obj1 objectForKey:@"id"] componentsSeparatedByString:@"."] lastObject]];
+        NSDecimalNumber* n2 = [NSDecimalNumber decimalNumberWithString:[[[obj2 objectForKey:@"id"] componentsSeparatedByString:@"."] lastObject]];
+        return [n2 compare:n1];
     })];
     return dataArray;
 }
