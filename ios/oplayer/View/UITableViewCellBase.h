@@ -46,4 +46,9 @@
                                              titleColor:(UIColor*)titleColor
                                              valueColor:(UIColor*)valueColor;
 
+/*
+ *  辅助 - 创建Label。
+ */
+- (UILabel*)auxGenLabel:(UIFont*)font;
+
 @end

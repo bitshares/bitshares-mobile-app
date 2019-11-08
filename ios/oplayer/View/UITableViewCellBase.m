@@ -127,6 +127,22 @@
     return nil;
 }
 
+/*
+ *  辅助 - 创建Label。
+ */
+- (UILabel*)auxGenLabel:(UIFont*)font
+{
+    UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
+    label.lineBreakMode = NSLineBreakByTruncatingTail;
+    label.textAlignment = NSTextAlignmentLeft;
+    label.numberOfLines = 1;
+    label.backgroundColor = [UIColor clearColor];
+    label.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    label.font = font;
+    [self addSubview:label];
+    return label;
+}
+
 /**
  *  获取分割线的父视图
  */
