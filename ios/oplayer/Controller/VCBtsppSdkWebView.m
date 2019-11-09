@@ -128,6 +128,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
         
     //  UI - 导航栏左边按钮
     UIBarButtonItem* btnClose = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"kBtnClose", @"关闭")
@@ -276,8 +277,8 @@
         //  TODO:2.9
         NSString* call_mode = [[prompt substringFromIndex:@"__btspp_sdk_call_mode".length+1] lowercaseString];
         BOOL async_call = [call_mode isEqualToString:@"async"];
-        id return_value = [[BtsppJssdkManager sharedBtsppJssdkManager] js_call:[call_args objectForKey:@"mid"]
-                                                                          args:[call_args objectForKey:@"args"]];
+        id return_value = [[[BtsppJssdkManager sharedBtsppJssdkManager] binding_vc:self] js_call:[call_args objectForKey:@"mid"]
+                                                                                            args:[call_args objectForKey:@"args"]];
         if ([return_value isKindOfClass:[WsPromise class]]) {
             if (async_call) {
                 //  1、异步方式调用异步API
@@ -378,7 +379,7 @@
     
     id jsb_info = @{@"cid":cid, @"err":err ?: [NSNull null], @"data":data ?: [NSNull null]};
     
-    [_webview evaluateJavaScript:[NSString stringWithFormat:@"window.__btspp_on_async_callback(%@)", [jsb_info to_json]]
+    [_webview evaluateJavaScript:[NSString stringWithFormat:@"window.__btspp_jssdk_on_async_callback(%@)", [jsb_info to_json]]
                completionHandler:^(id _Nullable s, NSError * _Nullable error)
     {
         if (error) {

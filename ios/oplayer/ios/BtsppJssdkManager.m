@@ -8,11 +8,15 @@
 
 #import "BtsppJssdkManager.h"
 #import "ChainObjectManager.h"
+#import "WalletManager.h"
+
+#import "VCBase.h"
 
 static BtsppJssdkManager *_sharedBtsppJssdkManager = nil;
 
 @interface BtsppJssdkManager()
 {
+    VCBase* _content_vc;            //  当前上下文VC
 }
 @end
 
@@ -35,32 +39,46 @@ static BtsppJssdkManager *_sharedBtsppJssdkManager = nil;
     self = [super init];
     if (self)
     {
+        _content_vc = nil;
     }
     return self;
 }
 
 - (void)dealloc
 {
+    [self _clean_data];
+}
+
+- (void)_clean_data
+{
+    _content_vc = nil;
+}
+
+- (BtsppJssdkManager*)binding_vc:(VCBase*)vc
+{
+    _content_vc = vc;
+    return self;
 }
 
 - (id)js_call:(NSString*)method args:(id)args
 {
     assert(method);
+    id retv = nil;
     @try {
         SEL sel = NSSelectorFromString([NSString stringWithFormat:@"%@:", method]);
         if ([self respondsToSelector:sel]) {
             IMP imp = [self methodForSelector:sel];
             assert(imp);
             id (*func_ptr)(id, SEL, id) = (id (*)(id, SEL, id))imp;
-            return func_ptr(self, sel, args);
+            retv = func_ptr(self, sel, args);
         } else {
             NSLog(@"js call unknown method: %@", method);
-            return nil;
         }
     }@catch(NSException* exception){
         NSLog(@"js call error: %@", exception);
-        return nil;
     }
+    [self _clean_data];
+    return retv;
 }
 
 /*
@@ -68,7 +86,36 @@ static BtsppJssdkManager *_sharedBtsppJssdkManager = nil;
  */
 - (WsPromise*)query_objects:(NSArray*)oid_array
 {
+    assert(oid_array);
     return [[ChainObjectManager sharedChainObjectManager] queryAllGrapheneObjects:oid_array];
+}
+
+- (id)is_wallet_exist:(id)args
+{
+    return @([[WalletManager sharedWalletManager] isWalletExist]);
+}
+
+- (id)show_block_view:(NSString*)msg
+{
+    if (_content_vc) {
+        [_content_vc showBlockViewWithTitle:msg ?: NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    }
+    return nil;
+}
+
+- (id)hide_block_view:(id)args
+{
+    if (_content_vc) {
+        [_content_vc hideBlockView];
+    }
+    return nil;
+}
+
+- (WsPromise*)tx_transfer:(id)args
+{
+    //  TODO:
+    
+    return nil;
 }
 
 @end
