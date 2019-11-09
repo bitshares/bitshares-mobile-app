@@ -3534,7 +3534,8 @@
 
 + (id)parse_json:(id)json_string
 {
-    if (!json_string) {
+    if (!json_string){
+        NSLog(@"empty json string.");
         return nil;
     }
     NSData* data = nil;
