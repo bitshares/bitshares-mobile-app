@@ -9,7 +9,7 @@
 #import "VCBase.h"
 #import <WebKit/WebKit.h>
 
-@interface VCBtsppSdkWebView : VCBase<WKNavigationDelegate>
+@interface VCBtsppSdkWebView : VCBase<WKNavigationDelegate, WKUIDelegate>
 
 - (id)initWithUrl:(NSString*)url;
 - (void)reload;
