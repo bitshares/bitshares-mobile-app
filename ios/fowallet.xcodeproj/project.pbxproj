@@ -1194,6 +1194,9 @@
 		3FC4D44C226F2EEB00787082 /* VCHtlcList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D44A226F2EEA00787082 /* VCHtlcList.m */; };
 		3FC4D44D226F2EEB00787082 /* VCHtlcList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D44A226F2EEA00787082 /* VCHtlcList.m */; };
 		3FCA2DC9219EC45900A5F4E9 /* VCProposalConfirm.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FCA2DC8219EC45900A5F4E9 /* VCProposalConfirm.m */; };
+		3FCC8B6D237A562D00F5664D /* OtcManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FCC8B6C237A562D00F5664D /* OtcManager.m */; };
+		3FCC8B6E237A562D00F5664D /* OtcManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FCC8B6C237A562D00F5664D /* OtcManager.m */; };
+		3FCC8B6F237A562D00F5664D /* OtcManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FCC8B6C237A562D00F5664D /* OtcManager.m */; };
 		3FD3DD2E2316A579009760A0 /* VCScanAccountName.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD3DD2C2316A578009760A0 /* VCScanAccountName.m */; };
 		3FD3DD2F2316A579009760A0 /* VCScanAccountName.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD3DD2C2316A578009760A0 /* VCScanAccountName.m */; };
 		3FD3DD302316A579009760A0 /* VCScanAccountName.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD3DD2C2316A578009760A0 /* VCScanAccountName.m */; };
@@ -1875,6 +1878,8 @@
 		3FC4D44B226F2EEB00787082 /* VCHtlcList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCHtlcList.h; path = Controller/VCHtlcList.h; sourceTree = "<group>"; };
 		3FCA2DC7219EC45800A5F4E9 /* VCProposalConfirm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCProposalConfirm.h; path = Controller/VCProposalConfirm.h; sourceTree = "<group>"; };
 		3FCA2DC8219EC45900A5F4E9 /* VCProposalConfirm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCProposalConfirm.m; path = Controller/VCProposalConfirm.m; sourceTree = "<group>"; };
+		3FCC8B6B237A562D00F5664D /* OtcManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OtcManager.h; path = ios/OtcManager.h; sourceTree = "<group>"; };
+		3FCC8B6C237A562D00F5664D /* OtcManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OtcManager.m; path = ios/OtcManager.m; sourceTree = "<group>"; };
 		3FD3DD2C2316A578009760A0 /* VCScanAccountName.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCScanAccountName.m; sourceTree = "<group>"; };
 		3FD3DD2D2316A579009760A0 /* VCScanAccountName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VCScanAccountName.h; sourceTree = "<group>"; };
 		3FD3DD312317B8FC009760A0 /* VCScanTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCScanTransfer.m; sourceTree = "<group>"; };
@@ -3208,6 +3213,8 @@
 		18FF06C217E039240088405E /* Object */ = {
 			isa = PBXGroup;
 			children = (
+				3FCC8B6B237A562D00F5664D /* OtcManager.h */,
+				3FCC8B6C237A562D00F5664D /* OtcManager.m */,
 				3FF3550521FECDF4008EF213 /* LangManager.h */,
 				3FF3550421FECDF4008EF213 /* LangManager.m */,
 				3FEA46E7216F812800127CA5 /* CurveSlider.h */,
@@ -5193,6 +5200,7 @@
 				3F676877230E9EC100E98C14 /* ViewProposalOpInfoCell_AccountUpdate.m in Sources */,
 				3F676878230E9EC100E98C14 /* WsPromise.m in Sources */,
 				3FE23E35236D6A1F006BF999 /* VCOtcUserAuth.m in Sources */,
+				3FCC8B6F237A562D00F5664D /* OtcManager.m in Sources */,
 				3F676879230E9EC100E98C14 /* VCTransfer.m in Sources */,
 				3F67687A230E9EC100E98C14 /* WjCryptLib_Sha256.c in Sources */,
 				3F67687B230E9EC100E98C14 /* WjCryptLib_Aes.c in Sources */,
@@ -5496,6 +5504,7 @@
 				3F7ED8F82278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.m in Sources */,
 				3FB8F90A21CE66C200DA88E2 /* WsPromise.m in Sources */,
 				3FE23E34236D6A1F006BF999 /* VCOtcUserAuth.m in Sources */,
+				3FCC8B6E237A562D00F5664D /* OtcManager.m in Sources */,
 				3FB8F90B21CE66C200DA88E2 /* VCTransfer.m in Sources */,
 				3FB8F90C21CE66C200DA88E2 /* WjCryptLib_Sha256.c in Sources */,
 				3FB8F90D21CE66C200DA88E2 /* WjCryptLib_Aes.c in Sources */,
@@ -5799,6 +5808,7 @@
 				B7BDA98420B28C7D00738F12 /* WsPromise.m in Sources */,
 				B7F99C4E20B80A740084CB56 /* VCTransfer.m in Sources */,
 				3FE23E33236D6A1F006BF999 /* VCOtcUserAuth.m in Sources */,
+				3FCC8B6D237A562D00F5664D /* OtcManager.m in Sources */,
 				B7BDA9A920B3A3D100738F12 /* WjCryptLib_Sha256.c in Sources */,
 				B7BDA9A220B3A3D100738F12 /* WjCryptLib_Aes.c in Sources */,
 				F531ECBF1D670895009328A4 /* AFURLSessionManager.m in Sources */,

@@ -367,6 +367,8 @@ typedef void (^YklUserCallback)(id data);
 +(void)asyncFetchJson:(NSString*)pURL timeout:(NSTimeInterval)seconds completionBlock:(void (^)(id json))completion;
 +(WsPromise*)asyncPostUrl:(NSString*)pURL args:(NSDictionary*)kvhash;
 +(WsPromise*)asyncPostUrl_jsonBody:(NSString*)pURL args:(NSDictionary*)json;
++(WsPromise*)asyncPostUrl_jsonBody:(NSString*)pURL args:(NSDictionary*)json headers:(NSDictionary*)headers;
+
 /**
  * 异步等待，单位毫秒。
  */
