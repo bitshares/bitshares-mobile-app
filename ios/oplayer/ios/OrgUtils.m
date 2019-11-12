@@ -2570,14 +2570,14 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 /**
  *  (private) 同步POST抓取网页。
  */
-+(NSData*)_postUrl:(NSString*)pURL data:(NSDictionary*)kvhash body:(NSString*)body_string;
++(NSData*)_postUrl:(NSString*)pURL form_args:(NSDictionary*)form_args body:(NSString*)body_string headers:(NSDictionary*)headers;
 {
     NSString* pPostData;
     NSString* pContentType;
-    if (kvhash){
+    if (form_args){
         //  application/x-www-form-urlencoded   连接各参数
         assert(!body_string);
-        pPostData = [self _makeKeyValueString:kvhash];
+        pPostData = [self _makeKeyValueString:form_args];
         pContentType = @"application/x-www-form-urlencoded";
     }else{
         //  application/json
@@ -2594,6 +2594,15 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:[pPostData dataUsingEncoding:NSUTF8StringEncoding]];
     [request setValue:pContentType forHTTPHeaderField:@"Content-Type"];
+    
+    //  附加 Header 信息
+    if (headers && [headers count] > 0) {
+        for (id header_field in headers) {
+            id header_value = [headers objectForKey:header_field];
+            assert(header_value);
+            [request setValue:header_value forHTTPHeaderField:header_field];
+        }
+    }
     
     //  发起请求
     NSURLResponse* response = nil;
@@ -2632,11 +2641,14 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     }] resume];
 }
 
-+(WsPromise*)_asyncPostUrl:(NSString*)pURL args:(NSDictionary*)kvhash body:(NSString*)body_string
++(WsPromise*)_asyncPostUrl:(NSString*)pURL
+                 form_args:(NSDictionary*)form_args
+                      body:(NSString*)body_string
+                   headers:(NSDictionary*)headers
 {
     return [WsPromise promise:^(WsResolveHandler resolve, WsRejectHandler reject) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            id data = [self _postUrl:pURL data:kvhash body:body_string];
+            id data = [self _postUrl:pURL form_args:form_args body:body_string headers:headers];
             if (data){
                 //  解析json
                 NSError* err = nil;
@@ -2775,17 +2787,26 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
  */
 +(WsPromise*)asyncPostUrl:(NSString*)pURL args:(NSDictionary*)kvhash
 {
-    return [self _asyncPostUrl:pURL args:kvhash body:nil];
+    return [self _asyncPostUrl:pURL form_args:kvhash body:nil headers:nil];
 }
 
 +(WsPromise*)asyncPostUrl_jsonBody:(NSString*)pURL args:(NSDictionary*)json
 {
+    return [self asyncPostUrl_jsonBody:pURL args:json headers:nil];
+}
+
++(WsPromise*)asyncPostUrl_jsonBody:(NSString*)pURL args:(NSDictionary*)json headers:(NSDictionary*)headers
+{
+    assert(json);
     NSError* err = nil;
     NSData* data = [NSJSONSerialization dataWithJSONObject:json
                                                    options:NSJSONReadingAllowFragments
                                                      error:&err];
     assert(!err && data);
-    return [self _asyncPostUrl:pURL args:nil body:[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]];
+    return [self _asyncPostUrl:pURL
+                     form_args:nil
+                          body:[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]
+                       headers:headers];
 }
 
 /**
