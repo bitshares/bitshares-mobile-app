@@ -19,7 +19,7 @@
     UILabel*        _imageHeader;
     
     UILabel*        _lbUsername;
-    UIImageView*    _imagePaymentMethods;
+    NSMutableArray* _paymentIconList;
     
     UILabel*        _lbCompleteNumber;  //  成交笔数
     
@@ -44,7 +44,7 @@
     _imageHeader = nil;
     
     _lbUsername = nil;
-    _imagePaymentMethods = nil;
+    _paymentIconList = nil;
     
     _lbCompleteNumber = nil;
     
@@ -72,10 +72,15 @@
         _lbUsername = [self auxGenLabel:[UIFont boldSystemFontOfSize:15]];
         
         //  TODO:2.9
-        UIImage* image = [UIImage imageNamed:@"iconSetting"];
-        _imagePaymentMethods = [[UIImageView alloc] initWithImage:image];
-        [self addSubview:_imagePaymentMethods];
-        
+        _paymentIconList = [NSMutableArray array];
+        for (id icon in @[@"iconPmAlipay", @"iconPmBankCard", @"iconPmWechat"]) {
+            UIImage* image = [UIImage imageNamed:icon];
+            UIImageView* iconView = [[UIImageView alloc] initWithImage:image];
+            iconView.hidden = YES;
+            [self addSubview:iconView];
+            [_paymentIconList addObject:iconView];
+        }
+
         _lbCompleteNumber = [self auxGenLabel:[UIFont systemFontOfSize:13]];
         _lbCompleteNumber.textAlignment = NSTextAlignmentRight;
         
@@ -145,7 +150,13 @@
     _lbUsername.frame = CGRectMake(fOffsetX + fDiameter + 8, fOffsetY, fWidth, fDiameter);
     
     CGSize size0 = [self auxSizeWithText:_lbUsername.text font:_lbUsername.font maxsize:CGSizeMake(fWidth, 9999)];
-    _imagePaymentMethods.frame = CGRectMake(fOffsetX + fDiameter + 8 + size0.width + 8, fOffsetY + 4, 16, 16);//TODO:2.9
+    //  TODO:2.9
+    CGFloat fIconOffset = fOffsetX + fDiameter + 8 + size0.width + 8;
+    for (UIImageView* icon in _paymentIconList) {
+        icon.hidden = NO;
+        icon.frame = CGRectMake(fIconOffset, fOffsetY + 4, 16, 16);
+        fIconOffset += 16 + 6.0f;
+    }
     
     _lbCompleteNumber.text = @"3332笔 | 94%";
     CGSize size1 = [self auxSizeWithText:_lbCompleteNumber.text font:_lbCompleteNumber.font maxsize:CGSizeMake(fWidth, 9999)];

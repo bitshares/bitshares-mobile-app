@@ -1197,6 +1197,24 @@
 		3FCC8B6D237A562D00F5664D /* OtcManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FCC8B6C237A562D00F5664D /* OtcManager.m */; };
 		3FCC8B6E237A562D00F5664D /* OtcManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FCC8B6C237A562D00F5664D /* OtcManager.m */; };
 		3FCC8B6F237A562D00F5664D /* OtcManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FCC8B6C237A562D00F5664D /* OtcManager.m */; };
+		3FCC8B76237A7C1F00F5664D /* iconPmBankCard@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B70237A7C1E00F5664D /* iconPmBankCard@2x.png */; };
+		3FCC8B77237A7C1F00F5664D /* iconPmBankCard@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B70237A7C1E00F5664D /* iconPmBankCard@2x.png */; };
+		3FCC8B78237A7C1F00F5664D /* iconPmBankCard@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B70237A7C1E00F5664D /* iconPmBankCard@2x.png */; };
+		3FCC8B79237A7C1F00F5664D /* iconPmAlipay@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B71237A7C1E00F5664D /* iconPmAlipay@3x.png */; };
+		3FCC8B7A237A7C1F00F5664D /* iconPmAlipay@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B71237A7C1E00F5664D /* iconPmAlipay@3x.png */; };
+		3FCC8B7B237A7C1F00F5664D /* iconPmAlipay@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B71237A7C1E00F5664D /* iconPmAlipay@3x.png */; };
+		3FCC8B7C237A7C1F00F5664D /* iconPmBankCard@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B72237A7C1F00F5664D /* iconPmBankCard@3x.png */; };
+		3FCC8B7D237A7C1F00F5664D /* iconPmBankCard@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B72237A7C1F00F5664D /* iconPmBankCard@3x.png */; };
+		3FCC8B7E237A7C1F00F5664D /* iconPmBankCard@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B72237A7C1F00F5664D /* iconPmBankCard@3x.png */; };
+		3FCC8B7F237A7C1F00F5664D /* iconPmAlipay@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B73237A7C1F00F5664D /* iconPmAlipay@2x.png */; };
+		3FCC8B80237A7C1F00F5664D /* iconPmAlipay@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B73237A7C1F00F5664D /* iconPmAlipay@2x.png */; };
+		3FCC8B81237A7C1F00F5664D /* iconPmAlipay@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B73237A7C1F00F5664D /* iconPmAlipay@2x.png */; };
+		3FCC8B82237A7C1F00F5664D /* iconPmWechat@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B74237A7C1F00F5664D /* iconPmWechat@2x.png */; };
+		3FCC8B83237A7C1F00F5664D /* iconPmWechat@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B74237A7C1F00F5664D /* iconPmWechat@2x.png */; };
+		3FCC8B84237A7C1F00F5664D /* iconPmWechat@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B74237A7C1F00F5664D /* iconPmWechat@2x.png */; };
+		3FCC8B85237A7C1F00F5664D /* iconPmWechat@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B75237A7C1F00F5664D /* iconPmWechat@3x.png */; };
+		3FCC8B86237A7C1F00F5664D /* iconPmWechat@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B75237A7C1F00F5664D /* iconPmWechat@3x.png */; };
+		3FCC8B87237A7C1F00F5664D /* iconPmWechat@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B75237A7C1F00F5664D /* iconPmWechat@3x.png */; };
 		3FD3DD2E2316A579009760A0 /* VCScanAccountName.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD3DD2C2316A578009760A0 /* VCScanAccountName.m */; };
 		3FD3DD2F2316A579009760A0 /* VCScanAccountName.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD3DD2C2316A578009760A0 /* VCScanAccountName.m */; };
 		3FD3DD302316A579009760A0 /* VCScanAccountName.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD3DD2C2316A578009760A0 /* VCScanAccountName.m */; };
@@ -1880,6 +1898,12 @@
 		3FCA2DC8219EC45900A5F4E9 /* VCProposalConfirm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCProposalConfirm.m; path = Controller/VCProposalConfirm.m; sourceTree = "<group>"; };
 		3FCC8B6B237A562D00F5664D /* OtcManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OtcManager.h; path = ios/OtcManager.h; sourceTree = "<group>"; };
 		3FCC8B6C237A562D00F5664D /* OtcManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OtcManager.m; path = ios/OtcManager.m; sourceTree = "<group>"; };
+		3FCC8B70237A7C1E00F5664D /* iconPmBankCard@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconPmBankCard@2x.png"; path = "Images/iconPmBankCard@2x.png"; sourceTree = "<group>"; };
+		3FCC8B71237A7C1E00F5664D /* iconPmAlipay@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconPmAlipay@3x.png"; path = "Images/iconPmAlipay@3x.png"; sourceTree = "<group>"; };
+		3FCC8B72237A7C1F00F5664D /* iconPmBankCard@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconPmBankCard@3x.png"; path = "Images/iconPmBankCard@3x.png"; sourceTree = "<group>"; };
+		3FCC8B73237A7C1F00F5664D /* iconPmAlipay@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconPmAlipay@2x.png"; path = "Images/iconPmAlipay@2x.png"; sourceTree = "<group>"; };
+		3FCC8B74237A7C1F00F5664D /* iconPmWechat@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconPmWechat@2x.png"; path = "Images/iconPmWechat@2x.png"; sourceTree = "<group>"; };
+		3FCC8B75237A7C1F00F5664D /* iconPmWechat@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconPmWechat@3x.png"; path = "Images/iconPmWechat@3x.png"; sourceTree = "<group>"; };
 		3FD3DD2C2316A578009760A0 /* VCScanAccountName.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCScanAccountName.m; sourceTree = "<group>"; };
 		3FD3DD2D2316A579009760A0 /* VCScanAccountName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VCScanAccountName.h; sourceTree = "<group>"; };
 		3FD3DD312317B8FC009760A0 /* VCScanTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCScanTransfer.m; sourceTree = "<group>"; };
@@ -2984,6 +3008,12 @@
 		18FF069417E00D870088405E /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				3FCC8B73237A7C1F00F5664D /* iconPmAlipay@2x.png */,
+				3FCC8B71237A7C1E00F5664D /* iconPmAlipay@3x.png */,
+				3FCC8B70237A7C1E00F5664D /* iconPmBankCard@2x.png */,
+				3FCC8B72237A7C1F00F5664D /* iconPmBankCard@3x.png */,
+				3FCC8B74237A7C1F00F5664D /* iconPmWechat@2x.png */,
+				3FCC8B75237A7C1F00F5664D /* iconPmWechat@3x.png */,
 				3FE19E9C235858A3000D1C54 /* iconExplorer@2x.png */,
 				3FE19E9D235858A3000D1C54 /* iconExplorer@3x.png */,
 				3FA72B552340BC2400EE3DC9 /* iconEdit@2x.png */,
@@ -4298,6 +4328,7 @@
 				3F676982230E9EC100E98C14 /* tabService@2x.png in Resources */,
 				3F676983230E9EC100E98C14 /* Hearts-50@2x.png in Resources */,
 				3F676984230E9EC100E98C14 /* iconWallet@3x.png in Resources */,
+				3FCC8B81237A7C1F00F5664D /* iconPmAlipay@2x.png in Resources */,
 				3F676985230E9EC100E98C14 /* tabFast_b@2x.png in Resources */,
 				3F676986230E9EC100E98C14 /* Trash@2x.png in Resources */,
 				3F676987230E9EC100E98C14 /* iconAvatar@2x.png in Resources */,
@@ -4356,6 +4387,7 @@
 				3F6769B9230E9EC100E98C14 /* share_line@2x.png in Resources */,
 				3F6769BA230E9EC100E98C14 /* iconTransfer@3x.png in Resources */,
 				3F6769BB230E9EC100E98C14 /* Filter-44@2x.png in Resources */,
+				3FCC8B87237A7C1F00F5664D /* iconPmWechat@3x.png in Resources */,
 				3F6769BC230E9EC100E98C14 /* tabMyself_b@3x.png in Resources */,
 				3F6769BD230E9EC100E98C14 /* Installing Updates@2x.png in Resources */,
 				3F6769BE230E9EC100E98C14 /* Checked User@2x.png in Resources */,
@@ -4377,6 +4409,7 @@
 				3F6769CE230E9EC100E98C14 /* Answers@2x.png in Resources */,
 				3F6769CF230E9EC100E98C14 /* firstenterbutton@2x.png in Resources */,
 				3F6769D0230E9EC100E98C14 /* abouticon@3x.png in Resources */,
+				3FCC8B78237A7C1F00F5664D /* iconPmBankCard@2x.png in Resources */,
 				3F6769D1230E9EC100E98C14 /* TrainDistance@2x.png in Resources */,
 				3F6769D2230E9EC100E98C14 /* icon_2_1@2x.png in Resources */,
 				3F6769D3230E9EC100E98C14 /* iconScan@2x.png in Resources */,
@@ -4384,6 +4417,7 @@
 				3F6769D5230E9EC100E98C14 /* iconOrders@2x.png in Resources */,
 				3F6769D6230E9EC100E98C14 /* ad_logo@2x.png in Resources */,
 				3F6769D7230E9EC100E98C14 /* Remove User@2x.png in Resources */,
+				3FCC8B7B237A7C1F00F5664D /* iconPmAlipay@3x.png in Resources */,
 				3F6769D8230E9EC100E98C14 /* banner_back@2x.png in Resources */,
 				3F6769D9230E9EC100E98C14 /* User Menu@2x.png in Resources */,
 				3F6769DA230E9EC100E98C14 /* Star@2x.png in Resources */,
@@ -4393,6 +4427,7 @@
 				3F6769DE230E9EC100E98C14 /* Tram@2x.png in Resources */,
 				3F6769DF230E9EC100E98C14 /* arrow right long bold@2x.png in Resources */,
 				3F6769E0230E9EC100E98C14 /* page_4@2x.png in Resources */,
+				3FCC8B7E237A7C1F00F5664D /* iconPmBankCard@3x.png in Resources */,
 				3F6769E1230E9EC100E98C14 /* Car-50@2x.png in Resources */,
 				3F6769E2230E9EC100E98C14 /* avatarmask.png in Resources */,
 				3F6769E3230E9EC100E98C14 /* pay_1@3x.png in Resources */,
@@ -4412,6 +4447,7 @@
 				3F6769F1230E9EC100E98C14 /* Great Wall@2x.png in Resources */,
 				3F6769F2230E9EC100E98C14 /* page_4_b@2x.png in Resources */,
 				3F6769F3230E9EC100E98C14 /* Help-50@2x.png in Resources */,
+				3FCC8B84237A7C1F00F5664D /* iconPmWechat@2x.png in Resources */,
 				3F6769F4230E9EC100E98C14 /* hotel order@2x.png in Resources */,
 				3FE19EA0235858A4000D1C54 /* iconExplorer@2x.png in Resources */,
 				3F6769F5230E9EC100E98C14 /* Taxi@2x.png in Resources */,
@@ -4539,6 +4575,7 @@
 				3FB8F9F821CE66C200DA88E2 /* tabService@2x.png in Resources */,
 				3FB8F9F921CE66C200DA88E2 /* Hearts-50@2x.png in Resources */,
 				3FB8F9FA21CE66C200DA88E2 /* iconWallet@3x.png in Resources */,
+				3FCC8B80237A7C1F00F5664D /* iconPmAlipay@2x.png in Resources */,
 				3FB8F9FB21CE66C200DA88E2 /* tabFast_b@2x.png in Resources */,
 				3FB8F9FC21CE66C200DA88E2 /* Trash@2x.png in Resources */,
 				3FB8F9FD21CE66C200DA88E2 /* iconAvatar@2x.png in Resources */,
@@ -4597,6 +4634,7 @@
 				3FB8FA2D21CE66C200DA88E2 /* share_line@2x.png in Resources */,
 				3FB8FA2E21CE66C200DA88E2 /* iconTransfer@3x.png in Resources */,
 				3FB8FA2F21CE66C200DA88E2 /* Filter-44@2x.png in Resources */,
+				3FCC8B86237A7C1F00F5664D /* iconPmWechat@3x.png in Resources */,
 				3FB8FA3021CE66C200DA88E2 /* tabMyself_b@3x.png in Resources */,
 				3FB8FA3121CE66C200DA88E2 /* Installing Updates@2x.png in Resources */,
 				3FB8FA3221CE66C200DA88E2 /* Checked User@2x.png in Resources */,
@@ -4618,6 +4656,7 @@
 				3FB8FA4221CE66C200DA88E2 /* Answers@2x.png in Resources */,
 				3FB8FA4321CE66C200DA88E2 /* firstenterbutton@2x.png in Resources */,
 				3FB8FA4421CE66C200DA88E2 /* abouticon@3x.png in Resources */,
+				3FCC8B77237A7C1F00F5664D /* iconPmBankCard@2x.png in Resources */,
 				3FB8FA4521CE66C200DA88E2 /* TrainDistance@2x.png in Resources */,
 				3FB8FA4621CE66C200DA88E2 /* icon_2_1@2x.png in Resources */,
 				3FB8FA4721CE66C200DA88E2 /* iconScan@2x.png in Resources */,
@@ -4625,6 +4664,7 @@
 				3FB8FA4921CE66C200DA88E2 /* iconOrders@2x.png in Resources */,
 				3FB8FA4A21CE66C200DA88E2 /* ad_logo@2x.png in Resources */,
 				3FB8FA4B21CE66C200DA88E2 /* Remove User@2x.png in Resources */,
+				3FCC8B7A237A7C1F00F5664D /* iconPmAlipay@3x.png in Resources */,
 				3FB8FA4C21CE66C200DA88E2 /* banner_back@2x.png in Resources */,
 				3FB8FA4D21CE66C200DA88E2 /* User Menu@2x.png in Resources */,
 				3FB8FA4E21CE66C200DA88E2 /* Star@2x.png in Resources */,
@@ -4634,6 +4674,7 @@
 				3FB8FA5221CE66C200DA88E2 /* Tram@2x.png in Resources */,
 				3FB8FA5321CE66C200DA88E2 /* arrow right long bold@2x.png in Resources */,
 				3FB8FA5421CE66C200DA88E2 /* page_4@2x.png in Resources */,
+				3FCC8B7D237A7C1F00F5664D /* iconPmBankCard@3x.png in Resources */,
 				3FB8FA5521CE66C200DA88E2 /* Car-50@2x.png in Resources */,
 				3FB8FA5621CE66C200DA88E2 /* avatarmask.png in Resources */,
 				3FB8FA5721CE66C200DA88E2 /* pay_1@3x.png in Resources */,
@@ -4653,6 +4694,7 @@
 				3FB8FA6521CE66C200DA88E2 /* Great Wall@2x.png in Resources */,
 				3FB8FA6621CE66C200DA88E2 /* page_4_b@2x.png in Resources */,
 				3FB8FA6721CE66C200DA88E2 /* Help-50@2x.png in Resources */,
+				3FCC8B83237A7C1F00F5664D /* iconPmWechat@2x.png in Resources */,
 				3FB8FA6821CE66C200DA88E2 /* hotel order@2x.png in Resources */,
 				3FE19E9F235858A4000D1C54 /* iconExplorer@2x.png in Resources */,
 				3FB8FA6921CE66C200DA88E2 /* Taxi@2x.png in Resources */,
@@ -4776,6 +4818,7 @@
 				F55325BD1C075D3200EC3F95 /* Questions@2x.png in Resources */,
 				B7973C3420E205550052A5F5 /* tabService@2x.png in Resources */,
 				F56DC0271E3118020051E785 /* Hearts-50@2x.png in Resources */,
+				3FCC8B85237A7C1F00F5664D /* iconPmWechat@3x.png in Resources */,
 				3F0AE33A2192C97800E4144C /* iconWallet@3x.png in Resources */,
 				F51D13EE1C51103100FBB748 /* tabFast_b@2x.png in Resources */,
 				F55325C61C075D3200EC3F95 /* Trash@2x.png in Resources */,
@@ -4797,6 +4840,7 @@
 				3F3E5849218310E900F1DC24 /* iconFeedDetail@2x.png in Resources */,
 				3FE19EA1235858A4000D1C54 /* iconExplorer@3x.png in Resources */,
 				F55325B21C075D3200EC3F95 /* Help@2x.png in Resources */,
+				3FCC8B7C237A7C1F00F5664D /* iconPmBankCard@3x.png in Resources */,
 				F55325AA1C075D3200EC3F95 /* Edit User@2x.png in Resources */,
 				F565D8D91C19CFF000814662 /* pay_0@3x.png in Resources */,
 				3FB8F89521CCD10400DA88E2 /* Localizable.strings in Resources */,
@@ -4805,6 +4849,7 @@
 				F5C25F261CFD97260098D3DA /* Images.xcassets in Resources */,
 				B7973C5120E4E43E0052A5F5 /* iconOrders@3x.png in Resources */,
 				3F0AE33C2192C97800E4144C /* iconGame@3x.png in Resources */,
+				3FCC8B82237A7C1F00F5664D /* iconPmWechat@2x.png in Resources */,
 				F55325C91C075D3200EC3F95 /* User Groups@2x.png in Resources */,
 				F55325951C075D3200EC3F95 /* Approval@2x.png in Resources */,
 				B7973C3B20E205560052A5F5 /* tabMyself@2x.png in Resources */,
@@ -4814,6 +4859,7 @@
 				F553259B1C075D3200EC3F95 /* Businesswoman@2x.png in Resources */,
 				3F23B781231CCC7000EEEE78 /* paysuccess@2x.png in Resources */,
 				F56C4B541C11924000DB4396 /* share_to_weixin.png in Resources */,
+				3FCC8B76237A7C1F00F5664D /* iconPmBankCard@2x.png in Resources */,
 				F55325A31C075D3200EC3F95 /* City Railway Station@2x.png in Resources */,
 				B7973C6020E4EACD0052A5F5 /* tabService_b@3x.png in Resources */,
 				F538707C1DC3508B00F56EAA /* kefuavatar@2x.png in Resources */,
@@ -4853,6 +4899,7 @@
 				F55325B91C075D3200EC3F95 /* Message@2x.png in Resources */,
 				F50C496E1C1355790001D9EA /* Upload-64@2x.png in Resources */,
 				ED9CB6071879388E00C4E2C0 /* icon_1_0@2x.png in Resources */,
+				3FCC8B79237A7C1F00F5664D /* iconPmAlipay@3x.png in Resources */,
 				3F7ED8DC227691BA00082680 /* iconAdvFunction@2x.png in Resources */,
 				F5F114791C230908006AE655 /* Forward-44@2x.png in Resources */,
 				F55325941C075D3200EC3F95 /* Answers@2x.png in Resources */,
@@ -4883,6 +4930,7 @@
 				F553259E1C075D3200EC3F95 /* Cancel@2x.png in Resources */,
 				3F7ED8DA227691BA00082680 /* iconAdvFunction@3x.png in Resources */,
 				B78FFC0C1C03220D00AB7F1F /* tapicon@2x.png in Resources */,
+				3FCC8B7F237A7C1F00F5664D /* iconPmAlipay@2x.png in Resources */,
 				F55325901C075D3200EC3F95 /* About@2x.png in Resources */,
 				F55325981C075D3200EC3F95 /* Attention@2x.png in Resources */,
 				B7973C4420E4C8EF0052A5F5 /* iconAssets@2x.png in Resources */,
