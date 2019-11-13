@@ -1253,6 +1253,12 @@
 		3FEBEEF621DDBBE600C124CF /* iconProposal@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FEBEEF321DDBBE600C124CF /* iconProposal@2x.png */; };
 		3FEBEEF721DDBBE600C124CF /* iconProposal@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FEBEEF421DDBBE600C124CF /* iconProposal@3x.png */; };
 		3FEBEEF821DDBBE600C124CF /* iconProposal@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FEBEEF421DDBBE600C124CF /* iconProposal@3x.png */; };
+		3FEFFD32237A83D90019799D /* ViewFullScreenBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FEFFD30237A83D90019799D /* ViewFullScreenBase.m */; };
+		3FEFFD33237A83D90019799D /* ViewFullScreenBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FEFFD30237A83D90019799D /* ViewFullScreenBase.m */; };
+		3FEFFD34237A83D90019799D /* ViewFullScreenBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FEFFD30237A83D90019799D /* ViewFullScreenBase.m */; };
+		3FEFFD35237A83D90019799D /* ViewWebviewPayment.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FEFFD31237A83D90019799D /* ViewWebviewPayment.m */; };
+		3FEFFD36237A83D90019799D /* ViewWebviewPayment.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FEFFD31237A83D90019799D /* ViewWebviewPayment.m */; };
+		3FEFFD37237A83D90019799D /* ViewWebviewPayment.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FEFFD31237A83D90019799D /* ViewWebviewPayment.m */; };
 		3FF3550621FECDF4008EF213 /* LangManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF3550421FECDF4008EF213 /* LangManager.m */; };
 		3FF3550721FECDF4008EF213 /* LangManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF3550421FECDF4008EF213 /* LangManager.m */; };
 		3FF3550A21FED340008EF213 /* VCSelectLanguage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF3550921FED340008EF213 /* VCSelectLanguage.m */; };
@@ -1934,6 +1940,10 @@
 		3FEA46E7216F812800127CA5 /* CurveSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CurveSlider.h; path = ios/CurveSlider.h; sourceTree = "<group>"; };
 		3FEBEEF321DDBBE600C124CF /* iconProposal@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconProposal@2x.png"; path = "Images/iconProposal@2x.png"; sourceTree = "<group>"; };
 		3FEBEEF421DDBBE600C124CF /* iconProposal@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconProposal@3x.png"; path = "Images/iconProposal@3x.png"; sourceTree = "<group>"; };
+		3FEFFD2E237A83D90019799D /* ViewFullScreenBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewFullScreenBase.h; path = oplayer/View/ModelView/ViewFullScreenBase.h; sourceTree = SOURCE_ROOT; };
+		3FEFFD2F237A83D90019799D /* ViewWebviewPayment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewWebviewPayment.h; path = oplayer/View/ModelView/ViewWebviewPayment.h; sourceTree = SOURCE_ROOT; };
+		3FEFFD30237A83D90019799D /* ViewFullScreenBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewFullScreenBase.m; path = oplayer/View/ModelView/ViewFullScreenBase.m; sourceTree = SOURCE_ROOT; };
+		3FEFFD31237A83D90019799D /* ViewWebviewPayment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewWebviewPayment.m; path = oplayer/View/ModelView/ViewWebviewPayment.m; sourceTree = SOURCE_ROOT; };
 		3FF3550421FECDF4008EF213 /* LangManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LangManager.m; path = ios/LangManager.m; sourceTree = "<group>"; };
 		3FF3550521FECDF4008EF213 /* LangManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LangManager.h; path = ios/LangManager.h; sourceTree = "<group>"; };
 		3FF3550821FED340008EF213 /* VCSelectLanguage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCSelectLanguage.h; path = Controller/VCSelectLanguage.h; sourceTree = "<group>"; };
@@ -2913,6 +2923,7 @@
 		18FF069017E00C5C0088405E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				3FEFFD2D237A839E0019799D /* ModelView */,
 				3F12FB632372BCC500654A07 /* ViewOtcMerchantInfoCell.h */,
 				3F12FB622372BCC500654A07 /* ViewOtcMerchantInfoCell.m */,
 				3F21FB73235749B500CF9F20 /* ViewSecTipsLineCell.h */,
@@ -3407,6 +3418,17 @@
 				3FE23E32236D6A1F006BF999 /* VCOtcUserAuth.m */,
 			);
 			name = OTC;
+			sourceTree = "<group>";
+		};
+		3FEFFD2D237A839E0019799D /* ModelView */ = {
+			isa = PBXGroup;
+			children = (
+				3FEFFD2E237A83D90019799D /* ViewFullScreenBase.h */,
+				3FEFFD30237A83D90019799D /* ViewFullScreenBase.m */,
+				3FEFFD2F237A83D90019799D /* ViewWebviewPayment.h */,
+				3FEFFD31237A83D90019799D /* ViewWebviewPayment.m */,
+			);
+			path = ModelView;
 			sourceTree = "<group>";
 		};
 		B714090820A31CC300003311 /* SocketRocket */ = {
@@ -5144,6 +5166,7 @@
 				3F676814230E9EC100E98C14 /* GCDWebServerRequest.m in Sources */,
 				3F676815230E9EC100E98C14 /* WjCryptLib_Sha1.c in Sources */,
 				3F676816230E9EC100E98C14 /* VCHtlcList.m in Sources */,
+				3FEFFD37237A83D90019799D /* ViewWebviewPayment.m in Sources */,
 				3F676817230E9EC100E98C14 /* ViewLimitOrderInfoCell.m in Sources */,
 				3F676818230E9EC100E98C14 /* VCSlideControllerBase.m in Sources */,
 				3F676819230E9EC100E98C14 /* MyTabBarController.m in Sources */,
@@ -5331,6 +5354,7 @@
 				3F6768C5230E9EC100E98C14 /* VCScanNormalString.m in Sources */,
 				3F6768C6230E9EC100E98C14 /* ViewKLine.m in Sources */,
 				3F6768C7230E9EC100E98C14 /* VCKlineIndexSetting.m in Sources */,
+				3FEFFD34237A83D90019799D /* ViewFullScreenBase.m in Sources */,
 				3F6768C8230E9EC100E98C14 /* Bcj2.c in Sources */,
 				3F6768C9230E9EC100E98C14 /* FlurryEmpty.m in Sources */,
 				3F6768CA230E9EC100E98C14 /* SAMKeychainQuery.m in Sources */,
@@ -5448,6 +5472,7 @@
 				3FB8F8AC21CE66C200DA88E2 /* GCDWebServerRequest.m in Sources */,
 				3FB8F8AD21CE66C200DA88E2 /* WjCryptLib_Sha1.c in Sources */,
 				3FC4D44D226F2EEB00787082 /* VCHtlcList.m in Sources */,
+				3FEFFD36237A83D90019799D /* ViewWebviewPayment.m in Sources */,
 				3FB8F8AE21CE66C200DA88E2 /* ViewLimitOrderInfoCell.m in Sources */,
 				3FB8F8AF21CE66C200DA88E2 /* VCSlideControllerBase.m in Sources */,
 				3FB8F8B021CE66C200DA88E2 /* MyTabBarController.m in Sources */,
@@ -5635,6 +5660,7 @@
 				3FB8F94C21CE66C200DA88E2 /* VCScanNormalString.m in Sources */,
 				3FB8F94D21CE66C200DA88E2 /* ViewKLine.m in Sources */,
 				3F3847372223AC7500B55914 /* VCKlineIndexSetting.m in Sources */,
+				3FEFFD33237A83D90019799D /* ViewFullScreenBase.m in Sources */,
 				3FB8F94E21CE66C200DA88E2 /* Bcj2.c in Sources */,
 				3F4D9A572294E476000BFD82 /* FlurryEmpty.m in Sources */,
 				3FB8F94F21CE66C200DA88E2 /* SAMKeychainQuery.m in Sources */,
@@ -5752,6 +5778,7 @@
 				B72A848320CCD18B00D92A25 /* GCDWebServerRequest.m in Sources */,
 				B7BDA9A820B3A3D100738F12 /* WjCryptLib_Sha1.c in Sources */,
 				3FC4D44C226F2EEB00787082 /* VCHtlcList.m in Sources */,
+				3FEFFD35237A83D90019799D /* ViewWebviewPayment.m in Sources */,
 				B786D52020F1FE7200427C08 /* ViewLimitOrderInfoCell.m in Sources */,
 				B72A845320CBE13B00D92A25 /* VCSlideControllerBase.m in Sources */,
 				ED75E62B186C63C9009BEF5E /* MyTabBarController.m in Sources */,
@@ -5939,6 +5966,7 @@
 				B737850920FF88EE001EEA8C /* ViewKLine.m in Sources */,
 				3F3847362223AC7500B55914 /* VCKlineIndexSetting.m in Sources */,
 				B7BDAA8620B3C77500738F12 /* Bcj2.c in Sources */,
+				3FEFFD32237A83D90019799D /* ViewFullScreenBase.m in Sources */,
 				3F4D9A562294E476000BFD82 /* FlurryEmpty.m in Sources */,
 				B7D5862D2115A9FA00FED7B0 /* SAMKeychainQuery.m in Sources */,
 				B72A848220CCD18B00D92A25 /* GCDWebServerFunctions.m in Sources */,

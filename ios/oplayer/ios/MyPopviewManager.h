@@ -26,6 +26,13 @@ typedef void (^Arg2CompletionBlock)(NSInteger buttonIndex, NSInteger cancelIndex
  */
 - (void)showActionSheet:(UIViewController*)vc message:(NSString*)message cancel:(NSString*)cancelbuttonname red:(NSString*)redbuttonname items:(NSArray*)itemnamelist callback:(Arg2CompletionBlock)callback;
 
+/*
+ *  显示网页中用的安全密码输入框。
+ */
+- (WsPromise*)showWebviewPaymentDialog:(UIViewController*)vc
+                   reserve_secure_text:(NSString*)reserve_secure_text
+                              paytitle:(NSString*)paytitle;
+
 /**
  *  在底部显示列表选择控件
  */

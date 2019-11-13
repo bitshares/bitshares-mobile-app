@@ -10,6 +10,9 @@
 #import "NativeAppDelegate.h"
 #import "ThemeManager.h"
 
+#import "ViewFullScreenBase.h"
+#import "ViewWebviewPayment.h"
+
 #import "objc/runtime.h"
 
 static MyPopviewManager *_sharedMyPopviewManager = nil;
@@ -157,6 +160,27 @@ static const char* __picker_view_args_addr__ = "__picker_view_args_addr__";
         block(buttonIndex, actionSheet.cancelButtonIndex);
         [_popViewIdBlockHash removeObjectForKey:key];
     }
+}
+
+/*
+ *  显示网页中用的安全密码输入框。
+ */
+- (WsPromise*)showWebviewPaymentDialog:(UIViewController*)vc
+                   reserve_secure_text:(NSString*)reserve_secure_text
+                              paytitle:(NSString*)paytitle
+{
+    //  TODO:2.9
+    
+    UIView* super_view = nil;
+    if (vc.tabBarController && vc.tabBarController.view){
+        super_view = vc.tabBarController.view;
+    }else{
+        super_view = vc.navigationController.view;
+    }
+    
+    ViewWebviewPayment* view = [[ViewWebviewPayment alloc] init];
+    [view showInView:super_view];
+    return nil;
 }
 
 /**
