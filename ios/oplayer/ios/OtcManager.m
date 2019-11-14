@@ -52,7 +52,7 @@ static OtcManager *_sharedOtcManager = nil;
  */
 - (WsPromise*)queryIdVerify:(NSString*)bts_account_name
 {
-    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/otc/queryIdVerify"];
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/user/queryIdVerify"];
     //  TODO:2.9服务器暂时没验证签名？
     id headers = @{
         @"btsAccount":bts_account_name,
@@ -60,7 +60,7 @@ static OtcManager *_sharedOtcManager = nil;
         @"dataVerifyType":@"",//TODO:2.9
         @"holderVerify":@"",//TODO:2.9
     };
-    return [OrgUtils asyncPostUrl_jsonBody:url args:@{} headers:headers];
+    return [OrgUtils asyncPostUrl_jsonBody:url args:@{@"btsAccount":bts_account_name} headers:nil];
 }
 
 /*

@@ -24,6 +24,12 @@
 		3F0DA36521884011006E1004 /* SGQRCodeObtainConfigure.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0DA36021884011006E1004 /* SGQRCodeObtainConfigure.m */; };
 		3F0DA36621884011006E1004 /* SGQRCodeScanView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0DA36221884011006E1004 /* SGQRCodeScanView.m */; };
 		3F0DA369218851FF006E1004 /* VCQrScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0DA367218851FF006E1004 /* VCQrScan.m */; };
+		3F12F43F237D0E2E001FBAD8 /* VCOtcOrders.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F12F43D237D0E2D001FBAD8 /* VCOtcOrders.m */; };
+		3F12F440237D0E2E001FBAD8 /* VCOtcOrders.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F12F43D237D0E2D001FBAD8 /* VCOtcOrders.m */; };
+		3F12F441237D0E2E001FBAD8 /* VCOtcOrders.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F12F43D237D0E2D001FBAD8 /* VCOtcOrders.m */; };
+		3F12F444237D101B001FBAD8 /* ViewOtcOrderInfCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F12F442237D101B001FBAD8 /* ViewOtcOrderInfCell.m */; };
+		3F12F445237D101B001FBAD8 /* ViewOtcOrderInfCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F12F442237D101B001FBAD8 /* ViewOtcOrderInfCell.m */; };
+		3F12F446237D101B001FBAD8 /* ViewOtcOrderInfCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F12F442237D101B001FBAD8 /* ViewOtcOrderInfCell.m */; };
 		3F12FB5F2372BA1A00654A07 /* VCOtcMerchantList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F12FB5D2372BA1900654A07 /* VCOtcMerchantList.m */; };
 		3F12FB602372BA1A00654A07 /* VCOtcMerchantList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F12FB5D2372BA1900654A07 /* VCOtcMerchantList.m */; };
 		3F12FB612372BA1A00654A07 /* VCOtcMerchantList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F12FB5D2372BA1900654A07 /* VCOtcMerchantList.m */; };
@@ -1790,6 +1796,10 @@
 		3F0DA36221884011006E1004 /* SGQRCodeScanView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SGQRCodeScanView.m; sourceTree = "<group>"; };
 		3F0DA367218851FF006E1004 /* VCQrScan.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCQrScan.m; path = Controller/VCQrScan.m; sourceTree = "<group>"; };
 		3F0DA368218851FF006E1004 /* VCQrScan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCQrScan.h; path = Controller/VCQrScan.h; sourceTree = "<group>"; };
+		3F12F43D237D0E2D001FBAD8 /* VCOtcOrders.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcOrders.m; path = Controller/VCOtcOrders.m; sourceTree = "<group>"; };
+		3F12F43E237D0E2E001FBAD8 /* VCOtcOrders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcOrders.h; path = Controller/VCOtcOrders.h; sourceTree = "<group>"; };
+		3F12F442237D101B001FBAD8 /* ViewOtcOrderInfCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewOtcOrderInfCell.m; path = View/ViewOtcOrderInfCell.m; sourceTree = "<group>"; };
+		3F12F443237D101B001FBAD8 /* ViewOtcOrderInfCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewOtcOrderInfCell.h; path = View/ViewOtcOrderInfCell.h; sourceTree = "<group>"; };
 		3F12FB5D2372BA1900654A07 /* VCOtcMerchantList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcMerchantList.m; path = Controller/VCOtcMerchantList.m; sourceTree = "<group>"; };
 		3F12FB5E2372BA1A00654A07 /* VCOtcMerchantList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcMerchantList.h; path = Controller/VCOtcMerchantList.h; sourceTree = "<group>"; };
 		3F12FB622372BCC500654A07 /* ViewOtcMerchantInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewOtcMerchantInfoCell.m; path = View/ViewOtcMerchantInfoCell.m; sourceTree = "<group>"; };
@@ -2926,6 +2936,8 @@
 				3FEFFD2D237A839E0019799D /* ModelView */,
 				3F12FB632372BCC500654A07 /* ViewOtcMerchantInfoCell.h */,
 				3F12FB622372BCC500654A07 /* ViewOtcMerchantInfoCell.m */,
+				3F12F443237D101B001FBAD8 /* ViewOtcOrderInfCell.h */,
+				3F12F442237D101B001FBAD8 /* ViewOtcOrderInfCell.m */,
 				3F21FB73235749B500CF9F20 /* ViewSecTipsLineCell.h */,
 				3F21FB74235749B600CF9F20 /* ViewSecTipsLineCell.m */,
 				3F2E6E2B233E0B3500BF4B78 /* ViewPermissionInfoCellB.h */,
@@ -3406,6 +3418,8 @@
 		3FE23E30236D6A07006BF999 /* OTC */ = {
 			isa = PBXGroup;
 			children = (
+				3F12F43E237D0E2E001FBAD8 /* VCOtcOrders.h */,
+				3F12F43D237D0E2D001FBAD8 /* VCOtcOrders.m */,
 				3F12FB5E2372BA1A00654A07 /* VCOtcMerchantList.h */,
 				3F12FB5D2372BA1900654A07 /* VCOtcMerchantList.m */,
 				3F4F293C23727A83007674E5 /* VCOtcAddAlipay.h */,
@@ -5189,6 +5203,7 @@
 				3F67682A230E9EC100E98C14 /* ViewFeedPriceDataCell.m in Sources */,
 				3F67682B230E9EC100E98C14 /* VCUserOrders.m in Sources */,
 				3F67682C230E9EC100E98C14 /* ViewProposalInfoCell.m in Sources */,
+				3F12F441237D0E2E001FBAD8 /* VCOtcOrders.m in Sources */,
 				3F67682D230E9EC100E98C14 /* SCLButton.m in Sources */,
 				3F67682E230E9EC100E98C14 /* UIDevice+Helper.m in Sources */,
 				3F67682F230E9EC100E98C14 /* ViewPermissionCell.m in Sources */,
@@ -5351,6 +5366,7 @@
 				3F6768C2230E9EC100E98C14 /* FXBlurView.m in Sources */,
 				3F6768C3230E9EC100E98C14 /* ScheduleManager.m in Sources */,
 				3F6768C4230E9EC100E98C14 /* NSURLRequest+SRWebSocket.m in Sources */,
+				3F12F446237D101B001FBAD8 /* ViewOtcOrderInfCell.m in Sources */,
 				3F6768C5230E9EC100E98C14 /* VCScanNormalString.m in Sources */,
 				3F6768C6230E9EC100E98C14 /* ViewKLine.m in Sources */,
 				3F6768C7230E9EC100E98C14 /* VCKlineIndexSetting.m in Sources */,
@@ -5495,6 +5511,7 @@
 				3FB8F8C121CE66C200DA88E2 /* ViewFeedPriceDataCell.m in Sources */,
 				3FB8F8C221CE66C200DA88E2 /* VCUserOrders.m in Sources */,
 				3FB8F8C321CE66C200DA88E2 /* ViewProposalInfoCell.m in Sources */,
+				3F12F440237D0E2E001FBAD8 /* VCOtcOrders.m in Sources */,
 				3FB8F8C421CE66C200DA88E2 /* SCLButton.m in Sources */,
 				3FB8F8C521CE66C200DA88E2 /* UIDevice+Helper.m in Sources */,
 				3F7ED8F42277F24700082680 /* ViewPermissionCell.m in Sources */,
@@ -5657,6 +5674,7 @@
 				3FB8F94921CE66C200DA88E2 /* FXBlurView.m in Sources */,
 				3FB8F94A21CE66C200DA88E2 /* ScheduleManager.m in Sources */,
 				3FB8F94B21CE66C200DA88E2 /* NSURLRequest+SRWebSocket.m in Sources */,
+				3F12F445237D101B001FBAD8 /* ViewOtcOrderInfCell.m in Sources */,
 				3FB8F94C21CE66C200DA88E2 /* VCScanNormalString.m in Sources */,
 				3FB8F94D21CE66C200DA88E2 /* ViewKLine.m in Sources */,
 				3F3847372223AC7500B55914 /* VCKlineIndexSetting.m in Sources */,
@@ -5801,6 +5819,7 @@
 				B7F9DA77212BD76200185503 /* ViewFeedPriceDataCell.m in Sources */,
 				B741A76320DBE77C000FBC00 /* VCUserOrders.m in Sources */,
 				3FC43A232196EF91004DFFA5 /* ViewProposalInfoCell.m in Sources */,
+				3F12F43F237D0E2E001FBAD8 /* VCOtcOrders.m in Sources */,
 				B782F0C31D6E94C600F61571 /* SCLButton.m in Sources */,
 				ED696AD0182B8425007053BA /* UIDevice+Helper.m in Sources */,
 				3F7ED8F32277F24700082680 /* ViewPermissionCell.m in Sources */,
@@ -5963,6 +5982,7 @@
 				B7C04123210C100100848CBC /* ScheduleManager.m in Sources */,
 				B714094B20A31CC300003311 /* NSURLRequest+SRWebSocket.m in Sources */,
 				3F475CDF21945A12009DD5C1 /* VCScanNormalString.m in Sources */,
+				3F12F444237D101B001FBAD8 /* ViewOtcOrderInfCell.m in Sources */,
 				B737850920FF88EE001EEA8C /* ViewKLine.m in Sources */,
 				3F3847362223AC7500B55914 /* VCKlineIndexSetting.m in Sources */,
 				B7BDAA8620B3C77500738F12 /* Bcj2.c in Sources */,
