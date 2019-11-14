@@ -7,8 +7,11 @@
 //
 
 #import "VCOtcMerchantList.h"
+#import "VCOtcOrders.h"
+
 #import "ViewOtcMerchantInfoCell.h"
 #import "MBProgressHUDSingleton.h"
+#import "OtcManager.h"
 
 @interface VCOtcMerchantListPages ()
 {
@@ -38,11 +41,23 @@
              [[VCOtcMerchantList alloc] initWithOwner:self userbuy:NO]];
 }
 
+- (void)onRightButtonClicked
+{
+    VCBase* vc = [[VCOtcOrdersPages alloc] init];
+    //  TODO:2.9
+    [self pushViewController:vc vctitle:@"订单管理" backtitle:kVcDefaultBackTitleName];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
+    
+    //  TODO:2.9 右上角 个人信息列表【我的信息、我的 订单等。】
+    [self showRightImageButton:@"iconFav"
+                        action:@selector(onRightButtonClicked)
+                         color:[ThemeManager sharedThemeManager].textColorGray];
     
     //  REMARK：请求第一页数据
     [self queryMerchantInfoList:1];
@@ -50,6 +65,15 @@
 
 - (void)queryMerchantInfoList:(NSInteger)tag
 {
+    [[[OtcManager sharedOtcManager] queryAssetList] then:^id(id data) {
+        NSLog(@"%@", data);
+        return nil;
+    }];
+    
+    [[[OtcManager sharedOtcManager] queryIdVerify:@"saya77"] then:^id(id data) {
+        NSLog(@"%@", data);
+        return nil;
+    }];
 //    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     //    get_call_orders && get_full_accounts
     
@@ -198,7 +222,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGFloat baseHeight = 8 + 24 + 4 + 20 * 2 + 8;
+    CGFloat baseHeight = 8 + 24 + 4 + 20 * 2 + 40 + 8;
     
     return baseHeight;
 }
@@ -230,13 +254,14 @@
     ViewOtcMerchantInfoCell* cell = (ViewOtcMerchantInfoCell*)[tableView dequeueReusableCellWithIdentifier:identify];
     if (!cell)
     {
-        cell = [[ViewOtcMerchantInfoCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:identify];
+        cell = [[ViewOtcMerchantInfoCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:identify vc:self];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.backgroundColor = [UIColor clearColor];
     }
     cell.showCustomBottomLine = YES;
     cell.isBuy = _userbuy;
+    [cell setTagData:indexPath.row];
     [cell setItem:[_data_array objectAtIndex:indexPath.row]];
     return cell;
 }
@@ -249,6 +274,18 @@
         assert(item);
         //  TODO:2.9 onclicked
     }];
+}
+
+/*
+ *  事件 - 点击购买or出售按钮。
+ */
+- (void)onButtonBuyOrSellClicked:(UIButton*)sender
+{
+    assert(sender.tag < [_data_array count]);
+    id item = [_data_array objectAtIndex:sender.tag];
+    assert(item);
+    //  TODO:2.9
+    [OrgUtils makeToast:_userbuy ? @"买" : @"卖"];
 }
 
 @end

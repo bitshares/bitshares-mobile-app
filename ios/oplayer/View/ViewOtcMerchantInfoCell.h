@@ -11,7 +11,8 @@
 
 @interface ViewOtcMerchantInfoCell : UITableViewCellBase
 
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier;
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier vc:(VCBase*)vc;
+- (void)setTagData:(NSInteger)tag;
 
 @property (nonatomic, assign) BOOL isBuy;
 @property (nonatomic, strong) NSDictionary* item;
