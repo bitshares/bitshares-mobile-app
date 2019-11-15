@@ -82,20 +82,23 @@ static OtcManager *_sharedOtcManager = nil;
  *  (public) 查询OTC商家广告列表。
  *  ad_status   - 广告状态 默认值：eoads_online
  *  ad_type     - 状态类型
+ *  asset_name  - OTC数字资产名字（CNY、USD、GDEX.USDT等）
  *  page        - 页号
  *  page_size   - 每页数量
  */
-- (WsPromise*)queryAdList:(EOtcAdType)ad_type page:(NSInteger)page page_size:(NSInteger)page_size
+- (WsPromise*)queryAdList:(EOtcAdType)ad_type asset_name:(NSString*)asset_name page:(NSInteger)page page_size:(NSInteger)page_size
 {
-    return [self queryAdList:eoads_online type:ad_type page:page page_size:page_size];
+    return [self queryAdList:eoads_online type:ad_type asset_name:asset_name page:page page_size:page_size];
 }
 
-- (WsPromise*)queryAdList:(EOtcAdStatus)ad_status type:(EOtcAdType)ad_type page:(NSInteger)page page_size:(NSInteger)page_size
+- (WsPromise*)queryAdList:(EOtcAdStatus)ad_status type:(EOtcAdType)ad_type asset_name:(NSString*)asset_name
+                     page:(NSInteger)page page_size:(NSInteger)page_size
 {
     id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/ad/list"];
     id args = @{
         @"adStatus":@(ad_status),
         @"adType":@(ad_type),
+        @"assetName":asset_name,
         @"page":@(page),
         @"pageSize":@(page_size)
     };

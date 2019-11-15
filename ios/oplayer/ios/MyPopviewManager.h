@@ -33,6 +33,11 @@ typedef void (^Arg2CompletionBlock)(NSInteger buttonIndex, NSInteger cancelIndex
                    reserve_secure_text:(NSString*)reserve_secure_text
                               paytitle:(NSString*)paytitle;
 
+/*
+ *  显示场外交易下单时的模态输入框
+ */
+- (WsPromise*)showOtcTradeView:(UIViewController*)vc ad_info:(id)ad_info;
+
 /**
  *  在底部显示列表选择控件
  */

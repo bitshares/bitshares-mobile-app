@@ -30,6 +30,9 @@
 		3F12F444237D101B001FBAD8 /* ViewOtcOrderInfCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F12F442237D101B001FBAD8 /* ViewOtcOrderInfCell.m */; };
 		3F12F445237D101B001FBAD8 /* ViewOtcOrderInfCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F12F442237D101B001FBAD8 /* ViewOtcOrderInfCell.m */; };
 		3F12F446237D101B001FBAD8 /* ViewOtcOrderInfCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F12F442237D101B001FBAD8 /* ViewOtcOrderInfCell.m */; };
+		3F12F449237D26C7001FBAD8 /* ViewOtcTrade.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F12F447237D26C7001FBAD8 /* ViewOtcTrade.m */; };
+		3F12F44A237D26C7001FBAD8 /* ViewOtcTrade.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F12F447237D26C7001FBAD8 /* ViewOtcTrade.m */; };
+		3F12F44B237D26C7001FBAD8 /* ViewOtcTrade.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F12F447237D26C7001FBAD8 /* ViewOtcTrade.m */; };
 		3F12FB5F2372BA1A00654A07 /* VCOtcMerchantList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F12FB5D2372BA1900654A07 /* VCOtcMerchantList.m */; };
 		3F12FB602372BA1A00654A07 /* VCOtcMerchantList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F12FB5D2372BA1900654A07 /* VCOtcMerchantList.m */; };
 		3F12FB612372BA1A00654A07 /* VCOtcMerchantList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F12FB5D2372BA1900654A07 /* VCOtcMerchantList.m */; };
@@ -1800,6 +1803,8 @@
 		3F12F43E237D0E2E001FBAD8 /* VCOtcOrders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcOrders.h; path = Controller/VCOtcOrders.h; sourceTree = "<group>"; };
 		3F12F442237D101B001FBAD8 /* ViewOtcOrderInfCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewOtcOrderInfCell.m; path = View/ViewOtcOrderInfCell.m; sourceTree = "<group>"; };
 		3F12F443237D101B001FBAD8 /* ViewOtcOrderInfCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewOtcOrderInfCell.h; path = View/ViewOtcOrderInfCell.h; sourceTree = "<group>"; };
+		3F12F447237D26C7001FBAD8 /* ViewOtcTrade.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewOtcTrade.m; path = oplayer/View/ModelView/ViewOtcTrade.m; sourceTree = SOURCE_ROOT; };
+		3F12F448237D26C7001FBAD8 /* ViewOtcTrade.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewOtcTrade.h; path = oplayer/View/ModelView/ViewOtcTrade.h; sourceTree = SOURCE_ROOT; };
 		3F12FB5D2372BA1900654A07 /* VCOtcMerchantList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcMerchantList.m; path = Controller/VCOtcMerchantList.m; sourceTree = "<group>"; };
 		3F12FB5E2372BA1A00654A07 /* VCOtcMerchantList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcMerchantList.h; path = Controller/VCOtcMerchantList.h; sourceTree = "<group>"; };
 		3F12FB622372BCC500654A07 /* ViewOtcMerchantInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewOtcMerchantInfoCell.m; path = View/ViewOtcMerchantInfoCell.m; sourceTree = "<group>"; };
@@ -3437,6 +3442,8 @@
 		3FEFFD2D237A839E0019799D /* ModelView */ = {
 			isa = PBXGroup;
 			children = (
+				3F12F448237D26C7001FBAD8 /* ViewOtcTrade.h */,
+				3F12F447237D26C7001FBAD8 /* ViewOtcTrade.m */,
 				3FEFFD2E237A83D90019799D /* ViewFullScreenBase.h */,
 				3FEFFD30237A83D90019799D /* ViewFullScreenBase.m */,
 				3FEFFD2F237A83D90019799D /* ViewWebviewPayment.h */,
@@ -5279,6 +5286,7 @@
 				3F676870230E9EC100E98C14 /* VCUnlockAccount.m in Sources */,
 				3F676871230E9EC100E98C14 /* AFNetworkReachabilityManager.m in Sources */,
 				3F676872230E9EC100E98C14 /* ViewAssetInfoCell.m in Sources */,
+				3F12F44B237D26C7001FBAD8 /* ViewOtcTrade.m in Sources */,
 				3F676873230E9EC100E98C14 /* SRHTTPConnectMessage.m in Sources */,
 				3F676874230E9EC100E98C14 /* VCRegisterWalletMode.m in Sources */,
 				3F676875230E9EC100E98C14 /* VCRegisterPasswordMode.m in Sources */,
@@ -5587,6 +5595,7 @@
 				3FB8F90321CE66C200DA88E2 /* VCUnlockAccount.m in Sources */,
 				3FB8F90421CE66C200DA88E2 /* AFNetworkReachabilityManager.m in Sources */,
 				3FB8F90521CE66C200DA88E2 /* ViewAssetInfoCell.m in Sources */,
+				3F12F44A237D26C7001FBAD8 /* ViewOtcTrade.m in Sources */,
 				3FB8F90621CE66C200DA88E2 /* SRHTTPConnectMessage.m in Sources */,
 				3FB8F90721CE66C200DA88E2 /* VCRegisterWalletMode.m in Sources */,
 				3FB8F90821CE66C200DA88E2 /* VCRegisterPasswordMode.m in Sources */,
@@ -5895,6 +5904,7 @@
 				F531ECBB1D670895009328A4 /* AFNetworkReachabilityManager.m in Sources */,
 				B72A849B20CFF66500D92A25 /* ViewAssetInfoCell.m in Sources */,
 				B714094420A31CC300003311 /* SRHTTPConnectMessage.m in Sources */,
+				3F12F449237D26C7001FBAD8 /* ViewOtcTrade.m in Sources */,
 				B72A84A420D14A4D00D92A25 /* VCRegisterWalletMode.m in Sources */,
 				B72A84A320D14A4D00D92A25 /* VCRegisterPasswordMode.m in Sources */,
 				B78553461CA253E600B921AE /* NativeMethodExtension.m in Sources */,
