@@ -18,6 +18,11 @@
     UIView*         _mainDialog;        //  底部主输入框
     MyTextField*    _tfNumber;          //  数量
     MyTextField*    _tfTotal;           //  总成交金额
+    UIButton*       _autoCloseButton;   //  自动取消按钮
+    
+    NSTimer*        _autoCloseTimer;
+    NSTimeInterval  _autoCloseStartTs;  //  开始计时
+    NSInteger       _autoCloseSeconds;  //  自动关闭秒数
 }
 
 @end
@@ -26,6 +31,7 @@
 
 - (void)dealloc
 {
+    _autoCloseButton = nil;
     if (_tfNumber){
         _tfNumber.delegate = nil;
         _tfNumber = nil;
@@ -36,6 +42,7 @@
     }
     _mainDialog = nil;
     _adInfo = nil;
+    [self stopAutoCloseTimer];
 }
 
 - (instancetype)initWithAdInfo:(id)ad_info
@@ -46,6 +53,7 @@
         self.cancelable = YES;
         _tfNumber = nil;
         _tfTotal = nil;
+        _autoCloseSeconds = 45;     //  TODO:2.9
     }
     return self;
 }
@@ -148,16 +156,57 @@
 
 - (UIView*)genDialogMain:(CGFloat)max_width
 {
-    BOOL buy = [self isBuy];
+    BOOL bUserBuy = [self isBuy];
     
     UIView* content = [[UIView alloc] init];
         
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     
-    //  TODO:2.9  买 or 卖
+    NSString* fiat_symbol = @"¥";// TODO:2.9
+    NSString* asset_symbol = _adInfo[@"assetName"];
     
-    NSString* numberPlaceHolder = NSLocalizedString(@"kPlaceHolderSellAmount", @"卖出数量");
-    NSString* totalPlaceHolder = NSLocalizedString(@"kLableTotalPrice", @"交易额");
+    //  单价
+    UILabel* lbPriceTitle = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
+    lbPriceTitle.text = @"单价 ";
+    lbPriceTitle.textAlignment = NSTextAlignmentLeft;
+    lbPriceTitle.textColor = theme.textColorGray;
+    
+    UILabel* lbPrice = [self auxGenLabel:[UIFont boldSystemFontOfSize:28.0f] superview:content];
+    lbPrice.text = [NSString stringWithFormat:@"%@%@", fiat_symbol, _adInfo[@"price"]];
+    lbPrice.textColor = theme.textColorHighlight;
+    
+    //  TODO:2.9  买 or 卖
+    UILabel* lbNumberTitle = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
+    lbNumberTitle.text = bUserBuy ? @"购买数量" : @"出售数量";
+    lbNumberTitle.textAlignment = NSTextAlignmentLeft;
+    lbNumberTitle.textColor = theme.textColorMain;
+    
+    UILabel* lbAvailable = nil;
+    if (!bUserBuy) {
+        lbAvailable = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
+        lbAvailable.text = [NSString stringWithFormat:@"%@ %@ %@", @"余额", @"333.44", asset_symbol];//TODO:2.9
+        lbAvailable.textAlignment = NSTextAlignmentLeft;
+        lbAvailable.textColor = theme.textColorNormal;
+    }
+    
+    UILabel* lbMaxNumber = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
+    lbMaxNumber.text = [NSString stringWithFormat:@"%@ %@ %@", @"限量", _adInfo[@"stock"], asset_symbol];
+    lbMaxNumber.textAlignment = NSTextAlignmentRight;
+    lbMaxNumber.textColor = theme.textColorNormal;
+    
+    UILabel* lbTotalTitle = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
+    lbTotalTitle.text = bUserBuy ? @"购买金额" : @"出售金额";
+    lbTotalTitle.textAlignment = NSTextAlignmentLeft;
+    lbTotalTitle.textColor = theme.textColorMain;
+    
+    UILabel* lbTotalLimited = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
+    lbTotalLimited.text = [NSString stringWithFormat:@"%@ %@%@ - %@%@", @"限额",
+                           fiat_symbol, _adInfo[@"lowestLimit"], fiat_symbol, _adInfo[@"maxLimit"]];
+    lbTotalLimited.textAlignment = NSTextAlignmentRight;
+    lbTotalLimited.textColor = theme.textColorGray;
+    
+    NSString* numberPlaceHolder = bUserBuy ? @"请输入购买数量" : @"请输入出售数量";
+    NSString* totalPlaceHolder = bUserBuy ? @"请输入购买金额" : @"请输入出售金额";
     
     //  UI -  数量输入框
     _tfNumber = [self createTfWithRect:CGRectZero
@@ -182,24 +231,24 @@
                                                                                    NSFontAttributeName:[UIFont systemFontOfSize:17]}];
     
     //  UI - 输入框末尾按钮
-    _tfNumber.rightView = [self genTailerView:_adInfo[@"assetName"] action:@"全部买入" tag:0];//TODO:2.9
+    _tfNumber.rightView = [self genTailerView:asset_symbol action:bUserBuy ? @"全部买入" : @"全部出售" tag:0];//TODO:2.9
     _tfNumber.rightViewMode = UITextFieldViewModeAlways;
-    _tfTotal.rightView = [self genTailerView:@"¥" action:@"全部买入" tag:0];//TODO:2.9 fiat currency
+    _tfTotal.rightView = [self genTailerView:fiat_symbol action:bUserBuy ? @"最大金额" : @"最大金额" tag:0];//TODO:2.9 fiat currency
     _tfTotal.rightViewMode = UITextFieldViewModeAlways;
     
     //  UI - 交易数量
     UILabel* tradeAmount = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
-    tradeAmount.text = @"交易数量 2323 BTC";
+    tradeAmount.text = [NSString stringWithFormat:@"%@ %@ %@", @"交易数量", @"2333", asset_symbol];
     tradeAmount.textAlignment = NSTextAlignmentRight;
-    tradeAmount.textColor = theme.textColorNormal;
+    tradeAmount.textColor = theme.textColorMain;
     
     //  UI - 实付款/实际到账
     UILabel* finalTotalTitle = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
     UILabel* finalTotalValue = [self auxGenLabel:[UIFont boldSystemFontOfSize:18.0f] superview:content];
-    finalTotalTitle.text = @"实付款";
+    finalTotalTitle.text = bUserBuy ? @"实际付款" : @"实际到账";
     finalTotalTitle.textAlignment = NSTextAlignmentLeft;
     
-    finalTotalValue.text = @"$ 3333";
+    finalTotalValue.text = [NSString stringWithFormat:@"%@%@", fiat_symbol, @"534535"];//TODO:2.9 teatdata
     finalTotalValue.textColor = theme.textColorHighlight;
     finalTotalValue.textAlignment = NSTextAlignmentRight;
     
@@ -207,33 +256,33 @@
     CGFloat fBottomViewHeight = 60.0f;
     CGFloat fBottomSpace = 12.0f;
     UIView* pBottomView = [[UIView alloc] init];
-//    pBottomView.backgroundColor = theme.tabBarColor;
     CGFloat fBottomBuySellWidth = max_width;
     CGFloat fBottomButtonWidth = (fBottomBuySellWidth - fBottomSpace) / 2;
     CGFloat fBottomButton = 38.0f;
-    UIButton* btnBottomBuy = [UIButton buttonWithType:UIButtonTypeSystem];
-    btnBottomBuy.titleLabel.font = [UIFont systemFontOfSize:16];
-    btnBottomBuy.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
-    [btnBottomBuy setTitle:@"14s后自动取消" forState:UIControlStateNormal];
-    [btnBottomBuy setTitleColor:theme.textColorPercent forState:UIControlStateNormal];
-    btnBottomBuy.userInteractionEnabled = YES;
-    [btnBottomBuy addTarget:self action:@selector(onButtomAutoCancelClicked:) forControlEvents:UIControlEventTouchUpInside];
-    btnBottomBuy.frame = CGRectMake(0, (fBottomViewHeight  - fBottomButton) / 2,
+    //  REMARK：用系统按钮更新文字时会闪烁。
+    _autoCloseButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    _autoCloseButton.titleLabel.font = [UIFont systemFontOfSize:16];
+    _autoCloseButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+    //  TODO:2.9
+    [_autoCloseButton setTitle:[NSString stringWithFormat:@"%@%@", @(_autoCloseSeconds), @"秒后自动取消"] forState:UIControlStateNormal];
+    [_autoCloseButton setTitleColor:theme.textColorPercent forState:UIControlStateNormal];
+    _autoCloseButton.userInteractionEnabled = YES;
+    [_autoCloseButton addTarget:self action:@selector(onButtomAutoCancelClicked) forControlEvents:UIControlEventTouchUpInside];
+    _autoCloseButton.frame = CGRectMake(0, (fBottomViewHeight  - fBottomButton) / 2,
                                     fBottomButtonWidth, fBottomButton);
-    btnBottomBuy.backgroundColor = theme.textColorGray;
-    [pBottomView addSubview:btnBottomBuy];
-    UIButton* btnBottomSell = [UIButton buttonWithType:UIButtonTypeSystem];
-    btnBottomSell.titleLabel.font = [UIFont boldSystemFontOfSize:16];
-    btnBottomSell.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
-    [btnBottomSell setTitle:@"下单" forState:UIControlStateNormal];
-    [btnBottomSell setTitleColor:theme.textColorPercent forState:UIControlStateNormal];
-    btnBottomSell.userInteractionEnabled = YES;
-    [btnBottomSell addTarget:self action:@selector(onButtomSubmitClicked:) forControlEvents:UIControlEventTouchUpInside];
-    btnBottomSell.frame = CGRectMake(fBottomButtonWidth + fBottomSpace,
+    _autoCloseButton.backgroundColor = theme.textColorGray;
+    [pBottomView addSubview:_autoCloseButton];
+    UIButton* btnBottomSubmit = [UIButton buttonWithType:UIButtonTypeSystem];
+    btnBottomSubmit.titleLabel.font = [UIFont boldSystemFontOfSize:16];
+    btnBottomSubmit.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+    [btnBottomSubmit setTitle:@"下单" forState:UIControlStateNormal];
+    [btnBottomSubmit setTitleColor:theme.textColorPercent forState:UIControlStateNormal];
+    btnBottomSubmit.userInteractionEnabled = YES;
+    [btnBottomSubmit addTarget:self action:@selector(onButtomSubmitClicked:) forControlEvents:UIControlEventTouchUpInside];
+    btnBottomSubmit.frame = CGRectMake(fBottomButtonWidth + fBottomSpace,
                                      (fBottomViewHeight  - fBottomButton) / 2, fBottomButtonWidth, fBottomButton);
-    btnBottomSell.backgroundColor = buy ? theme.buyColor : theme.sellColor;
-    [pBottomView addSubview:btnBottomSell];
-    
+    btnBottomSubmit.backgroundColor = bUserBuy ? theme.buyColor : theme.sellColor;
+    [pBottomView addSubview:btnBottomSubmit];
     
     [content addSubview:_tfNumber];
     [content addSubview:_tfTotal];
@@ -241,15 +290,36 @@
     
     //  设置 frame
     CGFloat fSpace = 16.0f;
-    CGFloat fOffsetY = fSpace;
+    CGFloat fOffsetY = 8.0f;
     CGFloat fLineHeight = 44.0f;
     CGFloat fTextHeight = 28.0f;
     
+    CGSize size_price = [UITableViewCellBase auxSizeWithText:lbPrice.text font:lbPrice.font maxsize:CGSizeMake(max_width, 9999)];
+    CGSize size_title = [UITableViewCellBase auxSizeWithText:lbPriceTitle.text font:lbPriceTitle.font maxsize:CGSizeMake(max_width, 9999)];
+    CGFloat fSizePriceX = (max_width - size_price.width) / 2;
+    lbPrice.frame = CGRectMake(fSizePriceX, fOffsetY, size_price.width, fLineHeight);
+    lbPriceTitle.frame = CGRectMake(fSizePriceX - size_title.width, fOffsetY, size_title.width, fLineHeight);
+//    lbPrice.backgroundColor = [UIColor  redColor];
+//    lbPriceTitle.backgroundColor = [UIColor greenColor];
+////    lbPrice.frame = CGRectMake(0, fOffsetY, max_width, fLineHeight);
+    fOffsetY += fLineHeight + 8.0f;
+    
+    lbNumberTitle.frame = CGRectMake(0, fOffsetY, max_width, 18.0f);
+    lbMaxNumber.frame = lbNumberTitle.frame;
+    if (lbAvailable) {
+        CGSize s = [UITableViewCellBase auxSizeWithText:lbNumberTitle.text font:lbNumberTitle.font maxsize:CGSizeMake(max_width, 9999)];
+        lbAvailable.frame = CGRectMake(s.width + 8, fOffsetY, max_width, 18.0f);
+    }
+    fOffsetY += lbNumberTitle.bounds.size.height;
     _tfNumber.frame = CGRectMake(0, fOffsetY, max_width, fLineHeight);
-    fOffsetY += fLineHeight;
+    fOffsetY += fLineHeight + 16;
+    
+    lbTotalTitle.frame = CGRectMake(0, fOffsetY, max_width, 18.0f);
+    lbTotalLimited.frame = lbTotalTitle.frame;
+    fOffsetY += lbTotalTitle.bounds.size.height;
     
     _tfTotal.frame = CGRectMake(0, fOffsetY, max_width, fLineHeight);
-    fOffsetY += fLineHeight;
+    fOffsetY += fLineHeight + fSpace;
     
     tradeAmount.frame = CGRectMake(0, fOffsetY, max_width, fTextHeight);
     fOffsetY += fTextHeight;
@@ -318,6 +388,10 @@
     [_mainDialog addSubview:toolbar];
     [_mainDialog addSubview:content];
     [self addSubview:_mainDialog];
+    
+    //  自动关闭计时
+    _autoCloseStartTs = ceil([[NSDate date] timeIntervalSince1970]);
+    [self startAutoCloseTimer];
 }
 
 - (void)setupAnimationBeginPosition:(BOOL)bSlideIn
@@ -373,8 +447,9 @@
 /*
  *  事件 -  自动取消按钮
  */
-- (void)onButtomAutoCancelClicked:(UIButton*)sender
+- (void)onButtomAutoCancelClicked
 {
+    [self stopAutoCloseTimer];
     [self resignAllFirstResponder];
     [self dismissWithCompletion:nil];
 }
@@ -387,12 +462,41 @@
     //  TODO:2.9
 }
 
-//- (void)onSubmitClicked
-//{
-//    //  TODO:2.9
-//    [self resignAllFirstResponder];
-//    [self dismissWithCompletion:nil];
-//}
+/*
+ *  处理自动关闭定时器
+ */
+- (void)startAutoCloseTimer
+{
+    if (!_autoCloseTimer){
+        _autoCloseTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
+                                                           target:self
+                                                         selector:@selector(onAutoCloseTimerTick)
+                                                         userInfo:nil
+                                                          repeats:YES];
+        [_autoCloseTimer fire];
+    }
+}
+
+- (void)stopAutoCloseTimer
+{
+    if (_autoCloseTimer){
+        [_autoCloseTimer invalidate];
+        _autoCloseTimer = nil;
+    }
+}
+
+- (void)onAutoCloseTimerTick
+{
+    NSTimeInterval ts = ceil([[NSDate date] timeIntervalSince1970]);
+    NSInteger left_ts = (NSInteger)(_autoCloseStartTs + _autoCloseSeconds - ts);
+    if (left_ts <= 0) {
+        //  自动关闭
+        [self onButtomAutoCancelClicked];
+    } else {
+        //  刷新 TODO:2.9 多语言
+        [_autoCloseButton setTitle:[NSString stringWithFormat:@"%@%@", @(left_ts), @"秒后自动取消"] forState:UIControlStateNormal];
+    }
+}
 
 #pragma mark- UITextFieldDelegate
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
