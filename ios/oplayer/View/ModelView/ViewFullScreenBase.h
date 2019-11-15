@@ -18,6 +18,12 @@
 - (void)setupSubViews;
 - (void)setupAnimationBeginPosition:(BOOL)bSlideIn;
 - (void)setupAnimationEndPosition:(BOOL)bSlideIn;
-- (void)onCancelClicked;
+- (void)onOutsideClicked;
+- (void)onFollowKeyboard:(CGFloat)keyboard_y duration:(CGFloat)duration;
+
+/*
+ *  (protected) 辅助方法 - 生成Label。
+ */
+- (UILabel*)auxGenLabel:(UIFont*)font superview:(UIView*)superview;
 
 @end

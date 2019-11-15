@@ -51,19 +51,6 @@
     return self;
 }
 
-- (UILabel*)auxGenLabel:(UIFont*)font superview:(UIView*)superview
-{
-    UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
-    label.lineBreakMode = NSLineBreakByTruncatingTail;
-    label.textAlignment = NSTextAlignmentCenter;
-    label.numberOfLines = 1;
-    label.backgroundColor = [UIColor clearColor];
-    label.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    label.font = font;
-    [superview addSubview:label];
-    return label;
-}
-
 - (UIView*)genMainPasswordDialog:(CGRect)main_rect
 {
     ThemeManager* theme = [ThemeManager sharedThemeManager];
@@ -256,7 +243,7 @@
     }
 }
 
-- (void)onCancelClicked
+- (void)onOutsideClicked
 {
     [self resignAllFirstResponder];
 }

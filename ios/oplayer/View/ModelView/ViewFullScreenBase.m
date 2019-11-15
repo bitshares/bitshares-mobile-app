@@ -33,7 +33,7 @@
 
 -(void)_onTap:(UITapGestureRecognizer*)pTap
 {
-    [self onCancelClicked];
+    [self onOutsideClicked];
 }
 
 - (void)setupSubViews
@@ -51,10 +51,15 @@
     //  子类重载：设置动画后到目标位置
 }
 
-- (void)onCancelClicked
+- (void)onOutsideClicked
 {
     //  子类可重载：取消事件
     [self dismissWithCompletion:nil];
+}
+
+- (void)onFollowKeyboard:(CGFloat)keyboard_y duration:(CGFloat)duration
+{
+    //  子类可重载：键盘位置变更
 }
 
 -(void)showInView:(UIView*)view
@@ -90,11 +95,17 @@
                         if (_pTap){
                             _pTap.enabled = YES;
                         }
+                        //  注册键盘监听
+                        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                                 selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification
+                                                                   object:nil];
                      }];
 }
 
 -(void)dismissWithCompletion:(void (^)())completion
 {
+    //  移除键盘监听
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     if (_pTap){
         _pTap.enabled = NO;
     }
@@ -111,6 +122,29 @@
                             completion();
                         }
                      }];
+}
+
+- (void)_keyboardWillChangeFrame:(NSNotification*)notification
+{
+    CGFloat keyboardY = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].origin.y;
+    CGFloat duration = [notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    [self onFollowKeyboard:keyboardY duration:duration];
+}
+
+/*
+ *  (protected) 辅助方法 - 生成Label。
+ */
+- (UILabel*)auxGenLabel:(UIFont*)font superview:(UIView*)superview
+{
+    UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
+    label.lineBreakMode = NSLineBreakByTruncatingTail;
+    label.textAlignment = NSTextAlignmentCenter;
+    label.numberOfLines = 1;
+    label.backgroundColor = [UIColor clearColor];
+    label.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    label.font = font;
+    [superview addSubview:label];
+    return label;
 }
 
 @end

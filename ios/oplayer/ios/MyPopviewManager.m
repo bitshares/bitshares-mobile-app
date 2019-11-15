@@ -12,6 +12,7 @@
 
 #import "ViewFullScreenBase.h"
 #import "ViewWebviewPayment.h"
+#import "ViewOtcTrade.h"
 
 #import "objc/runtime.h"
 
@@ -170,16 +171,18 @@ static const char* __picker_view_args_addr__ = "__picker_view_args_addr__";
                               paytitle:(NSString*)paytitle
 {
     //  TODO:2.9
-    
-    UIView* super_view = nil;
-    if (vc.tabBarController && vc.tabBarController.view){
-        super_view = vc.tabBarController.view;
-    }else{
-        super_view = vc.navigationController.view;
-    }
-    
     ViewWebviewPayment* view = [[ViewWebviewPayment alloc] init];
-    [view showInView:super_view];
+    [view showInView:[self getFullScreenSuperView:vc]];
+    return nil;
+}
+
+/*
+ *  显示场外交易下单时的模态输入框
+ */
+- (WsPromise*)showOtcTradeView:(UIViewController*)vc ad_info:(id)ad_info
+{
+    ViewOtcTrade* view = [[ViewOtcTrade alloc] initWithAdInfo:ad_info];
+    [view showInView:[self getFullScreenSuperView:vc]];
     return nil;
 }
 
@@ -284,6 +287,21 @@ static const char* __picker_view_args_addr__ = "__picker_view_args_addr__";
     label.textColor = theme.textColorMain;
     
     return label;
+}
+
+/*
+ *  (private) 辅助 - 获取控制器对应的全屏的VIEW对象。
+ */
+- (UIView*)getFullScreenSuperView:(UIViewController*)vc
+{
+    assert(vc);
+    UIView* super_view = nil;
+    if (vc.tabBarController && vc.tabBarController.view){
+        super_view = vc.tabBarController.view;
+    }else{
+        super_view = vc.navigationController.view;
+    }
+    return super_view;
 }
 
 @end
