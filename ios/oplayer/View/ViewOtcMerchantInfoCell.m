@@ -38,7 +38,7 @@
 
 @implementation ViewOtcMerchantInfoCell
 
-@synthesize isBuy;
+@synthesize adType;
 @synthesize item=_item;
 
 - (void)dealloc
@@ -71,7 +71,7 @@
         
         //  保存引用
         _owner = vc;
-        self.isBuy = NO;
+        self.adType = eoadt_user_buy;
         
         _item = nil;
         
@@ -92,10 +92,9 @@
         _lbPriceValue = [self auxGenLabel:[UIFont boldSystemFontOfSize:19]];
         _lbPriceValue.textAlignment = NSTextAlignmentRight;
         
-        //  最后一行：支付方法 和 按钮
-        //  TODO:2.9
+        //  最后一行：支付方法 和 按钮  支付图标顺序：银行卡、支付宝、微信
         _paymentIconList = [NSMutableArray array];
-        for (id icon in @[@"iconPmAlipay", @"iconPmBankCard", @"iconPmWechat"]) {
+        for (id icon in @[@"iconPmBankCard", @"iconPmAlipay", @"iconPmWechat"]) {
             UIImage* image = [UIImage imageNamed:icon];
             UIImageView* iconView = [[UIImageView alloc] initWithImage:image];
             iconView.hidden = YES;
@@ -154,6 +153,38 @@
     if (!_item)
         return;
     
+//    <__NSSingleObjectArrayI 0x2823199c0>(
+//    {
+//    adId = 73b7ce242d79f279a56d3cf0085cc41f7e133e1f;
+//    adType = 1;
+//    aliPaySwitch = 1;
+//    assetId = "1.0.2";
+//    assetName = USD;
+//    bankcardPaySwitch = 1;
+//    ctime = "2019-11-12T07:30:16.000+0000";
+//    deadTime = "2019-11-12T07:30:16.000+0000";
+//    frozenQuantity = 0;
+//    id = 17;
+//    isDeleted = 0;
+//    leagalType = 1;
+//    lowestLimit = 30;
+//    maxLimit = 1250;
+//    merchantId = 7;
+//    merchantNickname = "\U5409\U7965\U627f\U5151";
+//    mtime = "2019-11-12T10:34:06.000+0000";
+//    otcAccount = "gdex-otc1";
+//    otcBtsId = "1.2.42";
+//    price = "7.21";
+//    priceType = 1;
+//    quantity = 2620;
+//    remark = "\U53ea\U63a5\U53d7\U4ed8\U6b3e\U4eba\U4e0e\U5b9e\U540d\U8ba4\U8bc1\U4e00\U6837\U7684\U6b3e\U9879\Uff0c\U5426\U4e00\U5f8b\U4e0d\U653e\U5e01";
+//    status = 1;
+//    stock = 2620;
+//    userId = "<null>";
+//    }
+//    )
+//
+
     ThemeManager* theme = [ThemeManager sharedThemeManager];
 
     CGFloat fWidth = self.bounds.size.width;
@@ -165,36 +196,40 @@
     CGFloat fDiameter = 24.0f;
     
     //  UI - 第一行 头像
+    NSString* merchantName = [_item objectForKey:@"merchantNickname"];
     _imageHeader.layer.cornerRadius = fDiameter / 2.0f;
     _imageHeader.layer.backgroundColor = theme.textColorHighlight.CGColor;
-    _imageHeader.text = @"杭";//TODO:2.9
+    _imageHeader.text = [merchantName substringToIndex:1];
     _imageHeader.frame = CGRectMake(fOffsetX, fOffsetY, fDiameter, fDiameter);
     
     //  UI - 第一行 商家名字
-    _lbUsername.text = self.isBuy ? @"快来买哦吧啦啦啦" : @"提现走这里哦吧啦吧啦啦";
+    _lbUsername.text = merchantName;
     _lbUsername.frame = CGRectMake(fOffsetX + fDiameter + 8, fOffsetY, fWidth, fDiameter);
     
     //  UI - 第一行 商家订单统计信息
-    _lbCompleteNumber.text = @"3332笔 | 94%";
+    _lbCompleteNumber.text = @"3332笔 | 94%";//TODO:2.9 field?
     CGSize size1 = [self auxSizeWithText:_lbCompleteNumber.text font:_lbCompleteNumber.font maxsize:CGSizeMake(fWidth, 9999)];
     _lbCompleteNumber.frame = CGRectMake(0, fOffsetY + (fDiameter - size1.height) / 2.0f, fWidth - fOffsetX, size1.height);
     _lbCompleteNumber.textColor = theme.textColorGray;
     fOffsetY += fDiameter + 4;
     
     //  UI - 第二行 数量限额
+    NSString* fiat_sym = [[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"short_symbol"];
+    
     _lbAmount.attributedText = [self genAndColorAttributedText:@"数量 "
-                                                         value:@"33323 bitCNY"
+                                                         value:[NSString stringWithFormat:@"%@ %@", _item[@"stock"], _item[@"assetName"]]
                                                     titleColor:theme.textColorGray
                                                     valueColor:theme.textColorNormal];
     
     //  UI - 第三行 交易额限额
     _lbLimit.attributedText = [self genAndColorAttributedText:@"限额 "
-                                                        value:@"¥233 - ¥43555"
+                                                        value:[NSString stringWithFormat:@"%@%@ - %@%@", fiat_sym, _item[@"lowestLimit"],
+                                                               fiat_sym, _item[@"maxLimit"]]
                                                    titleColor:theme.textColorGray
                                                    valueColor:theme.textColorNormal];
     
     _lbPriceTitle.text = @"单价";
-    _lbPriceValue.text = @"¥0.91";
+    _lbPriceValue.text = [NSString stringWithFormat:@"%@%@", fiat_sym, _item[@"price"]];
     
     _lbAmount.frame = CGRectMake(fOffsetX, fOffsetY, fWidth, fLineHeight);
     _lbPriceTitle.frame = CGRectMake(0, fOffsetY, fWidth - fOffsetX, fLineHeight);
@@ -208,13 +243,27 @@
     //  UI - 第四行 支付方式图标 和 买卖按钮
     fOffsetY += fLineHeight;
     CGFloat fIconOffset = fOffsetX;
+    
+    //  全部隐藏
     for (UIImageView* icon in _paymentIconList) {
+        icon.hidden = YES;
+    }
+    if ([[_item objectForKey:@"bankcardPaySwitch"] boolValue]) {
+        UIImageView* icon = [_paymentIconList objectAtIndex:0]; //  0: 银行卡icon
         icon.hidden = NO;
         icon.frame = CGRectMake(fIconOffset, fOffsetY + 12 + 2, 16, 16);
         fIconOffset += 16 + 6.0f;
     }
+    if ([[_item objectForKey:@"aliPaySwitch"] boolValue]) {
+        UIImageView* icon = [_paymentIconList objectAtIndex:1]; //  1: 支付宝icon
+        icon.hidden = NO;
+        icon.frame = CGRectMake(fIconOffset, fOffsetY + 12 + 2, 16, 16);
+        fIconOffset += 16 + 6.0f;
+    }
+    
+    //  买卖按钮
     UIColor* backColor;
-    if (self.isBuy) {
+    if (self.adType == eoadt_user_buy) {
         backColor = theme.buyColor;
         [_lbSubmit setTitle:@"购买" forState:UIControlStateNormal];
     } else {

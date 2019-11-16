@@ -162,7 +162,7 @@
         
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     
-    NSString* fiat_symbol = @"¥";// TODO:2.9
+    NSString* fiat_symbol = [[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"short_symbol"];
     NSString* asset_symbol = _adInfo[@"assetName"];
     
     //  单价
@@ -190,9 +190,9 @@
     }
     
     UILabel* lbMaxNumber = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
-    lbMaxNumber.text = [NSString stringWithFormat:@"%@ %@ %@", @"限量", _adInfo[@"stock"], asset_symbol];
+    lbMaxNumber.text = [NSString stringWithFormat:@"%@ %@ %@", @"数量", _adInfo[@"stock"], asset_symbol];
     lbMaxNumber.textAlignment = NSTextAlignmentRight;
-    lbMaxNumber.textColor = theme.textColorNormal;
+    lbMaxNumber.textColor = theme.textColorGray;
     
     UILabel* lbTotalTitle = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
     lbTotalTitle.text = bUserBuy ? @"购买金额" : @"出售金额";

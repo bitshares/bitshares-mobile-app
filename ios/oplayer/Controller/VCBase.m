@@ -517,6 +517,19 @@ static NSInteger gen_notify_unique_id()
 }
 
 #pragma mark- navigation button
+- (UIBarButtonItem*)naviButtonWithImage:(NSString*)imageName action:(SEL)action color:(UIColor*)tintColor
+{
+    UIButton* btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    UIImage* image = [UIImage templateImageNamed:imageName];
+    [btn setBackgroundImage:image forState:UIControlStateNormal];
+    btn.frame = CGRectMake(0, 0, image.size.width, image.size.height);
+    btn.userInteractionEnabled = YES;
+    [btn addTarget:self action:action forControlEvents:UIControlEventTouchUpInside];
+    if (tintColor){
+        btn.tintColor = tintColor;
+    }
+    return [[UIBarButtonItem alloc] initWithCustomView:btn];
+}
 
 - (void)showRightImageButton:(NSString*)imageName action:(SEL)action color:(UIColor*)tintColor
 {

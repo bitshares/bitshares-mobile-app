@@ -13,6 +13,7 @@
     NSArray*    _subvcArrays;
 }
 
+- (VCBase*)currentPage;
 - (UIButton*)buttonWithTag:(NSInteger)tag;
 
 @end
