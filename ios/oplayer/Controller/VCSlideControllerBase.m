@@ -145,6 +145,12 @@
     return [_slideButtonArrays objectAtIndex:tag-1];
 }
 
+- (VCBase*)currentPage
+{
+    assert(_currentSelectedTag > 0 && _currentSelectedTag <= [_subvcArrays count]);
+    return [_subvcArrays objectAtIndex:_currentSelectedTag - 1];
+}
+
 /**
  *  (private) 点击分页滑动控件顶部按钮事件
  */

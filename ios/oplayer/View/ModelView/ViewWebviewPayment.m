@@ -277,7 +277,7 @@
 #pragma mark- UITextFieldDelegate
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    [self onSubmitClicked];
+    [self resignAllFirstResponder];
     return YES;
 }
 

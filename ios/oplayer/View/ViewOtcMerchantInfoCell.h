@@ -8,13 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "UITableViewCellBase.h"
+#import "OtcManager.h"
 
 @interface ViewOtcMerchantInfoCell : UITableViewCellBase
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier vc:(VCBase*)vc;
 - (void)setTagData:(NSInteger)tag;
 
-@property (nonatomic, assign) BOOL isBuy;
+@property (nonatomic, assign) EOtcAdType adType;
 @property (nonatomic, strong) NSDictionary* item;
 
 @end

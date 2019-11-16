@@ -8,6 +8,8 @@
 
 #import "VCOtcMerchantList.h"
 #import "VCOtcOrders.h"
+#import "VCOtcUserAuth.h"
+#import "VCOtcPaymentMethods.h"
 
 #import "ViewOtcMerchantInfoCell.h"
 #import "MBProgressHUDSingleton.h"
@@ -15,6 +17,8 @@
 
 @interface VCOtcMerchantListPages ()
 {
+    NSString*   _curr_asset_name;
+    EOtcAdType  _default_ad_type;
 }
 
 @end
@@ -23,6 +27,22 @@
 
 -(void)dealloc
 {
+}
+
+- (id)initWithAssetName:(NSString*)asset_name ad_type:(EOtcAdType)ad_type
+{
+    self = [super init];
+    if (self) {
+        // Custom initialization
+        _curr_asset_name = asset_name;
+        _default_ad_type = ad_type;
+    }
+    return self;
+}
+
+- (NSInteger)getTitleDefaultSelectedIndex
+{
+    return _default_ad_type == eoadt_user_buy ? 1 : 2;
 }
 
 - (NSArray*)getTitleStringArray
@@ -36,73 +56,86 @@
 
 - (NSArray*)getSubPageVCArray
 {
-    //  TODO:2.9
-    return @[[[VCOtcMerchantList alloc] initWithOwner:self userbuy:YES],
-             [[VCOtcMerchantList alloc] initWithOwner:self userbuy:NO]];
+    return @[[[VCOtcMerchantList alloc] initWithOwner:self ad_type:eoadt_user_buy],
+             [[VCOtcMerchantList alloc] initWithOwner:self ad_type:eoadt_user_sell]];
 }
 
-- (void)onRightButtonClicked
+- (void)onRightOrderButtonClicked
 {
     VCBase* vc = [[VCOtcOrdersPages alloc] init];
     //  TODO:2.9
-    [self pushViewController:vc vctitle:@"订单管理" backtitle:kVcDefaultBackTitleName];
+    [self pushViewController:vc vctitle:@"订单记录" backtitle:kVcDefaultBackTitleName];
+}
+
+- (void)onRightUserButtonClicked
+{
+    VCBase* vc = [[VCOtcUserAuth alloc] init];
+    //  TODO:2.9
+    [self pushViewController:vc vctitle:@"身份认证" backtitle:kVcDefaultBackTitleName];
+}
+
+- (NSString*)genTitleString
+{
+    return [NSString stringWithFormat:@"%@%@", _curr_asset_name, @"市场◢"];//TODO:2.9  lang
+}
+
+- (void)onTitleAssetButtonClicked:(UIButton*)sender
+{
+    id list = [[OtcManager sharedOtcManager].asset_list_digital ruby_map:^id(id src) {
+        return [src objectForKey:@"symbol"];
+    }];
+    //  TODO:2.9 lang
+    [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
+                                                       message:@"请选择要交易的资产"
+                                                        cancel:NSLocalizedString(@"kBtnCancel", @"取消")
+                                                         items:list
+                                                      callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
+     {
+         if (buttonIndex != cancelIndex){
+             id asset_name = [list objectAtIndex:buttonIndex];
+             if (![_curr_asset_name isEqualToString:asset_name]) {
+                 _curr_asset_name = asset_name;
+                 [sender setTitle:[self genTitleString] forState:UIControlStateNormal];
+                 [self queryCurrentPageAdList];
+             }
+         }
+     }];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
+    ThemeManager* theme = [ThemeManager sharedThemeManager];
     
-    //  TODO:2.9 右上角 个人信息列表【我的信息、我的 订单等。】
-    [self showRightImageButton:@"iconFav"
-                        action:@selector(onRightButtonClicked)
-                         color:[ThemeManager sharedThemeManager].textColorGray];
+    self.view.backgroundColor = theme.appBackColor;
     
-    //  REMARK：请求第一页数据
-    [self queryMerchantInfoList:1];
+    //  TODO:2.9 icon
+    id btn1 = [self naviButtonWithImage:@"iconOrders" action:@selector(onRightOrderButtonClicked) color:theme.textColorNormal];
+    id btn2 = [self naviButtonWithImage:@"iconExplorer" action:@selector(onRightUserButtonClicked) color:theme.textColorNormal];
+    [self.navigationItem setRightBarButtonItems:@[btn2, btn1]];
+    
+    //  导航栏中间标题
+    UIButton* btnAssetBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    btnAssetBtn.titleLabel.font = [UIFont boldSystemFontOfSize:17];
+    [btnAssetBtn setTitle:[self genTitleString] forState:UIControlStateNormal];
+    [btnAssetBtn setTitleColor:[ThemeManager sharedThemeManager].textColorMain forState:UIControlStateNormal];
+    btnAssetBtn.userInteractionEnabled = YES;
+    [btnAssetBtn addTarget:self action:@selector(onTitleAssetButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    btnAssetBtn.frame = CGRectMake(0, 0, self.view.bounds.size.width, [self heightForNavigationBar]);
+    self.navigationItem.titleView = btnAssetBtn;
+    
+    //  查询数据
+    [self queryCurrentPageAdList];
 }
 
-- (void)queryMerchantInfoList:(NSInteger)tag
+- (void)queryCurrentPageAdList
 {
-    [[[OtcManager sharedOtcManager] queryAssetList] then:^id(id data) {
-        NSLog(@"%@", data);
-        return nil;
-    }];
-    
-    [[[OtcManager sharedOtcManager] queryIdVerify:@"saya77"] then:^id(id data) {
-        NSLog(@"%@", data);
-        return nil;
-    }];
-//    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    //    get_call_orders && get_full_accounts
-    
-//    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
-//
-//    GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
-//
-//    id p1 = [api exec:@"get_call_orders" params:@[[asset objectForKey:@"id"], @50]];
-//    id p2 = [[api exec:@"get_objects" params:@[@[[asset objectForKey:@"bitasset_data_id"]]]] then:(^id(id data) {
-//        return [data objectAtIndex:0];
-//    })];
-//
-//    [[[WsPromise all:@[p1, p2]] then:(^id(id data) {
-//        id borrower_list = [data[0] ruby_map:(^id(id src) {
-//            return src[@"borrower"];
-//        })];
-//        return [[chainMgr queryAllAccountsInfo:borrower_list] then:(^id(id borrower_hash) {
-//            //  (void)borrower_hash 不需要
-//            [self onQueryCallOrderResponsed:data tag:tag];
-//            [self hideBlockView];
-//            return nil;
-//        })];
-//    })] catch:(^id(id error) {
-//        [self hideBlockView];
-//        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
-//        return nil;
-//    })];
-    //  TODO:2.9 data?
-    [self onMerchantListResponsed:@[] tag:tag];
+    //  TODO:2.9
+    VCOtcMerchantList* vc = (VCOtcMerchantList*)[self currentPage];
+    if (vc) {
+        [vc queryAdList:_curr_asset_name];
+    }
 }
 
 - (void)onPageChanged:(NSInteger)tag
@@ -114,14 +147,12 @@
         return;
     }
     
-    [self queryMerchantInfoList:tag];
-}
-
-- (void)onMerchantListResponsed:(id)data tag:(NSInteger)tag
-{
+    //  query
     if (_subvcArrays){
-        VCOtcMerchantList* vc = [_subvcArrays objectAtIndex:tag-1];
-        [vc onMerchantListResponsed:data];
+        VCOtcMerchantList* vc = [_subvcArrays safeObjectAtIndex:tag - 1];
+        if (vc){
+            [vc queryAdList:_curr_asset_name];
+        }
     }
 }
 
@@ -131,7 +162,7 @@
 {
     __weak VCBase*      _owner;         //  REMARK：声明为 weak，否则会导致循环引用。
     
-    BOOL                _userbuy;       //  用户买入界面（商家卖出）
+    EOtcAdType          _ad_type;       //  用户买入界面（商家卖出）
     UITableViewBase*    _mainTableView;
     UILabel*            _lbEmpty;
     
@@ -154,12 +185,12 @@
     _owner = nil;
 }
 
-- (id)initWithOwner:(VCBase*)owner userbuy:(BOOL)userbuy
+- (id)initWithOwner:(VCBase*)owner ad_type:(EOtcAdType)ad_type
 {
     self = [super init];
     if (self) {
         // Custom initialization
-        _userbuy = userbuy;
+        _ad_type = ad_type;
         _owner = owner;
         _data_array = [NSMutableArray array];
     }
@@ -188,15 +219,37 @@
     [self.view addSubview:_lbEmpty];
 }
 
-- (void)onMerchantListResponsed:(id)data
+- (void)queryAdList:(NSString*)asset_name
 {
-    [_data_array removeAllObjects];
+    //  TODO:2.9
+    //    [[[OtcManager sharedOtcManager] queryIdVerify:@"say007"] then:^id(id data) {
+    //        NSLog(@"%@", data);
+    //        return nil;
+    //    }];
+
+    //  TODO:2.9 page
+    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    [[[[OtcManager sharedOtcManager] queryAdList:_ad_type asset_name:asset_name page:0 page_size:50] then:^id(id data) {
+        [_owner hideBlockView];
+        [self onQueryAdListResponsed:data];
+        return nil;
+    }] catch:^id(id error) {
+        [_owner hideBlockView];
+        [[OtcManager sharedOtcManager] showOtcError:error];
+        return nil;
+    }];
+}
+
+- (void)onQueryAdListResponsed:(id)responsed
+{
+    //  TODO:2.9 这里显示异常？
+    assert([[responsed objectForKey:@"code"] integerValue] == 0);
     
-    //  TODO:2.9 TODO:
-    id testdata01 = @{};
-    [_data_array addObject:testdata01];
-    [_data_array addObject:testdata01];
-    [_data_array addObject:testdata01];
+    id list = [[responsed objectForKey:@"data"] objectForKey:@"records"];
+    [_data_array removeAllObjects];
+    if (list && [list isKindOfClass:[NSArray class]]) {
+        [_data_array addObjectsFromArray:list];
+    }
     
     //  动态设置UI的可见性
     if ([_data_array count] > 0){
@@ -260,7 +313,7 @@
         cell.backgroundColor = [UIColor clearColor];
     }
     cell.showCustomBottomLine = YES;
-    cell.isBuy = _userbuy;
+    cell.adType = _ad_type;
     [cell setTagData:indexPath.row];
     [cell setItem:[_data_array objectAtIndex:indexPath.row]];
     return cell;
@@ -285,7 +338,10 @@
     id item = [_data_array objectAtIndex:sender.tag];
     assert(item);
     //  TODO:2.9
-    [OrgUtils makeToast:_userbuy ? @"买" : @"卖"];
+//    [OrgUtils makeToast:_userbuy ? @"买" : @"卖"];
+    
+    //  TODO:2.9 
+    [[MyPopviewManager sharedMyPopviewManager] showOtcTradeView:_owner ad_info:item];
 }
 
 @end

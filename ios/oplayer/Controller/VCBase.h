@@ -112,6 +112,7 @@
 
 - (UITableViewCellBase*)getOrCreateTableViewCellBase:(UITableView*)tableView style:(UITableViewCellStyle)style reuseIdentifier:(NSString*)identify;
 
+- (UIBarButtonItem*)naviButtonWithImage:(NSString*)imageName action:(SEL)action color:(UIColor*)tintColor;
 - (void)showRightImageButton:(NSString*)imageName action:(SEL)action color:(UIColor*)tintColor;
 - (void)showLeftImageButton:(NSString*)imageName action:(SEL)action color:(UIColor*)tintColor;
 - (void)showRightButton:(NSString*)title action:(SEL)action;

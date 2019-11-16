@@ -40,9 +40,33 @@ typedef enum EOtcAdStatus
     eoads_deleted = 3,      //  删除
 } EOtcAdStatus;
 
+@class VCBase;
+
 @interface OtcManager : NSObject
 
+@property (nonatomic, strong) NSArray* asset_list_digital;  //  支持的数字资产列表
+
 + (OtcManager*)sharedOtcManager;
+
+/*
+ *  (public) 获取当前法币信息
+ */
+- (NSDictionary*)getFiatCnyInfo;
+
+/*
+ *  (public) 是否支持指定资产判断
+ */
+- (BOOL)isSupportDigital:(NSString*)asset_name;
+
+/*
+ *  (public) 转到OTC界面，会自动初始化必要信息。
+ */
+- (void)gotoOtc:(VCBase*)owner asset_name:(NSString*)asset_name ad_type:(EOtcAdType)ad_type;
+
+/*
+ *  (public) 显示OTC的错误信息。
+ */
+- (void)showOtcError:(id)error;
 
 /*
  *  (public) 查询OTC用户身份认证信息。
