@@ -1548,9 +1548,17 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     assert(account_name_or_id);
     //  TODO:fowallet 部分api结点，帐号不存在不是返回nil而是抛出异常。
     GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
-    return [[api exec:@"get_full_accounts" params:@[@[account_name_or_id], @FALSE]] then:(^id(id data) {
-        //  查询失败的情况下
-        if (!data || [data isKindOfClass:[NSNull class]]){
+    return [[api exec:@"get_full_accounts" params:@[@[account_name_or_id], @FALSE]] then:(^id(id data_array) {
+        //  获取帐号信息 REMARK: 修复由于API调整，data_array 为空数组时导致的崩溃问题。以前账号不存在时候 data_array 返回 nil。
+        id full_account_data = nil;
+        if (data_array && [data_array isKindOfClass:[NSArray class]] && [data_array count] > 0) {
+            id t = [data_array objectAtIndex:0];
+            if ([t isKindOfClass:[NSArray class]] && [t count] >= 2) {
+                full_account_data = [t objectAtIndex:1];
+            }
+        }
+        //  获取失败的情况下
+        if (!full_account_data){
             if (retry_num > 1) {
                 //  等待一会 & 重试
                 return [[OrgUtils asyncWait:2000] then:(^id(id data) {
@@ -1561,8 +1569,6 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
                 return nil;
             }
         }
-        //  获取帐号信息
-        id full_account_data = [[data objectAtIndex:0] objectAtIndex:1];
         //  [缓存] 添加到缓存
         id account = [full_account_data objectForKey:@"account"];
         [_cacheUserFullAccountData setObject:full_account_data forKey:account[@"id"]];
