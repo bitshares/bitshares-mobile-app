@@ -10,6 +10,8 @@
 #import "OrgUtils.h"
 
 #import "ViewTipsInfoCell.h"
+#import "OtcManager.h"
+#import "AsyncTaskManager.h"
 
 enum
 {
@@ -50,6 +52,8 @@ enum
     
     ViewBlockLabel*         _goto_submit;
     ViewTipsInfoCell*       _cell_tips;
+    
+    NSInteger               _smsTimerId;
 }
 
 @end
@@ -58,6 +62,9 @@ enum
 
 -(void)dealloc
 {
+    //  移除定时器
+    [[AsyncTaskManager sharedAsyncTaskManager] removeSecondsTimer:_smsTimerId];
+    
     if (_tf_name){
         _tf_name.delegate = nil;
         _tf_name = nil;
@@ -97,9 +104,46 @@ enum
     [_tf_smscode safeResignFirstResponder];
 }
 
+/*
+ *  (private) 点击获取验证码
+ */
 - (void)onRequestSmsCodeButtonClicked:(UIButton*)sender
 {
-    //  TODO:otc
+    //  倒计时中
+    if ([[AsyncTaskManager sharedAsyncTaskManager] isExistSecondsTimer:_smsTimerId]) {
+        return;
+    }
+    
+    //  TODO:2.9 otc
+    id str_phone_num = _tf_phonenumber.text;
+    if (![self _isValidPhoneNumber:str_phone_num]){
+        [OrgUtils makeToast:@"请输入正确的手机号码。"];
+        return;
+    }
+    
+    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    
+    //  TODO:2.9 配置，短信重发时间间隔。单位：秒。
+    NSInteger max_countdown_secs = 60;
+    OtcManager* otc = [OtcManager sharedOtcManager];
+    [[[otc sendSmsCode:[otc getCurrentBtsAccount] phone:str_phone_num type:eost_id_verify] then:^id(id data) {
+        [self hideBlockView];
+        [OrgUtils makeToast:@"短信发送成功。"];
+        //  重发倒计时
+        [sender setTitle:[NSString stringWithFormat:@"%@秒后重新获取", @(max_countdown_secs)] forState:UIControlStateNormal];
+        _smsTimerId = [[AsyncTaskManager sharedAsyncTaskManager] scheduledSecondsTimer:max_countdown_secs callback:^(NSInteger left_ts) {
+            if (left_ts > 0) {
+                [sender setTitle:[NSString stringWithFormat:@"%@秒后重新获取", @(left_ts)] forState:UIControlStateNormal];
+            } else {
+                [sender setTitle:@"获取验证码" forState:UIControlStateNormal];
+            }
+        }];
+        return nil;
+    }] catch:^id(id error) {
+        [self hideBlockView];
+        [otc showOtcError:error];
+        return nil;
+    }];
 }
 
 - (void)viewDidLoad
@@ -109,6 +153,9 @@ enum
     
     //  背景颜色
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
+    
+    //  初始化数据
+    _smsTimerId = 0;
     
     //  初始化UI
     //  TODO:otc
@@ -159,15 +206,20 @@ enum
     [_tf_idnumber addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
     
     //  UI - 短信验证码尾部获取按钮
-    UIButton* btnRequestSmsCode = [UIButton buttonWithType:UIButtonTypeSystem];
+    UIButton* btnRequestSmsCode = [UIButton buttonWithType:UIButtonTypeCustom];
     btnRequestSmsCode.titleLabel.font = [UIFont systemFontOfSize:13];
     [btnRequestSmsCode setTitle:@"获取验证码" forState:UIControlStateNormal];//TODO:otc
     [btnRequestSmsCode setTitleColor:[ThemeManager sharedThemeManager].textColorHighlight forState:UIControlStateNormal];
     btnRequestSmsCode.userInteractionEnabled = YES;
     [btnRequestSmsCode addTarget:self
-                          action:@selector(onRequestSmsCodeButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-    btnRequestSmsCode.frame = CGRectMake(6, 2, 80, 27);
-    _tf_smscode.rightView = btnRequestSmsCode;
+                          action:@selector(onRequestSmsCodeButtonClicked:)
+                forControlEvents:UIControlEventTouchUpInside];
+    btnRequestSmsCode.frame = CGRectMake(0, 2, 120, 27);
+    btnRequestSmsCode.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
+    //  REMARK：button外再套一层  UIView，不然设置 frame 无效。
+    _tf_smscode.rightView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 120, 31)] ruby_apply:^(id obj) {
+        [obj addSubview:btnRequestSmsCode];
+    }];
     _tf_smscode.rightViewMode = UITextFieldViewModeAlways;
     
     //  UI - 主表格
@@ -199,12 +251,105 @@ enum
     [self resignAllFirstResponder];
 }
 
+/*
+ *  (private) 是否是有效的手机号初步验证。
+ */
+- (BOOL)_isValidPhoneNumber:(NSString*)str_phone_num
+{
+    if (!str_phone_num || [str_phone_num isEqualToString:@""]){
+        return NO;
+    }
+    //  TODO:2.9 是否需要这个check？
+    if (str_phone_num.length != 11) {
+        return NO;
+    }
+    return YES;
+}
+
+/*
+*  (private) 是否是有效的身份证号初步验证。
+*/
+- (BOOL)_isValidCardNo:(NSString*)str_card_no
+{
+    if (!str_card_no || [str_card_no isEqualToString:@""]){
+        return NO;
+    }
+    if (str_card_no.length != 18) {
+        return NO;
+    }
+    
+    //  验证身份证校验位是否正确。
+    NSString* part_one = [str_card_no substringToIndex:17];
+    //  REMARK：最后的X强制转换为大写字母。
+    unichar verify = [[[str_card_no substringFromIndex:17] uppercaseString] characterAtIndex:0];
+    if (![OrgUtils isFullDigital:part_one]) {
+        return NO;
+    }
+    NSInteger muls[] = {7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2};
+    assert(sizeof(muls) / sizeof(muls[0]) == 17);
+    unichar mods[] = {'1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2'};
+    
+    NSInteger sum = 0;
+    for (NSInteger i = 0; i < part_one.length; ++i) {
+        sum += [[part_one substringWithRange:NSMakeRange(i, 1)] integerValue] * muls[i];
+    }
+    NSInteger mod = sum % 11;
+    if (mods[mod] != verify) {
+        return NO;
+    }
+    
+    return YES;
+}
+
 /**
  *  事件 - 用户点击提交按钮
  */
 -(void)gotoSubmitCore
 {
-    //  TODO:otc
+    NSString* str_name = _tf_name.text;
+    NSString* str_cardno = _tf_idnumber.text;
+    NSString* str_phone_num = _tf_phonenumber.text;
+    NSString* str_sms_code = _tf_smscode.text;
+    
+    //  TODO:2.9 验证码参数
+    if (!str_name || [str_name isEqualToString:@""]) {
+        [OrgUtils makeToast:@"请输入姓名。"];
+        return;
+    }
+    if (![self _isValidCardNo:str_cardno]) {
+        [OrgUtils makeToast:@"请输入正确的身份证号。"];
+        return;
+    }
+    if (![self _isValidPhoneNumber:str_phone_num]) {
+        [OrgUtils makeToast:@"请输入正确的手机号码。"];
+        return;
+    }
+    if (!str_sms_code || [str_sms_code isEqualToString:@""]) {
+        [OrgUtils makeToast:@"请输入短信验证码。"];
+        return;
+    }
+    
+    //  认证
+    OtcManager* otc = [OtcManager sharedOtcManager];
+    id args = @{
+        @"btsAccount":[otc getCurrentBtsAccount],
+        @"idcardNo":str_cardno,
+        @"phoneNum":str_phone_num,
+        @"realName":str_name,
+        @"smscode":str_sms_code,
+    };
+    
+    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    [[[otc idVerify:args] then:^id(id data) {
+        [self hideBlockView];
+        //  TODO:2.9
+        [OrgUtils makeToast:@"认证通过"];
+        return nil;
+    }] catch:^id(id error) {
+        [self hideBlockView];
+        [otc showOtcError:error];
+        return nil;
+    }];
 }
 
 #pragma mark- for UITextFieldDelegate

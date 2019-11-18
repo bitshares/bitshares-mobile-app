@@ -8,6 +8,8 @@
 #import "MyTextField.h"
 #import "OtcManager.h"
 
+#import "AsyncTaskManager.h"
+
 @interface ViewOtcTrade()
 {
     NSDictionary*   _adInfo;            //  广告牌信息
@@ -20,8 +22,7 @@
     MyTextField*    _tfTotal;           //  总成交金额
     UIButton*       _autoCloseButton;   //  自动取消按钮
     
-    NSTimer*        _autoCloseTimer;
-    NSTimeInterval  _autoCloseStartTs;  //  开始计时
+    NSInteger       _autoCloseTimerID;
     NSInteger       _autoCloseSeconds;  //  自动关闭秒数
 }
 
@@ -42,7 +43,6 @@
     }
     _mainDialog = nil;
     _adInfo = nil;
-    [self stopAutoCloseTimer];
 }
 
 - (instancetype)initWithAdInfo:(id)ad_info
@@ -54,6 +54,7 @@
         _tfNumber = nil;
         _tfTotal = nil;
         _autoCloseSeconds = 45;     //  TODO:2.9
+        _autoCloseTimerID = 0;
     }
     return self;
 }
@@ -389,9 +390,15 @@
     [_mainDialog addSubview:content];
     [self addSubview:_mainDialog];
     
-    //  自动关闭计时
-    _autoCloseStartTs = ceil([[NSDate date] timeIntervalSince1970]);
-    [self startAutoCloseTimer];
+    //  自动关闭定时器
+    _autoCloseTimerID = [[AsyncTaskManager sharedAsyncTaskManager] scheduledSecondsTimer:_autoCloseSeconds callback:^(NSInteger left_ts) {
+        if (left_ts > 0) {
+            //  刷新 TODO:2.9 多语言
+            [_autoCloseButton setTitle:[NSString stringWithFormat:@"%@%@", @(left_ts), @"秒后自动取消"] forState:UIControlStateNormal];
+        } else {
+            [self onButtomAutoCancelClicked];
+        }
+    }];
 }
 
 - (void)setupAnimationBeginPosition:(BOOL)bSlideIn
@@ -449,7 +456,7 @@
  */
 - (void)onButtomAutoCancelClicked
 {
-    [self stopAutoCloseTimer];
+    [[AsyncTaskManager sharedAsyncTaskManager] removeSecondsTimer:_autoCloseTimerID];
     [self resignAllFirstResponder];
     [self dismissWithCompletion:nil];
 }
@@ -460,42 +467,6 @@
 - (void)onButtomSubmitClicked:(UIButton*)sender
 {
     //  TODO:2.9
-}
-
-/*
- *  处理自动关闭定时器
- */
-- (void)startAutoCloseTimer
-{
-    if (!_autoCloseTimer){
-        _autoCloseTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
-                                                           target:self
-                                                         selector:@selector(onAutoCloseTimerTick)
-                                                         userInfo:nil
-                                                          repeats:YES];
-        [_autoCloseTimer fire];
-    }
-}
-
-- (void)stopAutoCloseTimer
-{
-    if (_autoCloseTimer){
-        [_autoCloseTimer invalidate];
-        _autoCloseTimer = nil;
-    }
-}
-
-- (void)onAutoCloseTimerTick
-{
-    NSTimeInterval ts = ceil([[NSDate date] timeIntervalSince1970]);
-    NSInteger left_ts = (NSInteger)(_autoCloseStartTs + _autoCloseSeconds - ts);
-    if (left_ts <= 0) {
-        //  自动关闭
-        [self onButtomAutoCancelClicked];
-    } else {
-        //  刷新 TODO:2.9 多语言
-        [_autoCloseButton setTitle:[NSString stringWithFormat:@"%@%@", @(left_ts), @"秒后自动取消"] forState:UIControlStateNormal];
-    }
 }
 
 #pragma mark- UITextFieldDelegate

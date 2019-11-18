@@ -58,6 +58,16 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
+ *  (public) 当前账号名
+ */
+- (NSString*)getCurrentBtsAccount
+{
+    assert([[WalletManager sharedWalletManager] isWalletExist]);
+    return @"say007";//TODO:2.9 test data
+//    return [[WalletManager sharedWalletManager] getWalletAccountName];
+}
+
+/*
  *  (public) 获取当前法币信息
  */
 - (NSDictionary*)getFiatCnyInfo
@@ -157,6 +167,8 @@ static OtcManager *_sharedOtcManager = nil;
  */
 - (void)showOtcError:(id)error
 {
+    //  TODO:2.9 咨询 error code表。验证码错误 等 需要显示对应文案。
+    
     //  显示错误信息
     NSString* errmsg = nil;
     if (error && [error isKindOfClass:[WsPromiseException class]]){
@@ -167,6 +179,22 @@ static OtcManager *_sharedOtcManager = nil;
         errmsg = @"服务器或网络异常，请稍后再试。";//TODO:2.9
     }
     [OrgUtils makeToast:errmsg];
+}
+
+/*
+ *  (public) 辅助方法 - 是否已认证判断
+ */
+- (BOOL)isIdVerifyed:(id)responsed
+{
+    id data = [responsed objectForKey:@"data"];
+    if (!data) {
+        return NO;
+    }
+    NSInteger iIdVerify = [[data objectForKey:@"isIdcard"] integerValue];
+    if (iIdVerify == eovs_kyc1 || iIdVerify == eovs_kyc2 || iIdVerify == eovs_kyc3) {
+        return YES;
+    }
+    return NO;
 }
 
 /*
@@ -184,6 +212,15 @@ static OtcManager *_sharedOtcManager = nil;
 //        @"holderVerify":@"",//TODO:2.9
 //    };
     return [self _queryApiCore:url args:@{@"btsAccount":bts_account_name} headers:nil];
+}
+
+/*
+ *  (public) 请求身份认证
+ */
+- (WsPromise*)idVerify:(id)args
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/user/idcardVerify"];
+    return [self _queryApiCore:url args:args headers:nil];
 }
 
 /*
@@ -257,6 +294,32 @@ static OtcManager *_sharedOtcManager = nil;
         @"assetName":asset_name,
         @"page":@(page),
         @"pageSize":@(page_size)
+    };
+    return [self _queryApiCore:url args:args headers:nil];
+}
+
+/*
+ *  (public) 查询广告详情。
+ */
+- (WsPromise*)queryAdDetails:(NSString*)ad_id
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/ad/detail"];
+    id args = @{
+        @"adId":ad_id,
+    };
+    return [self _queryApiCore:url args:args headers:nil];
+}
+
+/*
+ *  (public) 发送短信
+ */
+- (WsPromise*)sendSmsCode:(NSString*)bts_account_name phone:(NSString*)phone_number type:(EOtcSmsType)type
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/sms/send"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+        @"phoneNum":phone_number,
+        @"type":@(type)
     };
     return [self _queryApiCore:url args:args headers:nil];
 }

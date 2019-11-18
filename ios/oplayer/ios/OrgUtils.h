@@ -98,6 +98,11 @@ typedef void (^YklUserCallback)(id data);
  */
 + (BOOL)isValidHexString:(NSString*)hexstring;
 
+/*
+ *  (public) 字符串是不是全是数字判断。
+ */
++ (BOOL)isFullDigital:(NSString*)string;
+
 /**
  *  解析 BTS 网络时间字符串，返回 1970 到现在的秒数。格式：2018-06-04T13:03:57。
  */
