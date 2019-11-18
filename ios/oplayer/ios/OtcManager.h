@@ -31,6 +31,27 @@ typedef enum EOtcAdType
 } EOtcAdType;
 
 /*
+ *  用户订单类型
+ */
+typedef enum EOtcOrderType
+{
+    eoot_all = 0,           //  全部
+    eoot_sell,              //  出售
+    eoot_buy                //  购买
+} EOtcOrderType;
+
+/*
+ *  用户订单状态 TODO:2.9 申诉中哪些状态呢？
+ */
+typedef enum EOtcOrderStatus
+{
+    eoos_all = 0,           //  全部? TODO:2.9
+    eoos_pending,           //  进行中
+    eoos_completed,         //  已完成
+    eoos_cancelled,         //  已取消
+} EOtcOrderStatus;
+
+/*
  *  商家广告状态
  */
 typedef enum EOtcAdStatus
@@ -73,6 +94,20 @@ typedef enum EOtcAdStatus
  *  bts_account_name    - BTS账号名
  */
 - (WsPromise*)queryIdVerify:(NSString*)bts_account_name;
+
+/*
+ *  (public) 查询用户订单列表
+ */
+- (WsPromise*)queryUserOrders:(NSString*)bts_account_name
+                         type:(EOtcOrderType)type
+                       status:(EOtcOrderStatus)status
+                         page:(NSInteger)page
+                    page_size:(NSInteger)page_size;
+
+/*
+ *  (public) 查询订单详情
+ */
+- (WsPromise*)queryUserOrderDetails:(NSString*)bts_account_name order_id:(NSString*)order_id;
 
 /*
  *  (public) 查询OTC支持的数字资产列表（bitCNY、bitUSD、USDT等）

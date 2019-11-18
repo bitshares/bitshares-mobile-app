@@ -634,6 +634,9 @@
 		3F676A1F230E9EC100E98C14 /* first2.png in Resources */ = {isa = PBXBuildFile; fileRef = B7ED5E361D6BF6FD0043338B /* first2.png */; };
 		3F676A20230E9EC100E98C14 /* iconDepositWithdraw@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F6C35B421EE0AB1008E2903 /* iconDepositWithdraw@3x.png */; };
 		3F676A21230E9EC100E98C14 /* iconAdvFunction@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F7ED8D9227691BA00082680 /* iconAdvFunction@2x.png */; };
+		3F67F8F523823DCF00B3542E /* VCOtcOrderDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F67F8F323823DCE00B3542E /* VCOtcOrderDetails.m */; };
+		3F67F8F623823DCF00B3542E /* VCOtcOrderDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F67F8F323823DCE00B3542E /* VCOtcOrderDetails.m */; };
+		3F67F8F723823DCF00B3542E /* VCOtcOrderDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F67F8F323823DCE00B3542E /* VCOtcOrderDetails.m */; };
 		3F6C357A21E86C9E008E2903 /* ViewAddrMemoInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6C357821E86C9D008E2903 /* ViewAddrMemoInfoCell.m */; };
 		3F6C357B21E86C9E008E2903 /* ViewAddrMemoInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6C357821E86C9D008E2903 /* ViewAddrMemoInfoCell.m */; };
 		3F6C35AD21EC83AB008E2903 /* GatewayBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6C35AB21EC83AA008E2903 /* GatewayBase.m */; };
@@ -1851,6 +1854,8 @@
 		3F4F293B23727A83007674E5 /* VCOtcAddAlipay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcAddAlipay.m; path = Controller/VCOtcAddAlipay.m; sourceTree = "<group>"; };
 		3F4F293C23727A83007674E5 /* VCOtcAddAlipay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcAddAlipay.h; path = Controller/VCOtcAddAlipay.h; sourceTree = "<group>"; };
 		3F676A27230E9EC100E98C14 /* fowallet-baichenglian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "fowallet-baichenglian.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3F67F8F323823DCE00B3542E /* VCOtcOrderDetails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcOrderDetails.m; path = Controller/VCOtcOrderDetails.m; sourceTree = "<group>"; };
+		3F67F8F423823DCE00B3542E /* VCOtcOrderDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcOrderDetails.h; path = Controller/VCOtcOrderDetails.h; sourceTree = "<group>"; };
 		3F6C357821E86C9D008E2903 /* ViewAddrMemoInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewAddrMemoInfoCell.m; path = View/ViewAddrMemoInfoCell.m; sourceTree = "<group>"; };
 		3F6C357921E86C9E008E2903 /* ViewAddrMemoInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewAddrMemoInfoCell.h; path = View/ViewAddrMemoInfoCell.h; sourceTree = "<group>"; };
 		3F6C35AB21EC83AA008E2903 /* GatewayBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GatewayBase.m; path = Controller/Gateway/GatewayBase.m; sourceTree = "<group>"; };
@@ -3423,6 +3428,8 @@
 		3FE23E30236D6A07006BF999 /* OTC */ = {
 			isa = PBXGroup;
 			children = (
+				3F67F8F423823DCE00B3542E /* VCOtcOrderDetails.h */,
+				3F67F8F323823DCE00B3542E /* VCOtcOrderDetails.m */,
 				3F12F43E237D0E2E001FBAD8 /* VCOtcOrders.h */,
 				3F12F43D237D0E2D001FBAD8 /* VCOtcOrders.m */,
 				3F12FB5E2372BA1A00654A07 /* VCOtcMerchantList.h */,
@@ -5349,6 +5356,7 @@
 				3F6768AA230E9EC100E98C14 /* zip.c in Sources */,
 				3F6768AB230E9EC100E98C14 /* ViewSimulateActionSheet.m in Sources */,
 				3F6768AC230E9EC100E98C14 /* VCDebt.m in Sources */,
+				3F67F8F723823DCF00B3542E /* VCOtcOrderDetails.m in Sources */,
 				3F6768AD230E9EC100E98C14 /* MKlineIndexBoll.m in Sources */,
 				3F6768AE230E9EC100E98C14 /* VCScanPrivateKey.m in Sources */,
 				3F6768AF230E9EC100E98C14 /* SGQRCodeObtain.m in Sources */,
@@ -5658,6 +5666,7 @@
 				3FB8F93521CE66C200DA88E2 /* zip.c in Sources */,
 				3FB8F93621CE66C200DA88E2 /* ViewSimulateActionSheet.m in Sources */,
 				3FB8F93721CE66C200DA88E2 /* VCDebt.m in Sources */,
+				3F67F8F623823DCF00B3542E /* VCOtcOrderDetails.m in Sources */,
 				3F38473B2227752300B55914 /* MKlineIndexBoll.m in Sources */,
 				3FB8F93821CE66C200DA88E2 /* VCScanPrivateKey.m in Sources */,
 				3FB8F93921CE66C200DA88E2 /* SGQRCodeObtain.m in Sources */,
@@ -5967,6 +5976,7 @@
 				B7E690EF1C16BD3600EF32EF /* ViewSimulateActionSheet.m in Sources */,
 				B741A75D20DB807D000FBC00 /* VCDebt.m in Sources */,
 				3F38473A2227752300B55914 /* MKlineIndexBoll.m in Sources */,
+				3F67F8F523823DCF00B3542E /* VCOtcOrderDetails.m in Sources */,
 				3F475CE221946712009DD5C1 /* VCScanPrivateKey.m in Sources */,
 				3F0DA36421884011006E1004 /* SGQRCodeObtain.m in Sources */,
 				ED0571CE1878399600DEB570 /* MyAjaxProtocol.m in Sources */,
