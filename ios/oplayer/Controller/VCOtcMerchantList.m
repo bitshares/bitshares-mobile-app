@@ -221,12 +221,6 @@
 
 - (void)queryAdList:(NSString*)asset_name
 {
-    //  TODO:2.9
-    //    [[[OtcManager sharedOtcManager] queryIdVerify:@"say007"] then:^id(id data) {
-    //        NSLog(@"%@", data);
-    //        return nil;
-    //    }];
-
     //  TODO:2.9 page
     [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     [[[[OtcManager sharedOtcManager] queryAdList:_ad_type asset_name:asset_name page:0 page_size:50] then:^id(id data) {
@@ -330,6 +324,65 @@
 }
 
 /*
+ *  (private) 是否前往身份认证
+ */
+- (void)askForIdVerify:(id)responsed
+{
+    //  TODO:2.9
+    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"您尚未完成身份认证，不可进行场外交易，是否去认证？"
+                                                           withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                          completion:^(NSInteger buttonIndex)
+     {
+         if (buttonIndex == 1)
+         {
+//             [self gotoLogoutCore];
+         }
+     }];
+}
+
+/*
+ *  (private) 账号异常，冻结时，是否联系客服。
+ */
+- (void)askForContactCustomerService:(id)responsed
+{
+    //  TODO:2.9
+    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"您的账号已被冻结，是否联系客服？"
+                                                           withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                          completion:^(NSInteger buttonIndex)
+     {
+         if (buttonIndex == 1)
+         {
+             // TODO:2.9
+         }
+     }];
+}
+
+/*
+ *  (private) 价格变化，是否继续下单?
+ */
+- (void)askForPriceChanged:(id)new_ad_info
+{
+    //  TODO:2.9
+    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"您当前选择的订单价格有变动，是否继续下单？"
+                                                           withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                          completion:^(NSInteger buttonIndex)
+     {
+         if (buttonIndex == 1)
+         {
+             [self gotoInputOrderCore:new_ad_info];
+         }
+     }];
+}
+
+/*
+ *  (private) 前往下单
+ */
+- (void)gotoInputOrderCore:(id)new_ad_info
+{
+    [[MyPopviewManager sharedMyPopviewManager] showOtcTradeView:_owner ad_info:new_ad_info];
+}
+
+/*
  *  事件 - 点击购买or出售按钮。
  */
 - (void)onButtonBuyOrSellClicked:(UIButton*)sender
@@ -337,11 +390,48 @@
     assert(sender.tag < [_data_array count]);
     id item = [_data_array objectAtIndex:sender.tag];
     assert(item);
-    //  TODO:2.9
-//    [OrgUtils makeToast:_userbuy ? @"买" : @"卖"];
+    id adId = [item objectForKey:@"adId"];
+    assert(adId);
     
-    //  TODO:2.9 
-    [[MyPopviewManager sharedMyPopviewManager] showOtcTradeView:_owner ad_info:item];
+    OtcManager* otc = [OtcManager sharedOtcManager];
+    
+    //  查询用户认证信息
+    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    [[[otc queryIdVerify:[otc getCurrentBtsAccount]] then:^id(id responsed) {
+        //  查询认证信息
+        if (![otc isIdVerifyed:responsed]) {
+            [_owner hideBlockView];
+            [self askForIdVerify:responsed];
+            return nil;
+        }
+        //  查询账号状态
+        if ([[[responsed objectForKey:@"data"] objectForKey:@"status"] integerValue] == eous_freeze) {
+            [_owner hideBlockView];
+            [self askForContactCustomerService:responsed];
+            return nil;
+        }
+        //  TODO:2.9。付款方式是否和我的付款方式一致。
+        
+        //  前往下单（TODO:2.9 是否先查询广告详情，目前数据一直）
+        return [[otc queryAdDetails:adId] then:^id(id data) {
+            [_owner hideBlockView];
+            id new_item = [data objectForKey:@"data"];
+            assert(new_item);
+            NSString* oldprice = [NSString stringWithFormat:@"%@", [item objectForKey:@"price"]];
+            NSString* newprice = [NSString stringWithFormat:@"%@", [new_item objectForKey:@"price"]];
+            //  价格变化
+            if (![oldprice isEqualToString:newprice]) {
+                [self askForPriceChanged:new_item];
+            } else {
+                [self gotoInputOrderCore:new_item];
+            }
+            return nil;
+        }];
+    }] catch:^id(id error) {
+        [_owner hideBlockView];
+        [otc showOtcError:error];
+        return nil;
+    }];
 }
 
 @end

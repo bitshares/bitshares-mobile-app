@@ -457,6 +457,22 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     return YES;
 }
 
+/*
+ *  (public) 字符串是不是全是数字判断。
+ */
++ (BOOL)isFullDigital:(NSString*)string
+{
+    if (!string) {
+        return NO;
+    }
+    //  0-9 组成
+    NSPredicate* pre = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", @"^[0-9]+$"];
+    if (![pre evaluateWithObject:string]){
+        return NO;
+    }
+    return YES;
+}
+
 /**
  *  解析 BTS 网络时间字符串，返回 1970 到现在的秒数。格式：2018-06-04T13:03:57。
  */

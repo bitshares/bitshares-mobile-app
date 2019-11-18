@@ -60,14 +60,15 @@
 
 - (void)queryUserOrders
 {
+    OtcManager* otc = [OtcManager sharedOtcManager];
     [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    [[[[OtcManager sharedOtcManager] queryUserOrders:@"wakaka99" type:eoot_all status:eoos_all page:0 page_size:50] then:^id(id data) {
+    [[[otc queryUserOrders:[otc getCurrentBtsAccount] type:eoot_all status:eoos_all page:0 page_size:50] then:^id(id data) {
         [self hideBlockView];
         [self onQueryUserOrdersResponsed:data];
         return nil;
     }] catch:^id(id error) {
         [self hideBlockView];
-        [[OtcManager sharedOtcManager] showOtcError:error];
+        [otc showOtcError:error];
         return nil;
     }];
 }

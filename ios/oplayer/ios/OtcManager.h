@@ -19,6 +19,27 @@ typedef enum EOtcAssetType
 } EOtcAssetType;
 
 /*
+ *  场外交易账号状态
+ */
+typedef enum EOtcUserStatus
+{
+    eous_default = 0,       //  默认值（初始化时的值）
+    eous_normal,            //  正常
+    eous_freeze,            //  冻结中
+} EOtcUserStatus;
+
+/*
+ *  场外交易身份认证状态
+ */
+typedef enum EOtcUserIdVerifyStatus
+{
+    eovs_none = 0,          //  未认证
+    eovs_kyc1,              //  1级认证
+    eovs_kyc2,              //  2级认证
+    eovs_kyc3,              //  3级认证
+} EOtcUserIdVerifyStatus;
+
+/*
  *  商家广告类型
  */
 typedef enum EOtcAdType
@@ -61,6 +82,16 @@ typedef enum EOtcAdStatus
     eoads_deleted = 3,      //  删除
 } EOtcAdStatus;
 
+/*
+ *  验证码业务类型
+ */
+typedef enum EOtcSmsType
+{
+    eost_id_verify = 1,     //  身份认证
+    eost_change_phone,      //  更换手机号
+    eost_new_order_notify,  //  新订单通知
+} EOtcSmsType;
+
 @class VCBase;
 
 @interface OtcManager : NSObject
@@ -68,6 +99,11 @@ typedef enum EOtcAdStatus
 @property (nonatomic, strong) NSArray* asset_list_digital;  //  支持的数字资产列表
 
 + (OtcManager*)sharedOtcManager;
+
+/*
+ *  (public) 当前账号名
+ */
+- (NSString*)getCurrentBtsAccount;
 
 /*
  *  (public) 获取当前法币信息
@@ -90,10 +126,20 @@ typedef enum EOtcAdStatus
 - (void)showOtcError:(id)error;
 
 /*
+ *  (public) 辅助方法 - 是否已认证判断
+ */
+- (BOOL)isIdVerifyed:(id)data;
+
+/*
  *  (public) 查询OTC用户身份认证信息。
  *  bts_account_name    - BTS账号名
  */
 - (WsPromise*)queryIdVerify:(NSString*)bts_account_name;
+
+/*
+ *  (public) 请求身份认证
+ */
+- (WsPromise*)idVerify:(id)args;
 
 /*
  *  (public) 查询用户订单列表
@@ -127,5 +173,15 @@ typedef enum EOtcAdStatus
 - (WsPromise*)queryAdList:(EOtcAdType)ad_type asset_name:(NSString*)asset_name page:(NSInteger)page page_size:(NSInteger)page_size;
 - (WsPromise*)queryAdList:(EOtcAdStatus)ad_status type:(EOtcAdType)ad_type asset_name:(NSString*)asset_name
                      page:(NSInteger)page page_size:(NSInteger)page_size;
+
+/*
+ *  (public) 查询广告详情。
+ */
+- (WsPromise*)queryAdDetails:(NSString*)ad_id;
+
+/*
+ *  (public) 发送短信
+ */
+- (WsPromise*)sendSmsCode:(NSString*)bts_account_name phone:(NSString*)phone_number type:(EOtcSmsType)type;
 
 @end
