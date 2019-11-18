@@ -10,6 +10,10 @@
 #import "ViewOtcOrderInfCell.h"
 #import "OrgUtils.h"
 
+#import "VCOtcOrderDetails.h"
+
+#import "OtcManager.h"
+
 @interface VCOtcOrdersPages ()
 {
 }
@@ -39,9 +43,33 @@
 {
     self = [super init];
     if (self) {
-        //  TODO:2.9
+        
     }
     return self;
+}
+
+- (void)onQueryUserOrdersResponsed:(id)responsed
+{
+    id records = [[responsed objectForKey:@"data"] objectForKey:@"records"];
+    if (_subvcArrays && records){
+        for (VCOtcOrders* vc in _subvcArrays) {
+            [vc onQueryUserOrdersResponsed:records];
+        }
+    }
+}
+
+- (void)queryUserOrders
+{
+    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    [[[[OtcManager sharedOtcManager] queryUserOrders:@"wakaka99" type:eoot_all status:eoos_all page:0 page_size:50] then:^id(id data) {
+        [self hideBlockView];
+        [self onQueryUserOrdersResponsed:data];
+        return nil;
+    }] catch:^id(id error) {
+        [self hideBlockView];
+        [[OtcManager sharedOtcManager] showOtcError:error];
+        return nil;
+    }];
 }
 
 - (void)viewDidLoad
@@ -49,6 +77,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
+    //  查询
+    [self queryUserOrders];
 }
 
 @end
@@ -86,8 +116,7 @@
     if (self) {
         _owner = owner;
         _bCurrentOrder = current;
-        //  TODO:2.9
-        _dataArray = @[@{},@{}];
+        _dataArray = [NSMutableArray array];
     }
     return self;
 }
@@ -99,6 +128,15 @@
     if (!_mainTableView.hidden){
         [_mainTableView reloadData];
     }
+}
+
+- (void)onQueryUserOrdersResponsed:(NSArray*)data_array
+{
+    [_dataArray removeAllObjects];
+    if (data_array) {
+        [_dataArray addObjectsFromArray:data_array];
+    }
+    [self refreshView];
 }
 
 - (void)viewDidLoad
@@ -194,47 +232,31 @@
     return cell;
 }
 
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
+        id item = [_dataArray objectAtIndex:indexPath.row];
+        assert(item);
+        [self onOrderCellClicked:item];
+    }];
 }
 
-#pragma mark- for actions
-
-- (void)processCancelOrderCore:(id)order fee_item:(id)fee_item
+- (void)onOrderCellClicked:(id)order_item
 {
-   
-}
-
-- (void)onButtonClicked_CancelOrder:(UIButton*)button
-{
-//    if (_isHistory){
-//        return;
-//    }
-//
-//    assert(_fullUserData);
-//
-//    id order = [_dataArray objectAtIndex:button.tag];
-//    NSLog(@"cancel : %@", order[@"id"]);
-//
-//    id raw_order = [order objectForKey:@"raw_order"];
-//    id extra_balance = @{raw_order[@"sell_price"][@"base"][@"asset_id"]:raw_order[@"for_sale"]};
-//
-//    id fee_item = [[ChainObjectManager sharedChainObjectManager] getFeeItem:ebo_limit_order_cancel
-//                                                          full_account_data:_fullUserData
-//                                                              extra_balance:extra_balance];
-//    assert(fee_item);
-//    if (![[fee_item objectForKey:@"sufficient"] boolValue]){
-//        [OrgUtils makeToast:NSLocalizedString(@"kTipsTxFeeNotEnough", @"手续费不足，请确保帐号有足额的 BTS/CNY/USD 用于支付网络手续费。")];
-//        return;
-//    }
-//
-//    [_owner GuardWalletUnlocked:NO body:^(BOOL unlocked) {
-//        if (unlocked){
-//            //  TODO:fowallet !!! 取消订单是否二次确认。
-//            [self processCancelOrderCore:order fee_item:fee_item];
-//        }
-//    }];
+    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    [[[[OtcManager sharedOtcManager] queryUserOrderDetails:order_item[@"userAccount"] order_id:order_item[@"orderId"]] then:^id(id data) {
+        [_owner hideBlockView];
+//        [self onQueryUserOrdersResponsed:data];
+        //  TODO:2.9
+        VCOtcOrderDetails* vc = [[VCOtcOrderDetails alloc] init];
+        [_owner pushViewController:vc vctitle:@"订单详情" backtitle:kVcDefaultBackTitleName];
+        return nil;
+    }] catch:^id(id error) {
+        [_owner hideBlockView];
+        [[OtcManager sharedOtcManager] showOtcError:error];
+        return nil;
+    }];
 }
 
 @end

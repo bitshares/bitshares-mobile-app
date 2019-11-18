@@ -10,6 +10,7 @@
 #import "NativeAppDelegate.h"
 #import "ThemeManager.h"
 #import "OrgUtils.h"
+#import "OtcManager.h"
 
 @interface ViewOtcOrderInfCell()
 {
@@ -132,18 +133,17 @@
     CGFloat firstLineHeight = 28.0f;
     CGFloat fLineHeight = 24.0f;
     
-    //  第一行 买卖 PAIR
-    BOOL iscall = [[_item objectForKey:@"iscall"] boolValue];
-    id pair = [NSString stringWithFormat:@"%@/%@", _item[@"quote_symbol"], _item[@"base_symbol"]];
-    if ([[_item objectForKey:@"issell"] boolValue]){
+    //  第一行 买卖 SYMBOL
+    id asset_symbol = _item[@"assetName"];
+    if ([[_item objectForKey:@"type"] integerValue] == eoot_sell){
         _lbType.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@ ", @"出售"]
-                                                           value:pair
-                                                      titleColor:iscall ? theme.callOrderColor : theme.sellColor
+                                                           value:asset_symbol
+                                                      titleColor:theme.sellColor
                                                       valueColor:theme.textColorMain];
     }else{
         _lbType.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@ ", @"购买"]
-                                                           value:pair
-                                                      titleColor:iscall ? theme.callOrderColor : theme.buyColor
+                                                           value:asset_symbol
+                                                      titleColor:theme.buyColor
                                                       valueColor:theme.textColorMain];
     }
     _lbType.frame = CGRectMake(xOffset, yOffset, fWidth, firstLineHeight);
@@ -157,8 +157,8 @@
     
     //  第二行 数量和价格标题
     _lbDateTitle.text = @"时间";
-    _lbNumTitle.text = [NSString stringWithFormat:@"%@(%@)", NSLocalizedString(@"kLabelTradeHisTitleAmount", @"数量"), _item[@"quote_symbol"]];
-    _lbTotalTitle.text = [NSString stringWithFormat:@"%@(%@)", NSLocalizedString(@"kVcOrderTotal", @"总金额"), _item[@"base_symbol"]];
+    _lbNumTitle.text = [NSString stringWithFormat:@"%@(%@)", NSLocalizedString(@"kLabelTradeHisTitleAmount", @"数量"), asset_symbol];
+    _lbTotalTitle.text = [NSString stringWithFormat:@"%@(%@)", NSLocalizedString(@"kVcOrderTotal", @"总金额"), _item[@"legalCurrencySymbol"]];
     _lbDateTitle.textColor = theme.textColorGray;
     _lbNumTitle.textColor = theme.textColorGray;
     _lbTotalTitle.textColor = theme.textColorGray;
@@ -172,10 +172,10 @@
     _lbDate.text = @"xxx";// [_item objectForKey:@"price"];
     _lbDate.textColor = theme.textColorNormal;
     
-    _lbNum.text = @"33";// [_item objectForKey:@"amount"];
+    _lbNum.text = [NSString stringWithFormat:@"%@", [_item objectForKey:@"quantity"]];
     _lbNum.textColor = theme.textColorNormal;
     
-    _lbTotal.text = @"33";// [_item objectForKey:@"total"];
+    _lbTotal.text = [NSString stringWithFormat:@"%@", [_item objectForKey:@"amount"]];
     _lbTotal.textColor = theme.textColorNormal;
     
     _lbDate.frame = CGRectMake(xOffset, yOffset, fWidth, fLineHeight);
@@ -183,7 +183,7 @@
     _lbTotal.frame = CGRectMake(xOffset, yOffset, fWidth, fLineHeight);
     yOffset += fLineHeight;
     
-    _lbMerchantName.text = @"吹风的狗";
+    _lbMerchantName.text = [_item objectForKey:@"merchantNickname"] ?: @"";
     _lbMerchantName.textColor = theme.textColorMain;
     _lbMerchantName.frame = CGRectMake(xOffset, yOffset, fWidth, fLineHeight);
 }

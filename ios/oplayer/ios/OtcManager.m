@@ -187,6 +187,39 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
+ *  (public) 查询用户订单列表
+ */
+- (WsPromise*)queryUserOrders:(NSString*)bts_account_name
+                         type:(EOtcOrderType)type
+                       status:(EOtcOrderStatus)status
+                         page:(NSInteger)page
+                    page_size:(NSInteger)page_size
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/user/order/list"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+        @"ordertype":@(type),
+        @"status":@(status),
+        @"page":@(page),
+        @"pageSize":@(page_size)
+    };
+    return [self _queryApiCore:url args:args headers:nil];
+}
+
+/*
+ *  (public) 查询订单详情
+ */
+- (WsPromise*)queryUserOrderDetails:(NSString*)bts_account_name order_id:(NSString*)order_id
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/user/order/details"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+        @"orderId":order_id,
+    };
+    return [self _queryApiCore:url args:args headers:nil];
+}
+
+/*
  *  (public) 查询OTC支持的数字资产列表（bitCNY、bitUSD、USDT等）
  *  asset_type  - 资产类型 默认值：eoat_digital
  */

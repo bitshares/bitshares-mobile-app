@@ -17,5 +17,6 @@
 @interface VCOtcOrders : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
 - (id)initWithOwner:(VCBase*)owner current:(BOOL)current;
+- (void)onQueryUserOrdersResponsed:(NSArray*)data_array;
 
 @end
