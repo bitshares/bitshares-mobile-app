@@ -116,6 +116,11 @@ typedef enum EOtcSmsType
 - (BOOL)isSupportDigital:(NSString*)asset_name;
 
 /*
+ *  (public) 获取资产信息。OTC运营方配置的，非链上数据。
+ */
+- (NSDictionary*)getAssetInfo:(NSString*)asset_name;
+
+/*
  *  (public) 转到OTC界面，会自动初始化必要信息。
  */
 - (void)gotoOtc:(VCBase*)owner asset_name:(NSString*)asset_name ad_type:(EOtcAdType)ad_type;
@@ -140,6 +145,15 @@ typedef enum EOtcSmsType
  *  (public) 请求身份认证
  */
 - (WsPromise*)idVerify:(id)args;
+
+/*
+ *  (public) 创建订单
+ */
+- (WsPromise*)createUserOrder:(NSString*)bts_account_name
+                        ad_id:(NSString*)ad_id
+                         type:(EOtcAdType)ad_type
+                        price:(NSString*)price
+                        total:(NSString*)total;
 
 /*
  *  (public) 查询用户订单列表

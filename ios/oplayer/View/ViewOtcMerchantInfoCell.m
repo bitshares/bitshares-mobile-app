@@ -159,7 +159,7 @@
 //    adType = 1;
 //    aliPaySwitch = 1;
 //    assetId = "1.0.2";
-//    assetName = USD;
+//    assetSymbol = USD;
 //    bankcardPaySwitch = 1;
 //    ctime = "2019-11-12T07:30:16.000+0000";
 //    deadTime = "2019-11-12T07:30:16.000+0000";
@@ -217,7 +217,7 @@
     NSString* fiat_sym = [[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"short_symbol"];
     
     _lbAmount.attributedText = [self genAndColorAttributedText:@"数量 "
-                                                         value:[NSString stringWithFormat:@"%@ %@", _item[@"stock"], _item[@"assetName"]]
+                                                         value:[NSString stringWithFormat:@"%@ %@", _item[@"stock"], _item[@"assetSymbol"]]
                                                     titleColor:theme.textColorGray
                                                     valueColor:theme.textColorNormal];
     
