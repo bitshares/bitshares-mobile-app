@@ -167,7 +167,11 @@
         }
     }
     
-    id base_name = [_item objectForKey:@"base_market_name"];
+    NSString* base_name = [_item objectForKey:@"base_market_name"];
+    //  REMARK：如果 base 的别名刚好和交易资产名字相同，则显示 base 的原始资产名字。
+    if ([base_name isEqualToString:quote_name]) {
+        base_name = [base_asset objectForKey:@"symbol"];
+    }
     
     if (_group_info){
         //  普通市场（基本资产小写、不突出）

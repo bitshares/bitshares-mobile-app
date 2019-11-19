@@ -121,7 +121,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
 #if GRAPHENE_BITSHARES_TESTNET
     NSString* fullPathInApp = [NSString stringWithFormat:@"%@/%@/%@", bundlePath, kAppStaticDir, @"fowallet_config_testnet.json"];
 #else
-    NSString* fullPathInApp = [NSString stringWithFormat:@"%@/%@/%@", bundlePath, kAppStaticDir, @"fowallet_config.json"];
+    NSString* fullPathInApp = [NSString stringWithFormat:@"%@/%@/%@", bundlePath, kAppStaticDir, kAppConfigFile];
 #endif
     NSData* data = [NSData dataWithContentsOfFile:fullPathInApp];
     if (!data){
