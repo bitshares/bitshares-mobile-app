@@ -74,18 +74,18 @@ static OtcManager *_sharedOtcManager = nil;
 {
     if (_fiat_cny_info) {
         //{
-        //    alias = "\U4eba\U6c11\U5e01";
+        //    assetAlias = "\U4eba\U6c11\U5e01";
         //    assetId = "1.0.1";
         //    assetPrecision = 2;
         //    btsId = "<null>";
-        //    symbol = CNY;
+        //    assetSymbol = CNY;
         //    type = 1;
         //}
-        id symbol = _fiat_cny_info[@"symbol"];
+        id symbol = _fiat_cny_info[@"assetSymbol"];
         id precision = _fiat_cny_info[@"assetPrecision"];
         id assetId = _fiat_cny_info[@"assetId"];
         //  TODO:2.9 short_symbol
-        return @{@"symbol":symbol, @"precision":precision, @"id":assetId, @"short_symbol":@"¥", @"name":_fiat_cny_info[@"alias"]};
+        return @{@"assetSymbol":symbol, @"precision":precision, @"id":assetId, @"short_symbol":@"¥", @"name":_fiat_cny_info[@"assetAlias"]};
     } else {
         assert(false);
         return nil;
@@ -100,7 +100,7 @@ static OtcManager *_sharedOtcManager = nil;
     assert(asset_name);
     if (self.asset_list_digital && [self.asset_list_digital count] > 0) {
         for (id item in self.asset_list_digital) {
-            if ([[item objectForKey:@"symbol"] isEqualToString:asset_name]) {
+            if ([[item objectForKey:@"assetSymbol"] isEqualToString:asset_name]) {
                 return YES;
             }
         }
@@ -109,10 +109,29 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
+ *  (public) 获取资产信息。OTC运营方配置的，非链上数据。
+ */
+- (NSDictionary*)getAssetInfo:(NSString*)asset_name
+{
+    assert(asset_name);
+    if (self.asset_list_digital && [self.asset_list_digital count] > 0) {
+        for (id item in self.asset_list_digital) {
+            if ([[item objectForKey:@"assetSymbol"] isEqualToString:asset_name]) {
+                return item;
+            }
+        }
+    }
+    assert(false);
+    //  not reached
+    return nil;
+}
+
+/*
  *  (public) 转到OTC界面，会自动初始化必要信息。
  */
 - (void)gotoOtc:(VCBase*)owner asset_name:(NSString*)asset_name ad_type:(EOtcAdType)ad_type
 {
+    assert(asset_name);
     [owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     WsPromise* p1 =  [self queryAssetList:eoat_fiat];
     WsPromise* p2 = [self queryAssetList:eoat_digital];
@@ -120,13 +139,14 @@ static OtcManager *_sharedOtcManager = nil;
         [owner hideBlockView];
         id fiat_data = [data_array objectAtIndex:0];
         id asset_data = [data_array objectAtIndex:1];
+        
         //  获取法币信息
         _fiat_cny_info = nil;
         id asset_list_fiat = [fiat_data objectForKey:@"data"];
         if (asset_list_fiat && [asset_list_fiat count] > 0) {
             for (id fiat_info in asset_list_fiat) {
                 //  TODO:2.9 固定fiat CNY
-                if ([[fiat_info objectForKey:@"symbol"] isEqualToString:@"CNY"]) {
+                if ([[fiat_info objectForKey:@"assetSymbol"] isEqualToString:@"CNY"]) {
                     _fiat_cny_info = fiat_info;
                     break;
                 }
@@ -150,6 +170,7 @@ static OtcManager *_sharedOtcManager = nil;
             [OrgUtils makeToast:[NSString stringWithFormat:@"场外交易暂时不支持 %@ 资产，请稍后再试。", asset_name]];
             return nil;
         }
+        
         //  转到场外交易界面
         VCBase* vc = [[VCOtcMerchantListPages alloc] initWithAssetName:asset_name ad_type:ad_type];
         vc.title = @"";
@@ -224,6 +245,29 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
+ *  (public) 创建订单
+ */
+- (WsPromise*)createUserOrder:(NSString*)bts_account_name
+                        ad_id:(NSString*)ad_id
+                         type:(EOtcAdType)ad_type
+                        price:(NSString*)price
+                        total:(NSString*)total
+{
+//    NSString* fiat_symbol = [[self getFiatCnyInfo] objectForKey:@"short_symbol"];
+//    assert(fiat_symbol);
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/user/order/set"];
+    id args = @{
+        @"adId":ad_id,
+        @"adType":@(ad_type),
+        @"btsAccount":bts_account_name,
+        @"legalCurrency":@"￥",   //  !!!!! TODO:2.9 暂时只支持这一个！汗
+        @"price":price,
+        @"totalAmount":total
+    };
+    return [self _queryApiCore:url args:args headers:nil];
+}
+
+/*
  *  (public) 查询用户订单列表
  */
 - (WsPromise*)queryUserOrders:(NSString*)bts_account_name
@@ -291,7 +335,7 @@ static OtcManager *_sharedOtcManager = nil;
     id args = @{
         @"adStatus":@(ad_status),
         @"adType":@(ad_type),
-        @"assetName":asset_name,
+        @"assetSymbol":asset_name,
         @"page":@(page),
         @"pageSize":@(page_size)
     };

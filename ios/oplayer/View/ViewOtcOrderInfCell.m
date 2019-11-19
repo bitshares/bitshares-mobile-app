@@ -134,7 +134,7 @@
     CGFloat fLineHeight = 24.0f;
     
     //  第一行 买卖 SYMBOL
-    id asset_symbol = _item[@"assetName"];
+    id asset_symbol = _item[@"assetSymbol"];
     if ([[_item objectForKey:@"type"] integerValue] == eoot_sell){
         _lbType.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@ ", @"出售"]
                                                            value:asset_symbol

@@ -50,7 +50,7 @@
     //  TODO:2.9
     return @[@"我要买", @"我要卖"];
 //    return [_assetList ruby_map:(^id(id src) {
-//        return [src objectForKey:@"symbol"];
+//        return [src objectForKey:@"assetSymbol"];
 //    })];
 }
 
@@ -82,7 +82,7 @@
 - (void)onTitleAssetButtonClicked:(UIButton*)sender
 {
     id list = [[OtcManager sharedOtcManager].asset_list_digital ruby_map:^id(id src) {
-        return [src objectForKey:@"symbol"];
+        return [src objectForKey:@"assetSymbol"];
     }];
     //  TODO:2.9 lang
     [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
@@ -379,7 +379,28 @@
  */
 - (void)gotoInputOrderCore:(id)new_ad_info
 {
-    [[MyPopviewManager sharedMyPopviewManager] showOtcTradeView:_owner ad_info:new_ad_info];
+    [[[MyPopviewManager sharedMyPopviewManager] showOtcTradeView:_owner ad_info:new_ad_info] then:^id(id result) {
+        if (result) {
+            //  尝试下单
+            [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+            OtcManager* otc = [OtcManager sharedOtcManager];
+            [[[otc createUserOrder:[otc getCurrentBtsAccount]
+                             ad_id:[new_ad_info objectForKey:@"adId"]
+                              type:(EOtcAdType)[[new_ad_info objectForKey:@"adType"] integerValue]
+                             price:[NSString stringWithFormat:@"%@", new_ad_info[@"price"]]
+                             total:result[@"total"]] then:^id(id responsed) {
+                [_owner hideBlockView];
+                //  TODO:2.9
+                [OrgUtils makeToast:@"order done!"];
+                return nil;
+            }] catch:^id(id error) {
+                [_owner hideBlockView];
+                [otc showOtcError:error];
+                return nil;
+            }];
+        }
+        return nil;
+    }];
 }
 
 /*

@@ -9,21 +9,42 @@
 #import "OtcManager.h"
 
 #import "AsyncTaskManager.h"
+#import "OrgUtils.h"
+
+enum
+{
+    tf_tag_number = 0,                      //  数量输入框
+    tf_tag_total,                           //  总金额输入框
+};
 
 @interface ViewOtcTrade()
 {
-    NSDictionary*   _adInfo;            //  广告牌信息
+    WsPromiseObject*    _result_promise;
     
-    CGRect          _rectIn;
-    CGRect          _rectOut;
+    NSDictionary*       _adInfo;            //  广告牌信息
+    NSDictionary*       _assetInfo;         //  资产信息
+    NSDecimalNumber*    _nBalance;          //  我的余额（仅卖出需要）
+    NSDecimalNumber*    _nPrice;            //  价格
+    NSDecimalNumber*    _nStock;            //  数量限额
+    NSDecimalNumber*    _nStockFinal;       //  数量限额（考虑了最大金额限额的的情况）
+    NSDecimalNumber*    _nMaxLimit;         //  最大金额限制
+    NSDecimalNumber*    _nMaxLimitFinal;    //  最大金额限制（考虑数量和单价的总金额的情况）
+    NSInteger           _numPrecision;
+    NSInteger           _totalPrecision;
     
-    UIView*         _mainDialog;        //  底部主输入框
-    MyTextField*    _tfNumber;          //  数量
-    MyTextField*    _tfTotal;           //  总成交金额
-    UIButton*       _autoCloseButton;   //  自动取消按钮
+    CGRect              _rectIn;
+    CGRect              _rectOut;
     
-    NSInteger       _autoCloseTimerID;
-    NSInteger       _autoCloseSeconds;  //  自动关闭秒数
+    UIView*             _mainDialog;        //  底部主输入框
+    MyTextField*        _tfNumber;          //  数量
+    MyTextField*        _tfTotal;           //  总成交金额
+    UIButton*           _autoCloseButton;   //  自动取消按钮
+    
+    UILabel*            _tradeAmount;       //  最终交易数量
+    UILabel*            _finalTotalValue;   //  最终金额
+    
+    NSInteger           _autoCloseTimerID;
+    NSInteger           _autoCloseSeconds;  //  自动关闭秒数
 }
 
 @end
@@ -32,6 +53,9 @@
 
 - (void)dealloc
 {
+    _result_promise = nil;
+    _tradeAmount = nil;
+    _finalTotalValue = nil;
     _autoCloseButton = nil;
     if (_tfNumber){
         _tfNumber.delegate = nil;
@@ -43,17 +67,43 @@
     }
     _mainDialog = nil;
     _adInfo = nil;
+    _assetInfo = nil;
+    _nBalance = nil;
+    _nPrice = nil;
+    _nStock = nil;
+    _nStockFinal = nil;
+    _nMaxLimit = nil;
+    _nMaxLimitFinal = nil;
 }
 
-- (instancetype)initWithAdInfo:(id)ad_info
+- (instancetype)initWithAdInfo:(id)ad_info result_promise:(WsPromiseObject*)result_promise
 {
     if (self = [super init])
     {
+        _result_promise = result_promise;
         _adInfo = ad_info;
+        _assetInfo = [[OtcManager sharedOtcManager] getAssetInfo:ad_info[@"assetSymbol"]];
+        _numPrecision = [[_assetInfo objectForKey:@"assetPrecision"] integerValue];
+        _totalPrecision = [[[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"precision"] integerValue];
+        _nBalance = [NSDecimalNumber decimalNumberWithString:@"100.3"];//TODO:2.9 !!!
+        _nPrice = [OrgUtils auxGetStringDecimalNumberValue:[NSString stringWithFormat:@"%@", ad_info[@"price"]]];
+        _nStock = [OrgUtils auxGetStringDecimalNumberValue:[NSString stringWithFormat:@"%@", ad_info[@"stock"]]];
+        _nMaxLimit = [OrgUtils auxGetStringDecimalNumberValue:[NSString stringWithFormat:@"%@", ad_info[@"maxLimit"]]];
+        _nMaxLimitFinal = _nMaxLimit;
+        NSDecimalNumber* n_trade_max_limit = [self _calc_n_total_from_number:_nStock];
+        if ([_nMaxLimitFinal compare:n_trade_max_limit] > 0) {
+            _nMaxLimitFinal = n_trade_max_limit;
+        }
+        _nStockFinal = _nStock;
+        NSDecimalNumber* n_stock_limit = [self _calc_n_number_from_total:_nMaxLimit];
+        if ([_nStockFinal compare:n_stock_limit] > 0) {
+            _nStockFinal = n_stock_limit;
+        }
+        
         self.cancelable = YES;
         _tfNumber = nil;
         _tfTotal = nil;
-        _autoCloseSeconds = 45;     //  TODO:2.9
+        _autoCloseSeconds = 345;     //  TODO:2.9 real 45: test 345
         _autoCloseTimerID = 0;
     }
     return self;
@@ -129,7 +179,7 @@
 //    adType = 2;
 //    aliPaySwitch = 1;
 //    assetId = "1.0.3";
-//    assetName = CNY;
+//    assetSymbol = CNY;
 //    bankcardPaySwitch = 1;
 //    ctime = "2019-11-12T07:27:11.000+0000";
 //    deadTime = "2019-11-12T07:27:11.000+0000";
@@ -164,7 +214,7 @@
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     
     NSString* fiat_symbol = [[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"short_symbol"];
-    NSString* asset_symbol = _adInfo[@"assetName"];
+    NSString* asset_symbol = _adInfo[@"assetSymbol"];
     
     //  单价
     UILabel* lbPriceTitle = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
@@ -185,7 +235,9 @@
     UILabel* lbAvailable = nil;
     if (!bUserBuy) {
         lbAvailable = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
-        lbAvailable.text = [NSString stringWithFormat:@"%@ %@ %@", @"余额", @"333.44", asset_symbol];//TODO:2.9
+        lbAvailable.text = [NSString stringWithFormat:@"%@ %@ %@", @"余额",
+                            [OrgUtils formatFloatValue:_nBalance usesGroupingSeparator:NO],
+                            asset_symbol];//TODO:2.9
         lbAvailable.textAlignment = NSTextAlignmentLeft;
         lbAvailable.textColor = theme.textColorNormal;
     }
@@ -231,27 +283,31 @@
                                                                      attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
                                                                                    NSFontAttributeName:[UIFont systemFontOfSize:17]}];
     
+    //  绑定输入事件（限制输入）
+    [_tfNumber addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+    [_tfTotal addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+    
     //  UI - 输入框末尾按钮
-    _tfNumber.rightView = [self genTailerView:asset_symbol action:bUserBuy ? @"全部买入" : @"全部出售" tag:0];//TODO:2.9
+    _tfNumber.rightView = [self genTailerView:asset_symbol action:bUserBuy ? @"全部买入" : @"全部出售" tag:tf_tag_number];//TODO:2.9
     _tfNumber.rightViewMode = UITextFieldViewModeAlways;
-    _tfTotal.rightView = [self genTailerView:fiat_symbol action:bUserBuy ? @"最大金额" : @"最大金额" tag:0];//TODO:2.9 fiat currency
+    _tfTotal.rightView = [self genTailerView:fiat_symbol action:bUserBuy ? @"最大金额" : @"最大金额" tag:tf_tag_total];//TODO:2.9 fiat currency
     _tfTotal.rightViewMode = UITextFieldViewModeAlways;
     
     //  UI - 交易数量
-    UILabel* tradeAmount = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
-    tradeAmount.text = [NSString stringWithFormat:@"%@ %@ %@", @"交易数量", @"2333", asset_symbol];
-    tradeAmount.textAlignment = NSTextAlignmentRight;
-    tradeAmount.textColor = theme.textColorMain;
+    _tradeAmount = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
+    _tradeAmount.text = [NSString stringWithFormat:@"%@ %@ %@", @"交易数量", @"0", asset_symbol];//TODO:2.9
+    _tradeAmount.textAlignment = NSTextAlignmentRight;
+    _tradeAmount.textColor = theme.textColorMain;
     
     //  UI - 实付款/实际到账
     UILabel* finalTotalTitle = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
-    UILabel* finalTotalValue = [self auxGenLabel:[UIFont boldSystemFontOfSize:18.0f] superview:content];
+    _finalTotalValue = [self auxGenLabel:[UIFont boldSystemFontOfSize:18.0f] superview:content];
     finalTotalTitle.text = bUserBuy ? @"实际付款" : @"实际到账";
     finalTotalTitle.textAlignment = NSTextAlignmentLeft;
     
-    finalTotalValue.text = [NSString stringWithFormat:@"%@%@", fiat_symbol, @"534535"];//TODO:2.9 teatdata
-    finalTotalValue.textColor = theme.textColorHighlight;
-    finalTotalValue.textAlignment = NSTextAlignmentRight;
+    _finalTotalValue.text = [NSString stringWithFormat:@"%@%@", fiat_symbol, @"0"];//TODO:2.9 teatdata
+    _finalTotalValue.textColor = theme.textColorHighlight;
+    _finalTotalValue.textAlignment = NSTextAlignmentRight;
     
     //  UI - 按钮
     CGFloat fBottomViewHeight = 60.0f;
@@ -322,11 +378,11 @@
     _tfTotal.frame = CGRectMake(0, fOffsetY, max_width, fLineHeight);
     fOffsetY += fLineHeight + fSpace;
     
-    tradeAmount.frame = CGRectMake(0, fOffsetY, max_width, fTextHeight);
+    _tradeAmount.frame = CGRectMake(0, fOffsetY, max_width, fTextHeight);
     fOffsetY += fTextHeight;
     
     finalTotalTitle.frame = CGRectMake(0, fOffsetY, max_width, fTextHeight);
-    finalTotalValue.frame = CGRectMake(0, fOffsetY, max_width, fTextHeight);
+    _finalTotalValue.frame = CGRectMake(0, fOffsetY, max_width, fTextHeight);
     fOffsetY += fTextHeight;
     
     pBottomView.frame = CGRectMake(0, fOffsetY, max_width, fBottomViewHeight);
@@ -354,9 +410,9 @@
     lb_title.font = [UIFont boldSystemFontOfSize:16.0f];
     //  TODO:2.9 多语言 
     if ([self isBuy]) {
-        lb_title.text = [NSString stringWithFormat:@"%@ %@", @"购买", _adInfo[@"assetName"]];
+        lb_title.text = [NSString stringWithFormat:@"%@ %@", @"购买", _adInfo[@"assetSymbol"]];
     } else {
-        lb_title.text = [NSString stringWithFormat:@"%@ %@", @"出售", _adInfo[@"assetName"]];
+        lb_title.text = [NSString stringWithFormat:@"%@ %@", @"出售", _adInfo[@"assetSymbol"]];
     }
     [toolbar addSubview:lb_title];
     
@@ -448,7 +504,37 @@
  */
 - (void)onButtonTailerClicked:(UIButton*)sender
 {
-    //  TODO:2.9
+    switch (sender.tag) {
+        case tf_tag_number:
+        {
+            NSDecimalNumber* max_value = _nStockFinal;
+            //  出售的情况下
+            if (![self isBuy]) {
+                if ([max_value compare:_nBalance] > 0) {
+                    max_value = _nBalance;
+                }
+            }
+            _tfNumber.text = [OrgUtils formatFloatValue:max_value usesGroupingSeparator:NO];
+            [self onNumberFieldChanged];
+        }
+            break;
+        case tf_tag_total:
+        {
+            NSDecimalNumber* max_value = _nMaxLimitFinal;
+            //  出售的情况下
+            if (![self isBuy]) {
+                id sell_max = [self _calc_n_total_from_number:_nBalance];
+                if ([max_value compare:sell_max] > 0) {
+                    max_value = sell_max;
+                }
+            }
+            _tfTotal.text = [OrgUtils formatFloatValue:max_value usesGroupingSeparator:NO];
+            [self onTotalFieldChanged];
+        }
+            break;
+        default:
+            break;
+    }
 }
 
 /*
@@ -456,9 +542,7 @@
  */
 - (void)onButtomAutoCancelClicked
 {
-    [[AsyncTaskManager sharedAsyncTaskManager] removeSecondsTimer:_autoCloseTimerID];
-    [self resignAllFirstResponder];
-    [self dismissWithCompletion:nil];
+    [self _handleCloseWithResult:nil];
 }
 
 /*
@@ -467,6 +551,28 @@
 - (void)onButtomSubmitClicked:(UIButton*)sender
 {
     //  TODO:2.9
+    id str_amount = _tfNumber.text;
+    id str_total = _tfTotal.text;
+    
+    id n_amount = [OrgUtils auxGetStringDecimalNumberValue:str_amount];
+    id n_total = [OrgUtils auxGetStringDecimalNumberValue:str_total];
+    
+    //  TODO:2.9 result test data
+    [self _handleCloseWithResult:@{@"total":str_total}];
+}
+
+/*
+ *  (private) 关闭界面
+ */
+- (void)_handleCloseWithResult:(id)result
+{
+    [[AsyncTaskManager sharedAsyncTaskManager] removeSecondsTimer:_autoCloseTimerID];
+    [self resignAllFirstResponder];
+    [self dismissWithCompletion:^{
+        if (_result_promise) {
+            [_result_promise resolve:result];
+        }
+    }];
 }
 
 #pragma mark- UITextFieldDelegate
@@ -475,6 +581,130 @@
     //  TODO:2.9
 //    [self onSubmitClicked];
     return YES;
+}
+
+#pragma mark- for UITextFieldDelegate
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    if (textField != _tfNumber && textField != _tfTotal){
+        return YES;
+    }
+    
+    //  根据输入框不同，限制不同小数点位数。
+    return [OrgUtils isValidAmountOrPriceInput:textField.text
+                                         range:range
+                                    new_string:string
+                                     precision:textField == _tfNumber ? _numPrecision : _totalPrecision];
+}
+
+- (void)onTextFieldDidChange:(UITextField*)textField
+{
+    if (textField != _tfNumber && textField != _tfTotal){
+        return;
+    }
+    
+    //  更新小数点为APP默认小数点样式（可能和输入法中下小数点不同，比如APP里是`.`号，而输入法则是`,`号。
+    [OrgUtils correctTextFieldDecimalSeparatorDisplayStyle:textField];
+    
+    //  处理事件
+    if (textField == _tfTotal){
+        [self onTotalFieldChanged];
+    }else{
+        [self onNumberFieldChanged];
+    }
+}
+
+/**
+ *  (private) 输入交易额变化，重新计算交易数量or价格。
+ */
+- (void)onTotalFieldChanged
+{
+    id str_total = _tfTotal.text;
+    
+    NSDecimalNumber* n_total = [OrgUtils auxGetStringDecimalNumberValue:str_total];
+    NSDecimalNumber* n_amount = [self _calc_n_number_from_total:n_total];
+
+    //  刷新 交易数量 和 最终金额。
+    [self _draw_ui_trade_value:n_amount];
+    [self _draw_ui_final_value:n_total];
+
+    //  交易数量
+    if (!str_total || [str_total isEqualToString:@""]){
+        _tfNumber.text = @"";
+    }else{
+        _tfNumber.text = [OrgUtils formatFloatValue:n_amount usesGroupingSeparator:NO];
+    }
+}
+
+/**
+ *  (private) 输入的数量发生变化，评估交易额。
+ */
+- (void)onNumberFieldChanged
+{
+    id str_amount = _tfNumber.text;
+    
+    NSDecimalNumber* n_amount = [OrgUtils auxGetStringDecimalNumberValue:str_amount];
+    NSDecimalNumber* n_total = [self _calc_n_total_from_number:n_amount];
+
+    //  刷新 交易数量 和 最终金额。
+    [self _draw_ui_trade_value:n_amount];
+    [self _draw_ui_final_value:n_total];
+
+    //  总金额
+    if (!str_amount || [str_amount isEqualToString:@""]){
+        _tfTotal.text = @"";
+    }else{
+        _tfTotal.text = [OrgUtils formatFloatValue:n_total usesGroupingSeparator:NO];
+    }
+}
+
+/*
+*  (private) 根据总金额计算数量
+*  REMARK：买入行为：数量向下取整 卖出行为：数量向上取整
+*/
+- (NSDecimalNumber*)_calc_n_number_from_total:(NSDecimalNumber*)n_total
+{
+    NSDecimalNumberHandler* roundHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:[self isBuy] ? NSRoundDown : NSRoundUp
+                                                                                                  scale:_numPrecision
+                                                                                       raiseOnExactness:NO
+                                                                                        raiseOnOverflow:NO
+                                                                                       raiseOnUnderflow:NO
+                                                                                    raiseOnDivideByZero:NO];
+    return [n_total decimalNumberByDividingBy:_nPrice withBehavior:roundHandler];
+}
+
+/*
+ *  (private) 根据数量计算总金额
+ *  REMARK：买入行为：总金额向上取整 卖出行为：向下取整
+ */
+- (NSDecimalNumber*)_calc_n_total_from_number:(NSDecimalNumber*)n_amount
+{
+    NSDecimalNumberHandler* roundHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:[self isBuy] ? NSRoundUp : NSRoundDown
+                                                                                                  scale:_totalPrecision
+                                                                                       raiseOnExactness:NO
+                                                                                        raiseOnOverflow:NO
+                                                                                       raiseOnUnderflow:NO
+                                                                                    raiseOnDivideByZero:NO];
+    return [_nPrice decimalNumberByMultiplyingBy:n_amount withBehavior:roundHandler];
+}
+
+- (void)_draw_ui_trade_value:(NSDecimalNumber*)n_value
+{
+    //  TODO:2.9 是否超过。余额 以及。数量限制
+    NSString* asset_symbol = _adInfo[@"assetSymbol"];
+    
+    _tradeAmount.text = [NSString stringWithFormat:@"%@ %@ %@", @"交易数量",
+                         [OrgUtils formatFloatValue:n_value usesGroupingSeparator:NO],
+                         asset_symbol];//TODO:2.9
+}
+
+- (void)_draw_ui_final_value:(NSDecimalNumber*)n_final
+{
+    //  TODO:2.9 是否超过限额
+    NSString* fiat_symbol = [[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"short_symbol"];
+    _finalTotalValue.text = [NSString stringWithFormat:@"%@%@", fiat_symbol,
+                             [OrgUtils formatFloatValue:n_final usesGroupingSeparator:YES]];
 }
 
 @end

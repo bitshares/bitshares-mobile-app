@@ -181,9 +181,18 @@ static const char* __picker_view_args_addr__ = "__picker_view_args_addr__";
  */
 - (WsPromise*)showOtcTradeView:(UIViewController*)vc ad_info:(id)ad_info
 {
-    ViewOtcTrade* view = [[ViewOtcTrade alloc] initWithAdInfo:ad_info];
-    [view showInView:[self getFullScreenSuperView:vc]];
-    return nil;
+    return [WsPromise promise:^(WsResolveHandler resolve, WsRejectHandler reject) {
+        WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
+        ViewOtcTrade* view = [[ViewOtcTrade alloc] initWithAdInfo:ad_info result_promise:result_promise];
+        [view showInView:[self getFullScreenSuperView:vc]];
+        [[result_promise then:^id(id data) {
+            resolve(data);
+            return nil;
+        }] catch:^id(id error) {
+            reject(error);
+            return nil;
+        }];
+    }];
 }
 
 /**
