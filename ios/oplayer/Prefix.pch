@@ -50,6 +50,7 @@
 
 #define kUseCommunityFaucet         0
 #define kAppCommunityFaucetAddress  @""
+#define kAppConfigFile              @"fowallet_config_btspp.json"
 
 #elif kAppChannelID == 1
 
@@ -63,6 +64,7 @@
 
 #define kUseCommunityFaucet         1
 #define kAppCommunityFaucetAddress  @"https://faucet.bitshares.eu/onboarding/api/v1/accounts"
+#define kAppConfigFile              @"fowallet_config.json"
 
 #elif kAppChannelID == 100
 
@@ -76,6 +78,7 @@
 
 #define kUseCommunityFaucet         0
 #define kAppCommunityFaucetAddress  @""
+#define kAppConfigFile              @"fowallet_config_btspp.json"
 
 #else
 
