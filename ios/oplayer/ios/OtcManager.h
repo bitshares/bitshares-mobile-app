@@ -40,6 +40,16 @@ typedef enum EOtcUserIdVerifyStatus
 } EOtcUserIdVerifyStatus;
 
 /*
+ *  场外交易收款方式类型
+ */
+typedef enum EOtcPaymentMethodType
+{
+    eopmt_alipay = 1,       //  支付宝
+    eopmt_bankcard,         //  银行卡
+    eopmt_wechatpay         //  微信
+} EOtcPaymentMethodType;
+
+/*
  *  商家广告类型
  */
 typedef enum EOtcAdType
@@ -170,6 +180,11 @@ typedef enum EOtcSmsType
  *  (public) 查询订单详情
  */
 - (WsPromise*)queryUserOrderDetails:(NSString*)bts_account_name order_id:(NSString*)order_id;
+
+/*
+ *  (public) 查询用户收款方式
+ */
+- (WsPromise*)queryPaymentMethods:(NSString*)bts_account_name;
 
 /*
  *  (public) 查询OTC支持的数字资产列表（bitCNY、bitUSD、USDT等）
