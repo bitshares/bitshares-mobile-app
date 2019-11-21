@@ -10,4 +10,6 @@
 
 @interface VCOtcPaymentMethods : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
+- (id)initWithAuthInfo:(id)auth_info;
+
 @end

@@ -7,16 +7,8 @@
 //  OTC订单管理
 
 #import <UIKit/UIKit.h>
-#import "VCSlideControllerBase.h"
-
-@interface VCOtcOrdersPages : VCSlideControllerBase
-
-
-@end
+#import "VCBase.h"
 
 @interface VCOtcOrders : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
-
-- (id)initWithOwner:(VCBase*)owner current:(BOOL)current;
-- (void)onQueryUserOrdersResponsed:(NSArray*)data_array;
 
 @end

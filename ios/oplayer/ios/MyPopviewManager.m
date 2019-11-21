@@ -179,11 +179,11 @@ static const char* __picker_view_args_addr__ = "__picker_view_args_addr__";
 /*
  *  显示场外交易下单时的模态输入框
  */
-- (WsPromise*)showOtcTradeView:(UIViewController*)vc ad_info:(id)ad_info
+- (WsPromise*)showOtcTradeView:(UIViewController*)vc ad_info:(id)ad_info lock_info:(id)lock_info
 {
     return [WsPromise promise:^(WsResolveHandler resolve, WsRejectHandler reject) {
         WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
-        ViewOtcTrade* view = [[ViewOtcTrade alloc] initWithAdInfo:ad_info result_promise:result_promise];
+        ViewOtcTrade* view = [[ViewOtcTrade alloc] initWithAdInfo:ad_info lock_info:lock_info result_promise:result_promise];
         [view showInView:[self getFullScreenSuperView:vc]];
         [[result_promise then:^id(id data) {
             resolve(data);

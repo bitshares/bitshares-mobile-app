@@ -22,6 +22,7 @@ enum
     WsPromiseObject*    _result_promise;
     
     NSDictionary*       _adInfo;            //  广告牌信息
+    NSDictionary*       _lockInfo;          //  锁定后的价格信息
     NSDictionary*       _assetInfo;         //  资产信息
     NSDecimalNumber*    _nBalance;          //  我的余额（仅卖出需要）
     NSDecimalNumber*    _nPrice;            //  价格
@@ -76,19 +77,31 @@ enum
     _nMaxLimitFinal = nil;
 }
 
-- (instancetype)initWithAdInfo:(id)ad_info result_promise:(WsPromiseObject*)result_promise
+- (instancetype)initWithAdInfo:(id)ad_info lock_info:(id)lock_info result_promise:(WsPromiseObject*)result_promise
 {
     if (self = [super init])
     {
+        //    lock_info
+        //    code = 0;
+        //    data =     {
+        //        assetSymbol = USD;
+        //        expireDate = 60;
+        //        highLimitPrice = 1250;
+        //        legalCurrencySymbol = "\U00a5";
+        //        lowLimitPrice = 30;
+        //        unitPrice = "7.21";
+        //    };
+        //    message = success;
         _result_promise = result_promise;
         _adInfo = ad_info;
+        _lockInfo = lock_info;
         _assetInfo = [[OtcManager sharedOtcManager] getAssetInfo:ad_info[@"assetSymbol"]];
         _numPrecision = [[_assetInfo objectForKey:@"assetPrecision"] integerValue];
         _totalPrecision = [[[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"precision"] integerValue];
         _nBalance = [NSDecimalNumber decimalNumberWithString:@"100.3"];//TODO:2.9 !!!
-        _nPrice = [OrgUtils auxGetStringDecimalNumberValue:[NSString stringWithFormat:@"%@", ad_info[@"price"]]];
+        _nPrice = [OrgUtils auxGetStringDecimalNumberValue:[NSString stringWithFormat:@"%@", lock_info[@"unitPrice"]]];
         _nStock = [OrgUtils auxGetStringDecimalNumberValue:[NSString stringWithFormat:@"%@", ad_info[@"stock"]]];
-        _nMaxLimit = [OrgUtils auxGetStringDecimalNumberValue:[NSString stringWithFormat:@"%@", ad_info[@"maxLimit"]]];
+        _nMaxLimit = [OrgUtils auxGetStringDecimalNumberValue:[NSString stringWithFormat:@"%@", lock_info[@"highLimitPrice"]]];
         _nMaxLimitFinal = _nMaxLimit;
         NSDecimalNumber* n_trade_max_limit = [self _calc_n_total_from_number:_nStock];
         if ([_nMaxLimitFinal compare:n_trade_max_limit] > 0) {
@@ -103,7 +116,7 @@ enum
         self.cancelable = YES;
         _tfNumber = nil;
         _tfTotal = nil;
-        _autoCloseSeconds = 345;     //  TODO:2.9 real 45: test 345
+        _autoCloseSeconds = [[lock_info objectForKey:@"expireDate"] integerValue];     //  TODO:2.9 real 45: test 345
         _autoCloseTimerID = 0;
     }
     return self;
@@ -254,7 +267,7 @@ enum
     
     UILabel* lbTotalLimited = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
     lbTotalLimited.text = [NSString stringWithFormat:@"%@ %@%@ - %@%@", @"限额",
-                           fiat_symbol, _adInfo[@"lowestLimit"], fiat_symbol, _adInfo[@"maxLimit"]];
+                           fiat_symbol, _lockInfo[@"lowLimitPrice"], fiat_symbol, _lockInfo[@"highLimitPrice"]];
     lbTotalLimited.textAlignment = NSTextAlignmentRight;
     lbTotalLimited.textColor = theme.textColorGray;
     

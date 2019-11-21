@@ -13,6 +13,7 @@
 
 @interface VCOtcPaymentMethods ()
 {
+    NSDictionary*           _auth_info;
     UITableViewBase*        _mainTableView;
     NSMutableArray*         _dataArray;
     
@@ -32,6 +33,15 @@
         _mainTableView.delegate = nil;
         _mainTableView = nil;
     }
+}
+
+- (id)initWithAuthInfo:(id)auth_info
+{
+    self = [super init];
+    if (self) {
+        _auth_info = auth_info;
+    }
+    return self;
 }
 
 - (void)onAddNewPaymentMethodClicked
