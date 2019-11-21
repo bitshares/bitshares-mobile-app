@@ -56,9 +56,11 @@ typedef enum EOtcAdType
  */
 typedef enum EOtcOrderType
 {
-    eoot_all = 0,           //  全部
-    eoot_sell,              //  出售
-    eoot_buy                //  购买
+    eoot_query_all = 0,     //  查询参数 - 全部
+    eoot_query_sell = 1,    //  查询参数 - 出售
+    eoot_query_buy = 2,     //  查询参数 - 购买
+    eoot_data_sell = 2,     //  返回类型 - 出售
+    eoot_data_buy = 1,      //  返回类型 - 购买
 } EOtcOrderType;
 
 /*
@@ -66,7 +68,7 @@ typedef enum EOtcOrderType
  */
 typedef enum EOtcOrderStatus
 {
-    eoos_all = 0,           //  全部? TODO:2.9
+    eoos_all = 0,           //  全部
     eoos_pending,           //  进行中
     eoos_completed,         //  已完成
     eoos_cancelled,         //  已取消
@@ -192,6 +194,11 @@ typedef enum EOtcSmsType
  *  (public) 查询广告详情。
  */
 - (WsPromise*)queryAdDetails:(NSString*)ad_id;
+
+/*
+ *  (public) 锁定价格
+ */
+- (WsPromise*)lockPrice:(NSString*)bts_account_name ad_id:(NSString*)ad_id type:(EOtcAdType)ad_type price:(NSString*)price;
 
 /*
  *  (public) 发送短信

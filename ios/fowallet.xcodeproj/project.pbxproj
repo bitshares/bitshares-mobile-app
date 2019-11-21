@@ -1275,6 +1275,9 @@
 		3FF3550721FECDF4008EF213 /* LangManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF3550421FECDF4008EF213 /* LangManager.m */; };
 		3FF3550A21FED340008EF213 /* VCSelectLanguage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF3550921FED340008EF213 /* VCSelectLanguage.m */; };
 		3FF3550B21FED340008EF213 /* VCSelectLanguage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF3550921FED340008EF213 /* VCSelectLanguage.m */; };
+		3FFFA116238632EE00E25CFA /* VCOtcUserAuthInfos.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FFFA114238632ED00E25CFA /* VCOtcUserAuthInfos.m */; };
+		3FFFA117238632EE00E25CFA /* VCOtcUserAuthInfos.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FFFA114238632ED00E25CFA /* VCOtcUserAuthInfos.m */; };
+		3FFFA118238632EE00E25CFA /* VCOtcUserAuthInfos.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FFFA114238632ED00E25CFA /* VCOtcUserAuthInfos.m */; };
 		430D23D817D86F4900D85816 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 430D23D717D86F4900D85816 /* ImageIO.framework */; };
 		B7030DF91E2FB64600791B47 /* ViewLoading.m in Sources */ = {isa = PBXBuildFile; fileRef = B7030DF81E2FB64600791B47 /* ViewLoading.m */; };
 		B707E1C51DC89ECC008C92CB /* banner_back@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B707E1C41DC89ECC008C92CB /* banner_back@2x.png */; };
@@ -1968,6 +1971,8 @@
 		3FF3550521FECDF4008EF213 /* LangManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LangManager.h; path = ios/LangManager.h; sourceTree = "<group>"; };
 		3FF3550821FED340008EF213 /* VCSelectLanguage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCSelectLanguage.h; path = Controller/VCSelectLanguage.h; sourceTree = "<group>"; };
 		3FF3550921FED340008EF213 /* VCSelectLanguage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCSelectLanguage.m; path = Controller/VCSelectLanguage.m; sourceTree = "<group>"; };
+		3FFFA114238632ED00E25CFA /* VCOtcUserAuthInfos.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcUserAuthInfos.m; path = Controller/VCOtcUserAuthInfos.m; sourceTree = "<group>"; };
+		3FFFA115238632EE00E25CFA /* VCOtcUserAuthInfos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcUserAuthInfos.h; path = Controller/VCOtcUserAuthInfos.h; sourceTree = "<group>"; };
 		430D23D717D86F4900D85816 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		B7030DF71E2FB64600791B47 /* ViewLoading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewLoading.h; path = View/ViewLoading.h; sourceTree = "<group>"; };
 		B7030DF81E2FB64600791B47 /* ViewLoading.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewLoading.m; path = View/ViewLoading.m; sourceTree = "<group>"; };
@@ -3428,6 +3433,8 @@
 		3FE23E30236D6A07006BF999 /* OTC */ = {
 			isa = PBXGroup;
 			children = (
+				3FFFA115238632EE00E25CFA /* VCOtcUserAuthInfos.h */,
+				3FFFA114238632ED00E25CFA /* VCOtcUserAuthInfos.m */,
 				3F67F8F423823DCE00B3542E /* VCOtcOrderDetails.h */,
 				3F67F8F323823DCE00B3542E /* VCOtcOrderDetails.m */,
 				3F12F43E237D0E2E001FBAD8 /* VCOtcOrders.h */,
@@ -5361,6 +5368,7 @@
 				3F6768AE230E9EC100E98C14 /* VCScanPrivateKey.m in Sources */,
 				3F6768AF230E9EC100E98C14 /* SGQRCodeObtain.m in Sources */,
 				3F6768B0230E9EC100E98C14 /* MyAjaxProtocol.m in Sources */,
+				3FFFA118238632EE00E25CFA /* VCOtcUserAuthInfos.m in Sources */,
 				3F6768B1230E9EC100E98C14 /* SettingManager.m in Sources */,
 				3F6768B2230E9EC100E98C14 /* SRDelegateController.m in Sources */,
 				3F6768B3230E9EC100E98C14 /* VCVestingBalance.m in Sources */,
@@ -5671,6 +5679,7 @@
 				3FB8F93821CE66C200DA88E2 /* VCScanPrivateKey.m in Sources */,
 				3FB8F93921CE66C200DA88E2 /* SGQRCodeObtain.m in Sources */,
 				3FB8F93A21CE66C200DA88E2 /* MyAjaxProtocol.m in Sources */,
+				3FFFA117238632EE00E25CFA /* VCOtcUserAuthInfos.m in Sources */,
 				3FB8F93B21CE66C200DA88E2 /* SettingManager.m in Sources */,
 				3FB8F93C21CE66C200DA88E2 /* SRDelegateController.m in Sources */,
 				3FDD7FFB21D46F9800DA61FC /* VCVestingBalance.m in Sources */,
@@ -5981,6 +5990,7 @@
 				3F0DA36421884011006E1004 /* SGQRCodeObtain.m in Sources */,
 				ED0571CE1878399600DEB570 /* MyAjaxProtocol.m in Sources */,
 				B7F495421C508B3300704D14 /* SettingManager.m in Sources */,
+				3FFFA116238632EE00E25CFA /* VCOtcUserAuthInfos.m in Sources */,
 				B714093B20A31CC300003311 /* SRDelegateController.m in Sources */,
 				3FDD7FFA21D46F9800DA61FC /* VCVestingBalance.m in Sources */,
 				B724F63F1C5C56780022EA3B /* ViewBlockButton.m in Sources */,

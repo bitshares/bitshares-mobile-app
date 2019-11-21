@@ -9,6 +9,7 @@
 #import "VCOtcMerchantList.h"
 #import "VCOtcOrders.h"
 #import "VCOtcUserAuth.h"
+#import "VCOtcUserAuthInfos.h"
 #import "VCOtcPaymentMethods.h"
 
 #import "ViewOtcMerchantInfoCell.h"
@@ -62,16 +63,70 @@
 
 - (void)onRightOrderButtonClicked
 {
-    VCBase* vc = [[VCOtcOrdersPages alloc] init];
+    VCBase* vc = [[VCOtcOrders alloc] init];
     //  TODO:2.9
     [self pushViewController:vc vctitle:@"订单记录" backtitle:kVcDefaultBackTitleName];
 }
 
 - (void)onRightUserButtonClicked
 {
-    VCBase* vc = [[VCOtcUserAuth alloc] init];
-    //  TODO:2.9
-    [self pushViewController:vc vctitle:@"身份认证" backtitle:kVcDefaultBackTitleName];
+    [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
+                                                       message:nil
+                                                        cancel:NSLocalizedString(@"kBtnCancel", @"取消")
+                                                         items:@[@"认证信息", @"收款方式"]
+                                                      callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
+     {
+         if (buttonIndex != cancelIndex){
+             // 查询用户认证信息 TODO:2.9
+             OtcManager* otc = [OtcManager sharedOtcManager];
+             [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+             [[[otc queryIdVerify:[otc getCurrentBtsAccount]] then:^id(id responsed) {
+                 [self hideBlockView];
+                 switch (buttonIndex) {
+                     case 0:    //  认证信息
+                     {
+                         if ([otc isIdVerifyed:responsed]) {
+                             VCBase* vc = [[VCOtcUserAuthInfos alloc] initWithAuthInfo:responsed[@"data"]];
+                             [self pushViewController:vc vctitle:@"认证信息" backtitle:kVcDefaultBackTitleName];
+                         } else {
+                             VCBase* vc = [[VCOtcUserAuth alloc] init];
+                             [self pushViewController:vc vctitle:@"身份认证" backtitle:kVcDefaultBackTitleName];
+                         }
+                     }
+                         break;
+                     case 1:    //  付款方式
+                     {
+                         if ([otc isIdVerifyed:responsed]) {
+                             VCBase* vc = [[VCOtcPaymentMethods alloc] initWithAuthInfo:responsed[@"data"]];
+                             [self pushViewController:vc vctitle:@"付款方式" backtitle:kVcDefaultBackTitleName];
+                         } else {
+                             // TODO:2.9
+                             [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"添加付款方式之前，请先完成身份认证，是否继续？"
+                                                                                    withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                                                   completion:^(NSInteger buttonIndex)
+                              {
+                                  if (buttonIndex == 1)
+                                  {
+                                      VCBase* vc = [[VCOtcUserAuth alloc] init];
+                                      [self pushViewController:vc vctitle:@"身份认证" backtitle:kVcDefaultBackTitleName];
+                                  }
+                              }];
+                         }
+                     }
+                         break;
+                     default:
+                         break;
+                 }
+                 return nil;
+             }] catch:^id(id error) {
+                 [self hideBlockView];
+                 [otc showOtcError:error];
+                 return nil;
+             }];
+         }
+     }];
+    
+
 }
 
 - (NSString*)genTitleString
@@ -360,7 +415,7 @@
 /*
  *  (private) 价格变化，是否继续下单?
  */
-- (void)askForPriceChanged:(id)new_ad_info
+- (void)askForPriceChanged:(id)ad_info lock_info:(id)lock_info
 {
     //  TODO:2.9
     [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"您当前选择的订单价格有变动，是否继续下单？"
@@ -369,7 +424,7 @@
      {
          if (buttonIndex == 1)
          {
-             [self gotoInputOrderCore:new_ad_info];
+             [self gotoInputOrderCore:ad_info lock_info:lock_info];
          }
      }];
 }
@@ -377,17 +432,17 @@
 /*
  *  (private) 前往下单
  */
-- (void)gotoInputOrderCore:(id)new_ad_info
+- (void)gotoInputOrderCore:(id)ad_info lock_info:(id)lock_info
 {
-    [[[MyPopviewManager sharedMyPopviewManager] showOtcTradeView:_owner ad_info:new_ad_info] then:^id(id result) {
+    [[[MyPopviewManager sharedMyPopviewManager] showOtcTradeView:_owner ad_info:ad_info lock_info:lock_info] then:^id(id result) {
         if (result) {
-            //  尝试下单
+            //  输入完毕：尝试下单
             [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
             OtcManager* otc = [OtcManager sharedOtcManager];
             [[[otc createUserOrder:[otc getCurrentBtsAccount]
-                             ad_id:[new_ad_info objectForKey:@"adId"]
-                              type:(EOtcAdType)[[new_ad_info objectForKey:@"adType"] integerValue]
-                             price:[NSString stringWithFormat:@"%@", new_ad_info[@"price"]]
+                             ad_id:[ad_info objectForKey:@"adId"]
+                              type:(EOtcAdType)[[ad_info objectForKey:@"adType"] integerValue]
+                             price:[NSString stringWithFormat:@"%@", lock_info[@"unitPrice"]]
                              total:result[@"total"]] then:^id(id responsed) {
                 [_owner hideBlockView];
                 //  TODO:2.9
@@ -434,17 +489,20 @@
         //  TODO:2.9。付款方式是否和我的付款方式一致。
         
         //  前往下单（TODO:2.9 是否先查询广告详情，目前数据一直）
-        return [[otc queryAdDetails:adId] then:^id(id data) {
+        return [[otc lockPrice:[otc getCurrentBtsAccount]
+                         ad_id:adId
+                          type:(EOtcAdType)[[item objectForKey:@"adType"] integerValue]
+                         price:[item objectForKey:@"price"]] then:^id(id data) {
             [_owner hideBlockView];
-            id new_item = [data objectForKey:@"data"];
-            assert(new_item);
+            id lock_info = [data objectForKey:@"data"];
+            assert(lock_info);
             NSString* oldprice = [NSString stringWithFormat:@"%@", [item objectForKey:@"price"]];
-            NSString* newprice = [NSString stringWithFormat:@"%@", [new_item objectForKey:@"price"]];
+            NSString* newprice = [NSString stringWithFormat:@"%@", [lock_info objectForKey:@"unitPrice"]];
             //  价格变化
             if (![oldprice isEqualToString:newprice]) {
-                [self askForPriceChanged:new_item];
+                [self askForPriceChanged:item lock_info:lock_info];
             } else {
-                [self gotoInputOrderCore:new_item];
+                [self gotoInputOrderCore:item lock_info:lock_info];
             }
             return nil;
         }];

@@ -279,7 +279,7 @@ static OtcManager *_sharedOtcManager = nil;
     id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/user/order/list"];
     id args = @{
         @"btsAccount":bts_account_name,
-        @"ordertype":@(type),
+        @"orderType":@(type),
         @"status":@(status),
         @"page":@(page),
         @"pageSize":@(page_size)
@@ -350,6 +350,33 @@ static OtcManager *_sharedOtcManager = nil;
     id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/ad/detail"];
     id args = @{
         @"adId":ad_id,
+    };
+    return [self _queryApiCore:url args:args headers:nil];
+}
+
+/*
+ *  (public) 锁定价格
+ */
+- (WsPromise*)lockPrice:(NSString*)bts_account_name ad_id:(NSString*)ad_id type:(EOtcAdType)ad_type price:(NSString*)price
+{
+//    adId    广告id【必填】    number
+//adType    广告类型【必填】    number
+//btsAccount    bts账户【选填】    string
+//currency    代币名称【必填】    string
+//price    价格【必填】    string
+    
+//    {
+//    code = 1;
+//    message = "Validation failed for argument [0] in public com.bitshares.otc.common.object.BaseResponse<com.bitshares.otc.order.pojo.vo.LockPriceVo> com.bitshares.otc.api.web.order.LockedPriceController.setOrderLock(com.bitshares.otc.order.pojo.dto.SetLockPriceDto): [Field error in object 'setLockPriceDto' on field 'currency': rejected value []; codes [NotEmpty.setLockPriceDto.currency,NotEmpty.currency,NotEmpty.java.lang.String,NotEmpty]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [setLockPriceDto.currency,currency]; arguments []; default message [currency]]; default message [\U865a\U62df\U8d27\U5e01]] ";
+//}
+
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/order/price/lock/set"];
+    id args = @{
+        @"adId":ad_id,
+        @"adType":@(ad_type),
+        @"btsAccount":bts_account_name,
+        @"currency":@"￥",//TODO:2.9
+        @"price":price
     };
     return [self _queryApiCore:url args:args headers:nil];
 }
