@@ -36,6 +36,7 @@ enum
 
 @interface VCOtcAddBankCard ()
 {
+    NSDictionary*           _auth_info;
     UITableViewBase*        _mainTableView;
     
     UITableViewCellBase*    _cellAssetAvailable;
@@ -80,6 +81,7 @@ enum
         _mainTableView.delegate = nil;
         _mainTableView = nil;
     }
+    _auth_info = nil;
 }
 
 - (void)resignAllFirstResponder
@@ -92,9 +94,13 @@ enum
     [_tf_bankaddress safeResignFirstResponder];
 }
 
-- (void)onRequestSmsCodeButtonClicked:(UIButton*)sender
+- (id)initWithAuthInfo:(id)auth_info
 {
-    //  TODO:otc
+    self = [super init];
+    if (self) {
+        _auth_info = auth_info;
+    }
+    return self;
 }
 
 - (void)viewDidLoad
@@ -102,11 +108,13 @@ enum
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     
+    ThemeManager* theme = [ThemeManager sharedThemeManager];
+    
     //  背景颜色
-    self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
+    self.view.backgroundColor = theme.appBackColor;
     
     //  初始化UI
-    //  TODO:otc
+    //  TODO:2.9 otc
     NSString* placeHolderUserName = @"请输入您的姓名";
     NSString* placeHolderBankCardNo = @"请输入银行卡号";
     NSString* placeHolderBankName =  @"请输入开户银行";
@@ -117,6 +125,13 @@ enum
     _tf_bankname = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolderBankName];
     _tf_bankaddress = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolderBankAddress];
     
+    //  初始化值
+    NSString* name = [_auth_info objectForKey:@"realName"];
+    if (name && name.length > 0) {
+        _tf_username.text = name;
+        _tf_username.userInteractionEnabled = NO;
+    }
+    
     //  设置属性颜色等
     _tf_username.showBottomLine = YES;
     _tf_bankcardno.showBottomLine = YES;
@@ -124,29 +139,29 @@ enum
     _tf_bankaddress.showBottomLine = YES;
     
     _tf_username.updateClearButtonTintColor = YES;
-    _tf_username.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    _tf_username.textColor = theme.textColorMain;
     _tf_username.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderUserName
-                                                                        attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
+                                                                        attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
                                                                                      NSFontAttributeName:[UIFont systemFontOfSize:17]}];
     _tf_bankcardno.updateClearButtonTintColor = YES;
-    _tf_bankcardno.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    _tf_bankcardno.textColor = theme.textColorMain;
     _tf_bankcardno.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderBankCardNo
-                                                                       attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
+                                                                       attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
                                                                                     NSFontAttributeName:[UIFont systemFontOfSize:17]}];
  
     _tf_bankname.updateClearButtonTintColor = YES;
-    _tf_bankname.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    _tf_bankname.textColor = theme.textColorMain;
     _tf_bankname.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderBankName
-                                                                     attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
+                                                                     attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
                                                                                   NSFontAttributeName:[UIFont systemFontOfSize:17]}];
     
     _tf_bankaddress.updateClearButtonTintColor = YES;
-    _tf_bankaddress.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    _tf_bankaddress.textColor = theme.textColorMain;
     _tf_bankaddress.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderBankAddress
-                                                                     attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
+                                                                     attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
                                                                                   NSFontAttributeName:[UIFont systemFontOfSize:17]}];
     
-    //  绑定输入事件（限制输入） TODO:otc
+    //  绑定输入事件（限制输入） TODO:2.9 otc
     [_tf_bankcardno addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
     
     //  UI - 主表格

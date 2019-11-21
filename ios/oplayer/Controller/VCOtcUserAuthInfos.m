@@ -110,13 +110,22 @@ enum
         case kVcSecName:
         {
             cell.textLabel.text = @"姓名";
-            cell.detailTextLabel.text = [_auth_info objectForKey:@"realName"] ?: @"";
+            NSString* name = [_auth_info objectForKey:@"realName"];
+            if (name && name.length >= 2) {
+                name = [NSString stringWithFormat:@"*%@", [name substringFromIndex:1]];
+            }
+            cell.detailTextLabel.text = name ?: @"";
         }
             break;
         case kVcSecIdCardNo:
         {
             cell.textLabel.text = @"身份证号";
-            cell.detailTextLabel.text = [_auth_info objectForKey:@"idcardNo"] ?: @"";
+            NSString* idstr = [_auth_info objectForKey:@"idcardNo"];
+            if (idstr && idstr.length == 18) {
+                //  TODO:2.9 id format
+                idstr = [NSString stringWithFormat:@"%@********%@", [idstr substringToIndex:6], [idstr substringFromIndex:14]];
+            }
+            cell.detailTextLabel.text = idstr ?: @"";
         }
             break;
         case kVcSecPhoneNumber:

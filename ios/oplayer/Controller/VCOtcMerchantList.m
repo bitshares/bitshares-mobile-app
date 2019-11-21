@@ -94,14 +94,14 @@
                          }
                      }
                          break;
-                     case 1:    //  付款方式
+                     case 1:    //  收款方式
                      {
                          if ([otc isIdVerifyed:responsed]) {
                              VCBase* vc = [[VCOtcPaymentMethods alloc] initWithAuthInfo:responsed[@"data"]];
-                             [self pushViewController:vc vctitle:@"付款方式" backtitle:kVcDefaultBackTitleName];
+                             [self pushViewController:vc vctitle:@"收款方式" backtitle:kVcDefaultBackTitleName];
                          } else {
                              // TODO:2.9
-                             [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"添加付款方式之前，请先完成身份认证，是否继续？"
+                             [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"添加收款方式之前，请先完成身份认证，是否继续？"
                                                                                     withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
                                                                                    completion:^(NSInteger buttonIndex)
                               {
@@ -125,8 +125,6 @@
              }];
          }
      }];
-    
-
 }
 
 - (NSString*)genTitleString
@@ -486,7 +484,7 @@
             [self askForContactCustomerService:responsed];
             return nil;
         }
-        //  TODO:2.9。付款方式是否和我的付款方式一致。
+        //  TODO:2.9。付款方式是否和我的收款方式一致。
         
         //  前往下单（TODO:2.9 是否先查询广告详情，目前数据一直）
         return [[otc lockPrice:[otc getCurrentBtsAccount]

@@ -301,6 +301,18 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
+ *  (public) 查询用户收款方式
+ */
+- (WsPromise*)queryPaymentMethods:(NSString*)bts_account_name
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/payMethod/query"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+    };
+    return [self _queryApiCore:url args:args headers:nil];
+}
+
+/*
  *  (public) 查询OTC支持的数字资产列表（bitCNY、bitUSD、USDT等）
  *  asset_type  - 资产类型 默认值：eoat_digital
  */

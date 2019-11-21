@@ -30,6 +30,7 @@ enum
 
 @interface VCOtcAddAlipay ()
 {
+    NSDictionary*           _auth_info;
     UITableViewBase*        _mainTableView;
     
     UITableViewCellBase*    _cellAssetAvailable;
@@ -62,6 +63,7 @@ enum
         _mainTableView.delegate = nil;
         _mainTableView = nil;
     }
+    _auth_info = nil;
 }
 
 - (void)resignAllFirstResponder
@@ -72,9 +74,13 @@ enum
     [_tf_account_id safeResignFirstResponder];
 }
 
-- (void)onRequestSmsCodeButtonClicked:(UIButton*)sender
+- (id)initWithAuthInfo:(id)auth_info
 {
-    //  TODO:otc
+    self = [super init];
+    if (self) {
+        _auth_info = auth_info;
+    }
+    return self;
 }
 
 - (void)viewDidLoad
@@ -82,8 +88,10 @@ enum
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     
+    ThemeManager* theme = [ThemeManager sharedThemeManager];
+    
     //  背景颜色
-    self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
+    self.view.backgroundColor = theme.appBackColor;
     
     //  初始化UI
     //  TODO:otc
@@ -93,19 +101,26 @@ enum
     _tf_username = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolderUserName];
     _tf_account_id = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolderAccountID];
 
+    //  初始化值
+    NSString* name = [_auth_info objectForKey:@"realName"];
+    if (name && name.length > 0) {
+        _tf_username.text = name;
+        _tf_username.userInteractionEnabled = NO;
+    }
+    
     //  设置属性颜色等
     _tf_username.showBottomLine = YES;
     _tf_account_id.showBottomLine = YES;
 
     _tf_username.updateClearButtonTintColor = YES;
-    _tf_username.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    _tf_username.textColor = theme.textColorMain;
     _tf_username.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderUserName
-                                                                        attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
+                                                                        attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
                                                                                      NSFontAttributeName:[UIFont systemFontOfSize:17]}];
     _tf_account_id.updateClearButtonTintColor = YES;
-    _tf_account_id.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    _tf_account_id.textColor = theme.textColorMain;
     _tf_account_id.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderAccountID
-                                                                       attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
+                                                                       attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
                                                                                     NSFontAttributeName:[UIFont systemFontOfSize:17]}];
  
     //  绑定输入事件（限制输入） TODO:otc
