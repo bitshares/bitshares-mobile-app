@@ -21,6 +21,8 @@ class ActivityOtcMerchantList : BtsppActivity() {
 
     private lateinit var _asset_name: String
 
+    private lateinit var tv_asset_title: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -48,12 +50,16 @@ class ActivityOtcMerchantList : BtsppActivity() {
         setTabListener()
 
         // 根据 资产修改标题
-        findViewById<TextView>(R.id.title).text = "CNY 市场"
-
-        // 选择资产
-        image_select_asset_from_merchant_list.setOnClickListener {
+        tv_asset_title = findViewById<TextView>(R.id.title)
+        tv_asset_title.text = "${_asset_name} 市场◢"
+        tv_asset_title.setOnClickListener {
             onSelectAssetClicked()
         }
+
+        // 选择订单列表
+        image_select_orders_from_merchant_list.setOnClickListener{}
+        image_explorer_from_merchant_list.setOnClickListener{}
+
 
         //  返回
         layout_back_from_merchant_list.setOnClickListener { finish() }
@@ -67,7 +73,7 @@ class ActivityOtcMerchantList : BtsppActivity() {
             put("GDEX.CNY")
         }
         ViewSelector.show(this, "请选择要交易的资产", asset_list.toList<String>().toTypedArray()) { index: Int, _: String ->
-
+            tv_asset_title.text = "${asset_list.getString(index)} 市场◢"
         }
     }
 

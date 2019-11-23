@@ -128,7 +128,9 @@ class ActivityIndexServices : BtsppActivity() {
         }
 
         layout_advanced_feature_of_service.setOnClickListener {
-            goTo(ActivityOtcMerchantList::class.java, true)
+            // goTo(ActivityOtcMerchantList::class.java, true)
+
+            // REMARK: 测试界面用
             // goTo(ActivityAdvancedFeature::class.java, true)
         }
 
