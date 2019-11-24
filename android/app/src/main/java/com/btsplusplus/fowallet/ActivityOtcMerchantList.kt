@@ -32,8 +32,8 @@ class ActivityOtcMerchantList : BtsppActivity() {
         setFullScreen()
 
         //  Todo 获取参数
-//        val args = btspp_args_as_JSONArray()
-//        _asset_name  = args[0] as String
+        // val args = btspp_args_as_JSONArray()
+        // _asset_name  = args[0] as String
         _asset_name = "USD"
 
         // 设置 tablelayout 和 view_pager
@@ -57,13 +57,15 @@ class ActivityOtcMerchantList : BtsppActivity() {
         }
 
         // 选择订单列表
-        image_select_orders_from_merchant_list.setOnClickListener{}
-        image_explorer_from_merchant_list.setOnClickListener{}
-
+        image_select_orders_from_merchant_list.setOnClickListener{
+            goTo(ActivityOtcOrderList::class.java, true)
+        }
+        image_payments_from_merchant_list.setOnClickListener{
+            goTo(ActivityOtcPaymentList::class.java, true)
+        }
 
         //  返回
         layout_back_from_merchant_list.setOnClickListener { finish() }
-
     }
 
     private fun onSelectAssetClicked(){
