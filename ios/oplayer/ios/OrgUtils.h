@@ -368,11 +368,17 @@ typedef void (^YklUserCallback)(id data);
  */
 +(WsPromise*)asyncFetchUrl:(NSString*)pURL args:(NSDictionary*)args;
 +(void)asyncFetchUrl:(NSString*)pURL completionBlock:(void (^)(NSData*))completion;
+
+/*
+ *  POST方式 异步上传二进制文件。
+ */
++(NSData*)syncUploadBinaryData:(NSString*)url data:(NSData*)binary key:(NSString*)key filename:(NSString*)filename args:(NSDictionary*)kvhash;
++(WsPromise*)asyncUploadBinaryData:(NSString*)url data:(NSData*)binary key:(NSString*)key filename:(NSString*)filename args:(NSDictionary*)kvhash;
 +(void)asyncDownload:(NSString*)pURL verifyMD5:(NSString*)pMD5 fullpath:(NSString*)fullpath completionBlock:(void (^)(BOOL))completion;
 +(void)asyncFetchJson:(NSString*)pURL timeout:(NSTimeInterval)seconds completionBlock:(void (^)(id json))completion;
 +(WsPromise*)asyncPostUrl:(NSString*)pURL args:(NSDictionary*)kvhash;
 +(WsPromise*)asyncPostUrl_jsonBody:(NSString*)pURL args:(NSDictionary*)json;
-+(WsPromise*)asyncPostUrl_jsonBody:(NSString*)pURL args:(NSDictionary*)json headers:(NSDictionary*)headers;
++(WsPromise*)asyncPostUrl_jsonBody:(NSString*)pURL args:(NSDictionary*)json headers:(NSDictionary*)headers as_json:(BOOL)as_json;
 
 /**
  * 异步等待，单位毫秒。

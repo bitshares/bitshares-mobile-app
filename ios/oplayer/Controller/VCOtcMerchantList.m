@@ -485,11 +485,11 @@
             return nil;
         }
         //  TODO:2.9。付款方式是否和我的收款方式一致。
-        
         //  前往下单（TODO:2.9 是否先查询广告详情，目前数据一直）
         return [[otc lockPrice:[otc getCurrentBtsAccount]
                          ad_id:adId
                           type:(EOtcAdType)[[item objectForKey:@"adType"] integerValue]
+                  asset_symbol:[item objectForKey:@"assetSymbol"]
                          price:[item objectForKey:@"price"]] then:^id(id data) {
             [_owner hideBlockView];
             id lock_info = [data objectForKey:@"data"];

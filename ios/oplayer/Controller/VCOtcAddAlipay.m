@@ -8,6 +8,7 @@
 
 #import "VCOtcAddAlipay.h"
 #import "OrgUtils.h"
+#import "OtcManager.h"
 
 enum
 {
@@ -155,6 +156,60 @@ enum
 -(void)gotoSubmitCore
 {
     //  TODO:otc
+    NSString* str_name = _tf_username.text;
+    NSString* str_account = _tf_account_id.text;
+    
+    if (!str_name || [str_name isEqualToString:@""]) {
+        [OrgUtils makeToast:@"请输入姓名。"];
+        return;
+    }
+    
+    //  TODO:2.9 账号有效性检测？？？也许银行卡可以考虑
+    if (!str_account || [str_account isEqualToString:@""]) {
+        [OrgUtils makeToast:@"请输入账号。"];
+        return;
+    }
+  
+    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    OtcManager* otc = [OtcManager sharedOtcManager];
+    id args = @{
+        @"account":str_account,
+        @"btsAccount":[otc getCurrentBtsAccount],
+        @"qrCode":@"",          //  for alipay & wechat pay TODO:2.9
+        @"realName":str_name,
+        @"remark":@"",          //  for bank card
+        @"reservePhone":@"",    //  for bank card
+        @"type":@(eopmt_alipay)
+    };
+    [[[otc addPaymentMethods:args] then:^id(id data) {
+        [self hideBlockView];
+        NSLog(@"%@", data);
+        [OrgUtils makeToast:@"添加成功。"];//TODO:2.9 done & return & promise refresh.
+        return nil;
+    }] catch:^id(id error) {
+        [self hideBlockView];
+        [otc showOtcError:error];
+        return nil;
+    }];
+    
+    
+    //  TODO:2.9 测试数据
+    //    NSString* bundlePath = [NSBundle mainBundle].resourcePath;
+    //    NSString* fullPathInApp = [NSString stringWithFormat:@"%@/%@", bundlePath, @"abouticon@3x.png"];
+    //    NSData* data = [NSData dataWithContentsOfFile:fullPathInApp];
+    
+    //    [[otc queryQrCode:[otc getCurrentBtsAccount] filename:@"2019/11/2415170943383153952545308672.png"] then:^id(id data) {
+    //        NSLog(@"%@", data);
+    //        return nil;
+    //    }];
+    
+//    [[[otc uploadQrCode:[otc getCurrentBtsAccount] filename:@"test.png" data:data] then:^id(id data) {
+//        NSLog(@"%@", data);
+//        return nil;
+//    }] catch:^id(id error) {
+//        [otc showOtcError:error];
+//        return nil;
+//    }];
 }
 
 #pragma mark- for UITextFieldDelegate

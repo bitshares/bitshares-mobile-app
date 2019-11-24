@@ -2661,11 +2661,12 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
                  form_args:(NSDictionary*)form_args
                       body:(NSString*)body_string
                    headers:(NSDictionary*)headers
+                   as_json:(BOOL)as_json
 {
-    return [WsPromise promise:^(WsResolveHandler resolve, WsRejectHandler reject) {
+    return [WsPromise promise:^(WsResolveHandler resolve, WsRejectHandler _reject) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             id data = [self _postUrl:pURL form_args:form_args body:body_string headers:headers];
-            if (data){
+            if (data && as_json){
                 //  解析json
                 NSError* err = nil;
                 id response = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&err];
@@ -2803,15 +2804,15 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
  */
 +(WsPromise*)asyncPostUrl:(NSString*)pURL args:(NSDictionary*)kvhash
 {
-    return [self _asyncPostUrl:pURL form_args:kvhash body:nil headers:nil];
+    return [self _asyncPostUrl:pURL form_args:kvhash body:nil headers:nil as_json:YES];
 }
 
 +(WsPromise*)asyncPostUrl_jsonBody:(NSString*)pURL args:(NSDictionary*)json
 {
-    return [self asyncPostUrl_jsonBody:pURL args:json headers:nil];
+    return [self asyncPostUrl_jsonBody:pURL args:json headers:nil as_json:YES];
 }
 
-+(WsPromise*)asyncPostUrl_jsonBody:(NSString*)pURL args:(NSDictionary*)json headers:(NSDictionary*)headers
++(WsPromise*)asyncPostUrl_jsonBody:(NSString*)pURL args:(NSDictionary*)json headers:(NSDictionary*)headers as_json:(BOOL)as_json
 {
     assert(json);
     NSError* err = nil;
@@ -2822,7 +2823,8 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     return [self _asyncPostUrl:pURL
                      form_args:nil
                           body:[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]
-                       headers:headers];
+                       headers:headers
+                       as_json:as_json];
 }
 
 /**
@@ -2862,6 +2864,103 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
             completion(pData);
         });
     });
+}
+
+/*
+ *  POST方式 同步上传二进制文件。
+ *  失败返回 nil，成功返回 response data。
+ */
++(NSData*)syncUploadBinaryData:(NSString*)url data:(NSData*)binary key:(NSString*)key filename:(NSString*)filename args:(NSDictionary*)kvhash
+{
+    //  1、分界线的标识符
+    NSString* boundary_base = @"btspp_boundary_1qaz2wsx_2019";
+    //  分界线 --btspp_boundary_1qaz2wsx_2019
+    NSString* boundary_bgn = [NSString stringWithFormat:@"--%@", boundary_base];
+    //  结束符 --btspp_boundary_1qaz2wsx_2019--
+    NSString* boundary_end = [NSString stringWithFormat:@"%@--", boundary_bgn];
+
+    //  2、初始化body字符串
+    NSMutableString* body = [[NSMutableString alloc] init];
+    //  添加所有参数
+    NSEnumerator* pKeyEnum = [kvhash keyEnumerator];
+    NSString* pKey = nil;
+    while (pKey = [pKeyEnum nextObject])
+    {
+        NSString* pValue = (__bridge NSString*)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)[kvhash objectForKey:pKey], nil, nil, kCFStringEncodingUTF8);
+        //  添加分界线，换行
+        [body appendFormat:@"%@\r\n", boundary_bgn];
+        //  添加字段名称，换2行
+        [body appendFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", pKey];
+        //  添加字段的值，换行
+        [body appendFormat:@"%@\r\n", pValue];
+    }
+    //  添加文件
+    [body appendFormat:@"%@\r\n", boundary_bgn];
+    [body appendFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\n", key, filename];
+    //  声明上传文件的格式
+    [body appendFormat:@"Content-Type: application/octet-stream\r\n\r\n"];
+    
+    //  3、构造请求用的bodydata
+    NSMutableData* bodydata = [NSMutableData data];
+    //  将body字符串转化为UTF8格式的二进制
+    [bodydata appendData:[body dataUsingEncoding:NSUTF8StringEncoding]];
+    //  将二进制的data加入
+    [bodydata appendData:binary];
+    //  加入结束符
+    [bodydata appendData:[[NSString stringWithFormat:@"\r\n%@", boundary_end] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    //  4、构造请求
+    NSMutableURLRequest* request= [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:url]];
+    [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
+    [request setHTTPMethod:@"POST"];
+    //  设置Content-Type
+    [request setValue:[NSString stringWithFormat:@"multipart/form-data; boundary=%@", boundary_base] forHTTPHeaderField:@"Content-Type"];
+    //  设置Content-Length
+    [request setValue:[NSString stringWithFormat:@"%@", @([bodydata length])] forHTTPHeaderField:@"Content-Length"];
+    //  设置http body
+    [request setHTTPBody:bodydata];
+    
+    //  发起请求
+    NSURLResponse* response = nil;
+    NSError* error = nil;
+    NSData* respdata = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+    if (!respdata || error)
+    {
+        return nil;
+    }
+    
+#ifdef DEBUG
+    NSString* respstr = [[NSString alloc] initWithData:respdata encoding:NSUTF8StringEncoding];
+    NSLog(@"upload resp> %@", respstr);
+#endif
+    
+    return respdata;
+}
+
+/*
+ *  POST方式 异步上传二进制文件。
+ */
++(WsPromise*)asyncUploadBinaryData:(NSString*)url data:(NSData*)binary key:(NSString*)key filename:(NSString*)filename args:(NSDictionary*)kvhash
+{
+    return [WsPromise promise:^(WsResolveHandler resolve, WsRejectHandler __reject) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            id data  = [self syncUploadBinaryData:url data:binary key:key filename:filename args:kvhash];
+            if (data){
+                //  解析json
+                NSError* err = nil;
+                id response = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&err];
+                if (err || !response){
+                    NSLog(@"invalid json~");
+                    data = nil;
+                }else{
+                    data = response;
+                }
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                resolve(data);
+            });
+        });
+    }];
 }
 
 /**
