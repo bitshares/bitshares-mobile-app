@@ -85,15 +85,22 @@
     CGFloat fLineHeight = 28.0f;
     
     NSString* iconName = nil;
+    NSString* paymentName = nil;
     switch ([[_item objectForKey:@"type"] integerValue]) {
         case eopmt_alipay:
+        {
+            paymentName = @"支付宝";
             iconName = @"iconPmAlipay";
+        }
             break;
         case eopmt_bankcard:
             iconName = @"iconPmBankCard";
             break;
-        case  eopmt_wechatpay:
+        case eopmt_wechatpay:
+        {
+            paymentName = @"微信支付";
             iconName = @"iconPmWechat";
+        }
             break;
         default:
             break;
@@ -116,7 +123,7 @@
         _iconType.frame = CGRectMake(xOffset, yOffset + (fLineHeight - 16) / 2.0f, 16, 16);
         iconOffset = 16.0f + 6.0f;
     }
-    _lbName.text = @"中国银行";
+    _lbName.text = paymentName ?: @"中国银行";
     _lbName.frame = CGRectMake(xOffset + iconOffset, yOffset, fWidth, fLineHeight);
     _lbName.textColor = theme.textColorMain;
     yOffset += fLineHeight;

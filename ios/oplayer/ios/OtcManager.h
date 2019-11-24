@@ -182,9 +182,22 @@ typedef enum EOtcSmsType
 - (WsPromise*)queryUserOrderDetails:(NSString*)bts_account_name order_id:(NSString*)order_id;
 
 /*
- *  (public) 查询用户收款方式
+ *  (public) 查询用户收款方式/增加收款方式/删除收款方式/编辑收款方式
  */
 - (WsPromise*)queryPaymentMethods:(NSString*)bts_account_name;
+- (WsPromise*)addPaymentMethods:(id)args;
+- (WsPromise*)delPaymentMethods:(NSString*)bts_account_name;
+- (WsPromise*)editPaymentMethods:(NSString*)bts_account_name;
+
+/*
+ *  (public) 上传二维码图片。
+ */
+- (WsPromise*)uploadQrCode:(NSString*)bts_account_name filename:(NSString*)filename data:(NSData*)data;
+
+/*
+ *  (public) 获取二维码图片流。
+ */
+- (WsPromise*)queryQrCode:(NSString*)bts_account_name filename:(NSString*)filename;
 
 /*
  *  (public) 查询OTC支持的数字资产列表（bitCNY、bitUSD、USDT等）
@@ -213,7 +226,11 @@ typedef enum EOtcSmsType
 /*
  *  (public) 锁定价格
  */
-- (WsPromise*)lockPrice:(NSString*)bts_account_name ad_id:(NSString*)ad_id type:(EOtcAdType)ad_type price:(NSString*)price;
+- (WsPromise*)lockPrice:(NSString*)bts_account_name
+                  ad_id:(NSString*)ad_id
+                   type:(EOtcAdType)ad_type
+           asset_symbol:(NSString*)asset_symbol
+                  price:(NSString*)price;
 
 /*
  *  (public) 发送短信

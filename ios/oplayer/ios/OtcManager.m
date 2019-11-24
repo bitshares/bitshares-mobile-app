@@ -312,6 +312,60 @@ static OtcManager *_sharedOtcManager = nil;
     return [self _queryApiCore:url args:args headers:nil];
 }
 
+- (WsPromise*)addPaymentMethods:(id)args
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/payMethod/add"];
+    return [self _queryApiCore:url args:args headers:nil];
+}
+
+- (WsPromise*)delPaymentMethods:(NSString*)bts_account_name
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/payMethod/del"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+        @"id":@0,   //  TODO:2.9 未完成
+        @"status":@0    //  TODO:2.9 未完成
+    };
+    return [self _queryApiCore:url args:args headers:nil];
+}
+
+- (WsPromise*)editPaymentMethods:(NSString*)bts_account_name
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/payMethod/edit"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+        @"id":@0,   //  TODO:2.9 未完成
+        @"status":@0    //  TODO:2.9 未完成
+    };
+    return [self _queryApiCore:url args:args headers:nil];
+}
+
+/*
+ *  (public) 上传二维码图片。
+ */
+- (WsPromise*)uploadQrCode:(NSString*)bts_account_name filename:(NSString*)filename data:(NSData*)data
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/oss/upload"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+        @"fileName":filename,
+    };
+    return [self _handle_otc_server_response:[OrgUtils asyncUploadBinaryData:url data:data key:@"multipartFile" filename:filename args:args]];
+}
+
+/*
+ *  (public) 获取二维码图片流。
+ */
+- (WsPromise*)queryQrCode:(NSString*)bts_account_name filename:(NSString*)filename
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/oss/query"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+        @"fileName":filename,
+    };
+    return [self _queryApiCore:url args:args headers:nil as_json:NO];
+}
+
 /*
  *  (public) 查询OTC支持的数字资产列表（bitCNY、bitUSD、USDT等）
  *  asset_type  - 资产类型 默认值：eoat_digital
@@ -369,25 +423,18 @@ static OtcManager *_sharedOtcManager = nil;
 /*
  *  (public) 锁定价格
  */
-- (WsPromise*)lockPrice:(NSString*)bts_account_name ad_id:(NSString*)ad_id type:(EOtcAdType)ad_type price:(NSString*)price
+- (WsPromise*)lockPrice:(NSString*)bts_account_name
+                  ad_id:(NSString*)ad_id
+                   type:(EOtcAdType)ad_type
+           asset_symbol:(NSString*)asset_symbol
+                  price:(NSString*)price
 {
-//    adId    广告id【必填】    number
-//adType    广告类型【必填】    number
-//btsAccount    bts账户【选填】    string
-//currency    代币名称【必填】    string
-//price    价格【必填】    string
-    
-//    {
-//    code = 1;
-//    message = "Validation failed for argument [0] in public com.bitshares.otc.common.object.BaseResponse<com.bitshares.otc.order.pojo.vo.LockPriceVo> com.bitshares.otc.api.web.order.LockedPriceController.setOrderLock(com.bitshares.otc.order.pojo.dto.SetLockPriceDto): [Field error in object 'setLockPriceDto' on field 'currency': rejected value []; codes [NotEmpty.setLockPriceDto.currency,NotEmpty.currency,NotEmpty.java.lang.String,NotEmpty]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [setLockPriceDto.currency,currency]; arguments []; default message [currency]]; default message [\U865a\U62df\U8d27\U5e01]] ";
-//}
-
     id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/order/price/lock/set"];
     id args = @{
         @"adId":ad_id,
         @"adType":@(ad_type),
         @"btsAccount":bts_account_name,
-        @"currency":@"￥",//TODO:2.9
+        @"assetSymbol":asset_symbol,//@"￥",//TODO:2.9
         @"price":price
     };
     return [self _queryApiCore:url args:args headers:nil];
@@ -409,12 +456,35 @@ static OtcManager *_sharedOtcManager = nil;
 
 /*
  *  (private) 执行OTC网络请求。
+ *  as_json     - 是否返回 json 格式，否则返回原始数据流。
  */
 - (WsPromise*)_queryApiCore:(NSString*)url args:(id)args headers:(id)headers
 {
+    return [self _queryApiCore:url args:args headers:headers as_json:YES];
+}
+
+- (WsPromise*)_queryApiCore:(NSString*)url args:(id)args headers:(id)headers as_json:(BOOL)as_json
+{
     //  TODO:2.9 签名认证
+    WsPromise* request_promise = [OrgUtils asyncPostUrl_jsonBody:url args:args headers:headers as_json:as_json];
+    if (as_json) {
+        //  REMARK：json格式需要判断返回值
+        return [self _handle_otc_server_response:request_promise];
+    } else {
+        //  文件流直接返回。
+        return request_promise;
+    }
+}
+
+/*
+ *  (private) 处理返回值。
+ *  request_promise - 实际的网络请求。
+ */
+- (WsPromise*)_handle_otc_server_response:(WsPromise*)request_promise
+{
+    assert(request_promise);
     return [WsPromise promise:^(WsResolveHandler resolve, WsRejectHandler reject) {
-        [[[OrgUtils asyncPostUrl_jsonBody:url args:args headers:headers] then:^id(id responsed) {
+        [[request_promise then:^id(id responsed) {
             //  TODO:2.9 lang
             if (!responsed || ![responsed isKindOfClass:[NSDictionary class]]) {
                 reject(@"服务器或网络异常，请稍后再试。");
@@ -422,6 +492,7 @@ static OtcManager *_sharedOtcManager = nil;
             }
             NSInteger code = [[responsed objectForKey:@"code"] integerValue];
             if (code != 0) {
+                //  TODO:2.9 部分 error code 特殊多语言 处理 。
                 id msg = [responsed objectForKey:@"message"];
                 if (msg && ![msg isEqualToString:@""]) {
                     reject([NSString stringWithFormat:@"%@", @{@"code":@(code), @"message":msg}]);
