@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.btsplusplus.fowallet.ActivityOtcMerchantList"
+    tools:context="com.btsplusplus.fowallet.ActivityOtcPaymentList"
     android:background="@color/theme01.appBackColor">
 
 
@@ -22,7 +22,7 @@
 
 
             <LinearLayout
-                android:id="@+id/layout_back_from_merchant_list"
+                android:id="@+id/layout_back_from_otc_merchant_payment_list"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:orientation="horizontal">
@@ -47,7 +47,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text=""
+                android:text="收款方式"
                 style="@style/kNavigationBarTextStyle" />
 
             <LinearLayout
@@ -56,56 +56,37 @@
                 android:layout_gravity="right"
                 android:orientation="horizontal">
 
-                <ImageView
-                    android:id="@+id/image_select_orders_from_merchant_list"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/orders"/>
-
-                <ImageView
-                    android:id="@+id/image_payments_from_merchant_list"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/icon_explorer"/>
+                <Button
+                    android:id="@+id/button_add_payment_method_from_merchant_payment_list"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    style="@style/kNavigationBarTextStyle"
+                    android:background="#00000000"
+                    android:text="+"
+                    android:textSize="22dp"
+                    android:layout_marginRight="10dp"  />
 
 
             </LinearLayout>
 
         </FrameLayout>
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tablayout_of_merchant_list"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            app:tabTextAppearance="@style/KPageTabTextStyle"
-            app:tabIndicatorColor="#ff0000"
-            app:tabRippleColor="#aaaaaa"
-            app:tabTextColor="#ffffff">
-
-            <android.support.design.widget.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="我要买" />
-
-
-            <android.support.design.widget.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="我要卖" />
-
-        </android.support.design.widget.TabLayout>
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/view_pager_of_merchant_list"
+        <ScrollView
+            android:fillViewport="true"
+            android:padding="10dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        </android.support.v4.view.ViewPager>
+            <LinearLayout
+                android:id="@+id/layout_payment_lists_from_orc_merchant"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
+            </LinearLayout>
+        </ScrollView>
 
     </LinearLayout>
-
 
 </android.support.constraint.ConstraintLayout>
