@@ -233,10 +233,14 @@ class ViewOtcMerchantCell  : LinearLayout {
     }
 
     private fun onBuyButtonClicked(){
+        ViewDialogOtcTrade(_ctx,_asset_name,_ad_type,_data){ _index: Int, result_data: JSONObject ->
 
+        }.show()
     }
 
     private fun onSellButtonClicked(){
+        ViewDialogOtcTrade(_ctx,_asset_name,_ad_type,_data){ _index: Int, result_data: JSONObject ->
 
+        }.show()
     }
 }
