@@ -181,10 +181,10 @@ class ViewOtcMerchantCell  : LinearLayout {
                         gravity = Gravity.LEFT
                     }
                     if (payment_method == "wechat"){
-                        iv.setImageDrawable(resources.getDrawable(R.drawable.icon_htlc_preimage))
+                        iv.setImageDrawable(resources.getDrawable(R.drawable.icon_pm_wechat))
                     }
                     if (payment_method == "alipay"){
-                        iv.setImageDrawable(resources.getDrawable(R.drawable.icon_htlc_hashcode))
+                        iv.setImageDrawable(resources.getDrawable(R.drawable.icon_pm_alipay))
                     }
                     addView(iv)
                 }

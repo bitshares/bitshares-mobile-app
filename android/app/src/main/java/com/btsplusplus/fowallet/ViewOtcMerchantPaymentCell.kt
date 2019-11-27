@@ -43,7 +43,7 @@ class ViewOtcMerchantPaymentCell  : LinearLayout {
                     scaleType = ImageView.ScaleType.FIT_END
                     gravity = Gravity.LEFT
                 }
-                iv.setImageDrawable(resources.getDrawable(R.drawable.icon_htlc_hashcode))
+                iv.setImageDrawable(resources.getDrawable(R.drawable.icon_pm_bankcard))
                 addView(iv)
 
                 addView(TextView(_ctx).apply {
