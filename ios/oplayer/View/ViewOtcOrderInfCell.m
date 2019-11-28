@@ -135,7 +135,8 @@
     
     //  第一行 买卖 SYMBOL
     id asset_symbol = _item[@"assetSymbol"];
-    if ([[_item objectForKey:@"type"] integerValue] == eoot_data_sell){
+    BOOL bUserSell = [[_item objectForKey:@"type"] integerValue] == eoot_data_sell;
+    if (bUserSell){
         _lbType.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@ ", @"出售"]
                                                            value:asset_symbol
                                                       titleColor:theme.sellColor
@@ -147,38 +148,9 @@
                                                       valueColor:theme.textColorMain];
     }
     _lbType.frame = CGRectMake(xOffset, yOffset, fWidth, firstLineHeight);
-    //  TODO:2.9
-//    `status` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT '状态，1 订单已创建，2、已付款，3、已转币，4、系统处理中 5、 区块确认中 6、已完成，5、已退款，6、退款失败，7、退款已确认 8、订单已取消',
-    NSString* status_desc = @"未知状态";
-    switch ([[_item objectForKey:@"status"] integerValue]) {
-        case 1:
-            status_desc = @"已下单";
-            break;
-        case 2:
-            status_desc = @"已付款";
-            break;
-        case 3:
-            status_desc = @"已转币";
-            break;
-        case 4:
-            status_desc = @"系统处理中";
-            break;
-        case 5:
-            status_desc = @"区块确认中";
-            break;
-        case 6:
-            status_desc = @"已完成";
-            break;
-        case 7:
-            status_desc = @"退款已确认";
-            break;
-        case 8:
-            status_desc = @"已取消";
-            break;
-        default:
-            break;
-    }
-    _lbStatus.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@ ", status_desc]
+    
+    id status_infos = [OtcManager genUserOrderStatusAndActions:_item];
+    _lbStatus.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@ ", status_infos[@"main"]]
                                                          value:@">"
                                                     titleColor:theme.textColorNormal
                                                     valueColor:theme.textColorGray];

@@ -181,12 +181,10 @@
 - (void)onOrderCellClicked:(id)order_item
 {
     [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    [[[[OtcManager sharedOtcManager] queryUserOrderDetails:order_item[@"userAccount"] order_id:order_item[@"orderId"]] then:^id(id data) {
+    [[[[OtcManager sharedOtcManager] queryUserOrderDetails:order_item[@"userAccount"] order_id:order_item[@"orderId"]] then:^id(id responsed) {
         [self hideBlockView];
-//        [self onQueryUserOrdersResponsed:data];
-        //  TODO:2.9
-        VCOtcOrderDetails* vc = [[VCOtcOrderDetails alloc] init];
-        [self pushViewController:vc vctitle:@"订单详情" backtitle:kVcDefaultBackTitleName];
+        VCOtcOrderDetails* vc = [[VCOtcOrderDetails alloc] initWithOrder:order_item details:[responsed objectForKey:@"data"]];
+        [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
         return nil;
     }] catch:^id(id error) {
         [self hideBlockView];

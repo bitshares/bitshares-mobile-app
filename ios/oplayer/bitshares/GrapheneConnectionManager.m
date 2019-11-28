@@ -107,7 +107,7 @@ static GrapheneConnectionManager *_sharedGrapheneConnectionManager = nil;
             }
         }
     }
-#endif  //  GRAPHENE_BITSHARES_TESTNET
+#endif  //  GRAPHENE_BITSHARES_MAINNET
     
     //  2、获取app内配置的api结点信息
     id wslist = [network_infos objectForKey:@"ws_node_list"];
