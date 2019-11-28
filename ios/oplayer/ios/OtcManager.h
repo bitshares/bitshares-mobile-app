@@ -74,15 +74,32 @@ typedef enum EOtcOrderType
 } EOtcOrderType;
 
 /*
- *  用户订单状态 TODO:2.9 申诉中哪些状态呢？
+ *  用户订单查询状态 TODO:2.9 申诉中哪些状态呢？
  */
 typedef enum EOtcOrderStatus
 {
-    eoos_all = 0,           //  全部
-    eoos_pending,           //  进行中
-    eoos_completed,         //  已完成
-    eoos_cancelled,         //  已取消
+    eoos_all = 0,           //  查询全部
+    eoos_pending,           //  查询进行中
+    eoos_completed,         //  查询已完成
+    eoos_cancelled,         //  查询已取消
 } EOtcOrderStatus;
+
+/*
+ *  用户订单进度状态，数据库 status 字段。
+ */
+typedef enum EOtcOrderProgressStatus
+{
+    eoops_new = 1,                  //  订单已创建
+    eoops_already_paid = 2,         //  已付款
+    eoops_already_transferred = 3,  //  已转币
+    eoops_already_confirmed = 4,    //  区块已确认
+    eoops_refunded = 5,             //  已退款
+    eoops_refund_failed = 6,        //  退款失败
+    eoops_completed = 7,            //  交易成功
+    eoops_cancelled = 8,            //  失败订单（包括取消订单）
+    eoops_chain_failed = 9,         //  区块操作失败（异常了）
+    eoops_return_assets = 10,       //  退币中
+} EOtcOrderProgressStatus;
 
 /*
  *  商家广告状态
@@ -104,6 +121,15 @@ typedef enum EOtcSmsType
     eost_new_order_notify,  //  新订单通知
 } EOtcSmsType;
 
+/*
+ *  用户订单对应的各种可操作事件类型。仅客户端用，服务器不存在。
+ */
+typedef enum EOtcOrderOperationType
+{
+    eooot_transfer = 0,             //  立即转币
+    eooot_contact_customer_service, //  联系客服
+} EOtcOrderOperationType;
+
 @class VCBase;
 
 @interface OtcManager : NSObject
@@ -111,6 +137,11 @@ typedef enum EOtcSmsType
 @property (nonatomic, strong) NSArray* asset_list_digital;  //  支持的数字资产列表
 
 + (OtcManager*)sharedOtcManager;
+
+/*
+ *  (public) 辅助 - 根据订单当前状态获取主状态、状态描述、以及可操作按钮等信息。
+ */
++ (NSDictionary*)genUserOrderStatusAndActions:(id)order;
 
 /*
  *  (public) 当前账号名

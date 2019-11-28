@@ -200,8 +200,14 @@ static NSInteger gen_notify_unique_id()
 
 - (CGRect)rectWithoutNavi
 {
+    return [self rectWithoutNaviWithOffset:0.0f];
+}
+
+- (CGRect)rectWithoutNaviWithOffset:(CGFloat)fBottomOffset
+{
     CGRect screenRect = [[UIScreen mainScreen] bounds];
-    return CGRectMake(0, 0, screenRect.size.width, screenRect.size.height - [self heightForStatusAndNaviBar] - [self heightForBottomSafeArea]);
+    return CGRectMake(0, 0, screenRect.size.width,
+                      screenRect.size.height - [self heightForStatusAndNaviBar] - [self heightForBottomSafeArea] - fBottomOffset);
 }
 
 #pragma mark- cell label button

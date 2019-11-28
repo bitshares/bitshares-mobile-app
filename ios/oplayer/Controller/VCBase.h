@@ -78,6 +78,7 @@
 - (CGRect)rectWithoutTabbar;
 - (CGRect)rectWithoutNaviAndPageBar;
 - (CGRect)rectWithoutNavi;
+- (CGRect)rectWithoutNaviWithOffset:(CGFloat)fBottomOffset;
 
 - (void)showBlockViewWithTitle:(NSString*)pTitle subTitle:(NSString*)pSubTitle;
 - (void)showBlockViewWithTitle:(NSString*)pTitle;

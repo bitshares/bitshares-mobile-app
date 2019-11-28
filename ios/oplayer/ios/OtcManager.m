@@ -58,6 +58,120 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
+ *  (public) 辅助 - 根据订单当前状态获取主状态、状态描述、以及可操作按钮等信息。
+ */
++ (NSDictionary*)genUserOrderStatusAndActions:(id)order
+{
+    assert(order);
+    ThemeManager* theme = [ThemeManager sharedThemeManager];
+    BOOL bUserSell = [[order objectForKey:@"type"] integerValue] == eoot_data_sell;
+    NSInteger status = [[order objectForKey:@"status"] integerValue];
+    NSString* status_main = nil;
+    NSString* status_desc = nil;
+    NSMutableArray* actions = [NSMutableArray array];
+    BOOL showRemark = NO;
+    //  TODO:2.9 状态描述待细化。!!!!
+    
+    if (bUserSell) {
+        //  -- 用户卖币提现
+        switch (status) {
+            //  正常流程
+            case eoops_new:
+            {
+                status_main = @"待转币";               //  已下单(待转币)     正常情况下单自动转币、转币操作需二次确认
+                status_desc = @"您已成功下单，请转币。";
+                [actions addObject:@{@"type":@(eooot_contact_customer_service), @"color":theme.textColorGray}];
+                [actions addObject:@{@"type":@(eooot_transfer), @"color":theme.textColorHighlight}];
+            }
+                break;
+            case eoops_already_transferred:
+            {
+                status_main = @"确认中";               //  已转币(待处理)
+                status_desc = @"您已转币，正在等待区块确认。";
+            }
+                break;
+            case eoops_already_confirmed:
+                status_main = @"区块已确认(待收款)";
+                break;
+            case eoops_already_paid:
+                status_main = @"已付款(请放行)";  // 申诉 + 确认收款(放行操作需二次确认)
+                break;
+            case eoops_completed:
+            {
+                status_main = @"已完成";
+                status_desc = @"订单已完成。";
+            }
+                break;
+            //  异常流程
+            case eoops_chain_failed:
+                status_main = @"区块异常";       // 申诉
+                break;
+            case eoops_return_assets:
+                status_main = @"退币中";
+                break;
+            case eoops_cancelled:
+            {
+                status_main = @"已取消";
+                status_desc = @"订单已取消。";
+            }
+                break;
+            default:
+                break;
+        }
+    } else {
+        //  -- 用户充值买币
+        switch (status) {
+            //  正常流程
+            case eoops_new:
+                status_main = @"已下单(待付款)";  // 取消 + 确认付款
+                showRemark = YES;
+                break;
+            case eoops_already_paid:
+                status_main = @"已付款(待收币)";
+                break;
+            case eoops_already_transferred:
+                status_main = @"已转币";
+                break;
+            case eoops_already_confirmed:
+                status_main = @"区块已确认";
+                break;
+            case eoops_completed:
+            {
+                status_main = @"已完成";
+                status_desc = @"订单已完成。";
+            }
+                break;
+            //  异常流程
+            case eoops_refunded:
+                status_main = @"已退款";
+                break;
+            case eoops_chain_failed:
+                status_main = @"区块异常";
+                break;
+            case eoops_cancelled:
+            {
+                status_main = @"已取消";
+                status_desc = @"订单已取消。";
+            }
+                break;
+            default:
+                break;
+        }
+    }
+    if (!status_main) {
+        status_main = [NSString stringWithFormat:@"未知状态 %@", @(status)];
+    }
+    if (!status_desc) {
+        status_desc = [NSString stringWithFormat:@"未知状态 %@", @(status)];
+    }
+    
+    //  返回数据
+    return @{@"main":status_main, @"desc":status_desc,
+             @"actions":actions, @"sell":@(bUserSell),
+             @"phone":order[@"phone"] ?: @"", @"show_remark":@(showRemark)};
+}
+
+/*
  *  (public) 当前账号名
  */
 - (NSString*)getCurrentBtsAccount
