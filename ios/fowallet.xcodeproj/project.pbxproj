@@ -679,6 +679,9 @@
 		3F86510422EEA228000D496A /* VCLoginBrainKeyMode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F86510222EEA228000D496A /* VCLoginBrainKeyMode.m */; };
 		3F89DE4022B20CF800B052CB /* OpenLedger.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F89DE3F22B20CF800B052CB /* OpenLedger.m */; };
 		3F89DE4122B20CF800B052CB /* OpenLedger.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F89DE3F22B20CF800B052CB /* OpenLedger.m */; };
+		3F916037238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F916036238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m */; };
+		3F916038238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F916036238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m */; };
+		3F916039238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F916036238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m */; };
 		3F9A730821E59FF300DAF7A2 /* VCDepositWithdrawList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9A730721E59FF300DAF7A2 /* VCDepositWithdrawList.m */; };
 		3F9A730921E59FF300DAF7A2 /* VCDepositWithdrawList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9A730721E59FF300DAF7A2 /* VCDepositWithdrawList.m */; };
 		3F9A730C21E5C20500DAF7A2 /* ViewGatewayCoinInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9A730B21E5C20500DAF7A2 /* ViewGatewayCoinInfoCell.m */; };
@@ -1900,6 +1903,8 @@
 		3F86510222EEA228000D496A /* VCLoginBrainKeyMode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCLoginBrainKeyMode.m; path = Controller/VCLoginBrainKeyMode.m; sourceTree = "<group>"; };
 		3F89DE3E22B20CF700B052CB /* OpenLedger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenLedger.h; path = Controller/Gateway/OpenLedger.h; sourceTree = "<group>"; };
 		3F89DE3F22B20CF800B052CB /* OpenLedger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OpenLedger.m; path = Controller/Gateway/OpenLedger.m; sourceTree = "<group>"; };
+		3F916035238FF7FC000C3291 /* ViewOtcPaymentIconAndTextCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewOtcPaymentIconAndTextCell.h; path = View/ViewOtcPaymentIconAndTextCell.h; sourceTree = "<group>"; };
+		3F916036238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewOtcPaymentIconAndTextCell.m; path = View/ViewOtcPaymentIconAndTextCell.m; sourceTree = "<group>"; };
 		3F9A730621E59FF300DAF7A2 /* VCDepositWithdrawList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCDepositWithdrawList.h; path = Controller/VCDepositWithdrawList.h; sourceTree = "<group>"; };
 		3F9A730721E59FF300DAF7A2 /* VCDepositWithdrawList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCDepositWithdrawList.m; path = Controller/VCDepositWithdrawList.m; sourceTree = "<group>"; };
 		3F9A730A21E5C20400DAF7A2 /* ViewGatewayCoinInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewGatewayCoinInfoCell.h; path = View/ViewGatewayCoinInfoCell.h; sourceTree = "<group>"; };
@@ -2963,6 +2968,8 @@
 		18FF069017E00C5C0088405E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				3F916035238FF7FC000C3291 /* ViewOtcPaymentIconAndTextCell.h */,
+				3F916036238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m */,
 				3FEFFD2D237A839E0019799D /* ModelView */,
 				3FFB47E4238E585D00B69F13 /* ViewOtcOrderDetailBasicInfo.h */,
 				3FFB47E3238E585C00B69F13 /* ViewOtcOrderDetailBasicInfo.m */,
@@ -5473,6 +5480,7 @@
 				3F6768F6230E9EC100E98C14 /* Bra86.c in Sources */,
 				3F6768F7230E9EC100E98C14 /* SRURLUtilities.m in Sources */,
 				3F6768F8230E9EC100E98C14 /* ViewAddrMemoInfoCell.m in Sources */,
+				3F916039238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m in Sources */,
 				3F6768F9230E9EC100E98C14 /* ViewWorkerVoteCell.m in Sources */,
 				3F6768FA230E9EC100E98C14 /* VCProposal.m in Sources */,
 				3F6768FB230E9EC100E98C14 /* Sort.c in Sources */,
@@ -5787,6 +5795,7 @@
 				3FB8F97821CE66C200DA88E2 /* Bra86.c in Sources */,
 				3FB8F97921CE66C200DA88E2 /* SRURLUtilities.m in Sources */,
 				3F6C357B21E86C9E008E2903 /* ViewAddrMemoInfoCell.m in Sources */,
+				3F916038238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m in Sources */,
 				3FB8F97A21CE66C200DA88E2 /* ViewWorkerVoteCell.m in Sources */,
 				3FB8F97C21CE66C200DA88E2 /* VCProposal.m in Sources */,
 				3FB8F97D21CE66C200DA88E2 /* Sort.c in Sources */,
@@ -6101,6 +6110,7 @@
 				B7BDAA8920B3C77500738F12 /* Bra86.c in Sources */,
 				B714094920A31CC300003311 /* SRURLUtilities.m in Sources */,
 				3F6C357A21E86C9E008E2903 /* ViewAddrMemoInfoCell.m in Sources */,
+				3F916037238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m in Sources */,
 				B7C04117210867C300848CBC /* ViewWorkerVoteCell.m in Sources */,
 				3FC43A202196E1BB004DFFA5 /* VCProposal.m in Sources */,
 				B7BDAA9C20B3C77500738F12 /* Sort.c in Sources */,

@@ -388,7 +388,8 @@
      {
          if (buttonIndex == 1)
          {
-//             [self gotoLogoutCore];
+            VCBase* vc = [[VCOtcUserAuth alloc] init];
+            [_owner pushViewController:vc vctitle:@"身份认证" backtitle:kVcDefaultBackTitleName];
          }
      }];
 }

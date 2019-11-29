@@ -58,9 +58,90 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
+ *  (public) 解析 OTC 服务器返回的时间字符串，格式：2019-11-26T13:29:51.000+0000。
+ */
++ (NSTimeInterval)parseTime:(NSString*)time
+{
+    NSDateFormatter* dateFormat = [[NSDateFormatter alloc] init];
+    [dateFormat setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSZ"];
+    [dateFormat setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
+    NSDate* date = [dateFormat dateFromString:time];
+    return ceil([date timeIntervalSince1970]);
+}
+
+/*
+ *  格式化：场外交易订单列表日期显示格式。REMARK：以当前时区格式化，北京时间当前时区会+8。
+ */
++ (NSString*)fmtOrderListTime:(NSString*)time
+{
+    NSDateFormatter* dateFormat = [[NSDateFormatter alloc] init];
+    [dateFormat setDateFormat:@"MM-dd HH:mm"];
+    return [dateFormat stringFromDate:[NSDate dateWithTimeIntervalSince1970:[self parseTime:time]]];
+}
+
+/*
+ *  格式化：场外交易订单详情日期显示格式。REMARK：以当前时区格式化，北京时间当前时区会+8。
+ */
++ (NSString*)fmtOrderDetailTime:(NSString*)time
+{
+    NSDateFormatter* dateFormat = [[NSDateFormatter alloc] init];
+    [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    return [dateFormat stringFromDate:[NSDate dateWithTimeIntervalSince1970:[self parseTime:time]]];
+}
+
+/*
+ *  (public) 辅助 - 获取收款方式名字图标等。
+ */
++ (NSDictionary*)auxGenPaymentMethodInfos:(NSString*)account type:(id)type bankname:(NSString*)bankname
+{
+    assert(account);
+    assert(type);
+    
+    NSString* name = nil;
+    NSString* icon = nil;
+    NSString* short_account = account;
+    //  TODO:2.9 lang
+    switch ([type integerValue]) {
+        case eopmt_alipay:
+        {
+            name = @"支付宝";
+            icon = @"iconPmAlipay";
+        }
+            break;
+        case eopmt_bankcard:
+        {
+            icon = @"iconPmBankCard";
+            name = bankname;
+            if (!name || [bankname isEqualToString:@""]) {
+                name = @"银行卡";
+            }
+            NSString* card_no = [account stringByReplacingOccurrencesOfString:@" " withString:@""];
+            short_account = [card_no substringFromIndex:MAX((NSInteger)card_no.length - 4, 0)];
+        }
+            break;
+        case eopmt_wechatpay:
+        {
+            icon = @"iconPmWechat";
+            name = @"微信支付";
+        }
+            break;
+        default:
+            break;
+    }
+    //  TODO:2.9
+    if (!name) {
+        name = [NSString stringWithFormat:@"未知收款方式%@", type];
+    }
+    if (!icon) {
+        icon = @"iconPmBankCard";//TODO:2.9 default  icon
+    }
+    return @{@"name":name, @"icon":icon, @"name_with_short_account":[NSString stringWithFormat:@"%@(%@)", name, short_account]};
+}
+
+/*
  *  (public) 辅助 - 根据订单当前状态获取主状态、状态描述、以及可操作按钮等信息。
  */
-+ (NSDictionary*)genUserOrderStatusAndActions:(id)order
++ (NSDictionary*)auxGenUserOrderStatusAndActions:(id)order
 {
     assert(order);
     ThemeManager* theme = [ThemeManager sharedThemeManager];
@@ -70,8 +151,8 @@ static OtcManager *_sharedOtcManager = nil;
     NSString* status_desc = nil;
     NSMutableArray* actions = [NSMutableArray array];
     BOOL showRemark = NO;
+    BOOL pending = YES;
     //  TODO:2.9 状态描述待细化。!!!!
-    
     if (bUserSell) {
         //  -- 用户卖币提现
         switch (status) {
@@ -80,39 +161,59 @@ static OtcManager *_sharedOtcManager = nil;
             {
                 status_main = @"待转币";               //  已下单(待转币)     正常情况下单自动转币、转币操作需二次确认
                 status_desc = @"您已成功下单，请转币。";
+                //  按钮：联系客服 + 立即转币
                 [actions addObject:@{@"type":@(eooot_contact_customer_service), @"color":theme.textColorGray}];
                 [actions addObject:@{@"type":@(eooot_transfer), @"color":theme.textColorHighlight}];
             }
                 break;
             case eoops_already_transferred:
             {
-                status_main = @"确认中";               //  已转币(待处理)
+                status_main = @"已转币";               //  已转币(待处理)
                 status_desc = @"您已转币，正在等待区块确认。";
             }
                 break;
             case eoops_already_confirmed:
-                status_main = @"区块已确认(待收款)";
+            {
+                status_main = @"待收款";               //  区块已确认(待收款)
+                status_desc = @"区块已确认转币，等待商家付款。";
+            }
                 break;
             case eoops_already_paid:
-                status_main = @"已付款(请放行)";  // 申诉 + 确认收款(放行操作需二次确认)
+            {
+                status_main = @"请放行";               // 商家已付款(请放行) 申诉 + 确认收款(放行操作需二次确认)
+                status_desc = @"请查收对方付款，未收到请勿放行。";
+                //  按钮：联系客服 + 放行XXX资产
+                [actions addObject:@{@"type":@(eooot_contact_customer_service), @"color":theme.textColorGray}];
+                [actions addObject:@{@"type":@(eooot_confirm_received_money), @"color":theme.textColorHighlight}];
+            }
                 break;
             case eoops_completed:
             {
                 status_main = @"已完成";
                 status_desc = @"订单已完成。";
+                pending = NO;
             }
                 break;
             //  异常流程
             case eoops_chain_failed:
-                status_main = @"区块异常";       // 申诉
+            {
+                status_main = @"异常中";
+                status_desc = @"区块确认异常，请联系客服。";
+                //  按钮：联系客服
+                [actions addObject:@{@"type":@(eooot_contact_customer_service), @"color":theme.textColorGray}];
+            }
                 break;
             case eoops_return_assets:
+            {
                 status_main = @"退币中";
+                status_desc = @"商家无法接单，退币处理中。";
+            }
                 break;
             case eoops_cancelled:
             {
                 status_main = @"已取消";
                 status_desc = @"订单已取消。";
+                pending = NO;
             }
                 break;
             default:
@@ -123,35 +224,63 @@ static OtcManager *_sharedOtcManager = nil;
         switch (status) {
             //  正常流程
             case eoops_new:
-                status_main = @"已下单(待付款)";  // 取消 + 确认付款
+            {
+                status_main = @"待付款";       // 已下单(待付款)     取消 + 确认付款
+                status_desc = @"请在 xx:44 内付款给卖家。";//TODO:2.9 format?
                 showRemark = YES;
+                //  按钮：取消订单 + 确认付款
+                [actions addObject:@{@"type":@(eooot_cancel_order), @"color":theme.textColorGray}];
+                [actions addObject:@{@"type":@(eooot_confirm_paid), @"color":theme.textColorHighlight}];
+            }
                 break;
             case eoops_already_paid:
-                status_main = @"已付款(待收币)";
+            {
+                status_main = @"待收币";       // 已付款(待收币)
+                status_desc = @"您已付款，请等待商家确认并放币。";
+            }
                 break;
             case eoops_already_transferred:
-                status_main = @"已转币";
+            {
+                status_main = @"已转币";       //  已转币
+                status_desc = @"商家已转币，正在等待区块确认。";
+            }
                 break;
             case eoops_already_confirmed:
-                status_main = @"区块已确认";
+            {
+                status_main = @"已收币";       //  已收币 REMARK：这是中间状态，会自动跳转到已完成。
+                status_desc = @"商家转币已确认，请查收。";
                 break;
+            }
             case eoops_completed:
             {
                 status_main = @"已完成";
                 status_desc = @"订单已完成。";
+                pending = NO;
             }
                 break;
             //  异常流程
             case eoops_refunded:
+            {
                 status_main = @"已退款";
+                status_desc = @"商家无法接单，已退款，请查收退款。";
+                //  按钮：联系客服 + 我已收到退款（取消订单）
+                [actions addObject:@{@"type":@(eooot_contact_customer_service), @"color":theme.textColorGray}];
+                [actions addObject:@{@"type":@(eooot_confirm_received_refunded), @"color":theme.textColorHighlight}];
+            }
                 break;
             case eoops_chain_failed:
-                status_main = @"区块异常";
+            {
+                status_main = @"异常中";
+                status_desc = @"区块确认异常，请联系客服。";
+                //  按钮：联系客服
+                [actions addObject:@{@"type":@(eooot_contact_customer_service), @"color":theme.textColorGray}];
+            }
                 break;
             case eoops_cancelled:
             {
                 status_main = @"已取消";
                 status_desc = @"订单已取消。";
+                pending = NO;
             }
                 break;
             default:
@@ -168,7 +297,8 @@ static OtcManager *_sharedOtcManager = nil;
     //  返回数据
     return @{@"main":status_main, @"desc":status_desc,
              @"actions":actions, @"sell":@(bUserSell),
-             @"phone":order[@"phone"] ?: @"", @"show_remark":@(showRemark)};
+             @"phone":order[@"phone"] ?: @"",
+             @"show_remark":@(showRemark), @"pending":@(pending)};
 }
 
 /*
@@ -415,6 +545,26 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
+ *  (public) 更新订单
+ */
+- (WsPromise*)updateUserOrder:(NSString*)bts_account_name
+                     order_id:(NSString*)order_id
+                   payAccount:(NSString*)payAccount
+                   payChannel:(id)payChannel
+                         type:(EOtcOrderUpdateType)type
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/user/order/update"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+        @"orderId":order_id,
+        @"payAccount":payAccount,
+        @"paymentChannel":payChannel,
+        @"type":@(type)
+    };
+    return [self _queryApiCore:url args:args headers:nil];
+}
+
+/*
  *  (public) 查询用户收款方式
  */
 - (WsPromise*)queryPaymentMethods:(NSString*)bts_account_name
@@ -432,24 +582,25 @@ static OtcManager *_sharedOtcManager = nil;
     return [self _queryApiCore:url args:args headers:nil];
 }
 
-- (WsPromise*)delPaymentMethods:(NSString*)bts_account_name
+- (WsPromise*)delPaymentMethods:(NSString*)bts_account_name pmid:(id)pmid
 {
     id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/payMethod/del"];
     id args = @{
         @"btsAccount":bts_account_name,
-        @"id":@0,   //  TODO:2.9 未完成
-        @"status":@0    //  TODO:2.9 未完成
+        @"id":pmid,
     };
     return [self _queryApiCore:url args:args headers:nil];
 }
 
-- (WsPromise*)editPaymentMethods:(NSString*)bts_account_name
+- (WsPromise*)editPaymentMethods:(NSString*)bts_account_name new_status:(EOtcPaymentMethodStatus)new_status pmid:(id)pmid
 {
+    assert(bts_account_name);
+    assert(pmid);
     id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/payMethod/edit"];
     id args = @{
         @"btsAccount":bts_account_name,
-        @"id":@0,   //  TODO:2.9 未完成
-        @"status":@0    //  TODO:2.9 未完成
+        @"id":pmid,
+        @"status":@(new_status)
     };
     return [self _queryApiCore:url args:args headers:nil];
 }

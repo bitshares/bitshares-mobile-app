@@ -11,6 +11,7 @@
 
 #import "ViewOtcOrderDetailStatus.h"
 #import "ViewOtcOrderDetailBasicInfo.h"
+#import "ViewOtcPaymentIconAndTextCell.h"
 
 #import "OtcManager.h"
 
@@ -28,19 +29,26 @@ enum
     kVcSubMerchantNickName,     //  商家昵称
     kVcSubOrderID,              //  订单号
     kVcSubOrderTime,            //  下单日期
+    kVcSubPaymentMethod,        //  付款方式
     kVcSubRemark,               //  订单附加信息（备注信息）
     
-    kVcSubPaymentMethod,        //  收款方式
+    kVcSubPaymentTipsSameName,  //  相同名字账号付款提示
+    kVcSubPaymentMethodSelect,  //  选择收款方式
     kVcSubPaymentRealName,      //  收款人
     kVcSubPaymentAccount,       //  收款账号（银行卡号、微信支付宝账号等）
+    kVcSubPaymentBankName,      //  银行名（银行卡存在）
+    kVcSubPaymentQrCode,        //  二维码（支付宝微信可能存在）
 };
 
 @interface VCOtcOrderDetails ()
 {
-    NSDictionary*           _orderBasic;
+//    NSDictionary*           _orderBasic;
     NSDictionary*           _orderDetails;
-    BOOL                    _bUserSell;         //  是否是卖单
+    NSDictionary*           _authInfos;                 //  可能为空，一般需要付款时才存在。
+//    BOOL                    _bUserSell;                 //  是否是卖单
     NSDictionary*           _statusInfos;
+    
+    NSDictionary*           _currSelectedPaymentMethod; //  买单情况下，当前选中的卖家收款方式。
     
     UITableViewBase*        _mainTableView;
     NSMutableArray*         _sectionDataArray;
@@ -59,24 +67,56 @@ enum
         _mainTableView = nil;
     }
     _sectionDataArray = nil;
-    _orderBasic = nil;
+//    _orderBasic = nil;
     _orderDetails = nil;
+    _authInfos = nil;
     _btnArray = nil;
+    _currSelectedPaymentMethod = nil;
 }
 
-- (id)initWithOrder:(id)order details:(id)order_details
+- (id)initWithOrder:(id)order details:(id)order_details auth:(id)auth_info
 {
     self = [super init];
     if (self) {
-        _orderBasic = order;
+//        _orderBasic = order;
         _orderDetails = order_details;
+        _authInfos = auth_info;
         _sectionDataArray = [NSMutableArray array];
-        _bUserSell = [[_orderDetails objectForKey:@"type"] integerValue] == eoot_data_sell;
+//        _bUserSell = [[_orderDetails objectForKey:@"type"] integerValue] == eoot_data_sell;
         _btnArray = [NSMutableArray array];
-        _statusInfos = [OtcManager genUserOrderStatusAndActions:order_details];
+        _statusInfos = [OtcManager auxGenUserOrderStatusAndActions:order_details];
+        _currSelectedPaymentMethod = nil;
         [self _initUIData];
     }
     return self;
+}
+
+- (id)_genPaymentRows:(id)payment_info target_array:(NSMutableArray*)target_array
+{
+    assert(payment_info);
+    [target_array removeAllObjects];
+    
+    _currSelectedPaymentMethod = payment_info;
+    [target_array addObject:@(kVcSubPaymentTipsSameName)];
+    [target_array addObject:@(kVcSubPaymentMethodSelect)];
+    [target_array addObject:@(kVcSubPaymentRealName)];
+    [target_array addObject:@(kVcSubPaymentAccount)];
+    
+    if ([[payment_info objectForKey:@"type"] integerValue] == eopmt_bankcard) {
+        //  开户银行
+        NSString* bankName = [payment_info objectForKey:@"bankName"];
+        if (bankName && ![bankName isEqualToString:@""]) {
+            [target_array addObject:@(kVcSubPaymentBankName)];
+        }
+    } else {
+        //  收款二维码
+        NSString* qrCode = [payment_info objectForKey:@"qrCode"];
+        if (qrCode && ![qrCode isEqualToString:@""]) {
+            [target_array addObject:@(kVcSubPaymentQrCode)];
+        }
+    }
+    
+    return target_array;
 }
 
 /*
@@ -84,35 +124,159 @@ enum
  */
 - (void)_initUIData
 {
+    //  clean
     [_sectionDataArray removeAllObjects];
     [_btnArray removeAllObjects];
     
-    //  TODO:2.9
+    //  UI - 订单基本状态
     [_sectionDataArray addObject:@{@"type":@(kVcSecOrderStatus)}];
+    
+    //  UI - 订单金额等基本信息
     [_sectionDataArray addObject:@{@"type":@(kVcSecOrderInfo)}];
+    
+    //  UI - 付款信息
+    id payMethod = [_orderDetails objectForKey:@"payMethod"];
+    if (payMethod && [payMethod isKindOfClass:[NSArray class]] && [payMethod count] > 0) {
+        [_sectionDataArray addObject:@{@"type":@(kvcSecPaymentInfo),
+                                       @"rows":[self _genPaymentRows:[payMethod firstObject] target_array:[NSMutableArray array]]}];
+    }
+    
+    //  UI - 订单详细信息（订单号等）
     //  TODO:2.9 test  data
     id orderDetailRows = [[[NSMutableArray array] ruby_apply:^(id obj) {
         [obj addObject:@(kVcSubMerchantRealName)];
         [obj addObject:@(kVcSubMerchantNickName)];
         [obj addObject:@(kVcSubOrderID)];
         [obj addObject:@(kVcSubOrderTime)];
+        //  TODO:2.9
+        NSString* payAccount = [_orderDetails objectForKey:@"payAccount"];
+        if (payAccount && ![payAccount isEqualToString:@""]) {
+            [obj addObject:@(kVcSubPaymentMethod)];
+        }
         if ([[_statusInfos objectForKey:@"show_remark"] boolValue]) {
             [obj addObject:@(kVcSubRemark)];
         }
     }] copy];
     [_sectionDataArray addObject:@{@"type":@(kVcSecOrderDetailInfo), @"rows":orderDetailRows}];
 
-    //  底部按钮数据
+    //  UI - 底部按钮数据
     id actions = [_statusInfos objectForKey:@"actions"];
     if (actions && [actions count] > 0) {
         [_btnArray addObjectsFromArray:actions];
     }
 }
 
-- (void)onButtomButtonClicked:(UIButton*)sender
+/*
+ *  (private) 执行更新订单。确认付款/取消订单/商家退款（用户收到退款后取消订单）等
+ */
+- (void)_execUpdateOrderCore:(id)payAccount payChannel:(id)payChannel type:(EOtcOrderUpdateType)type
+{
+    assert(payAccount);
+    assert(payChannel);
+    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    OtcManager* otc = [OtcManager sharedOtcManager];
+    [[[otc updateUserOrder:_orderDetails[@"userAccount"]
+                  order_id:_orderDetails[@"orderId"]
+                payAccount:payAccount
+                payChannel:payChannel
+                      type:type] then:^id(id data) {
+        [self hideBlockView];
+        //  提示
+//        [OrgUtils makeToast:@"订单已取消。"];//TODO:2.9
+        //  刷新 TODO:2.9 外部列表也需要刷新？
+        return nil;
+    }] catch:^id(id error) {
+        [self hideBlockView];
+        [otc showOtcError:error];
+        return nil;
+    }];
+}
+
+/*
+ *  (private) 执行转币
+ */
+- (void)_execTransferCore
 {
     //  TODO:2.9
-    [OrgUtils makeToast:[NSString stringWithFormat:@"buttom clicked %@", @(sender.tag)]];
+}
+
+- (void)onButtomButtonClicked:(UIButton*)sender
+{
+    switch (sender.tag) {
+        case eooot_transfer:
+        {
+            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"如果您已转币，请不要重复操作，若系统长时间未确认请联系客服。是否继续？"
+                                                                   withTitle:@"确认转币"
+                                                                  completion:^(NSInteger buttonIndex)
+             {
+                 if (buttonIndex == 1)
+                 {
+                     [self _execTransferCore];
+                 }
+             }];
+        }
+            break;
+        case eooot_contact_customer_service:
+        {
+            //  TODO:2.9
+            [OrgUtils makeToast:[NSString stringWithFormat:@"客服 buttom clicked %@", @(sender.tag)]];
+        }
+            break;
+        case eooot_confirm_received_money:
+        {
+            //  TODO:2.9
+            [OrgUtils makeToast:[NSString stringWithFormat:@"buttom clicked %@", @(sender.tag)]];
+        }
+            break;
+            
+        case eooot_cancel_order:
+        {
+            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"※ 如果您已经付款给商家，请不要取消订单！！！\n\n注：若用户当日累计取消3笔订单，会限制当日下单功能。是否继续？"
+                                                                   withTitle:@"确认取消订单"
+                                                                  completion:^(NSInteger buttonIndex)
+             {
+                 if (buttonIndex == 1)
+                 {
+                     [self _execUpdateOrderCore:_currSelectedPaymentMethod[@"account"]
+                                     payChannel:_currSelectedPaymentMethod[@"type"]
+                                           type:eoout_to_cancel];
+                 }
+             }];
+        }
+            break;
+        case eooot_confirm_paid:
+        {
+            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"我确认已按要求付款给商家。\n注：恶意点击将会被冻结账号。\n是否继续？"
+                                                                   withTitle:@"确认付款"
+                                                                  completion:^(NSInteger buttonIndex)
+             {
+                 if (buttonIndex == 1)
+                 {
+                    [self _execUpdateOrderCore:_currSelectedPaymentMethod[@"account"]
+                                    payChannel:_currSelectedPaymentMethod[@"type"]
+                                          type:eoout_to_paied];
+                 }
+             }];
+        }
+            break;
+        case eooot_confirm_received_refunded:
+        {
+            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"我确认已登录原付款账户查看，并核对退款无误。是否继续？"
+                                                                   withTitle:@"确认收到退款"
+                                                                  completion:^(NSInteger buttonIndex)
+             {
+                 if (buttonIndex == 1)
+                 {
+                     [self _execUpdateOrderCore:_orderDetails[@"payAccount"]
+                                     payChannel:_orderDetails[@"payChannel"]
+                                           type:eoout_to_refunded_confirm];
+                 }
+             }];
+        }
+            break;
+        default:
+            break;
+    }
 }
 
 - (void)viewDidLoad
@@ -169,11 +333,25 @@ enum
             btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
             //  TODO:2.9
             switch (btn.tag) {
+                //  卖单
                 case eooot_transfer:
-                    [btn setTitle:@"立即转币" forState:UIControlStateNormal];
+                    [btn setTitle:NSLocalizedString(@"kOtcOdBtnTransfer", @"立即转币") forState:UIControlStateNormal];
                     break;
                 case eooot_contact_customer_service:
-                    [btn setTitle:@"联系客服" forState:UIControlStateNormal];
+                    [btn setTitle:NSLocalizedString(@"kOtcOdBtnCustomerService", @"联系客服") forState:UIControlStateNormal];
+                    break;
+                case eooot_confirm_received_money:
+                    [btn setTitle:[NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kOtcOdBtnConfirmReceivedMoney", @"放行"), _orderDetails[@"assetSymbol"]] forState:UIControlStateNormal];
+                    break;
+                //  买单
+                case eooot_cancel_order:
+                    [btn setTitle:NSLocalizedString(@"kOtcOdBtnCancelOrder", @"取消订单") forState:UIControlStateNormal];
+                    break;
+                case eooot_confirm_paid:
+                    [btn setTitle:NSLocalizedString(@"kOtcOdBtnConfirmPaid", @"我已付款成功") forState:UIControlStateNormal];
+                    break;
+                case eooot_confirm_received_refunded:
+                    [btn setTitle:NSLocalizedString(@"kOtcOdBtnConfirmReceivedRefunded", @"我已收到退款") forState:UIControlStateNormal];
                     break;
                 default:
                     break;
@@ -301,7 +479,20 @@ enum
         }
             break;
         case kVcSecOrderDetailInfo:
+        case kvcSecPaymentInfo:
         {
+            NSInteger rowType = [[[secInfos objectForKey:@"rows"] objectAtIndex:indexPath.row] integerValue];
+            
+            //  REMARK：付款方式单独样式的 view
+            if (rowType == kVcSubPaymentMethod) {
+                ViewOtcPaymentIconAndTextCell* cell = [[ViewOtcPaymentIconAndTextCell alloc] init];
+                cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                cell.accessoryType = UITableViewCellAccessoryNone;
+                cell.showCustomBottomLine = YES;
+                [cell setItem:_orderDetails];
+                return cell;
+            }
+            
             ThemeManager* theme = [ThemeManager sharedThemeManager];
             UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
             cell.accessoryType = UITableViewCellAccessoryNone;
@@ -312,17 +503,8 @@ enum
             cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
             cell.detailTextLabel.textColor = theme.textColorMain;
             cell.detailTextLabel.font = [UIFont systemFontOfSize:13.0f];
-//            kVcSubMerchantRealName = 0, //  商家实名
-//            kVcSubMerchantNickName,     //  商家昵称
-//            kVcSubOrderID,              //  订单号
-//            kVcSubOrderTime,            //  下单日期
-//            kVcSubRemark,               //  订单附加信息（备注信息）
-//
-//            kVcSubPaymentMethod,        //  收款方式
-//            kVcSubPaymentRealName,      //  收款人
-//            kVcSubPaymentAccount,       //  收款账号（银行卡号、微信支付宝账号等）
-            id rowInfos = [[secInfos objectForKey:@"rows"] objectAtIndex:indexPath.row];
-            switch ([rowInfos integerValue]) {
+            
+            switch (rowType) {
                 case kVcSubMerchantRealName:
                 {
                     cell.textLabel.text = @"商家姓名";
@@ -338,7 +520,7 @@ enum
                     break;
                 case kVcSubOrderID:
                 {
-                    cell.textLabel.text = @"订单号";
+                    cell.textLabel.text = @"订单编号";
                     cell.detailTextLabel.text = [_orderDetails objectForKey:@"orderId"] ?: @"";
                     cell.accessoryView = [self genCopyButton:indexPath.row];
                 }
@@ -346,7 +528,7 @@ enum
                 case kVcSubOrderTime:
                 {
                     cell.textLabel.text = @"下单日期";
-                    cell.detailTextLabel.text = [_orderDetails objectForKey:@"ctime"] ?: @"";
+                    cell.detailTextLabel.text = [OtcManager fmtOrderDetailTime:[_orderDetails objectForKey:@"ctime"]];
                 }
                     break;
                     
@@ -356,24 +538,96 @@ enum
                     cell.detailTextLabel.text = [_orderDetails objectForKey:@"remark"] ?: @"";
                 }
                     break;
-                case kVcSubPaymentMethod:
+                    
+                case kVcSubPaymentTipsSameName:
                 {
-                    cell.textLabel.text = @"收款方式";
-                    cell.detailTextLabel.text = @"xxsdfsf";//TODO:2.9
+                    assert(_currSelectedPaymentMethod);
+                    //  TODO:2.9 lang
+                    
+                    NSString* realname = nil;
+                    if (_authInfos) {
+                        realname = [_authInfos optString:@"realName"];
+                    }
+                    if (realname && realname.length >= 2) {
+                        realname = [NSString stringWithFormat:@"*%@", [realname substringFromIndex:1]];
+                    }
+                    if (realname) {
+                        realname = [NSString stringWithFormat:@"(%@)", realname];
+                    }
+                    
+                    id pminfos = [OtcManager auxGenPaymentMethodInfos:_currSelectedPaymentMethod[@"account"]
+                                                                 type:_currSelectedPaymentMethod[@"type"]
+                                                             bankname:nil];
+                    
+                    NSString* finalString;
+                    NSString* colorString;
+                    if (realname) {
+                        finalString = [NSString stringWithFormat:@"请使用本人%@的%@向以下账户自行转账", realname, [pminfos objectForKey:@"name"]];
+                        colorString = realname;
+                    } else {
+                        finalString = [NSString stringWithFormat:@"请使用本人名字的%@向以下账户自行转账", [pminfos objectForKey:@"name"]];
+                        colorString = @"本人名字";
+                    }
+                    
+                    //  着色显示
+                    NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] initWithString:finalString];
+                    NSRange range = [finalString rangeOfString:colorString];
+                    [attrString addAttribute:NSForegroundColorAttributeName
+                                       value:theme.sellColor
+                                       range:range];
+                    cell.textLabel.attributedText = attrString;
+                }
+                    break;
+                case kVcSubPaymentMethodSelect:
+                {
+                    assert(_currSelectedPaymentMethod);
+                    
+                    id pminfos = [OtcManager auxGenPaymentMethodInfos:_currSelectedPaymentMethod[@"account"]
+                                                                 type:_currSelectedPaymentMethod[@"type"]
+                                                             bankname:_currSelectedPaymentMethod[@"bankName"]];
+                    
+                    cell.imageView.image = [UIImage imageNamed:pminfos[@"icon"]];
+                    cell.textLabel.text = pminfos[@"name"];
+                    
+                    //  多种方式可选
+                    if ([[_orderDetails objectForKey:@"payMethod"] count] > 1) {
+                        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                        cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+                    }
+                    
+                    cell.detailTextLabel.text = @"点此切换付款方式";
+                    cell.detailTextLabel.textColor = theme.textColorGray;
                 }
                     break;
                 case kVcSubPaymentRealName:
                 {
+                    assert(_currSelectedPaymentMethod);
                     cell.textLabel.text = @"收款人";
-                    cell.detailTextLabel.text = @"xxxxx";//TODO:2.9
+                    cell.detailTextLabel.text = [_currSelectedPaymentMethod objectForKey:@"realName"];
                     cell.accessoryView = [self genCopyButton:indexPath.row];
                 }
                     break;
                 case kVcSubPaymentAccount:
                 {
+                    assert(_currSelectedPaymentMethod);
                     cell.textLabel.text = @"收款账号";
-                    cell.detailTextLabel.text = @"xxxx";//TODO:2.9
+                    cell.detailTextLabel.text = [_currSelectedPaymentMethod objectForKey:@"account"];
                     cell.accessoryView = [self genCopyButton:indexPath.row];
+                }
+                    break;
+                case kVcSubPaymentBankName:
+                {
+                    assert(_currSelectedPaymentMethod);
+                    cell.textLabel.text = @"开户银行";
+                    cell.detailTextLabel.text = [_currSelectedPaymentMethod objectForKey:@"bankName"];
+                }
+                    break;
+                case kVcSubPaymentQrCode:
+                {
+                    assert(_currSelectedPaymentMethod);
+                    cell.textLabel.text = @"收款二维码";
+                    //  TODO:2.9。大图显示
+                    cell.detailTextLabel.text = [_currSelectedPaymentMethod objectForKey:@"qrCode"];
                 }
                     break;
                 default:
@@ -388,115 +642,7 @@ enum
             assert(false);
             break;
     }
-//    return nil;
     
-//    if (indexPath.section == kVcFormData)
-//    {
-//        switch (indexPath.row) {
-//            case kVcSubNameTitle:
-//            {
-//                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-//                cell.backgroundColor = [UIColor clearColor];
-//                cell.hideBottomLine = YES;
-//                cell.accessoryType = UITableViewCellAccessoryNone;
-//                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-//                cell.textLabel.text = @"姓名";//TODO:otc
-//                cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
-//                cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-//                return cell;
-//            }
-//                break;
-//            case kVcSubName:
-//            {
-//                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-//                cell.backgroundColor = [UIColor clearColor];
-//                cell.accessoryType = UITableViewCellAccessoryNone;
-//                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-//                cell.hideTopLine = YES;
-//                cell.hideBottomLine = YES;
-//                [_mainTableView attachTextfieldToCell:cell tf:_tf_name];
-//                return cell;
-//            }
-//                break;
-//            case kVcSubIDNumberTitle:
-//            {
-//                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-//                cell.backgroundColor = [UIColor clearColor];
-//                cell.hideBottomLine = YES;
-//                cell.accessoryType = UITableViewCellAccessoryNone;
-//                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-//                cell.textLabel.text = @"身份证号";//TODO:otc
-//                cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
-//                cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-//                return cell;
-//            }
-//                break;
-//            case kVcSubIDNumber:
-//            {
-//                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-//                cell.backgroundColor = [UIColor clearColor];
-//                cell.accessoryType = UITableViewCellAccessoryNone;
-//                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-//                [_mainTableView attachTextfieldToCell:cell tf:_tf_idnumber];
-//                cell.hideTopLine = YES;
-//                cell.hideBottomLine = YES;
-//                return cell;
-//            }
-//                break;
-//            case kVcSubPhoneNumberTitle:
-//            {
-//                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-//                cell.backgroundColor = [UIColor clearColor];
-//                cell.hideBottomLine = YES;
-//                cell.accessoryType = UITableViewCellAccessoryNone;
-//                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-//                cell.textLabel.text = @"联系方式";//TODO:otc
-//                cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
-//                cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-//                return cell;
-//            }
-//                break;
-//            case kVcSubPhoneNumber:
-//            {
-//                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-//                cell.backgroundColor = [UIColor clearColor];
-//                cell.accessoryType = UITableViewCellAccessoryNone;
-//                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-//                [_mainTableView attachTextfieldToCell:cell tf:_tf_phonenumber];
-//                cell.hideTopLine = YES;
-//                cell.hideBottomLine = YES;
-//                return cell;
-//            }
-//                break;
-//            case kVcSubSmsCode:
-//            {
-//                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-//                cell.backgroundColor = [UIColor clearColor];
-//                cell.accessoryType = UITableViewCellAccessoryNone;
-//                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-//                [_mainTableView attachTextfieldToCell:cell tf:_tf_smscode];//TODO:
-//                cell.hideTopLine = YES;
-//                cell.hideBottomLine = YES;
-//                return cell;
-//            }
-//                break;
-//            default:
-//                assert(false);
-//                break;
-//        }
-//    }else if (indexPath.section == kVcCellTips){
-//        return _cell_tips;
-//    } else {
-//        UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-//        cell.accessoryType = UITableViewCellAccessoryNone;
-//        cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-//        cell.hideBottomLine = YES;
-//        cell.hideTopLine = YES;
-//        cell.backgroundColor = [UIColor clearColor];
-//        [self addLabelButtonToCell:_goto_submit cell:cell leftEdge:tableView.layoutMargins.left];
-//        return cell;
-//    }
-//
     //  not reached...
     return nil;
 }
@@ -504,15 +650,64 @@ enum
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-//    if (indexPath.section == kVcSubmit){
-//        //  表单行为按钮点击
-//        [self resignAllFirstResponder];
-//        [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
-//            [self delay:^{
-//                [self gotoSubmitCore];
-//            }];
-//        }];
-//    }
+    [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
+        id secInfos = [_sectionDataArray objectAtIndex:indexPath.section];
+        switch ([[secInfos objectForKey:@"type"] integerValue]) {
+            case kvcSecPaymentInfo:
+            {
+                id rowInfos = [[secInfos objectForKey:@"rows"] objectAtIndex:indexPath.row];
+                switch ([rowInfos integerValue]) {
+                    case kVcSubPaymentMethodSelect:
+                        [self _onSelectPaymentMethodClicked];
+                        break;
+                    default:
+                        break;
+                }
+            }
+                break;
+            default:
+                break;
+        }
+    }];
+}
+
+/*
+ *  (private) 事件 - 选择商家收款方式点击
+ */
+- (void)_onSelectPaymentMethodClicked
+{
+    id payMethod = [_orderDetails objectForKey:@"payMethod"];
+    if ([payMethod count] > 1) {
+        id nameList = [payMethod ruby_map:^id(id src) {
+            id pminfos = [OtcManager auxGenPaymentMethodInfos:src[@"account"]
+                                                         type:src[@"type"]
+                                                     bankname:src[@"bankName"]];
+            return [pminfos objectForKey:@"name_with_short_account"];
+        }];
+        [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
+                                                           message:@"请选择商家收款方式"
+                                                            cancel:NSLocalizedString(@"kBtnCancel", @"取消")
+                                                             items:nameList//@[@"银行卡", @"支付宝"]
+                                                          callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
+         {
+             if (buttonIndex != cancelIndex){
+                 id selectedPaymentMethod = [payMethod objectAtIndex:buttonIndex];
+                 NSString* new_id = [NSString stringWithFormat:@"%@", selectedPaymentMethod[@"id"]];
+                 NSString* old_id = [NSString stringWithFormat:@"%@", _currSelectedPaymentMethod[@"id"]];
+                 if (![new_id isEqualToString:old_id]) {
+                     // 更新商家收款方式相关字段
+                     for (id sec in _sectionDataArray) {
+                         if ([[sec objectForKey:@"type"] integerValue] == kvcSecPaymentInfo) {
+                             [self _genPaymentRows:selectedPaymentMethod
+                                      target_array:[sec objectForKey:@"rows"]];
+                             [_mainTableView reloadData];
+                             break;
+                         }
+                     }
+                 }
+             }
+         }];
+    }
 }
 
 @end

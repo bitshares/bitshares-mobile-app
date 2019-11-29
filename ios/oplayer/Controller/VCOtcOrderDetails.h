@@ -11,6 +11,6 @@
 
 @interface VCOtcOrderDetails : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
-- (id)initWithOrder:(id)order details:(id)order_details;
+- (id)initWithOrder:(id)order details:(id)order_details auth:(id)auth_info;
 
 @end
