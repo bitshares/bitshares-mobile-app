@@ -110,7 +110,7 @@ enum
         case kVcSecName:
         {
             cell.textLabel.text = @"姓名";
-            NSString* name = [_auth_info objectForKey:@"realName"];
+            NSString* name = [_auth_info optString:@"realName"];
             if (name && name.length >= 2) {
                 name = [NSString stringWithFormat:@"*%@", [name substringFromIndex:1]];
             }
@@ -120,7 +120,7 @@ enum
         case kVcSecIdCardNo:
         {
             cell.textLabel.text = @"身份证号";
-            NSString* idstr = [_auth_info objectForKey:@"idcardNo"];
+            NSString* idstr = [_auth_info optString:@"idcardNo"];
             if (idstr && idstr.length == 18) {
                 //  TODO:2.9 id format
                 idstr = [NSString stringWithFormat:@"%@********%@", [idstr substringToIndex:6], [idstr substringFromIndex:14]];
@@ -131,7 +131,7 @@ enum
         case kVcSecPhoneNumber:
         {
             cell.textLabel.text = @"联系方式";
-            cell.detailTextLabel.text = [_auth_info objectForKey:@"phone"] ?: @"";
+            cell.detailTextLabel.text = [_auth_info optString:@"phone"] ?: @"";
         }
             break;
         case kVcSecStauts:

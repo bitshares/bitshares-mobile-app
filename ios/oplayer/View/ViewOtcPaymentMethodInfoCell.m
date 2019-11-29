@@ -18,6 +18,7 @@
     
     UIImageView*    _iconType;      //  类型图标
     UILabel*        _lbName;        //  收款方式名 or 银行卡名
+    UILabel*        _lbStatus;      //  是否已开启状态
     UILabel*        _lbUserName;    //  用户姓名
     UILabel*        _lbAccount;     //  收款方式账号 or 银行卡号
 }
@@ -49,6 +50,8 @@
         
         _iconType = nil;
         _lbName = [self auxGenLabel:[UIFont boldSystemFontOfSize:16]];
+        _lbStatus = [self auxGenLabel:[UIFont systemFontOfSize:15]];
+        _lbStatus.textAlignment = NSTextAlignmentRight;
         _lbUserName = [self auxGenLabel:[UIFont systemFontOfSize:13]];
         _lbAccount = [self auxGenLabel:[UIFont systemFontOfSize:16]];
     }
@@ -84,38 +87,11 @@
     CGFloat fWidth = self.bounds.size.width - xOffset * 2;
     CGFloat fLineHeight = 28.0f;
     
-    NSString* iconName = nil;
-    NSString* paymentName = nil;
-    switch ([[_item objectForKey:@"type"] integerValue]) {
-        case eopmt_alipay:
-        {
-            paymentName = @"支付宝";
-            iconName = @"iconPmAlipay";
-        }
-            break;
-        case eopmt_bankcard:
-            iconName = @"iconPmBankCard";
-            break;
-        case eopmt_wechatpay:
-        {
-            paymentName = @"微信支付";
-            iconName = @"iconPmWechat";
-        }
-            break;
-        default:
-            break;
-    }
+    id pminfos = [OtcManager auxGenPaymentMethodInfos:_item[@"account"] type:_item[@"type"] bankname:_item[@"bankName"]];
     
-    if (!_iconType && iconName) {
-        _iconType = [[UIImageView alloc] initWithImage:[UIImage imageNamed:iconName]];
+    if (!_iconType) {
+        _iconType = [[UIImageView alloc] initWithImage:[UIImage imageNamed:pminfos[@"icon"]]];
         [self addSubview:_iconType];
-    }
-    
-    if (_iconType && !iconName) {
-        if (_iconType.superview) {
-            [_iconType removeFromSuperview];
-        }
-        _iconType = nil;
     }
     
     CGFloat iconOffset = 0.0f;
@@ -123,9 +99,20 @@
         _iconType.frame = CGRectMake(xOffset, yOffset + (fLineHeight - 16) / 2.0f, 16, 16);
         iconOffset = 16.0f + 6.0f;
     }
-    _lbName.text = paymentName ?: @"中国银行";
+    _lbName.text = pminfos[@"name"];
     _lbName.frame = CGRectMake(xOffset + iconOffset, yOffset, fWidth, fLineHeight);
     _lbName.textColor = theme.textColorMain;
+    
+    //  TODO:2.9
+    if ([[_item objectForKey:@"status"] integerValue] == eopms_enable) {
+        _lbStatus.text = @"已开启";
+        _lbStatus.textColor = theme.textColorHighlight;
+    } else {
+        _lbStatus.text = @"未开启";
+        _lbStatus.textColor = theme.textColorGray;
+    }
+
+    _lbStatus.frame = CGRectMake(xOffset, yOffset, fWidth, fLineHeight);
     yOffset += fLineHeight;
     
     _lbUserName.text = [_item objectForKey:@"realName"] ?: @"";
