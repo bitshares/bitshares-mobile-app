@@ -75,10 +75,12 @@
 
 - (void)onQueryPaymentMethodsResponsed:(id)responsed
 {
-    id records = [responsed objectForKey:@"data"];
+    id data = [responsed objectForKey:@"data"];
     [_dataArray removeAllObjects];
-    if (records) {
-        [_dataArray addObjectsFromArray:records];
+    if (data) {
+        for (id item in data) {
+            [_dataArray addObject:[item mutableCopy]];
+        }
     }
     [self refreshView];
 }
@@ -160,14 +162,9 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString* identify = @"id_payment_method_info_cell";
-    ViewOtcPaymentMethodInfoCell* cell = (ViewOtcPaymentMethodInfoCell*)[tableView dequeueReusableCellWithIdentifier:identify];
-    if (!cell)
-    {
-        cell = [[ViewOtcPaymentMethodInfoCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:identify];
-        cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    }
+    ViewOtcPaymentMethodInfoCell* cell = [[ViewOtcPaymentMethodInfoCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+    cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+    cell.accessoryType = UITableViewCellAccessoryNone;
     cell.showCustomBottomLine = YES;
     [cell setItem:[_dataArray objectAtIndex:indexPath.row]];
     return cell;
@@ -188,15 +185,109 @@
  */
 - (void)onCellClicked:(id)item
 {
+    NSString* enable_or_disable;
+    if ([[item objectForKey:@"status"] integerValue] == eopms_enable) {
+        enable_or_disable = NSLocalizedString(@"kOtcPmActionBtnDisable", @"禁用");
+    } else {
+        enable_or_disable = NSLocalizedString(@"kOtcPmActionBtnEnable", @"启用");
+    }
     [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
                                                       message:nil
                                                        cancel:NSLocalizedString(@"kBtnCancel", @"取消")
-                                                        items:@[@"编辑", @"删除"]
+                                                        items:@[enable_or_disable,
+                                                                NSLocalizedString(@"kOtcPmActionBtnView", @"查看"),
+                                                                NSLocalizedString(@"kOtcPmActionBtnDelete", @"删除")]
                                                      callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
     {
         if (buttonIndex != cancelIndex){
-            //  TODO:2.9
+            switch (buttonIndex) {
+                case 0:
+                    [self _onActionEnableOrDisableClicked:item];
+                    break;
+                case 1:
+                    [self _onActionViewClicked:item];
+                    break;
+                case 2:
+                    [self _onActionDeleteClicked:item];
+                    break;
+                default:
+                    break;
+            }
         }
+    }];
+}
+
+/*
+ *  (private) 操作 - 启用 or 禁用收款方式
+ */
+- (void)_onActionEnableOrDisableClicked:(id)item
+{
+    EOtcPaymentMethodStatus new_status;
+    if ([[item objectForKey:@"status"] integerValue] == eopms_enable) {
+        new_status = eopms_disable;
+    } else {
+        new_status = eopms_enable;
+    }
+    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    OtcManager* otc = [OtcManager sharedOtcManager];
+    [[[otc editPaymentMethods:item[@"btsAccount"] ?: [otc getCurrentBtsAccount] new_status:new_status pmid:item[@"id"]] then:^id(id data) {
+        [self hideBlockView];
+        //  刷新data & UI
+        [item setObject:@(new_status) forKey:@"status"];
+        [_mainTableView reloadData];
+        //  提示信息
+        if (new_status == eopms_enable) {
+            [OrgUtils makeToast:NSLocalizedString(@"kOtcPmActionTipsEnabled", @"已启用，允许向商家展示。")];
+        } else {
+            [OrgUtils makeToast:NSLocalizedString(@"kOtcPmActionTipsDisabled", @"已禁用，不再向商家展示。")];
+        }
+        return nil;
+    }] catch:^id(id error) {
+        [self hideBlockView];
+        [otc showOtcError:error];
+        return nil;
+    }];
+}
+
+/*
+ *  (private) 操作 - 查看收款方式
+ */
+- (void)_onActionViewClicked:(id)item
+{
+    //  TODO:2.9
+}
+
+/*
+ *  (private) 操作 - 删除收款方式
+ */
+- (void)_onActionDeleteClicked:(id)item
+{
+    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:NSLocalizedString(@"kOtcPmActionTipsDeleteConfirm", @"确认删除该收款方式吗？")
+                                                           withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                          completion:^(NSInteger buttonIndex)
+     {
+         if (buttonIndex == 1)
+         {
+             [self _execActionDeleteCore:item];
+         }
+     }];
+}
+
+- (void)_execActionDeleteCore:(id)item
+{
+    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    OtcManager* otc = [OtcManager sharedOtcManager];
+    [[[otc delPaymentMethods:item[@"btsAccount"] ?: [otc getCurrentBtsAccount] pmid:item[@"id"]] then:^id(id data) {
+        [self hideBlockView];
+        //  提示
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcPmActionTipsDeleted", @"删除成功。")];
+        //  刷新
+        [self queryPaymentMethods];
+        return nil;
+    }] catch:^id(id error) {
+        [self hideBlockView];
+        [otc showOtcError:error];
+        return nil;
     }];
 }
 
