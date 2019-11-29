@@ -67,6 +67,15 @@ typedef void (^RubyFilterEachWithIndexFunction)(id src, NSInteger idx);
 
 @end
 
+@interface NSDictionary (SafeExt)
+
+/*
+ *  获取字符串，如果value不是字符串，则返回format后的值。
+ */
+- (id)optString:(id)aKey;
+
+@end
+
 typedef void (^RubyApplyBody)(id obj);
 @interface NSObject (BtsppExt)
 

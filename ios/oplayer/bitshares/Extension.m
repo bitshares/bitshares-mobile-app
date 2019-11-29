@@ -228,6 +228,22 @@
 
 @end
 
+@implementation NSDictionary (SafeExt)
+
+/*
+ *  获取字符串，如果value不是字符串，则返回format后的值。
+ */
+- (id)optString:(id)aKey
+{
+    id value = [self objectForKey:aKey];
+    if (value && ![value isKindOfClass:[NSString class]]) {
+        return [NSString stringWithFormat:@"%@", value];
+    }
+    return value;
+}
+
+@end
+
 @implementation NSObject (BtsppExt)
 
 - (id)ruby_apply:(RubyApplyBody)func

@@ -180,15 +180,31 @@
 
 - (void)onOrderCellClicked:(id)order_item
 {
+    OtcManager* otc = [OtcManager sharedOtcManager];
     [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    [[[[OtcManager sharedOtcManager] queryUserOrderDetails:order_item[@"userAccount"] order_id:order_item[@"orderId"]] then:^id(id responsed) {
-        [self hideBlockView];
-        VCOtcOrderDetails* vc = [[VCOtcOrderDetails alloc] initWithOrder:order_item details:[responsed objectForKey:@"data"]];
-        [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-        return nil;
+    [[[otc queryUserOrderDetails:order_item[@"userAccount"] order_id:order_item[@"orderId"]] then:^id(id responsed) {
+        //  获取订单详情
+        id details = [responsed objectForKey:@"data"];
+        assert(details);
+        id payMethod = [details objectForKey:@"payMethod"];
+        if (payMethod && [payMethod isKindOfClass:[NSArray class]] && [payMethod count] > 0) {
+            //  需要付款（查询实名认证信息）
+           return [[otc queryIdVerify:[otc getCurrentBtsAccount]] then:^id(id auth_responsed) {
+               [self hideBlockView];
+               VCOtcOrderDetails* vc = [[VCOtcOrderDetails alloc] initWithOrder:order_item details:details auth:auth_responsed[@"data"]];
+               [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+               return nil;
+            }];
+        } else {
+            //  不用付款 - 直接转到详情界面
+            [self hideBlockView];
+            VCOtcOrderDetails* vc = [[VCOtcOrderDetails alloc] initWithOrder:order_item details:details auth:nil];
+            [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+            return nil;
+        }
     }] catch:^id(id error) {
         [self hideBlockView];
-        [[OtcManager sharedOtcManager] showOtcError:error];
+        [otc showOtcError:error];
         return nil;
     }];
 }

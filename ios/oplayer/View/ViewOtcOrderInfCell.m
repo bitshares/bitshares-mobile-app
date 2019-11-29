@@ -133,6 +133,9 @@
     CGFloat firstLineHeight = 28.0f;
     CGFloat fLineHeight = 24.0f;
     
+    id status_infos = [OtcManager auxGenUserOrderStatusAndActions:_item];
+    BOOL pending = [[status_infos objectForKey:@"pending"] boolValue];
+    
     //  第一行 买卖 SYMBOL
     id asset_symbol = _item[@"assetSymbol"];
     BOOL bUserSell = [[_item objectForKey:@"type"] integerValue] == eoot_data_sell;
@@ -149,10 +152,9 @@
     }
     _lbType.frame = CGRectMake(xOffset, yOffset, fWidth, firstLineHeight);
     
-    id status_infos = [OtcManager genUserOrderStatusAndActions:_item];
     _lbStatus.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@ ", status_infos[@"main"]]
                                                          value:@">"
-                                                    titleColor:theme.textColorNormal
+                                                    titleColor:pending ? theme.textColorHighlight : theme.textColorGray
                                                     valueColor:theme.textColorGray];
     _lbStatus.frame = CGRectMake(xOffset, yOffset + 1, fWidth, firstLineHeight);
     yOffset += firstLineHeight;
@@ -171,7 +173,7 @@
     yOffset += fLineHeight;
     
     //  第三行 数量和价格
-    _lbDate.text = @"xxx";// [_item objectForKey:@"price"];
+    _lbDate.text = [OtcManager fmtOrderListTime:_item[@"ctime"]];
     _lbDate.textColor = theme.textColorNormal;
     
     _lbNum.text = [NSString stringWithFormat:@"%@", [_item objectForKey:@"quantity"]];

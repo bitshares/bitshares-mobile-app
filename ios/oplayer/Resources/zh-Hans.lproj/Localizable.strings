@@ -898,6 +898,22 @@
 "kOpDetailSubPrefixWitness" = "见证人";
 "kOpDetailSubPrefixProxy" = "代理人";
 
+/* 场外交易相关 */
+"kOtcOdBtnTransfer" = "立即转币";
+"kOtcOdBtnCustomerService" = "联系客服";
+"kOtcOdBtnConfirmReceivedMoney" = "放行";
+"kOtcOdBtnCancelOrder" = "取消订单";
+"kOtcOdBtnConfirmPaid" = "我已付款成功";
+"kOtcOdBtnConfirmReceivedRefunded" = "我已收到退款";
+"kOtcPmActionBtnEnable" = "启用";
+"kOtcPmActionBtnDisable" = "禁用";
+"kOtcPmActionBtnView" = "查看";
+"kOtcPmActionBtnDelete" = "删除";
+"kOtcPmActionTipsEnabled" = "已启用，允许向商家展示。";
+"kOtcPmActionTipsDisabled" = "已禁用，不再向商家展示。";
+"kOtcPmActionTipsDeleteConfirm" = "确认删除该收款方式吗？";
+"kOtcPmActionTipsDeleted" = "删除成功。";
+
 /* 通用字符串 */
 "kLangKeyZhSimple" = "简体中文";
 "kLangKeyEn" = "English / 英文";

@@ -50,6 +50,15 @@ typedef enum EOtcPaymentMethodType
 } EOtcPaymentMethodType;
 
 /*
+ *  场外交易收款方式状态
+ */
+typedef enum EOtcPaymentMethodStatus
+{
+    eopms_enable = 1,       //  已开启
+    eopms_disable           //  已禁用
+} EOtcPaymentMethodStatus;
+
+/*
  *  商家广告类型
  */
 typedef enum EOtcAdType
@@ -102,6 +111,18 @@ typedef enum EOtcOrderProgressStatus
 } EOtcOrderProgressStatus;
 
 /*
+ *  用户更新订单类型。
+ */
+typedef enum EOtcOrderUpdateType
+{
+    eoout_to_paied = 1,             //  买单：确认付款
+    eoout_to_cancel = 2,            //  买单：取消订单
+    eoout_to_refunded_confirm = 3,  //  买单：商家退款&用户确认&取消订单
+    eoout_to_transferred = 4,       //  卖单：用户确认转币 TODO:2.9 不确定
+    eoout_to_received_money = 5,    //  卖单：确认收款 TODO:2.9 不确定
+} EOtcOrderUpdateType;
+
+/*
  *  商家广告状态
  */
 typedef enum EOtcAdStatus
@@ -126,8 +147,13 @@ typedef enum EOtcSmsType
  */
 typedef enum EOtcOrderOperationType
 {
-    eooot_transfer = 0,             //  立即转币
-    eooot_contact_customer_service, //  联系客服
+    eooot_transfer = 0,                 //  卖单：立即转币
+    eooot_contact_customer_service,     //  卖单：联系客服
+    eooot_confirm_received_money,       //  卖单：确认收款（放行资产给商家）
+    
+    eooot_cancel_order,                 //  买单：取消订单
+    eooot_confirm_paid,                 //  买单：我已付款成功
+    eooot_confirm_received_refunded,    //  买单：确认收到商家退款 & 取消订单
 } EOtcOrderOperationType;
 
 @class VCBase;
@@ -139,9 +165,29 @@ typedef enum EOtcOrderOperationType
 + (OtcManager*)sharedOtcManager;
 
 /*
+ *  (public) 解析 OTC 服务器返回的时间字符串，格式：2019-11-26T13:29:51.000+0000。
+ */
++ (NSTimeInterval)parseTime:(NSString*)time;
+
+/*
+ *  格式化：场外交易订单列表日期显示格式。REMARK：以当前时区格式化，北京时间当前时区会+8。
+ */
++ (NSString*)fmtOrderListTime:(NSString*)time;
+
+/*
+ *  格式化：场外交易订单详情日期显示格式。REMARK：以当前时区格式化，北京时间当前时区会+8。
+ */
++ (NSString*)fmtOrderDetailTime:(NSString*)time;
+
+/*
+ *  (public) 辅助 - 获取收款方式名字图标等。
+ */
++ (NSDictionary*)auxGenPaymentMethodInfos:(NSString*)account type:(id)type bankname:(NSString*)bankname;
+
+/*
  *  (public) 辅助 - 根据订单当前状态获取主状态、状态描述、以及可操作按钮等信息。
  */
-+ (NSDictionary*)genUserOrderStatusAndActions:(id)order;
++ (NSDictionary*)auxGenUserOrderStatusAndActions:(id)order;
 
 /*
  *  (public) 当前账号名
@@ -213,12 +259,21 @@ typedef enum EOtcOrderOperationType
 - (WsPromise*)queryUserOrderDetails:(NSString*)bts_account_name order_id:(NSString*)order_id;
 
 /*
+ *  (public) 更新订单
+ */
+- (WsPromise*)updateUserOrder:(NSString*)bts_account_name
+                     order_id:(NSString*)order_id
+                   payAccount:(NSString*)payAccount
+                   payChannel:(id)payChannel
+                         type:(EOtcOrderUpdateType)type;
+
+/*
  *  (public) 查询用户收款方式/增加收款方式/删除收款方式/编辑收款方式
  */
 - (WsPromise*)queryPaymentMethods:(NSString*)bts_account_name;
 - (WsPromise*)addPaymentMethods:(id)args;
-- (WsPromise*)delPaymentMethods:(NSString*)bts_account_name;
-- (WsPromise*)editPaymentMethods:(NSString*)bts_account_name;
+- (WsPromise*)delPaymentMethods:(NSString*)bts_account_name pmid:(id)pmid;
+- (WsPromise*)editPaymentMethods:(NSString*)bts_account_name new_status:(EOtcPaymentMethodStatus)new_status pmid:(id)pmid;
 
 /*
  *  (public) 上传二维码图片。

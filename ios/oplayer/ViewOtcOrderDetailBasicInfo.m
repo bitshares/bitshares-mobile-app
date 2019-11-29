@@ -92,7 +92,9 @@
 //    NSString* fiat_symbol = [_item objectForKey:@"legalCurrencySymbol"];
     NSString* asset_symbol = [_item objectForKey:@"assetSymbol"];
     
-    _lbTotal.text = [NSString stringWithFormat:@"%@ %@", fiat_symbol, _item[@"amount"]];
+    //  TODO:2.9 3E+2 格式
+    id n_amount = [NSDecimalNumber decimalNumberWithString:[NSString stringWithFormat:@"%@", _item[@"amount"]]];
+    _lbTotal.text = [NSString stringWithFormat:@"%@ %@", fiat_symbol, n_amount];
     _lbTotal.textColor = theme.textColorHighlight;
     
     _lbPrice.attributedText = [self genAndColorAttributedText:@"单价 "
