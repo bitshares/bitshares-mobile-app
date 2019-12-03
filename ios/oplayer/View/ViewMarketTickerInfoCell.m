@@ -235,17 +235,17 @@
         UIColor* backColor = [ThemeManager sharedThemeManager].buyColor;
         _lbPercent.layer.borderColor = backColor.CGColor;
         _lbPercent.layer.backgroundColor = backColor.CGColor;
-        _lbPercent.text = [NSString stringWithFormat:@"+%@%%", [OrgUtils formatFloatValue:percent precision:2]];
+        _lbPercent.text = [NSString stringWithFormat:@"+%@%%", [OrgUtils formatFloatValue:percent precision:2 usesGroupingSeparator:NO]];
     }else if (percent < 0){
         UIColor* backColor = [ThemeManager sharedThemeManager].sellColor;
         _lbPercent.layer.borderColor = backColor.CGColor;
         _lbPercent.layer.backgroundColor = backColor.CGColor;
-        _lbPercent.text = [NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:percent precision:2]];
+        _lbPercent.text = [NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:percent precision:2 usesGroupingSeparator:NO]];
     } else {
         UIColor* backColor = [ThemeManager sharedThemeManager].zeroColor;
         _lbPercent.layer.borderColor = backColor.CGColor;
         _lbPercent.layer.backgroundColor = backColor.CGColor;
-        _lbPercent.text = [NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:percent precision:2]];
+        _lbPercent.text = [NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:percent precision:2 usesGroupingSeparator:NO]];
     }
     _lbPercent.frame = CGRectMake(fWidth - 12 - percent_label_width, 9, percent_label_width, 32);
 }

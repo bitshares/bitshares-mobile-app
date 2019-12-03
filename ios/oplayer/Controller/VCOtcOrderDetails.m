@@ -12,6 +12,7 @@
 #import "ViewOtcOrderDetailStatus.h"
 #import "ViewOtcOrderDetailBasicInfo.h"
 #import "ViewOtcPaymentIconAndTextCell.h"
+#import "ViewTipsInfoCell.h"
 
 #import "OtcManager.h"
 
@@ -21,6 +22,7 @@ enum
     kVcSecOrderInfo,        //  订单基本信息：价格单价等
     kvcSecPaymentInfo,      //  收付款信息（用户买入时需要显示）
     kVcSecOrderDetailInfo,  //  订单详细信息：商家名、订单号等
+    kVcSecCellTips,         //  转账时：附加系统提示
 };
 
 enum
@@ -29,8 +31,7 @@ enum
     kVcSubMerchantNickName,     //  商家昵称
     kVcSubOrderID,              //  订单号
     kVcSubOrderTime,            //  下单日期
-    kVcSubPaymentMethod,        //  付款方式
-    kVcSubRemark,               //  订单附加信息（备注信息）
+    kVcSubPaymentMethod,        //  付款方式 or 收款方式
     
     kVcSubPaymentTipsSameName,  //  相同名字账号付款提示
     kVcSubPaymentMethodSelect,  //  选择收款方式
@@ -42,16 +43,15 @@ enum
 
 @interface VCOtcOrderDetails ()
 {
-//    NSDictionary*           _orderBasic;
     NSDictionary*           _orderDetails;
     NSDictionary*           _authInfos;                 //  可能为空，一般需要付款时才存在。
-//    BOOL                    _bUserSell;                 //  是否是卖单
     NSDictionary*           _statusInfos;
     
     NSDictionary*           _currSelectedPaymentMethod; //  买单情况下，当前选中的卖家收款方式。
     
     UITableViewBase*        _mainTableView;
     NSMutableArray*         _sectionDataArray;
+    ViewTipsInfoCell*       _cell_tips;                 //
     NSMutableArray*         _btnArray;
 }
 
@@ -66,8 +66,8 @@ enum
         _mainTableView.delegate = nil;
         _mainTableView = nil;
     }
+    _cell_tips = nil;
     _sectionDataArray = nil;
-//    _orderBasic = nil;
     _orderDetails = nil;
     _authInfos = nil;
     _btnArray = nil;
@@ -78,12 +78,11 @@ enum
 {
     self = [super init];
     if (self) {
-//        _orderBasic = order;
         _orderDetails = order_details;
         _authInfos = auth_info;
         _sectionDataArray = [NSMutableArray array];
-//        _bUserSell = [[_orderDetails objectForKey:@"type"] integerValue] == eoot_data_sell;
         _btnArray = [NSMutableArray array];
+        _cell_tips = nil;
         _statusInfos = [OtcManager auxGenUserOrderStatusAndActions:order_details];
         _currSelectedPaymentMethod = nil;
         [self _initUIData];
@@ -153,17 +152,39 @@ enum
         if (payAccount && ![payAccount isEqualToString:@""]) {
             [obj addObject:@(kVcSubPaymentMethod)];
         }
-        if ([[_statusInfos objectForKey:@"show_remark"] boolValue]) {
-            [obj addObject:@(kVcSubRemark)];
-        }
     }] copy];
     [_sectionDataArray addObject:@{@"type":@(kVcSecOrderDetailInfo), @"rows":orderDetailRows}];
+
+    //  提示 TODO:2.9
+    if ([[_statusInfos objectForKey:@"show_remark"] boolValue]) {
+        if (!_cell_tips) {
+            NSMutableArray* tips_array = [NSMutableArray array];
+            NSString* remark = [_orderDetails objectForKey:@"remark"];
+            if (remark && [remark isKindOfClass:[NSString class]] && ![remark isEqualToString:@""]) {
+                [tips_array addObject:[NSString stringWithFormat:@"商家：%@", remark]];
+            }
+            [tips_array addObject:@"系统：在转账过程中请勿备注BTC、USDT等信息，防止汇款被拦截、银行卡被冻结等问题。"];
+            
+            _cell_tips = [[ViewTipsInfoCell alloc] initWithText:[NSString stringWithFormat:@"%@", [tips_array componentsJoinedByString:@"\n\n"]]];
+            _cell_tips.hideBottomLine = YES;
+            _cell_tips.hideTopLine = YES;
+            _cell_tips.backgroundColor = [UIColor clearColor];
+        }
+        [_sectionDataArray addObject:@{@"type":@(kVcSecCellTips)}];
+    } else {
+        _cell_tips = nil;
+    }
 
     //  UI - 底部按钮数据
     id actions = [_statusInfos objectForKey:@"actions"];
     if (actions && [actions count] > 0) {
         [_btnArray addObjectsFromArray:actions];
     }
+}
+
+- (void)_refreshUI:(id)new_order_detail
+{
+    
 }
 
 /*
@@ -180,11 +201,13 @@ enum
                 payAccount:payAccount
                 payChannel:payChannel
                       type:type] then:^id(id data) {
-        [self hideBlockView];
-        //  提示
-//        [OrgUtils makeToast:@"订单已取消。"];//TODO:2.9
-        //  刷新 TODO:2.9 外部列表也需要刷新？
-        return nil;
+        //  更新状态成功、刷新界面。
+        return [[otc queryUserOrderDetails:_orderDetails[@"userAccount"] order_id:_orderDetails[@"orderId"]] then:^id(id details_responsed) {
+            //  获取新订单数据成功
+            [self hideBlockView];
+            [self _refreshUI:[details_responsed objectForKey:@"data"]];
+            return nil;
+        }];
     }] catch:^id(id error) {
         [self hideBlockView];
         [otc showOtcError:error];
@@ -224,8 +247,17 @@ enum
             break;
         case eooot_confirm_received_money:
         {
-            //  TODO:2.9
-            [OrgUtils makeToast:[NSString stringWithFormat:@"buttom clicked %@", @(sender.tag)]];
+            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"我确认已登录收款账户查看，并核对收款无误。是否放行？"
+                                                                   withTitle:@"确认放行"
+                                                                  completion:^(NSInteger buttonIndex)
+             {
+                 if (buttonIndex == 1)
+                 {
+                     [self _execUpdateOrderCore:_orderDetails[@"payAccount"]
+                                     payChannel:_orderDetails[@"payChannel"]
+                                           type:eoout_to_received_money];
+                 }
+             }];
         }
             break;
             
@@ -390,6 +422,7 @@ enum
     switch ([[secInfos objectForKey:@"type"] integerValue]) {
         case kVcSecOrderStatus:
         case kVcSecOrderInfo:
+        case kVcSecCellTips:
             return 1;
         default:
             break;
@@ -399,10 +432,13 @@ enum
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    switch ([[[_sectionDataArray objectAtIndex:indexPath.section] objectForKey:@"type"] integerValue]) {
+    id secInfos = [_sectionDataArray objectAtIndex:indexPath.section];
+    switch ([[secInfos objectForKey:@"type"] integerValue]) {
         case kVcSecOrderStatus:
         case kVcSecOrderInfo:
             return 80.0f;
+        case kVcSecCellTips:
+            return [_cell_tips calcCellDynamicHeight:tableView.layoutMargins.left];
         default:
             break;
     }
@@ -489,6 +525,7 @@ enum
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 cell.accessoryType = UITableViewCellAccessoryNone;
                 cell.showCustomBottomLine = YES;
+                cell.bUserSell = [[_statusInfos objectForKey:@"sell"] boolValue];
                 [cell setItem:_orderDetails];
                 return cell;
             }
@@ -529,13 +566,6 @@ enum
                 {
                     cell.textLabel.text = @"下单日期";
                     cell.detailTextLabel.text = [OtcManager fmtOrderDetailTime:[_orderDetails objectForKey:@"ctime"]];
-                }
-                    break;
-                    
-                case kVcSubRemark:
-                {
-                    cell.textLabel.text = @"备注";
-                    cell.detailTextLabel.text = [_orderDetails objectForKey:@"remark"] ?: @"";
                 }
                     break;
                     
@@ -636,6 +666,12 @@ enum
             }
             
             return cell;
+        }
+            break;
+        case kVcSecCellTips:
+        {
+            assert(_cell_tips);
+            return _cell_tips;
         }
             break;
         default:
