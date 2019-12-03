@@ -1373,6 +1373,8 @@
 "appDepositWithdrawDefaultGateway" = "GDEX";
 "btsaiLangKey" = "cn";
 "enableOtcEntry" = "1";
+"qaHtmlFileName" = "qam.html";
+"userAgreementHtmlFileName" = "agreement.html";
 
 /* Android专有字符串 */
 "action_settings" = "Settings";

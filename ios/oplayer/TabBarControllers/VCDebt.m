@@ -876,31 +876,22 @@ enum
  */
 - (void)onTipFeedPriceButtonClicked:(UIButton*)sender
 {
-    //  [统计]
-    [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_feed_settlement"}];
-    VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"https://btspp.io/qam.html#qa_feed_settlement"];
-    vc.title = NSLocalizedString(@"kDebtTipTitleFeedAndCallPrice", @"喂价和强平触发价");
-    [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+    [self gotoQaView:@"qa_feed_settlement"
+               title:NSLocalizedString(@"kDebtTipTitleFeedAndCallPrice", @"喂价和强平触发价")];
 }
 - (void)onTipButtonClicked:(UIButton*)sender
 {
     switch (sender.tag) {
         case kVcSubRateValue:
         {
-            //  [统计]
-            [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_ratio"}];
-            VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"https://btspp.io/qam.html#qa_ratio"];
-            vc.title = NSLocalizedString(@"kDebtTipTitleWhatIsRatio", @"什么是抵押率？");
-            [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+            [self gotoQaView:@"qa_ratio"
+                       title:NSLocalizedString(@"kDebtTipTitleWhatIsRatio", @"什么是抵押率？")];
         }
             break;
         case kVcSubTargetRateValue:
         {
-            //  [统计]
-            [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_target_ratio"}];
-            VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"https://btspp.io/qam.html#qa_target_ratio"];
-            vc.title = NSLocalizedString(@"kDebtTipTitleWhatIsTargetRatio", @"什么是目标抵押率？");
-            [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+            [self gotoQaView:@"qa_target_ratio"
+                       title:NSLocalizedString(@"kDebtTipTitleWhatIsTargetRatio", @"什么是目标抵押率？")];
         }
             break;
         default:

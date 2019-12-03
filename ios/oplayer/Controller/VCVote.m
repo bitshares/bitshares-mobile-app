@@ -1029,56 +1029,44 @@ enum
  */
 - (void)onTipButtonClicked:(UIButton*)sender
 {
-    NSString* url = nil;
+    NSString* anchor_name = nil;
     NSString* title = nil;
     switch (sender.tag) {
         case kSecTypeCommitteeActive:
         {
-            //  [统计]
-            [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_committee"}];
-            url = @"https://btspp.io/qam.html#qa_committee";
+            anchor_name = @"qa_committee";
             title = NSLocalizedString(@"kVcVoteWhatIsActiveCommittee", @"什么是活跃理事会？");
         }
             break;
         case kSecTypeCommitteeCandidate:
         {
-            //  [统计]
-            [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_committee_c"}];
-            url = @"https://btspp.io/qam.html#qa_committee_c";
+            anchor_name = @"qa_committee_c";
             title = NSLocalizedString(@"kVcVoteWhatIsStandbyCommittee", @"什么是候选理事会？");
         }
             break;
         case kSecTypeWitnessActive:
         {
-            //  [统计]
-            [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_witness"}];
-            url = @"https://btspp.io/qam.html#qa_witness";
+            anchor_name = @"qa_witness";
             title = NSLocalizedString(@"kVcVoteWhatIsActiveWitness", @"什么是活跃见证人？");
         }
             break;
         case kSecTypeWitnessCandidate:
         {
-            //  [统计]
-            [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_witness_c"}];
-            url = @"https://btspp.io/qam.html#qa_witness_c";
+            anchor_name = @"qa_witness_c";
             title = NSLocalizedString(@"kVcVoteWhatIsStandbyWitness", @"什么是候选见证人？");
         }
             break;
         case kBtnTagProxyHelp:
         {
-            //  [统计]
-            [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_proxy"}];
-            url = @"https://btspp.io/qam.html#qa_proxy";
+            anchor_name = @"qa_proxy";
             title = NSLocalizedString(@"kVcVoteWhatIsProxy", @"什么是代理人？");
         }
             break;
         default:
             break;
     }
-    if (url && title && _owner){
-        VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:url];
-        vc.title = title;
-        [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+    if (anchor_name && title && _owner){
+        [_owner gotoQaView:anchor_name title:title];
     }
 }
 
