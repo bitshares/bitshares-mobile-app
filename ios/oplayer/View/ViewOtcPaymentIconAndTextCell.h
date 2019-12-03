@@ -11,6 +11,7 @@
 
 @interface ViewOtcPaymentIconAndTextCell : UITableViewCellBase
 
+@property (nonatomic, assign) BOOL bUserSell;
 @property (nonatomic, strong) NSDictionary* item;
 
 @end

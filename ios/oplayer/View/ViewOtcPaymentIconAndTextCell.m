@@ -25,6 +25,7 @@
 
 @implementation ViewOtcPaymentIconAndTextCell
 
+@synthesize bUserSell;
 @synthesize item=_item;
 
 - (void)dealloc
@@ -45,6 +46,7 @@
         self.textLabel.hidden = YES;
         self.backgroundColor = [UIColor clearColor];
         
+        self.bUserSell = NO;
         _iconType = nil;
         _lbTitle = [self auxGenLabel:[UIFont boldSystemFontOfSize:13]];
         _lbNameAndAccount = [self auxGenLabel:[UIFont systemFontOfSize:13]];
@@ -89,7 +91,7 @@
         [self addSubview:_iconType];
     }
     
-    _lbTitle.text = @"付款方式";
+    _lbTitle.text = self.bUserSell ? @"收款方式" : @"付款方式";
     _lbTitle.textColor = theme.textColorNormal;
     _lbTitle.frame = CGRectMake(xOffset, 0, fWidth, fHeight);
 

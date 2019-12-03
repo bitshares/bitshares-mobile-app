@@ -138,8 +138,8 @@
     
     //  第一行 买卖 SYMBOL
     id asset_symbol = _item[@"assetSymbol"];
-    BOOL bUserSell = [[_item objectForKey:@"type"] integerValue] == eoot_data_sell;
-    if (bUserSell){
+    
+    if ([[status_infos objectForKey:@"sell"] boolValue]){
         _lbType.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@ ", @"出售"]
                                                            value:asset_symbol
                                                       titleColor:theme.sellColor
