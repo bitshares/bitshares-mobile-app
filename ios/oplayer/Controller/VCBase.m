@@ -16,6 +16,7 @@
 #import "MyNavigationController.h"
 #import "OrgUtils.h"
 #import "UIDevice+Helper.h"
+#import "VCBtsaiWebView.h"
 
 #import "Crashlytics/Crashlytics.h"
 
@@ -388,6 +389,28 @@ static NSInteger gen_notify_unique_id()
 {
     [TempManager sharedTempManager].clearNavbarStackOnVcPushCompleted = vc;
     [self pushViewController:vc vctitle:vctitle backtitle:backtitle];
+}
+
+/*
+ *  (public) 转到WebView页面。
+ */
+- (void)gotoWebView:(NSString*)url title:(NSString*)title
+{
+    VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:url];
+    [self pushViewController:vc vctitle:title backtitle:kVcDefaultBackTitleName];
+}
+
+/*
+ *  (public) 转到问号QA提示页面。
+ */
+- (void)gotoQaView:(NSString*)anchor_name title:(NSString*)title
+{
+    assert(anchor_name);
+    assert(title);
+    [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":anchor_name}];
+    //  TODO:2.9 url config
+    [self gotoWebView:[NSString stringWithFormat:@"%@%@#%@", @"https://btspp.io/", NSLocalizedString(@"qaHtmlFileName", @"qa html file"), anchor_name]
+                title:title];
 }
 
 - (void)viewDidAppear:(BOOL)animated

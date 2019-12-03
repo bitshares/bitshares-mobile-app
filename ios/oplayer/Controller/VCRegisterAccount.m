@@ -50,9 +50,9 @@
 
 - (void)onRBtnAgreementClicked
 {
-    VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"https://btspp.io/agreement.html"];
-    vc.title = NSLocalizedString(@"kVcTitleAgreement", @"用户协议和服务条款");
-    [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+    //  TODO:2.9 url
+    [self gotoWebView:[NSString stringWithFormat:@"%@%@", @"https://btspp.io/", NSLocalizedString(@"userAgreementHtmlFileName", @"agreement html file")]
+                title:NSLocalizedString(@"kVcTitleAgreement", @"用户协议和服务条款")];
 }
 
 - (void)viewDidLoad

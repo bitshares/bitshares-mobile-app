@@ -93,23 +93,33 @@ enum
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
-    NSArray* pSection1 = [NSArray arrayWithObjects:
-                          @"kAccount",                      //  帐号
-                          nil];
-    NSArray* pSection2 = [NSArray arrayWithObjects:
-                          @"kLblCellMyBalance",             //  我的资产,
-                          @"kLblCellOrderManagement",       //  订单管理,
-                          @"kLblCellWalletAndMultiSign",    //  钱包&多签
-                          @"kLblCellMyProposal",            //  待处理提案,
-                          nil];
-    NSArray* pSection3 = [NSArray arrayWithObjects:
-                          @"faq",                           //  常见问题,
-                          nil];
-    NSArray* pSection4 = [NSArray arrayWithObjects:
-                          @"kSettingEx",                    //  设置,
-                          @"kLblCellAboutBtspp",            //  关于BTS++,
-                          nil];
-    _dataArray = [[NSArray alloc] initWithObjects:pSection1, pSection2, pSection3, pSection4, nil];
+    _dataArray = [[[NSMutableArray array] ruby_apply:^(id obj) {
+        NSArray* pSection1 = [NSArray arrayWithObjects:
+                              @"kAccount",                      //  帐号
+                              nil];
+        [obj addObject:@{@"type":@(kVcBanner), @"rows":pSection1}];
+        
+        NSArray* pSection2 = [NSArray arrayWithObjects:
+                              @"kLblCellMyBalance",             //  我的资产,
+                              @"kLblCellOrderManagement",       //  订单管理,
+                              @"kLblCellWalletAndMultiSign",    //  钱包&多签
+                              @"kLblCellMyProposal",            //  待处理提案,
+                              nil];
+        [obj addObject:@{@"type":@(kVcAssets), @"rows":pSection2}];
+        
+    #if kAppModuleEnableFaq
+        NSArray* pSection3 = [NSArray arrayWithObjects:
+                              @"faq",                           //  常见问题,
+                              nil];
+        [obj addObject:@{@"type":@(kVcFaq), @"rows":pSection3}];
+    #endif  //  kAppModuleEnableFaq
+        
+        NSArray* pSection4 = [NSArray arrayWithObjects:
+                              @"kSettingEx",                    //  设置,
+                              @"kLblCellAboutBtspp",            //  关于BTS++,
+                              nil];
+        [obj addObject:@{@"type":@(kVcSetting), @"rows":pSection4}];
+    }] copy];
     
     _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutTabbar] style:UITableViewStyleGrouped];
     _mainTableView.delegate = self;
@@ -151,12 +161,12 @@ enum
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[_dataArray objectAtIndex:section] count];
+    return [[[_dataArray objectAtIndex:section] objectForKey:@"rows"] count];
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == kVcBanner)
+    if ([[[_dataArray objectAtIndex:indexPath.section] objectForKey:@"type"] integerValue] == kVcBanner)
     {
         //  头像部分
         if (_faceView){
@@ -176,7 +186,8 @@ enum
  */
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    if (section == kVcBanner || section == kVcAssets){
+    NSInteger type = [[[_dataArray objectAtIndex:section] objectForKey:@"type"] integerValue];
+    if (type == kVcBanner || type == kVcAssets){
         return 0.01f;
     }
     return 15.0f;
@@ -189,7 +200,9 @@ enum
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == kVcBanner)
+    id secinfos = [_dataArray objectAtIndex:indexPath.section];
+    NSInteger sectype = [[secinfos objectForKey:@"type"] integerValue];
+    if (sectype == kVcBanner)
     {
         return _faceView;
     }
@@ -201,13 +214,13 @@ enum
     
     cell.showCustomBottomLine = YES;
     
-    id ary = [_dataArray objectAtIndex:indexPath.section];
+    id ary = [secinfos objectForKey:@"rows"];
     
     cell.textLabel.text = NSLocalizedString([ary objectAtIndex:indexPath.row], @"");
     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
     
     //  设置图标
-    switch (indexPath.section) {
+    switch (sectype) {
         case kVcAssets:
         {
             switch (indexPath.row) {
@@ -289,7 +302,10 @@ enum
     [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
         UIViewController* vc = nil;
         
-        switch (indexPath.section) {
+        id secinfos = [_dataArray objectAtIndex:indexPath.section];
+        NSInteger sectype = [[secinfos objectForKey:@"type"] integerValue];
+        
+        switch (sectype) {
             case kVcBanner:
             {
                 if ([[WalletManager sharedWalletManager] isWalletExist]){

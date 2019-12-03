@@ -183,6 +183,16 @@
 - (void)pushViewController:(UIViewController*)vc vctitle:(NSString*)vctitle backtitle:(NSString*)backtitle;
 - (void)clearPushViewController:(UIViewController*)vc vctitle:(NSString*)vctitle backtitle:(NSString*)backtitle;
 
+/*
+ *  (public) 转到WebView页面。
+ */
+- (void)gotoWebView:(NSString*)url title:(NSString*)title;
+
+/*
+ *  (public) 转到问号QA提示页面。
+ */
+- (void)gotoQaView:(NSString*)anchor_name title:(NSString*)title;
+
 #pragma mark- debug
 - (void)printView:(UIView*)view level:(NSInteger)level;
 

@@ -536,11 +536,8 @@ enum
     switch (button.tag) {
         case kVcSubUserTradingPassword:
         {
-            //  [统计]
-            [OrgUtils logEvents:@"qa_tip_click" params:@{@"qa":@"qa_trading_password"}];
-            VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:@"https://btspp.io/qam.html#qa_trading_password"];
-            vc.title = NSLocalizedString(@"kVcTitleWhatIsTradePassowrd", @"什么是交易密码？");
-            [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+            [_owner gotoQaView:@"qa_trading_password"
+                         title:NSLocalizedString(@"kVcTitleWhatIsTradePassowrd", @"什么是交易密码？")];
         }
             break;
             

@@ -39,6 +39,7 @@
 #define kAppModuleEnableFeedPrice   1
 #define kAppModuleEnableOTC         1
 #define kAppModuleEnableGateway     0
+#define kAppModuleEnableFaq         1
 #define kAppCheckUpdate             0
 
 #define kUseCommunityFaucet         0
@@ -68,6 +69,7 @@
 #define kAppModuleEnableFeedPrice   1
 #define kAppModuleEnableOTC         1
 #define kAppModuleEnableGateway     1
+#define kAppModuleEnableFaq         1
 #define kAppCheckUpdate             1
 
 #define kUseCommunityFaucet         0
@@ -83,6 +85,7 @@
 #define kAppModuleEnableFeedPrice   1
 #define kAppModuleEnableOTC         0
 #define kAppModuleEnableGateway     1
+#define kAppModuleEnableFaq         0
 #define kAppCheckUpdate             1
 
 #define kUseCommunityFaucet         1
@@ -98,6 +101,7 @@
 #define kAppModuleEnableFeedPrice   0
 #define kAppModuleEnableOTC         0
 #define kAppModuleEnableGateway     0
+#define kAppModuleEnableFaq         1
 #define kAppCheckUpdate             0
 
 #define kUseCommunityFaucet         0
