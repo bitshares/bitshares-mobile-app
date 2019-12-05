@@ -57,6 +57,7 @@
 "kServicesCellLabelRank" = "抵押排行";
 "kServicesCellLabelVoting" = "投票";
 "kServicesCellLabelFeedPrice" = "喂价详情";
+"kServicesCellLabelOTC" = "场外交易";
 "kServicesCellLabelDepositWithdraw" = "充币提币";
 "kServicesCellLabelAdvFunction" = "高级功能";
 "kServicesCellLabelBtsExplorer" = "BTS浏览器";

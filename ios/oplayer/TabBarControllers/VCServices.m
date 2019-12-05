@@ -18,6 +18,7 @@
 #import "VCVote.h"
 #import "VCDepositWithdrawList.h"
 
+#import "OtcManager.h"
 #import "WalletManager.h"
 #import "OrgUtils.h"
 
@@ -32,6 +33,7 @@ enum
     kVcSubCallRanking,      //  抵押排行
     kVcSubFeedPriceDetail,  //  喂价详情
     
+    kVcOtc,                 //  场外交易
     kVcSubDepositWithdraw,  //  充币&提币
     
     kVcSubAdvanced,         //  更多高级功能(HTLC等）
@@ -96,6 +98,9 @@ enum
         }
         
         NSArray* pSection4 = [[[NSMutableArray array] ruby_apply:(^(id obj) {
+#if kAppModuleEnableOTC
+            [obj addObject:@[@(kVcOtc), @"kServicesCellLabelOTC"]];                                 //  场外交易
+#endif  //  kAppModuleEnableOTC
 #if kAppModuleEnableGateway
             [obj addObject:@[@(kVcSubDepositWithdraw),   @"kServicesCellLabelDepositWithdraw"]];    //  充币提币
 #endif  //  kAppModuleEnableGateway
@@ -215,6 +220,9 @@ enum
             cell.imageView.image = [UIImage templateImageNamed:@"iconFeedDetail"];
             break;
             
+        case kVcOtc:
+            cell.imageView.image = [UIImage templateImageNamed:@"iconOtc"];
+            break;
         case kVcSubDepositWithdraw:
             cell.imageView.image = [UIImage templateImageNamed:@"iconDepositWithdraw"];
             break;
@@ -321,6 +329,12 @@ enum
                 break;
             }
                 
+            case kVcOtc:                //  场外交易
+            {
+                //  TODO:2.9
+                [[OtcManager sharedOtcManager] gotoOtc:self asset_name:@"USD" ad_type:eoadt_user_buy];
+            }
+                break;
             case kVcSubDepositWithdraw: //  充提（需要登录）
             {
                 [self GuardWalletExist:^{

@@ -477,7 +477,7 @@ enum
 {
     //  TODO:2.9 icon???
     UIButton* btn = [UIButton buttonWithType:UIButtonTypeCustom];
-    UIImage* btn_image = [UIImage imageNamed:@"iconPmBankCard"];
+    UIImage* btn_image = [UIImage imageNamed:@"iconCopy"];
     CGSize btn_size = btn_image.size;
     [btn setBackgroundImage:btn_image forState:UIControlStateNormal];
     btn.userInteractionEnabled = YES;
