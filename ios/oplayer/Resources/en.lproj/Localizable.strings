@@ -57,6 +57,7 @@
 "kServicesCellLabelRank" = "Rank";
 "kServicesCellLabelVoting" = "Voting";
 "kServicesCellLabelFeedPrice" = "Feed price details";
+"kServicesCellLabelOTC" = "场外交易";//TODO:
 "kServicesCellLabelDepositWithdraw" = "Deposit & Withdraw";
 "kServicesCellLabelAdvFunction" = "Advanced Features";
 "kServicesCellLabelBtsExplorer" = "Explorer";

@@ -698,6 +698,36 @@
 		3FA72B5A2340BC2500EE3DC9 /* iconEdit@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FA72B562340BC2500EE3DC9 /* iconEdit@3x.png */; };
 		3FA72B5B2340BC2500EE3DC9 /* iconEdit@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FA72B562340BC2500EE3DC9 /* iconEdit@3x.png */; };
 		3FA72B5C2340BC2500EE3DC9 /* iconEdit@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FA72B562340BC2500EE3DC9 /* iconEdit@3x.png */; };
+		3FB038002398A73F00FC859C /* iconOtc@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB037FE2398A73E00FC859C /* iconOtc@2x.png */; };
+		3FB038012398A73F00FC859C /* iconOtc@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB037FE2398A73E00FC859C /* iconOtc@2x.png */; };
+		3FB038022398A73F00FC859C /* iconOtc@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB037FE2398A73E00FC859C /* iconOtc@2x.png */; };
+		3FB038032398A73F00FC859C /* iconOtc@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB037FF2398A73F00FC859C /* iconOtc@3x.png */; };
+		3FB038042398A73F00FC859C /* iconOtc@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB037FF2398A73F00FC859C /* iconOtc@3x.png */; };
+		3FB038052398A73F00FC859C /* iconOtc@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB037FF2398A73F00FC859C /* iconOtc@3x.png */; };
+		3FB0380A2398A8AD00FC859C /* iconOtcUser@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB038062398A8AD00FC859C /* iconOtcUser@3x.png */; };
+		3FB0380B2398A8AD00FC859C /* iconOtcUser@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB038062398A8AD00FC859C /* iconOtcUser@3x.png */; };
+		3FB0380C2398A8AD00FC859C /* iconOtcUser@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB038062398A8AD00FC859C /* iconOtcUser@3x.png */; };
+		3FB0380D2398A8AD00FC859C /* iconOtcOrder@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB038072398A8AD00FC859C /* iconOtcOrder@3x.png */; };
+		3FB0380E2398A8AD00FC859C /* iconOtcOrder@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB038072398A8AD00FC859C /* iconOtcOrder@3x.png */; };
+		3FB0380F2398A8AD00FC859C /* iconOtcOrder@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB038072398A8AD00FC859C /* iconOtcOrder@3x.png */; };
+		3FB038102398A8AD00FC859C /* iconOtcUser@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB038082398A8AD00FC859C /* iconOtcUser@2x.png */; };
+		3FB038112398A8AD00FC859C /* iconOtcUser@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB038082398A8AD00FC859C /* iconOtcUser@2x.png */; };
+		3FB038122398A8AD00FC859C /* iconOtcUser@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB038082398A8AD00FC859C /* iconOtcUser@2x.png */; };
+		3FB038132398A8AD00FC859C /* iconOtcOrder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB038092398A8AD00FC859C /* iconOtcOrder@2x.png */; };
+		3FB038142398A8AD00FC859C /* iconOtcOrder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB038092398A8AD00FC859C /* iconOtcOrder@2x.png */; };
+		3FB038152398A8AD00FC859C /* iconOtcOrder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB038092398A8AD00FC859C /* iconOtcOrder@2x.png */; };
+		3FB038182398A93400FC859C /* iconCopy@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB038162398A93400FC859C /* iconCopy@2x.png */; };
+		3FB038192398A93400FC859C /* iconCopy@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB038162398A93400FC859C /* iconCopy@2x.png */; };
+		3FB0381A2398A93400FC859C /* iconCopy@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB038162398A93400FC859C /* iconCopy@2x.png */; };
+		3FB0381B2398A93400FC859C /* iconCopy@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB038172398A93400FC859C /* iconCopy@3x.png */; };
+		3FB0381C2398A93400FC859C /* iconCopy@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB038172398A93400FC859C /* iconCopy@3x.png */; };
+		3FB0381D2398A93400FC859C /* iconCopy@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB038172398A93400FC859C /* iconCopy@3x.png */; };
+		3FB038202398AA4200FC859C /* iconPhone@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB0381E2398AA4100FC859C /* iconPhone@2x.png */; };
+		3FB038212398AA4200FC859C /* iconPhone@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB0381E2398AA4100FC859C /* iconPhone@2x.png */; };
+		3FB038222398AA4200FC859C /* iconPhone@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB0381E2398AA4100FC859C /* iconPhone@2x.png */; };
+		3FB038232398AA4200FC859C /* iconPhone@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB0381F2398AA4100FC859C /* iconPhone@3x.png */; };
+		3FB038242398AA4200FC859C /* iconPhone@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB0381F2398AA4100FC859C /* iconPhone@3x.png */; };
+		3FB038252398AA4200FC859C /* iconPhone@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB0381F2398AA4100FC859C /* iconPhone@3x.png */; };
 		3FB5BFB62181B5250009C346 /* VCFeedPriceDetail.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB5BFB42181B5250009C346 /* VCFeedPriceDetail.m */; };
 		3FB8F88D21CA4BA000DA88E2 /* DFReachabilityUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB8F88A21CA4BA000DA88E2 /* DFReachabilityUtil.m */; };
 		3FB8F88E21CA4BA000DA88E2 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB8F88C21CA4BA000DA88E2 /* Reachability.m */; };
@@ -1917,6 +1947,16 @@
 		3F9F2C3D2229051600D49165 /* MKlineIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKlineIndex.m; sourceTree = "<group>"; };
 		3FA72B552340BC2400EE3DC9 /* iconEdit@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconEdit@2x.png"; path = "Images/iconEdit@2x.png"; sourceTree = "<group>"; };
 		3FA72B562340BC2500EE3DC9 /* iconEdit@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconEdit@3x.png"; path = "Images/iconEdit@3x.png"; sourceTree = "<group>"; };
+		3FB037FE2398A73E00FC859C /* iconOtc@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtc@2x.png"; path = "Images/iconOtc@2x.png"; sourceTree = "<group>"; };
+		3FB037FF2398A73F00FC859C /* iconOtc@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtc@3x.png"; path = "Images/iconOtc@3x.png"; sourceTree = "<group>"; };
+		3FB038062398A8AD00FC859C /* iconOtcUser@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtcUser@3x.png"; path = "Images/iconOtcUser@3x.png"; sourceTree = "<group>"; };
+		3FB038072398A8AD00FC859C /* iconOtcOrder@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtcOrder@3x.png"; path = "Images/iconOtcOrder@3x.png"; sourceTree = "<group>"; };
+		3FB038082398A8AD00FC859C /* iconOtcUser@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtcUser@2x.png"; path = "Images/iconOtcUser@2x.png"; sourceTree = "<group>"; };
+		3FB038092398A8AD00FC859C /* iconOtcOrder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtcOrder@2x.png"; path = "Images/iconOtcOrder@2x.png"; sourceTree = "<group>"; };
+		3FB038162398A93400FC859C /* iconCopy@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconCopy@2x.png"; path = "Images/iconCopy@2x.png"; sourceTree = "<group>"; };
+		3FB038172398A93400FC859C /* iconCopy@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconCopy@3x.png"; path = "Images/iconCopy@3x.png"; sourceTree = "<group>"; };
+		3FB0381E2398AA4100FC859C /* iconPhone@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconPhone@2x.png"; path = "Images/iconPhone@2x.png"; sourceTree = "<group>"; };
+		3FB0381F2398AA4100FC859C /* iconPhone@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconPhone@3x.png"; path = "Images/iconPhone@3x.png"; sourceTree = "<group>"; };
 		3FB5BFB42181B5250009C346 /* VCFeedPriceDetail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCFeedPriceDetail.m; path = Controller/VCFeedPriceDetail.m; sourceTree = "<group>"; };
 		3FB5BFB52181B5250009C346 /* VCFeedPriceDetail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCFeedPriceDetail.h; path = Controller/VCFeedPriceDetail.h; sourceTree = "<group>"; };
 		3FB8F88921CA4BA000DA88E2 /* DFReachabilityUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFReachabilityUtil.h; sourceTree = "<group>"; };
@@ -3074,6 +3114,16 @@
 		18FF069417E00D870088405E /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				3FB0381E2398AA4100FC859C /* iconPhone@2x.png */,
+				3FB0381F2398AA4100FC859C /* iconPhone@3x.png */,
+				3FB038162398A93400FC859C /* iconCopy@2x.png */,
+				3FB038172398A93400FC859C /* iconCopy@3x.png */,
+				3FB038092398A8AD00FC859C /* iconOtcOrder@2x.png */,
+				3FB038072398A8AD00FC859C /* iconOtcOrder@3x.png */,
+				3FB038082398A8AD00FC859C /* iconOtcUser@2x.png */,
+				3FB038062398A8AD00FC859C /* iconOtcUser@3x.png */,
+				3FB037FE2398A73E00FC859C /* iconOtc@2x.png */,
+				3FB037FF2398A73F00FC859C /* iconOtc@3x.png */,
 				3FCC8B73237A7C1F00F5664D /* iconPmAlipay@2x.png */,
 				3FCC8B71237A7C1E00F5664D /* iconPmAlipay@3x.png */,
 				3FCC8B70237A7C1E00F5664D /* iconPmBankCard@2x.png */,
@@ -4342,6 +4392,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3F67693E230E9EC100E98C14 /* Approve@2x.png in Resources */,
+				3FB038252398AA4200FC859C /* iconPhone@3x.png in Resources */,
 				3F67693F230E9EC100E98C14 /* ad_logo@3x.png in Resources */,
 				3F676940230E9EC100E98C14 /* Airport-50@2x.png in Resources */,
 				3F676941230E9EC100E98C14 /* iconAbout@2x.png in Resources */,
@@ -4353,6 +4404,7 @@
 				3F676947230E9EC100E98C14 /* icon_2_2@2x.png in Resources */,
 				3F676948230E9EC100E98C14 /* mic@2x.png in Resources */,
 				3F676949230E9EC100E98C14 /* 5 Star Hotel@2x.png in Resources */,
+				3FB0380F2398A8AD00FC859C /* iconOtcOrder@3x.png in Resources */,
 				3F67694A230E9EC100E98C14 /* Download@2x.png in Resources */,
 				3F67694B230E9EC100E98C14 /* page_2_b@2x.png in Resources */,
 				3F67694C230E9EC100E98C14 /* banner_center@2x.png in Resources */,
@@ -4371,7 +4423,9 @@
 				3F676958230E9EC100E98C14 /* icon_3_2@2x.png in Resources */,
 				3F676959230E9EC100E98C14 /* Christmas Star@2x.png in Resources */,
 				3F67695A230E9EC100E98C14 /* iconHtlcPreimage@2x.png in Resources */,
+				3FB038122398A8AD00FC859C /* iconOtcUser@2x.png in Resources */,
 				3F67695B230E9EC100E98C14 /* Sorting Arrows Horizontal-50@2x.png in Resources */,
+				3FB0381D2398A93400FC859C /* iconCopy@3x.png in Resources */,
 				3F67695C230E9EC100E98C14 /* Car@2x.png in Resources */,
 				3F67695D230E9EC100E98C14 /* Advertising@2x.png in Resources */,
 				3F67695E230E9EC100E98C14 /* iconSetting@3x.png in Resources */,
@@ -4379,6 +4433,7 @@
 				3F676960230E9EC100E98C14 /* Minus@2x.png in Resources */,
 				3F676961230E9EC100E98C14 /* Menu@2x.png in Resources */,
 				3F676962230E9EC100E98C14 /* Date To@2x.png in Resources */,
+				3FB0380C2398A8AD00FC859C /* iconOtcUser@3x.png in Resources */,
 				3F676963230E9EC100E98C14 /* iconProposal@3x.png in Resources */,
 				3F676964230E9EC100E98C14 /* sns_more_actions@2x.png in Resources */,
 				3F676965230E9EC100E98C14 /* ResignBgdz-50@2x.png in Resources */,
@@ -4406,6 +4461,7 @@
 				3F67697B230E9EC100E98C14 /* Edit@2x.png in Resources */,
 				3F67697C230E9EC100E98C14 /* iconAdvFunction@3x.png in Resources */,
 				3F67697D230E9EC100E98C14 /* Localizable.strings in Resources */,
+				3FB038052398A73F00FC859C /* iconOtc@3x.png in Resources */,
 				3F67697E230E9EC100E98C14 /* Assets.xcassets in Resources */,
 				3F67697F230E9EC100E98C14 /* iconDepositWithdraw@2x.png in Resources */,
 				3F676980230E9EC100E98C14 /* pass@2x.png in Resources */,
@@ -4418,6 +4474,7 @@
 				3F676986230E9EC100E98C14 /* Trash@2x.png in Resources */,
 				3F676987230E9EC100E98C14 /* iconAvatar@2x.png in Resources */,
 				3F676988230E9EC100E98C14 /* Share@2x.png in Resources */,
+				3FB038022398A73F00FC859C /* iconOtc@2x.png in Resources */,
 				3F676989230E9EC100E98C14 /* Back-44@2x.png in Resources */,
 				3FE19EA3235858A4000D1C54 /* iconExplorer@3x.png in Resources */,
 				3F67698A230E9EC100E98C14 /* bus order@2x.png in Resources */,
@@ -4432,6 +4489,7 @@
 				3F676993230E9EC100E98C14 /* Arrow@2x.png in Resources */,
 				3F676994230E9EC100E98C14 /* Entering Geo Fence@2x.png in Resources */,
 				3F676995230E9EC100E98C14 /* iconAvatar@3x.png in Resources */,
+				3FB038222398AA4200FC859C /* iconPhone@2x.png in Resources */,
 				3F676996230E9EC100E98C14 /* iconFeedDetail@2x.png in Resources */,
 				3F676997230E9EC100E98C14 /* Help@2x.png in Resources */,
 				3F676998230E9EC100E98C14 /* Edit User@2x.png in Resources */,
@@ -4465,6 +4523,7 @@
 				3F6769B4230E9EC100E98C14 /* Add User@2x.png in Resources */,
 				3F6769B5230E9EC100E98C14 /* Cancel 2@2x.png in Resources */,
 				3F6769B6230E9EC100E98C14 /* Enter@2x.png in Resources */,
+				3FB038152398A8AD00FC859C /* iconOtcOrder@2x.png in Resources */,
 				3F6769B7230E9EC100E98C14 /* Close Window-50@2x.png in Resources */,
 				3F6769B8230E9EC100E98C14 /* Hearts Filled-50@2x.png in Resources */,
 				3FA72B5C2340BC2500EE3DC9 /* iconEdit@3x.png in Resources */,
@@ -4559,6 +4618,7 @@
 				3F676A0A230E9EC100E98C14 /* Info-50@2x.png in Resources */,
 				3F676A0B230E9EC100E98C14 /* Leaving Geo Fence@2x.png in Resources */,
 				3F23B780231CCC7000EEEE78 /* paysuccess@3x.png in Resources */,
+				3FB0381A2398A93400FC859C /* iconCopy@2x.png in Resources */,
 				3F676A0C230E9EC100E98C14 /* share_wechat_friend@2x.png in Resources */,
 				3F676A0D230E9EC100E98C14 /* Calendar@2x.png in Resources */,
 				3F676A0E230E9EC100E98C14 /* Find User@2x.png in Resources */,
@@ -4589,6 +4649,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3FB8F9BA21CE66C200DA88E2 /* Approve@2x.png in Resources */,
+				3FB038242398AA4200FC859C /* iconPhone@3x.png in Resources */,
 				3FB8F9BB21CE66C200DA88E2 /* ad_logo@3x.png in Resources */,
 				3FB8F9BC21CE66C200DA88E2 /* Airport-50@2x.png in Resources */,
 				3FB8F9BD21CE66C200DA88E2 /* iconAbout@2x.png in Resources */,
@@ -4600,6 +4661,7 @@
 				3FB8F9C321CE66C200DA88E2 /* icon_2_2@2x.png in Resources */,
 				3FB8F9C421CE66C200DA88E2 /* mic@2x.png in Resources */,
 				3FB8F9C521CE66C200DA88E2 /* 5 Star Hotel@2x.png in Resources */,
+				3FB0380E2398A8AD00FC859C /* iconOtcOrder@3x.png in Resources */,
 				3FB8F9C621CE66C200DA88E2 /* Download@2x.png in Resources */,
 				3FB8F9C721CE66C200DA88E2 /* page_2_b@2x.png in Resources */,
 				3FB8F9C821CE66C200DA88E2 /* banner_center@2x.png in Resources */,
@@ -4618,7 +4680,9 @@
 				3FB8F9D421CE66C200DA88E2 /* icon_3_2@2x.png in Resources */,
 				3FB8F9D521CE66C200DA88E2 /* Christmas Star@2x.png in Resources */,
 				3F7ED8E52276937D00082680 /* iconHtlcPreimage@2x.png in Resources */,
+				3FB038112398A8AD00FC859C /* iconOtcUser@2x.png in Resources */,
 				3FB8F9D621CE66C200DA88E2 /* Sorting Arrows Horizontal-50@2x.png in Resources */,
+				3FB0381C2398A93400FC859C /* iconCopy@3x.png in Resources */,
 				3FB8F9D721CE66C200DA88E2 /* Car@2x.png in Resources */,
 				3FB8F9D821CE66C200DA88E2 /* Advertising@2x.png in Resources */,
 				3FB8F9D921CE66C200DA88E2 /* iconSetting@3x.png in Resources */,
@@ -4626,6 +4690,7 @@
 				3FB8F9DB21CE66C200DA88E2 /* Minus@2x.png in Resources */,
 				3FB8F9DC21CE66C200DA88E2 /* Menu@2x.png in Resources */,
 				3FB8F9DD21CE66C200DA88E2 /* Date To@2x.png in Resources */,
+				3FB0380B2398A8AD00FC859C /* iconOtcUser@3x.png in Resources */,
 				3FEBEEF821DDBBE600C124CF /* iconProposal@3x.png in Resources */,
 				3FB8F9DE21CE66C200DA88E2 /* sns_more_actions@2x.png in Resources */,
 				3FB8F9DF21CE66C200DA88E2 /* ResignBgdz-50@2x.png in Resources */,
@@ -4653,6 +4718,7 @@
 				3FB8F9F421CE66C200DA88E2 /* Edit@2x.png in Resources */,
 				3F7ED8DB227691BA00082680 /* iconAdvFunction@3x.png in Resources */,
 				3F767B12224B7B310012822D /* Localizable.strings in Resources */,
+				3FB038042398A73F00FC859C /* iconOtc@3x.png in Resources */,
 				3FB8F9F521CE66C200DA88E2 /* Assets.xcassets in Resources */,
 				3F6C35B621EE0AB1008E2903 /* iconDepositWithdraw@2x.png in Resources */,
 				3FB8F9F621CE66C200DA88E2 /* pass@2x.png in Resources */,
@@ -4665,6 +4731,7 @@
 				3FB8F9FC21CE66C200DA88E2 /* Trash@2x.png in Resources */,
 				3FB8F9FD21CE66C200DA88E2 /* iconAvatar@2x.png in Resources */,
 				3FB8F9FE21CE66C200DA88E2 /* Share@2x.png in Resources */,
+				3FB038012398A73F00FC859C /* iconOtc@2x.png in Resources */,
 				3FB8F9FF21CE66C200DA88E2 /* Back-44@2x.png in Resources */,
 				3FE19EA2235858A4000D1C54 /* iconExplorer@3x.png in Resources */,
 				3FB8FA0021CE66C200DA88E2 /* bus order@2x.png in Resources */,
@@ -4679,6 +4746,7 @@
 				3FB8FA0821CE66C200DA88E2 /* Arrow@2x.png in Resources */,
 				3FB8FA0921CE66C200DA88E2 /* Entering Geo Fence@2x.png in Resources */,
 				3FB8FA0A21CE66C200DA88E2 /* iconAvatar@3x.png in Resources */,
+				3FB038212398AA4200FC859C /* iconPhone@2x.png in Resources */,
 				3FB8FA0B21CE66C200DA88E2 /* iconFeedDetail@2x.png in Resources */,
 				3FB8FA0C21CE66C200DA88E2 /* Help@2x.png in Resources */,
 				3FB8FA0D21CE66C200DA88E2 /* Edit User@2x.png in Resources */,
@@ -4712,6 +4780,7 @@
 				3FB8FA2821CE66C200DA88E2 /* Add User@2x.png in Resources */,
 				3FB8FA2921CE66C200DA88E2 /* Cancel 2@2x.png in Resources */,
 				3FB8FA2A21CE66C200DA88E2 /* Enter@2x.png in Resources */,
+				3FB038142398A8AD00FC859C /* iconOtcOrder@2x.png in Resources */,
 				3FB8FA2B21CE66C200DA88E2 /* Close Window-50@2x.png in Resources */,
 				3FB8FA2C21CE66C200DA88E2 /* Hearts Filled-50@2x.png in Resources */,
 				3FA72B5B2340BC2500EE3DC9 /* iconEdit@3x.png in Resources */,
@@ -4806,6 +4875,7 @@
 				3FB8FA7D21CE66C200DA88E2 /* Info-50@2x.png in Resources */,
 				3FB8FA7E21CE66C200DA88E2 /* Leaving Geo Fence@2x.png in Resources */,
 				3F23B77F231CCC7000EEEE78 /* paysuccess@3x.png in Resources */,
+				3FB038192398A93400FC859C /* iconCopy@2x.png in Resources */,
 				3FB8FA7F21CE66C200DA88E2 /* share_wechat_friend@2x.png in Resources */,
 				3FB8FA8021CE66C200DA88E2 /* Calendar@2x.png in Resources */,
 				3FB8FA8121CE66C200DA88E2 /* Find User@2x.png in Resources */,
@@ -4861,6 +4931,7 @@
 				B7A837A81C0CB35D00CBA6D0 /* Localizable.strings in Resources */,
 				B7ED5E391D6BF6FD0043338B /* first1.png in Resources */,
 				B7973C3620E205560052A5F5 /* tabDebt@2x.png in Resources */,
+				3FB038002398A73F00FC859C /* iconOtc@2x.png in Resources */,
 				B7435DBD1C1EB7A700EEEEDD /* icon_1_1@2x.png in Resources */,
 				3FB8F89421CCD10400DA88E2 /* InfoPlist.strings in Resources */,
 				F5D19DDF1CA6D68400321C82 /* Offline@2x.png in Resources */,
@@ -4890,7 +4961,9 @@
 				B7973C3920E205560052A5F5 /* tabMyself_b@2x.png in Resources */,
 				F590168A1CE5F2C700898B70 /* Airport@2x.png in Resources */,
 				F55325A81C075D3200EC3F95 /* Delete@2x.png in Resources */,
+				3FB038202398AA4200FC859C /* iconPhone@2x.png in Resources */,
 				B7A829641D64162A002F5B66 /* mic-icon@2x.png in Resources */,
+				3FB038132398A8AD00FC859C /* iconOtcOrder@2x.png in Resources */,
 				F553259F1C075D3200EC3F95 /* Checked Checkbox 2@2x.png in Resources */,
 				F5A426501DC1E13200B56635 /* Headset@2x.png in Resources */,
 				F5BF57BB1E307A0B00DEDE38 /* sns_praised_highlight@2x.png in Resources */,
@@ -4922,6 +4995,7 @@
 				F55325971C075D3200EC3F95 /* Arrow@2x.png in Resources */,
 				F55325AD1C075D3200EC3F95 /* Entering Geo Fence@2x.png in Resources */,
 				B73784FD20FE2449001EEA8C /* iconAvatar@3x.png in Resources */,
+				3FB0380D2398A8AD00FC859C /* iconOtcOrder@3x.png in Resources */,
 				3F3E5849218310E900F1DC24 /* iconFeedDetail@2x.png in Resources */,
 				3FE19EA1235858A4000D1C54 /* iconExplorer@3x.png in Resources */,
 				F55325B21C075D3200EC3F95 /* Help@2x.png in Resources */,
@@ -4996,6 +5070,7 @@
 				3F0AE33F2192C97800E4144C /* iconScan@2x.png in Resources */,
 				F55325AE1C075D3200EC3F95 /* Exit@2x.png in Resources */,
 				B7973C4520E4C8EF0052A5F5 /* iconOrders@2x.png in Resources */,
+				3FB038032398A73F00FC859C /* iconOtc@3x.png in Resources */,
 				B7961A9D1DC9BEE8004826FA /* ad_logo@2x.png in Resources */,
 				F55325BE1C075D3200EC3F95 /* Remove User@2x.png in Resources */,
 				B707E1C51DC89ECC008C92CB /* banner_back@2x.png in Resources */,
@@ -5007,11 +5082,13 @@
 				F55325C51C075D3200EC3F95 /* Tram@2x.png in Resources */,
 				F55E1D3A1C5F9E540072FF99 /* arrow right long bold@2x.png in Resources */,
 				B729E48E1C2D566900CE3623 /* page_4@2x.png in Resources */,
+				3FB0380A2398A8AD00FC859C /* iconOtcUser@3x.png in Resources */,
 				F59016911CE6DAF300898B70 /* Car-50@2x.png in Resources */,
 				ED055C6618607ECF00515EA2 /* avatarmask.png in Resources */,
 				F565D8DA1C19CFF000814662 /* pay_1@3x.png in Resources */,
 				F51D13F31C51115F00FBB748 /* tabUser@2x.png in Resources */,
 				B7973C4F20E4E43E0052A5F5 /* iconAbout@3x.png in Resources */,
+				3FB0381B2398A93400FC859C /* iconCopy@3x.png in Resources */,
 				F553259E1C075D3200EC3F95 /* Cancel@2x.png in Resources */,
 				3F7ED8DA227691BA00082680 /* iconAdvFunction@3x.png in Resources */,
 				B78FFC0C1C03220D00AB7F1F /* tapicon@2x.png in Resources */,
@@ -5022,6 +5099,7 @@
 				F51D14061C59FAA100FBB748 /* share_passbook@2x.png in Resources */,
 				F55E1D2A1C5F30010072FF99 /* begin@2x.png in Resources */,
 				F5EA29761DC77A7D00574ECC /* flight order@2x.png in Resources */,
+				3FB038232398AA4200FC859C /* iconPhone@3x.png in Resources */,
 				B786D51520EB793500427C08 /* iconDebtRank@2x.png in Resources */,
 				EDC4D6EA1869D84200D0A23E /* Static in Resources */,
 				B7973C4720E4C8EF0052A5F5 /* iconFaq@2x.png in Resources */,
@@ -5030,6 +5108,7 @@
 				F5D21AB01D45E91500C1ED54 /* Help-50@2x.png in Resources */,
 				F5EA29771DC77A7D00574ECC /* hotel order@2x.png in Resources */,
 				F55325C41C075D3200EC3F95 /* Taxi@2x.png in Resources */,
+				3FB038182398A93400FC859C /* iconCopy@2x.png in Resources */,
 				F5BF57BC1E307A0B00DEDE38 /* sns_praised@2x.png in Resources */,
 				F55325A41C075D3200EC3F95 /* Clock@2x.png in Resources */,
 				B7973C5E20E4EACD0052A5F5 /* tabDebt@3x.png in Resources */,
@@ -5042,6 +5121,7 @@
 				ED055C6818607ECF00515EA2 /* avatarmask@2x.png in Resources */,
 				F55325C71C075D3200EC3F95 /* User Female@2x.png in Resources */,
 				3F3E5848218310E900F1DC24 /* iconFeedDetail@3x.png in Resources */,
+				3FB038102398A8AD00FC859C /* iconOtcUser@2x.png in Resources */,
 				F55325C81C075D3200EC3F95 /* User Group@2x.png in Resources */,
 				3F23B77E231CCC7000EEEE78 /* paysuccess@3x.png in Resources */,
 				3F7ED8E42276937D00082680 /* iconHtlcPreimage@2x.png in Resources */,

@@ -164,8 +164,8 @@
     self.view.backgroundColor = theme.appBackColor;
     
     //  TODO:2.9 icon
-    id btn1 = [self naviButtonWithImage:@"iconOrders" action:@selector(onRightOrderButtonClicked) color:theme.textColorNormal];
-    id btn2 = [self naviButtonWithImage:@"iconExplorer" action:@selector(onRightUserButtonClicked) color:theme.textColorNormal];
+    id btn1 = [self naviButtonWithImage:@"iconOtcOrder" action:@selector(onRightOrderButtonClicked) color:theme.textColorNormal];
+    id btn2 = [self naviButtonWithImage:@"iconOtcUser" action:@selector(onRightUserButtonClicked) color:theme.textColorNormal];
     [self.navigationItem setRightBarButtonItems:@[btn2, btn1]];
     
     //  导航栏中间标题

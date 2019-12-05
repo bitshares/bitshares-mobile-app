@@ -50,7 +50,7 @@
         _lbStatusName = [self auxGenLabel:[UIFont boldSystemFontOfSize:30]];
         _lbStatusDesc = [self auxGenLabel:[UIFont systemFontOfSize:13]];
         //  TODO:2.9 icon
-        _imgPhone = [[UIImageView alloc] initWithImage:[UIImage templateImageNamed:@"paysuccess"]];
+        _imgPhone = [[UIImageView alloc] initWithImage:[UIImage templateImageNamed:@"iconPhone"]];
         [self addSubview:_imgPhone];
         _lbPhone = [self auxGenLabel:[UIFont systemFontOfSize:13.0f]];
         _lbPhone.textAlignment = NSTextAlignmentRight;
