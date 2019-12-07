@@ -97,32 +97,37 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
  */
 + (void)showGrapheneError:(id)error
 {
-    if (error && [error isKindOfClass:[WsPromiseException class]]){
-        WsPromiseException* excp = (WsPromiseException*)error;
-        if (excp.userInfo){
-            NSString* message = [excp.userInfo objectForKey:@"message"] ?: @"";
-            id stack = [[excp.userInfo objectForKey:@"data"] objectForKey:@"stack"];
-            if (stack && [stack count] > 0) {
-                message = [NSString stringWithFormat:@"%@ : %@", message, [[stack firstObject] objectForKey:@"format"] ?: @""];
+    if (error){
+        if ([error isKindOfClass:[WsPromiseException class]]) {
+            WsPromiseException* excp = (WsPromiseException*)error;
+            if (excp.userInfo){
+                NSString* message = [excp.userInfo objectForKey:@"message"] ?: @"";
+                id stack = [[excp.userInfo objectForKey:@"data"] objectForKey:@"stack"];
+                if (stack && [stack count] > 0) {
+                    message = [NSString stringWithFormat:@"%@ : %@", message, [[stack firstObject] objectForKey:@"format"] ?: @""];
+                }
+                if (message && message.length > 0){
+                    //  REMARK：部分错误特化显示
+                    if ([message rangeOfString:@"no such account"].location != NSNotFound){
+                        [self makeToast:NSLocalizedString(@"kGPErrorAccountNotExist", @"账号不存在。")];
+                        return;
+                    }
+                    if ([message rangeOfString:@"Insufficient Balance"].location != NSNotFound){
+                        [self makeToast:NSLocalizedString(@"kGPErrorInsufficientBalance", @"手续费不足。")];
+                        return;
+                    }
+                    NSString* lowermsg = [message lowercaseString];
+                    if ([lowermsg rangeOfString:@"preimage size"].location != NSNotFound ||
+                        [lowermsg rangeOfString:@"provided preimage"].location != NSNotFound){
+                        [self makeToast:NSLocalizedString(@"kGPErrorRedeemInvalidPreimage", @"原像不正确。")];
+                        return;
+                    }
+                    //  TODO:fowallet 提案等手续费不足等情况显示
+                }
             }
-            if (message && message.length > 0){
-                //  REMARK：部分错误特化显示
-                if ([message rangeOfString:@"no such account"].location != NSNotFound){
-                    [self makeToast:NSLocalizedString(@"kGPErrorAccountNotExist", @"账号不存在。")];
-                    return;
-                }
-                if ([message rangeOfString:@"Insufficient Balance"].location != NSNotFound){
-                    [self makeToast:NSLocalizedString(@"kGPErrorInsufficientBalance", @"手续费不足。")];
-                    return;
-                }
-                NSString* lowermsg = [message lowercaseString];
-                if ([lowermsg rangeOfString:@"preimage size"].location != NSNotFound ||
-                    [lowermsg rangeOfString:@"provided preimage"].location != NSNotFound){
-                    [self makeToast:NSLocalizedString(@"kGPErrorRedeemInvalidPreimage", @"原像不正确。")];
-                    return;
-                }
-                //  TODO:fowallet 提案等手续费不足等情况显示
-            }
+        } else if ([error isKindOfClass:[NSString class]]) {
+            [self makeToast:error];
+            return;
         }
     }
     [self makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];

@@ -48,11 +48,7 @@
 
 - (NSArray*)getTitleStringArray
 {
-    //  TODO:2.9
-    return @[@"我要买", @"我要卖"];
-//    return [_assetList ruby_map:(^id(id src) {
-//        return [src objectForKey:@"assetSymbol"];
-//    })];
+    return @[NSLocalizedString(@"kOtcPageTitleBuy", @"我要买"), NSLocalizedString(@"kOtcPageTitleSell", @"我要卖")];
 }
 
 - (NSArray*)getSubPageVCArray
@@ -64,8 +60,7 @@
 - (void)onRightOrderButtonClicked
 {
     VCBase* vc = [[VCOtcOrders alloc] init];
-    //  TODO:2.9
-    [self pushViewController:vc vctitle:@"订单记录" backtitle:kVcDefaultBackTitleName];
+    [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleOtcOrderList", @"订单记录") backtitle:kVcDefaultBackTitleName];
 }
 
 - (void)onRightUserButtonClicked
@@ -73,11 +68,11 @@
     [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
                                                        message:nil
                                                         cancel:NSLocalizedString(@"kBtnCancel", @"取消")
-                                                         items:@[@"认证信息", @"收款方式"]
+                                                         items:@[@"认证信息", @"收款方式"]//TODO:2.9 lang
                                                       callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
      {
          if (buttonIndex != cancelIndex){
-             // 查询用户认证信息 TODO:2.9
+             // 查询用户认证信息 TODO:2.9 lang
              OtcManager* otc = [OtcManager sharedOtcManager];
              [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
              [[[otc queryIdVerify:[otc getCurrentBtsAccount]] then:^id(id responsed) {
@@ -87,10 +82,14 @@
                      {
                          if ([otc isIdVerifyed:responsed]) {
                              VCBase* vc = [[VCOtcUserAuthInfos alloc] initWithAuthInfo:responsed[@"data"]];
-                             [self pushViewController:vc vctitle:@"认证信息" backtitle:kVcDefaultBackTitleName];
+                             [self pushViewController:vc
+                                              vctitle:NSLocalizedString(@"kVcTitleOtcAuthInfos", @"认证信息")
+                                            backtitle:kVcDefaultBackTitleName];
                          } else {
                              VCBase* vc = [[VCOtcUserAuth alloc] init];
-                             [self pushViewController:vc vctitle:@"身份认证" backtitle:kVcDefaultBackTitleName];
+                             [self pushViewController:vc
+                                              vctitle:NSLocalizedString(@"kVcTitleOtcUserAuth", @"身份认证")
+                                            backtitle:kVcDefaultBackTitleName];
                          }
                      }
                          break;
@@ -98,9 +97,11 @@
                      {
                          if ([otc isIdVerifyed:responsed]) {
                              VCBase* vc = [[VCOtcPaymentMethods alloc] initWithAuthInfo:responsed[@"data"]];
-                             [self pushViewController:vc vctitle:@"收款方式" backtitle:kVcDefaultBackTitleName];
+                             [self pushViewController:vc
+                                              vctitle:NSLocalizedString(@"kVcTitleOtcPaymentMethodList", @"收款方式")
+                                            backtitle:kVcDefaultBackTitleName];
                          } else {
-                             // TODO:2.9
+                             // TODO:2.9 lang
                              [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"添加收款方式之前，请先完成身份认证，是否继续？"
                                                                                     withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
                                                                                    completion:^(NSInteger buttonIndex)
@@ -108,7 +109,9 @@
                                   if (buttonIndex == 1)
                                   {
                                       VCBase* vc = [[VCOtcUserAuth alloc] init];
-                                      [self pushViewController:vc vctitle:@"身份认证" backtitle:kVcDefaultBackTitleName];
+                                      [self pushViewController:vc
+                                                       vctitle:NSLocalizedString(@"kVcTitleOtcUserAuth", @"身份认证")
+                                                     backtitle:kVcDefaultBackTitleName];
                                   }
                               }];
                          }
@@ -148,7 +151,7 @@
              id asset_name = [list objectAtIndex:buttonIndex];
              if (![_curr_asset_name isEqualToString:asset_name]) {
                  _curr_asset_name = asset_name;
-                 [sender setTitle:[self genTitleString] forState:UIControlStateNormal];
+                 [sender updateTitleWithoutAnimation:[self genTitleString]];
                  [self queryCurrentPageAdList];
              }
          }
@@ -163,13 +166,13 @@
     
     self.view.backgroundColor = theme.appBackColor;
     
-    //  TODO:2.9 icon
+    //  导航栏右边 订单和个人信息按钮
     id btn1 = [self naviButtonWithImage:@"iconOtcOrder" action:@selector(onRightOrderButtonClicked) color:theme.textColorNormal];
     id btn2 = [self naviButtonWithImage:@"iconOtcUser" action:@selector(onRightUserButtonClicked) color:theme.textColorNormal];
     [self.navigationItem setRightBarButtonItems:@[btn2, btn1]];
     
     //  导航栏中间标题
-    UIButton* btnAssetBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    UIButton* btnAssetBtn = [UIButton buttonWithType:UIButtonTypeSystem];
     btnAssetBtn.titleLabel.font = [UIFont boldSystemFontOfSize:17];
     [btnAssetBtn setTitle:[self genTitleString] forState:UIControlStateNormal];
     [btnAssetBtn setTitleColor:[ThemeManager sharedThemeManager].textColorMain forState:UIControlStateNormal];
@@ -184,7 +187,6 @@
 
 - (void)queryCurrentPageAdList
 {
-    //  TODO:2.9
     VCOtcMerchantList* vc = (VCOtcMerchantList*)[self currentPage];
     if (vc) {
         [vc queryAdList:_curr_asset_name];
@@ -268,13 +270,15 @@
 
     //  TODO:2.9
     _lbEmpty = [self genCenterEmptyLabel:rect txt:@"没有任何商家在线。"];
-//    _lbEmpty.backgroundColor = [UIColor clearColor];
     [self.view addSubview:_lbEmpty];
 }
 
+/*
+ *  (private) 查询广告列表
+ */
 - (void)queryAdList:(NSString*)asset_name
 {
-    //  TODO:2.9 page
+    //  TODO:2.9 page args
     [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     [[[[OtcManager sharedOtcManager] queryAdList:_ad_type asset_name:asset_name page:0 page_size:50] then:^id(id data) {
         [_owner hideBlockView];
@@ -381,7 +385,7 @@
  */
 - (void)askForIdVerify:(id)responsed
 {
-    //  TODO:2.9
+    //  TODO:2.9 lang
     [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"您尚未完成身份认证，不可进行场外交易，是否去认证？"
                                                            withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
                                                           completion:^(NSInteger buttonIndex)
@@ -389,7 +393,9 @@
          if (buttonIndex == 1)
          {
             VCBase* vc = [[VCOtcUserAuth alloc] init];
-            [_owner pushViewController:vc vctitle:@"身份认证" backtitle:kVcDefaultBackTitleName];
+            [_owner pushViewController:vc
+                               vctitle:NSLocalizedString(@"kVcTitleOtcUserAuth", @"身份认证")
+                             backtitle:kVcDefaultBackTitleName];
          }
      }];
 }
@@ -399,14 +405,50 @@
  */
 - (void)askForContactCustomerService:(id)responsed
 {
-    //  TODO:2.9
+    //  TODO:2.9 lang
     [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"您的账号已被冻结，是否联系客服？"
                                                            withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
                                                           completion:^(NSInteger buttonIndex)
      {
          if (buttonIndex == 1)
          {
-             // TODO:2.9
+             // TODO:2.9 客服界面是什么样的...
+         }
+     }];
+}
+
+/*
+ *  (private) 用户的收款方式和商家付款方式不匹配的提示。
+ */
+- (void)askForAddNewPaymentMethod:(id)aditem auth_info:(id)auth_info
+{
+    BOOL bankcardPaySwitch = [[aditem objectForKey:@"bankcardPaySwitch"] boolValue];
+    BOOL aliPaySwitch = [[aditem objectForKey:@"aliPaySwitch"] boolValue];
+    BOOL wechatPaySwitch = NO; //  TODO:2.9 默认false，ad数据里没微信。
+    
+    NSMutableArray* ary = [NSMutableArray array];
+    if (aliPaySwitch) {
+        [ary addObject:@"支付宝"];
+    }
+    if (bankcardPaySwitch) {
+        [ary addObject:@"银行卡"];
+    }
+    if (wechatPaySwitch) {
+        [ary addObject:@"微信支付"];
+    }
+    assert([ary count] > 0);
+    NSString* paymentStrList = [ary componentsJoinedByString:@"、"];
+    //  TODO:2.9 lang
+    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:[NSString stringWithFormat:@"商家仅支持通过【%@】向您付款，您需要前往添加并激活对应收款方式，是否继续？", paymentStrList]
+                                                           withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                          completion:^(NSInteger buttonIndex)
+     {
+         if (buttonIndex == 1)
+         {
+             VCBase* vc = [[VCOtcPaymentMethods alloc] initWithAuthInfo:auth_info];
+             [_owner pushViewController:vc
+                                vctitle:NSLocalizedString(@"kVcTitleOtcPaymentMethodList", @"收款方式")
+                              backtitle:kVcDefaultBackTitleName];
          }
      }];
 }
@@ -458,6 +500,21 @@
 }
 
 /*
+ *  (private) 用户卖出时 - 查询用户的收款方式列表。
+ */
+- (WsPromise*)_queryPaymentMethodList
+{
+    if (_ad_type == eoadt_user_buy) {
+        return [WsPromise resolve:@YES];
+    } else {
+        OtcManager* otc = [OtcManager sharedOtcManager];
+        return [[otc queryPaymentMethods:[otc getCurrentBtsAccount]] then:^id(id payment_responsed) {
+            return [payment_responsed objectForKey:@"data"];
+        }];
+    }
+}
+
+/*
  *  事件 - 点击购买or出售按钮。
  */
 - (void)onButtonBuyOrSellClicked:(UIButton*)sender
@@ -465,45 +522,109 @@
     assert(sender.tag < [_data_array count]);
     id item = [_data_array objectAtIndex:sender.tag];
     assert(item);
+    
+    BOOL bankcardPaySwitch = [[item objectForKey:@"bankcardPaySwitch"] boolValue];
+    BOOL aliPaySwitch = [[item objectForKey:@"aliPaySwitch"] boolValue];
+    BOOL wechatPaySwitch = NO; //  TODO:2.9 默认false，ad数据里没微信。
+  
+    //  TODO:2.9临时关闭check
+    //  TODO:2.9 lang
+    if (!bankcardPaySwitch && !aliPaySwitch && !wechatPaySwitch) {
+        if (_ad_type == eoadt_user_buy) {
+            //  用户买
+            [OrgUtils makeToast:@"商家没开启任何收款方式。"];
+        } else {
+            //  用户卖
+            [OrgUtils makeToast:@"商家没开启任何付款方式。"];
+        }
+        return;
+    }
+    
     id adId = [item objectForKey:@"adId"];
     assert(adId);
     
     OtcManager* otc = [OtcManager sharedOtcManager];
     
-    //  查询用户认证信息
     [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     [[[otc queryIdVerify:[otc getCurrentBtsAccount]] then:^id(id responsed) {
-        //  查询认证信息
+        //  1、查询认证信息：用户是否完成实名认证
         if (![otc isIdVerifyed:responsed]) {
             [_owner hideBlockView];
             [self askForIdVerify:responsed];
             return nil;
         }
-        //  查询账号状态
+        //  2、查询账号状态：用户账号是否异常
         if ([[[responsed objectForKey:@"data"] objectForKey:@"status"] integerValue] == eous_freeze) {
             [_owner hideBlockView];
             [self askForContactCustomerService:responsed];
             return nil;
         }
-        //  TODO:2.9。付款方式是否和我的收款方式一致。
-        //  前往下单（TODO:2.9 是否先查询广告详情，目前数据一直）
-        return [[otc lockPrice:[otc getCurrentBtsAccount]
-                         ad_id:adId
-                          type:(EOtcAdType)[[item objectForKey:@"adType"] integerValue]
-                  asset_symbol:[item objectForKey:@"assetSymbol"]
-                         price:[item objectForKey:@"price"]] then:^id(id data) {
-            [_owner hideBlockView];
-            id lock_info = [data objectForKey:@"data"];
-            assert(lock_info);
-            NSString* oldprice = [NSString stringWithFormat:@"%@", [item objectForKey:@"price"]];
-            NSString* newprice = [NSString stringWithFormat:@"%@", [lock_info objectForKey:@"unitPrice"]];
-            //  价格变化
-            if (![oldprice isEqualToString:newprice]) {
-                [self askForPriceChanged:item lock_info:lock_info];
-            } else {
-                [self gotoInputOrderCore:item lock_info:lock_info];
+        //  3、仅针对用户卖出的情况：收款方式和商家付款方式是否匹配 REMARK：用户买入不用check，只要商家开启任意收款方式即可。
+        return [[self _queryPaymentMethodList] then:^id(id pminfo_list) {
+            //  仅卖出的情况
+            if (_ad_type == eoadt_user_sell) {
+                BOOL bPaymentMatch = NO;
+                if (pminfo_list && [pminfo_list isKindOfClass:[NSArray class]] && [pminfo_list count] > 0) {
+                    for (id pminfo in pminfo_list) {
+                        if ([[pminfo objectForKey:@"status"] integerValue] == eopms_enable) {
+                            NSInteger pmtype = [pminfo[@"type"] integerValue];
+                            switch (pmtype) {
+                                case eopmt_alipay:
+                                {
+                                    if (aliPaySwitch) {
+                                        bPaymentMatch = YES;
+                                    }
+                                }
+                                    break;
+                                case eopmt_bankcard:
+                                {
+                                    if (bankcardPaySwitch) {
+                                        bPaymentMatch = YES;
+                                    }
+                                }
+                                    break;
+                                case eopmt_wechatpay:
+                                {
+                                    if (wechatPaySwitch) {
+                                        bPaymentMatch = YES;
+                                    }
+                                }
+                                    break;
+                                default:
+                                    break;
+                            }
+                            //  已匹配
+                            if (bPaymentMatch) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!bPaymentMatch) {
+                    [_owner hideBlockView];
+                    [self askForAddNewPaymentMethod:item auth_info:responsed[@"data"]];
+                    return nil;
+                }
             }
-            return nil;
+            //  4、锁定价格&前往下单（TODO:2.9 是否先查询广告详情，目前数据一直）
+            return [[otc lockPrice:[otc getCurrentBtsAccount]
+                             ad_id:adId
+                              type:(EOtcAdType)[[item objectForKey:@"adType"] integerValue]
+                      asset_symbol:[item objectForKey:@"assetSymbol"]
+                             price:[item objectForKey:@"price"]] then:^id(id data) {
+                [_owner hideBlockView];
+                id lock_info = [data objectForKey:@"data"];
+                assert(lock_info);
+                NSString* oldprice = [NSString stringWithFormat:@"%@", [item objectForKey:@"price"]];
+                NSString* newprice = [NSString stringWithFormat:@"%@", [lock_info objectForKey:@"unitPrice"]];
+                //  价格变化
+                if (![oldprice isEqualToString:newprice]) {
+                    [self askForPriceChanged:item lock_info:lock_info];
+                } else {
+                    [self gotoInputOrderCore:item lock_info:lock_info];
+                }
+                return nil;
+            }];
         }];
     }] catch:^id(id error) {
         [_owner hideBlockView];

@@ -191,15 +191,29 @@
             //  需要付款（查询实名认证信息）
            return [[otc queryIdVerify:[otc getCurrentBtsAccount]] then:^id(id auth_responsed) {
                [self hideBlockView];
-               VCOtcOrderDetails* vc = [[VCOtcOrderDetails alloc] initWithOrder:order_item details:details auth:auth_responsed[@"data"]];
+               WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
+               VCOtcOrderDetails* vc = [[VCOtcOrderDetails alloc] initWithOrderDetails:details
+                                                                                  auth:auth_responsed[@"data"]
+                                                                        result_promise:result_promise];
                [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+               [result_promise then:^id(id callback_data) {
+                   [self _onOrderDetailCallback:callback_data];
+                   return nil;
+               }];
                return nil;
             }];
         } else {
             //  不用付款 - 直接转到详情界面
             [self hideBlockView];
-            VCOtcOrderDetails* vc = [[VCOtcOrderDetails alloc] initWithOrder:order_item details:details auth:nil];
+            WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
+            VCOtcOrderDetails* vc = [[VCOtcOrderDetails alloc] initWithOrderDetails:details
+                                                                               auth:nil
+                                                                     result_promise:result_promise];
             [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+            [result_promise then:^id(id callback_data) {
+                [self _onOrderDetailCallback:callback_data];
+                return nil;
+            }];
             return nil;
         }
     }] catch:^id(id error) {
@@ -207,6 +221,17 @@
         [otc showOtcError:error];
         return nil;
     }];
+}
+
+/*
+ *  (private) 从订单详情返回
+ */
+- (void)_onOrderDetailCallback:(id)callback_data
+{
+    if (callback_data && [callback_data boolValue]) {
+        //  订单状态变更：刷新界面
+        [self queryUserOrders];
+    }
 }
 
 @end

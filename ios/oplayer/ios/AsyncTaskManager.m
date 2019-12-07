@@ -95,7 +95,9 @@ static AsyncTaskManager *_sharedAsyncTaskManager = nil;
  */
 - (void)removeSecondsTimer:(NSInteger)tid
 {
-    [self _removeSecondsTimerCore:[NSString stringWithFormat:@"%@", @(tid)]];
+    if (tid > 0) {
+        [self _removeSecondsTimerCore:[NSString stringWithFormat:@"%@", @(tid)]];
+    }
 }
 
 - (void)_removeSecondsTimerCore:(NSString*)timer_id

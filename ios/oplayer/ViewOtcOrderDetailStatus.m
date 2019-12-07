@@ -5,7 +5,7 @@
 //  Created by SYALON on 13-12-28.
 //
 //
-
+#import "VCBase.h"
 #import "ViewOtcOrderDetailStatus.h"
 #import "NativeAppDelegate.h"
 #import "ThemeManager.h"
@@ -14,11 +14,13 @@
 
 @interface ViewOtcOrderDetailStatus()
 {
+    __weak VCBase*  _owner;                 //  REMARK：声明为 weak，否则会导致循环引用。
+    
     NSDictionary*   _item;
     
     UILabel*        _lbStatusName;
     UILabel*        _lbStatusDesc;
-    UIImageView*    _imgPhone;
+    UIButton*       _imgPhone;
     UILabel*        _lbPhone;
 }
 
@@ -36,9 +38,18 @@
     _lbStatusDesc = nil;
     _imgPhone = nil;
     _lbPhone = nil;
+    
+    _owner = nil;
 }
 
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+- (void)onPhoneButtonClicked:(UIButton*)sender
+{
+    if (_owner && [_owner respondsToSelector:@selector(onPhoneButtonClicked:)]){
+        [_owner performSelector:@selector(onPhoneButtonClicked:) withObject:sender];
+    }
+}
+
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier vc:(VCBase*)vc
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
@@ -47,11 +58,17 @@
         self.textLabel.hidden = YES;
         self.backgroundColor = [UIColor clearColor];
         
+        _owner = vc;
+        
         _lbStatusName = [self auxGenLabel:[UIFont boldSystemFontOfSize:30]];
         _lbStatusDesc = [self auxGenLabel:[UIFont systemFontOfSize:13]];
-        //  TODO:2.9 icon
-        _imgPhone = [[UIImageView alloc] initWithImage:[UIImage templateImageNamed:@"iconPhone"]];
+
+        _imgPhone = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_imgPhone setBackgroundImage:[UIImage templateImageNamed:@"iconPhone"] forState:UIControlStateNormal];
+        _imgPhone.userInteractionEnabled = YES;
+        [_imgPhone addTarget:self action:@selector(onPhoneButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:_imgPhone];
+        
         _lbPhone = [self auxGenLabel:[UIFont systemFontOfSize:13.0f]];
         _lbPhone.textAlignment = NSTextAlignmentRight;
     }
@@ -77,6 +94,13 @@
             [self layoutSubviews];
         }
     }
+}
+
+- (void)refreshText
+{
+    assert(_item);
+    _lbStatusName.text = _item[@"main"];
+    _lbStatusDesc.text = _item[@"desc"];
 }
 
 - (void)layoutSubviews
