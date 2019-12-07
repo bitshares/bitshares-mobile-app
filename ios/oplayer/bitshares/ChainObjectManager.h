@@ -231,6 +231,11 @@
  */
 - (WsPromise*)queryAllBlockHeaderInfos:(NSArray*)block_num_array skipQueryCache:(BOOL)skipQueryCache;
 
+/*
+ *  (public) 查询指定账号指定类型的账号明细列表。
+ */
+- (WsPromise*)queryAccountHistoryByOperations:(NSString*)account_id_or_name optype_array:(NSArray*)optype_array limit:(NSInteger)limit;
+
 /**
  *  (public) 查询最近成交记录
  */

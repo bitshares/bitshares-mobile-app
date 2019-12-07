@@ -15,6 +15,9 @@
 #import "ViewTipsInfoCell.h"
 
 #import "OtcManager.h"
+#import "AsyncTaskManager.h"
+
+#define fBottomButtonsViewHeight 60.0f
 
 enum
 {
@@ -43,16 +46,24 @@ enum
 
 @interface VCOtcOrderDetails ()
 {
-    NSDictionary*           _orderDetails;
-    NSDictionary*           _authInfos;                 //  可能为空，一般需要付款时才存在。
-    NSDictionary*           _statusInfos;
+    WsPromiseObject*            _result_promise;
     
-    NSDictionary*           _currSelectedPaymentMethod; //  买单情况下，当前选中的卖家收款方式。
+    NSDictionary*               _orderDetails;
+    NSDictionary*               _authInfos;                 //  可能为空，一般需要付款时才存在。
+    NSMutableDictionary*        _statusInfos;
+    BOOL                        _orderStatusDirty;          //  订单状态是否更新过了
     
-    UITableViewBase*        _mainTableView;
-    NSMutableArray*         _sectionDataArray;
-    ViewTipsInfoCell*       _cell_tips;                 //
-    NSMutableArray*         _btnArray;
+    NSInteger                   _timerID;                   //  买单付款倒计时
+    
+    NSDictionary*               _currSelectedPaymentMethod; //  买单情况下，当前选中的卖家收款方式。
+    
+    UITableViewBase*            _mainTableView;
+    ViewOtcOrderDetailStatus*   _viewStatusCell;            //  状态信息CELL
+    UIView*                     _pBottomActionsView;        //  底部按钮界面
+    
+    NSMutableArray*             _sectionDataArray;
+    ViewTipsInfoCell*           _cell_tips;
+    NSMutableArray*             _btnArray;
 }
 
 @end
@@ -61,29 +72,72 @@ enum
 
 -(void)dealloc
 {
+    [self _stopPaymentTimer];
     if (_mainTableView){
         [[IntervalManager sharedIntervalManager] releaseLock:_mainTableView];
         _mainTableView.delegate = nil;
         _mainTableView = nil;
     }
+    _viewStatusCell = nil;
+    _pBottomActionsView = nil;
     _cell_tips = nil;
     _sectionDataArray = nil;
     _orderDetails = nil;
     _authInfos = nil;
     _btnArray = nil;
     _currSelectedPaymentMethod = nil;
+    _result_promise = nil;
 }
 
-- (id)initWithOrder:(id)order details:(id)order_details auth:(id)auth_info
+- (void)_stopPaymentTimer
+{
+    if (_timerID != 0) {
+        [[AsyncTaskManager sharedAsyncTaskManager] removeSecondsTimer:_timerID];
+        _timerID = 0;
+    }
+}
+
+/*
+ *  (private) 待付款定时器
+ */
+- (void)_onPaymentTimerTick:(NSInteger)left_ts
+{
+    if (left_ts > 0) {
+        //  刷新 TODO:2.9 lang
+        [_statusInfos setObject:[NSString stringWithFormat:@"请在 %@ 内付款给卖家。", [OtcManager fmtPaymentExpireTime:left_ts]] forKey:@"desc"];
+        [_viewStatusCell setItem:_statusInfos];
+        [_viewStatusCell refreshText];
+    } else {
+        //  TODO:2.9
+    }
+}
+
+- (id)initWithOrderDetails:(id)order_details auth:(id)auth_info result_promise:(WsPromiseObject*)result_promise
 {
     self = [super init];
     if (self) {
+        _orderStatusDirty = NO;
+        _result_promise = result_promise;
         _orderDetails = order_details;
         _authInfos = auth_info;
         _sectionDataArray = [NSMutableArray array];
         _btnArray = [NSMutableArray array];
         _cell_tips = nil;
-        _statusInfos = [OtcManager auxGenUserOrderStatusAndActions:order_details];
+        _statusInfos = [[OtcManager auxGenUserOrderStatusAndActions:order_details] mutableCopy];
+        
+        //  支付关闭定时器
+        _timerID = 0;
+        NSInteger expireDate = [_orderDetails[@"expireDate"] integerValue];
+        if (expireDate > 0 && ![_statusInfos[@"sell"] boolValue] && [_orderDetails[@"status"] integerValue] == eoops_new) {
+           NSInteger now_ts = (NSInteger)ceil([[NSDate date] timeIntervalSince1970]);
+           NSInteger expire_ts = (NSInteger)[OtcManager parseTime:_orderDetails[@"ctime"]] + expireDate;
+            if (now_ts < expire_ts) {
+               _timerID = [[AsyncTaskManager sharedAsyncTaskManager] scheduledSecondsTimerWithEndTS:expire_ts callback:^(NSInteger left_ts) {
+                   [self _onPaymentTimerTick:left_ts];
+                }];
+            }
+        }
+        
         _currSelectedPaymentMethod = nil;
         [self _initUIData];
     }
@@ -109,8 +163,8 @@ enum
         }
     } else {
         //  收款二维码
-        NSString* qrCode = [payment_info objectForKey:@"qrCode"];
-        if (qrCode && ![qrCode isEqualToString:@""]) {
+        NSString* qrCode = [NSString stringWithFormat:@"%@", [payment_info objectForKey:@"qrCode"]];
+        if (qrCode && ![qrCode isEqualToString:@""] && ![qrCode isEqualToString:@"0"]) {
             [target_array addObject:@(kVcSubPaymentQrCode)];
         }
     }
@@ -124,6 +178,7 @@ enum
 - (void)_initUIData
 {
     //  clean
+    _currSelectedPaymentMethod = nil;
     [_sectionDataArray removeAllObjects];
     [_btnArray removeAllObjects];
     
@@ -155,7 +210,7 @@ enum
     }] copy];
     [_sectionDataArray addObject:@{@"type":@(kVcSecOrderDetailInfo), @"rows":orderDetailRows}];
 
-    //  提示 TODO:2.9
+    //  提示 TODO:2.9 lang
     if ([[_statusInfos objectForKey:@"show_remark"] boolValue]) {
         if (!_cell_tips) {
             NSMutableArray* tips_array = [NSMutableArray array];
@@ -164,7 +219,7 @@ enum
                 [tips_array addObject:[NSString stringWithFormat:@"商家：%@", remark]];
             }
             [tips_array addObject:@"系统：在转账过程中请勿备注BTC、USDT等信息，防止汇款被拦截、银行卡被冻结等问题。"];
-            
+            //  UI
             _cell_tips = [[ViewTipsInfoCell alloc] initWithText:[NSString stringWithFormat:@"%@", [tips_array componentsJoinedByString:@"\n\n"]]];
             _cell_tips.hideBottomLine = YES;
             _cell_tips.hideTopLine = YES;
@@ -182,9 +237,19 @@ enum
     }
 }
 
+/*
+ *  (private) 刷新UI
+ */
 - (void)_refreshUI:(id)new_order_detail
 {
-    
+    _orderDetails = new_order_detail;
+    _statusInfos = [[OtcManager auxGenUserOrderStatusAndActions:_orderDetails] mutableCopy];
+    [self _initUIData];
+    //  刷新UI
+    CGRect tableRect = [_btnArray count] > 0 ? [self rectWithoutNaviWithOffset:fBottomButtonsViewHeight] : [self rectWithoutNavi];
+    [self _genBottomActionsView:fBottomButtonsViewHeight tableRect:tableRect];
+    _mainTableView.frame = tableRect;
+    [_mainTableView reloadData];
 }
 
 /*
@@ -192,8 +257,6 @@ enum
  */
 - (void)_execUpdateOrderCore:(id)payAccount payChannel:(id)payChannel type:(EOtcOrderUpdateType)type
 {
-    assert(payAccount);
-    assert(payChannel);
     [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     OtcManager* otc = [OtcManager sharedOtcManager];
     [[[otc updateUserOrder:_orderDetails[@"userAccount"]
@@ -201,6 +264,10 @@ enum
                 payAccount:payAccount
                 payChannel:payChannel
                       type:type] then:^id(id data) {
+        //  设置：订单状态已变更标记
+        _orderStatusDirty = YES;
+        //  停止付款计时器
+        [self _stopPaymentTimer];
         //  更新状态成功、刷新界面。
         return [[otc queryUserOrderDetails:_orderDetails[@"userAccount"] order_id:_orderDetails[@"orderId"]] then:^id(id details_responsed) {
             //  获取新订单数据成功
@@ -220,7 +287,130 @@ enum
  */
 - (void)_execTransferCore
 {
-    //  TODO:2.9
+    //  解锁：需要check资金权限，提案等不支持。
+    [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+        
+        NSString* userAccount = _orderDetails[@"userAccount"];
+        NSString* otcAccount = _orderDetails[@"otcAccount"];
+        NSString* assetSymbol = _orderDetails[@"assetSymbol"];
+        NSString* args_amount = [NSString stringWithFormat:@"%@", _orderDetails[@"quantity"]];
+        
+        //  REMARK：转账memo格式：F(发币)T(退币) + 订单号后10位
+        NSString* orderId = _orderDetails[@"orderId"];
+        NSString* args_memo_str = [NSString stringWithFormat:@"F%@", [orderId substringFromIndex:MAX((NSInteger)orderId.length - 10, 0)]];
+        
+        [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+        
+        ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+        id p1 = [chainMgr queryFullAccountInfo:userAccount];
+        id p2 = [chainMgr queryAccountData:otcAccount];
+        id p3 = [chainMgr queryAssetData:assetSymbol];
+        //  TODO:2.9 100? args
+        id p4 = [chainMgr queryAccountHistoryByOperations:userAccount optype_array:@[@(ebo_transfer)] limit:100];
+        [[[WsPromise all:@[p1, p2, p3, p4]] then:^id(id promise_data_array) {
+            id full_from_account = [promise_data_array safeObjectAtIndex:0];
+            id to_account = [promise_data_array safeObjectAtIndex:1];
+            id asset = [promise_data_array safeObjectAtIndex:2];
+            id his_data_array = [promise_data_array safeObjectAtIndex:3];
+            
+            if (!full_from_account || !to_account || !asset) {
+                [self hideBlockView];
+                //  TODO:2.9
+                [OrgUtils makeToast:@"数据异常。"];
+                return nil;
+            }
+            
+            NSString* real_from_id = [[full_from_account objectForKey:@"account"] objectForKey:@"id"];
+            NSString* real_to_id = [to_account objectForKey:@"id"];
+            NSDecimalNumber* real_amount = [NSDecimalNumber decimalNumberWithString:args_amount];
+            NSString* real_asset_id = [asset objectForKey:@"id"];
+            NSInteger real_asset_precision = [[asset objectForKey:@"precision"] integerValue];
+            
+            //  检测是否已经转币了。
+            BOOL bMatched = NO;
+            if (his_data_array && [his_data_array count] > 0) {
+                for (id his_object in his_data_array) {
+                    id op = [his_object objectForKey:@"op"];
+                    assert([[op safeObjectAtIndex:0] integerValue] == ebo_transfer);
+                    
+                    id opdata = [op safeObjectAtIndex:1];
+                    if (!opdata) {
+                        continue;
+                    }
+
+                    // 1、检测from、to、amount是否匹配
+                    NSString* from_id = [opdata objectForKey:@"from"];
+                    NSString* to_id = [opdata objectForKey:@"to"];
+                    if (![from_id isEqualToString:real_from_id] || ![to_id isEqualToString:real_to_id]) {
+                        continue;
+                    }
+
+                    // 2、检测转币数量是否撇皮
+                    id op_amount = [opdata objectForKey:@"amount"];
+                    if (![real_asset_id isEqualToString:[op_amount objectForKey:@"asset_id"]]) {
+                        continue;
+                    }
+                    id n_op_amount = [NSDecimalNumber decimalNumberWithMantissa:[[op_amount objectForKey:@"amount"] unsignedLongLongValue]
+                                                        exponent:-real_asset_precision
+                                                      isNegative:NO];
+                    if ([real_amount compare:n_op_amount] != NSOrderedSame) {
+                        continue;
+                    }
+
+                    // 3、检测memo中订单号信息是否匹配
+                    id memo_object = [opdata objectForKey:@"memo"];
+                    if (!memo_object) {
+                        continue;
+                    }
+                    NSString* plain_memo = [[WalletManager sharedWalletManager] decryptMemoObject:memo_object];
+                    if (!plain_memo) {
+                        continue;
+                    }
+                    if ([plain_memo isEqualToString:args_memo_str]) {
+                        bMatched = YES;
+                        break;
+                    }
+                }
+            }
+            
+            if (bMatched) {
+                //  已转过币了：仅更新订单状态
+                [self _execUpdateOrderCore:nil
+                                payChannel:nil
+                                      type:eoout_to_transferred];
+            } else {
+                //  转币 & 更新订单状态
+                [[[[BitsharesClientManager sharedBitsharesClientManager] simpleTransfer2:full_from_account
+                                                                                      to:to_account
+                                                                                   asset:asset
+                                                                                  amount:args_amount
+                                                                                    memo:args_memo_str] then:^id(id data)
+                {
+                    id err = [data objectForKey:@"err"];
+                    if (err) {
+                        //  错误
+                        [self hideBlockView];
+                        [OrgUtils makeToast:err];
+                    } else {
+                        //  转币成功：更新订单状态
+                        [self _execUpdateOrderCore:nil
+                                        payChannel:nil
+                                              type:eoout_to_transferred];
+                    }
+                    return nil;
+                }] catch:^id(id error) {
+                    [self hideBlockView];
+                    [OrgUtils showGrapheneError:error];
+                    return nil;
+                }];
+            }
+            return nil;
+        }] catch:^id(id error) {
+            [self hideBlockView];
+            [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+            return nil;
+        }];
+    }];
 }
 
 - (void)onButtomButtonClicked:(UIButton*)sender
@@ -228,7 +418,7 @@ enum
     switch (sender.tag) {
         case eooot_transfer:
         {
-            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"如果您已转币，请不要重复操作，若系统长时间未确认请联系客服。是否继续？"
+            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"确定转币给商家。是否继续？"
                                                                    withTitle:@"确认转币"
                                                                   completion:^(NSInteger buttonIndex)
              {
@@ -321,7 +511,6 @@ enum
     self.view.backgroundColor = theme.appBackColor;
     
     //  UI - 主表格
-    CGFloat fBottomButtonsViewHeight = 60.0f;
     CGRect tableRect = [_btnArray count] > 0 ? [self rectWithoutNaviWithOffset:fBottomButtonsViewHeight] : [self rectWithoutNavi];
     _mainTableView = [[UITableViewBase alloc] initWithFrame:tableRect style:UITableViewStyleGrouped];
     _mainTableView.delegate = self;
@@ -331,15 +520,47 @@ enum
     _mainTableView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:_mainTableView];
     
+    //  UI - 状态信息
+    _viewStatusCell = [[ViewOtcOrderDetailStatus alloc] initWithStyle:UITableViewCellStyleValue1
+                                                      reuseIdentifier:nil
+                                                                   vc:self];
+    _viewStatusCell.selectionStyle = UITableViewCellSelectionStyleNone;
+    _viewStatusCell.accessoryType = UITableViewCellAccessoryNone;
+    _viewStatusCell.backgroundColor = [UIColor clearColor];
+    _viewStatusCell.showCustomBottomLine = YES;
+    
     //  UI - 底部按钮
+    _pBottomActionsView = nil;
+    [self _genBottomActionsView:fBottomButtonsViewHeight tableRect:tableRect];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    if (_result_promise) {
+        [_result_promise resolve:@(_orderStatusDirty)];
+        _result_promise = nil;
+    }
+}
+
+/*
+ *  (private) 创建底部按钮视图
+ */
+- (void)_genBottomActionsView:(CGFloat)fHeight tableRect:(CGRect)tableRect
+{
+    if (_pBottomActionsView) {
+        [_pBottomActionsView removeFromSuperview];
+        _pBottomActionsView = nil;
+    }
     if ([_btnArray count] > 0) {
+        ThemeManager* theme = [ThemeManager sharedThemeManager];
         assert([_btnArray count] <= 2);
-        UIView* pBottomView = [[UIView alloc] initWithFrame:CGRectMake(0,
+        _pBottomActionsView = [[UIView alloc] initWithFrame:CGRectMake(0,
                                                                        tableRect.size.height,
                                                                        tableRect.size.width,
-                                                                       fBottomButtonsViewHeight + [self heightForBottomSafeArea])];
-        [self.view addSubview:pBottomView];
-        pBottomView.backgroundColor = theme.tabBarColor;
+                                                                       fHeight + [self heightForBottomSafeArea])];
+        [self.view addSubview:_pBottomActionsView];
+        _pBottomActionsView.backgroundColor = theme.tabBarColor;
         CGFloat fBottomTotalWidth = tableRect.size.width;
         CGFloat fBtnBorderWidth = 12.0f;                                    //  边距
         CGFloat fTotalSpace = ([_btnArray count] + 1) * fBtnBorderWidth;    //  总间隔（2边+中间按钮间隔）
@@ -391,22 +612,14 @@ enum
             [btn setTitleColor:theme.textColorPercent forState:UIControlStateNormal];
             btn.userInteractionEnabled = YES;
             [btn addTarget:self action:@selector(onButtomButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-            btn.frame = CGRectMake(fBtnOffsetX, (fBottomButtonsViewHeight  - fBtnHeight) / 2, fBtnWidth, fBtnHeight);
+            btn.frame = CGRectMake(fBtnOffsetX, (fHeight  - fBtnHeight) / 2, fBtnWidth, fBtnHeight);
             btn.backgroundColor = [btnInfo objectForKey:@"color"];
-            [pBottomView addSubview:btn];
+            [_pBottomActionsView addSubview:btn];
             
             fBtnOffsetX += fBtnWidth + fBtnBorderWidth;
             ++btnIndex;
         }
     }
-}
-
-/**
- *  事件 - 用户点击提交按钮
- */
--(void)gotoSubmitCore
-{
-    //  TODO:otc
 }
 
 #pragma mark- TableView delegate method
@@ -467,40 +680,61 @@ enum
     return @" ";
 }
 
+/*
+ *  (private) 复制按钮点击
+ */
 - (void)onCopyButtonClicked:(UIButton*)sender
 {
-    //  TODO:2.9
-    [OrgUtils makeToast:[NSString stringWithFormat:@"copy clicked: %@", @(sender.tag)]];
+    NSString* value = nil;
+    switch (sender.tag) {
+        case kVcSubMerchantRealName:
+            value = [_orderDetails objectForKey:@"payRealName"] ?: @"";
+            break;
+        case kVcSubOrderID:
+            value = [_orderDetails objectForKey:@"orderId"] ?: @"";
+            break;
+        case kVcSubPaymentRealName:
+            value = [_currSelectedPaymentMethod objectForKey:@"realName"];
+            break;
+        case kVcSubPaymentAccount:
+            value = [_currSelectedPaymentMethod objectForKey:@"account"];
+            break;
+        default:
+            value = [NSString stringWithFormat:@"unknown tag: %@", @(sender.tag)];
+            assert(false);
+            break;
+    }
+    if (value) {
+        [UIPasteboard generalPasteboard].string = [value copy];
+        //  TODO:2.9
+        [OrgUtils makeToast:@"已复制"];
+    }
 }
 
 - (UIButton*)genCopyButton:(NSInteger)tag
 {
-    //  TODO:2.9 icon???
     UIButton* btn = [UIButton buttonWithType:UIButtonTypeCustom];
-    UIImage* btn_image = [UIImage imageNamed:@"iconCopy"];
+    UIImage* btn_image = [UIImage templateImageNamed:@"iconCopy"];
     CGSize btn_size = btn_image.size;
     [btn setBackgroundImage:btn_image forState:UIControlStateNormal];
     btn.userInteractionEnabled = YES;
     [btn addTarget:self action:@selector(onCopyButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     btn.frame = CGRectMake(0, (44 - btn_size.height) / 2, btn_size.width, btn_size.height);
-//    btn.tintColor = [ThemeManager sharedThemeManager].textColorHighlight;
+    btn.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
     btn.tag = tag;
     return btn;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    //  TODO:2.9 lang
     id secInfos = [_sectionDataArray objectAtIndex:indexPath.section];
     switch ([[secInfos objectForKey:@"type"] integerValue]) {
         case kVcSecOrderStatus:
         {
-            ViewOtcOrderDetailStatus* cell = [[ViewOtcOrderDetailStatus alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
-            cell.accessoryType = UITableViewCellAccessoryNone;
-            cell.backgroundColor = [UIColor clearColor];
-            cell.showCustomBottomLine = YES;
-            [cell setItem:_statusInfos];
-            return cell;
+            assert(_viewStatusCell);
+            [_viewStatusCell setItem:_statusInfos];
+            return _viewStatusCell;
         }
             break;
         case kVcSecOrderInfo:
@@ -546,7 +780,7 @@ enum
                 {
                     cell.textLabel.text = @"商家姓名";
                     cell.detailTextLabel.text = [_orderDetails objectForKey:@"payRealName"] ?: @"";
-                    cell.accessoryView = [self genCopyButton:indexPath.row];
+                    cell.accessoryView = [self genCopyButton:rowType];
                 }
                     break;
                 case kVcSubMerchantNickName:
@@ -559,7 +793,7 @@ enum
                 {
                     cell.textLabel.text = @"订单编号";
                     cell.detailTextLabel.text = [_orderDetails objectForKey:@"orderId"] ?: @"";
-                    cell.accessoryView = [self genCopyButton:indexPath.row];
+                    cell.accessoryView = [self genCopyButton:rowType];
                 }
                     break;
                 case kVcSubOrderTime:
@@ -623,10 +857,10 @@ enum
                     if ([[_orderDetails objectForKey:@"payMethod"] count] > 1) {
                         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                         cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+                        
+                        cell.detailTextLabel.text = @"点此切换付款方式";
+                        cell.detailTextLabel.textColor = theme.textColorGray;
                     }
-                    
-                    cell.detailTextLabel.text = @"点此切换付款方式";
-                    cell.detailTextLabel.textColor = theme.textColorGray;
                 }
                     break;
                 case kVcSubPaymentRealName:
@@ -634,7 +868,7 @@ enum
                     assert(_currSelectedPaymentMethod);
                     cell.textLabel.text = @"收款人";
                     cell.detailTextLabel.text = [_currSelectedPaymentMethod objectForKey:@"realName"];
-                    cell.accessoryView = [self genCopyButton:indexPath.row];
+                    cell.accessoryView = [self genCopyButton:rowType];
                 }
                     break;
                 case kVcSubPaymentAccount:
@@ -642,7 +876,7 @@ enum
                     assert(_currSelectedPaymentMethod);
                     cell.textLabel.text = @"收款账号";
                     cell.detailTextLabel.text = [_currSelectedPaymentMethod objectForKey:@"account"];
-                    cell.accessoryView = [self genCopyButton:indexPath.row];
+                    cell.accessoryView = [self genCopyButton:rowType];
                 }
                     break;
                 case kVcSubPaymentBankName:
@@ -656,8 +890,13 @@ enum
                 {
                     assert(_currSelectedPaymentMethod);
                     cell.textLabel.text = @"收款二维码";
-                    //  TODO:2.9。大图显示
-                    cell.detailTextLabel.text = [_currSelectedPaymentMethod objectForKey:@"qrCode"];
+                    cell.detailTextLabel.text = @"点此查看二维码";
+                    cell.detailTextLabel.textColor = theme.textColorGray;
+                    cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+                    //  icon
+                    UIImageView* view = [[UIImageView alloc] initWithImage:[UIImage templateImageNamed:@"iconOtcQrcode"]];
+                    view.tintColor = theme.textColorGray;
+                    cell.accessoryView = view;
                 }
                     break;
                 default:
@@ -696,6 +935,9 @@ enum
                     case kVcSubPaymentMethodSelect:
                         [self _onSelectPaymentMethodClicked];
                         break;
+                    case kVcSubPaymentQrCode:
+                        [self _onViewPaymentQrCodeClicked];
+                        break;
                     default:
                         break;
                 }
@@ -723,7 +965,7 @@ enum
         [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
                                                            message:@"请选择商家收款方式"
                                                             cancel:NSLocalizedString(@"kBtnCancel", @"取消")
-                                                             items:nameList//@[@"银行卡", @"支付宝"]
+                                                             items:nameList
                                                           callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
          {
              if (buttonIndex != cancelIndex){
@@ -743,6 +985,31 @@ enum
                  }
              }
          }];
+    }
+}
+
+/*
+ *  (private) 事件 - 点击查看二维码
+ */
+- (void)_onViewPaymentQrCodeClicked
+{
+    //  TODO:2.9
+    [OrgUtils makeToast:[NSString stringWithFormat:@"view qr code: %@", [_currSelectedPaymentMethod objectForKey:@"qrCode"]]];
+}
+
+/*
+ *  (public) 用户点击电话按钮联系对方
+ */
+- (void)onPhoneButtonClicked:(UIButton*)sender
+{
+    NSString* phone = [_orderDetails objectForKey:@"phone"];
+    if (phone && [phone isKindOfClass:[NSString class]] && ![phone isEqualToString:@""]) {
+#if TARGET_IPHONE_SIMULATOR
+        [OrgUtils makeToast:[NSString stringWithFormat:@"call: %@", phone]];
+#else
+        NSURL* phoneUrl = [NSURL URLWithString:[NSString stringWithFormat:@"tel:%@", phone]];
+        [[UIApplication sharedApplication] openURL:phoneUrl];
+#endif  //  TARGET_IPHONE_SIMULATOR
     }
 }
 

@@ -80,6 +80,152 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
     return nil;
 }
 
+/*
+ *  OP - 转账（简化版）
+ */
+- (WsPromise*)simpleTransfer:(NSString*)from_name
+                          to:(NSString*)to_name
+                       asset:(NSString*)asset_name
+                      amount:(NSString*)amount
+                        memo:(NSString*)memo
+{
+    WalletManager* walletMgr = [WalletManager sharedWalletManager];
+    assert(![walletMgr isLocked]);
+    
+    return [WsPromise promise:^(WsResolveHandler resolve, WsRejectHandler reject) {
+        ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+        id p1 = [chainMgr queryFullAccountInfo:from_name];
+        id p2 = [chainMgr queryAccountData:to_name];
+        id p3 = [chainMgr queryAssetData:asset_name];
+        
+        [[[WsPromise all:@[p1, p2, p3]] then:^id(id data_array) {
+            id full_from_account = [data_array safeObjectAtIndex:0];
+            id to_account = [data_array safeObjectAtIndex:1];
+            id asset = [data_array safeObjectAtIndex:2];
+            [self _transferWithFullFromAccount:full_from_account
+                                    to_account:to_account
+                                         asset:asset
+                                        amount:amount
+                                          memo:memo
+                                       resolve:resolve
+                                        reject:reject];
+            
+            return nil;
+        }] catch:^id(id error) {
+            reject(@{@"err":NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")});
+            return nil;
+        }];
+    }];
+}
+
+- (WsPromise*)simpleTransfer2:(id)full_from_account
+                           to:(id)to_account
+                        asset:(id)asset
+                       amount:(NSString*)amount
+                         memo:(NSString*)memo
+{
+    return [WsPromise promise:^(WsResolveHandler resolve, WsRejectHandler reject) {
+        [self _transferWithFullFromAccount:full_from_account
+                                to_account:to_account
+                                     asset:asset
+                                    amount:amount
+                                      memo:memo
+                                   resolve:resolve
+                                    reject:reject];
+    }];
+}
+
+- (void)_transferWithFullFromAccount:(id)full_from_account
+                          to_account:(id)to_account
+                               asset:(id)asset
+                              amount:(NSString*)amount
+                                memo:(NSString*)memo
+                             resolve:(WsResolveHandler)resolve
+                              reject:(WsRejectHandler)reject
+{
+    assert(resolve);
+    assert(reject);
+    
+    //  检测链上数据有效性
+    if (!full_from_account || !to_account || !asset) {
+        resolve(@{@"err":@"区块数据异常。"});
+        return;
+    }
+    id from_account = [full_from_account objectForKey:@"account"];
+    NSString* from_id = [from_account objectForKey:@"id"];
+    NSString* to_id = [to_account objectForKey:@"id"];
+    if ([from_id isEqualToString:to_id]) {
+        resolve(@{@"err":NSLocalizedString(@"kVcTransferSubmitTipFromToIsSame", @"收款账号和发送账号不能相同。")});
+        return;
+    }
+    
+    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+    WalletManager* walletMgr = [WalletManager sharedWalletManager];
+    
+    NSString* asset_id = asset[@"id"];
+    NSInteger asset_precision = [[asset objectForKey:@"precision"] integerValue];
+                
+    //  检测转账资产数量是否足够
+    id n_amount = [NSDecimalNumber decimalNumberWithString:amount];
+    id n_amount_pow = [NSString stringWithFormat:@"%@", [n_amount decimalNumberByMultiplyingByPowerOf10:asset_precision]];
+    
+    BOOL bBalanceEnough = NO;
+    id balances = [full_from_account objectForKey:@"balances"];
+    if (balances && [balances isKindOfClass:[NSArray class]] && [balances count] > 0) {
+        for (id balance_object in balances) {
+            if ([asset_id isEqualToString:[balance_object objectForKey:@"asset_type"]]) {
+                id n_balance = [NSDecimalNumber decimalNumberWithMantissa:[[balance_object objectForKey:@"balance"] unsignedLongLongValue]
+                                                                 exponent:-asset_precision
+                                                               isNegative:NO];
+                if ([n_balance compare:n_amount] >= 0) {
+                    bBalanceEnough = YES;
+                    break;
+                }
+            }
+        }
+    }
+    if (!bBalanceEnough) {
+        resolve(@{@"err":@"余额不足。"});
+        return;
+    }
+    
+    //  生成转账备注信息
+    id memo_object = [NSNull null];
+    if (memo) {
+        id from_public_memo = [[from_account objectForKey:@"options"] objectForKey:@"memo_key"];
+        id to_public_memo = [[to_account objectForKey:@"options"] objectForKey:@"memo_key"];
+        memo_object = [walletMgr genMemoObject:memo from_public:from_public_memo to_public:to_public_memo];
+        if (!memo_object) {
+            resolve(@{@"err":@"缺少备注私钥。"});
+            return;
+        }
+    }
+    
+    //  构造转账结构
+    id op = @{
+              @"fee":@{
+                      @"amount":@0,
+                      @"asset_id":chainMgr.grapheneCoreAssetID,
+                      },
+              @"from":from_id,
+              @"to":to_id,
+              @"amount":@{
+                      @"amount":@([n_amount_pow unsignedLongLongValue]),
+                      @"asset_id":asset_id,
+                      },
+              @"memo":memo_object
+              };
+
+    //  转账
+    [[[self transfer:op] then:^id(id tx_data) {
+        resolve(@{@"tx":tx_data});
+        return nil;
+    }] catch:^id(id error) {
+        reject(error);
+        return nil;
+    }];
+}
+
 /**
  *  OP - 转账
  */

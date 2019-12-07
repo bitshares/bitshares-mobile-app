@@ -28,7 +28,23 @@
  */
 - (WsPromise*)createWitness:(NSString*)witness_account_id url:(NSString*)url signkey:(NSString*)block_signing_key;
 
+/*
+ *  OP - 转账（简化版）
+ */
+- (WsPromise*)simpleTransfer:(NSString*)from_name
+                          to:(NSString*)to_name
+                       asset:(NSString*)asset_name
+                      amount:(NSString*)amount
+                        memo:(NSString*)memo;
+
+- (WsPromise*)simpleTransfer2:(id)full_from_account
+                           to:(id)to_account
+                        asset:(id)asset
+                       amount:(NSString*)amount
+                         memo:(NSString*)memo;
+
 - (WsPromise*)transfer:(NSDictionary*)transfer_op_data;
+
 /**
  *  更新帐号信息（投票 TODO:fowallet 目前仅支持修改new_options)
  */
