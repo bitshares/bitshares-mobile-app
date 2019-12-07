@@ -178,7 +178,7 @@ static void gen_aes_context(struct __aes256_context* ctx, const unsigned char* i
 }
 
 /**
- *  (private) 获取 shared_secret，终于用于 aes 加解密。    REMARK：public_key 会发生改变，如果有必要需要提前备份。
+ *  (private) 获取 shared_secret，用于 aes 加解密。    REMARK：public_key 会发生改变，如果有必要需要提前备份。
  */
 static bool get_shared_secret(const unsigned char private_key32[], secp256k1_pubkey* public_key, unsigned char output_shared_secret32_digest64[])
 {
@@ -403,6 +403,60 @@ size_t __bts_aes256_encrypt_with_checksum_calc_outputsize(const size_t message_s
     size_t input_size = message_size + 4;  //  message_size + checksum_size
     size_t output_size = __bts_aes256_calc_output_size(input_size);
     return output_size;
+}
+
+/*
+ *  (public) 主要方法，用于memo、钱包等解密。
+ *  解密失败返回 0，解密成功返回指向数据缓冲区的指针。
+ */
+unsigned char* __bts_aes256_decrypt_with_checksum(const unsigned char private_key32[], const secp256k1_pubkey* public_key,
+                                                  const char* nonce, const size_t nonce_size,
+                                                  const unsigned char* message, const size_t message_size,
+                                                  unsigned char* output, size_t* final_output_size)
+{
+    assert(final_output_size);
+    
+    //  1、生成aes上下文
+    secp256k1_pubkey pubkey = {0, };
+    memcpy(&pubkey, public_key, sizeof(pubkey));
+    
+    unsigned char shared_secret_sha512[64] = {0,};
+    if (!get_shared_secret(private_key32, &pubkey, shared_secret_sha512)){
+        return 0;
+    }
+    
+    //  nonce + hex-shared_secret_sha512-size
+    unsigned char seed_buffer[nonce_size + 128 + 1];
+    if (nonce && nonce_size > 0){
+        memcpy(seed_buffer, nonce, nonce_size);
+    }
+    hex_encode(shared_secret_sha512, sizeof(shared_secret_sha512), &seed_buffer[nonce_size]);
+    seed_buffer[nonce_size + 128] = 0;  //  zero it!
+    
+    struct __aes256_context aes_ctx;
+    gen_aes_context_from_seed(&aes_ctx, seed_buffer, nonce_size + 128);
+    
+    //  2、解密 REMARK：解密后的数据大小应该小于等于加密数据长度的，故output缓冲区设置为加密数据长度即可。
+    size_t output_size = *final_output_size;
+    if (!aes256_decrypt(&aes_ctx, (const char*)message, message_size, (char*)output, &output_size)) {
+        return 0;
+    }
+    //  解密失败(小于checksum长度)
+    const size_t checksum_size = 4;
+    if (output_size < checksum_size) {
+        return 0;
+    }
+    
+    //  3、校验
+    unsigned char new_digest32[32] = {0, };
+    sha256(&output[checksum_size], output_size - checksum_size, new_digest32);
+    if (0 != memcmp(new_digest32, output, checksum_size)) {
+        return 0;
+    }
+    
+    //  4、返回
+    *final_output_size  = output_size - checksum_size;
+    return &output[checksum_size];
 }
 
 /**

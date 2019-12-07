@@ -856,6 +856,69 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
     return [result copy];
 }
 
+/*
+ *  (public) 解密memo数据，失败返回nil。
+ */
+- (NSString*)decryptMemoObject:(NSDictionary*)memo_object
+{
+    assert(![self isLocked]);
+    
+    assert(memo_object);
+    
+    NSString* from = [memo_object objectForKey:@"from"];
+    NSString* to = [memo_object objectForKey:@"to"];
+    NSString* nonce = [memo_object objectForKey:@"nonce"];
+    NSString* message = [memo_object objectForKey:@"message"];
+    assert(from && to && nonce && message);
+    
+    //  1、获取私钥和公钥（from和to任意一方私钥即可，双方均可解密。）
+    NSString* pubkey = nil;
+    NSString* prikey = nil;
+    NSString* from_prikey_wif = [_private_keys_hash objectForKey:from];
+    NSString* to_prikey_wif = [_private_keys_hash objectForKey:to];
+    if (from_prikey_wif) {
+        prikey = from_prikey_wif;
+        pubkey = to;
+    } else if (to_prikey_wif) {
+        prikey = to_prikey_wif;
+        pubkey = from;
+    } else {
+        //  no any private key
+        return nil;
+    }
+    
+    unsigned char memo_private_key32[32] = {0, };
+    secp256k1_pubkey s_pubkey = {0, };
+    const size_t addr_prefix_size = (const size_t)[[ChainObjectManager sharedChainObjectManager].grapheneAddressPrefix length];
+
+    //  获取私钥
+    if (!__bts_gen_private_key_from_wif_privatekey((const unsigned char*)[prikey UTF8String], (const size_t)prikey.length, memo_private_key32)){
+        return nil;
+    }
+    
+    //  获取公钥
+    if (!__bts_gen_public_key_from_b58address((const unsigned char*)[pubkey UTF8String], (const size_t)[pubkey length], addr_prefix_size, &s_pubkey)){
+        return nil;
+    }
+
+    //  2、解密
+    NSData* raw_message = [OrgUtils hexDecode:message];
+    size_t output_size = (size_t)raw_message.length;
+    unsigned char output[output_size];
+    
+    unsigned char* plain_ptr = __bts_aes256_decrypt_with_checksum(memo_private_key32, &s_pubkey,
+                                                                  [nonce UTF8String], [nonce length],
+                                                                  raw_message.bytes, raw_message.length,
+                                                                  output, &output_size);
+    if (!plain_ptr) {
+        //  decrypt failed...
+        return nil;
+    }
+    
+    //  3、返回
+    return [[NSString alloc] initWithBytes:plain_ptr length:output_size encoding:NSUTF8StringEncoding];
+}
+
 /**
  *  (public) 加密并生成 memo 信息结构体，失败返回 nil。
  */
@@ -899,7 +962,7 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
     unsigned char output[output_size];
     
     //  4、加密
-    ret =__bts_aes256_encrypt_with_checksum(memo_private_key32, &pubkey, [nonce UTF8String], [nonce length], message, message_size, output);
+    ret = __bts_aes256_encrypt_with_checksum(memo_private_key32, &pubkey, [nonce UTF8String], [nonce length], message, message_size, output);
     if (!ret){
         //  TODO:fowallet 统计错误
         return nil;

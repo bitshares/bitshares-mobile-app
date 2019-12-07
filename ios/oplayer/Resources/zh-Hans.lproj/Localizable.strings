@@ -732,6 +732,12 @@
 "kVcTitleKlineIndexSetting" = "K线指标设置";
 "kVcTitleCreateHTLC" = "创建HTLC合约";
 "kVcTitleCreateSubHTLC" = "部署副合约";
+"kVcTitleOtcOrderList" = "订单记录";
+"kVcTitleOtcAuthInfos" = "认证信息";
+"kVcTitleOtcUserAuth" = "身份认证";
+"kVcTitleOtcPaymentMethodList" = "收款方式";
+"kVcTitleOtcPmAddAlipay" = "添加支付宝";
+"kVcTitleOtcPmAddBankCard" = "添加银行卡";
 
 /* 钱包管理 */
 "kWalletUnlockFailedUnknowMode" = "解锁失败，未知的账号模式：%@。";
@@ -900,6 +906,8 @@
 "kOpDetailSubPrefixProxy" = "代理人";
 
 /* 场外交易相关 */
+"kOtcPageTitleBuy" = "我要买";
+"kOtcPageTitleSell" = "我要卖";
 "kOtcOdBtnTransfer" = "立即转币";
 "kOtcOdBtnCustomerService" = "联系客服";
 "kOtcOdBtnConfirmReceivedMoney" = "放行";

@@ -179,6 +179,11 @@ typedef enum EImportToWalletStatus
  */
 - (NSArray*)signTransaction:(NSData*)sign_buffer signKeys:(NSArray*)pubKeyList;
 
+/*
+ *  (public) 解密memo数据，失败返回nil。
+ */
+- (NSString*)decryptMemoObject:(NSDictionary*)memo_object;
+
 /**
  *  (public) 加密并生成 memo 信息结构体，失败返回 nil。
  */
