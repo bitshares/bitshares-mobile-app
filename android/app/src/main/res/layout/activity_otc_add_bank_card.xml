@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/theme01.appBackColor"
+    tools:context="com.btsplusplus.fowallet.ActivityOtcAddBankCard">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="25dp"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/layout_back_from_otc_add_bankcard"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_btn_back"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/kBtnBack"
+                    style="@style/kNavigationBarTextStyle"
+                    android:gravity="center_vertical"
+                    />
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:text="添加银行卡"
+                style="@style/kNavigationBarTextStyle" />
+
+        </FrameLayout>
+
+
+        <LinearLayout
+            android:padding="10dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="姓名"
+                android:textSize="12dp"
+                android:textColor="@color/theme01.textColorMain"/>
+
+            <EditText
+                android:id="@+id/et_input_realname_from_otc_add_bankcard"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColor="#ffffff"
+                android:textColorHint="@color/theme01.textColorGray"
+                android:hint="请输入姓名"
+                android:theme="@style/theme01.EditText"
+                android:background="@null"
+                android:textSize="16dp"/>
+
+            <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="卡号"
+                android:textSize="12dp"
+                android:textColor="@color/theme01.textColorMain"/>
+
+            <EditText
+                android:id="@+id/et_input_cardno_from_otc_add_bankcard"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:digits="1234567890"
+                android:inputType="phone|number"
+                android:maxLength="24"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColor="#ffffff"
+                android:textColorHint="@color/theme01.textColorGray"
+                android:hint="请输入卡号"
+                android:theme="@style/theme01.EditText"
+                android:background="@null"
+                android:textSize="16dp"/>
+
+            <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="开户银行"
+                android:textSize="12dp"
+                android:textColor="@color/theme01.textColorMain"/>
+            <EditText
+                android:id="@+id/et_input_bankname_from_otc_add_bankcard"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColor="#ffffff"
+                android:textColorHint="@color/theme01.textColorGray"
+                android:hint="请输入开户银行"
+                android:theme="@style/theme01.EditText"
+                android:background="@null"
+                android:textSize="16dp"/>
+
+            <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="开户地址"
+                android:textSize="12dp"
+                android:textColor="@color/theme01.textColorMain"/>
+
+            <EditText
+                android:id="@+id/et_input_bank_address_from_otc_add_bankcard"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColor="#ffffff"
+                android:textColorHint="@color/theme01.textColorGray"
+                android:hint="请输入开户地址"
+                android:theme="@style/theme01.EditText"
+                android:background="@null"
+                android:textSize="16dp"/>
+
+            <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+
+
+            <TextView
+                android:id="@+id/tv_submit_from_otc_add_bankcard"
+                android:gravity="center"
+                android:background="@color/theme01.sellColor"
+                android:layout_marginTop="10dp"
+                android:text="提交"
+                android:textColor="@color/theme01.textColorMain"
+                android:textSize="14dp"
+                android:layout_width="match_parent"
+                android:layout_height="40dp" />
+
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
