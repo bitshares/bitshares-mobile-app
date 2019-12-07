@@ -57,7 +57,7 @@
 "kServicesCellLabelRank" = "担保の順序";
 "kServicesCellLabelVoting" = "投票";
 "kServicesCellLabelFeedPrice" = "詳しいフィード価格";
-"kServicesCellLabelOTC" = "场外交易";//TODO:
+"kServicesCellLabelOTC" = "OTC";
 "kServicesCellLabelDepositWithdraw" = "入金出金";
 "kServicesCellLabelAdvFunction" = "高度な機能";
 "kServicesCellLabelBtsExplorer" = "エクスプローラ";
@@ -732,6 +732,12 @@
 "kVcTitleKlineIndexSetting" = "Kライン表示設定";
 "kVcTitleCreateHTLC" = "HTLCを作成する";
 "kVcTitleCreateSubHTLC" = "コピー契約を作成する";
+"kVcTitleOtcOrderList" = "注文記録";
+"kVcTitleOtcAuthInfos" = "ユーザー情報";
+"kVcTitleOtcUserAuth" = "KYC認証";
+"kVcTitleOtcPaymentMethodList" = "支払方法";
+"kVcTitleOtcPmAddAlipay" = "アリペイを追加";
+"kVcTitleOtcPmAddBankCard" = "銀行カードを追加";
 
 /* 钱包管理 */
 "kWalletUnlockFailedUnknowMode" = "錠解除に失敗する，未知のパターンです：%@。";
@@ -900,16 +906,18 @@
 "kOpDetailSubPrefixProxy" = "エージェント";
 
 /* 场外交易相关 */
+"kOtcPageTitleBuy" = "買う";
+"kOtcPageTitleSell" = "売る";
 "kOtcOdBtnTransfer" = "立即转币";//TODO
 "kOtcOdBtnCustomerService" = "联系客服";//TODO
 "kOtcOdBtnConfirmReceivedMoney" = "放行";//TODO
 "kOtcOdBtnCancelOrder" = "取消订单";//TODO
 "kOtcOdBtnConfirmPaid" = "我已付款成功";//TODO
 "kOtcOdBtnConfirmReceivedRefunded" = "我已收到退款";//TODO
-"kOtcPmActionBtnEnable" = "启用";//TODO:
-"kOtcPmActionBtnDisable" = "禁用";//TODO:
-"kOtcPmActionBtnView" = "查看";//TODO:
-"kOtcPmActionBtnDelete" = "删除";//TODO:
+"kOtcPmActionBtnEnable" = "有効にする";
+"kOtcPmActionBtnDisable" = "無効にする";
+"kOtcPmActionBtnView" = "表示する";
+"kOtcPmActionBtnDelete" = "削除する";
 "kOtcPmActionTipsEnabled" = "已启用，允许向商家展示。";//TODO:
 "kOtcPmActionTipsDisabled" = "已禁用，不再向商家展示。";//TODO:
 "kOtcPmActionTipsDeleteConfirm" = "确认删除该收款方式吗？";//TODO:

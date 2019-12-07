@@ -62,6 +62,15 @@ extern "C"
      */
     extern size_t __bts_aes256_encrypt_with_checksum_calc_outputsize(const size_t message_size);
     
+    /*
+     *  (public) 主要方法，用于memo、钱包等解密。
+     *  解密失败返回 0，解密成功返回指向数据缓冲区的指针。
+     */
+    extern unsigned char* __bts_aes256_decrypt_with_checksum(const unsigned char private_key32[], const secp256k1_pubkey* public_key,
+                                                             const char* nonce, const size_t nonce_size,
+                                                             const unsigned char* message, const size_t message_size,
+                                                             unsigned char* output, size_t* final_output_size);
+
     /**
      *  Aes核心加密（主要用于加密钱包、memo等）
      */
