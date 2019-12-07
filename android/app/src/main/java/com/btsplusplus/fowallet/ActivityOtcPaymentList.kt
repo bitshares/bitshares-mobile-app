@@ -65,11 +65,14 @@ class ActivityOtcPaymentList : BtsppActivity() {
     private fun onAddPaymentMethodClicked(){
         val asset_list = JSONArray().apply {
             put("支付宝")
-            put("微信")
+            put("银行卡")
         }
         ViewSelector.show(this, "添加收款方式", asset_list.toList<String>().toTypedArray()) { index: Int, _: String ->
-            addPayment()
-            refreshUI()
+            if(index == 0){
+                goTo(ActivityOtcAddAlipay::class.java, true)
+            } else {
+                goTo(ActivityOtcAddBankCard::class.java, true)
+            }
         }
     }
 }

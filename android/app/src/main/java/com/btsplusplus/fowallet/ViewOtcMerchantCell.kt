@@ -53,7 +53,13 @@ class ViewOtcMerchantCell  : LinearLayout {
                     text = _data.getString("mmerchant_name").first().toString()
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
                     setTextColor(_ctx.resources.getColor(R.color.theme01_textColorMain))
-                    background = _ctx.resources.getDrawable(R.drawable.border_text_view)
+                    background = _ctx.resources.getDrawable(R.drawable.circle_character_view)
+
+                    layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                        width = 22.dp
+                        height = 22.dp
+                    }
+
                     gravity = Gravity.CENTER
                 })
 

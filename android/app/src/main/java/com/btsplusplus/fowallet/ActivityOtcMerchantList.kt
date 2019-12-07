@@ -61,7 +61,23 @@ class ActivityOtcMerchantList : BtsppActivity() {
             goTo(ActivityOtcOrderList::class.java, true)
         }
         image_payments_from_merchant_list.setOnClickListener{
-            goTo(ActivityOtcPaymentList::class.java, true)
+
+            val asset_list = JSONArray().apply {
+                put("认证信息")
+                put("收款方式")
+            }
+            ViewSelector.show(this, "添加收款方式", asset_list.toList<String>().toTypedArray()) { index: Int, _: String ->
+                if (index == 0){
+                    val is_user_auth = false
+                    if (is_user_auth) {
+                        goTo(ActivityOtcUserAuthInfos::class.java, true)
+                    } else {
+                        goTo(ActivityOtcUserAuth::class.java, true)
+                    }
+                } else {
+                    goTo(ActivityOtcPaymentList::class.java, true)
+                }
+            }
         }
 
         //  返回

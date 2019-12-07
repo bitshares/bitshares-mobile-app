@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/theme01.appBackColor"
+    tools:context="com.btsplusplus.fowallet.ActivityOtcUserAuth">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="25dp"
+        android:orientation="vertical">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+
+            <LinearLayout
+                android:id="@+id/layout_back_from_otc_user_auth"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_btn_back"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/kBtnBack"
+                    style="@style/kNavigationBarTextStyle"
+                    android:gravity="center_vertical"
+                    />
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:text="身份认证"
+                style="@style/kNavigationBarTextStyle" />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:padding="10dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="姓名"
+                android:textSize="12dp"
+                android:textColor="@color/theme01.textColorMain"/>
+
+            <EditText
+                android:id="@+id/et_input_realname_from_otc_user_auth"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColor="#ffffff"
+                android:textColorHint="@color/theme01.textColorGray"
+                android:hint="请输入姓名"
+                android:theme="@style/theme01.EditText"
+                android:background="@null"
+                android:textSize="16dp"/>
+
+            <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="身份证号"
+                android:textSize="12dp"
+                android:textColor="@color/theme01.textColorMain"/>
+
+            <EditText
+                android:id="@+id/et_input_idcardno_from_otc_user_auth"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:digits="1234567890"
+                android:inputType="phone|number"
+                android:maxLength="18"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColor="#ffffff"
+                android:textColorHint="@color/theme01.textColorGray"
+                android:hint="请输入身份证号"
+                android:theme="@style/theme01.EditText"
+                android:background="@null"
+                android:textSize="16dp"/>
+
+            <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="联系方式"
+                android:textSize="12dp"
+                android:textColor="@color/theme01.textColorMain"/>
+            <EditText
+                android:id="@+id/et_input_contact_phone_from_otc_user_auth"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:digits="1234567890"
+                android:inputType="phone|number"
+                android:maxLength="11"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColor="#ffffff"
+                android:textColorHint="@color/theme01.textColorGray"
+                android:hint="请输入联系方式"
+                android:theme="@style/theme01.EditText"
+                android:background="@null"
+                android:textSize="16dp"/>
+
+            <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+            <LinearLayout
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+
+                    android:id="@+id/et_input_phone_auth_code_from_otc_user_auth"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:textColor="#ffffff"
+                    android:textColorHint="@color/theme01.textColorGray"
+                    android:hint="请输入手机号码"
+                    android:theme="@style/theme01.EditText"
+                    android:background="@null"
+                    android:textSize="16dp"/>
+
+                <TextView
+                    android:id="@+id/tv_get_phone_auth_code_from_otc_user_auth"
+                    android:text="获取验证码"
+                    android:textSize="12dp"
+                    android:textColor="@color/theme01.textColorHighlight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:gravity="bottom"/>
+
+            </LinearLayout>
+
+            <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+            <TextView
+                android:id="@+id/tv_submit_from_otc_user_auth"
+                android:gravity="center"
+                android:background="@color/theme01.sellColor"
+                android:layout_marginTop="10dp"
+                android:text="提交"
+                android:textColor="@color/theme01.textColorMain"
+                android:textSize="14dp"
+                android:layout_width="match_parent"
+                android:layout_height="40dp" />
+
+            <TextView
+                android:id="@+id/tv_tips_from_otc_user_auth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:singleLine="false"
+                android:textSize="12dp"
+                android:textColor="@color/theme01.textColorMain"
+                android:padding="5dp"
+                android:background="@color/theme01.textColorGray"
+                android:text="【温馨提示】\n 你好你好你好你好你好你好你好你好。\n你好你好你好你好你好你好你好你好你好\n你好你好你好你好你好你好你好" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
