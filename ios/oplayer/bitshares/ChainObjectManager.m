@@ -1231,6 +1231,25 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     })];
 }
 
+/*
+ *  (public) 查询指定账号指定类型的账号明细列表。
+ */
+- (WsPromise*)queryAccountHistoryByOperations:(NSString*)account_id_or_name optype_array:(NSArray*)optype_array limit:(NSInteger)limit
+{
+    assert(account_id_or_name);
+    if (!optype_array) {
+        optype_array = @[];
+    }
+    GrapheneApi* api_history = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_history;
+    return [[api_history exec:@"get_account_history_by_operations" params:@[account_id_or_name, optype_array, @0, @(limit)]] then:^id(id data) {
+        id operation_history_objs = [data objectForKey:@"operation_history_objs"];
+        if (!operation_history_objs) {
+            operation_history_objs = @[];
+        }
+        return operation_history_objs;
+    }];
+}
+
 /**
  *  (public) 查询最近成交记录
  */
