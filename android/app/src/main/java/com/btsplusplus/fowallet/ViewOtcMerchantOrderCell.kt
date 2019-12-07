@@ -83,11 +83,14 @@ class ViewOtcMerchantOrderCell  : LinearLayout {
                     gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
                     setColorFilter(resources.getColor(R.color.theme01_textColorGray))
                 }
+
+                setOnClickListener {
+                    onOrderClicked()
+                }
+
                 addView(iv)
             })
         }
-        ly1.setOnClickListener { onOrderClicked() }
-
 
         // 第二行 数量 单价
         val ly2 = LinearLayout(_ctx).apply {
@@ -202,7 +205,7 @@ class ViewOtcMerchantOrderCell  : LinearLayout {
     }
 
     private fun onOrderClicked(){
-        (_ctx as Activity).showToast("点击了该订单")
+        (_ctx as Activity).goTo(ActivityOtcOrderDetails::class.java,true)
     }
 
 }

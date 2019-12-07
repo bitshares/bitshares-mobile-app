@@ -179,6 +179,7 @@ class ViewOtcMerchantCell  : LinearLayout {
                     val iv = ImageView(_ctx).apply {
                         scaleType = ImageView.ScaleType.FIT_END
                         gravity = Gravity.LEFT
+                        setPadding(0,0,5,0)
                     }
                     if (payment_method == "wechat"){
                         iv.setImageDrawable(resources.getDrawable(R.drawable.icon_pm_wechat))

@@ -51,7 +51,7 @@
     </style>
 
     <style name="KPageTabTextStyle">
-        <item name="android:textSize">14dp</item>
+        <item name="android:textSize">12dp</item>
     </style>
 
     <style name="kNavigationBarTextStyle">
