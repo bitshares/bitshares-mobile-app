@@ -90,6 +90,19 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
+ *  格式化：场外交易订单倒计时时间。
+ */
++ (NSString*)fmtPaymentExpireTime:(NSInteger)left_ts
+{
+    assert(left_ts > 0);
+    
+    int min = (int)(left_ts / 60);
+    int sec = (int)(left_ts % 60);
+    
+    return [NSString stringWithFormat:@"%02d:%02d", min, sec];
+}
+
+/*
  *  (public) 辅助 - 获取收款方式名字图标等。
  */
 + (NSDictionary*)auxGenPaymentMethodInfos:(NSString*)account type:(id)type bankname:(NSString*)bankname
@@ -226,7 +239,7 @@ static OtcManager *_sharedOtcManager = nil;
             case eoops_new:
             {
                 status_main = @"待付款";       // 已下单(待付款)     取消 + 确认付款
-                status_desc = @"请在 xx:44 内付款给卖家。";//TODO:2.9 format?
+                status_desc = @"请尽快付款给卖家。";
                 showRemark = YES;
                 //  按钮：取消订单 + 确认付款
                 [actions addObject:@{@"type":@(eooot_cancel_order), @"color":theme.textColorGray}];
@@ -307,8 +320,7 @@ static OtcManager *_sharedOtcManager = nil;
 - (NSString*)getCurrentBtsAccount
 {
     assert([[WalletManager sharedWalletManager] isWalletExist]);
-    return @"say007";//TODO:2.9 test data
-//    return [[WalletManager sharedWalletManager] getWalletAccountName];
+    return [[WalletManager sharedWalletManager] getWalletAccountName];
 }
 
 /*
@@ -553,15 +565,24 @@ static OtcManager *_sharedOtcManager = nil;
                    payChannel:(id)payChannel
                          type:(EOtcOrderUpdateType)type
 {
+    assert(bts_account_name);
+    assert(order_id);
+    
     id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/user/order/update"];
-    id args = @{
-        @"btsAccount":bts_account_name,
-        @"orderId":order_id,
-        @"payAccount":payAccount,
-        @"paymentChannel":payChannel,
-        @"type":@(type)
-    };
-    return [self _queryApiCore:url args:args headers:nil];
+    
+    id args = [NSMutableDictionary dictionary];
+    [args setObject:bts_account_name forKey:@"btsAccount"];
+    [args setObject:order_id forKey:@"orderId"];
+    [args setObject:@(type) forKey:@"type"];
+    //  有的状态不需要这些参数。
+    if (payAccount) {
+        [args setObject:payAccount forKey:@"payAccount"];
+    }
+    if (payChannel) {
+        [args setObject:payChannel forKey:@"paymentChannel"];
+    }
+    
+    return [self _queryApiCore:url args:[args copy] headers:nil];
 }
 
 /*
@@ -730,6 +751,20 @@ static OtcManager *_sharedOtcManager = nil;
 
 - (WsPromise*)_queryApiCore:(NSString*)url args:(id)args headers:(id)headers as_json:(BOOL)as_json
 {
+    //  TODO:2.9 args
+    BOOL bNeedSign = YES;
+    if (bNeedSign) {
+        //  计算签名 先获取毫秒时间戳
+        id timestamp = [NSString stringWithFormat:@"%@", @((uint64_t)([[NSDate date] timeIntervalSince1970] * 1000))];
+        NSString* sign = [self _sign:timestamp args:args];
+        //  合并请求header
+        id new_headers = headers ? [headers mutableCopy] : [NSMutableDictionary dictionary];
+        [new_headers setObject:timestamp forKey:@"timestamp"];
+        [new_headers setObject:sign forKey:@"sign"];
+        //  更新header
+        headers = [new_headers copy];
+    }
+    
     //  TODO:2.9 签名认证
     WsPromise* request_promise = [OrgUtils asyncPostUrl_jsonBody:url args:args headers:headers as_json:as_json];
     if (as_json) {
@@ -756,7 +791,7 @@ static OtcManager *_sharedOtcManager = nil;
                 return nil;
             }
             NSInteger code = [[responsed objectForKey:@"code"] integerValue];
-            if (code != 0) {
+            if (code != eoerr_ok) {
                 //  TODO:2.9 部分 error code 特殊多语言 处理 。
                 id msg = [responsed objectForKey:@"message"];
                 if (msg && ![msg isEqualToString:@""]) {
@@ -773,6 +808,40 @@ static OtcManager *_sharedOtcManager = nil;
             return nil;
         }];
     }];
+}
+
+/*
+ *  (private) 生成待签名之前的完整字符串。
+ */
+- (NSString*)_gen_sign_string:(NSDictionary*)args
+{
+    NSArray* sortedKeys = [[args allKeys] sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        return [obj1 compare:obj2];
+    }];
+    NSMutableArray* pArray = [[NSMutableArray alloc] init];
+    for (NSString* pKey in sortedKeys) {
+        //  TODO:2.9 url encode??
+        //  NSString* pValue = (__bridge NSString*)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)[NSString stringWithFormat:@"%@", [args objectForKey:pKey]], nil, nil, kCFStringEncodingUTF8);
+        NSString* pValue = [args objectForKey:pKey];
+        [pArray addObject:[NSString stringWithFormat:@"%@=%@", pKey, pValue]];
+    }
+    return [pArray componentsJoinedByString:@"&"];
+}
+
+/*
+ *  (private) 执行签名。
+ */
+- (NSString*)_sign:(id)timestamp args:(id)args
+{
+    //  获取待签名字符串
+    id sign_args = args ? [args mutableCopy] : [NSMutableDictionary dictionary];
+    [sign_args setObject:timestamp forKey:@"timestamp"];
+    NSString* sign_str = [self _gen_sign_string:sign_args];
+    
+    //  执行签名 TODO:2.9 sign(sign_str)
+    
+    //  TODO:2.9 私钥签名。
+    return sign_str;
 }
 
 @end

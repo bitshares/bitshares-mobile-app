@@ -8,12 +8,37 @@
 
 #import <Foundation/Foundation.h>
 
+/*
+ *  文字+图片 按钮的布局方式。
+ */
+typedef enum EUIButtonImageLayoutStyle
+{
+    ebils_top = 0,                  //  image在上，label在下
+    ebils_left,                     //  image在左，label在右
+    ebils_bottom,                   //  image在下，label在上
+    ebils_right,                    //  image在右，label在左
+} EUIButtonImageLayoutStyle;
+
 typedef BOOL (^ViewCallback)(UIView* view);
 
 @interface UIView (Aux)
 
 - (UIView*)findSubview:(Class)klass resursion:(BOOL)resursion;
 - (BOOL)iterateSubview:(ViewCallback)handler;
+
+@end
+
+@interface UIButton (Aux)
+
+/*
+ *  (public) 无动画更新UIButton中的标题文字。REMARK：UIButtonTypeSystem 风格的按钮更新文字默认会闪烁，而 UIButtonTypeCustom 风格按钮又没有点击动画。
+ */
+- (void)updateTitleWithoutAnimation:(NSString*)title;
+
+/*
+ *  (public) 重新排列标题文字和图片等布局方式。REMARK：仅同时存在文字和图片时候才需要用到。
+ */
+- (void)relayoutTitleImageStyle:(EUIButtonImageLayoutStyle)style space:(CGFloat)space;
 
 @end
 

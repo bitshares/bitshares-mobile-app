@@ -153,38 +153,6 @@
     if (!_item)
         return;
     
-//    <__NSSingleObjectArrayI 0x2823199c0>(
-//    {
-//    adId = 73b7ce242d79f279a56d3cf0085cc41f7e133e1f;
-//    adType = 1;
-//    aliPaySwitch = 1;
-//    assetId = "1.0.2";
-//    assetSymbol = USD;
-//    bankcardPaySwitch = 1;
-//    ctime = "2019-11-12T07:30:16.000+0000";
-//    deadTime = "2019-11-12T07:30:16.000+0000";
-//    frozenQuantity = 0;
-//    id = 17;
-//    isDeleted = 0;
-//    leagalType = 1;
-//    lowestLimit = 30;
-//    maxLimit = 1250;
-//    merchantId = 7;
-//    merchantNickname = "\U5409\U7965\U627f\U5151";
-//    mtime = "2019-11-12T10:34:06.000+0000";
-//    otcAccount = "gdex-otc1";
-//    otcBtsId = "1.2.42";
-//    price = "7.21";
-//    priceType = 1;
-//    quantity = 2620;
-//    remark = "\U53ea\U63a5\U53d7\U4ed8\U6b3e\U4eba\U4e0e\U5b9e\U540d\U8ba4\U8bc1\U4e00\U6837\U7684\U6b3e\U9879\Uff0c\U5426\U4e00\U5f8b\U4e0d\U653e\U5e01";
-//    status = 1;
-//    stock = 2620;
-//    userId = "<null>";
-//    }
-//    )
-//
-
     ThemeManager* theme = [ThemeManager sharedThemeManager];
 
     CGFloat fWidth = self.bounds.size.width;
@@ -216,6 +184,7 @@
     //  UI - 第二行 数量限额
     NSString* fiat_sym = [[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"short_symbol"];
     
+    //  TODO:2.9 lang
     _lbAmount.attributedText = [self genAndColorAttributedText:@"数量 "
                                                          value:[NSString stringWithFormat:@"%@ %@", _item[@"stock"], _item[@"assetSymbol"]]
                                                     titleColor:theme.textColorGray
@@ -261,7 +230,7 @@
         fIconOffset += 16 + 6.0f;
     }
     
-    //  买卖按钮
+    //  买卖按钮 TODO:2.9 lang
     UIColor* backColor;
     if (self.adType == eoadt_user_buy) {
         backColor = theme.buyColor;

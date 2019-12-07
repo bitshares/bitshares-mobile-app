@@ -10,6 +10,17 @@
 #import "WsPromise.h"
 
 /*
+ *  错误码
+ */
+typedef enum EOtcErrorCode
+{
+    eoerr_ok = 0,                           //  正常
+    eoerr_too_often = 1012,                 //  请求太频繁
+    eoerr_order_cancel_to_go_online = 5001, //  取消订单数量太多？TODO:2.9
+    //  TODO:2.9 其他待添加
+} EOtcErrorCode;
+
+/*
  *  资产类型
  */
 typedef enum EOtcAssetType
@@ -101,7 +112,7 @@ typedef enum EOtcOrderProgressStatus
     eoops_new = 1,                  //  订单已创建
     eoops_already_paid = 2,         //  已付款
     eoops_already_transferred = 3,  //  已转币
-    eoops_already_confirmed = 4,    //  区块已确认
+    eoops_already_confirmed = 4,    //  区块已确认 TODO:2.9 确认中还是已确认？待审核，描述也需要对应调整。
     eoops_refunded = 5,             //  已退款
     eoops_refund_failed = 6,        //  退款失败
     eoops_completed = 7,            //  交易成功
@@ -118,7 +129,7 @@ typedef enum EOtcOrderUpdateType
     eoout_to_paied = 1,             //  买单：确认付款
     eoout_to_cancel = 2,            //  买单：取消订单
     eoout_to_refunded_confirm = 3,  //  买单：商家退款&用户确认&取消订单
-    eoout_to_transferred = 4,       //  卖单：用户确认转币 TODO:2.9 不确定
+    eoout_to_transferred = 4,       //  卖单：用户确认转币
     eoout_to_received_money = 5,    //  卖单：确认收款 TODO:2.9 不确定
 } EOtcOrderUpdateType;
 
@@ -178,6 +189,11 @@ typedef enum EOtcOrderOperationType
  *  格式化：场外交易订单详情日期显示格式。REMARK：以当前时区格式化，北京时间当前时区会+8。
  */
 + (NSString*)fmtOrderDetailTime:(NSString*)time;
+
+/*
+ *  格式化：场外交易订单倒计时时间。
+ */
++ (NSString*)fmtPaymentExpireTime:(NSInteger)left_ts;
 
 /*
  *  (public) 辅助 - 获取收款方式名字图标等。

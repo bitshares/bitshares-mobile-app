@@ -50,21 +50,20 @@
 
 - (void)onAddNewPaymentMethodClicked
 {
-    //  TODO:2.9
     [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
                                                        message:nil
                                                         cancel:NSLocalizedString(@"kBtnCancel", @"取消")
-                                                         items:@[@"银行卡", @"支付宝"]
+                                                         items:@[@"银行卡", @"支付宝"]//TODO:2.9 lang
                                                       callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
      {
          if (buttonIndex != cancelIndex){
              if (buttonIndex == 0){
                  [self pushViewController:[[VCOtcAddBankCard alloc] initWithAuthInfo:_auth_info]
-                                  vctitle:@"添加银行卡"//TODO:2.9多语言
+                                  vctitle:NSLocalizedString(@"kVcTitleOtcPmAddBankCard", @"添加银行卡")
                                 backtitle:kVcDefaultBackTitleName];
              }else if (buttonIndex ==1){
                  [self pushViewController:[[VCOtcAddAlipay alloc] initWithAuthInfo:_auth_info]
-                                  vctitle:@"添加支付宝"//TODO:2.9多语言
+                                  vctitle:NSLocalizedString(@"kVcTitleOtcPmAddAlipay", @"添加支付宝")
                                 backtitle:kVcDefaultBackTitleName];
              }else{
                  assert(false);

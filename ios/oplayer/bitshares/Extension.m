@@ -45,6 +45,68 @@
 
 @end
 
+@implementation UIButton (Aux)
+
+/*
+ *  (public) 无动画更新UIButton中的标题文字。REMARK：UIButtonTypeSystem 风格的按钮更新文字默认会闪烁，而 UIButtonTypeCustom 风格按钮又没有点击动画。
+ */
+- (void)updateTitleWithoutAnimation:(NSString*)title
+{
+    [UIView performWithoutAnimation:^{
+        [self setTitle:title forState:UIControlStateNormal];
+        [self layoutIfNeeded];
+    }];
+}
+
+/*
+ *  (public) 重新排列标题文字和图片等布局方式。REMARK：仅同时存在文字和图片时候才需要用到。
+ */
+- (void)relayoutTitleImageStyle:(EUIButtonImageLayoutStyle)style space:(CGFloat)space
+{
+    CGFloat imageWith = self.imageView.image.size.width;
+    CGFloat imageHeight = self.imageView.image.size.height;
+    CGFloat labelWidth = self.titleLabel.intrinsicContentSize.width;
+    CGFloat labelHeight = self.titleLabel.intrinsicContentSize.height;
+    
+    UIEdgeInsets imageEdgeInsets = UIEdgeInsetsZero;
+    UIEdgeInsets labelEdgeInsets = UIEdgeInsetsZero;
+    
+    switch (style)
+    {
+        case ebils_top:
+        {
+            imageEdgeInsets = UIEdgeInsetsMake(-labelHeight-space/2.0, 0, 0, -labelWidth);
+            labelEdgeInsets = UIEdgeInsetsMake(0, -imageWith, -imageHeight-space/2.0, 0);
+        }
+            break;
+        case ebils_left:
+        {
+            imageEdgeInsets = UIEdgeInsetsMake(0, -space/2.0, 0, space/2.0);
+            labelEdgeInsets = UIEdgeInsetsMake(0, space/2.0, 0, -space/2.0);
+        }
+            break;
+        case ebils_bottom:
+        {
+            imageEdgeInsets = UIEdgeInsetsMake(0, 0, -labelHeight-space/2.0, -labelWidth);
+            labelEdgeInsets = UIEdgeInsetsMake(-imageHeight-space/2.0, -imageWith, 0, 0);
+        }
+            break;
+        case ebils_right:
+        {
+            imageEdgeInsets = UIEdgeInsetsMake(0, labelWidth+space/2.0, 0, -labelWidth-space/2.0);
+            labelEdgeInsets = UIEdgeInsetsMake(0, -imageWith-space/2.0, 0, imageWith+space/2.0);
+        }
+            break;
+        default:
+            break;
+    }
+    
+    self.titleEdgeInsets = labelEdgeInsets;
+    self.imageEdgeInsets = imageEdgeInsets;
+}
+
+@end
+
 @implementation NSNull (JSON)
 
 - (NSUInteger)length { return 0; }
