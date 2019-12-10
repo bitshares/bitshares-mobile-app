@@ -1,12 +1,12 @@
 //
-//  VCOtcPaymentMethods.m
+//  VCOtcMcPaymentMethods.m
 //  oplayer
 //
 //  Created by SYALON on 13-10-23.
 //
 //
 
-#import "VCOtcPaymentMethods.h"
+#import "VCOtcMcPaymentMethods.h"
 
 #import "VCOtcAddBankCard.h"
 #import "VCOtcAddAlipay.h"
@@ -14,7 +14,7 @@
 #import "ViewOtcPaymentMethodInfoCell.h"
 #import "OtcManager.h"
 
-@interface VCOtcPaymentMethods ()
+@interface VCOtcMcPaymentMethods ()
 {
     NSDictionary*           _auth_info;
     UITableViewBase*        _mainTableView;
@@ -25,7 +25,7 @@
 
 @end
 
-@implementation VCOtcPaymentMethods
+@implementation VCOtcMcPaymentMethods
 
 -(void)dealloc
 {
