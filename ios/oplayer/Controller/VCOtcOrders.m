@@ -14,6 +14,8 @@
 
 @interface VCOtcOrders ()
 {
+    NSDictionary*           _auth_info;
+    
     UITableViewBase*        _mainTableView;
     NSMutableArray*         _dataArray;
     
@@ -26,6 +28,7 @@
 
 -(void)dealloc
 {
+    _auth_info = nil;
     _dataArray = nil;
     if (_mainTableView){
         [[IntervalManager sharedIntervalManager] releaseLock:_mainTableView];
@@ -59,10 +62,11 @@
     }];
 }
 
-- (id)init
+- (id)initWithAuthInfo:(id)auth_info
 {
     self = [super init];
     if (self) {
+        _auth_info = auth_info;
         _dataArray = [NSMutableArray array];
     }
     return self;
@@ -183,39 +187,18 @@
     OtcManager* otc = [OtcManager sharedOtcManager];
     [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     [[[otc queryUserOrderDetails:order_item[@"userAccount"] order_id:order_item[@"orderId"]] then:^id(id responsed) {
-        //  获取订单详情
-        id details = [responsed objectForKey:@"data"];
-        assert(details);
-        id payMethod = [details objectForKey:@"payMethod"];
-        if (payMethod && [payMethod isKindOfClass:[NSArray class]] && [payMethod count] > 0) {
-            //  需要付款（查询实名认证信息）
-           return [[otc queryIdVerify:[otc getCurrentBtsAccount]] then:^id(id auth_responsed) {
-               [self hideBlockView];
-               WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
-               VCOtcOrderDetails* vc = [[VCOtcOrderDetails alloc] initWithOrderDetails:details
-                                                                                  auth:auth_responsed[@"data"]
-                                                                        result_promise:result_promise];
-               [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-               [result_promise then:^id(id callback_data) {
-                   [self _onOrderDetailCallback:callback_data];
-                   return nil;
-               }];
-               return nil;
-            }];
-        } else {
-            //  不用付款 - 直接转到详情界面
-            [self hideBlockView];
-            WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
-            VCOtcOrderDetails* vc = [[VCOtcOrderDetails alloc] initWithOrderDetails:details
-                                                                               auth:nil
-                                                                     result_promise:result_promise];
-            [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-            [result_promise then:^id(id callback_data) {
-                [self _onOrderDetailCallback:callback_data];
-                return nil;
-            }];
+        [self hideBlockView];
+        //  转到订单详情界面
+        WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
+        VCOtcOrderDetails* vc = [[VCOtcOrderDetails alloc] initWithOrderDetails:[responsed objectForKey:@"data"]
+                                                                           auth:_auth_info
+                                                                 result_promise:result_promise];
+        [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+        [result_promise then:^id(id callback_data) {
+            [self _onOrderDetailCallback:callback_data];
             return nil;
-        }
+        }];
+        return nil;
     }] catch:^id(id error) {
         [self hideBlockView];
         [otc showOtcError:error];

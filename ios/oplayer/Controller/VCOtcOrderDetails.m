@@ -49,7 +49,7 @@ enum
     WsPromiseObject*            _result_promise;
     
     NSDictionary*               _orderDetails;
-    NSDictionary*               _authInfos;                 //  可能为空，一般需要付款时才存在。
+    NSDictionary*               _authInfos;                 //  认证信息
     NSMutableDictionary*        _statusInfos;
     BOOL                        _orderStatusDirty;          //  订单状态是否更新过了
     

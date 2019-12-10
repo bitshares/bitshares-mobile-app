@@ -11,6 +11,8 @@
 #import "VCBase.h"
 #import "VCOtcMerchantList.h"
 
+#import "VCOtcUserAuth.h"
+
 static OtcManager *_sharedOtcManager = nil;
 
 @interface OtcManager()
@@ -387,9 +389,17 @@ static OtcManager *_sharedOtcManager = nil;
  */
 - (void)gotoOtc:(VCBase*)owner asset_name:(NSString*)asset_name ad_type:(EOtcAdType)ad_type
 {
-    assert(asset_name);
+    WalletManager* walletMgr = [WalletManager sharedWalletManager];
+    assert([walletMgr isWalletExist]);
+    
+    if ([WalletManager isMultiSignPermission:[walletMgr getWalletAccountInfo][@"account"][@"active"]]) {
+        //  TODO:2.9
+        [OrgUtils makeToast:@"多签账号不支持场外交易。"];
+        return;
+    }
+    
     [owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    WsPromise* p1 =  [self queryAssetList:eoat_fiat];
+    WsPromise* p1 = [self queryAssetList:eoat_fiat];
     WsPromise* p2 = [self queryAssetList:eoat_digital];
     [[[WsPromise all:@[p1, p2]] then:^id(id data_array) {
         [owner hideBlockView];
@@ -439,20 +449,198 @@ static OtcManager *_sharedOtcManager = nil;
     }];
 }
 
+- (void)_guardUserIdVerified:(VCBase*)owner
+                   auto_hide:(BOOL)auto_hide
+           askForIdVerifyMsg:(NSString*)askForIdVerifyMsg
+               first_request:(BOOL)first_request
+                    callback:(void (^)(id auth_info))verifyed_callback
+{
+    [owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    [[[self queryIdVerify:[self getCurrentBtsAccount]] then:^id(id responsed) {
+        if ([self isIdVerifyed:responsed]) {
+            if (auto_hide) {
+                [owner hideBlockView];
+            }
+            //  已认证：返回认证后数据。
+            verifyed_callback([responsed objectForKey:@"data"]);
+        } else {
+            [owner hideBlockView];
+            //  未认证：询问认证 or 直接转认证界面
+            if (askForIdVerifyMsg) {
+                [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:askForIdVerifyMsg
+                                                                       withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                                      completion:^(NSInteger buttonIndex)
+                 {
+                     if (buttonIndex == 1)
+                     {
+                         VCBase* vc = [[VCOtcUserAuth alloc] init];
+                         [owner pushViewController:vc
+                                          vctitle:NSLocalizedString(@"kVcTitleOtcUserAuth", @"身份认证")
+                                        backtitle:kVcDefaultBackTitleName];
+                     }
+                 }];
+            } else {
+                VCBase* vc = [[VCOtcUserAuth alloc] init];
+                [owner pushViewController:vc
+                                 vctitle:NSLocalizedString(@"kVcTitleOtcUserAuth", @"身份认证")
+                               backtitle:kVcDefaultBackTitleName];
+            }
+        }
+        return nil;
+    }] catch:^id(id error) {
+        [owner hideBlockView];
+        if (first_request) {
+            [self showOtcError:error not_login_callback:^{
+                //  处理登录
+                [self handleOtcUserLogin:owner login_callback:^{
+                    //  query id verify again
+                    [self _guardUserIdVerified:owner
+                                     auto_hide:auto_hide
+                             askForIdVerifyMsg:askForIdVerifyMsg
+                                 first_request:NO
+                                      callback:verifyed_callback];
+                }];
+            }];
+        } else {
+            [self showOtcError:error];
+        }
+        return nil;
+    }];
+}
+
+/*
+ *  (public) 确保已经进行认证认证。
+ */
+- (void)guardUserIdVerified:(VCBase*)owner
+                  auto_hide:(BOOL)auto_hide
+          askForIdVerifyMsg:(NSString*)askForIdVerifyMsg
+                   callback:(void (^)(id auth_info))verifyed_callback
+{
+    assert(owner);
+    assert(verifyed_callback);
+    [self _guardUserIdVerified:owner
+                     auto_hide:auto_hide
+             askForIdVerifyMsg:askForIdVerifyMsg
+                 first_request:YES
+                      callback:verifyed_callback];
+}
+
+/*
+ *  (public) 请求私钥授权登录。
+ */
+- (void)handleOtcUserLogin:(VCBase*)owner login_callback:(void (^)())login_callback
+{
+    assert(owner);
+    assert(login_callback);
+    [owner GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+        if (unlocked) {
+            [owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+            NSString* account_name = [self getCurrentBtsAccount];
+            [[[self login:account_name] then:^id(id login_responsed) {
+                [owner hideBlockView];
+                NSString* token = [login_responsed objectForKey:@"data"];
+                if (token && [token isKindOfClass:[NSString class]] && ![token isEqualToString:@""]) {
+                    [self _saveUserTokenCookie:account_name token:token];
+                    login_callback();
+                } else {
+                    [self showOtcError:nil];
+                }
+                return nil;
+            }] catch:^id(id error) {
+                [owner hideBlockView];
+                [self showOtcError:error];
+                return nil;
+            }];
+        }
+    }];
+}
+
+/*
+ *  (public) 处理用户注销账号。需要清理token等信息。
+ */
+- (void)processLogout
+{
+    if ([[WalletManager sharedWalletManager] isWalletExist]) {
+        [self _delUserTokenCookie:[self getCurrentBtsAccount]];
+    }
+}
+
+/*
+ *  (public) 是否是未登录错误判断。
+ */
+- (BOOL)isOtcUserNotLoginError:(id)error
+{
+    if (error && [error isKindOfClass:[WsPromiseException class]]){
+        WsPromiseException* excp = (WsPromiseException*)error;
+        id userInfo = excp.userInfo;
+        if (userInfo) {
+            id otcerror = [userInfo objectForKey:@"otcerror"];
+            if (otcerror) {
+                NSInteger errcode = [[otcerror objectForKey:@"code"] integerValue];
+                if (errcode == eoerr_not_login) {
+                    return YES;
+                }
+            }
+        }
+    }
+    return NO;
+}
+
 /*
  *  (public) 显示OTC的错误信息。
  */
 - (void)showOtcError:(id)error
 {
-    //  TODO:2.9 咨询 error code表。验证码错误 等 需要显示对应文案。
-    
-    //  显示错误信息
+    [self showOtcError:error not_login_callback:nil];
+}
+
+- (void)showOtcError:(id)error not_login_callback:(void (^)())not_login_callback
+{
     NSString* errmsg = nil;
     if (error && [error isKindOfClass:[WsPromiseException class]]){
         WsPromiseException* excp = (WsPromiseException*)error;
-        errmsg = excp.reason;
+        id userInfo = excp.userInfo;
+        if (userInfo) {
+            id otcerror = [userInfo objectForKey:@"otcerror"];
+            if (otcerror) {
+                //  异常中包含 otcerror 的情况
+                NSInteger errcode = [[otcerror objectForKey:@"code"] integerValue];
+                if (errcode == eoerr_not_login && not_login_callback) {
+                    not_login_callback();
+                    return;
+                } else {
+                    //  TODO:2.9 error code table 部分消息特化处理。
+                    switch (errcode) {
+                        case eoerr_too_often:
+                            errmsg = @"请求太频繁，请稍后再试。";
+                            break;
+                        case eoerr_not_login:
+                            errmsg = @"请退出场外交易界面重新登录。";
+                            break;
+                        default:
+                            {
+                                //  默认错误消息处理
+                                NSString* tmpmsg = [otcerror objectForKey:@"message"];
+                                if ([tmpmsg isKindOfClass:[NSString class]] && ![tmpmsg isEqualToString:@""]) {
+                                    //  显示 code 和 message
+                                    errmsg = [NSString stringWithFormat:@"%@", otcerror];
+                                } else {
+                                    //  仅显示 code
+                                    errmsg = [NSString stringWithFormat:@"服务器或网络异常，请稍后再试。错误代码：%@", @(errcode)];//TODO:2.9 lang
+                                }
+                            }
+                            break;
+                    }
+
+                }
+            }
+        }
+        if (!errmsg) {
+            errmsg = excp.reason;
+        }
     }
     if (!errmsg || [errmsg isEqualToString:@""]) {
+        //  没有任何错误信息的情况
         errmsg = @"服务器或网络异常，请稍后再试。";//TODO:2.9
     }
     [OrgUtils makeToast:errmsg];
@@ -475,7 +663,8 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
- *  (public) 查询OTC用户身份认证信息。
+ *  (public) API - 查询OTC用户身份认证信息。
+ *  认证：TOKEN 方式
  *  bts_account_name    - BTS账号名
  */
 - (WsPromise*)queryIdVerify:(NSString*)bts_account_name
@@ -488,7 +677,7 @@ static OtcManager *_sharedOtcManager = nil;
 //        @"dataVerifyType":@"",//TODO:2.9
 //        @"holderVerify":@"",//TODO:2.9
 //    };
-    return [self _queryApiCore:url args:@{@"btsAccount":bts_account_name} headers:nil];
+    return [self _queryApiCore:url args:@{@"btsAccount":bts_account_name} headers:nil auth_flag:eoaf_token];
 }
 
 /*
@@ -524,7 +713,8 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
- *  (public) 查询用户订单列表
+ *  (public) API - 查询用户订单列表
+ *  认证：TOKEN 方式
  */
 - (WsPromise*)queryUserOrders:(NSString*)bts_account_name
                          type:(EOtcOrderType)type
@@ -540,11 +730,12 @@ static OtcManager *_sharedOtcManager = nil;
         @"page":@(page),
         @"pageSize":@(page_size)
     };
-    return [self _queryApiCore:url args:args headers:nil];
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
 }
 
 /*
- *  (public) 查询订单详情
+ *  (public) API - 查询订单详情
+ *  认证：TOKEN 方式
  */
 - (WsPromise*)queryUserOrderDetails:(NSString*)bts_account_name order_id:(NSString*)order_id
 {
@@ -553,7 +744,7 @@ static OtcManager *_sharedOtcManager = nil;
         @"btsAccount":bts_account_name,
         @"orderId":order_id,
     };
-    return [self _queryApiCore:url args:args headers:nil];
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
 }
 
 /*
@@ -586,7 +777,8 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
- *  (public) 查询用户收款方式
+ *  (public) API - 查询用户收款方式
+ *  认证：TOKEN 方式
  */
 - (WsPromise*)queryPaymentMethods:(NSString*)bts_account_name
 {
@@ -594,7 +786,7 @@ static OtcManager *_sharedOtcManager = nil;
     id args = @{
         @"btsAccount":bts_account_name,
     };
-    return [self _queryApiCore:url args:args headers:nil];
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
 }
 
 - (WsPromise*)addPaymentMethods:(id)args
@@ -649,11 +841,12 @@ static OtcManager *_sharedOtcManager = nil;
         @"btsAccount":bts_account_name,
         @"fileName":filename,
     };
-    return [self _queryApiCore:url args:args headers:nil as_json:NO];
+    return [self _queryApiCore:url args:args headers:nil as_json:NO auth_flag:eoaf_none];
 }
 
 /*
- *  (public) 查询OTC支持的数字资产列表（bitCNY、bitUSD、USDT等）
+ *  (public) API - 查询OTC支持的数字资产列表（bitCNY、bitUSD、USDT等）
+ *  认证：无
  *  asset_type  - 资产类型 默认值：eoat_digital
  */
 - (WsPromise*)queryAssetList
@@ -668,7 +861,8 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
- *  (public) 查询OTC商家广告列表。
+ *  (public) API - 查询OTC商家广告列表。
+ *  认证：无
  *  ad_status   - 广告状态 默认值：eoads_online
  *  ad_type     - 状态类型
  *  asset_name  - OTC数字资产名字（CNY、USD、GDEX.USDT等）
@@ -694,17 +888,17 @@ static OtcManager *_sharedOtcManager = nil;
     return [self _queryApiCore:url args:args headers:nil];
 }
 
-/*
- *  (public) 查询广告详情。
- */
-- (WsPromise*)queryAdDetails:(NSString*)ad_id
-{
-    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/ad/detail"];
-    id args = @{
-        @"adId":ad_id,
-    };
-    return [self _queryApiCore:url args:args headers:nil];
-}
+///*
+// *  (public) 查询广告详情。
+// */
+//- (WsPromise*)queryAdDetails:(NSString*)ad_id
+//{
+//    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/ad/detail"];
+//    id args = @{
+//        @"adId":ad_id,
+//    };
+//    return [self _queryApiCore:url args:args headers:nil];
+//}
 
 /*
  *  (public) 锁定价格
@@ -741,31 +935,59 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
+ *  (public) API - 登录。部分API接口需要传递登录过的token字段。
+ *  认证：SIGN 方式
+ */
+- (WsPromise*)login:(NSString*)bts_account_name
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/user/login"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+    };
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+}
+
+/*
  *  (private) 执行OTC网络请求。
  *  as_json     - 是否返回 json 格式，否则返回原始数据流。
  */
 - (WsPromise*)_queryApiCore:(NSString*)url args:(id)args headers:(id)headers
 {
-    return [self _queryApiCore:url args:args headers:headers as_json:YES];
+    return [self _queryApiCore:url args:args headers:headers as_json:YES auth_flag:eoaf_none];
 }
 
-- (WsPromise*)_queryApiCore:(NSString*)url args:(id)args headers:(id)headers as_json:(BOOL)as_json
+- (WsPromise*)_queryApiCore:(NSString*)url args:(id)args headers:(id)headers auth_flag:(EOtcAuthFlag)auth_flag
 {
-    //  TODO:2.9 args
-    BOOL bNeedSign = YES;
-    if (bNeedSign) {
+    return [self _queryApiCore:url args:args headers:headers as_json:YES auth_flag:auth_flag];
+}
+
+- (WsPromise*)_queryApiCore:(NSString*)url args:(id)args headers:(id)headers as_json:(BOOL)as_json auth_flag:(EOtcAuthFlag)auth_flag
+{
+    //  认证：签名 or token
+    if (auth_flag != eoaf_none) {
         //  计算签名 先获取毫秒时间戳
         id timestamp = [NSString stringWithFormat:@"%@", @((uint64_t)([[NSDate date] timeIntervalSince1970] * 1000))];
-        NSString* sign = [self _sign:timestamp args:args];
+        NSString* auth_key;
+        NSString* auth_value;
+        if (auth_flag == eoaf_sign) {
+            auth_key = @"sign";
+            auth_value = [self _sign:timestamp args:args];
+        } else {
+            assert(auth_flag == eoaf_token);
+            auth_key = @"token";
+            auth_value = [self _loadUserTokenCookie:[self getCurrentBtsAccount]];
+        }
         //  合并请求header
         id new_headers = headers ? [headers mutableCopy] : [NSMutableDictionary dictionary];
         [new_headers setObject:timestamp forKey:@"timestamp"];
-        [new_headers setObject:sign forKey:@"sign"];
+        if (auth_value) {
+            [new_headers setObject:auth_value forKey:auth_key];
+        }
         //  更新header
         headers = [new_headers copy];
     }
     
-    //  TODO:2.9 签名认证
+    //  执行请求
     WsPromise* request_promise = [OrgUtils asyncPostUrl_jsonBody:url args:args headers:headers as_json:as_json];
     if (as_json) {
         //  REMARK：json格式需要判断返回值
@@ -792,13 +1014,7 @@ static OtcManager *_sharedOtcManager = nil;
             }
             NSInteger code = [[responsed objectForKey:@"code"] integerValue];
             if (code != eoerr_ok) {
-                //  TODO:2.9 部分 error code 特殊多语言 处理 。
-                id msg = [responsed objectForKey:@"message"];
-                if (msg && ![msg isEqualToString:@""]) {
-                    reject([NSString stringWithFormat:@"%@", @{@"code":@(code), @"message":msg}]);
-                } else {
-                    reject([NSString stringWithFormat:@"服务器或网络异常，请稍后再试。错误代码：%@", @(code)]);
-                }
+                reject(@{@"otcerror":@{@"code":@(code), @"message":[responsed objectForKey:@"message"] ?: @""}});
             } else {
                 resolve(responsed);
             }
@@ -808,6 +1024,33 @@ static OtcManager *_sharedOtcManager = nil;
             return nil;
         }];
     }];
+}
+
+/*
+ *  (private) token信息管理
+ */
+- (NSString*)_genUserTokenCookieName:(NSString*)bts_account_name
+{
+    assert(bts_account_name);
+    //  TODO:2.9 token key config
+    return [NSString stringWithFormat:@"_bts_otc_token_%@", bts_account_name];
+}
+
+- (NSString*)_loadUserTokenCookie:(NSString*)bts_account_name
+{
+    return (NSString*)[[AppCacheManager sharedAppCacheManager] getPref:[self _genUserTokenCookieName:bts_account_name]];
+}
+
+- (void)_delUserTokenCookie:(NSString*)bts_account_name
+{
+    [[[AppCacheManager sharedAppCacheManager] deletePref:[self _genUserTokenCookieName:bts_account_name]] saveCacheToFile];
+}
+
+- (void)_saveUserTokenCookie:(NSString*)bts_account_name token:(NSString*)token
+{
+    if (token) {
+        [[[AppCacheManager sharedAppCacheManager] setPref:[self _genUserTokenCookieName:bts_account_name] value:token] saveCacheToFile];
+    }
 }
 
 /*
@@ -829,19 +1072,32 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
- *  (private) 执行签名。
+ *  (private) 执行签名。钱包需要先解锁。
  */
 - (NSString*)_sign:(id)timestamp args:(id)args
 {
+    WalletManager* walletMgr = [WalletManager sharedWalletManager];
+    assert(![walletMgr isLocked]);
+    
     //  获取待签名字符串
     id sign_args = args ? [args mutableCopy] : [NSMutableDictionary dictionary];
     [sign_args setObject:timestamp forKey:@"timestamp"];
     NSString* sign_str = [self _gen_sign_string:sign_args];
     
-    //  执行签名 TODO:2.9 sign(sign_str)
+    //  TODO:2.9 实际签名数据是否加上chain id
+    NSData* sign_data = [sign_str dataUsingEncoding:NSUTF8StringEncoding];
     
-    //  TODO:2.9 私钥签名。
-    return sign_str;
+    //  TODO:2.9 不支持任何多签。必须单key 100%权限。active。
+    id active_permission = [[[walletMgr getWalletAccountInfo] objectForKey:@"account"] objectForKey:@"active"];
+    id sign_keys = [walletMgr getSignKeys:active_permission];
+    assert([sign_keys count] == 1);
+    id signs = [walletMgr signTransaction:sign_data signKeys:sign_keys];
+    if (!signs) {
+        //  签名失败
+        return nil;
+    }
+    
+    return [[signs firstObject] hex_encode];
 }
 
 @end

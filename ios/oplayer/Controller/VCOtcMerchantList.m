@@ -8,7 +8,6 @@
 
 #import "VCOtcMerchantList.h"
 #import "VCOtcOrders.h"
-#import "VCOtcUserAuth.h"
 #import "VCOtcUserAuthInfos.h"
 #import "VCOtcPaymentMethods.h"
 
@@ -59,8 +58,15 @@
 
 - (void)onRightOrderButtonClicked
 {
-    VCBase* vc = [[VCOtcOrders alloc] init];
-    [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleOtcOrderList", @"订单记录") backtitle:kVcDefaultBackTitleName];
+    //  TODO:2.9 lang
+    [[OtcManager sharedOtcManager] guardUserIdVerified:self
+                                             auto_hide:YES
+                                     askForIdVerifyMsg:@"在继续操作之前您需要先完成身份认证，是否继续？"
+                                              callback:^(id auth_info)
+    {
+        VCBase* vc = [[VCOtcOrders alloc] initWithAuthInfo:auth_info];
+        [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleOtcOrderList", @"订单记录") backtitle:kVcDefaultBackTitleName];
+    }];
 }
 
 - (void)onRightUserButtonClicked
@@ -72,60 +78,38 @@
                                                       callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
      {
          if (buttonIndex != cancelIndex){
-             // 查询用户认证信息 TODO:2.9 lang
-             OtcManager* otc = [OtcManager sharedOtcManager];
-             [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-             [[[otc queryIdVerify:[otc getCurrentBtsAccount]] then:^id(id responsed) {
-                 [self hideBlockView];
-                 switch (buttonIndex) {
-                     case 0:    //  认证信息
+             switch (buttonIndex) {
+                 case 0:    //  认证信息
+                 {
+                     [[OtcManager sharedOtcManager] guardUserIdVerified:self
+                                                              auto_hide:YES
+                                                      askForIdVerifyMsg:nil
+                                                               callback:^(id auth_info)
                      {
-                         if ([otc isIdVerifyed:responsed]) {
-                             VCBase* vc = [[VCOtcUserAuthInfos alloc] initWithAuthInfo:responsed[@"data"]];
-                             [self pushViewController:vc
-                                              vctitle:NSLocalizedString(@"kVcTitleOtcAuthInfos", @"认证信息")
-                                            backtitle:kVcDefaultBackTitleName];
-                         } else {
-                             VCBase* vc = [[VCOtcUserAuth alloc] init];
-                             [self pushViewController:vc
-                                              vctitle:NSLocalizedString(@"kVcTitleOtcUserAuth", @"身份认证")
-                                            backtitle:kVcDefaultBackTitleName];
-                         }
-                     }
-                         break;
-                     case 1:    //  收款方式
-                     {
-                         if ([otc isIdVerifyed:responsed]) {
-                             VCBase* vc = [[VCOtcPaymentMethods alloc] initWithAuthInfo:responsed[@"data"]];
-                             [self pushViewController:vc
-                                              vctitle:NSLocalizedString(@"kVcTitleOtcPaymentMethodList", @"收款方式")
-                                            backtitle:kVcDefaultBackTitleName];
-                         } else {
-                             // TODO:2.9 lang
-                             [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"添加收款方式之前，请先完成身份认证，是否继续？"
-                                                                                    withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
-                                                                                   completion:^(NSInteger buttonIndex)
-                              {
-                                  if (buttonIndex == 1)
-                                  {
-                                      VCBase* vc = [[VCOtcUserAuth alloc] init];
-                                      [self pushViewController:vc
-                                                       vctitle:NSLocalizedString(@"kVcTitleOtcUserAuth", @"身份认证")
-                                                     backtitle:kVcDefaultBackTitleName];
-                                  }
-                              }];
-                         }
-                     }
-                         break;
-                     default:
-                         break;
+                         VCBase* vc = [[VCOtcUserAuthInfos alloc] initWithAuthInfo:auth_info];
+                         [self pushViewController:vc
+                                          vctitle:NSLocalizedString(@"kVcTitleOtcAuthInfos", @"认证信息")
+                                        backtitle:kVcDefaultBackTitleName];
+                     }];
                  }
-                 return nil;
-             }] catch:^id(id error) {
-                 [self hideBlockView];
-                 [otc showOtcError:error];
-                 return nil;
-             }];
+                     break;
+                 case 1:    //  收款方式
+                 {
+                     [[OtcManager sharedOtcManager] guardUserIdVerified:self
+                                                              auto_hide:YES
+                                                      askForIdVerifyMsg:@"添加收款方式之前，请先完成身份认证，是否继续？"
+                                                               callback:^(id auth_info)
+                     {
+                         VCBase* vc = [[VCOtcPaymentMethods alloc] initWithAuthInfo:auth_info];
+                         [self pushViewController:vc
+                                          vctitle:NSLocalizedString(@"kVcTitleOtcPaymentMethodList", @"收款方式")
+                                        backtitle:kVcDefaultBackTitleName];
+                     }];
+                 }
+                     break;
+                 default:
+                     break;
+             }
          }
      }];
 }
@@ -381,29 +365,9 @@
 }
 
 /*
- *  (private) 是否前往身份认证
- */
-- (void)askForIdVerify:(id)responsed
-{
-    //  TODO:2.9 lang
-    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"您尚未完成身份认证，不可进行场外交易，是否去认证？"
-                                                           withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
-                                                          completion:^(NSInteger buttonIndex)
-     {
-         if (buttonIndex == 1)
-         {
-            VCBase* vc = [[VCOtcUserAuth alloc] init];
-            [_owner pushViewController:vc
-                               vctitle:NSLocalizedString(@"kVcTitleOtcUserAuth", @"身份认证")
-                             backtitle:kVcDefaultBackTitleName];
-         }
-     }];
-}
-
-/*
  *  (private) 账号异常，冻结时，是否联系客服。
  */
-- (void)askForContactCustomerService:(id)responsed
+- (void)askForContactCustomerService:(id)auth_info
 {
     //  TODO:2.9 lang
     [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"您的账号已被冻结，是否联系客服？"
@@ -544,23 +508,20 @@
     assert(adId);
     
     OtcManager* otc = [OtcManager sharedOtcManager];
-    
-    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    [[[otc queryIdVerify:[otc getCurrentBtsAccount]] then:^id(id responsed) {
-        //  1、查询认证信息：用户是否完成实名认证
-        if (![otc isIdVerifyed:responsed]) {
+    [otc guardUserIdVerified:_owner
+                   auto_hide:NO
+           askForIdVerifyMsg:@"您尚未完成身份认证，不可进行场外交易，是否去认证？"//TODO:2.9 lang
+                    callback:^(id auth_info)
+    {
+        //  1、查询账号状态：用户账号是否异常
+        if ([[auth_info objectForKey:@"status"] integerValue] == eous_freeze) {
             [_owner hideBlockView];
-            [self askForIdVerify:responsed];
-            return nil;
+            [self askForContactCustomerService:auth_info];
+            return;
         }
-        //  2、查询账号状态：用户账号是否异常
-        if ([[[responsed objectForKey:@"data"] objectForKey:@"status"] integerValue] == eous_freeze) {
-            [_owner hideBlockView];
-            [self askForContactCustomerService:responsed];
-            return nil;
-        }
-        //  3、仅针对用户卖出的情况：收款方式和商家付款方式是否匹配 REMARK：用户买入不用check，只要商家开启任意收款方式即可。
-        return [[self _queryPaymentMethodList] then:^id(id pminfo_list) {
+        
+        //  2、仅针对用户卖出的情况：收款方式和商家付款方式是否匹配 REMARK：用户买入不用check，只要商家开启任意收款方式即可。
+        [[[self _queryPaymentMethodList] then:^id(id pminfo_list) {
             //  仅卖出的情况
             if (_ad_type == eoadt_user_sell) {
                 BOOL bPaymentMatch = NO;
@@ -602,11 +563,11 @@
                 }
                 if (!bPaymentMatch) {
                     [_owner hideBlockView];
-                    [self askForAddNewPaymentMethod:item auth_info:responsed[@"data"]];
+                    [self askForAddNewPaymentMethod:item auth_info:auth_info];
                     return nil;
                 }
             }
-            //  4、锁定价格&前往下单（TODO:2.9 是否先查询广告详情，目前数据一直）
+            //  3、锁定价格&前往下单（TODO:2.9 是否先查询广告详情，目前数据一直）
             return [[otc lockPrice:[otc getCurrentBtsAccount]
                              ad_id:adId
                               type:(EOtcAdType)[[item objectForKey:@"adType"] integerValue]
@@ -625,11 +586,11 @@
                 }
                 return nil;
             }];
+        }] catch:^id(id error) {
+            [_owner hideBlockView];
+            [otc showOtcError:error];
+            return nil;
         }];
-    }] catch:^id(id error) {
-        [_owner hideBlockView];
-        [otc showOtcError:error];
-        return nil;
     }];
 }
 

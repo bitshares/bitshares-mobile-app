@@ -332,19 +332,19 @@ static AppCacheManager* _spInstanceAppCacheMgr = nil;
     [_native_caches removeObjectForKey:key];
     return self;
 }
--(id)nativeCacheHash
-{
-    return _native_caches;
-}
--(id)getNativeCacheForKey:(NSString*)pKey
-{
-    return [_native_caches objectForKey:pKey];
-}
--(AppCacheManager*)setNativeCacheObject:(id)object forKey:(NSString*)pKey
-{
-    [_native_caches setObject:object forKey:pKey];
-    return self;
-}
+//-(id)nativeCacheHash
+//{
+//    return _native_caches;
+//}
+//-(id)getNativeCacheForKey:(NSString*)pKey
+//{
+//    return [_native_caches objectForKey:pKey];
+//}
+//-(AppCacheManager*)setNativeCacheObject:(id)object forKey:(NSString*)pKey
+//{
+//    [_native_caches setObject:object forKey:pKey];
+//    return self;
+//}
 
 #pragma mark- for wallet info
 - (NSDictionary*)getWalletInfo

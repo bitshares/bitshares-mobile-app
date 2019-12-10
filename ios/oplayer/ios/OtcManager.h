@@ -10,12 +10,23 @@
 #import "WsPromise.h"
 
 /*
+ *  API认证方式
+ */
+typedef enum EOtcAuthFlag
+{
+    eoaf_none = 0,                          //  无需认证
+    eoaf_sign,                              //  Active私钥签名认证
+    eoaf_token                              //  Token认证
+} EOtcAuthFlag;
+
+/*
  *  错误码
  */
 typedef enum EOtcErrorCode
 {
     eoerr_ok = 0,                           //  正常
     eoerr_too_often = 1012,                 //  请求太频繁
+    eoerr_not_login = 2011,                 //  未登录
     eoerr_order_cancel_to_go_online = 5001, //  取消订单数量太多？TODO:2.9
     //  TODO:2.9 其他待添加
 } EOtcErrorCode;
@@ -231,9 +242,33 @@ typedef enum EOtcOrderOperationType
 - (void)gotoOtc:(VCBase*)owner asset_name:(NSString*)asset_name ad_type:(EOtcAdType)ad_type;
 
 /*
+ *  (public) 确保已经进行认证认证。
+ */
+- (void)guardUserIdVerified:(VCBase*)owner
+                  auto_hide:(BOOL)auto_hide
+          askForIdVerifyMsg:(NSString*)askForIdVerifyMsg
+                   callback:(void (^)(id auth_info))verifyed_callback;
+
+/*
+ *  (public) 请求私钥授权登录。
+ */
+- (void)handleOtcUserLogin:(VCBase*)owner login_callback:(void (^)())login_callback;
+
+/*
+ *  (public) 处理用户注销账号。需要清理token等信息。
+ */
+- (void)processLogout;
+
+/*
+ *  (public) 是否是未登录错误判断。
+ */
+- (BOOL)isOtcUserNotLoginError:(id)error;
+
+/*
  *  (public) 显示OTC的错误信息。
  */
 - (void)showOtcError:(id)error;
+- (void)showOtcError:(id)error not_login_callback:(void (^)())not_login_callback;
 
 /*
  *  (public) 辅助方法 - 是否已认证判断
@@ -320,10 +355,10 @@ typedef enum EOtcOrderOperationType
 - (WsPromise*)queryAdList:(EOtcAdStatus)ad_status type:(EOtcAdType)ad_type asset_name:(NSString*)asset_name
                      page:(NSInteger)page page_size:(NSInteger)page_size;
 
-/*
- *  (public) 查询广告详情。
- */
-- (WsPromise*)queryAdDetails:(NSString*)ad_id;
+///*
+// *  (public) 查询广告详情。
+// */
+//- (WsPromise*)queryAdDetails:(NSString*)ad_id;
 
 /*
  *  (public) 锁定价格
@@ -338,5 +373,10 @@ typedef enum EOtcOrderOperationType
  *  (public) 发送短信
  */
 - (WsPromise*)sendSmsCode:(NSString*)bts_account_name phone:(NSString*)phone_number type:(EOtcSmsType)type;
+
+/*
+ *  (public) 登录。部分API接口需要传递登录过的token字段。
+ */
+- (WsPromise*)login:(NSString*)bts_account_name;
 
 @end
