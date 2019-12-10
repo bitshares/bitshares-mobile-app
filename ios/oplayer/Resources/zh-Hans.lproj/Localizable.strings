@@ -735,7 +735,7 @@
 "kVcTitleOtcOrderList" = "订单记录";
 "kVcTitleOtcAuthInfos" = "认证信息";
 "kVcTitleOtcUserAuth" = "身份认证";
-"kVcTitleOtcPaymentMethodList" = "收款方式";
+"kVcTitleOtcReceiveMethodsList" = "收款方式";
 "kVcTitleOtcPmAddAlipay" = "添加支付宝";
 "kVcTitleOtcPmAddBankCard" = "添加银行卡";
 

@@ -735,7 +735,7 @@
 "kVcTitleOtcOrderList" = "Orders";
 "kVcTitleOtcAuthInfos" = "User Info";
 "kVcTitleOtcUserAuth" = "KYC";
-"kVcTitleOtcPaymentMethodList" = "Payment Info";
+"kVcTitleOtcReceiveMethodsList" = "Payment Info";
 "kVcTitleOtcPmAddAlipay" = "Add alipay";
 "kVcTitleOtcPmAddBankCard" = "Add bank card";
 

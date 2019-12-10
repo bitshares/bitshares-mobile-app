@@ -9,6 +9,21 @@
 /* Begin PBXBuildFile section */
 		18FF06C517E03C170088405E /* share_line.png in Resources */ = {isa = PBXBuildFile; fileRef = 18FF06C317E03C170088405E /* share_line.png */; };
 		18FF06C617E03C170088405E /* share_line@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18FF06C417E03C170088405E /* share_line@2x.png */; };
+		3F0099F0239FA96D00A77E4A /* VCOtcReceiveMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0099EE239FA96D00A77E4A /* VCOtcReceiveMethods.m */; };
+		3F0099F1239FA96D00A77E4A /* VCOtcReceiveMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0099EE239FA96D00A77E4A /* VCOtcReceiveMethods.m */; };
+		3F0099F2239FA96D00A77E4A /* VCOtcReceiveMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0099EE239FA96D00A77E4A /* VCOtcReceiveMethods.m */; };
+		3F0099FB239FAA9A00A77E4A /* VCOtcMcAssetList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0099F3239FAA9900A77E4A /* VCOtcMcAssetList.m */; };
+		3F0099FC239FAA9A00A77E4A /* VCOtcMcAssetList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0099F3239FAA9900A77E4A /* VCOtcMcAssetList.m */; };
+		3F0099FD239FAA9A00A77E4A /* VCOtcMcAssetList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0099F3239FAA9900A77E4A /* VCOtcMcAssetList.m */; };
+		3F0099FE239FAA9A00A77E4A /* VCOtcMcHome.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0099F5239FAA9900A77E4A /* VCOtcMcHome.m */; };
+		3F0099FF239FAA9A00A77E4A /* VCOtcMcHome.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0099F5239FAA9900A77E4A /* VCOtcMcHome.m */; };
+		3F009A00239FAA9A00A77E4A /* VCOtcMcHome.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0099F5239FAA9900A77E4A /* VCOtcMcHome.m */; };
+		3F009A01239FAA9A00A77E4A /* VCOtcMcAdList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0099F6239FAA9900A77E4A /* VCOtcMcAdList.m */; };
+		3F009A02239FAA9A00A77E4A /* VCOtcMcAdList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0099F6239FAA9900A77E4A /* VCOtcMcAdList.m */; };
+		3F009A03239FAA9A00A77E4A /* VCOtcMcAdList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0099F6239FAA9900A77E4A /* VCOtcMcAdList.m */; };
+		3F009A04239FAA9A00A77E4A /* VCOtcMcPaymentMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0099F7239FAA9900A77E4A /* VCOtcMcPaymentMethods.m */; };
+		3F009A05239FAA9A00A77E4A /* VCOtcMcPaymentMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0099F7239FAA9900A77E4A /* VCOtcMcPaymentMethods.m */; };
+		3F009A06239FAA9A00A77E4A /* VCOtcMcPaymentMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F0099F7239FAA9900A77E4A /* VCOtcMcPaymentMethods.m */; };
 		3F05DDBD230B7D76002934DA /* VCLaunch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F05DDBB230B7D75002934DA /* VCLaunch.m */; };
 		3F05DDBE230B7D76002934DA /* VCLaunch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F05DDBB230B7D75002934DA /* VCLaunch.m */; };
 		3F0AE33A2192C97800E4144C /* iconWallet@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F0AE3342192C97700E4144C /* iconWallet@3x.png */; };
@@ -84,9 +99,6 @@
 		3F4F2935237180C9007674E5 /* VCOtcAddBankCard.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4F2931237180C9007674E5 /* VCOtcAddBankCard.m */; };
 		3F4F2936237180C9007674E5 /* VCOtcAddBankCard.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4F2931237180C9007674E5 /* VCOtcAddBankCard.m */; };
 		3F4F2937237180C9007674E5 /* VCOtcAddBankCard.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4F2931237180C9007674E5 /* VCOtcAddBankCard.m */; };
-		3F4F2938237180C9007674E5 /* VCOtcPaymentMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4F2934237180C9007674E5 /* VCOtcPaymentMethods.m */; };
-		3F4F2939237180C9007674E5 /* VCOtcPaymentMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4F2934237180C9007674E5 /* VCOtcPaymentMethods.m */; };
-		3F4F293A237180C9007674E5 /* VCOtcPaymentMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4F2934237180C9007674E5 /* VCOtcPaymentMethods.m */; };
 		3F4F293D23727A83007674E5 /* VCOtcAddAlipay.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4F293B23727A83007674E5 /* VCOtcAddAlipay.m */; };
 		3F4F293E23727A83007674E5 /* VCOtcAddAlipay.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4F293B23727A83007674E5 /* VCOtcAddAlipay.m */; };
 		3F4F293F23727A83007674E5 /* VCOtcAddAlipay.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4F293B23727A83007674E5 /* VCOtcAddAlipay.m */; };
@@ -1837,6 +1849,16 @@
 /* Begin PBXFileReference section */
 		18FF06C317E03C170088405E /* share_line.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = share_line.png; path = Images/share_line.png; sourceTree = "<group>"; };
 		18FF06C417E03C170088405E /* share_line@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "share_line@2x.png"; path = "Images/share_line@2x.png"; sourceTree = "<group>"; };
+		3F0099EE239FA96D00A77E4A /* VCOtcReceiveMethods.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcReceiveMethods.m; path = Controller/VCOtcReceiveMethods.m; sourceTree = "<group>"; };
+		3F0099EF239FA96D00A77E4A /* VCOtcReceiveMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcReceiveMethods.h; path = Controller/VCOtcReceiveMethods.h; sourceTree = "<group>"; };
+		3F0099F3239FAA9900A77E4A /* VCOtcMcAssetList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcMcAssetList.m; path = Controller/VCOtcMcAssetList.m; sourceTree = "<group>"; };
+		3F0099F4239FAA9900A77E4A /* VCOtcMcPaymentMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcMcPaymentMethods.h; path = Controller/VCOtcMcPaymentMethods.h; sourceTree = "<group>"; };
+		3F0099F5239FAA9900A77E4A /* VCOtcMcHome.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcMcHome.m; path = Controller/VCOtcMcHome.m; sourceTree = "<group>"; };
+		3F0099F6239FAA9900A77E4A /* VCOtcMcAdList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcMcAdList.m; path = Controller/VCOtcMcAdList.m; sourceTree = "<group>"; };
+		3F0099F7239FAA9900A77E4A /* VCOtcMcPaymentMethods.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcMcPaymentMethods.m; path = Controller/VCOtcMcPaymentMethods.m; sourceTree = "<group>"; };
+		3F0099F8239FAA9900A77E4A /* VCOtcMcAssetList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcMcAssetList.h; path = Controller/VCOtcMcAssetList.h; sourceTree = "<group>"; };
+		3F0099F9239FAA9A00A77E4A /* VCOtcMcAdList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcMcAdList.h; path = Controller/VCOtcMcAdList.h; sourceTree = "<group>"; };
+		3F0099FA239FAA9A00A77E4A /* VCOtcMcHome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcMcHome.h; path = Controller/VCOtcMcHome.h; sourceTree = "<group>"; };
 		3F05DDBB230B7D75002934DA /* VCLaunch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCLaunch.m; path = Controller/VCLaunch.m; sourceTree = "<group>"; };
 		3F05DDBC230B7D75002934DA /* VCLaunch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCLaunch.h; path = Controller/VCLaunch.h; sourceTree = "<group>"; };
 		3F0AE3342192C97700E4144C /* iconWallet@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconWallet@3x.png"; path = "Images/iconWallet@3x.png"; sourceTree = "<group>"; };
@@ -1906,8 +1928,6 @@
 		3F4D9A552294E476000BFD82 /* libFlurry_9.3.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry_9.3.1.a; sourceTree = "<group>"; };
 		3F4F2931237180C9007674E5 /* VCOtcAddBankCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcAddBankCard.m; path = Controller/VCOtcAddBankCard.m; sourceTree = "<group>"; };
 		3F4F2932237180C9007674E5 /* VCOtcAddBankCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcAddBankCard.h; path = Controller/VCOtcAddBankCard.h; sourceTree = "<group>"; };
-		3F4F2933237180C9007674E5 /* VCOtcPaymentMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcPaymentMethods.h; path = Controller/VCOtcPaymentMethods.h; sourceTree = "<group>"; };
-		3F4F2934237180C9007674E5 /* VCOtcPaymentMethods.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcPaymentMethods.m; path = Controller/VCOtcPaymentMethods.m; sourceTree = "<group>"; };
 		3F4F293B23727A83007674E5 /* VCOtcAddAlipay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcAddAlipay.m; path = Controller/VCOtcAddAlipay.m; sourceTree = "<group>"; };
 		3F4F293C23727A83007674E5 /* VCOtcAddAlipay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcAddAlipay.h; path = Controller/VCOtcAddAlipay.h; sourceTree = "<group>"; };
 		3F676A27230E9EC100E98C14 /* fowallet-baichenglian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "fowallet-baichenglian.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3531,6 +3551,14 @@
 		3FE23E30236D6A07006BF999 /* OTC */ = {
 			isa = PBXGroup;
 			children = (
+				3F0099F9239FAA9A00A77E4A /* VCOtcMcAdList.h */,
+				3F0099F6239FAA9900A77E4A /* VCOtcMcAdList.m */,
+				3F0099F8239FAA9900A77E4A /* VCOtcMcAssetList.h */,
+				3F0099F3239FAA9900A77E4A /* VCOtcMcAssetList.m */,
+				3F0099FA239FAA9A00A77E4A /* VCOtcMcHome.h */,
+				3F0099F5239FAA9900A77E4A /* VCOtcMcHome.m */,
+				3F0099F4239FAA9900A77E4A /* VCOtcMcPaymentMethods.h */,
+				3F0099F7239FAA9900A77E4A /* VCOtcMcPaymentMethods.m */,
 				3FFFA115238632EE00E25CFA /* VCOtcUserAuthInfos.h */,
 				3FFFA114238632ED00E25CFA /* VCOtcUserAuthInfos.m */,
 				3F67F8F423823DCE00B3542E /* VCOtcOrderDetails.h */,
@@ -3539,12 +3567,12 @@
 				3F12F43D237D0E2D001FBAD8 /* VCOtcOrders.m */,
 				3F12FB5E2372BA1A00654A07 /* VCOtcMerchantList.h */,
 				3F12FB5D2372BA1900654A07 /* VCOtcMerchantList.m */,
+				3F0099EF239FA96D00A77E4A /* VCOtcReceiveMethods.h */,
+				3F0099EE239FA96D00A77E4A /* VCOtcReceiveMethods.m */,
 				3F4F293C23727A83007674E5 /* VCOtcAddAlipay.h */,
 				3F4F293B23727A83007674E5 /* VCOtcAddAlipay.m */,
 				3F4F2932237180C9007674E5 /* VCOtcAddBankCard.h */,
 				3F4F2931237180C9007674E5 /* VCOtcAddBankCard.m */,
-				3F4F2933237180C9007674E5 /* VCOtcPaymentMethods.h */,
-				3F4F2934237180C9007674E5 /* VCOtcPaymentMethods.m */,
 				3FE23E31236D6A1F006BF999 /* VCOtcUserAuth.h */,
 				3FE23E32236D6A1F006BF999 /* VCOtcUserAuth.m */,
 			);
@@ -5332,6 +5360,7 @@
 				3F67680B230E9EC100E98C14 /* Delta.c in Sources */,
 				3F67680C230E9EC100E98C14 /* WjCryptLib_Md5.c in Sources */,
 				3F67680D230E9EC100E98C14 /* main.m in Sources */,
+				3F009A00239FAA9A00A77E4A /* VCOtcMcHome.m in Sources */,
 				3F67680E230E9EC100E98C14 /* VCGatewayWithdraw.m in Sources */,
 				3F67680F230E9EC100E98C14 /* 7zBuf2.c in Sources */,
 				3F676810230E9EC100E98C14 /* VCTradeHor.m in Sources */,
@@ -5388,6 +5417,8 @@
 				3F67683E230E9EC100E98C14 /* VCSelectEstimateUnit.m in Sources */,
 				3F1A5132235577F100632A6F /* VCPermissionEdit.m in Sources */,
 				3F67683F230E9EC100E98C14 /* ViewActionsCell.m in Sources */,
+				3F0099FD239FAA9A00A77E4A /* VCOtcMcAssetList.m in Sources */,
+				3F0099F2239FA96D00A77E4A /* VCOtcReceiveMethods.m in Sources */,
 				3F676840230E9EC100E98C14 /* GCDWebServerFileResponse.m in Sources */,
 				3F676841230E9EC100E98C14 /* TempManager.m in Sources */,
 				3F676842230E9EC100E98C14 /* AsyncTaskManager.m in Sources */,
@@ -5405,7 +5436,6 @@
 				3F67684E230E9EC100E98C14 /* DirectionPanGestureRecognizer.m in Sources */,
 				3F67684F230E9EC100E98C14 /* mztools.c in Sources */,
 				3F676850230E9EC100E98C14 /* 7zAlloc.c in Sources */,
-				3F4F293A237180C9007674E5 /* VCOtcPaymentMethods.m in Sources */,
 				3F676851230E9EC100E98C14 /* SAMKeychain.m in Sources */,
 				3F676852230E9EC100E98C14 /* 7zStream.c in Sources */,
 				3F676853230E9EC100E98C14 /* BraIA64.c in Sources */,
@@ -5479,6 +5509,7 @@
 				3F676890230E9EC100E98C14 /* ViewCommitteeVoteCell.m in Sources */,
 				3F676891230E9EC100E98C14 /* 7zFile.c in Sources */,
 				3F676892230E9EC100E98C14 /* GCDWebServerResponse.m in Sources */,
+				3F009A06239FAA9A00A77E4A /* VCOtcMcPaymentMethods.m in Sources */,
 				3F676893230E9EC100E98C14 /* TransactionBuilder.m in Sources */,
 				3F676894230E9EC100E98C14 /* VCLoginPrivateKeyMode.m in Sources */,
 				3F676895230E9EC100E98C14 /* VCBaseWebView.m in Sources */,
@@ -5567,6 +5598,7 @@
 				3F6768DF230E9EC100E98C14 /* VCBtsaiWebView.m in Sources */,
 				3F6768E0230E9EC100E98C14 /* VCNotice.m in Sources */,
 				3F6768E1230E9EC100E98C14 /* VCWebView.m in Sources */,
+				3F009A03239FAA9A00A77E4A /* VCOtcMcAdList.m in Sources */,
 				3F2E6E2E233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */,
 				3F6768E2230E9EC100E98C14 /* StyledPageControl.m in Sources */,
 				3F6768E3230E9EC100E98C14 /* VCTest.m in Sources */,
@@ -5647,6 +5679,7 @@
 				3FB8F8A421CE66C200DA88E2 /* Delta.c in Sources */,
 				3FB8F8A521CE66C200DA88E2 /* WjCryptLib_Md5.c in Sources */,
 				3FB8F8A621CE66C200DA88E2 /* main.m in Sources */,
+				3F0099FF239FAA9A00A77E4A /* VCOtcMcHome.m in Sources */,
 				3F9A731121E729A900DAF7A2 /* VCGatewayWithdraw.m in Sources */,
 				3FB8F8A721CE66C200DA88E2 /* 7zBuf2.c in Sources */,
 				3FB8F8A821CE66C200DA88E2 /* VCTradeHor.m in Sources */,
@@ -5703,6 +5736,8 @@
 				3FB8F8D421CE66C200DA88E2 /* VCSelectEstimateUnit.m in Sources */,
 				3F1A5133235577F200632A6F /* VCPermissionEdit.m in Sources */,
 				3F216572226FEF5500AB5A3D /* ViewActionsCell.m in Sources */,
+				3F0099FC239FAA9A00A77E4A /* VCOtcMcAssetList.m in Sources */,
+				3F0099F1239FA96D00A77E4A /* VCOtcReceiveMethods.m in Sources */,
 				3FB8F8D521CE66C200DA88E2 /* GCDWebServerFileResponse.m in Sources */,
 				3FB8F8D621CE66C200DA88E2 /* TempManager.m in Sources */,
 				3FB8F8D721CE66C200DA88E2 /* AsyncTaskManager.m in Sources */,
@@ -5720,7 +5755,6 @@
 				3FB8F8E021CE66C200DA88E2 /* DirectionPanGestureRecognizer.m in Sources */,
 				3FB8F8E121CE66C200DA88E2 /* mztools.c in Sources */,
 				3FB8F8E221CE66C200DA88E2 /* 7zAlloc.c in Sources */,
-				3F4F2939237180C9007674E5 /* VCOtcPaymentMethods.m in Sources */,
 				3FB8F8E321CE66C200DA88E2 /* SAMKeychain.m in Sources */,
 				3FB8F8E421CE66C200DA88E2 /* 7zStream.c in Sources */,
 				3FB8F8E521CE66C200DA88E2 /* BraIA64.c in Sources */,
@@ -5794,6 +5828,7 @@
 				3FB8F91E21CE66C200DA88E2 /* ViewCommitteeVoteCell.m in Sources */,
 				3FB8F91F21CE66C200DA88E2 /* 7zFile.c in Sources */,
 				3FB8F92021CE66C200DA88E2 /* GCDWebServerResponse.m in Sources */,
+				3F009A05239FAA9A00A77E4A /* VCOtcMcPaymentMethods.m in Sources */,
 				3FB8F92121CE66C200DA88E2 /* TransactionBuilder.m in Sources */,
 				3FB8F92221CE66C200DA88E2 /* VCLoginPrivateKeyMode.m in Sources */,
 				3FB8F92321CE66C200DA88E2 /* VCBaseWebView.m in Sources */,
@@ -5882,6 +5917,7 @@
 				3FB8F96321CE66C200DA88E2 /* VCBtsaiWebView.m in Sources */,
 				3FB8F96421CE66C200DA88E2 /* VCNotice.m in Sources */,
 				3FB8F96521CE66C200DA88E2 /* VCWebView.m in Sources */,
+				3F009A02239FAA9A00A77E4A /* VCOtcMcAdList.m in Sources */,
 				3F2E6E2D233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */,
 				3FB8F96621CE66C200DA88E2 /* StyledPageControl.m in Sources */,
 				3FB8F96721CE66C200DA88E2 /* VCTest.m in Sources */,
@@ -5962,6 +5998,7 @@
 				B7BDAA8C20B3C77500738F12 /* Delta.c in Sources */,
 				B7BDA9A620B3A3D100738F12 /* WjCryptLib_Md5.c in Sources */,
 				ED3778E81654A8FA0016EC64 /* main.m in Sources */,
+				3F0099FE239FAA9A00A77E4A /* VCOtcMcHome.m in Sources */,
 				3F9A731021E729A900DAF7A2 /* VCGatewayWithdraw.m in Sources */,
 				B7BDAA7D20B3C77400738F12 /* 7zBuf2.c in Sources */,
 				B72A84AA20D4D4CE00D92A25 /* VCTradeHor.m in Sources */,
@@ -6018,6 +6055,8 @@
 				B786D51D20EF9E1800427C08 /* VCSelectEstimateUnit.m in Sources */,
 				3F216571226FEF5500AB5A3D /* ViewActionsCell.m in Sources */,
 				B72A848B20CCD18B00D92A25 /* GCDWebServerFileResponse.m in Sources */,
+				3F0099FB239FAA9A00A77E4A /* VCOtcMcAssetList.m in Sources */,
+				3F0099F0239FA96D00A77E4A /* VCOtcReceiveMethods.m in Sources */,
 				B741F0291C27A6A000F3803A /* TempManager.m in Sources */,
 				B7B1D9D21C154EB80059E71A /* AsyncTaskManager.m in Sources */,
 				3FB5BFB62181B5250009C346 /* VCFeedPriceDetail.m in Sources */,
@@ -6035,7 +6074,6 @@
 				B7A13B781CA1443A0096A6A4 /* mztools.c in Sources */,
 				B7BDAA7A20B3C77400738F12 /* 7zAlloc.c in Sources */,
 				B7D5862C2115A9FA00FED7B0 /* SAMKeychain.m in Sources */,
-				3F4F2938237180C9007674E5 /* VCOtcPaymentMethods.m in Sources */,
 				B7BDAA8220B3C77400738F12 /* 7zStream.c in Sources */,
 				B7BDAA8A20B3C77500738F12 /* BraIA64.c in Sources */,
 				3F0DA369218851FF006E1004 /* VCQrScan.m in Sources */,
@@ -6109,6 +6147,7 @@
 				B7BDAA8120B3C77400738F12 /* 7zFile.c in Sources */,
 				B72A848420CCD18B00D92A25 /* GCDWebServerResponse.m in Sources */,
 				B79F1E2320B90730004A8B7F /* TransactionBuilder.m in Sources */,
+				3F009A04239FAA9A00A77E4A /* VCOtcMcPaymentMethods.m in Sources */,
 				B7272F4320F3148000B5CBA8 /* VCLoginPrivateKeyMode.m in Sources */,
 				B7B1E3321DBF3E1C000B9635 /* VCBaseWebView.m in Sources */,
 				3FB8FAA121CF361900DA88E2 /* VCConvertToWalletMode.m in Sources */,
@@ -6197,6 +6236,7 @@
 				B79FC2D41A45E8A0000D49D5 /* VCNotice.m in Sources */,
 				B7BEC2821A4601440049EB1F /* VCWebView.m in Sources */,
 				3F2E6E2C233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */,
+				3F009A01239FAA9A00A77E4A /* VCOtcMcAdList.m in Sources */,
 				ED96A096186C62AD002181D4 /* StyledPageControl.m in Sources */,
 				EDC7D39C1869D430009F40F1 /* VCTest.m in Sources */,
 				B7BDAA9A20B3C77500738F12 /* Ppmd7Enc.c in Sources */,

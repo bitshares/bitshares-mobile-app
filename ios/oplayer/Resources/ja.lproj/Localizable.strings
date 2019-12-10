@@ -735,7 +735,7 @@
 "kVcTitleOtcOrderList" = "注文記録";
 "kVcTitleOtcAuthInfos" = "ユーザー情報";
 "kVcTitleOtcUserAuth" = "KYC認証";
-"kVcTitleOtcPaymentMethodList" = "支払方法";
+"kVcTitleOtcReceiveMethodsList" = "支払方法";
 "kVcTitleOtcPmAddAlipay" = "アリペイを追加";
 "kVcTitleOtcPmAddBankCard" = "銀行カードを追加";
 

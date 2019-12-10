@@ -1,5 +1,5 @@
 //
-//  VCOtcPaymentMethods.h
+//  VCOtcReceiveMethods.h
 //  oplayer
 //
 //  Created by SYALON on 13-10-23.
@@ -8,7 +8,7 @@
 
 #import "VCBase.h"
 
-@interface VCOtcPaymentMethods : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
+@interface VCOtcReceiveMethods : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
 - (id)initWithAuthInfo:(id)auth_info;
 

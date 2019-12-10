@@ -9,7 +9,7 @@
 #import "VCOtcMerchantList.h"
 #import "VCOtcOrders.h"
 #import "VCOtcUserAuthInfos.h"
-#import "VCOtcPaymentMethods.h"
+#import "VCOtcReceiveMethods.h"
 
 #import "ViewOtcMerchantInfoCell.h"
 #import "MBProgressHUDSingleton.h"
@@ -100,9 +100,9 @@
                                                       askForIdVerifyMsg:@"添加收款方式之前，请先完成身份认证，是否继续？"
                                                                callback:^(id auth_info)
                      {
-                         VCBase* vc = [[VCOtcPaymentMethods alloc] initWithAuthInfo:auth_info];
+                         VCBase* vc = [[VCOtcReceiveMethods alloc] initWithAuthInfo:auth_info];
                          [self pushViewController:vc
-                                          vctitle:NSLocalizedString(@"kVcTitleOtcPaymentMethodList", @"收款方式")
+                                          vctitle:NSLocalizedString(@"kVcTitleOtcReceiveMethodsList", @"收款方式")
                                         backtitle:kVcDefaultBackTitleName];
                      }];
                  }
@@ -409,9 +409,9 @@
      {
          if (buttonIndex == 1)
          {
-             VCBase* vc = [[VCOtcPaymentMethods alloc] initWithAuthInfo:auth_info];
+             VCBase* vc = [[VCOtcReceiveMethods alloc] initWithAuthInfo:auth_info];
              [_owner pushViewController:vc
-                                vctitle:NSLocalizedString(@"kVcTitleOtcPaymentMethodList", @"收款方式")
+                                vctitle:NSLocalizedString(@"kVcTitleOtcReceiveMethodsList", @"收款方式")
                               backtitle:kVcDefaultBackTitleName];
          }
      }];
@@ -486,7 +486,7 @@
     assert(sender.tag < [_data_array count]);
     id item = [_data_array objectAtIndex:sender.tag];
     assert(item);
-    
+        
     BOOL bankcardPaySwitch = [[item objectForKey:@"bankcardPaySwitch"] boolValue];
     BOOL aliPaySwitch = [[item objectForKey:@"aliPaySwitch"] boolValue];
     BOOL wechatPaySwitch = NO; //  TODO:2.9 默认false，ad数据里没微信。
@@ -507,90 +507,94 @@
     id adId = [item objectForKey:@"adId"];
     assert(adId);
     
-    OtcManager* otc = [OtcManager sharedOtcManager];
-    [otc guardUserIdVerified:_owner
-                   auto_hide:NO
-           askForIdVerifyMsg:@"您尚未完成身份认证，不可进行场外交易，是否去认证？"//TODO:2.9 lang
-                    callback:^(id auth_info)
-    {
-        //  1、查询账号状态：用户账号是否异常
-        if ([[auth_info objectForKey:@"status"] integerValue] == eous_freeze) {
-            [_owner hideBlockView];
-            [self askForContactCustomerService:auth_info];
-            return;
-        }
-        
-        //  2、仅针对用户卖出的情况：收款方式和商家付款方式是否匹配 REMARK：用户买入不用check，只要商家开启任意收款方式即可。
-        [[[self _queryPaymentMethodList] then:^id(id pminfo_list) {
-            //  仅卖出的情况
-            if (_ad_type == eoadt_user_sell) {
-                BOOL bPaymentMatch = NO;
-                if (pminfo_list && [pminfo_list isKindOfClass:[NSArray class]] && [pminfo_list count] > 0) {
-                    for (id pminfo in pminfo_list) {
-                        if ([[pminfo objectForKey:@"status"] integerValue] == eopms_enable) {
-                            NSInteger pmtype = [pminfo[@"type"] integerValue];
-                            switch (pmtype) {
-                                case eopmt_alipay:
-                                {
-                                    if (aliPaySwitch) {
-                                        bPaymentMatch = YES;
+    [_owner GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+        if (unlocked) {
+            OtcManager* otc = [OtcManager sharedOtcManager];
+            [otc guardUserIdVerified:_owner
+                           auto_hide:NO
+                   askForIdVerifyMsg:@"您尚未完成身份认证，不可进行场外交易，是否去认证？"//TODO:2.9 lang
+                            callback:^(id auth_info)
+            {
+                //  1、查询账号状态：用户账号是否异常
+                if ([[auth_info objectForKey:@"status"] integerValue] == eous_freeze) {
+                    [_owner hideBlockView];
+                    [self askForContactCustomerService:auth_info];
+                    return;
+                }
+                
+                //  2、仅针对用户卖出的情况：收款方式和商家付款方式是否匹配 REMARK：用户买入不用check，只要商家开启任意收款方式即可。
+                [[[self _queryPaymentMethodList] then:^id(id pminfo_list) {
+                    //  仅卖出的情况
+                    if (_ad_type == eoadt_user_sell) {
+                        BOOL bPaymentMatch = NO;
+                        if (pminfo_list && [pminfo_list isKindOfClass:[NSArray class]] && [pminfo_list count] > 0) {
+                            for (id pminfo in pminfo_list) {
+                                if ([[pminfo objectForKey:@"status"] integerValue] == eopms_enable) {
+                                    NSInteger pmtype = [pminfo[@"type"] integerValue];
+                                    switch (pmtype) {
+                                        case eopmt_alipay:
+                                        {
+                                            if (aliPaySwitch) {
+                                                bPaymentMatch = YES;
+                                            }
+                                        }
+                                            break;
+                                        case eopmt_bankcard:
+                                        {
+                                            if (bankcardPaySwitch) {
+                                                bPaymentMatch = YES;
+                                            }
+                                        }
+                                            break;
+                                        case eopmt_wechatpay:
+                                        {
+                                            if (wechatPaySwitch) {
+                                                bPaymentMatch = YES;
+                                            }
+                                        }
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    //  已匹配
+                                    if (bPaymentMatch) {
+                                        break;
                                     }
                                 }
-                                    break;
-                                case eopmt_bankcard:
-                                {
-                                    if (bankcardPaySwitch) {
-                                        bPaymentMatch = YES;
-                                    }
-                                }
-                                    break;
-                                case eopmt_wechatpay:
-                                {
-                                    if (wechatPaySwitch) {
-                                        bPaymentMatch = YES;
-                                    }
-                                }
-                                    break;
-                                default:
-                                    break;
-                            }
-                            //  已匹配
-                            if (bPaymentMatch) {
-                                break;
                             }
                         }
+                        if (!bPaymentMatch) {
+                            [_owner hideBlockView];
+                            [self askForAddNewPaymentMethod:item auth_info:auth_info];
+                            return nil;
+                        }
                     }
-                }
-                if (!bPaymentMatch) {
+                    //  3、锁定价格&前往下单（TODO:2.9 是否先查询广告详情，目前数据一直）
+                    return [[otc lockPrice:[otc getCurrentBtsAccount]
+                                     ad_id:adId
+                                      type:(EOtcAdType)[[item objectForKey:@"adType"] integerValue]
+                              asset_symbol:[item objectForKey:@"assetSymbol"]
+                                     price:[item objectForKey:@"price"]] then:^id(id data) {
+                        [_owner hideBlockView];
+                        id lock_info = [data objectForKey:@"data"];
+                        assert(lock_info);
+                        NSString* oldprice = [NSString stringWithFormat:@"%@", [item objectForKey:@"price"]];
+                        NSString* newprice = [NSString stringWithFormat:@"%@", [lock_info objectForKey:@"unitPrice"]];
+                        //  价格变化
+                        if (![oldprice isEqualToString:newprice]) {
+                            [self askForPriceChanged:item lock_info:lock_info];
+                        } else {
+                            [self gotoInputOrderCore:item lock_info:lock_info];
+                        }
+                        return nil;
+                    }];
+                }] catch:^id(id error) {
                     [_owner hideBlockView];
-                    [self askForAddNewPaymentMethod:item auth_info:auth_info];
+                    [otc showOtcError:error];
                     return nil;
-                }
-            }
-            //  3、锁定价格&前往下单（TODO:2.9 是否先查询广告详情，目前数据一直）
-            return [[otc lockPrice:[otc getCurrentBtsAccount]
-                             ad_id:adId
-                              type:(EOtcAdType)[[item objectForKey:@"adType"] integerValue]
-                      asset_symbol:[item objectForKey:@"assetSymbol"]
-                             price:[item objectForKey:@"price"]] then:^id(id data) {
-                [_owner hideBlockView];
-                id lock_info = [data objectForKey:@"data"];
-                assert(lock_info);
-                NSString* oldprice = [NSString stringWithFormat:@"%@", [item objectForKey:@"price"]];
-                NSString* newprice = [NSString stringWithFormat:@"%@", [lock_info objectForKey:@"unitPrice"]];
-                //  价格变化
-                if (![oldprice isEqualToString:newprice]) {
-                    [self askForPriceChanged:item lock_info:lock_info];
-                } else {
-                    [self gotoInputOrderCore:item lock_info:lock_info];
-                }
-                return nil;
+                }];
             }];
-        }] catch:^id(id error) {
-            [_owner hideBlockView];
-            [otc showOtcError:error];
-            return nil;
-        }];
+        }
     }];
 }
 
