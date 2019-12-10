@@ -329,10 +329,12 @@ enum
                 break;
             }
                 
-            case kVcOtc:                //  场外交易
+            case kVcOtc:                //  场外交易（需要登录）
             {
-                //  TODO:2.9
-                [[OtcManager sharedOtcManager] gotoOtc:self asset_name:@"USD" ad_type:eoadt_user_buy];
+                [self GuardWalletExist:^{
+                    //  TODO:2.9 默认参数？
+                    [[OtcManager sharedOtcManager] gotoOtc:self asset_name:@"USD" ad_type:eoadt_user_buy];
+                }];
             }
                 break;
             case kVcSubDepositWithdraw: //  充提（需要登录）

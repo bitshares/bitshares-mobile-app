@@ -29,6 +29,7 @@
 
 -(void)dealloc
 {
+    _auth_info = nil;
     _dataArray = nil;
     _lbEmpty = nil;
     if (_mainTableView){

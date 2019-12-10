@@ -63,10 +63,10 @@ typedef enum EWalletMode
 -(AppCacheManager*)setPref:(NSString*)key value:(NSObject*)value;
 -(AppCacheManager*)deletePref:(NSString*)key;
 
-#pragma mark- cache
--(id)nativeCacheHash;
--(id)getNativeCacheForKey:(NSString*)pKey;
--(AppCacheManager*)setNativeCacheObject:(id)object forKey:(NSString*)pKey;
+//#pragma mark- cache
+//-(id)nativeCacheHash;
+//-(id)getNativeCacheForKey:(NSString*)pKey;
+//-(AppCacheManager*)setNativeCacheObject:(id)object forKey:(NSString*)pKey;
 
 #pragma mark- for wallet info
 - (NSDictionary*)getWalletInfo;

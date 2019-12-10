@@ -12,6 +12,7 @@
 #import "Extension.h"
 
 #import "ChainObjectManager.h"
+#import "OtcManager.h"
 
 #include "bts_wallet_core.h"
 
@@ -398,6 +399,7 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
  */
 - (void)processLogout
 {
+    [[OtcManager sharedOtcManager] processLogout];
     [self Lock];
     [[AppCacheManager sharedAppCacheManager] removeWalletInfo];
 }
