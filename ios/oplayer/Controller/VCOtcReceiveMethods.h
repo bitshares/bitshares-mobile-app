@@ -7,9 +7,10 @@
 //  收款方式列表
 
 #import "VCBase.h"
+#import "OtcManager.h"
 
 @interface VCOtcReceiveMethods : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
-- (id)initWithAuthInfo:(id)auth_info;
+- (id)initWithAuthInfo:(id)auth_info user_type:(EOtcUserType)user_type;
 
 @end

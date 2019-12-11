@@ -8,11 +8,13 @@
 
 #import "VCOtcMcHome.h"
 
+#import "VCOtcUserAuthInfos.h"
 #import "VCOtcMcAssetList.h"
 #import "VCOtcMcAdList.h"
 #import "VCOtcOrders.h"
 
 #import "VCOtcReceiveMethods.h"
+#import "VCOtcMcPaymentMethods.h"
 
 #import "ViewOtcMcMerchantBasicCell.h"
 
@@ -40,6 +42,9 @@ enum
 
 @interface VCOtcMcHome ()
 {
+    NSDictionary*           _progress_info;     //  申请状态进度
+    NSDictionary*           _merchant_detail;   //  商家详情（已同意之后才有，否则为nil。）
+    
     UITableViewBase*        _mainTableView;
     NSArray*                _dataArray;
 }
@@ -50,6 +55,8 @@ enum
 
 -(void)dealloc
 {
+    _progress_info = nil;
+    _merchant_detail = nil;
     _dataArray = nil;
     if (_mainTableView){
         [[IntervalManager sharedIntervalManager] releaseLock:_mainTableView];
@@ -57,39 +64,16 @@ enum
         _mainTableView = nil;
     }
 }
-//
-//- (void)onQueryUserOrdersResponsed:(id)responsed
-//{
-//    id records = [[responsed objectForKey:@"data"] objectForKey:@"records"];
-//    [_dataArray removeAllObjects];
-//    if (records) {
-//        [_dataArray addObjectsFromArray:records];
-//    }
-//    [self refreshView];
-//}
-//
-//- (void)queryUserOrders
-//{
-//    OtcManager* otc = [OtcManager sharedOtcManager];
-//    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-//    [[[otc queryUserOrders:[otc getCurrentBtsAccount] type:eoot_query_all status:eoos_all page:0 page_size:50] then:^id(id data) {
-//        [self hideBlockView];
-//        [self onQueryUserOrdersResponsed:data];
-//        return nil;
-//    }] catch:^id(id error) {
-//        [self hideBlockView];
-//        [otc showOtcError:error];
-//        return nil;
-//    }];
-//}
 
-//- (id)init
-//{
-//    self = [super init];
-//    if (self) {
-//    }
-//    return self;
-//}
+- (id)initWithProgressInfo:(id)progress_info merchantDetail:(id)merchant_detail
+{
+    self = [super init];
+    if (self) {
+        _progress_info = progress_info;
+        _merchant_detail = merchant_detail;
+    }
+    return self;
+}
 
 - (void)viewDidLoad
 {
@@ -170,11 +154,10 @@ enum
         ViewOtcMcMerchantBasicCell* cell = [[ViewOtcMcMerchantBasicCell alloc] initWithStyle:UITableViewCellStyleValue1
                                                                              reuseIdentifier:nil];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         cell.backgroundColor = [UIColor clearColor];
         cell.showCustomBottomLine = YES;
-        //  TODO:3.0
-        [cell setItem:@{@"merchantNickname":@"秦佳仙承兑", @"ctime":@"2019-11-26T13:29:51.000+0000"}];
+        [cell setItem:_merchant_detail];
         return cell;
     }
     
@@ -221,6 +204,9 @@ enum
     }
     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
     
+    cell.imageView.image = [UIImage templateImageNamed:@"iconOtc"];//TODO:2.9 现在全都一样
+    cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
+    
     return cell;
 }
 
@@ -228,39 +214,75 @@ enum
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
-        id secinfos = [_dataArray objectAtIndex:indexPath.section];
-        NSInteger rowType = [[[secinfos objectForKey:@"rows"] objectAtIndex:indexPath.row] integerValue];
-        switch (rowType) {
-            case kVcSubBasicInfo:
-//                cell.textLabel.text = @"基本信息";//TODO:
-                break;
-                
-            case kVcSubStatistics:
-//                cell.textLabel.text = @"统计分析";//TODO:
-                break;
-                
-            case kVcSubOtcAsset:
-//                cell.textLabel.text = @"OTC资产";//TODO:
-                break;
-            case kVcSubOtcAd:
-//                cell.textLabel.text = @"OTC广告";//TODO:
-                break;
-            case kVcSubOtcOrder:
-//                cell.textLabel.text = @"OTC订单";//TODO:
-                break;
-                
-            case kVcSubReceiveMethods:
-//                cell.textLabel.text = @"收款方式";//TODO:
-                break;
-            case kVcSubPaymentMethods:
-//                cell.textLabel.text = @"付款方式";//TODO:
-                break;
-                
-            default:
-                assert(false);
-                break;
-        }
+        [[OtcManager sharedOtcManager] guardUserIdVerified:self
+                                                 auto_hide:YES
+                                         askForIdVerifyMsg:nil
+                                                  callback:^(id auth_info)
+        {
+            id secinfos = [_dataArray objectAtIndex:indexPath.section];
+            NSInteger rowType = [[[secinfos objectForKey:@"rows"] objectAtIndex:indexPath.row] integerValue];
+            switch (rowType) {
+                case kVcSubBasicInfo:
+                {
+                    VCBase* vc = [[VCOtcUserAuthInfos alloc] initWithAuthInfo:auth_info];
+                    [self pushViewController:vc
+                                     vctitle:NSLocalizedString(@"kVcTitleOtcAuthInfos", @"认证信息")
+                                   backtitle:kVcDefaultBackTitleName];
+                }
+                    break;
+                    
+                case kVcSubStatistics:
+                    break;
+                    
+                case kVcSubOtcAsset:
+                    [self gotoOtcAssetClicked:auth_info];
+                    break;
+                case kVcSubOtcAd:
+                    [self gotoOtcAdClicked:auth_info];
+                    break;
+                case kVcSubOtcOrder:
+                    [self gotoOtcOrderClicked:auth_info];
+                    break;
+                    
+                case kVcSubReceiveMethods:
+                {
+                    VCBase* vc = [[VCOtcReceiveMethods alloc] initWithAuthInfo:auth_info user_type:eout_merchant];
+                    [self pushViewController:vc
+                                     vctitle:NSLocalizedString(@"kVcTitleOtcReceiveMethodsList", @"收款方式")
+                                   backtitle:kVcDefaultBackTitleName];
+                }
+                    break;
+                case kVcSubPaymentMethods:
+                {
+                    VCBase* vc = [[VCOtcMcPaymentMethods alloc] initWithAuthInfo:auth_info];
+                    [self pushViewController:vc
+                                     vctitle:@"付款方式"//TODO:2.9
+                                   backtitle:kVcDefaultBackTitleName];
+                }
+                    break;
+                    
+                default:
+                    assert(false);
+                    break;
+            }
+        }];
     }];
+}
+
+- (void)gotoOtcAssetClicked:(id)auth_info
+{
+    //  TODO:2.9
+}
+
+- (void)gotoOtcAdClicked:(id)auth_info
+{
+    //  TODO:2.9
+}
+
+- (void)gotoOtcOrderClicked:(id)auth_info
+{
+    VCBase* vc = [[VCOtcOrdersPages alloc] initWithAuthInfo:auth_info user_type:eout_merchant];
+    [self pushViewController:vc vctitle:@"商家订单" backtitle:kVcDefaultBackTitleName];
 }
 
 @end

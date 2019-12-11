@@ -93,6 +93,16 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
+ *  格式化：格式化商家加入日期格式。REMARK：以当前时区格式化，北京时间当前时区会+8。
+ */
++ (NSString*)fmtMerchantTime:(NSString*)time
+{
+    NSDateFormatter* dateFormat = [[NSDateFormatter alloc] init];
+    [dateFormat setDateFormat:@"yyyy-MM-dd"];
+    return [dateFormat stringFromDate:[NSDate dateWithTimeIntervalSince1970:[self parseTime:time]]];
+}
+
+/*
  *  格式化：场外交易订单倒计时时间。
  */
 + (NSString*)fmtPaymentExpireTime:(NSInteger)left_ts
@@ -1114,7 +1124,7 @@ static OtcManager *_sharedOtcManager = nil;
     
     //  TODO:3.0 unlock sign
     [[[self merchantProgress:[self getCurrentBtsAccount]] then:^id(id responsed) {
-        [owner hideBlockView];
+        
         //{
         //    code = 0;
         //    data =     {
@@ -1126,18 +1136,33 @@ static OtcManager *_sharedOtcManager = nil;
         //    };
         //    message = success;
         //}
-        if ([[[responsed objectForKey:@"data"] objectForKey:@"status"] integerValue] == eomp_default) {
+        id progress_info = [responsed objectForKey:@"data"];
+        NSInteger progress_status = [[progress_info objectForKey:@"status"] integerValue];
+        if (progress_status == eomp_default) {
+            [owner hideBlockView];
             //  TODO:3.0 未申请
             [OrgUtils makeToast:@"去申请界面。"];
+            return nil;
         } else {
-                //  TODO:3.0
-            VCBase* vc = [[VCOtcMcHome alloc] init];
-            [owner pushViewController:vc vctitle:@"商家信息" backtitle:kVcDefaultBackTitleName];
+            if (progress_status == eomp_approved || progress_status == eomp_activated) {
+                //  已同意：查询商家详情
+                return [[self merchantDetail:[self getCurrentBtsAccount]] then:^id(id merchant_detail_responsed) {
+                    [owner hideBlockView];
+                    VCBase* vc = [[VCOtcMcHome alloc] initWithProgressInfo:progress_info
+                                                            merchantDetail:[merchant_detail_responsed objectForKey:@"data"]];
+                    [owner pushViewController:vc vctitle:@"商家信息" backtitle:kVcDefaultBackTitleName];
+                    return nil;
+                }];
+            } else {
+                //  申请中 or 已拒绝
+                [owner hideBlockView];
+                VCBase* vc = [[VCOtcMcHome alloc] initWithProgressInfo:progress_info merchantDetail:nil];
+                [owner pushViewController:vc vctitle:@"商家信息" backtitle:kVcDefaultBackTitleName];
+                return nil;
+            }
         }
-        return nil;
     }] catch:^id(id error) {
         [owner hideBlockView];
-        
         [self showOtcError:error];
         return nil;
     }];
@@ -1154,6 +1179,54 @@ static OtcManager *_sharedOtcManager = nil;
         @"btsAccount":bts_account_name,
     };
     return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+}
+
+/*
+ *  (public) API - 商家详情查询
+ *  认证：SIGN 方式 TODO:3.0 修改吗？
+ */
+- (WsPromise*)merchantDetail:(NSString*)bts_account_name
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/detail"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+    };
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_none];
+}
+
+/*
+ *  (public) API - 查询商家订单列表
+ *  认证：TOKEN 方式
+ */
+- (WsPromise*)queryMerchantOrders:(NSString*)bts_account_name
+                             type:(EOtcOrderType)type
+                           status:(EOtcOrderStatus)status
+                             page:(NSInteger)page
+                        page_size:(NSInteger)page_size
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchants/order/list"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+        @"orderType":@(type),
+        @"status":@(status),
+        @"page":@(page),
+        @"pageSize":@(page_size)
+    };
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
+}
+
+/*
+ *  (public) API - 查询订单详情
+ *  认证：TOKEN 方式
+ */
+- (WsPromise*)queryMerchantOrderDetails:(NSString*)bts_account_name order_id:(NSString*)order_id
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchants/order/details"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+        @"orderId":order_id,
+    };
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
 }
 
 @end

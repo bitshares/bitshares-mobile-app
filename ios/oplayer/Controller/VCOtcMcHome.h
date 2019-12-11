@@ -11,4 +11,6 @@
 
 @interface VCOtcMcHome : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
+- (id)initWithProgressInfo:(id)progress_info merchantDetail:(id)merchant_detail;
+
 @end

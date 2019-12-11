@@ -63,7 +63,7 @@
                                      askForIdVerifyMsg:NSLocalizedString(@"kOtcAdAskIdVerifyTips01", @"在继续操作之前您需要先完成身份认证，是否继续？")
                                               callback:^(id auth_info)
     {
-        VCBase* vc = [[VCOtcOrders alloc] initWithAuthInfo:auth_info];
+        VCBase* vc = [[VCOtcOrdersPages alloc] initWithAuthInfo:auth_info user_type:eout_normal_user];
         [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleOtcOrderList", @"订单记录") backtitle:kVcDefaultBackTitleName];
     }];
 }
@@ -99,7 +99,7 @@
                                                       askForIdVerifyMsg:NSLocalizedString(@"kOtcAdAskIdVerifyTips02", @"添加收款方式之前，请先完成身份认证，是否继续？")
                                                                callback:^(id auth_info)
                      {
-                         VCBase* vc = [[VCOtcReceiveMethods alloc] initWithAuthInfo:auth_info];
+                         VCBase* vc = [[VCOtcReceiveMethods alloc] initWithAuthInfo:auth_info user_type:eout_normal_user];
                          [self pushViewController:vc
                                           vctitle:NSLocalizedString(@"kVcTitleOtcReceiveMethodsList", @"收款方式")
                                         backtitle:kVcDefaultBackTitleName];
@@ -399,7 +399,7 @@
      {
          if (buttonIndex == 1)
          {
-             VCBase* vc = [[VCOtcReceiveMethods alloc] initWithAuthInfo:auth_info];
+             VCBase* vc = [[VCOtcReceiveMethods alloc] initWithAuthInfo:auth_info user_type:eout_normal_user];
              [_owner pushViewController:vc
                                 vctitle:NSLocalizedString(@"kVcTitleOtcReceiveMethodsList", @"收款方式")
                               backtitle:kVcDefaultBackTitleName];

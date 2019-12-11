@@ -7,14 +7,90 @@
 //
 
 #import "VCOtcOrders.h"
+#import "MBProgressHUDSingleton.h"
 #import "ViewOtcOrderInfCell.h"
 #import "OrgUtils.h"
 #import "VCOtcOrderDetails.h"
 #import "OtcManager.h"
 
+@interface VCOtcOrdersPages ()
+{
+    NSDictionary*   _auth_info;
+    EOtcUserType    _user_type;
+}
+
+@end
+
+@implementation VCOtcOrdersPages
+
+-(void)dealloc
+{
+    _auth_info = nil;
+}
+
+- (NSArray*)getTitleStringArray
+{
+    //  TODO:2.9
+    return @[@"进行中", @"已完成", @"已取消"];
+}
+
+- (NSArray*)getSubPageVCArray
+{
+    id vc01 = [[VCOtcOrders alloc] initWithOwner:self authInfo:_auth_info user_type:_user_type order_status:eoos_pending];
+    id vc02 = [[VCOtcOrders alloc] initWithOwner:self authInfo:_auth_info user_type:_user_type order_status:eoos_completed];
+    id vc03 = [[VCOtcOrders alloc] initWithOwner:self authInfo:_auth_info user_type:_user_type order_status:eoos_cancelled];
+    return @[vc01, vc02, vc03];
+}
+
+- (id)initWithAuthInfo:(id)auth_info user_type:(EOtcUserType)user_type
+{
+    self = [super init];
+    if (self) {
+        _auth_info = auth_info;
+        _user_type = user_type;
+    }
+    return self;
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    //  Do any additional setup after loading the view.
+    self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
+    //  查询当前初始页数据
+    VCOtcOrders* vc = (VCOtcOrders*)[self currentPage];
+    if (vc) {
+        [vc queryUserOrders];
+    }
+}
+
+- (void)onPageChanged:(NSInteger)tag
+{
+    NSLog(@"onPageChanged: %@", @(tag));
+    
+    //  gurad
+    if ([[MBProgressHUDSingleton sharedMBProgressHUDSingleton] is_showing]){
+        return;
+    }
+    
+    //  query
+    if (_subvcArrays){
+        id vc = [_subvcArrays safeObjectAtIndex:tag - 1];
+        if (vc){
+            [vc queryUserOrders];
+        }
+    }
+}
+
+@end
+
 @interface VCOtcOrders ()
 {
+    __weak VCBase*          _owner;                 //  REMARK：声明为 weak，否则会导致循环引用。
+    
     NSDictionary*           _auth_info;
+    EOtcUserType            _user_type;
+    EOtcOrderStatus         _order_status;
     
     UITableViewBase*        _mainTableView;
     NSMutableArray*         _dataArray;
@@ -28,6 +104,7 @@
 
 -(void)dealloc
 {
+    _owner = nil;
     _auth_info = nil;
     _dataArray = nil;
     if (_mainTableView){
@@ -50,23 +127,32 @@
 - (void)queryUserOrders
 {
     OtcManager* otc = [OtcManager sharedOtcManager];
-    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    [[[otc queryUserOrders:[otc getCurrentBtsAccount] type:eoot_query_all status:eoos_all page:0 page_size:50] then:^id(id data) {
-        [self hideBlockView];
+    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    WsPromise* p1;
+    if (_user_type == eout_normal_user) {
+        p1 = [otc queryUserOrders:[otc getCurrentBtsAccount] type:eoot_query_all status:_order_status page:0 page_size:50];
+    } else {
+        p1 = [otc queryMerchantOrders:[otc getCurrentBtsAccount] type:eoot_query_all status:_order_status page:0 page_size:50];
+    }
+    [[p1 then:^id(id data) {
+        [_owner hideBlockView];
         [self onQueryUserOrdersResponsed:data];
         return nil;
     }] catch:^id(id error) {
-        [self hideBlockView];
+        [_owner hideBlockView];
         [otc showOtcError:error];
         return nil;
     }];
 }
 
-- (id)initWithAuthInfo:(id)auth_info
+- (id)initWithOwner:(VCBase*)owner authInfo:(id)auth_info user_type:(EOtcUserType)user_type order_status:(EOtcOrderStatus)order_status
 {
     self = [super init];
     if (self) {
+        _owner = owner;
         _auth_info = auth_info;
+        _user_type = user_type;
+        _order_status = order_status;
         _dataArray = [NSMutableArray array];
     }
     return self;
@@ -89,7 +175,7 @@
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
     //  UI - 列表
-    CGRect rect = [self rectWithoutNavi];
+    CGRect rect = [self rectWithoutNaviAndPageBar];
     _mainTableView = [[UITableViewBase alloc] initWithFrame:rect style:UITableViewStyleGrouped];
     _mainTableView.delegate = self;
     _mainTableView.dataSource = self;
@@ -106,12 +192,25 @@
     _lbEmptyOrder.textColor = [ThemeManager sharedThemeManager].textColorMain;
     _lbEmptyOrder.textAlignment = NSTextAlignmentCenter;
     _lbEmptyOrder.font = [UIFont boldSystemFontOfSize:13];
-    _lbEmptyOrder.text = NSLocalizedString(@"kOtcOrderEmptyLabel", @"没有任何订单信息");
+    //  TODO:2.9
+    switch (_order_status) {
+        case eoos_pending:
+            _lbEmptyOrder.text = NSLocalizedString(@"kOtcOrderEmptyLabel", @"没有任何订单信息");
+            break;
+        case eoos_completed:
+            _lbEmptyOrder.text = NSLocalizedString(@"kOtcOrderEmptyLabel", @"没有任何订单信息");
+            break;
+        case eoos_cancelled:
+            _lbEmptyOrder.text = NSLocalizedString(@"kOtcOrderEmptyLabel", @"没有任何订单信息");
+            break;
+        default:
+            break;
+    }
     [self.view addSubview:_lbEmptyOrder];
     _lbEmptyOrder.hidden = YES;
     
     //  查询
-    [self queryUserOrders];
+//    [self queryUserOrders];
 }
 
 #pragma mark- TableView delegate method
@@ -166,7 +265,7 @@
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
     cell.showCustomBottomLine = YES;
-//    [cell setTagData:indexPath.row];
+    cell.userType = _user_type;
     [cell setItem:[_dataArray objectAtIndex:indexPath.row]];
     return cell;
 }
@@ -184,22 +283,29 @@
 - (void)onOrderCellClicked:(id)order_item
 {
     OtcManager* otc = [OtcManager sharedOtcManager];
-    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    [[[otc queryUserOrderDetails:order_item[@"userAccount"] order_id:order_item[@"orderId"]] then:^id(id responsed) {
-        [self hideBlockView];
+    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    WsPromise* p1;
+    if (_user_type == eout_normal_user) {
+        p1 = [otc queryUserOrderDetails:[otc getCurrentBtsAccount] order_id:order_item[@"orderId"]];
+    } else {
+        p1 = [otc queryMerchantOrderDetails:[otc getCurrentBtsAccount] order_id:order_item[@"orderId"]];
+    }
+    [[p1 then:^id(id responsed) {
+        [_owner hideBlockView];
         //  转到订单详情界面
         WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
         VCOtcOrderDetails* vc = [[VCOtcOrderDetails alloc] initWithOrderDetails:[responsed objectForKey:@"data"]
                                                                            auth:_auth_info
+                                                                      user_type:_user_type
                                                                  result_promise:result_promise];
-        [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+        [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
         [result_promise then:^id(id callback_data) {
             [self _onOrderDetailCallback:callback_data];
             return nil;
         }];
         return nil;
     }] catch:^id(id error) {
-        [self hideBlockView];
+        [_owner hideBlockView];
         [otc showOtcError:error];
         return nil;
     }];

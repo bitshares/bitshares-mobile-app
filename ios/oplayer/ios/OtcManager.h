@@ -32,6 +32,15 @@ typedef enum EOtcErrorCode
 } EOtcErrorCode;
 
 /*
+ *  场外交易用户类型
+ */
+typedef enum EOtcUserType
+{
+    eout_normal_user = 0,   //  普通用户
+    eout_merchant           //  商家
+} EOtcUserType;
+
+/*
  *  资产类型
  */
 typedef enum EOtcAssetType
@@ -188,7 +197,8 @@ typedef enum EOtcMcProgress
     eomp_default = 0,                   //  未申请：默认值
     eomp_applying,                      //  申请中
     eomp_approved,                      //  已同意
-    eomp_rejected                       //  已拒绝
+    eomp_rejected,                      //  已拒绝
+    eomp_activated,                     //  已激活
 } EOtcMcProgress;
 
 @class VCBase;
@@ -213,6 +223,11 @@ typedef enum EOtcMcProgress
  *  格式化：场外交易订单详情日期显示格式。REMARK：以当前时区格式化，北京时间当前时区会+8。
  */
 + (NSString*)fmtOrderDetailTime:(NSString*)time;
+
+/*
+ *  格式化：格式化商家加入日期格式。REMARK：以当前时区格式化，北京时间当前时区会+8。
+ */
++ (NSString*)fmtMerchantTime:(NSString*)time;
 
 /*
  *  格式化：场外交易订单倒计时时间。
@@ -400,5 +415,21 @@ typedef enum EOtcMcProgress
  *  (public) API - 商家申请进度查询
  */
 - (WsPromise*)merchantProgress:(NSString*)bts_account_name;
+
+/*
+ *  (public) API - 查询商家订单列表
+ *  认证：TOKEN 方式
+ */
+- (WsPromise*)queryMerchantOrders:(NSString*)bts_account_name
+                             type:(EOtcOrderType)type
+                           status:(EOtcOrderStatus)status
+                             page:(NSInteger)page
+                        page_size:(NSInteger)page_size;
+
+/*
+ *  (public) API - 查询订单详情
+ *  认证：TOKEN 方式
+ */
+- (WsPromise*)queryMerchantOrderDetails:(NSString*)bts_account_name order_id:(NSString*)order_id;
 
 @end

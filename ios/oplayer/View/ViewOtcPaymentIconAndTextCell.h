@@ -8,9 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "UITableViewCellBase.h"
+#import "OtcManager.h"
 
 @interface ViewOtcPaymentIconAndTextCell : UITableViewCellBase
 
+@property (nonatomic, assign) EOtcUserType userType;
 @property (nonatomic, assign) BOOL bUserSell;
 @property (nonatomic, strong) NSDictionary* item;
 
