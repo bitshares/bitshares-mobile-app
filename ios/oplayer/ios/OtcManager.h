@@ -178,6 +178,19 @@ typedef enum EOtcOrderOperationType
     eooot_confirm_received_refunded,    //  买单：确认收到商家退款 & 取消订单
 } EOtcOrderOperationType;
 
+#pragma mark- merchant enum
+
+/*
+ *  商家：申请进度
+ */
+typedef enum EOtcMcProgress
+{
+    eomp_default = 0,                   //  未申请：默认值
+    eomp_applying,                      //  申请中
+    eomp_approved,                      //  已同意
+    eomp_rejected                       //  已拒绝
+} EOtcMcProgress;
+
 @class VCBase;
 
 @interface OtcManager : NSObject
@@ -378,5 +391,14 @@ typedef enum EOtcOrderOperationType
  *  (public) 登录。部分API接口需要传递登录过的token字段。
  */
 - (WsPromise*)login:(NSString*)bts_account_name;
+
+#pragma mark- for merchant
+
+- (void)gotoOtcMerchantHome:(VCBase*)owner;
+
+/*
+ *  (public) API - 商家申请进度查询
+ */
+- (WsPromise*)merchantProgress:(NSString*)bts_account_name;
 
 @end

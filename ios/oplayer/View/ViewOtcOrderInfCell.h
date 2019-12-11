@@ -15,6 +15,4 @@
 
 @property (nonatomic, strong) NSDictionary* item;
 
-- (void)setTagData:(NSInteger)tag;
-
 @end

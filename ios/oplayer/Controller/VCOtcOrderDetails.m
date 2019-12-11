@@ -103,8 +103,8 @@ enum
 - (void)_onPaymentTimerTick:(NSInteger)left_ts
 {
     if (left_ts > 0) {
-        //  刷新 TODO:2.9 lang
-        [_statusInfos setObject:[NSString stringWithFormat:@"请在 %@ 内付款给卖家。", [OtcManager fmtPaymentExpireTime:left_ts]] forKey:@"desc"];
+        //  刷新
+        [_statusInfos setObject:[NSString stringWithFormat:NSLocalizedString(@"kOtcOdPaymentTimeLimit", @"请在 %@ 内付款给卖家。"), [OtcManager fmtPaymentExpireTime:left_ts]] forKey:@"desc"];
         [_viewStatusCell setItem:_statusInfos];
         [_viewStatusCell refreshText];
     } else {
@@ -162,7 +162,7 @@ enum
             [target_array addObject:@(kVcSubPaymentBankName)];
         }
     } else {
-        //  收款二维码
+        //  收款二维码 TODO:2.9 该版本考虑不支持二维码。不显示
         NSString* qrCode = [NSString stringWithFormat:@"%@", [payment_info objectForKey:@"qrCode"]];
         if (qrCode && ![qrCode isEqualToString:@""] && ![qrCode isEqualToString:@"0"]) {
             [target_array addObject:@(kVcSubPaymentQrCode)];
@@ -210,15 +210,15 @@ enum
     }] copy];
     [_sectionDataArray addObject:@{@"type":@(kVcSecOrderDetailInfo), @"rows":orderDetailRows}];
 
-    //  提示 TODO:2.9 lang
+    //  提示
     if ([[_statusInfos objectForKey:@"show_remark"] boolValue]) {
         if (!_cell_tips) {
             NSMutableArray* tips_array = [NSMutableArray array];
             NSString* remark = [_orderDetails objectForKey:@"remark"];
             if (remark && [remark isKindOfClass:[NSString class]] && ![remark isEqualToString:@""]) {
-                [tips_array addObject:[NSString stringWithFormat:@"商家：%@", remark]];
+                [tips_array addObject:[NSString stringWithFormat:@"%@%@", NSLocalizedString(@"kOtcOdPaymentTipsMcRemarkPrefix", @"商家："), remark]];
             }
-            [tips_array addObject:@"系统：在转账过程中请勿备注BTC、USDT等信息，防止汇款被拦截、银行卡被冻结等问题。"];
+            [tips_array addObject:NSLocalizedString(@"kOtcOdPaymentTipsSystemMsg", @"系统：在转账过程中请勿备注BTC、USDT等信息，防止汇款被拦截、银行卡被冻结等问题。")];
             //  UI
             _cell_tips = [[ViewTipsInfoCell alloc] initWithText:[NSString stringWithFormat:@"%@", [tips_array componentsJoinedByString:@"\n\n"]]];
             _cell_tips.hideBottomLine = YES;
@@ -315,8 +315,7 @@ enum
             
             if (!full_from_account || !to_account || !asset) {
                 [self hideBlockView];
-                //  TODO:2.9
-                [OrgUtils makeToast:@"数据异常。"];
+                [OrgUtils makeToast:NSLocalizedString(@"kOtcOdOrderDataException", @"订单数据异常，请联系客服。")];
                 return nil;
             }
             
@@ -415,6 +414,7 @@ enum
 
 - (void)onButtomButtonClicked:(UIButton*)sender
 {
+    //  TODO:2.9 lang
     switch (sender.tag) {
         case eooot_transfer:
         {
@@ -584,7 +584,7 @@ enum
             btn.titleLabel.font = [UIFont boldSystemFontOfSize:16];
             btn.tag = [[btnInfo objectForKey:@"type"] integerValue];
             btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
-            //  TODO:2.9
+            //  TODO:2.9 others button confirm?
             switch (btn.tag) {
                 //  卖单
                 case eooot_transfer:
@@ -706,8 +706,7 @@ enum
     }
     if (value) {
         [UIPasteboard generalPasteboard].string = [value copy];
-        //  TODO:2.9
-        [OrgUtils makeToast:@"已复制"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcOdCopiedTips", @"已复制")];
     }
 }
 
@@ -727,7 +726,6 @@ enum
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    //  TODO:2.9 lang
     id secInfos = [_sectionDataArray objectAtIndex:indexPath.section];
     switch ([[secInfos objectForKey:@"type"] integerValue]) {
         case kVcSecOrderStatus:
@@ -739,7 +737,8 @@ enum
             break;
         case kVcSecOrderInfo:
         {
-            ViewOtcOrderDetailBasicInfo* cell = [[ViewOtcOrderDetailBasicInfo alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+            ViewOtcOrderDetailBasicInfo* cell = [[ViewOtcOrderDetailBasicInfo alloc] initWithStyle:UITableViewCellStyleValue1
+                                                                                   reuseIdentifier:nil];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             cell.accessoryType = UITableViewCellAccessoryNone;
             cell.backgroundColor = [UIColor clearColor];
@@ -778,27 +777,27 @@ enum
             switch (rowType) {
                 case kVcSubMerchantRealName:
                 {
-                    cell.textLabel.text = @"商家姓名";
+                    cell.textLabel.text = NSLocalizedString(@"kOtcOdCellLabelMcRealName", @"商家姓名");
                     cell.detailTextLabel.text = [_orderDetails objectForKey:@"payRealName"] ?: @"";
                     cell.accessoryView = [self genCopyButton:rowType];
                 }
                     break;
                 case kVcSubMerchantNickName:
                 {
-                    cell.textLabel.text = @"商家昵称";
+                    cell.textLabel.text = NSLocalizedString(@"kOtcOdCellLabelMcNickName", @"商家昵称");
                     cell.detailTextLabel.text = [_orderDetails objectForKey:@"merchantsNickname"] ?: @"";
                 }
                     break;
                 case kVcSubOrderID:
                 {
-                    cell.textLabel.text = @"订单编号";
+                    cell.textLabel.text = NSLocalizedString(@"kOtcOdCellLabelOrderID", @"订单编号");
                     cell.detailTextLabel.text = [_orderDetails objectForKey:@"orderId"] ?: @"";
                     cell.accessoryView = [self genCopyButton:rowType];
                 }
                     break;
                 case kVcSubOrderTime:
                 {
-                    cell.textLabel.text = @"下单日期";
+                    cell.textLabel.text = NSLocalizedString(@"kOtcOdCellLabelOrderDate", @"下单日期");
                     cell.detailTextLabel.text = [OtcManager fmtOrderDetailTime:[_orderDetails objectForKey:@"ctime"]];
                 }
                     break;
@@ -806,8 +805,6 @@ enum
                 case kVcSubPaymentTipsSameName:
                 {
                     assert(_currSelectedPaymentMethod);
-                    //  TODO:2.9 lang
-                    
                     NSString* realname = nil;
                     if (_authInfos) {
                         realname = [_authInfos optString:@"realName"];
@@ -826,11 +823,11 @@ enum
                     NSString* finalString;
                     NSString* colorString;
                     if (realname) {
-                        finalString = [NSString stringWithFormat:@"请使用本人%@的%@向以下账户自行转账", realname, [pminfos objectForKey:@"name"]];
+                        finalString = [NSString stringWithFormat:NSLocalizedString(@"kOtcOdCellPaymentSameNameTips01", @"请使用本人%@的%@向以下账户自行转账"), realname, [pminfos objectForKey:@"name"]];
                         colorString = realname;
                     } else {
-                        finalString = [NSString stringWithFormat:@"请使用本人名字的%@向以下账户自行转账", [pminfos objectForKey:@"name"]];
-                        colorString = @"本人名字";
+                        finalString = [NSString stringWithFormat:NSLocalizedString(@"kOtcOdCellPaymentSameNameTips02", @"请使用本人名字的%@向以下账户自行转账"), [pminfos objectForKey:@"name"]];
+                        colorString = NSLocalizedString(@"kOtcOdCellPaymentSameNameTitle", @"本人名字");
                     }
                     
                     //  着色显示
@@ -858,7 +855,7 @@ enum
                         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                         cell.selectionStyle = UITableViewCellSelectionStyleBlue;
                         
-                        cell.detailTextLabel.text = @"点此切换付款方式";
+                        cell.detailTextLabel.text = NSLocalizedString(@"kOtcAdCellTipClickSwitchPayment", @"点此切换付款方式");
                         cell.detailTextLabel.textColor = theme.textColorGray;
                     }
                 }
@@ -866,7 +863,7 @@ enum
                 case kVcSubPaymentRealName:
                 {
                     assert(_currSelectedPaymentMethod);
-                    cell.textLabel.text = @"收款人";
+                    cell.textLabel.text = NSLocalizedString(@"kOtcAdCellLabelPmReceiveRealName", @"收款人");
                     cell.detailTextLabel.text = [_currSelectedPaymentMethod objectForKey:@"realName"];
                     cell.accessoryView = [self genCopyButton:rowType];
                 }
@@ -874,7 +871,7 @@ enum
                 case kVcSubPaymentAccount:
                 {
                     assert(_currSelectedPaymentMethod);
-                    cell.textLabel.text = @"收款账号";
+                    cell.textLabel.text = NSLocalizedString(@"kOtcAdCellLabelPmReceiveAccount", @"收款账号");
                     cell.detailTextLabel.text = [_currSelectedPaymentMethod objectForKey:@"account"];
                     cell.accessoryView = [self genCopyButton:rowType];
                 }
@@ -882,15 +879,15 @@ enum
                 case kVcSubPaymentBankName:
                 {
                     assert(_currSelectedPaymentMethod);
-                    cell.textLabel.text = @"开户银行";
+                    cell.textLabel.text = NSLocalizedString(@"kOtcAdCellLabelPmReceiveBankName", @"开户银行");
                     cell.detailTextLabel.text = [_currSelectedPaymentMethod objectForKey:@"bankName"];
                 }
                     break;
                 case kVcSubPaymentQrCode:
                 {
                     assert(_currSelectedPaymentMethod);
-                    cell.textLabel.text = @"收款二维码";
-                    cell.detailTextLabel.text = @"点此查看二维码";
+                    cell.textLabel.text = NSLocalizedString(@"kOtcAdCellLabelPmReceiveQrcode", @"收款二维码");
+                    cell.detailTextLabel.text = NSLocalizedString(@"kOtcAdCellTipClickViewQrcode", @"点此查看二维码");
                     cell.detailTextLabel.textColor = theme.textColorGray;
                     cell.selectionStyle = UITableViewCellSelectionStyleBlue;
                     //  icon
@@ -963,7 +960,7 @@ enum
             return [pminfos objectForKey:@"name_with_short_account"];
         }];
         [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
-                                                           message:@"请选择商家收款方式"
+                                                           message:NSLocalizedString(@"kOtcAdCellSelectMcReceiveMethodTitle", @"请选择商家收款方式")
                                                             cancel:NSLocalizedString(@"kBtnCancel", @"取消")
                                                              items:nameList
                                                           callback:^(NSInteger buttonIndex, NSInteger cancelIndex)

@@ -1,5 +1,5 @@
 //
-//  ViewOtcMerchantInfoCell.h
+//  ViewOtcAdInfoCell.h
 //  oplayer
 //
 //  Created by SYALON on 13-12-31.
@@ -10,7 +10,7 @@
 #import "UITableViewCellBase.h"
 #import "OtcManager.h"
 
-@interface ViewOtcMerchantInfoCell : UITableViewCellBase
+@interface ViewOtcAdInfoCell : UITableViewCellBase
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier vc:(VCBase*)vc;
 - (void)setTagData:(NSInteger)tag;

@@ -98,11 +98,6 @@
     // Configure the view for the selected state
 }
 
-- (void)setTagData:(NSInteger)tag
-{
-    //  TODO:2.9
-}
-
 -(void)setItem:(NSDictionary*)item
 {
     if (_item != item)
@@ -140,12 +135,12 @@
     id asset_symbol = _item[@"assetSymbol"];
     
     if ([[status_infos objectForKey:@"sell"] boolValue]){
-        _lbType.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@ ", @"出售"]
+        _lbType.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@ ", NSLocalizedString(@"kOtcOrderCellTitleSell", @"出售")]
                                                            value:asset_symbol
                                                       titleColor:theme.sellColor
                                                       valueColor:theme.textColorMain];
     }else{
-        _lbType.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@ ", @"购买"]
+        _lbType.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@ ", NSLocalizedString(@"kOtcOrderCellTitleBuy", @"购买")]
                                                            value:asset_symbol
                                                       titleColor:theme.buyColor
                                                       valueColor:theme.textColorMain];
@@ -160,7 +155,7 @@
     yOffset += firstLineHeight;
     
     //  第二行 数量和价格标题
-    _lbDateTitle.text = @"时间";
+    _lbDateTitle.text = NSLocalizedString(@"kLabelTradeHisTitleTime", @"时间");
     _lbNumTitle.text = [NSString stringWithFormat:@"%@(%@)", NSLocalizedString(@"kLabelTradeHisTitleAmount", @"数量"), asset_symbol];
     _lbTotalTitle.text = [NSString stringWithFormat:@"%@(%@)", NSLocalizedString(@"kVcOrderTotal", @"总金额"), _item[@"legalCurrencySymbol"]];
     _lbDateTitle.textColor = theme.textColorGray;
