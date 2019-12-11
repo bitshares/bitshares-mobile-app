@@ -25,6 +25,7 @@
 
 @implementation ViewOtcPaymentIconAndTextCell
 
+@synthesize userType;
 @synthesize bUserSell;
 @synthesize item=_item;
 
@@ -46,6 +47,7 @@
         self.textLabel.hidden = YES;
         self.backgroundColor = [UIColor clearColor];
         
+        self.userType = eout_normal_user;
         self.bUserSell = NO;
         _iconType = nil;
         _lbTitle = [self auxGenLabel:[UIFont boldSystemFontOfSize:13]];
@@ -91,7 +93,12 @@
         [self addSubview:_iconType];
     }
     
-    _lbTitle.text = self.bUserSell ? NSLocalizedString(@"kOtcAdCellLabelTitleReceiveMethod", @"收款方式") : NSLocalizedString(@"kOtcAdCellLabelTitlePaymentMethod", @"付款方式");
+    if (self.userType == eout_normal_user) {
+        _lbTitle.text = self.bUserSell ? NSLocalizedString(@"kOtcAdCellLabelTitleReceiveMethod", @"收款方式") : NSLocalizedString(@"kOtcAdCellLabelTitlePaymentMethod", @"付款方式");
+    } else {
+        _lbTitle.text = self.bUserSell ? NSLocalizedString(@"kOtcAdCellLabelTitlePaymentMethod", @"付款方式") : NSLocalizedString(@"kOtcAdCellLabelTitleReceiveMethod", @"收款方式");
+    }
+    
     _lbTitle.textColor = theme.textColorNormal;
     _lbTitle.frame = CGRectMake(xOffset, 0, fWidth, fHeight);
 

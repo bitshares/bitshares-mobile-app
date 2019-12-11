@@ -103,7 +103,8 @@
                                                    valueColor:theme.textColorMain];
     
     _lbAmount.attributedText = [self genAndColorAttributedText:@"数量 "
-                                                         value:[NSString stringWithFormat:@"%@ %@", _item[@"quantity"], asset_symbol]
+                                                         value:[NSString stringWithFormat:@"%@ %@", [NSDecimalNumber decimalNumberWithString:[NSString stringWithFormat:@"%@", _item[@"quantity"]]],
+                                                                asset_symbol]
                                                     titleColor:theme.textColorNormal
                                                     valueColor:theme.textColorMain];
     

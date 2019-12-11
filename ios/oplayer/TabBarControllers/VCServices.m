@@ -33,7 +33,8 @@ enum
     kVcSubCallRanking,      //  抵押排行
     kVcSubFeedPriceDetail,  //  喂价详情
     
-    kVcOtc,                 //  场外交易
+    kVcOtcUser,             //  场外交易
+    kVcOtcMerchant,         //  商家信息
     kVcSubDepositWithdraw,  //  充币&提币
     
     kVcSubAdvanced,         //  更多高级功能(HTLC等）
@@ -99,7 +100,8 @@ enum
         
         NSArray* pSection4 = [[[NSMutableArray array] ruby_apply:(^(id obj) {
 #if kAppModuleEnableOTC
-            [obj addObject:@[@(kVcOtc), @"kServicesCellLabelOTC"]];                                 //  场外交易
+            [obj addObject:@[@(kVcOtcUser), @"kServicesCellLabelOtcUser"]];                         //  场外交易
+            [obj addObject:@[@(kVcOtcMerchant), @"kServicesCellLabelOtcMerchant"]];                 //  商家信息
 #endif  //  kAppModuleEnableOTC
 #if kAppModuleEnableGateway
             [obj addObject:@[@(kVcSubDepositWithdraw),   @"kServicesCellLabelDepositWithdraw"]];    //  充币提币
@@ -220,8 +222,11 @@ enum
             cell.imageView.image = [UIImage templateImageNamed:@"iconFeedDetail"];
             break;
             
-        case kVcOtc:
+        case kVcOtcUser:
             cell.imageView.image = [UIImage templateImageNamed:@"iconOtc"];
+            break;
+        case kVcOtcMerchant:
+            cell.imageView.image = [UIImage templateImageNamed:@"iconOtc"];//TODO:2.9 icon
             break;
         case kVcSubDepositWithdraw:
             cell.imageView.image = [UIImage templateImageNamed:@"iconDepositWithdraw"];
@@ -329,17 +334,23 @@ enum
                 break;
             }
                 
-            case kVcOtc:                //  场外交易（需要登录）
+            case kVcOtcUser:            //  场外交易（需要登录）
             {
                 [self GuardWalletExist:^{
                     //  TODO:2.9 默认参数？
                     [[OtcManager sharedOtcManager] gotoOtc:self asset_name:@"CNY" ad_type:eoadt_user_buy];
-//                    //  TODO:3.0 是否需要unlock
-//                    [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
-//                        if (unlocked) {
-//                            [[OtcManager sharedOtcManager] gotoOtcMerchantHome:self];
-//                        }
-//                    }];
+                }];
+            }
+                break;
+            case kVcOtcMerchant:        //  商家信息（需要登录）
+            {
+                [self GuardWalletExist:^{
+                    //  TODO:3.0 是否需要解锁？
+                    [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+                        if (unlocked) {
+                            [[OtcManager sharedOtcManager] gotoOtcMerchantHome:self];
+                        }
+                    }];
                 }];
             }
                 break;

@@ -57,7 +57,8 @@
 "kServicesCellLabelRank" = "Rank";
 "kServicesCellLabelVoting" = "Voting";
 "kServicesCellLabelFeedPrice" = "Feed price details";
-"kServicesCellLabelOTC" = "OTC";
+"kServicesCellLabelOtcUser" = "OTC";
+"kServicesCellLabelOtcMerchant" = "Merchant";
 "kServicesCellLabelDepositWithdraw" = "Deposit & Withdraw";
 "kServicesCellLabelAdvFunction" = "Advanced Features";
 "kServicesCellLabelBtsExplorer" = "Explorer";

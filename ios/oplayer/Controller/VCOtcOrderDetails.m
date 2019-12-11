@@ -50,6 +50,7 @@ enum
     
     NSDictionary*               _orderDetails;
     NSDictionary*               _authInfos;                 //  认证信息
+    EOtcUserType                _user_type;                 //  用户 or 商家界面
     NSMutableDictionary*        _statusInfos;
     BOOL                        _orderStatusDirty;          //  订单状态是否更新过了
     
@@ -112,7 +113,8 @@ enum
     }
 }
 
-- (id)initWithOrderDetails:(id)order_details auth:(id)auth_info result_promise:(WsPromiseObject*)result_promise
+- (id)initWithOrderDetails:(id)order_details auth:(id)auth_info user_type:(EOtcUserType)user_type
+            result_promise:(WsPromiseObject*)result_promise
 {
     self = [super init];
     if (self) {
@@ -120,6 +122,7 @@ enum
         _result_promise = result_promise;
         _orderDetails = order_details;
         _authInfos = auth_info;
+        _user_type = user_type;
         _sectionDataArray = [NSMutableArray array];
         _btnArray = [NSMutableArray array];
         _cell_tips = nil;
@@ -259,7 +262,8 @@ enum
 {
     [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     OtcManager* otc = [OtcManager sharedOtcManager];
-    [[[otc updateUserOrder:_orderDetails[@"userAccount"]
+    NSString* userAccount = [otc getCurrentBtsAccount];
+    [[[otc updateUserOrder:userAccount
                   order_id:_orderDetails[@"orderId"]
                 payAccount:payAccount
                 payChannel:payChannel
@@ -269,7 +273,7 @@ enum
         //  停止付款计时器
         [self _stopPaymentTimer];
         //  更新状态成功、刷新界面。
-        return [[otc queryUserOrderDetails:_orderDetails[@"userAccount"] order_id:_orderDetails[@"orderId"]] then:^id(id details_responsed) {
+        return [[otc queryUserOrderDetails:userAccount order_id:_orderDetails[@"orderId"]] then:^id(id details_responsed) {
             //  获取新订单数据成功
             [self hideBlockView];
             [self _refreshUI:[details_responsed objectForKey:@"data"]];
@@ -290,7 +294,7 @@ enum
     //  解锁：需要check资金权限，提案等不支持。
     [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
         
-        NSString* userAccount = _orderDetails[@"userAccount"];
+        NSString* userAccount = [[OtcManager sharedOtcManager] getCurrentBtsAccount];
         NSString* otcAccount = _orderDetails[@"otcAccount"];
         NSString* assetSymbol = _orderDetails[@"assetSymbol"];
         NSString* args_amount = [NSString stringWithFormat:@"%@", _orderDetails[@"quantity"]];
@@ -758,6 +762,7 @@ enum
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 cell.accessoryType = UITableViewCellAccessoryNone;
                 cell.showCustomBottomLine = YES;
+                cell.userType = _user_type;
                 cell.bUserSell = [[_statusInfos objectForKey:@"sell"] boolValue];
                 [cell setItem:_orderDetails];
                 return cell;

@@ -17,6 +17,7 @@
 @interface VCOtcReceiveMethods ()
 {
     NSDictionary*           _auth_info;
+    EOtcUserType            _user_type;
     UITableViewBase*        _mainTableView;
     NSMutableArray*         _dataArray;
     
@@ -39,11 +40,12 @@
     }
 }
 
-- (id)initWithAuthInfo:(id)auth_info
+- (id)initWithAuthInfo:(id)auth_info user_type:(EOtcUserType)user_type
 {
     self = [super init];
     if (self) {
         _auth_info = auth_info;
+        _user_type = user_type;
         _dataArray = [NSMutableArray array];
     }
     return self;
@@ -236,10 +238,19 @@
         [item setObject:@(new_status) forKey:@"status"];
         [_mainTableView reloadData];
         //  提示信息
-        if (new_status == eopms_enable) {
-            [OrgUtils makeToast:NSLocalizedString(@"kOtcPmActionTipsEnabled", @"已启用，允许向商家展示。")];
+        if (_user_type == eout_normal_user) {
+            if (new_status == eopms_enable) {
+                [OrgUtils makeToast:NSLocalizedString(@"kOtcPmActionTipsEnabled", @"已启用，允许向商家展示。")];
+            } else {
+                [OrgUtils makeToast:NSLocalizedString(@"kOtcPmActionTipsDisabled", @"已禁用，不再向商家展示。")];
+            }
         } else {
-            [OrgUtils makeToast:NSLocalizedString(@"kOtcPmActionTipsDisabled", @"已禁用，不再向商家展示。")];
+            //  TODO:2.9
+            if (new_status == eopms_enable) {
+                [OrgUtils makeToast:@"已启用，允许向用户展示。"];
+            } else {
+                [OrgUtils makeToast:@"已禁用，不再向用户展示。"];
+            }
         }
         return nil;
     }] catch:^id(id error) {

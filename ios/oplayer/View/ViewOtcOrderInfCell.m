@@ -35,6 +35,7 @@
 
 @implementation ViewOtcOrderInfCell
 
+@synthesize userType;
 @synthesize item=_item;
 
 - (void)dealloc
@@ -64,6 +65,8 @@
         self.textLabel.text = @" ";
         self.textLabel.hidden = YES;
         self.backgroundColor = [UIColor clearColor];
+        
+        self.userType = eout_normal_user;
         
         _lbType = [self auxGenLabel:[UIFont boldSystemFontOfSize:16]];
         _lbStatus = [self auxGenLabel:[UIFont systemFontOfSize:13]];
@@ -134,13 +137,16 @@
     //  第一行 买卖 SYMBOL
     id asset_symbol = _item[@"assetSymbol"];
     
+    //  TODO:2.9 userType
+    NSString* prefix = self.userType == eout_normal_user ? @"" : @"用户";
+    
     if ([[status_infos objectForKey:@"sell"] boolValue]){
-        _lbType.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@ ", NSLocalizedString(@"kOtcOrderCellTitleSell", @"出售")]
+        _lbType.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@%@ ", prefix, NSLocalizedString(@"kOtcOrderCellTitleSell", @"出售")]
                                                            value:asset_symbol
                                                       titleColor:theme.sellColor
                                                       valueColor:theme.textColorMain];
     }else{
-        _lbType.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@ ", NSLocalizedString(@"kOtcOrderCellTitleBuy", @"购买")]
+        _lbType.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@%@ ", prefix, NSLocalizedString(@"kOtcOrderCellTitleBuy", @"购买")]
                                                            value:asset_symbol
                                                       titleColor:theme.buyColor
                                                       valueColor:theme.textColorMain];

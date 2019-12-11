@@ -57,7 +57,8 @@
 "kServicesCellLabelRank" = "担保の順序";
 "kServicesCellLabelVoting" = "投票";
 "kServicesCellLabelFeedPrice" = "詳しいフィード価格";
-"kServicesCellLabelOTC" = "OTC";
+"kServicesCellLabelOtcUser" = "OTC";
+"kServicesCellLabelOtcMerchant" = "商家信息";//TODO:
 "kServicesCellLabelDepositWithdraw" = "入金出金";
 "kServicesCellLabelAdvFunction" = "高度な機能";
 "kServicesCellLabelBtsExplorer" = "エクスプローラ";

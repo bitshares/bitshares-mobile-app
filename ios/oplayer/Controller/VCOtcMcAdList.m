@@ -192,6 +192,7 @@
         WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
         VCOtcOrderDetails* vc = [[VCOtcOrderDetails alloc] initWithOrderDetails:[responsed objectForKey:@"data"]
                                                                            auth:_auth_info
+                                                                      user_type:eout_normal_user//TODO:2.9
                                                                  result_promise:result_promise];
         [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
         [result_promise then:^id(id callback_data) {

@@ -8,11 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import "UITableViewCellBase.h"
+#import "OtcManager.h"
 
 @interface ViewOtcOrderInfCell : UITableViewCellBase
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier vc:(UIViewController*)vc;
 
+@property (nonatomic, assign) EOtcUserType userType;
 @property (nonatomic, strong) NSDictionary* item;
 
 @end
