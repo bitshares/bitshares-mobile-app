@@ -167,7 +167,7 @@
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
     cell.showCustomBottomLine = YES;
-    [cell setTagData:indexPath.row];
+//    [cell setTagData:indexPath.row];
     [cell setItem:[_dataArray objectAtIndex:indexPath.row]];
     return cell;
 }

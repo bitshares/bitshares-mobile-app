@@ -10,6 +10,7 @@
 #import "OrgUtils.h"
 #import "VCBase.h"
 #import "VCOtcMerchantList.h"
+#import "VCOtcMcHome.h"
 
 #import "VCOtcUserAuth.h"
 
@@ -115,11 +116,11 @@ static OtcManager *_sharedOtcManager = nil;
     NSString* name = nil;
     NSString* icon = nil;
     NSString* short_account = account;
-    //  TODO:2.9 lang
+    
     switch ([type integerValue]) {
         case eopmt_alipay:
         {
-            name = @"支付宝";
+            name = NSLocalizedString(@"kOtcAdPmNameAlipay", @"支付宝");
             icon = @"iconPmAlipay";
         }
             break;
@@ -128,7 +129,7 @@ static OtcManager *_sharedOtcManager = nil;
             icon = @"iconPmBankCard";
             name = bankname;
             if (!name || [bankname isEqualToString:@""]) {
-                name = @"银行卡";
+                name = NSLocalizedString(@"kOtcAdPmNameBankCard", @"银行卡");
             }
             NSString* card_no = [account stringByReplacingOccurrencesOfString:@" " withString:@""];
             short_account = [card_no substringFromIndex:MAX((NSInteger)card_no.length - 4, 0)];
@@ -137,15 +138,14 @@ static OtcManager *_sharedOtcManager = nil;
         case eopmt_wechatpay:
         {
             icon = @"iconPmWechat";
-            name = @"微信支付";
+            name = NSLocalizedString(@"kOtcAdPmNameWechatPay", @"微信支付");
         }
             break;
         default:
             break;
     }
-    //  TODO:2.9
     if (!name) {
-        name = [NSString stringWithFormat:@"未知收款方式%@", type];
+        name = [NSString stringWithFormat:NSLocalizedString(@"kOtcAdPmUnknownType", @"未知收款方式%@"), type];
     }
     if (!icon) {
         icon = @"iconPmBankCard";//TODO:2.9 default  icon
@@ -709,7 +709,7 @@ static OtcManager *_sharedOtcManager = nil;
         @"price":price,
         @"totalAmount":total
     };
-    return [self _queryApiCore:url args:args headers:nil];
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
 }
 
 /*
@@ -901,7 +901,8 @@ static OtcManager *_sharedOtcManager = nil;
 //}
 
 /*
- *  (public) 锁定价格
+ *  (public) API - 锁定价格
+ *  认证：TOKEN 方式
  */
 - (WsPromise*)lockPrice:(NSString*)bts_account_name
                   ad_id:(NSString*)ad_id
@@ -917,7 +918,7 @@ static OtcManager *_sharedOtcManager = nil;
         @"assetSymbol":asset_symbol,//@"￥",//TODO:2.9
         @"price":price
     };
-    return [self _queryApiCore:url args:args headers:nil];
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
 }
 
 /*
@@ -1098,6 +1099,61 @@ static OtcManager *_sharedOtcManager = nil;
     }
     
     return [[signs firstObject] hex_encode];
+}
+
+#pragma mark- for merchant
+
+- (void)gotoOtcMerchantHome:(VCBase*)owner
+{
+    //  TODO:3.0
+    
+    WalletManager* walletMgr = [WalletManager sharedWalletManager];
+    assert([walletMgr isWalletExist]);
+    
+    [owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    
+    //  TODO:3.0 unlock sign
+    [[[self merchantProgress:[self getCurrentBtsAccount]] then:^id(id responsed) {
+        [owner hideBlockView];
+        //{
+        //    code = 0;
+        //    data =     {
+        //        bakAccount = "<null>";
+        //        btsAccount = "<null>";
+        //        level = "<null>";
+        //        nickname = "<null>";
+        //        status = 0;
+        //    };
+        //    message = success;
+        //}
+        if ([[[responsed objectForKey:@"data"] objectForKey:@"status"] integerValue] == eomp_default) {
+            //  TODO:3.0 未申请
+            [OrgUtils makeToast:@"去申请界面。"];
+        } else {
+                //  TODO:3.0
+            VCBase* vc = [[VCOtcMcHome alloc] init];
+            [owner pushViewController:vc vctitle:@"商家信息" backtitle:kVcDefaultBackTitleName];
+        }
+        return nil;
+    }] catch:^id(id error) {
+        [owner hideBlockView];
+        
+        [self showOtcError:error];
+        return nil;
+    }];
+}
+
+/*
+ *  (public) API - 商家申请进度查询
+ *  认证：SIGN 方式 TODO:3.0 修改吗？
+ */
+- (WsPromise*)merchantProgress:(NSString*)bts_account_name
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/progress"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+    };
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
 }
 
 @end

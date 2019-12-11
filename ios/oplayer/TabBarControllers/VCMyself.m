@@ -404,7 +404,7 @@ enum
                     {
                         vc = [[VCAbout alloc] init];
                         vc.title = NSLocalizedString(@"kVcTitleAbout", @"关于");
-                        //  TODO:2.9 test
+                        //  TODO:3.1 test
 //                        [[MyPopviewManager sharedMyPopviewManager] showWebviewPaymentDialog:self
 //                                                                        reserve_secure_text:@"我的账号"
 //                                                                                   paytitle:@"下注"];

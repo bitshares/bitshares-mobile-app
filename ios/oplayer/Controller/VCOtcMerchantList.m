@@ -11,7 +11,7 @@
 #import "VCOtcUserAuthInfos.h"
 #import "VCOtcReceiveMethods.h"
 
-#import "ViewOtcMerchantInfoCell.h"
+#import "ViewOtcAdInfoCell.h"
 #import "MBProgressHUDSingleton.h"
 #import "OtcManager.h"
 
@@ -58,10 +58,9 @@
 
 - (void)onRightOrderButtonClicked
 {
-    //  TODO:2.9 lang
     [[OtcManager sharedOtcManager] guardUserIdVerified:self
                                              auto_hide:YES
-                                     askForIdVerifyMsg:@"在继续操作之前您需要先完成身份认证，是否继续？"
+                                     askForIdVerifyMsg:NSLocalizedString(@"kOtcAdAskIdVerifyTips01", @"在继续操作之前您需要先完成身份认证，是否继续？")
                                               callback:^(id auth_info)
     {
         VCBase* vc = [[VCOtcOrders alloc] initWithAuthInfo:auth_info];
@@ -74,7 +73,7 @@
     [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
                                                        message:nil
                                                         cancel:NSLocalizedString(@"kBtnCancel", @"取消")
-                                                         items:@[@"认证信息", @"收款方式"]//TODO:2.9 lang
+                                                         items:@[NSLocalizedString(@"kOtcAdUserActionItemAuthInfo", @"认证信息"), NSLocalizedString(@"kOtcAdUserActionItemReceiveMethod", @"收款方式")]
                                                       callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
      {
          if (buttonIndex != cancelIndex){
@@ -97,7 +96,7 @@
                  {
                      [[OtcManager sharedOtcManager] guardUserIdVerified:self
                                                               auto_hide:YES
-                                                      askForIdVerifyMsg:@"添加收款方式之前，请先完成身份认证，是否继续？"
+                                                      askForIdVerifyMsg:NSLocalizedString(@"kOtcAdAskIdVerifyTips02", @"添加收款方式之前，请先完成身份认证，是否继续？")
                                                                callback:^(id auth_info)
                      {
                          VCBase* vc = [[VCOtcReceiveMethods alloc] initWithAuthInfo:auth_info];
@@ -116,7 +115,7 @@
 
 - (NSString*)genTitleString
 {
-    return [NSString stringWithFormat:@"%@%@", _curr_asset_name, @"市场◢"];//TODO:2.9  lang
+    return [NSString stringWithFormat:@"%@%@", _curr_asset_name, NSLocalizedString(@"kOtcAdTitleBase", @"市场◢")];
 }
 
 - (void)onTitleAssetButtonClicked:(UIButton*)sender
@@ -124,9 +123,8 @@
     id list = [[OtcManager sharedOtcManager].asset_list_digital ruby_map:^id(id src) {
         return [src objectForKey:@"assetSymbol"];
     }];
-    //  TODO:2.9 lang
     [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
-                                                       message:@"请选择要交易的资产"
+                                                       message:NSLocalizedString(@"kOtcAdSwitchAssetTips", @"请选择要交易的资产")
                                                         cancel:NSLocalizedString(@"kBtnCancel", @"取消")
                                                          items:list
                                                       callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
@@ -252,8 +250,7 @@
     _mainTableView.separatorStyle = UITableViewCellSeparatorStyleNone;  //  REMARK：不显示cell间的横线。
     [self.view addSubview:_mainTableView];
 
-    //  TODO:2.9
-    _lbEmpty = [self genCenterEmptyLabel:rect txt:@"没有任何商家在线。"];
+    _lbEmpty = [self genCenterEmptyLabel:rect txt:NSLocalizedString(@"kOtcAdNoAnyMerchantOnline", @"没有任何商家在线。")];
     [self.view addSubview:_lbEmpty];
 }
 
@@ -338,11 +335,11 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString* identify = @"id_merchant_cell";
-    ViewOtcMerchantInfoCell* cell = (ViewOtcMerchantInfoCell*)[tableView dequeueReusableCellWithIdentifier:identify];
+    static NSString* identify = @"id_otc_ad_cell";
+    ViewOtcAdInfoCell* cell = (ViewOtcAdInfoCell*)[tableView dequeueReusableCellWithIdentifier:identify];
     if (!cell)
     {
-        cell = [[ViewOtcMerchantInfoCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:identify vc:self];
+        cell = [[ViewOtcAdInfoCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:identify vc:self];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.backgroundColor = [UIColor clearColor];
@@ -357,11 +354,6 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
-        id item = [_data_array objectAtIndex:indexPath.row];
-        assert(item);
-        //  TODO:2.9 onclicked
-    }];
 }
 
 /*
@@ -369,8 +361,7 @@
  */
 - (void)askForContactCustomerService:(id)auth_info
 {
-    //  TODO:2.9 lang
-    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"您的账号已被冻结，是否联系客服？"
+    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:NSLocalizedString(@"kOtcAdUserFreezeAsk", @"您的账号已被冻结，是否联系客服？")
                                                            withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
                                                           completion:^(NSInteger buttonIndex)
      {
@@ -392,18 +383,17 @@
     
     NSMutableArray* ary = [NSMutableArray array];
     if (aliPaySwitch) {
-        [ary addObject:@"支付宝"];
+        [ary addObject:NSLocalizedString(@"kOtcAdPmNameAlipay", @"支付宝")];
     }
     if (bankcardPaySwitch) {
-        [ary addObject:@"银行卡"];
+        [ary addObject:NSLocalizedString(@"kOtcAdPmNameBankCard", @"银行卡")];
     }
     if (wechatPaySwitch) {
-        [ary addObject:@"微信支付"];
+        [ary addObject:NSLocalizedString(@"kOtcAdPmNameWechatPay", @"微信支付")];
     }
     assert([ary count] > 0);
-    NSString* paymentStrList = [ary componentsJoinedByString:@"、"];
-    //  TODO:2.9 lang
-    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:[NSString stringWithFormat:@"商家仅支持通过【%@】向您付款，您需要前往添加并激活对应收款方式，是否继续？", paymentStrList]
+    NSString* paymentStrList = [ary componentsJoinedByString:NSLocalizedString(@"kOtcAdPmJoinChar", @"、")];
+    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:[NSString stringWithFormat:NSLocalizedString(@"kOtcAdOrderMissingPmAsk", @"商家仅支持通过【%@】向您付款，您需要前往添加并激活对应收款方式，是否继续？"), paymentStrList]
                                                            withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
                                                           completion:^(NSInteger buttonIndex)
      {
@@ -422,8 +412,7 @@
  */
 - (void)askForPriceChanged:(id)ad_info lock_info:(id)lock_info
 {
-    //  TODO:2.9
-    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"您当前选择的订单价格有变动，是否继续下单？"
+    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:NSLocalizedString(@"kOtcAdOrderPriceChangeAsk", @"您当前选择的订单价格有变动，是否继续下单？")
                                                            withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
                                                           completion:^(NSInteger buttonIndex)
      {
@@ -444,6 +433,7 @@
             //  输入完毕：尝试下单
             [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
             OtcManager* otc = [OtcManager sharedOtcManager];
+            //TODO:2.9 [lock_info objectForKey:@"legalCurrencySymbol"]
             [[[otc createUserOrder:[otc getCurrentBtsAccount]
                              ad_id:[ad_info objectForKey:@"adId"]
                               type:(EOtcAdType)[[ad_info objectForKey:@"adType"] integerValue]
@@ -492,14 +482,13 @@
     BOOL wechatPaySwitch = NO; //  TODO:2.9 默认false，ad数据里没微信。
   
     //  TODO:2.9临时关闭check
-    //  TODO:2.9 lang
     if (!bankcardPaySwitch && !aliPaySwitch && !wechatPaySwitch) {
         if (_ad_type == eoadt_user_buy) {
             //  用户买
-            [OrgUtils makeToast:@"商家没开启任何收款方式。"];
+            [OrgUtils makeToast:NSLocalizedString(@"kOtcAdOrderTipsMcNoAnyReceiveMethod", @"商家没开启任何收款方式。")];
         } else {
             //  用户卖
-            [OrgUtils makeToast:@"商家没开启任何付款方式。"];
+            [OrgUtils makeToast:NSLocalizedString(@"kOtcAdOrderTipsMcNoAnyPaymentMethod", @"商家没开启任何付款方式。")];
         }
         return;
     }
@@ -512,7 +501,7 @@
             OtcManager* otc = [OtcManager sharedOtcManager];
             [otc guardUserIdVerified:_owner
                            auto_hide:NO
-                   askForIdVerifyMsg:@"您尚未完成身份认证，不可进行场外交易，是否去认证？"//TODO:2.9 lang
+                   askForIdVerifyMsg:NSLocalizedString(@"kOtcAdAskIdVerifyTips03", @"您尚未完成身份认证，不可进行场外交易，是否去认证？")
                             callback:^(id auth_info)
             {
                 //  1、查询账号状态：用户账号是否异常

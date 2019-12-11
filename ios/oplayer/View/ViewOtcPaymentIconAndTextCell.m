@@ -91,7 +91,7 @@
         [self addSubview:_iconType];
     }
     
-    _lbTitle.text = self.bUserSell ? @"收款方式" : @"付款方式";
+    _lbTitle.text = self.bUserSell ? NSLocalizedString(@"kOtcAdCellLabelTitleReceiveMethod", @"收款方式") : NSLocalizedString(@"kOtcAdCellLabelTitlePaymentMethod", @"付款方式");
     _lbTitle.textColor = theme.textColorNormal;
     _lbTitle.frame = CGRectMake(xOffset, 0, fWidth, fHeight);
 

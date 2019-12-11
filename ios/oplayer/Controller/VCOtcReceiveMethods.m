@@ -54,7 +54,7 @@
     [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
                                                        message:nil
                                                         cancel:NSLocalizedString(@"kBtnCancel", @"取消")
-                                                         items:@[@"银行卡", @"支付宝"]//TODO:2.9 lang
+                                                         items:@[NSLocalizedString(@"kOtcAdPmNameBankCard", @"银行卡"), NSLocalizedString(@"kOtcAdPmNameAlipay", @"支付宝")]
                                                       callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
      {
          if (buttonIndex != cancelIndex){

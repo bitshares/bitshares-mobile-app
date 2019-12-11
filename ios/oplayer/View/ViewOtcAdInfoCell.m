@@ -1,5 +1,5 @@
 //
-//  ViewOtcMerchantInfoCell.m
+//  ViewOtcAdInfoCell.m
 //  oplayer
 //
 //  Created by SYALON on 13-12-31.
@@ -7,13 +7,13 @@
 //
 
 #import "VCBase.h"
-#import "ViewOtcMerchantInfoCell.h"
+#import "ViewOtcAdInfoCell.h"
 #import "NativeAppDelegate.h"
 #import "ThemeManager.h"
 #import "OrgUtils.h"
 #import "ChainObjectManager.h"
 
-@interface ViewOtcMerchantInfoCell()
+@interface ViewOtcAdInfoCell()
 {
     __weak VCBase*  _owner;                 //  REMARK：声明为 weak，否则会导致循环引用。
     
@@ -36,7 +36,7 @@
 
 @end
 
-@implementation ViewOtcMerchantInfoCell
+@implementation ViewOtcAdInfoCell
 
 @synthesize adType;
 @synthesize item=_item;
@@ -174,6 +174,7 @@
     _lbUsername.text = merchantName;
     _lbUsername.frame = CGRectMake(fOffsetX + fDiameter + 8, fOffsetY, fWidth, fDiameter);
     
+    //  TODO:2.9 lang
     //  UI - 第一行 商家订单统计信息
     _lbCompleteNumber.text = @"3332笔 | 94%";//TODO:2.9 field?
     CGSize size1 = [self auxSizeWithText:_lbCompleteNumber.text font:_lbCompleteNumber.font maxsize:CGSizeMake(fWidth, 9999)];
@@ -184,20 +185,19 @@
     //  UI - 第二行 数量限额
     NSString* fiat_sym = [[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"short_symbol"];
     
-    //  TODO:2.9 lang
-    _lbAmount.attributedText = [self genAndColorAttributedText:@"数量 "
+    _lbAmount.attributedText = [self genAndColorAttributedText:NSLocalizedString(@"kOtcAdCellLabelAmount", @"数量 ")
                                                          value:[NSString stringWithFormat:@"%@ %@", _item[@"stock"], _item[@"assetSymbol"]]
                                                     titleColor:theme.textColorGray
                                                     valueColor:theme.textColorNormal];
     
     //  UI - 第三行 交易额限额
-    _lbLimit.attributedText = [self genAndColorAttributedText:@"限额 "
+    _lbLimit.attributedText = [self genAndColorAttributedText:NSLocalizedString(@"kOtcAdCellLabelLimit", @"限额 ")
                                                         value:[NSString stringWithFormat:@"%@%@ - %@%@", fiat_sym, _item[@"lowestLimit"],
                                                                fiat_sym, _item[@"maxLimit"]]
                                                    titleColor:theme.textColorGray
                                                    valueColor:theme.textColorNormal];
     
-    _lbPriceTitle.text = @"单价";
+    _lbPriceTitle.text = NSLocalizedString(@"kOtcAdCellLabelUnitPrice", @"单价");
     _lbPriceValue.text = [NSString stringWithFormat:@"%@%@", fiat_sym, _item[@"price"]];
     
     _lbAmount.frame = CGRectMake(fOffsetX, fOffsetY, fWidth, fLineHeight);
@@ -230,14 +230,14 @@
         fIconOffset += 16 + 6.0f;
     }
     
-    //  买卖按钮 TODO:2.9 lang
+    //  买卖按钮
     UIColor* backColor;
     if (self.adType == eoadt_user_buy) {
         backColor = theme.buyColor;
-        [_lbSubmit setTitle:@"购买" forState:UIControlStateNormal];
+        [_lbSubmit setTitle:NSLocalizedString(@"kOtcAdBtnBuy", @"购买") forState:UIControlStateNormal];
     } else {
         backColor = theme.sellColor;
-        [_lbSubmit setTitle:@"出售" forState:UIControlStateNormal];
+        [_lbSubmit setTitle:NSLocalizedString(@"kOtcAdBtnSell", @"出售") forState:UIControlStateNormal];
     }
     _lbSubmit.layer.borderColor = backColor.CGColor;
     _lbSubmit.layer.backgroundColor = backColor.CGColor;

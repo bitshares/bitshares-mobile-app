@@ -333,7 +333,13 @@ enum
             {
                 [self GuardWalletExist:^{
                     //  TODO:2.9 默认参数？
-                    [[OtcManager sharedOtcManager] gotoOtc:self asset_name:@"USD" ad_type:eoadt_user_buy];
+                    [[OtcManager sharedOtcManager] gotoOtc:self asset_name:@"CNY" ad_type:eoadt_user_buy];
+//                    //  TODO:3.0 是否需要unlock
+//                    [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+//                        if (unlocked) {
+//                            [[OtcManager sharedOtcManager] gotoOtcMerchantHome:self];
+//                        }
+//                    }];
                 }];
             }
                 break;

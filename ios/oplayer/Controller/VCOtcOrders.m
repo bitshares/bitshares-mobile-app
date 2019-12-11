@@ -106,8 +106,7 @@
     _lbEmptyOrder.textColor = [ThemeManager sharedThemeManager].textColorMain;
     _lbEmptyOrder.textAlignment = NSTextAlignmentCenter;
     _lbEmptyOrder.font = [UIFont boldSystemFontOfSize:13];
-    //  TODO:2.9
-    _lbEmptyOrder.text = @"没有任何订单信息";
+    _lbEmptyOrder.text = NSLocalizedString(@"kOtcOrderEmptyLabel", @"没有任何订单信息");
     [self.view addSubview:_lbEmptyOrder];
     _lbEmptyOrder.hidden = YES;
     
@@ -167,7 +166,7 @@
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
     cell.showCustomBottomLine = YES;
-    [cell setTagData:indexPath.row];
+//    [cell setTagData:indexPath.row];
     [cell setItem:[_dataArray objectAtIndex:indexPath.row]];
     return cell;
 }
