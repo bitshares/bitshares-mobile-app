@@ -15,8 +15,6 @@
 
 @interface ViewOtcMcMerchantBasicCell()
 {
-    __weak VCBase*  _owner;                 //  REMARK：声明为 weak，否则会导致循环引用。
-    
     NSDictionary*   _item;
     
     UILabel*        _imageHeader;

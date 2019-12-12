@@ -137,6 +137,14 @@
         id opresult = [history objectForKey:@"result"];
         
         id uidata = [OrgUtils processOpdata2UiData:optype opdata:opdata opresult:opresult isproposal:NO];
+        //  TODO:2.9
+//        if (optype == ebo_transfer) {
+//            id memo_object = [opdata objectForKey:@"memo"];
+//            if (memo_object) {
+//                id ss = [[WalletManager sharedWalletManager] decryptMemoObject:memo_object];
+//                 NSLog(@"%@", ss);
+//            }
+//        }
         
         //  REMARK：未知操作不显示，略过。
         if (!uidata){
@@ -147,7 +155,9 @@
                                 @"history":history,
                                 @"typename":uidata[@"name"],
                                 @"desc":uidata[@"desc"],
-                                @"typecolor":uidata[@"color"]}];
+                                @"typecolor":uidata[@"color"],
+                                @"optype":@(optype),
+                                @"opdata":opdata}];
     }
     
     //  刷新

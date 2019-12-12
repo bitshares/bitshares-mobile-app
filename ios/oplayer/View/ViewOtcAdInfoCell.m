@@ -38,7 +38,7 @@
 
 @implementation ViewOtcAdInfoCell
 
-@synthesize adType;
+@synthesize userType;
 @synthesize item=_item;
 
 - (void)dealloc
@@ -71,14 +71,14 @@
         
         //  保存引用
         _owner = vc;
-        self.adType = eoadt_user_buy;
+        self.userType = eout_normal_user;
         
         _item = nil;
         
         _imageHeader = [self auxGenLabel:[UIFont systemFontOfSize:14]];
         _imageHeader.textAlignment = NSTextAlignmentCenter;
         
-        _lbUsername = [self auxGenLabel:[UIFont boldSystemFontOfSize:15]];
+        _lbUsername = [self auxGenLabel:[UIFont boldSystemFontOfSize:16]];
         
         _lbCompleteNumber = [self auxGenLabel:[UIFont systemFontOfSize:13]];
         _lbCompleteNumber.textAlignment = NSTextAlignmentRight;
@@ -163,30 +163,56 @@
     CGFloat fLineHeight = 20.0f;
     CGFloat fDiameter = 24.0f;
     
-    //  UI - 第一行 头像
-    NSString* merchantName = [_item objectForKey:@"merchantNickname"];
-    _imageHeader.layer.cornerRadius = fDiameter / 2.0f;
-    _imageHeader.layer.backgroundColor = theme.textColorHighlight.CGColor;
-    _imageHeader.text = [merchantName substringToIndex:1];
-    _imageHeader.frame = CGRectMake(fOffsetX, fOffsetY, fDiameter, fDiameter);
+    NSString* assetSymbol = _item[@"assetSymbol"];
+    NSInteger adType = [[_item objectForKey:@"adType"] integerValue];
     
-    //  UI - 第一行 商家名字
-    _lbUsername.text = merchantName;
-    _lbUsername.frame = CGRectMake(fOffsetX + fDiameter + 8, fOffsetY, fWidth, fDiameter);
-    
-    //  TODO:2.9 lang
-    //  UI - 第一行 商家订单统计信息
-    _lbCompleteNumber.text = @"3332笔 | 94%";//TODO:2.9 field?
-    CGSize size1 = [self auxSizeWithText:_lbCompleteNumber.text font:_lbCompleteNumber.font maxsize:CGSizeMake(fWidth, 9999)];
-    _lbCompleteNumber.frame = CGRectMake(0, fOffsetY + (fDiameter - size1.height) / 2.0f, fWidth - fOffsetX, size1.height);
-    _lbCompleteNumber.textColor = theme.textColorGray;
+    if (self.userType == eout_normal_user) {
+        //  【用户端】
+        //  UI - 第一行 头像
+        NSString* merchantName = [_item objectForKey:@"merchantNickname"];
+        _imageHeader.hidden = NO;
+        _imageHeader.layer.cornerRadius = fDiameter / 2.0f;
+        _imageHeader.layer.backgroundColor = theme.textColorHighlight.CGColor;
+        _imageHeader.text = [merchantName substringToIndex:1];
+        _imageHeader.frame = CGRectMake(fOffsetX, fOffsetY, fDiameter, fDiameter);
+        
+        //  UI - 第一行 商家名字
+        _lbUsername.text = merchantName;
+        _lbUsername.frame = CGRectMake(fOffsetX + fDiameter + 8, fOffsetY, fWidth, fDiameter);
+        
+        //  TODO:2.9 lang
+        //  UI - 第一行 商家订单统计信息
+        _lbCompleteNumber.hidden = NO;
+        _lbCompleteNumber.text = @"3332笔 | 94%";//TODO:2.9 field?
+        CGSize size1 = [self auxSizeWithText:_lbCompleteNumber.text font:_lbCompleteNumber.font maxsize:CGSizeMake(fWidth, 9999)];
+        _lbCompleteNumber.frame = CGRectMake(0, fOffsetY + (fDiameter - size1.height) / 2.0f, fWidth - fOffsetX, size1.height);
+        _lbCompleteNumber.textColor = theme.textColorGray;
+    } else {
+        //  【商家端】
+        _imageHeader.hidden = YES;
+        _lbCompleteNumber.hidden = YES;
+        if (adType == eoadt_merchant_buy) {
+            //  TODO:2.9 lang
+            _lbUsername.attributedText = [self genAndColorAttributedText:@"商家购买 "
+                                                                   value:assetSymbol
+                                                              titleColor:theme.buyColor
+                                                              valueColor:theme.textColorMain];
+        } else {
+            _lbUsername.attributedText = [self genAndColorAttributedText:@"商家出售 "
+                                                                   value:assetSymbol
+                                                              titleColor:theme.sellColor
+                                                              valueColor:theme.textColorMain];
+        }
+        _lbUsername.frame = CGRectMake(fOffsetX, fOffsetY, fWidth, fDiameter);
+    }
+
     fOffsetY += fDiameter + 4;
     
     //  UI - 第二行 数量限额
     NSString* fiat_sym = [[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"short_symbol"];
     
     _lbAmount.attributedText = [self genAndColorAttributedText:NSLocalizedString(@"kOtcAdCellLabelAmount", @"数量 ")
-                                                         value:[NSString stringWithFormat:@"%@ %@", _item[@"stock"], _item[@"assetSymbol"]]
+                                                         value:[NSString stringWithFormat:@"%@ %@", _item[@"stock"], assetSymbol]
                                                     titleColor:theme.textColorGray
                                                     valueColor:theme.textColorNormal];
     
@@ -230,14 +256,33 @@
         fIconOffset += 16 + 6.0f;
     }
     
-    //  买卖按钮
     UIColor* backColor;
-    if (self.adType == eoadt_user_buy) {
-        backColor = theme.buyColor;
-        [_lbSubmit setTitle:NSLocalizedString(@"kOtcAdBtnBuy", @"购买") forState:UIControlStateNormal];
+    if (self.userType == eout_normal_user) {
+        //  用户端：买卖按钮
+        if (adType == eoadt_user_buy) {
+            backColor = theme.buyColor;
+            [_lbSubmit setTitle:NSLocalizedString(@"kOtcAdBtnBuy", @"购买") forState:UIControlStateNormal];
+        } else {
+            backColor = theme.sellColor;
+            [_lbSubmit setTitle:NSLocalizedString(@"kOtcAdBtnSell", @"出售") forState:UIControlStateNormal];
+        }
     } else {
-        backColor = theme.sellColor;
-        [_lbSubmit setTitle:NSLocalizedString(@"kOtcAdBtnSell", @"出售") forState:UIControlStateNormal];
+        //  商家端：下架or上架按钮
+        backColor = theme.textColorHighlight;
+        _lbSubmit.hidden = NO;
+        switch ([[_item objectForKey:@"status"] integerValue]) {
+            case eoads_online:
+                [_lbSubmit setTitle:@"下架" forState:UIControlStateNormal];
+                break;
+            case eoads_offline:
+                [_lbSubmit setTitle:@"上架" forState:UIControlStateNormal];
+                break;
+            case eoads_deleted:
+                _lbSubmit.hidden = YES;
+                break;
+            default:
+                break;
+        }
     }
     _lbSubmit.layer.borderColor = backColor.CGColor;
     _lbSubmit.layer.backgroundColor = backColor.CGColor;

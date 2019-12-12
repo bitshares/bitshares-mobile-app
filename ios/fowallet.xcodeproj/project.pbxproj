@@ -30,6 +30,18 @@
 		3F009A0E239FB58100A77E4A /* ViewOtcMcMerchantBasicCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A0C239FB58100A77E4A /* ViewOtcMcMerchantBasicCell.m */; };
 		3F009A0F239FB58100A77E4A /* ViewOtcMcMerchantBasicCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A0C239FB58100A77E4A /* ViewOtcMcMerchantBasicCell.m */; };
 		3F009A10239FB58100A77E4A /* ViewOtcMcMerchantBasicCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A0C239FB58100A77E4A /* ViewOtcMcMerchantBasicCell.m */; };
+		3F009A1323A1F9B200A77E4A /* ViewOtcMcAssetInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A1223A1F9B200A77E4A /* ViewOtcMcAssetInfoCell.m */; };
+		3F009A1423A1F9B200A77E4A /* ViewOtcMcAssetInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A1223A1F9B200A77E4A /* ViewOtcMcAssetInfoCell.m */; };
+		3F009A1523A1F9B200A77E4A /* ViewOtcMcAssetInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A1223A1F9B200A77E4A /* ViewOtcMcAssetInfoCell.m */; };
+		3F009A1823A2099D00A77E4A /* VCOtcMcAssetTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A1623A2099C00A77E4A /* VCOtcMcAssetTransfer.m */; };
+		3F009A1923A2099D00A77E4A /* VCOtcMcAssetTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A1623A2099C00A77E4A /* VCOtcMcAssetTransfer.m */; };
+		3F009A1A23A2099D00A77E4A /* VCOtcMcAssetTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A1623A2099C00A77E4A /* VCOtcMcAssetTransfer.m */; };
+		3F009A1D23A212DF00A77E4A /* ViewUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A1C23A212DF00A77E4A /* ViewUtils.m */; };
+		3F009A1E23A212DF00A77E4A /* ViewUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A1C23A212DF00A77E4A /* ViewUtils.m */; };
+		3F009A1F23A212DF00A77E4A /* ViewUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A1C23A212DF00A77E4A /* ViewUtils.m */; };
+		3F009A2223A2176100A77E4A /* ViewOtcMcAssetSwitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A2023A2176000A77E4A /* ViewOtcMcAssetSwitchCell.m */; };
+		3F009A2323A2176100A77E4A /* ViewOtcMcAssetSwitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A2023A2176000A77E4A /* ViewOtcMcAssetSwitchCell.m */; };
+		3F009A2423A2176100A77E4A /* ViewOtcMcAssetSwitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A2023A2176000A77E4A /* ViewOtcMcAssetSwitchCell.m */; };
 		3F05DDBD230B7D76002934DA /* VCLaunch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F05DDBB230B7D75002934DA /* VCLaunch.m */; };
 		3F05DDBE230B7D76002934DA /* VCLaunch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F05DDBB230B7D75002934DA /* VCLaunch.m */; };
 		3F0AE33A2192C97800E4144C /* iconWallet@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F0AE3342192C97700E4144C /* iconWallet@3x.png */; };
@@ -1866,6 +1878,14 @@
 		3F009A08239FB4EC00A77E4A /* ViewOtcAdInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewOtcAdInfoCell.h; path = View/ViewOtcAdInfoCell.h; sourceTree = "<group>"; };
 		3F009A0C239FB58100A77E4A /* ViewOtcMcMerchantBasicCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewOtcMcMerchantBasicCell.m; path = View/ViewOtcMcMerchantBasicCell.m; sourceTree = "<group>"; };
 		3F009A0D239FB58100A77E4A /* ViewOtcMcMerchantBasicCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewOtcMcMerchantBasicCell.h; path = View/ViewOtcMcMerchantBasicCell.h; sourceTree = "<group>"; };
+		3F009A1123A1F9B100A77E4A /* ViewOtcMcAssetInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewOtcMcAssetInfoCell.h; path = View/ViewOtcMcAssetInfoCell.h; sourceTree = "<group>"; };
+		3F009A1223A1F9B200A77E4A /* ViewOtcMcAssetInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewOtcMcAssetInfoCell.m; path = View/ViewOtcMcAssetInfoCell.m; sourceTree = "<group>"; };
+		3F009A1623A2099C00A77E4A /* VCOtcMcAssetTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcMcAssetTransfer.m; path = Controller/VCOtcMcAssetTransfer.m; sourceTree = "<group>"; };
+		3F009A1723A2099C00A77E4A /* VCOtcMcAssetTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcMcAssetTransfer.h; path = Controller/VCOtcMcAssetTransfer.h; sourceTree = "<group>"; };
+		3F009A1B23A212DF00A77E4A /* ViewUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewUtils.h; path = View/ViewUtils.h; sourceTree = "<group>"; };
+		3F009A1C23A212DF00A77E4A /* ViewUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewUtils.m; path = View/ViewUtils.m; sourceTree = "<group>"; };
+		3F009A2023A2176000A77E4A /* ViewOtcMcAssetSwitchCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewOtcMcAssetSwitchCell.m; path = View/ViewOtcMcAssetSwitchCell.m; sourceTree = "<group>"; };
+		3F009A2123A2176000A77E4A /* ViewOtcMcAssetSwitchCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewOtcMcAssetSwitchCell.h; path = View/ViewOtcMcAssetSwitchCell.h; sourceTree = "<group>"; };
 		3F05DDBB230B7D75002934DA /* VCLaunch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCLaunch.m; path = Controller/VCLaunch.m; sourceTree = "<group>"; };
 		3F05DDBC230B7D75002934DA /* VCLaunch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCLaunch.h; path = Controller/VCLaunch.h; sourceTree = "<group>"; };
 		3F0AE3342192C97700E4144C /* iconWallet@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconWallet@3x.png"; path = "Images/iconWallet@3x.png"; sourceTree = "<group>"; };
@@ -3049,6 +3069,12 @@
 		18FF069017E00C5C0088405E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				3F009A2123A2176000A77E4A /* ViewOtcMcAssetSwitchCell.h */,
+				3F009A2023A2176000A77E4A /* ViewOtcMcAssetSwitchCell.m */,
+				3F009A1B23A212DF00A77E4A /* ViewUtils.h */,
+				3F009A1C23A212DF00A77E4A /* ViewUtils.m */,
+				3F009A1123A1F9B100A77E4A /* ViewOtcMcAssetInfoCell.h */,
+				3F009A1223A1F9B200A77E4A /* ViewOtcMcAssetInfoCell.m */,
 				3F009A0D239FB58100A77E4A /* ViewOtcMcMerchantBasicCell.h */,
 				3F009A0C239FB58100A77E4A /* ViewOtcMcMerchantBasicCell.m */,
 				3F009A08239FB4EC00A77E4A /* ViewOtcAdInfoCell.h */,
@@ -3558,6 +3584,8 @@
 		3FE23E30236D6A07006BF999 /* OTC */ = {
 			isa = PBXGroup;
 			children = (
+				3F009A1723A2099C00A77E4A /* VCOtcMcAssetTransfer.h */,
+				3F009A1623A2099C00A77E4A /* VCOtcMcAssetTransfer.m */,
 				3F0099F9239FAA9A00A77E4A /* VCOtcMcAdList.h */,
 				3F0099F6239FAA9900A77E4A /* VCOtcMcAdList.m */,
 				3F0099F8239FAA9900A77E4A /* VCOtcMcAssetList.h */,
@@ -5389,6 +5417,7 @@
 				3F67681F230E9EC100E98C14 /* UIImage+ImageCompress.m in Sources */,
 				3F676820230E9EC100E98C14 /* VCCallOrderRanking.m in Sources */,
 				3F676821230E9EC100E98C14 /* rmd160.c in Sources */,
+				3F009A2423A2176100A77E4A /* ViewOtcMcAssetSwitchCell.m in Sources */,
 				3F676822230E9EC100E98C14 /* WjCryptLib_AesCtr.c in Sources */,
 				3F676823230E9EC100E98C14 /* AWActionSheet.m in Sources */,
 				3F676824230E9EC100E98C14 /* VCBackupWallet.m in Sources */,
@@ -5515,10 +5544,12 @@
 				3F67688E230E9EC100E98C14 /* LzFind.c in Sources */,
 				3F67688F230E9EC100E98C14 /* VCLoginPasswordMode.m in Sources */,
 				3F676890230E9EC100E98C14 /* ViewCommitteeVoteCell.m in Sources */,
+				3F009A1523A1F9B200A77E4A /* ViewOtcMcAssetInfoCell.m in Sources */,
 				3F676891230E9EC100E98C14 /* 7zFile.c in Sources */,
 				3F676892230E9EC100E98C14 /* GCDWebServerResponse.m in Sources */,
 				3F009A06239FAA9A00A77E4A /* VCOtcMcPaymentMethods.m in Sources */,
 				3F676893230E9EC100E98C14 /* TransactionBuilder.m in Sources */,
+				3F009A1A23A2099D00A77E4A /* VCOtcMcAssetTransfer.m in Sources */,
 				3F676894230E9EC100E98C14 /* VCLoginPrivateKeyMode.m in Sources */,
 				3F676895230E9EC100E98C14 /* VCBaseWebView.m in Sources */,
 				3F676896230E9EC100E98C14 /* VCConvertToWalletMode.m in Sources */,
@@ -5593,6 +5624,7 @@
 				3F6768D4230E9EC100E98C14 /* Xz.c in Sources */,
 				3F6768D5230E9EC100E98C14 /* GCDWebServer.m in Sources */,
 				3F6768D6230E9EC100E98C14 /* SCLTextView.m in Sources */,
+				3F009A1F23A212DF00A77E4A /* ViewUtils.m in Sources */,
 				3F6768D7230E9EC100E98C14 /* SRLog.m in Sources */,
 				3F6768D8230E9EC100E98C14 /* MyTextView.m in Sources */,
 				3F6768D9230E9EC100E98C14 /* GCDWebServerMultiPartFormRequest.m in Sources */,
@@ -5709,6 +5741,7 @@
 				3FB8F8B721CE66C200DA88E2 /* UIImage+ImageCompress.m in Sources */,
 				3FB8F8B821CE66C200DA88E2 /* VCCallOrderRanking.m in Sources */,
 				3FB8F8B921CE66C200DA88E2 /* rmd160.c in Sources */,
+				3F009A2323A2176100A77E4A /* ViewOtcMcAssetSwitchCell.m in Sources */,
 				3FB8F8BA21CE66C200DA88E2 /* WjCryptLib_AesCtr.c in Sources */,
 				3FB8F8BB21CE66C200DA88E2 /* AWActionSheet.m in Sources */,
 				3FB8F8BC21CE66C200DA88E2 /* VCBackupWallet.m in Sources */,
@@ -5835,10 +5868,12 @@
 				3FB8F91C21CE66C200DA88E2 /* LzFind.c in Sources */,
 				3FB8F91D21CE66C200DA88E2 /* VCLoginPasswordMode.m in Sources */,
 				3FB8F91E21CE66C200DA88E2 /* ViewCommitteeVoteCell.m in Sources */,
+				3F009A1423A1F9B200A77E4A /* ViewOtcMcAssetInfoCell.m in Sources */,
 				3FB8F91F21CE66C200DA88E2 /* 7zFile.c in Sources */,
 				3FB8F92021CE66C200DA88E2 /* GCDWebServerResponse.m in Sources */,
 				3F009A05239FAA9A00A77E4A /* VCOtcMcPaymentMethods.m in Sources */,
 				3FB8F92121CE66C200DA88E2 /* TransactionBuilder.m in Sources */,
+				3F009A1923A2099D00A77E4A /* VCOtcMcAssetTransfer.m in Sources */,
 				3FB8F92221CE66C200DA88E2 /* VCLoginPrivateKeyMode.m in Sources */,
 				3FB8F92321CE66C200DA88E2 /* VCBaseWebView.m in Sources */,
 				3FB8FAA221CF361900DA88E2 /* VCConvertToWalletMode.m in Sources */,
@@ -5913,6 +5948,7 @@
 				3FB8F95921CE66C200DA88E2 /* Xz.c in Sources */,
 				3FB8F95A21CE66C200DA88E2 /* GCDWebServer.m in Sources */,
 				3FB8F95B21CE66C200DA88E2 /* SCLTextView.m in Sources */,
+				3F009A1E23A212DF00A77E4A /* ViewUtils.m in Sources */,
 				3FB8F95C21CE66C200DA88E2 /* SRLog.m in Sources */,
 				3FE4E94A22F698DC0056A44F /* MyTextView.m in Sources */,
 				3FB8F95D21CE66C200DA88E2 /* GCDWebServerMultiPartFormRequest.m in Sources */,
@@ -6029,6 +6065,7 @@
 				F5BF579D1E2F78C800DEDE38 /* UIImage+ImageCompress.m in Sources */,
 				B741A75120D9DCEB000FBC00 /* VCCallOrderRanking.m in Sources */,
 				B7B8810C20C3D9BE00DBCD45 /* rmd160.c in Sources */,
+				3F009A2223A2176100A77E4A /* ViewOtcMcAssetSwitchCell.m in Sources */,
 				B7BDA9A420B3A3D100738F12 /* WjCryptLib_AesCtr.c in Sources */,
 				F51D13FA1C59C45800FBB748 /* AWActionSheet.m in Sources */,
 				B77EBBEF213A4416009AC776 /* VCBackupWallet.m in Sources */,
@@ -6155,10 +6192,12 @@
 				B7272F4420F3148000B5CBA8 /* VCLoginPasswordMode.m in Sources */,
 				B7C041142108275900848CBC /* ViewCommitteeVoteCell.m in Sources */,
 				B7BDAA8120B3C77400738F12 /* 7zFile.c in Sources */,
+				3F009A1323A1F9B200A77E4A /* ViewOtcMcAssetInfoCell.m in Sources */,
 				B72A848420CCD18B00D92A25 /* GCDWebServerResponse.m in Sources */,
 				B79F1E2320B90730004A8B7F /* TransactionBuilder.m in Sources */,
 				3F009A04239FAA9A00A77E4A /* VCOtcMcPaymentMethods.m in Sources */,
 				B7272F4320F3148000B5CBA8 /* VCLoginPrivateKeyMode.m in Sources */,
+				3F009A1823A2099D00A77E4A /* VCOtcMcAssetTransfer.m in Sources */,
 				B7B1E3321DBF3E1C000B9635 /* VCBaseWebView.m in Sources */,
 				3FB8FAA121CF361900DA88E2 /* VCConvertToWalletMode.m in Sources */,
 				B7BDAA9620B3C77500738F12 /* LzmaLib.c in Sources */,
@@ -6233,6 +6272,7 @@
 				B72A848020CCD18B00D92A25 /* GCDWebServer.m in Sources */,
 				B782F0C51D6E94C600F61571 /* SCLTextView.m in Sources */,
 				B714094520A31CC300003311 /* SRLog.m in Sources */,
+				3F009A1D23A212DF00A77E4A /* ViewUtils.m in Sources */,
 				3FE4E94922F698DC0056A44F /* MyTextView.m in Sources */,
 				B72A848720CCD18B00D92A25 /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				3FCA2DC9219EC45900A5F4E9 /* VCProposalConfirm.m in Sources */,

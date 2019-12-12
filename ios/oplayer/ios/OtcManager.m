@@ -881,20 +881,36 @@ static OtcManager *_sharedOtcManager = nil;
  */
 - (WsPromise*)queryAdList:(EOtcAdType)ad_type asset_name:(NSString*)asset_name page:(NSInteger)page page_size:(NSInteger)page_size
 {
-    return [self queryAdList:eoads_online type:ad_type asset_name:asset_name page:page page_size:page_size];
+    return [self queryAdList:eoads_online type:ad_type asset_name:asset_name otcAccount:nil page:page page_size:page_size];
 }
 
-- (WsPromise*)queryAdList:(EOtcAdStatus)ad_status type:(EOtcAdType)ad_type asset_name:(NSString*)asset_name
-                     page:(NSInteger)page page_size:(NSInteger)page_size
+- (WsPromise*)queryAdList:(EOtcAdStatus)ad_status
+                     type:(EOtcAdType)ad_type
+               asset_name:(NSString*)asset_name
+               otcAccount:(NSString*)otcAccount
+                     page:(NSInteger)page
+                page_size:(NSInteger)page_size
 {
     id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/ad/list"];
-    id args = @{
-        @"adStatus":@(ad_status),
-        @"adType":@(ad_type),
-        @"assetSymbol":asset_name,
-        @"page":@(page),
-        @"pageSize":@(page_size)
-    };
+    NSDictionary* args;
+    if (otcAccount) {
+        args = @{
+            @"adStatus":@(ad_status),
+            @"adType":@(ad_type),
+            @"assetSymbol":asset_name,
+            @"otcAccount":otcAccount,
+            @"page":@(page),
+            @"pageSize":@(page_size)
+        };
+    } else {
+        args = @{
+            @"adStatus":@(ad_status),
+            @"adType":@(ad_type),
+            @"assetSymbol":asset_name,
+            @"page":@(page),
+            @"pageSize":@(page_size)
+        };
+    }
     return [self _queryApiCore:url args:args headers:nil];
 }
 
@@ -1225,6 +1241,19 @@ static OtcManager *_sharedOtcManager = nil;
     id args = @{
         @"btsAccount":bts_account_name,
         @"orderId":order_id,
+    };
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
+}
+
+/*
+ *  (public) API - 查询商家资产
+ *  认证：TOKEN 方式
+ */
+- (WsPromise*)queryMerchantOtcAsset:(NSString*)bts_account_name
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/asset/list"];
+    id args = @{
+        @"btsAccount":bts_account_name,
     };
     return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
 }

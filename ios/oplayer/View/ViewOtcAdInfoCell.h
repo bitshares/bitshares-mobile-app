@@ -15,7 +15,7 @@
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier vc:(VCBase*)vc;
 - (void)setTagData:(NSInteger)tag;
 
-@property (nonatomic, assign) EOtcAdType adType;
+@property (nonatomic, assign) EOtcUserType userType;
 @property (nonatomic, strong) NSDictionary* item;
 
 @end

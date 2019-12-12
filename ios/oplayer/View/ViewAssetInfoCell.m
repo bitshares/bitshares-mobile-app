@@ -130,7 +130,7 @@
         
         if (vc)
         {
-            _btnTransfer = [UIButton buttonWithType:UIButtonTypeCustom];
+            _btnTransfer = [UIButton buttonWithType:UIButtonTypeSystem];
             _btnTransfer.backgroundColor = [UIColor clearColor];
             
             [_btnTransfer setTitle:NSLocalizedString(@"kVcAssetBtnTransfer", @"转账") forState:UIControlStateNormal];
@@ -140,7 +140,7 @@
             [_btnTransfer addTarget:vc action:@selector(onButtonClicked_Transfer:) forControlEvents:UIControlEventTouchUpInside];
             [self addSubview:_btnTransfer];
             
-            _btnTrade = [UIButton buttonWithType:UIButtonTypeCustom];
+            _btnTrade = [UIButton buttonWithType:UIButtonTypeSystem];
             _btnTrade.backgroundColor = [UIColor clearColor];
             [_btnTrade setTitle:NSLocalizedString(@"kVcAssetBtnTrade", @"交易") forState:UIControlStateNormal];
             [_btnTrade setTitleColor:[ThemeManager sharedThemeManager].textColorHighlight forState:UIControlStateNormal];

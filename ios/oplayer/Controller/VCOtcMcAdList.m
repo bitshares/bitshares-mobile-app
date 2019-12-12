@@ -7,14 +7,118 @@
 //
 
 #import "VCOtcMcAdList.h"
-#import "ViewOtcOrderInfCell.h"
+#import "MBProgressHUDSingleton.h"
+#import "ViewOtcAdInfoCell.h"
 #import "OrgUtils.h"
-#import "VCOtcOrderDetails.h"
 #import "OtcManager.h"
+
+@interface VCOtcMcAdListPages ()
+{
+    NSDictionary*   _auth_info;
+    NSDictionary*   _merchant_detail;
+    EOtcUserType    _user_type;
+}
+
+@end
+
+@implementation VCOtcMcAdListPages
+
+-(void)dealloc
+{
+    _auth_info = nil;
+}
+
+- (NSArray*)getTitleStringArray
+{
+    //  TODO:2.9
+    return @[@"上架中", @"已下架", @"已删除"];
+}
+
+- (NSArray*)getSubPageVCArray
+{
+    id vc01 = [[VCOtcMcAdList alloc] initWithOwner:self
+                                          authInfo:_auth_info
+                                         user_type:_user_type
+                                   merchant_detail:_merchant_detail
+                                         ad_status:eoads_online];
+    id vc02 = [[VCOtcMcAdList alloc] initWithOwner:self
+                                          authInfo:_auth_info
+                                         user_type:_user_type
+                                   merchant_detail:_merchant_detail
+                                         ad_status:eoads_offline];
+    id vc03 = [[VCOtcMcAdList alloc] initWithOwner:self
+                                          authInfo:_auth_info
+                                         user_type:_user_type
+                                   merchant_detail:_merchant_detail
+                                         ad_status:eoads_deleted];
+    return @[vc01, vc02, vc03];
+}
+
+- (id)initWithAuthInfo:(id)auth_info user_type:(EOtcUserType)user_type merchant_detail:(id)merchant_detail
+{
+    self = [super init];
+    if (self) {
+        _auth_info = auth_info;
+        _user_type = user_type;
+        _merchant_detail = merchant_detail;
+    }
+    return self;
+}
+
+- (void)onAddNewPaymentMethodClicked
+{
+    //  TODO:2.9
+    [OrgUtils makeToast:@"add new ad"];
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    //  Do any additional setup after loading the view.
+    self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
+    
+    //  右上角新增按钮
+    UIBarButtonItem* addBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
+                                                                            target:self
+                                                                            action:@selector(onAddNewPaymentMethodClicked)];
+    addBtn.tintColor = [ThemeManager sharedThemeManager].navigationBarTextColor;
+    self.navigationItem.rightBarButtonItem = addBtn;
+    
+    //  查询当前初始页数据
+    VCOtcMcAdList* vc = (VCOtcMcAdList*)[self currentPage];
+    if (vc) {
+        [vc queryMerchantAdList];
+    }
+}
+
+- (void)onPageChanged:(NSInteger)tag
+{
+    NSLog(@"onPageChanged: %@", @(tag));
+    
+    //  gurad
+    if ([[MBProgressHUDSingleton sharedMBProgressHUDSingleton] is_showing]){
+        return;
+    }
+    
+    //  query
+    if (_subvcArrays){
+        id vc = [_subvcArrays safeObjectAtIndex:tag - 1];
+        if (vc){
+            [vc queryMerchantAdList];
+        }
+    }
+}
+
+@end
 
 @interface VCOtcMcAdList ()
 {
+    __weak VCBase*          _owner;                 //  REMARK：声明为 weak，否则会导致循环引用。
+    
     NSDictionary*           _auth_info;
+    NSDictionary*           _merchant_detail;
+    EOtcUserType            _user_type;
+    EOtcAdStatus            _ad_status;
     
     UITableViewBase*        _mainTableView;
     NSMutableArray*         _dataArray;
@@ -28,6 +132,7 @@
 
 -(void)dealloc
 {
+    _owner = nil;
     _auth_info = nil;
     _dataArray = nil;
     if (_mainTableView){
@@ -37,7 +142,7 @@
     }
 }
 
-- (void)onQueryUserOrdersResponsed:(id)responsed
+- (void)onQueryMerchantAdListResponsed:(id)responsed
 {
     id records = [[responsed objectForKey:@"data"] objectForKey:@"records"];
     [_dataArray removeAllObjects];
@@ -47,26 +152,37 @@
     [self refreshView];
 }
 
-- (void)queryUserOrders
+- (void)queryMerchantAdList
 {
     OtcManager* otc = [OtcManager sharedOtcManager];
-    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    [[[otc queryUserOrders:[otc getCurrentBtsAccount] type:eoot_query_all status:eoos_all page:0 page_size:50] then:^id(id data) {
-        [self hideBlockView];
-        [self onQueryUserOrdersResponsed:data];
+    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    WsPromise* p1 = [otc queryAdList:_ad_status
+                                type:eoadt_all
+                          asset_name:@""
+                          otcAccount:[_merchant_detail objectForKey:@"otcAccount"]
+                                page:0
+                           page_size:50];
+    [[p1 then:^id(id data) {
+        [_owner hideBlockView];
+        [self onQueryMerchantAdListResponsed:data];
         return nil;
     }] catch:^id(id error) {
-        [self hideBlockView];
+        [_owner hideBlockView];
         [otc showOtcError:error];
         return nil;
     }];
 }
 
-- (id)initWithAuthInfo:(id)auth_info
+- (id)initWithOwner:(VCBase*)owner authInfo:(id)auth_info user_type:(EOtcUserType)user_type merchant_detail:(id)merchant_detail
+          ad_status:(EOtcAdStatus)ad_status
 {
     self = [super init];
     if (self) {
+        _owner = owner;
         _auth_info = auth_info;
+        _merchant_detail = merchant_detail;
+        _user_type = user_type;
+        _ad_status = ad_status;
         _dataArray = [NSMutableArray array];
     }
     return self;
@@ -89,7 +205,7 @@
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
     //  UI - 列表
-    CGRect rect = [self rectWithoutNavi];
+    CGRect rect = [self rectWithoutNaviAndPageBar];
     _mainTableView = [[UITableViewBase alloc] initWithFrame:rect style:UITableViewStyleGrouped];
     _mainTableView.delegate = self;
     _mainTableView.dataSource = self;
@@ -107,12 +223,21 @@
     _lbEmptyOrder.textAlignment = NSTextAlignmentCenter;
     _lbEmptyOrder.font = [UIFont boldSystemFontOfSize:13];
     //  TODO:2.9
-    _lbEmptyOrder.text = @"没有任何订单信息";
+    switch (_ad_status) {
+        case eoads_online:
+            _lbEmptyOrder.text = @"没有任何广告信息，点击右上角发布广告。";
+            break;
+        case eoads_offline:
+            _lbEmptyOrder.text = @"没有任何广告信息";
+            break;
+        case eoads_deleted:
+            _lbEmptyOrder.text = @"没有任何广告信息";
+            break;
+        default:
+            break;
+    }
     [self.view addSubview:_lbEmptyOrder];
     _lbEmptyOrder.hidden = YES;
-    
-    //  查询
-    [self queryUserOrders];
 }
 
 #pragma mark- TableView delegate method
@@ -128,8 +253,8 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGFloat baseHeight = 8.0 + 28 + 24 * 3;
-
+    CGFloat baseHeight = 8 + 24 + 4 + 20 * 2 + 40 + 8;
+    
     return baseHeight;
 }
 
@@ -156,18 +281,18 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString* identify = @"id_otc_orders";
-    ViewOtcOrderInfCell* cell = (ViewOtcOrderInfCell *)[tableView dequeueReusableCellWithIdentifier:identify];
+    static NSString* identify = @"id_otc_mc_ad_cell";
+    ViewOtcAdInfoCell* cell = (ViewOtcAdInfoCell*)[tableView dequeueReusableCellWithIdentifier:identify];
     if (!cell)
     {
-        cell = [[ViewOtcOrderInfCell alloc] initWithStyle:UITableViewCellStyleValue1
-                                          reuseIdentifier:identify
-                                                       vc:self];
+        cell = [[ViewOtcAdInfoCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:identify vc:self];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.backgroundColor = [UIColor clearColor];
     }
     cell.showCustomBottomLine = YES;
-//    [cell setTagData:indexPath.row];
+    cell.userType = eout_merchant;
+    [cell setTagData:indexPath.row];
     [cell setItem:[_dataArray objectAtIndex:indexPath.row]];
     return cell;
 }
@@ -178,33 +303,41 @@
     [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
         id item = [_dataArray objectAtIndex:indexPath.row];
         assert(item);
-        [self onOrderCellClicked:item];
+        [self onAdCellClicked:item];
     }];
 }
 
-- (void)onOrderCellClicked:(id)order_item
+- (void)onAdCellClicked:(id)order_item
 {
-    OtcManager* otc = [OtcManager sharedOtcManager];
-    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    [[[otc queryUserOrderDetails:order_item[@"userAccount"] order_id:order_item[@"orderId"]] then:^id(id responsed) {
-        [self hideBlockView];
-        //  转到订单详情界面
-        WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
-        VCOtcOrderDetails* vc = [[VCOtcOrderDetails alloc] initWithOrderDetails:[responsed objectForKey:@"data"]
-                                                                           auth:_auth_info
-                                                                      user_type:eout_normal_user//TODO:2.9
-                                                                 result_promise:result_promise];
-        [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-        [result_promise then:^id(id callback_data) {
-            [self _onOrderDetailCallback:callback_data];
-            return nil;
-        }];
-        return nil;
-    }] catch:^id(id error) {
-        [self hideBlockView];
-        [otc showOtcError:error];
-        return nil;
-    }];
+    //  TODO:2.9
+    
+//    OtcManager* otc = [OtcManager sharedOtcManager];
+//    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+//    WsPromise* p1;
+//    if (_user_type == eout_normal_user) {
+//        p1 = [otc queryUserOrderDetails:[otc getCurrentBtsAccount] order_id:order_item[@"orderId"]];
+//    } else {
+//        p1 = [otc queryMerchantOrderDetails:[otc getCurrentBtsAccount] order_id:order_item[@"orderId"]];
+//    }
+//    [[p1 then:^id(id responsed) {
+//        [_owner hideBlockView];
+////        //  转到订单详情界面
+////        WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
+////        VCOtcOrderDetails* vc = [[VCOtcOrderDetails alloc] initWithOrderDetails:[responsed objectForKey:@"data"]
+////                                                                           auth:_auth_info
+////                                                                      user_type:_user_type
+////                                                                 result_promise:result_promise];
+////        [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+////        [result_promise then:^id(id callback_data) {
+////            [self _onOrderDetailCallback:callback_data];
+////            return nil;
+////        }];
+//        return nil;
+//    }] catch:^id(id error) {
+//        [_owner hideBlockView];
+//        [otc showOtcError:error];
+//        return nil;
+//    }];
 }
 
 /*
@@ -214,7 +347,7 @@
 {
     if (callback_data && [callback_data boolValue]) {
         //  订单状态变更：刷新界面
-        [self queryUserOrders];
+        [self queryMerchantAdList];
     }
 }
 

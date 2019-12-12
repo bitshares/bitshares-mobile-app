@@ -171,6 +171,7 @@ enum
     [btn setTitleColor:theme.textColorHighlight forState:UIControlStateNormal];
     btn.userInteractionEnabled = YES;
     [btn addTarget:self action:@selector(onButtonTailerClicked:) forControlEvents:UIControlEventTouchUpInside];
+    btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
     btn.tag = tag;
     
     //  设置 frame
