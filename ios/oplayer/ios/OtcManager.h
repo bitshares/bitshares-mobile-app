@@ -94,6 +94,8 @@ typedef enum EOtcPaymentMethodStatus
  */
 typedef enum EOtcAdType
 {
+    eoadt_all = 0,                          //  所有广告
+    
     eoadt_merchant_sell = 1,                //  商家出售（用户购买）
     eoadt_merchant_buy = 2,                 //  商家购买（用户出售）
     
@@ -380,8 +382,12 @@ typedef enum EOtcMcProgress
  *  page_size   - 每页数量
  */
 - (WsPromise*)queryAdList:(EOtcAdType)ad_type asset_name:(NSString*)asset_name page:(NSInteger)page page_size:(NSInteger)page_size;
-- (WsPromise*)queryAdList:(EOtcAdStatus)ad_status type:(EOtcAdType)ad_type asset_name:(NSString*)asset_name
-                     page:(NSInteger)page page_size:(NSInteger)page_size;
+- (WsPromise*)queryAdList:(EOtcAdStatus)ad_status
+                     type:(EOtcAdType)ad_type
+               asset_name:(NSString*)asset_name
+               otcAccount:(NSString*)otcAccount
+                     page:(NSInteger)page
+                page_size:(NSInteger)page_size;
 
 ///*
 // *  (public) 查询广告详情。
@@ -431,5 +437,11 @@ typedef enum EOtcMcProgress
  *  认证：TOKEN 方式
  */
 - (WsPromise*)queryMerchantOrderDetails:(NSString*)bts_account_name order_id:(NSString*)order_id;
+
+/*
+ *  (public) API - 查询商家资产
+ *  认证：TOKEN 方式
+ */
+- (WsPromise*)queryMerchantOtcAsset:(NSString*)bts_account_name;
 
 @end

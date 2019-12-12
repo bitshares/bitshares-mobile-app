@@ -272,11 +272,15 @@ enum
 - (void)gotoOtcAssetClicked:(id)auth_info
 {
     //  TODO:2.9
+    VCBase* vc = [[VCOtcMcAssetList alloc] initWithAuthInfo:auth_info user_type:eout_merchant merchant_detail:_merchant_detail];
+    [self pushViewController:vc vctitle:@"资产管理" backtitle:kVcDefaultBackTitleName];
 }
 
 - (void)gotoOtcAdClicked:(id)auth_info
 {
     //  TODO:2.9
+    VCBase* vc = [[VCOtcMcAdListPages alloc] initWithAuthInfo:auth_info user_type:eout_merchant merchant_detail:_merchant_detail];
+    [self pushViewController:vc vctitle:@"商家广告" backtitle:kVcDefaultBackTitleName];
 }
 
 - (void)gotoOtcOrderClicked:(id)auth_info

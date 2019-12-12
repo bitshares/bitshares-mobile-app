@@ -345,7 +345,7 @@
         cell.backgroundColor = [UIColor clearColor];
     }
     cell.showCustomBottomLine = YES;
-    cell.adType = _ad_type;
+    cell.userType = eout_normal_user;
     [cell setTagData:indexPath.row];
     [cell setItem:[_data_array objectAtIndex:indexPath.row]];
     return cell;
