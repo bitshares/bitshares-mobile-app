@@ -415,9 +415,7 @@
         [_searchController.searchBar iterateSubview:^BOOL(UIView *view) {
             if ([view isKindOfClass:klass]) {
                 UIButton* btn = (UIButton*)view;
-                CGSize size1 = [UITableViewCellBase auxSizeWithText:btn.titleLabel.text
-                                                               font:btn.titleLabel.font
-                                                            maxsize:CGSizeMake(self.view.bounds.size.width, 9999)];
+                CGSize size1 = [ViewUtils auxSizeWithLabel:btn.titleLabel];
                 CGRect frame = btn.frame;
                 btn.frame = CGRectMake(frame.origin.x, frame.origin.y, size1.width, frame.size.height);
                 return YES;

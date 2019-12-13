@@ -9,6 +9,7 @@
 #import "VCOtcMcAdList.h"
 #import "MBProgressHUDSingleton.h"
 #import "ViewOtcAdInfoCell.h"
+#import "VCOtcMcAdUpdate.h"
 #import "OrgUtils.h"
 #import "OtcManager.h"
 
@@ -67,8 +68,12 @@
 
 - (void)onAddNewPaymentMethodClicked
 {
+    VCBase* vc = [[VCOtcMcAdUpdate alloc] initWithAuthInfo:_auth_info
+                                                 user_type:eout_merchant
+                                           merchant_detail:_merchant_detail
+                                                   ad_info:nil];
     //  TODO:2.9
-    [OrgUtils makeToast:@"add new ad"];
+    [self pushViewController:vc vctitle:@"发布广告" backtitle:kVcDefaultBackTitleName];
 }
 
 - (void)viewDidLoad
@@ -200,7 +205,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
@@ -307,37 +312,42 @@
     }];
 }
 
-- (void)onAdCellClicked:(id)order_item
+- (void)onAdCellClicked:(id)ad_info
 {
+    VCBase* vc = [[VCOtcMcAdUpdate alloc] initWithAuthInfo:_auth_info
+                                                 user_type:eout_merchant
+                                           merchant_detail:_merchant_detail
+                                                   ad_info:ad_info];
     //  TODO:2.9
+    [_owner pushViewController:vc vctitle:@"编辑广告" backtitle:kVcDefaultBackTitleName];
     
-//    OtcManager* otc = [OtcManager sharedOtcManager];
-//    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-//    WsPromise* p1;
-//    if (_user_type == eout_normal_user) {
-//        p1 = [otc queryUserOrderDetails:[otc getCurrentBtsAccount] order_id:order_item[@"orderId"]];
-//    } else {
-//        p1 = [otc queryMerchantOrderDetails:[otc getCurrentBtsAccount] order_id:order_item[@"orderId"]];
-//    }
-//    [[p1 then:^id(id responsed) {
-//        [_owner hideBlockView];
-////        //  转到订单详情界面
-////        WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
-////        VCOtcOrderDetails* vc = [[VCOtcOrderDetails alloc] initWithOrderDetails:[responsed objectForKey:@"data"]
-////                                                                           auth:_auth_info
-////                                                                      user_type:_user_type
-////                                                                 result_promise:result_promise];
-////        [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-////        [result_promise then:^id(id callback_data) {
-////            [self _onOrderDetailCallback:callback_data];
-////            return nil;
-////        }];
-//        return nil;
-//    }] catch:^id(id error) {
-//        [_owner hideBlockView];
-//        [otc showOtcError:error];
-//        return nil;
-//    }];
+    //    OtcManager* otc = [OtcManager sharedOtcManager];
+    //    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    //    WsPromise* p1;
+    //    if (_user_type == eout_normal_user) {
+    //        p1 = [otc queryUserOrderDetails:[otc getCurrentBtsAccount] order_id:order_item[@"orderId"]];
+    //    } else {
+    //        p1 = [otc queryMerchantOrderDetails:[otc getCurrentBtsAccount] order_id:order_item[@"orderId"]];
+    //    }
+    //    [[p1 then:^id(id responsed) {
+    //        [_owner hideBlockView];
+    ////        //  转到订单详情界面
+    ////        WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
+    ////        VCOtcOrderDetails* vc = [[VCOtcOrderDetails alloc] initWithOrderDetails:[responsed objectForKey:@"data"]
+    ////                                                                           auth:_auth_info
+    ////                                                                      user_type:_user_type
+    ////                                                                 result_promise:result_promise];
+    ////        [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+    ////        [result_promise then:^id(id callback_data) {
+    ////            [self _onOrderDetailCallback:callback_data];
+    ////            return nil;
+    ////        }];
+    //        return nil;
+    //    }] catch:^id(id error) {
+    //        [_owner hideBlockView];
+    //        [otc showOtcError:error];
+    //        return nil;
+    //    }];
 }
 
 /*

@@ -64,7 +64,7 @@ enum
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
@@ -79,8 +79,8 @@ enum
         }
         
         NSArray* pSection2 = @[
-                               @[@(kVcSubQrScan), @"kServicesCellLabelQrScan"]                      //  扫一扫
-                               ];
+            @[@(kVcSubQrScan), @"kServicesCellLabelQrScan"]                      //  扫一扫
+        ];
         if ([pSection2 count] > 0) {
             [ary addObject:pSection2];
         }
@@ -112,15 +112,15 @@ enum
         }
         
         NSArray* pSection5 = @[
-                               @[@(kVcSubAdvanced),         @"kServicesCellLabelAdvFunction"]       //  高级功能
-                               ];
+            @[@(kVcSubAdvanced),         @"kServicesCellLabelAdvFunction"]       //  高级功能
+        ];
         if ([pSection5 count] > 0) {
             [ary addObject:pSection5];
         }
         
         NSArray* pSection6 = @[
-                               @[@(kVcSubBtsExplorer),      @"kServicesCellLabelBtsExplorer"]       //  BTS区块浏览器
-                               ];
+            @[@(kVcSubBtsExplorer),      @"kServicesCellLabelBtsExplorer"]       //  BTS区块浏览器
+        ];
         if ([pSection6 count] > 0) {
             [ary addObject:pSection6];
         }
@@ -138,14 +138,14 @@ enum
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-//    [self.navigationController setNavigationBarHidden:YES animated:animated];
+    //    [self.navigationController setNavigationBarHidden:YES animated:animated];
     //  登录后返回需要重新刷新列表
     [_mainTableView reloadData];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-//    [self.navigationController setNavigationBarHidden:NO animated:animated];
+    //    [self.navigationController setNavigationBarHidden:NO animated:animated];
     [super viewWillDisappear:animated];
 }
 
@@ -190,7 +190,7 @@ enum
     UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-
+    
     id item = [[_dataArray objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     
     cell.backgroundColor = [UIColor clearColor];
@@ -246,7 +246,6 @@ enum
     cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
     
     return cell;
-    
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -345,12 +344,7 @@ enum
             case kVcOtcMerchant:        //  商家信息（需要登录）
             {
                 [self GuardWalletExist:^{
-                    //  TODO:3.0 是否需要解锁？
-                    [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
-                        if (unlocked) {
-                            [[OtcManager sharedOtcManager] gotoOtcMerchantHome:self];
-                        }
-                    }];
+                    [[OtcManager sharedOtcManager] gotoOtcMerchantHome:self];
                 }];
             }
                 break;

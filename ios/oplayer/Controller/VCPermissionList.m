@@ -333,7 +333,7 @@
     
     //  编辑按钮
     if ([[item objectForKey:@"canBeModified"] boolValue]) {
-        CGSize size1 = [UITableViewCellBase auxSizeWithText:titleLabel.text font:titleLabel.font maxsize:CGSizeMake(fWidth, 9999)];
+        CGSize size1 = [ViewUtils auxSizeWithLabel:titleLabel];
         UIButton* btnModify = [UIButton buttonWithType:UIButtonTypeCustom];
         UIImage* btn_image = [UIImage templateImageNamed:@"iconEdit"];
         CGSize btn_size = btn_image.size;
@@ -353,10 +353,10 @@
         secLabel.textAlignment = NSTextAlignmentRight;
         secLabel.backgroundColor = [UIColor clearColor];
         secLabel.font = [UIFont boldSystemFontOfSize:13];
-        secLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:NSLocalizedString(@"kVcPermissionPassThreshold", @"阈值 ")
-                                                                           value:[NSString stringWithFormat:@"%@", item[@"weight_threshold"]]
-                                                                      titleColor:theme.textColorNormal
-                                                                      valueColor:theme.textColorMain];
+        secLabel.attributedText = [ViewUtils genAndColorAttributedText:NSLocalizedString(@"kVcPermissionPassThreshold", @"阈值 ")
+                                                                 value:[NSString stringWithFormat:@"%@", item[@"weight_threshold"]]
+                                                            titleColor:theme.textColorNormal
+                                                            valueColor:theme.textColorMain];
         [myView addSubview:secLabel];
     }
     

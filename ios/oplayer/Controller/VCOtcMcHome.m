@@ -182,13 +182,13 @@ enum
             break;
             
         case kVcSubOtcAsset:
-            cell.textLabel.text = @"OTC资产";//TODO:
+            cell.textLabel.text = @"商家资产";//TODO:
             break;
         case kVcSubOtcAd:
-            cell.textLabel.text = @"OTC广告";//TODO:
+            cell.textLabel.text = @"商家广告";//TODO:
             break;
         case kVcSubOtcOrder:
-            cell.textLabel.text = @"OTC订单";//TODO:
+            cell.textLabel.text = @"商家订单";//TODO:
             break;
             
         case kVcSubReceiveMethods:
@@ -254,7 +254,7 @@ enum
                     break;
                 case kVcSubPaymentMethods:
                 {
-                    VCBase* vc = [[VCOtcMcPaymentMethods alloc] initWithAuthInfo:auth_info];
+                    VCBase* vc = [[VCOtcMcPaymentMethods alloc] initWithAuthInfo:auth_info merchant_detail:_merchant_detail];
                     [self pushViewController:vc
                                      vctitle:@"付款方式"//TODO:2.9
                                    backtitle:kVcDefaultBackTitleName];
@@ -273,7 +273,7 @@ enum
 {
     //  TODO:2.9
     VCBase* vc = [[VCOtcMcAssetList alloc] initWithAuthInfo:auth_info user_type:eout_merchant merchant_detail:_merchant_detail];
-    [self pushViewController:vc vctitle:@"资产管理" backtitle:kVcDefaultBackTitleName];
+    [self pushViewController:vc vctitle:@"商家资产" backtitle:kVcDefaultBackTitleName];
 }
 
 - (void)gotoOtcAdClicked:(id)auth_info

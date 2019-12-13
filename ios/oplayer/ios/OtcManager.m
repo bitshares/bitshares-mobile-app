@@ -355,8 +355,8 @@ static OtcManager *_sharedOtcManager = nil;
         //  TODO:2.9 short_symbol
         return @{@"assetSymbol":symbol, @"precision":precision, @"id":assetId, @"short_symbol":@"¥", @"name":_fiat_cny_info[@"assetAlias"]};
     } else {
-        assert(false);
-        return nil;
+        //  TODO:2.9 数据不存在时兼容
+        return @{@"assetSymbol":@"CNY", @"precision":@2, @"short_symbol":@"¥"};
     }
 }
 
@@ -409,30 +409,12 @@ static OtcManager *_sharedOtcManager = nil;
     }
     
     [owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    WsPromise* p1 = [self queryAssetList:eoat_fiat];
+    WsPromise* p1 = [self queryFiatAssetCNY];
     WsPromise* p2 = [self queryAssetList:eoat_digital];
     [[[WsPromise all:@[p1, p2]] then:^id(id data_array) {
         [owner hideBlockView];
-        id fiat_data = [data_array objectAtIndex:0];
+//        id fiat_data = [data_array objectAtIndex:0];
         id asset_data = [data_array objectAtIndex:1];
-        
-        //  获取法币信息
-        _fiat_cny_info = nil;
-        id asset_list_fiat = [fiat_data objectForKey:@"data"];
-        if (asset_list_fiat && [asset_list_fiat count] > 0) {
-            for (id fiat_info in asset_list_fiat) {
-                //  TODO:2.9 固定fiat CNY
-                if ([[fiat_info objectForKey:@"assetSymbol"] isEqualToString:@"CNY"]) {
-                    _fiat_cny_info = fiat_info;
-                    break;
-                }
-            }
-        }
-        if (!_fiat_cny_info) {
-            //  TODO:2.9 lang
-            [OrgUtils makeToast:@"场外交易不支持CNY法币，请稍后再试。"];
-            return nil;
-        }
         //  获取数字货币信息
         self.asset_list_digital = [asset_data objectForKey:@"data"];
         if (!self.asset_list_digital || [self.asset_list_digital count] <= 0) {
@@ -691,7 +673,7 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
- *  (public) 请求身份认证
+ *  (public) API - 请求身份认证
  */
 - (WsPromise*)idVerify:(id)args
 {
@@ -700,7 +682,7 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
- *  (public) 创建订单
+ *  (public) API - 创建订单
  */
 - (WsPromise*)createUserOrder:(NSString*)bts_account_name
                         ad_id:(NSString*)ad_id
@@ -758,7 +740,7 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
- *  (public) 更新订单
+ *  (public) API - 更新订单
  */
 - (WsPromise*)updateUserOrder:(NSString*)bts_account_name
                      order_id:(NSString*)order_id
@@ -829,7 +811,7 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
- *  (public) 上传二维码图片。
+ *  (public) API - 上传二维码图片。
  */
 - (WsPromise*)uploadQrCode:(NSString*)bts_account_name filename:(NSString*)filename data:(NSData*)data
 {
@@ -842,7 +824,7 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
- *  (public) 获取二维码图片流。
+ *  (public) API - 获取二维码图片流。
  */
 - (WsPromise*)queryQrCode:(NSString*)bts_account_name filename:(NSString*)filename
 {
@@ -868,6 +850,31 @@ static OtcManager *_sharedOtcManager = nil;
 {
     id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/asset/getList"];
     return [self _queryApiCore:url args:@{@"type":@(asset_type)} headers:nil];
+}
+
+/*
+ *  (private) API - 直接查询CNY法币信息。TODO:3.0目前只支持cny一个。临时实现。
+ */
+- (WsPromise*)queryFiatAssetCNY
+{
+    //  已经存在了则直接返回
+    if (_fiat_cny_info) {
+        return [WsPromise resolve:_fiat_cny_info];
+    }
+    return [[self queryAssetList:eoat_fiat] then:^id(id fiat_data) {
+        _fiat_cny_info = nil;
+        id asset_list_fiat = [fiat_data objectForKey:@"data"];
+        if (asset_list_fiat && [asset_list_fiat count] > 0) {
+            for (id fiat_info in asset_list_fiat) {
+                //  TODO:2.9 固定fiat CNY
+                if ([[fiat_info objectForKey:@"assetSymbol"] isEqualToString:@"CNY"]) {
+                    _fiat_cny_info = fiat_info;
+                    break;
+                }
+            }
+        }
+        return _fiat_cny_info;
+    }];
 }
 
 /*
@@ -948,7 +955,8 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
- *  (public) 发送短信
+ *  (public) API - 发送短信
+ *  认证：TODO:2.9 待定
  */
 - (WsPromise*)sendSmsCode:(NSString*)bts_account_name phone:(NSString*)phone_number type:(EOtcSmsType)type
 {
@@ -1131,52 +1139,27 @@ static OtcManager *_sharedOtcManager = nil;
 
 - (void)gotoOtcMerchantHome:(VCBase*)owner
 {
-    //  TODO:3.0
-    
-    WalletManager* walletMgr = [WalletManager sharedWalletManager];
-    assert([walletMgr isWalletExist]);
-    
+    //  TODO:2.9 merchantProgress 暂时不调用
     [owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    
-    //  TODO:3.0 unlock sign
-    [[[self merchantProgress:[self getCurrentBtsAccount]] then:^id(id responsed) {
-        
-        //{
-        //    code = 0;
-        //    data =     {
-        //        bakAccount = "<null>";
-        //        btsAccount = "<null>";
-        //        level = "<null>";
-        //        nickname = "<null>";
-        //        status = 0;
-        //    };
-        //    message = success;
-        //}
-        id progress_info = [responsed objectForKey:@"data"];
-        NSInteger progress_status = [[progress_info objectForKey:@"status"] integerValue];
-        if (progress_status == eomp_default) {
-            [owner hideBlockView];
-            //  TODO:3.0 未申请
-            [OrgUtils makeToast:@"去申请界面。"];
-            return nil;
-        } else {
-            if (progress_status == eomp_approved || progress_status == eomp_activated) {
-                //  已同意：查询商家详情
-                return [[self merchantDetail:[self getCurrentBtsAccount]] then:^id(id merchant_detail_responsed) {
-                    [owner hideBlockView];
-                    VCBase* vc = [[VCOtcMcHome alloc] initWithProgressInfo:progress_info
-                                                            merchantDetail:[merchant_detail_responsed objectForKey:@"data"]];
-                    [owner pushViewController:vc vctitle:@"商家信息" backtitle:kVcDefaultBackTitleName];
-                    return nil;
-                }];
-            } else {
-                //  申请中 or 已拒绝
-                [owner hideBlockView];
-                VCBase* vc = [[VCOtcMcHome alloc] initWithProgressInfo:progress_info merchantDetail:nil];
-                [owner pushViewController:vc vctitle:@"商家信息" backtitle:kVcDefaultBackTitleName];
-                return nil;
-            }
+    //  直接调用商家详情，非商家返回空数据。
+    WsPromise* p1 = [self merchantDetail:[self getCurrentBtsAccount]];
+    WsPromise* p2 = [self queryFiatAssetCNY];
+    [[[WsPromise all:@[p1, p2]] then:^id(id data_array) {
+        [owner hideBlockView];
+        id merchant_detail_responsed = [data_array objectAtIndex:0];
+        id merchant_detail = [merchant_detail_responsed objectForKey:@"data"];
+        if (merchant_detail && ![merchant_detail isKindOfClass:[NSDictionary class]]) {
+            merchant_detail = nil;
         }
+        if (merchant_detail) {
+            //  TODO:2.9 lang
+            VCBase* vc = [[VCOtcMcHome alloc] initWithProgressInfo:nil merchantDetail:merchant_detail];
+            [owner pushViewController:vc vctitle:@"商家信息" backtitle:kVcDefaultBackTitleName];
+        } else {
+            //  TODO:2.9
+            [OrgUtils makeToast:@"去申请商家界面 or 隐藏？。"];
+        }
+        return nil;
     }] catch:^id(id error) {
         [owner hideBlockView];
         [self showOtcError:error];
@@ -1186,7 +1169,7 @@ static OtcManager *_sharedOtcManager = nil;
 
 /*
  *  (public) API - 商家申请进度查询
- *  认证：SIGN 方式 TODO:3.0 修改吗？
+ *  认证：SIGN 方式
  */
 - (WsPromise*)merchantProgress:(NSString*)bts_account_name
 {
@@ -1199,7 +1182,7 @@ static OtcManager *_sharedOtcManager = nil;
 
 /*
  *  (public) API - 商家详情查询
- *  认证：SIGN 方式 TODO:3.0 修改吗？
+ *  认证：无
  */
 - (WsPromise*)merchantDetail:(NSString*)bts_account_name
 {
@@ -1256,6 +1239,64 @@ static OtcManager *_sharedOtcManager = nil;
         @"btsAccount":bts_account_name,
     };
     return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
+}
+
+/*
+ *  (public) API - 查询商家指定资产余额查询
+ *  认证：TOKEN 方式
+ */
+- (WsPromise*)queryMerchantAssetBalance:(NSString*)bts_account_name
+                             otcAccount:(NSString*)otcAccount
+                             merchantId:(id)merchantId
+                            assetSymbol:(id)assetSymbol
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/asset/balance"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+        @"otcAccount":otcAccount,
+        @"merchantId":merchantId,
+        @"assetSymbol":assetSymbol,
+    };
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
+}
+
+/*
+ *  (public) API - 查询商家付款方式
+ *  认证：TOKEN 方式
+ */
+- (WsPromise*)queryMerchantPaymentMethods:(NSString*)bts_account_name
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/getpaymethod"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+    };
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
+}
+
+/*
+ *  (public) API - 更新商家付款方式
+ *  认证：SIGN 方式
+ */
+- (WsPromise*)updateMerchantPaymentMethods:(NSString*)bts_account_name
+                                otcAccount:(NSString*)otcAccount
+                              aliPaySwitch:(id)aliPaySwitch
+                         bankcardPaySwitch:(id)bankcardPaySwitch
+{
+    assert(bts_account_name);
+    assert(otcAccount);
+    assert(aliPaySwitch || bankcardPaySwitch);
+    
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/payswitch"];
+    NSMutableDictionary* args = [NSMutableDictionary dictionary];
+    [args setObject:bts_account_name forKey:@"btsAccount"];
+    [args setObject:otcAccount forKey:@"otcAccount"];
+    if (aliPaySwitch) {
+        [args setObject:aliPaySwitch forKey:@"aliPaySwitch"];
+    }
+    if (bankcardPaySwitch) {
+        [args setObject:bankcardPaySwitch forKey:@"bankcardPaySwitch"];
+    }
+    return [self _queryApiCore:url args:[args copy] headers:nil auth_flag:eoaf_sign];
 }
 
 @end

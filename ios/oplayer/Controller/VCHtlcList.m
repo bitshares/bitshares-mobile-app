@@ -324,46 +324,46 @@ enum
     switch (indexPath.row) {
         case kVcSubFromAndTo:
         {
-            cell.textLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListCellFrom", @"付款账号 ")
-                                                                                     value:[[chainMgr getChainObjectByID:[[htlc objectForKey:@"transfer"] objectForKey:@"from"]] objectForKey:@"name"]
-                                                                                titleColor:theme.textColorNormal
-                                                                                valueColor:theme.textColorMain];
+            cell.textLabel.attributedText = [ViewUtils genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListCellFrom", @"付款账号 ")
+                                                                           value:[[chainMgr getChainObjectByID:[[htlc objectForKey:@"transfer"] objectForKey:@"from"]] objectForKey:@"name"]
+                                                                      titleColor:theme.textColorNormal
+                                                                      valueColor:theme.textColorMain];
             
             
-            cell.detailTextLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListCellTo", @"收款账号 ")
-                                                                                           value:[[chainMgr getChainObjectByID:[[htlc objectForKey:@"transfer"] objectForKey:@"to"]] objectForKey:@"name"]
-                                                                                      titleColor:theme.textColorNormal
-                                                                                      valueColor:theme.textColorMain];
+            cell.detailTextLabel.attributedText = [ViewUtils genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListCellTo", @"收款账号 ")
+                                                                                 value:[[chainMgr getChainObjectByID:[[htlc objectForKey:@"transfer"] objectForKey:@"to"]] objectForKey:@"name"]
+                                                                            titleColor:theme.textColorNormal
+                                                                            valueColor:theme.textColorMain];
         }
             break;
         case kVcSubAssetAmount:
         {
             BOOL isPay = [_fullAccountInfo[@"account"][@"id"] isEqualToString:[[htlc objectForKey:@"transfer"] objectForKey:@"from"]];
             if (isPay){
-                cell.textLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListTransferDir", @"转账类型 ")
-                                                                                         value:NSLocalizedString(@"kVcHtlcListTransferDirPayment", @"付款")
-                                                                                    titleColor:theme.textColorNormal
-                                                                                    valueColor:theme.sellColor];
+                cell.textLabel.attributedText = [ViewUtils genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListTransferDir", @"转账类型 ")
+                                                                               value:NSLocalizedString(@"kVcHtlcListTransferDirPayment", @"付款")
+                                                                          titleColor:theme.textColorNormal
+                                                                          valueColor:theme.sellColor];
             }else{
-                cell.textLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListTransferDir", @"转账类型 ")
-                                                                                         value:NSLocalizedString(@"kVcHtlcListTransferDirIncome", @"收款")
-                                                                                    titleColor:theme.textColorNormal
-                                                                                    valueColor:theme.buyColor];
+                cell.textLabel.attributedText = [ViewUtils genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListTransferDir", @"转账类型 ")
+                                                                               value:NSLocalizedString(@"kVcHtlcListTransferDirIncome", @"收款")
+                                                                          titleColor:theme.textColorNormal
+                                                                          valueColor:theme.buyColor];
             }
-            cell.detailTextLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListTransferAmount", @"转账金额 ")
-                                                                                           value:[OrgUtils formatAssetAmountItem:[htlc objectForKey:@"transfer"]]
-                                                                                      titleColor:theme.textColorNormal
-                                                                                      valueColor:theme.textColorMain];
+            cell.detailTextLabel.attributedText = [ViewUtils genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListTransferAmount", @"转账金额 ")
+                                                                                 value:[OrgUtils formatAssetAmountItem:[htlc objectForKey:@"transfer"]]
+                                                                            titleColor:theme.textColorNormal
+                                                                            valueColor:theme.textColorMain];
         }
             break;
         case kVcSubPreimageLengthAndHashType:
         {
             id size = [[[htlc objectForKey:@"conditions"] objectForKey:@"hash_lock"] objectForKey:@"preimage_size"];
             
-            cell.textLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListPreimageLength", @"原像长度 ")
-                                                                                     value:[NSString stringWithFormat:@"%@", size]
-                                                                                titleColor:theme.textColorNormal
-                                                                                valueColor:theme.textColorMain];
+            cell.textLabel.attributedText = [ViewUtils genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListPreimageLength", @"原像长度 ")
+                                                                           value:[NSString stringWithFormat:@"%@", size]
+                                                                      titleColor:theme.textColorNormal
+                                                                      valueColor:theme.textColorMain];
             
             
             NSInteger hash_type = [[[[[htlc objectForKey:@"conditions"] objectForKey:@"hash_lock"] objectForKey:@"preimage_hash"] firstObject] integerValue];
@@ -382,10 +382,10 @@ enum
                     break;
             }
             
-            cell.detailTextLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListHashType", @"哈希类型 ")
-                                                                                           value:hash_type_str
-                                                                                      titleColor:theme.textColorNormal
-                                                                                      valueColor:theme.textColorMain];
+            cell.detailTextLabel.attributedText = [ViewUtils genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListHashType", @"哈希类型 ")
+                                                                                 value:hash_type_str
+                                                                            titleColor:theme.textColorNormal
+                                                                            valueColor:theme.textColorMain];
         }
             break;
         case kVcSubPreimageHash:
@@ -394,10 +394,10 @@ enum
             
             NSString* have_value = [[[[htlc objectForKey:@"conditions"] objectForKey:@"hash_lock"] objectForKey:@"preimage_hash"] lastObject];
             cell.textLabel.lineBreakMode = NSLineBreakByTruncatingMiddle;
-            cell.textLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListHashValue", @"原像哈希 ")
-                                                                                     value:[have_value uppercaseString]
-                                                                                titleColor:theme.textColorNormal
-                                                                                valueColor:theme.textColorMain];
+            cell.textLabel.attributedText = [ViewUtils genAndColorAttributedText:NSLocalizedString(@"kVcHtlcListHashValue", @"原像哈希 ")
+                                                                           value:[have_value uppercaseString]
+                                                                      titleColor:theme.textColorNormal
+                                                                      valueColor:theme.textColorMain];
             cell.showCustomBottomLine = YES;
         }
             break;

@@ -216,16 +216,16 @@ enum
     id account_data = [full_account_data objectForKey:@"account"];
     id account_id = [account_data objectForKey:@"id"];
     id op_data = @{
-                   @"fee":@{@"amount":@0, @"asset_id":fee_asset_id},
-                   @"account":account_id,
-                   @"new_options":@{
-                           @"memo_key":account_data[@"options"][@"memo_key"],
-                           @"voting_account":new_voting_account,
-                           @"num_witness":@(num_witness),
-                           @"num_committee":@(num_committee),
-                           @"votes":new_votes
-                           },
-                   };
+        @"fee":@{@"amount":@0, @"asset_id":fee_asset_id},
+        @"account":account_id,
+        @"new_options":@{
+                @"memo_key":account_data[@"options"][@"memo_key"],
+                @"voting_account":new_voting_account,
+                @"num_witness":@(num_witness),
+                @"num_committee":@(num_committee),
+                @"votes":new_votes
+        },
+    };
     
     //  确保有权限发起普通交易，否则作为提案交易处理。
     [self GuardProposalOrNormalTransaction:ebo_account_update
@@ -235,34 +235,34 @@ enum
                                  opaccount:account_data
                                       body:^(BOOL isProposal, NSDictionary *proposal_create_args)
      {
-         assert(!isProposal);
-         //  请求网络广播
-         [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-         [[[[BitsharesClientManager sharedBitsharesClientManager] accountUpdate:op_data] then:(^id(id data) {
-             //  投票成功、继续请求、刷新界面。
-             [[[[ChainObjectManager sharedChainObjectManager] queryAccountVotingInfos:account_id] then:(^id(id vote_info) {
-                 [self hideBlockView];
-                 [self _refresh_ui:vote_info];
-                 [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcVoteTipTxFullOK", @"%@成功。"), title]];
-                 //  [统计]
-                 [OrgUtils logEvents:@"txVotingFullOK" params:@{@"account":account_id}];
-                 return nil;
-             })] catch:(^id(id error) {
-                 [self hideBlockView];
-                 [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcVoteTipTxOK", @"%@成功，但刷新界面失败，请稍后再试。"), title]];
-                 //  [统计]
-                 [OrgUtils logEvents:@"txVotingOK" params:@{@"account":account_id}];
-                 return nil;
-             })];
-             return nil;
-         })] catch:(^id(id error) {
-             [self hideBlockView];
-             [OrgUtils showGrapheneError:error];
-             //  [统计]
-             [OrgUtils logEvents:@"txVotingFailed" params:@{@"account":account_id}];
-             return nil;
-         })];
-     }];
+        assert(!isProposal);
+        //  请求网络广播
+        [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+        [[[[BitsharesClientManager sharedBitsharesClientManager] accountUpdate:op_data] then:(^id(id data) {
+            //  投票成功、继续请求、刷新界面。
+            [[[[ChainObjectManager sharedChainObjectManager] queryAccountVotingInfos:account_id] then:(^id(id vote_info) {
+                [self hideBlockView];
+                [self _refresh_ui:vote_info];
+                [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcVoteTipTxFullOK", @"%@成功。"), title]];
+                //  [统计]
+                [OrgUtils logEvents:@"txVotingFullOK" params:@{@"account":account_id}];
+                return nil;
+            })] catch:(^id(id error) {
+                [self hideBlockView];
+                [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcVoteTipTxOK", @"%@成功，但刷新界面失败，请稍后再试。"), title]];
+                //  [统计]
+                [OrgUtils logEvents:@"txVotingOK" params:@{@"account":account_id}];
+                return nil;
+            })];
+            return nil;
+        })] catch:(^id(id error) {
+            [self hideBlockView];
+            [OrgUtils showGrapheneError:error];
+            //  [统计]
+            [OrgUtils logEvents:@"txVotingFailed" params:@{@"account":account_id}];
+            return nil;
+        })];
+    }];
 }
 
 /**
@@ -399,11 +399,11 @@ enum
                                                                        withTitle:nil
                                                                       completion:^(NSInteger buttonIndex)
                  {
-                     if (buttonIndex == 1)
-                     {
-                         [self _processActionVoting];   //  取消代理人并修改投票。
-                     }
-                 }];
+                    if (buttonIndex == 1)
+                    {
+                        [self _processActionVoting];   //  取消代理人并修改投票。
+                    }
+                }];
             }else{
                 [self _processActionVoting];            //  没代理人，则直接修改投票。
             }
@@ -437,7 +437,7 @@ enum
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
     [self showRightButton:NSLocalizedString(@"kVcVoteBtnReset", @"重置") action:@selector(onResetModifyCLicked)];
@@ -830,7 +830,7 @@ enum
     id voting_hash = [_votingInfo objectForKey:@"voting_hash"];
     if (_vote_type == evt_work){
         //  预算提案（活跃预算、提案预算、过期预算）
-
+        
         //  1、筛选过期和有效的预算项目
         NSMutableArray* ary_expired_worker = [NSMutableArray array];
         NSMutableArray* ary_valid = [NSMutableArray array];
@@ -933,7 +933,7 @@ enum
             [_sectionDataArray addObject:@{@"kType":@(kSecTypeWitnessCandidate), @"kDataArray":sorted_ary_candidate}];
         }
     }
-
+    
     //  刷新
     [_mainTableView reloadData];
 }
@@ -1103,14 +1103,14 @@ enum
         return [[UIView alloc] init];
     }else{
         CGFloat fWidth = self.view.bounds.size.width;
-
+        
         UIView* myView = [[UIView alloc] init];
         myView.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
         UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(12, 0, fWidth - 24, 44)];    //  REMARK：12 和 ViewCallOrderInfoCell 里控件边距一致。
         titleLabel.textColor = [ThemeManager sharedThemeManager].textColorHighlight;
         titleLabel.backgroundColor = [UIColor clearColor];
         titleLabel.font = [UIFont boldSystemFontOfSize:16];
-
+        
         NSInteger kType = [_sectionDataArray[section][@"kType"] integerValue];
         NSInteger num = [_sectionDataArray[section][@"kDataArray"] count];
         switch (kType) {
@@ -1154,10 +1154,10 @@ enum
                 secLabel.textColor = [ThemeManager sharedThemeManager].textColorHighlight;
                 secLabel.backgroundColor = [UIColor clearColor];
                 secLabel.font = [UIFont boldSystemFontOfSize:13];
-                secLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:NSLocalizedString(@"kLabelVotingTotalBudget", @"预算总额 ")
-                                                                                   value:[NSString stringWithFormat:@"%@", @(round([_nTotalBudget doubleValue]))]
-                                                                              titleColor:[ThemeManager sharedThemeManager].textColorNormal
-                                                                              valueColor:[ThemeManager sharedThemeManager].textColorMain];
+                secLabel.attributedText = [ViewUtils genAndColorAttributedText:NSLocalizedString(@"kLabelVotingTotalBudget", @"预算总额 ")
+                                                                         value:[NSString stringWithFormat:@"%@", @(round([_nTotalBudget doubleValue]))]
+                                                                    titleColor:[ThemeManager sharedThemeManager].textColorNormal
+                                                                    valueColor:[ThemeManager sharedThemeManager].textColorMain];
                 [myView addSubview:secLabel];
             }
                 break;
@@ -1172,10 +1172,10 @@ enum
                 secLabel.backgroundColor = [UIColor clearColor];
                 secLabel.font = [UIFont boldSystemFontOfSize:13];
                 
-                secLabel.attributedText = [UITableViewCellBase genAndColorAttributedText:NSLocalizedString(@"kLabelVotingWPPassVotes", @"通过所需票数 ")
-                                                                                   value:[_nActiveMinVoteNum isEqualToString:@""] ? NSLocalizedString(@"kLabelVotingNoBudget", @"没有预算资金") : _nActiveMinVoteNum
-                                                                              titleColor:[ThemeManager sharedThemeManager].textColorNormal
-                                                                              valueColor:[ThemeManager sharedThemeManager].textColorMain];
+                secLabel.attributedText = [ViewUtils genAndColorAttributedText:NSLocalizedString(@"kLabelVotingWPPassVotes", @"通过所需票数 ")
+                                                                         value:[_nActiveMinVoteNum isEqualToString:@""] ? NSLocalizedString(@"kLabelVotingNoBudget", @"没有预算资金") : _nActiveMinVoteNum
+                                                                    titleColor:[ThemeManager sharedThemeManager].textColorNormal
+                                                                    valueColor:[ThemeManager sharedThemeManager].textColorMain];
                 [myView addSubview:secLabel];
             }
                 break;
@@ -1271,13 +1271,13 @@ enum
     //  更新脏标记
     _bDirty = [self _isUserModifyed];
     //  TODO:fowallet 新增、删除标记待处理。
-//    //  有代理人的情况（需要重新刷新table、所有代投票标签都要移除or添加）
-//    if (_have_proxy){
-//        //  TODO:fowallet 3个界面都需要更新
-//        [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
-//            [tableView reloadData];
-//        }];
-//    }
+    //    //  有代理人的情况（需要重新刷新table、所有代投票标签都要移除or添加）
+    //    if (_have_proxy){
+    //        //  TODO:fowallet 3个界面都需要更新
+    //        [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
+    //            [tableView reloadData];
+    //        }];
+    //    }
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(3_0)
@@ -1289,13 +1289,13 @@ enum
     //  更新脏标记
     _bDirty = [self _isUserModifyed];
     //  TODO:fowallet 新增、删除标记待处理。
-//    //  有代理人的情况（需要重新刷新table、所有代投票标签都要移除or添加）
-//    if (_have_proxy){
-//        //  TODO:fowallet 3个界面都需要更新
-//        [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
-//            [tableView reloadData];
-//        }];
-//    }
+    //    //  有代理人的情况（需要重新刷新table、所有代投票标签都要移除or添加）
+    //    if (_have_proxy){
+    //        //  TODO:fowallet 3个界面都需要更新
+    //        [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
+    //            [tableView reloadData];
+    //        }];
+    //    }
 }
 
 #pragma mark- for url clicked
