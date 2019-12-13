@@ -111,8 +111,8 @@
     _tf_password.autocapitalizationType = UITextAutocapitalizationTypeNone;
     _tf_password.autocorrectionType = UITextAutocorrectionTypeNo;
     _tf_password.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeholder
-                                                                      attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
-                                                                                   NSFontAttributeName:[UIFont systemFontOfSize:14]}];
+                                                                         attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
+                                                                                      NSFontAttributeName:[UIFont systemFontOfSize:14]}];
     UIView* tf_border = [[UIView alloc] init];
     tf_border.layer.borderWidth = 0.5f;
     tf_border.layer.cornerRadius = 3.0f;
@@ -153,20 +153,19 @@
     CGFloat fOffset = fBorderOffset;
     
     CGSize maxSize = CGSizeMake(fContentWidth, 9999);
-    CGSize tmp = [UITableViewCellBase auxSizeWithText:btn_close.titleLabel.text
-                                                 font:btn_close.titleLabel.font maxsize:maxSize];
+    CGSize tmp = [ViewUtils auxSizeWithLabel:btn_close.titleLabel maxsize:maxSize];
     btn_close.frame = CGRectMake(0, 0, fBorderOffset * 2 + tmp.width, fTitleHeight);
     
-    tmp = [UITableViewCellBase auxSizeWithText:title.text font:title.font maxsize:maxSize];
+    tmp = [ViewUtils auxSizeWithLabel:title maxsize:maxSize];
     title.frame = CGRectMake(fBorderOffset, (fTitleHeight - tmp.height) / 2.0f,
                              fContentWidth, tmp.height);
     fOffset += fTitleHeight;
     
-    tmp = [UITableViewCellBase auxSizeWithText:desc.text font:desc.font maxsize:maxSize];
+    tmp = [ViewUtils auxSizeWithLabel:desc maxsize:maxSize];
     desc.frame = CGRectMake(fBorderOffset, fOffset + (fLineHeight - tmp.height) / 2.0f, fContentWidth, tmp.height);
     fOffset += fLineHeight;
     
-    tmp = [UITableViewCellBase auxSizeWithText:price.text font:price.font maxsize:maxSize];
+    tmp = [ViewUtils auxSizeWithLabel:price maxsize:maxSize];
     price.frame = CGRectMake(fBorderOffset, fOffset + (fLineHeight * 2 - tmp.height) / 2.0f, fContentWidth, tmp.height);
     fOffset += fLineHeight * 2;
     
@@ -206,10 +205,10 @@
     [self addSubview:_safeNaviBar];
     
     _lbReserveSecureText = [self auxGenLabel:[UIFont boldSystemFontOfSize:14] superview:_safeNaviBar];
-    _lbReserveSecureText.attributedText = [UITableViewCellBase genAndColorAttributedText:@"您的预留信息 "
-                                                                                   value:@"佛系持币～"
-                                                                              titleColor:theme.textColorMain
-                                                                              valueColor:theme.buyColor];
+    _lbReserveSecureText.attributedText = [ViewUtils genAndColorAttributedText:@"您的预留信息 "
+                                                                         value:@"佛系持币～"
+                                                                    titleColor:theme.textColorMain
+                                                                    valueColor:theme.buyColor];
     _lbReserveSecureText.frame = CGRectMake(0, statusBarHeight + 2, rect.size.width, 20.0f);
     
     _lbSafeTips = [self auxGenLabel:[UIFont systemFontOfSize:12.0f] superview:_safeNaviBar];

@@ -120,9 +120,9 @@ enum
     btn.tag = tag;
     
     //  设置 frame
-    CGSize size1 = [UITableViewCellBase auxSizeWithText:btn.titleLabel.text font:btn.titleLabel.font maxsize:CGSizeMake(9999, 9999)];
-    CGSize size2 = [UITableViewCellBase auxSizeWithText:lbSpace.text font:lbSpace.font maxsize:CGSizeMake(9999, 9999)];
-    CGSize size3 = [UITableViewCellBase auxSizeWithText:lbAsset.text font:lbAsset.font maxsize:CGSizeMake(9999, 9999)];
+    CGSize size1 = [ViewUtils auxSizeWithLabel:btn.titleLabel];
+    CGSize size2 = [ViewUtils auxSizeWithLabel:lbSpace];
+    CGSize size3 = [ViewUtils auxSizeWithLabel:lbAsset];
     
     CGFloat fWidth = size1.width + size2.width + size3.width + fSpace * 3;
     

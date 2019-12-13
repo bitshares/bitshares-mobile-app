@@ -109,10 +109,10 @@
         value_color = theme.tintColor;
     }
     
-    _lbAvailable.attributedText = [UITableViewCellBase genAndColorAttributedText:[NSString stringWithFormat:@"%@ ", NSLocalizedString(@"kLableAvailable", @"可用")]
-                                                                           value:value_str
-                                                                      titleColor:value_color
-                                                                      valueColor:value_color];
+    _lbAvailable.attributedText = [ViewUtils genAndColorAttributedText:[NSString stringWithFormat:@"%@ ", NSLocalizedString(@"kLableAvailable", @"可用")]
+                                                                 value:value_str
+                                                            titleColor:value_color
+                                                            valueColor:value_color];
 }
 
 - (void)draw_market_fee:(NSDictionary*)asset account:(NSDictionary*)account

@@ -29,4 +29,51 @@
     return label;
 }
 
+/*
+ *  (public) 辅助计算文字尺寸
+ */
++ (CGSize)auxSizeWithText:(NSString*)text font:(UIFont*)font maxsize:(CGSize)maxsize
+{
+    assert(text);
+    assert(font);
+    return [text boundingRectWithSize:maxsize
+                              options:NSStringDrawingUsesLineFragmentOrigin
+                           attributes:@{NSFontAttributeName:font}
+                              context:nil].size;
+}
+
++ (CGSize)auxSizeWithText:(NSString*)text font:(UIFont*)font
+{
+    return [self auxSizeWithText:text font:font maxsize:CGSizeMake(9999, 9999)];
+}
+
++ (CGSize)auxSizeWithLabel:(UILabel*)label maxsize:(CGSize)maxsize
+{
+    assert(label);
+    return [self auxSizeWithText:label.text font:label.font maxsize:maxsize];
+}
+
++ (CGSize)auxSizeWithLabel:(UILabel*)label
+{
+    assert(label);
+    return [self auxSizeWithText:label.text font:label.font];
+}
+
+/*
+ *  (public) 辅助着色
+ */
++ (NSMutableAttributedString*)genAndColorAttributedText:(NSString*)titleString
+                                                  value:(NSString*)valueString
+                                             titleColor:(UIColor*)titleColor
+                                             valueColor:(UIColor*)valueColor
+{
+    assert(titleString && valueString && titleColor && valueColor);
+    NSString* finalString = [NSString stringWithFormat:@"%@%@", titleString, valueString];
+    NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] initWithString:finalString];
+    NSRange range = [finalString rangeOfString:valueString];
+    [attrString addAttribute:NSForegroundColorAttributeName value:titleColor range:NSMakeRange(0, range.location)];
+    [attrString addAttribute:NSForegroundColorAttributeName value:valueColor range:range];
+    return attrString;
+}
+
 @end

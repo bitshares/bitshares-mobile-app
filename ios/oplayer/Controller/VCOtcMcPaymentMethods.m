@@ -7,18 +7,27 @@
 //
 
 #import "VCOtcMcPaymentMethods.h"
-
-#import "VCOtcAddBankCard.h"
-#import "VCOtcAddAlipay.h"
-
-#import "ViewOtcPaymentMethodInfoCell.h"
 #import "OtcManager.h"
+
+enum
+{
+    kVcSubRowAlipay = 0,
+    kVcSubRowBankCard,
+    
+    kVcSubMax
+};
 
 @interface VCOtcMcPaymentMethods ()
 {
     NSDictionary*           _auth_info;
+    NSDictionary*           _merchant_detail;
     UITableViewBase*        _mainTableView;
-    NSMutableArray*         _dataArray;
+    NSArray*                _dataArray;
+    
+    BOOL                    _querying;
+    
+    BOOL                    _aliPaySwitch;
+    BOOL                    _bankcardPaySwitch;
 }
 
 @end
@@ -36,143 +45,247 @@
     }
 }
 
-- (id)initWithAuthInfo:(id)auth_info
+- (id)initWithAuthInfo:(id)auth_info merchant_detail:(id)merchant_detail
 {
     self = [super init];
     if (self) {
         _auth_info = auth_info;
-        _dataArray = [NSMutableArray array];
+        _merchant_detail = merchant_detail;
+        _dataArray = nil;
+        _querying = YES;
     }
     return self;
+}
+
+- (void)onQueryPaymentMethodsResponsed:(id)responsed
+{
+    id data = [responsed objectForKey:@"data"];
+    
+    _aliPaySwitch = [[data objectForKey:@"aliPaySwitch"] boolValue];
+    _bankcardPaySwitch = [[data objectForKey:@"bankcardPaySwitch"] boolValue];
+    
+    _querying = NO;
+    [self refreshView];
+}
+
+- (void)refreshView
+{
+    [_mainTableView reloadData];
+}
+
+- (void)queryPaymentMethods
+{
+    OtcManager* otc = [OtcManager sharedOtcManager];
+    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    [[[otc queryMerchantPaymentMethods:[otc getCurrentBtsAccount]] then:^id(id data) {
+        [self hideBlockView];
+        [self onQueryPaymentMethodsResponsed:data];
+        return nil;
+    }] catch:^id(id error) {
+        [self hideBlockView];
+        [otc showOtcError:error];
+        return nil;
+    }];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
+    //  数据
+    _dataArray = @[
+        @(kVcSubRowAlipay), @(kVcSubRowBankCard)
+    ];
+    
     //  UI - 列表
     CGRect rect = [self rectWithoutNavi];
-    _mainTableView = [[UITableViewBase alloc] initWithFrame:rect style:UITableViewStylePlain];
+    _mainTableView = [[UITableViewBase alloc] initWithFrame:rect style:UITableViewStyleGrouped];
     _mainTableView.delegate = self;
     _mainTableView.dataSource = self;
     _mainTableView.separatorStyle = UITableViewCellSeparatorStyleNone;  //  REMARK：不显示cell间的横线。
     _mainTableView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:_mainTableView];
+    _mainTableView.hidden = NO;
+    
+    //  查询
+    [self queryPaymentMethods];
 }
 
 #pragma mark- TableView delegate method
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    return [_dataArray count];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [_dataArray count];
+    return 1;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGFloat baseHeight = 8.0 + 28 * 3;
+    return tableView.rowHeight;
+}
+
+#pragma mark- for switch action
+- (void)resetSwitchToValue:(UISwitch*)sender value:(BOOL)value
+{
+    //  重置switch&刷新tableview（不然UISwitch样式不会更新）
+    sender.on = value;
+    [self refreshView];
+}
+
+-(void)onSwitchAction:(UISwitch*)sender
+{
+    BOOL bSwitchIsOn = sender.on;
     
-    return baseHeight;
+    //  TODO:2.9 lang
+    id newAliPaySwitch = nil;
+    id newBankcardPaySwitch = nil;
+    switch (sender.tag) {
+        case kVcSubRowAlipay:
+        {
+            newAliPaySwitch = @(bSwitchIsOn);
+            if (!bSwitchIsOn && !_bankcardPaySwitch) {
+                [self resetSwitchToValue:sender value:!bSwitchIsOn];
+                [OrgUtils makeToast:@"不能同时关闭所有付款方式。"];
+                return;
+            }
+        }
+            break;
+        case kVcSubRowBankCard:
+        {
+            newBankcardPaySwitch = @(bSwitchIsOn);
+            if (!bSwitchIsOn && !_aliPaySwitch) {
+                [self resetSwitchToValue:sender value:!bSwitchIsOn];
+                [OrgUtils makeToast:@"不能同时关闭所有付款方式。"];
+                return;
+            }
+        }
+            break;
+        default:
+            break;
+    }
+    
+    //  先解锁
+    [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+        if (unlocked) {
+            [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+            OtcManager* otc = [OtcManager sharedOtcManager];
+            [[[otc updateMerchantPaymentMethods:[otc getCurrentBtsAccount]
+                                     otcAccount:[_merchant_detail objectForKey:@"otcAccount"]
+                                   aliPaySwitch:newAliPaySwitch
+                              bankcardPaySwitch:newBankcardPaySwitch] then:^id(id data)
+              {
+                [self hideBlockView];
+                //  TODO:2.9 lang
+                if (newAliPaySwitch) {
+                    _aliPaySwitch = bSwitchIsOn;
+                    if (bSwitchIsOn) {
+                        [OrgUtils makeToast:@"已开启支付宝付款。"];
+                    } else {
+                        [OrgUtils makeToast:@"已关闭支付宝付款。"];
+                    }
+                }
+                if (newBankcardPaySwitch) {
+                    _bankcardPaySwitch = bSwitchIsOn;
+                    if (bSwitchIsOn) {
+                        [OrgUtils makeToast:@"已开启银行卡付款。"];
+                    } else {
+                        [OrgUtils makeToast:@"已关闭银行卡付款。"];
+                    }
+                }
+                return nil;
+            }] catch:^id(id error) {
+                [self hideBlockView];
+                [otc showOtcError:error];
+                [self resetSwitchToValue:sender value:!bSwitchIsOn];
+                return nil;
+            }];
+        } else {
+            [self resetSwitchToValue:sender value:!bSwitchIsOn];
+        }
+    }];
+}
+
+/**
+ *  调整Header和Footer高度。REMARK：header和footer VIEW 不能为空，否则高度设置无效。
+ */
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 10.0f;
+}
+- (nullable NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return @" ";
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    return 10.0f;
+}
+- (nullable NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
+{
+    return @" ";
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    ViewOtcPaymentMethodInfoCell* cell = [[ViewOtcPaymentMethodInfoCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-    cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+    ThemeManager* theme = [ThemeManager sharedThemeManager];
+    
+    UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
     cell.accessoryType = UITableViewCellAccessoryNone;
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    cell.backgroundColor = [UIColor clearColor];
     cell.showCustomBottomLine = YES;
-    [cell setItem:[_dataArray objectAtIndex:indexPath.row]];
+    cell.textLabel.textColor = theme.textColorMain;
+    
+    NSInteger rowType = [[_dataArray objectAtIndex:indexPath.section] integerValue];
+    
+    //  状态开关
+    UISwitch* pSwitch = nil;
+    if (!_querying) {
+        pSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
+        pSwitch.tintColor = theme.textColorGray;        //  边框颜色
+        pSwitch.thumbTintColor = theme.textColorGray;   //  按钮颜色
+        pSwitch.onTintColor = theme.textColorHighlight; //  开启时颜色
+        pSwitch.tag = rowType;
+        [pSwitch addTarget:self action:@selector(onSwitchAction:) forControlEvents:UIControlEventValueChanged];
+        cell.accessoryView = pSwitch;
+    }
+    
+    switch (rowType) {
+        case kVcSubRowAlipay:
+        {
+            if (pSwitch) {
+                pSwitch.on = _aliPaySwitch;
+            }
+            cell.textLabel.text = NSLocalizedString(@"kOtcAdPmNameAlipay", @"支付宝");
+            cell.imageView.image = [UIImage imageNamed:@"iconPmAlipay"];
+        }
+            break;
+        case kVcSubRowBankCard:
+        {
+            if (pSwitch) {
+                pSwitch.on = _bankcardPaySwitch;
+            }
+            cell.textLabel.text = NSLocalizedString(@"kOtcAdPmNameBankCard", @"银行卡");
+            cell.imageView.image = [UIImage imageNamed:@"iconPmBankCard"];
+        }
+            break;
+        default:
+            break;
+    }
+    
     return cell;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
-        id item = [_dataArray objectAtIndex:indexPath.row];
-        assert(item);
-//        [self onCellClicked:item];
-    }];
-}
-
-/*
- *  (private) 操作 - 启用 or 禁用收款方式
- */
-- (void)_onActionEnableOrDisableClicked:(id)item
-{
-    EOtcPaymentMethodStatus new_status;
-    if ([[item objectForKey:@"status"] integerValue] == eopms_enable) {
-        new_status = eopms_disable;
-    } else {
-        new_status = eopms_enable;
-    }
-    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    OtcManager* otc = [OtcManager sharedOtcManager];
-    [[[otc editPaymentMethods:item[@"btsAccount"] ?: [otc getCurrentBtsAccount] new_status:new_status pmid:item[@"id"]] then:^id(id data) {
-        [self hideBlockView];
-        //  刷新data & UI
-        [item setObject:@(new_status) forKey:@"status"];
-        [_mainTableView reloadData];
-        //  提示信息
-        if (new_status == eopms_enable) {
-            [OrgUtils makeToast:NSLocalizedString(@"kOtcPmActionTipsEnabled", @"已启用，允许向商家展示。")];
-        } else {
-            [OrgUtils makeToast:NSLocalizedString(@"kOtcPmActionTipsDisabled", @"已禁用，不再向商家展示。")];
-        }
-        return nil;
-    }] catch:^id(id error) {
-        [self hideBlockView];
-        [otc showOtcError:error];
-        return nil;
-    }];
-}
-
-/*
- *  (private) 操作 - 查看收款方式
- */
-- (void)_onActionViewClicked:(id)item
-{
-    //  TODO:2.9
-}
-
-/*
- *  (private) 操作 - 删除收款方式
- */
-- (void)_onActionDeleteClicked:(id)item
-{
-    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:NSLocalizedString(@"kOtcPmActionTipsDeleteConfirm", @"确认删除该收款方式吗？")
-                                                           withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
-                                                          completion:^(NSInteger buttonIndex)
-     {
-         if (buttonIndex == 1)
-         {
-             [self _execActionDeleteCore:item];
-         }
-     }];
-}
-
-- (void)_execActionDeleteCore:(id)item
-{
-    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    OtcManager* otc = [OtcManager sharedOtcManager];
-    [[[otc delPaymentMethods:item[@"btsAccount"] ?: [otc getCurrentBtsAccount] pmid:item[@"id"]] then:^id(id data) {
-        [self hideBlockView];
-        //  提示
-        [OrgUtils makeToast:NSLocalizedString(@"kOtcPmActionTipsDeleted", @"删除成功。")];
-        //  刷新
-//        [self queryPaymentMethods];
-        return nil;
-    }] catch:^id(id error) {
-        [self hideBlockView];
-        [otc showOtcError:error];
-        return nil;
-    }];
 }
 
 @end

@@ -294,16 +294,12 @@
  */
 + (CGSize)auxSizeWithText:(NSString*)text font:(UIFont*)font maxsize:(CGSize)maxsize
 {
-    assert(text);
-    assert(font);
-    return [text boundingRectWithSize:maxsize
-                              options:NSStringDrawingUsesLineFragmentOrigin
-                           attributes:@{NSFontAttributeName:font} context:nil].size;
+    return [ViewUtils auxSizeWithText:text font:font maxsize:maxsize];
 }
 
 - (CGSize)auxSizeWithText:(NSString*)text font:(UIFont*)font maxsize:(CGSize)maxsize
 {
-    return [[self class] auxSizeWithText:text font:font maxsize:maxsize];
+    return [ViewUtils auxSizeWithText:text font:font maxsize:maxsize];
 }
 
 /**
@@ -314,12 +310,7 @@
                                              titleColor:(UIColor*)titleColor
                                              valueColor:(UIColor*)valueColor
 {
-    NSString* finalString = [NSString stringWithFormat:@"%@%@", titleString, valueString];
-    NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] initWithString:finalString];
-    NSRange range = [finalString rangeOfString:valueString];
-    [attrString addAttribute:NSForegroundColorAttributeName value:titleColor range:NSMakeRange(0, range.location)];
-    [attrString addAttribute:NSForegroundColorAttributeName value:valueColor range:range];
-    return attrString;
+    return [ViewUtils genAndColorAttributedText:titleString value:valueString titleColor:titleColor valueColor:valueColor];
 }
 
 - (NSMutableAttributedString*)genAndColorAttributedText:(NSString*)titleString
@@ -327,7 +318,7 @@
                                              titleColor:(UIColor*)titleColor
                                              valueColor:(UIColor*)valueColor
 {
-    return [[self class] genAndColorAttributedText:titleString value:valueString titleColor:titleColor valueColor:valueColor];
+    return [ViewUtils genAndColorAttributedText:titleString value:valueString titleColor:titleColor valueColor:valueColor];
 }
 
 @end

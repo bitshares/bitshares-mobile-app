@@ -42,6 +42,9 @@
 		3F009A2223A2176100A77E4A /* ViewOtcMcAssetSwitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A2023A2176000A77E4A /* ViewOtcMcAssetSwitchCell.m */; };
 		3F009A2323A2176100A77E4A /* ViewOtcMcAssetSwitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A2023A2176000A77E4A /* ViewOtcMcAssetSwitchCell.m */; };
 		3F009A2423A2176100A77E4A /* ViewOtcMcAssetSwitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A2023A2176000A77E4A /* ViewOtcMcAssetSwitchCell.m */; };
+		3F009A2723A2386300A77E4A /* VCOtcMcAdUpdate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A2523A2386300A77E4A /* VCOtcMcAdUpdate.m */; };
+		3F009A2823A2386300A77E4A /* VCOtcMcAdUpdate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A2523A2386300A77E4A /* VCOtcMcAdUpdate.m */; };
+		3F009A2923A2386300A77E4A /* VCOtcMcAdUpdate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A2523A2386300A77E4A /* VCOtcMcAdUpdate.m */; };
 		3F05DDBD230B7D76002934DA /* VCLaunch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F05DDBB230B7D75002934DA /* VCLaunch.m */; };
 		3F05DDBE230B7D76002934DA /* VCLaunch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F05DDBB230B7D75002934DA /* VCLaunch.m */; };
 		3F0AE33A2192C97800E4144C /* iconWallet@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F0AE3342192C97700E4144C /* iconWallet@3x.png */; };
@@ -1886,6 +1889,8 @@
 		3F009A1C23A212DF00A77E4A /* ViewUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewUtils.m; path = View/ViewUtils.m; sourceTree = "<group>"; };
 		3F009A2023A2176000A77E4A /* ViewOtcMcAssetSwitchCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewOtcMcAssetSwitchCell.m; path = View/ViewOtcMcAssetSwitchCell.m; sourceTree = "<group>"; };
 		3F009A2123A2176000A77E4A /* ViewOtcMcAssetSwitchCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewOtcMcAssetSwitchCell.h; path = View/ViewOtcMcAssetSwitchCell.h; sourceTree = "<group>"; };
+		3F009A2523A2386300A77E4A /* VCOtcMcAdUpdate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcMcAdUpdate.m; path = Controller/VCOtcMcAdUpdate.m; sourceTree = "<group>"; };
+		3F009A2623A2386300A77E4A /* VCOtcMcAdUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcMcAdUpdate.h; path = Controller/VCOtcMcAdUpdate.h; sourceTree = "<group>"; };
 		3F05DDBB230B7D75002934DA /* VCLaunch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCLaunch.m; path = Controller/VCLaunch.m; sourceTree = "<group>"; };
 		3F05DDBC230B7D75002934DA /* VCLaunch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCLaunch.h; path = Controller/VCLaunch.h; sourceTree = "<group>"; };
 		3F0AE3342192C97700E4144C /* iconWallet@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconWallet@3x.png"; path = "Images/iconWallet@3x.png"; sourceTree = "<group>"; };
@@ -3584,6 +3589,8 @@
 		3FE23E30236D6A07006BF999 /* OTC */ = {
 			isa = PBXGroup;
 			children = (
+				3F009A2623A2386300A77E4A /* VCOtcMcAdUpdate.h */,
+				3F009A2523A2386300A77E4A /* VCOtcMcAdUpdate.m */,
 				3F009A1723A2099C00A77E4A /* VCOtcMcAssetTransfer.h */,
 				3F009A1623A2099C00A77E4A /* VCOtcMcAssetTransfer.m */,
 				3F0099F9239FAA9A00A77E4A /* VCOtcMcAdList.h */,
@@ -5432,6 +5439,7 @@
 				3FFFA11D238673F800E25CFA /* ViewOtcPaymentMethodInfoCell.m in Sources */,
 				3F12F441237D0E2E001FBAD8 /* VCOtcOrders.m in Sources */,
 				3F67682D230E9EC100E98C14 /* SCLButton.m in Sources */,
+				3F009A2923A2386300A77E4A /* VCOtcMcAdUpdate.m in Sources */,
 				3F67682E230E9EC100E98C14 /* UIDevice+Helper.m in Sources */,
 				3F67682F230E9EC100E98C14 /* ViewPermissionCell.m in Sources */,
 				3F676830230E9EC100E98C14 /* HtmlColor.m in Sources */,
@@ -5756,6 +5764,7 @@
 				3FFFA11C238673F800E25CFA /* ViewOtcPaymentMethodInfoCell.m in Sources */,
 				3F12F440237D0E2E001FBAD8 /* VCOtcOrders.m in Sources */,
 				3FB8F8C421CE66C200DA88E2 /* SCLButton.m in Sources */,
+				3F009A2823A2386300A77E4A /* VCOtcMcAdUpdate.m in Sources */,
 				3FB8F8C521CE66C200DA88E2 /* UIDevice+Helper.m in Sources */,
 				3F7ED8F42277F24700082680 /* ViewPermissionCell.m in Sources */,
 				3FB8F8C721CE66C200DA88E2 /* HtmlColor.m in Sources */,
@@ -6080,6 +6089,7 @@
 				3FFFA11B238673F800E25CFA /* ViewOtcPaymentMethodInfoCell.m in Sources */,
 				3F12F43F237D0E2E001FBAD8 /* VCOtcOrders.m in Sources */,
 				B782F0C31D6E94C600F61571 /* SCLButton.m in Sources */,
+				3F009A2723A2386300A77E4A /* VCOtcMcAdUpdate.m in Sources */,
 				ED696AD0182B8425007053BA /* UIDevice+Helper.m in Sources */,
 				3F7ED8F32277F24700082680 /* ViewPermissionCell.m in Sources */,
 				ED96A090186C62AD002181D4 /* HtmlColor.m in Sources */,

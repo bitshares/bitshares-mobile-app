@@ -364,9 +364,8 @@ enum
     CGFloat fOffsetY = 8.0f;
     CGFloat fLineHeight = 44.0f;
     CGFloat fTextHeight = 28.0f;
-    
-    CGSize size_price = [UITableViewCellBase auxSizeWithText:lbPrice.text font:lbPrice.font maxsize:CGSizeMake(max_width, 9999)];
-    CGSize size_title = [UITableViewCellBase auxSizeWithText:lbPriceTitle.text font:lbPriceTitle.font maxsize:CGSizeMake(max_width, 9999)];
+    CGSize size_price = [ViewUtils auxSizeWithLabel:lbPrice maxsize:CGSizeMake(max_width, 9999)];
+    CGSize size_title = [ViewUtils auxSizeWithLabel:lbPriceTitle maxsize:CGSizeMake(max_width, 9999)];
     CGFloat fSizePriceX = (max_width - size_price.width) / 2;
     lbPrice.frame = CGRectMake(fSizePriceX, fOffsetY, size_price.width, fLineHeight);
     lbPriceTitle.frame = CGRectMake(fSizePriceX - size_title.width, fOffsetY, size_title.width, fLineHeight);
@@ -378,7 +377,7 @@ enum
     lbNumberTitle.frame = CGRectMake(0, fOffsetY, max_width, 18.0f);
     lbMaxNumber.frame = lbNumberTitle.frame;
     if (lbAvailable) {
-        CGSize s = [UITableViewCellBase auxSizeWithText:lbNumberTitle.text font:lbNumberTitle.font maxsize:CGSizeMake(max_width, 9999)];
+        CGSize s = [ViewUtils auxSizeWithLabel:lbNumberTitle maxsize:CGSizeMake(max_width, 9999)];
         lbAvailable.frame = CGRectMake(s.width + 8, fOffsetY, max_width, 18.0f);
     }
     fOffsetY += lbNumberTitle.bounds.size.height;

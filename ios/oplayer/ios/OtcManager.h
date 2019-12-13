@@ -444,4 +444,28 @@ typedef enum EOtcMcProgress
  */
 - (WsPromise*)queryMerchantOtcAsset:(NSString*)bts_account_name;
 
+/*
+ *  (public) API - 查询商家指定资产余额查询
+ *  认证：TOKEN 方式
+ */
+- (WsPromise*)queryMerchantAssetBalance:(NSString*)bts_account_name
+                             otcAccount:(NSString*)otcAccount
+                             merchantId:(id)merchantId
+                            assetSymbol:(id)assetSymbol;
+
+/*
+ *  (public) API - 查询商家付款方式
+ *  认证：TOKEN 方式
+ */
+- (WsPromise*)queryMerchantPaymentMethods:(NSString*)bts_account_name;
+
+/*
+ *  (public) API - 更新商家付款方式
+ *  认证：SIGN 方式
+ */
+- (WsPromise*)updateMerchantPaymentMethods:(NSString*)bts_account_name
+                                otcAccount:(NSString*)otcAccount
+                              aliPaySwitch:(id)aliPaySwitch
+                         bankcardPaySwitch:(id)bankcardPaySwitch;
+
 @end
