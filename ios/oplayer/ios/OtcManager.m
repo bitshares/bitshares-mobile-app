@@ -164,9 +164,9 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
- *  (public) 辅助 - 根据订单当前状态获取主状态、状态描述、以及可操作按钮等信息。
+ *  (private) 场外交易订单流转各种状态信息：用户端看的情况。
  */
-+ (NSDictionary*)auxGenUserOrderStatusAndActions:(id)order
++ (NSDictionary*)_auxGenOtcOrderStatusAndActions_UserSide:(id)order
 {
     assert(order);
     ThemeManager* theme = [ThemeManager sharedThemeManager];
@@ -181,7 +181,7 @@ static OtcManager *_sharedOtcManager = nil;
     if (bUserSell) {
         //  -- 用户卖币提现
         switch (status) {
-            //  正常流程
+                //  正常流程
             case eoops_new:
             {
                 status_main = @"待转币";               //  已下单(待转币)     正常情况下单自动转币、转币操作需二次确认
@@ -219,7 +219,7 @@ static OtcManager *_sharedOtcManager = nil;
                 pending = NO;
             }
                 break;
-            //  异常流程
+                //  异常流程
             case eoops_chain_failed:
             {
                 status_main = @"异常中";
@@ -247,7 +247,7 @@ static OtcManager *_sharedOtcManager = nil;
     } else {
         //  -- 用户充值买币
         switch (status) {
-            //  正常流程
+                //  正常流程
             case eoops_new:
             {
                 status_main = @"待付款";       // 已下单(待付款)     取消 + 确认付款
@@ -283,7 +283,7 @@ static OtcManager *_sharedOtcManager = nil;
                 pending = NO;
             }
                 break;
-            //  异常流程
+                //  异常流程
             case eoops_refunded:
             {
                 status_main = @"已退款";
@@ -324,6 +324,187 @@ static OtcManager *_sharedOtcManager = nil;
              @"actions":actions, @"sell":@(bUserSell),
              @"phone":order[@"phone"] ?: @"",
              @"show_remark":@(showRemark), @"pending":@(pending)};
+}
+
+/*
+*  (private) 场外交易订单流转各种状态信息：商家端看的情况。
+*/
++ (NSDictionary*)_auxGenOtcOrderStatusAndActions_MerchantSide:(id)order
+{
+    assert(order);
+    ThemeManager* theme = [ThemeManager sharedThemeManager];
+    BOOL bUserSell = [[order objectForKey:@"type"] integerValue] == eoot_data_sell;
+    NSInteger status = [[order objectForKey:@"status"] integerValue];
+    NSString* status_main = nil;
+    NSString* status_desc = nil;
+    NSMutableArray* actions = [NSMutableArray array];
+    BOOL showRemark = NO;
+    BOOL pending = YES;
+    //  TODO:2.9 状态描述待细化。!!!!
+    if (bUserSell) {
+        //  -- 用户卖币提现
+        switch (status) {
+                //  正常流程
+            case eoops_new:
+            {
+                //  DONE!!!
+                status_main = @"待收币";
+                status_desc = @"用户已下单，等待用户转币。";
+            }
+                break;
+            case eoops_already_transferred:
+            {
+                //  DONE!!!
+                status_main = @"已转币";
+                status_desc = @"用户已转币，正在等待区块确认。";
+            }
+                break;
+            case eoops_already_confirmed:
+            {
+                //  DONE!!!
+                status_main = @"请付款";               //  区块已确认(请付款) 【商家】
+                status_desc = @"区块已确认转币，请付款给用户。";
+                //  按钮：无法接(卖)单 + 确认付款
+                [actions addObject:@{@"type":@(eooot_mc_cancel_sell_order), @"color":theme.textColorGray}];
+                [actions addObject:@{@"type":@(eooot_mc_confirm_paid), @"color":theme.textColorHighlight}];
+            }
+                break;
+            case eoops_already_paid:
+            {
+                //  DONE!!!
+                status_main = @"待放行";               // 商家已付款（等待用户确认放行）
+                status_desc = @"您已付款，等待用户放行。";
+            }
+                break;
+            case eoops_completed:
+            {
+                //  DONE!!!
+                status_main = @"已完成";
+                status_desc = @"订单已完成。";
+                pending = NO;
+            }
+                break;
+                //  异常流程
+            case eoops_chain_failed:
+            {
+                //  DONE!!!
+                status_main = @"异常中";
+                status_desc = @"区块确认异常。";
+            }
+                break;
+            case eoops_return_assets:
+            {
+                //  DONE!!!
+                status_main = @"退币中";
+                status_desc = @"您无法接单，平台退币中。";
+            }
+                break;
+            case eoops_cancelled:
+            {
+                //  DONE!!!
+                status_main = @"已取消";
+                status_desc = @"订单已取消。";
+                pending = NO;
+            }
+                break;
+            default:
+                break;
+        }
+    } else {
+        //  -- 用户充值买币
+        switch (status) {
+                //  正常流程
+            case eoops_new:
+            {
+                //  DONE!!!
+                status_main = @"待收款";
+                status_desc = @"用户已下单，等待用户付款。";
+            }
+                break;
+            case eoops_already_paid:
+            {
+                //  DONE!!!
+                status_main = @"请放行";
+                status_desc = @"用户已付款，请确认并放币。";
+                //  按钮：无法接(买)单 + 放行资产
+                [actions addObject:@{@"type":@(eooot_mc_cancel_buy_order), @"color":theme.textColorGray}];
+                [actions addObject:@{@"type":@(eooot_mc_confirm_received_money), @"color":theme.textColorHighlight}];
+            }
+                break;
+            case eoops_already_transferred:
+            {
+                //  DONE!!!
+                status_main = @"已转币";       //  已转币
+                status_desc = @"您已放行，平台处理中。";
+            }
+                break;
+            case eoops_already_confirmed:
+            {
+                //  DONE!!!
+                status_main = @"已转币";       //  已收币 REMARK：这是中间状态，会自动跳转到已完成。
+                status_desc = @"平台已验证，区块确认中。";
+                break;
+            }
+            case eoops_completed:
+            {
+                //  DONE!!!
+                status_main = @"已完成";
+                status_desc = @"订单已完成。";
+                pending = NO;
+            }
+                break;
+                //  异常流程
+            case eoops_refunded:
+            {
+                //  DONE!!!
+                status_main = @"已退款";
+                status_desc = @"您已退款，等待用户确认。";
+            }
+                break;
+            case eoops_chain_failed:
+            {
+                //  DONE!!!
+                status_main = @"异常中";
+                status_desc = @"区块确认异常";
+            }
+                break;
+            case eoops_cancelled:
+            {
+                //  DONE!!!
+                status_main = @"已取消";
+                status_desc = @"订单已取消。";
+                pending = NO;
+            }
+                break;
+            default:
+                break;
+        }
+    }
+    if (!status_main) {
+        status_main = [NSString stringWithFormat:@"未知状态 %@", @(status)];
+    }
+    if (!status_desc) {
+        status_desc = [NSString stringWithFormat:@"未知状态 %@", @(status)];
+    }
+    
+    //  返回数据
+    return @{@"main":status_main, @"desc":status_desc,
+             @"actions":actions, @"sell":@(bUserSell),
+             @"phone":order[@"phone"] ?: @"",
+             @"show_remark":@(showRemark), @"pending":@(pending)};
+}
+
+
+/*
+ *  (public) 辅助 - 根据订单当前状态获取主状态、状态描述、以及可操作按钮等信息。
+ */
++ (NSDictionary*)auxGenOtcOrderStatusAndActions:(id)order user_type:(EOtcUserType)user_type
+{
+    if (user_type == eout_normal_user) {
+        return [self _auxGenOtcOrderStatusAndActions_UserSide:order];
+    } else {
+        return [self _auxGenOtcOrderStatusAndActions_MerchantSide:order];
+    }
 }
 
 /*
@@ -413,7 +594,7 @@ static OtcManager *_sharedOtcManager = nil;
     WsPromise* p2 = [self queryAssetList:eoat_digital];
     [[[WsPromise all:@[p1, p2]] then:^id(id data_array) {
         [owner hideBlockView];
-//        id fiat_data = [data_array objectAtIndex:0];
+        //        id fiat_data = [data_array objectAtIndex:0];
         id asset_data = [data_array objectAtIndex:1];
         //  获取数字货币信息
         self.asset_list_digital = [asset_data objectForKey:@"data"];
@@ -463,19 +644,19 @@ static OtcManager *_sharedOtcManager = nil;
                                                                        withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
                                                                       completion:^(NSInteger buttonIndex)
                  {
-                     if (buttonIndex == 1)
-                     {
-                         VCBase* vc = [[VCOtcUserAuth alloc] init];
-                         [owner pushViewController:vc
+                    if (buttonIndex == 1)
+                    {
+                        VCBase* vc = [[VCOtcUserAuth alloc] init];
+                        [owner pushViewController:vc
                                           vctitle:NSLocalizedString(@"kVcTitleOtcUserAuth", @"身份认证")
                                         backtitle:kVcDefaultBackTitleName];
-                     }
-                 }];
+                    }
+                }];
             } else {
                 VCBase* vc = [[VCOtcUserAuth alloc] init];
                 [owner pushViewController:vc
-                                 vctitle:NSLocalizedString(@"kVcTitleOtcUserAuth", @"身份认证")
-                               backtitle:kVcDefaultBackTitleName];
+                                  vctitle:NSLocalizedString(@"kVcTitleOtcUserAuth", @"身份认证")
+                                backtitle:kVcDefaultBackTitleName];
             }
         }
         return nil;
@@ -610,20 +791,20 @@ static OtcManager *_sharedOtcManager = nil;
                             errmsg = @"请退出场外交易界面重新登录。";
                             break;
                         default:
-                            {
-                                //  默认错误消息处理
-                                NSString* tmpmsg = [otcerror objectForKey:@"message"];
-                                if ([tmpmsg isKindOfClass:[NSString class]] && ![tmpmsg isEqualToString:@""]) {
-                                    //  显示 code 和 message
-                                    errmsg = [NSString stringWithFormat:@"%@", otcerror];
-                                } else {
-                                    //  仅显示 code
-                                    errmsg = [NSString stringWithFormat:@"服务器或网络异常，请稍后再试。错误代码：%@", @(errcode)];//TODO:2.9 lang
-                                }
+                        {
+                            //  默认错误消息处理
+                            NSString* tmpmsg = [otcerror objectForKey:@"message"];
+                            if ([tmpmsg isKindOfClass:[NSString class]] && ![tmpmsg isEqualToString:@""]) {
+                                //  显示 code 和 message
+                                errmsg = [NSString stringWithFormat:@"%@", otcerror];
+                            } else {
+                                //  仅显示 code
+                                errmsg = [NSString stringWithFormat:@"服务器或网络异常，请稍后再试。错误代码：%@", @(errcode)];//TODO:2.9 lang
                             }
+                        }
                             break;
                     }
-
+                    
                 }
             }
         }
@@ -662,27 +843,22 @@ static OtcManager *_sharedOtcManager = nil;
 - (WsPromise*)queryIdVerify:(NSString*)bts_account_name
 {
     id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/user/queryIdVerify"];
-    //  TODO:2.9服务器暂时没验证签名？
-//    id headers = @{
-//        @"btsAccount":bts_account_name,
-//        @"dataVerify":@"",//TODO:2.9
-//        @"dataVerifyType":@"",//TODO:2.9
-//        @"holderVerify":@"",//TODO:2.9
-//    };
     return [self _queryApiCore:url args:@{@"btsAccount":bts_account_name} headers:nil auth_flag:eoaf_token];
 }
 
 /*
  *  (public) API - 请求身份认证
+ *  认证：SIGN 方式
  */
 - (WsPromise*)idVerify:(id)args
 {
     id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/user/idcardVerify"];
-    return [self _queryApiCore:url args:args headers:nil];
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
 }
 
 /*
  *  (public) API - 创建订单
+ *  认证：SIGN 方式
  */
 - (WsPromise*)createUserOrder:(NSString*)bts_account_name
                         ad_id:(NSString*)ad_id
@@ -690,8 +866,8 @@ static OtcManager *_sharedOtcManager = nil;
                         price:(NSString*)price
                         total:(NSString*)total
 {
-//    NSString* fiat_symbol = [[self getFiatCnyInfo] objectForKey:@"short_symbol"];
-//    assert(fiat_symbol);
+    //    NSString* fiat_symbol = [[self getFiatCnyInfo] objectForKey:@"short_symbol"];
+    //    assert(fiat_symbol);
     id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/user/order/set"];
     id args = @{
         @"adId":ad_id,
@@ -740,7 +916,8 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
- *  (public) API - 更新订单
+ *  (public) API - 更新用户订单
+ *  认证：SIGN 方式
  */
 - (WsPromise*)updateUserOrder:(NSString*)bts_account_name
                      order_id:(NSString*)order_id
@@ -765,7 +942,7 @@ static OtcManager *_sharedOtcManager = nil;
         [args setObject:payChannel forKey:@"paymentChannel"];
     }
     
-    return [self _queryApiCore:url args:[args copy] headers:nil];
+    return [self _queryApiCore:url args:[args copy] headers:nil auth_flag:eoaf_sign];
 }
 
 /*
@@ -781,12 +958,20 @@ static OtcManager *_sharedOtcManager = nil;
     return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
 }
 
+/*
+ *  (public) API - 添加收款方式
+ *  认证：SIGN 方式
+ */
 - (WsPromise*)addPaymentMethods:(id)args
 {
     id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/payMethod/add"];
-    return [self _queryApiCore:url args:args headers:nil];
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
 }
 
+/*
+ *  (public) API - 删除收款方式
+ *  认证：SIGN 方式
+ */
 - (WsPromise*)delPaymentMethods:(NSString*)bts_account_name pmid:(id)pmid
 {
     id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/payMethod/del"];
@@ -794,9 +979,13 @@ static OtcManager *_sharedOtcManager = nil;
         @"btsAccount":bts_account_name,
         @"id":pmid,
     };
-    return [self _queryApiCore:url args:args headers:nil];
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
 }
 
+/*
+ *  (public) API - 编辑收款方式
+ *  认证：SIGN 方式
+ */
 - (WsPromise*)editPaymentMethods:(NSString*)bts_account_name new_status:(EOtcPaymentMethodStatus)new_status pmid:(id)pmid
 {
     assert(bts_account_name);
@@ -807,34 +996,34 @@ static OtcManager *_sharedOtcManager = nil;
         @"id":pmid,
         @"status":@(new_status)
     };
-    return [self _queryApiCore:url args:args headers:nil];
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
 }
 
-/*
- *  (public) API - 上传二维码图片。
- */
-- (WsPromise*)uploadQrCode:(NSString*)bts_account_name filename:(NSString*)filename data:(NSData*)data
-{
-    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/oss/upload"];
-    id args = @{
-        @"btsAccount":bts_account_name,
-        @"fileName":filename,
-    };
-    return [self _handle_otc_server_response:[OrgUtils asyncUploadBinaryData:url data:data key:@"multipartFile" filename:filename args:args]];
-}
-
-/*
- *  (public) API - 获取二维码图片流。
- */
-- (WsPromise*)queryQrCode:(NSString*)bts_account_name filename:(NSString*)filename
-{
-    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/oss/query"];
-    id args = @{
-        @"btsAccount":bts_account_name,
-        @"fileName":filename,
-    };
-    return [self _queryApiCore:url args:args headers:nil as_json:NO auth_flag:eoaf_none];
-}
+///*
+// *  (public) API - 上传二维码图片。
+// */
+//- (WsPromise*)uploadQrCode:(NSString*)bts_account_name filename:(NSString*)filename data:(NSData*)data
+//{
+//    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/oss/upload"];
+//    id args = @{
+//        @"btsAccount":bts_account_name,
+//        @"fileName":filename,
+//    };
+//    return [self _handle_otc_server_response:[OrgUtils asyncUploadBinaryData:url data:data key:@"multipartFile" filename:filename args:args]];
+//}
+//
+///*
+// *  (public) API - 获取二维码图片流。
+// */
+//- (WsPromise*)queryQrCode:(NSString*)bts_account_name filename:(NSString*)filename
+//{
+//    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/oss/query"];
+//    id args = @{
+//        @"btsAccount":bts_account_name,
+//        @"fileName":filename,
+//    };
+//    return [self _queryApiCore:url args:args headers:nil as_json:NO auth_flag:eoaf_none];
+//}
 
 /*
  *  (public) API - 查询OTC支持的数字资产列表（bitCNY、bitUSD、USDT等）
@@ -956,7 +1145,7 @@ static OtcManager *_sharedOtcManager = nil;
 
 /*
  *  (public) API - 发送短信
- *  认证：TODO:2.9 待定
+ *  认证：SIGN 认证
  */
 - (WsPromise*)sendSmsCode:(NSString*)bts_account_name phone:(NSString*)phone_number type:(EOtcSmsType)type
 {
@@ -966,7 +1155,7 @@ static OtcManager *_sharedOtcManager = nil;
         @"phoneNum":phone_number,
         @"type":@(type)
     };
-    return [self _queryApiCore:url args:args headers:nil];
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
 }
 
 /*
@@ -1167,18 +1356,18 @@ static OtcManager *_sharedOtcManager = nil;
     }];
 }
 
-/*
- *  (public) API - 商家申请进度查询
- *  认证：SIGN 方式
- */
-- (WsPromise*)merchantProgress:(NSString*)bts_account_name
-{
-    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/progress"];
-    id args = @{
-        @"btsAccount":bts_account_name,
-    };
-    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
-}
+///*
+// *  (public) API - 商家申请进度查询
+// *  认证：SIGN 方式
+// */
+//- (WsPromise*)merchantProgress:(NSString*)bts_account_name
+//{
+//    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/progress"];
+//    id args = @{
+//        @"btsAccount":bts_account_name,
+//    };
+//    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+//}
 
 /*
  *  (public) API - 商家详情查询
@@ -1278,18 +1467,15 @@ static OtcManager *_sharedOtcManager = nil;
  *  认证：SIGN 方式
  */
 - (WsPromise*)updateMerchantPaymentMethods:(NSString*)bts_account_name
-                                otcAccount:(NSString*)otcAccount
                               aliPaySwitch:(id)aliPaySwitch
                          bankcardPaySwitch:(id)bankcardPaySwitch
 {
     assert(bts_account_name);
-    assert(otcAccount);
     assert(aliPaySwitch || bankcardPaySwitch);
     
     id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/payswitch"];
     NSMutableDictionary* args = [NSMutableDictionary dictionary];
     [args setObject:bts_account_name forKey:@"btsAccount"];
-    [args setObject:otcAccount forKey:@"otcAccount"];
     if (aliPaySwitch) {
         [args setObject:aliPaySwitch forKey:@"aliPaySwitch"];
     }
@@ -1298,5 +1484,75 @@ static OtcManager *_sharedOtcManager = nil;
     }
     return [self _queryApiCore:url args:[args copy] headers:nil auth_flag:eoaf_sign];
 }
+
+/*
+ *  (public) API - 更新商家订单
+ *  认证：SIGN 方式
+ */
+- (WsPromise*)updateMerchantOrder:(NSString*)bts_account_name
+                         order_id:(NSString*)order_id
+                       payAccount:(NSString*)payAccount
+                       payChannel:(id)payChannel
+                             type:(EOtcOrderUpdateType)type
+                      signatureTx:(id)signatureTx
+{
+    assert(bts_account_name);
+    assert(order_id);
+    
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchants/order/update"];
+    
+    id args = [NSMutableDictionary dictionary];
+    [args setObject:bts_account_name forKey:@"btsAccount"];
+    [args setObject:order_id forKey:@"orderId"];
+    [args setObject:@(type) forKey:@"type"];
+    //  有的状态不需要这些参数。
+    if (payAccount) {
+        [args setObject:payAccount forKey:@"payAccount"];
+    }
+    if (payChannel) {
+        [args setObject:payChannel forKey:@"paymentChannel"];
+    }
+    if (signatureTx) {
+        [args setObject:[signatureTx to_json] forKey:@"signatureTx"];
+    }
+    return [self _queryApiCore:url args:[args copy] headers:nil auth_flag:eoaf_sign];
+}
+
+/*
+ *  (public) API - 查询商家memokey
+ *  认证：SIGN 方式
+ */
+- (WsPromise*)queryMerchantMemoKey:(NSString*)bts_account_name
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchants/order/memo/key"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+    };
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+}
+
+//  TODO:2.9
+//POST http://otc-api.gdex.vip/merchants/order/memo/key HTTP/1.1
+//timestamp: 1576218069581
+//sign: 1f6971f867958a25b8fac16b9f6ef7fcdcb4040b4ce635aa04f86a3f43cb8aba6a2ebabad6b608ce24a552ddacb8ec30e611e957625644a3e91da92daba9c99a17
+//Content-Type: application/json; charset=UTF-8
+//Content-Length: 25
+//Host: otc-api.gdex.vip
+//Connection: Keep-Alive
+//Accept-Encoding: gzip
+//User-Agent: okhttp/3.11.0
+//
+//{"btsAccount":"zxc10002"}
+//POST http://otc-api.gdex.vip/merchants/order/update HTTP/1.1
+//timestamp: 1576218070836
+//sign: 203a63e152a12f3267a5f8f90cfc21355a2818ff64cab0091dcb6f6c88245f94f877be187cfd8844d17d62ceeb010e6de49bc069513bd86e1fd9e0df93bb7573e0
+//Content-Type: application/json; charset=UTF-8
+//Content-Length: 817
+//Host: otc-api.gdex.vip
+//Connection: Keep-Alive
+//Accept-Encoding: gzip
+//User-Agent: okhttp/3.11.0
+//
+//{"paymentChannel":1,"payAccount":"144ddd","signatureTx":"{\"signatures\":[\"1c7ad45a5c822692854bc56951a982a5f1947303fa27433900e5fa210830b7423361471aaf7afb9144fe21c0631b0e06389b6393420554051c7ff18cbfad7de321\"],\"expiration\":\"2019-12-13T06:26:05\",\"extensions\":[],\"operations\":[[0,{\"amount\":{\"amount\":153200,\"asset_id\":\"1.3.5\"},\"extensions\":[],\"fee\":{\"amount\":2089843,\"asset_id\":\"1.3.0\"},\"from\":\"1.2.42\",\"memo\":{\"from\":\"BTS6MBNdwBFzFReMQ8QFFULuo6Qwppmw3hkowu3dPdmxHvvcGgmhd\",\"message\":\"13f88c4e8c9510198abb6ecb3f7e9bb9\",\"nonce\":7854279326352215333,\"to\":\"BTS7eVkGdropaALRxM3sRKHdyzadpLjYS9M9H5M5qDrVDyn6t4f4P\"},\"to\":\"1.2.44\"}]],\"ref_block_num\":42252,\"ref_block_prefix\":205552263}","btsAccount":"zxc10002","type":4,"orderId":"6dbc0e6a63a6042e4f94265de03377fcba051445"}
 
 @end

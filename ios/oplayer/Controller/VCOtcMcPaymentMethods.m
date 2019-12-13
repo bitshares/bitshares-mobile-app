@@ -176,7 +176,6 @@ enum
             [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
             OtcManager* otc = [OtcManager sharedOtcManager];
             [[[otc updateMerchantPaymentMethods:[otc getCurrentBtsAccount]
-                                     otcAccount:[_merchant_detail objectForKey:@"otcAccount"]
                                    aliPaySwitch:newAliPaySwitch
                               bankcardPaySwitch:newBankcardPaySwitch] then:^id(id data)
               {

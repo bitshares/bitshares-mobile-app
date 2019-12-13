@@ -120,10 +120,15 @@ typedef enum EOtcOrderType
  */
 typedef enum EOtcOrderStatus
 {
-    eoos_all = 0,           //  查询全部
-    eoos_pending,           //  查询进行中
-    eoos_completed,         //  查询已完成
-    eoos_cancelled,         //  查询已取消
+    eoos_all = 0,               //  用户和商家都是：查询全部
+    
+    eoos_pending = 1,           //  用户：查询进行中
+    eoos_completed = 2,         //  用户：查询已完成
+    eoos_cancelled = 3,         //  用户：查询已取消
+    
+    eoos_mc_wait_process = 1,   //  商家：需处理
+    eoos_mc_pending = 2,        //  商家：进行中
+    eoos_mc_done = 3,           //  商家：已结束（已完成+已取消）
 } EOtcOrderStatus;
 
 /*
@@ -144,15 +149,22 @@ typedef enum EOtcOrderProgressStatus
 } EOtcOrderProgressStatus;
 
 /*
- *  用户更新订单类型。
+ *  更新订单类型。
  */
 typedef enum EOtcOrderUpdateType
 {
+    //  用户
     eoout_to_paied = 1,             //  买单：确认付款
     eoout_to_cancel = 2,            //  买单：取消订单
     eoout_to_refunded_confirm = 3,  //  买单：商家退款&用户确认&取消订单
     eoout_to_transferred = 4,       //  卖单：用户确认转币
     eoout_to_received_money = 5,    //  卖单：确认收款 TODO:2.9 不确定
+    
+    //  商家
+    eoout_to_mc_received_money = 1, //  用户购买：放行（已收款）
+    eoout_to_mc_cancel = 2,         //  用户购买：无法接单，商家退款。
+    eoout_to_mc_paied = 3,          //  用户卖单：商家已付款
+    eoout_to_mc_return = 4,         //  用户卖单：无法接单，退币。
 } EOtcOrderUpdateType;
 
 /*
@@ -180,6 +192,7 @@ typedef enum EOtcSmsType
  */
 typedef enum EOtcOrderOperationType
 {
+    //  用户
     eooot_transfer = 0,                 //  卖单：立即转币
     eooot_contact_customer_service,     //  卖单：联系客服
     eooot_confirm_received_money,       //  卖单：确认收款（放行资产给商家）
@@ -187,6 +200,12 @@ typedef enum EOtcOrderOperationType
     eooot_cancel_order,                 //  买单：取消订单
     eooot_confirm_paid,                 //  买单：我已付款成功
     eooot_confirm_received_refunded,    //  买单：确认收到商家退款 & 取消订单
+    
+    //  商家
+    eooot_mc_cancel_sell_order,         //  用户卖单：无法接单（退币、需要签名）
+    eooot_mc_confirm_paid,              //  用户卖单：我已付款成功
+    eooot_mc_cancel_buy_order,          //  用户买单：无法接单
+    eooot_mc_confirm_received_money,    //  用户买单：确认收款（放行、需要签名）
 } EOtcOrderOperationType;
 
 #pragma mark- merchant enum
@@ -244,7 +263,7 @@ typedef enum EOtcMcProgress
 /*
  *  (public) 辅助 - 根据订单当前状态获取主状态、状态描述、以及可操作按钮等信息。
  */
-+ (NSDictionary*)auxGenUserOrderStatusAndActions:(id)order;
++ (NSDictionary*)auxGenOtcOrderStatusAndActions:(id)order user_type:(EOtcUserType)user_type;
 
 /*
  *  (public) 当前账号名
@@ -356,15 +375,15 @@ typedef enum EOtcMcProgress
 - (WsPromise*)delPaymentMethods:(NSString*)bts_account_name pmid:(id)pmid;
 - (WsPromise*)editPaymentMethods:(NSString*)bts_account_name new_status:(EOtcPaymentMethodStatus)new_status pmid:(id)pmid;
 
-/*
- *  (public) 上传二维码图片。
- */
-- (WsPromise*)uploadQrCode:(NSString*)bts_account_name filename:(NSString*)filename data:(NSData*)data;
-
-/*
- *  (public) 获取二维码图片流。
- */
-- (WsPromise*)queryQrCode:(NSString*)bts_account_name filename:(NSString*)filename;
+///*
+// *  (public) 上传二维码图片。
+// */
+//- (WsPromise*)uploadQrCode:(NSString*)bts_account_name filename:(NSString*)filename data:(NSData*)data;
+//
+///*
+// *  (public) 获取二维码图片流。
+// */
+//- (WsPromise*)queryQrCode:(NSString*)bts_account_name filename:(NSString*)filename;
 
 /*
  *  (public) 查询OTC支持的数字资产列表（bitCNY、bitUSD、USDT等）
@@ -417,10 +436,10 @@ typedef enum EOtcMcProgress
 
 - (void)gotoOtcMerchantHome:(VCBase*)owner;
 
-/*
- *  (public) API - 商家申请进度查询
- */
-- (WsPromise*)merchantProgress:(NSString*)bts_account_name;
+///*
+// *  (public) API - 商家申请进度查询
+// */
+//- (WsPromise*)merchantProgress:(NSString*)bts_account_name;
 
 /*
  *  (public) API - 查询商家订单列表
@@ -464,8 +483,24 @@ typedef enum EOtcMcProgress
  *  认证：SIGN 方式
  */
 - (WsPromise*)updateMerchantPaymentMethods:(NSString*)bts_account_name
-                                otcAccount:(NSString*)otcAccount
                               aliPaySwitch:(id)aliPaySwitch
                          bankcardPaySwitch:(id)bankcardPaySwitch;
+
+/*
+ *  (public) API - 更新商家订单
+ *  认证：SIGN 方式
+ */
+- (WsPromise*)updateMerchantOrder:(NSString*)bts_account_name
+                         order_id:(NSString*)order_id
+                       payAccount:(NSString*)payAccount
+                       payChannel:(id)payChannel
+                             type:(EOtcOrderUpdateType)type
+                      signatureTx:(id)signatureTx;
+
+/*
+ *  (public) API - 查询商家memokey
+ *  认证：SIGN 方式
+ */
+- (WsPromise*)queryMerchantMemoKey:(NSString*)bts_account_name;
 
 @end

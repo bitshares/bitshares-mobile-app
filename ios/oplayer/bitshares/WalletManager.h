@@ -153,9 +153,11 @@ typedef enum EImportToWalletStatus
  */
 + (NSMutableDictionary*)getAllPublicKeyFromAccountData:(NSDictionary*)account_data result:(NSMutableDictionary*)result;
 
-/**
- *  获取本地钱包中需要参与【指定权限、active或owner等】签名的必须的 公钥列表。
+/*
+ *  (public) 获取本地钱包中需要参与【指定权限、active或owner等】签名的必须的 公钥列表。
+ *  assert_enough_permission - 是否检查拥有完整私钥权限。
  */
+- (NSArray*)getSignKeys:(NSDictionary*)raw_permission_json assert_enough_permission:(BOOL)assert_enough_permission;
 - (NSArray*)getSignKeys:(NSDictionary*)raw_permission_json;
 
 /**
@@ -188,6 +190,10 @@ typedef enum EImportToWalletStatus
  *  (public) 加密并生成 memo 信息结构体，失败返回 nil。
  */
 - (NSDictionary*)genMemoObject:(NSString*)memo_string from_public:(NSString*)from_public to_public:(NSString*)to_public;
+- (NSDictionary*)genMemoObject:(NSString*)memo_string
+                   from_public:(NSString*)from_public
+                     to_public:(NSString*)to_public
+                    extra_keys:(NSDictionary*)extra_keys_hash;
 
 #pragma mark- for wallet manager
 

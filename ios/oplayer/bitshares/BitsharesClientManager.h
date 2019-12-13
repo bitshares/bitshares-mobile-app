@@ -35,13 +35,19 @@
                           to:(NSString*)to_name
                        asset:(NSString*)asset_name
                       amount:(NSString*)amount
-                        memo:(NSString*)memo;
+                        memo:(NSString*)memo
+             memo_extra_keys:(id)memo_extra_keys
+               sign_pub_keys:(NSArray*)sign_pub_keys
+                   broadcast:(BOOL)broadcast;
 
 - (WsPromise*)simpleTransfer2:(id)full_from_account
                            to:(id)to_account
                         asset:(id)asset
                        amount:(NSString*)amount
-                         memo:(NSString*)memo;
+                         memo:(NSString*)memo
+              memo_extra_keys:(id)memo_extra_keys
+                sign_pub_keys:(NSArray*)sign_pub_keys
+                    broadcast:(BOOL)broadcast;
 
 - (WsPromise*)transfer:(NSDictionary*)transfer_op_data;
 

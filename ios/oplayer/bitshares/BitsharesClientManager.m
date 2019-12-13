@@ -51,8 +51,13 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
 #pragma mark- private
 - (WsPromise*)process_transaction:(TransactionBuilder*)tr
 {
+    return [self process_transaction:tr broadcast_to_blockchain:YES];
+}
+
+- (WsPromise*)process_transaction:(TransactionBuilder*)tr broadcast_to_blockchain:(BOOL)broadcast_to_blockchain;
+{
     return [[[tr set_required_fees:nil removeDuplicates:NO] then:(^id(id data) {
-        return [tr broadcast];
+        return [tr broadcast:broadcast_to_blockchain];
     })] then:(^id(id data) {
         NSLog(@"tid:%@ broadcast callback notify data: %@", [tr transaction_id], data);
         //  TODO:fowallet 到这里就是交易广播成功 并且 回调已经执行了
@@ -88,6 +93,9 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
                        asset:(NSString*)asset_name
                       amount:(NSString*)amount
                         memo:(NSString*)memo
+             memo_extra_keys:(id)memo_extra_keys
+               sign_pub_keys:(NSArray*)sign_pub_keys
+                   broadcast:(BOOL)broadcast
 {
     WalletManager* walletMgr = [WalletManager sharedWalletManager];
     assert(![walletMgr isLocked]);
@@ -107,8 +115,11 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
                                          asset:asset
                                         amount:amount
                                           memo:memo
+                               memo_extra_keys:memo_extra_keys
+                                 sign_pub_keys:sign_pub_keys
                                        resolve:resolve
-                                        reject:reject];
+                                        reject:reject
+                                     broadcast:broadcast];
             
             return nil;
         }] catch:^id(id error) {
@@ -123,6 +134,9 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
                         asset:(id)asset
                        amount:(NSString*)amount
                          memo:(NSString*)memo
+              memo_extra_keys:(id)memo_extra_keys
+                sign_pub_keys:(NSArray*)sign_pub_keys
+                    broadcast:(BOOL)broadcast
 {
     return [WsPromise promise:^(WsResolveHandler resolve, WsRejectHandler reject) {
         [self _transferWithFullFromAccount:full_from_account
@@ -130,8 +144,11 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
                                      asset:asset
                                     amount:amount
                                       memo:memo
+                           memo_extra_keys:memo_extra_keys
+                             sign_pub_keys:sign_pub_keys
                                    resolve:resolve
-                                    reject:reject];
+                                    reject:reject
+                                 broadcast:broadcast];
     }];
 }
 
@@ -140,8 +157,11 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
                                asset:(id)asset
                               amount:(NSString*)amount
                                 memo:(NSString*)memo
+                     memo_extra_keys:(id)memo_extra_keys
+                       sign_pub_keys:(NSArray*)sign_pub_keys
                              resolve:(WsResolveHandler)resolve
                               reject:(WsRejectHandler)reject
+                           broadcast:(BOOL)broadcast
 {
     assert(resolve);
     assert(reject);
@@ -164,7 +184,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
     
     NSString* asset_id = asset[@"id"];
     NSInteger asset_precision = [[asset objectForKey:@"precision"] integerValue];
-                
+    
     //  检测转账资产数量是否足够
     id n_amount = [NSDecimalNumber decimalNumberWithString:amount];
     id n_amount_pow = [NSString stringWithFormat:@"%@", [n_amount decimalNumberByMultiplyingByPowerOf10:asset_precision]];
@@ -194,7 +214,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
     if (memo) {
         id from_public_memo = [[from_account objectForKey:@"options"] objectForKey:@"memo_key"];
         id to_public_memo = [[to_account objectForKey:@"options"] objectForKey:@"memo_key"];
-        memo_object = [walletMgr genMemoObject:memo from_public:from_public_memo to_public:to_public_memo];
+        memo_object = [walletMgr genMemoObject:memo from_public:from_public_memo to_public:to_public_memo extra_keys:memo_extra_keys];
         if (!memo_object) {
             resolve(@{@"err":@"缺少备注私钥。"});
             return;
@@ -203,21 +223,21 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
     
     //  构造转账结构
     id op = @{
-              @"fee":@{
-                      @"amount":@0,
-                      @"asset_id":chainMgr.grapheneCoreAssetID,
-                      },
-              @"from":from_id,
-              @"to":to_id,
-              @"amount":@{
-                      @"amount":@([n_amount_pow unsignedLongLongValue]),
-                      @"asset_id":asset_id,
-                      },
-              @"memo":memo_object
-              };
-
+        @"fee":@{
+                @"amount":@0,
+                @"asset_id":chainMgr.grapheneCoreAssetID,
+        },
+        @"from":from_id,
+        @"to":to_id,
+        @"amount":@{
+                @"amount":@([n_amount_pow unsignedLongLongValue]),
+                @"asset_id":asset_id,
+        },
+        @"memo":memo_object
+    };
+    
     //  转账
-    [[[self transfer:op] then:^id(id tx_data) {
+    [[[self _transfer:op broadcast:broadcast sign_pub_keys:sign_pub_keys] then:^id(id tx_data) {
         resolve(@{@"tx":tx_data});
         return nil;
     }] catch:^id(id error) {
@@ -231,10 +251,19 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
  */
 - (WsPromise*)transfer:(NSDictionary*)transfer_op_data
 {
+    return [self _transfer:transfer_op_data broadcast:YES sign_pub_keys:nil];
+}
+
+- (WsPromise*)_transfer:(NSDictionary*)transfer_op_data broadcast:(BOOL)broadcast sign_pub_keys:(NSArray*)sign_pub_keys
+{
     TransactionBuilder* tr = [[TransactionBuilder alloc] init];
     [tr add_operation:ebo_transfer opdata:transfer_op_data];
-    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[transfer_op_data objectForKey:@"from"]]];
-    return [self process_transaction:tr];
+    if (sign_pub_keys && [sign_pub_keys count] > 0) {
+        [tr addSignKeys:sign_pub_keys];
+    } else {
+        [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[transfer_op_data objectForKey:@"from"]]];
+    }
+    return [self process_transaction:tr broadcast_to_blockchain:broadcast];
 }
 
 /**
@@ -419,11 +448,11 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
         uint32_t expiration_ts = (uint32_t)(now_sec + proposal_lifetime_sec);
         
         id op = @{
-                  @"fee":@{@"amount":@0, @"asset_id":[ChainObjectManager sharedChainObjectManager].grapheneCoreAssetID},
-                  @"fee_paying_account":fee_paying_account_id,
-                  @"expiration_time":@(expiration_ts),
-                  @"proposed_ops":@[@{@"op":@[@(opcode), opdata_with_fee]}],
-                  };
+            @"fee":@{@"amount":@0, @"asset_id":[ChainObjectManager sharedChainObjectManager].grapheneCoreAssetID},
+            @"fee_paying_account":fee_paying_account_id,
+            @"expiration_time":@(expiration_ts),
+            @"proposed_ops":@[@{@"op":@[@(opcode), opdata_with_fee]}],
+        };
         
         //  REMARK：理事会提案必须添加审核期。
         assert(![[opaccount objectForKey:@"id"] isEqualToString:BTS_GRAPHENE_COMMITTEE_ACCOUNT] || kReviewPeriod > 0);

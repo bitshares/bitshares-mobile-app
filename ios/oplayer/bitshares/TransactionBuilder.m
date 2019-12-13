@@ -249,7 +249,7 @@
 /**
  *  (private) 广播交易 核心
  */
-- (WsPromise*)broadcast_core
+- (WsPromise*)broadcast_core:(BOOL)broadcast_to_blockchain
 {
     return [WsPromise promise:^(WsResolveHandler resolve, WsRejectHandler reject) {
         //  1、签名
@@ -282,41 +282,46 @@
                       };
         id obj = [T_signed_transaction encode_to_object:opdata];
         
-        //  3、执行广播请求
-        WsNotifyCallback cc = ^(BOOL success, id data){
-            if (success){
-                //  TODO:fowallet 一定要确保在网络异常的情况下也要回调该callback，否则这里会卡死。
-                NSLog(@"broadcast_transaction_with_callback submit callback = %@", data);
-                resolve(data);
-            }else{
-                reject(@"websocket error.");
-            }
-            //  回调之后删除 callback
-            return YES;
-        };
-        GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] last_connection].api_net;
-        [[[api exec:@"broadcast_transaction_with_callback" params:@[cc, obj]] then:(^id(id data) {
-            //  广播成功，等待网络通知执行 cc 回调。
-            NSLog(@"broadcast_transaction_with_callback response: %@", data);
-            return data;
-        })] catch:(^id(id error) {
-            //  TODO:fowallet error
-            reject(error);
-            return nil;
-        })];
+        if (broadcast_to_blockchain) {
+            //  3、执行广播请求
+            WsNotifyCallback cc = ^(BOOL success, id data){
+                if (success){
+                    //  TODO:fowallet 一定要确保在网络异常的情况下也要回调该callback，否则这里会卡死。
+                    NSLog(@"broadcast_transaction_with_callback submit callback = %@", data);
+                    resolve(data);
+                }else{
+                    reject(@"websocket error.");
+                }
+                //  回调之后删除 callback
+                return YES;
+            };
+            GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] last_connection].api_net;
+            [[[api exec:@"broadcast_transaction_with_callback" params:@[cc, obj]] then:(^id(id data) {
+                //  广播成功，等待网络通知执行 cc 回调。
+                NSLog(@"broadcast_transaction_with_callback response: %@", data);
+                return data;
+            })] catch:(^id(id error) {
+                //  TODO:fowallet error
+                reject(error);
+                return nil;
+            })];
+        } else {
+            //  直接返回待广播的数据
+            resolve(obj);
+        }
     }];
 }
 
 /**
  *  广播交易到区块链网络
  */
-- (WsPromise*)broadcast
+- (WsPromise*)broadcast:(BOOL)broadcast_to_blockchain
 {
     if (_tr_buffer){
-        return [self broadcast_core];
+        return [self broadcast_core:broadcast_to_blockchain];
     }else{
         return [[self finalize] then:(^id(id data) {
-            return [self broadcast_core];
+            return [self broadcast_core:broadcast_to_blockchain];
         })];
     }
 }

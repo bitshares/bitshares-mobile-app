@@ -20,6 +20,6 @@
 
 - (id)initWithOwner:(VCBase*)owner authInfo:(id)auth_info user_type:(EOtcUserType)user_type order_status:(EOtcOrderStatus)order_status;
 
-- (void)queryUserOrders;
+- (void)queryCurrentPageOrders;
 
 @end

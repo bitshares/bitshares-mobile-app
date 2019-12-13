@@ -732,10 +732,11 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
     return result;
 }
 
-/**
- *  获取本地钱包中需要参与【指定权限、active或owner等】签名的必须的 公钥列表。
+/*
+ *  (public) 获取本地钱包中需要参与【指定权限、active或owner等】签名的必须的 公钥列表。
+ *  assert_enough_permission - 是否检查拥有完整私钥权限。
  */
-- (NSArray*)getSignKeys:(NSDictionary*)raw_permission_json
+- (NSArray*)getSignKeys:(NSDictionary*)raw_permission_json assert_enough_permission:(BOOL)assert_enough_permission
 {
     assert(![self isLocked]);
     assert(raw_permission_json);
@@ -763,9 +764,16 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
     }
     
     //  确保权限足够（返回的KEY签名之后的阈值之后达到触发阈值）
-    assert([self canAuthorizeThePermission:raw_permission_json]);
+    if (assert_enough_permission) {
+        assert([self canAuthorizeThePermission:raw_permission_json]);
+    }
     
     return [result copy];
+}
+
+- (NSArray*)getSignKeys:(NSDictionary*)raw_permission_json
+{
+    return [self getSignKeys:raw_permission_json assert_enough_permission:YES];
 }
 
 /**
@@ -926,6 +934,14 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
  */
 - (NSDictionary*)genMemoObject:(NSString*)memo_string from_public:(NSString*)from_public to_public:(NSString*)to_public
 {
+    return [self genMemoObject:memo_string from_public:from_public to_public:to_public extra_keys:nil];
+}
+
+- (NSDictionary*)genMemoObject:(NSString*)memo_string
+                   from_public:(NSString*)from_public
+                     to_public:(NSString*)to_public
+                    extra_keys:(NSDictionary*)extra_keys_hash
+{
     assert(![self isLocked]);
     assert(memo_string);
     assert(from_public);
@@ -933,6 +949,9 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
     
     //  1、获取和 from_public 对应的备注私钥
     NSString* from_public_private_key_wif = [_private_keys_hash objectForKey:from_public];
+    if (!from_public_private_key_wif && extra_keys_hash) {
+        from_public_private_key_wif = [extra_keys_hash objectForKey:from_public];
+    }
     if (!from_public_private_key_wif){
         return nil;
     }

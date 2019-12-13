@@ -131,7 +131,7 @@
     CGFloat firstLineHeight = 28.0f;
     CGFloat fLineHeight = 24.0f;
     
-    id status_infos = [OtcManager auxGenUserOrderStatusAndActions:_item];
+    id status_infos = [OtcManager auxGenOtcOrderStatusAndActions:_item user_type:self.userType];
     BOOL pending = [[status_infos objectForKey:@"pending"] boolValue];
     
     //  第一行 买卖 SYMBOL
@@ -188,7 +188,11 @@
     _lbTotal.frame = CGRectMake(xOffset, yOffset, fWidth, fLineHeight);
     yOffset += fLineHeight;
     
-    _lbMerchantName.text = [_item objectForKey:@"merchantNickname"] ?: @"";
+    if (self.userType == eout_normal_user) {
+        _lbMerchantName.text = [_item objectForKey:@"merchantNickname"] ?: @"";
+    } else {
+        _lbMerchantName.text = [_item objectForKey:@"userAccount"] ?: @"";
+    }
     _lbMerchantName.textColor = theme.textColorMain;
     _lbMerchantName.frame = CGRectMake(xOffset, yOffset, fWidth, fLineHeight);
 }
