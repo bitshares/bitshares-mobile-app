@@ -26,6 +26,6 @@
 
 - (WsPromise*)set_required_fees:(NSString*)asset_id removeDuplicates:(BOOL)removeDuplicates;
 - (WsPromise*)finalize;
-- (WsPromise*)broadcast;
+- (WsPromise*)broadcast:(BOOL)broadcast_to_blockchain;
 
 @end

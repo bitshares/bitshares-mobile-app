@@ -28,18 +28,36 @@
     _auth_info = nil;
 }
 
+- (NSInteger)getTitleDefaultSelectedIndex
+{
+    //  商家端：默认选中【需处理】标签
+    return _user_type == eout_normal_user ? 1 : 2;
+}
+
 - (NSArray*)getTitleStringArray
 {
-    //  TODO:2.9
-    return @[@"进行中", @"已完成", @"已取消"];
+    if (_user_type == eout_normal_user) {
+        //  TODO:2.9
+        return @[@"进行中", @"已完成", @"已取消"];
+    } else {
+        return @[@"全部", @"需处理", @"进行中", @"已完成"];
+    }
 }
 
 - (NSArray*)getSubPageVCArray
 {
-    id vc01 = [[VCOtcOrders alloc] initWithOwner:self authInfo:_auth_info user_type:_user_type order_status:eoos_pending];
-    id vc02 = [[VCOtcOrders alloc] initWithOwner:self authInfo:_auth_info user_type:_user_type order_status:eoos_completed];
-    id vc03 = [[VCOtcOrders alloc] initWithOwner:self authInfo:_auth_info user_type:_user_type order_status:eoos_cancelled];
-    return @[vc01, vc02, vc03];
+    if (_user_type == eout_normal_user) {
+        id vc01 = [[VCOtcOrders alloc] initWithOwner:self authInfo:_auth_info user_type:_user_type order_status:eoos_pending];
+        id vc02 = [[VCOtcOrders alloc] initWithOwner:self authInfo:_auth_info user_type:_user_type order_status:eoos_completed];
+        id vc03 = [[VCOtcOrders alloc] initWithOwner:self authInfo:_auth_info user_type:_user_type order_status:eoos_cancelled];
+        return @[vc01, vc02, vc03];
+    } else {
+        id vc01 = [[VCOtcOrders alloc] initWithOwner:self authInfo:_auth_info user_type:_user_type order_status:eoos_all];
+        id vc02 = [[VCOtcOrders alloc] initWithOwner:self authInfo:_auth_info user_type:_user_type order_status:eoos_mc_wait_process];
+        id vc03 = [[VCOtcOrders alloc] initWithOwner:self authInfo:_auth_info user_type:_user_type order_status:eoos_mc_pending];
+        id vc04 = [[VCOtcOrders alloc] initWithOwner:self authInfo:_auth_info user_type:_user_type order_status:eoos_mc_done];
+        return @[vc01, vc02, vc03, vc04];
+    }
 }
 
 - (id)initWithAuthInfo:(id)auth_info user_type:(EOtcUserType)user_type
@@ -60,7 +78,7 @@
     //  查询当前初始页数据
     VCOtcOrders* vc = (VCOtcOrders*)[self currentPage];
     if (vc) {
-        [vc queryUserOrders];
+        [vc queryCurrentPageOrders];
     }
 }
 
@@ -77,7 +95,7 @@
     if (_subvcArrays){
         id vc = [_subvcArrays safeObjectAtIndex:tag - 1];
         if (vc){
-            [vc queryUserOrders];
+            [vc queryCurrentPageOrders];
         }
     }
 }
@@ -114,7 +132,7 @@
     }
 }
 
-- (void)onQueryUserOrdersResponsed:(id)responsed
+- (void)onQueryCurrentPageOrdersResponsed:(id)responsed
 {
     id records = [[responsed objectForKey:@"data"] objectForKey:@"records"];
     [_dataArray removeAllObjects];
@@ -124,7 +142,7 @@
     [self refreshView];
 }
 
-- (void)queryUserOrders
+- (void)queryCurrentPageOrders
 {
     OtcManager* otc = [OtcManager sharedOtcManager];
     [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
@@ -136,7 +154,7 @@
     }
     [[p1 then:^id(id data) {
         [_owner hideBlockView];
-        [self onQueryUserOrdersResponsed:data];
+        [self onQueryCurrentPageOrdersResponsed:data];
         return nil;
     }] catch:^id(id error) {
         [_owner hideBlockView];
@@ -193,24 +211,14 @@
     _lbEmptyOrder.textAlignment = NSTextAlignmentCenter;
     _lbEmptyOrder.font = [UIFont boldSystemFontOfSize:13];
     //  TODO:2.9
-    switch (_order_status) {
-        case eoos_pending:
-            _lbEmptyOrder.text = NSLocalizedString(@"kOtcOrderEmptyLabel", @"没有任何订单信息");
-            break;
-        case eoos_completed:
-            _lbEmptyOrder.text = NSLocalizedString(@"kOtcOrderEmptyLabel", @"没有任何订单信息");
-            break;
-        case eoos_cancelled:
-            _lbEmptyOrder.text = NSLocalizedString(@"kOtcOrderEmptyLabel", @"没有任何订单信息");
-            break;
-        default:
-            break;
+    if (_user_type == eout_merchant && _order_status == eoos_mc_wait_process) {
+        _lbEmptyOrder.text = @"没有任何需处理的订单。";
+    } else {
+        _lbEmptyOrder.text = NSLocalizedString(@"kOtcOrderEmptyLabel", @"没有任何订单信息");
     }
+    
     [self.view addSubview:_lbEmptyOrder];
     _lbEmptyOrder.hidden = YES;
-    
-    //  查询
-//    [self queryUserOrders];
 }
 
 #pragma mark- TableView delegate method
@@ -318,7 +326,7 @@
 {
     if (callback_data && [callback_data boolValue]) {
         //  订单状态变更：刷新界面
-        [self queryUserOrders];
+        [self queryCurrentPageOrders];
     }
 }
 

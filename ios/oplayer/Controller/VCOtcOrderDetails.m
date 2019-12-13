@@ -42,6 +42,8 @@ enum
     kVcSubPaymentAccount,       //  收款账号（银行卡号、微信支付宝账号等）
     kVcSubPaymentBankName,      //  银行名（银行卡存在）
     kVcSubPaymentQrCode,        //  二维码（支付宝微信可能存在）
+    
+    kVcSubMcUserAccount,        //  用户账号（商家端）
 };
 
 @interface VCOtcOrderDetails ()
@@ -105,11 +107,16 @@ enum
 {
     if (left_ts > 0) {
         //  刷新
-        [_statusInfos setObject:[NSString stringWithFormat:NSLocalizedString(@"kOtcOdPaymentTimeLimit", @"请在 %@ 内付款给卖家。"), [OtcManager fmtPaymentExpireTime:left_ts]] forKey:@"desc"];
+        if (_user_type == eout_normal_user) {
+            [_statusInfos setObject:[NSString stringWithFormat:NSLocalizedString(@"kOtcOdPaymentTimeLimit", @"请在 %@ 内付款给卖家。"), [OtcManager fmtPaymentExpireTime:left_ts]] forKey:@"desc"];
+        } else {
+            //  TODO:2.9
+            [_statusInfos setObject:[NSString stringWithFormat:@"预计 %@ 内收到用户付款。", [OtcManager fmtPaymentExpireTime:left_ts]] forKey:@"desc"];
+        }
         [_viewStatusCell setItem:_statusInfos];
         [_viewStatusCell refreshText];
     } else {
-        //  TODO:2.9
+        //  TODO:2.9 cancel?
     }
 }
 
@@ -126,17 +133,17 @@ enum
         _sectionDataArray = [NSMutableArray array];
         _btnArray = [NSMutableArray array];
         _cell_tips = nil;
-        _statusInfos = [[OtcManager auxGenUserOrderStatusAndActions:order_details] mutableCopy];
+        _statusInfos = [[OtcManager auxGenOtcOrderStatusAndActions:order_details user_type:_user_type] mutableCopy];
         
         //  支付关闭定时器
         _timerID = 0;
         NSInteger expireDate = [_orderDetails[@"expireDate"] integerValue];
         if (expireDate > 0 && ![_statusInfos[@"sell"] boolValue] && [_orderDetails[@"status"] integerValue] == eoops_new) {
-           NSInteger now_ts = (NSInteger)ceil([[NSDate date] timeIntervalSince1970]);
-           NSInteger expire_ts = (NSInteger)[OtcManager parseTime:_orderDetails[@"ctime"]] + expireDate;
+            NSInteger now_ts = (NSInteger)ceil([[NSDate date] timeIntervalSince1970]);
+            NSInteger expire_ts = (NSInteger)[OtcManager parseTime:_orderDetails[@"ctime"]] + expireDate;
             if (now_ts < expire_ts) {
-               _timerID = [[AsyncTaskManager sharedAsyncTaskManager] scheduledSecondsTimerWithEndTS:expire_ts callback:^(NSInteger left_ts) {
-                   [self _onPaymentTimerTick:left_ts];
+                _timerID = [[AsyncTaskManager sharedAsyncTaskManager] scheduledSecondsTimerWithEndTS:expire_ts callback:^(NSInteger left_ts) {
+                    [self _onPaymentTimerTick:left_ts];
                 }];
             }
         }
@@ -201,8 +208,12 @@ enum
     //  UI - 订单详细信息（订单号等）
     //  TODO:2.9 test  data
     id orderDetailRows = [[[NSMutableArray array] ruby_apply:^(id obj) {
-        [obj addObject:@(kVcSubMerchantRealName)];
-        [obj addObject:@(kVcSubMerchantNickName)];
+        if (_user_type == eout_normal_user) {
+            [obj addObject:@(kVcSubMerchantRealName)];
+            [obj addObject:@(kVcSubMerchantNickName)];
+        } else {
+            [obj addObject:@(kVcSubMcUserAccount)];
+        }
         [obj addObject:@(kVcSubOrderID)];
         [obj addObject:@(kVcSubOrderTime)];
         //  TODO:2.9
@@ -212,7 +223,7 @@ enum
         }
     }] copy];
     [_sectionDataArray addObject:@{@"type":@(kVcSecOrderDetailInfo), @"rows":orderDetailRows}];
-
+    
     //  提示
     if ([[_statusInfos objectForKey:@"show_remark"] boolValue]) {
         if (!_cell_tips) {
@@ -232,7 +243,7 @@ enum
     } else {
         _cell_tips = nil;
     }
-
+    
     //  UI - 底部按钮数据
     id actions = [_statusInfos objectForKey:@"actions"];
     if (actions && [actions count] > 0) {
@@ -246,7 +257,7 @@ enum
 - (void)_refreshUI:(id)new_order_detail
 {
     _orderDetails = new_order_detail;
-    _statusInfos = [[OtcManager auxGenUserOrderStatusAndActions:_orderDetails] mutableCopy];
+    _statusInfos = [[OtcManager auxGenOtcOrderStatusAndActions:_orderDetails user_type:_user_type] mutableCopy];
     [self _initUIData];
     //  刷新UI
     CGRect tableRect = [_btnArray count] > 0 ? [self rectWithoutNaviWithOffset:fBottomButtonsViewHeight] : [self rectWithoutNavi];
@@ -260,14 +271,25 @@ enum
  */
 - (void)_execUpdateOrderCore:(id)payAccount payChannel:(id)payChannel type:(EOtcOrderUpdateType)type
 {
+    [self _execUpdateOrderCore:payAccount payChannel:payChannel type:type signatureTx:nil];
+}
+
+- (void)_execUpdateOrderCore:(id)payAccount payChannel:(id)payChannel type:(EOtcOrderUpdateType)type signatureTx:(id)signatureTx
+{
+    assert(![[WalletManager sharedWalletManager] isLocked]);
+    
     [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     OtcManager* otc = [OtcManager sharedOtcManager];
     NSString* userAccount = [otc getCurrentBtsAccount];
-    [[[otc updateUserOrder:userAccount
-                  order_id:_orderDetails[@"orderId"]
-                payAccount:payAccount
-                payChannel:payChannel
-                      type:type] then:^id(id data) {
+    NSString* orderId = _orderDetails[@"orderId"];
+    WsPromise* p1;
+    if (_user_type == eout_normal_user) {
+        p1 = [otc updateUserOrder:userAccount order_id:orderId payAccount:payAccount payChannel:payChannel type:type];
+    } else {
+        p1 = [otc updateMerchantOrder:userAccount order_id:orderId payAccount:payAccount payChannel:payChannel type:type
+                          signatureTx:signatureTx];
+    }
+    [[p1 then:^id(id data) {
         //  设置：订单状态已变更标记
         _orderStatusDirty = YES;
         //  停止付款计时器
@@ -293,112 +315,164 @@ enum
 {
     //  解锁：需要check资金权限，提案等不支持。
     [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
-        
-        NSString* userAccount = [[OtcManager sharedOtcManager] getCurrentBtsAccount];
-        NSString* otcAccount = _orderDetails[@"otcAccount"];
-        NSString* assetSymbol = _orderDetails[@"assetSymbol"];
-        NSString* args_amount = [NSString stringWithFormat:@"%@", _orderDetails[@"quantity"]];
-        
-        //  REMARK：转账memo格式：F(发币)T(退币) + 订单号后10位
-        NSString* orderId = _orderDetails[@"orderId"];
-        NSString* args_memo_str = [NSString stringWithFormat:@"F%@", [orderId substringFromIndex:MAX((NSInteger)orderId.length - 10, 0)]];
-        
-        [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-        
-        ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
-        id p1 = [chainMgr queryFullAccountInfo:userAccount];
-        id p2 = [chainMgr queryAccountData:otcAccount];
-        id p3 = [chainMgr queryAssetData:assetSymbol];
-        //  TODO:2.9 100? args
-        id p4 = [chainMgr queryAccountHistoryByOperations:userAccount optype_array:@[@(ebo_transfer)] limit:100];
-        [[[WsPromise all:@[p1, p2, p3, p4]] then:^id(id promise_data_array) {
-            id full_from_account = [promise_data_array safeObjectAtIndex:0];
-            id to_account = [promise_data_array safeObjectAtIndex:1];
-            id asset = [promise_data_array safeObjectAtIndex:2];
-            id his_data_array = [promise_data_array safeObjectAtIndex:3];
+        if (unlocked) {
+            NSString* userAccount = [[OtcManager sharedOtcManager] getCurrentBtsAccount];
+            NSString* otcAccount = _orderDetails[@"otcAccount"];
+            NSString* assetSymbol = _orderDetails[@"assetSymbol"];
+            NSString* args_amount = [NSString stringWithFormat:@"%@", _orderDetails[@"quantity"]];
             
-            if (!full_from_account || !to_account || !asset) {
-                [self hideBlockView];
-                [OrgUtils makeToast:NSLocalizedString(@"kOtcOdOrderDataException", @"订单数据异常，请联系客服。")];
-                return nil;
-            }
+            //  REMARK：转账memo格式：F(发币)T(退币) + 订单号后10位
+            NSString* orderId = _orderDetails[@"orderId"];
+            NSString* args_memo_str = [NSString stringWithFormat:@"F%@", [orderId substringFromIndex:MAX((NSInteger)orderId.length - 10, 0)]];
             
-            NSString* real_from_id = [[full_from_account objectForKey:@"account"] objectForKey:@"id"];
-            NSString* real_to_id = [to_account objectForKey:@"id"];
-            NSDecimalNumber* real_amount = [NSDecimalNumber decimalNumberWithString:args_amount];
-            NSString* real_asset_id = [asset objectForKey:@"id"];
-            NSInteger real_asset_precision = [[asset objectForKey:@"precision"] integerValue];
+            [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
             
-            //  检测是否已经转币了。
-            BOOL bMatched = NO;
-            if (his_data_array && [his_data_array count] > 0) {
-                for (id his_object in his_data_array) {
-                    id op = [his_object objectForKey:@"op"];
-                    assert([[op safeObjectAtIndex:0] integerValue] == ebo_transfer);
-                    
-                    id opdata = [op safeObjectAtIndex:1];
-                    if (!opdata) {
-                        continue;
-                    }
-
-                    // 1、检测from、to、amount是否匹配
-                    NSString* from_id = [opdata objectForKey:@"from"];
-                    NSString* to_id = [opdata objectForKey:@"to"];
-                    if (![from_id isEqualToString:real_from_id] || ![to_id isEqualToString:real_to_id]) {
-                        continue;
-                    }
-
-                    // 2、检测转币数量是否撇皮
-                    id op_amount = [opdata objectForKey:@"amount"];
-                    if (![real_asset_id isEqualToString:[op_amount objectForKey:@"asset_id"]]) {
-                        continue;
-                    }
-                    id n_op_amount = [NSDecimalNumber decimalNumberWithMantissa:[[op_amount objectForKey:@"amount"] unsignedLongLongValue]
-                                                        exponent:-real_asset_precision
-                                                      isNegative:NO];
-                    if ([real_amount compare:n_op_amount] != NSOrderedSame) {
-                        continue;
-                    }
-
-                    // 3、检测memo中订单号信息是否匹配
-                    id memo_object = [opdata objectForKey:@"memo"];
-                    if (!memo_object) {
-                        continue;
-                    }
-                    NSString* plain_memo = [[WalletManager sharedWalletManager] decryptMemoObject:memo_object];
-                    if (!plain_memo) {
-                        continue;
-                    }
-                    if ([plain_memo isEqualToString:args_memo_str]) {
-                        bMatched = YES;
-                        break;
+            ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+            id p1 = [chainMgr queryFullAccountInfo:userAccount];
+            id p2 = [chainMgr queryAccountData:otcAccount];
+            id p3 = [chainMgr queryAssetData:assetSymbol];
+            //  TODO:2.9 100? args
+            id p4 = [chainMgr queryAccountHistoryByOperations:userAccount optype_array:@[@(ebo_transfer)] limit:100];
+            [[[WsPromise all:@[p1, p2, p3, p4]] then:^id(id promise_data_array) {
+                id full_from_account = [promise_data_array safeObjectAtIndex:0];
+                id to_account = [promise_data_array safeObjectAtIndex:1];
+                id asset = [promise_data_array safeObjectAtIndex:2];
+                id his_data_array = [promise_data_array safeObjectAtIndex:3];
+                
+                if (!full_from_account || !to_account || !asset) {
+                    [self hideBlockView];
+                    [OrgUtils makeToast:NSLocalizedString(@"kOtcOdOrderDataException", @"订单数据异常，请联系客服。")];
+                    return nil;
+                }
+                
+                NSString* real_from_id = [[full_from_account objectForKey:@"account"] objectForKey:@"id"];
+                NSString* real_to_id = [to_account objectForKey:@"id"];
+                NSDecimalNumber* real_amount = [NSDecimalNumber decimalNumberWithString:args_amount];
+                NSString* real_asset_id = [asset objectForKey:@"id"];
+                NSInteger real_asset_precision = [[asset objectForKey:@"precision"] integerValue];
+                
+                //  检测是否已经转币了。
+                BOOL bMatched = NO;
+                if (his_data_array && [his_data_array count] > 0) {
+                    for (id his_object in his_data_array) {
+                        id op = [his_object objectForKey:@"op"];
+                        assert([[op safeObjectAtIndex:0] integerValue] == ebo_transfer);
+                        
+                        id opdata = [op safeObjectAtIndex:1];
+                        if (!opdata) {
+                            continue;
+                        }
+                        
+                        // 1、检测from、to、amount是否匹配
+                        NSString* from_id = [opdata objectForKey:@"from"];
+                        NSString* to_id = [opdata objectForKey:@"to"];
+                        if (![from_id isEqualToString:real_from_id] || ![to_id isEqualToString:real_to_id]) {
+                            continue;
+                        }
+                        
+                        // 2、检测转币数量是否撇皮
+                        id op_amount = [opdata objectForKey:@"amount"];
+                        if (![real_asset_id isEqualToString:[op_amount objectForKey:@"asset_id"]]) {
+                            continue;
+                        }
+                        id n_op_amount = [NSDecimalNumber decimalNumberWithMantissa:[[op_amount objectForKey:@"amount"] unsignedLongLongValue]
+                                                                           exponent:-real_asset_precision
+                                                                         isNegative:NO];
+                        if ([real_amount compare:n_op_amount] != NSOrderedSame) {
+                            continue;
+                        }
+                        
+                        // 3、检测memo中订单号信息是否匹配
+                        id memo_object = [opdata objectForKey:@"memo"];
+                        if (!memo_object) {
+                            continue;
+                        }
+                        NSString* plain_memo = [[WalletManager sharedWalletManager] decryptMemoObject:memo_object];
+                        if (!plain_memo) {
+                            continue;
+                        }
+                        if ([plain_memo isEqualToString:args_memo_str]) {
+                            bMatched = YES;
+                            break;
+                        }
                     }
                 }
-            }
-            
-            if (bMatched) {
-                //  已转过币了：仅更新订单状态
-                [self _execUpdateOrderCore:nil
-                                payChannel:nil
-                                      type:eoout_to_transferred];
-            } else {
-                //  转币 & 更新订单状态
-                [[[[BitsharesClientManager sharedBitsharesClientManager] simpleTransfer2:full_from_account
-                                                                                      to:to_account
-                                                                                   asset:asset
-                                                                                  amount:args_amount
-                                                                                    memo:args_memo_str] then:^id(id data)
-                {
-                    id err = [data objectForKey:@"err"];
+                
+                if (bMatched) {
+                    //  已转过币了：仅更新订单状态
+                    [self _execUpdateOrderCore:nil
+                                    payChannel:nil
+                                          type:eoout_to_transferred];
+                } else {
+                    //  转币 & 更新订单状态
+                    [[[[BitsharesClientManager sharedBitsharesClientManager] simpleTransfer2:full_from_account
+                                                                                          to:to_account
+                                                                                       asset:asset
+                                                                                      amount:args_amount
+                                                                                        memo:args_memo_str
+                                                                             memo_extra_keys:nil
+                                                                               sign_pub_keys:nil
+                                                                                   broadcast:YES] then:^id(id data)
+                      {
+                        id err = [data objectForKey:@"err"];
+                        if (err) {
+                            //  错误
+                            [self hideBlockView];
+                            [OrgUtils makeToast:err];
+                        } else {
+                            //  转币成功：更新订单状态
+                            [self _execUpdateOrderCore:nil
+                                            payChannel:nil
+                                                  type:eoout_to_transferred];
+                        }
+                        return nil;
+                    }] catch:^id(id error) {
+                        [self hideBlockView];
+                        [OrgUtils showGrapheneError:error];
+                        return nil;
+                    }];
+                }
+                return nil;
+            }] catch:^id(id error) {
+                [self hideBlockView];
+                [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+                return nil;
+            }];
+        }
+    }];
+}
+
+- (void)_transferCoinToUserAndUpadteOrder:(BOOL)return_coin_to_user
+                               payAccount:(id)payAccount
+                               payChannel:(id)payChannel
+                                     type:(EOtcOrderUpdateType)type
+{
+    OtcManager* otc = [OtcManager sharedOtcManager];
+    [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+        if (unlocked) {
+            [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+            [[[otc queryMerchantMemoKey:[otc getCurrentBtsAccount]] then:^id(id responsed) {
+                id priKey = [responsed optString:@"data"] ?: @"";
+                id pubKey = [OrgUtils genBtsAddressFromWifPrivateKey:priKey];
+                if (!pubKey) {
+                    [self hideBlockView];
+                    //  TODO:2.9 lang
+                    [OrgUtils makeToast:@"备注私钥无效。"];
+                    return nil;
+                }
+                id memo_extra_keys = @{pubKey:priKey};
+                [[[self _genTransferTransactionObject:return_coin_to_user memo_extra_keys:memo_extra_keys] then:^id(id tx_data) {
+                    id err = [tx_data objectForKey:@"err"];
                     if (err) {
                         //  错误
                         [self hideBlockView];
                         [OrgUtils makeToast:err];
                     } else {
-                        //  转币成功：更新订单状态
-                        [self _execUpdateOrderCore:nil
-                                        payChannel:nil
-                                              type:eoout_to_transferred];
+                        //  转账签名成功
+                        id tx = [tx_data objectForKey:@"tx"];
+                        assert(tx);
+                        //  更新订单状态
+                        [self _execUpdateOrderCore:payAccount payChannel:payChannel type:type signatureTx:tx];
                     }
                     return nil;
                 }] catch:^id(id error) {
@@ -406,14 +480,46 @@ enum
                     [OrgUtils showGrapheneError:error];
                     return nil;
                 }];
-            }
-            return nil;
-        }] catch:^id(id error) {
-            [self hideBlockView];
-            [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
-            return nil;
-        }];
+                return nil;
+            }] catch:^id(id error) {
+                [self hideBlockView];
+                [otc showOtcError:error];
+                return nil;
+            }];
+        }
     }];
+}
+
+/*
+ *  (private) 生成转账数据结构。商家已签名的。
+ */
+- (WsPromise*)_genTransferTransactionObject:(BOOL)return_coin_to_user memo_extra_keys:(id)memo_extra_keys
+{
+    WalletManager* walletMgr = [WalletManager sharedWalletManager];
+    assert(![walletMgr isLocked]);
+    
+    NSString* userAccount = _orderDetails[@"userAccount"];
+    NSString* otcAccount = _orderDetails[@"otcAccount"];
+    NSString* assetSymbol = _orderDetails[@"assetSymbol"];
+    NSString* args_amount = [NSString stringWithFormat:@"%@", _orderDetails[@"quantity"]];
+    
+    //  REMARK：转账memo格式：F(发币)T(退币) + 订单号后10位
+    NSString* orderId = _orderDetails[@"orderId"];
+    NSString* prefix = return_coin_to_user ? @"T" : @"F";
+    NSString* args_memo_str = [NSString stringWithFormat:@"%@%@", prefix, [orderId substringFromIndex:MAX((NSInteger)orderId.length - 10, 0)]];
+    
+    //  获取用户自身的KEY进行签名。
+    id active_permission = [[[walletMgr getWalletAccountInfo] objectForKey:@"account"] objectForKey:@"active"];
+    id sign_pub_keys = [walletMgr getSignKeys:active_permission assert_enough_permission:NO];
+    
+    return [[BitsharesClientManager sharedBitsharesClientManager] simpleTransfer:otcAccount
+                                                                              to:userAccount
+                                                                           asset:assetSymbol
+                                                                          amount:args_amount
+                                                                            memo:args_memo_str
+                                                                 memo_extra_keys:memo_extra_keys
+                                                                   sign_pub_keys:sign_pub_keys
+                                                                       broadcast:NO];
 }
 
 - (void)onButtomButtonClicked:(UIButton*)sender
@@ -426,11 +532,11 @@ enum
                                                                    withTitle:@"确认转币"
                                                                   completion:^(NSInteger buttonIndex)
              {
-                 if (buttonIndex == 1)
-                 {
-                     [self _execTransferCore];
-                 }
-             }];
+                if (buttonIndex == 1)
+                {
+                    [self _execTransferCore];
+                }
+            }];
         }
             break;
         case eooot_contact_customer_service:
@@ -445,13 +551,17 @@ enum
                                                                    withTitle:@"确认放行"
                                                                   completion:^(NSInteger buttonIndex)
              {
-                 if (buttonIndex == 1)
-                 {
-                     [self _execUpdateOrderCore:_orderDetails[@"payAccount"]
-                                     payChannel:_orderDetails[@"payChannel"]
-                                           type:eoout_to_received_money];
-                 }
-             }];
+                if (buttonIndex == 1)
+                {
+                    [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+                        if (unlocked) {
+                            [self _execUpdateOrderCore:_orderDetails[@"payAccount"]
+                                            payChannel:_orderDetails[@"payChannel"]
+                                                  type:eoout_to_received_money];
+                        }
+                    }];
+                }
+            }];
         }
             break;
             
@@ -461,13 +571,17 @@ enum
                                                                    withTitle:@"确认取消订单"
                                                                   completion:^(NSInteger buttonIndex)
              {
-                 if (buttonIndex == 1)
-                 {
-                     [self _execUpdateOrderCore:_currSelectedPaymentMethod[@"account"]
-                                     payChannel:_currSelectedPaymentMethod[@"type"]
-                                           type:eoout_to_cancel];
-                 }
-             }];
+                if (buttonIndex == 1)
+                {
+                    [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+                        if (unlocked) {
+                            [self _execUpdateOrderCore:_currSelectedPaymentMethod[@"account"]
+                                            payChannel:_currSelectedPaymentMethod[@"type"]
+                                                  type:eoout_to_cancel];
+                        }
+                    }];
+                }
+            }];
         }
             break;
         case eooot_confirm_paid:
@@ -476,13 +590,17 @@ enum
                                                                    withTitle:@"确认付款"
                                                                   completion:^(NSInteger buttonIndex)
              {
-                 if (buttonIndex == 1)
-                 {
-                    [self _execUpdateOrderCore:_currSelectedPaymentMethod[@"account"]
-                                    payChannel:_currSelectedPaymentMethod[@"type"]
-                                          type:eoout_to_paied];
-                 }
-             }];
+                if (buttonIndex == 1)
+                {
+                    [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+                        if (unlocked) {
+                            [self _execUpdateOrderCore:_currSelectedPaymentMethod[@"account"]
+                                            payChannel:_currSelectedPaymentMethod[@"type"]
+                                                  type:eoout_to_paied];
+                        }
+                    }];
+                }
+            }];
         }
             break;
         case eooot_confirm_received_refunded:
@@ -491,16 +609,90 @@ enum
                                                                    withTitle:@"确认收到退款"
                                                                   completion:^(NSInteger buttonIndex)
              {
-                 if (buttonIndex == 1)
-                 {
-                     [self _execUpdateOrderCore:_orderDetails[@"payAccount"]
-                                     payChannel:_orderDetails[@"payChannel"]
-                                           type:eoout_to_refunded_confirm];
-                 }
-             }];
+                if (buttonIndex == 1)
+                {
+                    [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+                        if (unlocked) {
+                            [self _execUpdateOrderCore:_orderDetails[@"payAccount"]
+                                            payChannel:_orderDetails[@"payChannel"]
+                                                  type:eoout_to_refunded_confirm];
+                        }
+                    }];
+                }
+            }];
+        }
+            break;
+            //  商家
+        case eooot_mc_cancel_sell_order:
+        {
+            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"我由于个人原因无法接单，同意退币给用户。\n\n注：确定后将直接转帐给用户。拒绝接单将会影响您的订单完成率。是否继续？"
+                                                                   withTitle:@"确认退币"
+                                                                  completion:^(NSInteger buttonIndex)
+             {
+                if (buttonIndex == 1)
+                {
+                    [self _transferCoinToUserAndUpadteOrder:YES payAccount:nil payChannel:nil type:eoout_to_mc_return];
+                }
+            }];
+        }
+            break;
+        case eooot_mc_confirm_paid:
+        {
+            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"我确认已按要求付款给用户。\n注：恶意点击将会被冻结账号。\n是否继续？"
+                                                                   withTitle:@"确认付款"
+                                                                  completion:^(NSInteger buttonIndex)
+             {
+                if (buttonIndex == 1)
+                {
+                    [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+                        if (unlocked) {
+                            [self _execUpdateOrderCore:_currSelectedPaymentMethod[@"account"]
+                                            payChannel:_currSelectedPaymentMethod[@"type"]
+                                                  type:eoout_to_mc_paied];
+                        }
+                    }];
+                }
+            }];
+        }
+            break;
+        case eooot_mc_confirm_received_money:
+        {
+            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"我确认已登录收款账户查看，并核对收款无误。是否放行？"
+                                                                   withTitle:@"确认放行"
+                                                                  completion:^(NSInteger buttonIndex)
+             {
+                if (buttonIndex == 1)
+                {
+                    [self _transferCoinToUserAndUpadteOrder:NO
+                                                 payAccount:_orderDetails[@"payAccount"]
+                                                 payChannel:_orderDetails[@"payChannel"]
+                                                       type:eoout_to_mc_received_money];
+                }
+            }];
+        }
+            break;
+        case eooot_mc_cancel_buy_order:
+        {
+            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"我确认已从原路径退款给用户。\n\n注：拒绝接单将会影响您的订单完成率。恶意点击将直接冻结账号。是否继续？"
+                                                                   withTitle:@"确认退款"
+                                                                  completion:^(NSInteger buttonIndex)
+             {
+                if (buttonIndex == 1)
+                {
+                    [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+                        if (unlocked) {
+                            [self _execUpdateOrderCore:_orderDetails[@"payAccount"]
+                                            payChannel:_orderDetails[@"payChannel"]
+                                                  type:eoout_to_mc_cancel];
+                        }
+                    }];
+                }
+            }];
         }
             break;
         default:
+            //  TODO:2.9
+            [OrgUtils makeToast:[NSString stringWithFormat:@"TODO:button:%@", @(sender.tag)]];
             break;
     }
 }
@@ -508,7 +700,7 @@ enum
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     
     //  背景颜色
@@ -590,7 +782,7 @@ enum
             btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
             //  TODO:2.9 others button confirm?
             switch (btn.tag) {
-                //  卖单
+                    //  卖单
                 case eooot_transfer:
                     [btn setTitle:NSLocalizedString(@"kOtcOdBtnTransfer", @"立即转币") forState:UIControlStateNormal];
                     break;
@@ -600,7 +792,7 @@ enum
                 case eooot_confirm_received_money:
                     [btn setTitle:[NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kOtcOdBtnConfirmReceivedMoney", @"放行"), _orderDetails[@"assetSymbol"]] forState:UIControlStateNormal];
                     break;
-                //  买单
+                    //  买单
                 case eooot_cancel_order:
                     [btn setTitle:NSLocalizedString(@"kOtcOdBtnCancelOrder", @"取消订单") forState:UIControlStateNormal];
                     break;
@@ -609,6 +801,17 @@ enum
                     break;
                 case eooot_confirm_received_refunded:
                     [btn setTitle:NSLocalizedString(@"kOtcOdBtnConfirmReceivedRefunded", @"我已收到退款") forState:UIControlStateNormal];
+                    break;
+                    //  商家 TODO:lang
+                case eooot_mc_cancel_sell_order:
+                case eooot_mc_cancel_buy_order:
+                    [btn setTitle:@"无法接单" forState:UIControlStateNormal];
+                    break;
+                case eooot_mc_confirm_paid:
+                    [btn setTitle:NSLocalizedString(@"kOtcOdBtnConfirmPaid", @"我已付款成功") forState:UIControlStateNormal];
+                    break;
+                case eooot_mc_confirm_received_money:
+                    [btn setTitle:[NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kOtcOdBtnConfirmReceivedMoney", @"放行"), _orderDetails[@"assetSymbol"]] forState:UIControlStateNormal];
                     break;
                 default:
                     break;
@@ -702,6 +905,9 @@ enum
             break;
         case kVcSubPaymentAccount:
             value = [_currSelectedPaymentMethod objectForKey:@"account"];
+            break;
+        case kVcSubMcUserAccount:
+            value = [_orderDetails objectForKey:@"userAccount"] ?: @"";
             break;
         default:
             value = [NSString stringWithFormat:@"unknown tag: %@", @(sender.tag)];
@@ -804,6 +1010,13 @@ enum
                 {
                     cell.textLabel.text = NSLocalizedString(@"kOtcOdCellLabelOrderDate", @"下单日期");
                     cell.detailTextLabel.text = [OtcManager fmtOrderDetailTime:[_orderDetails objectForKey:@"ctime"]];
+                }
+                    break;
+                case kVcSubMcUserAccount:
+                {
+                    cell.textLabel.text = @"用户账号";//TODO:2.9
+                    cell.detailTextLabel.text = [_orderDetails objectForKey:@"userAccount"] ?: @"";
+                    cell.accessoryView = [self genCopyButton:rowType];
                 }
                     break;
                     
@@ -970,23 +1183,23 @@ enum
                                                              items:nameList
                                                           callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
          {
-             if (buttonIndex != cancelIndex){
-                 id selectedPaymentMethod = [payMethod objectAtIndex:buttonIndex];
-                 NSString* new_id = [NSString stringWithFormat:@"%@", selectedPaymentMethod[@"id"]];
-                 NSString* old_id = [NSString stringWithFormat:@"%@", _currSelectedPaymentMethod[@"id"]];
-                 if (![new_id isEqualToString:old_id]) {
-                     // 更新商家收款方式相关字段
-                     for (id sec in _sectionDataArray) {
-                         if ([[sec objectForKey:@"type"] integerValue] == kvcSecPaymentInfo) {
-                             [self _genPaymentRows:selectedPaymentMethod
-                                      target_array:[sec objectForKey:@"rows"]];
-                             [_mainTableView reloadData];
-                             break;
-                         }
-                     }
-                 }
-             }
-         }];
+            if (buttonIndex != cancelIndex){
+                id selectedPaymentMethod = [payMethod objectAtIndex:buttonIndex];
+                NSString* new_id = [NSString stringWithFormat:@"%@", selectedPaymentMethod[@"id"]];
+                NSString* old_id = [NSString stringWithFormat:@"%@", _currSelectedPaymentMethod[@"id"]];
+                if (![new_id isEqualToString:old_id]) {
+                    // 更新商家收款方式相关字段
+                    for (id sec in _sectionDataArray) {
+                        if ([[sec objectForKey:@"type"] integerValue] == kvcSecPaymentInfo) {
+                            [self _genPaymentRows:selectedPaymentMethod
+                                     target_array:[sec objectForKey:@"rows"]];
+                            [_mainTableView reloadData];
+                            break;
+                        }
+                    }
+                }
+            }
+        }];
     }
 }
 
