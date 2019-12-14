@@ -66,14 +66,31 @@
     return self;
 }
 
+- (void)refreshCurrentAdPage
+{
+    VCOtcMcAdList* vc = (VCOtcMcAdList*)[self currentPage];
+    if (vc) {
+        [vc queryMerchantAdList];
+    }
+}
+
 - (void)onAddNewPaymentMethodClicked
 {
+    WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
     VCBase* vc = [[VCOtcMcAdUpdate alloc] initWithAuthInfo:_auth_info
                                                  user_type:eout_merchant
                                            merchant_detail:_merchant_detail
-                                                   ad_info:nil];
+                                                   ad_info:nil
+                                            result_promise:result_promise];
     //  TODO:2.9
     [self pushViewController:vc vctitle:@"发布广告" backtitle:kVcDefaultBackTitleName];
+    [result_promise then:^id(id dirty) {
+        //  刷新UI
+        if (dirty && [dirty boolValue]) {
+            [self refreshCurrentAdPage];
+        }
+        return nil;
+    }];
 }
 
 - (void)viewDidLoad
@@ -90,10 +107,7 @@
     self.navigationItem.rightBarButtonItem = addBtn;
     
     //  查询当前初始页数据
-    VCOtcMcAdList* vc = (VCOtcMcAdList*)[self currentPage];
-    if (vc) {
-        [vc queryMerchantAdList];
-    }
+    [self refreshCurrentAdPage];
 }
 
 - (void)onPageChanged:(NSInteger)tag
@@ -314,51 +328,97 @@
 
 - (void)onAdCellClicked:(id)ad_info
 {
+    //  TODO:2.9 已删除的广告暂时不可查看，也不可编辑了。
+    if (_ad_status == eoads_deleted) {
+        return;
+    }
+    
+    WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
     VCBase* vc = [[VCOtcMcAdUpdate alloc] initWithAuthInfo:_auth_info
                                                  user_type:eout_merchant
                                            merchant_detail:_merchant_detail
-                                                   ad_info:ad_info];
+                                                   ad_info:ad_info
+                                            result_promise:result_promise];
     //  TODO:2.9
     [_owner pushViewController:vc vctitle:@"编辑广告" backtitle:kVcDefaultBackTitleName];
-    
-    //    OtcManager* otc = [OtcManager sharedOtcManager];
-    //    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    //    WsPromise* p1;
-    //    if (_user_type == eout_normal_user) {
-    //        p1 = [otc queryUserOrderDetails:[otc getCurrentBtsAccount] order_id:order_item[@"orderId"]];
-    //    } else {
-    //        p1 = [otc queryMerchantOrderDetails:[otc getCurrentBtsAccount] order_id:order_item[@"orderId"]];
-    //    }
-    //    [[p1 then:^id(id responsed) {
-    //        [_owner hideBlockView];
-    ////        //  转到订单详情界面
-    ////        WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
-    ////        VCOtcOrderDetails* vc = [[VCOtcOrderDetails alloc] initWithOrderDetails:[responsed objectForKey:@"data"]
-    ////                                                                           auth:_auth_info
-    ////                                                                      user_type:_user_type
-    ////                                                                 result_promise:result_promise];
-    ////        [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-    ////        [result_promise then:^id(id callback_data) {
-    ////            [self _onOrderDetailCallback:callback_data];
-    ////            return nil;
-    ////        }];
-    //        return nil;
-    //    }] catch:^id(id error) {
-    //        [_owner hideBlockView];
-    //        [otc showOtcError:error];
-    //        return nil;
-    //    }];
+    [result_promise then:^id(id dirty) {
+        //  刷新UI
+        if (dirty && [dirty boolValue]) {
+            [self queryMerchantAdList];
+        }
+        return nil;
+    }];
 }
 
 /*
- *  (private) 从订单详情返回
+ *  事件 - 上架or下架按钮点击。
  */
-- (void)_onOrderDetailCallback:(id)callback_data
+- (void)onButtonUpOrDownClicked:(UIButton*)sender
 {
-    if (callback_data && [callback_data boolValue]) {
-        //  订单状态变更：刷新界面
-        [self queryMerchantAdList];
+    assert(sender.tag < [_dataArray count]);
+    id adInfos = [_dataArray objectAtIndex:sender.tag];
+    assert(adInfos);
+    
+    switch ([[adInfos objectForKey:@"status"] integerValue]) {
+        case eoads_online:
+        {
+            [_owner GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+                if (unlocked) {
+                    [self _execAdDownCore:adInfos];
+                }
+            }];
+        }
+            break;
+        case eoads_offline:
+        {
+            [_owner GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+                if (unlocked) {
+                    [self _execAdReupCore:adInfos];
+                }
+            }];
+        }
+            break;
+        case eoads_deleted:
+            break;
+        default:
+            break;
     }
+}
+
+- (void)_execAdDownCore:(id)adInfos
+{
+    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    OtcManager* otc = [OtcManager sharedOtcManager];
+    [[[otc merchantDownAd:[otc getCurrentBtsAccount] ad_id:[adInfos objectForKey:@"adId"]] then:^id(id data) {
+        [_owner hideBlockView];
+        //  TODO:2.9 lang
+        [OrgUtils makeToast:@"已下架。"];
+        //  刷新
+        [self queryMerchantAdList];
+        return nil;
+    }] catch:^id(id error) {
+        [_owner hideBlockView];
+        [otc showOtcError:error];
+        return nil;
+    }];
+}
+
+- (void)_execAdReupCore:(id)adInfos
+{
+    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    OtcManager* otc = [OtcManager sharedOtcManager];
+    [[[otc merchantReUpAd:[otc getCurrentBtsAccount] ad_id:[adInfos objectForKey:@"adId"]] then:^id(id data) {
+        [_owner hideBlockView];
+        //  TODO:2.9 lang
+        [OrgUtils makeToast:@"已上架。"];
+        //  刷新
+        [self queryMerchantAdList];
+        return nil;
+    }] catch:^id(id error) {
+        [_owner hideBlockView];
+        [otc showOtcError:error];
+        return nil;
+    }];
 }
 
 @end

@@ -964,7 +964,6 @@
 "kOtcOdCopiedTips" = "Copied";
 "kOtcPmActionBtnEnable" = "Enable";
 "kOtcPmActionBtnDisable" = "Disable";
-"kOtcPmActionBtnView" = "View";
 "kOtcPmActionBtnDelete" = "Delete";//TODO:
 "kOtcPmActionTipsEnabled" = "已启用，允许向商家展示。";//TODO:
 "kOtcPmActionTipsDisabled" = "已禁用，不再向商家展示。";//TODO:

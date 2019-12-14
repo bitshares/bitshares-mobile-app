@@ -212,7 +212,7 @@
     _lbEmptyOrder.font = [UIFont boldSystemFontOfSize:13];
     //  TODO:2.9
     if (_user_type == eout_merchant && _order_status == eoos_mc_wait_process) {
-        _lbEmptyOrder.text = @"没有任何需处理的订单。";
+        _lbEmptyOrder.text = @"没有任何需处理的订单";
     } else {
         _lbEmptyOrder.text = NSLocalizedString(@"kOtcOrderEmptyLabel", @"没有任何订单信息");
     }

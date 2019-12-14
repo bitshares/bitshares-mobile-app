@@ -61,6 +61,57 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
+ *  (public) 是否是有效的手机号初步验证。
+ */
++ (BOOL)checkIsValidPhoneNumber:(NSString*)str_phone_num
+{
+    if (!str_phone_num || [str_phone_num isEqualToString:@""]){
+        return NO;
+    }
+    //  TODO:2.9 是否需要这个check？
+    if (str_phone_num.length != 11) {
+        return NO;
+    }
+    return YES;
+}
+
+
+/*
+ *  (public) 是否是有效的中国身份证号。
+ */
++ (BOOL)checkIsValidChineseCardNo:(NSString*)str_card_no
+{
+    if (!str_card_no || [str_card_no isEqualToString:@""]){
+        return NO;
+    }
+    if (str_card_no.length != 18) {
+        return NO;
+    }
+    
+    //  验证身份证校验位是否正确。
+    NSString* part_one = [str_card_no substringToIndex:17];
+    //  REMARK：最后的X强制转换为大写字母。
+    unichar verify = [[[str_card_no substringFromIndex:17] uppercaseString] characterAtIndex:0];
+    if (![OrgUtils isFullDigital:part_one]) {
+        return NO;
+    }
+    NSInteger muls[] = {7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2};
+    assert(sizeof(muls) / sizeof(muls[0]) == 17);
+    unichar mods[] = {'1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2'};
+    
+    NSInteger sum = 0;
+    for (NSInteger i = 0; i < part_one.length; ++i) {
+        sum += [[part_one substringWithRange:NSMakeRange(i, 1)] integerValue] * muls[i];
+    }
+    NSInteger mod = sum % 11;
+    if (mods[mod] != verify) {
+        return NO;
+    }
+    
+    return YES;
+}
+
+/*
  *  (public) 解析 OTC 服务器返回的时间字符串，格式：2019-11-26T13:29:51.000+0000。
  */
 + (NSTimeInterval)parseTime:(NSString*)time
@@ -534,10 +585,12 @@ static OtcManager *_sharedOtcManager = nil;
         id precision = _fiat_cny_info[@"assetPrecision"];
         id assetId = _fiat_cny_info[@"assetId"];
         //  TODO:2.9 short_symbol
-        return @{@"assetSymbol":symbol, @"precision":precision, @"id":assetId, @"short_symbol":@"¥", @"name":_fiat_cny_info[@"assetAlias"]};
+        return @{@"assetSymbol":symbol, @"precision":precision,
+                 @"id":assetId, @"short_symbol":@"¥", @"type":_fiat_cny_info[@"type"],
+                 @"name":_fiat_cny_info[@"assetAlias"]};
     } else {
         //  TODO:2.9 数据不存在时兼容
-        return @{@"assetSymbol":@"CNY", @"precision":@2, @"short_symbol":@"¥"};
+        return @{@"assetSymbol":@"CNY", @"precision":@2, @"short_symbol":@"¥", @"type":@1};
     }
 }
 
@@ -750,7 +803,7 @@ static OtcManager *_sharedOtcManager = nil;
             id otcerror = [userInfo objectForKey:@"otcerror"];
             if (otcerror) {
                 NSInteger errcode = [[otcerror objectForKey:@"code"] integerValue];
-                if (errcode == eoerr_not_login) {
+                if (errcode == eoerr_not_login || errcode == eoerr_token_is_empty) {
                     return YES;
                 }
             }
@@ -778,7 +831,7 @@ static OtcManager *_sharedOtcManager = nil;
             if (otcerror) {
                 //  异常中包含 otcerror 的情况
                 NSInteger errcode = [[otcerror objectForKey:@"code"] integerValue];
-                if (errcode == eoerr_not_login && not_login_callback) {
+                if ((errcode == eoerr_not_login || errcode == eoerr_token_is_empty) && not_login_callback) {
                     not_login_callback();
                     return;
                 } else {
@@ -788,6 +841,7 @@ static OtcManager *_sharedOtcManager = nil;
                             errmsg = @"请求太频繁，请稍后再试。";
                             break;
                         case eoerr_not_login:
+                        case eoerr_token_is_empty:
                             errmsg = @"请退出场外交易界面重新登录。";
                             break;
                         default:
@@ -1004,6 +1058,24 @@ static OtcManager *_sharedOtcManager = nil;
 // */
 //- (WsPromise*)uploadQrCode:(NSString*)bts_account_name filename:(NSString*)filename data:(NSData*)data
 //{
+//1//      TODO:2.9 测试数据
+////        NSString* bundlePath = [NSBundle mainBundle].resourcePath;
+////        NSString* fullPathInApp = [NSString stringWithFormat:@"%@/%@", bundlePath, @"abouticon@3x.png"];
+////        NSData* data = [NSData dataWithContentsOfFile:fullPathInApp];
+////
+////        [[otc queryQrCode:[otc getCurrentBtsAccount] filename:@"2019/11/2415170943383153952545308672.png"] then:^id(id data) {
+////            NSLog(@"%@", data);
+////            return nil;
+////        }];
+////
+////    [[[otc uploadQrCode:[otc getCurrentBtsAccount] filename:@"test.png" data:data] then:^id(id data) {
+////        NSLog(@"%@", data);
+////        return nil;
+////    }] catch:^id(id error) {
+////        [otc showOtcError:error];
+////        return nil;
+////    }];
+
 //    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/oss/upload"];
 //    id args = @{
 //        @"btsAccount":bts_account_name,
@@ -1476,11 +1548,12 @@ static OtcManager *_sharedOtcManager = nil;
     id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/payswitch"];
     NSMutableDictionary* args = [NSMutableDictionary dictionary];
     [args setObject:bts_account_name forKey:@"btsAccount"];
+    //  REMARK：服务器采用true和false计算签名，用0和1计算签名会导致签名验证失败。
     if (aliPaySwitch) {
-        [args setObject:aliPaySwitch forKey:@"aliPaySwitch"];
+        [args setObject:[aliPaySwitch boolValue] ? @"true" : @"false" forKey:@"aliPaySwitch"];
     }
     if (bankcardPaySwitch) {
-        [args setObject:bankcardPaySwitch forKey:@"bankcardPaySwitch"];
+        [args setObject:[bankcardPaySwitch boolValue] ? @"true" : @"false" forKey:@"bankcardPaySwitch"];
     }
     return [self _queryApiCore:url args:[args copy] headers:nil auth_flag:eoaf_sign];
 }
@@ -1531,28 +1604,66 @@ static OtcManager *_sharedOtcManager = nil;
     return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
 }
 
-//  TODO:2.9
-//POST http://otc-api.gdex.vip/merchants/order/memo/key HTTP/1.1
-//timestamp: 1576218069581
-//sign: 1f6971f867958a25b8fac16b9f6ef7fcdcb4040b4ce635aa04f86a3f43cb8aba6a2ebabad6b608ce24a552ddacb8ec30e611e957625644a3e91da92daba9c99a17
-//Content-Type: application/json; charset=UTF-8
-//Content-Length: 25
-//Host: otc-api.gdex.vip
-//Connection: Keep-Alive
-//Accept-Encoding: gzip
-//User-Agent: okhttp/3.11.0
-//
-//{"btsAccount":"zxc10002"}
-//POST http://otc-api.gdex.vip/merchants/order/update HTTP/1.1
-//timestamp: 1576218070836
-//sign: 203a63e152a12f3267a5f8f90cfc21355a2818ff64cab0091dcb6f6c88245f94f877be187cfd8844d17d62ceeb010e6de49bc069513bd86e1fd9e0df93bb7573e0
-//Content-Type: application/json; charset=UTF-8
-//Content-Length: 817
-//Host: otc-api.gdex.vip
-//Connection: Keep-Alive
-//Accept-Encoding: gzip
-//User-Agent: okhttp/3.11.0
-//
-//{"paymentChannel":1,"payAccount":"144ddd","signatureTx":"{\"signatures\":[\"1c7ad45a5c822692854bc56951a982a5f1947303fa27433900e5fa210830b7423361471aaf7afb9144fe21c0631b0e06389b6393420554051c7ff18cbfad7de321\"],\"expiration\":\"2019-12-13T06:26:05\",\"extensions\":[],\"operations\":[[0,{\"amount\":{\"amount\":153200,\"asset_id\":\"1.3.5\"},\"extensions\":[],\"fee\":{\"amount\":2089843,\"asset_id\":\"1.3.0\"},\"from\":\"1.2.42\",\"memo\":{\"from\":\"BTS6MBNdwBFzFReMQ8QFFULuo6Qwppmw3hkowu3dPdmxHvvcGgmhd\",\"message\":\"13f88c4e8c9510198abb6ecb3f7e9bb9\",\"nonce\":7854279326352215333,\"to\":\"BTS7eVkGdropaALRxM3sRKHdyzadpLjYS9M9H5M5qDrVDyn6t4f4P\"},\"to\":\"1.2.44\"}]],\"ref_block_num\":42252,\"ref_block_prefix\":205552263}","btsAccount":"zxc10002","type":4,"orderId":"6dbc0e6a63a6042e4f94265de03377fcba051445"}
+/*
+ *  (public) API - 商家创建广告（不上架、仅保存）
+ *  认证：SIGN 方式
+ */
+- (WsPromise*)merchantCreateAd:(id)args
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/ad/create"];
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+}
+
+/*
+ *  (public) API - 商家更新并上架广告
+ *  认证：SIGN 方式
+ */
+- (WsPromise*)merchantUpdateAd:(id)args
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/ad/publish"];
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+}
+
+/*
+ *  (public) API - 商家重新上架广告
+ *  认证：SIGN 方式
+ */
+- (WsPromise*)merchantReUpAd:(NSString*)bts_account_name ad_id:(NSString*)ad_id
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/ad/reup"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+        @"adId":ad_id
+    };
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+}
+
+/*
+ *  (public) API - 商家下架广告
+ *  认证：SIGN 方式
+ */
+- (WsPromise*)merchantDownAd:(NSString*)bts_account_name ad_id:(NSString*)ad_id
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/ad/down"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+        @"adId":ad_id
+    };
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+}
+
+/*
+ *  (public) API - 商家删除广告
+ *  认证：SIGN 方式
+ */
+- (WsPromise*)merchantDeleteAd:(NSString*)bts_account_name ad_id:(NSString*)ad_id
+{
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/ad/cancel"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+        @"adId":ad_id
+    };
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+}
 
 @end

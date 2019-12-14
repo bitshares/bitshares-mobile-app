@@ -14,7 +14,7 @@
 
 @interface SCLTextView : UITextField
 
-@property (nonatomic, assign) BOOL bLimitInputThreshold;
+@property (nonatomic, assign) NSInteger iDecimalPrecision;  //  小数精度：0 - 整数键盘 >0 - 小数键盘(该参数指定小数位数) <0 - 普通键盘
 
 - (BOOL)isValidAuthorityThreshold:(NSString*)new_string;
 

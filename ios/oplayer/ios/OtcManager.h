@@ -26,7 +26,9 @@ typedef enum EOtcErrorCode
 {
     eoerr_ok = 0,                           //  正常
     eoerr_too_often = 1012,                 //  请求太频繁
+    eoerr_token_is_empty = 1002,            //  TOEKN不能为空
     eoerr_not_login = 2011,                 //  未登录
+    
     eoerr_order_cancel_to_go_online = 5001, //  取消订单数量太多？TODO:2.9
     //  TODO:2.9 其他待添加
 } EOtcErrorCode;
@@ -48,6 +50,14 @@ typedef enum EOtcAssetType
     eoat_fiat = 1,          //  法币
     eoat_digital = 2        //  数字货币
 } EOtcAssetType;
+
+/*
+ *  商家广告定价类型
+ */
+typedef enum EOtcPriceType
+{
+    eopt_price_fixed = 1,   //  固定价格
+} EOtcPriceType;
 
 /*
  *  场外交易账号状态
@@ -229,6 +239,16 @@ typedef enum EOtcMcProgress
 @property (nonatomic, strong) NSArray* asset_list_digital;  //  支持的数字资产列表
 
 + (OtcManager*)sharedOtcManager;
+
+/*
+ *  (public) 是否是有效的手机号初步验证。
+ */
++ (BOOL)checkIsValidPhoneNumber:(NSString*)str_phone_num;
+
+/*
+ *  (public) 是否是有效的中国身份证号。
+ */
++ (BOOL)checkIsValidChineseCardNo:(NSString*)str_card_no;
 
 /*
  *  (public) 解析 OTC 服务器返回的时间字符串，格式：2019-11-26T13:29:51.000+0000。
@@ -502,5 +522,35 @@ typedef enum EOtcMcProgress
  *  认证：SIGN 方式
  */
 - (WsPromise*)queryMerchantMemoKey:(NSString*)bts_account_name;
+
+/*
+ *  (public) API - 商家创建广告（不上架、仅保存）
+ *  认证：SIGN 方式
+ */
+- (WsPromise*)merchantCreateAd:(id)args;
+
+/*
+ *  (public) API - 商家更新并上架广告
+ *  认证：SIGN 方式
+ */
+- (WsPromise*)merchantUpdateAd:(id)args;
+
+/*
+ *  (public) API - 商家重新上架广告
+ *  认证：SIGN 方式
+ */
+- (WsPromise*)merchantReUpAd:(NSString*)bts_account_name ad_id:(NSString*)ad_id;
+
+/*
+ *  (public) API - 商家下架广告
+ *  认证：SIGN 方式
+ */
+- (WsPromise*)merchantDownAd:(NSString*)bts_account_name ad_id:(NSString*)ad_id;
+
+/*
+ *  (public) API - 商家删除广告
+ *  认证：SIGN 方式
+ */
+- (WsPromise*)merchantDeleteAd:(NSString*)bts_account_name ad_id:(NSString*)ad_id;
 
 @end
