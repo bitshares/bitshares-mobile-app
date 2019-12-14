@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/theme01.appBackColor"
+    tools:context="com.btsplusplus.fowallet.ActivityOtcMcAdUpdate">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="25dp"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+
+            <LinearLayout
+                android:id="@+id/layout_back_from_otc_mc_ad_update"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_btn_back"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/kBtnBack"
+                    style="@style/kNavigationBarTextStyle"
+                    android:gravity="center_vertical"
+                    />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:text="发布广告"
+                style="@style/kNavigationBarTextStyle" />
+
+        </FrameLayout>
+
+        <ScrollView
+            android:fillViewport="true"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/layout_asset_list_from_otc_ad_update"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <!-- 广告类型 -->
+                <LinearLayout
+                    android:id="@+id/layout_select_ad_type_from_otc_mc_ad_update"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="广告类型"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+
+                    <LinearLayout
+                        android:gravity="center_vertical|right"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:layout_marginLeft="5dp"
+                            android:textSize="12dp"
+                            android:textColor="@color/theme01.textColorMain"
+                            android:text="请选择广告类型"/>
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:foregroundGravity="right"
+                            android:src="@drawable/ic_btn_right_arrow" />
+
+                    </LinearLayout>
+                </LinearLayout>
+                <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+                <!-- 数字资产 -->
+                <LinearLayout
+                    android:id="@+id/layout_select_asset_type_from_otc_mc_ad_update"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="数字资产"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+
+                    <LinearLayout
+                        android:gravity="center_vertical|right"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:layout_marginLeft="5dp"
+                            android:textSize="12dp"
+                            android:textColor="@color/theme01.textColorMain"
+                            android:text="请选择数字资产"/>
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:foregroundGravity="right"
+                            android:src="@drawable/ic_btn_right_arrow" />
+
+                    </LinearLayout>
+                </LinearLayout>
+                <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+                <!-- 法币 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="法币"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+
+                    <LinearLayout
+                        android:gravity="center_vertical|right"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:layout_marginLeft="5dp"
+                            android:textSize="12dp"
+                            android:textColor="@color/theme01.textColorMain"
+                            android:text="人民币"/>
+
+                    </LinearLayout>
+                </LinearLayout>
+                <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+                <!-- 定价方式 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="定价方式"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+
+                    <LinearLayout
+                        android:gravity="center_vertical|right"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:layout_marginLeft="5dp"
+                            android:textSize="12dp"
+                            android:textColor="@color/theme01.textColorMain"
+                            android:text="固定方式"/>
+
+                    </LinearLayout>
+                </LinearLayout>
+                <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+                <!-- 您的价格 -->
+                <LinearLayout
+                    android:id="@+id/layout_select_price_from_otc_mc_ad_update"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="您的价格"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+
+                    <LinearLayout
+                        android:gravity="center_vertical|right"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:layout_marginLeft="5dp"
+                            android:textSize="12dp"
+                            android:textColor="@color/theme01.textColorMain"
+                            android:text="请输入您的价格"/>
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:foregroundGravity="right"
+                            android:src="@drawable/ic_btn_right_arrow" />
+
+                    </LinearLayout>
+                </LinearLayout>
+                <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+
+                <!-- 交易数量 -->
+                <LinearLayout
+                    android:id="@+id/layout_select_quantity_from_otc_mc_ad_update"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="交易数量"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+
+                    <LinearLayout
+                        android:gravity="center_vertical|right"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:layout_marginLeft="5dp"
+                            android:textSize="12dp"
+                            android:textColor="@color/theme01.textColorMain"
+                            android:text="请输入交易数量"/>
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:foregroundGravity="right"
+                            android:src="@drawable/ic_btn_right_arrow" />
+
+                    </LinearLayout>
+                </LinearLayout>
+                <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+                <!-- 可用余额 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="可用余额"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+
+                    <LinearLayout
+                        android:gravity="center_vertical|right"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:layout_marginLeft="5dp"
+                            android:textSize="12dp"
+                            android:textColor="@color/theme01.textColorMain"
+                            android:text="444444"/>
+
+                    </LinearLayout>
+                </LinearLayout>
+                <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+
+                <!-- 最小限额 -->
+                <LinearLayout
+                    android:id="@+id/layout_select_min_amount_limit_from_otc_mc_ad_update"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="最小限额"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+
+                    <LinearLayout
+                        android:gravity="center_vertical|right"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:layout_marginLeft="5dp"
+                            android:textSize="12dp"
+                            android:textColor="@color/theme01.textColorMain"
+                            android:text="请输入单笔最小限额"/>
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:foregroundGravity="right"
+                            android:src="@drawable/ic_btn_right_arrow" />
+
+                    </LinearLayout>
+                </LinearLayout>
+                <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+
+                <!-- 最大限额 -->
+                <LinearLayout
+                    android:id="@+id/layout_select_max_amount_limit_from_otc_mc_ad_update"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="最大限额"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+
+                    <LinearLayout
+                        android:gravity="center_vertical|right"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:layout_marginLeft="5dp"
+                            android:textSize="12dp"
+                            android:textColor="@color/theme01.textColorMain"
+                            android:text="请输入单笔最大限额"/>
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:foregroundGravity="right"
+                            android:src="@drawable/ic_btn_right_arrow" />
+
+                    </LinearLayout>
+                </LinearLayout>
+                <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+
+                <!-- 交易说明 -->
+                <LinearLayout
+                    android:id="@+id/layout_select_trade_description_from_otc_mc_ad_update"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="交易说明"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+
+                    <LinearLayout
+                        android:gravity="center_vertical|right"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:layout_marginLeft="5dp"
+                            android:textSize="12dp"
+                            android:textColor="@color/theme01.textColorMain"
+                            android:text="(选填)"/>
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:foregroundGravity="right"
+                            android:src="@drawable/ic_btn_right_arrow" />
+
+                    </LinearLayout>
+                </LinearLayout>
+                <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+                <TextView
+                    android:id="@+id/tv_submit_ad_from_otc_mc_ad_update"
+                    android:gravity="center"
+                    android:layout_marginTop="30dp"
+                    android:textSize="14dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:background="@color/theme01.sellColor"
+                    android:text="发布广告"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp" />
+
+
+
+            </LinearLayout>
+
+        </ScrollView>
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>

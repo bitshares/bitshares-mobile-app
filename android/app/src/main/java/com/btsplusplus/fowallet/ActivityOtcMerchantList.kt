@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
 import android.view.animation.OvershootInterpolator
 import android.widget.TextView
+import bitshares.toJsonArray
 import bitshares.toList
 import kotlinx.android.synthetic.main.activity_account_info.*
 import kotlinx.android.synthetic.main.activity_my_orders.*
@@ -20,8 +21,10 @@ class ActivityOtcMerchantList : BtsppActivity() {
     private var view_pager: ViewPager? = null
 
     private lateinit var _asset_name: String
+    private lateinit var _data: JSONArray
 
     private lateinit var tv_asset_title: TextView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +42,8 @@ class ActivityOtcMerchantList : BtsppActivity() {
         // 设置 tablelayout 和 view_pager
         tablayout = tablayout_of_merchant_list
         view_pager = view_pager_of_merchant_list
+
+        getData()
 
         // 添加 fargments
         setFragments()
@@ -117,9 +122,45 @@ class ActivityOtcMerchantList : BtsppActivity() {
         })
     }
 
+    private fun getData() {
+        _data = JSONArray().apply {
+            for (i in 0 until 10){
+                put(JSONObject().apply {
+                    put("mmerchant_name","吉祥承兑")
+                    put("total",3332)
+                    put("rate","94%")
+                    put("trade_count",1500)
+                    put("legal_asset_symbol","¥")
+                    put("limit_min","30")
+                    put("limit_max","1250")
+                    put("price","7.21")
+                    put("ad_type",(1+ i % 2))
+                    put("payment_methods", JSONArray().apply {
+                        put("alipay")
+                        put("bankcard")
+                    })
+                })
+            }
+        }
+    }
+
     private fun setFragments() {
-        fragmens.add(FragmentOtcMerchantListBuy().initialize(_asset_name))
-        fragmens.add(FragmentOtcMerchantListSell().initialize(_asset_name))
+
+        // TODO 需要对 data 按买和卖分类传入
+        val _args1 = JSONObject().apply {
+            put("entry","otc_mc_list")
+            put("data",_data)
+            put("asset_name",_asset_name)
+        }
+
+        val _args2 = JSONObject().apply {
+            put("entry","otc_ad_mc_list")
+            put("data",_data)
+            put("asset_name",_asset_name)
+        }
+
+        fragmens.add(FragmentOtcMerchantList().initialize(_args1))
+        fragmens.add(FragmentOtcMerchantList().initialize(_args2))
     }
 
     private fun setTabListener() {

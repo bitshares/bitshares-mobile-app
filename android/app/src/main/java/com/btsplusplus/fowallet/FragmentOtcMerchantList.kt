@@ -23,45 +23,27 @@ private const val ARG_PARAM2 = "param2"
  * A simple [Fragment] subclass.
  *
  */
-class FragmentOtcMerchantListBuy : BtsppFragment() {
+class FragmentOtcMerchantList : BtsppFragment() {
 
     private var _ctx: Context? = null
     private var _view: View? = null
     private lateinit var _data: JSONArray
     private var _asset_name: String = ""
+    private var _entry: String = ""
 
     override fun onInitParams(args: Any?) {
-        _asset_name = args as String
+        val _args = args as JSONObject
+        _asset_name = _args.getString("asset_name")
+        _entry = args.getString("entry")
+        _data = _args.getJSONArray("data")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         _ctx = inflater.context
-        _view = inflater.inflate(R.layout.fragment_otc_merchant_list_buy, container, false)
-        getDataAndRefreshUI()
-        return _view
-    }
-
-    private fun getDataAndRefreshUI() {
-        _data = JSONArray().apply {
-            for (i in 0 until 10){
-                put(JSONObject().apply {
-                    put("mmerchant_name","吉祥承兑")
-                    put("total",3332)
-                    put("rate","94%")
-                    put("trade_count",1500)
-                    put("legal_asset_symbol","¥")
-                    put("limit_min","30")
-                    put("limit_max","1250")
-                    put("price","7.21")
-                    put("payment_methods", JSONArray().apply {
-                        put("alipay")
-                        put("wechat")
-                    })
-                })
-            }
-        }
+        _view = inflater.inflate(R.layout.fragment_otc_merchant_list, container, false)
         refreshUI()
+        return _view
     }
 
     private fun refreshUI() {
@@ -73,7 +55,7 @@ class FragmentOtcMerchantListBuy : BtsppFragment() {
             layout.addView(ViewUtils.createEmptyCenterLabel(_ctx!!, "没有任何商家在线"))
         } else {
             _data.forEach<JSONObject> {
-                val view = ViewOtcMerchantCell(_ctx!!,_asset_name,1,it!!)
+                val view = ViewOtcMerchantCell(_ctx!!,_entry,_asset_name,it!!)
                 layout.addView(view)
             }
         }

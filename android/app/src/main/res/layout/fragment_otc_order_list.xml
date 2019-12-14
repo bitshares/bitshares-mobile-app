@@ -2,8 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FragmentOtcMerchantListSell">
-
+    tools:context="com.btsplusplus.fowallet.FragmentOtcOrderList">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,20 +12,19 @@
 
         <ScrollView
             android:fillViewport="true"
+            android:padding="10dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <LinearLayout
-                android:id="@+id/layout_buy_from_fragment_merchant_list"
+                android:id="@+id/layout_order_lists_from_fragment_orc_merchant"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-
 
             </LinearLayout>
         </ScrollView>
 
     </LinearLayout>
-
 
 </FrameLayout>

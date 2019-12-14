@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/theme01.appBackColor"
+    tools:context="com.btsplusplus.fowallet.ActivityOtcMcAssetTransfer">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="25dp"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+
+            <LinearLayout
+                android:id="@+id/layout_back_from_otc_mc_asset_transfer"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_btn_back"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/kBtnBack"
+                    style="@style/kNavigationBarTextStyle"
+                    android:gravity="center_vertical"
+                    />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:text="划转"
+                style="@style/kNavigationBarTextStyle" />
+
+        </FrameLayout>
+
+        <ScrollView
+            android:fillViewport="true"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/layout_asset_transfer_from_otc_mc_home"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <!-- 左 -->
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        tools:ignore="Suspicious0dp">
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:textColor="@color/theme01.textColorMain"
+                                android:textSize="11dp"
+                                android:text="从"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                            <TextView
+                                android:id="@+id/tv_from_text_from_otc_mc_transfer"
+                                android:textColor="@color/theme01.textColorGray"
+                                android:textSize="11dp"
+                                android:text="(个人账号)"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tv_from_account_from_otc_mc_transfer"
+                            android:layout_marginTop="10dp"
+                            android:textColor="@color/theme01.textColorMain"
+                            android:textSize="12dp"
+                            android:text="susu03"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                    <!-- 中 -->
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        tools:ignore="Suspicious0dp">
+
+                        <ImageView
+                            android:src="@drawable/icon_transfer"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                    <!-- 右 -->
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        tools:ignore="Suspicious0dp">
+
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:textColor="@color/theme01.textColorMain"
+                                android:textSize="11dp"
+                                android:text="到"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                            <TextView
+                                android:id="@+id/tv_to_text_from_otc_mc_transfer"
+                                android:textColor="@color/theme01.textColorGray"
+                                android:textSize="11dp"
+                                android:text="(商家账号)"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tv_to_account_from_otc_mc_transfer"
+                            android:layout_marginTop="10dp"
+                            android:textColor="@color/theme01.textColorMain"
+                            android:textSize="12dp"
+                            android:text="otc-xxxxxx"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+                </LinearLayout>
+                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+                <TextView
+                    android:textSize="11dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:layout_marginTop="20dp"
+                    android:text="资产"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+
+                <LinearLayout
+                    android:id="@+id/layout_select_asset_from_otc_mc_asset_transfer"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tv_transfer_asset_from_otc_mc_asset_transfer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="14dp"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="USD"/>
+
+                    <LinearLayout
+                        android:gravity="center_vertical|right"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:foregroundGravity="right"
+                            android:src="@drawable/ic_btn_right_arrow" />
+                    </LinearLayout>
+
+                </LinearLayout>
+                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+
+                <LinearLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="11dp"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="数量"/>
+
+
+                    <TextView
+                        android:id="@+id/tv_available_from_otc_mc_asset_transfer"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical|right"
+                        android:textSize="11dp"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="可用0USD"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_height="40dp">
+
+                    <EditText
+                        android:id="@+id/et_input_amount_from_otc_mc_asset_transfer"
+                        android:singleLine="true"
+                        android:maxLines="1"
+                        android:digits=".1234567890"
+                        android:inputType="phone|number"
+                        android:maxLength="24"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+
+                        android:gravity="center_vertical"
+                        android:textSize="14dp"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:background="@null"
+                        android:textColorHint="@color/theme01.textColorGray"
+                        android:hint="@string/kVcTransferSubmitTipPleaseInputAmount"/>
+
+                    <LinearLayout
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical|right"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/tv_input_aasset_symbol_from_otc_mc_asset_transfer"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:textSize="11dp"
+                            android:textColor="@color/theme01.textColorMain"
+                            android:text="USD"/>
+                        <TextView
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:textSize="11dp"
+                            android:textColor="@color/theme01.textColorNormal"
+                            android:text="|"/>
+                        <TextView
+                            android:id="@+id/tv_transfer_all_from_otc_mc_asset_transfer"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical|right"
+                            android:textSize="11dp"
+                            android:textColor="@color/theme01.textColorHighlight"
+                            android:text="@string/kLabelSendAll"/>
+                    </LinearLayout>
+
+
+                </LinearLayout>
+                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+                <TextView
+                    android:id="@+id/tv_transfer_submit_from_otc_mc_asset_transfer"
+                    android:gravity="center"
+                    android:layout_marginTop="30dp"
+                    android:textSize="14dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:background="@color/theme01.sellColor"
+                    android:text="划转"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp" />
+
+                <TextView
+                    android:id="@+id/tv_warm_tip_from_otc_mc_asset_transfer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:singleLine="false"
+                    android:textSize="12dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:padding="5dp"
+                    android:background="@color/theme01.textColorGray"
+                    android:text="【温馨提示】\n 从个人账号直接转账给商家账号" />
+
+
+            </LinearLayout>
+
+        </ScrollView>
+    </LinearLayout>
+
+
+
+</android.support.constraint.ConstraintLayout>
