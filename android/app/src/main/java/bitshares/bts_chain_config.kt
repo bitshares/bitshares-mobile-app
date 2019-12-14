@@ -243,3 +243,20 @@ enum class EHtlcDeployMode(val value: Int) {
     EDM_PREIMAGE(0),               //  根据原像部署
     EDM_HASHCODE(1),               //  根据Hash部署
 }
+
+/**
+ *  OTC 订单状态
+ */
+enum class OtcOrderStatus(val value: Int) {
+    STARTING(0),               //  进行中
+    FINISHED(1),               //  已完成
+    CANCELED(2)                //  已取消
+}
+
+/**
+ *  OTC 付款方式
+ */
+enum class OtcPaymentMethods(val value: Int) {
+    ALIPAY(0),               //  支付宝
+    BANKCARD(1),             //  银行卡
+}

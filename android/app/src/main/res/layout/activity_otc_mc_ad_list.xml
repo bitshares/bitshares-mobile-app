@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.btsplusplus.fowallet.ActivityOtcOrderList"
-    android:background="@color/theme01.appBackColor">
-
+    android:background="@color/theme01.appBackColor"
+    tools:context="com.btsplusplus.fowallet.ActivityOtcMcAdList">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,8 +19,9 @@
             android:layout_height="40dp"
             android:orientation="horizontal">
 
+
             <LinearLayout
-                android:id="@+id/layout_back_from_otc_merchant_order_list"
+                android:id="@+id/layout_back_from_otc_mc_ad_list"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:orientation="horizontal">
@@ -45,14 +45,24 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="订单记录"
+                android:text="商家广告"
                 style="@style/kNavigationBarTextStyle" />
+
+            <Button
+                android:id="@+id/button_add_ad_from_otc_mc_ad_list"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                style="@style/kNavigationBarTextStyle"
+                android:background="#00000000"
+                android:text="+"
+                android:textSize="22dp"
+                android:layout_marginRight="10dp"  />
 
         </FrameLayout>
 
-
         <android.support.design.widget.TabLayout
-            android:id="@+id/tablayout_of_otc_order_list"
+            android:id="@+id/tablayout_of_otc_ad_list"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             app:tabTextAppearance="@style/KPageTabTextStyle"
@@ -63,27 +73,29 @@
             <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="进行中" />
+                android:text="上架中" />
 
             <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="已完成" />
+                android:text="已下架" />
 
             <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="已取消" />
+                android:text="已删除" />
 
         </android.support.design.widget.TabLayout>
 
         <android.support.v4.view.ViewPager
-            android:id="@+id/view_pager_of_otc_order_list"
+            android:id="@+id/view_pager_of_otc_ad_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
         </android.support.v4.view.ViewPager>
 
+
     </LinearLayout>
+
 
 </android.support.constraint.ConstraintLayout>
