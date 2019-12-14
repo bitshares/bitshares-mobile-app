@@ -964,7 +964,6 @@
 "kOtcOdCopiedTips" = "已复制";//TODO:
 "kOtcPmActionBtnEnable" = "有効にする";
 "kOtcPmActionBtnDisable" = "無効にする";
-"kOtcPmActionBtnView" = "表示する";
 "kOtcPmActionBtnDelete" = "削除する";
 "kOtcPmActionTipsEnabled" = "已启用，允许向商家展示。";//TODO:
 "kOtcPmActionTipsDisabled" = "已禁用，不再向商家展示。";//TODO:

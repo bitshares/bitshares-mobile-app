@@ -14,6 +14,8 @@
 #import "SCLTimerDisplay.h"
 #import "SCLMacros.h"
 
+#import "OrgUtils.h"
+
 #if defined(__has_feature) && __has_feature(modules)
 @import AVFoundation;
 @import AudioToolbox;
@@ -652,11 +654,31 @@ SCLTimerDisplay *buttonTimer;
 {
     if ([textField isKindOfClass:[SCLTextView class]]) {
         SCLTextView* tf = (SCLTextView*)textField;
-        if (tf.bLimitInputThreshold) {
-            return [tf isValidAuthorityThreshold:string];
+        //  小于0 - 不限制
+        //  等于0 - 用整数键盘限制
+        //  大于0 - 限制小数精度
+        if (tf.iDecimalPrecision > 0) {
+            return [OrgUtils isValidAmountOrPriceInput:textField.text
+                                                 range:range
+                                            new_string:string
+                                             precision:tf.iDecimalPrecision];
         }
     }
     return YES;
+}
+
+- (void)onTextFieldDidChange:(UITextField*)textField
+{
+    if ([textField isKindOfClass:[SCLTextView class]]) {
+        SCLTextView* tf = (SCLTextView*)textField;
+        //  小于0 - 不限制
+        //  等于0 - 用整数键盘限制
+        //  大于0 - 限制小数精度
+        if (tf.iDecimalPrecision > 0) {
+            //  更新小数点为APP默认小数点样式（可能和输入法中下小数点不同，比如APP里是`.`号，而输入法则是`,`号。
+            [OrgUtils correctTextFieldDecimalSeparatorDisplayStyle:textField];
+        }
+    }
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField

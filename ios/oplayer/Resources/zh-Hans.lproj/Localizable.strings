@@ -964,7 +964,6 @@
 "kOtcOdCopiedTips" = "已复制";
 "kOtcPmActionBtnEnable" = "启用";
 "kOtcPmActionBtnDisable" = "禁用";
-"kOtcPmActionBtnView" = "查看";
 "kOtcPmActionBtnDelete" = "删除";
 "kOtcPmActionTipsEnabled" = "已启用，允许向商家展示。";
 "kOtcPmActionTipsDisabled" = "已禁用，不再向商家展示。";

@@ -12,7 +12,7 @@
 
 @implementation SCLTextView
 
-@synthesize bLimitInputThreshold;
+@synthesize iDecimalPrecision;
 
 - (instancetype)init
 {
@@ -46,7 +46,7 @@
 
 - (void)setup
 {
-    self.bLimitInputThreshold = NO;
+    self.iDecimalPrecision = -1;
     self.frame = CGRectMake(0.0f, 0.0f, 0.0f, MIN_HEIGHT);
     self.returnKeyType = UIReturnKeyDone;
     self.borderStyle = UITextBorderStyleRoundedRect;
