@@ -255,20 +255,14 @@ enum
     
     _tf_address.updateClearButtonTintColor = YES;
     _tf_address.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    _tf_address.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderAddress
-                                                                        attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                     NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tf_address.attributedPlaceholder = [ViewUtils placeholderAttrString:placeHolderAddress];
     _tf_amount.updateClearButtonTintColor = YES;
     _tf_amount.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    _tf_amount.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderAmount
-                                                                       attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                    NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tf_amount.attributedPlaceholder = [ViewUtils placeholderAttrString:placeHolderAmount];
     if (_tf_memo){
         _tf_memo.updateClearButtonTintColor = YES;
         _tf_memo.textColor = [ThemeManager sharedThemeManager].textColorMain;
-        _tf_memo.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderMemo
-                                                                         attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                      NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+        _tf_memo.attributedPlaceholder = [ViewUtils placeholderAttrString:placeHolderMemo];
     }
     
     //  绑定输入事件（限制输入）

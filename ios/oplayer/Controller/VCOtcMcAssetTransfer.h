@@ -14,7 +14,9 @@
 - (id)initWithAuthInfo:(id)auth_info
              user_type:(EOtcUserType)user_type
        merchant_detail:(id)merchant_detail
-          balance_info:(id)balance_info
+            asset_list:(id)asset_list
+   curr_merchant_asset:(id)curr_merchant_asset
+     full_account_data:(id)full_account_data
            transfer_in:(BOOL)transfer_in;
 
 @end

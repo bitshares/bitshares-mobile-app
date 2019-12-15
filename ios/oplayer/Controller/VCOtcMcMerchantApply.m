@@ -90,9 +90,7 @@ enum
     //  设置属性颜色等
     _tf_nickname.updateClearButtonTintColor = YES;
     _tf_nickname.textColor = theme.textColorMain;
-    _tf_nickname.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderNickName
-                                                                         attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
-                                                                                      NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tf_nickname.attributedPlaceholder = [ViewUtils placeholderAttrString:placeHolderNickName];
     
     //  UI - 主表格
     _mainTableView = [[UITableViewBase alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];

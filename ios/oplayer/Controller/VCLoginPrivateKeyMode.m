@@ -111,15 +111,11 @@ enum
     //  颜色字号下划线
     _tf_private_key.updateClearButtonTintColor = YES;
     _tf_private_key.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    _tf_private_key.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_private_key.placeholder
-                                                                         attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                      NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tf_private_key.attributedPlaceholder = [ViewUtils placeholderAttrString:_tf_private_key.placeholder];
     if (_tf_trade_password){
         _tf_trade_password.updateClearButtonTintColor = YES;
         _tf_trade_password.textColor = [ThemeManager sharedThemeManager].textColorMain;
-        _tf_trade_password.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_trade_password.placeholder
-                                                                                   attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                                NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+        _tf_trade_password.attributedPlaceholder = [ViewUtils placeholderAttrString:_tf_trade_password.placeholder];
     }
     
     //  UI - 主列表

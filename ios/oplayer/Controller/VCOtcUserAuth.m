@@ -177,34 +177,24 @@ enum
     
     _tf_name.updateClearButtonTintColor = YES;
     _tf_name.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    _tf_name.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderName
-                                                                        attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                     NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tf_name.attributedPlaceholder = [ViewUtils placeholderAttrString:placeHolderName];
+    
     _tf_idnumber.updateClearButtonTintColor = YES;
     _tf_idnumber.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    _tf_idnumber.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderIdNumber
-                                                                       attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                    NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tf_idnumber.attributedPlaceholder = [ViewUtils placeholderAttrString:placeHolderIdNumber];
  
     _tf_phonenumber.updateClearButtonTintColor = YES;
     _tf_phonenumber.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    _tf_phonenumber.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderPhoneNumber
-                                                                     attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                  NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tf_phonenumber.attributedPlaceholder = [ViewUtils placeholderAttrString:placeHolderPhoneNumber];
     
     _tf_smscode.updateClearButtonTintColor = YES;
     _tf_smscode.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    _tf_smscode.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderSmscode
-                                                                     attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                  NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tf_smscode.attributedPlaceholder = [ViewUtils placeholderAttrString:placeHolderSmscode];
     //  自动填充短信验证码
     if (@available(iOS 12.0, *)) {
         _tf_smscode.textContentType = UITextContentTypeOneTimeCode;
     }
-    
-    //  绑定输入事件（限制输入） TODO:otc
-    [_tf_idnumber addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
-    
+
     //  UI - 短信验证码尾部获取按钮
     UIButton* btnRequestSmsCode = [UIButton buttonWithType:UIButtonTypeCustom];
     btnRequestSmsCode.titleLabel.font = [UIFont systemFontOfSize:13];
@@ -302,17 +292,17 @@ enum
     }];
 }
 
-#pragma mark- for UITextFieldDelegate
-
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
-{
-    return YES;//TODO:otc
-}
-
-- (void)onTextFieldDidChange:(UITextField*)textField
-{
-    //  TODO:otc
-}
+//#pragma mark- for UITextFieldDelegate
+//
+//- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+//{
+//    return YES;//TODO:otc
+//}
+//
+//- (void)onTextFieldDidChange:(UITextField*)textField
+//{
+//    //  TODO:otc
+//}
 
 #pragma mark- UITextFieldDelegate delegate method
 - (BOOL)textFieldShouldReturn:(UITextField *)textField

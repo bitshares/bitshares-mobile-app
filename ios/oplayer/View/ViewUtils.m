@@ -76,4 +76,26 @@
     return attrString;
 }
 
+/*
+ *  (public) 大部分输入框占位符默认属性字符串
+ */
++ (NSAttributedString*)placeholderAttrString:(NSString*)placeholder
+{
+    return [self placeholderAttrString:placeholder
+                                  font:[UIFont systemFontOfSize:17]
+                                 color:[ThemeManager sharedThemeManager].textColorGray];
+}
+
++ (NSAttributedString*)placeholderAttrString:(NSString*)placeholder font:(UIFont*)font color:(UIColor*)color
+{
+    assert(placeholder);
+    assert(font);
+    assert(color);
+    
+    return [[NSAttributedString alloc] initWithString:placeholder
+                                           attributes:@{NSForegroundColorAttributeName:color,
+                                                        NSFontAttributeName:font}];
+}
+
+
 @end

@@ -100,17 +100,13 @@ enum
     _tf_authority.updateClearButtonTintColor = YES;
     _tf_authority.showBottomLine = YES;
     _tf_authority.textColor = theme.textColorMain;
-    _tf_authority.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderAuthority
-                                                                          attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
-                                                                                       NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tf_authority.attributedPlaceholder = [ViewUtils placeholderAttrString:placeHolderAuthority];
     
     _tf_threshold = [self createTfWithRect:rect keyboard:UIKeyboardTypeNumberPad placeholder:placeHolderThreshold];
     _tf_threshold.updateClearButtonTintColor = YES;
     _tf_threshold.showBottomLine = YES;
     _tf_threshold.textColor = theme.textColorMain;
-    _tf_threshold.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderThreshold
-                                                                          attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
-                                                                                       NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tf_threshold.attributedPlaceholder = [ViewUtils placeholderAttrString:placeHolderThreshold];
     
     //  UI - 管理者输入框末尾按钮
     UIButton* btnSearch = [UIButton buttonWithType:UIButtonTypeSystem];

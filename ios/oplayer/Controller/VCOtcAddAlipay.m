@@ -122,18 +122,12 @@ enum
 
     _tf_username.updateClearButtonTintColor = YES;
     _tf_username.textColor = theme.textColorMain;
-    _tf_username.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderUserName
-                                                                        attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
-                                                                                     NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    
+    _tf_username.attributedPlaceholder = [ViewUtils placeholderAttrString:placeHolderUserName];
     _tf_account_id.updateClearButtonTintColor = YES;
     _tf_account_id.textColor = theme.textColorMain;
-    _tf_account_id.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderAccountID
-                                                                       attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
-                                                                                    NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tf_account_id.attributedPlaceholder = [ViewUtils placeholderAttrString:placeHolderAccountID];
  
-    //  绑定输入事件（限制输入） TODO:otc
-    [_tf_account_id addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
-    
     //  UI - 主表格
     _mainTableView = [[UITableViewBase alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];
     _mainTableView.delegate = self;
@@ -212,18 +206,6 @@ enum
             }];
         }
     }];
-}
-
-#pragma mark- for UITextFieldDelegate
-
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
-{
-    return YES;//TODO:otc
-}
-
-- (void)onTextFieldDidChange:(UITextField*)textField
-{
-    //  TODO:otc
 }
 
 #pragma mark- UITextFieldDelegate delegate method

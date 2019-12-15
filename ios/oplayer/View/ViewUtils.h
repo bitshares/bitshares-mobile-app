@@ -31,4 +31,10 @@
                                              titleColor:(UIColor*)titleColor
                                              valueColor:(UIColor*)valueColor;
 
+/*
+ *  (public) 大部分输入框占位符默认属性字符串
+ */
++ (NSAttributedString*)placeholderAttrString:(NSString*)placeholder;
++ (NSAttributedString*)placeholderAttrString:(NSString*)placeholder font:(UIFont*)font color:(UIColor*)color;
+
 @end

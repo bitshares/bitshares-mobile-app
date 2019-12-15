@@ -445,16 +445,9 @@ enum
     _tfTotal.textColor = [ThemeManager sharedThemeManager].textColorMain;
     _tfTotal.showBottomLine = YES;
     
-    _tfPrice.attributedPlaceholder = [[NSAttributedString alloc] initWithString:pricePlaceHolder
-                                                                     attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                  NSFontAttributeName:[UIFont systemFontOfSize:17]}];
-    _tfNumber.attributedPlaceholder = [[NSAttributedString alloc] initWithString:numberPlaceHolder
-                                                                      attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                   NSFontAttributeName:[UIFont systemFontOfSize:17]}];
-    
-    _tfTotal.attributedPlaceholder = [[NSAttributedString alloc] initWithString:totalPlaceHolder
-                                                                      attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                   NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tfPrice.attributedPlaceholder = [ViewUtils placeholderAttrString:pricePlaceHolder];
+    _tfNumber.attributedPlaceholder = [ViewUtils placeholderAttrString:numberPlaceHolder];
+    _tfTotal.attributedPlaceholder = [ViewUtils placeholderAttrString:totalPlaceHolder];
     
     //  绑定输入事件（限制输入）
     [_tfPrice addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];

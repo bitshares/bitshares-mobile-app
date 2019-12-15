@@ -50,15 +50,35 @@
     return self;
 }
 
-- (void)onQueryOtcAssetsResponsed:(id)responsed
+- (void)onQueryOtcAssetsResponsed:(id)merchantAssetList chainAssets:(id)chainAssets
 {
-    id data = [responsed objectForKey:@"data"];
     [_dataArray removeAllObjects];
-    if (data) {
-        for (id item in data) {
-            [_dataArray addObject:[item mutableCopy]];
+    
+    if (merchantAssetList && [merchantAssetList count] > 0) {
+        
+        NSMutableDictionary* chain_asset_map = [NSMutableDictionary dictionary];
+        if (chainAssets) {
+            for (id asset in chainAssets) {
+                id symbol = [asset objectForKey:@"symbol"];
+                if (symbol) {
+                    [chain_asset_map setObject:asset forKey:symbol];
+                }
+            }
+        }
+        
+        for (id item in merchantAssetList) {
+            id chain_asset = [chain_asset_map objectForKey:[item objectForKey:@"assetSymbol"]];
+            assert(chain_asset);
+            //  OTC服务器数据错误则可能导致链上资产不存在。
+            if (chain_asset) {
+                id mitem = [item mutableCopy];
+                [mitem setObject:@([[chain_asset objectForKey:@"precision"] integerValue]) forKey:@"kExtPrecision"];
+                [mitem setObject:chain_asset forKey:@"kExtChainAsset"];
+                [_dataArray addObject:mitem];
+            }
         }
     }
+    
     [self refreshView];
 }
 
@@ -75,9 +95,30 @@
 {
     OtcManager* otc = [OtcManager sharedOtcManager];
     [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    [[[otc queryMerchantOtcAsset:[otc getCurrentBtsAccount]] then:^id(id data) {
-        [self hideBlockView];
-        [self onQueryOtcAssetsResponsed:data];
+    [[[otc queryMerchantOtcAsset:[otc getCurrentBtsAccount]] then:^id(id responsed) {
+        id merchantAssetList = [responsed objectForKey:@"data"];
+        NSMutableArray* assetSymbolList = [NSMutableArray array];
+        if (merchantAssetList && [merchantAssetList isKindOfClass:[NSArray class]] && [merchantAssetList count] > 0) {
+            for (id item in merchantAssetList) {
+                [assetSymbolList addObject:[item objectForKey:@"assetSymbol"]];
+            }
+        }
+        if ([assetSymbolList count] > 0) {
+            //  查询资产信息和个人账号余额信息
+            [[[[ChainObjectManager sharedChainObjectManager] queryAssetDataList:assetSymbolList] then:^id(id chain_assets) {
+                [self hideBlockView];
+                [self onQueryOtcAssetsResponsed:merchantAssetList chainAssets:chain_assets];
+                return nil;
+            }] catch:^id(id error) {
+                [self hideBlockView];
+                [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+                [self onQueryOtcAssetsResponsed:nil chainAssets:nil];
+                return nil;
+            }];
+        } else {
+            [self hideBlockView];
+            [self onQueryOtcAssetsResponsed:nil chainAssets:nil];
+        }
         return nil;
     }] catch:^id(id error) {
         [self hideBlockView];
@@ -89,7 +130,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
@@ -151,27 +192,37 @@
 - (void)onButtonClicked_TransferIn:(UIButton*)button
 {
     id item = [_dataArray objectAtIndex:button.tag];
-    
-    //  TODO:2.9
-    VCBase* vc = [[VCOtcMcAssetTransfer alloc] initWithAuthInfo:_auth_info
-                                                      user_type:_user_type
-                                                merchant_detail:_merchant_detail
-                                                   balance_info:item
-                                                    transfer_in:YES];
-    [self pushViewController:vc vctitle:@"划转" backtitle:kVcDefaultBackTitleName];
+    [self gotoOtcMcAssetTransfer:YES curr_merchant_asset:item];
 }
 
 - (void)onButtonClicked_TransferOut:(UIButton*)button
 {
     id item = [_dataArray objectAtIndex:button.tag];
-    
-    //  TODO:2.9
-    VCBase* vc = [[VCOtcMcAssetTransfer alloc] initWithAuthInfo:_auth_info
-                                                      user_type:_user_type
-                                                merchant_detail:_merchant_detail
-                                                   balance_info:item
-                                                    transfer_in:NO];
-    [self pushViewController:vc vctitle:@"划转" backtitle:kVcDefaultBackTitleName];
+    [self gotoOtcMcAssetTransfer:NO curr_merchant_asset:item];
+}
+
+- (void)gotoOtcMcAssetTransfer:(BOOL)transfer_in curr_merchant_asset:(id)curr_merchant_asset
+{
+    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    id p1 = [[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:[[OtcManager sharedOtcManager] getCurrentBtsAccount]];
+    [[p1 then:^id(id full_account_data) {
+        [self hideBlockView];
+        //  转到划转界面
+        //  TODO:2.9 lang
+        VCBase* vc = [[VCOtcMcAssetTransfer alloc] initWithAuthInfo:_auth_info
+                                                          user_type:_user_type
+                                                    merchant_detail:_merchant_detail
+                                                         asset_list:_dataArray
+                                                curr_merchant_asset:curr_merchant_asset
+                                                  full_account_data:full_account_data
+                                                        transfer_in:transfer_in];
+        [self pushViewController:vc vctitle:@"划转" backtitle:kVcDefaultBackTitleName];
+        return nil;
+    }] catch:^id(id error) {
+        [self hideBlockView];
+        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+        return nil;
+    }];
 }
 
 @end

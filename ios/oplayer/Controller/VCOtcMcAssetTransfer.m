@@ -22,13 +22,23 @@ enum
     kvcSecMax
 };
 
+enum
+{
+    kTailerTagAssetName = 1,
+    kTailerTagSpace,
+    kTailerTagBtnAll
+};
+
 @interface VCOtcMcAssetTransfer ()
 {
     NSDictionary*           _auth_info;
     EOtcUserType            _user_type;
-    NSDictionary*           _balance_info;
+    NSArray*                _asset_list;
+    NSDictionary*           _curr_merchant_asset;
+    NSDictionary*           _full_account_data;
     NSDictionary*           _merchant_detail;
     NSMutableDictionary*    _argsFromTo;
+    NSDecimalNumber*        _nCurrBalance;
     
     UITableViewBase*        _mainTableView;
     UITableViewCellBase*    _cellAssetAvailable;
@@ -44,7 +54,9 @@ enum
 
 -(void)dealloc
 {
-    _balance_info = nil;
+    _nCurrBalance = nil;
+    _asset_list = nil;
+    _curr_merchant_asset = nil;
     _cellAssetAvailable = nil;
     _auth_info = nil;
     if (_tf_amount){
@@ -63,7 +75,9 @@ enum
 - (id)initWithAuthInfo:(id)auth_info
              user_type:(EOtcUserType)user_type
        merchant_detail:(id)merchant_detail
-          balance_info:(id)balance_info
+            asset_list:(id)asset_list
+   curr_merchant_asset:(id)curr_merchant_asset
+     full_account_data:(id)full_account_data
            transfer_in:(BOOL)transfer_in
 {
     self = [super init];
@@ -71,7 +85,9 @@ enum
         _auth_info = auth_info;
         _user_type = user_type;
         _merchant_detail = merchant_detail;
-        _balance_info = balance_info;
+        _asset_list = asset_list;
+        _curr_merchant_asset = curr_merchant_asset;
+        _full_account_data = full_account_data;
         _argsFromTo = [NSMutableDictionary dictionary];
         if (transfer_in) {
             //  个人到商家
@@ -84,6 +100,7 @@ enum
             [_argsFromTo setObject:[_merchant_detail objectForKey:@"btsAccount"] forKey:@"to"];
             [_argsFromTo setObject:@YES forKey:@"bFromIsMerchant"];
         }
+        [self _genCurrBalance];
     }
     return self;
 }
@@ -93,12 +110,99 @@ enum
     [_mainTableView reloadData];
 }
 
-- (UIView*)genTailerView:(NSString*)asset_symbol action:(NSString*)action tag:(NSInteger)tag
+/*
+ *  切换资产 or 交换FROM/TO的时候需要更新余额
+ */
+- (void)_genCurrBalance
 {
+    if ([[_argsFromTo objectForKey:@"bFromIsMerchant"] boolValue]) {
+        _nCurrBalance = [NSDecimalNumber decimalNumberWithString:[NSString stringWithFormat:@"%@", [_curr_merchant_asset objectForKey:@"available"]]];
+    } else {
+        //  链上余额
+        _nCurrBalance = nil;
+        id balances = [_full_account_data objectForKey:@"balances"];
+        if (balances) {
+            id curr_asset = [_curr_merchant_asset objectForKey:@"kExtChainAsset"];
+            NSString* curr_asset_id = [curr_asset objectForKey:@"id"];
+            NSInteger precision = [[curr_asset objectForKey:@"precision"] integerValue];
+            for (id balance_object in balances) {
+                if ([curr_asset_id isEqualToString:[balance_object objectForKey:@"asset_type"]]) {
+                    _nCurrBalance = [NSDecimalNumber decimalNumberWithMantissa:[[balance_object objectForKey:@"balance"] unsignedLongLongValue]
+                                                                      exponent:-precision
+                                                                    isNegative:NO];
+                    
+                    break;
+                }
+            }
+        }
+        if (!_nCurrBalance) {
+            _nCurrBalance = [NSDecimalNumber zero];
+        }
+    }
+}
+- (void)_drawUI_Balance:(BOOL)not_enough
+{
+    //  TODO:2.9 lang
     ThemeManager* theme = [ThemeManager sharedThemeManager];
-    
+    NSString* symbol = [_curr_merchant_asset objectForKey:@"assetSymbol"];
+    if (not_enough) {
+        _cellAssetAvailable.detailTextLabel.text = [NSString stringWithFormat:@"可用 %@ %@(%@)", _nCurrBalance,
+                                                    symbol, @"余额不足"];
+        _cellAssetAvailable.detailTextLabel.textColor = theme.tintColor;
+    } else {
+        _cellAssetAvailable.detailTextLabel.text = [NSString stringWithFormat:@"可用 %@ %@", _nCurrBalance,
+                                                    symbol];
+        _cellAssetAvailable.detailTextLabel.textColor = theme.textColorMain;
+    }
+}
+
+- (void)_drawUI_newTailerAssetName:(NSString*)asset_symbol
+{
+    UILabel* lbAsset = nil;
+    UILabel* lbSpace = nil;
+    UIButton* btn = nil;
+    for (UIView* view in _tf_amount.rightView.subviews) {
+        switch (view.tag) {
+            case kTailerTagAssetName:
+                lbAsset = (UILabel*)view;
+                lbAsset.text = asset_symbol;
+                break;
+            case kTailerTagSpace:
+                lbSpace = (UILabel*)view;
+                break;
+            case kTailerTagBtnAll:
+                btn = (UIButton*)view;
+                break;
+            default:
+                break;
+        }
+        if (lbAsset && lbSpace && btn) {
+            [self _resetTailerViewFrame:lbAsset space:lbSpace btn:btn tailer_view:lbAsset.superview];
+            break;
+        }
+    }
+}
+
+- (void)_resetTailerViewFrame:(UILabel*)lbAsset space:(UILabel*)lbSpace btn:(UIButton*)btn tailer_view:(UIView*)tailer_view
+{
     CGFloat fHeight = 31.0f;
     CGFloat fSpace = 12.0f;
+    
+    CGSize size1 = [ViewUtils auxSizeWithLabel:btn.titleLabel];
+    CGSize size2 = [ViewUtils auxSizeWithLabel:lbSpace];
+    CGSize size3 = [ViewUtils auxSizeWithLabel:lbAsset];
+    
+    CGFloat fWidth = size1.width + size2.width + size3.width + fSpace * 3;
+    
+    tailer_view.frame = CGRectMake(0, 0, fWidth, fHeight);
+    lbAsset.frame = CGRectMake(fSpace * 1, 0, size3.width, fHeight);
+    lbSpace.frame = CGRectMake(fSpace * 2 + size3.width, 0, size2.width, fHeight);
+    btn.frame = CGRectMake(fSpace * 3 + size3.width + size2.width, 0, size1.width, fHeight);
+}
+
+- (UIView*)genTailerView:(NSString*)asset_symbol action:(NSString*)action
+{
+    ThemeManager* theme = [ThemeManager sharedThemeManager];
     
     UIView* tailer_view = [[UIView alloc] initWithFrame:CGRectZero];
     
@@ -117,19 +221,14 @@ enum
     btn.userInteractionEnabled = YES;
     [btn addTarget:self action:@selector(onButtonTailerClicked:) forControlEvents:UIControlEventTouchUpInside];
     btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
-    btn.tag = tag;
+    
+    //  设置TAG
+    lbAsset.tag = kTailerTagAssetName;
+    lbSpace.tag = kTailerTagSpace;
+    btn.tag = kTailerTagBtnAll;
     
     //  设置 frame
-    CGSize size1 = [ViewUtils auxSizeWithLabel:btn.titleLabel];
-    CGSize size2 = [ViewUtils auxSizeWithLabel:lbSpace];
-    CGSize size3 = [ViewUtils auxSizeWithLabel:lbAsset];
-    
-    CGFloat fWidth = size1.width + size2.width + size3.width + fSpace * 3;
-    
-    tailer_view.frame = CGRectMake(0, 0, fWidth, fHeight);
-    lbAsset.frame = CGRectMake(fSpace * 1, 0, size3.width, fHeight);
-    lbSpace.frame = CGRectMake(fSpace * 2 + size3.width, 0, size2.width, fHeight);
-    btn.frame = CGRectMake(fSpace * 3 + size3.width + size2.width, 0, size1.width, fHeight);
+    [self _resetTailerViewFrame:lbAsset space:lbSpace btn:btn tailer_view:tailer_view];
     
     [tailer_view addSubview:lbAsset];
     [tailer_view addSubview:lbSpace];
@@ -138,13 +237,22 @@ enum
     return tailer_view;
 }
 
+/*
+ *  事件 - 全部 按钮点击
+ */
 - (void)onButtonTailerClicked:(UIButton*)sender
 {
-    //  TODO:2.9
+    id new_value = _nCurrBalance;
+    if ([new_value compare:[NSDecimalNumber zero]] < 0) {
+        new_value = [NSDecimalNumber zero];
+    }
+    _tf_amount.text = [OrgUtils formatFloatValue:_nCurrBalance usesGroupingSeparator:NO];
+    [self onAmountChanged];
 }
 
 - (NSString*)genTransferTipsMessage
 {
+    //  TODO:2.9 lang
     if ([[_argsFromTo objectForKey:@"bFromIsMerchant"] boolValue]) {
         return @"【温馨提示】\n从商家账号转账给个人账号，需要平台协同处理，划转成功后请耐心等待。";
     } else {
@@ -155,7 +263,7 @@ enum
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     
     self.view.backgroundColor = theme.appBackColor;
@@ -169,22 +277,21 @@ enum
     _cellAssetAvailable.textLabel.text = @"数量";
     _cellAssetAvailable.textLabel.font = [UIFont systemFontOfSize:13.0f];
     _cellAssetAvailable.textLabel.textColor = theme.textColorMain;
-    _cellAssetAvailable.detailTextLabel.text = [NSString stringWithFormat:@"可用 %@ %@", [_balance_info objectForKey:@"available"], [_balance_info objectForKey:@"assetSymbol"]];
     _cellAssetAvailable.detailTextLabel.font = [UIFont systemFontOfSize:13.0f];
     _cellAssetAvailable.detailTextLabel.textColor = theme.textColorMain;
+    [self _drawUI_Balance:NO];
     
     NSString* placeHolderAmount = @"请输入划转数量";
     _tf_amount = [self createTfWithRect:[self makeTextFieldRectFull] keyboard:UIKeyboardTypeDecimalPad placeholder:placeHolderAmount];
     _tf_amount.updateClearButtonTintColor = YES;
     _tf_amount.showBottomLine = YES;
     _tf_amount.textColor = theme.textColorMain;
-    _tf_amount.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderAmount
-                                                                       attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
-                                                                                    NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tf_amount.attributedPlaceholder = [ViewUtils placeholderAttrString:placeHolderAmount];
     
     //  绑定输入事件（限制输入）
     [_tf_amount addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
-    _tf_amount.rightView = [self genTailerView:[_balance_info objectForKey:@"assetSymbol"] action:@"全部" tag:0];;
+    _tf_amount.rightView = [self genTailerView:[_curr_merchant_asset objectForKey:@"assetSymbol"]
+                                        action:NSLocalizedString(@"kLabelSendAll", @"全部")];
     _tf_amount.rightViewMode = UITextFieldViewModeAlways;
     
     //  UI - 列表
@@ -196,7 +303,7 @@ enum
     _mainTableView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:_mainTableView];
     
-    //  TODO:2.9 msg
+    //  UI - 提示信息
     _cell_tips = [[ViewTipsInfoCell alloc] initWithText:[self genTransferTipsMessage]];
     _cell_tips.hideBottomLine = YES;
     _cell_tips.hideTopLine = YES;
@@ -226,55 +333,26 @@ enum
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
+    
     return [OrgUtils isValidAmountOrPriceInput:textField.text
                                          range:range
                                     new_string:string
-                                     precision:4];//TODO:2.9 pre
+                                     precision:[[_curr_merchant_asset objectForKey:@"kExtPrecision"] integerValue]];
 }
 
 - (void)onTextFieldDidChange:(UITextField*)textField
 {
-//    if (textField != _tf_amount){
-//        return;
-//    }
-//
     //  更新小数点为APP默认小数点样式（可能和输入法中下小数点不同，比如APP里是`.`号，而输入法则是`,`号。
     [OrgUtils correctTextFieldDecimalSeparatorDisplayStyle:textField];
-    
     [self onAmountChanged];
 }
 
 /**
- *  (private) 转账数量发生变化。
+ *  (private) 划转数量发生变化。
  */
 - (void)onAmountChanged
 {
-    id str_amount = _tf_amount.text;
-//
-//    GatewayAssetItemData* appext = [_withdrawAssetItem objectForKey:@"kAppExt"];
-//    NSString* symbol = appext.symbol;
-//
-//    //  无效输入
-//    if (!str_amount || [str_amount isEqualToString:@""]){
-//        _cellAssetAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@", [OrgUtils formatFloatValue:_n_available], symbol];
-//        _cellAssetAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-//        return;
-//    }
-//
-//    //  获取输入的数量
-//    id n_amount = [OrgUtils auxGetStringDecimalNumberValue:str_amount];
-//
-//    //  _n_available < n_amount
-//    if ([_n_available compare:n_amount] == NSOrderedAscending){
-//        //  数量不足
-//        _cellAssetAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@(%@)", [OrgUtils formatFloatValue:_n_available], symbol, NSLocalizedString(@"kVcTransferTipAmountNotEnough", @"数量不足")];
-//        _cellAssetAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].tintColor;
-//    }else{
-//        _cellAssetAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@", [OrgUtils formatFloatValue:_n_available], symbol];
-//        _cellAssetAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-//    }
-//
-//    [self _refreshFinalValueUI:n_amount];
+    [self _drawUI_Balance:[_nCurrBalance compare:[OrgUtils auxGetStringDecimalNumberValue:_tf_amount.text]] < 0];
 }
 
 #pragma mark- TableView delegate method
@@ -362,7 +440,7 @@ enum
                 cell.showCustomBottomLine = YES;
                 cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                 cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-                cell.textLabel.text = @"USD";
+                cell.textLabel.text = [_curr_merchant_asset objectForKey:@"assetSymbol"];
             }
             return cell;
         }
@@ -409,19 +487,184 @@ enum
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-//    [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
-//        id item = [_dataArray objectAtIndex:indexPath.row];
-//        assert(item);
-//        //  TODO:2.9
-////        [self onCellClicked:item];
-//    }];
+    [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
+        switch (indexPath.section) {
+            case kVcSecTransferCoin:
+                [self onSelectAssetClicked];
+                break;
+            case kVcSecSubmit:
+                [self onSubmitClicked];
+                break;
+            default:
+                break;
+        }
+    }];
+}
+
+- (void)onSelectAssetClicked
+{
+    //  TODO:2.9 lang
+    id list = [_asset_list ruby_map:^id(id src) {
+        return [src objectForKey:@"assetSymbol"];
+    }];
+    [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
+                                                       message:@"请选择划转资产"
+                                                        cancel:NSLocalizedString(@"kBtnCancel", @"取消")
+                                                         items:list
+                                                      callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
+     {
+        if (buttonIndex != cancelIndex){
+            id select_asset_symbol = [list objectAtIndex:buttonIndex];
+            NSString* current_asset_symbol = [_curr_merchant_asset objectForKey:@"assetSymbol"];
+            if (![current_asset_symbol isEqualToString:select_asset_symbol]) {
+                _curr_merchant_asset = [_asset_list objectAtIndex:buttonIndex];
+                //  切换资产后重新输入
+                [self _genCurrBalance];
+                _tf_amount.text = @"";
+                [self _drawUI_newTailerAssetName:[_curr_merchant_asset objectForKey:@"assetSymbol"]];
+                [self _drawUI_Balance:NO];
+                [self refreshView];
+            }
+        }
+    }];
+}
+
+- (void)onSubmitClicked
+{
+    //  TODO:2.9 lang
+    id n_amount = [OrgUtils auxGetStringDecimalNumberValue:_tf_amount.text];
+    
+    NSDecimalNumber* n_zero = [NSDecimalNumber zero];
+    if ([n_amount compare:n_zero] <= 0) {
+        [OrgUtils makeToast:@"请输入划转金额。"];
+        return;
+    }
+    
+    if ([_nCurrBalance compare:n_amount] < 0) {
+        [OrgUtils makeToast:@"余额不足。"];
+        return;
+    }
+    
+    if ([[_argsFromTo objectForKey:@"bFromIsMerchant"] boolValue]) {
+        //  TODO:2.9 lang
+        id value = [NSString stringWithFormat:@"您确认转出 %@ %@ 到个人账号吗？", n_amount, _curr_merchant_asset[@"assetSymbol"]];
+        [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:value
+                                                               withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                              completion:^(NSInteger buttonIndex)
+         {
+            if (buttonIndex == 1)
+            {
+                [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+                    if (unlocked) {
+                        [self _execTransferOut:n_amount];
+                    }
+                }];
+            }
+        }];
+    } else {
+        id value = [NSString stringWithFormat:@"您确认转入 %@ %@ 到商家账号吗？", n_amount, _curr_merchant_asset[@"assetSymbol"]];
+        [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:value
+                                                               withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                              completion:^(NSInteger buttonIndex)
+         {
+            if (buttonIndex == 1)
+            {
+                [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+                    if (unlocked) {
+                        [self _execTransferIn:n_amount];
+                    }
+                }];
+            }
+        }];
+    }
+}
+
+/*
+ *  (private) 转出 - 从商家账号转到个人账号
+ */
+- (void)_execTransferOut:(NSDecimalNumber*)n_amount
+{
+    //  获取用户自身的KEY进行签名。
+    WalletManager* walletMgr = [WalletManager sharedWalletManager];
+    assert(![walletMgr isLocked]);
+    id active_permission = [[[walletMgr getWalletAccountInfo] objectForKey:@"account"] objectForKey:@"active"];
+    id sign_pub_keys = [walletMgr getSignKeys:active_permission assert_enough_permission:NO];
+    
+    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    [[[[BitsharesClientManager sharedBitsharesClientManager] simpleTransfer:[_argsFromTo objectForKey:@"from"]
+                                                                         to:[_argsFromTo objectForKey:@"to"]
+                                                                      asset:[_curr_merchant_asset objectForKey:@"assetSymbol"]
+                                                                     amount:[NSString stringWithFormat:@"%@", n_amount]
+                                                                       memo:nil
+                                                            memo_extra_keys:nil
+                                                              sign_pub_keys:sign_pub_keys
+                                                                  broadcast:NO] then:^id(id tx_data) {
+        id err = [tx_data objectForKey:@"err"];
+        if (err) {
+            //  构造签名数据结构错误
+            [self hideBlockView];
+            [OrgUtils makeToast:err];
+        } else {
+            //  转账签名成功
+            id tx = [tx_data objectForKey:@"tx"];
+            assert(tx);
+            //  调用平台API进行转出操作
+            OtcManager* otc = [OtcManager sharedOtcManager];
+            [[[otc queryMerchantAssetExport:[otc getCurrentBtsAccount] signatureTx:tx] then:^id(id data) {
+                [self hideBlockView];
+                //  TODO:2.9
+                [OrgUtils makeToast:@"转出请求已提交，请耐心等待平台处理，请勿重复操作。"];
+                return nil;
+            }] catch:^id(id error) {
+                [self hideBlockView];
+                [otc showOtcError:error];
+                return nil;
+            }];
+        }
+        return nil;
+    }] catch:^id(id error) {
+        [self hideBlockView];
+        [OrgUtils showGrapheneError:error];
+        return nil;
+    }];
+}
+
+/*
+ *  (private) 转入 - 从个人账号转入商家账号
+ */
+- (void)_execTransferIn:(NSDecimalNumber*)n_amount
+{
+    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    [[[[BitsharesClientManager sharedBitsharesClientManager] simpleTransfer:[_argsFromTo objectForKey:@"from"]
+                                                                         to:[_argsFromTo objectForKey:@"to"]
+                                                                      asset:[_curr_merchant_asset objectForKey:@"assetSymbol"]
+                                                                     amount:[NSString stringWithFormat:@"%@", n_amount]
+                                                                       memo:nil
+                                                            memo_extra_keys:nil
+                                                              sign_pub_keys:nil
+                                                                  broadcast:YES] then:^id(id data) {
+        [self hideBlockView];
+        id err = [data objectForKey:@"err"];
+        if (err) {
+            //  错误
+            [OrgUtils makeToast:err];
+        } else {
+            //  TODO:2.9 lang
+            [OrgUtils makeToast:@"转入成功。"];
+        }
+        return nil;
+    }] catch:^id(id error) {
+        [self hideBlockView];
+        [OrgUtils showGrapheneError:error];
+        return nil;
+    }];
 }
 
 #pragma mark- for actions
 
 - (void)onButtonClicked_Switched:(UIButton*)sender
 {
-    //  TODO:2.9
+    //  交换FROM TO
     if ([[_argsFromTo objectForKey:@"bFromIsMerchant"] boolValue]) {
         [_argsFromTo setObject:@NO forKey:@"bFromIsMerchant"];
     } else {
@@ -430,8 +673,13 @@ enum
     NSString* tmp = [_argsFromTo objectForKey:@"from"];
     [_argsFromTo setObject:[_argsFromTo objectForKey:@"to"] forKey:@"from"];
     [_argsFromTo setObject:tmp forKey:@"to"];
+    //  刷新UI
     [_cell_tips updateLabelText:[self genTransferTipsMessage]];
-    //  TODO:2.9
+    //  刷新余额
+    [self _genCurrBalance];
+    _tf_amount.text = @"";
+    [self _drawUI_Balance:NO];
+    //  刷新列表
     [_mainTableView reloadData];
 }
 

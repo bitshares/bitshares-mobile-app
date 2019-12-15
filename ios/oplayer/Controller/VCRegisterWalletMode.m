@@ -119,18 +119,10 @@ enum
     _tf_password.textColor = [ThemeManager sharedThemeManager].textColorMain;
     _tf_confirm.textColor = [ThemeManager sharedThemeManager].textColorMain;
     _tf_refcode.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    _tf_username.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_username.placeholder
-                                                                         attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                      NSFontAttributeName:[UIFont systemFontOfSize:17]}];
-    _tf_password.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_password.placeholder
-                                                                         attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                      NSFontAttributeName:[UIFont systemFontOfSize:17]}];
-    _tf_confirm.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_confirm.placeholder
-                                                                        attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                     NSFontAttributeName:[UIFont systemFontOfSize:17]}];
-    _tf_refcode.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_refcode.placeholder
-                                                                        attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                     NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tf_username.attributedPlaceholder = [ViewUtils placeholderAttrString:_tf_username.placeholder];
+    _tf_password.attributedPlaceholder = [ViewUtils placeholderAttrString:_tf_password.placeholder];
+    _tf_confirm.attributedPlaceholder = [ViewUtils placeholderAttrString:_tf_confirm.placeholder];
+    _tf_refcode.attributedPlaceholder = [ViewUtils placeholderAttrString:_tf_refcode.placeholder];
     
     //  UI - 主列表
     _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];

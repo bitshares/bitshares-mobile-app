@@ -118,9 +118,7 @@
     _tf_password.secureTextEntry = YES;
     _tf_password.updateClearButtonTintColor = YES;
     _tf_password.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    _tf_password.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolder
-                                                                     attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                  NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tf_password.attributedPlaceholder = [ViewUtils placeholderAttrString:placeHolder];
     
     //  wallet password
     _tf_wallet_password = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault
@@ -129,9 +127,7 @@
     _tf_wallet_password.secureTextEntry = YES;
     _tf_wallet_password.updateClearButtonTintColor = YES;
     _tf_wallet_password.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    _tf_wallet_password.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_wallet_password.placeholder
-                                                                                attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                             NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tf_wallet_password.attributedPlaceholder = [ViewUtils placeholderAttrString:_tf_wallet_password.placeholder];
     //  tableview list
     CGFloat offset = 66;
     _mainTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, offset,

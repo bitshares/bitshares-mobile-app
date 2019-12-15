@@ -124,9 +124,7 @@ enum
     if (_tf_trade_password){
         _tf_trade_password.updateClearButtonTintColor = YES;
         _tf_trade_password.textColor = theme.textColorMain;
-        _tf_trade_password.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_trade_password.placeholder
-                                                                                   attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
-                                                                                                NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+        _tf_trade_password.attributedPlaceholder = [ViewUtils placeholderAttrString:_tf_trade_password.placeholder];
     }
     
     //  UI - 主列表

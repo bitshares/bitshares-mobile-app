@@ -285,12 +285,9 @@ enum
     _tfCollateralValue = [self createTfWithRect:tfrect keyboard:UIKeyboardTypeDecimalPad placeholder:collateralPlaceHolder];
     _tfDebtValue.textColor = [ThemeManager sharedThemeManager].textColorMain;
     _tfCollateralValue.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    _tfDebtValue.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tfDebtValue.placeholder
-                                                                         attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                      NSFontAttributeName:[UIFont systemFontOfSize:17]}];
-    _tfCollateralValue.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tfCollateralValue.placeholder
-                                                                               attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                            NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    
+    _tfDebtValue.attributedPlaceholder = [ViewUtils placeholderAttrString:_tfDebtValue.placeholder];
+    _tfCollateralValue.attributedPlaceholder = [ViewUtils placeholderAttrString:_tfCollateralValue.placeholder];
     //  绑定输入事件（限制输入）
     [_tfDebtValue addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
     [_tfCollateralValue addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
@@ -1589,12 +1586,8 @@ enum
     
     _tfDebtValue.textColor = theme.textColorMain;
     _tfCollateralValue.textColor = theme.textColorMain;
-    _tfDebtValue.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tfDebtValue.placeholder
-                                                                         attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
-                                                                                      NSFontAttributeName:[UIFont systemFontOfSize:17]}];
-    _tfCollateralValue.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tfCollateralValue.placeholder
-                                                                               attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
-                                                                                            NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tfDebtValue.attributedPlaceholder = [ViewUtils placeholderAttrString:_tfDebtValue.placeholder];
+    _tfCollateralValue.attributedPlaceholder = [ViewUtils placeholderAttrString:_tfCollateralValue.placeholder];
     _cellLabelRate.textLabel.textColor = theme.textColorMain;
     
     if (_mainTableView){
@@ -1620,12 +1613,8 @@ enum
         [btn setTitle:NSLocalizedString(@"kDebtLableUseMax", @"全部抵押") forState:UIControlStateNormal];
     }
     
-    _tfDebtValue.attributedPlaceholder = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"kDebtTipInputDebtValue", @"请输入借款金额")
-                                                                         attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                      NSFontAttributeName:[UIFont systemFontOfSize:17]}];
-    _tfCollateralValue.attributedPlaceholder = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"kDebtTipInputCollAmount", @"请输入抵押物数量")
-                                                                               attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                            NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tfDebtValue.attributedPlaceholder = [ViewUtils placeholderAttrString:NSLocalizedString(@"kDebtTipInputDebtValue", @"请输入借款金额")];
+    _tfCollateralValue.attributedPlaceholder = [ViewUtils placeholderAttrString:NSLocalizedString(@"kDebtTipInputCollAmount", @"请输入抵押物数量")];
     
     [_cellTips updateLabelText:NSLocalizedString(@"kDebtWarmTips", @"【温馨提示】\n当喂价下降到强平触发价时，系统将会自动出售您的抵押资产用于归还借款。请注意调整抵押率控制风险。")];
     
