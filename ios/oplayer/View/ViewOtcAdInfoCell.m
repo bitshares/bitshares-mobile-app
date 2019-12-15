@@ -104,7 +104,7 @@
         _lbSubmit = [UIButton buttonWithType:UIButtonTypeCustom];
         _lbSubmit.titleLabel.font = [UIFont boldSystemFontOfSize:14];
         [_lbSubmit setTitleColor:[ThemeManager sharedThemeManager].textColorMain forState:UIControlStateNormal];
-        [_lbSubmit addTarget:self action:@selector(onButtonUpOrDownClicked:) forControlEvents:UIControlEventTouchUpInside];
+        [_lbSubmit addTarget:self action:@selector(onSubmitButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
         _lbSubmit.layer.borderWidth = 1;
         _lbSubmit.layer.cornerRadius = 0;
         _lbSubmit.layer.masksToBounds = YES;
@@ -113,10 +113,10 @@
     return self;
 }
 
-- (void)onButtonUpOrDownClicked:(UIButton*)sender
+- (void)onSubmitButtonClicked:(UIButton*)sender
 {
-    if (_owner && [_owner respondsToSelector:@selector(onButtonUpOrDownClicked:)]){
-        [_owner performSelector:@selector(onButtonUpOrDownClicked:) withObject:sender];
+    if (_owner && [_owner respondsToSelector:@selector(onSubmitButtonClicked:)]){
+        [_owner performSelector:@selector(onSubmitButtonClicked:) withObject:sender];
     }
 }
 

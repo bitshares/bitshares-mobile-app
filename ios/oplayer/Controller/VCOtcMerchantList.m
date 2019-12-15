@@ -280,7 +280,14 @@
     id list = [[responsed objectForKey:@"data"] objectForKey:@"records"];
     [_data_array removeAllObjects];
     if (list && [list isKindOfClass:[NSArray class]]) {
-        [_data_array addObjectsFromArray:list];
+        for (id item in list) {
+            BOOL bankcardPaySwitch = [[item objectForKey:@"bankcardPaySwitch"] boolValue];
+            BOOL aliPaySwitch = [[item objectForKey:@"aliPaySwitch"] boolValue];
+            BOOL wechatPaySwitch = NO; //  TODO:2.9 默认false，ad数据里没微信。
+            if (aliPaySwitch || bankcardPaySwitch || wechatPaySwitch) {
+                [_data_array addObject:item];
+            }
+        }
     }
     
     //  动态设置UI的可见性
@@ -471,7 +478,7 @@
 /*
  *  事件 - 点击购买or出售按钮。
  */
-- (void)onButtonBuyOrSellClicked:(UIButton*)sender
+- (void)onSubmitButtonClicked:(UIButton*)sender
 {
     assert(sender.tag < [_data_array count]);
     id item = [_data_array objectAtIndex:sender.tag];
@@ -480,25 +487,27 @@
     BOOL bankcardPaySwitch = [[item objectForKey:@"bankcardPaySwitch"] boolValue];
     BOOL aliPaySwitch = [[item objectForKey:@"aliPaySwitch"] boolValue];
     BOOL wechatPaySwitch = NO; //  TODO:2.9 默认false，ad数据里没微信。
-  
-    //  TODO:2.9临时关闭check
-    if (!bankcardPaySwitch && !aliPaySwitch && !wechatPaySwitch) {
-        if (_ad_type == eoadt_user_buy) {
-            //  用户买
-            [OrgUtils makeToast:NSLocalizedString(@"kOtcAdOrderTipsMcNoAnyReceiveMethod", @"商家没开启任何收款方式。")];
-        } else {
-            //  用户卖
-            [OrgUtils makeToast:NSLocalizedString(@"kOtcAdOrderTipsMcNoAnyPaymentMethod", @"商家没开启任何付款方式。")];
-        }
-        return;
-    }
+    
+    //  已经过滤过了，这里的都是至少开启了一种付款方式的。
+    assert(aliPaySwitch || bankcardPaySwitch || wechatPaySwitch);
     
     id adId = [item objectForKey:@"adId"];
     assert(adId);
     
+    OtcManager* otc = [OtcManager sharedOtcManager];
+    id merchant_detail = [otc getCacheMerchantDetail];
+    if (merchant_detail) {
+        NSString* myOtcAccountId = [merchant_detail objectForKey:@"otcAccountId"];
+        NSString* adOtcAccountId = [item objectForKey:@"otcBtsId"];
+        if (myOtcAccountId && adOtcAccountId && [myOtcAccountId isEqualToString:adOtcAccountId]) {
+            //  TODO:2.9 lang
+            [OrgUtils makeToast:@"不能和自己进行交易。"];
+            return;
+        }
+    }
+    
     [_owner GuardWalletUnlocked:YES body:^(BOOL unlocked) {
         if (unlocked) {
-            OtcManager* otc = [OtcManager sharedOtcManager];
             [otc guardUserIdVerified:_owner
                            auto_hide:NO
                    askForIdVerifyMsg:NSLocalizedString(@"kOtcAdAskIdVerifyTips03", @"您尚未完成身份认证，不可进行场外交易，是否去认证？")

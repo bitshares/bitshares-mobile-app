@@ -353,7 +353,7 @@
 /*
  *  事件 - 上架or下架按钮点击。
  */
-- (void)onButtonUpOrDownClicked:(UIButton*)sender
+- (void)onSubmitButtonClicked:(UIButton*)sender
 {
     assert(sender.tag < [_dataArray count]);
     id adInfos = [_dataArray objectAtIndex:sender.tag];

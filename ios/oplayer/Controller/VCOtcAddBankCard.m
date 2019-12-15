@@ -7,12 +7,15 @@
 //
 
 #import "VCOtcAddBankCard.h"
+#import "ViewTipsInfoCell.h"
 #import "OrgUtils.h"
+#import "OtcManager.h"
 
 enum
 {
     kVcFormData = 0,            //  表单数据
     kVcSubmit,                  //  保存按钮
+    kVcTips,                    //  提示信息
     
     kVcMax
 };
@@ -25,17 +28,15 @@ enum
     kVcSubBankCardNoTitle,
     kVcSubBankCardNo,           //  银行卡号
     
-    kVcSubBankNameTitle,
-    kVcSubBankName,             //  开户银行
-    
-    kVcSubBankAddressTitle,
-    kVcSubBankAddress,          //  开户地址（选填）
+    kVcSubBankPhoneNumTitle,
+    kVcSubBankPhoneNum,         //  预留手机号
     
     kVcSubMax
 };
 
 @interface VCOtcAddBankCard ()
 {
+    WsPromiseObject*        _result_promise;
     NSDictionary*           _auth_info;
     UITableViewBase*        _mainTableView;
     
@@ -44,10 +45,10 @@ enum
     
     MyTextField*            _tf_username;
     MyTextField*            _tf_bankcardno;
-    MyTextField*            _tf_bankname;
-    MyTextField*            _tf_bankaddress;
+    MyTextField*            _tf_bankphonenumber;
     
     ViewBlockLabel*         _goto_submit;
+    ViewTipsInfoCell*       _cell_tips;
 }
 
 @end
@@ -65,15 +66,10 @@ enum
         _tf_bankcardno.delegate = nil;
         _tf_bankcardno = nil;
     }
-
-    if (_tf_bankname){
-        _tf_bankname.delegate = nil;
-        _tf_bankname = nil;
-    }
     
-    if (_tf_bankaddress) {
-        _tf_bankaddress.delegate = nil;
-        _tf_bankaddress = nil;
+    if (_tf_bankphonenumber){
+        _tf_bankphonenumber.delegate = nil;
+        _tf_bankphonenumber = nil;
     }
     
     if (_mainTableView){
@@ -82,6 +78,8 @@ enum
         _mainTableView = nil;
     }
     _auth_info = nil;
+    _result_promise = nil;
+    _cell_tips = nil;
 }
 
 - (void)resignAllFirstResponder
@@ -90,15 +88,15 @@ enum
     [self.view endEditing:YES];
     [_tf_username safeResignFirstResponder];
     [_tf_bankcardno safeResignFirstResponder];
-    [_tf_bankname safeResignFirstResponder];
-    [_tf_bankaddress safeResignFirstResponder];
+    [_tf_bankphonenumber safeResignFirstResponder];
 }
 
-- (id)initWithAuthInfo:(id)auth_info
+- (id)initWithAuthInfo:(id)auth_info result_promise:(WsPromiseObject*)result_promise
 {
     self = [super init];
     if (self) {
         _auth_info = auth_info;
+        _result_promise = result_promise;
     }
     return self;
 }
@@ -106,7 +104,7 @@ enum
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     
@@ -117,13 +115,11 @@ enum
     //  TODO:2.9 otc
     NSString* placeHolderUserName = @"请输入您的姓名";
     NSString* placeHolderBankCardNo = @"请输入银行卡号";
-    NSString* placeHolderBankName =  @"请输入开户银行";
-    NSString* placeHolderBankAddress = @"请输入开户地址（选填）";
+    NSString* placeHolderBankPhoneNum =  @"请输入银行预留手机号";
     CGRect rect = [self makeTextFieldRectFull];
     _tf_username = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolderUserName];
     _tf_bankcardno = [self createTfWithRect:rect keyboard:UIKeyboardTypeNumberPad placeholder:placeHolderBankCardNo];
-    _tf_bankname = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolderBankName];
-    _tf_bankaddress = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolderBankAddress];
+    _tf_bankphonenumber = [self createTfWithRect:rect keyboard:UIKeyboardTypePhonePad placeholder:placeHolderBankPhoneNum];
     
     //  初始化值
     NSString* name = [_auth_info objectForKey:@"realName"];
@@ -135,31 +131,24 @@ enum
     //  设置属性颜色等
     _tf_username.showBottomLine = YES;
     _tf_bankcardno.showBottomLine = YES;
-    _tf_bankname.showBottomLine = YES;
-    _tf_bankaddress.showBottomLine = YES;
+    _tf_bankphonenumber.showBottomLine = YES;
     
     _tf_username.updateClearButtonTintColor = YES;
     _tf_username.textColor = theme.textColorMain;
     _tf_username.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderUserName
-                                                                        attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
-                                                                                     NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+                                                                         attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
+                                                                                      NSFontAttributeName:[UIFont systemFontOfSize:17]}];
     _tf_bankcardno.updateClearButtonTintColor = YES;
     _tf_bankcardno.textColor = theme.textColorMain;
     _tf_bankcardno.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderBankCardNo
-                                                                       attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
-                                                                                    NSFontAttributeName:[UIFont systemFontOfSize:17]}];
- 
-    _tf_bankname.updateClearButtonTintColor = YES;
-    _tf_bankname.textColor = theme.textColorMain;
-    _tf_bankname.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderBankName
-                                                                     attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
-                                                                                  NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+                                                                           attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
+                                                                                        NSFontAttributeName:[UIFont systemFontOfSize:17]}];
     
-    _tf_bankaddress.updateClearButtonTintColor = YES;
-    _tf_bankaddress.textColor = theme.textColorMain;
-    _tf_bankaddress.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderBankAddress
-                                                                     attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
-                                                                                  NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tf_bankphonenumber.updateClearButtonTintColor = YES;
+    _tf_bankphonenumber.textColor = theme.textColorMain;
+    _tf_bankphonenumber.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderBankPhoneNum
+                                                                                attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
+                                                                                             NSFontAttributeName:[UIFont systemFontOfSize:17]}];
     
     //  绑定输入事件（限制输入） TODO:2.9 otc
     [_tf_bankcardno addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
@@ -180,6 +169,11 @@ enum
     
     //  提交按钮
     _goto_submit = [self createCellLableButton:@"提交"];//TODO:otc
+    
+    _cell_tips = [[ViewTipsInfoCell alloc] initWithText:@"【温馨提示】\n请务必使用您本人的银行卡。"];
+    _cell_tips.hideBottomLine = YES;
+    _cell_tips.hideTopLine = YES;
+    _cell_tips.backgroundColor = [UIColor clearColor];
 }
 
 -(void)onTap:(UITapGestureRecognizer*)pTap
@@ -192,7 +186,32 @@ enum
  */
 -(void)gotoSubmitCore
 {
+    NSString* str_realname = _tf_username.text;
+    NSString* str_bankno = _tf_bankcardno.text;
+    NSString* str_phoneno = _tf_bankphonenumber.text;
+    
+    //  TODO:2.9 验证码参数
+    if (!str_realname || [str_realname isEqualToString:@""]) {
+        [OrgUtils makeToast:@"请输入姓名。"];
+        return;
+    }
+    if (!str_bankno || [str_bankno isEqualToString:@""]) {
+        [OrgUtils makeToast:@"请输入有效的银行卡号。"];
+        return;
+    }
+    if (![OtcManager checkIsValidPhoneNumber:str_phoneno]) {
+        [OrgUtils makeToast:@"请输入正确的手机号码。"];
+        return;
+    }
+    //  TODO:2.9
+    
     //  TODO:otc
+    //  TODO:2.9 done!
+    if (_result_promise) {
+        [_result_promise resolve:@YES];
+    }
+    [self closeOrPopViewController];
+    return;
 }
 
 #pragma mark- for UITextFieldDelegate
@@ -214,9 +233,7 @@ enum
         [_tf_bankcardno becomeFirstResponder];
     }
     else if (textField == _tf_bankcardno) {
-        [_tf_bankname becomeFirstResponder];
-    }else if (textField == _tf_bankname) {
-        [_tf_bankaddress becomeFirstResponder];
+        [_tf_bankphonenumber becomeFirstResponder];
     } else {
         [self resignAllFirstResponder];
     }
@@ -246,14 +263,15 @@ enum
             switch (indexPath.row) {
                 case kVcSubUserNameTitle:
                 case kVcSubBankCardNoTitle:
-                case kVcSubBankNameTitle:
-                case kVcSubBankAddressTitle:
+                case kVcSubBankPhoneNumTitle:
                     return 28.0f;
                 default:
                     break;
             }
         }
             break;
+        case kVcTips:
+            return [_cell_tips calcCellDynamicHeight:tableView.layoutMargins.left];
         default:
             break;
     }
@@ -279,122 +297,107 @@ enum
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == kVcFormData)
-    {
-        switch (indexPath.row) {
-            case kVcSubUserNameTitle:
-            {
-                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-                cell.backgroundColor = [UIColor clearColor];
-                cell.hideBottomLine = YES;
-                cell.accessoryType = UITableViewCellAccessoryNone;
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.textLabel.text = @"姓名";//TODO:otc
-                cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
-                cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                return cell;
+    switch (indexPath.section) {
+        case kVcFormData:
+        {
+            switch (indexPath.row) {
+                case kVcSubUserNameTitle:
+                {
+                    UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+                    cell.backgroundColor = [UIColor clearColor];
+                    cell.hideBottomLine = YES;
+                    cell.accessoryType = UITableViewCellAccessoryNone;
+                    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                    cell.textLabel.text = @"姓名";//TODO:otc
+                    cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
+                    cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+                    return cell;
+                }
+                    break;
+                case kVcSubUserName:
+                {
+                    UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+                    cell.backgroundColor = [UIColor clearColor];
+                    cell.accessoryType = UITableViewCellAccessoryNone;
+                    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                    cell.hideTopLine = YES;
+                    cell.hideBottomLine = YES;
+                    [_mainTableView attachTextfieldToCell:cell tf:_tf_username];
+                    return cell;
+                }
+                    break;
+                case kVcSubBankCardNoTitle:
+                {
+                    UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+                    cell.backgroundColor = [UIColor clearColor];
+                    cell.hideBottomLine = YES;
+                    cell.accessoryType = UITableViewCellAccessoryNone;
+                    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                    cell.textLabel.text = @"银行卡号";//TODO:otc
+                    cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
+                    cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+                    return cell;
+                }
+                    break;
+                case kVcSubBankCardNo:
+                {
+                    UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+                    cell.backgroundColor = [UIColor clearColor];
+                    cell.accessoryType = UITableViewCellAccessoryNone;
+                    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                    [_mainTableView attachTextfieldToCell:cell tf:_tf_bankcardno];
+                    cell.hideTopLine = YES;
+                    cell.hideBottomLine = YES;
+                    return cell;
+                }
+                    break;
+                case kVcSubBankPhoneNumTitle:
+                {
+                    UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+                    cell.backgroundColor = [UIColor clearColor];
+                    cell.hideBottomLine = YES;
+                    cell.accessoryType = UITableViewCellAccessoryNone;
+                    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                    cell.textLabel.text = @"开户银行";//TODO:otc
+                    cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
+                    cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+                    return cell;
+                }
+                    break;
+                case kVcSubBankPhoneNum:
+                {
+                    UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+                    cell.backgroundColor = [UIColor clearColor];
+                    cell.accessoryType = UITableViewCellAccessoryNone;
+                    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                    [_mainTableView attachTextfieldToCell:cell tf:_tf_bankphonenumber];
+                    cell.hideTopLine = YES;
+                    cell.hideBottomLine = YES;
+                    return cell;
+                }
+                    break;
+                default:
+                    assert(false);
+                    break;
             }
-                break;
-            case kVcSubUserName:
-            {
-                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-                cell.backgroundColor = [UIColor clearColor];
-                cell.accessoryType = UITableViewCellAccessoryNone;
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.hideTopLine = YES;
-                cell.hideBottomLine = YES;
-                [_mainTableView attachTextfieldToCell:cell tf:_tf_username];
-                return cell;
-            }
-                break;
-            case kVcSubBankCardNoTitle:
-            {
-                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-                cell.backgroundColor = [UIColor clearColor];
-                cell.hideBottomLine = YES;
-                cell.accessoryType = UITableViewCellAccessoryNone;
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.textLabel.text = @"银行卡号";//TODO:otc
-                cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
-                cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                return cell;
-            }
-                break;
-            case kVcSubBankCardNo:
-            {
-                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-                cell.backgroundColor = [UIColor clearColor];
-                cell.accessoryType = UITableViewCellAccessoryNone;
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                [_mainTableView attachTextfieldToCell:cell tf:_tf_bankcardno];
-                cell.hideTopLine = YES;
-                cell.hideBottomLine = YES;
-                return cell;
-            }
-                break;
-            case kVcSubBankNameTitle:
-            {
-                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-                cell.backgroundColor = [UIColor clearColor];
-                cell.hideBottomLine = YES;
-                cell.accessoryType = UITableViewCellAccessoryNone;
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.textLabel.text = @"开户银行";//TODO:otc
-                cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
-                cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                return cell;
-            }
-                break;
-            case kVcSubBankName:
-            {
-                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-                cell.backgroundColor = [UIColor clearColor];
-                cell.accessoryType = UITableViewCellAccessoryNone;
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                [_mainTableView attachTextfieldToCell:cell tf:_tf_bankname];
-                cell.hideTopLine = YES;
-                cell.hideBottomLine = YES;
-                return cell;
-            }
-                break;
-            case kVcSubBankAddressTitle:
-            {
-                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-                cell.backgroundColor = [UIColor clearColor];
-                cell.hideBottomLine = YES;
-                cell.accessoryType = UITableViewCellAccessoryNone;
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.textLabel.text = @"开户地址";//TODO:otc
-                cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
-                cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                return cell;
-            }
-                break;
-            case kVcSubBankAddress:
-            {
-                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-                cell.backgroundColor = [UIColor clearColor];
-                cell.accessoryType = UITableViewCellAccessoryNone;
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                [_mainTableView attachTextfieldToCell:cell tf:_tf_bankaddress];//TODO:
-                cell.hideTopLine = YES;
-                cell.hideBottomLine = YES;
-                return cell;
-            }
-                break;
-            default:
-                assert(false);
-                break;
         }
-    } else {
-        UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-        cell.accessoryType = UITableViewCellAccessoryNone;
-        cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-        cell.hideBottomLine = YES;
-        cell.hideTopLine = YES;
-        cell.backgroundColor = [UIColor clearColor];
-        [self addLabelButtonToCell:_goto_submit cell:cell leftEdge:tableView.layoutMargins.left];
-        return cell;
+            break;
+        case kVcSubmit:
+        {
+            UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+            cell.accessoryType = UITableViewCellAccessoryNone;
+            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+            cell.hideBottomLine = YES;
+            cell.hideTopLine = YES;
+            cell.backgroundColor = [UIColor clearColor];
+            [self addLabelButtonToCell:_goto_submit cell:cell leftEdge:tableView.layoutMargins.left];
+            return cell;
+        }
+            break;
+        case kVcTips:
+            return _cell_tips;
+        default:
+            break;
     }
     
     //  not reached...

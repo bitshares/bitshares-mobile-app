@@ -296,6 +296,11 @@ typedef enum EOtcMcProgress
 - (NSDictionary*)getFiatCnyInfo;
 
 /*
+ *  (public) 获取缓存的商家信息（可能为nil）
+ */
+- (NSDictionary*)getCacheMerchantDetail;
+
+/*
  *  (public) 是否支持指定资产判断
  */
 - (BOOL)isSupportDigital:(NSString*)asset_name;
@@ -462,6 +467,18 @@ typedef enum EOtcMcProgress
 //- (WsPromise*)merchantProgress:(NSString*)bts_account_name;
 
 /*
+ *  (public) API - 商家申请
+ *  认证：SIGN 方式
+ */
+- (WsPromise*)merchantApply:(NSString*)bts_account_name bakAccount:(NSString*)bakAccount nickName:(NSString*)nickName;
+
+/*
+ *  (public) API - 商家详情查询
+ *  认证：无
+ */
+- (WsPromise*)merchantDetail:(NSString*)bts_account_name skip_cache:(BOOL)skip_cache;
+
+/*
  *  (public) API - 查询商家订单列表
  *  认证：TOKEN 方式
  */
@@ -491,6 +508,12 @@ typedef enum EOtcMcProgress
                              otcAccount:(NSString*)otcAccount
                              merchantId:(id)merchantId
                             assetSymbol:(id)assetSymbol;
+
+/*
+ *  (public) API - 划转商家资产到个人账号
+ *  认证：TOKEN 方式
+ */
+- (WsPromise*)queryMerchantAssetExport:(NSString*)bts_account_name signatureTx:(id)signatureTx;
 
 /*
  *  (public) API - 查询商家付款方式

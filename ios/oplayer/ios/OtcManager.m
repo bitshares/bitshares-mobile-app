@@ -10,6 +10,7 @@
 #import "OrgUtils.h"
 #import "VCBase.h"
 #import "VCOtcMerchantList.h"
+#import "VCOtcMcMerchantApply.h"
 #import "VCOtcMcHome.h"
 
 #import "VCOtcUserAuth.h"
@@ -21,6 +22,8 @@ static OtcManager *_sharedOtcManager = nil;
     NSString*       _base_api;
     NSDictionary*   _fiat_cny_info;         //  法币信息 TODO:2.9 默认只支持一种
     NSArray*        _asset_list_digital;    //  支持的数字资产列表
+    
+    NSDictionary*   _cache_merchant_detail; //  商家信息（如果进入场外交易使用缓存，进入商家每次都刷新。）
 }
 @end
 
@@ -49,6 +52,7 @@ static OtcManager *_sharedOtcManager = nil;
         _base_api = @"http://otc-api.gdex.vip";
         _fiat_cny_info  = nil;
         _asset_list_digital = nil;
+        _cache_merchant_detail = nil;
     }
     return self;
 }
@@ -56,7 +60,8 @@ static OtcManager *_sharedOtcManager = nil;
 - (void)dealloc
 {
     _base_api = nil;
-    _fiat_cny_info  = nil;
+    _fiat_cny_info = nil;
+    _cache_merchant_detail = nil;
     self.asset_list_digital = nil;
 }
 
@@ -378,8 +383,8 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
-*  (private) 场外交易订单流转各种状态信息：商家端看的情况。
-*/
+ *  (private) 场外交易订单流转各种状态信息：商家端看的情况。
+ */
 + (NSDictionary*)_auxGenOtcOrderStatusAndActions_MerchantSide:(id)order
 {
     assert(order);
@@ -595,6 +600,14 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
+ *  (public) 获取缓存的商家信息（可能为nil）
+ */
+- (NSDictionary*)getCacheMerchantDetail
+{
+    return _cache_merchant_detail;
+}
+
+/*
  *  (public) 是否支持指定资产判断
  */
 - (BOOL)isSupportDigital:(NSString*)asset_name
@@ -645,7 +658,8 @@ static OtcManager *_sharedOtcManager = nil;
     [owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     WsPromise* p1 = [self queryFiatAssetCNY];
     WsPromise* p2 = [self queryAssetList:eoat_digital];
-    [[[WsPromise all:@[p1, p2]] then:^id(id data_array) {
+    WsPromise* p3 = [self merchantDetail:[self getCurrentBtsAccount] skip_cache:NO];
+    [[[WsPromise all:@[p1, p2, p3]] then:^id(id data_array) {
         [owner hideBlockView];
         //        id fiat_data = [data_array objectAtIndex:0];
         id asset_data = [data_array objectAtIndex:1];
@@ -662,7 +676,6 @@ static OtcManager *_sharedOtcManager = nil;
             [OrgUtils makeToast:[NSString stringWithFormat:@"场外交易暂时不支持 %@ 资产，请稍后再试。", asset_name]];
             return nil;
         }
-        
         //  转到场外交易界面
         VCBase* vc = [[VCOtcMerchantListPages alloc] initWithAssetName:asset_name ad_type:ad_type];
         vc.title = @"";
@@ -1403,22 +1416,24 @@ static OtcManager *_sharedOtcManager = nil;
     //  TODO:2.9 merchantProgress 暂时不调用
     [owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     //  直接调用商家详情，非商家返回空数据。
-    WsPromise* p1 = [self merchantDetail:[self getCurrentBtsAccount]];
+    WsPromise* p1 = [self merchantDetail:[self getCurrentBtsAccount] skip_cache:YES];
     WsPromise* p2 = [self queryFiatAssetCNY];
     [[[WsPromise all:@[p1, p2]] then:^id(id data_array) {
         [owner hideBlockView];
-        id merchant_detail_responsed = [data_array objectAtIndex:0];
-        id merchant_detail = [merchant_detail_responsed objectForKey:@"data"];
+        id merchant_detail = [data_array objectAtIndex:0];
         if (merchant_detail && ![merchant_detail isKindOfClass:[NSDictionary class]]) {
             merchant_detail = nil;
         }
         if (merchant_detail) {
             //  TODO:2.9 lang
+            // `status` tinyint(2) NOT NULL DEFAULT '0' COMMENT '状态:0=默认,0=未激活,1=已激活,2=取消激活,3=冻结',
+            
             VCBase* vc = [[VCOtcMcHome alloc] initWithProgressInfo:nil merchantDetail:merchant_detail];
             [owner pushViewController:vc vctitle:@"商家信息" backtitle:kVcDefaultBackTitleName];
         } else {
             //  TODO:2.9
-            [OrgUtils makeToast:@"去申请商家界面 or 隐藏？。"];
+            VCBase* vc = [[VCOtcMcMerchantApply alloc] init];
+            [owner pushViewController:vc vctitle:@"商家申请" backtitle:kVcDefaultBackTitleName];
         }
         return nil;
     }] catch:^id(id error) {
@@ -1442,16 +1457,47 @@ static OtcManager *_sharedOtcManager = nil;
 //}
 
 /*
+ *  (public) API - 商家申请
+ *  认证：SIGN 方式
+ */
+- (WsPromise*)merchantApply:(NSString*)bts_account_name bakAccount:(NSString*)bakAccount nickName:(NSString*)nickName
+{
+    assert(bts_account_name);
+    assert(bakAccount);
+    assert(nickName);
+    
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/apply"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+        @"bakAccount":bakAccount,
+        @"nickname":nickName
+    };
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+}
+
+/*
  *  (public) API - 商家详情查询
  *  认证：无
  */
-- (WsPromise*)merchantDetail:(NSString*)bts_account_name
+- (WsPromise*)merchantDetail:(NSString*)bts_account_name skip_cache:(BOOL)skip_cache
 {
+    //  直接返回缓存
+    if (!skip_cache && _cache_merchant_detail) {
+        return [WsPromise resolve:_cache_merchant_detail];
+    }
+    //  从服务器查询
     id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/detail"];
     id args = @{
         @"btsAccount":bts_account_name,
     };
-    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_none];
+    return [[self _queryApiCore:url args:args headers:nil auth_flag:eoaf_none] then:^id(id merchant_detail_responsed) {
+        id merchant_detail = [merchant_detail_responsed objectForKey:@"data"];
+        if (merchant_detail && ![merchant_detail isKindOfClass:[NSDictionary class]]) {
+            merchant_detail = nil;
+        }
+        _cache_merchant_detail = merchant_detail;
+        return _cache_merchant_detail;
+    }];
 }
 
 /*
@@ -1517,6 +1563,22 @@ static OtcManager *_sharedOtcManager = nil;
         @"otcAccount":otcAccount,
         @"merchantId":merchantId,
         @"assetSymbol":assetSymbol,
+    };
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
+}
+
+/*
+ *  (public) API - 划转商家资产到个人账号
+ *  认证：TOKEN 方式
+ */
+- (WsPromise*)queryMerchantAssetExport:(NSString*)bts_account_name signatureTx:(id)signatureTx
+{
+    assert(bts_account_name);
+    assert(signatureTx);
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/asset/export"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+        @"signatureTx":[signatureTx to_json],
     };
     return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
 }
