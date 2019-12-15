@@ -59,20 +59,28 @@
                                                          items:@[NSLocalizedString(@"kOtcAdPmNameBankCard", @"银行卡"), NSLocalizedString(@"kOtcAdPmNameAlipay", @"支付宝")]
                                                       callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
      {
-         if (buttonIndex != cancelIndex){
-             if (buttonIndex == 0){
-                 [self pushViewController:[[VCOtcAddBankCard alloc] initWithAuthInfo:_auth_info]
-                                  vctitle:NSLocalizedString(@"kVcTitleOtcPmAddBankCard", @"添加银行卡")
-                                backtitle:kVcDefaultBackTitleName];
-             }else if (buttonIndex ==1){
-                 [self pushViewController:[[VCOtcAddAlipay alloc] initWithAuthInfo:_auth_info]
-                                  vctitle:NSLocalizedString(@"kVcTitleOtcPmAddAlipay", @"添加支付宝")
-                                backtitle:kVcDefaultBackTitleName];
-             }else{
-                 assert(false);
-             }
-         }
-     }];
+        if (buttonIndex != cancelIndex){
+            WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
+            if (buttonIndex == 0){
+                [self pushViewController:[[VCOtcAddBankCard alloc] initWithAuthInfo:_auth_info result_promise:result_promise]
+                                 vctitle:NSLocalizedString(@"kVcTitleOtcPmAddBankCard", @"添加银行卡")
+                               backtitle:kVcDefaultBackTitleName];
+            }else if (buttonIndex ==1){
+                [self pushViewController:[[VCOtcAddAlipay alloc] initWithAuthInfo:_auth_info result_promise:result_promise]
+                                 vctitle:NSLocalizedString(@"kVcTitleOtcPmAddAlipay", @"添加支付宝")
+                               backtitle:kVcDefaultBackTitleName];
+            }else{
+                assert(false);
+            }
+            [result_promise then:^id(id dirty) {
+                //  刷新UI
+                if (dirty && [dirty boolValue]) {
+                    [self queryPaymentMethods];
+                }
+                return nil;
+            }];
+        }
+    }];
 }
 
 - (void)onQueryPaymentMethodsResponsed:(id)responsed
@@ -114,7 +122,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
@@ -194,22 +202,24 @@
         enable_or_disable = NSLocalizedString(@"kOtcPmActionBtnEnable", @"启用");
     }
     [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
-                                                      message:nil
-                                                       cancel:NSLocalizedString(@"kBtnCancel", @"取消")
-                                                        items:@[enable_or_disable,
-                                                                NSLocalizedString(@"kOtcPmActionBtnView", @"查看"),
-                                                                NSLocalizedString(@"kOtcPmActionBtnDelete", @"删除")]
-                                                     callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
-    {
+                                                       message:nil
+                                                        cancel:NSLocalizedString(@"kBtnCancel", @"取消")
+                                                         items:@[enable_or_disable,
+                                                                 NSLocalizedString(@"kOtcPmActionBtnDelete", @"删除")]
+                                                      callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
+     {
         if (buttonIndex != cancelIndex){
             switch (buttonIndex) {
                 case 0:
-                    [self _onActionEnableOrDisableClicked:item];
+                {
+                    [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+                        if (unlocked) {
+                            [self _onActionEnableOrDisableClicked:item];
+                        }
+                    }];
+                }
                     break;
                 case 1:
-                    [self _onActionViewClicked:item];
-                    break;
-                case 2:
                     [self _onActionDeleteClicked:item];
                     break;
                 default:
@@ -261,14 +271,6 @@
 }
 
 /*
- *  (private) 操作 - 查看收款方式
- */
-- (void)_onActionViewClicked:(id)item
-{
-    //  TODO:2.9
-}
-
-/*
  *  (private) 操作 - 删除收款方式
  */
 - (void)_onActionDeleteClicked:(id)item
@@ -277,11 +279,15 @@
                                                            withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
                                                           completion:^(NSInteger buttonIndex)
      {
-         if (buttonIndex == 1)
-         {
-             [self _execActionDeleteCore:item];
-         }
-     }];
+        if (buttonIndex == 1)
+        {
+            [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+                if (unlocked) {
+                    [self _execActionDeleteCore:item];
+                }
+            }];
+        }
+    }];
 }
 
 - (void)_execActionDeleteCore:(id)item

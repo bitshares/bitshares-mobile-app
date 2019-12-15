@@ -7,6 +7,7 @@
 //
 
 #import "VCOtcAddAlipay.h"
+#import "ViewTipsInfoCell.h"
 #import "OrgUtils.h"
 #import "OtcManager.h"
 
@@ -14,6 +15,7 @@ enum
 {
     kVcFormData = 0,            //  表单数据
     kVcSubmit,                  //  保存按钮
+    kVcTips,                    //  提示信息
     
     kVcMax
 };
@@ -31,6 +33,7 @@ enum
 
 @interface VCOtcAddAlipay ()
 {
+    WsPromiseObject*        _result_promise;
     NSDictionary*           _auth_info;
     UITableViewBase*        _mainTableView;
     
@@ -41,6 +44,7 @@ enum
     MyTextField*            _tf_account_id;
     
     ViewBlockLabel*         _goto_submit;
+    ViewTipsInfoCell*       _cell_tips;
 }
 
 @end
@@ -65,6 +69,8 @@ enum
         _mainTableView = nil;
     }
     _auth_info = nil;
+    _result_promise = nil;
+    _cell_tips = nil;
 }
 
 - (void)resignAllFirstResponder
@@ -75,11 +81,12 @@ enum
     [_tf_account_id safeResignFirstResponder];
 }
 
-- (id)initWithAuthInfo:(id)auth_info
+- (id)initWithAuthInfo:(id)auth_info result_promise:(WsPromiseObject*)result_promise
 {
     self = [super init];
     if (self) {
         _auth_info = auth_info;
+        _result_promise = result_promise;
     }
     return self;
 }
@@ -143,6 +150,11 @@ enum
     
     //  提交按钮
     _goto_submit = [self createCellLableButton:@"提交"];//TODO:otc
+    
+    _cell_tips = [[ViewTipsInfoCell alloc] initWithText:@"【温馨提示】\n请务必使用您本人的实名账号。"];
+    _cell_tips.hideBottomLine = YES;
+    _cell_tips.hideTopLine = YES;
+    _cell_tips.backgroundColor = [UIColor clearColor];
 }
 
 -(void)onTap:(UITapGestureRecognizer*)pTap
@@ -155,10 +167,10 @@ enum
  */
 -(void)gotoSubmitCore
 {
-    //  TODO:otc
     NSString* str_name = _tf_username.text;
     NSString* str_account = _tf_account_id.text;
-    
+ 
+    //  TODO:2.9 lang
     if (!str_name || [str_name isEqualToString:@""]) {
         [OrgUtils makeToast:@"请输入姓名。"];
         return;
@@ -169,47 +181,37 @@ enum
         [OrgUtils makeToast:@"请输入账号。"];
         return;
     }
-  
-    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    OtcManager* otc = [OtcManager sharedOtcManager];
-    id args = @{
-        @"account":str_account,
-        @"btsAccount":[otc getCurrentBtsAccount],
-        @"qrCode":@"",          //  for alipay & wechat pay TODO:2.9
-        @"realName":str_name,
-        @"remark":@"",          //  for bank card
-        @"reservePhone":@"",    //  for bank card
-        @"type":@(eopmt_alipay)
-    };
-    [[[otc addPaymentMethods:args] then:^id(id data) {
-        [self hideBlockView];
-        NSLog(@"%@", data);
-        [OrgUtils makeToast:@"添加成功。"];//TODO:2.9 done & return & promise refresh.
-        return nil;
-    }] catch:^id(id error) {
-        [self hideBlockView];
-        [otc showOtcError:error];
-        return nil;
+    
+    [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+        if (unlocked) {
+            [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+            OtcManager* otc = [OtcManager sharedOtcManager];
+            id args = @{
+                @"account":str_account,
+                @"btsAccount":[otc getCurrentBtsAccount],
+                @"qrCode":@"",          //  for alipay & wechat pay TODO:3.0 暂时不支持二维码
+                @"realName":str_name,
+                @"remark":@"",          //  for bank card
+                @"reservePhone":@"",    //  for bank card
+                @"type":@(eopmt_alipay)
+            };
+            [[[otc addPaymentMethods:args] then:^id(id data) {
+                [self hideBlockView];
+                //  TODO:2.9 lang
+                [OrgUtils makeToast:@"添加成功。"];
+                //  返回上一个界面并刷新
+                if (_result_promise) {
+                    [_result_promise resolve:@YES];
+                }
+                [self closeOrPopViewController];
+                return nil;
+            }] catch:^id(id error) {
+                [self hideBlockView];
+                [otc showOtcError:error];
+                return nil;
+            }];
+        }
     }];
-    
-    
-    //  TODO:2.9 测试数据
-    //    NSString* bundlePath = [NSBundle mainBundle].resourcePath;
-    //    NSString* fullPathInApp = [NSString stringWithFormat:@"%@/%@", bundlePath, @"abouticon@3x.png"];
-    //    NSData* data = [NSData dataWithContentsOfFile:fullPathInApp];
-    
-    //    [[otc queryQrCode:[otc getCurrentBtsAccount] filename:@"2019/11/2415170943383153952545308672.png"] then:^id(id data) {
-    //        NSLog(@"%@", data);
-    //        return nil;
-    //    }];
-    
-//    [[[otc uploadQrCode:[otc getCurrentBtsAccount] filename:@"test.png" data:data] then:^id(id data) {
-//        NSLog(@"%@", data);
-//        return nil;
-//    }] catch:^id(id error) {
-//        [otc showOtcError:error];
-//        return nil;
-//    }];
 }
 
 #pragma mark- for UITextFieldDelegate
@@ -264,6 +266,8 @@ enum
             }
         }
             break;
+        case kVcTips:
+            return [_cell_tips calcCellDynamicHeight:tableView.layoutMargins.left];
         default:
             break;
     }
@@ -289,72 +293,82 @@ enum
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == kVcFormData)
-    {
-        switch (indexPath.row) {
-            case kVcSubUserNameTitle:
-            {
-                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-                cell.backgroundColor = [UIColor clearColor];
-                cell.hideBottomLine = YES;
-                cell.accessoryType = UITableViewCellAccessoryNone;
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.textLabel.text = @"姓名";//TODO:otc
-                cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
-                cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                return cell;
+    switch (indexPath.section) {
+        case kVcFormData:
+        {
+            switch (indexPath.row) {
+                case kVcSubUserNameTitle:
+                {
+                    UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+                    cell.backgroundColor = [UIColor clearColor];
+                    cell.hideBottomLine = YES;
+                    cell.accessoryType = UITableViewCellAccessoryNone;
+                    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                    cell.textLabel.text = @"姓名";//TODO:otc
+                    cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
+                    cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+                    return cell;
+                }
+                    break;
+                case kVcSubUserName:
+                {
+                    UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+                    cell.backgroundColor = [UIColor clearColor];
+                    cell.accessoryType = UITableViewCellAccessoryNone;
+                    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                    cell.hideTopLine = YES;
+                    cell.hideBottomLine = YES;
+                    [_mainTableView attachTextfieldToCell:cell tf:_tf_username];
+                    return cell;
+                }
+                    break;
+                case kVcSubAccountIDTitle:
+                {
+                    UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+                    cell.backgroundColor = [UIColor clearColor];
+                    cell.hideBottomLine = YES;
+                    cell.accessoryType = UITableViewCellAccessoryNone;
+                    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                    cell.textLabel.text = @"账号";//TODO:otc
+                    cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
+                    cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+                    return cell;
+                }
+                    break;
+                case kVcSubAccountID:
+                {
+                    UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+                    cell.backgroundColor = [UIColor clearColor];
+                    cell.accessoryType = UITableViewCellAccessoryNone;
+                    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                    [_mainTableView attachTextfieldToCell:cell tf:_tf_account_id];
+                    cell.hideTopLine = YES;
+                    cell.hideBottomLine = YES;
+                    return cell;
+                }
+                    break;
+                default:
+                    assert(false);
+                    break;
             }
-                break;
-            case kVcSubUserName:
-            {
-                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-                cell.backgroundColor = [UIColor clearColor];
-                cell.accessoryType = UITableViewCellAccessoryNone;
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.hideTopLine = YES;
-                cell.hideBottomLine = YES;
-                [_mainTableView attachTextfieldToCell:cell tf:_tf_username];
-                return cell;
-            }
-                break;
-            case kVcSubAccountIDTitle:
-            {
-                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-                cell.backgroundColor = [UIColor clearColor];
-                cell.hideBottomLine = YES;
-                cell.accessoryType = UITableViewCellAccessoryNone;
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.textLabel.text = @"账号";//TODO:otc
-                cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
-                cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                return cell;
-            }
-                break;
-            case kVcSubAccountID:
-            {
-                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-                cell.backgroundColor = [UIColor clearColor];
-                cell.accessoryType = UITableViewCellAccessoryNone;
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                [_mainTableView attachTextfieldToCell:cell tf:_tf_account_id];
-                cell.hideTopLine = YES;
-                cell.hideBottomLine = YES;
-                return cell;
-            }
-                break;
-            default:
-                assert(false);
-                break;
         }
-    } else {
-        UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-        cell.accessoryType = UITableViewCellAccessoryNone;
-        cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-        cell.hideBottomLine = YES;
-        cell.hideTopLine = YES;
-        cell.backgroundColor = [UIColor clearColor];
-        [self addLabelButtonToCell:_goto_submit cell:cell leftEdge:tableView.layoutMargins.left];
-        return cell;
+            break;
+        case kVcSubmit:
+        {
+            UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+            cell.accessoryType = UITableViewCellAccessoryNone;
+            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+            cell.hideBottomLine = YES;
+            cell.hideTopLine = YES;
+            cell.backgroundColor = [UIColor clearColor];
+            [self addLabelButtonToCell:_goto_submit cell:cell leftEdge:tableView.layoutMargins.left];
+            return cell;
+        }
+            break;
+        case kVcTips:
+            return _cell_tips;
+        default:
+            break;
     }
     
     //  not reached...

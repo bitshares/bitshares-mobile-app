@@ -116,7 +116,7 @@ enum
     
     //  TODO:2.9 otc
     id str_phone_num = _tf_phonenumber.text;
-    if (![self _isValidPhoneNumber:str_phone_num]){
+    if (![OtcManager checkIsValidPhoneNumber:str_phone_num]){
         [OrgUtils makeToast:@"请输入正确的手机号码。"];
         return;
     }
@@ -158,7 +158,7 @@ enum
     _smsTimerId = 0;
     
     //  初始化UI
-    //  TODO:otc
+    //  TODO:2.9 lang otc
     NSString* placeHolderName = @"请输入您的姓名";
     NSString* placeHolderIdNumber = @"请输入身份证号";
     NSString* placeHolderPhoneNumber =  @"请输入手机号码";
@@ -251,56 +251,6 @@ enum
     [self resignAllFirstResponder];
 }
 
-/*
- *  (private) 是否是有效的手机号初步验证。
- */
-- (BOOL)_isValidPhoneNumber:(NSString*)str_phone_num
-{
-    if (!str_phone_num || [str_phone_num isEqualToString:@""]){
-        return NO;
-    }
-    //  TODO:2.9 是否需要这个check？
-    if (str_phone_num.length != 11) {
-        return NO;
-    }
-    return YES;
-}
-
-/*
-*  (private) 是否是有效的身份证号初步验证。
-*/
-- (BOOL)_isValidCardNo:(NSString*)str_card_no
-{
-    if (!str_card_no || [str_card_no isEqualToString:@""]){
-        return NO;
-    }
-    if (str_card_no.length != 18) {
-        return NO;
-    }
-    
-    //  验证身份证校验位是否正确。
-    NSString* part_one = [str_card_no substringToIndex:17];
-    //  REMARK：最后的X强制转换为大写字母。
-    unichar verify = [[[str_card_no substringFromIndex:17] uppercaseString] characterAtIndex:0];
-    if (![OrgUtils isFullDigital:part_one]) {
-        return NO;
-    }
-    NSInteger muls[] = {7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2};
-    assert(sizeof(muls) / sizeof(muls[0]) == 17);
-    unichar mods[] = {'1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2'};
-    
-    NSInteger sum = 0;
-    for (NSInteger i = 0; i < part_one.length; ++i) {
-        sum += [[part_one substringWithRange:NSMakeRange(i, 1)] integerValue] * muls[i];
-    }
-    NSInteger mod = sum % 11;
-    if (mods[mod] != verify) {
-        return NO;
-    }
-    
-    return YES;
-}
-
 /**
  *  事件 - 用户点击提交按钮
  */
@@ -316,11 +266,11 @@ enum
         [OrgUtils makeToast:@"请输入姓名。"];
         return;
     }
-    if (![self _isValidCardNo:str_cardno]) {
+    if (![OtcManager checkIsValidChineseCardNo:str_cardno]) {
         [OrgUtils makeToast:@"请输入正确的身份证号。"];
         return;
     }
-    if (![self _isValidPhoneNumber:str_phone_num]) {
+    if (![OtcManager checkIsValidPhoneNumber:str_phone_num]) {
         [OrgUtils makeToast:@"请输入正确的手机号码。"];
         return;
     }

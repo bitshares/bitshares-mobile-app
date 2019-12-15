@@ -568,7 +568,7 @@ enum
                                                              ok:NSLocalizedString(@"kBtnOK", @"确定")
                                                           tfcfg:(^(SCLTextView *tf) {
         tf.keyboardType = UIKeyboardTypeNumberPad;
-        tf.bLimitInputThreshold = YES;
+        tf.iDecimalPrecision = 0;
     })
                                                      completion:(^(NSInteger buttonIndex, NSString *tfvalue) {
         if (buttonIndex != 0){

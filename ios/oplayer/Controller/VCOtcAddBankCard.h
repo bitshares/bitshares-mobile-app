@@ -11,6 +11,6 @@
 
 @interface VCOtcAddBankCard : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
-- (id)initWithAuthInfo:(id)auth_info;
+- (id)initWithAuthInfo:(id)auth_info result_promise:(WsPromiseObject*)result_promise;
 
 @end
