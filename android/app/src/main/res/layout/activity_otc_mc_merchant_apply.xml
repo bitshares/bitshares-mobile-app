@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/theme01.appBackColor"
+    tools:context="com.btsplusplus.fowallet.ActivityOtcMcMerchantApply">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="25dp"
+        android:orientation="vertical">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+
+            <LinearLayout
+                android:id="@+id/layout_back_from_otc_mc_merchant_apply"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_btn_back"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/kBtnBack"
+                    style="@style/kNavigationBarTextStyle"
+                    android:gravity="center_vertical"
+                    />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:text="商家申请"
+                style="@style/kNavigationBarTextStyle" />
+
+        </FrameLayout>
+
+        <ScrollView
+            android:fillViewport="true"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="商家昵称"
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorMain"/>
+
+                    <EditText
+                        android:id="@+id/et_input_nickname_from_otc_mc_merchant_apply"
+                        android:layout_marginLeft="10dp"
+                        android:singleLine="true"
+                        android:maxLines="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="#ffffff"
+                        android:textColorHint="@color/theme01.textColorGray"
+                        android:hint="请输入姓名"
+                        android:theme="@style/theme01.EditText"
+                        android:background="@null"
+                        android:textSize="16dp"/>
+
+                </LinearLayout>
+                <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+                <LinearLayout
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="个人账号"
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorMain"/>
+
+                    <TextView
+                        android:id="@+id/tv_account_name_from_otc_mc_merchant_apply"
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.buyColor"
+                        android:text="susu01"
+                        android:gravity="right"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+                <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+                <LinearLayout
+                    android:id="@+id/layout_select_bak_account_from_otc_mc_merchant_apply"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="备用账号"
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorMain"/>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical|right"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/tv_bak_account_name_from_otc_mc_merchant_apply"
+                            android:textSize="12dp"
+                            android:textColor="@color/theme01.textColorGray"
+                            android:text="请选择备用账号"
+                            android:gravity="right"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:foregroundGravity="right"
+                            android:src="@drawable/ic_btn_right_arrow" />
+
+                    </LinearLayout>
+                </LinearLayout>
+                <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+                <TextView
+                    android:id="@+id/tv_apply_submit_from_otc_mc_merchant_apply"
+                    android:layout_marginTop="30dp"
+                    android:background="@color/theme01.sellColor"
+                    android:gravity="center"
+                    android:textSize="14dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="申请"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp" />
+
+                <TextView
+                    android:id="@+id/tv_tips_from_otc_mc_merchant_apply"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:singleLine="false"
+                    android:textSize="12dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:padding="5dp"
+                    android:background="@color/theme01.textColorGray"
+                    android:text="【温馨提示】\n申请申请xxxxxxxx\nn申请申请xxxxxxxx" />
+
+
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
