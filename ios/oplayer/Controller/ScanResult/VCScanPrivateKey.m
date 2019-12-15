@@ -131,9 +131,7 @@ enum
         _tf_wallet_password.secureTextEntry = YES;
         _tf_wallet_password.updateClearButtonTintColor = YES;
         _tf_wallet_password.textColor = [ThemeManager sharedThemeManager].textColorMain;
-        _tf_wallet_password.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_wallet_password.placeholder
-                                                                                    attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                                 NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+        _tf_wallet_password.attributedPlaceholder = [ViewUtils placeholderAttrString:_tf_wallet_password.placeholder];
     } else {
         //  已经是钱包模式（or交易密码的模式）下不用在再次设置。
         _tf_wallet_password = nil;

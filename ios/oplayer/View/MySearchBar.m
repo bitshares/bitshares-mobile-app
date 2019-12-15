@@ -8,6 +8,7 @@
 
 #import "MySearchBar.h"
 #import "ThemeManager.h"
+#import "ViewUtils.h"
 
 @interface MySearchBar()
 {
@@ -53,9 +54,7 @@
             _tfColorInited = YES;
             tfSearchBar.backgroundColor = [UIColor clearColor];
             tfSearchBar.textColor = [ThemeManager sharedThemeManager].textColorMain;
-            tfSearchBar.attributedPlaceholder = [[NSAttributedString alloc] initWithString:tfSearchBar.placeholder
-                                                                                attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                             NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+            tfSearchBar.attributedPlaceholder = [ViewUtils placeholderAttrString:tfSearchBar.placeholder];
         }
     }
 }

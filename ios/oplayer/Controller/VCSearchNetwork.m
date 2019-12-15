@@ -227,9 +227,7 @@
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     UITextField* tf = (UITextField*)[_searchController.searchBar findSubview:[UITextField class] resursion:YES];
     if (tf) {
-        tf.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_searchController.searchBar.placeholder
-                                                                         attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
-                                                                                      NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+        tf.attributedPlaceholder = [ViewUtils placeholderAttrString:_searchController.searchBar.placeholder];
     }
     
     //  [兼容性] REMARK：iOS13 取消按钮文字用 KVC 方式崩溃。采用以下方法设置并且不能放在 viewDidLoad 中进行设置。

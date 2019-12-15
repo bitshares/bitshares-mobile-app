@@ -127,18 +127,14 @@ enum
     _tf_password.updateClearButtonTintColor = YES;
     _tf_username.textColor = [ThemeManager sharedThemeManager].textColorMain;
     _tf_password.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    _tf_username.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_username.placeholder
-                                                                         attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                      NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tf_username.attributedPlaceholder = [ViewUtils placeholderAttrString:_tf_username.placeholder];
     _tf_password.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_password.placeholder
                                                                          attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
                                                                                       NSFontAttributeName:[UIFont systemFontOfSize:17]}];
     if (_tf_trade_password){
         _tf_trade_password.updateClearButtonTintColor = YES;
         _tf_trade_password.textColor = [ThemeManager sharedThemeManager].textColorMain;
-        _tf_trade_password.attributedPlaceholder = [[NSAttributedString alloc] initWithString:_tf_trade_password.placeholder
-                                                                                   attributes:@{NSForegroundColorAttributeName:[ThemeManager sharedThemeManager].textColorGray,
-                                                                                                NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+        _tf_trade_password.attributedPlaceholder = [ViewUtils placeholderAttrString:_tf_trade_password.placeholder];
     }
     
     //  UI - 主列表

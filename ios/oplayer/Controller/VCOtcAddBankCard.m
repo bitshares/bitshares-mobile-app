@@ -135,23 +135,15 @@ enum
     
     _tf_username.updateClearButtonTintColor = YES;
     _tf_username.textColor = theme.textColorMain;
-    _tf_username.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderUserName
-                                                                         attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
-                                                                                      NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    
+    _tf_username.attributedPlaceholder = [ViewUtils placeholderAttrString:placeHolderUserName];
     _tf_bankcardno.updateClearButtonTintColor = YES;
     _tf_bankcardno.textColor = theme.textColorMain;
-    _tf_bankcardno.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderBankCardNo
-                                                                           attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
-                                                                                        NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tf_bankcardno.attributedPlaceholder = [ViewUtils placeholderAttrString:placeHolderBankCardNo];
     
     _tf_bankphonenumber.updateClearButtonTintColor = YES;
     _tf_bankphonenumber.textColor = theme.textColorMain;
-    _tf_bankphonenumber.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderBankPhoneNum
-                                                                                attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
-                                                                                             NSFontAttributeName:[UIFont systemFontOfSize:17]}];
-    
-    //  绑定输入事件（限制输入） TODO:2.9 otc
-    [_tf_bankcardno addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+    _tf_bankphonenumber.attributedPlaceholder = [ViewUtils placeholderAttrString:placeHolderBankPhoneNum];
     
     //  UI - 主表格
     _mainTableView = [[UITableViewBase alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];
@@ -190,7 +182,7 @@ enum
     NSString* str_bankno = _tf_bankcardno.text;
     NSString* str_phoneno = _tf_bankphonenumber.text;
     
-    //  TODO:2.9 验证码参数
+    //  TODO:2.9 lang 验证码参数
     if (!str_realname || [str_realname isEqualToString:@""]) {
         [OrgUtils makeToast:@"请输入姓名。"];
         return;
@@ -203,27 +195,37 @@ enum
         [OrgUtils makeToast:@"请输入正确的手机号码。"];
         return;
     }
-    //  TODO:2.9
     
-    //  TODO:otc
-    //  TODO:2.9 done!
-    if (_result_promise) {
-        [_result_promise resolve:@YES];
-    }
-    [self closeOrPopViewController];
-    return;
-}
-
-#pragma mark- for UITextFieldDelegate
-
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
-{
-    return YES;//TODO:otc
-}
-
-- (void)onTextFieldDidChange:(UITextField*)textField
-{
-    //  TODO:otc
+    [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+        if (unlocked) {
+            [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+            OtcManager* otc = [OtcManager sharedOtcManager];
+            id args = @{
+                @"account":str_bankno,
+                @"btsAccount":[otc getCurrentBtsAccount],
+                @"qrCode":@"",                  //  for alipay & wechat pay
+                @"realName":str_realname,
+                @"remark":@"",                  //  for bank card
+                @"reservePhone":str_phoneno,    //  for bank card
+                @"type":@(eopmt_bankcard)
+            };
+            [[[otc addPaymentMethods:args] then:^id(id data) {
+                [self hideBlockView];
+                //  TODO:2.9 lang
+                [OrgUtils makeToast:@"添加成功。"];
+                //  返回上一个界面并刷新
+                if (_result_promise) {
+                    [_result_promise resolve:@YES];
+                }
+                [self closeOrPopViewController];
+                return nil;
+            }] catch:^id(id error) {
+                [self hideBlockView];
+                [otc showOtcError:error];
+                return nil;
+            }];
+        }
+    }];
 }
 
 #pragma mark- UITextFieldDelegate delegate method
@@ -358,7 +360,7 @@ enum
                     cell.hideBottomLine = YES;
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                    cell.textLabel.text = @"开户银行";//TODO:otc
+                    cell.textLabel.text = @"预留手机号";//TODO:otc
                     cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                     return cell;

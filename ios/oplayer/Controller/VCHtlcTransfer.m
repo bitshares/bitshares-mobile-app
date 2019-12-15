@@ -400,14 +400,10 @@ enum
     //  设置属性颜色等
     _tf_preimage_or_hash.updateClearButtonTintColor = YES;
     _tf_preimage_or_hash.textColor = theme.textColorMain;
-    _tf_preimage_or_hash.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderMemo
-                                                                                 attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
-                                                                                              NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tf_preimage_or_hash.attributedPlaceholder = [ViewUtils placeholderAttrString:placeHolderMemo];
     _tf_amount.updateClearButtonTintColor = YES;
     _tf_amount.textColor = theme.textColorMain;
-    _tf_amount.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeHolderAmount
-                                                                       attributes:@{NSForegroundColorAttributeName:theme.textColorGray,
-                                                                                    NSFontAttributeName:[UIFont systemFontOfSize:17]}];
+    _tf_amount.attributedPlaceholder = [ViewUtils placeholderAttrString:placeHolderAmount];
     
     //  绑定输入事件（限制输入）
     [_tf_amount addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
