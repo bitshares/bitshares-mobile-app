@@ -270,6 +270,7 @@
  * (public) 查询资产基本信息
  */
 - (WsPromise*)queryAssetData:(NSString*)asset_symbol_or_id;
+- (WsPromise*)queryAssetDataList:(NSArray*)asset_name_list;
 
 /**
  * (public) 账号是否存在于区块链上

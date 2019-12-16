@@ -589,7 +589,7 @@ enum
     assert(![walletMgr isLocked]);
     id active_permission = [[[walletMgr getWalletAccountInfo] objectForKey:@"account"] objectForKey:@"active"];
     id sign_pub_keys = [walletMgr getSignKeys:active_permission assert_enough_permission:NO];
-    
+    //  TODO:2.9 手续费不足判断？
     [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     [[[[BitsharesClientManager sharedBitsharesClientManager] simpleTransfer:[_argsFromTo objectForKey:@"from"]
                                                                          to:[_argsFromTo objectForKey:@"to"]

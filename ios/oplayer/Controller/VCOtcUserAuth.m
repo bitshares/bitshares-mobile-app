@@ -283,7 +283,8 @@ enum
     [[[otc idVerify:args] then:^id(id data) {
         [self hideBlockView];
         //  TODO:2.9
-        [OrgUtils makeToast:@"认证通过"];
+        [self showMessageAndClose:@"认证通过"];
+//        [OrgUtils makeToast:@"认证通过"];
         return nil;
     }] catch:^id(id error) {
         [self hideBlockView];

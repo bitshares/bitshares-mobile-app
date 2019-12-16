@@ -1636,6 +1636,17 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     })];
 }
 
+- (WsPromise*)queryAssetDataList:(NSArray*)asset_name_list
+{
+    GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
+    return [[[api exec:@"get_assets" params:@[asset_name_list]] then:(^id(id data_array) {
+        return data_array;
+    })] catch:(^id(id error) {
+        NSLog(@"%@", error);
+        return nil;
+    })];
+}
+
 /**
  * (public) 账号是否存在于区块链上
  */
