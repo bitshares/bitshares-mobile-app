@@ -511,7 +511,7 @@ typedef enum EOtcMcProgress
 
 /*
  *  (public) API - 划转商家资产到个人账号
- *  认证：TOKEN 方式
+ *  认证：SIGN 方式
  */
 - (WsPromise*)queryMerchantAssetExport:(NSString*)bts_account_name signatureTx:(id)signatureTx;
 

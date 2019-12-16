@@ -1569,7 +1569,7 @@ static OtcManager *_sharedOtcManager = nil;
 
 /*
  *  (public) API - 划转商家资产到个人账号
- *  认证：TOKEN 方式
+ *  认证：SIGN 方式
  */
 - (WsPromise*)queryMerchantAssetExport:(NSString*)bts_account_name signatureTx:(id)signatureTx
 {
@@ -1580,7 +1580,7 @@ static OtcManager *_sharedOtcManager = nil;
         @"btsAccount":bts_account_name,
         @"signatureTx":[signatureTx to_json],
     };
-    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
 }
 
 /*
