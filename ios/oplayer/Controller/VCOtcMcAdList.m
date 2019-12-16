@@ -31,8 +31,9 @@
 
 - (NSArray*)getTitleStringArray
 {
-    //  TODO:2.9
-    return @[@"上架中", @"已下架", @"已删除"];
+    return @[NSLocalizedString(@"kOtcMcAdPageTitleOnline", @"上架中"),
+             NSLocalizedString(@"kOtcMcAdPageTitleOffline", @"已下架"),
+             NSLocalizedString(@"kOtcMcAdPageTitleDeleted", @"已删除")];
 }
 
 - (NSArray*)getSubPageVCArray
@@ -82,8 +83,7 @@
                                            merchant_detail:_merchant_detail
                                                    ad_info:nil
                                             result_promise:result_promise];
-    //  TODO:2.9
-    [self pushViewController:vc vctitle:@"发布广告" backtitle:kVcDefaultBackTitleName];
+    [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleOtcMcCreateAd", @"发布广告") backtitle:kVcDefaultBackTitleName];
     [result_promise then:^id(id dirty) {
         //  刷新UI
         if (dirty && [dirty boolValue]) {
@@ -241,16 +241,15 @@
     _lbEmptyOrder.textColor = [ThemeManager sharedThemeManager].textColorMain;
     _lbEmptyOrder.textAlignment = NSTextAlignmentCenter;
     _lbEmptyOrder.font = [UIFont boldSystemFontOfSize:13];
-    //  TODO:2.9
     switch (_ad_status) {
         case eoads_online:
-            _lbEmptyOrder.text = @"没有任何广告信息，点击右上角发布广告。";
+            _lbEmptyOrder.text = NSLocalizedString(@"kOtcMcAdTableNoOnlineAd", @"没有任何广告信息，点击右上角发布广告。");
             break;
         case eoads_offline:
-            _lbEmptyOrder.text = @"没有任何广告信息";
+            _lbEmptyOrder.text = NSLocalizedString(@"kOtcMcAdTableNoAd", @"没有任何广告信息");
             break;
         case eoads_deleted:
-            _lbEmptyOrder.text = @"没有任何广告信息";
+            _lbEmptyOrder.text = NSLocalizedString(@"kOtcMcAdTableNoAd", @"没有任何广告信息");
             break;
         default:
             break;
@@ -339,8 +338,7 @@
                                            merchant_detail:_merchant_detail
                                                    ad_info:ad_info
                                             result_promise:result_promise];
-    //  TODO:2.9
-    [_owner pushViewController:vc vctitle:@"编辑广告" backtitle:kVcDefaultBackTitleName];
+    [_owner pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleOtcMcUpdateAd", @"编辑广告") backtitle:kVcDefaultBackTitleName];
     [result_promise then:^id(id dirty) {
         //  刷新UI
         if (dirty && [dirty boolValue]) {
@@ -391,8 +389,7 @@
     OtcManager* otc = [OtcManager sharedOtcManager];
     [[[otc merchantDownAd:[otc getCurrentBtsAccount] ad_id:[adInfos objectForKey:@"adId"]] then:^id(id data) {
         [_owner hideBlockView];
-        //  TODO:2.9 lang
-        [OrgUtils makeToast:@"已下架。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAdSubmitTipsDownOK", @"已下架。")];
         //  刷新
         [self queryMerchantAdList];
         return nil;
@@ -409,8 +406,7 @@
     OtcManager* otc = [OtcManager sharedOtcManager];
     [[[otc merchantReUpAd:[otc getCurrentBtsAccount] ad_id:[adInfos objectForKey:@"adId"]] then:^id(id data) {
         [_owner hideBlockView];
-        //  TODO:2.9 lang
-        [OrgUtils makeToast:@"已上架。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAdSubmitTipsUpOK", @"已上架。")];
         //  刷新
         [self queryMerchantAdList];
         return nil;

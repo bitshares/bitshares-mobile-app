@@ -37,10 +37,14 @@
 - (NSArray*)getTitleStringArray
 {
     if (_user_type == eout_normal_user) {
-        //  TODO:2.9
-        return @[@"进行中", @"已完成", @"已取消"];
+        return @[NSLocalizedString(@"kOtcOrderPageTitlePending", @"进行中"),
+                 NSLocalizedString(@"kOtcOrderPageTitleCompleted", @"已完成"),
+                 NSLocalizedString(@"kOtcOrderPageTitleCancelled", @"已取消")];
     } else {
-        return @[@"全部", @"需处理", @"进行中", @"已完成"];
+        return @[NSLocalizedString(@"kOtcOrderPageTitleAll", @"全部"),
+                 NSLocalizedString(@"kOtcOrderPageTitleWaitProcessing", @"需处理"),
+                 NSLocalizedString(@"kOtcOrderPageTitlePending", @"进行中"),
+                 NSLocalizedString(@"kOtcOrderPageTitleCompleted", @"已完成")];
     }
 }
 
@@ -210,9 +214,8 @@
     _lbEmptyOrder.textColor = [ThemeManager sharedThemeManager].textColorMain;
     _lbEmptyOrder.textAlignment = NSTextAlignmentCenter;
     _lbEmptyOrder.font = [UIFont boldSystemFontOfSize:13];
-    //  TODO:2.9
     if (_user_type == eout_merchant && _order_status == eoos_mc_wait_process) {
-        _lbEmptyOrder.text = @"没有任何需处理的订单";
+        _lbEmptyOrder.text = NSLocalizedString(@"kOtcOrderEmptyLabelWaitProcessing", @"没有任何需处理的订单");
     } else {
         _lbEmptyOrder.text = NSLocalizedString(@"kOtcOrderEmptyLabel", @"没有任何订单信息");
     }

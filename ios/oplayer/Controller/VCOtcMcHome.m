@@ -175,27 +175,28 @@ enum
             
         case kVcSubStatistics:
         {
+            //  TODO:3.0 暂时不支持统计分析数据
             cell.accessoryType = UITableViewCellAccessoryNone;
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
-            cell.textLabel.text = @"统计分析";//TODO:
+            cell.textLabel.text = NSLocalizedString(@"kOtcMcHomeCellLabelTitleStatistics", @"统计分析");
         }
             break;
             
         case kVcSubOtcAsset:
-            cell.textLabel.text = @"商家资产";//TODO:
+            cell.textLabel.text = NSLocalizedString(@"kOtcMcHomeCellLabelTitleAsset", @"商家资产");
             break;
         case kVcSubOtcAd:
-            cell.textLabel.text = @"商家广告";//TODO:
+            cell.textLabel.text = NSLocalizedString(@"kOtcMcHomeCellLabelTitleAd", @"商家广告");
             break;
         case kVcSubOtcOrder:
-            cell.textLabel.text = @"商家订单";//TODO:
+            cell.textLabel.text = NSLocalizedString(@"kOtcMcHomeCellLabelTitleOrder", @"商家订单");
             break;
             
         case kVcSubReceiveMethods:
-            cell.textLabel.text = @"收款方式";//TODO:
+            cell.textLabel.text = NSLocalizedString(@"kOtcMcHomeCellLabelTitleReceiveMethod", @"收款方式");
             break;
         case kVcSubPaymentMethods:
-            cell.textLabel.text = @"付款方式";//TODO:
+            cell.textLabel.text = NSLocalizedString(@"kOtcMcHomeCellLabelTitlePaymentMethod", @"付款方式");
             break;
             
         default:
@@ -256,7 +257,7 @@ enum
                 {
                     VCBase* vc = [[VCOtcMcPaymentMethods alloc] initWithAuthInfo:auth_info merchant_detail:_merchant_detail];
                     [self pushViewController:vc
-                                     vctitle:@"付款方式"//TODO:2.9
+                                     vctitle:NSLocalizedString(@"kVcTitleOtcMcPaymentMethodsList", @"付款方式")
                                    backtitle:kVcDefaultBackTitleName];
                 }
                     break;
@@ -271,22 +272,20 @@ enum
 
 - (void)gotoOtcAssetClicked:(id)auth_info
 {
-    //  TODO:2.9
     VCBase* vc = [[VCOtcMcAssetList alloc] initWithAuthInfo:auth_info user_type:eout_merchant merchant_detail:_merchant_detail];
-    [self pushViewController:vc vctitle:@"商家资产" backtitle:kVcDefaultBackTitleName];
+    [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleOtcMcAsset", @"商家资产") backtitle:kVcDefaultBackTitleName];
 }
 
 - (void)gotoOtcAdClicked:(id)auth_info
 {
-    //  TODO:2.9
     VCBase* vc = [[VCOtcMcAdListPages alloc] initWithAuthInfo:auth_info user_type:eout_merchant merchant_detail:_merchant_detail];
-    [self pushViewController:vc vctitle:@"商家广告" backtitle:kVcDefaultBackTitleName];
+    [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleOtcMcAd", @"商家广告") backtitle:kVcDefaultBackTitleName];
 }
 
 - (void)gotoOtcOrderClicked:(id)auth_info
 {
     VCBase* vc = [[VCOtcOrdersPages alloc] initWithAuthInfo:auth_info user_type:eout_merchant];
-    [self pushViewController:vc vctitle:@"商家订单" backtitle:kVcDefaultBackTitleName];
+    [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleOtcMcOrder", @"商家订单") backtitle:kVcDefaultBackTitleName];
 }
 
 @end

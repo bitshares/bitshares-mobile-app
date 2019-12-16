@@ -142,7 +142,6 @@ enum
 {
     BOOL bSwitchIsOn = sender.on;
     
-    //  TODO:2.9 lang
     id newAliPaySwitch = nil;
     id newBankcardPaySwitch = nil;
     switch (sender.tag) {
@@ -151,7 +150,7 @@ enum
             newAliPaySwitch = @(bSwitchIsOn);
             if (!bSwitchIsOn && !_bankcardPaySwitch) {
                 [self resetSwitchToValue:sender value:!bSwitchIsOn];
-                [OrgUtils makeToast:@"不能同时关闭所有付款方式。"];
+                [OrgUtils makeToast:NSLocalizedString(@"kOtcMcPmSubmitTipCannotCloseAll", @"不能同时关闭所有付款方式。")];
                 return;
             }
         }
@@ -161,7 +160,7 @@ enum
             newBankcardPaySwitch = @(bSwitchIsOn);
             if (!bSwitchIsOn && !_aliPaySwitch) {
                 [self resetSwitchToValue:sender value:!bSwitchIsOn];
-                [OrgUtils makeToast:@"不能同时关闭所有付款方式。"];
+                [OrgUtils makeToast:NSLocalizedString(@"kOtcMcPmSubmitTipCannotCloseAll", @"不能同时关闭所有付款方式。")];
                 return;
             }
         }
@@ -180,21 +179,20 @@ enum
                               bankcardPaySwitch:newBankcardPaySwitch] then:^id(id data)
               {
                 [self hideBlockView];
-                //  TODO:2.9 lang
                 if (newAliPaySwitch) {
                     _aliPaySwitch = bSwitchIsOn;
                     if (bSwitchIsOn) {
-                        [OrgUtils makeToast:@"已开启支付宝付款。"];
+                        [OrgUtils makeToast:NSLocalizedString(@"kOtcMcPmSubmitTipEnableAlipay", @"已开启支付宝付款。")];
                     } else {
-                        [OrgUtils makeToast:@"已关闭支付宝付款。"];
+                        [OrgUtils makeToast:NSLocalizedString(@"kOtcMcPmSubmitTipDisableAlipay", @"已关闭支付宝付款。")];
                     }
                 }
                 if (newBankcardPaySwitch) {
                     _bankcardPaySwitch = bSwitchIsOn;
                     if (bSwitchIsOn) {
-                        [OrgUtils makeToast:@"已开启银行卡付款。"];
+                        [OrgUtils makeToast:NSLocalizedString(@"kOtcMcPmSubmitTipEnableBankcardPay", @"已开启银行卡付款。")];
                     } else {
-                        [OrgUtils makeToast:@"已关闭银行卡付款。"];
+                        [OrgUtils makeToast:NSLocalizedString(@"kOtcMcPmSubmitTipDisableBankcardPay", @"已关闭银行卡付款。")];
                     }
                 }
                 return nil;

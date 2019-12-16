@@ -112,10 +112,9 @@ enum
     self.view.backgroundColor = theme.appBackColor;
     
     //  初始化UI
-    //  TODO:2.9 otc
-    NSString* placeHolderUserName = @"请输入您的姓名";
-    NSString* placeHolderBankCardNo = @"请输入银行卡号";
-    NSString* placeHolderBankPhoneNum =  @"请输入银行预留手机号";
+    NSString* placeHolderUserName = NSLocalizedString(@"kOtcRmAddPlaceholderRealname", @"请输入您的姓名");
+    NSString* placeHolderBankCardNo = NSLocalizedString(@"kOtcRmAddPlaceholderBankCardNo", @"请输入银行卡号");
+    NSString* placeHolderBankPhoneNum = NSLocalizedString(@"kOtcRmAddPlaceholderBankPhoneNo", @"请输入银行预留手机号");
     CGRect rect = [self makeTextFieldRectFull];
     _tf_username = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolderUserName];
     _tf_bankcardno = [self createTfWithRect:rect keyboard:UIKeyboardTypeNumberPad placeholder:placeHolderBankCardNo];
@@ -160,9 +159,9 @@ enum
     [self.view addGestureRecognizer:pTap];
     
     //  提交按钮
-    _goto_submit = [self createCellLableButton:@"提交"];//TODO:otc
+    _goto_submit = [self createCellLableButton:NSLocalizedString(@"kOtcRmAddSubmitBtnName", @"提交")];
     
-    _cell_tips = [[ViewTipsInfoCell alloc] initWithText:@"【温馨提示】\n请务必使用您本人的银行卡。"];
+    _cell_tips = [[ViewTipsInfoCell alloc] initWithText:NSLocalizedString(@"kOtcRmAddCellTipsBankcard", @"【温馨提示】\n请务必使用您本人的银行卡。")];
     _cell_tips.hideBottomLine = YES;
     _cell_tips.hideTopLine = YES;
     _cell_tips.backgroundColor = [UIColor clearColor];
@@ -182,17 +181,16 @@ enum
     NSString* str_bankno = _tf_bankcardno.text;
     NSString* str_phoneno = _tf_bankphonenumber.text;
     
-    //  TODO:2.9 lang 验证码参数
     if (!str_realname || [str_realname isEqualToString:@""]) {
-        [OrgUtils makeToast:@"请输入姓名。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcRmSubmitTipsInputRealname", @"请输入姓名。")];
         return;
     }
     if (!str_bankno || [str_bankno isEqualToString:@""]) {
-        [OrgUtils makeToast:@"请输入有效的银行卡号。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcRmSubmitTipsInputBankcardNo", @"请输入有效的银行卡号。")];
         return;
     }
     if (![OtcManager checkIsValidPhoneNumber:str_phoneno]) {
-        [OrgUtils makeToast:@"请输入正确的手机号码。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcRmSubmitTipsInputPhoneNo", @"请输入正确的手机号码。")];
         return;
     }
     
@@ -211,8 +209,7 @@ enum
             };
             [[[otc addPaymentMethods:args] then:^id(id data) {
                 [self hideBlockView];
-                //  TODO:2.9 lang
-                [OrgUtils makeToast:@"添加成功。"];
+                [OrgUtils makeToast:NSLocalizedString(@"kOtcRmSubmitTipsOK", @"添加成功。")];
                 //  返回上一个界面并刷新
                 if (_result_promise) {
                     [_result_promise resolve:@YES];
@@ -310,7 +307,7 @@ enum
                     cell.hideBottomLine = YES;
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                    cell.textLabel.text = @"姓名";//TODO:otc
+                    cell.textLabel.text = NSLocalizedString(@"kOtcRmAddCellLabelTitleName", @"姓名");
                     cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                     return cell;
@@ -335,7 +332,7 @@ enum
                     cell.hideBottomLine = YES;
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                    cell.textLabel.text = @"银行卡号";//TODO:otc
+                    cell.textLabel.text = NSLocalizedString(@"kOtcRmAddCellLabelTitleBankCardNo", @"银行卡号");
                     cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                     return cell;
@@ -360,7 +357,7 @@ enum
                     cell.hideBottomLine = YES;
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                    cell.textLabel.text = @"预留手机号";//TODO:otc
+                    cell.textLabel.text = NSLocalizedString(@"kOtcRmAddCellLabelTitleBankPhoneNo", @"预留手机号");
                     cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                     return cell;

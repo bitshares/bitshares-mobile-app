@@ -114,10 +114,9 @@ enum
         return;
     }
     
-    //  TODO:2.9 otc
     id str_phone_num = _tf_phonenumber.text;
     if (![OtcManager checkIsValidPhoneNumber:str_phone_num]){
-        [OrgUtils makeToast:@"请输入正确的手机号码。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcRmSubmitTipsInputPhoneNo", @"请输入正确的手机号码。")];
         return;
     }
     
@@ -128,14 +127,14 @@ enum
     OtcManager* otc = [OtcManager sharedOtcManager];
     [[[otc sendSmsCode:[otc getCurrentBtsAccount] phone:str_phone_num type:eost_id_verify] then:^id(id data) {
         [self hideBlockView];
-        [OrgUtils makeToast:@"短信发送成功。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcAuthInfoTailerTipsGetSmscodeOK", @"短信发送成功。")];
         //  重发倒计时
-        [sender setTitle:[NSString stringWithFormat:@"%@秒后重新获取", @(max_countdown_secs)] forState:UIControlStateNormal];
+        [sender setTitle:[NSString stringWithFormat:NSLocalizedString(@"kOtcAuthInfoTailerBtnGetSmscodeWaitNsec", @"%@秒后重新获取"), @(max_countdown_secs)] forState:UIControlStateNormal];
         _smsTimerId = [[AsyncTaskManager sharedAsyncTaskManager] scheduledSecondsTimer:max_countdown_secs callback:^(NSInteger left_ts) {
             if (left_ts > 0) {
-                [sender setTitle:[NSString stringWithFormat:@"%@秒后重新获取", @(left_ts)] forState:UIControlStateNormal];
+                [sender setTitle:[NSString stringWithFormat:NSLocalizedString(@"kOtcAuthInfoTailerBtnGetSmscodeWaitNsec", @"%@秒后重新获取"), @(left_ts)] forState:UIControlStateNormal];
             } else {
-                [sender setTitle:@"获取验证码" forState:UIControlStateNormal];
+                [sender setTitle:NSLocalizedString(@"kOtcAuthInfoTailerBtnGetSmscode", @"获取验证码") forState:UIControlStateNormal];
             }
         }];
         return nil;
@@ -158,11 +157,10 @@ enum
     _smsTimerId = 0;
     
     //  初始化UI
-    //  TODO:2.9 lang otc
-    NSString* placeHolderName = @"请输入您的姓名";
-    NSString* placeHolderIdNumber = @"请输入身份证号";
-    NSString* placeHolderPhoneNumber =  @"请输入手机号码";
-    NSString* placeHolderSmscode = @"短信验证码";
+    NSString* placeHolderName = NSLocalizedString(@"kOtcRmAddPlaceholderRealname", @"请输入您的姓名");
+    NSString* placeHolderIdNumber = NSLocalizedString(@"kOtcAuthInfoPlaceholderIdNo", @"请输入身份证号");
+    NSString* placeHolderPhoneNumber = NSLocalizedString(@"kOtcAuthInfoPlaceholderPhoneNo", @"请输入手机号码");
+    NSString* placeHolderSmscode = NSLocalizedString(@"kOtcAuthInfoPlaceholderSmscode", @"短信验证码");
     CGRect rect = [self makeTextFieldRectFull];
     _tf_name = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolderName];
     _tf_idnumber = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolderIdNumber];
@@ -198,7 +196,7 @@ enum
     //  UI - 短信验证码尾部获取按钮
     UIButton* btnRequestSmsCode = [UIButton buttonWithType:UIButtonTypeCustom];
     btnRequestSmsCode.titleLabel.font = [UIFont systemFontOfSize:13];
-    [btnRequestSmsCode setTitle:@"获取验证码" forState:UIControlStateNormal];//TODO:otc
+    [btnRequestSmsCode setTitle:NSLocalizedString(@"kOtcAuthInfoTailerBtnGetSmscode", @"获取验证码") forState:UIControlStateNormal];
     [btnRequestSmsCode setTitleColor:[ThemeManager sharedThemeManager].textColorHighlight forState:UIControlStateNormal];
     btnRequestSmsCode.userInteractionEnabled = YES;
     [btnRequestSmsCode addTarget:self
@@ -226,14 +224,14 @@ enum
     pTap.cancelsTouchesInView = NO; //  IOS 5.0系列导致按钮没响应
     [self.view addGestureRecognizer:pTap];
     
-    //  提示 TODO:otc wenzi
-    _cell_tips = [[ViewTipsInfoCell alloc] initWithText:@"【温馨提示】\n您只有通过了身份认证，才能进行场外交易。\n目前仅支持中国大陆地区进行身份认证。姓名和身份证号提交后不可更改。"];
+    //  提示
+    _cell_tips = [[ViewTipsInfoCell alloc] initWithText:NSLocalizedString(@"kOtcAuthInfoCellTips", @"【温馨提示】\n您只有通过了身份认证，才能进行场外交易。\n目前仅支持中国大陆地区进行身份认证。姓名和身份证号提交后不可更改。")];
     _cell_tips.hideBottomLine = YES;
     _cell_tips.hideTopLine = YES;
     _cell_tips.backgroundColor = [UIColor clearColor];
     
     //  提交按钮
-    _goto_submit = [self createCellLableButton:@"提交"];//TODO:otc
+    _goto_submit = [self createCellLableButton:NSLocalizedString(@"kOtcRmAddSubmitBtnName", @"提交")];
 }
 
 -(void)onTap:(UITapGestureRecognizer*)pTap
@@ -251,21 +249,20 @@ enum
     NSString* str_phone_num = _tf_phonenumber.text;
     NSString* str_sms_code = _tf_smscode.text;
     
-    //  TODO:2.9 验证码参数
     if (!str_name || [str_name isEqualToString:@""]) {
-        [OrgUtils makeToast:@"请输入姓名。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcRmSubmitTipsInputRealname", @"请输入姓名。")];
         return;
     }
     if (![OtcManager checkIsValidChineseCardNo:str_cardno]) {
-        [OrgUtils makeToast:@"请输入正确的身份证号。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcAuthInfoSubmitTipsInputIdNo", @"请输入正确的身份证号。")];
         return;
     }
     if (![OtcManager checkIsValidPhoneNumber:str_phone_num]) {
-        [OrgUtils makeToast:@"请输入正确的手机号码。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcRmSubmitTipsInputPhoneNo", @"请输入正确的手机号码。")];
         return;
     }
     if (!str_sms_code || [str_sms_code isEqualToString:@""]) {
-        [OrgUtils makeToast:@"请输入短信验证码。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcAuthInfoSubmitTipsInputSmscode", @"请输入短信验证码。")];
         return;
     }
     
@@ -282,9 +279,7 @@ enum
     [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     [[[otc idVerify:args] then:^id(id data) {
         [self hideBlockView];
-        //  TODO:2.9
-        [self showMessageAndClose:@"认证通过"];
-//        [OrgUtils makeToast:@"认证通过"];
+        [self showMessageAndClose:NSLocalizedString(@"kOtcAuthInfoSubmitTipsOK", @"认证通过。")];
         return nil;
     }] catch:^id(id error) {
         [self hideBlockView];
@@ -292,18 +287,6 @@ enum
         return nil;
     }];
 }
-
-//#pragma mark- for UITextFieldDelegate
-//
-//- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
-//{
-//    return YES;//TODO:otc
-//}
-//
-//- (void)onTextFieldDidChange:(UITextField*)textField
-//{
-//    //  TODO:otc
-//}
 
 #pragma mark- UITextFieldDelegate delegate method
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
@@ -388,7 +371,7 @@ enum
                 cell.hideBottomLine = YES;
                 cell.accessoryType = UITableViewCellAccessoryNone;
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.textLabel.text = @"姓名";//TODO:otc
+                cell.textLabel.text = NSLocalizedString(@"kOtcRmAddCellLabelTitleName", @"姓名");
                 cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
                 cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                 return cell;
@@ -413,7 +396,7 @@ enum
                 cell.hideBottomLine = YES;
                 cell.accessoryType = UITableViewCellAccessoryNone;
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.textLabel.text = @"身份证号";//TODO:otc
+                cell.textLabel.text = NSLocalizedString(@"kOtcAuthInfoCellLabelTitleIdNo", @"身份证号");
                 cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
                 cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                 return cell;
@@ -438,7 +421,7 @@ enum
                 cell.hideBottomLine = YES;
                 cell.accessoryType = UITableViewCellAccessoryNone;
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.textLabel.text = @"联系方式";//TODO:otc
+                cell.textLabel.text = NSLocalizedString(@"kOtcAuthInfoCellLabelTitleContact", @"联系方式");
                 cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
                 cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                 return cell;
@@ -462,7 +445,7 @@ enum
                 cell.backgroundColor = [UIColor clearColor];
                 cell.accessoryType = UITableViewCellAccessoryNone;
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                [_mainTableView attachTextfieldToCell:cell tf:_tf_smscode];//TODO:
+                [_mainTableView attachTextfieldToCell:cell tf:_tf_smscode];
                 cell.hideTopLine = YES;
                 cell.hideBottomLine = YES;
                 return cell;
