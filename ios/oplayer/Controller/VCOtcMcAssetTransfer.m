@@ -142,15 +142,19 @@ enum
 }
 - (void)_drawUI_Balance:(BOOL)not_enough
 {
-    //  TODO:2.9 lang
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     NSString* symbol = [_curr_merchant_asset objectForKey:@"assetSymbol"];
     if (not_enough) {
-        _cellAssetAvailable.detailTextLabel.text = [NSString stringWithFormat:@"可用 %@ %@(%@)", _nCurrBalance,
-                                                    symbol, @"余额不足"];
+        _cellAssetAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@ %@(%@)",
+                                                    NSLocalizedString(@"kOtcMcAssetCellAvailable", @"可用"),
+                                                    _nCurrBalance,
+                                                    symbol,
+                                                    NSLocalizedString(@"kOtcMcAssetTransferBalanceNotEnough", @"余额不足")];
         _cellAssetAvailable.detailTextLabel.textColor = theme.tintColor;
     } else {
-        _cellAssetAvailable.detailTextLabel.text = [NSString stringWithFormat:@"可用 %@ %@", _nCurrBalance,
+        _cellAssetAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@ %@",
+                                                    NSLocalizedString(@"kOtcMcAssetCellAvailable", @"可用"),
+                                                    _nCurrBalance,
                                                     symbol];
         _cellAssetAvailable.detailTextLabel.textColor = theme.textColorMain;
     }
@@ -209,7 +213,7 @@ enum
     UILabel* lbAsset = [ViewUtils auxGenLabel:[UIFont boldSystemFontOfSize:13] superview:tailer_view];
     UILabel* lbSpace = [ViewUtils auxGenLabel:[UIFont systemFontOfSize:13] superview:tailer_view];
     lbAsset.text = asset_symbol;
-    lbSpace.text = @"|";//TODO:2.9
+    lbSpace.text = @"|";
     lbAsset.textColor = theme.textColorMain;
     lbSpace.textColor = theme.textColorGray;
     lbAsset.textAlignment = NSTextAlignmentRight;
@@ -252,11 +256,10 @@ enum
 
 - (NSString*)genTransferTipsMessage
 {
-    //  TODO:2.9 lang
     if ([[_argsFromTo objectForKey:@"bFromIsMerchant"] boolValue]) {
-        return @"【温馨提示】\n从商家账号转账给个人账号，需要平台协同处理，划转成功后请耐心等待。";
+        return NSLocalizedString(@"kOtcMcAssetCellTipsTransferOut", @"【温馨提示】\n从商家账号转账给个人账号，需要平台协同处理，划转成功后请耐心等待。");
     } else {
-        return @"【温馨提示】\n从个人账号直接转账给商家账号。";
+        return NSLocalizedString(@"kOtcMcAssetCellTipsTransferIn", @"【温馨提示】\n从个人账号直接转账给商家账号。");
     }
 }
 
@@ -313,8 +316,7 @@ enum
     pTap.cancelsTouchesInView = NO; //  IOS 5.0系列导致按钮没响应
     [self.view addGestureRecognizer:pTap];
     
-    //  TODO:2.9
-    _lbCommit = [self createCellLableButton:@"划转"];
+    _lbCommit = [self createCellLableButton:NSLocalizedString(@"kOtcMcAssetSubmitBtnName", @"划转")];
 }
 
 -(void)onTap:(UITapGestureRecognizer*)pTap
@@ -503,12 +505,11 @@ enum
 
 - (void)onSelectAssetClicked
 {
-    //  TODO:2.9 lang
     id list = [_asset_list ruby_map:^id(id src) {
         return [src objectForKey:@"assetSymbol"];
     }];
     [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
-                                                       message:@"请选择划转资产"
+                                                       message:NSLocalizedString(@"kOtcMcAssetSubmitAskSelectTransferAsset", @"请选择划转资产")
                                                         cancel:NSLocalizedString(@"kBtnCancel", @"取消")
                                                          items:list
                                                       callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
@@ -531,23 +532,22 @@ enum
 
 - (void)onSubmitClicked
 {
-    //  TODO:2.9 lang
     id n_amount = [OrgUtils auxGetStringDecimalNumberValue:_tf_amount.text];
     
     NSDecimalNumber* n_zero = [NSDecimalNumber zero];
     if ([n_amount compare:n_zero] <= 0) {
-        [OrgUtils makeToast:@"请输入划转金额。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAssetSubmitTipPleaseInputAmount", @"请输入划转金额。")];
         return;
     }
     
     if ([_nCurrBalance compare:n_amount] < 0) {
-        [OrgUtils makeToast:@"余额不足。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAssetSubmitTipBalanceNotEnough", @"余额不足。")];
         return;
     }
     
     if ([[_argsFromTo objectForKey:@"bFromIsMerchant"] boolValue]) {
-        //  TODO:2.9 lang
-        id value = [NSString stringWithFormat:@"您确认转出 %@ %@ 到个人账号吗？", n_amount, _curr_merchant_asset[@"assetSymbol"]];
+        id value = [NSString stringWithFormat:NSLocalizedString(@"kOtcMcAssetSubmitAskTransferOut", @"您确认转出 %@ %@ 到个人账号吗？"),
+                    n_amount, _curr_merchant_asset[@"assetSymbol"]];
         [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:value
                                                                withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
                                                               completion:^(NSInteger buttonIndex)
@@ -562,7 +562,8 @@ enum
             }
         }];
     } else {
-        id value = [NSString stringWithFormat:@"您确认转入 %@ %@ 到商家账号吗？", n_amount, _curr_merchant_asset[@"assetSymbol"]];
+        id value = [NSString stringWithFormat:NSLocalizedString(@"kOtcMcAssetSubmitAskTransferIn", @"您确认转入 %@ %@ 到商家账号吗？"),
+                    n_amount, _curr_merchant_asset[@"assetSymbol"]];
         [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:value
                                                                withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
                                                               completion:^(NSInteger buttonIndex)
@@ -612,8 +613,7 @@ enum
             OtcManager* otc = [OtcManager sharedOtcManager];
             [[[otc queryMerchantAssetExport:[otc getCurrentBtsAccount] signatureTx:tx] then:^id(id data) {
                 [self hideBlockView];
-                //  TODO:2.9
-                [OrgUtils makeToast:@"转出请求已提交，请耐心等待平台处理，请勿重复操作。"];
+                [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAssetSubmitTipTransferOutOK", @"转出请求已提交，请耐心等待平台处理，请勿重复操作。")];
                 return nil;
             }] catch:^id(id error) {
                 [self hideBlockView];
@@ -649,8 +649,8 @@ enum
             //  错误
             [OrgUtils makeToast:err];
         } else {
-            //  TODO:2.9 lang
-            [OrgUtils makeToast:@"转入成功。"];
+            //  TODO:2.9 refresh ui balance?
+            [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAssetSubmitTipTransferInOK", @"转入成功。")];
         }
         return nil;
     }] catch:^id(id error) {

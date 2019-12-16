@@ -155,8 +155,7 @@ enum
 
 - (void)onDeleteAdClicked:(UIButton*)sender
 {
-    //  TODO:2.9 lang
-    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"您确认删除该广告吗？"
+    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:NSLocalizedString(@"kOtcMcAdTipAskDelete", @"您确认删除该广告吗？")
                                                            withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
                                                           completion:^(NSInteger buttonIndex)
      {
@@ -168,8 +167,7 @@ enum
                     OtcManager* otc = [OtcManager sharedOtcManager];
                     [[[otc merchantDeleteAd:[otc getCurrentBtsAccount] ad_id:[_ad_infos objectForKey:@"adId"]] then:^id(id data) {
                         [self hideBlockView];
-                        //  TODO:2.9 lang
-                        [OrgUtils makeToast:@"删除成功。"];
+                        [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAdSubmitTipDeleteOK", @"删除成功。")];
                         //  返回上一个界面并刷新
                         if (_result_promise) {
                             [_result_promise resolve:@YES];
@@ -197,8 +195,7 @@ enum
     
     //  编辑的时候 - 添加删除按钮
     if (!_bNewAd) {
-        //  TODO:2.9 lang
-        [self showRightButton:@"删除" action:@selector(onDeleteAdClicked:)];
+        [self showRightButton:NSLocalizedString(@"kOtcMcAdBtnNameDelete", @"删除") action:@selector(onDeleteAdClicked:)];
     }
     
     _dataArray = [[[NSMutableArray array] ruby_apply:^(id obj) {
@@ -222,19 +219,18 @@ enum
     _mainTableView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:_mainTableView];
     
-    //  TODO:2.9 lang
     if (_bNewAd) {
-        _lbCommit = [self createCellLableButton:@"发布广告"];
+        _lbCommit = [self createCellLableButton:NSLocalizedString(@"kOtcMcAdBtnPublishAd", @"发布广告")];
         //  新建的时候增加一个保存按钮
-        _lbSave = [self createCellLableButton:@"保存广告"];
+        _lbSave = [self createCellLableButton:NSLocalizedString(@"kOtcMcAdBtnSaveAd", @"保存广告")];
         UIColor* backColor = [ThemeManager sharedThemeManager].textColorGray;
         _lbSave.layer.borderColor = backColor.CGColor;
         _lbSave.layer.backgroundColor = backColor.CGColor;
     } else {
         if ([[_ad_infos objectForKey:@"status"] integerValue] == eoads_online) {
-            _lbCommit = [self createCellLableButton:@"更新广告"];
+            _lbCommit = [self createCellLableButton:NSLocalizedString(@"kOtcMcAdBtnUpdateAd", @"更新广告")];
         } else {
-            _lbCommit = [self createCellLableButton:@"更新并上架广告"];
+            _lbCommit = [self createCellLableButton:NSLocalizedString(@"kOtcMcAdBtnUpdateAndUpAd", @"更新并上架广告")];
         }
     }
     
@@ -335,22 +331,21 @@ enum
     cell.detailTextLabel.font = [UIFont systemFontOfSize:15.0f];
     cell.showCustomBottomLine = YES;
     
-    //  TODO:2.9 lang
     switch (rowType) {
         case kVcSubAdType:
         {
-            cell.textLabel.text = @"广告类型";
+            cell.textLabel.text = NSLocalizedString(@"kOtcMcAdEditCellAdType", @"广告类型");
             id adType = [_ad_infos objectForKey:@"adType"];
             if (adType) {
                 if ([adType integerValue] == eoadt_merchant_buy) {
-                    cell.detailTextLabel.text = @"商家购买";
+                    cell.detailTextLabel.text = NSLocalizedString(@"kOtcMcAdEditCellAdTypeValueBuy", @"商家购买");
                     cell.detailTextLabel.textColor = theme.buyColor;
                 } else {
-                    cell.detailTextLabel.text = @"商家出售";
+                    cell.detailTextLabel.text = NSLocalizedString(@"kOtcMcAdEditCellAdTypeValueSell", @"商家出售");
                     cell.detailTextLabel.textColor = theme.sellColor;
                 }
             } else {
-                cell.detailTextLabel.text = @"请选择广告类型";
+                cell.detailTextLabel.text = NSLocalizedString(@"kOtcMcAdEditCellAdTypeValueSelectPlaceholder", @"请选择广告类型");
                 cell.detailTextLabel.textColor = theme.textColorGray;
             }
             //  新建的时候才可以编辑该字段
@@ -362,7 +357,7 @@ enum
             break;
         case kVcSubAdAsset:
         {
-            cell.textLabel.text = @"数字资产";
+            cell.textLabel.text = NSLocalizedString(@"kOtcMcAdEditCellAsset", @"数字资产");
             id assetSymbol = [_ad_infos objectForKey:@"assetSymbol"];
             if (assetSymbol) {
                 cell.detailTextLabel.text = assetSymbol;
@@ -372,7 +367,7 @@ enum
                     cell.detailTextLabel.textColor = theme.textColorNormal;
                 }
             } else {
-                cell.detailTextLabel.text = @"请选择数字资产";
+                cell.detailTextLabel.text = NSLocalizedString(@"kOtcMcAdEditCellAssetValueSelectPlaceholder", @"请选择数字资产");
                 cell.detailTextLabel.textColor = theme.textColorGray;
             }
             //  新建的时候才可以编辑该字段
@@ -384,8 +379,8 @@ enum
             break;
         case kVcSubAdFiatAsset:
         {
-            cell.textLabel.text = @"法币";
-            cell.detailTextLabel.text = @"人民币";//TODO:2.9
+            cell.textLabel.text = NSLocalizedString(@"kOtcMcAdEditCellFiatAsset", @"法币");
+            cell.detailTextLabel.text = NSLocalizedString(@"kOtcMcAdEditCellFiatAssetValueCN", @"人民币");//TODO:3.0 暂时固定一种
             cell.accessoryType = UITableViewCellAccessoryNone;
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             if (_bNewAd) {
@@ -398,14 +393,14 @@ enum
             
         case kVcSubPriceType:
         {
-            cell.textLabel.text = @"定价方式";
+            cell.textLabel.text = NSLocalizedString(@"kOtcMcAdEditCellPriceType", @"定价方式");
             switch ([[_ad_infos objectForKey:@"priceType"] integerValue]) {
                 case eopt_price_fixed:
-                    cell.detailTextLabel.text = @"固定价格";
+                    cell.detailTextLabel.text = NSLocalizedString(@"kOtcMcAdEditCellPriceTypeFixed", @"固定价格");
                     break;
                 default:
                     assert(false);
-                    cell.detailTextLabel.text = [NSString stringWithFormat:@"未知定价方式：%@", _ad_infos[@"priceType"]];
+                    cell.detailTextLabel.text = [NSString stringWithFormat:NSLocalizedString(@"kOtcMcAdEditCellPriceTypeUnknown", @"未知定价方式：%@"), _ad_infos[@"priceType"]];
                     break;
             }
             cell.accessoryType = UITableViewCellAccessoryNone;
@@ -419,24 +414,24 @@ enum
             break;
         case kVcSubPriceValue:
         {
-            cell.textLabel.text = @"您的价格";
+            cell.textLabel.text = NSLocalizedString(@"kOtcMcAdEditCellYourPrice", @"您的价格");
             [self _setDetailTextLabelText:cell.detailTextLabel value:[_ad_infos objectForKey:@"price"]
-                              defaultText:@"请输入您的价格" fiatPrefix:YES];
+                              defaultText:NSLocalizedString(@"kOtcMcAdEditCellYourPlacePlaceholder", @"请输入您的价格")
+                               fiatPrefix:YES];
         }
             break;
             
         case kVcSubAmount:
         {
-            cell.textLabel.text = @"交易数量";
+            cell.textLabel.text = NSLocalizedString(@"kOtcMcAdEditCellAmount", @"交易数量");
             [self _setDetailTextLabelText:cell.detailTextLabel value:[_ad_infos objectForKey:@"quantity"]
-                              defaultText:@"请输入交易数量" fiatPrefix:NO];
+                              defaultText:NSLocalizedString(@"kOtcMcAdEditCellAmountPlaceholder", @"请输入交易数量")
+                               fiatPrefix:NO];
         }
             break;
         case kVcSubAvailable:
         {
-            //            cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
-            //            cell.detailTextLabel.font = [UIFont systemFontOfSize:13.0f];
-            cell.textLabel.text = @"可用";
+            cell.textLabel.text = NSLocalizedString(@"kOtcMcAdEditCellAvailable", @"可用");
             if (_currBalance) {
                 cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@", _currBalance, _ad_infos[@"assetSymbol"]];
             } else {
@@ -445,31 +440,32 @@ enum
             cell.detailTextLabel.textColor = theme.textColorNormal;
             cell.accessoryType = UITableViewCellAccessoryNone;
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
-            //            cell.hideBottomLine = YES;
-            //            cell.showCustomBottomLine = NO;
         }
             break;
             
         case kVcSubMinLimit:
         {
-            cell.textLabel.text = @"最小限额";
+            cell.textLabel.text = NSLocalizedString(@"kOtcMcAdEditCellMinLimit", @"最小限额");
             [self _setDetailTextLabelText:cell.detailTextLabel value:[_ad_infos objectForKey:@"lowestLimit"]
-                              defaultText:@"请输入单笔最小限额" fiatPrefix:YES];
+                              defaultText:NSLocalizedString(@"kOtcMcAdEditCellMinLimitPlaceholder", @"请输入单笔最小限额")
+                               fiatPrefix:YES];
         }
             break;
         case kVcSubMaxLimit:
         {
-            cell.textLabel.text = @"最大限额";
+            cell.textLabel.text = NSLocalizedString(@"kOtcMcAdEditCellMaxLimit", @"最大限额");
             [self _setDetailTextLabelText:cell.detailTextLabel value:[_ad_infos objectForKey:@"maxLimit"]
-                              defaultText:@"请输入单笔最大限额" fiatPrefix:YES];
+                              defaultText:NSLocalizedString(@"kOtcMcAdEditCellMaxLimitPlaceholder", @"请输入单笔最大限额")
+                               fiatPrefix:YES];
         }
             break;
             
         case kVcSubRemark:
         {
-            cell.textLabel.text = @"交易说明";
+            cell.textLabel.text = NSLocalizedString(@"kOtcMcAdEditCellRemark", @"交易说明");
             [self _setDetailTextLabelText:cell.detailTextLabel value:[_ad_infos objectForKey:@"remark"]
-                              defaultText:@"(选填)" fiatPrefix:NO];
+                              defaultText:NSLocalizedString(@"kOtcMcAdEditCellRemarkPlaceholder", @"(选填)")
+                               fiatPrefix:NO];
         }
             break;
         case kVcSubSubmit:
@@ -487,7 +483,7 @@ enum
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
-        //  TODO:2.9
+        //  TODO:2.9 check logic
         NSInteger rowType = [[[_dataArray objectAtIndex:indexPath.section] objectAtIndex:indexPath.row] integerValue];
         switch (rowType) {
             case kVcSubAdType:
@@ -537,37 +533,37 @@ enum
 {
     id adType = [_ad_infos objectForKey:@"adType"];
     if (!adType) {
-        [OrgUtils makeToast:@"请选择广告类型。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAdSubmitTipPleaseSelectAdType", @"请选择广告类型。")];
         return;
     }
     id assetSymbol = [_ad_infos objectForKey:@"assetSymbol"];
     if (!assetSymbol) {
-        [OrgUtils makeToast:@"请选择交易的数字资产。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAdSubmitTipPleaseSelectAsset", @"请选择交易的数字资产。")];
         return;
     }
     NSDictionary* current_asset = [self _getCurrentAsset:assetSymbol];
     if (!current_asset) {
-        [OrgUtils makeToast:[NSString stringWithFormat:@"不支持数字资产 %@", assetSymbol]];
+        [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kOtcMcAdSelectAmountTipUnkownAsset", @"不支持数字资产 %@"), assetSymbol]];
         return;
     }
     id lowestLimit = [_ad_infos objectForKey:@"lowestLimit"];
     if (!lowestLimit) {
-        [OrgUtils makeToast:@"请输入单笔最小限额。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAdSubmitTipPleaseInputMinLimit", @"请输入单笔最小限额。")];
         return;
     }
     id maxLimit = [_ad_infos objectForKey:@"maxLimit"];
     if (!maxLimit) {
-        [OrgUtils makeToast:@"请输入单笔最大限额。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAdSubmitTipPleaseInputMaxLimit", @"请输入单笔最大限额。")];
         return;
     }
     NSDecimalNumber* n_lowestLimit = [OrgUtils auxGetStringDecimalNumberValue:[NSString stringWithFormat:@"%@", lowestLimit]];
     NSDecimalNumber* n_maxLimit = [OrgUtils auxGetStringDecimalNumberValue:[NSString stringWithFormat:@"%@", maxLimit]];
     if ([n_lowestLimit compare:n_maxLimit] >= 0) {
-        [OrgUtils makeToast:@"最大限额必须大于最小限额。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAdSubmitTipErrorMaxLimit", @"最大限额必须大于最小限额。")];
         return;
     }
     if ([n_lowestLimit integerValue] % 100 != 0 || [n_maxLimit integerValue] % 100 != 0) {
-        [OrgUtils makeToast:@"交易限额应该为100的整数倍。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAdSubmitTipErrorMinOrMaxLimitValue", @"交易限额应该为100的整数倍。")];
         return;
     }
     id n_price = [_ad_infos objectForKey:@"price"];
@@ -575,7 +571,7 @@ enum
         n_price = [OrgUtils auxGetStringDecimalNumberValue:[NSString stringWithFormat:@"%@", n_price]];
     }
     if ([n_price compare:[NSDecimalNumber zero]] <= 0) {
-        [OrgUtils makeToast:@"请输入交易单价。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAdSubmitTipPleaseInputPrice", @"请输入交易单价。")];
         return;
     }
     id n_quantity = [_ad_infos objectForKey:@"quantity"];
@@ -583,14 +579,14 @@ enum
         n_quantity = [OrgUtils auxGetStringDecimalNumberValue:[NSString stringWithFormat:@"%@", n_quantity]];
     }
     if ([n_quantity compare:[NSDecimalNumber zero]] <= 0) {
-        [OrgUtils makeToast:@"请输入交易数量。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAdSubmitTipPleaseInputAmount", @"请输入交易数量。")];
         return;
     }
     //  【商家出售】的情况需要判断余额是否足够。
     if ([adType integerValue] == eoadt_merchant_sell) {
         id n_balance = [OrgUtils auxGetStringDecimalNumberValue:[NSString stringWithFormat:@"%@", _currBalance]];
         if ([n_quantity compare:n_balance] > 0) {
-            [OrgUtils makeToast:@"可用余额不足。"];
+            [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAdSubmitTipBalanceNotEnough", @"可用余额不足。")];
             return;
         }
     }
@@ -645,16 +641,14 @@ enum
             }
             [[p1 then:^id(id data) {
                 [self hideBlockView];
-                //  TODO:2.9 lang
                 if (_bNewAd) {
                     if (onlySaveAd) {
-                        [OrgUtils makeToast:@"保存广告成功。"];
+                        [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAdSubmitTipSaveOK", @"保存广告成功。")];
                     } else {
-                        [OrgUtils makeToast:@"发布广告成功。"];
+                        [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAdSubmitTipPublishOK", @"发布广告成功。")];
                     }
-                    
                 } else {
-                    [OrgUtils makeToast:@"更新广告成功。"];
+                    [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAdSubmitTipUpdateOK", @"更新广告成功。")];
                 }
                 //  返回上一个界面并刷新
                 if (_result_promise) {
@@ -682,7 +676,8 @@ enum
         return;
     }
     id adTypeList = @[@(eoadt_merchant_buy), @(eoadt_merchant_sell)];
-    id nameList = @[@"商家购买", @"商家出售"];
+    id nameList = @[NSLocalizedString(@"kOtcMcAdEditCellAdTypeValueBuy", @"商家购买"),
+                    NSLocalizedString(@"kOtcMcAdEditCellAdTypeValueSell", @"商家出售")];
     [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
                                                        message:nil
                                                         cancel:NSLocalizedString(@"kBtnCancel", @"取消")
@@ -714,7 +709,7 @@ enum
         return [src objectForKey:@"assetSymbol"];
     }];
     [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
-                                                       message:@"请选择数字资产"
+                                                       message:NSLocalizedString(@"kOtcMcAdTipAskSelectAsset", @"请选择数字资产")
                                                         cancel:NSLocalizedString(@"kBtnCancel", @"取消")
                                                          items:list
                                                       callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
@@ -741,9 +736,9 @@ enum
 
 - (void)onPriceValueClicked
 {
-    [[UIAlertViewManager sharedUIAlertViewManager] showInputBox:@"您的价格"
+    [[UIAlertViewManager sharedUIAlertViewManager] showInputBox:NSLocalizedString(@"kOtcMcAdTipAskInputYourPriceTitle", @"您的价格")
                                                       withTitle:nil
-                                                    placeholder:@"请输入价格"
+                                                    placeholder:NSLocalizedString(@"kOtcMcAdTipAskInputYourPricePlaceholder", @"请输入价格")
                                                      ispassword:NO
                                                              ok:NSLocalizedString(@"kBtnOK", @"确定")
                                                           tfcfg:(^(SCLTextView *tf) {
@@ -783,21 +778,21 @@ enum
     
     NSString* current_asset_symbol = [_ad_infos objectForKey:@"assetSymbol"];
     if (!current_asset_symbol) {
-        [OrgUtils makeToast:@"请先选择数字资产。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAdSelectAmountTipFirstSelectAsset", @"请先选择数字资产。")];
         return;
     }
     
     NSDictionary* current_asset = [self _getCurrentAsset:current_asset_symbol];
     if (!current_asset) {
-        [OrgUtils makeToast:[NSString stringWithFormat:@"不支持数字资产 %@", current_asset_symbol]];
+        [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kOtcMcAdSelectAmountTipUnkownAsset", @"不支持数字资产 %@"), current_asset_symbol]];
         return;
     }
     
     NSInteger assetPrecision = [[current_asset objectForKey:@"assetPrecision"] integerValue];
     
-    [[UIAlertViewManager sharedUIAlertViewManager] showInputBox:@"交易数量"
+    [[UIAlertViewManager sharedUIAlertViewManager] showInputBox:NSLocalizedString(@"kOtcMcAdTipAskInputAmountTitle", @"交易数量")
                                                       withTitle:nil
-                                                    placeholder:@"请输入交易数量"
+                                                    placeholder:NSLocalizedString(@"kOtcMcAdTipAskInputAmountPlaceholder", @"请输入交易数量")
                                                      ispassword:NO
                                                              ok:NSLocalizedString(@"kBtnOK", @"确定")
                                                           tfcfg:(^(SCLTextView *tf) {
@@ -825,9 +820,9 @@ enum
 
 - (void)onMinLimitClicked
 {
-    [[UIAlertViewManager sharedUIAlertViewManager] showInputBox:@"最小限额"
+    [[UIAlertViewManager sharedUIAlertViewManager] showInputBox:NSLocalizedString(@"kOtcMcAdTipAskInputMinLimitTitle", @"最小限额")
                                                       withTitle:nil
-                                                    placeholder:@"请输入最小限额"
+                                                    placeholder:NSLocalizedString(@"kOtcMcAdTipAskInputMinLimitPlaceholder", @"请输入最小限额")
                                                      ispassword:NO
                                                              ok:NSLocalizedString(@"kBtnOK", @"确定")
                                                           tfcfg:(^(SCLTextView *tf) {
@@ -857,9 +852,9 @@ enum
 
 - (void)onMaxLimitClicked
 {
-    [[UIAlertViewManager sharedUIAlertViewManager] showInputBox:@"最大限额"
+    [[UIAlertViewManager sharedUIAlertViewManager] showInputBox:NSLocalizedString(@"kOtcMcAdTipAskInputMaxLimitTitle", @"最大限额")
                                                       withTitle:nil
-                                                    placeholder:@"请输入最大限额"
+                                                    placeholder:NSLocalizedString(@"kOtcMcAdTipAskInputMaxLimitPlaceholder", @"请输入最大限额")
                                                      ispassword:NO
                                                              ok:NSLocalizedString(@"kBtnOK", @"确定")
                                                           tfcfg:(^(SCLTextView *tf) {
@@ -890,9 +885,9 @@ enum
 
 - (void)onRemarkClicked
 {
-    [[UIAlertViewManager sharedUIAlertViewManager] showInputBox:@"交易说明"
+    [[UIAlertViewManager sharedUIAlertViewManager] showInputBox:NSLocalizedString(@"kOtcMcAdTipAskInputRemarkTitle", @"交易说明")
                                                       withTitle:nil
-                                                    placeholder:@"附加交易说明"
+                                                    placeholder:NSLocalizedString(@"kOtcMcAdTipAskInputRemarkPlaceholder", @"附加交易说明")
                                                      ispassword:NO
                                                              ok:NSLocalizedString(@"kBtnOK", @"确定")
                                                           tfcfg:nil

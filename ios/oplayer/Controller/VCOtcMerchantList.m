@@ -283,7 +283,7 @@
         for (id item in list) {
             BOOL bankcardPaySwitch = [[item objectForKey:@"bankcardPaySwitch"] boolValue];
             BOOL aliPaySwitch = [[item objectForKey:@"aliPaySwitch"] boolValue];
-            BOOL wechatPaySwitch = NO; //  TODO:2.9 默认false，ad数据里没微信。
+            BOOL wechatPaySwitch = NO; //  TODO:3.0 默认false，ad数据里没微信。
             if (aliPaySwitch || bankcardPaySwitch || wechatPaySwitch) {
                 [_data_array addObject:item];
             }
@@ -447,8 +447,8 @@
                              price:[NSString stringWithFormat:@"%@", lock_info[@"unitPrice"]]
                              total:result[@"total"]] then:^id(id responsed) {
                 [_owner hideBlockView];
-                //  TODO:2.9
-                [OrgUtils makeToast:@"order done!"];
+                //  TODO:2.9 自动跳转逻辑
+                [OrgUtils makeToast:NSLocalizedString(@"kOtcAdSubmitTipOrderOK", @"下单成功。")];
                 return nil;
             }] catch:^id(id error) {
                 [_owner hideBlockView];
@@ -500,8 +500,7 @@
         NSString* myOtcAccountId = [merchant_detail objectForKey:@"otcAccountId"];
         NSString* adOtcAccountId = [item objectForKey:@"otcBtsId"];
         if (myOtcAccountId && adOtcAccountId && [myOtcAccountId isEqualToString:adOtcAccountId]) {
-            //  TODO:2.9 lang
-            [OrgUtils makeToast:@"不能和自己进行交易。"];
+            [OrgUtils makeToast:NSLocalizedString(@"kOtcAdSubmitTipCannotTradeWithSelf", @"不能和自己进行交易。")];
             return;
         }
     }

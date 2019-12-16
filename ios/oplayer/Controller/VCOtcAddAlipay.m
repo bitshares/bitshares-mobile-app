@@ -102,9 +102,8 @@ enum
     self.view.backgroundColor = theme.appBackColor;
     
     //  初始化UI
-    //  TODO:otc
-    NSString* placeHolderUserName = @"请输入您的姓名";
-    NSString* placeHolderAccountID = @"请输入账号";
+    NSString* placeHolderUserName = NSLocalizedString(@"kOtcRmAddPlaceholderRealname", @"请输入您的姓名");
+    NSString* placeHolderAccountID = NSLocalizedString(@"kOtcRmAddPlaceholderAccountName", @"请输入账号");
     CGRect rect = [self makeTextFieldRectFull];
     _tf_username = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolderUserName];
     _tf_account_id = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolderAccountID];
@@ -143,9 +142,9 @@ enum
     [self.view addGestureRecognizer:pTap];
     
     //  提交按钮
-    _goto_submit = [self createCellLableButton:@"提交"];//TODO:otc
+    _goto_submit = [self createCellLableButton:NSLocalizedString(@"kOtcRmAddSubmitBtnName", @"提交")];
     
-    _cell_tips = [[ViewTipsInfoCell alloc] initWithText:@"【温馨提示】\n请务必使用您本人的实名账号。"];
+    _cell_tips = [[ViewTipsInfoCell alloc] initWithText:NSLocalizedString(@"kOtcRmAddCellTipsAlipay", @"【温馨提示】\n请务必使用您本人的实名账号。")];
     _cell_tips.hideBottomLine = YES;
     _cell_tips.hideTopLine = YES;
     _cell_tips.backgroundColor = [UIColor clearColor];
@@ -163,16 +162,15 @@ enum
 {
     NSString* str_name = _tf_username.text;
     NSString* str_account = _tf_account_id.text;
- 
-    //  TODO:2.9 lang
+    
     if (!str_name || [str_name isEqualToString:@""]) {
-        [OrgUtils makeToast:@"请输入姓名。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcRmSubmitTipsInputRealname", @"请输入姓名。")];
         return;
     }
     
-    //  TODO:2.9 账号有效性检测？？？也许银行卡可以考虑
+    //  账号有效性检测
     if (!str_account || [str_account isEqualToString:@""]) {
-        [OrgUtils makeToast:@"请输入账号。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcRmSubmitTipsInputValidAccount", @"请输入账号。")];
         return;
     }
     
@@ -191,8 +189,7 @@ enum
             };
             [[[otc addPaymentMethods:args] then:^id(id data) {
                 [self hideBlockView];
-                //  TODO:2.9 lang
-                [OrgUtils makeToast:@"添加成功。"];
+                [OrgUtils makeToast:NSLocalizedString(@"kOtcRmSubmitTipsOK", @"添加成功。")];
                 //  返回上一个界面并刷新
                 if (_result_promise) {
                     [_result_promise resolve:@YES];
@@ -286,7 +283,7 @@ enum
                     cell.hideBottomLine = YES;
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                    cell.textLabel.text = @"姓名";//TODO:otc
+                    cell.textLabel.text = NSLocalizedString(@"kOtcRmAddCellLabelTitleName", @"姓名");
                     cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                     return cell;
@@ -311,7 +308,7 @@ enum
                     cell.hideBottomLine = YES;
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                    cell.textLabel.text = @"账号";//TODO:otc
+                    cell.textLabel.text = NSLocalizedString(@"kOtcRmAddCellLabelTitleAccount", @"账号");
                     cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                     return cell;

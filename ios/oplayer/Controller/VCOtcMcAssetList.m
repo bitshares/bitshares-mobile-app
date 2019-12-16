@@ -144,8 +144,8 @@
     [self.view addSubview:_mainTableView];
     _mainTableView.hidden = NO;
     
-    //  UI - 空 TODO:2.9
-    _lbEmpty = [self genCenterEmptyLabel:rect txt:@"没有任何资产"];
+    //  UI - 空
+    _lbEmpty = [self genCenterEmptyLabel:rect txt:NSLocalizedString(@"kOtcMcAssetEmptyLabel", @"没有任何资产")];
     _lbEmpty.hidden = YES;
     [self.view addSubview:_lbEmpty];
     
@@ -208,7 +208,6 @@
     [[p1 then:^id(id full_account_data) {
         [self hideBlockView];
         //  转到划转界面
-        //  TODO:2.9 lang
         VCBase* vc = [[VCOtcMcAssetTransfer alloc] initWithAuthInfo:_auth_info
                                                           user_type:_user_type
                                                     merchant_detail:_merchant_detail
@@ -216,7 +215,7 @@
                                                 curr_merchant_asset:curr_merchant_asset
                                                   full_account_data:full_account_data
                                                         transfer_in:transfer_in];
-        [self pushViewController:vc vctitle:@"划转" backtitle:kVcDefaultBackTitleName];
+        [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleOtcMcAssetTransfer", @"划转") backtitle:kVcDefaultBackTitleName];
         return nil;
     }] catch:^id(id error) {
         [self hideBlockView];

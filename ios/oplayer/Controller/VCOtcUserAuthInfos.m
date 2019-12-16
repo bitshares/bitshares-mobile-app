@@ -109,7 +109,7 @@ enum
     switch (indexPath.section) {
         case kVcSecName:
         {
-            cell.textLabel.text = @"姓名";
+            cell.textLabel.text = NSLocalizedString(@"kOtcRmAddCellLabelTitleName", @"姓名");
             NSString* name = [_auth_info optString:@"realName"];
             if (name && name.length >= 2) {
                 name = [NSString stringWithFormat:@"*%@", [name substringFromIndex:1]];
@@ -119,10 +119,9 @@ enum
             break;
         case kVcSecIdCardNo:
         {
-            cell.textLabel.text = @"身份证号";
+            cell.textLabel.text = NSLocalizedString(@"kOtcAuthInfoCellLabelTitleIdNo", @"身份证号");
             NSString* idstr = [_auth_info optString:@"idcardNo"];
             if (idstr && idstr.length == 18) {
-                //  TODO:2.9 id format
                 idstr = [NSString stringWithFormat:@"%@********%@", [idstr substringToIndex:6], [idstr substringFromIndex:14]];
             }
             cell.detailTextLabel.text = idstr ?: @"";
@@ -130,18 +129,18 @@ enum
             break;
         case kVcSecPhoneNumber:
         {
-            cell.textLabel.text = @"联系方式";
+            cell.textLabel.text = NSLocalizedString(@"kOtcAuthInfoCellLabelTitleContact", @"联系方式");
             cell.detailTextLabel.text = [_auth_info optString:@"phone"] ?: @"";
         }
             break;
         case kVcSecStauts:
         {
-            cell.textLabel.text = @"状态";
+            cell.textLabel.text = NSLocalizedString(@"kOtcAuthInfoCellLabelTitleStatus", @"状态");
             if ([[_auth_info objectForKey:@"status"] integerValue] == eous_freeze) {
-                cell.detailTextLabel.text = @"已冻结";//TODO:2.9
+                cell.detailTextLabel.text = NSLocalizedString(@"kOtcAuthInfoCellLabelValueStatusFreeze", @"已冻结");
                 cell.detailTextLabel.textColor = theme.sellColor;
             } else {
-                cell.detailTextLabel.text = @"已认证";//TODO:2.9
+                cell.detailTextLabel.text = NSLocalizedString(@"kOtcAuthInfoCellLabelValueStatusOK", @"已认证");
                 cell.detailTextLabel.textColor = theme.buyColor;
             }
         }
@@ -155,10 +154,6 @@ enum
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
-    [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
-        //  TODO:2.9
-    }];
 }
 
 @end

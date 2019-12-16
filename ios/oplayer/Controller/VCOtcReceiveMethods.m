@@ -143,8 +143,8 @@
     [self.view addSubview:_mainTableView];
     _mainTableView.hidden = NO;
     
-    //  UI - 空 TODO:2.9
-    _lbEmpty = [self genCenterEmptyLabel:rect txt:@"没有任何收款方式，点击右上角添加。"];
+    //  UI - 空
+    _lbEmpty = [self genCenterEmptyLabel:rect txt:NSLocalizedString(@"kOtcRmLabelEmpty", @"没有任何收款方式，点击右上角添加。")];
     _lbEmpty.hidden = YES;
     [self.view addSubview:_lbEmpty];
     
@@ -250,16 +250,15 @@
         //  提示信息
         if (_user_type == eout_normal_user) {
             if (new_status == eopms_enable) {
-                [OrgUtils makeToast:NSLocalizedString(@"kOtcPmActionTipsEnabled", @"已启用，允许向商家展示。")];
+                [OrgUtils makeToast:NSLocalizedString(@"kOtcRmActionTipsEnabled", @"已启用，允许向商家展示。")];
             } else {
-                [OrgUtils makeToast:NSLocalizedString(@"kOtcPmActionTipsDisabled", @"已禁用，不再向商家展示。")];
+                [OrgUtils makeToast:NSLocalizedString(@"kOtcRmActionTipsDisabled", @"已禁用，不再向商家展示。")];
             }
         } else {
-            //  TODO:2.9
             if (new_status == eopms_enable) {
-                [OrgUtils makeToast:@"已启用，允许向用户展示。"];
+                [OrgUtils makeToast:NSLocalizedString(@"kOtcMcRmActionTipsEnabled", @"已启用，允许向用户展示。")];
             } else {
-                [OrgUtils makeToast:@"已禁用，不再向用户展示。"];
+                [OrgUtils makeToast:NSLocalizedString(@"kOtcMcRmActionTipsDisabled", @"已禁用，不再向用户展示。")];
             }
         }
         return nil;
