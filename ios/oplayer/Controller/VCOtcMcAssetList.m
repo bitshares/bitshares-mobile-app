@@ -50,22 +50,36 @@
     return self;
 }
 
-- (void)onQueryOtcAssetsResponsed:(id)merchantAssetList chainAssets:(id)chainAssets
+- (void)onQueryOtcAssetsResponsed:(id)merchantAssetList chainAssets:(id)chainAssets coreAssetBalance:(id)coreAssetBalance
 {
     [_dataArray removeAllObjects];
     
-    if (merchantAssetList && [merchantAssetList count] > 0) {
-        
-        NSMutableDictionary* chain_asset_map = [NSMutableDictionary dictionary];
-        if (chainAssets) {
-            for (id asset in chainAssets) {
-                id symbol = [asset objectForKey:@"symbol"];
-                if (symbol) {
-                    [chain_asset_map setObject:asset forKey:symbol];
-                }
+    NSMutableDictionary* chain_asset_map = [NSMutableDictionary dictionary];
+    if (chainAssets) {
+        for (id asset in chainAssets) {
+            id symbol = [asset objectForKey:@"symbol"];
+            if (symbol) {
+                [chain_asset_map setObject:asset forKey:symbol];
             }
         }
-        
+    }
+    
+    if (coreAssetBalance) {
+        ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+        id core_asset = [chain_asset_map objectForKey:chainMgr.grapheneCoreAssetSymbol];
+        NSInteger core_precision = [[core_asset objectForKey:@"precision"] integerValue];
+        id n_core_amount = [NSDecimalNumber decimalNumberWithMantissa:[[coreAssetBalance objectForKey:@"amount"] unsignedLongLongValue]
+                                                             exponent:-core_precision
+                                                           isNegative:NO];
+        [_dataArray addObject:@{@"assetSymbol":chainMgr.grapheneCoreAssetSymbol,
+                                @"available":[NSString stringWithFormat:@"%@", n_core_amount],
+                                @"freeze":@"0",
+                                @"fees":@"0",
+                                @"kExtPrecision":@(core_precision),
+                                @"kExtChainAsset":core_asset}];
+    }
+    
+    if (merchantAssetList && [merchantAssetList count] > 0) {
         for (id item in merchantAssetList) {
             id chain_asset = [chain_asset_map objectForKey:[item objectForKey:@"assetSymbol"]];
             assert(chain_asset);
@@ -97,27 +111,44 @@
     [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     [[[otc queryMerchantOtcAsset:[otc getCurrentBtsAccount]] then:^id(id responsed) {
         id merchantAssetList = [responsed objectForKey:@"data"];
-        NSMutableArray* assetSymbolList = [NSMutableArray array];
+        NSMutableDictionary* assetSymbolHash = [NSMutableDictionary dictionary];
         if (merchantAssetList && [merchantAssetList isKindOfClass:[NSArray class]] && [merchantAssetList count] > 0) {
             for (id item in merchantAssetList) {
-                [assetSymbolList addObject:[item objectForKey:@"assetSymbol"]];
+                [assetSymbolHash setObject:@YES forKey:[item objectForKey:@"assetSymbol"]];
             }
         }
-        if ([assetSymbolList count] > 0) {
+        ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+        BOOL containCoreAsset = [[assetSymbolHash objectForKey:chainMgr.grapheneCoreAssetSymbol] boolValue];
+        //  REMARK：自动把手续费资产CORE，加入列表。
+        if (!containCoreAsset) {
+            [assetSymbolHash setObject:@YES forKey:chainMgr.grapheneCoreAssetSymbol];
+        }
+        if ([assetSymbolHash count] > 0) {
             //  查询资产信息和个人账号余额信息
-            [[[[ChainObjectManager sharedChainObjectManager] queryAssetDataList:assetSymbolList] then:^id(id chain_assets) {
-                [self hideBlockView];
-                [self onQueryOtcAssetsResponsed:merchantAssetList chainAssets:chain_assets];
-                return nil;
+            [[[chainMgr queryAssetDataList:[assetSymbolHash allKeys]] then:^id(id chain_assets) {
+                if (!containCoreAsset) {
+                    //  查询手续费CORE资产的链上余额
+                    return [[chainMgr queryAccountBalance:[_merchant_detail objectForKey:@"otcAccount"]
+                                                   assets:@[chainMgr.grapheneCoreAssetID]] then:^id(id balance_data_array) {
+                        [self hideBlockView];
+                        id core_balance_data = [balance_data_array firstObject];
+                        [self onQueryOtcAssetsResponsed:merchantAssetList chainAssets:chain_assets coreAssetBalance:core_balance_data];
+                        return nil;
+                    }];
+                } else {
+                    [self hideBlockView];
+                    [self onQueryOtcAssetsResponsed:merchantAssetList chainAssets:chain_assets coreAssetBalance:nil];
+                    return nil;
+                }
             }] catch:^id(id error) {
                 [self hideBlockView];
                 [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
-                [self onQueryOtcAssetsResponsed:nil chainAssets:nil];
+                [self onQueryOtcAssetsResponsed:nil chainAssets:nil coreAssetBalance:nil];
                 return nil;
             }];
         } else {
             [self hideBlockView];
-            [self onQueryOtcAssetsResponsed:nil chainAssets:nil];
+            [self onQueryOtcAssetsResponsed:nil chainAssets:nil coreAssetBalance:nil];
         }
         return nil;
     }] catch:^id(id error) {
@@ -208,14 +239,23 @@
     [[p1 then:^id(id full_account_data) {
         [self hideBlockView];
         //  转到划转界面
+        WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
         VCBase* vc = [[VCOtcMcAssetTransfer alloc] initWithAuthInfo:_auth_info
                                                           user_type:_user_type
                                                     merchant_detail:_merchant_detail
                                                          asset_list:_dataArray
                                                 curr_merchant_asset:curr_merchant_asset
                                                   full_account_data:full_account_data
-                                                        transfer_in:transfer_in];
+                                                        transfer_in:transfer_in
+                                                     result_promise:result_promise];
         [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleOtcMcAssetTransfer", @"划转") backtitle:kVcDefaultBackTitleName];
+        [result_promise then:^id(id dirty) {
+            //  刷新UI
+            if (dirty && [dirty boolValue]) {
+                [self queryOtcAssets];
+            }
+            return nil;
+        }];
         return nil;
     }] catch:^id(id error) {
         [self hideBlockView];

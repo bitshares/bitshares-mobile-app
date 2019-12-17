@@ -1647,6 +1647,24 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     })];
 }
 
+/*
+ *  (public) 查询指定账号余额
+ */
+- (WsPromise*)queryAccountBalance:(NSString*)account_name_or_id assets:(NSArray*)asset_id_array
+{
+    assert(account_name_or_id);
+    if (!asset_id_array) {
+        asset_id_array = @[];
+    }
+    GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
+    return [[[api exec:@"get_account_balances" params:@[account_name_or_id, asset_id_array]] then:(^id(id data_array) {
+        return data_array;
+    })] catch:(^id(id error) {
+        NSLog(@"%@", error);
+        return nil;
+    })];
+}
+
 /**
  * (public) 账号是否存在于区块链上
  */

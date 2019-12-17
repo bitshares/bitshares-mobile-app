@@ -210,7 +210,6 @@
     
     //  UI - 第二行 数量限额
     NSString* fiat_sym = [[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"short_symbol"];
-    
     _lbAmount.attributedText = [self genAndColorAttributedText:NSLocalizedString(@"kOtcAdCellLabelAmount", @"数量 ")
                                                          value:[NSString stringWithFormat:@"%@ %@", _item[@"stock"], assetSymbol]
                                                     titleColor:theme.textColorGray

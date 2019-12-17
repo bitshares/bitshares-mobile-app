@@ -62,7 +62,7 @@
                                              auto_hide:YES
                                      askForIdVerifyMsg:NSLocalizedString(@"kOtcAdAskIdVerifyTips01", @"在继续操作之前您需要先完成身份认证，是否继续？")
                                               callback:^(id auth_info)
-    {
+     {
         VCBase* vc = [[VCOtcOrdersPages alloc] initWithAuthInfo:auth_info user_type:eout_normal_user];
         [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleOtcOrderList", @"订单记录") backtitle:kVcDefaultBackTitleName];
     }];
@@ -76,41 +76,41 @@
                                                          items:@[NSLocalizedString(@"kOtcAdUserActionItemAuthInfo", @"认证信息"), NSLocalizedString(@"kOtcAdUserActionItemReceiveMethod", @"收款方式")]
                                                       callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
      {
-         if (buttonIndex != cancelIndex){
-             switch (buttonIndex) {
-                 case 0:    //  认证信息
-                 {
-                     [[OtcManager sharedOtcManager] guardUserIdVerified:self
-                                                              auto_hide:YES
-                                                      askForIdVerifyMsg:nil
-                                                               callback:^(id auth_info)
+        if (buttonIndex != cancelIndex){
+            switch (buttonIndex) {
+                case 0:    //  认证信息
+                {
+                    [[OtcManager sharedOtcManager] guardUserIdVerified:self
+                                                             auto_hide:YES
+                                                     askForIdVerifyMsg:nil
+                                                              callback:^(id auth_info)
                      {
-                         VCBase* vc = [[VCOtcUserAuthInfos alloc] initWithAuthInfo:auth_info];
-                         [self pushViewController:vc
-                                          vctitle:NSLocalizedString(@"kVcTitleOtcAuthInfos", @"认证信息")
-                                        backtitle:kVcDefaultBackTitleName];
-                     }];
-                 }
-                     break;
-                 case 1:    //  收款方式
-                 {
-                     [[OtcManager sharedOtcManager] guardUserIdVerified:self
-                                                              auto_hide:YES
-                                                      askForIdVerifyMsg:NSLocalizedString(@"kOtcAdAskIdVerifyTips02", @"添加收款方式之前，请先完成身份认证，是否继续？")
-                                                               callback:^(id auth_info)
+                        VCBase* vc = [[VCOtcUserAuthInfos alloc] initWithAuthInfo:auth_info];
+                        [self pushViewController:vc
+                                         vctitle:NSLocalizedString(@"kVcTitleOtcAuthInfos", @"认证信息")
+                                       backtitle:kVcDefaultBackTitleName];
+                    }];
+                }
+                    break;
+                case 1:    //  收款方式
+                {
+                    [[OtcManager sharedOtcManager] guardUserIdVerified:self
+                                                             auto_hide:YES
+                                                     askForIdVerifyMsg:NSLocalizedString(@"kOtcAdAskIdVerifyTips02", @"添加收款方式之前，请先完成身份认证，是否继续？")
+                                                              callback:^(id auth_info)
                      {
-                         VCBase* vc = [[VCOtcReceiveMethods alloc] initWithAuthInfo:auth_info user_type:eout_normal_user];
-                         [self pushViewController:vc
-                                          vctitle:NSLocalizedString(@"kVcTitleOtcReceiveMethodsList", @"收款方式")
-                                        backtitle:kVcDefaultBackTitleName];
-                     }];
-                 }
-                     break;
-                 default:
-                     break;
-             }
-         }
-     }];
+                        VCBase* vc = [[VCOtcReceiveMethods alloc] initWithAuthInfo:auth_info user_type:eout_normal_user];
+                        [self pushViewController:vc
+                                         vctitle:NSLocalizedString(@"kVcTitleOtcReceiveMethodsList", @"收款方式")
+                                       backtitle:kVcDefaultBackTitleName];
+                    }];
+                }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }];
 }
 
 - (NSString*)genTitleString
@@ -129,21 +129,21 @@
                                                          items:list
                                                       callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
      {
-         if (buttonIndex != cancelIndex){
-             id asset_name = [list objectAtIndex:buttonIndex];
-             if (![_curr_asset_name isEqualToString:asset_name]) {
-                 _curr_asset_name = asset_name;
-                 [sender updateTitleWithoutAnimation:[self genTitleString]];
-                 [self queryCurrentPageAdList];
-             }
-         }
-     }];
+        if (buttonIndex != cancelIndex){
+            id asset_name = [list objectAtIndex:buttonIndex];
+            if (![_curr_asset_name isEqualToString:asset_name]) {
+                _curr_asset_name = asset_name;
+                [sender updateTitleWithoutAnimation:[self genTitleString]];
+                [self queryCurrentPageAdList];
+            }
+        }
+    }];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     
     self.view.backgroundColor = theme.appBackColor;
@@ -249,7 +249,7 @@
     _mainTableView.backgroundColor = [UIColor clearColor];
     _mainTableView.separatorStyle = UITableViewCellSeparatorStyleNone;  //  REMARK：不显示cell间的横线。
     [self.view addSubview:_mainTableView];
-
+    
     _lbEmpty = [self genCenterEmptyLabel:rect txt:NSLocalizedString(@"kOtcAdNoAnyMerchantOnline", @"没有任何商家在线。")];
     [self.view addSubview:_lbEmpty];
 }
@@ -372,11 +372,11 @@
                                                            withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
                                                           completion:^(NSInteger buttonIndex)
      {
-         if (buttonIndex == 1)
-         {
-             // TODO:2.9 客服界面是什么样的...
-         }
-     }];
+        if (buttonIndex == 1)
+        {
+            // TODO:2.9 客服界面是什么样的...
+        }
+    }];
 }
 
 /*
@@ -404,51 +404,83 @@
                                                            withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
                                                           completion:^(NSInteger buttonIndex)
      {
-         if (buttonIndex == 1)
-         {
-             VCBase* vc = [[VCOtcReceiveMethods alloc] initWithAuthInfo:auth_info user_type:eout_normal_user];
-             [_owner pushViewController:vc
-                                vctitle:NSLocalizedString(@"kVcTitleOtcReceiveMethodsList", @"收款方式")
-                              backtitle:kVcDefaultBackTitleName];
-         }
-     }];
+        if (buttonIndex == 1)
+        {
+            VCBase* vc = [[VCOtcReceiveMethods alloc] initWithAuthInfo:auth_info user_type:eout_normal_user];
+            [_owner pushViewController:vc
+                               vctitle:NSLocalizedString(@"kVcTitleOtcReceiveMethodsList", @"收款方式")
+                             backtitle:kVcDefaultBackTitleName];
+        }
+    }];
 }
 
 /*
  *  (private) 价格变化，是否继续下单?
  */
-- (void)askForPriceChanged:(id)ad_info lock_info:(id)lock_info
+- (void)askForPriceChanged:(id)ad_info lock_info:(id)lock_info auth_info:(id)auth_info sell_user_balance:(id)sell_user_balance
 {
     [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:NSLocalizedString(@"kOtcAdOrderPriceChangeAsk", @"您当前选择的订单价格有变动，是否继续下单？")
                                                            withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
                                                           completion:^(NSInteger buttonIndex)
      {
-         if (buttonIndex == 1)
-         {
-             [self gotoInputOrderCore:ad_info lock_info:lock_info];
-         }
-     }];
+        if (buttonIndex == 1)
+        {
+            [self gotoInputOrderCore:ad_info lock_info:lock_info auth_info:auth_info sell_user_balance:sell_user_balance];
+        }
+    }];
 }
 
 /*
  *  (private) 前往下单
  */
-- (void)gotoInputOrderCore:(id)ad_info lock_info:(id)lock_info
+- (void)gotoInputOrderCore:(id)ad_info lock_info:(id)lock_info auth_info:(id)auth_info sell_user_balance:(id)sell_user_balance
 {
-    [[[MyPopviewManager sharedMyPopviewManager] showOtcTradeView:_owner ad_info:ad_info lock_info:lock_info] then:^id(id result) {
+    [[[MyPopviewManager sharedMyPopviewManager] showOtcTradeView:_owner
+                                                         ad_info:ad_info
+                                                       lock_info:lock_info
+                                               sell_user_balance:sell_user_balance] then:^id(id result) {
         if (result) {
             //  输入完毕：尝试下单
             [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+            EOtcAdType adType = (EOtcAdType)[[ad_info objectForKey:@"adType"] integerValue];
             OtcManager* otc = [OtcManager sharedOtcManager];
             //TODO:2.9 [lock_info objectForKey:@"legalCurrencySymbol"]
             [[[otc createUserOrder:[otc getCurrentBtsAccount]
                              ad_id:[ad_info objectForKey:@"adId"]
-                              type:(EOtcAdType)[[ad_info objectForKey:@"adType"] integerValue]
+                              type:adType
                              price:[NSString stringWithFormat:@"%@", lock_info[@"unitPrice"]]
                              total:result[@"total"]] then:^id(id responsed) {
                 [_owner hideBlockView];
-                //  TODO:2.9 自动跳转逻辑
-                [OrgUtils makeToast:NSLocalizedString(@"kOtcAdSubmitTipOrderOK", @"下单成功。")];
+                //{
+                //    code = 0;
+                //    data =     {
+                //        amount = 100;
+                //        ctime = "2019-12-16 20:19:54";
+                //        legalCurrencySymbol = "\Uffe5";
+                //        merchantNickname = "\U7d20\U7d20\U627f\U5151";
+                //        orderId = aa977e527fc166c599a23f9dff164d57eaec50bf;
+                //        phone = "<null>";
+                //        quantity = 128;
+                //        status = 1;
+                //        type = 2;
+                //        unitPrice = "0.78";
+                //        userBtsAccount = "<null>";
+                //    };
+                //    message = success;
+                //}
+                //  TODO:3.0 暂时不自动更新，可能转账失败等。手续费不足。
+                //if (adType == eoadt_user_sell) {
+                //    //  REMARK：用户出售的情况下考虑自动转币
+                //    id orderId = [[responsed objectForKey:@"data"] objectForKey:@"orderId"];
+                //}
+                [[UIAlertViewManager sharedUIAlertViewManager] showMessage:NSLocalizedString(@"kOtcAdSubmitTipOrderOK", @"下单成功。")
+                                                                 withTitle:nil
+                                                                completion:^(NSInteger buttonIndex) {
+                    VCBase* vc = [[VCOtcOrdersPages alloc] initWithAuthInfo:auth_info user_type:eout_normal_user];
+                    [_owner pushViewController:vc
+                                       vctitle:NSLocalizedString(@"kVcTitleOtcOrderList", @"订单记录")
+                                     backtitle:kVcDefaultBackTitleName];
+                }];
                 return nil;
             }] catch:^id(id error) {
                 [_owner hideBlockView];
@@ -476,6 +508,28 @@
 }
 
 /*
+ *  (private) 用户卖出时 - 查询用户对应资产余额。
+ */
+- (WsPromise*)_queryUserBalance:(NSDictionary*)adItem userAccount:(NSString*)userAccount
+{
+    if (_ad_type == eoadt_user_buy) {
+        return [WsPromise resolve:nil];
+    } else {
+        assert([adItem objectForKey:@"assetId"]);
+        return [[[[ChainObjectManager sharedChainObjectManager] queryAccountBalance:userAccount
+                                                                             assets:@[[adItem objectForKey:@"assetId"]]] then:^id(id data_array) {
+            if (data_array && [data_array isKindOfClass:[NSArray class]] && [data_array count] > 0) {
+                return [data_array firstObject];
+            }
+            return nil;
+        }] catch:^id(id error) {
+            NSLog(@"query balance error: %@", error);
+            return nil;
+        }];
+    }
+}
+
+/*
  *  事件 - 点击购买or出售按钮。
  */
 - (void)onSubmitButtonClicked:(UIButton*)sender
@@ -483,7 +537,7 @@
     assert(sender.tag < [_data_array count]);
     id item = [_data_array objectAtIndex:sender.tag];
     assert(item);
-        
+    
     BOOL bankcardPaySwitch = [[item objectForKey:@"bankcardPaySwitch"] boolValue];
     BOOL aliPaySwitch = [[item objectForKey:@"aliPaySwitch"] boolValue];
     BOOL wechatPaySwitch = NO; //  TODO:2.9 默认false，ad数据里没微信。
@@ -511,7 +565,7 @@
                            auto_hide:NO
                    askForIdVerifyMsg:NSLocalizedString(@"kOtcAdAskIdVerifyTips03", @"您尚未完成身份认证，不可进行场外交易，是否去认证？")
                             callback:^(id auth_info)
-            {
+             {
                 //  1、查询账号状态：用户账号是否异常
                 if ([[auth_info objectForKey:@"status"] integerValue] == eous_freeze) {
                     [_owner hideBlockView];
@@ -566,24 +620,34 @@
                             return nil;
                         }
                     }
-                    //  3、锁定价格&前往下单（TODO:2.9 是否先查询广告详情，目前数据一直）
-                    return [[otc lockPrice:[otc getCurrentBtsAccount]
-                                     ad_id:adId
-                                      type:(EOtcAdType)[[item objectForKey:@"adType"] integerValue]
-                              asset_symbol:[item objectForKey:@"assetSymbol"]
-                                     price:[item objectForKey:@"price"]] then:^id(id data) {
-                        [_owner hideBlockView];
-                        id lock_info = [data objectForKey:@"data"];
-                        assert(lock_info);
-                        NSString* oldprice = [NSString stringWithFormat:@"%@", [item objectForKey:@"price"]];
-                        NSString* newprice = [NSString stringWithFormat:@"%@", [lock_info objectForKey:@"unitPrice"]];
-                        //  价格变化
-                        if (![oldprice isEqualToString:newprice]) {
-                            [self askForPriceChanged:item lock_info:lock_info];
-                        } else {
-                            [self gotoInputOrderCore:item lock_info:lock_info];
+                    //  3、查询余额&锁定价格&前往下单（TODO:2.9 是否先查询广告详情，目前数据一直）
+                    NSString* userAccount = [otc getCurrentBtsAccount];
+                    return [[self _queryUserBalance:item userAccount:userAccount] then:^id(id userAssetBalance) {
+                        //  卖出时候：获取余额异常
+                        if (_ad_type == eoadt_user_sell && (!userAssetBalance || ![userAssetBalance isKindOfClass:[NSDictionary class]])) {
+                            [_owner hideBlockView];
+                            [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+                            return nil;
                         }
-                        return nil;
+                        //  锁定
+                        return [[otc lockPrice:userAccount
+                                         ad_id:adId
+                                          type:(EOtcAdType)[[item objectForKey:@"adType"] integerValue]
+                                  asset_symbol:[item objectForKey:@"assetSymbol"]
+                                         price:[item objectForKey:@"price"]] then:^id(id data) {
+                            [_owner hideBlockView];
+                            id lock_info = [data objectForKey:@"data"];
+                            assert(lock_info);
+                            NSString* oldprice = [NSString stringWithFormat:@"%@", [item objectForKey:@"price"]];
+                            NSString* newprice = [NSString stringWithFormat:@"%@", [lock_info objectForKey:@"unitPrice"]];
+                            //  价格变化
+                            if (![oldprice isEqualToString:newprice]) {
+                                [self askForPriceChanged:item lock_info:lock_info auth_info:auth_info sell_user_balance:userAssetBalance];
+                            } else {
+                                [self gotoInputOrderCore:item lock_info:lock_info auth_info:auth_info sell_user_balance:userAssetBalance];
+                            }
+                            return nil;
+                        }];
                     }];
                 }] catch:^id(id error) {
                     [_owner hideBlockView];

@@ -1103,6 +1103,38 @@
 "kOtcMcPmSubmitTipDisableAlipay" = "已关闭支付宝付款。";//TODO:
 "kOtcMcPmSubmitTipEnableBankcardPay" = "已开启银行卡付款。";//TODO:
 "kOtcMcPmSubmitTipDisableBankcardPay" = "已关闭银行卡付款。";//TODO:
+"kOtcInputTitleBuy" = "购买";//TODO:
+"kOtcInputTitleSell" = "出售";//TODO:
+"kOtcInputLabelUnitPrice" = "单价 ";//TODO:
+"kOtcInputCellLabelBuyAmount" = "购买数量";//TODO:
+"kOtcInputCellLabelSellAmount" = "出售数量";//TODO:
+"kOtcInputCellYourBalance" = "您的余额";//TODO:
+"kOtcInputCellStock" = "数量";//TODO:
+"kOtcInputCellLabelBuyTotal" = "购买金额";//TODO:
+"kOtcInputCellLabelSellTotal" = "出售金额";//TODO:
+"kOtcInputCellLabelLimit" = "限额";//TODO:
+"kOtcInputPlaceholderBuyAmount" = "请输入购买数量";//TODO:
+"kOtcInputPlaceholderSellAmount" = "请输入出售数量";//TODO:
+"kOtcInputPlaceholderBuyTotal" = "请输入购买金额";//TODO:
+"kOtcInputPlaceholderSellTotal" = "请输入出售金额";//TODO:
+"kOtcInputTailerBtnBuyAll" = "全部买入";//TODO:
+"kOtcInputTailerBtnSellAll" = "全部出售";//TODO:
+"kOtcInputTailerBtnMaxTotal" = "最大金额";//TODO:
+"kOtcInputCellLabelTradeAmount" = "交易数量";//TODO:
+"kOtcInputCellRealPayment" = "实际付款";//TODO:
+"kOtcInputCellRealReceive" = "实际到账";//TODO:
+"kOtcInputBtnCreateOrder" = "下单";//TODO:
+"kOtcInputAutoCloseSecTips" = "%@秒后自动取消";//TODO:
+"kOtcInputSubmitTipTotalZero" = "交易金额不能为零。";//TODO:
+"kOtcInputSubmitTipAmountGreatThanStock" = "交易数量不能大于可用数量。";//TODO:
+"kOtcInputSubmitTipAmountGreatThanBalance" = "交易数量不能大于用户可用余额。";//TODO:
+"kOtcInputSubmitTipTotalLessMinLimit" = "交易金额不能低于单笔最小限额。";//TODO:
+"kOtcInputSubmitTipTotalGreatMaxLimit" = "交易金额不能大于单笔最大限额。";//TODO:
+
+/* 交易部分字符串 */
+"kTxBlockDataError" = "区块数据异常。";//TODO:
+"kTxBalanceNotEnough" = "您的 %@ 余额不足。";//TODO:
+"kTxMissMemoPriKey" = "缺少备注私钥。";//TODO:
 
 /* 通用字符串 */
 "kLangKeyZhSimple" = "简体中文 / 簡体字中国語";

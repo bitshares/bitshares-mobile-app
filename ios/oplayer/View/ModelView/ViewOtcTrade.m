@@ -23,6 +23,7 @@ enum
     
     NSDictionary*       _adInfo;            //  广告牌信息
     NSDictionary*       _lockInfo;          //  锁定后的价格信息
+    NSDictionary*       _sell_user_balance; //  卖单时：用户账号对应资产余额信息。买单时为nil。
     NSDictionary*       _assetInfo;         //  资产信息
     NSDecimalNumber*    _nBalance;          //  我的余额（仅卖出需要）
     NSDecimalNumber*    _nPrice;            //  价格
@@ -77,7 +78,10 @@ enum
     _nMaxLimitFinal = nil;
 }
 
-- (instancetype)initWithAdInfo:(id)ad_info lock_info:(id)lock_info result_promise:(WsPromiseObject*)result_promise
+- (instancetype)initWithAdInfo:(id)ad_info
+                     lock_info:(id)lock_info
+             sell_user_balance:(id)sell_user_balance
+                result_promise:(WsPromiseObject*)result_promise
 {
     if (self = [super init])
     {
@@ -95,10 +99,17 @@ enum
         _result_promise = result_promise;
         _adInfo = ad_info;
         _lockInfo = lock_info;
+        _sell_user_balance = sell_user_balance;
         _assetInfo = [[OtcManager sharedOtcManager] getAssetInfo:ad_info[@"assetSymbol"]];
         _numPrecision = [[_assetInfo objectForKey:@"assetPrecision"] integerValue];
         _totalPrecision = [[[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"precision"] integerValue];
-        _nBalance = [NSDecimalNumber decimalNumberWithString:@"100.3"];//TODO:2.9 !!!
+        if (_sell_user_balance) {
+            _nBalance = [NSDecimalNumber decimalNumberWithMantissa:[[_sell_user_balance objectForKey:@"amount"] unsignedLongLongValue]
+                                                          exponent:-_numPrecision
+                                                        isNegative:NO];
+        } else {
+            _nBalance = nil;
+        }
         _nPrice = [OrgUtils auxGetStringDecimalNumberValue:[NSString stringWithFormat:@"%@", lock_info[@"unitPrice"]]];
         _nStock = [OrgUtils auxGetStringDecimalNumberValue:[NSString stringWithFormat:@"%@", ad_info[@"stock"]]];
         _nMaxLimit = [OrgUtils auxGetStringDecimalNumberValue:[NSString stringWithFormat:@"%@", lock_info[@"highLimitPrice"]]];
@@ -116,7 +127,7 @@ enum
         self.cancelable = YES;
         _tfNumber = nil;
         _tfTotal = nil;
-        _autoCloseSeconds = [[lock_info objectForKey:@"expireDate"] integerValue];     //  TODO:2.9 real 45: test 345
+        _autoCloseSeconds = [[lock_info objectForKey:@"expireDate"] integerValue]; //  TODO:2.9 real 45: test 345
         _autoCloseTimerID = 0;
     }
     return self;
@@ -160,7 +171,7 @@ enum
     UILabel* lbAsset = [self auxGenLabel:[UIFont boldSystemFontOfSize:13] superview:tailer_view];
     UILabel* lbSpace = [self auxGenLabel:[UIFont systemFontOfSize:13] superview:tailer_view];
     lbAsset.text = asset_symbol;
-    lbSpace.text = @"|";//TODO:2.9
+    lbSpace.text = @"|";
     lbAsset.textColor = theme.textColorMain;
     lbSpace.textColor = theme.textColorGray;
     lbAsset.textAlignment = NSTextAlignmentRight;
@@ -186,45 +197,12 @@ enum
     return tailer_view;
 }
 
-//  TODO:2.9
-//<__NSSingleObjectArrayI 0x2811d8680>(
-//{
-//    adId = 22f879a1303f167c70292fb2f88fef58f1301d02;
-//    adType = 2;
-//    aliPaySwitch = 1;
-//    assetId = "1.0.3";
-//    assetSymbol = CNY;
-//    bankcardPaySwitch = 1;
-//    ctime = "2019-11-12T07:27:11.000+0000";
-//    deadTime = "2019-11-12T07:27:11.000+0000";
-//    frozenQuantity = 0;
-//    id = 14;
-//    isDeleted = 0;
-//    leagalType = 1;
-//    lowestLimit = 50;
-//    maxLimit = 1000;
-//    merchantId = 7;
-//    merchantNickname = "\U5409\U7965\U627f\U5151";
-//    mtime = "2019-11-12T10:33:55.000+0000";
-//    otcAccount = "gdex-otc1";
-//    otcBtsId = "1.2.42";
-//    price = "1.02";
-//    priceType = 1;
-//    quantity = 5000;
-//    remark = "\U6d4b\U8bd5\U5907\U6ce8";
-//    status = 1;
-//    stock = 5000;
-//    userId = "<null>";
-//}
-//)
-
-
 - (UIView*)genDialogMain:(CGFloat)max_width
 {
     BOOL bUserBuy = [self isBuy];
     
     UIView* content = [[UIView alloc] init];
-        
+    
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     
     NSString* fiat_symbol = [[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"short_symbol"];
@@ -232,7 +210,7 @@ enum
     
     //  单价
     UILabel* lbPriceTitle = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
-    lbPriceTitle.text = @"单价 ";
+    lbPriceTitle.text = NSLocalizedString(@"kOtcInputLabelUnitPrice", @"单价 ");
     lbPriceTitle.textAlignment = NSTextAlignmentLeft;
     lbPriceTitle.textColor = theme.textColorGray;
     
@@ -240,40 +218,40 @@ enum
     lbPrice.text = [NSString stringWithFormat:@"%@%@", fiat_symbol, _adInfo[@"price"]];
     lbPrice.textColor = theme.textColorHighlight;
     
-    //  TODO:2.9  买 or 卖
+    //  买 or 卖
     UILabel* lbNumberTitle = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
-    lbNumberTitle.text = bUserBuy ? @"购买数量" : @"出售数量";
+    lbNumberTitle.text = bUserBuy ? NSLocalizedString(@"kOtcInputCellLabelBuyAmount", @"购买数量") : NSLocalizedString(@"kOtcInputCellLabelSellAmount", @"出售数量");
     lbNumberTitle.textAlignment = NSTextAlignmentLeft;
     lbNumberTitle.textColor = theme.textColorMain;
     
     UILabel* lbAvailable = nil;
     if (!bUserBuy) {
         lbAvailable = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
-        lbAvailable.text = [NSString stringWithFormat:@"%@ %@ %@", @"余额",
+        lbAvailable.text = [NSString stringWithFormat:@"%@ %@ %@", NSLocalizedString(@"kOtcInputCellYourBalance", @"您的余额"),
                             [OrgUtils formatFloatValue:_nBalance usesGroupingSeparator:NO],
-                            asset_symbol];//TODO:2.9
+                            asset_symbol];
         lbAvailable.textAlignment = NSTextAlignmentLeft;
         lbAvailable.textColor = theme.textColorNormal;
     }
     
     UILabel* lbMaxNumber = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
-    lbMaxNumber.text = [NSString stringWithFormat:@"%@ %@ %@", @"数量", _adInfo[@"stock"], asset_symbol];
+    lbMaxNumber.text = [NSString stringWithFormat:@"%@ %@ %@", NSLocalizedString(@"kOtcInputCellStock", @"数量"), _adInfo[@"stock"], asset_symbol];
     lbMaxNumber.textAlignment = NSTextAlignmentRight;
     lbMaxNumber.textColor = theme.textColorGray;
     
     UILabel* lbTotalTitle = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
-    lbTotalTitle.text = bUserBuy ? @"购买金额" : @"出售金额";
+    lbTotalTitle.text = bUserBuy ? NSLocalizedString(@"kOtcInputCellLabelBuyTotal", @"购买金额") : NSLocalizedString(@"kOtcInputCellLabelSellTotal", @"出售金额");
     lbTotalTitle.textAlignment = NSTextAlignmentLeft;
     lbTotalTitle.textColor = theme.textColorMain;
     
     UILabel* lbTotalLimited = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
-    lbTotalLimited.text = [NSString stringWithFormat:@"%@ %@%@ - %@%@", @"限额",
+    lbTotalLimited.text = [NSString stringWithFormat:@"%@ %@%@ - %@%@", NSLocalizedString(@"kOtcInputCellLabelLimit", @"限额"),
                            fiat_symbol, _lockInfo[@"lowLimitPrice"], fiat_symbol, _lockInfo[@"highLimitPrice"]];
     lbTotalLimited.textAlignment = NSTextAlignmentRight;
     lbTotalLimited.textColor = theme.textColorGray;
     
-    NSString* numberPlaceHolder = bUserBuy ? @"请输入购买数量" : @"请输入出售数量";
-    NSString* totalPlaceHolder = bUserBuy ? @"请输入购买金额" : @"请输入出售金额";
+    NSString* numberPlaceHolder = bUserBuy ? NSLocalizedString(@"kOtcInputPlaceholderBuyAmount", @"请输入购买数量") : NSLocalizedString(@"kOtcInputPlaceholderSellAmount", @"请输入出售数量");
+    NSString* totalPlaceHolder = bUserBuy ? NSLocalizedString(@"kOtcInputPlaceholderBuyTotal", @"请输入购买金额") : NSLocalizedString(@"kOtcInputPlaceholderSellTotal", @"请输入出售金额");
     
     //  UI -  数量输入框
     _tfNumber = [self createTfWithRect:CGRectZero
@@ -297,24 +275,28 @@ enum
     [_tfTotal addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
     
     //  UI - 输入框末尾按钮
-    _tfNumber.rightView = [self genTailerView:asset_symbol action:bUserBuy ? @"全部买入" : @"全部出售" tag:tf_tag_number];//TODO:2.9
+    _tfNumber.rightView = [self genTailerView:asset_symbol
+                                       action:bUserBuy ? NSLocalizedString(@"kOtcInputTailerBtnBuyAll", @"全部买入") : NSLocalizedString(@"kOtcInputTailerBtnSellAll", @"全部出售")
+                                          tag:tf_tag_number];
     _tfNumber.rightViewMode = UITextFieldViewModeAlways;
-    _tfTotal.rightView = [self genTailerView:fiat_symbol action:bUserBuy ? @"最大金额" : @"最大金额" tag:tf_tag_total];//TODO:2.9 fiat currency
+    _tfTotal.rightView = [self genTailerView:fiat_symbol
+                                      action:NSLocalizedString(@"kOtcInputTailerBtnMaxTotal", @"最大金额")
+                                         tag:tf_tag_total];
     _tfTotal.rightViewMode = UITextFieldViewModeAlways;
     
     //  UI - 交易数量
     _tradeAmount = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
-    _tradeAmount.text = [NSString stringWithFormat:@"%@ %@ %@", @"交易数量", @"0", asset_symbol];//TODO:2.9
+    _tradeAmount.text = [NSString stringWithFormat:@"%@ %@ %@", NSLocalizedString(@"kOtcInputCellLabelTradeAmount", @"交易数量"), @"0", asset_symbol];
     _tradeAmount.textAlignment = NSTextAlignmentRight;
     _tradeAmount.textColor = theme.textColorMain;
     
     //  UI - 实付款/实际到账
     UILabel* finalTotalTitle = [self auxGenLabel:[UIFont systemFontOfSize:13.0f] superview:content];
     _finalTotalValue = [self auxGenLabel:[UIFont boldSystemFontOfSize:18.0f] superview:content];
-    finalTotalTitle.text = bUserBuy ? @"实际付款" : @"实际到账";
+    finalTotalTitle.text = bUserBuy ? NSLocalizedString(@"kOtcInputCellRealPayment", @"实际付款") : NSLocalizedString(@"kOtcInputCellRealReceive", @"实际到账");
     finalTotalTitle.textAlignment = NSTextAlignmentLeft;
     
-    _finalTotalValue.text = [NSString stringWithFormat:@"%@%@", fiat_symbol, @"0"];//TODO:2.9 teatdata
+    _finalTotalValue.text = [NSString stringWithFormat:@"%@%@", fiat_symbol, @"0"];
     _finalTotalValue.textColor = theme.textColorHighlight;
     _finalTotalValue.textAlignment = NSTextAlignmentRight;
     
@@ -329,24 +311,23 @@ enum
     _autoCloseButton = [UIButton buttonWithType:UIButtonTypeCustom];
     _autoCloseButton.titleLabel.font = [UIFont systemFontOfSize:16];
     _autoCloseButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
-    //  TODO:2.9
-    [_autoCloseButton setTitle:[NSString stringWithFormat:@"%@%@", @(_autoCloseSeconds), @"秒后自动取消"] forState:UIControlStateNormal];
+    [_autoCloseButton setTitle:[NSString stringWithFormat:NSLocalizedString(@"kOtcInputAutoCloseSecTips", @"%@秒后自动取消"), @(_autoCloseSeconds)] forState:UIControlStateNormal];
     [_autoCloseButton setTitleColor:theme.textColorPercent forState:UIControlStateNormal];
     _autoCloseButton.userInteractionEnabled = YES;
     [_autoCloseButton addTarget:self action:@selector(onButtomAutoCancelClicked) forControlEvents:UIControlEventTouchUpInside];
     _autoCloseButton.frame = CGRectMake(0, (fBottomViewHeight  - fBottomButton) / 2,
-                                    fBottomButtonWidth, fBottomButton);
+                                        fBottomButtonWidth, fBottomButton);
     _autoCloseButton.backgroundColor = theme.textColorGray;
     [pBottomView addSubview:_autoCloseButton];
     UIButton* btnBottomSubmit = [UIButton buttonWithType:UIButtonTypeSystem];
     btnBottomSubmit.titleLabel.font = [UIFont boldSystemFontOfSize:16];
     btnBottomSubmit.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
-    [btnBottomSubmit setTitle:@"下单" forState:UIControlStateNormal];
+    [btnBottomSubmit setTitle:NSLocalizedString(@"kOtcInputBtnCreateOrder", @"下单") forState:UIControlStateNormal];
     [btnBottomSubmit setTitleColor:theme.textColorPercent forState:UIControlStateNormal];
     btnBottomSubmit.userInteractionEnabled = YES;
     [btnBottomSubmit addTarget:self action:@selector(onButtomSubmitClicked:) forControlEvents:UIControlEventTouchUpInside];
     btnBottomSubmit.frame = CGRectMake(fBottomButtonWidth + fBottomSpace,
-                                     (fBottomViewHeight  - fBottomButton) / 2, fBottomButtonWidth, fBottomButton);
+                                       (fBottomViewHeight  - fBottomButton) / 2, fBottomButtonWidth, fBottomButton);
     btnBottomSubmit.backgroundColor = bUserBuy ? theme.buyColor : theme.sellColor;
     [pBottomView addSubview:btnBottomSubmit];
     
@@ -364,9 +345,6 @@ enum
     CGFloat fSizePriceX = (max_width - size_price.width) / 2;
     lbPrice.frame = CGRectMake(fSizePriceX, fOffsetY, size_price.width, fLineHeight);
     lbPriceTitle.frame = CGRectMake(fSizePriceX - size_title.width, fOffsetY, size_title.width, fLineHeight);
-//    lbPrice.backgroundColor = [UIColor  redColor];
-//    lbPriceTitle.backgroundColor = [UIColor greenColor];
-////    lbPrice.frame = CGRectMake(0, fOffsetY, max_width, fLineHeight);
     fOffsetY += fLineHeight + 8.0f;
     
     lbNumberTitle.frame = CGRectMake(0, fOffsetY, max_width, 18.0f);
@@ -416,11 +394,10 @@ enum
     lb_title.textColor = theme.textColorMain;
     lb_title.textAlignment = NSTextAlignmentCenter;
     lb_title.font = [UIFont boldSystemFontOfSize:16.0f];
-    //  TODO:2.9 多语言 
     if ([self isBuy]) {
-        lb_title.text = [NSString stringWithFormat:@"%@ %@", @"购买", _adInfo[@"assetSymbol"]];
+        lb_title.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kOtcInputTitleBuy", @"购买"), _adInfo[@"assetSymbol"]];
     } else {
-        lb_title.text = [NSString stringWithFormat:@"%@ %@", @"出售", _adInfo[@"assetSymbol"]];
+        lb_title.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kOtcInputTitleSell", @"出售"), _adInfo[@"assetSymbol"]];
     }
     [toolbar addSubview:lb_title];
     
@@ -434,7 +411,7 @@ enum
     CGRect rect = [UIScreen mainScreen].bounds;
     
     CGFloat xOffset = 16.0f;
-
+    
     //  UI - 标题栏
     UIView* toolbar = [self genToolbar:rect];
     
@@ -457,8 +434,8 @@ enum
     //  自动关闭定时器
     _autoCloseTimerID = [[AsyncTaskManager sharedAsyncTaskManager] scheduledSecondsTimer:_autoCloseSeconds callback:^(NSInteger left_ts) {
         if (left_ts > 0) {
-            //  刷新 TODO:2.9 多语言
-            [_autoCloseButton setTitle:[NSString stringWithFormat:@"%@%@", @(left_ts), @"秒后自动取消"] forState:UIControlStateNormal];
+            //  刷新
+            [_autoCloseButton setTitle:[NSString stringWithFormat:NSLocalizedString(@"kOtcInputAutoCloseSecTips", @"%@秒后自动取消"), @(left_ts)] forState:UIControlStateNormal];
         } else {
             [self onButtomAutoCancelClicked];
         }
@@ -558,14 +535,46 @@ enum
  */
 - (void)onButtomSubmitClicked:(UIButton*)sender
 {
-    //  TODO:2.9
     id str_amount = _tfNumber.text;
     id str_total = _tfTotal.text;
     
     id n_amount = [OrgUtils auxGetStringDecimalNumberValue:str_amount];
     id n_total = [OrgUtils auxGetStringDecimalNumberValue:str_total];
     
-    //  TODO:2.9 result test data
+    //  REMARK：该界面的toast居中显示。不然可能会被键盘遮挡。
+    NSString* toastPosition = @"CSToastPositionCenter";
+    if ([n_total compare:[NSDecimalNumber zero]] <= 0) {
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcInputSubmitTipTotalZero", @"交易金额不能为零。")
+                   position:toastPosition];
+        return;
+    }
+    
+    if ([n_amount compare:_nStock] > 0) {
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcInputSubmitTipAmountGreatThanStock", @"交易数量不能大于可用数量。")
+                   position:toastPosition];
+        return;
+    }
+    
+    if (_nBalance && [n_amount compare:_nBalance] > 0) {
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcInputSubmitTipAmountGreatThanBalance", @"交易数量不能大于用户可用余额。")
+                   position:toastPosition];
+        return;
+    }
+    
+    id n_min_limit = [NSDecimalNumber decimalNumberWithString:[NSString stringWithFormat:@"%@", _lockInfo[@"lowLimitPrice"]]];
+    if ([n_total compare:n_min_limit] < 0) {
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcInputSubmitTipTotalLessMinLimit", @"交易金额不能低于单笔最小限额。")
+                   position:toastPosition];
+        return;
+    }
+    
+    if ([n_total compare:_nMaxLimit] > 0) {
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcInputSubmitTipTotalGreatMaxLimit", @"交易金额不能大于单笔最大限额。")
+                   position:toastPosition];
+        return;
+    }
+    
+    //  校验完毕，前往下单。
     [self _handleCloseWithResult:@{@"total":str_total}];
 }
 
@@ -587,7 +596,7 @@ enum
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     //  TODO:2.9
-//    [self onSubmitClicked];
+    //    [self onSubmitClicked];
     return YES;
 }
 
@@ -632,11 +641,11 @@ enum
     
     NSDecimalNumber* n_total = [OrgUtils auxGetStringDecimalNumberValue:str_total];
     NSDecimalNumber* n_amount = [self _calc_n_number_from_total:n_total];
-
+    
     //  刷新 交易数量 和 最终金额。
     [self _draw_ui_trade_value:n_amount];
     [self _draw_ui_final_value:n_total];
-
+    
     //  交易数量
     if (!str_total || [str_total isEqualToString:@""]){
         _tfNumber.text = @"";
@@ -654,11 +663,11 @@ enum
     
     NSDecimalNumber* n_amount = [OrgUtils auxGetStringDecimalNumberValue:str_amount];
     NSDecimalNumber* n_total = [self _calc_n_total_from_number:n_amount];
-
+    
     //  刷新 交易数量 和 最终金额。
     [self _draw_ui_trade_value:n_amount];
     [self _draw_ui_final_value:n_total];
-
+    
     //  总金额
     if (!str_amount || [str_amount isEqualToString:@""]){
         _tfTotal.text = @"";
@@ -668,9 +677,9 @@ enum
 }
 
 /*
-*  (private) 根据总金额计算数量
-*  REMARK：买入行为：数量向下取整 卖出行为：数量向上取整
-*/
+ *  (private) 根据总金额计算数量
+ *  REMARK：买入行为：数量向下取整 卖出行为：数量向上取整
+ */
 - (NSDecimalNumber*)_calc_n_number_from_total:(NSDecimalNumber*)n_total
 {
     NSDecimalNumberHandler* roundHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:[self isBuy] ? NSRoundDown : NSRoundUp
@@ -702,7 +711,7 @@ enum
     //  TODO:2.9 是否超过。余额 以及。数量限制
     NSString* asset_symbol = _adInfo[@"assetSymbol"];
     
-    _tradeAmount.text = [NSString stringWithFormat:@"%@ %@ %@", @"交易数量",
+    _tradeAmount.text = [NSString stringWithFormat:@"%@ %@ %@", NSLocalizedString(@"kOtcInputCellLabelTradeAmount", @"交易数量"),
                          [OrgUtils formatFloatValue:n_value usesGroupingSeparator:NO],
                          asset_symbol];//TODO:2.9
 }

@@ -168,7 +168,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
     
     //  检测链上数据有效性
     if (!full_from_account || !to_account || !asset) {
-        resolve(@{@"err":@"区块数据异常。"});
+        resolve(@{@"err":NSLocalizedString(@"kTxBlockDataError", @"区块数据异常。")});
         return;
     }
     id from_account = [full_from_account objectForKey:@"account"];
@@ -205,7 +205,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
         }
     }
     if (!bBalanceEnough) {
-        resolve(@{@"err":@"余额不足。"});
+        resolve(@{@"err":[NSString stringWithFormat:NSLocalizedString(@"kTxBalanceNotEnough", @"您的 %@ 余额不足。"), asset[@"symbol"]]});
         return;
     }
     
@@ -216,7 +216,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
         id to_public_memo = [[to_account objectForKey:@"options"] objectForKey:@"memo_key"];
         memo_object = [walletMgr genMemoObject:memo from_public:from_public_memo to_public:to_public_memo extra_keys:memo_extra_keys];
         if (!memo_object) {
-            resolve(@{@"err":@"缺少备注私钥。"});
+            resolve(@{@"err":NSLocalizedString(@"kTxMissMemoPriKey", @"缺少备注私钥。")});
             return;
         }
     }

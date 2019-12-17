@@ -36,7 +36,7 @@ typedef void (^Arg2CompletionBlock)(NSInteger buttonIndex, NSInteger cancelIndex
 /*
  *  显示场外交易下单时的模态输入框
  */
-- (WsPromise*)showOtcTradeView:(UIViewController*)vc ad_info:(id)ad_info lock_info:(id)lock_info;
+- (WsPromise*)showOtcTradeView:(UIViewController*)vc ad_info:(id)ad_info lock_info:(id)lock_info sell_user_balance:(id)sell_user_balance;
 
 /**
  *  在底部显示列表选择控件

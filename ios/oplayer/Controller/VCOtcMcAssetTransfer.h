@@ -17,6 +17,7 @@
             asset_list:(id)asset_list
    curr_merchant_asset:(id)curr_merchant_asset
      full_account_data:(id)full_account_data
-           transfer_in:(BOOL)transfer_in;
+           transfer_in:(BOOL)transfer_in
+        result_promise:(WsPromiseObject*)result_promise;
 
 @end

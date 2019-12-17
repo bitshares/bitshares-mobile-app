@@ -31,6 +31,8 @@ enum
 
 @interface VCOtcMcAssetTransfer ()
 {
+    WsPromiseObject*        _result_promise;
+    
     NSDictionary*           _auth_info;
     EOtcUserType            _user_type;
     NSArray*                _asset_list;
@@ -54,6 +56,7 @@ enum
 
 -(void)dealloc
 {
+    _result_promise = nil;
     _nCurrBalance = nil;
     _asset_list = nil;
     _curr_merchant_asset = nil;
@@ -79,9 +82,11 @@ enum
    curr_merchant_asset:(id)curr_merchant_asset
      full_account_data:(id)full_account_data
            transfer_in:(BOOL)transfer_in
+        result_promise:(WsPromiseObject*)result_promise
 {
     self = [super init];
     if (self) {
+        _result_promise = result_promise;
         _auth_info = auth_info;
         _user_type = user_type;
         _merchant_detail = merchant_detail;
@@ -614,6 +619,11 @@ enum
             [[[otc queryMerchantAssetExport:[otc getCurrentBtsAccount] signatureTx:tx] then:^id(id data) {
                 [self hideBlockView];
                 [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAssetSubmitTipTransferOutOK", @"转出请求已提交，请耐心等待平台处理，请勿重复操作。")];
+                //  返回上一个界面并刷新
+                if (_result_promise) {
+                    [_result_promise resolve:@YES];
+                }
+                [self closeOrPopViewController];
                 return nil;
             }] catch:^id(id error) {
                 [self hideBlockView];
@@ -649,8 +659,12 @@ enum
             //  错误
             [OrgUtils makeToast:err];
         } else {
-            //  TODO:2.9 refresh ui balance?
             [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAssetSubmitTipTransferInOK", @"转入成功。")];
+            //  返回上一个界面并刷新
+            if (_result_promise) {
+                [_result_promise resolve:@YES];
+            }
+            [self closeOrPopViewController];
         }
         return nil;
     }] catch:^id(id error) {
