@@ -184,19 +184,24 @@ enum
             
         case kVcSubOtcAsset:
             cell.textLabel.text = NSLocalizedString(@"kOtcMcHomeCellLabelTitleAsset", @"商家资产");
+            cell.imageView.image = [UIImage templateImageNamed:@"iconOtcMcAsset"];
             break;
         case kVcSubOtcAd:
             cell.textLabel.text = NSLocalizedString(@"kOtcMcHomeCellLabelTitleAd", @"商家广告");
+            cell.imageView.image = [UIImage templateImageNamed:@"iconOtcMcAd"];
             break;
         case kVcSubOtcOrder:
             cell.textLabel.text = NSLocalizedString(@"kOtcMcHomeCellLabelTitleOrder", @"商家订单");
+            cell.imageView.image = [UIImage templateImageNamed:@"iconOtcOrder"];
             break;
             
         case kVcSubReceiveMethods:
             cell.textLabel.text = NSLocalizedString(@"kOtcMcHomeCellLabelTitleReceiveMethod", @"收款方式");
+            cell.imageView.image = [UIImage templateImageNamed:@"iconOtcReceive"];
             break;
         case kVcSubPaymentMethods:
             cell.textLabel.text = NSLocalizedString(@"kOtcMcHomeCellLabelTitlePaymentMethod", @"付款方式");
+            cell.imageView.image = [UIImage templateImageNamed:@"iconOtcPayment"];
             break;
             
         default:
@@ -204,8 +209,6 @@ enum
             break;
     }
     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    
-    cell.imageView.image = [UIImage templateImageNamed:@"iconOtc"];//TODO:2.9 现在全都一样
     cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
     
     return cell;
