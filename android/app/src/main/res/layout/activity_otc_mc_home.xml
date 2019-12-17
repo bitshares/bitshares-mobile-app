@@ -154,11 +154,12 @@
                         android:layout_height="wrap_content">
 
                         <ImageView
+                            android:id="@+id/img_icon_otc_mc_asset"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_gravity="center_vertical"
                             android:foregroundGravity="right"
-                            android:src="@drawable/ic_bottom_markets" />
+                            android:src="@drawable/icon_otc_mc_asset" />
                     </LinearLayout>
 
                     <TextView
@@ -199,11 +200,12 @@
                         android:layout_height="wrap_content">
 
                         <ImageView
+                            android:id="@+id/img_icon_otc_mc_ad"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_gravity="center_vertical"
                             android:foregroundGravity="right"
-                            android:src="@drawable/ic_bottom_markets" />
+                            android:src="@drawable/icon_otc_mc_ad" />
                     </LinearLayout>
 
                     <TextView
@@ -244,11 +246,12 @@
                         android:layout_height="wrap_content">
 
                         <ImageView
+                            android:id="@+id/img_icon_otc_mc_order"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_gravity="center_vertical"
                             android:foregroundGravity="right"
-                            android:src="@drawable/ic_bottom_markets" />
+                            android:src="@drawable/icon_otc_order" />
                     </LinearLayout>
 
                     <TextView
@@ -289,11 +292,12 @@
                         android:layout_height="wrap_content">
 
                         <ImageView
+                            android:id="@+id/img_icon_otc_mc_receive"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_gravity="center_vertical"
                             android:foregroundGravity="right"
-                            android:src="@drawable/ic_bottom_markets" />
+                            android:src="@drawable/icon_otc_mc_payment" />
                     </LinearLayout>
 
                     <TextView
@@ -336,11 +340,12 @@
                         android:layout_height="wrap_content">
 
                         <ImageView
+                            android:id="@+id/img_icon_otc_mc_payment"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_gravity="center_vertical"
                             android:foregroundGravity="right"
-                            android:src="@drawable/ic_bottom_markets" />
+                            android:src="@drawable/icon_otc_payment" />
                     </LinearLayout>
 
                     <TextView

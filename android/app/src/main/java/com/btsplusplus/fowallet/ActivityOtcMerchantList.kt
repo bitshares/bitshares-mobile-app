@@ -61,11 +61,16 @@ class ActivityOtcMerchantList : BtsppActivity() {
             onSelectAssetClicked()
         }
 
+        //  初始化图标颜色
+        val iconcolor = resources.getColor(R.color.theme01_textColorNormal)
+        img_icon_otc_orders.setColorFilter(iconcolor)
+        img_icon_otc_auth.setColorFilter(iconcolor)
+
         // 选择订单列表
-        image_select_orders_from_merchant_list.setOnClickListener{
+        img_icon_otc_orders.setOnClickListener{
             goTo(ActivityOtcOrderList::class.java, true)
         }
-        image_payments_from_merchant_list.setOnClickListener{
+        img_icon_otc_auth.setOnClickListener{
 
             val asset_list = JSONArray().apply {
                 put("认证信息")

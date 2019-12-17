@@ -119,7 +119,8 @@
                         tools:ignore="Suspicious0dp">
 
                         <ImageView
-                            android:src="@drawable/icon_transfer"
+                            android:id="@+id/img_icon_otc_switch"
+                            android:src="@drawable/icon_switch"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
 

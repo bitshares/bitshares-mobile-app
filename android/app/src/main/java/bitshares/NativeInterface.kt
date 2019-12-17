@@ -14,6 +14,8 @@ class NativeInterface {
 
     external fun bts_aes256_decrypt_from_hex(aes_seed: ByteArray, hexsrc: ByteArray): ByteArray?
 
+    external fun bts_aes256_decrypt_with_checksum(private_key32: ByteArray, public_key: ByteArray, nonce: ByteArray, message: ByteArray): ByteArray?
+
     external fun bts_aes256_encrypt_with_checksum(private_key32: ByteArray, public_key: ByteArray, nonce: ByteArray, message: ByteArray): ByteArray?
 
     external fun bts_gen_private_key_from_seed(seed: ByteArray): ByteArray?

@@ -47,6 +47,13 @@ class ActivityIndexServices : BtsppActivity() {
         } else {
             layout_recharge_and_withdraw_of_service.visibility = View.GONE
         }
+        if (BuildConfig.kAppModuleEnableOTC) {
+            layout_otc_user.visibility = View.VISIBLE
+            layout_otc_merchant.visibility = View.VISIBLE
+        } else {
+            layout_otc_user.visibility = View.GONE
+            layout_otc_merchant.visibility = View.GONE
+        }
 
         //  设置图标颜色
         val iconcolor = resources.getColor(R.color.theme01_textColorNormal)
@@ -57,6 +64,8 @@ class ActivityIndexServices : BtsppActivity() {
         img_icon_voting.setColorFilter(iconcolor)
         img_icon_feedprice.setColorFilter(iconcolor)
         img_icon_deposit_withdraw.setColorFilter(iconcolor)
+        img_icon_otc_user.setColorFilter(iconcolor)
+        img_icon_otc_merchant.setColorFilter(iconcolor)
         img_icon_advfunction.setColorFilter(iconcolor)
         img_icon_explorer.setColorFilter(iconcolor)
         img_icon_game.setColorFilter(iconcolor)
@@ -127,12 +136,18 @@ class ActivityIndexServices : BtsppActivity() {
             }
         }
 
+        if (BuildConfig.kAppModuleEnableOTC) {
+            //  TODO:2.9
+            layout_otc_user.setOnClickListener {
+                guardWalletExist { goTo(ActivityOtcMerchantList::class.java, true) }
+            }
+            layout_otc_merchant.setOnClickListener {
+                guardWalletExist { goTo(ActivityOtcMcHome::class.java, true) }
+            }
+        }
+
         layout_advanced_feature_of_service.setOnClickListener {
             goTo(ActivityAdvancedFeature::class.java, true)
-
-            // REMARK: 测试界面入口
-            // goTo(ActivityOtcMcHome::class.java, true)
-            // goTo(ActivityOtcMerchantList::class.java, true)
         }
 
         layout_bts_explorer.setOnClickListener {
