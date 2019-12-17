@@ -226,7 +226,7 @@ enum
             cell.imageView.image = [UIImage templateImageNamed:@"iconOtc"];
             break;
         case kVcOtcMerchant:
-            cell.imageView.image = [UIImage templateImageNamed:@"iconOtc"];//TODO:2.9 icon
+            cell.imageView.image = [UIImage templateImageNamed:@"iconOtcMerchant"];
             break;
         case kVcSubDepositWithdraw:
             cell.imageView.image = [UIImage templateImageNamed:@"iconDepositWithdraw"];
