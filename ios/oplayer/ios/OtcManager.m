@@ -1232,7 +1232,7 @@ static OtcManager *_sharedOtcManager = nil;
 
 /*
  *  (public) API - 发送短信
- *  认证：SIGN 认证
+ *  认证：TOKEN 认证
  */
 - (WsPromise*)sendSmsCode:(NSString*)bts_account_name phone:(NSString*)phone_number type:(EOtcSmsType)type
 {
@@ -1242,7 +1242,7 @@ static OtcManager *_sharedOtcManager = nil;
         @"phoneNum":phone_number,
         @"type":@(type)
     };
-    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
 }
 
 /*

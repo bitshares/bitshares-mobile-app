@@ -27,6 +27,7 @@ typedef enum EOtcErrorCode
     eoerr_ok = 0,                           //  正常
     eoerr_too_often = 1012,                 //  请求太频繁
     eoerr_token_is_empty = 1002,            //  TOEKN不能为空
+    eoerr_user_not_exist = 2001,            //  用户不存在
     eoerr_not_login = 2011,                 //  未登录
     
     eoerr_order_cancel_to_go_online = 5001, //  取消订单数量太多？TODO:2.9
@@ -448,7 +449,8 @@ typedef enum EOtcMcProgress
                   price:(NSString*)price;
 
 /*
- *  (public) 发送短信
+ *  (public) API - 发送短信
+ *  认证：TOKEN 认证
  */
 - (WsPromise*)sendSmsCode:(NSString*)bts_account_name phone:(NSString*)phone_number type:(EOtcSmsType)type;
 
