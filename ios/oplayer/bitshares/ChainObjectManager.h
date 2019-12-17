@@ -272,6 +272,11 @@
 - (WsPromise*)queryAssetData:(NSString*)asset_symbol_or_id;
 - (WsPromise*)queryAssetDataList:(NSArray*)asset_name_list;
 
+/*
+ *  (public) 查询指定账号余额
+ */
+- (WsPromise*)queryAccountBalance:(NSString*)account_name_or_id assets:(NSArray*)asset_id_array;
+
 /**
  * (public) 账号是否存在于区块链上
  */

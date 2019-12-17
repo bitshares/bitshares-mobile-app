@@ -802,6 +802,8 @@ static OtcManager *_sharedOtcManager = nil;
     if ([[WalletManager sharedWalletManager] isWalletExist]) {
         [self _delUserTokenCookie:[self getCurrentBtsAccount]];
     }
+    //  清理商家信息
+    _cache_merchant_detail = nil;
 }
 
 /*
