@@ -80,7 +80,7 @@
                             android:layout_height="20dp"
                             android:layout_gravity="center_vertical"
                             android:foregroundGravity="right"
-                            android:src="@drawable/ic_bottom_markets" />
+                            android:src="@drawable/icon_pm_alipay" />
                     </LinearLayout>
 
                     <TextView
@@ -128,7 +128,7 @@
                             android:layout_height="20dp"
                             android:layout_gravity="center_vertical"
                             android:foregroundGravity="right"
-                            android:src="@drawable/ic_bottom_markets" />
+                            android:src="@drawable/icon_pm_bankcard" />
                     </LinearLayout>
 
                     <TextView

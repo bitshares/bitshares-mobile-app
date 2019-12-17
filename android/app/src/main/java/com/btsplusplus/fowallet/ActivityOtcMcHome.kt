@@ -15,6 +15,14 @@ class ActivityOtcMcHome : BtsppActivity() {
         // 设置全屏(隐藏状态栏和虚拟导航栏)
         setFullScreen()
 
+        //  初始化图标颜色
+        val iconcolor = resources.getColor(R.color.theme01_textColorNormal)
+        img_icon_otc_mc_asset.setColorFilter(iconcolor)
+        img_icon_otc_mc_ad.setColorFilter(iconcolor)
+        img_icon_otc_mc_order.setColorFilter(iconcolor)
+        img_icon_otc_mc_payment.setColorFilter(iconcolor)
+        img_icon_otc_mc_receive.setColorFilter(iconcolor)
+
         tv_mc_first_name_from_otc_mc_home.text = "素"
         tv_mc_first_name_from_otc_mc_home.background = getDrawable(R.drawable.circle_character_view)
 

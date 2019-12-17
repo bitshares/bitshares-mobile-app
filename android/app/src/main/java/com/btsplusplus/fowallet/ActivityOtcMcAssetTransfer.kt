@@ -26,6 +26,10 @@ class ActivityOtcMcAssetTransfer : BtsppActivity() {
 
         layout_parent = layout_asset_transfer_from_otc_mc_home
 
+        //  设置图标颜色
+        val iconcolor = resources.getColor(R.color.theme01_textColorNormal)
+        img_icon_otc_switch.setColorFilter(iconcolor)
+
         val args = btspp_args_as_JSONObject()
 
         // 1 个人 -> 商家    1 商家 -> 个人

@@ -31,6 +31,7 @@ android {
         buildConfigField "boolean", "kAppModuleEnableTabDebt", "true"
         buildConfigField "boolean", "kAppModuleEnableRank", "true"
         buildConfigField "boolean", "kAppModuleEnableFeedPrice", "true"
+        buildConfigField "boolean", "kAppModuleEnableOTC", "true"
         buildConfigField "boolean", "kAppModuleEnableGateway", "true"
         buildConfigField "boolean", "kAppCheckUpdate", "true"
 
@@ -45,11 +46,14 @@ android {
             //  0:iOS企业版 1:AppStore版 10:btspp 20:community(bbf) 100:baichenglian
             buildConfigField "int", "kAppChannelID", "10"
             buildConfigField "boolean", "kUseCommunityFaucet", "false"
-            buildConfigField "String", "kAppConfigFile", "\"fowallet_config_btspp.json\""
+//            buildConfigField "String", "kAppConfigFile", "\"fowallet_config_btspp.json\""
+            //  TODO:2.9 test otc
+            buildConfigField "String", "kAppConfigFile", "\"fowallet_config_otctest.json\""
         }
         //  for community_bbf
         bitshares {
             buildConfigField "int", "kAppChannelID", "20"
+            buildConfigField "boolean", "kAppModuleEnableOTC", "false"
             buildConfigField "boolean", "kUseCommunityFaucet", "true"
             buildConfigField "String", "kAppCommunityFaucetAddress", "\"https://faucet.bitshares.eu/onboarding/api/v1/accounts\""
         }
