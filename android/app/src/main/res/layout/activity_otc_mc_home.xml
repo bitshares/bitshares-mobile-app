@@ -62,8 +62,9 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-
+                <!-- 基本信息 -->
                 <LinearLayout
+                    android:id="@+id/layout_otc_merchant_home_basic"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -74,7 +75,7 @@
                         android:layout_gravity="center_vertical"
                         android:textSize="17dp"
                         android:textColor="@color/theme01.textColorMain"
-                        android:text="素"
+                        android:text=""
                         android:layout_width="24dp"
                         android:layout_height="24dp" />
 
@@ -95,7 +96,7 @@
                                 android:id="@+id/tv_mc_name_from_otc_mc_home"
                                 android:textSize="14dp"
                                 android:textColor="@color/theme01.textColorMain"
-                                android:text="素素承兑"
+                                android:text=""
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content" />
 

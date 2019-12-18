@@ -1,7 +1,7 @@
 package com.btsplusplus.fowallet
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import bitshares.OtcManager
 import kotlinx.android.synthetic.main.activity_otc_mc_home.*
 import org.json.JSONObject
 
@@ -15,6 +15,10 @@ class ActivityOtcMcHome : BtsppActivity() {
         // 设置全屏(隐藏状态栏和虚拟导航栏)
         setFullScreen()
 
+        //  获取参数
+        val args = btspp_args_as_JSONObject()
+        val merchant_detail = args.getJSONObject("merchant_detail")
+
         //  初始化图标颜色
         val iconcolor = resources.getColor(R.color.theme01_textColorNormal)
         img_icon_otc_mc_asset.setColorFilter(iconcolor)
@@ -23,47 +27,77 @@ class ActivityOtcMcHome : BtsppActivity() {
         img_icon_otc_mc_payment.setColorFilter(iconcolor)
         img_icon_otc_mc_receive.setColorFilter(iconcolor)
 
-        tv_mc_first_name_from_otc_mc_home.text = "素"
+        val nickname = merchant_detail.getString("nickname")
+        tv_mc_first_name_from_otc_mc_home.text = nickname.substring(0, 1)
         tv_mc_first_name_from_otc_mc_home.background = getDrawable(R.drawable.circle_character_view)
 
-        tv_mc_name_from_otc_mc_home.text = "素素承兑"
+        //  TODO:2.9 status
+        tv_mc_name_from_otc_mc_home.text = nickname
         tv_auth_text_from_otc_mc_home.text = "已认证"
-        tv_date_from_otc_mc_home.text = "2019-12-12"
+        tv_date_from_otc_mc_home.text = OtcManager.fmtMerchantTime(merchant_detail.getString("ctime"))
 
-        // 商家资产
+        //  基本信息
+        layout_otc_merchant_home_basic.setOnClickListener {
+            OtcManager.sharedOtcManager().guardUserIdVerified(this, true, null) { auth_info ->
+                goTo(ActivityOtcUserAuthInfos::class.java, true, args = JSONObject().apply {
+                    put("auth_info", auth_info)
+                })
+            }
+        }
+
+        //  商家资产
         layout_asset_list_from_otc_mc_home.setOnClickListener {
-            goTo(ActivityOtcMcAssetList::class.java,true)
+            OtcManager.sharedOtcManager().guardUserIdVerified(this, true, null) { auth_info ->
+                goTo(ActivityOtcMcAssetList::class.java, true, args = JSONObject().apply {
+                    put("auth_info", auth_info)
+                    put("merchant_detail", merchant_detail)
+                    put("user_type", OtcManager.EOtcUserType.eout_merchant)
+                })
+            }
         }
 
-        // 商家广告
+        //  商家广告
         layout_ad_list_from_otc_mc_home.setOnClickListener {
-            goTo(ActivityOtcMcAdList::class.java,true)
+            OtcManager.sharedOtcManager().guardUserIdVerified(this, true, null) { auth_info ->
+                goTo(ActivityOtcMcAdList::class.java, true, args = JSONObject().apply {
+                    put("auth_info", auth_info)
+                    put("merchant_detail", merchant_detail)
+                    put("user_type", OtcManager.EOtcUserType.eout_merchant)
+                })
+            }
         }
 
-        // 商家订单
+        //  商家订单
         layout_order_list_from_otc_mc_home.setOnClickListener {
-            goTo(ActivityOtcOrderList::class.java,true)
+            OtcManager.sharedOtcManager().guardUserIdVerified(this, true, null) { auth_info ->
+                goTo(ActivityOtcOrderList::class.java, true, args = JSONObject().apply {
+                    put("auth_info", auth_info)
+                    put("user_type", OtcManager.EOtcUserType.eout_merchant)
+                })
+            }
         }
 
-        // 收款方式
+        //  收款方式
         layout_receive_methods_from_otc_mc_home.setOnClickListener {
-            val _args = JSONObject().apply {
-                put("type", "receive")
+            OtcManager.sharedOtcManager().guardUserIdVerified(this, true, null) { auth_info ->
+                goTo(ActivityOtcPaymentList::class.java, true, args = JSONObject().apply {
+                    put("auth_info", auth_info)
+                    put("user_type", OtcManager.EOtcUserType.eout_merchant)
+                })
             }
-            goTo(ActivityOtcMcPaymentMethods::class.java,true, args = _args)
         }
 
-        // 付款方式
+        //  付款方式
         layout_payment_methods_from_otc_mc_home.setOnClickListener {
-            val _args = JSONObject().apply {
-                put("type", "payment")
+            OtcManager.sharedOtcManager().guardUserIdVerified(this, true, null) { auth_info ->
+                goTo(ActivityOtcMcPaymentMethods::class.java, true, args = JSONObject().apply {
+                    put("auth_info", auth_info)
+                    put("merchant_detail", merchant_detail)
+                })
             }
-            goTo(ActivityOtcMcPaymentMethods::class.java,true, args = _args)
         }
 
-
-
-        // 返回按钮事件
+        //  返回按钮事件
         layout_back_from_otc_mc_home.setOnClickListener { finish() }
     }
 }

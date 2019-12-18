@@ -525,10 +525,15 @@ class OrgUtils {
         /**
          * 异步POST请求：body参数
          */
-        fun asyncPost_jsonBody(url: String, args: JSONObject): Promise {
+        fun asyncPost_jsonBody(url: String, args: JSONObject, headers: JSONObject? = null): Promise {
             val p = Promise()
             _asyncExecRequest(p, url, body = args.toString(), headers = JSONObject().apply {
                 put("Content-Type", "application/json")
+                if (headers != null) {
+                    headers.keys().forEach { key ->
+                        put(key, headers.getString(key))
+                    }
+                }
             })
             return p
         }

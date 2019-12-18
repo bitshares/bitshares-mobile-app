@@ -3,10 +3,7 @@ package com.btsplusplus.fowallet
 import android.Manifest
 import android.os.Bundle
 import android.view.View
-import bitshares.Promise
-import bitshares.TempManager
-import bitshares.jsonObjectfromKVS
-import bitshares.xmlstring
+import bitshares.*
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_index_services.*
@@ -137,12 +134,14 @@ class ActivityIndexServices : BtsppActivity() {
         }
 
         if (BuildConfig.kAppModuleEnableOTC) {
-            //  TODO:2.9
             layout_otc_user.setOnClickListener {
-                guardWalletExist { goTo(ActivityOtcMerchantList::class.java, true) }
+                guardWalletExist {
+                    //  TODO:2.9 默認參數
+                    OtcManager.sharedOtcManager().gotoOtc(this, "CNY", OtcManager.EOtcAdType.eoadt_user_buy)
+                }
             }
             layout_otc_merchant.setOnClickListener {
-                guardWalletExist { goTo(ActivityOtcMcHome::class.java, true) }
+                guardWalletExist { OtcManager.sharedOtcManager().gotoOtcMerchantHome(this) }
             }
         }
 

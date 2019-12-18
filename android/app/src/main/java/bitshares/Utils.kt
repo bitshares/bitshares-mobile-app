@@ -462,6 +462,10 @@ class Utils {
             return (Date().time / 1000.0).toLong()
         }
 
+        fun now_ts_ms(): Long {
+            return Date().time
+        }
+
         /**
          *  把DP单位转PX单位
          */

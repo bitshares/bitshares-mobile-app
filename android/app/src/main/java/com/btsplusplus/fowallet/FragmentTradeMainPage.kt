@@ -887,7 +887,7 @@ class FragmentTradeMainPage : BtsppFragment() {
             dataArray.add(data_item)
         }
         //  按照ID降序
-        dataArray.sortByDescending { it.getString("id") }
+        dataArray.sortByDescending { it.getString("id").split(".").last().toInt() }
         return dataArray
     }
 
