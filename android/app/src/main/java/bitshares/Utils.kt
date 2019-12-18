@@ -181,6 +181,21 @@ class Utils {
         }
 
         /**
+         *  (public) 字符串是不是全是数字判断。
+         */
+        fun isFullDigital(string: String?): Boolean {
+            if (string == null) {
+                return false
+            }
+            //  0-9 组成
+            val pre = "^[0-9]+$"
+            if (!isRegularMatch(string, pre)) {
+                return false
+            }
+            return true
+        }
+
+        /**
          * text是否匹配正则
          */
         private fun isRegularMatch(text: String, format: String): Boolean {

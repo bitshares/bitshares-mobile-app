@@ -1,14 +1,218 @@
 package bitshares
 
+import com.fowallet.walletcore.bts.WalletManager
+import org.json.JSONArray
+import org.json.JSONObject
+
 class OtcManager {
 
-    enum class EWalletMode(val value: Int) {
-        kwmNoWallet(0),                 //  无钱包
-        kwmPasswordOnlyMode(1),         //  普通密码模式
-        kwmPasswordWithWallet(2),       //  密码登录+钱包模式
-        kwmPrivateKeyWithWallet(3),     //  活跃私钥+钱包模式
-        kwmFullWalletMode(4),           //  完整钱包模式（兼容官方客户端的钱包格式）
-        kwmBrainKeyWithWallet(5),       //  助记词+钱包模式
+    /**
+     * API认证方式
+     */
+    enum class EOtcAuthFlag(val value: Int) {
+        eoaf_none(0),                   //  无需认证
+        eoaf_sign(1),                   //  Active私钥签名认证
+        eoaf_token(2)                   //  Token认证
+    }
+
+    /**
+     * 错误码
+     */
+    enum class EOtcErrorCode(val value: Int) {
+        eoerr_ok(0),                           //  正常
+        eoerr_too_often(1012),                 //  请求太频繁
+        eoerr_token_is_empty(1002),            //  TOEKN不能为空
+        eoerr_user_not_exist(2001),            //  用户不存在
+        eoerr_not_login(2011),                 //  未登录
+
+        eoerr_order_cancel_to_go_online(5001), //  取消订单数量太多？TODO:2.9
+        //  TODO:2.9 其他待添加
+    }
+
+    /**
+     * 场外交易用户类型
+     */
+    enum class EOtcUserType(val value: Int) {
+        eout_normal_user(0),   //  普通用户
+        eout_merchant(1)           //  商家
+    }
+
+    /**
+     *  资产类型
+     */
+    enum class EOtcAssetType(val value: Int) {
+        eoat_fiat(1),          //  法币
+        eoat_digital(2)        //  数字货币
+    }
+
+
+    /**
+     *  商家广告定价类型
+     */
+    enum class EOtcPriceType(val value: Int) {
+        eopt_price_fixed(1),   //  固定价格
+    }
+
+
+    /**
+     *  场外交易账号状态
+     */
+    enum class EOtcUserStatus(val value: Int) {
+        eous_default(0),       //  默认值（初始化时的值）
+        eous_normal(1),            //  正常
+        eous_freeze(2),            //  冻结中
+    }
+
+    /**
+     *  场外交易身份认证状态
+     */
+    enum class EOtcUserIdVerifyStatus(val value: Int) {
+        eovs_none(0),          //  未认证
+        eovs_kyc1(1),              //  1级认证
+        eovs_kyc2(2),              //  2级认证
+        eovs_kyc3(3),              //  3级认证
+    }
+
+    /**
+     *  场外交易收款方式类型
+     */
+    enum class EOtcPaymentMethodType(val value: Int) {
+        eopmt_alipay(1),       //  支付宝
+        eopmt_bankcard(2),         //  银行卡
+        eopmt_wechatpay(3)         //  微信
+    }
+
+    /**
+     *  场外交易收款方式状态
+     */
+    enum class EOtcPaymentMethodStatus(val value: Int) {
+        eopms_enable(1),       //  已开启
+        eopms_disable(2)           //  已禁用
+    }
+
+    /**
+     *  商家广告类型
+     */
+    enum class EOtcAdType(val value: Int) {
+        eoadt_all(0),                          //  所有广告
+
+        eoadt_merchant_sell(1),                //  商家出售（用户购买）
+        eoadt_merchant_buy(2),                 //  商家购买（用户出售）
+
+        eoadt_user_sell(eoadt_merchant_buy.value),   //  用户出售（商家购买）
+        eoadt_user_buy(eoadt_merchant_sell.value)    //  用户购买（商家出售）
+    }
+
+
+    /**
+     *  用户订单类型
+     */
+    enum class EOtcOrderType(val value: Int) {
+        eoot_query_all(0),     //  查询参数 - 全部
+        eoot_query_sell(1),    //  查询参数 - 出售
+        eoot_query_buy(2),     //  查询参数 - 购买
+        eoot_data_sell(2),     //  返回类型 - 出售
+        eoot_data_buy(1),      //  返回类型 - 购买
+    }
+
+    /**
+     *  用户订单查询状态 TODO:2.9 申诉中哪些状态呢？
+     */
+    enum class EOtcOrderStatus(val value: Int) {
+        eoos_all(0),               //  用户和商家都是：查询全部
+
+        eoos_pending(1),           //  用户：查询进行中
+        eoos_completed(2),         //  用户：查询已完成
+        eoos_cancelled(3),         //  用户：查询已取消
+
+        eoos_mc_wait_process(1),   //  商家：需处理
+        eoos_mc_pending(2),        //  商家：进行中
+        eoos_mc_done(3),           //  商家：已结束（已完成+已取消）
+    }
+
+
+    /**
+     *  用户订单进度状态，数据库 status 字段。
+     */
+    enum class EOtcOrderProgressStatus(val value: Int) {
+        eoops_new(1),                  //  订单已创建
+        eoops_already_paid(2),         //  已付款
+        eoops_already_transferred(3),  //  已转币
+        eoops_already_confirmed(4),    //  区块已确认 TODO:2.9 确认中还是已确认？待审核，描述也需要对应调整。
+        eoops_refunded(5),             //  已退款
+        eoops_refund_failed(6),        //  退款失败
+        eoops_completed(7),            //  交易成功
+        eoops_cancelled(8),            //  失败订单（包括取消订单）
+        eoops_chain_failed(9),         //  区块操作失败（异常了）
+        eoops_return_assets(10),       //  退币中
+    }
+
+    /**
+     *  更新订单类型。
+     */
+    enum class EOtcOrderUpdateType(val value: Int) {
+        //  用户
+        eoout_to_paied(1),             //  买单：确认付款
+        eoout_to_cancel(2),            //  买单：取消订单
+        eoout_to_refunded_confirm(3),  //  买单：商家退款&用户确认&取消订单
+        eoout_to_transferred(4),       //  卖单：用户确认转币
+        eoout_to_received_money(5),    //  卖单：确认收款 TODO:2.9 不确定
+
+        //  商家
+        eoout_to_mc_received_money(1), //  用户购买：放行（已收款）
+        eoout_to_mc_cancel(2),         //  用户购买：无法接单，商家退款。
+        eoout_to_mc_paied(3),          //  用户卖单：商家已付款
+        eoout_to_mc_return(4),         //  用户卖单：无法接单，退币。
+    }
+
+    /**
+     *  商家广告状态
+     */
+    enum class EOtcAdStatus(val value: Int) {
+        eoads_online(1),       //  上架中
+        eoads_offline(2),      //  下架中
+        eoads_deleted(3),      //  删除
+    }
+
+    /**
+     *  验证码业务类型
+     */
+    enum class EOtcSmsType(val value: Int) {
+        eost_id_verify(1),     //  身份认证
+        eost_change_phone(2),      //  更换手机号
+        eost_new_order_notify(3),  //  新订单通知
+    }
+
+    /**
+     *  用户订单对应的各种可操作事件类型。仅客户端用，服务器不存在。
+     */
+    enum class EOtcOrderOperationType(val value: Int) {
+        //  用户
+        eooot_transfer(0),                 //  卖单：立即转币
+        eooot_contact_customer_service(1),     //  卖单：联系客服
+        eooot_confirm_received_money(2),       //  卖单：确认收款（放行资产给商家）
+
+        eooot_cancel_order(3),                 //  买单：取消订单
+        eooot_confirm_paid(4),                 //  买单：我已付款成功
+        eooot_confirm_received_refunded(5),    //  买单：确认收到商家退款 & 取消订单
+
+        //  商家
+        eooot_mc_cancel_sell_order(6),         //  用户卖单：无法接单（退币、需要签名）
+        eooot_mc_confirm_paid(7),              //  用户卖单：我已付款成功
+        eooot_mc_cancel_buy_order(8),          //  用户买单：无法接单
+        eooot_mc_confirm_received_money(9),    //  用户买单：确认收款（放行、需要签名）
+    }
+
+
+    /**
+     *  商家：申请进度
+     */
+    enum class EOtcMcProgress(val value: Int) {
+        eomp_default(0),                   //  未申请：默认值
+        eomp_applying(1),                      //  申请中
+        eomp_approved(2),                      //  已同意
+        eomp_rejected(3),                      //  已拒绝
+        eomp_activated(4),                     //  已激活
     }
 
     companion object {
@@ -22,321 +226,692 @@ class OtcManager {
         }
     }
 
-//    var _native_caches: JSONObject         //  一些本地缓存信息
-//    var _wallet_info: JSONObject           //  钱包信息
+    private var _base_api = ""
+    private var _fiat_cny_info: JSONObject? = null          //  法币信息 TODO:2.9 默认只支持一种
+    private var _asset_list_digital: JSONArray? = null      //  支持的数字资产列表
+    private var _cache_merchant_detail: JSONObject? = null  //  商家信息（如果进入场外交易使用缓存，进入商家每次都刷新。）
 
-    constructor() {
-//        _native_caches = JSONObject()
-//        _wallet_info = JSONObject()
-    }
-
-
-///*
-// *  API认证方式
-// */
-//    typedef enum EOtcAuthFlag
-//    {
-//        eoaf_none = 0,                          //  无需认证
-//        eoaf_sign,                              //  Active私钥签名认证
-//        eoaf_token                              //  Token认证
-//    } EOtcAuthFlag;
-//
-///*
-// *  错误码
-// */
-//    typedef enum EOtcErrorCode
-//    {
-//        eoerr_ok = 0,                           //  正常
-//        eoerr_too_often = 1012,                 //  请求太频繁
-//        eoerr_token_is_empty = 1002,            //  TOEKN不能为空
-//        eoerr_user_not_exist = 2001,            //  用户不存在
-//        eoerr_not_login = 2011,                 //  未登录
-//
-//        eoerr_order_cancel_to_go_online = 5001, //  取消订单数量太多？TODO:2.9
-//        //  TODO:2.9 其他待添加
-//    } EOtcErrorCode;
-//
-///*
-// *  场外交易用户类型
-// */
-//    typedef enum EOtcUserType
-//    {
-//        eout_normal_user = 0,   //  普通用户
-//        eout_merchant           //  商家
-//    } EOtcUserType;
-//
-///*
-// *  资产类型
-// */
-//    typedef enum EOtcAssetType
-//    {
-//        eoat_fiat = 1,          //  法币
-//        eoat_digital = 2        //  数字货币
-//    } EOtcAssetType;
-//
-///*
-// *  商家广告定价类型
-// */
-//    typedef enum EOtcPriceType
-//    {
-//        eopt_price_fixed = 1,   //  固定价格
-//    } EOtcPriceType;
-//
-///*
-// *  场外交易账号状态
-// */
-//    typedef enum EOtcUserStatus
-//    {
-//        eous_default = 0,       //  默认值（初始化时的值）
-//        eous_normal,            //  正常
-//        eous_freeze,            //  冻结中
-//    } EOtcUserStatus;
-//
-///*
-// *  场外交易身份认证状态
-// */
-//    typedef enum EOtcUserIdVerifyStatus
-//    {
-//        eovs_none = 0,          //  未认证
-//        eovs_kyc1,              //  1级认证
-//        eovs_kyc2,              //  2级认证
-//        eovs_kyc3,              //  3级认证
-//    } EOtcUserIdVerifyStatus;
-//
-///*
-// *  场外交易收款方式类型
-// */
-//    typedef enum EOtcPaymentMethodType
-//    {
-//        eopmt_alipay = 1,       //  支付宝
-//        eopmt_bankcard,         //  银行卡
-//        eopmt_wechatpay         //  微信
-//    } EOtcPaymentMethodType;
-//
-///*
-// *  场外交易收款方式状态
-// */
-//    typedef enum EOtcPaymentMethodStatus
-//    {
-//        eopms_enable = 1,       //  已开启
-//        eopms_disable           //  已禁用
-//    } EOtcPaymentMethodStatus;
-//
-///*
-// *  商家广告类型
-// */
-//    typedef enum EOtcAdType
-//    {
-//        eoadt_all = 0,                          //  所有广告
-//
-//        eoadt_merchant_sell = 1,                //  商家出售（用户购买）
-//        eoadt_merchant_buy = 2,                 //  商家购买（用户出售）
-//
-//        eoadt_user_sell = eoadt_merchant_buy,   //  用户出售（商家购买）
-//        eoadt_user_buy = eoadt_merchant_sell    //  用户购买（商家出售）
-//    } EOtcAdType;
-//
-///*
-// *  用户订单类型
-// */
-//    typedef enum EOtcOrderType
-//    {
-//        eoot_query_all = 0,     //  查询参数 - 全部
-//        eoot_query_sell = 1,    //  查询参数 - 出售
-//        eoot_query_buy = 2,     //  查询参数 - 购买
-//        eoot_data_sell = 2,     //  返回类型 - 出售
-//        eoot_data_buy = 1,      //  返回类型 - 购买
-//    } EOtcOrderType;
-//
-///*
-// *  用户订单查询状态 TODO:2.9 申诉中哪些状态呢？
-// */
-//    typedef enum EOtcOrderStatus
-//    {
-//        eoos_all = 0,               //  用户和商家都是：查询全部
-//
-//        eoos_pending = 1,           //  用户：查询进行中
-//        eoos_completed = 2,         //  用户：查询已完成
-//        eoos_cancelled = 3,         //  用户：查询已取消
-//
-//        eoos_mc_wait_process = 1,   //  商家：需处理
-//        eoos_mc_pending = 2,        //  商家：进行中
-//        eoos_mc_done = 3,           //  商家：已结束（已完成+已取消）
-//    } EOtcOrderStatus;
-//
-///*
-// *  用户订单进度状态，数据库 status 字段。
-// */
-//    typedef enum EOtcOrderProgressStatus
-//    {
-//        eoops_new = 1,                  //  订单已创建
-//        eoops_already_paid = 2,         //  已付款
-//        eoops_already_transferred = 3,  //  已转币
-//        eoops_already_confirmed = 4,    //  区块已确认 TODO:2.9 确认中还是已确认？待审核，描述也需要对应调整。
-//        eoops_refunded = 5,             //  已退款
-//        eoops_refund_failed = 6,        //  退款失败
-//        eoops_completed = 7,            //  交易成功
-//        eoops_cancelled = 8,            //  失败订单（包括取消订单）
-//        eoops_chain_failed = 9,         //  区块操作失败（异常了）
-//        eoops_return_assets = 10,       //  退币中
-//    } EOtcOrderProgressStatus;
-//
-///*
-// *  更新订单类型。
-// */
-//    typedef enum EOtcOrderUpdateType
-//    {
-//        //  用户
-//        eoout_to_paied = 1,             //  买单：确认付款
-//        eoout_to_cancel = 2,            //  买单：取消订单
-//        eoout_to_refunded_confirm = 3,  //  买单：商家退款&用户确认&取消订单
-//        eoout_to_transferred = 4,       //  卖单：用户确认转币
-//        eoout_to_received_money = 5,    //  卖单：确认收款 TODO:2.9 不确定
-//
-//        //  商家
-//        eoout_to_mc_received_money = 1, //  用户购买：放行（已收款）
-//        eoout_to_mc_cancel = 2,         //  用户购买：无法接单，商家退款。
-//        eoout_to_mc_paied = 3,          //  用户卖单：商家已付款
-//        eoout_to_mc_return = 4,         //  用户卖单：无法接单，退币。
-//    } EOtcOrderUpdateType;
-//
-///*
-// *  商家广告状态
-// */
-//    typedef enum EOtcAdStatus
-//    {
-//        eoads_online = 1,       //  上架中
-//        eoads_offline = 2,      //  下架中
-//        eoads_deleted = 3,      //  删除
-//    } EOtcAdStatus;
-//
-///*
-// *  验证码业务类型
-// */
-//    typedef enum EOtcSmsType
-//    {
-//        eost_id_verify = 1,     //  身份认证
-//        eost_change_phone,      //  更换手机号
-//        eost_new_order_notify,  //  新订单通知
-//    } EOtcSmsType;
-//
-///*
-// *  用户订单对应的各种可操作事件类型。仅客户端用，服务器不存在。
-// */
-//    typedef enum EOtcOrderOperationType
-//    {
-//        //  用户
-//        eooot_transfer = 0,                 //  卖单：立即转币
-//        eooot_contact_customer_service,     //  卖单：联系客服
-//        eooot_confirm_received_money,       //  卖单：确认收款（放行资产给商家）
-//
-//        eooot_cancel_order,                 //  买单：取消订单
-//        eooot_confirm_paid,                 //  买单：我已付款成功
-//        eooot_confirm_received_refunded,    //  买单：确认收到商家退款 & 取消订单
-//
-//        //  商家
-//        eooot_mc_cancel_sell_order,         //  用户卖单：无法接单（退币、需要签名）
-//        eooot_mc_confirm_paid,              //  用户卖单：我已付款成功
-//        eooot_mc_cancel_buy_order,          //  用户买单：无法接单
-//        eooot_mc_confirm_received_money,    //  用户买单：确认收款（放行、需要签名）
-//    } EOtcOrderOperationType;
-//
-//    #pragma mark- merchant enum
-//
-///*
-// *  商家：申请进度
-// */
-//    typedef enum EOtcMcProgress
-//    {
-//        eomp_default = 0,                   //  未申请：默认值
-//        eomp_applying,                      //  申请中
-//        eomp_approved,                      //  已同意
-//        eomp_rejected,                      //  已拒绝
-//        eomp_activated,                     //  已激活
-//    } EOtcMcProgress;
-//
-//    @class VCBase;
-//
-//    @interface OtcManager : NSObject
-//
-//    @property (nonatomic, strong) NSArray* asset_list_digital;  //  支持的数字资产列表
-//
-//    + (OtcManager*)sharedOtcManager;
 //
 ///*
 // *  (public) 是否是有效的手机号初步验证。
 // */
-//    + (BOOL)checkIsValidPhoneNumber:(NSString*)str_phone_num;
+//    + (BOOL)checkIsValidPhoneNumber:(NSString*)str_phone_num
+//    {
+//        if (!str_phone_num || [str_phone_num isEqualToString:@""]){
+//        return NO;
+//    }
+//        //  TODO:2.9 是否需要这个check？
+//        if (str_phone_num.length != 11) {
+//            return NO;
+//        }
+//        return YES;
+//    }
+//
 //
 ///*
 // *  (public) 是否是有效的中国身份证号。
 // */
-//    + (BOOL)checkIsValidChineseCardNo:(NSString*)str_card_no;
+//    + (BOOL)checkIsValidChineseCardNo:(NSString*)str_card_no
+//    {
+//        if (!str_card_no || [str_card_no isEqualToString:@""]){
+//        return NO;
+//    }
+//        if (str_card_no.length != 18) {
+//            return NO;
+//        }
+//
+//        //  验证身份证校验位是否正确。
+//        NSString* part_one = [str_card_no substringToIndex:17];
+//        //  REMARK：最后的X强制转换为大写字母。
+//        unichar verify = [[[str_card_no substringFromIndex:17] uppercaseString] characterAtIndex:0];
+//        if (![OrgUtils isFullDigital:part_one]) {
+//            return NO;
+//        }
+//        NSInteger muls[] = {7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2};
+//        assert(sizeof(muls) / sizeof(muls[0]) == 17);
+//        unichar mods[] = {'1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2'};
+//
+//        NSInteger sum = 0;
+//        for (NSInteger i = 0; i < part_one.length; ++i) {
+//        sum += [[part_one substringWithRange:NSMakeRange(i, 1)] integerValue] * muls[i];
+//    }
+//        NSInteger mod = sum % 11;
+//        if (mods[mod] != verify) {
+//            return NO;
+//        }
+//
+//        return YES;
+//    }
 //
 ///*
 // *  (public) 解析 OTC 服务器返回的时间字符串，格式：2019-11-26T13:29:51.000+0000。
 // */
-//    + (NSTimeInterval)parseTime:(NSString*)time;
+//    + (NSTimeInterval)parseTime:(NSString*)time
+//    {
+//        NSDateFormatter* dateFormat = [[NSDateFormatter alloc] init];
+//        [dateFormat setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSZ"];
+//        [dateFormat setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
+//        NSDate* date = [dateFormat dateFromString:time];
+//        return ceil([date timeIntervalSince1970]);
+//    }
 //
 ///*
 // *  格式化：场外交易订单列表日期显示格式。REMARK：以当前时区格式化，北京时间当前时区会+8。
 // */
-//    + (NSString*)fmtOrderListTime:(NSString*)time;
+//    + (NSString*)fmtOrderListTime:(NSString*)time
+//    {
+//        NSDateFormatter* dateFormat = [[NSDateFormatter alloc] init];
+//        [dateFormat setDateFormat:@"MM-dd HH:mm"];
+//        return [dateFormat stringFromDate:[NSDate dateWithTimeIntervalSince1970:[self parseTime:time]]];
+//    }
 //
 ///*
 // *  格式化：场外交易订单详情日期显示格式。REMARK：以当前时区格式化，北京时间当前时区会+8。
 // */
-//    + (NSString*)fmtOrderDetailTime:(NSString*)time;
+//    + (NSString*)fmtOrderDetailTime:(NSString*)time
+//    {
+//        NSDateFormatter* dateFormat = [[NSDateFormatter alloc] init];
+//        [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+//        return [dateFormat stringFromDate:[NSDate dateWithTimeIntervalSince1970:[self parseTime:time]]];
+//    }
 //
 ///*
 // *  格式化：格式化商家加入日期格式。REMARK：以当前时区格式化，北京时间当前时区会+8。
 // */
-//    + (NSString*)fmtMerchantTime:(NSString*)time;
+//    + (NSString*)fmtMerchantTime:(NSString*)time
+//    {
+//        NSDateFormatter* dateFormat = [[NSDateFormatter alloc] init];
+//        [dateFormat setDateFormat:@"yyyy-MM-dd"];
+//        return [dateFormat stringFromDate:[NSDate dateWithTimeIntervalSince1970:[self parseTime:time]]];
+//    }
 //
 ///*
 // *  格式化：场外交易订单倒计时时间。
 // */
-//    + (NSString*)fmtPaymentExpireTime:(NSInteger)left_ts;
+//    + (NSString*)fmtPaymentExpireTime:(NSInteger)left_ts
+//    {
+//        assert(left_ts > 0);
+//
+//        int min = (int)(left_ts / 60);
+//        int sec = (int)(left_ts % 60);
+//
+//        return [NSString stringWithFormat:@"%02d:%02d", min, sec];
+//    }
 //
 ///*
 // *  (public) 辅助 - 获取收款方式名字图标等。
 // */
-//    + (NSDictionary*)auxGenPaymentMethodInfos:(NSString*)account type:(id)type bankname:(NSString*)bankname;
+//    + (NSDictionary*)auxGenPaymentMethodInfos:(NSString*)account type:(id)type bankname:(NSString*)bankname
+//    {
+//        assert(account);
+//        assert(type);
+//
+//        NSString* name = nil;
+//        NSString* icon = nil;
+//        NSString* short_account = account;
+//
+//        switch ([type integerValue]) {
+//            case eopmt_alipay:
+//            {
+//                name = NSLocalizedString(@"kOtcAdPmNameAlipay", @"支付宝");
+//                icon = @"iconPmAlipay";
+//            }
+//            break;
+//            case eopmt_bankcard:
+//            {
+//                icon = @"iconPmBankCard";
+//                name = bankname;
+//                if (!name || [bankname isEqualToString:@""]) {
+//                name = NSLocalizedString(@"kOtcAdPmNameBankCard", @"银行卡");
+//            }
+//                NSString* card_no = [account stringByReplacingOccurrencesOfString:@" " withString:@""];
+//                short_account = [card_no substringFromIndex:MAX((NSInteger)card_no.length - 4, 0)];
+//            }
+//            break;
+//            case eopmt_wechatpay:
+//            {
+//                icon = @"iconPmWechat";
+//                name = NSLocalizedString(@"kOtcAdPmNameWechatPay", @"微信支付");
+//            }
+//            break;
+//            default:
+//            break;
+//        }
+//        if (!name) {
+//            name = [NSString stringWithFormat:NSLocalizedString(@"kOtcAdPmUnknownType", @"未知收款方式%@"), type];
+//        }
+//        if (!icon) {
+//            icon = @"iconPmBankCard";//TODO:2.9 default  icon
+//        }
+//        return @{@"name":name, @"icon":icon, @"name_with_short_account":[NSString stringWithFormat:@"%@(%@)", name, short_account]};
+//    }
+//
+///*
+// *  (private) 场外交易订单流转各种状态信息：用户端看的情况。
+// */
+//    + (NSDictionary*)_auxGenOtcOrderStatusAndActions_UserSide:(id)order
+//    {
+//        assert(order);
+//        ThemeManager* theme = [ThemeManager sharedThemeManager];
+//        BOOL bUserSell = [[order objectForKey:@"type"] integerValue] == eoot_data_sell;
+//        NSInteger status = [[order objectForKey:@"status"] integerValue];
+//        NSString* status_main = nil;
+//        NSString* status_desc = nil;
+//        NSMutableArray* actions = [NSMutableArray array];
+//        BOOL showRemark = NO;
+//        BOOL pending = YES;
+//        //  TODO:2.9 状态描述待细化。!!!!
+//        if (bUserSell) {
+//            //  -- 用户卖币提现
+//            switch (status) {
+//                //  正常流程
+//                case eoops_new:
+//                {
+//                    status_main = @"待转币";               //  已下单(待转币)     正常情况下单自动转币、转币操作需二次确认
+//                    status_desc = @"您已成功下单，请转币。";
+//                    //  按钮：联系客服 + 立即转币
+//                    [actions addObject:@{@"type":@(eooot_contact_customer_service), @"color":theme.textColorGray}];
+//                    [actions addObject:@{@"type":@(eooot_transfer), @"color":theme.textColorHighlight}];
+//                }
+//                break;
+//                case eoops_already_transferred:
+//                {
+//                    status_main = @"已转币";               //  已转币(待处理)
+//                    status_desc = @"您已转币，正在等待区块确认。";
+//                }
+//                break;
+//                case eoops_already_confirmed:
+//                {
+//                    status_main = @"待收款";               //  区块已确认(待收款)
+//                    status_desc = @"区块已确认转币，等待商家付款。";
+//                }
+//                break;
+//                case eoops_already_paid:
+//                {
+//                    status_main = @"请放行";               // 商家已付款(请放行) 申诉 + 确认收款(放行操作需二次确认)
+//                    status_desc = @"请查收对方付款，未收到请勿放行。";
+//                    //  按钮：联系客服 + 放行XXX资产
+//                    [actions addObject:@{@"type":@(eooot_contact_customer_service), @"color":theme.textColorGray}];
+//                    [actions addObject:@{@"type":@(eooot_confirm_received_money), @"color":theme.textColorHighlight}];
+//                }
+//                break;
+//                case eoops_completed:
+//                {
+//                    status_main = @"已完成";
+//                    status_desc = @"订单已完成。";
+//                    pending = NO;
+//                }
+//                break;
+//                //  异常流程
+//                case eoops_chain_failed:
+//                {
+//                    status_main = @"异常中";
+//                    status_desc = @"区块确认异常，请联系客服。";
+//                    //  按钮：联系客服
+//                    [actions addObject:@{@"type":@(eooot_contact_customer_service), @"color":theme.textColorGray}];
+//                }
+//                break;
+//                case eoops_return_assets:
+//                {
+//                    status_main = @"退币中";
+//                    status_desc = @"商家无法接单，退币处理中。";
+//                }
+//                break;
+//                case eoops_cancelled:
+//                {
+//                    status_main = @"已取消";
+//                    status_desc = @"订单已取消。";
+//                    pending = NO;
+//                }
+//                break;
+//                default:
+//                break;
+//            }
+//        } else {
+//            //  -- 用户充值买币
+//            switch (status) {
+//                //  正常流程
+//                case eoops_new:
+//                {
+//                    status_main = @"待付款";       // 已下单(待付款)     取消 + 确认付款
+//                    status_desc = @"请尽快付款给卖家。";
+//                    showRemark = YES;
+//                    //  按钮：取消订单 + 确认付款
+//                    [actions addObject:@{@"type":@(eooot_cancel_order), @"color":theme.textColorGray}];
+//                    [actions addObject:@{@"type":@(eooot_confirm_paid), @"color":theme.textColorHighlight}];
+//                }
+//                break;
+//                case eoops_already_paid:
+//                {
+//                    status_main = @"待收币";       // 已付款(待收币)
+//                    status_desc = @"您已付款，请等待商家确认并放币。";
+//                }
+//                break;
+//                case eoops_already_transferred:
+//                {
+//                    status_main = @"已转币";       //  已转币
+//                    status_desc = @"商家已转币，正在等待区块确认。";
+//                }
+//                break;
+//                case eoops_already_confirmed:
+//                {
+//                    status_main = @"已收币";       //  已收币 REMARK：这是中间状态，会自动跳转到已完成。
+//                    status_desc = @"商家转币已确认，请查收。";
+//                    break;
+//                }
+//                case eoops_completed:
+//                {
+//                    status_main = @"已完成";
+//                    status_desc = @"订单已完成。";
+//                    pending = NO;
+//                }
+//                break;
+//                //  异常流程
+//                case eoops_refunded:
+//                {
+//                    status_main = @"已退款";
+//                    status_desc = @"商家无法接单，已退款，请查收退款。";
+//                    //  按钮：联系客服 + 我已收到退款（取消订单）
+//                    [actions addObject:@{@"type":@(eooot_contact_customer_service), @"color":theme.textColorGray}];
+//                    [actions addObject:@{@"type":@(eooot_confirm_received_refunded), @"color":theme.textColorHighlight}];
+//                }
+//                break;
+//                case eoops_chain_failed:
+//                {
+//                    status_main = @"异常中";
+//                    status_desc = @"区块确认异常，请联系客服。";
+//                    //  按钮：联系客服
+//                    [actions addObject:@{@"type":@(eooot_contact_customer_service), @"color":theme.textColorGray}];
+//                }
+//                break;
+//                case eoops_cancelled:
+//                {
+//                    status_main = @"已取消";
+//                    status_desc = @"订单已取消。";
+//                    pending = NO;
+//                }
+//                break;
+//                default:
+//                break;
+//            }
+//        }
+//        if (!status_main) {
+//            status_main = [NSString stringWithFormat:@"未知状态 %@", @(status)];
+//        }
+//        if (!status_desc) {
+//            status_desc = [NSString stringWithFormat:@"未知状态 %@", @(status)];
+//        }
+//
+//        //  返回数据
+//        return @{@"main":status_main, @"desc":status_desc,
+//            @"actions":actions, @"sell":@(bUserSell),
+//            @"phone":order[@"phone"] ?: @"",
+//            @"show_remark":@(showRemark), @"pending":@(pending)};
+//    }
+//
+///*
+// *  (private) 场外交易订单流转各种状态信息：商家端看的情况。
+// */
+//    + (NSDictionary*)_auxGenOtcOrderStatusAndActions_MerchantSide:(id)order
+//    {
+//        assert(order);
+//        ThemeManager* theme = [ThemeManager sharedThemeManager];
+//        BOOL bUserSell = [[order objectForKey:@"type"] integerValue] == eoot_data_sell;
+//        NSInteger status = [[order objectForKey:@"status"] integerValue];
+//        NSString* status_main = nil;
+//        NSString* status_desc = nil;
+//        NSMutableArray* actions = [NSMutableArray array];
+//        BOOL showRemark = NO;
+//        BOOL pending = YES;
+//        //  TODO:2.9 状态描述待细化。!!!!
+//        if (bUserSell) {
+//            //  -- 用户卖币提现
+//            switch (status) {
+//                //  正常流程
+//                case eoops_new:
+//                {
+//                    //  DONE!!!
+//                    status_main = @"待收币";
+//                    status_desc = @"用户已下单，等待用户转币。";
+//                }
+//                break;
+//                case eoops_already_transferred:
+//                {
+//                    //  DONE!!!
+//                    status_main = @"已转币";
+//                    status_desc = @"用户已转币，正在等待区块确认。";
+//                }
+//                break;
+//                case eoops_already_confirmed:
+//                {
+//                    //  DONE!!!
+//                    status_main = @"请付款";               //  区块已确认(请付款) 【商家】
+//                    status_desc = @"区块已确认转币，请付款给用户。";
+//                    //  按钮：无法接(卖)单 + 确认付款
+//                    [actions addObject:@{@"type":@(eooot_mc_cancel_sell_order), @"color":theme.textColorGray}];
+//                    [actions addObject:@{@"type":@(eooot_mc_confirm_paid), @"color":theme.textColorHighlight}];
+//                }
+//                break;
+//                case eoops_already_paid:
+//                {
+//                    //  DONE!!!
+//                    status_main = @"待放行";               // 商家已付款（等待用户确认放行）
+//                    status_desc = @"您已付款，等待用户放行。";
+//                }
+//                break;
+//                case eoops_completed:
+//                {
+//                    //  DONE!!!
+//                    status_main = @"已完成";
+//                    status_desc = @"订单已完成。";
+//                    pending = NO;
+//                }
+//                break;
+//                //  异常流程
+//                case eoops_chain_failed:
+//                {
+//                    //  DONE!!!
+//                    status_main = @"异常中";
+//                    status_desc = @"区块确认异常。";
+//                }
+//                break;
+//                case eoops_return_assets:
+//                {
+//                    //  DONE!!!
+//                    status_main = @"退币中";
+//                    status_desc = @"您无法接单，平台退币中。";
+//                }
+//                break;
+//                case eoops_cancelled:
+//                {
+//                    //  DONE!!!
+//                    status_main = @"已取消";
+//                    status_desc = @"订单已取消。";
+//                    pending = NO;
+//                }
+//                break;
+//                default:
+//                break;
+//            }
+//        } else {
+//            //  -- 用户充值买币
+//            switch (status) {
+//                //  正常流程
+//                case eoops_new:
+//                {
+//                    //  DONE!!!
+//                    status_main = @"待收款";
+//                    status_desc = @"用户已下单，等待用户付款。";
+//                }
+//                break;
+//                case eoops_already_paid:
+//                {
+//                    //  DONE!!!
+//                    status_main = @"请放行";
+//                    status_desc = @"用户已付款，请确认并放币。";
+//                    //  按钮：无法接(买)单 + 放行资产
+//                    [actions addObject:@{@"type":@(eooot_mc_cancel_buy_order), @"color":theme.textColorGray}];
+//                    [actions addObject:@{@"type":@(eooot_mc_confirm_received_money), @"color":theme.textColorHighlight}];
+//                }
+//                break;
+//                case eoops_already_transferred:
+//                {
+//                    //  DONE!!!
+//                    status_main = @"已转币";       //  已转币
+//                    status_desc = @"您已放行，平台处理中。";
+//                }
+//                break;
+//                case eoops_already_confirmed:
+//                {
+//                    //  DONE!!!
+//                    status_main = @"已转币";       //  已收币 REMARK：这是中间状态，会自动跳转到已完成。
+//                    status_desc = @"平台已验证，区块确认中。";
+//                    break;
+//                }
+//                case eoops_completed:
+//                {
+//                    //  DONE!!!
+//                    status_main = @"已完成";
+//                    status_desc = @"订单已完成。";
+//                    pending = NO;
+//                }
+//                break;
+//                //  异常流程
+//                case eoops_refunded:
+//                {
+//                    //  DONE!!!
+//                    status_main = @"已退款";
+//                    status_desc = @"您已退款，等待用户确认。";
+//                }
+//                break;
+//                case eoops_chain_failed:
+//                {
+//                    //  DONE!!!
+//                    status_main = @"异常中";
+//                    status_desc = @"区块确认异常";
+//                }
+//                break;
+//                case eoops_cancelled:
+//                {
+//                    //  DONE!!!
+//                    status_main = @"已取消";
+//                    status_desc = @"订单已取消。";
+//                    pending = NO;
+//                }
+//                break;
+//                default:
+//                break;
+//            }
+//        }
+//        if (!status_main) {
+//            status_main = [NSString stringWithFormat:@"未知状态 %@", @(status)];
+//        }
+//        if (!status_desc) {
+//            status_desc = [NSString stringWithFormat:@"未知状态 %@", @(status)];
+//        }
+//
+//        //  返回数据
+//        return @{@"main":status_main, @"desc":status_desc,
+//            @"actions":actions, @"sell":@(bUserSell),
+//            @"phone":order[@"phone"] ?: @"",
+//            @"show_remark":@(showRemark), @"pending":@(pending)};
+//    }
+//
 //
 ///*
 // *  (public) 辅助 - 根据订单当前状态获取主状态、状态描述、以及可操作按钮等信息。
 // */
-//    + (NSDictionary*)auxGenOtcOrderStatusAndActions:(id)order user_type:(EOtcUserType)user_type;
+//    + (NSDictionary*)auxGenOtcOrderStatusAndActions:(id)order user_type:(EOtcUserType)user_type
+//    {
+//        if (user_type == eout_normal_user) {
+//            return [self _auxGenOtcOrderStatusAndActions_UserSide:order];
+//        } else {
+//            return [self _auxGenOtcOrderStatusAndActions_MerchantSide:order];
+//        }
+//    }
 //
-///*
-// *  (public) 当前账号名
-// */
-//    - (NSString*)getCurrentBtsAccount;
+    /**
+     *  (public) 当前账号名
+     */
+    fun getCurrentBtsAccount(): String {
+        assert(WalletManager.sharedWalletManager().isWalletExist())
+        return WalletManager.sharedWalletManager().getWalletAccountName()!!
+    }
 //
 ///*
 // *  (public) 获取当前法币信息
 // */
-//    - (NSDictionary*)getFiatCnyInfo;
+//    - (NSDictionary*)getFiatCnyInfo
+//    {
+//        if (_fiat_cny_info) {
+//            //{
+//            //    assetAlias = "\U4eba\U6c11\U5e01";
+//            //    assetId = "1.0.1";
+//            //    assetPrecision = 2;
+//            //    btsId = "<null>";
+//            //    assetSymbol = CNY;
+//            //    type = 1;
+//            //}
+//            id symbol = _fiat_cny_info[@"assetSymbol"];
+//            id precision = _fiat_cny_info[@"assetPrecision"];
+//            id assetId = _fiat_cny_info[@"assetId"];
+//            //  TODO:2.9 short_symbol
+//            return @{@"assetSymbol":symbol, @"precision":precision,
+//                @"id":assetId, @"short_symbol":@"¥", @"type":_fiat_cny_info[@"type"],
+//                @"name":_fiat_cny_info[@"assetAlias"]};
+//        } else {
+//            //  TODO:2.9 数据不存在时兼容
+//            return @{@"assetSymbol":@"CNY", @"precision":@2, @"short_symbol":@"¥", @"type":@1};
+//        }
+//    }
 //
 ///*
 // *  (public) 获取缓存的商家信息（可能为nil）
 // */
-//    - (NSDictionary*)getCacheMerchantDetail;
+//    - (NSDictionary*)getCacheMerchantDetail
+//    {
+//        return _cache_merchant_detail;
+//    }
 //
 ///*
 // *  (public) 是否支持指定资产判断
 // */
-//    - (BOOL)isSupportDigital:(NSString*)asset_name;
+//    - (BOOL)isSupportDigital:(NSString*)asset_name
+//    {
+//        assert(asset_name);
+//        if (self.asset_list_digital && [self.asset_list_digital count] > 0) {
+//            for (id item in self.asset_list_digital) {
+//                if ([[item objectForKey:@"assetSymbol"] isEqualToString:asset_name]) {
+//                return YES;
+//            }
+//            }
+//        }
+//        return NO;
+//    }
 //
 ///*
 // *  (public) 获取资产信息。OTC运营方配置的，非链上数据。
 // */
-//    - (NSDictionary*)getAssetInfo:(NSString*)asset_name;
+//    - (NSDictionary*)getAssetInfo:(NSString*)asset_name
+//    {
+//        assert(asset_name);
+//        if (self.asset_list_digital && [self.asset_list_digital count] > 0) {
+//            for (id item in self.asset_list_digital) {
+//                if ([[item objectForKey:@"assetSymbol"] isEqualToString:asset_name]) {
+//                return item;
+//            }
+//            }
+//        }
+//        assert(false);
+//        //  not reached
+//        return nil;
+//    }
 //
 ///*
 // *  (public) 转到OTC界面，会自动初始化必要信息。
 // */
-//    - (void)gotoOtc:(VCBase*)owner asset_name:(NSString*)asset_name ad_type:(EOtcAdType)ad_type;
+//    - (void)gotoOtc:(VCBase*)owner asset_name:(NSString*)asset_name ad_type:(EOtcAdType)ad_type
+//    {
+//        WalletManager* walletMgr = [WalletManager sharedWalletManager];
+//        assert([walletMgr isWalletExist]);
+//
+//        if ([WalletManager isMultiSignPermission:[walletMgr getWalletAccountInfo][@"account"][@"active"]]) {
+//            //  TODO:2.9
+//            [OrgUtils makeToast:@"多签账号不支持场外交易。"];
+//            return;
+//        }
+//
+//        [owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+//        WsPromise* p1 = [self queryFiatAssetCNY];
+//        WsPromise* p2 = [self queryAssetList:eoat_digital];
+//        WsPromise* p3 = [self merchantDetail:[self getCurrentBtsAccount] skip_cache:NO];
+//        [[[WsPromise all:@[p1, p2, p3]] then:^id(id data_array) {
+//        [owner hideBlockView];
+//        //        id fiat_data = [data_array objectAtIndex:0];
+//        id asset_data = [data_array objectAtIndex:1];
+//        //  获取数字货币信息
+//        self.asset_list_digital = [asset_data objectForKey:@"data"];
+//        if (!self.asset_list_digital || [self.asset_list_digital count] <= 0) {
+//            //  TODO:2.9 lang
+//            [OrgUtils makeToast:@"场外交易暂不支持任何数字资产，请稍后再试。"];
+//            return nil;
+//        }
+//        //  是否支持判断
+//        if (![self isSupportDigital:asset_name]) {
+//            //  TODO:2.9 lang
+//            [OrgUtils makeToast:[NSString stringWithFormat:@"场外交易暂时不支持 %@ 资产，请稍后再试。", asset_name]];
+//            return nil;
+//        }
+//        //  转到场外交易界面
+//        VCBase* vc = [[VCOtcMerchantListPages alloc] initWithAssetName:asset_name ad_type:ad_type];
+//        vc.title = @"";
+//        [owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+//        return nil;
+//    }] catch:^id(id error) {
+//        [owner hideBlockView];
+//        [self showOtcError:error];
+//        return nil;
+//    }];
+//    }
+//
+//    - (void)_guardUserIdVerified:(VCBase*)owner
+//    auto_hide:(BOOL)auto_hide
+//    askForIdVerifyMsg:(NSString*)askForIdVerifyMsg
+//    first_request:(BOOL)first_request
+//    callback:(void (^)(id auth_info))verifyed_callback
+//    {
+//        [owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+//        [[[self queryIdVerify:[self getCurrentBtsAccount]] then:^id(id responsed) {
+//        if ([self isIdVerifyed:responsed]) {
+//            if (auto_hide) {
+//                [owner hideBlockView];
+//            }
+//            //  已认证：返回认证后数据。
+//            verifyed_callback([responsed objectForKey:@"data"]);
+//        } else {
+//            [owner hideBlockView];
+//            //  未认证：询问认证 or 直接转认证界面
+//            if (askForIdVerifyMsg) {
+//                [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:askForIdVerifyMsg
+//                        withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+//                completion:^(NSInteger buttonIndex)
+//                {
+//                    if (buttonIndex == 1)
+//                    {
+//                        VCBase* vc = [[VCOtcUserAuth alloc] init];
+//                        [owner pushViewController:vc
+//                                vctitle:NSLocalizedString(@"kVcTitleOtcUserAuth", @"身份认证")
+//                        backtitle:kVcDefaultBackTitleName];
+//                    }
+//                }];
+//            } else {
+//                VCBase* vc = [[VCOtcUserAuth alloc] init];
+//                [owner pushViewController:vc
+//                        vctitle:NSLocalizedString(@"kVcTitleOtcUserAuth", @"身份认证")
+//                backtitle:kVcDefaultBackTitleName];
+//            }
+//        }
+//        return nil;
+//    }] catch:^id(id error) {
+//        [owner hideBlockView];
+//        if (first_request) {
+//            [self showOtcError:error not_login_callback:^{
+//                //  处理登录
+//                [self handleOtcUserLogin:owner login_callback:^{
+//                //  query id verify again
+//                [self _guardUserIdVerified:owner
+//                        auto_hide:auto_hide
+//                askForIdVerifyMsg:askForIdVerifyMsg
+//                first_request:NO
+//                callback:verifyed_callback];
+//            }];
+//            }];
+//        } else {
+//            [self showOtcError:error];
+//        }
+//        return nil;
+//    }];
+//    }
 //
 ///*
 // *  (public) 确保已经进行认证认证。
@@ -344,163 +919,754 @@ class OtcManager {
 //    - (void)guardUserIdVerified:(VCBase*)owner
 //    auto_hide:(BOOL)auto_hide
 //    askForIdVerifyMsg:(NSString*)askForIdVerifyMsg
-//    callback:(void (^)(id auth_info))verifyed_callback;
+//    callback:(void (^)(id auth_info))verifyed_callback
+//    {
+//        assert(owner);
+//        assert(verifyed_callback);
+//        [self _guardUserIdVerified:owner
+//                auto_hide:auto_hide
+//        askForIdVerifyMsg:askForIdVerifyMsg
+//        first_request:YES
+//        callback:verifyed_callback];
+//    }
 //
 ///*
 // *  (public) 请求私钥授权登录。
 // */
-//    - (void)handleOtcUserLogin:(VCBase*)owner login_callback:(void (^)())login_callback;
+//    - (void)handleOtcUserLogin:(VCBase*)owner login_callback:(void (^)())login_callback
+//    {
+//        assert(owner);
+//        assert(login_callback);
+//        [owner GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+//        if (unlocked) {
+//            [owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+//            NSString* account_name = [self getCurrentBtsAccount];
+//            [[[self login:account_name] then:^id(id login_responsed) {
+//                [owner hideBlockView];
+//                NSString* token = [login_responsed objectForKey:@"data"];
+//                if (token && [token isKindOfClass:[NSString class]] && ![token isEqualToString:@""]) {
+//                [self _saveUserTokenCookie:account_name token:token];
+//                login_callback();
+//            } else {
+//                [self showOtcError:nil];
+//            }
+//                return nil;
+//            }] catch:^id(id error) {
+//                [owner hideBlockView];
+//                [self showOtcError:error];
+//                return nil;
+//            }];
+//        }
+//    }];
+//    }
 //
-///*
-// *  (public) 处理用户注销账号。需要清理token等信息。
-// */
-//    - (void)processLogout;
-//
+    /**
+     *  (public) 处理用户注销账号。需要清理token等信息。
+     */
+    fun processLogout() {
+        if (WalletManager.sharedWalletManager().isWalletExist()) {
+            _delUserTokenCookie(getCurrentBtsAccount())
+        }
+        //  清理商家信息
+        _cache_merchant_detail = null
+    }
+
+    //
 ///*
 // *  (public) 是否是未登录错误判断。
 // */
-//    - (BOOL)isOtcUserNotLoginError:(id)error;
+//    - (BOOL)isOtcUserNotLoginError:(id)error
+//    {
+//        if (error && [error isKindOfClass:[WsPromiseException class]]){
+//        WsPromiseException* excp = (WsPromiseException*)error;
+//        id userInfo = excp.userInfo;
+//        if (userInfo) {
+//            id otcerror = [userInfo objectForKey:@"otcerror"];
+//            if (otcerror) {
+//                NSInteger errcode = [[otcerror objectForKey:@"code"] integerValue];
+//                if (errcode == eoerr_not_login || errcode == eoerr_token_is_empty) {
+//                    return YES;
+//                }
+//            }
+//        }
+//    }
+//        return NO;
+//    }
 //
 ///*
 // *  (public) 显示OTC的错误信息。
 // */
-//    - (void)showOtcError:(id)error;
-//    - (void)showOtcError:(id)error not_login_callback:(void (^)())not_login_callback;
+//    - (void)showOtcError:(id)error
+//    {
+//        [self showOtcError:error not_login_callback:nil];
+//    }
+//
+//    - (void)showOtcError:(id)error not_login_callback:(void (^)())not_login_callback
+//    {
+//        NSString* errmsg = nil;
+//        if (error && [error isKindOfClass:[WsPromiseException class]]){
+//        WsPromiseException* excp = (WsPromiseException*)error;
+//        id userInfo = excp.userInfo;
+//        if (userInfo) {
+//            id otcerror = [userInfo objectForKey:@"otcerror"];
+//            if (otcerror) {
+//                //  异常中包含 otcerror 的情况
+//                NSInteger errcode = [[otcerror objectForKey:@"code"] integerValue];
+//                if ((errcode == eoerr_not_login || errcode == eoerr_token_is_empty) && not_login_callback) {
+//                    not_login_callback();
+//                    return;
+//                } else {
+//                    //  TODO:2.9 error code table 部分消息特化处理。
+//                    switch (errcode) {
+//                        case eoerr_too_often:
+//                        errmsg = @"请求太频繁，请稍后再试。";
+//                        break;
+//                        case eoerr_not_login:
+//                        case eoerr_token_is_empty:
+//                        errmsg = @"请退出场外交易界面重新登录。";
+//                        break;
+//                        default:
+//                        {
+//                            //  默认错误消息处理
+//                            NSString* tmpmsg = [otcerror objectForKey:@"message"];
+//                            if ([tmpmsg isKindOfClass:[NSString class]] && ![tmpmsg isEqualToString:@""]) {
+//                            //  显示 code 和 message
+//                            errmsg = [NSString stringWithFormat:@"%@", otcerror];
+//                        } else {
+//                            //  仅显示 code
+//                            errmsg = [NSString stringWithFormat:@"服务器或网络异常，请稍后再试。错误代码：%@", @(errcode)];//TODO:2.9 lang
+//                        }
+//                        }
+//                        break;
+//                    }
+//
+//                }
+//            }
+//        }
+//        if (!errmsg) {
+//            errmsg = excp.reason;
+//        }
+//    }
+//        if (!errmsg || [errmsg isEqualToString:@""]) {
+//        //  没有任何错误信息的情况
+//        errmsg = @"服务器或网络异常，请稍后再试。";//TODO:2.9
+//    }
+//        [OrgUtils makeToast:errmsg];
+//    }
 //
 ///*
 // *  (public) 辅助方法 - 是否已认证判断
 // */
-//    - (BOOL)isIdVerifyed:(id)data;
+//    - (BOOL)isIdVerifyed:(id)responsed
+//    {
+//        id data = [responsed objectForKey:@"data"];
+//        if (!data) {
+//            return NO;
+//        }
+//        NSInteger iIdVerify = [[data objectForKey:@"isIdcard"] integerValue];
+//        if (iIdVerify == eovs_kyc1 || iIdVerify == eovs_kyc2 || iIdVerify == eovs_kyc3) {
+//            return YES;
+//        }
+//        return NO;
+//    }
 //
 ///*
-// *  (public) 查询OTC用户身份认证信息。
+// *  (public) API - 查询OTC用户身份认证信息。
+// *  认证：TOKEN 方式
 // *  bts_account_name    - BTS账号名
 // */
-//    - (WsPromise*)queryIdVerify:(NSString*)bts_account_name;
+//    - (WsPromise*)queryIdVerify:(NSString*)bts_account_name
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/user/queryIdVerify"];
+//        return [self _queryApiCore:url args:@{@"btsAccount":bts_account_name} headers:nil auth_flag:eoaf_token];
+//    }
 //
 ///*
-// *  (public) 请求身份认证
+// *  (public) API - 请求身份认证
+// *  认证：SIGN 方式
 // */
-//    - (WsPromise*)idVerify:(id)args;
+//    - (WsPromise*)idVerify:(id)args
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/user/idcardVerify"];
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+//    }
 //
 ///*
-// *  (public) 创建订单
+// *  (public) API - 创建订单
+// *  认证：SIGN 方式
 // */
 //    - (WsPromise*)createUserOrder:(NSString*)bts_account_name
 //    ad_id:(NSString*)ad_id
 //    type:(EOtcAdType)ad_type
 //    price:(NSString*)price
-//    total:(NSString*)total;
+//    total:(NSString*)total
+//    {
+//        //    NSString* fiat_symbol = [[self getFiatCnyInfo] objectForKey:@"short_symbol"];
+//        //    assert(fiat_symbol);
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/user/order/set"];
+//        id args = @{
+//            @"adId":ad_id,
+//            @"adType":@(ad_type),
+//            @"btsAccount":bts_account_name,
+//            @"legalCurrency":@"￥",   //  !!!!! TODO:2.9 暂时只支持这一个！汗
+//            @"price":price,
+//            @"totalAmount":total
+//        };
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+//    }
 //
 ///*
-// *  (public) 查询用户订单列表
+// *  (public) API - 查询用户订单列表
+// *  认证：TOKEN 方式
 // */
 //    - (WsPromise*)queryUserOrders:(NSString*)bts_account_name
 //    type:(EOtcOrderType)type
 //    status:(EOtcOrderStatus)status
 //    page:(NSInteger)page
-//    page_size:(NSInteger)page_size;
+//    page_size:(NSInteger)page_size
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/user/order/list"];
+//        id args = @{
+//            @"btsAccount":bts_account_name,
+//            @"orderType":@(type),
+//            @"status":@(status),
+//            @"page":@(page),
+//            @"pageSize":@(page_size)
+//        };
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
+//    }
 //
 ///*
-// *  (public) 查询订单详情
+// *  (public) API - 查询订单详情
+// *  认证：TOKEN 方式
 // */
-//    - (WsPromise*)queryUserOrderDetails:(NSString*)bts_account_name order_id:(NSString*)order_id;
+//    - (WsPromise*)queryUserOrderDetails:(NSString*)bts_account_name order_id:(NSString*)order_id
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/user/order/details"];
+//        id args = @{
+//            @"btsAccount":bts_account_name,
+//            @"orderId":order_id,
+//        };
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
+//    }
 //
 ///*
-// *  (public) 更新订单
+// *  (public) API - 更新用户订单
+// *  认证：SIGN 方式
 // */
 //    - (WsPromise*)updateUserOrder:(NSString*)bts_account_name
 //    order_id:(NSString*)order_id
 //    payAccount:(NSString*)payAccount
 //    payChannel:(id)payChannel
-//    type:(EOtcOrderUpdateType)type;
+//    type:(EOtcOrderUpdateType)type
+//    {
+//        assert(bts_account_name);
+//        assert(order_id);
+//
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/user/order/update"];
+//
+//        id args = [NSMutableDictionary dictionary];
+//        [args setObject:bts_account_name forKey:@"btsAccount"];
+//        [args setObject:order_id forKey:@"orderId"];
+//        [args setObject:@(type) forKey:@"type"];
+//        //  有的状态不需要这些参数。
+//        if (payAccount) {
+//            [args setObject:payAccount forKey:@"payAccount"];
+//        }
+//        if (payChannel) {
+//            [args setObject:payChannel forKey:@"paymentChannel"];
+//        }
+//
+//        return [self _queryApiCore:url args:[args copy] headers:nil auth_flag:eoaf_sign];
+//    }
 //
 ///*
-// *  (public) 查询用户收款方式/增加收款方式/删除收款方式/编辑收款方式
+// *  (public) API - 查询用户收款方式
+// *  认证：TOKEN 方式
 // */
-//    - (WsPromise*)queryPaymentMethods:(NSString*)bts_account_name;
-//    - (WsPromise*)addPaymentMethods:(id)args;
-//    - (WsPromise*)delPaymentMethods:(NSString*)bts_account_name pmid:(id)pmid;
-//    - (WsPromise*)editPaymentMethods:(NSString*)bts_account_name new_status:(EOtcPaymentMethodStatus)new_status pmid:(id)pmid;
+//    - (WsPromise*)queryPaymentMethods:(NSString*)bts_account_name
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/payMethod/query"];
+//        id args = @{
+//            @"btsAccount":bts_account_name,
+//        };
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
+//    }
+//
+///*
+// *  (public) API - 添加收款方式
+// *  认证：SIGN 方式
+// */
+//    - (WsPromise*)addPaymentMethods:(id)args
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/payMethod/add"];
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+//    }
+//
+///*
+// *  (public) API - 删除收款方式
+// *  认证：SIGN 方式
+// */
+//    - (WsPromise*)delPaymentMethods:(NSString*)bts_account_name pmid:(id)pmid
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/payMethod/del"];
+//        id args = @{
+//            @"btsAccount":bts_account_name,
+//            @"id":pmid,
+//        };
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+//    }
+//
+///*
+// *  (public) API - 编辑收款方式
+// *  认证：SIGN 方式
+// */
+//    - (WsPromise*)editPaymentMethods:(NSString*)bts_account_name new_status:(EOtcPaymentMethodStatus)new_status pmid:(id)pmid
+//    {
+//        assert(bts_account_name);
+//        assert(pmid);
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/payMethod/edit"];
+//        id args = @{
+//            @"btsAccount":bts_account_name,
+//            @"id":pmid,
+//            @"status":@(new_status)
+//        };
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+//    }
 //
 /////*
-//// *  (public) 上传二维码图片。
+//// *  (public) API - 上传二维码图片。
 //// */
-////- (WsPromise*)uploadQrCode:(NSString*)bts_account_name filename:(NSString*)filename data:(NSData*)data;
+////- (WsPromise*)uploadQrCode:(NSString*)bts_account_name filename:(NSString*)filename data:(NSData*)data
+////{
+////1//      TODO:2.9 测试数据
+//////        NSString* bundlePath = [NSBundle mainBundle].resourcePath;
+//////        NSString* fullPathInApp = [NSString stringWithFormat:@"%@/%@", bundlePath, @"abouticon@3x.png"];
+//////        NSData* data = [NSData dataWithContentsOfFile:fullPathInApp];
+//////
+//////        [[otc queryQrCode:[otc getCurrentBtsAccount] filename:@"2019/11/2415170943383153952545308672.png"] then:^id(id data) {
+//////            NSLog(@"%@", data);
+//////            return nil;
+//////        }];
+//////
+//////    [[[otc uploadQrCode:[otc getCurrentBtsAccount] filename:@"test.png" data:data] then:^id(id data) {
+//////        NSLog(@"%@", data);
+//////        return nil;
+//////    }] catch:^id(id error) {
+//////        [otc showOtcError:error];
+//////        return nil;
+//////    }];
+//
+////    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/oss/upload"];
+////    id args = @{
+////        @"btsAccount":bts_account_name,
+////        @"fileName":filename,
+////    };
+////    return [self _handle_otc_server_response:[OrgUtils asyncUploadBinaryData:url data:data key:@"multipartFile" filename:filename args:args]];
+////}
 ////
 /////*
-//// *  (public) 获取二维码图片流。
+//// *  (public) API - 获取二维码图片流。
 //// */
-////- (WsPromise*)queryQrCode:(NSString*)bts_account_name filename:(NSString*)filename;
+////- (WsPromise*)queryQrCode:(NSString*)bts_account_name filename:(NSString*)filename
+////{
+////    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/oss/query"];
+////    id args = @{
+////        @"btsAccount":bts_account_name,
+////        @"fileName":filename,
+////    };
+////    return [self _queryApiCore:url args:args headers:nil as_json:NO auth_flag:eoaf_none];
+////}
 //
 ///*
-// *  (public) 查询OTC支持的数字资产列表（bitCNY、bitUSD、USDT等）
-// *  asset_type - 资产类型 默认值：eoat_digital
+// *  (public) API - 查询OTC支持的数字资产列表（bitCNY、bitUSD、USDT等）
+// *  认证：无
+// *  asset_type  - 资产类型 默认值：eoat_digital
 // */
-//    - (WsPromise*)queryAssetList;
-//    - (WsPromise*)queryAssetList:(EOtcAssetType)asset_type;
+//    - (WsPromise*)queryAssetList
+//    {
+//        return [self queryAssetList:eoat_digital];
+//    }
+//
+//    - (WsPromise*)queryAssetList:(EOtcAssetType)asset_type
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/asset/getList"];
+//        return [self _queryApiCore:url args:@{@"type":@(asset_type)} headers:nil];
+//    }
 //
 ///*
-// *  (public) 查询OTC商家广告列表。
+// *  (private) API - 直接查询CNY法币信息。TODO:3.0目前只支持cny一个。临时实现。
+// */
+//    - (WsPromise*)queryFiatAssetCNY
+//    {
+//        //  已经存在了则直接返回
+//        if (_fiat_cny_info) {
+//            return [WsPromise resolve:_fiat_cny_info];
+//        }
+//        return [[self queryAssetList:eoat_fiat] then:^id(id fiat_data) {
+//        _fiat_cny_info = nil;
+//        id asset_list_fiat = [fiat_data objectForKey:@"data"];
+//        if (asset_list_fiat && [asset_list_fiat count] > 0) {
+//            for (id fiat_info in asset_list_fiat) {
+//                //  TODO:2.9 固定fiat CNY
+//                if ([[fiat_info objectForKey:@"assetSymbol"] isEqualToString:@"CNY"]) {
+//                _fiat_cny_info = fiat_info;
+//                break;
+//            }
+//            }
+//        }
+//        return _fiat_cny_info;
+//    }];
+//    }
+//
+///*
+// *  (public) API - 查询OTC商家广告列表。
+// *  认证：无
 // *  ad_status   - 广告状态 默认值：eoads_online
 // *  ad_type     - 状态类型
 // *  asset_name  - OTC数字资产名字（CNY、USD、GDEX.USDT等）
 // *  page        - 页号
 // *  page_size   - 每页数量
 // */
-//    - (WsPromise*)queryAdList:(EOtcAdType)ad_type asset_name:(NSString*)asset_name page:(NSInteger)page page_size:(NSInteger)page_size;
+//    - (WsPromise*)queryAdList:(EOtcAdType)ad_type asset_name:(NSString*)asset_name page:(NSInteger)page page_size:(NSInteger)page_size
+//    {
+//        return [self queryAdList:eoads_online type:ad_type asset_name:asset_name otcAccount:nil page:page page_size:page_size];
+//    }
+//
 //    - (WsPromise*)queryAdList:(EOtcAdStatus)ad_status
 //    type:(EOtcAdType)ad_type
 //    asset_name:(NSString*)asset_name
 //    otcAccount:(NSString*)otcAccount
 //    page:(NSInteger)page
-//    page_size:(NSInteger)page_size;
+//    page_size:(NSInteger)page_size
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/ad/list"];
+//        NSDictionary* args;
+//        if (otcAccount) {
+//            args = @{
+//                @"adStatus":@(ad_status),
+//                @"adType":@(ad_type),
+//                @"assetSymbol":asset_name,
+//                @"otcAccount":otcAccount,
+//                @"page":@(page),
+//                @"pageSize":@(page_size)
+//            };
+//        } else {
+//            args = @{
+//                @"adStatus":@(ad_status),
+//                @"adType":@(ad_type),
+//                @"assetSymbol":asset_name,
+//                @"page":@(page),
+//                @"pageSize":@(page_size)
+//            };
+//        }
+//        return [self _queryApiCore:url args:args headers:nil];
+//    }
 //
 /////*
 //// *  (public) 查询广告详情。
 //// */
-////- (WsPromise*)queryAdDetails:(NSString*)ad_id;
+////- (WsPromise*)queryAdDetails:(NSString*)ad_id
+////{
+////    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/ad/detail"];
+////    id args = @{
+////        @"adId":ad_id,
+////    };
+////    return [self _queryApiCore:url args:args headers:nil];
+////}
 //
 ///*
-// *  (public) 锁定价格
+// *  (public) API - 锁定价格
+// *  认证：TOKEN 方式
 // */
 //    - (WsPromise*)lockPrice:(NSString*)bts_account_name
 //    ad_id:(NSString*)ad_id
 //    type:(EOtcAdType)ad_type
 //    asset_symbol:(NSString*)asset_symbol
-//    price:(NSString*)price;
+//    price:(NSString*)price
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/order/price/lock/set"];
+//        id args = @{
+//            @"adId":ad_id,
+//            @"adType":@(ad_type),
+//            @"btsAccount":bts_account_name,
+//            @"assetSymbol":asset_symbol,//@"￥",//TODO:2.9
+//            @"price":price
+//        };
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
+//    }
 //
 ///*
 // *  (public) API - 发送短信
 // *  认证：TOKEN 认证
 // */
-//    - (WsPromise*)sendSmsCode:(NSString*)bts_account_name phone:(NSString*)phone_number type:(EOtcSmsType)type;
+//    - (WsPromise*)sendSmsCode:(NSString*)bts_account_name phone:(NSString*)phone_number type:(EOtcSmsType)type
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/sms/send"];
+//        id args = @{
+//            @"btsAccount":bts_account_name,
+//            @"phoneNum":phone_number,
+//            @"type":@(type)
+//        };
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
+//    }
 //
 ///*
-// *  (public) 登录。部分API接口需要传递登录过的token字段。
+// *  (public) API - 登录。部分API接口需要传递登录过的token字段。
+// *  认证：SIGN 方式
 // */
-//    - (WsPromise*)login:(NSString*)bts_account_name;
+//    - (WsPromise*)login:(NSString*)bts_account_name
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/user/login"];
+//        id args = @{
+//            @"btsAccount":bts_account_name,
+//        };
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+//    }
+//
+///*
+// *  (private) 执行OTC网络请求。
+// *  as_json     - 是否返回 json 格式，否则返回原始数据流。
+// */
+//    - (WsPromise*)_queryApiCore:(NSString*)url args:(id)args headers:(id)headers
+//    {
+//        return [self _queryApiCore:url args:args headers:headers as_json:YES auth_flag:eoaf_none];
+//    }
+//
+//    - (WsPromise*)_queryApiCore:(NSString*)url args:(id)args headers:(id)headers auth_flag:(EOtcAuthFlag)auth_flag
+//    {
+//        return [self _queryApiCore:url args:args headers:headers as_json:YES auth_flag:auth_flag];
+//    }
+//
+//    - (WsPromise*)_queryApiCore:(NSString*)url args:(id)args headers:(id)headers as_json:(BOOL)as_json auth_flag:(EOtcAuthFlag)auth_flag
+//    {
+//        //  认证：签名 or token
+//        if (auth_flag != eoaf_none) {
+//            //  计算签名 先获取毫秒时间戳
+//            id timestamp = [NSString stringWithFormat:@"%@", @((uint64_t)([[NSDate date] timeIntervalSince1970] * 1000))];
+//            NSString* auth_key;
+//            NSString* auth_value;
+//            if (auth_flag == eoaf_sign) {
+//                auth_key = @"sign";
+//                auth_value = [self _sign:timestamp args:args];
+//            } else {
+//                assert(auth_flag == eoaf_token);
+//                auth_key = @"token";
+//                auth_value = [self _loadUserTokenCookie:[self getCurrentBtsAccount]];
+//            }
+//            //  合并请求header
+//            id new_headers = headers ? [headers mutableCopy] : [NSMutableDictionary dictionary];
+//            [new_headers setObject:timestamp forKey:@"timestamp"];
+//            if (auth_value) {
+//                [new_headers setObject:auth_value forKey:auth_key];
+//            }
+//            //  更新header
+//            headers = [new_headers copy];
+//        }
+//
+//        //  执行请求
+//        WsPromise* request_promise = [OrgUtils asyncPostUrl_jsonBody:url args:args headers:headers as_json:as_json];
+//        if (as_json) {
+//            //  REMARK：json格式需要判断返回值
+//            return [self _handle_otc_server_response:request_promise];
+//        } else {
+//            //  文件流直接返回。
+//            return request_promise;
+//        }
+//    }
+//
+///*
+// *  (private) 处理返回值。
+// *  request_promise - 实际的网络请求。
+// */
+//    - (WsPromise*)_handle_otc_server_response:(WsPromise*)request_promise
+//    {
+//        assert(request_promise);
+//        return [WsPromise promise:^(WsResolveHandler resolve, WsRejectHandler reject) {
+//        [[request_promise then:^id(id responsed) {
+//        //  TODO:2.9 lang
+//        if (!responsed || ![responsed isKindOfClass:[NSDictionary class]]) {
+//        reject(@"服务器或网络异常，请稍后再试。");
+//        return nil;
+//    }
+//        NSInteger code = [[responsed objectForKey:@"code"] integerValue];
+//        if (code != eoerr_ok) {
+//            reject(@{@"otcerror":@{@"code":@(code), @"message":[responsed objectForKey:@"message"] ?: @""}});
+//        } else {
+//            resolve(responsed);
+//        }
+//        return nil;
+//    }] catch:^id(id error) {
+//        reject(@"服务器或网络异常，请稍后再试。");
+//        return nil;
+//    }];
+//    }];
+//    }
+//
+///*
+// *  (private) token信息管理
+// */
+//    - (NSString*)_genUserTokenCookieName:(NSString*)bts_account_name
+//    {
+//        assert(bts_account_name);
+//        //  TODO:2.9 token key config
+//        return [NSString stringWithFormat:@"_bts_otc_token_%@", bts_account_name];
+//    }
+//
+//    - (NSString*)_loadUserTokenCookie:(NSString*)bts_account_name
+//    {
+//        return (NSString*)[[AppCacheManager sharedAppCacheManager] getPref:[self _genUserTokenCookieName:bts_account_name]];
+//    }
+//
+    fun _delUserTokenCookie(bts_account_name: String) {
+//    [[[AppCacheManager sharedAppCacheManager] deletePref:[self _genUserTokenCookieName:bts_account_name]] saveCacheToFile];
+        //  TODO:2.9
+    }
+//
+//    - (void)_saveUserTokenCookie:(NSString*)bts_account_name token:(NSString*)token
+//    {
+//        if (token) {
+//            [[[AppCacheManager sharedAppCacheManager] setPref:[self _genUserTokenCookieName:bts_account_name] value:token] saveCacheToFile];
+//        }
+//    }
+//
+///*
+// *  (private) 生成待签名之前的完整字符串。
+// */
+//    - (NSString*)_gen_sign_string:(NSDictionary*)args
+//    {
+//        NSArray* sortedKeys = [[args allKeys] sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+//        return [obj1 compare:obj2];
+//    }];
+//        NSMutableArray* pArray = [[NSMutableArray alloc] init];
+//        for (NSString* pKey in sortedKeys) {
+//        //  TODO:2.9 url encode??
+//        //  NSString* pValue = (__bridge NSString*)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)[NSString stringWithFormat:@"%@", [args objectForKey:pKey]], nil, nil, kCFStringEncodingUTF8);
+//        NSString* pValue = [args objectForKey:pKey];
+//        [pArray addObject:[NSString stringWithFormat:@"%@=%@", pKey, pValue]];
+//    }
+//        return [pArray componentsJoinedByString:@"&"];
+//    }
+//
+///*
+// *  (private) 执行签名。钱包需要先解锁。
+// */
+//    - (NSString*)_sign:(id)timestamp args:(id)args
+//    {
+//        WalletManager* walletMgr = [WalletManager sharedWalletManager];
+//        assert(![walletMgr isLocked]);
+//
+//        //  获取待签名字符串
+//        id sign_args = args ? [args mutableCopy] : [NSMutableDictionary dictionary];
+//        [sign_args setObject:timestamp forKey:@"timestamp"];
+//        NSString* sign_str = [self _gen_sign_string:sign_args];
+//
+//        //  TODO:2.9 实际签名数据是否加上chain id
+//        NSData* sign_data = [sign_str dataUsingEncoding:NSUTF8StringEncoding];
+//
+//        //  TODO:2.9 不支持任何多签。必须单key 100%权限。active。
+//        id active_permission = [[[walletMgr getWalletAccountInfo] objectForKey:@"account"] objectForKey:@"active"];
+//        id sign_keys = [walletMgr getSignKeys:active_permission];
+//        assert([sign_keys count] == 1);
+//        id signs = [walletMgr signTransaction:sign_data signKeys:sign_keys];
+//        if (!signs) {
+//            //  签名失败
+//            return nil;
+//        }
+//
+//        return [[signs firstObject] hex_encode];
+//    }
 //
 //    #pragma mark- for merchant
 //
-//    - (void)gotoOtcMerchantHome:(VCBase*)owner;
+//    - (void)gotoOtcMerchantHome:(VCBase*)owner
+//    {
+//        //  TODO:2.9 merchantProgress 暂时不调用
+//        [owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+//        //  直接调用商家详情，非商家返回空数据。
+//        WsPromise* p1 = [self merchantDetail:[self getCurrentBtsAccount] skip_cache:YES];
+//        WsPromise* p2 = [self queryFiatAssetCNY];
+//        [[[WsPromise all:@[p1, p2]] then:^id(id data_array) {
+//        [owner hideBlockView];
+//        id merchant_detail = [data_array objectAtIndex:0];
+//        if (merchant_detail && ![merchant_detail isKindOfClass:[NSDictionary class]]) {
+//        merchant_detail = nil;
+//    }
+//        if (merchant_detail) {
+//            //  TODO:2.9 lang
+//            // `status` tinyint(2) NOT NULL DEFAULT '0' COMMENT '状态:0=默认,0=未激活,1=已激活,2=取消激活,3=冻结',
+//
+//            VCBase* vc = [[VCOtcMcHome alloc] initWithProgressInfo:nil merchantDetail:merchant_detail];
+//            [owner pushViewController:vc vctitle:@"商家信息" backtitle:kVcDefaultBackTitleName];
+//        } else {
+//            //  TODO:2.9
+//            VCBase* vc = [[VCOtcMcMerchantApply alloc] init];
+//            [owner pushViewController:vc vctitle:@"商家申请" backtitle:kVcDefaultBackTitleName];
+//        }
+//        return nil;
+//    }] catch:^id(id error) {
+//        [owner hideBlockView];
+//        [self showOtcError:error];
+//        return nil;
+//    }];
+//    }
 //
 /////*
 //// *  (public) API - 商家申请进度查询
+//// *  认证：SIGN 方式
 //// */
-////- (WsPromise*)merchantProgress:(NSString*)bts_account_name;
+////- (WsPromise*)merchantProgress:(NSString*)bts_account_name
+////{
+////    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/progress"];
+////    id args = @{
+////        @"btsAccount":bts_account_name,
+////    };
+////    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+////}
 //
 ///*
 // *  (public) API - 商家申请
 // *  认证：SIGN 方式
 // */
-//    - (WsPromise*)merchantApply:(NSString*)bts_account_name bakAccount:(NSString*)bakAccount nickName:(NSString*)nickName;
+//    - (WsPromise*)merchantApply:(NSString*)bts_account_name bakAccount:(NSString*)bakAccount nickName:(NSString*)nickName
+//    {
+//        assert(bts_account_name);
+//        assert(bakAccount);
+//        assert(nickName);
+//
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/apply"];
+//        id args = @{
+//            @"btsAccount":bts_account_name,
+//            @"bakAccount":bakAccount,
+//            @"nickname":nickName
+//        };
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+//    }
 //
 ///*
 // *  (public) API - 商家详情查询
 // *  认证：无
 // */
-//    - (WsPromise*)merchantDetail:(NSString*)bts_account_name skip_cache:(BOOL)skip_cache;
+//    - (WsPromise*)merchantDetail:(NSString*)bts_account_name skip_cache:(BOOL)skip_cache
+//    {
+//        //  直接返回缓存
+//        if (!skip_cache && _cache_merchant_detail) {
+//            return [WsPromise resolve:_cache_merchant_detail];
+//        }
+//        //  从服务器查询
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/detail"];
+//        id args = @{
+//            @"btsAccount":bts_account_name,
+//        };
+//        return [[self _queryApiCore:url args:args headers:nil auth_flag:eoaf_none] then:^id(id merchant_detail_responsed) {
+//        id merchant_detail = [merchant_detail_responsed objectForKey:@"data"];
+//        if (merchant_detail && ![merchant_detail isKindOfClass:[NSDictionary class]]) {
+//        merchant_detail = nil;
+//    }
+//        _cache_merchant_detail = merchant_detail;
+//        return _cache_merchant_detail;
+//    }];
+//    }
 //
 ///*
 // *  (public) API - 查询商家订单列表
@@ -510,19 +1676,45 @@ class OtcManager {
 //    type:(EOtcOrderType)type
 //    status:(EOtcOrderStatus)status
 //    page:(NSInteger)page
-//    page_size:(NSInteger)page_size;
+//    page_size:(NSInteger)page_size
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchants/order/list"];
+//        id args = @{
+//            @"btsAccount":bts_account_name,
+//            @"orderType":@(type),
+//            @"status":@(status),
+//            @"page":@(page),
+//            @"pageSize":@(page_size)
+//        };
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
+//    }
 //
 ///*
 // *  (public) API - 查询订单详情
 // *  认证：TOKEN 方式
 // */
-//    - (WsPromise*)queryMerchantOrderDetails:(NSString*)bts_account_name order_id:(NSString*)order_id;
+//    - (WsPromise*)queryMerchantOrderDetails:(NSString*)bts_account_name order_id:(NSString*)order_id
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchants/order/details"];
+//        id args = @{
+//            @"btsAccount":bts_account_name,
+//            @"orderId":order_id,
+//        };
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
+//    }
 //
 ///*
 // *  (public) API - 查询商家资产
 // *  认证：TOKEN 方式
 // */
-//    - (WsPromise*)queryMerchantOtcAsset:(NSString*)bts_account_name;
+//    - (WsPromise*)queryMerchantOtcAsset:(NSString*)bts_account_name
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/asset/list"];
+//        id args = @{
+//            @"btsAccount":bts_account_name,
+//        };
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
+//    }
 //
 ///*
 // *  (public) API - 查询商家指定资产余额查询
@@ -531,19 +1723,46 @@ class OtcManager {
 //    - (WsPromise*)queryMerchantAssetBalance:(NSString*)bts_account_name
 //    otcAccount:(NSString*)otcAccount
 //    merchantId:(id)merchantId
-//    assetSymbol:(id)assetSymbol;
+//    assetSymbol:(id)assetSymbol
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/asset/balance"];
+//        id args = @{
+//            @"btsAccount":bts_account_name,
+//            @"otcAccount":otcAccount,
+//            @"merchantId":merchantId,
+//            @"assetSymbol":assetSymbol,
+//        };
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
+//    }
 //
 ///*
 // *  (public) API - 划转商家资产到个人账号
 // *  认证：SIGN 方式
 // */
-//    - (WsPromise*)queryMerchantAssetExport:(NSString*)bts_account_name signatureTx:(id)signatureTx;
+//    - (WsPromise*)queryMerchantAssetExport:(NSString*)bts_account_name signatureTx:(id)signatureTx
+//    {
+//        assert(bts_account_name);
+//        assert(signatureTx);
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/asset/export"];
+//        id args = @{
+//            @"btsAccount":bts_account_name,
+//            @"signatureTx":[signatureTx to_json],
+//        };
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+//    }
 //
 ///*
 // *  (public) API - 查询商家付款方式
 // *  认证：TOKEN 方式
 // */
-//    - (WsPromise*)queryMerchantPaymentMethods:(NSString*)bts_account_name;
+//    - (WsPromise*)queryMerchantPaymentMethods:(NSString*)bts_account_name
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/getpaymethod"];
+//        id args = @{
+//            @"btsAccount":bts_account_name,
+//        };
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
+//    }
 //
 ///*
 // *  (public) API - 更新商家付款方式
@@ -551,7 +1770,23 @@ class OtcManager {
 // */
 //    - (WsPromise*)updateMerchantPaymentMethods:(NSString*)bts_account_name
 //    aliPaySwitch:(id)aliPaySwitch
-//    bankcardPaySwitch:(id)bankcardPaySwitch;
+//    bankcardPaySwitch:(id)bankcardPaySwitch
+//    {
+//        assert(bts_account_name);
+//        assert(aliPaySwitch || bankcardPaySwitch);
+//
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/payswitch"];
+//        NSMutableDictionary* args = [NSMutableDictionary dictionary];
+//        [args setObject:bts_account_name forKey:@"btsAccount"];
+//        //  REMARK：服务器采用true和false计算签名，用0和1计算签名会导致签名验证失败。
+//        if (aliPaySwitch) {
+//            [args setObject:[aliPaySwitch boolValue] ? @"true" : @"false" forKey:@"aliPaySwitch"];
+//        }
+//        if (bankcardPaySwitch) {
+//            [args setObject:[bankcardPaySwitch boolValue] ? @"true" : @"false" forKey:@"bankcardPaySwitch"];
+//        }
+//        return [self _queryApiCore:url args:[args copy] headers:nil auth_flag:eoaf_sign];
+//    }
 //
 ///*
 // *  (public) API - 更新商家订单
@@ -562,42 +1797,103 @@ class OtcManager {
 //    payAccount:(NSString*)payAccount
 //    payChannel:(id)payChannel
 //    type:(EOtcOrderUpdateType)type
-//    signatureTx:(id)signatureTx;
+//    signatureTx:(id)signatureTx
+//    {
+//        assert(bts_account_name);
+//        assert(order_id);
+//
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchants/order/update"];
+//
+//        id args = [NSMutableDictionary dictionary];
+//        [args setObject:bts_account_name forKey:@"btsAccount"];
+//        [args setObject:order_id forKey:@"orderId"];
+//        [args setObject:@(type) forKey:@"type"];
+//        //  有的状态不需要这些参数。
+//        if (payAccount) {
+//            [args setObject:payAccount forKey:@"payAccount"];
+//        }
+//        if (payChannel) {
+//            [args setObject:payChannel forKey:@"paymentChannel"];
+//        }
+//        if (signatureTx) {
+//            [args setObject:[signatureTx to_json] forKey:@"signatureTx"];
+//        }
+//        return [self _queryApiCore:url args:[args copy] headers:nil auth_flag:eoaf_sign];
+//    }
 //
 ///*
 // *  (public) API - 查询商家memokey
 // *  认证：SIGN 方式
 // */
-//    - (WsPromise*)queryMerchantMemoKey:(NSString*)bts_account_name;
+//    - (WsPromise*)queryMerchantMemoKey:(NSString*)bts_account_name
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchants/order/memo/key"];
+//        id args = @{
+//            @"btsAccount":bts_account_name,
+//        };
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+//    }
 //
 ///*
 // *  (public) API - 商家创建广告（不上架、仅保存）
 // *  认证：SIGN 方式
 // */
-//    - (WsPromise*)merchantCreateAd:(id)args;
+//    - (WsPromise*)merchantCreateAd:(id)args
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/ad/create"];
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+//    }
 //
 ///*
 // *  (public) API - 商家更新并上架广告
 // *  认证：SIGN 方式
 // */
-//    - (WsPromise*)merchantUpdateAd:(id)args;
+//    - (WsPromise*)merchantUpdateAd:(id)args
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/ad/publish"];
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+//    }
 //
 ///*
 // *  (public) API - 商家重新上架广告
 // *  认证：SIGN 方式
 // */
-//    - (WsPromise*)merchantReUpAd:(NSString*)bts_account_name ad_id:(NSString*)ad_id;
+//    - (WsPromise*)merchantReUpAd:(NSString*)bts_account_name ad_id:(NSString*)ad_id
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/ad/reup"];
+//        id args = @{
+//            @"btsAccount":bts_account_name,
+//            @"adId":ad_id
+//        };
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+//    }
 //
 ///*
 // *  (public) API - 商家下架广告
 // *  认证：SIGN 方式
 // */
-//    - (WsPromise*)merchantDownAd:(NSString*)bts_account_name ad_id:(NSString*)ad_id;
+//    - (WsPromise*)merchantDownAd:(NSString*)bts_account_name ad_id:(NSString*)ad_id
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/ad/down"];
+//        id args = @{
+//            @"btsAccount":bts_account_name,
+//            @"adId":ad_id
+//        };
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+//    }
 //
 ///*
 // *  (public) API - 商家删除广告
 // *  认证：SIGN 方式
 // */
-//    - (WsPromise*)merchantDeleteAd:(NSString*)bts_account_name ad_id:(NSString*)ad_id;
+//    - (WsPromise*)merchantDeleteAd:(NSString*)bts_account_name ad_id:(NSString*)ad_id
+//    {
+//        id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/ad/cancel"];
+//        id args = @{
+//            @"btsAccount":bts_account_name,
+//            @"adId":ad_id
+//        };
+//        return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+//    }
 
 }

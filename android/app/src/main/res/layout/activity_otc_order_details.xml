@@ -90,7 +90,7 @@
                                     android:id="@+id/iv_check_from_otc_order_details"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:src="@drawable/ic_checkbox_check"/>
+                                    android:src="@drawable/icon_otc_phone"/>
                             </LinearLayout>
                         </LinearLayout>
 
@@ -300,7 +300,7 @@
                                 android:id="@+id/iv_receiver_method_icon_from_otc_order_details"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:src="@drawable/icon_pm_bankcard"/>
+                                android:src="@drawable/icon_copy"/>
                         </LinearLayout>
                     </LinearLayout>
 
@@ -335,7 +335,7 @@
                                 android:id="@+id/iv_account_receiver_method_icon_from_otc_order_details"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:src="@drawable/icon_pm_bankcard"/>
+                                android:src="@drawable/icon_copy"/>
                         </LinearLayout>
                     </LinearLayout>
 
@@ -396,7 +396,7 @@
                                 android:id="@+id/iv_merchant_name_icon_from_otc_order_details"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:src="@drawable/icon_pm_bankcard"/>
+                                android:src="@drawable/icon_copy"/>
                         </LinearLayout>
                     </LinearLayout>
 
@@ -456,7 +456,7 @@
                                 android:id="@+id/iv_order_no_icon_from_otc_order_details"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:src="@drawable/icon_pm_bankcard"/>
+                                android:src="@drawable/icon_copy"/>
                         </LinearLayout>
                     </LinearLayout>
 

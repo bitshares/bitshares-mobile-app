@@ -1153,6 +1153,21 @@ class ChainObjectManager {
         }
     }
 
+    /**
+     *  (public) 查询指定账号指定类型的账号明细列表。
+     */
+    fun queryAccountHistoryByOperations(account_name_or_id: String, optype_array: JSONArray? = null, limit: Int): Promise {
+        val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
+        return conn.async_exec_history("get_account_history_by_operations", jsonArrayfrom(account_name_or_id, optype_array
+                ?: JSONArray(), 0, limit)).then {
+            val data = it as? JSONObject
+            var operation_history_objs = data?.optJSONArray("operation_history_objs")
+            if (operation_history_objs == null) {
+                operation_history_objs = JSONArray()
+            }
+            return@then operation_history_objs
+        }
+    }
 
     /**
      *  (public) 查询最近成交记录
@@ -1408,9 +1423,19 @@ class ChainObjectManager {
     fun queryFullAccountInfo(account_name_or_id: String, retry_num: Int = 1): Promise {
         val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
         return conn.async_exec_db("get_full_accounts", jsonArrayfrom(jsonArrayfrom(account_name_or_id), false)).then {
-            val data = it as? JSONArray
+            val data_array = it as? JSONArray
+
+            //  获取帐号信息 REMARK: 修复由于API调整，data_array 为空数组时导致的崩溃问题。以前账号不存在时候 data_array 返回 nil。
+            var full_account_data: JSONObject? = null
+            if (data_array != null && data_array.length() > 0) {
+                val t = data_array.opt(0)
+                if (t is JSONArray && t.length() >= 2) {
+                    full_account_data = t.optJSONObject(1)
+                }
+            }
+
             //  查询失败的情况下
-            if (data == null || data.length() <= 0) {
+            if (full_account_data == null) {
                 if (retry_num > 1) {
                     //  等待一会 & 重试
                     return@then OrgUtils.asyncWait(2000).then {
@@ -1421,8 +1446,7 @@ class ChainObjectManager {
                     return@then null
                 }
             }
-            //  获取帐号信息
-            val full_account_data = data.getJSONArray(0).getJSONObject(1)
+
             //  [缓存] 添加到缓存
             val account = full_account_data.getJSONObject("account")
             _cacheUserFullAccountData[account.getString("id")] = full_account_data
@@ -1464,6 +1488,34 @@ class ChainObjectManager {
                 return@then null
             }
             p.resolve(data_array.getJSONObject(0))
+            return@then null
+        }.catch {
+            p.resolve(null)
+        }
+        return p
+    }
+
+    fun queryAssetDataList(asset_name_list: JSONArray): Promise {
+        val p = Promise()
+        val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
+        conn.async_exec_db("get_assets", jsonArrayfrom(asset_name_list)).then {
+            p.resolve(it as JSONArray?)
+            return@then null
+        }.catch {
+            p.resolve(null)
+        }
+        return p
+    }
+
+    /**
+     *  (public) 查询指定账号余额
+     */
+    fun queryAccountBalance(account_name_or_id: String, asset_id_array: JSONArray? = null): Promise {
+        val p = Promise()
+        val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
+        conn.async_exec_db("get_account_balances", jsonArrayfrom(account_name_or_id, asset_id_array
+                ?: JSONArray())).then {
+            p.resolve(it as JSONArray?)
             return@then null
         }.catch {
             p.resolve(null)
