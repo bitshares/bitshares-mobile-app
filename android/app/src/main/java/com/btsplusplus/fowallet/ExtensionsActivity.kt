@@ -221,6 +221,10 @@ fun Fragment.showToast(str: String, duration: Int = Toast.LENGTH_SHORT) {
  */
 fun android.app.Activity.showGrapheneError(error: Any?) {
     if (error != null) {
+        if (error is String) {
+            showToast(error)
+            return
+        }
         try {
             val json = if (error is Promise.WsPromiseException) {
                 JSONObject(error.message.toString())

@@ -63,7 +63,7 @@
                 android:orientation="vertical">
 
 
-                <!-- 付款方式 -->
+                <!-- 支付宝 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -108,10 +108,7 @@
                 </LinearLayout>
                 <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-
-
-
-                <!-- 付款方式 -->
+                <!-- 银行卡 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

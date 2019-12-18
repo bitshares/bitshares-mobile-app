@@ -134,7 +134,7 @@ class FragmentOrderHistory : BtsppFragment() {
             _dataArray.add(data_item)
         }
         //  按照ID降序
-        _dataArray.sortByDescending { it.getString("id") }
+        _dataArray.sortByDescending { it.getString("id").split(".").last().toInt() }
     }
 
     private fun refreshUI() {
