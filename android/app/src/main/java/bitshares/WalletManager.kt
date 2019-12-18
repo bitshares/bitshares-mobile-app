@@ -396,6 +396,7 @@ class WalletManager {
      *  (public) 注销登录逻辑。内存钱包锁定、导入钱包删除。
      */
     fun processLogout() {
+        OtcManager.sharedOtcManager().processLogout()
         Lock()
         AppCacheManager.sharedAppCacheManager().removeWalletInfo()
     }
@@ -596,7 +597,7 @@ class WalletManager {
     /**
      * (public) 获取本地钱包中需要参与【指定权限、active或owner等】签名的必须的 公钥列表。
      */
-    fun getSignKeys(raw_permission_json: JSONObject): JSONArray {
+    fun getSignKeys(raw_permission_json: JSONObject, assert_enough_permission: Boolean = true): JSONArray {
         assert(!isLocked())
         val result = JSONArray()
 
@@ -622,7 +623,9 @@ class WalletManager {
         }
 
         //  确保权限足够（返回的KEY签名之后的阈值之后达到触发阈值）
-        assert(canAuthorizeThePermission(raw_permission_json))
+        if (assert_enough_permission) {
+            assert(canAuthorizeThePermission(raw_permission_json))
+        }
         return result
     }
 
@@ -707,14 +710,65 @@ class WalletManager {
     }
 
     /**
+     *  (public) 解密memo数据，失败返回nil。
+     */
+    fun decryptMemoObject(memo_object: JSONObject): String? {
+        assert(!isLocked())
+        val from = memo_object.getString("from")
+        val to = memo_object.getString("to")
+        val nonce = memo_object.getString("nonce")
+        val message = memo_object.getString("message")
+
+        //  1、获取私钥和公钥（from和to任意一方私钥即可，双方均可解密。）
+        var pubkey: String? = null
+        var prikey: String? = null
+        val from_prikey_wif = _private_keys_hash.optString(from, null)
+        val to_prikey_wif = _private_keys_hash.optString(to, null)
+        if (from_prikey_wif != null) {
+            prikey = from_prikey_wif
+            pubkey = to
+        } else if (to_prikey_wif != null) {
+            prikey = to_prikey_wif
+            pubkey = from
+        } else {
+            //  no any private key
+            return null
+        }
+
+        val nativePtr = NativeInterface.sharedNativeInterface()
+
+        //  获取私钥
+        val memo_private_key32 = nativePtr.bts_gen_private_key_from_wif_privatekey(prikey.utf8String())
+        if (memo_private_key32 == null) {
+            return null
+        }
+
+        //  获取公钥
+        val public_key = nativePtr.bts_gen_public_key_from_b58address(pubkey.utf8String(), ChainObjectManager.sharedChainObjectManager().grapheneAddressPrefix.utf8String())
+        if (public_key == null) {
+            return null
+        }
+
+        val plain_ptr = nativePtr.bts_aes256_decrypt_with_checksum(memo_private_key32, public_key, nonce.utf8String(), message.hexDecode())
+        if (plain_ptr == null) {
+            return null
+        }
+
+        return plain_ptr.utf8String()
+    }
+
+    /**
      * (public) 加密并生成 memo 信息结构体，失败返回 nil。
      */
-    fun genMemoObject(memo: String, from_public: String, to_public: String): JSONObject? {
+    fun genMemoObject(memo: String, from_public: String, to_public: String, extra_keys_hash: JSONObject? = null): JSONObject? {
         assert(!isLocked())
 
         //  1、获取和 from_public 对应的备注私钥
-        val from_public_private_key_wif = _private_keys_hash.optString(from_public, "")
-        if (from_public_private_key_wif == "") {
+        var from_public_private_key_wif = _private_keys_hash.optString(from_public, null)
+        if (from_public_private_key_wif == null && extra_keys_hash != null) {
+            from_public_private_key_wif = extra_keys_hash.optString(from_public, null)
+        }
+        if (from_public_private_key_wif == null) {
             return null
         }
 

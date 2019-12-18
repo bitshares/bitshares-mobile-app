@@ -1,6 +1,8 @@
 package com.fowallet.walletcore.bts
 
+import android.content.Context
 import bitshares.*
+import com.btsplusplus.fowallet.R
 import org.json.JSONArray
 import org.json.JSONObject
 import kotlin.math.max
@@ -17,9 +19,9 @@ class BitsharesClientManager {
         }
     }
 
-    private fun process_transaction(tr: TransactionBuilder): Promise {
+    private fun process_transaction(tr: TransactionBuilder, broadcast_to_blockchain: Boolean = true): Promise {
         return tr.set_required_fees(null).then {
-            return@then tr.broadcast()
+            return@then tr.broadcast(broadcast_to_blockchain)
         }.then { data ->
             //  TODO:fowallet 到这里就是交易广播成功 并且 回调已经执行了
             return@then data
@@ -67,13 +69,145 @@ class BitsharesClientManager {
     }
 
     /**
+     *  OP - 转账（简化版）
+     */
+    fun simpleTransfer(ctx: Context, from_name: String, to_name: String, asset_name: String,
+                       amount: String, memo: String?, memo_extra_keys: JSONObject?, sign_pub_keys: JSONArray?,
+                       broadcast: Boolean): Promise {
+        assert(!WalletManager.sharedWalletManager().isLocked())
+
+        val p = Promise()
+
+        val chainMgr = ChainObjectManager.sharedChainObjectManager()
+        val p1 = chainMgr.queryFullAccountInfo(from_name)
+        val p2 = chainMgr.queryAccountData(to_name)
+        val p3 = chainMgr.queryAssetData(asset_name)
+        Promise.all(p1, p2, p3).then {
+            val data_array = it as? JSONArray
+            val full_from_account = data_array?.optJSONObject(0)
+            val to_account = data_array?.optJSONObject(1)
+            val asset = data_array?.optJSONObject(2)
+            _transferWithFullFromAccount(ctx, full_from_account, to_account, asset, amount, memo, memo_extra_keys, sign_pub_keys, p, broadcast)
+            return@then null
+        }.catch {
+            p.reject(JSONObject().apply {
+                put("err", R.string.tip_network_error.xmlstring(ctx))
+            })
+        }
+
+        return p
+    }
+
+    fun simpleTransfer2(ctx: Context, full_from_account: JSONObject, to_account: JSONObject, asset: JSONObject,
+                        amount: String, memo: String?, memo_extra_keys: JSONObject?, sign_pub_keys: JSONArray?,
+                        broadcast: Boolean): Promise {
+        val p = Promise()
+        _transferWithFullFromAccount(ctx, full_from_account, to_account, asset, amount, memo, memo_extra_keys, sign_pub_keys, p, broadcast)
+        return p
+    }
+
+    private fun _transferWithFullFromAccount(ctx: Context, full_from_account: JSONObject?, to_account: JSONObject?, asset: JSONObject?,
+                                             amount: String, memo: String?, memo_extra_keys: JSONObject?, sign_pub_keys: JSONArray?,
+                                             p: Promise, broadcast: Boolean) {
+
+        //  检测链上数据有效性
+        if (full_from_account == null || to_account == null || asset == null) {
+            p.resolve(JSONObject().apply {
+                put("err", R.string.kTxBlockDataError.xmlstring(ctx))
+            })
+            return
+        }
+        val from_account = full_from_account.getJSONObject("account")
+        val from_id = from_account.getString("id")
+        val to_id = to_account.getString("id")
+        if (from_id == to_id) {
+            p.resolve(JSONObject().apply {
+                put("err", R.string.kVcTransferSubmitTipFromToIsSame.xmlstring(ctx))
+            })
+            return
+        }
+
+        val chainMgr = ChainObjectManager.sharedChainObjectManager()
+        val walletMgr = WalletManager.sharedWalletManager()
+
+        val asset_id = asset.getString("id")
+        val asset_precision = asset.getInt("precision")
+
+        //  检测转账资产数量是否足够
+        val n_amount = Utils.auxGetStringDecimalNumberValue(amount)
+        val n_amount_pow = n_amount.multiplyByPowerOf10(asset_precision)
+
+        var bBalanceEnough = false
+        val balances = full_from_account.optJSONArray("balances")
+        if (balances != null && balances.length() > 0) {
+            for (balance_object in balances.forin<JSONObject>()) {
+                if (asset_id == balance_object!!.getString("asset_type")) {
+                    val n_balance = bigDecimalfromAmount(balance_object.getString("balance"), asset_precision)
+                    if (n_balance >= n_amount) {
+                        bBalanceEnough = true
+                        break
+                    }
+                }
+            }
+        }
+
+        if (!bBalanceEnough) {
+            p.resolve(JSONObject().apply {
+                put("err", String.format(R.string.kTxBalanceNotEnough.xmlstring(ctx), asset.getString("symbol")))
+            })
+            return
+        }
+
+        //  生成转账备注信息
+        var memo_object: JSONObject? = null
+        if (memo != null) {
+            val from_public_memo = from_account.getJSONObject("options").getString("memo_key")
+            val to_public_memo = to_account.getJSONObject("options").getString("memo_key")
+            memo_object = walletMgr.genMemoObject(memo, from_public_memo, to_public_memo, memo_extra_keys)
+            if (memo_object == null) {
+                p.resolve(JSONObject().apply {
+                    put("err", R.string.kTxMissMemoPriKey.xmlstring(ctx))
+                })
+                return
+            }
+        }
+
+        //  构造转账结构
+        val op = JSONObject().apply {
+            put("fee", jsonObjectfromKVS("amount", 0, "asset_id", chainMgr.grapheneCoreAssetID))
+            put("from", from_id)
+            put("to", to_id)
+            put("amount", jsonObjectfromKVS("amount", n_amount_pow.toPlainString(), "asset_id", asset_id))
+            put("memo", memo_object)    //  maybe null
+        }
+
+        //  转账
+        _transfer(op, broadcast, sign_pub_keys).then {
+            p.resolve(JSONObject().apply {
+                put("tx", it as JSONArray)
+            })
+            return@then null
+        }.catch {
+            p.reject(it)
+        }
+    }
+
+    /**
      *  转账
      */
     fun transfer(transfer_op_data: JSONObject): Promise {
+        return _transfer(transfer_op_data, broadcast = true, sign_pub_keys = null)
+    }
+
+    private fun _transfer(transfer_op_data: JSONObject, broadcast: Boolean = true, sign_pub_keys: JSONArray? = null): Promise {
         val tr = TransactionBuilder()
         tr.add_operation(EBitsharesOperations.ebo_transfer, transfer_op_data)
-        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(transfer_op_data.getString("from")))
-        return process_transaction(tr)
+        if (sign_pub_keys != null && sign_pub_keys.length() > 0) {
+            tr.addSignKeys(sign_pub_keys)
+        } else {
+            tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(transfer_op_data.getString("from")))
+        }
+        return process_transaction(tr, broadcast_to_blockchain = broadcast)
     }
 
     /**

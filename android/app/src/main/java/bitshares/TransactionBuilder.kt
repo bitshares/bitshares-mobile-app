@@ -81,12 +81,12 @@ class TransactionBuilder {
     /**
      * (public) 广播交易到区块链网络
      */
-    fun broadcast(): Promise {
+    fun broadcast(broadcast_to_blockchain: Boolean): Promise {
         if (_tr_buffer != null) {
-            return broadcast_core()
+            return broadcast_core(broadcast_to_blockchain)
         } else {
             return finalize().then {
-                return@then broadcast_core()
+                return@then broadcast_core(broadcast_to_blockchain)
             }
         }
     }
@@ -122,7 +122,7 @@ class TransactionBuilder {
     /**
      * (private) 广播交易 核心
      */
-    private fun broadcast_core(): Promise {
+    private fun broadcast_core(broadcast: Boolean): Promise {
         val p = Promise()
 
         //  1、签名
@@ -141,26 +141,32 @@ class TransactionBuilder {
                 "signatures", _signatures)
         val obj = T_signed_transaction.encode_to_object(opdata)
 
-        //  3、执行广播请求
-        val cc: (Boolean, Any?) -> Boolean = cc@{ success, data ->
-            if (success) {
-                //  REMARK:一定要确保在网络异常的情况下也要回调该callback，否则这里会卡死。
-                p.resolve(data)
-            } else {
-                p.reject("websocket error.")
+        if (broadcast) {
+            //  3、执行广播请求
+            val cc: (Boolean, Any?) -> Boolean = cc@{ success, data ->
+                if (success) {
+                    //  REMARK:一定要确保在网络异常的情况下也要回调该callback，否则这里会卡死。
+                    p.resolve(data)
+                } else {
+                    p.reject("websocket error.")
+                }
+                //  回调之后删除 callback
+                return@cc true
             }
-            //  回调之后删除 callback
-            return@cc true
+
+            val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
+            conn.async_exec_net("broadcast_transaction_with_callback", jsonArrayfrom(cc, obj)).then { data ->
+                //  广播成功，等待网络通知执行 cc 回调。
+//            NSLog(@"broadcast_transaction_with_callback response: %@", data);
+                return@then data
+            }.catch { error ->
+                p.reject(error)
+            }
+        } else {
+            //  直接返回待广播的数据
+            p.resolve(obj)
         }
 
-        val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
-        conn.async_exec_net("broadcast_transaction_with_callback", jsonArrayfrom(cc, obj)).then { data ->
-            //  广播成功，等待网络通知执行 cc 回调。
-//            NSLog(@"broadcast_transaction_with_callback response: %@", data);
-            return@then data
-        }.catch { error ->
-            p.reject(error)
-        }
         return p
     }
 
