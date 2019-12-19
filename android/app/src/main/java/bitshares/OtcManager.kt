@@ -1413,6 +1413,7 @@ class OtcManager {
         val sign_args = args ?: JSONObject()
         sign_args.put("timestamp", timestamp)
         val sign_str = _gen_sign_string(sign_args)
+        sign_args.remove("timestamp")
 
         //  ODO:2.9 不支持任何多签。必须单key 100%权限。active。
         val active_permission = walletMgr.getWalletAccountInfo()!!.getJSONObject("account").getJSONObject("active")

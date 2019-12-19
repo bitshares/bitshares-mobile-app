@@ -46,7 +46,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="添加支付宝"
+                android:text="@string/kVcTitleOtcPmAddAlipay"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
@@ -57,15 +57,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <!-- 姓名 -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="姓名"
+                android:text="@string/kOtcRmAddCellLabelTitleName"
                 android:textSize="12dp"
                 android:textColor="@color/theme01.textColorMain"/>
 
             <EditText
-                android:id="@+id/et_input_realname_from_otc_add_alipay"
+                android:id="@+id/tf_realname"
                 android:singleLine="true"
                 android:maxLines="1"
                 android:layout_width="match_parent"
@@ -73,25 +74,24 @@
                 android:layout_marginTop="10dp"
                 android:textColor="#ffffff"
                 android:textColorHint="@color/theme01.textColorGray"
-                android:hint="请输入姓名"
+                android:hint="@string/kOtcRmAddPlaceholderRealname"
                 android:theme="@style/theme01.EditText"
                 android:background="@null"
                 android:textSize="16dp"/>
 
             <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-
-
+            <!-- 账号 -->
             <TextView
                 android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="账号"
+                android:text="@string/kOtcRmAddCellLabelTitleAccount"
                 android:textSize="12dp"
                 android:textColor="@color/theme01.textColorMain"/>
 
             <EditText
-                android:id="@+id/et_input_account_from_otc_add_alipay"
+                android:id="@+id/tf_account"
                 android:singleLine="true"
                 android:maxLines="1"
                 android:layout_width="match_parent"
@@ -99,7 +99,7 @@
                 android:layout_marginTop="10dp"
                 android:textColor="#ffffff"
                 android:textColorHint="@color/theme01.textColorGray"
-                android:hint="请输入账号"
+                android:hint="@string/kOtcRmAddPlaceholderAccountName"
                 android:theme="@style/theme01.EditText"
                 android:background="@null"
                 android:textSize="16dp"/>
@@ -107,12 +107,13 @@
             <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
 
+            <!-- 提交 -->
             <TextView
                 android:id="@+id/tv_submit_from_otc_add_alipay"
                 android:gravity="center"
                 android:background="@color/theme01.sellColor"
                 android:layout_marginTop="10dp"
-                android:text="提交"
+                android:text="@string/kOtcRmAddSubmitBtnName"
                 android:textColor="@color/theme01.textColorMain"
                 android:textSize="14dp"
                 android:layout_width="match_parent"
