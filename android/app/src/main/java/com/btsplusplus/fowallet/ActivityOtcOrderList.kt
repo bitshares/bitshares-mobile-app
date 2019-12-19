@@ -1,14 +1,11 @@
 package com.btsplusplus.fowallet
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
 import android.view.animation.OvershootInterpolator
-import android.widget.LinearLayout
-import bitshares.forEach
-import kotlinx.android.synthetic.main.activity_otc_merchant_list.*
+import bitshares.OtcManager
 import kotlinx.android.synthetic.main.activity_otc_order_list.*
 import org.json.JSONArray
 import org.json.JSONObject
@@ -20,7 +17,9 @@ class ActivityOtcOrderList : BtsppActivity() {
     private var tablayout: TabLayout? = null
     private var view_pager: ViewPager? = null
 
-    private lateinit var _data: JSONArray
+    private lateinit var _auth_info: JSONObject
+    private var _user_type = OtcManager.EOtcUserType.eout_normal_user
+    private var _curr_select_index = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +29,26 @@ class ActivityOtcOrderList : BtsppActivity() {
         //  设置全屏(隐藏状态栏和虚拟导航栏)
         setFullScreen()
 
+        //  获取参数
+        val args = btspp_args_as_JSONObject()
+        _auth_info = args.getJSONObject("auth_info")
+        _user_type = args.get("user_type") as OtcManager.EOtcUserType
+        _curr_select_index = if (_user_type == OtcManager.EOtcUserType.eout_normal_user) { 0 } else { 1 }
+
+        //  UI - 初始化page bar
+        val pages = findViewById<android.support.design.widget.TabLayout>(R.id.tablayout_of_otc_order_list)
+        if (_user_type == OtcManager.EOtcUserType.eout_normal_user) {
+            pages.removeTabAt(3)
+            pages.getTabAt(0)!!.text = resources.getString(R.string.kOtcOrderPageTitlePending)
+            pages.getTabAt(1)!!.text = resources.getString(R.string.kOtcOrderPageTitleCompleted)
+            pages.getTabAt(2)!!.text = resources.getString(R.string.kOtcOrderPageTitleCancelled)
+        } else {
+            pages.getTabAt(0)!!.text = resources.getString(R.string.kOtcOrderPageTitleAll)
+            pages.getTabAt(1)!!.text = resources.getString(R.string.kOtcOrderPageTitleWaitProcessing)
+            pages.getTabAt(2)!!.text = resources.getString(R.string.kOtcOrderPageTitlePending)
+            pages.getTabAt(3)!!.text = resources.getString(R.string.kOtcOrderPageTitleCompleted)
+        }
+
         //  返回
         layout_back_from_otc_merchant_order_list.setOnClickListener { finish() }
 
@@ -37,53 +56,38 @@ class ActivityOtcOrderList : BtsppActivity() {
         tablayout = tablayout_of_otc_order_list
         view_pager = view_pager_of_otc_order_list
 
-        getData()
-
-        // 添加 fargments
+        //  添加 fargments
         setFragments()
 
-        // 设置 viewPager 并配置滚动速度
+        //  设置 viewPager 并配置滚动速度
         setViewPager()
 
-        // 监听 tab 并设置选中 item
+        //  监听 tab 并设置选中 item
         setTabListener()
 
+        //  查询
+        queryCurrentPageOrders()
     }
 
-    private fun getData(){
-        _data = JSONArray().apply {
-            for (i in 0 until 10) {
-                put(JSONObject().apply {
-                    put("order_type", 1)
-                    put("asset_name", "CNY")
-                    put("time", "2019-12-12T12:12")
-                    put("quantity", 7.76)
-                    put("price", 7.92)
-                    put("legal_symbol", "¥")
-                    put("merchant_name", "吉祥承兑")
-                })
-                put(JSONObject().apply {
-                    put("order_type", 2)
-                    put("asset_name", "GDEX.USDT")
-                    put("time", "2019-12-12T12:12")
-                    put("quantity", 17.76)
-                    put("price", 17.92)
-                    put("legal_symbol", "$")
-                    put("merchant_name", "XX承兑")
-                })
+    private fun queryCurrentPageOrders() {
+        fragmens[_curr_select_index].let {
+            if (it is FragmentOtcOrderList) {
+                it.queryCurrentPageOrders()
             }
         }
     }
-
 
     private fun setViewPager() {
         view_pager!!.adapter = ViewPagerAdapter(super.getSupportFragmentManager(), fragmens)
         val f: Field = ViewPager::class.java.getDeclaredField("mScroller")
         f.isAccessible = true
-        val vpc: ViewPagerScroller = ViewPagerScroller(view_pager!!.context, OvershootInterpolator(0.6f))
+        val vpc = ViewPagerScroller(view_pager!!.context, OvershootInterpolator(0.6f))
         f.set(view_pager, vpc)
         vpc.duration = 700
 
+        //  默认选中
+        tablayout!!.getTabAt(_curr_select_index)!!.select()
+        view_pager!!.currentItem = _curr_select_index
         view_pager!!.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
             }
@@ -99,15 +103,51 @@ class ActivityOtcOrderList : BtsppActivity() {
     }
 
     private fun setFragments() {
-        // todo data 分类筛选
-        fragmens.add(FragmentOtcOrderList().initialize(_data))
-        fragmens.add(FragmentOtcOrderList().initialize(_data))
-        fragmens.add(FragmentOtcOrderList().initialize(_data))
+        if (_user_type == OtcManager.EOtcUserType.eout_normal_user) {
+            fragmens.add(FragmentOtcOrderList().initialize(JSONObject().apply {
+                put("auth_info", _auth_info)
+                put("user_type", _user_type)
+                put("order_status", OtcManager.EOtcOrderStatus.eoos_pending)
+            }))
+            fragmens.add(FragmentOtcOrderList().initialize(JSONObject().apply {
+                put("auth_info", _auth_info)
+                put("user_type", _user_type)
+                put("order_status", OtcManager.EOtcOrderStatus.eoos_completed)
+            }))
+            fragmens.add(FragmentOtcOrderList().initialize(JSONObject().apply {
+                put("auth_info", _auth_info)
+                put("user_type", _user_type)
+                put("order_status", OtcManager.EOtcOrderStatus.eoos_cancelled)
+            }))
+        } else {
+            fragmens.add(FragmentOtcOrderList().initialize(JSONObject().apply {
+                put("auth_info", _auth_info)
+                put("user_type", _user_type)
+                put("order_status", OtcManager.EOtcOrderStatus.eoos_all)
+            }))
+            fragmens.add(FragmentOtcOrderList().initialize(JSONObject().apply {
+                put("auth_info", _auth_info)
+                put("user_type", _user_type)
+                put("order_status", OtcManager.EOtcOrderStatus.eoos_mc_wait_process)
+            }))
+            fragmens.add(FragmentOtcOrderList().initialize(JSONObject().apply {
+                put("auth_info", _auth_info)
+                put("user_type", _user_type)
+                put("order_status", OtcManager.EOtcOrderStatus.eoos_mc_pending)
+            }))
+            fragmens.add(FragmentOtcOrderList().initialize(JSONObject().apply {
+                put("auth_info", _auth_info)
+                put("user_type", _user_type)
+                put("order_status", OtcManager.EOtcOrderStatus.eoos_mc_done)
+            }))
+        }
     }
 
     private fun setTabListener() {
         tablayout!!.setOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
+                _curr_select_index = tab.position
+                queryCurrentPageOrders()
                 view_pager!!.setCurrentItem(tab.position, true)
             }
 
@@ -120,7 +160,6 @@ class ActivityOtcOrderList : BtsppActivity() {
             }
         })
     }
-
 
 
 }

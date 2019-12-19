@@ -1,10 +1,13 @@
 package bitshares
 
 import android.app.Activity
+import android.content.Context
 import com.btsplusplus.fowallet.*
 import com.fowallet.walletcore.bts.WalletManager
 import org.json.JSONArray
 import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.*
 
 class OtcManager {
 
@@ -47,14 +50,12 @@ class OtcManager {
         eoat_digital(2)        //  数字货币
     }
 
-
     /**
      *  商家广告定价类型
      */
     enum class EOtcPriceType(val value: Int) {
         eopt_price_fixed(1),   //  固定价格
     }
-
 
     /**
      *  场外交易账号状态
@@ -105,7 +106,6 @@ class OtcManager {
         eoadt_user_buy(eoadt_merchant_sell.value)    //  用户购买（商家出售）
     }
 
-
     /**
      *  用户订单类型
      */
@@ -131,7 +131,6 @@ class OtcManager {
         eoos_mc_pending(2),        //  商家：进行中
         eoos_mc_done(3),           //  商家：已结束（已完成+已取消）
     }
-
 
     /**
      *  用户订单进度状态，数据库 status 字段。
@@ -204,7 +203,6 @@ class OtcManager {
         eooot_mc_cancel_buy_order(8),          //  用户买单：无法接单
         eooot_mc_confirm_received_money(9),    //  用户买单：确认收款（放行、需要签名）
     }
-
 
     /**
      *  商家：申请进度
@@ -282,65 +280,395 @@ class OtcManager {
          *  (public) 解析 OTC 服务器返回的时间字符串，格式：2019-11-26T13:29:51.000+0000。
          */
         fun parseTime(time: String): Long {
-            //  TODO:2.9 未完成
-            //            NSDateFormatter* dateFormat = [[NSDateFormatter alloc] init];
-            //            [dateFormat setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSZ"];
-            //            [dateFormat setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
-            //            NSDate* date = [dateFormat dateFromString:time];
-            //            return ceil([date timeIntervalSince1970]);
-
-            return 0
+            val f = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+            f.timeZone = java.util.TimeZone.getTimeZone("UTC")
+            val d = f.parse(time)
+            return (d.time / 1000.0).toLong()
         }
-
 
         /**
          *  格式化：场外交易订单列表日期显示格式。REMARK：以当前时区格式化，北京时间当前时区会+8。
          */
         fun fmtOrderListTime(time: String): String {
-            //TODO:2.9 未完成
-            //            NSDateFormatter* dateFormat = [[NSDateFormatter alloc] init];
-            //            [dateFormat setDateFormat:@"MM-dd HH:mm"];
-            //            return [dateFormat stringFromDate:[NSDate dateWithTimeIntervalSince1970:[self parseTime:time]]];
-            return ""
+            val ts = parseTime(time)
+            val d = Date(ts * 1000)
+            val f = SimpleDateFormat("MM-dd HH:mm")
+            return f.format(d)
         }
 
         /**
          *  格式化：场外交易订单详情日期显示格式。REMARK：以当前时区格式化，北京时间当前时区会+8。
          */
         fun fmtOrderDetailTime(time: String): String {
-            //  TODO:2.9 未完成
-            //            NSDateFormatter* dateFormat = [[NSDateFormatter alloc] init];
-            //            [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-            //            return [dateFormat stringFromDate:[NSDate dateWithTimeIntervalSince1970:[self parseTime:time]]];
-            return ""
+            val ts = parseTime(time)
+            val d = Date(ts * 1000)
+            val f = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            return f.format(d)
         }
-
 
         /**
          *  格式化：格式化商家加入日期格式。REMARK：以当前时区格式化，北京时间当前时区会+8。
          */
         fun fmtMerchantTime(time: String): String {
-            //  TODO:2.9 未完成
-            //    NSDateFormatter* dateFormat = [[NSDateFormatter alloc] init];
-            //    [dateFormat setDateFormat:@"yyyy-MM-dd"];
-            //    return [dateFormat stringFromDate:[NSDate dateWithTimeIntervalSince1970:[self parseTime:time]]];
-            return ""
+            val ts = parseTime(time)
+            val d = Date(ts * 1000)
+            val f = SimpleDateFormat("yyyy-MM-dd")
+            return f.format(d)
         }
 
         /**
          *  格式化：场外交易订单倒计时时间。
          */
         fun fmtPaymentExpireTime(left_ts: Int): String {
-            //  TODO:2.9 未完成
-            //    assert(left_ts > 0);
-            //
-            //    int min = (int)(left_ts / 60);
-            //    int sec = (int)(left_ts % 60);
-            //
-            //    return [NSString stringWithFormat:@"%02d:%02d", min, sec];
-            return ""
+            assert(left_ts > 0)
+            val min = left_ts / 60
+            val sec = left_ts % 60
+            return String.format("%02d:%02d", min, sec)
         }
 
+        /**
+         *  (public) 辅助 - 获取收款方式名字图标等。
+         */
+        fun auxGenPaymentMethodInfos(ctx: Context, account: String, type: Int, bankname: String?): JSONObject {
+            var name: String? = null
+            var icon: Int? = null
+            val short_account = account
+
+            when (type) {
+                EOtcPaymentMethodType.eopmt_alipay.value -> {
+                    name = R.string.kOtcAdPmNameAlipay.xmlstring(ctx)
+                    icon = R.drawable.icon_pm_alipay
+                }
+                EOtcPaymentMethodType.eopmt_bankcard.value -> {
+                    name = R.string.kOtcAdPmNameBankCard.xmlstring(ctx)
+                    icon = R.drawable.icon_pm_bankcard
+
+                    name = bankname
+                    if (name == null || name.isEmpty()) {
+                        name = R.string.kOtcAdPmNameBankCard.xmlstring(ctx)
+                    }
+                    //  TODO:2.9
+//                    NSString* card_no = [account stringByReplacingOccurrencesOfString:@" " withString:@""];
+//                    short_account = [card_no substringFromIndex:MAX((NSInteger)card_no.length - 4, 0)];
+                }
+                EOtcPaymentMethodType.eopmt_wechatpay.value -> {
+                    name = R.string.kOtcAdPmNameWechatPay.xmlstring(ctx)
+                    icon = R.drawable.icon_pm_wechat
+                }
+            }
+
+            if (name == null) {
+                name = String.format(R.string.kOtcAdPmUnknownType.xmlstring(ctx), type.toString())
+            }
+
+            if (icon == null) {
+                //  TODO:2.9 default  icon
+                icon = R.drawable.icon_pm_bankcard
+            }
+
+            return JSONObject().apply {
+                put("name", name)
+                put("icon", icon)
+                put("name_with_short_account", "$name($short_account)")
+            }
+        }
+
+        /**
+         *  (private) 场外交易订单流转各种状态信息：用户端看的情况。
+         */
+        private fun _auxGenOtcOrderStatusAndActions_UserSide(ctx: Context, order: JSONObject): JSONObject {
+            val bUserSell = order.getInt("type") == EOtcOrderType.eoot_data_sell.value
+            val status = order.getInt("status")
+            var status_main: String? = null
+            var status_desc: String? = null
+            val actions = JSONArray()
+            var showRemark = false
+            var pending = true
+
+            //  TODO:2.9 状态描述待细化。!!!!
+            if (bUserSell) {
+                //  -- 用户卖币提现
+                when (status) {
+                    EOtcOrderProgressStatus.eoops_new.value -> {
+                        status_main = "待转币"
+                        status_desc = "您已成功下单，请转币。"
+                        //  按钮：联系客服 + 立即转币
+                        actions.put(JSONObject().apply {
+                            put("type", EOtcOrderOperationType.eooot_contact_customer_service)
+                            put("color", ctx.resources.getColor(R.color.theme01_textColorGray))
+                        })
+                        actions.put(JSONObject().apply {
+                            put("type", EOtcOrderOperationType.eooot_transfer)
+                            put("color", ctx.resources.getColor(R.color.theme01_textColorHighlight))
+                        })
+                    }
+                    EOtcOrderProgressStatus.eoops_already_transferred.value -> {
+                        status_main = "已转币"
+                        status_desc = "您已转币，正在等待区块确认。"
+                    }
+                    EOtcOrderProgressStatus.eoops_already_confirmed.value -> {
+                        status_main = "待收款"
+                        status_desc = "区块已确认转币，等待商家付款。"
+                    }
+                    EOtcOrderProgressStatus.eoops_already_paid.value -> {
+                        status_main = "请放行"               // 商家已付款(请放行) 申诉 + 确认收款(放行操作需二次确认)
+                        status_desc = "请查收对方付款，未收到请勿放行。"
+                        //  按钮：联系客服 + 放行XXX资产
+                        actions.put(JSONObject().apply {
+                            put("type", EOtcOrderOperationType.eooot_contact_customer_service)
+                            put("color", ctx.resources.getColor(R.color.theme01_textColorGray))
+                        })
+                        actions.put(JSONObject().apply {
+                            put("type", EOtcOrderOperationType.eooot_confirm_received_money)
+                            put("color", ctx.resources.getColor(R.color.theme01_textColorHighlight))
+                        })
+                    }
+                    EOtcOrderProgressStatus.eoops_completed.value -> {
+                        status_main = "已完成"
+                        status_desc = "订单已完成。"
+                        pending = false
+                    }
+                    EOtcOrderProgressStatus.eoops_chain_failed.value -> {
+                        status_main = "异常中"
+                        status_desc = "区块确认异常，请联系客服。"
+                        //  按钮：联系客服
+                        actions.put(JSONObject().apply {
+                            put("type", EOtcOrderOperationType.eooot_contact_customer_service)
+                            put("color", ctx.resources.getColor(R.color.theme01_textColorGray))
+                        })
+                    }
+                    EOtcOrderProgressStatus.eoops_return_assets.value -> {
+                        status_main = "退币中"
+                        status_desc = "商家无法接单，退币处理中。"
+                    }
+                    EOtcOrderProgressStatus.eoops_cancelled.value -> {
+                        status_main = "已取消"
+                        status_desc = "订单已取消。"
+                        pending = false
+                    }
+                }   //  end when
+            } else {
+                //  -- 用户充值买币
+                when (status) {
+                    EOtcOrderProgressStatus.eoops_new.value -> {
+                        status_main = "待付款"       // 已下单(待付款)     取消 + 确认付款
+                        status_desc = "请尽快付款给卖家。"
+                        showRemark = true
+                        //  按钮：取消订单 + 确认付款
+                        actions.put(JSONObject().apply {
+                            put("type", EOtcOrderOperationType.eooot_cancel_order)
+                            put("color", ctx.resources.getColor(R.color.theme01_textColorGray))
+                        })
+                        actions.put(JSONObject().apply {
+                            put("type", EOtcOrderOperationType.eooot_confirm_paid)
+                            put("color", ctx.resources.getColor(R.color.theme01_textColorHighlight))
+                        })
+                    }
+                    EOtcOrderProgressStatus.eoops_already_paid.value -> {
+                        status_main = "待收币"       // 已付款(待收币)
+                        status_desc = "您已付款，请等待商家确认并放币。"
+                    }
+                    EOtcOrderProgressStatus.eoops_already_transferred.value -> {
+                        status_main = "已转币"       //  已转币
+                        status_desc = "商家已转币，正在等待区块确认。"
+                    }
+                    EOtcOrderProgressStatus.eoops_already_confirmed.value -> {
+                        status_main = "已收币"       //  已收币 REMARK：这是中间状态，会自动跳转到已完成。
+                        status_desc = "商家转币已确认，请查收。"
+                    }
+                    EOtcOrderProgressStatus.eoops_completed.value -> {
+                        status_main = "已完成"
+                        status_desc = "订单已完成。"
+                        pending = false
+                    }
+                    EOtcOrderProgressStatus.eoops_refunded.value -> {
+                        status_main = "已退款"
+                        status_desc = "商家无法接单，已退款，请查收退款。"
+                        //  按钮：联系客服 + 我已收到退款（取消订单）
+                        actions.put(JSONObject().apply {
+                            put("type", EOtcOrderOperationType.eooot_contact_customer_service)
+                            put("color", ctx.resources.getColor(R.color.theme01_textColorGray))
+                        })
+                        actions.put(JSONObject().apply {
+                            put("type", EOtcOrderOperationType.eooot_confirm_received_refunded)
+                            put("color", ctx.resources.getColor(R.color.theme01_textColorHighlight))
+                        })
+                    }
+                    EOtcOrderProgressStatus.eoops_chain_failed.value -> {
+                        status_main = "异常中"
+                        status_desc = "区块确认异常，请联系客服。"
+                        //  按钮：联系客服
+                        actions.put(JSONObject().apply {
+                            put("type", EOtcOrderOperationType.eooot_contact_customer_service)
+                            put("color", ctx.resources.getColor(R.color.theme01_textColorGray))
+                        })
+                    }
+                    EOtcOrderProgressStatus.eoops_cancelled.value -> {
+                        status_main = "已取消"
+                        status_desc = "订单已取消。"
+                        pending = false
+                    }
+                }   //  end when
+            }
+
+            if (status_main == null) {
+                status_main = "未知状态 $status"
+            }
+            if (status_desc == null) {
+                status_desc = "未知状态 $status"
+            }
+
+            //  返回数据
+            return JSONObject().apply {
+                put("main", status_main)
+                put("desc", status_desc)
+                put("actions", actions)
+                put("sell", bUserSell)
+                put("phone", order.optString("phone"))
+                put("show_remark", showRemark)
+                put("pending", pending)
+            }
+        }
+
+        /**
+         *  (private) 场外交易订单流转各种状态信息：商家端看的情况。
+         */
+        private fun _auxGenOtcOrderStatusAndActions_MerchantSide(ctx: Context, order: JSONObject): JSONObject {
+            val bUserSell = order.getInt("type") == EOtcOrderType.eoot_data_sell.value
+            val status = order.getInt("status")
+            var status_main: String? = null
+            var status_desc: String? = null
+            val actions = JSONArray()
+            val showRemark = false
+            var pending = true
+
+            //  TODO:2.9 状态描述待细化。!!!!
+            if (bUserSell) {
+                //  -- 用户卖币提现
+                when (status) {
+                    EOtcOrderProgressStatus.eoops_new.value -> {
+                        status_main = "待收币"
+                        status_desc = "用户已下单，等待用户转币。"
+                    }
+                    EOtcOrderProgressStatus.eoops_already_transferred.value -> {
+                        status_main = "已转币"
+                        status_desc = "用户已转币，正在等待区块确认。"
+                    }
+                    EOtcOrderProgressStatus.eoops_already_confirmed.value -> {
+                        status_main = "请付款"               //  区块已确认(请付款) 【商家】
+                        status_desc = "区块已确认转币，请付款给用户。"
+                        //  按钮：无法接(卖)单 + 确认付款
+                        actions.put(JSONObject().apply {
+                            put("type", EOtcOrderOperationType.eooot_mc_cancel_sell_order)
+                            put("color", ctx.resources.getColor(R.color.theme01_textColorGray))
+                        })
+                        actions.put(JSONObject().apply {
+                            put("type", EOtcOrderOperationType.eooot_mc_confirm_paid)
+                            put("color", ctx.resources.getColor(R.color.theme01_textColorHighlight))
+                        })
+                    }
+                    EOtcOrderProgressStatus.eoops_already_paid.value -> {
+                        status_main = "待放行"               // 商家已付款（等待用户确认放行）
+                        status_desc = "您已付款，等待用户放行。"
+                    }
+                    EOtcOrderProgressStatus.eoops_completed.value -> {
+                        status_main = "已完成"
+                        status_desc = "订单已完成。"
+                        pending = false
+                    }
+                    EOtcOrderProgressStatus.eoops_chain_failed.value -> {
+                        status_main = "异常中"
+                        status_desc = "区块确认异常。"
+                    }
+                    EOtcOrderProgressStatus.eoops_return_assets.value -> {
+                        status_main = "退币中"
+                        status_desc = "您无法接单，平台退币中。"
+                    }
+                    EOtcOrderProgressStatus.eoops_cancelled.value -> {
+                        status_main = "已取消"
+                        status_desc = "订单已取消。"
+                        pending = false
+                    }
+                }   //  end when
+            } else {
+                //  -- 用户充值买币
+                when (status) {
+                    EOtcOrderProgressStatus.eoops_new.value -> {
+                        status_main = "待收款"
+                        status_desc = "用户已下单，等待用户付款。"
+                    }
+                    EOtcOrderProgressStatus.eoops_already_paid.value -> {
+                        //  DONE!!!
+                        status_main = "请放行"
+                        status_desc = "用户已付款，请确认并放币。"
+                        //  按钮：无法接(买)单 + 放行资产
+                        actions.put(JSONObject().apply {
+                            put("type", EOtcOrderOperationType.eooot_mc_cancel_buy_order)
+                            put("color", ctx.resources.getColor(R.color.theme01_textColorGray))
+                        })
+                        actions.put(JSONObject().apply {
+                            put("type", EOtcOrderOperationType.eooot_mc_confirm_received_money)
+                            put("color", ctx.resources.getColor(R.color.theme01_textColorHighlight))
+                        })
+                    }
+                    EOtcOrderProgressStatus.eoops_already_transferred.value -> {
+                        status_main = "已转币"       //  已转币
+                        status_desc = "您已放行，平台处理中。"
+                    }
+                    EOtcOrderProgressStatus.eoops_already_confirmed.value -> {
+                        status_main = "已转币"       //  已收币 REMARK：这是中间状态，会自动跳转到已完成。
+                        status_desc = "平台已验证，区块确认中。"
+                    }
+                    EOtcOrderProgressStatus.eoops_completed.value -> {
+                        status_main = "已完成"
+                        status_desc = "订单已完成。"
+                        pending = false
+                    }
+                    EOtcOrderProgressStatus.eoops_refunded.value -> {
+                        status_main = "已退款"
+                        status_desc = "您已退款，等待用户确认。"
+                    }
+                    EOtcOrderProgressStatus.eoops_chain_failed.value -> {
+                        status_main = "异常中"
+                        status_desc = "区块确认异常"
+                    }
+                    EOtcOrderProgressStatus.eoops_cancelled.value -> {
+                        status_main = "已取消"
+                        status_desc = "订单已取消。"
+                        pending = false
+                    }
+                }   //  end when
+            }
+
+            if (status_main == null) {
+                status_main = "未知状态 $status"
+            }
+            if (status_desc == null) {
+                status_desc = "未知状态 $status"
+            }
+
+            //  返回数据
+            return JSONObject().apply {
+                put("main", status_main)
+                put("desc", status_desc)
+                put("actions", actions)
+                put("sell", bUserSell)
+                put("phone", order.optString("phone"))
+                put("show_remark", showRemark)
+                put("pending", pending)
+            }
+        }
+
+        /**
+         *  (public) 辅助 - 根据订单当前状态获取主状态、状态描述、以及可操作按钮等信息。
+         */
+        fun auxGenOtcOrderStatusAndActions(ctx: Context, order: JSONObject, user_type: EOtcUserType): JSONObject {
+            return if (user_type == EOtcUserType.eout_normal_user) {
+                _auxGenOtcOrderStatusAndActions_UserSide(ctx, order)
+            } else {
+                _auxGenOtcOrderStatusAndActions_MerchantSide(ctx, order)
+            }
+        }
     }
 
     private var _base_api = "http://otc-api.gdex.vip"       //  TODO:2.9 test url
@@ -348,399 +676,10 @@ class OtcManager {
     private var _asset_list_digital: JSONArray? = null      //  支持的数字资产列表
     private var _cache_merchant_detail: JSONObject? = null  //  商家信息（如果进入场外交易使用缓存，进入商家每次都刷新。）
 
-//
-///*
-// *  (public) 辅助 - 获取收款方式名字图标等。
-// */
-//    + (NSDictionary*)auxGenPaymentMethodInfos:(NSString*)account type:(id)type bankname:(NSString*)bankname
-//    {
-//        assert(account);
-//        assert(type);
-//
-//        NSString* name = nil;
-//        NSString* icon = nil;
-//        NSString* short_account = account;
-//
-//        switch ([type integerValue]) {
-//            case eopmt_alipay:
-//            {
-//                name = NSLocalizedString(@"kOtcAdPmNameAlipay", @"支付宝");
-//                icon = @"iconPmAlipay";
-//            }
-//            break;
-//            case eopmt_bankcard:
-//            {
-//                icon = @"iconPmBankCard";
-//                name = bankname;
-//                if (!name || [bankname isEqualToString:@""]) {
-//                name = NSLocalizedString(@"kOtcAdPmNameBankCard", @"银行卡");
-//            }
-//                NSString* card_no = [account stringByReplacingOccurrencesOfString:@" " withString:@""];
-//                short_account = [card_no substringFromIndex:MAX((NSInteger)card_no.length - 4, 0)];
-//            }
-//            break;
-//            case eopmt_wechatpay:
-//            {
-//                icon = @"iconPmWechat";
-//                name = NSLocalizedString(@"kOtcAdPmNameWechatPay", @"微信支付");
-//            }
-//            break;
-//            default:
-//            break;
-//        }
-//        if (!name) {
-//            name = [NSString stringWithFormat:NSLocalizedString(@"kOtcAdPmUnknownType", @"未知收款方式%@"), type];
-//        }
-//        if (!icon) {
-//            icon = @"iconPmBankCard";//TODO:2.9 default  icon
-//        }
-//        return @{@"name":name, @"icon":icon, @"name_with_short_account":[NSString stringWithFormat:@"%@(%@)", name, short_account]};
-//    }
-//
-///*
-// *  (private) 场外交易订单流转各种状态信息：用户端看的情况。
-// */
-//    + (NSDictionary*)_auxGenOtcOrderStatusAndActions_UserSide:(id)order
-//    {
-//        assert(order);
-//        ThemeManager* theme = [ThemeManager sharedThemeManager];
-//        BOOL bUserSell = [[order objectForKey:@"type"] integerValue] == eoot_data_sell;
-//        NSInteger status = [[order objectForKey:@"status"] integerValue];
-//        NSString* status_main = nil;
-//        NSString* status_desc = nil;
-//        NSMutableArray* actions = [NSMutableArray array];
-//        BOOL showRemark = NO;
-//        BOOL pending = YES;
-//        //  TODO:2.9 状态描述待细化。!!!!
-//        if (bUserSell) {
-//            //  -- 用户卖币提现
-//            switch (status) {
-//                //  正常流程
-//                case eoops_new:
-//                {
-//                    status_main = @"待转币";               //  已下单(待转币)     正常情况下单自动转币、转币操作需二次确认
-//                    status_desc = @"您已成功下单，请转币。";
-//                    //  按钮：联系客服 + 立即转币
-//                    [actions addObject:@{@"type":@(eooot_contact_customer_service), @"color":theme.textColorGray}];
-//                    [actions addObject:@{@"type":@(eooot_transfer), @"color":theme.textColorHighlight}];
-//                }
-//                break;
-//                case eoops_already_transferred:
-//                {
-//                    status_main = @"已转币";               //  已转币(待处理)
-//                    status_desc = @"您已转币，正在等待区块确认。";
-//                }
-//                break;
-//                case eoops_already_confirmed:
-//                {
-//                    status_main = @"待收款";               //  区块已确认(待收款)
-//                    status_desc = @"区块已确认转币，等待商家付款。";
-//                }
-//                break;
-//                case eoops_already_paid:
-//                {
-//                    status_main = @"请放行";               // 商家已付款(请放行) 申诉 + 确认收款(放行操作需二次确认)
-//                    status_desc = @"请查收对方付款，未收到请勿放行。";
-//                    //  按钮：联系客服 + 放行XXX资产
-//                    [actions addObject:@{@"type":@(eooot_contact_customer_service), @"color":theme.textColorGray}];
-//                    [actions addObject:@{@"type":@(eooot_confirm_received_money), @"color":theme.textColorHighlight}];
-//                }
-//                break;
-//                case eoops_completed:
-//                {
-//                    status_main = @"已完成";
-//                    status_desc = @"订单已完成。";
-//                    pending = NO;
-//                }
-//                break;
-//                //  异常流程
-//                case eoops_chain_failed:
-//                {
-//                    status_main = @"异常中";
-//                    status_desc = @"区块确认异常，请联系客服。";
-//                    //  按钮：联系客服
-//                    [actions addObject:@{@"type":@(eooot_contact_customer_service), @"color":theme.textColorGray}];
-//                }
-//                break;
-//                case eoops_return_assets:
-//                {
-//                    status_main = @"退币中";
-//                    status_desc = @"商家无法接单，退币处理中。";
-//                }
-//                break;
-//                case eoops_cancelled:
-//                {
-//                    status_main = @"已取消";
-//                    status_desc = @"订单已取消。";
-//                    pending = NO;
-//                }
-//                break;
-//                default:
-//                break;
-//            }
-//        } else {
-//            //  -- 用户充值买币
-//            switch (status) {
-//                //  正常流程
-//                case eoops_new:
-//                {
-//                    status_main = @"待付款";       // 已下单(待付款)     取消 + 确认付款
-//                    status_desc = @"请尽快付款给卖家。";
-//                    showRemark = YES;
-//                    //  按钮：取消订单 + 确认付款
-//                    [actions addObject:@{@"type":@(eooot_cancel_order), @"color":theme.textColorGray}];
-//                    [actions addObject:@{@"type":@(eooot_confirm_paid), @"color":theme.textColorHighlight}];
-//                }
-//                break;
-//                case eoops_already_paid:
-//                {
-//                    status_main = @"待收币";       // 已付款(待收币)
-//                    status_desc = @"您已付款，请等待商家确认并放币。";
-//                }
-//                break;
-//                case eoops_already_transferred:
-//                {
-//                    status_main = @"已转币";       //  已转币
-//                    status_desc = @"商家已转币，正在等待区块确认。";
-//                }
-//                break;
-//                case eoops_already_confirmed:
-//                {
-//                    status_main = @"已收币";       //  已收币 REMARK：这是中间状态，会自动跳转到已完成。
-//                    status_desc = @"商家转币已确认，请查收。";
-//                    break;
-//                }
-//                case eoops_completed:
-//                {
-//                    status_main = @"已完成";
-//                    status_desc = @"订单已完成。";
-//                    pending = NO;
-//                }
-//                break;
-//                //  异常流程
-//                case eoops_refunded:
-//                {
-//                    status_main = @"已退款";
-//                    status_desc = @"商家无法接单，已退款，请查收退款。";
-//                    //  按钮：联系客服 + 我已收到退款（取消订单）
-//                    [actions addObject:@{@"type":@(eooot_contact_customer_service), @"color":theme.textColorGray}];
-//                    [actions addObject:@{@"type":@(eooot_confirm_received_refunded), @"color":theme.textColorHighlight}];
-//                }
-//                break;
-//                case eoops_chain_failed:
-//                {
-//                    status_main = @"异常中";
-//                    status_desc = @"区块确认异常，请联系客服。";
-//                    //  按钮：联系客服
-//                    [actions addObject:@{@"type":@(eooot_contact_customer_service), @"color":theme.textColorGray}];
-//                }
-//                break;
-//                case eoops_cancelled:
-//                {
-//                    status_main = @"已取消";
-//                    status_desc = @"订单已取消。";
-//                    pending = NO;
-//                }
-//                break;
-//                default:
-//                break;
-//            }
-//        }
-//        if (!status_main) {
-//            status_main = [NSString stringWithFormat:@"未知状态 %@", @(status)];
-//        }
-//        if (!status_desc) {
-//            status_desc = [NSString stringWithFormat:@"未知状态 %@", @(status)];
-//        }
-//
-//        //  返回数据
-//        return @{@"main":status_main, @"desc":status_desc,
-//            @"actions":actions, @"sell":@(bUserSell),
-//            @"phone":order[@"phone"] ?: @"",
-//            @"show_remark":@(showRemark), @"pending":@(pending)};
-//    }
-//
-///*
-// *  (private) 场外交易订单流转各种状态信息：商家端看的情况。
-// */
-//    + (NSDictionary*)_auxGenOtcOrderStatusAndActions_MerchantSide:(id)order
-//    {
-//        assert(order);
-//        ThemeManager* theme = [ThemeManager sharedThemeManager];
-//        BOOL bUserSell = [[order objectForKey:@"type"] integerValue] == eoot_data_sell;
-//        NSInteger status = [[order objectForKey:@"status"] integerValue];
-//        NSString* status_main = nil;
-//        NSString* status_desc = nil;
-//        NSMutableArray* actions = [NSMutableArray array];
-//        BOOL showRemark = NO;
-//        BOOL pending = YES;
-//        //  TODO:2.9 状态描述待细化。!!!!
-//        if (bUserSell) {
-//            //  -- 用户卖币提现
-//            switch (status) {
-//                //  正常流程
-//                case eoops_new:
-//                {
-//                    //  DONE!!!
-//                    status_main = @"待收币";
-//                    status_desc = @"用户已下单，等待用户转币。";
-//                }
-//                break;
-//                case eoops_already_transferred:
-//                {
-//                    //  DONE!!!
-//                    status_main = @"已转币";
-//                    status_desc = @"用户已转币，正在等待区块确认。";
-//                }
-//                break;
-//                case eoops_already_confirmed:
-//                {
-//                    //  DONE!!!
-//                    status_main = @"请付款";               //  区块已确认(请付款) 【商家】
-//                    status_desc = @"区块已确认转币，请付款给用户。";
-//                    //  按钮：无法接(卖)单 + 确认付款
-//                    [actions addObject:@{@"type":@(eooot_mc_cancel_sell_order), @"color":theme.textColorGray}];
-//                    [actions addObject:@{@"type":@(eooot_mc_confirm_paid), @"color":theme.textColorHighlight}];
-//                }
-//                break;
-//                case eoops_already_paid:
-//                {
-//                    //  DONE!!!
-//                    status_main = @"待放行";               // 商家已付款（等待用户确认放行）
-//                    status_desc = @"您已付款，等待用户放行。";
-//                }
-//                break;
-//                case eoops_completed:
-//                {
-//                    //  DONE!!!
-//                    status_main = @"已完成";
-//                    status_desc = @"订单已完成。";
-//                    pending = NO;
-//                }
-//                break;
-//                //  异常流程
-//                case eoops_chain_failed:
-//                {
-//                    //  DONE!!!
-//                    status_main = @"异常中";
-//                    status_desc = @"区块确认异常。";
-//                }
-//                break;
-//                case eoops_return_assets:
-//                {
-//                    //  DONE!!!
-//                    status_main = @"退币中";
-//                    status_desc = @"您无法接单，平台退币中。";
-//                }
-//                break;
-//                case eoops_cancelled:
-//                {
-//                    //  DONE!!!
-//                    status_main = @"已取消";
-//                    status_desc = @"订单已取消。";
-//                    pending = NO;
-//                }
-//                break;
-//                default:
-//                break;
-//            }
-//        } else {
-//            //  -- 用户充值买币
-//            switch (status) {
-//                //  正常流程
-//                case eoops_new:
-//                {
-//                    //  DONE!!!
-//                    status_main = @"待收款";
-//                    status_desc = @"用户已下单，等待用户付款。";
-//                }
-//                break;
-//                case eoops_already_paid:
-//                {
-//                    //  DONE!!!
-//                    status_main = @"请放行";
-//                    status_desc = @"用户已付款，请确认并放币。";
-//                    //  按钮：无法接(买)单 + 放行资产
-//                    [actions addObject:@{@"type":@(eooot_mc_cancel_buy_order), @"color":theme.textColorGray}];
-//                    [actions addObject:@{@"type":@(eooot_mc_confirm_received_money), @"color":theme.textColorHighlight}];
-//                }
-//                break;
-//                case eoops_already_transferred:
-//                {
-//                    //  DONE!!!
-//                    status_main = @"已转币";       //  已转币
-//                    status_desc = @"您已放行，平台处理中。";
-//                }
-//                break;
-//                case eoops_already_confirmed:
-//                {
-//                    //  DONE!!!
-//                    status_main = @"已转币";       //  已收币 REMARK：这是中间状态，会自动跳转到已完成。
-//                    status_desc = @"平台已验证，区块确认中。";
-//                    break;
-//                }
-//                case eoops_completed:
-//                {
-//                    //  DONE!!!
-//                    status_main = @"已完成";
-//                    status_desc = @"订单已完成。";
-//                    pending = NO;
-//                }
-//                break;
-//                //  异常流程
-//                case eoops_refunded:
-//                {
-//                    //  DONE!!!
-//                    status_main = @"已退款";
-//                    status_desc = @"您已退款，等待用户确认。";
-//                }
-//                break;
-//                case eoops_chain_failed:
-//                {
-//                    //  DONE!!!
-//                    status_main = @"异常中";
-//                    status_desc = @"区块确认异常";
-//                }
-//                break;
-//                case eoops_cancelled:
-//                {
-//                    //  DONE!!!
-//                    status_main = @"已取消";
-//                    status_desc = @"订单已取消。";
-//                    pending = NO;
-//                }
-//                break;
-//                default:
-//                break;
-//            }
-//        }
-//        if (!status_main) {
-//            status_main = [NSString stringWithFormat:@"未知状态 %@", @(status)];
-//        }
-//        if (!status_desc) {
-//            status_desc = [NSString stringWithFormat:@"未知状态 %@", @(status)];
-//        }
-//
-//        //  返回数据
-//        return @{@"main":status_main, @"desc":status_desc,
-//            @"actions":actions, @"sell":@(bUserSell),
-//            @"phone":order[@"phone"] ?: @"",
-//            @"show_remark":@(showRemark), @"pending":@(pending)};
-//    }
-//
-//
-///*
-// *  (public) 辅助 - 根据订单当前状态获取主状态、状态描述、以及可操作按钮等信息。
-// */
-//    + (NSDictionary*)auxGenOtcOrderStatusAndActions:(id)order user_type:(EOtcUserType)user_type
-//    {
-//        if (user_type == eout_normal_user) {
-//            return [self _auxGenOtcOrderStatusAndActions_UserSide:order];
-//        } else {
-//            return [self _auxGenOtcOrderStatusAndActions_MerchantSide:order];
-//        }
-//    }
-//
+    fun asset_list_digital(): JSONArray {
+        return _asset_list_digital!!
+    }
+
     /**
      *  (public) 当前账号名
      */
@@ -857,8 +796,10 @@ class OtcManager {
             }
 
             //  转到场外交易界面
-            //  TODO:2.9 args asset name, ad type
-            ctx.goTo(ActivityOtcMerchantList::class.java, true)
+            ctx.goTo(ActivityOtcMerchantList::class.java, true, args = JSONObject().apply {
+                put("asset_name", asset_name)
+                put("ad_type", ad_type)
+            })
             return@then null
         }.catch { err ->
             mask.dismiss()

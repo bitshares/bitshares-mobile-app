@@ -7,19 +7,21 @@ import android.view.Gravity
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import bitshares.Utils
+import bitshares.OtcManager
 import bitshares.dp
-import bitshares.forEach
+import bitshares.xmlstring
 import org.json.JSONObject
 
-class ViewOtcMerchantOrderCell  : LinearLayout {
+class ViewOtcMerchantOrderCell : LinearLayout {
 
-    var _ctx: Context
-    var _data: JSONObject
+    private var _ctx: Context
+    private var _data: JSONObject
+    private var _user_type: OtcManager.EOtcUserType
 
-    constructor(ctx: Context, data: JSONObject) : super(ctx) {
+    constructor(ctx: Context, data: JSONObject, user_type: OtcManager.EOtcUserType) : super(ctx) {
         _ctx = ctx
         _data = data
+        _user_type = user_type
         createUI()
     }
 
@@ -27,10 +29,14 @@ class ViewOtcMerchantOrderCell  : LinearLayout {
         val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 24.dp)
         layout_params.gravity = Gravity.CENTER_VERTICAL
 
+        val status_infos = OtcManager.auxGenOtcOrderStatusAndActions(_ctx, _data, _user_type)
+        val prefix = if (_user_type == OtcManager.EOtcUserType.eout_normal_user) "" else "用户"//:TODO:2.9
+        val pending = status_infos.optBoolean("pending")
+
         val layout_wrap = LinearLayout(_ctx)
         layout_wrap.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         layout_wrap.orientation = LinearLayout.VERTICAL
-        layout_wrap.setPadding(0,0,0,10.dp)
+        layout_wrap.setPadding(0, 0, 0, 10.dp)
 
         // 第一行 商家图标 商家名称 交易总数|成交比
         val ly1 = LinearLayout(_ctx).apply {
@@ -43,12 +49,11 @@ class ViewOtcMerchantOrderCell  : LinearLayout {
                 gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
 
                 addView(TextView(_ctx).apply {
-                    val order_type = _data.getInt("order_type")
-                    if (order_type == 1) {
-                        text = "购买"
+                    if (!status_infos.optBoolean("sell")) {
+                        text = "$prefix${R.string.kOtcOrderCellTitleBuy.xmlstring(_ctx)}"
                         setTextColor(_ctx.resources.getColor(R.color.theme01_buyColor))
                     } else {
-                        text = "出售"
+                        text = "$prefix${R.string.kOtcOrderCellTitleSell.xmlstring(_ctx)}"
                         setTextColor(_ctx.resources.getColor(R.color.theme01_sellColor))
                     }
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15.0f)
@@ -56,11 +61,11 @@ class ViewOtcMerchantOrderCell  : LinearLayout {
                 })
 
                 addView(TextView(_ctx).apply {
-                    text = _data.getString("asset_name")
+                    text = _data.getString("assetSymbol")
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15.0f)
                     setTextColor(resources.getColor(R.color.theme01_textColorMain))
                     gravity = Gravity.CENTER
-                    setPadding(5.dp,0,0,0)
+                    setPadding(5.dp, 0, 0, 0)
                 })
             })
             // 右边
@@ -71,24 +76,28 @@ class ViewOtcMerchantOrderCell  : LinearLayout {
                 gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
 
                 addView(TextView(_ctx).apply {
-                    text = "退款已确认"
+                    text = "${status_infos.getString("main")} >"
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
-                    setTextColor(_ctx.resources.getColor(R.color.theme01_textColorGray))
+                    if (pending) {
+                        setTextColor(_ctx.resources.getColor(R.color.theme01_textColorHighlight))
+                    } else {
+                        setTextColor(_ctx.resources.getColor(R.color.theme01_textColorGray))
+                    }
                     gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
                 })
 
-                val iv = ImageView(_ctx).apply {
-                    scaleType = ImageView.ScaleType.FIT_END
-                    setImageDrawable(resources.getDrawable(R.drawable.ic_btn_right_arrow))
-                    gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
-                    setColorFilter(resources.getColor(R.color.theme01_textColorGray))
-                }
+//                val iv = ImageView(_ctx).apply {
+//                    scaleType = ImageView.ScaleType.FIT_END
+//                    setImageDrawable(resources.getDrawable(R.drawable.ic_btn_right_arrow))
+//                    gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
+//                    setColorFilter(resources.getColor(R.color.theme01_textColorGray))
+//                }
 
-                setOnClickListener {
-                    onOrderClicked()
-                }
+//                setOnClickListener {
+//                    onOrderClicked()
+//                }
 
-                addView(iv)
+//                addView(iv)
             })
         }
 
@@ -103,7 +112,7 @@ class ViewOtcMerchantOrderCell  : LinearLayout {
                 gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
 
                 addView(TextView(_ctx).apply {
-                    text = "时间"
+                    text = R.string.kLabelTradeHisTitleTime.xmlstring(_ctx)
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
                     setTextColor(_ctx.resources.getColor(R.color.theme01_textColorGray))
                     gravity = Gravity.LEFT
@@ -115,7 +124,7 @@ class ViewOtcMerchantOrderCell  : LinearLayout {
                 gravity = Gravity.CENTER_VERTICAL or Gravity.CENTER
 
                 addView(TextView(_ctx).apply {
-                    text = "数量${_data.getString("asset_name")}"
+                    text = "${R.string.kLabelTradeHisTitleAmount.xmlstring(_ctx)}(${_data.getString("assetSymbol")})"
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
                     setTextColor(_ctx.resources.getColor(R.color.theme01_textColorGray))
                     gravity = Gravity.CENTER
@@ -128,7 +137,7 @@ class ViewOtcMerchantOrderCell  : LinearLayout {
                 gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
 
                 addView(TextView(_ctx).apply {
-                    text = "总金额${_data.getString("legal_symbol")}"
+                    text = "${R.string.kVcOrderTotal.xmlstring(_ctx)}(${_data.getString("legalCurrencySymbol")})"
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
                     setTextColor(_ctx.resources.getColor(R.color.theme01_textColorGray))
                 })
@@ -147,7 +156,7 @@ class ViewOtcMerchantOrderCell  : LinearLayout {
                 gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
 
                 addView(TextView(_ctx).apply {
-                    text = _data.getString("time")
+                    text = OtcManager.fmtOrderListTime(_data.getString("ctime"))
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11.0f)
                     setTextColor(_ctx.resources.getColor(R.color.theme01_textColorNormal))
                     gravity = Gravity.LEFT
@@ -172,7 +181,7 @@ class ViewOtcMerchantOrderCell  : LinearLayout {
                 gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
 
                 addView(TextView(_ctx).apply {
-                    text = _data.getString("price")
+                    text = _data.getString("amount")
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11.0f)
                     setTextColor(_ctx.resources.getColor(R.color.theme01_textColorNormal))
                 })
@@ -187,7 +196,11 @@ class ViewOtcMerchantOrderCell  : LinearLayout {
 
             // 左边
             addView(TextView(_ctx).apply {
-                text = _data.getString("merchant_name")
+                text = if (_user_type == OtcManager.EOtcUserType.eout_normal_user) {
+                    _data.getString("merchantNickname")
+                } else {
+                    _data.getString("userAccount")
+                }
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.0f)
                 setTextColor(_ctx.resources.getColor(R.color.theme01_textColorMain))
                 gravity = Gravity.LEFT
@@ -202,10 +215,6 @@ class ViewOtcMerchantOrderCell  : LinearLayout {
 
         addView(layout_wrap)
         return this
-    }
-
-    private fun onOrderClicked(){
-        (_ctx as Activity).goTo(ActivityOtcOrderDetails::class.java,true)
     }
 
 }

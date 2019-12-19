@@ -14,6 +14,7 @@
         android:layout_marginTop="25dp"
         android:orientation="vertical">
 
+        <!-- 导航栏 TODO:2.9 lang title -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -171,7 +172,7 @@
                         android:layout_marginLeft="5dp"
                         android:textSize="14dp"
                         android:textColor="@color/theme01.textColorMain"
-                        android:text="商家资产"/>
+                        android:text="@string/kOtcMcHomeCellLabelTitleAsset"/>
 
                     <LinearLayout
                         android:gravity="center_vertical|right"
@@ -217,7 +218,7 @@
                         android:layout_marginLeft="5dp"
                         android:textSize="14dp"
                         android:textColor="@color/theme01.textColorMain"
-                        android:text="商家广告"/>
+                        android:text="@string/kOtcMcHomeCellLabelTitleAd"/>
 
                     <LinearLayout
                         android:gravity="center_vertical|right"
@@ -263,7 +264,7 @@
                         android:layout_marginLeft="5dp"
                         android:textSize="14dp"
                         android:textColor="@color/theme01.textColorMain"
-                        android:text="商家订单"/>
+                        android:text="@string/kOtcMcHomeCellLabelTitleOrder"/>
 
                     <LinearLayout
                         android:gravity="center_vertical|right"
@@ -309,7 +310,7 @@
                         android:layout_marginLeft="5dp"
                         android:textSize="14dp"
                         android:textColor="@color/theme01.textColorMain"
-                        android:text="收款方式"/>
+                        android:text="@string/kOtcMcHomeCellLabelTitleReceiveMethod"/>
 
                     <LinearLayout
                         android:gravity="center_vertical|right"
@@ -357,7 +358,7 @@
                         android:layout_marginLeft="5dp"
                         android:textSize="14dp"
                         android:textColor="@color/theme01.textColorMain"
-                        android:text="付款方式"/>
+                        android:text="@string/kOtcMcHomeCellLabelTitlePaymentMethod"/>
 
                     <LinearLayout
                         android:gravity="center_vertical|right"

@@ -47,7 +47,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="认证信息"
+                android:text="@string/kVcTitleOtcAuthInfos"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
@@ -58,6 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <!-- 姓名 -->
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -66,7 +67,7 @@
                 <TextView
                     android:textColor="@color/theme01.textColorMain"
                     android:textSize="14dp"
-                    android:text="姓名"
+                    android:text="@string/kOtcRmAddCellLabelTitleName"
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="match_parent" />
@@ -84,6 +85,7 @@
             </LinearLayout>
             <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
+            <!-- 身份证号 -->
             <LinearLayout
                 android:layout_marginTop="30dp"
                 android:orientation="horizontal"
@@ -93,7 +95,7 @@
                 <TextView
                     android:textColor="@color/theme01.textColorMain"
                     android:textSize="14dp"
-                    android:text="身份证号"
+                    android:text="@string/kOtcAuthInfoCellLabelTitleIdNo"
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="match_parent" />
@@ -111,6 +113,7 @@
             </LinearLayout>
             <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
+            <!-- 联系方式 -->
             <LinearLayout
                 android:layout_marginTop="30dp"
                 android:orientation="horizontal"
@@ -120,7 +123,7 @@
                 <TextView
                     android:textColor="@color/theme01.textColorMain"
                     android:textSize="14dp"
-                    android:text="联系方式"
+                    android:text="@string/kOtcAuthInfoCellLabelTitleContact"
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="match_parent" />
@@ -138,6 +141,7 @@
             </LinearLayout>
             <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
+            <!-- 状态 -->
             <LinearLayout
                 android:layout_marginTop="30dp"
                 android:orientation="horizontal"
@@ -147,7 +151,7 @@
                 <TextView
                     android:textColor="@color/theme01.textColorMain"
                     android:textSize="14dp"
-                    android:text="状态"
+                    android:text="@string/kOtcAuthInfoCellLabelTitleStatus"
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="match_parent" />

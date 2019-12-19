@@ -9,7 +9,7 @@ import android.widget.TextView
 import bitshares.dp
 import org.json.JSONObject
 
-class ViewOtcMerchantPaymentCell  : LinearLayout {
+class ViewOtcMerchantPaymentCell : LinearLayout {
 
     var _ctx: Context
     var _data: JSONObject
@@ -24,10 +24,11 @@ class ViewOtcMerchantPaymentCell  : LinearLayout {
         val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 24.dp)
         layout_params.gravity = Gravity.CENTER_VERTICAL
 
+        //  TODO:2.9 未完成
         val layout_wrap = LinearLayout(_ctx)
         layout_wrap.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         layout_wrap.orientation = LinearLayout.VERTICAL
-        layout_wrap.setPadding(0,0,0,10.dp)
+        layout_wrap.setPadding(0, 0, 0, 10.dp)
 
         // 第一行 商家图标 商家名称 交易总数|成交比
         val ly1 = LinearLayout(_ctx).apply {
@@ -43,20 +44,24 @@ class ViewOtcMerchantPaymentCell  : LinearLayout {
                     scaleType = ImageView.ScaleType.FIT_END
                     gravity = Gravity.LEFT
                 }
+
+                //  TODO:2.9 未完成
+//                id pminfos = [OtcManager auxGenPaymentMethodInfos:_item[@"account"] type:_item[@"type"] bankname:_item[@"bankName"]];
+                //  TODO:2.9 icon
                 iv.setImageDrawable(resources.getDrawable(R.drawable.icon_pm_bankcard))
                 addView(iv)
 
                 addView(TextView(_ctx).apply {
-                    text = _data.getString("name")
+                    text = _data.optString("name")//TODO:2.9
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15.0f)
                     setTextColor(resources.getColor(R.color.theme01_textColorMain))
                     gravity = Gravity.CENTER
-                    setPadding(5.dp,0,0,0)
+                    setPadding(5.dp, 0, 0, 0)
                 })
             })
         }
 
-        // 第二行 数量 单价
+        // 第二行 姓名
         val ly2 = LinearLayout(_ctx).apply {
             layoutParams = layout_params
             orientation = LinearLayout.HORIZONTAL
@@ -67,7 +72,7 @@ class ViewOtcMerchantPaymentCell  : LinearLayout {
                 gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
 
                 addView(TextView(_ctx).apply {
-                    text = _data.getString("username")
+                    text = _data.optString("realName")
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
                     setTextColor(_ctx.resources.getColor(R.color.theme01_textColorNormal))
                     gravity = Gravity.LEFT
@@ -75,7 +80,7 @@ class ViewOtcMerchantPaymentCell  : LinearLayout {
             })
         }
 
-        // 第三行 数量 单价
+        // 第三行 账号 or 银行卡号
         val ly3 = LinearLayout(_ctx).apply {
             layoutParams = layout_params
             orientation = LinearLayout.HORIZONTAL
@@ -86,14 +91,13 @@ class ViewOtcMerchantPaymentCell  : LinearLayout {
                 gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
 
                 addView(TextView(_ctx).apply {
-                    text = _data.getString("card_no")
+                    text = _data.optString("account")
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.0f)
                     setTextColor(_ctx.resources.getColor(R.color.theme01_textColorMain))
                     gravity = Gravity.LEFT
                 })
             })
         }
-
 
         layout_wrap.addView(ly1)
         layout_wrap.addView(ly2)

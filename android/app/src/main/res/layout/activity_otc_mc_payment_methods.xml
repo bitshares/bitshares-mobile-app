@@ -14,11 +14,11 @@
         android:layout_marginTop="25dp"
         android:orientation="vertical">
 
+        <!-- 导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:orientation="horizontal">
-
 
             <LinearLayout
                 android:id="@+id/layout_back_from_otc_mc_payment_methods"
@@ -45,7 +45,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="付款方式"
+                android:text="@string/kVcTitleOtcMcPaymentMethodsList"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
@@ -61,7 +61,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-
 
                 <!-- 支付宝 -->
                 <LinearLayout
@@ -91,7 +90,7 @@
                         android:layout_marginLeft="5dp"
                         android:textSize="14dp"
                         android:textColor="@color/theme01.textColorMain"
-                        android:text="支付宝"/>
+                        android:text="@string/kOtcAdPmNameAlipay"/>
 
                     <LinearLayout
                         android:gravity="center_vertical|right"
@@ -136,7 +135,7 @@
                         android:layout_marginLeft="5dp"
                         android:textSize="14dp"
                         android:textColor="@color/theme01.textColorMain"
-                        android:text="银行卡"/>
+                        android:text="@string/kOtcAdPmNameBankCard"/>
 
                     <LinearLayout
                         android:gravity="center_vertical|right"
