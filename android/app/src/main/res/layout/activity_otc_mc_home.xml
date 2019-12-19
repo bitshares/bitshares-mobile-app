@@ -147,8 +147,8 @@
                 <LinearLayout
                     android:id="@+id/layout_asset_list_from_otc_mc_home"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="40dp"
                     android:orientation="horizontal">
 
                     <LinearLayout
@@ -187,14 +187,14 @@
 
                     </LinearLayout>
                 </LinearLayout>
-                <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+                <!-- <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View> -->
 
                 <!-- 商家广告 -->
                 <LinearLayout
                     android:id="@+id/layout_ad_list_from_otc_mc_home"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="12dp"
                     android:orientation="horizontal">
 
                     <LinearLayout
@@ -233,14 +233,14 @@
 
                     </LinearLayout>
                 </LinearLayout>
-                <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+                <!-- <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View> -->
 
                 <!-- 商家订单 -->
                 <LinearLayout
                     android:id="@+id/layout_order_list_from_otc_mc_home"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="12dp"
                     android:orientation="horizontal">
 
                     <LinearLayout
@@ -279,14 +279,14 @@
 
                     </LinearLayout>
                 </LinearLayout>
-                <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+                <!-- <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View> -->
 
                 <!-- 收款方式 -->
                 <LinearLayout
                     android:id="@+id/layout_receive_methods_from_otc_mc_home"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="40dp"
                     android:orientation="horizontal">
 
                     <LinearLayout
@@ -325,7 +325,7 @@
 
                     </LinearLayout>
                 </LinearLayout>
-                <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+                <!-- <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View> -->
 
 
 
@@ -333,8 +333,8 @@
                 <LinearLayout
                     android:id="@+id/layout_payment_methods_from_otc_mc_home"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="12dp"
                     android:orientation="horizontal">
 
                     <LinearLayout
@@ -373,7 +373,7 @@
 
                     </LinearLayout>
                 </LinearLayout>
-                <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+                <!-- <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View> -->
 
 
 

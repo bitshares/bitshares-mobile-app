@@ -6,13 +6,14 @@ import android.view.Gravity
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import bitshares.OtcManager
 import bitshares.dp
 import org.json.JSONObject
 
 class ViewOtcMerchantPaymentCell : LinearLayout {
 
-    var _ctx: Context
-    var _data: JSONObject
+    private var _ctx: Context
+    private var _data: JSONObject
 
     constructor(ctx: Context, data: JSONObject) : super(ctx) {
         _ctx = ctx
@@ -24,7 +25,11 @@ class ViewOtcMerchantPaymentCell : LinearLayout {
         val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 24.dp)
         layout_params.gravity = Gravity.CENTER_VERTICAL
 
-        //  TODO:2.9 未完成
+        val pminfos = OtcManager.auxGenPaymentMethodInfos(_ctx, _data.getString("account"),
+                _data.getInt("type"),
+                _data.optString("bankName"))
+
+        //  TODO:2.9 右边 已激活 未激活
         val layout_wrap = LinearLayout(_ctx)
         layout_wrap.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         layout_wrap.orientation = LinearLayout.VERTICAL
@@ -45,14 +50,11 @@ class ViewOtcMerchantPaymentCell : LinearLayout {
                     gravity = Gravity.LEFT
                 }
 
-                //  TODO:2.9 未完成
-//                id pminfos = [OtcManager auxGenPaymentMethodInfos:_item[@"account"] type:_item[@"type"] bankname:_item[@"bankName"]];
-                //  TODO:2.9 icon
-                iv.setImageDrawable(resources.getDrawable(R.drawable.icon_pm_bankcard))
+                iv.setImageDrawable(resources.getDrawable(pminfos.getInt("icon")))
                 addView(iv)
 
                 addView(TextView(_ctx).apply {
-                    text = _data.optString("name")//TODO:2.9
+                    text = pminfos.getString("name")
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15.0f)
                     setTextColor(resources.getColor(R.color.theme01_textColorMain))
                     gravity = Gravity.CENTER
