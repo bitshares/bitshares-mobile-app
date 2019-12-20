@@ -29,6 +29,7 @@ class OtcManager {
         eoerr_token_is_empty(1002),            //  TOEKN不能为空
         eoerr_user_not_exist(2001),            //  用户不存在
         eoerr_not_login(2011),                 //  未登录
+        eoerr_merchant_not_exist(3002),        //  商家不存在
 
         eoerr_order_cancel_to_go_online(5001), //  取消订单数量太多？TODO:2.9
         //  TODO:2.9 其他待添加
@@ -694,18 +695,17 @@ class OtcManager {
     fun getFiatCnyInfo(): JSONObject {
         if (_fiat_cny_info != null) {
             //{
-            //    assetAlias = "\U4eba\U6c11\U5e01";
-            //    assetId = "1.0.1";
+            //    assetAlias = RMB;
+            //    assetId = "";
             //    assetPrecision = 2;
-            //    btsId = "<null>";
             //    assetSymbol = CNY;
+            //    legalCurrencySymbol = "\U00a5";
             //    type = 1;
             //}
             return JSONObject().apply {
                 put("assetSymbol", _fiat_cny_info!!.getString("assetSymbol"))
-                put("precision", _fiat_cny_info!!.getInt("assetPrecision"))
-                put("id", _fiat_cny_info!!.getString("assetId"))
-                put("short_symbol", "¥")    //  TODO:2.9 short_symbol
+                put("assetPrecision", _fiat_cny_info!!.getInt("assetPrecision"))
+                put("legalCurrencySymbol", _fiat_cny_info!!.getString("legalCurrencySymbol"))
                 put("type", _fiat_cny_info!!.get("type"))
                 put("name", _fiat_cny_info!!.getString("assetAlias"))
             }
@@ -713,8 +713,8 @@ class OtcManager {
             //  TODO:2.9 数据不存在时兼容
             return JSONObject().apply {
                 put("assetSymbol", "CNY")
-                put("precision", 2)
-                put("short_symbol", "¥")
+                put("assetPrecision", 2)
+                put("legalCurrencySymbol", "¥")
                 put("type", 1)
             }
         }
@@ -807,18 +807,18 @@ class OtcManager {
         }
     }
 
-    private fun _guardUserIdVerified(ctx: Activity, auto_hide: Boolean, askForIdVerifyMsg: String?, first_request: Boolean, verifyed_callback: (JSONObject) -> Unit) {
-        val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
+    private fun _guardUserIdVerified(ctx: Activity, prev_mask: ViewMask?, askForIdVerifyMsg: String?, first_request: Boolean, keep_mask: Boolean, verifyed_callback: (auth_info: JSONObject, mask: ViewMask?) -> Unit) {
+        val mask = prev_mask ?: ViewMask(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
         mask.show()
         queryIdVerify(getCurrentBtsAccount()).then {
             val responsed = it as? JSONObject
             if (isIdVerifyed(responsed)) {
-                //  TODO:2.9 mask logic .... wrong
-                if (auto_hide) {
+                if (keep_mask) {
+                    verifyed_callback(responsed!!.getJSONObject("data"), mask)
+                } else {
                     mask.dismiss()
+                    verifyed_callback(responsed!!.getJSONObject("data"), null)
                 }
-                //  已认证：返回认证后数据。
-                verifyed_callback(responsed!!.getJSONObject("data"))
             } else {
                 mask.dismiss()
                 //  未认证：询问认证 or 直接转认证界面
@@ -835,16 +835,15 @@ class OtcManager {
             }
             return@then null
         }.catch { err ->
-            mask.dismiss()
-            if (first_request) {
-                showOtcError(ctx, err) {
-                    //  处理登录
-                    handleOtcUserLogin(ctx) {
-                        //  query id verify again
-                        _guardUserIdVerified(ctx, auto_hide, askForIdVerifyMsg, false, verifyed_callback)
-                    }
+            if (first_request && isOtcUserNotLoginError(err)) {
+                //  处理登录
+                handleOtcUserLogin(ctx, mask) { new_mask ->
+                    //  query id verify again
+                    _guardUserIdVerified(ctx, new_mask, askForIdVerifyMsg, false, keep_mask, verifyed_callback)
                 }
             } else {
+                //  认证失败：直接显示错误信息，关闭mask。
+                mask.dismiss()
                 showOtcError(ctx, err)
             }
         }
@@ -853,26 +852,36 @@ class OtcManager {
     /**
      *  (public) 确保已经进行认证认证。
      */
-    fun guardUserIdVerified(ctx: Activity, auto_hide: Boolean, askForIdVerifyMsg: String?, verifyed_callback: (JSONObject) -> Unit) {
-        _guardUserIdVerified(ctx, auto_hide, askForIdVerifyMsg, true, verifyed_callback)
+    fun guardUserIdVerified(ctx: Activity, askForIdVerifyMsg: String?, keep_mask: Boolean = false, verifyed_callback: (auth_info: JSONObject, mask: ViewMask?) -> Unit) {
+        _guardUserIdVerified(ctx, null, askForIdVerifyMsg, true, keep_mask, verifyed_callback)
     }
 
     /**
-     *  (public) 请求私钥授权登录。
+     *  (private) 请求私钥授权登录。
      */
-    fun handleOtcUserLogin(ctx: Activity, login_callback: () -> Unit) {
+    private fun handleOtcUserLogin(ctx: Activity, prev_mask: ViewMask, login_callback: (ViewMask) -> Unit) {
+        val currMask: ViewMask?
+        val isLocked = WalletManager.sharedWalletManager().isLocked()
+        if (isLocked) {
+            prev_mask.dismiss()
+            currMask = null
+        } else {
+            currMask = prev_mask
+        }
+        //  解锁之前需要关闭mask。
         ctx.guardWalletUnlocked(true) { unlocked ->
             if (unlocked) {
-                val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
+                //  如果之前的mask被关闭了，则这里重新创建。
+                val mask = currMask ?: ViewMask(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
                 mask.show()
                 val account_name = getCurrentBtsAccount()
                 login(account_name).then {
-                    mask.dismiss()
                     val login_responsed = it as? JSONObject
                     val token = login_responsed?.optString("data", null)
                     if (token != null && token.isNotEmpty()) {
                         _saveUserTokenCookie(account_name, token)
-                        login_callback()
+                        //  把最新的mask返回，可能和之前已经不同了。
+                        login_callback(mask)
                     } else {
                         showOtcError(ctx, null)
                     }
@@ -894,6 +903,29 @@ class OtcManager {
         }
         //  清理商家信息
         _cache_merchant_detail = null
+    }
+
+    /**
+     *  (public) 是否是指定错误判断。
+     */
+    fun isOtcError(error: Any?, check_errcode: EOtcErrorCode): Boolean {
+        if (error != null && error is Promise.WsPromiseException) {
+            val json = try {
+                JSONObject(error.message.toString())
+            } catch (e: Exception) {
+                null
+            }
+            if (json != null) {
+                val otcerror = json.optJSONObject("otcerror")
+                if (otcerror != null) {
+                    val errcode = otcerror.getInt("code")
+                    if (errcode == check_errcode.value) {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
     }
 
     /**
@@ -1011,15 +1043,16 @@ class OtcManager {
      *  (public) API - 创建订单
      *  认证：SIGN 方式
      */
-    fun createUserOrder(bts_account_name: String, ad_id: String, ad_type: EOtcAdType, price: String, total: String): Promise {
+    fun createUserOrder(bts_account_name: String, ad_id: String, ad_type: Int, legalCurrencySymbol: String, price: String, total: String): Promise {
         val url = "$_base_api/user/order/set"
         val args = JSONObject().apply {
             put("btsAccount", bts_account_name)
             put("adId", ad_id)
-            put("adType", ad_type.value)
-            put("legalCurrency", "￥")//!!!!! TODO:2.9 暂时只支持这一个！汗
+            put("adType", ad_type)
+            put("legalCurrencySymbol", legalCurrencySymbol)
             put("price", price)
             put("totalAmount", total)
+            put("channel", "testotca")  //  TODO:2.9 config
         }
         return _queryApiCore(url, args = args, auth_flag = EOtcAuthFlag.eoaf_sign)
     }
@@ -1249,11 +1282,11 @@ class OtcManager {
      *  (public) API - 锁定价格
      *  认证：TOKEN 方式
      */
-    fun lockPrice(bts_account_name: String, ad_id: String, ad_type: EOtcAdType, asset_symbol: String, price: String): Promise {
+    fun lockPrice(bts_account_name: String, ad_id: String, ad_type: Int, asset_symbol: String, price: String): Promise {
         val url = "$_base_api/order/price/lock/set"
         val args = JSONObject().apply {
             put("adId", ad_id)
-            put("adType", ad_type.value)
+            put("adType", ad_type)
             put("btsAccount", bts_account_name)
             put("assetSymbol", asset_symbol)
             put("price", price)
@@ -1498,13 +1531,23 @@ class OtcManager {
         val args = JSONObject().apply {
             put("btsAccount", bts_account_name)
         }
-        return _queryApiCore(url, args = args).then {
+        //  查询
+        val p = Promise()
+        _queryApiCore(url, args = args).then {
             val merchant_detail_responsed = it as? JSONObject
             _cache_merchant_detail = merchant_detail_responsed?.optJSONObject("data")
-            return@then _cache_merchant_detail
+            p.resolve(_cache_merchant_detail)
+            return@then null
+        }.catch { err ->
+            _cache_merchant_detail = null
+            if (isOtcError(err, EOtcErrorCode.eoerr_merchant_not_exist)) {
+                p.resolve(null)
+            } else {
+                p.reject(err)
+            }
         }
+        return p
     }
-
 
     /**
      *  (public) API - 查询商家订单列表
