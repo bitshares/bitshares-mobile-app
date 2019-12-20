@@ -29,6 +29,7 @@ typedef enum EOtcErrorCode
     eoerr_token_is_empty = 1002,            //  TOEKN不能为空
     eoerr_user_not_exist = 2001,            //  用户不存在
     eoerr_not_login = 2011,                 //  未登录
+    eoerr_merchant_not_exist = 3002,        //  商家不存在
     
     eoerr_order_cancel_to_go_online = 5001, //  取消订单数量太多？TODO:2.9
     //  TODO:2.9 其他待添加
@@ -367,6 +368,7 @@ typedef enum EOtcMcProgress
 - (WsPromise*)createUserOrder:(NSString*)bts_account_name
                         ad_id:(NSString*)ad_id
                          type:(EOtcAdType)ad_type
+          legalCurrencySymbol:(NSString*)legalCurrencySymbol
                         price:(NSString*)price
                         total:(NSString*)total;
 

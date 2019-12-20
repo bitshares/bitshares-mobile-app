@@ -276,7 +276,7 @@ enum
     
     self.view.backgroundColor = theme.appBackColor;
     
-    //  初始化UI
+    //  初始化UI TODO:2.9 lang
     _cellAssetAvailable = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
     _cellAssetAvailable.backgroundColor = [UIColor clearColor];
     _cellAssetAvailable.hideBottomLine = YES;
@@ -441,7 +441,7 @@ enum
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             if (indexPath.row == 0) {
                 cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
-                cell.textLabel.text = @"资产";
+                cell.textLabel.text = @"资产";//TODO:2.9 lang
                 cell.hideBottomLine = YES;
             } else {
                 cell.showCustomBottomLine = YES;

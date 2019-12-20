@@ -225,7 +225,7 @@ enum
     [self.view addGestureRecognizer:pTap];
     
     //  提示
-    _cell_tips = [[ViewTipsInfoCell alloc] initWithText:NSLocalizedString(@"kOtcAuthInfoCellTips", @"【温馨提示】\n您只有通过了身份认证，才能进行场外交易。\n目前仅支持中国大陆地区进行身份认证。姓名和身份证号提交后不可更改。")];
+    _cell_tips = [[ViewTipsInfoCell alloc] initWithText:NSLocalizedString(@"kOtcAuthInfoCellTips", @"【温馨提示】\n您只有通过了身份认证，才能进行场外交易。\n姓名和身份证号提交后不可更改。")];
     _cell_tips.hideBottomLine = YES;
     _cell_tips.hideTopLine = YES;
     _cell_tips.backgroundColor = [UIColor clearColor];
@@ -276,15 +276,19 @@ enum
         @"smscode":str_sms_code,
     };
     
-    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    [[[otc idVerify:args] then:^id(id data) {
-        [self hideBlockView];
-        [self showMessageAndClose:NSLocalizedString(@"kOtcAuthInfoSubmitTipsOK", @"认证通过。")];
-        return nil;
-    }] catch:^id(id error) {
-        [self hideBlockView];
-        [otc showOtcError:error];
-        return nil;
+    [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+        if (unlocked) {
+            [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+            [[[otc idVerify:args] then:^id(id data) {
+                [self hideBlockView];
+                [self showMessageAndClose:NSLocalizedString(@"kOtcAuthInfoSubmitTipsOK", @"认证通过。")];
+                return nil;
+            }] catch:^id(id error) {
+                [self hideBlockView];
+                [otc showOtcError:error];
+                return nil;
+            }];
+        }
     }];
 }
 

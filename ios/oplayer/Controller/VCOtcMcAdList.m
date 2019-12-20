@@ -75,7 +75,7 @@
     }
 }
 
-- (void)onAddNewPaymentMethodClicked
+- (void)onAddNewAdClicked
 {
     WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
     VCBase* vc = [[VCOtcMcAdUpdate alloc] initWithAuthInfo:_auth_info
@@ -102,7 +102,7 @@
     //  右上角新增按钮
     UIBarButtonItem* addBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
                                                                             target:self
-                                                                            action:@selector(onAddNewPaymentMethodClicked)];
+                                                                            action:@selector(onAddNewAdClicked)];
     addBtn.tintColor = [ThemeManager sharedThemeManager].navigationBarTextColor;
     self.navigationItem.rightBarButtonItem = addBtn;
     

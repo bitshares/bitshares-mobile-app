@@ -884,6 +884,7 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
     //  1、获取私钥和公钥（from和to任意一方私钥即可，双方均可解密。）
     NSString* pubkey = nil;
     NSString* prikey = nil;
+    
     NSString* from_prikey_wif = [_private_keys_hash objectForKey:from];
     NSString* to_prikey_wif = [_private_keys_hash objectForKey:to];
     if (from_prikey_wif) {

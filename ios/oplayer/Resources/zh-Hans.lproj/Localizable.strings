@@ -1075,7 +1075,7 @@
 "kOtcAuthInfoTailerBtnGetSmscode" = "获取验证码";
 "kOtcAuthInfoTailerBtnGetSmscodeWaitNsec" = "%@秒后重新获取";
 "kOtcAuthInfoTailerTipsGetSmscodeOK" = "短信发送成功。";
-"kOtcAuthInfoCellTips" = "【温馨提示】\n您只有通过了身份认证，才能进行场外交易。\n目前仅支持中国大陆地区进行身份认证。姓名和身份证号提交后不可更改。";
+"kOtcAuthInfoCellTips" = "【温馨提示】\n您只有通过了身份认证，才能进行场外交易。\n姓名和身份证号提交后不可更改。";
 "kOtcAuthInfoSubmitTipsInputIdNo" = "请输入正确的身份证号。";
 "kOtcAuthInfoSubmitTipsInputSmscode" = "请输入短信验证码。";
 "kOtcAuthInfoSubmitTipsOK" = "认证通过。";

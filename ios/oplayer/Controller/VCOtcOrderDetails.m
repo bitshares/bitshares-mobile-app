@@ -295,7 +295,13 @@ enum
         //  停止付款计时器
         [self _stopPaymentTimer];
         //  更新状态成功、刷新界面。
-        return [[otc queryUserOrderDetails:userAccount order_id:_orderDetails[@"orderId"]] then:^id(id details_responsed) {
+        WsPromise* queryPromise;
+        if (_user_type == eout_normal_user) {
+            queryPromise = [otc queryUserOrderDetails:userAccount order_id:_orderDetails[@"orderId"]];
+        } else {
+            queryPromise = [otc queryMerchantOrderDetails:userAccount order_id:_orderDetails[@"orderId"]];
+        }
+        return [queryPromise then:^id(id details_responsed) {
             //  获取新订单数据成功
             [self hideBlockView];
             [self _refreshUI:[details_responsed objectForKey:@"data"]];

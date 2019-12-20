@@ -579,23 +579,23 @@ static OtcManager *_sharedOtcManager = nil;
 {
     if (_fiat_cny_info) {
         //{
-        //    assetAlias = "\U4eba\U6c11\U5e01";
-        //    assetId = "1.0.1";
+        //    assetAlias = RMB;
+        //    assetId = "";
         //    assetPrecision = 2;
-        //    btsId = "<null>";
         //    assetSymbol = CNY;
+        //    legalCurrencySymbol = "\U00a5";
         //    type = 1;
         //}
         id symbol = _fiat_cny_info[@"assetSymbol"];
         id precision = _fiat_cny_info[@"assetPrecision"];
-        id assetId = _fiat_cny_info[@"assetId"];
+        //        id assetId = _fiat_cny_info[@"assetId"];
         //  TODO:2.9 short_symbol
-        return @{@"assetSymbol":symbol, @"precision":precision,
-                 @"id":assetId, @"short_symbol":@"¥", @"type":_fiat_cny_info[@"type"],
+        return @{@"assetSymbol":symbol, @"assetPrecision":precision,
+                 @"legalCurrencySymbol":_fiat_cny_info[@"legalCurrencySymbol"], @"type":_fiat_cny_info[@"type"],
                  @"name":_fiat_cny_info[@"assetAlias"]};
     } else {
         //  TODO:2.9 数据不存在时兼容
-        return @{@"assetSymbol":@"CNY", @"precision":@2, @"short_symbol":@"¥", @"type":@1};
+        return @{@"assetSymbol":@"CNY", @"assetPrecision":@2, @"legalCurrencySymbol":@"¥", @"type":@1};
     }
 }
 
@@ -807,9 +807,9 @@ static OtcManager *_sharedOtcManager = nil;
 }
 
 /*
- *  (public) 是否是未登录错误判断。
+ *  (public) 是否是指定错误判断。
  */
-- (BOOL)isOtcUserNotLoginError:(id)error
+- (BOOL)isOtcError:(id)error errcode:(EOtcErrorCode)check_errcode
 {
     if (error && [error isKindOfClass:[WsPromiseException class]]){
         WsPromiseException* excp = (WsPromiseException*)error;
@@ -818,13 +818,21 @@ static OtcManager *_sharedOtcManager = nil;
             id otcerror = [userInfo objectForKey:@"otcerror"];
             if (otcerror) {
                 NSInteger errcode = [[otcerror objectForKey:@"code"] integerValue];
-                if (errcode == eoerr_not_login || errcode == eoerr_token_is_empty) {
+                if (errcode == check_errcode) {
                     return YES;
                 }
             }
         }
     }
     return NO;
+}
+
+/*
+ *  (public) 是否是未登录错误判断。
+ */
+- (BOOL)isOtcUserNotLoginError:(id)error
+{
+    return [self isOtcError:error errcode:eoerr_not_login] || [self isOtcError:error errcode:eoerr_token_is_empty];
 }
 
 /*
@@ -932,19 +940,19 @@ static OtcManager *_sharedOtcManager = nil;
 - (WsPromise*)createUserOrder:(NSString*)bts_account_name
                         ad_id:(NSString*)ad_id
                          type:(EOtcAdType)ad_type
+          legalCurrencySymbol:(NSString*)legalCurrencySymbol
                         price:(NSString*)price
                         total:(NSString*)total
 {
-    //    NSString* fiat_symbol = [[self getFiatCnyInfo] objectForKey:@"short_symbol"];
-    //    assert(fiat_symbol);
     id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/user/order/set"];
     id args = @{
         @"adId":ad_id,
         @"adType":@(ad_type),
         @"btsAccount":bts_account_name,
-        @"legalCurrency":@"￥",   //  !!!!! TODO:2.9 暂时只支持这一个！汗
+        @"legalCurrencySymbol":legalCurrencySymbol,
         @"price":price,
-        @"totalAmount":total
+        @"totalAmount":total,
+        @"channel":@"testotc",          //  TODO:2.9 config
     };
     return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
 }
@@ -1492,13 +1500,25 @@ static OtcManager *_sharedOtcManager = nil;
     id args = @{
         @"btsAccount":bts_account_name,
     };
-    return [[self _queryApiCore:url args:args headers:nil auth_flag:eoaf_none] then:^id(id merchant_detail_responsed) {
-        id merchant_detail = [merchant_detail_responsed objectForKey:@"data"];
-        if (merchant_detail && ![merchant_detail isKindOfClass:[NSDictionary class]]) {
-            merchant_detail = nil;
-        }
-        _cache_merchant_detail = merchant_detail;
-        return _cache_merchant_detail;
+    //  查询
+    return [WsPromise promise:^(WsResolveHandler resolve, WsRejectHandler reject) {
+        [[[self _queryApiCore:url args:args headers:nil auth_flag:eoaf_none] then:^id(id merchant_detail_responsed) {
+            id merchant_detail = [merchant_detail_responsed objectForKey:@"data"];
+            if (merchant_detail && ![merchant_detail isKindOfClass:[NSDictionary class]]) {
+                merchant_detail = nil;
+            }
+            _cache_merchant_detail = merchant_detail;
+            resolve(_cache_merchant_detail);
+            return nil;
+        }] catch:^id(id error) {
+            _cache_merchant_detail = nil;
+            if ([self isOtcError:error errcode:eoerr_merchant_not_exist]) {
+                resolve(nil);
+            } else {
+                reject(error);
+            }
+            return nil;
+        }];
     }];
 }
 

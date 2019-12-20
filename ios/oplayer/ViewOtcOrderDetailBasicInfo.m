@@ -88,7 +88,7 @@
     CGFloat fWidth = self.bounds.size.width - fOffsetX *  2;
     
     //  TODO:2.9 订单返回的是全角符号...
-    NSString* fiat_symbol = [[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"short_symbol"];
+    NSString* fiat_symbol = [[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"legalCurrencySymbol"];
 //    NSString* fiat_symbol = [_item objectForKey:@"legalCurrencySymbol"];
     NSString* asset_symbol = [_item objectForKey:@"assetSymbol"];
     
