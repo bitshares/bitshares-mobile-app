@@ -444,10 +444,10 @@
             [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
             EOtcAdType adType = (EOtcAdType)[[ad_info objectForKey:@"adType"] integerValue];
             OtcManager* otc = [OtcManager sharedOtcManager];
-            //TODO:2.9 [lock_info objectForKey:@"legalCurrencySymbol"]
             [[[otc createUserOrder:[otc getCurrentBtsAccount]
                              ad_id:[ad_info objectForKey:@"adId"]
                               type:adType
+               legalCurrencySymbol:[lock_info objectForKey:@"legalCurrencySymbol"]
                              price:[NSString stringWithFormat:@"%@", lock_info[@"unitPrice"]]
                              total:result[@"total"]] then:^id(id responsed) {
                 [_owner hideBlockView];

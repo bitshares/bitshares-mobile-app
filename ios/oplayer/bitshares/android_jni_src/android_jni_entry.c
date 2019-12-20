@@ -241,6 +241,68 @@ java_jni_entry_bts_aes256_decrypt_from_hex(JNIEnv* env, jobject self,
 }
 
 /**
+ *  Aes核心解密（主要用于解密memo等）
+ */
+JNIEXPORT jbyteArray
+java_jni_entry_bts_aes256_decrypt_with_checksum(JNIEnv* env, jobject self,
+    jbyteArray private_key32, jbyteArray public_key, jbyteArray nonce, jbyteArray message)
+{
+    //  检查参数
+    if (!private_key32 || !public_key || !nonce || !message){
+        return NULL;
+    }
+
+    //  获取数据
+    jbyte* private_key32_ptr = (*env)->GetByteArrayElements(env, private_key32, 0);
+    jsize private_key32_size = (*env)->GetArrayLength(env, private_key32);
+    jbyte* public_key_ptr = (*env)->GetByteArrayElements(env, public_key, 0);
+    jsize public_key_size = (*env)->GetArrayLength(env, public_key);
+    jbyte* nonce_ptr = (*env)->GetByteArrayElements(env, nonce, 0);
+    jsize nonce_size = (*env)->GetArrayLength(env, nonce);
+    jbyte* message_ptr = (*env)->GetByteArrayElements(env, message, 0);
+    jsize message_size = (*env)->GetArrayLength(env, message);
+
+    //  调用API
+    size_t output_size = (size_t)message_size;
+    unsigned char* output = (unsigned char*)malloc(output_size);
+    unsigned char* plain_ptr = 0;
+    if (output){
+        secp256k1_pubkey public_key_s = {0, };
+        assert(public_key_size == sizeof(public_key_s.data));
+        memcpy(&public_key_s.data, public_key_ptr, sizeof(public_key_s.data));
+        plain_ptr = __bts_aes256_decrypt_with_checksum((const unsigned char*)private_key32_ptr, &public_key_s, (const char*)nonce_ptr, (const size_t)nonce_size, (const unsigned char*)message_ptr, (const size_t)message_size, output, &output_size);
+    }
+
+    //  释放参数数据
+    (*env)->ReleaseByteArrayElements(env, private_key32, private_key32_ptr, JNI_ABORT);
+    (*env)->ReleaseByteArrayElements(env, public_key, public_key_ptr, JNI_ABORT);
+    (*env)->ReleaseByteArrayElements(env, nonce, nonce_ptr, JNI_ABORT);
+    (*env)->ReleaseByteArrayElements(env, message, message_ptr, JNI_ABORT);
+
+    //  返回
+
+    //  分配内存失败
+    if (!output){
+        return NULL;
+    }
+
+    //  解密失败
+    if (!plain_ptr || !output_size){
+        free(output);
+        return NULL;
+    }
+
+    jbyteArray retv = (*env)->NewByteArray(env, output_size);
+    (*env)->SetByteArrayRegion(env, retv, 0, output_size, (const jbyte*)plain_ptr);
+
+    //  释放内存
+    free(output);
+    output = 0;
+
+    return retv;
+}
+
+/**
  *  Aes核心加密（主要用于加密钱包、memo等）
  */
 JNIEXPORT jbyteArray
@@ -833,6 +895,10 @@ java_jni_entry_bts_aes256_decrypt_from_hex(JNIEnv* env, jobject self,
     jbyteArray aes_seed, jbyteArray hex_src);
 
 JNIEXPORT jbyteArray
+java_jni_entry_bts_aes256_decrypt_with_checksum(JNIEnv* env, jobject self,
+    jbyteArray private_key32, jbyteArray public_key, jbyteArray nonce, jbyteArray message);
+
+JNIEXPORT jbyteArray
 java_jni_entry_bts_aes256_encrypt_with_checksum(JNIEnv* env, jobject self,
     jbyteArray private_key32, jbyteArray public_key, jbyteArray nonce, jbyteArray message);
 
@@ -900,6 +966,7 @@ static JNINativeMethod jni_methods_table[] =
     {"sha512",                                  "([B)[B",                   (void*)java_jni_entry_sha512},
     {"bts_aes256_encrypt_to_hex",               "([B[B)[B",                 (void*)java_jni_entry_bts_aes256_encrypt_to_hex},
     {"bts_aes256_decrypt_from_hex",             "([B[B)[B",                 (void*)java_jni_entry_bts_aes256_decrypt_from_hex},
+    {"bts_aes256_decrypt_with_checksum",        "([B[B[B[B)[B",             (void*)java_jni_entry_bts_aes256_decrypt_with_checksum},
     {"bts_aes256_encrypt_with_checksum",        "([B[B[B[B)[B",             (void*)java_jni_entry_bts_aes256_encrypt_with_checksum},
     {"bts_gen_private_key_from_seed",           "([B)[B",                   (void*)java_jni_entry_bts_gen_private_key_from_seed},
     {"bts_gen_public_key_compressed",           "([B)[B",                   (void*)java_jni_entry_bts_gen_public_key_compressed},

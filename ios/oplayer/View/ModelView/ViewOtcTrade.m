@@ -102,7 +102,7 @@ enum
         _sell_user_balance = sell_user_balance;
         _assetInfo = [[OtcManager sharedOtcManager] getAssetInfo:ad_info[@"assetSymbol"]];
         _numPrecision = [[_assetInfo objectForKey:@"assetPrecision"] integerValue];
-        _totalPrecision = [[[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"precision"] integerValue];
+        _totalPrecision = [[[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"assetPrecision"] integerValue];
         if (_sell_user_balance) {
             _nBalance = [NSDecimalNumber decimalNumberWithMantissa:[[_sell_user_balance objectForKey:@"amount"] unsignedLongLongValue]
                                                           exponent:-_numPrecision
@@ -205,7 +205,7 @@ enum
     
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     
-    NSString* fiat_symbol = [[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"short_symbol"];
+    NSString* fiat_symbol = [[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"legalCurrencySymbol"];
     NSString* asset_symbol = _adInfo[@"assetSymbol"];
     
     //  单价
@@ -719,7 +719,7 @@ enum
 - (void)_draw_ui_final_value:(NSDecimalNumber*)n_final
 {
     //  TODO:2.9 是否超过限额
-    NSString* fiat_symbol = [[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"short_symbol"];
+    NSString* fiat_symbol = [[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"legalCurrencySymbol"];
     _finalTotalValue.text = [NSString stringWithFormat:@"%@%@", fiat_symbol,
                              [OrgUtils formatFloatValue:n_final usesGroupingSeparator:YES]];
 }

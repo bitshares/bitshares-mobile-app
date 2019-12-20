@@ -80,8 +80,8 @@ enum
             _bNewAd = YES;
             _ad_infos = [NSMutableDictionary dictionary];
             //  初始化新广告的部分默认值 TODO:3.0 后期可调整
-            [_ad_infos setValue:[[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"type"]
-                         forKey:@"leagalType"];
+            [_ad_infos setValue:[[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"legalCurrencySymbol"]
+                         forKey:@"legalCurrencySymbol"];
             [_ad_infos setValue:@(eopt_price_fixed) forKey:@"priceType"];
         }
         _assetList = nil;
@@ -286,7 +286,7 @@ enum
 {
     if (value) {
         if (fiatPrefix) {
-            label.text = [NSString stringWithFormat:@"%@%@", [[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"short_symbol"], value];
+            label.text = [NSString stringWithFormat:@"%@%@", [[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"legalCurrencySymbol"], value];
         } else {
             label.text = [NSString stringWithFormat:@"%@", value];
         }
@@ -603,7 +603,7 @@ enum
                     @"assetId": current_asset[@"assetId"],
                     @"assetSymbol": _ad_infos[@"assetSymbol"],
                     @"btsAccount": [otc getCurrentBtsAccount],
-                    @"leagalType": _ad_infos[@"leagalType"],
+                    @"legalCurrencySymbol": _ad_infos[@"legalCurrencySymbol"],
                     @"lowestLimit": [NSString stringWithFormat:@"%@", n_lowestLimit],
                     @"maxLimit": [NSString stringWithFormat:@"%@", n_maxLimit],
                     @"merchantId": _merchant_detail[@"id"],
@@ -620,7 +620,7 @@ enum
                     @"assetId": _ad_infos[@"assetId"],
                     @"assetSymbol": _ad_infos[@"assetSymbol"],
                     @"btsAccount": [otc getCurrentBtsAccount],
-                    @"leagalType": _ad_infos[@"leagalType"],
+                    @"legalCurrencySymbol": _ad_infos[@"legalCurrencySymbol"],
                     @"lowestLimit": [NSString stringWithFormat:@"%@", n_lowestLimit],
                     @"maxLimit": [NSString stringWithFormat:@"%@", n_maxLimit],
                     @"merchantId": _ad_infos[@"merchantId"],
@@ -743,7 +743,7 @@ enum
                                                              ok:NSLocalizedString(@"kBtnOK", @"确定")
                                                           tfcfg:(^(SCLTextView *tf) {
         tf.keyboardType = UIKeyboardTypeDecimalPad;
-        tf.iDecimalPrecision = [[[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"precision"] integerValue];
+        tf.iDecimalPrecision = [[[[OtcManager sharedOtcManager] getFiatCnyInfo] objectForKey:@"assetPrecision"] integerValue];
     })
                                                      completion:(^(NSInteger buttonIndex, NSString *tfvalue) {
         if (buttonIndex != 0){
