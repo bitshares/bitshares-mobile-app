@@ -4,23 +4,23 @@ import android.app.Activity
 import android.content.Context
 import android.util.TypedValue
 import android.view.Gravity
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import bitshares.dp
-import bitshares.forEach
 import org.json.JSONObject
 
 class ViewOtcMcAssetCell : LinearLayout {
 
-    var _ctx: Context
-    var _data: JSONObject
+    private var _ctx: Context
+    private var _data: JSONObject
+    private var _callback: (Boolean) -> Unit
 
     private val content_fontsize = 12.0f
 
-    constructor(ctx: Context, data: JSONObject) : super(ctx) {
+    constructor(ctx: Context, data: JSONObject, callback: (Boolean)->Unit) : super(ctx) {
         _ctx = ctx
         _data = data
+        _callback = callback
         createUI()
     }
 
@@ -28,10 +28,11 @@ class ViewOtcMcAssetCell : LinearLayout {
         val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 24.dp)
         layout_params.gravity = Gravity.CENTER_VERTICAL
 
+        //  TODO:2.9 lang
         val layout_wrap = LinearLayout(_ctx)
         layout_wrap.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         layout_wrap.orientation = LinearLayout.VERTICAL
-        layout_wrap.setPadding(0,0,0,10.dp)
+        layout_wrap.setPadding(0, 0, 0, 10.dp)
 
         // 第一行 商家图标 商家名称 交易总数|成交比
         val ly1 = LinearLayout(_ctx).apply {
@@ -44,7 +45,7 @@ class ViewOtcMcAssetCell : LinearLayout {
                 gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
 
                 addView(TextView(_ctx).apply {
-                    text = _data.getString("asset_name").toString()
+                    text = _data.getString("assetSymbol")
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
                     setTextColor(_ctx.resources.getColor(R.color.theme01_textColorMain))
                 })
@@ -116,7 +117,7 @@ class ViewOtcMcAssetCell : LinearLayout {
                 gravity = Gravity.CENTER_VERTICAL or Gravity.CENTER
 
                 addView(TextView(_ctx).apply {
-                    text = _data.getString("freeze_count")
+                    text = _data.getString("freeze")
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
                     setTextColor(_ctx.resources.getColor(R.color.theme01_textColorNormal))
                 })
@@ -128,7 +129,7 @@ class ViewOtcMcAssetCell : LinearLayout {
                 gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
 
                 addView(TextView(_ctx).apply {
-                    text = _data.getString("fee")
+                    text = _data.getString("fees")
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
                     setTextColor(_ctx.resources.getColor(R.color.theme01_textColorNormal))
                 })
@@ -151,8 +152,7 @@ class ViewOtcMcAssetCell : LinearLayout {
                     text = "转入"
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16.0f)
                     setTextColor(_ctx.resources.getColor(R.color.theme01_textColorHighlight))
-
-                    setOnClickListener { onTransferClicked(1) }
+                    setOnClickListener { _callback(true) }
                 })
             })
             // 转出
@@ -165,8 +165,7 @@ class ViewOtcMcAssetCell : LinearLayout {
                     text = "转出"
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16.0f)
                     setTextColor(_ctx.resources.getColor(R.color.theme01_textColorHighlight))
-
-                    setOnClickListener { onTransferClicked(2) }
+                    setOnClickListener { _callback(false) }
                 })
             })
         }
@@ -178,10 +177,5 @@ class ViewOtcMcAssetCell : LinearLayout {
 
         addView(layout_wrap)
         return this
-    }
-
-    private fun onTransferClicked(type: Int){
-        val _args = JSONObject().apply { put("type", type) }
-        (_ctx as Activity).goTo(ActivityOtcMcAssetTransfer::class.java, args = _args)
     }
 }

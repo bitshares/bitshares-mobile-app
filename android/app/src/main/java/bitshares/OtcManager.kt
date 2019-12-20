@@ -808,7 +808,6 @@ class OtcManager {
     }
 
     private fun _guardUserIdVerified(ctx: Activity, auto_hide: Boolean, askForIdVerifyMsg: String?, first_request: Boolean, verifyed_callback: (JSONObject) -> Unit) {
-        //  TODO:2.9
         val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
         mask.show()
         queryIdVerify(getCurrentBtsAccount()).then {
@@ -826,13 +825,11 @@ class OtcManager {
                 if (askForIdVerifyMsg != null) {
                     ctx.alerShowMessageConfirm(R.string.kWarmTips.xmlstring(ctx), askForIdVerifyMsg).then {
                         if (it != null && it as Boolean) {
-                            //  TODO:2.9 title?
                             ctx.goTo(ActivityOtcUserAuth::class.java, true)
                         }
                         return@then null
                     }
                 } else {
-                    //  TODO:2.9 title?
                     ctx.goTo(ActivityOtcUserAuth::class.java, true)
                 }
             }
@@ -903,20 +900,22 @@ class OtcManager {
      *  (public) 是否是未登录错误判断。
      */
     fun isOtcUserNotLoginError(error: Any?): Boolean {
-        //    TODO:2.9 未完成
-        //    if (error && [error isKindOfClass:[WsPromiseException class]]){
-        //        WsPromiseException* excp = (WsPromiseException*)error;
-        //        id userInfo = excp.userInfo;
-        //        if (userInfo) {
-        //            id otcerror = [userInfo objectForKey:@"otcerror"];
-        //            if (otcerror) {
-        //                NSInteger errcode = [[otcerror objectForKey:@"code"] integerValue];
-        //                if (errcode == eoerr_not_login || errcode == eoerr_token_is_empty) {
-        //                    return YES;
-        //                }
-        //            }
-        //        }
-        //    }
+        if (error != null && error is Promise.WsPromiseException) {
+            val json = try {
+                JSONObject(error.message.toString())
+            } catch (e: Exception) {
+                null
+            }
+            if (json != null) {
+                val otcerror = json.optJSONObject("otcerror")
+                if (otcerror != null) {
+                    val errcode = otcerror.getInt("code")
+                    if (errcode == EOtcErrorCode.eoerr_not_login.value || errcode == EOtcErrorCode.eoerr_token_is_empty.value) {
+                        return true
+                    }
+                }
+            }
+        }
         return false
     }
 
@@ -1187,7 +1186,7 @@ class OtcManager {
     /**
      *  (private) API - 直接查询CNY法币信息。TODO:3.0目前只支持cny一个。临时实现。
      */
-    fun queryFiatAssetCNY(): Promise {
+    private fun queryFiatAssetCNY(): Promise {
         //  已经存在了则直接返回
         if (_fiat_cny_info != null) {
             return Promise._resolve(_fiat_cny_info)
@@ -1571,7 +1570,7 @@ class OtcManager {
         val url = "$_base_api/merchant/asset/export"
         val args = JSONObject().apply {
             put("btsAccount", bts_account_name)
-            put("signatureTx", signatureTx)//TODO:2.9 !!! to _json
+            put("signatureTx", signatureTx.toString())
         }
         return _queryApiCore(url, args = args, auth_flag = EOtcAuthFlag.eoaf_sign)
     }
@@ -1626,7 +1625,7 @@ class OtcManager {
                 put("paymentChannel", payChannel)
             }
             if (signatureTx != null) {
-                put("signatureTx", signatureTx)//TODO:2.9 to _json
+                put("signatureTx", signatureTx.toString())
             }
         }
         return _queryApiCore(url, args = args, auth_flag = EOtcAuthFlag.eoaf_sign)

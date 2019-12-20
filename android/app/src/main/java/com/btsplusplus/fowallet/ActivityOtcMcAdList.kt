@@ -1,13 +1,13 @@
 package com.btsplusplus.fowallet
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
 import android.view.animation.OvershootInterpolator
+import bitshares.OtcManager
+import bitshares.Promise
 import kotlinx.android.synthetic.main.activity_otc_mc_ad_list.*
-import kotlinx.android.synthetic.main.activity_otc_merchant_list.*
 import org.json.JSONArray
 import org.json.JSONObject
 import java.lang.reflect.Field
@@ -18,8 +18,11 @@ class ActivityOtcMcAdList : BtsppActivity() {
     private var tablayout: TabLayout? = null
     private var view_pager: ViewPager? = null
 
-    private lateinit var _asset_name: String
-    private lateinit var _data: JSONArray
+    private lateinit var _auth_info: JSONObject
+    private lateinit var _merchant_detail: JSONObject
+    private var _user_type = OtcManager.EOtcUserType.eout_merchant
+
+    private var _curr_select_index = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,13 +31,15 @@ class ActivityOtcMcAdList : BtsppActivity() {
         // 设置全屏
         setFullScreen()
 
-        _asset_name = "CNY"
+        //  获取参数
+        val args = btspp_args_as_JSONObject()
+        _auth_info = args.getJSONObject("auth_info")
+        _merchant_detail = args.getJSONObject("merchant_detail")
+        _user_type = args.get("user_type") as OtcManager.EOtcUserType
 
         // 设置 tablelayout 和 view_pager
         tablayout = tablayout_of_otc_ad_list
         view_pager = view_pager_of_otc_ad_list
-
-        getData()
 
         // 添加 fargments
         setFragments()
@@ -45,13 +50,38 @@ class ActivityOtcMcAdList : BtsppActivity() {
         // 监听 tab 并设置选中 item
         setTabListener()
 
-        button_add_ad_from_otc_mc_ad_list.setOnClickListener {
-            goTo(ActivityOtcMcAdUpdate::class.java,true)
-        }
-
+        //  事件
+        button_add_ad_from_otc_mc_ad_list.setOnClickListener { onAddNewAdClicked() }
         layout_back_from_otc_mc_ad_list.setOnClickListener { finish() }
+
+        //  查询
+        queryCurrentPageAdList()
     }
 
+    private fun queryCurrentPageAdList() {
+        fragmens[_curr_select_index].let {
+            if (it is FragmentOtcMerchantList) {
+                it.queryAdList("")
+            }
+        }
+    }
+
+    private fun onAddNewAdClicked() {
+        val result_promise = Promise()
+        goTo(ActivityOtcMcAdUpdate::class.java, true, args = JSONObject().apply {
+            put("auth_info", _auth_info)
+            put("merchant_detail", _merchant_detail)
+            put("user_type", _user_type)
+            put("ad_info", null)
+            put("result_promise", result_promise)
+        })
+        result_promise.then { dirty ->
+            //  刷新UI
+            if (dirty != null && dirty as Boolean) {
+                queryCurrentPageAdList()
+            }
+        }
+    }
 
     private fun setViewPager() {
         view_pager!!.adapter = ViewPagerAdapter(super.getSupportFragmentManager(), fragmens)
@@ -75,57 +105,32 @@ class ActivityOtcMcAdList : BtsppActivity() {
         })
     }
 
-    private fun getData() {
-        _data = JSONArray().apply {
-            for (i in 0 until 10){
-                put(JSONObject().apply {
-                    put("mmerchant_name","吉祥承兑")
-
-                    put("trade_count",1500)
-                    put("legal_asset_symbol","¥")
-                    put("limit_min","30")
-                    put("limit_max","1250")
-                    put("price","7.21")
-                    put("ad_type", 1 + (i % 2))
-                    put("payment_methods", JSONArray().apply {
-                        put("alipay")
-                        put("bankcard")
-                    })
-                })
-            }
-        }
-    }
-
     private fun setFragments() {
-
-        // REMARK : 这里公用商家列表的 Fragment, 需要分类
-
-        val _args1 = JSONObject().apply {
-            put("entry","otc_ad_list")
-            put("data",_data)
-            put("asset_name",_asset_name)
-        }
-
-        val _args2 = JSONObject().apply {
-            put("entry","otc_ad_list")
-            put("data",_data)
-            put("asset_name",_asset_name)
-        }
-
-        val _args3 = JSONObject().apply {
-            put("entry","otc_ad_list")
-            put("data",_data)
-            put("asset_name",_asset_name)
-        }
-
-        fragmens.add(FragmentOtcMerchantList().initialize(_args1))
-        fragmens.add(FragmentOtcMerchantList().initialize(_args2))
-        fragmens.add(FragmentOtcMerchantList().initialize(_args3))
+        fragmens.add(FragmentOtcMerchantList().initialize(JSONObject().apply {
+            put("auth_info", _auth_info)
+            put("merchant_detail", _merchant_detail)
+            put("user_type", _user_type)
+            put("ad_status", OtcManager.EOtcAdStatus.eoads_online)
+        }))
+        fragmens.add(FragmentOtcMerchantList().initialize(JSONObject().apply {
+            put("auth_info", _auth_info)
+            put("merchant_detail", _merchant_detail)
+            put("user_type", _user_type)
+            put("ad_status", OtcManager.EOtcAdStatus.eoads_offline)
+        }))
+        fragmens.add(FragmentOtcMerchantList().initialize(JSONObject().apply {
+            put("auth_info", _auth_info)
+            put("merchant_detail", _merchant_detail)
+            put("user_type", _user_type)
+            put("ad_status", OtcManager.EOtcAdStatus.eoads_deleted)
+        }))
     }
 
     private fun setTabListener() {
         tablayout!!.setOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
+                _curr_select_index = tab.position
+                queryCurrentPageAdList()
                 view_pager!!.setCurrentItem(tab.position, true)
             }
 
