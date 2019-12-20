@@ -1,16 +1,14 @@
 package com.btsplusplus.fowallet
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.EditText
+import bitshares.AsyncTaskManager
+import bitshares.OtcManager
 import kotlinx.android.synthetic.main.activity_otc_user_auth.*
+import org.json.JSONObject
 
-class ActivityOtcUserAuth : AppCompatActivity() {
+class ActivityOtcUserAuth : BtsppActivity() {
 
-    private lateinit var et_realname: EditText
-    private lateinit var et_idcordno: EditText
-    private lateinit var et_contact_phone: EditText
-    private lateinit var et_auth_code: EditText
+    private var _smsTimerId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,25 +18,108 @@ class ActivityOtcUserAuth : AppCompatActivity() {
         //  设置全屏(隐藏状态栏和虚拟导航栏)
         setFullScreen()
 
+        //  事件
         layout_back_from_otc_user_auth.setOnClickListener { finish() }
-
-        et_realname = et_input_realname_from_otc_user_auth
-        et_idcordno = et_input_idcardno_from_otc_user_auth
-        et_contact_phone = et_input_contact_phone_from_otc_user_auth
-        et_auth_code = et_input_phone_auth_code_from_otc_user_auth
-
-        tv_get_phone_auth_code_from_otc_user_auth.setOnClickListener { sendPhoneAuthCode() }
-        tv_submit_from_otc_user_auth.setOnClickListener { onSubmit() }
-
+        btn_getsmscode.setOnClickListener { sendPhoneAuthCode() }
+        btn_submit.setOnClickListener { onSubmit() }
     }
 
-    private fun sendPhoneAuthCode(){
-        val phone_number = et_contact_phone.text.toString()
+    override fun onDestroy() {
+        //  移除定时器
+        AsyncTaskManager.sharedAsyncTaskManager().removeSecondsTimer(_smsTimerId)
+        super.onDestroy()
     }
 
-    private fun onSubmit(){
+    private fun sendPhoneAuthCode() {
+        //  倒计时中
+        if (AsyncTaskManager.sharedAsyncTaskManager().isExistSecondsTimer(_smsTimerId)) {
+            return
+        }
 
-        goTo(ActivityOtcUserAuthInfos::class.java,true)
+        val str_phone = tf_phone.text.toString()
+        if (!OtcManager.checkIsValidPhoneNumber(str_phone)) {
+            showToast(resources.getString(R.string.kOtcRmSubmitTipsInputPhoneNo))
+            return
+        }
 
+        //  TODO:2.9 配置，短信重发时间间隔。单位：秒。
+        val max_countdown_secs = 60L
+        val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this)
+        mask.show()
+        val otc = OtcManager.sharedOtcManager()
+        otc.sendSmsCode(otc.getCurrentBtsAccount(), str_phone, OtcManager.EOtcSmsType.eost_id_verify).then {
+            mask.dismiss()
+            //  提示
+            showToast(resources.getString(R.string.kOtcAuthInfoTailerTipsGetSmscodeOK))
+            //  重发倒计时
+            btn_getsmscode.isClickable = false
+            btn_getsmscode.text = String.format(resources.getString(R.string.kOtcAuthInfoTailerBtnGetSmscodeWaitNsec), max_countdown_secs.toString())
+            _smsTimerId = AsyncTaskManager.sharedAsyncTaskManager().scheduledSecondsTimer(max_countdown_secs) { left_ts ->
+                if (left_ts > 0) {
+                    btn_getsmscode.text = String.format(resources.getString(R.string.kOtcAuthInfoTailerBtnGetSmscodeWaitNsec), left_ts.toString())
+                } else {
+                    btn_getsmscode.isClickable = true
+                    btn_getsmscode.text = resources.getString(R.string.kOtcAuthInfoTailerBtnGetSmscode)
+                }
+            }
+            return@then null
+        }.catch { err ->
+            mask.dismiss()
+            otc.showOtcError(this, err)
+        }
+    }
+
+    private fun onSubmit() {
+        val str_realname = tf_realname.text.toString()
+        val str_idcard_no = tf_idcard_no.text.toString()
+        val str_phone = tf_phone.text.toString()
+        val str_smscode = tf_smscode.text.toString()
+
+        if (str_realname.isEmpty()) {
+            showToast(resources.getString(R.string.kOtcRmSubmitTipsInputRealname))
+            return
+        }
+
+        if (!OtcManager.checkIsValidChineseCardNo(str_idcard_no)) {
+            showToast(resources.getString(R.string.kOtcAuthInfoSubmitTipsInputIdNo))
+            return
+        }
+
+        if (!OtcManager.checkIsValidPhoneNumber(str_phone)) {
+            showToast(resources.getString(R.string.kOtcRmSubmitTipsInputPhoneNo))
+            return
+        }
+
+        if (str_smscode.isEmpty()) {
+            showToast(resources.getString(R.string.kOtcAuthInfoSubmitTipsInputSmscode))
+            return
+        }
+
+        //  认证
+        val otc = OtcManager.sharedOtcManager()
+        val args = JSONObject().apply {
+            put("btsAccount", otc.getCurrentBtsAccount())
+            put("idcardNo", str_idcard_no)
+            put("phoneNum", str_phone)
+            put("realName", str_realname)
+            put("smscode", str_smscode)
+        }
+
+        guardWalletUnlocked(true) { unlocked ->
+            if (unlocked) {
+                val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this)
+                mask.show()
+                otc.idVerify(args).then {
+                    mask.dismiss()
+                    //  提示 & 返回
+                    showToast(resources.getString(R.string.kOtcAuthInfoSubmitTipsOK))
+                    finish()
+                    return@then null
+                }.catch { err ->
+                    mask.dismiss()
+                    otc.showOtcError(this, err)
+                }
+            }
+        }
     }
 }

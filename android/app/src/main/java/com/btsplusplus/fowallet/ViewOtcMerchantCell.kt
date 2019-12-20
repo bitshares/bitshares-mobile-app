@@ -6,27 +6,23 @@ import android.view.Gravity
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import bitshares.dp
-import bitshares.forEach
-import bitshares.toList
-import bitshares.xmlstring
-import org.json.JSONArray
+import bitshares.*
 import org.json.JSONObject
 
-class ViewOtcMerchantCell  : LinearLayout {
+class ViewOtcMerchantCell : LinearLayout {
 
-    var _ctx: Context
-    var _entry: String = ""
-    var _asset_name: String
-    var _data: JSONObject
+    private var _ctx: Context
+    private var _user_type = OtcManager.EOtcUserType.eout_normal_user
+    private var _data: JSONObject
+    private var _callback: (JSONObject)-> Unit
 
-     private val content_fontsize = 12.0f
+    private val content_fontsize = 12.0f
 
-    constructor(ctx: Context, entry: String,asset_name: String, data: JSONObject) : super(ctx) {
+    constructor(ctx: Context, user_type: OtcManager.EOtcUserType, data: JSONObject, callback: (JSONObject)->Unit) : super(ctx) {
         _ctx = ctx
-        _entry = entry
-        _asset_name = asset_name
+        _user_type = user_type
         _data = data
+        _callback = callback
         createUI()
     }
 
@@ -37,16 +33,19 @@ class ViewOtcMerchantCell  : LinearLayout {
         val layout_wrap = LinearLayout(_ctx)
         layout_wrap.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         layout_wrap.orientation = LinearLayout.VERTICAL
-        layout_wrap.setPadding(0,0,0,10.dp)
+        layout_wrap.setPadding(0, 0, 0, 10.dp)
 
-        // 第一行
-        // entry = otc_mc_list : 商家图标 商家名称 交易总数|成交比
-        // entry = otc_ad_list : 商家购买|商家出售 asset_name
+        //  获取数据
+        val assetSymbol = _data.getString("assetSymbol")
+        val fiat_sym = OtcManager.sharedOtcManager().getFiatCnyInfo().getString("short_symbol")//TODO:2.9
+
+        //  第一行
+        //  用户端：商家头像 + 商家名称 ----- 统计数据
+        //  商家端：商家买卖 + 资产
         val ly1 = LinearLayout(_ctx).apply {
             layoutParams = layout_params
             orientation = LinearLayout.HORIZONTAL
-
-            if (_entry == "otc_mc_list"){
+            if (_user_type == OtcManager.EOtcUserType.eout_normal_user) {
                 // 左边
                 addView(LinearLayout(_ctx).apply {
                     layoutParams = LinearLayout.LayoutParams(0.dp, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
@@ -54,7 +53,7 @@ class ViewOtcMerchantCell  : LinearLayout {
 
 
                     addView(TextView(_ctx).apply {
-                        text = _data.getString("mmerchant_name").first().toString()
+                        text = _data.getString("merchantNickname").substring(0, 1)
                         setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
                         setTextColor(_ctx.resources.getColor(R.color.theme01_textColorMain))
                         background = _ctx.resources.getDrawable(R.drawable.circle_character_view)
@@ -66,35 +65,34 @@ class ViewOtcMerchantCell  : LinearLayout {
                         gravity = Gravity.CENTER
                     })
                     addView(TextView(_ctx).apply {
-                        text = _data.getString("mmerchant_name")
+                        text = _data.getString("merchantNickname")
                         setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
                         setTextColor(resources.getColor(R.color.theme01_textColorMain))
                         gravity = Gravity.CENTER
-                        setPadding(5.dp,0,0,0)
+                        setPadding(5.dp, 0, 0, 0)
                     })
                 })
-                // 右边
+                // 右边 TODO;2.9 miss dasta
                 addView(LinearLayout(_ctx).apply {
                     val _layout_params = LinearLayout.LayoutParams(0.dp, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
                     layoutParams = _layout_params
                     gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
 
                     addView(TextView(_ctx).apply {
-                        text = String.format("%s 笔 | %s",_data.getInt("total"), _data.getString("rate"))
+                        text = "333 | 44" //String.format("%s 笔 | %s", _data.getInt("total"), _data.getString("rate"))
 
                         setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
                         setTextColor(_ctx.resources.getColor(R.color.theme01_textColorGray))
                     })
                 })
-            }
-            if (_entry == "otc_ad_list") {
+            } else {
                 addView(LinearLayout(_ctx).apply {
                     layoutParams = LinearLayout.LayoutParams(0.dp, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
                     gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
-
+                    //  TODO:2.9 lang
                     addView(TextView(_ctx).apply {
                         setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
-                        if (_data.getInt("ad_type") == 1) {
+                        if (_data.getInt("adType") == OtcManager.EOtcAdType.eoadt_merchant_buy.value) {
                             text = "商家购买"
                             setTextColor(_ctx.resources.getColor(R.color.theme01_buyColor))
                         } else {
@@ -103,120 +101,98 @@ class ViewOtcMerchantCell  : LinearLayout {
                         }
                     })
                     addView(TextView(_ctx).apply {
-                        text = _asset_name
+                        text = assetSymbol
                         setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
                         setTextColor(resources.getColor(R.color.theme01_textColorMain))
                         gravity = Gravity.CENTER
-                        setPadding(5.dp,0,0,0)
+                        setPadding(5.dp, 0, 0, 0)
                     })
                 })
             }
         }
 
-
-        // 第二行 数量 单价
+        // 第二行 数量 单价标题
         val ly2 = LinearLayout(_ctx).apply {
             layoutParams = layout_params
             orientation = LinearLayout.HORIZONTAL
 
-            // 左边
+            //  左边
             addView(LinearLayout(_ctx).apply {
                 layoutParams = LinearLayout.LayoutParams(0.dp, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
                 gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
 
                 addView(TextView(_ctx).apply {
-                    text = "数量"
+                    text = R.string.kOtcAdCellLabelAmount.xmlstring(_ctx)
+                    setTextColor(resources.getColor(R.color.theme01_textColorGray))
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
-
-                    if (_entry == "otc_mc_list") {
-                        setTextColor(_ctx.resources.getColor(R.color.theme01_textColorMain))
-                    } else if (_entry == "otc_ad_list") {
-                        setTextColor(_ctx.resources.getColor(R.color.theme01_textColorGray))
-                    }
-
                     gravity = Gravity.CENTER
                 })
 
                 addView(TextView(_ctx).apply {
-                    text = String.format("%s %s",_data.getInt("trade_count").toString(),_asset_name)
+                    text = String.format("%s %s", _data.getString("stock"), assetSymbol)
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
                     setTextColor(resources.getColor(R.color.theme01_textColorNormal))
                     gravity = Gravity.CENTER
-                    setPadding(5.dp,0,0,0)
+                    setPadding(5.dp, 0, 0, 0)
                 })
             })
-            // 右边
+
+            //  右边
             addView(LinearLayout(_ctx).apply {
                 val _layout_params = LinearLayout.LayoutParams(0.dp, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
                 layoutParams = _layout_params
                 gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
-
                 addView(TextView(_ctx).apply {
-                    text = "单价"
+                    text = R.string.kOtcAdCellLabelUnitPrice.xmlstring(_ctx)
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
                     setTextColor(_ctx.resources.getColor(R.color.theme01_textColorGray))
                 })
             })
         }
 
-
-        // 第三行 限额 价格
+        // 第三行 限额 价格价格
         val ly3 = LinearLayout(_ctx).apply {
             layoutParams = layout_params
             orientation = LinearLayout.HORIZONTAL
-
 
             // 左边
             addView(LinearLayout(_ctx).apply {
                 layoutParams = LinearLayout.LayoutParams(0.dp, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
                 gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
 
+                //  限额
                 addView(TextView(_ctx).apply {
-
-                    if (_entry == "otc_mc_list"){
-                        text =  String.format("%s%s - %s%s",_data.getString("legal_asset_symbol"), _data.getString("limit_min"),_data.getString("legal_asset_symbol"), _data.getString("limit_max"))
-                        setTextColor(_ctx.resources.getColor(R.color.theme01_textColorMain))
-                    } else if (_entry == "otc_ad_list") {
-                        text = "限额"
-                        setTextColor(_ctx.resources.getColor(R.color.theme01_textColorGray))
-                    }
+                    text = R.string.kOtcAdCellLabelLimit.xmlstring(_ctx)
+                    setTextColor(_ctx.resources.getColor(R.color.theme01_textColorGray))
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
-
                     gravity = Gravity.CENTER
                 })
 
+                //  限额范围
                 addView(TextView(_ctx).apply {
-
-                    if (_entry == "otc_mc_list"){
-                        text = _data.getInt("trade_count").toString()
-                    } else if (_entry == "otc_ad_list") {
-                        text =  String.format("%s%s - %s%s",_data.getString("legal_asset_symbol"), _data.getString("limit_min"),_data.getString("legal_asset_symbol"), _data.getString("limit_max"))
-                    }
+                    text = "$fiat_sym${_data.getString("lowestLimit")} - $fiat_sym${_data.getString("maxLimit")}"
                     setTextColor(resources.getColor(R.color.theme01_textColorNormal))
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
-
                     gravity = Gravity.CENTER
-                    setPadding(5.dp,0,0,0)
+                    setPadding(5.dp, 0, 0, 0)
                 })
             })
 
-            // 右边
+            // 右边 - 单价价格
             addView(LinearLayout(_ctx).apply {
                 val _layout_params = LinearLayout.LayoutParams(0.dp, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
                 layoutParams = _layout_params
                 gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
-
                 addView(TextView(_ctx).apply {
-                    text = String.format("%s%s",_data.getString("legal_asset_symbol"),_data.getString("price"))
-
-                    setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15.0f)
+                    text = "$fiat_sym${_data.getString("price")}"
+                    paint.isFakeBoldText = true
+                    setTextSize(TypedValue.COMPLEX_UNIT_DIP, 19.0f)
                     setTextColor(_ctx.resources.getColor(R.color.theme01_textColorHighlight))
                 })
             })
         }
 
-
-        // 第四行 支付宝 微信 购买/出售
+        // 第四行 支付宝 微信 购买/出售/上架/下架
         val ly4 = LinearLayout(_ctx).apply {
             layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 40.dp)
             orientation = LinearLayout.HORIZONTAL
@@ -226,37 +202,40 @@ class ViewOtcMerchantCell  : LinearLayout {
                 layoutParams = LinearLayout.LayoutParams(0.dp, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
                 gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
 
-                _data.getJSONArray("payment_methods").forEach<String> {
-                    val payment_method = it!!
-
+                //  银行卡
+                if (_data.isTrue("bankcardPaySwitch")) {
                     val iv = ImageView(_ctx).apply {
                         scaleType = ImageView.ScaleType.FIT_END
                         gravity = Gravity.LEFT
-                        setPadding(0,0,5,0)
+                        setPadding(0, 0, 12, 0)
                     }
-                    if (payment_method == "alipay"){
-                        iv.setImageDrawable(resources.getDrawable(R.drawable.icon_pm_alipay))
-                    }
-                    if (payment_method == "bankcard"){
-                        iv.setImageDrawable(resources.getDrawable(R.drawable.icon_pm_bankcard))
-                    }
+                    iv.setImageDrawable(resources.getDrawable(R.drawable.icon_pm_bankcard))
                     addView(iv)
                 }
 
-
+                //  支付宝
+                if (_data.isTrue("aliPaySwitch")) {
+                    val iv = ImageView(_ctx).apply {
+                        scaleType = ImageView.ScaleType.FIT_END
+                        gravity = Gravity.LEFT
+                        setPadding(0, 0, 12, 0)
+                    }
+                    iv.setImageDrawable(resources.getDrawable(R.drawable.icon_pm_alipay))
+                    addView(iv)
+                }
             })
 
             // 右边
             addView(LinearLayout(_ctx).apply {
-                val _layout_params = LinearLayout.LayoutParams(0.dp, 32.dp, 1f)
+                val _layout_params = LinearLayout.LayoutParams(0.dp, 28.dp, 1f)
                 layoutParams = _layout_params
                 gravity = Gravity.TOP or Gravity.RIGHT
 
-                val ad_type = _data.getInt("ad_type")
-
-                if (_entry == "otc_mc_list"){
+                val ad_type = _data.getInt("adType")
+                //  用户端：买卖 商家端：上架/下架
+                if (_user_type == OtcManager.EOtcUserType.eout_normal_user) {
                     val button_buy_or_sell = TextView(_ctx).apply {
-                        if(ad_type == 1) {
+                        if (ad_type == OtcManager.EOtcAdType.eoadt_user_buy.value) {
                             text = resources.getString(R.string.kLabelTitleBuy)
                             setBackgroundColor(resources.getColor(R.color.theme01_buyColor))
                         } else {
@@ -266,30 +245,25 @@ class ViewOtcMerchantCell  : LinearLayout {
                         setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
                         setTextColor(resources.getColor(R.color.theme01_textColorMain))
                         gravity = Gravity.TOP
-                        setPadding(20.dp,5.dp,20.dp,5.dp)
+                        setPadding(20.dp, 5.dp, 20.dp, 5.dp)
                     }
-                    button_buy_or_sell.setOnClickListener {
-                        if(ad_type == 1) {
-                            onBuyButtonClicked()
-                        } else {
-                            onSellButtonClicked()
-                        }
-                    }
+                    button_buy_or_sell.setOnClickListener { _callback(_data) }
                     addView(button_buy_or_sell)
-                }
-                if (_entry == "otc_ad_list") {
-                    val button_ad_down = TextView(_ctx).apply {
-                        text = "下架"
-                        setBackgroundColor(resources.getColor(R.color.theme01_textColorHighlight))
-                        setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
-                        setTextColor(resources.getColor(R.color.theme01_textColorMain))
-                        gravity = Gravity.TOP
-                        setPadding(20.dp,5.dp,20.dp,5.dp)
+                } else {
+                    //  商家端按钮
+                    val ad_status = _data.getInt("status")
+                    if (ad_status != OtcManager.EOtcAdStatus.eoads_deleted.value) {
+                        val button_ad_down = TextView(_ctx).apply {
+                            text = if (ad_status == OtcManager.EOtcAdStatus.eoads_online.value) "下架" else "上架"//TODO:2.9 lang
+                            setBackgroundColor(resources.getColor(R.color.theme01_textColorHighlight))
+                            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
+                            setTextColor(resources.getColor(R.color.theme01_textColorMain))
+                            gravity = Gravity.TOP
+                            setPadding(20.dp, 5.dp, 20.dp, 5.dp)
+                        }
+                        button_ad_down.setOnClickListener { _callback(_data) }
+                        addView(button_ad_down)
                     }
-                    button_ad_down.setOnClickListener {
-                        onAdDownButtonClicked()
-                    }
-                    addView(button_ad_down)
                 }
             })
         }
@@ -302,23 +276,5 @@ class ViewOtcMerchantCell  : LinearLayout {
 
         addView(layout_wrap)
         return this
-    }
-
-    private fun onAdDownButtonClicked(){
-
-    }
-
-    private fun onBuyButtonClicked(){
-        val ad_type = _data.getInt("ad_type")
-        ViewDialogOtcTrade(_ctx,_asset_name,ad_type,_data){ _index: Int, result_data: JSONObject ->
-
-        }.show()
-    }
-
-    private fun onSellButtonClicked(){
-        val ad_type = _data.getInt("ad_type")
-        ViewDialogOtcTrade(_ctx,_asset_name,ad_type,_data){ _index: Int, result_data: JSONObject ->
-
-        }.show()
     }
 }

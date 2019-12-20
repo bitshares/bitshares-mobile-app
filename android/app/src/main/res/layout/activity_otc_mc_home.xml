@@ -70,77 +70,81 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <TextView
-                        android:gravity="center"
-                        android:id="@+id/tv_mc_first_name_from_otc_mc_home"
-                        android:layout_gravity="center_vertical"
-                        android:textSize="17dp"
-                        android:textColor="@color/theme01.textColorMain"
-                        android:text=""
-                        android:layout_width="24dp"
-                        android:layout_height="24dp" />
-
-
+                    <!-- 左边头像+文字一体 -->
                     <LinearLayout
-                        android:layout_marginLeft="10dp"
-                        android:orientation="vertical"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="10"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:gravity="center"
+                            android:id="@+id/tv_mc_first_name_from_otc_mc_home"
+                            android:layout_gravity="center_vertical"
+                            android:textSize="17dp"
+                            android:textColor="@color/theme01.textColorMain"
+                            android:text=""
+                            android:layout_width="24dp"
+                            android:layout_height="24dp" />
 
 
                         <LinearLayout
-                            android:orientation="horizontal"
+                            android:layout_marginLeft="10dp"
+                            android:orientation="vertical"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content">
 
-                            <TextView
-                                android:id="@+id/tv_mc_name_from_otc_mc_home"
-                                android:textSize="14dp"
-                                android:textColor="@color/theme01.textColorMain"
-                                android:text=""
+
+                            <LinearLayout
+                                android:orientation="horizontal"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/tv_mc_name_from_otc_mc_home"
+                                    android:textSize="14dp"
+                                    android:textColor="@color/theme01.textColorMain"
+                                    android:text=""
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+
+                                <TextView
+                                    android:id="@+id/tv_auth_text_from_otc_mc_home"
+                                    android:layout_marginLeft="5dp"
+                                    android:paddingTop="1dp"
+                                    android:paddingBottom="1dp"
+                                    android:paddingLeft="4dp"
+                                    android:paddingRight="4dp"
+                                    android:background="@color/theme01.textColorHighlight"
+                                    android:textSize="8dp"
+                                    android:textColor="@color/theme01.textColorMain"
+                                    android:text="已认证"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+                            </LinearLayout>
 
                             <TextView
-                                android:id="@+id/tv_auth_text_from_otc_mc_home"
-                                android:layout_marginLeft="5dp"
-                                android:paddingTop="1dp"
-                                android:paddingBottom="1dp"
-                                android:paddingLeft="4dp"
-                                android:paddingRight="4dp"
-                                android:background="@color/theme01.textColorHighlight"
-                                android:textSize="8dp"
-                                android:textColor="@color/theme01.textColorMain"
-                                android:text="已认证"
+                                android:id="@+id/tv_date_from_otc_mc_home"
+                                android:layout_marginTop="2dp"
+                                android:textSize="10dp"
+                                android:text="2019-12-04"
+                                android:textColor="@color/theme01.textColorNormal"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content" />
                         </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/tv_date_from_otc_mc_home"
-                            android:layout_marginTop="2dp"
-                            android:textSize="10dp"
-                            android:text="2019-12-04"
-                            android:textColor="@color/theme01.textColorNormal"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_gravity="center_vertical"
-                        android:gravity="right|center_vertical"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_btn_right_arrow" />
-
-                    </LinearLayout>
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="20dp"
+                        android:foregroundGravity="right"
+                        android:layout_gravity="center_vertical|right"
+                        android:src="@drawable/ic_btn_right_arrow" />
                 </LinearLayout>
 
-                <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+                <!-- <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View> -->
 
 
                 <!-- 商家资产 -->
@@ -151,21 +155,18 @@
                     android:layout_marginTop="40dp"
                     android:orientation="horizontal">
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:id="@+id/img_icon_otc_mc_asset"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_gravity="center_vertical"
-                            android:foregroundGravity="right"
-                            android:src="@drawable/icon_otc_mc_asset" />
-                    </LinearLayout>
+                    <ImageView
+                        android:id="@+id/img_icon_otc_mc_asset"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:foregroundGravity="right"
+                        android:src="@drawable/icon_otc_mc_ad" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="9"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:gravity="center_vertical"
@@ -174,18 +175,13 @@
                         android:textColor="@color/theme01.textColorMain"
                         android:text="@string/kOtcMcHomeCellLabelTitleAsset"/>
 
-                    <LinearLayout
-                        android:gravity="center_vertical|right"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:foregroundGravity="right"
-                            android:src="@drawable/ic_btn_right_arrow" />
-
-                    </LinearLayout>
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="20dp"
+                        android:foregroundGravity="right"
+                        android:layout_gravity="center_vertical|right"
+                        android:src="@drawable/ic_btn_right_arrow" />
                 </LinearLayout>
                 <!-- <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View> -->
 
@@ -197,21 +193,18 @@
                     android:layout_marginTop="12dp"
                     android:orientation="horizontal">
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:id="@+id/img_icon_otc_mc_ad"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_gravity="center_vertical"
-                            android:foregroundGravity="right"
-                            android:src="@drawable/icon_otc_mc_ad" />
-                    </LinearLayout>
+                    <ImageView
+                        android:id="@+id/img_icon_otc_mc_ad"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:foregroundGravity="right"
+                        android:src="@drawable/icon_otc_mc_ad" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="9"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:gravity="center_vertical"
@@ -220,18 +213,13 @@
                         android:textColor="@color/theme01.textColorMain"
                         android:text="@string/kOtcMcHomeCellLabelTitleAd"/>
 
-                    <LinearLayout
-                        android:gravity="center_vertical|right"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:foregroundGravity="right"
-                            android:src="@drawable/ic_btn_right_arrow" />
-
-                    </LinearLayout>
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="20dp"
+                        android:foregroundGravity="right"
+                        android:layout_gravity="center_vertical|right"
+                        android:src="@drawable/ic_btn_right_arrow" />
                 </LinearLayout>
                 <!-- <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View> -->
 
@@ -243,21 +231,18 @@
                     android:layout_marginTop="12dp"
                     android:orientation="horizontal">
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:id="@+id/img_icon_otc_mc_order"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_gravity="center_vertical"
-                            android:foregroundGravity="right"
-                            android:src="@drawable/icon_otc_order" />
-                    </LinearLayout>
+                    <ImageView
+                        android:id="@+id/img_icon_otc_mc_order"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:foregroundGravity="right"
+                        android:src="@drawable/icon_otc_order" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="9"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:gravity="center_vertical"
@@ -266,18 +251,13 @@
                         android:textColor="@color/theme01.textColorMain"
                         android:text="@string/kOtcMcHomeCellLabelTitleOrder"/>
 
-                    <LinearLayout
-                        android:gravity="center_vertical|right"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:foregroundGravity="right"
-                            android:src="@drawable/ic_btn_right_arrow" />
-
-                    </LinearLayout>
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="20dp"
+                        android:foregroundGravity="right"
+                        android:layout_gravity="center_vertical|right"
+                        android:src="@drawable/ic_btn_right_arrow" />
                 </LinearLayout>
                 <!-- <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View> -->
 
@@ -289,21 +269,18 @@
                     android:layout_marginTop="40dp"
                     android:orientation="horizontal">
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:id="@+id/img_icon_otc_mc_receive"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_gravity="center_vertical"
-                            android:foregroundGravity="right"
-                            android:src="@drawable/icon_otc_mc_payment" />
-                    </LinearLayout>
+                    <ImageView
+                        android:id="@+id/img_icon_otc_mc_receive"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:foregroundGravity="right"
+                        android:src="@drawable/icon_otc_receive" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="9"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:gravity="center_vertical"
@@ -312,18 +289,13 @@
                         android:textColor="@color/theme01.textColorMain"
                         android:text="@string/kOtcMcHomeCellLabelTitleReceiveMethod"/>
 
-                    <LinearLayout
-                        android:gravity="center_vertical|right"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:foregroundGravity="right"
-                            android:src="@drawable/ic_btn_right_arrow" />
-
-                    </LinearLayout>
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="20dp"
+                        android:foregroundGravity="right"
+                        android:layout_gravity="center_vertical|right"
+                        android:src="@drawable/ic_btn_right_arrow" />
                 </LinearLayout>
                 <!-- <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View> -->
 
@@ -337,21 +309,18 @@
                     android:layout_marginTop="12dp"
                     android:orientation="horizontal">
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:id="@+id/img_icon_otc_mc_payment"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_gravity="center_vertical"
-                            android:foregroundGravity="right"
-                            android:src="@drawable/icon_otc_payment" />
-                    </LinearLayout>
+                    <ImageView
+                        android:id="@+id/img_icon_otc_mc_payment"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:foregroundGravity="right"
+                        android:src="@drawable/icon_otc_mc_payment" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="9"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:gravity="center_vertical"
@@ -360,18 +329,13 @@
                         android:textColor="@color/theme01.textColorMain"
                         android:text="@string/kOtcMcHomeCellLabelTitlePaymentMethod"/>
 
-                    <LinearLayout
-                        android:gravity="center_vertical|right"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:foregroundGravity="right"
-                            android:src="@drawable/ic_btn_right_arrow" />
-
-                    </LinearLayout>
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="20dp"
+                        android:foregroundGravity="right"
+                        android:layout_gravity="center_vertical|right"
+                        android:src="@drawable/ic_btn_right_arrow" />
                 </LinearLayout>
                 <!-- <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View> -->
 

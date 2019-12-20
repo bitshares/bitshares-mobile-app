@@ -14,7 +14,7 @@
         android:layout_marginTop="25dp"
         android:orientation="vertical">
 
-
+        <!-- 导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -47,7 +47,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="身份认证"
+                android:text="@string/kVcTitleOtcUserAuth"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
@@ -59,16 +59,16 @@
             android:layout_height="wrap_content">
 
 
-
+            <!-- 姓名 -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="姓名"
+                android:text="@string/kOtcRmAddCellLabelTitleName"
                 android:textSize="12dp"
                 android:textColor="@color/theme01.textColorMain"/>
 
             <EditText
-                android:id="@+id/et_input_realname_from_otc_user_auth"
+                android:id="@+id/tf_realname"
                 android:singleLine="true"
                 android:maxLines="1"
                 android:layout_width="match_parent"
@@ -76,23 +76,24 @@
                 android:layout_marginTop="10dp"
                 android:textColor="#ffffff"
                 android:textColorHint="@color/theme01.textColorGray"
-                android:hint="请输入姓名"
+                android:hint="@string/kOtcRmAddPlaceholderRealname"
                 android:theme="@style/theme01.EditText"
                 android:background="@null"
                 android:textSize="16dp"/>
 
             <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
+            <!-- 身份证号 -->
             <TextView
                 android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="身份证号"
+                android:text="@string/kOtcAuthInfoCellLabelTitleIdNo"
                 android:textSize="12dp"
                 android:textColor="@color/theme01.textColorMain"/>
 
             <EditText
-                android:id="@+id/et_input_idcardno_from_otc_user_auth"
+                android:id="@+id/tf_idcard_no"
                 android:singleLine="true"
                 android:maxLines="1"
                 android:digits="1234567890"
@@ -103,23 +104,23 @@
                 android:layout_marginTop="10dp"
                 android:textColor="#ffffff"
                 android:textColorHint="@color/theme01.textColorGray"
-                android:hint="请输入身份证号"
+                android:hint="@string/kOtcAuthInfoPlaceholderIdNo"
                 android:theme="@style/theme01.EditText"
                 android:background="@null"
                 android:textSize="16dp"/>
 
             <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-
+            <!-- 联系方式 -->
             <TextView
                 android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="联系方式"
+                android:text="@string/kOtcAuthInfoCellLabelTitleContact"
                 android:textSize="12dp"
                 android:textColor="@color/theme01.textColorMain"/>
             <EditText
-                android:id="@+id/et_input_contact_phone_from_otc_user_auth"
+                android:id="@+id/tf_phone"
                 android:singleLine="true"
                 android:maxLines="1"
                 android:digits="1234567890"
@@ -130,7 +131,7 @@
                 android:layout_marginTop="10dp"
                 android:textColor="#ffffff"
                 android:textColorHint="@color/theme01.textColorGray"
-                android:hint="请输入联系方式"
+                android:hint="@string/kOtcAuthInfoPlaceholderPhoneNo"
                 android:theme="@style/theme01.EditText"
                 android:background="@null"
                 android:textSize="16dp"/>
@@ -147,21 +148,21 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
 
-                    android:id="@+id/et_input_phone_auth_code_from_otc_user_auth"
+                    android:id="@+id/tf_smscode"
                     android:singleLine="true"
                     android:maxLines="1"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:textColor="#ffffff"
                     android:textColorHint="@color/theme01.textColorGray"
-                    android:hint="请输入手机号码"
+                    android:hint="@string/kOtcAuthInfoPlaceholderSmscode"
                     android:theme="@style/theme01.EditText"
                     android:background="@null"
                     android:textSize="16dp"/>
 
                 <TextView
-                    android:id="@+id/tv_get_phone_auth_code_from_otc_user_auth"
-                    android:text="获取验证码"
+                    android:id="@+id/btn_getsmscode"
+                    android:text="@string/kOtcAuthInfoTailerBtnGetSmscode"
                     android:textSize="12dp"
                     android:textColor="@color/theme01.textColorHighlight"
                     android:layout_width="wrap_content"
@@ -173,17 +174,19 @@
 
             <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
+            <!-- 提交按钮 -->
             <TextView
-                android:id="@+id/tv_submit_from_otc_user_auth"
+                android:id="@+id/btn_submit"
                 android:gravity="center"
                 android:background="@color/theme01.sellColor"
                 android:layout_marginTop="10dp"
-                android:text="提交"
+                android:text="@string/kOtcRmAddSubmitBtnName"
                 android:textColor="@color/theme01.textColorMain"
                 android:textSize="14dp"
                 android:layout_width="match_parent"
                 android:layout_height="40dp" />
 
+            <!-- 提示信息 -->
             <TextView
                 android:id="@+id/tv_tips_from_otc_user_auth"
                 android:layout_width="match_parent"
@@ -194,7 +197,7 @@
                 android:textColor="@color/theme01.textColorMain"
                 android:padding="5dp"
                 android:background="@color/theme01.textColorGray"
-                android:text="【温馨提示】\n 你好你好你好你好你好你好你好你好。\n你好你好你好你好你好你好你好你好你好\n你好你好你好你好你好你好你好" />
+                android:text="@string/kOtcAuthInfoCellTips" />
 
         </LinearLayout>
 

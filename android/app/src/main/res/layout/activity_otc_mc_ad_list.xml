@@ -13,7 +13,7 @@
         android:layout_marginTop="25dp"
         android:orientation="vertical">
 
-
+        <!-- 导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -45,7 +45,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="商家广告"
+                android:text="@string/kVcTitleOtcMcAd"
                 style="@style/kNavigationBarTextStyle" />
 
             <Button
@@ -73,17 +73,17 @@
             <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="上架中" />
+                android:text="@string/kOtcMcAdPageTitleOnline" />
 
             <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="已下架" />
+                android:text="@string/kOtcMcAdPageTitleOffline" />
 
             <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="已删除" />
+                android:text="@string/kOtcMcAdPageTitleDeleted" />
 
         </android.support.design.widget.TabLayout>
 
