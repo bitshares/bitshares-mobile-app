@@ -38,7 +38,7 @@ class ActivityOtcMcHome : BtsppActivity() {
 
         //  基本信息
         layout_otc_merchant_home_basic.setOnClickListener {
-            OtcManager.sharedOtcManager().guardUserIdVerified(this, true, null) { auth_info ->
+            OtcManager.sharedOtcManager().guardUserIdVerified(this, null) { auth_info, _ ->
                 goTo(ActivityOtcUserAuthInfos::class.java, true, args = JSONObject().apply {
                     put("auth_info", auth_info)
                 })
@@ -47,7 +47,7 @@ class ActivityOtcMcHome : BtsppActivity() {
 
         //  商家资产
         layout_asset_list_from_otc_mc_home.setOnClickListener {
-            OtcManager.sharedOtcManager().guardUserIdVerified(this, true, null) { auth_info ->
+            OtcManager.sharedOtcManager().guardUserIdVerified(this, null) { auth_info, _ ->
                 goTo(ActivityOtcMcAssetList::class.java, true, args = JSONObject().apply {
                     put("auth_info", auth_info)
                     put("merchant_detail", merchant_detail)
@@ -58,7 +58,7 @@ class ActivityOtcMcHome : BtsppActivity() {
 
         //  商家广告
         layout_ad_list_from_otc_mc_home.setOnClickListener {
-            OtcManager.sharedOtcManager().guardUserIdVerified(this, true, null) { auth_info ->
+            OtcManager.sharedOtcManager().guardUserIdVerified(this, null) { auth_info, _ ->
                 goTo(ActivityOtcMcAdList::class.java, true, args = JSONObject().apply {
                     put("auth_info", auth_info)
                     put("merchant_detail", merchant_detail)
@@ -69,7 +69,7 @@ class ActivityOtcMcHome : BtsppActivity() {
 
         //  商家订单
         layout_order_list_from_otc_mc_home.setOnClickListener {
-            OtcManager.sharedOtcManager().guardUserIdVerified(this, true, null) { auth_info ->
+            OtcManager.sharedOtcManager().guardUserIdVerified(this, null) { auth_info, _ ->
                 goTo(ActivityOtcOrderList::class.java, true, args = JSONObject().apply {
                     put("auth_info", auth_info)
                     put("user_type", OtcManager.EOtcUserType.eout_merchant)
@@ -79,8 +79,8 @@ class ActivityOtcMcHome : BtsppActivity() {
 
         //  收款方式
         layout_receive_methods_from_otc_mc_home.setOnClickListener {
-            OtcManager.sharedOtcManager().guardUserIdVerified(this, true, null) { auth_info ->
-                goTo(ActivityOtcPaymentList::class.java, true, args = JSONObject().apply {
+            OtcManager.sharedOtcManager().guardUserIdVerified(this, null) { auth_info, _ ->
+                goTo(ActivityOtcReceiveMethods::class.java, true, args = JSONObject().apply {
                     put("auth_info", auth_info)
                     put("user_type", OtcManager.EOtcUserType.eout_merchant)
                 })
@@ -89,7 +89,7 @@ class ActivityOtcMcHome : BtsppActivity() {
 
         //  付款方式
         layout_payment_methods_from_otc_mc_home.setOnClickListener {
-            OtcManager.sharedOtcManager().guardUserIdVerified(this, true, null) { auth_info ->
+            OtcManager.sharedOtcManager().guardUserIdVerified(this, null) { auth_info, _ ->
                 goTo(ActivityOtcMcPaymentMethods::class.java, true, args = JSONObject().apply {
                     put("auth_info", auth_info)
                     put("merchant_detail", merchant_detail)

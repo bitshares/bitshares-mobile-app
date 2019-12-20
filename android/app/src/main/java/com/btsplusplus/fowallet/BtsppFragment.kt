@@ -18,7 +18,7 @@ abstract class BtsppFragment : Fragment() {
     private var _param_id = 0
     private var _tmp_destory = false
     protected var _m_ctx: Context? = null
-    private var _waitOnCreateViewPromise:Promise? = null
+    private var _waitOnCreateViewPromise: Promise? = null
 
     /**
      * Fragment通过调用该方法传递参数。

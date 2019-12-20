@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.btsplusplus.fowallet.ActivityOtcPaymentList"
+    tools:context="com.btsplusplus.fowallet.ActivityOtcReceiveMethods"
     android:background="@color/theme01.appBackColor">
 
 

@@ -7,7 +7,6 @@ import android.support.v4.view.ViewPager
 import android.view.animation.OvershootInterpolator
 import bitshares.OtcManager
 import kotlinx.android.synthetic.main.activity_otc_order_list.*
-import org.json.JSONArray
 import org.json.JSONObject
 import java.lang.reflect.Field
 
@@ -33,7 +32,11 @@ class ActivityOtcOrderList : BtsppActivity() {
         val args = btspp_args_as_JSONObject()
         _auth_info = args.getJSONObject("auth_info")
         _user_type = args.get("user_type") as OtcManager.EOtcUserType
-        _curr_select_index = if (_user_type == OtcManager.EOtcUserType.eout_normal_user) { 0 } else { 1 }
+        _curr_select_index = if (_user_type == OtcManager.EOtcUserType.eout_normal_user) {
+            0
+        } else {
+            1
+        }
 
         //  UI - 初始化page bar
         val pages = findViewById<android.support.design.widget.TabLayout>(R.id.tablayout_of_otc_order_list)

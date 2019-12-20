@@ -14,6 +14,7 @@
         android:layout_marginTop="25dp"
         android:orientation="vertical">
 
+        <!-- 导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -45,7 +46,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="发布广告"
+                android:text=""
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
@@ -73,7 +74,7 @@
                     <TextView
                         android:textSize="12dp"
                         android:textColor="@color/theme01.textColorNormal"
-                        android:text="广告类型"
+                        android:text="@string/kOtcMcAdEditCellAdType"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
@@ -92,7 +93,7 @@
                             android:layout_marginLeft="5dp"
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorMain"
-                            android:text="请选择广告类型"/>
+                            android:text="@string/kOtcMcAdEditCellAdTypeValueSelectPlaceholder"/>
 
                         <ImageView
                             android:layout_width="20dp"
@@ -115,7 +116,7 @@
                     <TextView
                         android:textSize="12dp"
                         android:textColor="@color/theme01.textColorNormal"
-                        android:text="数字资产"
+                        android:text="@string/kOtcMcAdEditCellAsset"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
@@ -134,7 +135,7 @@
                             android:layout_marginLeft="5dp"
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorMain"
-                            android:text="请选择数字资产"/>
+                            android:text="@string/kOtcMcAdEditCellAssetValueSelectPlaceholder"/>
 
                         <ImageView
                             android:layout_width="20dp"
@@ -156,7 +157,7 @@
                     <TextView
                         android:textSize="12dp"
                         android:textColor="@color/theme01.textColorNormal"
-                        android:text="法币"
+                        android:text="@string/kOtcMcAdEditCellFiatAsset"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
@@ -174,7 +175,7 @@
                             android:layout_marginLeft="5dp"
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorMain"
-                            android:text="人民币"/>
+                            android:text="@string/kOtcMcAdEditCellFiatAssetValueCN"/>
 
                     </LinearLayout>
                 </LinearLayout>
@@ -191,7 +192,7 @@
                     <TextView
                         android:textSize="12dp"
                         android:textColor="@color/theme01.textColorNormal"
-                        android:text="定价方式"
+                        android:text="@string/kOtcMcAdEditCellPriceType"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
@@ -209,7 +210,7 @@
                             android:layout_marginLeft="5dp"
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorMain"
-                            android:text="固定方式"/>
+                            android:text="@string/kOtcMcAdEditCellPriceTypeFixed"/>
 
                     </LinearLayout>
                 </LinearLayout>
@@ -226,7 +227,7 @@
                     <TextView
                         android:textSize="12dp"
                         android:textColor="@color/theme01.textColorNormal"
-                        android:text="您的价格"
+                        android:text="@string/kOtcMcAdEditCellYourPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
@@ -245,7 +246,7 @@
                             android:layout_marginLeft="5dp"
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorMain"
-                            android:text="请输入您的价格"/>
+                            android:text="@string/kOtcMcAdEditCellYourPlacePlaceholder"/>
 
                         <ImageView
                             android:layout_width="20dp"
@@ -270,7 +271,7 @@
                     <TextView
                         android:textSize="12dp"
                         android:textColor="@color/theme01.textColorNormal"
-                        android:text="交易数量"
+                        android:text="@string/kOtcMcAdEditCellAmount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
@@ -289,7 +290,7 @@
                             android:layout_marginLeft="5dp"
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorMain"
-                            android:text="请输入交易数量"/>
+                            android:text="@string/kOtcMcAdEditCellAmountPlaceholder"/>
 
                         <ImageView
                             android:layout_width="20dp"
@@ -312,7 +313,7 @@
                     <TextView
                         android:textSize="12dp"
                         android:textColor="@color/theme01.textColorNormal"
-                        android:text="可用余额"
+                        android:text="@string/kOtcMcAdEditCellAvailable"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
@@ -330,7 +331,7 @@
                             android:layout_marginLeft="5dp"
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorMain"
-                            android:text="444444"/>
+                            android:text=""/>
 
                     </LinearLayout>
                 </LinearLayout>
@@ -349,7 +350,7 @@
                     <TextView
                         android:textSize="12dp"
                         android:textColor="@color/theme01.textColorNormal"
-                        android:text="最小限额"
+                        android:text="@string/kOtcMcAdEditCellMinLimit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
@@ -368,7 +369,7 @@
                             android:layout_marginLeft="5dp"
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorMain"
-                            android:text="请输入单笔最小限额"/>
+                            android:text="@string/kOtcMcAdEditCellMinLimitPlaceholder"/>
 
                         <ImageView
                             android:layout_width="20dp"
@@ -393,7 +394,7 @@
                     <TextView
                         android:textSize="12dp"
                         android:textColor="@color/theme01.textColorNormal"
-                        android:text="最大限额"
+                        android:text="@string/kOtcMcAdEditCellMaxLimit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
@@ -412,7 +413,7 @@
                             android:layout_marginLeft="5dp"
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorMain"
-                            android:text="请输入单笔最大限额"/>
+                            android:text="@string/kOtcMcAdEditCellMaxLimitPlaceholder"/>
 
                         <ImageView
                             android:layout_width="20dp"
@@ -437,7 +438,7 @@
                     <TextView
                         android:textSize="12dp"
                         android:textColor="@color/theme01.textColorNormal"
-                        android:text="交易说明"
+                        android:text="@string/kOtcMcAdEditCellRemark"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
@@ -456,7 +457,7 @@
                             android:layout_marginLeft="5dp"
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorMain"
-                            android:text="(选填)"/>
+                            android:text="@string/kOtcMcAdEditCellRemarkPlaceholder"/>
 
                         <ImageView
                             android:layout_width="20dp"
@@ -475,11 +476,9 @@
                     android:textSize="14dp"
                     android:textColor="@color/theme01.textColorMain"
                     android:background="@color/theme01.sellColor"
-                    android:text="发布广告"
+                    android:text="submit button"
                     android:layout_width="match_parent"
                     android:layout_height="30dp" />
-
-
 
             </LinearLayout>
 

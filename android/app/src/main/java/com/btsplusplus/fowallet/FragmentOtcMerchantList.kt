@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import bitshares.*
+import com.fowallet.walletcore.bts.ChainObjectManager
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -122,7 +123,7 @@ class FragmentOtcMerchantList : BtsppFragment() {
         } else {
             data_array.forEach<JSONObject> {
                 val data = it!!
-                val view = ViewOtcMerchantCell(ctx, _user_type, data) { ad_item -> onAdActionButtonClicked(ctx, ad_item)}
+                val view = ViewOtcMerchantCell(ctx, _user_type, data) { ad_item -> onAdActionButtonClicked(ctx, ad_item) }
                 //  商家：尚未删除的广告添加点击事件
                 if (_user_type == OtcManager.EOtcUserType.eout_merchant && data.getInt("status") != OtcManager.EOtcAdStatus.eoads_deleted.value) {
                     view.setOnClickListener { onAdInfoCellClicked(ctx, data) }
@@ -149,9 +150,242 @@ class FragmentOtcMerchantList : BtsppFragment() {
         }
     }
 
+    private fun _askForContactCustomerService(ctx: Context, auth_info: JSONObject) {
+        UtilsAlert.showMessageConfirm(ctx, R.string.kWarmTips.xmlstring(ctx), R.string.kOtcAdUserFreezeAsk.xmlstring(ctx)).then {
+            if (it != null && it as Boolean) {
+                //  TODO:2.9 客服界面是什么样的...
+            }
+        }
+    }
+
+    /**
+     *  (private) 用户卖出时 - 查询用户的收款方式列表。
+     */
+    private fun _queryPaymentMethodList(): Promise {
+        if (_ad_type == OtcManager.EOtcAdType.eoadt_user_buy) {
+            return Promise._resolve(true)
+        } else {
+            val otc = OtcManager.sharedOtcManager()
+            return otc.queryPaymentMethods(otc.getCurrentBtsAccount()).then {
+                val payment_responsed = it as? JSONObject
+                return@then payment_responsed?.optJSONArray("data")
+            }
+        }
+    }
+
+    /**
+     *  (private) 用户卖出时 - 查询用户对应资产余额。
+     */
+    private fun _queryUserBalance(ad_item: JSONObject, userAccount: String): Promise {
+        if (_ad_type == OtcManager.EOtcAdType.eoadt_user_buy) {
+            return Promise._resolve(null)
+        } else {
+            val p = Promise()
+            ChainObjectManager.sharedChainObjectManager().queryAccountBalance(userAccount, jsonArrayfrom(ad_item.getString("assetId"))).then {
+                val data_array = it as? JSONArray
+                if (data_array != null && data_array.length() > 0) {
+                    p.resolve(data_array.getJSONObject(0))
+                } else {
+                    p.resolve(null)
+                }
+                return@then null
+            }.catch {
+                p.resolve(null)
+            }
+            return p
+        }
+    }
+
+    /**
+     *  (private) 用户的收款方式和商家付款方式不匹配的提示。
+     */
+    private fun askForAddNewPaymentMethod(ctx: Context, ad_item: JSONObject, auth_info: JSONObject) {
+        val bankcardPaySwitch = ad_item.isTrue("bankcardPaySwitch")
+        val aliPaySwitch = ad_item.isTrue("aliPaySwitch")
+        val wechatPaySwitch = false     //  TODO:2.9 默认false，ad数据里没微信。
+
+        val ary = JSONArray()
+        if (aliPaySwitch) {
+            ary.put(R.string.kOtcAdPmNameAlipay.xmlstring(ctx))
+        }
+        if (bankcardPaySwitch) {
+            ary.put(R.string.kOtcAdPmNameBankCard.xmlstring(ctx))
+        }
+        if (wechatPaySwitch) {
+            ary.put(R.string.kOtcAdPmNameWechatPay.xmlstring(ctx))
+        }
+
+        assert(ary.length() > 0)
+        val paymentStrList = ary.join(R.string.kOtcAdPmJoinChar.xmlstring(ctx))
+        UtilsAlert.showMessageConfirm(ctx, R.string.kWarmTips.xmlstring(ctx), String.format(R.string.kOtcAdOrderMissingPmAsk.xmlstring(ctx), paymentStrList)).then {
+            if (it != null && it as Boolean) {
+                (ctx as Activity).goTo(ActivityOtcReceiveMethods::class.java, true, args = JSONObject().apply {
+                    put("auth_info", auth_info)
+                    put("user_type", OtcManager.EOtcUserType.eout_normal_user)
+                })
+            }
+        }
+    }
+
+    /**
+     *  (private) 价格变化，是否继续下单?
+     */
+    private fun askForPriceChanged(ctx: Context, ad_item: JSONObject, lock_info: JSONObject, auth_info: JSONObject, sell_user_balance: JSONObject?) {
+        UtilsAlert.showMessageConfirm(ctx, R.string.kWarmTips.xmlstring(ctx), R.string.kOtcAdOrderPriceChangeAsk.xmlstring(ctx)).then {
+            if (it != null && it as Boolean) {
+                gotoInputOrderCore(ctx, ad_item, lock_info, auth_info, sell_user_balance)
+            }
+        }
+    }
+
+    /**
+     *  (private) 前往下单
+     */
+    private fun gotoInputOrderCore(ctx: Context, ad_item: JSONObject, lock_info: JSONObject, auth_info: JSONObject, sell_user_balance: JSONObject?) {
+        ViewDialogOtcTrade(ctx, ad_item, lock_info, sell_user_balance) { result: JSONObject? ->
+            if (result != null) {
+                //  输入完毕：尝试下单
+                val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
+                mask.show()
+                val adType = ad_item.getInt("adType")
+                val otc = OtcManager.sharedOtcManager()
+                otc.createUserOrder(otc.getCurrentBtsAccount(), ad_item.getString("adId"),
+                        adType, lock_info.getString("legalCurrencySymbol"),
+                        lock_info.getString("unitPrice"), result.getString("total")).then {
+                    mask.dismiss()
+                    //  TODO:3.0 暂时不自动更新，可能转账失败等。手续费不足。
+                    //if (adType == eoadt_user_sell) {
+                    //    //  REMARK：用户出售的情况下考虑自动转币
+                    //    id orderId = [[responsed objectForKey:@"data"] objectForKey:@"orderId"];
+                    //}
+                    UtilsAlert.showMessageConfirm(ctx, resources.getString(R.string.kWarmTips), resources.getString(R.string.kOtcAdSubmitTipOrderOK), btn_cancel = null).then {
+                        (ctx as Activity).goTo(ActivityOtcOrderList::class.java, true, args = JSONObject().apply {
+                            put("auth_info", auth_info)
+                            put("user_type", OtcManager.EOtcUserType.eout_normal_user)
+                        })
+                        return@then null
+                    }
+                    return@then null
+                }.catch { err ->
+                    mask.dismiss()
+                    otc.showOtcError(ctx as Activity, err)
+                }
+            }
+        }.show()
+    }
+
+    /**
+     * 事件 - 点击购买or出售按钮。
+     */
+    private fun onBuyOrSellButtonClicked(ctx: Context, ad_item: JSONObject) {
+        val bankcardPaySwitch = ad_item.isTrue("bankcardPaySwitch")
+        val aliPaySwitch = ad_item.isTrue("aliPaySwitch")
+        val wechatPaySwitch = false     //  TODO:2.9 默认false，ad数据里没微信。
+
+        //  已经过滤过了，这里的都是至少开启了一种付款方式的。
+        assert(aliPaySwitch || bankcardPaySwitch || wechatPaySwitch)
+
+        val adId = ad_item.getString("adId")
+
+        val otc = OtcManager.sharedOtcManager()
+        val merchant_detail = otc.getCacheMerchantDetail()
+        if (merchant_detail != null) {
+            val myOtcAccountId = merchant_detail.optString("otcAccountId", null)
+            val adOtcAccountId = ad_item.optString("otcBtsId", null)
+            if (myOtcAccountId != null && adOtcAccountId != null && myOtcAccountId == adOtcAccountId) {
+                showToast(R.string.kOtcAdSubmitTipCannotTradeWithSelf.xmlstring(ctx))
+                return
+            }
+        }
+
+        (ctx as Activity).guardWalletUnlocked(true) { unlocked ->
+            if (unlocked) {
+                otc.guardUserIdVerified(ctx, R.string.kOtcAdAskIdVerifyTips03.xmlstring(ctx), keep_mask = true) { auth_info, new_mask ->
+                    val mask = new_mask!!
+                    //  1、查询账号状态：用户账号是否异常
+                    if (auth_info.getInt("status") == OtcManager.EOtcUserStatus.eous_freeze.value) {
+                        mask.dismiss()
+                        _askForContactCustomerService(ctx, auth_info)
+                        return@guardUserIdVerified
+                    }
+                    _queryPaymentMethodList().then {
+                        //  仅卖出的情况
+                        if (_ad_type == OtcManager.EOtcAdType.eoadt_user_sell) {
+                            val pminfo_list = it as? JSONArray
+                            var bPaymentMatch = false
+                            if (pminfo_list != null && pminfo_list.length() > 0) {
+                                for (pminfo in pminfo_list.forin<JSONObject>()) {
+                                    if (pminfo!!.getInt("status") != OtcManager.EOtcPaymentMethodStatus.eopms_enable.value) {
+                                        continue
+                                    }
+                                    when (pminfo.getInt("type")) {
+                                        OtcManager.EOtcPaymentMethodType.eopmt_alipay.value -> {
+                                            if (aliPaySwitch) {
+                                                bPaymentMatch = true
+                                            }
+                                        }
+                                        OtcManager.EOtcPaymentMethodType.eopmt_bankcard.value -> {
+                                            if (bankcardPaySwitch) {
+                                                bPaymentMatch = true
+                                            }
+                                        }
+                                        OtcManager.EOtcPaymentMethodType.eopmt_wechatpay.value -> {
+                                            if (wechatPaySwitch) {
+                                                bPaymentMatch = true
+                                            }
+                                        }
+                                    }
+                                    //  已匹配
+                                    if (bPaymentMatch) {
+                                        break
+                                    }
+                                }
+                            }
+                            if (!bPaymentMatch) {
+                                mask.dismiss()
+                                askForAddNewPaymentMethod(ctx, ad_item, auth_info)
+                                return@then null
+                            }
+                        }
+                        //  3、查询余额&锁定价格&前往下单（TODO:2.9 是否先查询广告详情，目前数据一直）
+                        val userAccount = otc.getCurrentBtsAccount()
+                        return@then _queryUserBalance(ad_item, userAccount).then {
+                            //  卖出时候：获取余额异常
+                            val userAssetBalance = it as? JSONObject
+                            if (_ad_type == OtcManager.EOtcAdType.eoadt_user_sell && userAssetBalance == null) {
+                                mask.dismiss()
+                                showToast(R.string.tip_network_error.xmlstring(ctx))
+                                return@then null
+                            }
+                            return@then otc.lockPrice(userAccount, adId, ad_item.getInt("adType"), ad_item.getString("assetSymbol"), ad_item.getString("price")).then {
+                                mask.dismiss()
+                                val responsed = it as JSONObject
+                                val lock_info = responsed.getJSONObject("data")
+
+                                val oldprice = ad_item.getString("price")
+                                val newprice = lock_info.getString("unitPrice")
+
+                                //  价格变化
+                                if (oldprice != newprice) {
+                                    askForPriceChanged(ctx, ad_item, lock_info, auth_info, userAssetBalance)
+                                } else {
+                                    gotoInputOrderCore(ctx, ad_item, lock_info, auth_info, userAssetBalance)
+                                }
+                                return@then null
+                            }
+                        }
+                    }.catch { err ->
+                        mask.dismiss()
+                        otc.showOtcError(ctx, err)
+                    }
+                }
+            }
+        }
+    }
+
     private fun onAdActionButtonClicked(ctx: Context, ad_item: JSONObject) {
         if (_user_type == OtcManager.EOtcUserType.eout_normal_user) {
-            //  TODO:2.9 buy or sell
+            onBuyOrSellButtonClicked(ctx, ad_item)
         } else {
             when (ad_item.getInt("status")) {
                 OtcManager.EOtcAdStatus.eoads_online.value -> {
@@ -197,16 +431,4 @@ class FragmentOtcMerchantList : BtsppFragment() {
             otc.showOtcError(ctx as Activity, err)
         }
     }
-
-//    private fun onBuyButtonClicked() {
-//        val ad_type = _data.getInt("adType")
-//        ViewDialogOtcTrade(_ctx, _data.getString("assetSymbol"), ad_type, _data) { _index: Int, result_data: JSONObject ->
-//        }.show()
-//    }
-//
-//    private fun onSellButtonClicked() {
-//        val ad_type = _data.getInt("adType")
-//        ViewDialogOtcTrade(_ctx, _data.getString("assetSymbol"), ad_type, _data) { _index: Int, result_data: JSONObject ->
-//        }.show()
-//    }
 }

@@ -6,7 +6,10 @@ import android.view.Gravity
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import bitshares.*
+import bitshares.OtcManager
+import bitshares.dp
+import bitshares.isTrue
+import bitshares.xmlstring
 import org.json.JSONObject
 
 class ViewOtcMerchantCell : LinearLayout {
@@ -14,11 +17,11 @@ class ViewOtcMerchantCell : LinearLayout {
     private var _ctx: Context
     private var _user_type = OtcManager.EOtcUserType.eout_normal_user
     private var _data: JSONObject
-    private var _callback: (JSONObject)-> Unit
+    private var _callback: (JSONObject) -> Unit
 
     private val content_fontsize = 12.0f
 
-    constructor(ctx: Context, user_type: OtcManager.EOtcUserType, data: JSONObject, callback: (JSONObject)->Unit) : super(ctx) {
+    constructor(ctx: Context, user_type: OtcManager.EOtcUserType, data: JSONObject, callback: (JSONObject) -> Unit) : super(ctx) {
         _ctx = ctx
         _user_type = user_type
         _data = data
@@ -37,7 +40,7 @@ class ViewOtcMerchantCell : LinearLayout {
 
         //  获取数据
         val assetSymbol = _data.getString("assetSymbol")
-        val fiat_sym = OtcManager.sharedOtcManager().getFiatCnyInfo().getString("short_symbol")//TODO:2.9
+        val fiat_sym = OtcManager.sharedOtcManager().getFiatCnyInfo().getString("legalCurrencySymbol")//TODO:2.9
 
         //  第一行
         //  用户端：商家头像 + 商家名称 ----- 统计数据

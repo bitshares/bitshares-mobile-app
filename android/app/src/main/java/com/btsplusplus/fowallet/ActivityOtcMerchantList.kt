@@ -38,7 +38,11 @@ class ActivityOtcMerchantList : BtsppActivity() {
         val args = btspp_args_as_JSONObject()
         _curr_asset_name = args.getString("asset_name")
         _default_ad_type = args.get("ad_type") as OtcManager.EOtcAdType
-        _curr_select_index = if (_default_ad_type == OtcManager.EOtcAdType.eoadt_user_buy) { 0 } else { 1 }
+        _curr_select_index = if (_default_ad_type == OtcManager.EOtcAdType.eoadt_user_buy) {
+            0
+        } else {
+            1
+        }
 
         //  设置 tablelayout 和 view_pager
         tablayout = tablayout_of_merchant_list
@@ -67,7 +71,7 @@ class ActivityOtcMerchantList : BtsppActivity() {
 
         //  事件 - 选择订单列表
         img_icon_otc_orders.setOnClickListener {
-            OtcManager.sharedOtcManager().guardUserIdVerified(this, true, resources.getString(R.string.kOtcAdAskIdVerifyTips01)) { auth_info ->
+            OtcManager.sharedOtcManager().guardUserIdVerified(this, resources.getString(R.string.kOtcAdAskIdVerifyTips01)) { auth_info, _ ->
                 goTo(ActivityOtcOrderList::class.java, true, args = JSONObject().apply {
                     put("auth_info", auth_info)
                     put("user_type", OtcManager.EOtcUserType.eout_normal_user)
@@ -84,15 +88,15 @@ class ActivityOtcMerchantList : BtsppActivity() {
             ViewSelector.show(this, "", asset_list.toList<String>().toTypedArray()) { index: Int, _: String ->
                 if (index == 0) {
                     //  认证信息
-                    OtcManager.sharedOtcManager().guardUserIdVerified(this, true, null) { auth_info ->
+                    OtcManager.sharedOtcManager().guardUserIdVerified(this, null) { auth_info, _ ->
                         goTo(ActivityOtcUserAuthInfos::class.java, true, args = JSONObject().apply {
                             put("auth_info", auth_info)
                         })
                     }
                 } else {
                     //  收款方式
-                    OtcManager.sharedOtcManager().guardUserIdVerified(this, true, resources.getString(R.string.kOtcAdAskIdVerifyTips02)) { auth_info ->
-                        goTo(ActivityOtcPaymentList::class.java, true, args = JSONObject().apply {
+                    OtcManager.sharedOtcManager().guardUserIdVerified(this, resources.getString(R.string.kOtcAdAskIdVerifyTips02)) { auth_info, _ ->
+                        goTo(ActivityOtcReceiveMethods::class.java, true, args = JSONObject().apply {
                             put("auth_info", auth_info)
                             put("user_type", OtcManager.EOtcUserType.eout_normal_user)
                         })
@@ -150,8 +154,10 @@ class ActivityOtcMerchantList : BtsppActivity() {
         view_pager!!.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
             }
+
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
             }
+
             override fun onPageSelected(position: Int) {
                 tablayout!!.getTabAt(position)!!.select()
             }
@@ -176,9 +182,11 @@ class ActivityOtcMerchantList : BtsppActivity() {
                 queryCurrentPageAdList()
                 view_pager!!.setCurrentItem(tab.position, true)
             }
+
             override fun onTabUnselected(tab: TabLayout.Tab) {
                 //tab未被选择的时候回调
             }
+
             override fun onTabReselected(tab: TabLayout.Tab) {
                 //tab重新选择的时候回调
             }
