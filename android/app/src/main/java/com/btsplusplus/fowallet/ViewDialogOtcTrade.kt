@@ -634,6 +634,7 @@ class ViewDialogOtcTrade : Dialog {
         params.height = WindowManager.LayoutParams.WRAP_CONTENT
         window.attributes = params
         window.decorView.setBackgroundColor(Color.GREEN)
+        window.setWindowAnimations(R.style.SlideFromBottom)
     }
 
 }
