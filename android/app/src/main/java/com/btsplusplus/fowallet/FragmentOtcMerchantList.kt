@@ -204,19 +204,19 @@ class FragmentOtcMerchantList : BtsppFragment() {
         val aliPaySwitch = ad_item.isTrue("aliPaySwitch")
         val wechatPaySwitch = false     //  TODO:2.9 默认false，ad数据里没微信。
 
-        val ary = JSONArray()
+        val ary = mutableListOf<String>()
         if (aliPaySwitch) {
-            ary.put(R.string.kOtcAdPmNameAlipay.xmlstring(ctx))
+            ary.add(R.string.kOtcAdPmNameAlipay.xmlstring(ctx))
         }
         if (bankcardPaySwitch) {
-            ary.put(R.string.kOtcAdPmNameBankCard.xmlstring(ctx))
+            ary.add(R.string.kOtcAdPmNameBankCard.xmlstring(ctx))
         }
         if (wechatPaySwitch) {
-            ary.put(R.string.kOtcAdPmNameWechatPay.xmlstring(ctx))
+            ary.add(R.string.kOtcAdPmNameWechatPay.xmlstring(ctx))
         }
 
-        assert(ary.length() > 0)
-        val paymentStrList = ary.join(R.string.kOtcAdPmJoinChar.xmlstring(ctx))
+        assert(ary.size > 0)
+        val paymentStrList = ary.joinToString(R.string.kOtcAdPmJoinChar.xmlstring(ctx))
         UtilsAlert.showMessageConfirm(ctx, R.string.kWarmTips.xmlstring(ctx), String.format(R.string.kOtcAdOrderMissingPmAsk.xmlstring(ctx), paymentStrList)).then {
             if (it != null && it as Boolean) {
                 (ctx as Activity).goTo(ActivityOtcReceiveMethods::class.java, true, args = JSONObject().apply {

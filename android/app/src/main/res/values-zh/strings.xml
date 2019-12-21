@@ -933,6 +933,7 @@
     <string name="kOtcOdCellPaymentSameNameTips01">请使用本人%s的%s向以下账户自行转账</string>
     <string name="kOtcOdCellPaymentSameNameTips02">请使用本人名字的%s向以下账户自行转账</string>
     <string name="kOtcOdCellPaymentSameNameTitle">本人名字</string>
+    <string name="kOtcOdCellPaymentSameNameTipsAndroidTailer">的%s向以下账户自行转账</string>
     <string name="kOtcAdCellTipClickSwitchPayment">点此切换付款方式</string>
     <string name="kOtcAdCellSelectMcReceiveMethodTitle">请选择商家收款方式</string>
     <string name="kOtcAdCellLabelTitleReceiveMethod">收款方式</string>
@@ -1041,7 +1042,7 @@
     <string name="kOtcAuthInfoTailerBtnGetSmscode">获取验证码</string>
     <string name="kOtcAuthInfoTailerBtnGetSmscodeWaitNsec">%s秒后重新获取</string>
     <string name="kOtcAuthInfoTailerTipsGetSmscodeOK">短信发送成功。</string>
-    <string name="kOtcAuthInfoCellTips">【温馨提示】\n您只有通过了身份认证，才能进行场外交易。\n目前仅支持中国大陆地区进行身份认证。姓名和身份证号提交后不可更改。</string>
+    <string name="kOtcAuthInfoCellTips">【温馨提示】\n您只有通过了身份认证，才能进行场外交易。\n姓名和身份证号提交后不可更改。</string>
     <string name="kOtcAuthInfoSubmitTipsInputIdNo">请输入正确的身份证号。</string>
     <string name="kOtcAuthInfoSubmitTipsInputSmscode">请输入短信验证码。</string>
     <string name="kOtcAuthInfoSubmitTipsOK">认证通过。</string>

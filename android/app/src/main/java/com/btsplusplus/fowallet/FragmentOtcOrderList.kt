@@ -60,7 +60,7 @@ class FragmentOtcOrderList : BtsppFragment() {
                 mask.dismiss()
                 onQueryCurrentPageOrdersResponsed(ctx, it as? JSONObject)
                 return@then null
-            }.catch {  err ->
+            }.catch { err ->
                 mask.dismiss()
                 otc.showOtcError(ctx as Activity, err)
             }
@@ -120,7 +120,6 @@ class FragmentOtcOrderList : BtsppFragment() {
                 put("result_promise", result_promise)
             })
             result_promise.then {
-                //  TODO:2.9
                 if (it != null && it as Boolean) {
                     _onOrderDetailCallback()
                 }
@@ -133,7 +132,8 @@ class FragmentOtcOrderList : BtsppFragment() {
     }
 
     private fun _onOrderDetailCallback() {
-        //  TODO:2.9 未完成
+        //  订单状态变更：刷新界面
+        queryCurrentPageOrders()
     }
 
 }
