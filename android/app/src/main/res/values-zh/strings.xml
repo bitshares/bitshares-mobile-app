@@ -933,6 +933,8 @@
     <string name="kOtcOdCellPaymentSameNameTips01">请使用本人%s的%s向以下账户自行转账</string>
     <string name="kOtcOdCellPaymentSameNameTips02">请使用本人名字的%s向以下账户自行转账</string>
     <string name="kOtcOdCellPaymentSameNameTitle">本人名字</string>
+    <string name="kOtcOdCellPaymentSameNameTipsAndroidHeader01">请使用本人</string>
+    <string name="kOtcOdCellPaymentSameNameTipsAndroidHeader02">请使用</string>
     <string name="kOtcOdCellPaymentSameNameTipsAndroidTailer">的%s向以下账户自行转账</string>
     <string name="kOtcAdCellTipClickSwitchPayment">点此切换付款方式</string>
     <string name="kOtcAdCellSelectMcReceiveMethodTitle">请选择商家收款方式</string>

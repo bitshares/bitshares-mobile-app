@@ -536,20 +536,20 @@
                                 android:layout_weight="1.5"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content">
+                                <!-- TODO:2.9 未完成 -->
+                                <ImageView
+                                    android:id="@+id/img_order_detail_payment_or_receive_item_icon"
+                                    android:layout_marginRight="6dp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/icon_copy"/>
                                 <TextView
-                                    android:id="@+id/tv_order_no_from_otc_order_details"
-                                    android:paddingLeft="10dp"
+                                    android:id="@+id/tv_order_detail_payment_or_receive_item_value"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="--"
                                     android:textSize="12dp"
                                     android:textColor="@color/theme01.textColorMain"/>
-                                <!-- TODO:2.9 未完成 -->
-                                <ImageView
-                                    android:layout_marginLeft="10dp"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:src="@drawable/icon_copy"/>
                             </LinearLayout>
                         </LinearLayout>
                         <View 
