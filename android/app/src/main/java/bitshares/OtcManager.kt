@@ -320,7 +320,7 @@ class OtcManager {
         /**
          *  格式化：场外交易订单倒计时时间。
          */
-        fun fmtPaymentExpireTime(left_ts: Int): String {
+        fun fmtPaymentExpireTime(left_ts: Long): String {
             assert(left_ts > 0)
             val min = left_ts / 60
             val sec = left_ts % 60
@@ -396,11 +396,11 @@ class OtcManager {
                         //  按钮：联系客服 + 立即转币
                         actions.put(JSONObject().apply {
                             put("type", EOtcOrderOperationType.eooot_contact_customer_service)
-                            put("color", ctx.resources.getColor(R.color.theme01_textColorGray))
+                            put("color", R.color.theme01_textColorGray)
                         })
                         actions.put(JSONObject().apply {
                             put("type", EOtcOrderOperationType.eooot_transfer)
-                            put("color", ctx.resources.getColor(R.color.theme01_textColorHighlight))
+                            put("color", R.color.theme01_textColorHighlight)
                         })
                     }
                     EOtcOrderProgressStatus.eoops_already_transferred.value -> {
@@ -417,11 +417,11 @@ class OtcManager {
                         //  按钮：联系客服 + 放行XXX资产
                         actions.put(JSONObject().apply {
                             put("type", EOtcOrderOperationType.eooot_contact_customer_service)
-                            put("color", ctx.resources.getColor(R.color.theme01_textColorGray))
+                            put("color", R.color.theme01_textColorGray)
                         })
                         actions.put(JSONObject().apply {
                             put("type", EOtcOrderOperationType.eooot_confirm_received_money)
-                            put("color", ctx.resources.getColor(R.color.theme01_textColorHighlight))
+                            put("color", R.color.theme01_textColorHighlight)
                         })
                     }
                     EOtcOrderProgressStatus.eoops_completed.value -> {
@@ -435,7 +435,7 @@ class OtcManager {
                         //  按钮：联系客服
                         actions.put(JSONObject().apply {
                             put("type", EOtcOrderOperationType.eooot_contact_customer_service)
-                            put("color", ctx.resources.getColor(R.color.theme01_textColorGray))
+                            put("color", R.color.theme01_textColorGray)
                         })
                     }
                     EOtcOrderProgressStatus.eoops_return_assets.value -> {
@@ -458,11 +458,11 @@ class OtcManager {
                         //  按钮：取消订单 + 确认付款
                         actions.put(JSONObject().apply {
                             put("type", EOtcOrderOperationType.eooot_cancel_order)
-                            put("color", ctx.resources.getColor(R.color.theme01_textColorGray))
+                            put("color", R.color.theme01_textColorGray)
                         })
                         actions.put(JSONObject().apply {
                             put("type", EOtcOrderOperationType.eooot_confirm_paid)
-                            put("color", ctx.resources.getColor(R.color.theme01_textColorHighlight))
+                            put("color", R.color.theme01_textColorHighlight)
                         })
                     }
                     EOtcOrderProgressStatus.eoops_already_paid.value -> {
@@ -488,11 +488,11 @@ class OtcManager {
                         //  按钮：联系客服 + 我已收到退款（取消订单）
                         actions.put(JSONObject().apply {
                             put("type", EOtcOrderOperationType.eooot_contact_customer_service)
-                            put("color", ctx.resources.getColor(R.color.theme01_textColorGray))
+                            put("color", R.color.theme01_textColorGray)
                         })
                         actions.put(JSONObject().apply {
                             put("type", EOtcOrderOperationType.eooot_confirm_received_refunded)
-                            put("color", ctx.resources.getColor(R.color.theme01_textColorHighlight))
+                            put("color", R.color.theme01_textColorHighlight)
                         })
                     }
                     EOtcOrderProgressStatus.eoops_chain_failed.value -> {
@@ -501,7 +501,7 @@ class OtcManager {
                         //  按钮：联系客服
                         actions.put(JSONObject().apply {
                             put("type", EOtcOrderOperationType.eooot_contact_customer_service)
-                            put("color", ctx.resources.getColor(R.color.theme01_textColorGray))
+                            put("color", R.color.theme01_textColorGray)
                         })
                     }
                     EOtcOrderProgressStatus.eoops_cancelled.value -> {
@@ -561,11 +561,11 @@ class OtcManager {
                         //  按钮：无法接(卖)单 + 确认付款
                         actions.put(JSONObject().apply {
                             put("type", EOtcOrderOperationType.eooot_mc_cancel_sell_order)
-                            put("color", ctx.resources.getColor(R.color.theme01_textColorGray))
+                            put("color", R.color.theme01_textColorGray)
                         })
                         actions.put(JSONObject().apply {
                             put("type", EOtcOrderOperationType.eooot_mc_confirm_paid)
-                            put("color", ctx.resources.getColor(R.color.theme01_textColorHighlight))
+                            put("color", R.color.theme01_textColorHighlight)
                         })
                     }
                     EOtcOrderProgressStatus.eoops_already_paid.value -> {
@@ -605,11 +605,11 @@ class OtcManager {
                         //  按钮：无法接(买)单 + 放行资产
                         actions.put(JSONObject().apply {
                             put("type", EOtcOrderOperationType.eooot_mc_cancel_buy_order)
-                            put("color", ctx.resources.getColor(R.color.theme01_textColorGray))
+                            put("color", R.color.theme01_textColorGray)
                         })
                         actions.put(JSONObject().apply {
                             put("type", EOtcOrderOperationType.eooot_mc_confirm_received_money)
-                            put("color", ctx.resources.getColor(R.color.theme01_textColorHighlight))
+                            put("color", R.color.theme01_textColorHighlight)
                         })
                     }
                     EOtcOrderProgressStatus.eoops_already_transferred.value -> {

@@ -14,7 +14,7 @@
         android:layout_marginTop="25dp"
         android:orientation="vertical">
 
-
+        <!-- 导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -51,7 +51,7 @@
             <ScrollView
                 android:fillViewport="true"
                 android:padding="10dp"
-                android:layout_marginBottom="40dp"
+                android:layout_marginBottom="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -61,21 +61,24 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
+                    <!-- 订单基本状态、价格、数量等 -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
+                        <!-- 主状态 -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
 
                             <TextView
+                                android:id="@+id/tv_status_main"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textSize="24dp"
-                                android:text="待付款"
+                                android:text=""
                                 android:textColor="@color/theme01.textColorMain"
                                 android:textStyle="bold"
                                 android:layout_gravity="left|center_vertical" />
@@ -87,25 +90,26 @@
                                 android:layout_height="wrap_content">
 
                                 <ImageView
-                                    android:id="@+id/iv_check_from_otc_order_details"
+                                    android:id="@+id/img_icon_phone"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:src="@drawable/icon_otc_phone"/>
                             </LinearLayout>
                         </LinearLayout>
 
+                        <!-- 状态描述和联系对方 -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
 
                             <TextView
-                                android:id="@+id/tv_payment_tips_from_otc_order_details"
+                                android:id="@+id/tv_status_desc"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1.5"
                                 android:textSize="12dp"
-                                android:text="请在12:33内付款给卖家"
+                                android:text=""
                                 android:textColor="@color/theme01.textColorMain"
                                 android:layout_gravity="left|center_vertical" />
 
@@ -121,9 +125,9 @@
 
                         <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-
+                        <!-- 总金额 -->
                         <TextView
-                            android:id="@+id/tv_pay_amount_from_otc_order_details"
+                            android:id="@+id/tv_order_total_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="20dp"
@@ -133,11 +137,12 @@
                             android:textColor="@color/theme01.textColorHighlight"
                             />
 
+                        <!-- 单价&数量 -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
-
+                            <!-- TODO:2.9 lang -->
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -146,13 +151,13 @@
                                 android:text="单价"/>
 
                             <TextView
-                                android:id="@+id/tv_pay_price_from_otc_order_details"
+                                android:id="@+id/tv_unit_price"
                                 android:layout_marginLeft="5dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textSize="12dp"
                                 android:textColor="@color/theme01.textColorMain"
-                                android:text="¥ 7.21"/>
+                                android:text="$"/>
 
                             <LinearLayout
                                 android:gravity="right|center_vertical"
@@ -169,53 +174,59 @@
                                     android:text="数量"/>
 
                                 <TextView
-                                    android:id="@+id/tv_buy_quantity_from_otc_order_details"
+                                    android:id="@+id/tv_order_amount"
                                     android:layout_marginLeft="5dp"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textSize="12dp"
                                     android:textColor="@color/theme01.textColorMain"
-                                    android:text="4 USD"/>
+                                    android:text="0 USD"/>
 
                             </LinearLayout>
                         </LinearLayout>
 
                         <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+                    </LinearLayout>
 
-
+                    <!-- 对方收款方式信息（可能不存在） -->
+                    <LinearLayout
+                        android:id="@+id/layout_payment_section"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:orientation="vertical">
+                        <!-- 本人账号转账提示 -->
                         <LinearLayout
-                            android:layout_marginTop="26dp"
                             android:orientation="horizontal"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
-
                             <TextView
+                                android:id="@+id/tv_pm_sametips_prev_string"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textSize="12dp"
                                 android:textColor="@color/theme01.textColorNormal"
-                                android:text="请使用本人"/>
+                                android:text=""/>
                             <TextView
-                                android:id="@+id/tv_buy_bankcard_realname_from_otc_order_details"
+                                android:id="@+id/tv_pm_sametips_color_string"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textSize="12dp"
                                 android:textColor="@color/theme01.sellColor"
-                                android:text="(*洋明)"/>
-
+                                android:text="(*alice)"/>
                             <TextView
+                                android:id="@+id/tv_pm_sametips_after_string"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textSize="12dp"
                                 android:textColor="@color/theme01.textColorNormal"
-                                android:text="的银行卡向以下账户自行转账"/>
+                                android:text=""/>
                         </LinearLayout>
-
                         <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-
+                        <!-- 切换收款方式 -->
                         <LinearLayout
-                            android:id="@+id/ly_toggle_payment_method_from_otc_order_details"
+                            android:id="@+id/layout_curr_payment_method_main"
                             android:layout_marginTop="10dp"
                             android:orientation="horizontal"
                             android:layout_width="match_parent"
@@ -223,22 +234,22 @@
                             android:layout_height="20dp">
 
                             <ImageView
-                                android:id="@+id/iv_payment_method_icon_from_otc_order_details"
+                                android:id="@+id/img_icon_curr_payment_method"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/icon_pm_bankcard"/>
 
                             <TextView
-                                android:id="@+id/tv_payment_method_name_from_otc_order_details"
+                                android:id="@+id/tv_curr_payment_method_name"
                                 android:textSize="12dp"
                                 android:layout_marginLeft="10dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/theme01.textColorNormal"
-                                android:text="中国银行"/>
-
+                                android:text=""/>
 
                             <LinearLayout
+                                android:id="@+id/layout_curr_payment_method_click_switch"
                                 android:orientation="horizontal"
                                 android:layout_weight="1"
                                 android:layout_width="0dp"
@@ -251,10 +262,10 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/theme01.textColorGray"
-                                    android:text="点此切换付款方式"/>
+                                    android:text="@string/kOtcAdCellTipClickSwitchPayment"/>
 
                                 <ImageView
-                                    android:id="@+id/iv_toggle_payment_method_right_arrow_from_otc_order_details"
+                                    android:id="@+id/img_icon_arrow_curr_payment_method"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:src="@drawable/ic_btn_right_arrow"/>
@@ -264,230 +275,297 @@
 
 
                         </LinearLayout>
+                        <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_marginTop="10dp"
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="收件人"
-                            android:textSize="12dp"
-                            android:textColor="@color/theme01.textColorNormal"/>
-
+                        <!-- 收款实名 -->
                         <LinearLayout
-                            android:gravity="right"
+                            android:layout_marginTop="10dp"
                             android:orientation="horizontal"
-                            android:layout_weight="1"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content">
-                            <TextView
-                                android:id="@+id/tv_receiver_name_from_otc_order_details"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="江博"
-                                android:textSize="12dp"
-                                android:textColor="@color/theme01.textColorMain"/>
-                            <ImageView
-                                android:layout_marginLeft="10dp"
-                                android:id="@+id/iv_receiver_method_icon_from_otc_order_details"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/icon_copy"/>
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
-
-                    <LinearLayout
-                        android:layout_marginTop="10dp"
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="收款账号"
-                            android:textSize="12dp"
-                            android:textColor="@color/theme01.textColorNormal"/>
-                        <LinearLayout
-                            android:gravity="right"
-                            android:orientation="horizontal"
-                            android:layout_weight="1.5"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content">
-                            <TextView
-                                android:id="@+id/tv_receiver_account_from_otc_order_details"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="1919 2554 2565 2321 292"
-                                android:textSize="12dp"
-                                android:textColor="@color/theme01.textColorMain"/>
-                            <ImageView
-                                android:layout_marginLeft="10dp"
-                                android:id="@+id/iv_account_receiver_method_icon_from_otc_order_details"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/icon_copy"/>
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
-
-                    <LinearLayout
-                        android:layout_marginTop="10dp"
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <TextView
-                            android:id="@+id/tv_receiver_method_type_name_from_otc_order_details"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="开户银行"
-                            android:textSize="12dp"
-                            android:textColor="@color/theme01.textColorNormal"/>
-                        <TextView
-                            android:id="@+id/tv_receiver_bankname_from_otc_order_details"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="right"
-                            android:text="中国银行"
-                            android:textSize="12dp"
-                            android:textColor="@color/theme01.textColorMain"/>
-                    </LinearLayout>
+                            android:layout_height="wrap_content">
 
-                    <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/kOtcAdCellLabelPmReceiveRealName"
+                                android:textSize="12dp"
+                                android:textColor="@color/theme01.textColorNormal"/>
 
-                    <LinearLayout
-                        android:layout_marginTop="10dp"
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                            <LinearLayout
+                                android:gravity="right"
+                                android:orientation="horizontal"
+                                android:layout_weight="1"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:id="@+id/tv_curr_payment_realname"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="alice"
+                                    android:textSize="12dp"
+                                    android:textColor="@color/theme01.textColorMain"/>
+                                <ImageView
+                                    android:layout_marginLeft="10dp"
+                                    android:id="@+id/btn_copy_curr_payment_realname"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/icon_copy"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                        <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="商家姓名"
-                            android:textSize="12dp"
-                            android:textColor="@color/theme01.textColorNormal"/>
-
+                        <!-- 账号or卡号 -->
                         <LinearLayout
-                            android:gravity="right"
+                            android:layout_marginTop="10dp"
                             android:orientation="horizontal"
-                            android:layout_weight="1"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content">
                             <TextView
-                                android:id="@+id/tv_merchant_name_from_otc_order_details"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="江博"
+                                android:text="@string/kOtcAdCellLabelPmReceiveAccount"
                                 android:textSize="12dp"
-                                android:textColor="@color/theme01.textColorMain"/>
-                            <ImageView
-                                android:layout_marginLeft="10dp"
-                                android:id="@+id/iv_merchant_name_icon_from_otc_order_details"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/icon_copy"/>
+                                android:textColor="@color/theme01.textColorNormal"/>
+                            <LinearLayout
+                                android:gravity="right"
+                                android:orientation="horizontal"
+                                android:layout_weight="1.5"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:id="@+id/tv_curr_payment_account"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="--"
+                                    android:textSize="12dp"
+                                    android:textColor="@color/theme01.textColorMain"/>
+                                <ImageView
+                                    android:layout_marginLeft="10dp"
+                                    android:id="@+id/btn_copy_curr_payment_account"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/icon_copy"/>
+                            </LinearLayout>
                         </LinearLayout>
-                    </LinearLayout>
+                        <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-                    <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
-
-                    <LinearLayout
-                        android:layout_marginTop="10dp"
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="商家昵称"
-                            android:textSize="12dp"
-                            android:textColor="@color/theme01.textColorNormal"/>
-                        <TextView
-                            android:id="@+id/tv_merchant_nickname_from_otc_order_details"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="right"
-                            android:text="吉祥承兑"
-                            android:textSize="12dp"
-                            android:textColor="@color/theme01.textColorMain"/>
-                    </LinearLayout>
-
-                    <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
-
-
-                    <LinearLayout
-                        android:layout_marginTop="10dp"
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="订单编号"
-                            android:textSize="12dp"
-                            android:textColor="@color/theme01.textColorNormal"/>
+                        <!-- 银行名 or qrcode　TODO:2.9暂时不支持qrcode -->
                         <LinearLayout
-                            android:gravity="right"
+                            android:id="@+id/layout_curr_payment_bankname_cell"
+                            android:layout_marginTop="10dp"
                             android:orientation="horizontal"
-                            android:layout_weight="1.5"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content">
                             <TextView
-                                android:id="@+id/tv_order_no_from_otc_order_details"
-                                android:paddingLeft="10dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="3121323j12klj312j3kl1jsfkljsfkljlkjf2j1l2kj3llk"
+                                android:text="@string/kOtcAdCellLabelPmReceiveBankName"
+                                android:textSize="12dp"
+                                android:textColor="@color/theme01.textColorNormal"/>
+                            <TextView
+                                android:id="@+id/tv_curr_payment_bankname"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="right"
+                                android:text="--"
                                 android:textSize="12dp"
                                 android:textColor="@color/theme01.textColorMain"/>
-                            <ImageView
-                                android:layout_marginLeft="10dp"
-                                android:id="@+id/iv_order_no_icon_from_otc_order_details"
+                        </LinearLayout>
+                        <View 
+                            android:id="@+id/layout_curr_payment_bankname_line"
+                            android:layout_marginTop="10dp" 
+                            android:layout_height="1dp" 
+                            android:background="@color/theme01.bottomLineColor" 
+                            android:layout_width="fill_parent">
+                        </View>
+
+                    </LinearLayout>
+
+                    <!-- 订单ID等详细信息 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:orientation="vertical">
+
+                        <!-- 商家姓名 or 用户账号 -->
+                        <LinearLayout
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/tv_order_detail_merchant_name_or_account_title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:src="@drawable/icon_copy"/>
+                                android:text=""
+                                android:textSize="12dp"
+                                android:textColor="@color/theme01.textColorNormal"/>
+
+                            <LinearLayout
+                                android:gravity="right"
+                                android:orientation="horizontal"
+                                android:layout_weight="1"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:id="@+id/tv_order_detail_merchant_name_or_account_value"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="alice"
+                                    android:textSize="12dp"
+                                    android:textColor="@color/theme01.textColorMain"/>
+                                <ImageView
+                                    android:layout_marginLeft="10dp"
+                                    android:id="@+id/btn_copy_order_detail_merchant_name_or_account"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/icon_copy"/>
+                            </LinearLayout>
                         </LinearLayout>
-                    </LinearLayout>
 
-                    <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+                        <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-                    <LinearLayout
-                        android:layout_marginTop="10dp"
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="下单日期"
-                            android:textSize="12dp"
-                            android:textColor="@color/theme01.textColorNormal"/>
-                        <TextView
-                            android:id="@+id/tv_order_create_time_from_otc_order_details"
+                        <!-- 商家昵称 or 空 -->
+                        <LinearLayout
+                            android:id="@+id/layout_order_detail_merchant_nickname_cell"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="right"
-                            android:text="2019-12-12 20:20:20"
-                            android:textSize="12dp"
-                            android:textColor="@color/theme01.textColorMain"/>
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/kOtcOdCellLabelMcNickName"
+                                android:textSize="12dp"
+                                android:textColor="@color/theme01.textColorNormal"/>
+                            <TextView
+                                android:id="@+id/tv_order_detail_merchant_nickname_value"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="right"
+                                android:text=""
+                                android:textSize="12dp"
+                                android:textColor="@color/theme01.textColorMain"/>
+                        </LinearLayout>
+                        <View 
+                            android:id="@+id/layout_order_detail_merchant_nickname_line"
+                            android:layout_marginTop="10dp" 
+                            android:layout_height="1dp" 
+                            android:background="@color/theme01.bottomLineColor" 
+                            android:layout_width="fill_parent">
+                        </View>
+
+                        <!-- 订单编号 -->
+                        <LinearLayout
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/kOtcOdCellLabelOrderID"
+                                android:textSize="12dp"
+                                android:textColor="@color/theme01.textColorNormal"/>
+                            <LinearLayout
+                                android:gravity="right"
+                                android:orientation="horizontal"
+                                android:layout_weight="1.5"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:id="@+id/tv_order_detail_orderid_value"
+                                    android:paddingLeft="10dp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="-- -- -- --"
+                                    android:textSize="12dp"
+                                    android:textColor="@color/theme01.textColorMain"/>
+                                <ImageView
+                                    android:layout_marginLeft="10dp"
+                                    android:id="@+id/btn_copy_order_detail_orderid"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/icon_copy"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                        <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+                        <!-- 订单日期 -->
+                        <LinearLayout
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/kOtcOdCellLabelOrderDate"
+                                android:textSize="12dp"
+                                android:textColor="@color/theme01.textColorNormal"/>
+                            <TextView
+                                android:id="@+id/tv_order_detail_time_value"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="right"
+                                android:text="2000-12-12 20:20:20"
+                                android:textSize="12dp"
+                                android:textColor="@color/theme01.textColorMain"/>
+                        </LinearLayout>
+                        <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+                        <!-- 收款方式 or 付款方式 可能不存在 -->
+                        <LinearLayout
+                            android:id="@+id/layout_order_detail_payment_or_receive_item_cell"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:id="@+id/tv_order_detail_payment_or_receive_item_title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="--"
+                                android:textSize="12dp"
+                                android:textColor="@color/theme01.textColorNormal"/>
+                            <LinearLayout
+                                android:gravity="right"
+                                android:orientation="horizontal"
+                                android:layout_weight="1.5"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:id="@+id/tv_order_no_from_otc_order_details"
+                                    android:paddingLeft="10dp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="--"
+                                    android:textSize="12dp"
+                                    android:textColor="@color/theme01.textColorMain"/>
+                                <!-- TODO:2.9 未完成 -->
+                                <ImageView
+                                    android:layout_marginLeft="10dp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/icon_copy"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                        <View 
+                            android:id="@+id/layout_order_detail_payment_or_receive_item_line"
+                            android:layout_marginTop="10dp" 
+                            android:layout_height="1dp" 
+                            android:background="@color/theme01.bottomLineColor" 
+                            android:layout_width="fill_parent">
+                        </View>
+
+
                     </LinearLayout>
 
-                    <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
-
-
+                    <!-- 转账提示（可能不存在） -->
                     <TextView
-                        android:id="@+id/tv_tips_from_otc_order_details"
+                        android:id="@+id/tv_order_payment_sectips"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
@@ -501,43 +579,46 @@
                 </LinearLayout>
             </ScrollView>
 
+            <!-- 底部各种按钮 -->
             <LinearLayout
-                android:background="@color/theme01.textColorGray"
+                android:id="@+id/layout_order_bottom_buttons"
+                android:background="@color/theme01.tabBarColor"
                 android:layout_gravity="bottom|center_vertical"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="0dp"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="50dp">
+                android:layout_height="52dp">
 
                 <TextView
-                    android:id="@+id/tv_cancel_order_from_otc_order_details"
-                    android:layout_margin="5dp"
-                    android:layout_marginRight="2.5dp"
+                    android:id="@+id/btn_order_button01"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
                     android:gravity="center"
-                    android:layout_weight="1.5"
+                    android:layout_weight="4"
                     android:layout_width="0dp"
-                    android:textColor="@color/theme01.textColorMain"
+                    android:textColor="@color/theme01.textColorPercent"
                     android:background="@color/theme01.textColorNormal"
-                    android:text="取消订单"
-                    android:layout_height="40dp" />
+                    android:text="--"
+                    android:layout_height="match_parent" />
 
                 <TextView
-                    android:id="@+id/tv_payment_success_from_otc_order_details"
-                    android:layout_margin="5dp"
-                    android:layout_marginLeft="2.5dp"
+                    android:id="@+id/btn_order_button02"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
                     android:gravity="center"
-                    android:layout_weight="1"
+                    android:layout_weight="6"
                     android:layout_width="0dp"
 
-                    android:textColor="@color/theme01.textColorMain"
+                    android:textColor="@color/theme01.textColorPercent"
                     android:background="@color/theme01.textColorHighlight"
-                    android:text="我已付款成功"
-                    android:layout_height="40dp" />
+                    android:text="--"
+                    android:layout_height="match_parent" />
 
             </LinearLayout>
-
-
-
 
         </FrameLayout>
 
