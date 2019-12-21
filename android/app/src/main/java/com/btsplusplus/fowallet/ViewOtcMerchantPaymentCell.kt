@@ -35,14 +35,16 @@ class ViewOtcMerchantPaymentCell : LinearLayout {
         layout_wrap.orientation = LinearLayout.VERTICAL
         layout_wrap.setPadding(0, 0, 0, 10.dp)
 
-        // 第一行 商家图标 商家名称 交易总数|成交比
+        // 第一行 商家图标 商家名称 已字符|未支付
         val ly1 = LinearLayout(_ctx).apply {
             layoutParams = layout_params
             orientation = LinearLayout.HORIZONTAL
 
             // 左边
             addView(LinearLayout(_ctx).apply {
-                layoutParams = LinearLayout.LayoutParams(0.dp, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                layoutParams = LinearLayout.LayoutParams(0.dp, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
+                    gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
+                }
                 gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
 
                 val iv = ImageView(_ctx).apply {
@@ -61,6 +63,22 @@ class ViewOtcMerchantPaymentCell : LinearLayout {
                     setPadding(5.dp, 0, 0, 0)
                 })
             })
+
+            // 右边
+            addView(LinearLayout(_ctx).apply {
+                layoutParams = LinearLayout.LayoutParams(0.dp, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
+
+                addView(TextView(_ctx).apply {
+                    text = "已支付"
+                    setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15.0f)
+                    setTextColor(resources.getColor(R.color.theme01_textColorHighlight))
+                    gravity = Gravity.CENTER
+                    setPadding(5.dp, 0, 0, 0)
+                })
+            })
+
+
         }
 
         // 第二行 姓名
