@@ -80,4 +80,8 @@
         <item name="android:windowBackground">@mipmap/launch</item>
     </style>
 
+    <style name="SlideFromBottom" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/dialog_enter</item>
+        <item name="android:windowExitAnimation">@anim/dialog_exit</item>
+    </style>
 </resources>
