@@ -1,12 +1,19 @@
 package com.btsplusplus.fowallet
 
+import android.Manifest
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
 import bitshares.*
+import com.fowallet.walletcore.bts.BitsharesClientManager
+import com.fowallet.walletcore.bts.ChainObjectManager
+import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_otc_order_details.*
 import org.json.JSONArray
 import org.json.JSONObject
+import kotlin.math.max
 
 class ActivityOtcOrderDetails : BtsppActivity() {
 
@@ -19,10 +26,18 @@ class ActivityOtcOrderDetails : BtsppActivity() {
     private var _timerID = 0
     private var _currSelectedPaymentMethod: JSONObject? = null          //  买单情况下，当前选中的卖家收款方式。
 
+    private var _orderStatusDirty = false                               //  订单状态是否更新过了
+
     override fun onDestroy() {
-        //  移除定时器
-        AsyncTaskManager.sharedAsyncTaskManager().removeSecondsTimer(_timerID)
+        _stopPaymentTimer()
         super.onDestroy()
+    }
+
+    private fun _stopPaymentTimer() {
+        if (_timerID != 0) {
+            AsyncTaskManager.sharedAsyncTaskManager().removeSecondsTimer(_timerID)
+            _timerID = 0
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +75,11 @@ class ActivityOtcOrderDetails : BtsppActivity() {
         _drawUI_all()
 
         //  事件 - 返回
-        layout_back_from_otc_order_details.setOnClickListener { finish() }
+        layout_back_from_otc_order_details.setOnClickListener {
+            _result_promise?.resolve(_orderStatusDirty)
+            _result_promise = null
+            finish()
+        }
 
         //  事件 - 电话
         img_icon_phone.setOnClickListener { onPhoneButtonClicked() }
@@ -76,15 +95,6 @@ class ActivityOtcOrderDetails : BtsppActivity() {
             }
         }
         btn_copy_order_detail_orderid.setOnClickListener { onCopyButtonClicked(_order_details.optString("orderId", null)) }
-
-        //  TODO;2.9
-        // 取消订单 支付成功
-//        tv_cancel_order_from_otc_order_details.setOnClickListener {
-//
-//        }
-//        tv_payment_success_from_otc_order_details.setOnClickListener {
-//
-
     }
 
     /**
@@ -106,15 +116,6 @@ class ActivityOtcOrderDetails : BtsppActivity() {
             //  TODO:2.9 cancel?
         }
     }
-
-//    /**
-//     *  (private) 动态初始化UI需要显示的字段信息按钮等数据。
-//     */
-//    private fun _initUIData() {
-//        //  TODO:2.9 未完成
-//        _changeCurrSelectedPaymentMethod(null)
-//
-//    }
 
     /**
      *  (private) 刷新UI
@@ -145,8 +146,6 @@ class ActivityOtcOrderDetails : BtsppActivity() {
         tv_status_main.text = _statusInfos.getString("main")
         tv_status_desc.text = _statusInfos.getString("desc")
         img_icon_phone.setColorFilter(resources.getColor(R.color.theme01_textColorMain))
-        //  TODO:2.9 events
-//        img_icon_phone
     }
 
     private fun _drawUI_orderBasicInfo() {
@@ -178,17 +177,19 @@ class ActivityOtcOrderDetails : BtsppActivity() {
             realname = "($realname)"
         }
         val pminfos = OtcManager.auxGenPaymentMethodInfos(this, curr_pm.getString("account"), curr_pm.getInt("type"), null)
-        val finalString: String
-        val colorString: String
+        val headerString: String
+        val middleString: String
+        val tailerString = String.format(resources.getString(R.string.kOtcOdCellPaymentSameNameTipsAndroidTailer), pminfos.optString("name"))
         if (realname != null) {
-            finalString = String.format(resources.getString(R.string.kOtcOdCellPaymentSameNameTips01), realname, pminfos.optString("name"))
-            colorString = realname
+            headerString = resources.getString(R.string.kOtcOdCellPaymentSameNameTipsAndroidHeader01)
+            middleString = realname
         } else {
-            finalString = String.format(resources.getString(R.string.kOtcOdCellPaymentSameNameTips02), pminfos.optString("name"))
-            colorString = resources.getString(R.string.kOtcOdCellPaymentSameNameTitle)
+            headerString = resources.getString(R.string.kOtcOdCellPaymentSameNameTipsAndroidHeader02)
+            middleString = resources.getString(R.string.kOtcOdCellPaymentSameNameTitle)
         }
-        //  TODO;2.9 拼接未完成
-        tv_pm_sametips_color_string.text = finalString
+        tv_pm_sametips_prev_string.text = headerString
+        tv_pm_sametips_color_string.text = middleString
+        tv_pm_sametips_after_string.text = tailerString
     }
 
     /**
@@ -223,7 +224,7 @@ class ActivityOtcOrderDetails : BtsppActivity() {
                 __drawUI_payment_same_tips(curr_pm)
                 //  点击切换CELL
                 __drawUI_payment_click_switch_cell(curr_pm)
-                //  收款人 TODO:2.9 复制
+                //  收款人
                 tv_curr_payment_realname.text = curr_pm.optString("realName")
                 //  收款账号
                 tv_curr_payment_account.text = curr_pm.optString("account")
@@ -282,8 +283,10 @@ class ActivityOtcOrderDetails : BtsppActivity() {
         if (payAccount != null && payAccount.isNotEmpty()) {
             layout_order_detail_payment_or_receive_item_cell.visibility = View.VISIBLE
             layout_order_detail_payment_or_receive_item_line.visibility = View.VISIBLE
-
+            
             val pminfos = OtcManager.auxGenPaymentMethodInfos(this, payAccount, _order_details.optInt("payChannel"), null)
+
+            //  标题
             tv_order_detail_payment_or_receive_item_title.text = if (_user_type == OtcManager.EOtcUserType.eout_normal_user) {
                 if (_statusInfos.getBoolean("sell")) {
                     resources.getString(R.string.kOtcAdCellLabelTitleReceiveMethod)
@@ -297,7 +300,10 @@ class ActivityOtcOrderDetails : BtsppActivity() {
                     resources.getString(R.string.kOtcAdCellLabelTitleReceiveMethod)
                 }
             }
-            //  TODO:2.9 pminfos.getInt("icon") + pminfos.getString("name_with_short_account") 未完成
+
+            //  图标 + 值
+            img_order_detail_payment_or_receive_item_icon.setImageDrawable(resources.getDrawable(pminfos.getInt("icon")))
+            tv_order_detail_payment_or_receive_item_value.text = pminfos.getString("name_with_short_account")
         } else {
             layout_order_detail_payment_or_receive_item_cell.visibility = View.GONE
             layout_order_detail_payment_or_receive_item_line.visibility = View.GONE
@@ -424,8 +430,23 @@ class ActivityOtcOrderDetails : BtsppActivity() {
     private fun onPhoneButtonClicked() {
         val phone = _order_details.opt("phone") as? String
         if (phone != null && phone.isNotEmpty()) {
-            showToast("call: $phone")
-            //  TODO:2.9 !!! 重要 打电话 未完成
+            //  TODO:2.9 lang
+            this.guardPermissions(Manifest.permission.CALL_PHONE).then {
+                when (it as Int) {
+                    EBtsppPermissionResult.GRANTED.value -> {
+                        val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$phone"))
+                        startActivity(intent)
+                    }
+                    else -> {
+                        if (Utils.copyToClipboard(this, phone)) {
+                            showToast("无权限，您可以手动拨打电话：$phone，号码已复制。")
+                        } else {
+                            showToast("无权限，您可以手动拨打电话：$phone")
+                        }
+                    }
+                }
+                return@then null
+            }
         }
     }
 
@@ -446,40 +467,348 @@ class ActivityOtcOrderDetails : BtsppActivity() {
     private fun onButtomButtonClicked(btn: View) {
         val btnType = btn.tag as? OtcManager.EOtcOrderOperationType
         if (btnType != null) {
-            showToast("clicked: ${btnType.value}")
+            //  TODO:2.9 lang
             when (btnType) {
                 //  卖单
                 OtcManager.EOtcOrderOperationType.eooot_transfer -> {
-//                    curr_button.text = resources.getString(R.string.kOtcOdBtnTransfer)
+                    UtilsAlert.showMessageConfirm(this, "确认转币", "确定转币给商家。是否继续？").then {
+                        if (it != null && it as Boolean) {
+                            _execTransferCore()
+                        }
+                    }
                 }
                 OtcManager.EOtcOrderOperationType.eooot_contact_customer_service -> {
-//                    curr_button.text = resources.getString(R.string.kOtcOdBtnCustomerService)
+                    //  TODO:2.9
+                    showToast("联系客服 ${btnType.value}")
                 }
                 OtcManager.EOtcOrderOperationType.eooot_confirm_received_money -> {
-//                    curr_button.text = "${resources.getString(R.string.kOtcOdBtnConfirmReceivedMoney)} ${_order_details.optString("assetSymbol")}"
+                    UtilsAlert.showMessageConfirm(this, "确认放行", "我确认已登录收款账户查看，并核对收款无误。是否放行？").then {
+                        if (it != null && it as Boolean) {
+                            guardWalletUnlocked(true) { unlocked ->
+                                if (unlocked) {
+                                    _execUpdateOrderCore(_order_details.getString("payAccount"),
+                                            _order_details.get("payChannel"),
+                                            OtcManager.EOtcOrderUpdateType.eoout_to_received_money)
+                                }
+                            }
+                        }
+                    }
                 }
                 //  买单
                 OtcManager.EOtcOrderOperationType.eooot_cancel_order -> {
-//                    curr_button.text = resources.getString(R.string.kOtcOdBtnCancelOrder)
+                    UtilsAlert.showMessageConfirm(this, "确认取消订单", "※ 如果您已经付款给商家，请不要取消订单！！！\\n\\n注：若用户当日累计取消3笔订单，会限制当日下单功能。是否继续？").then {
+                        if (it != null && it as Boolean) {
+                            guardWalletUnlocked(true) { unlocked ->
+                                if (unlocked) {
+                                    _execUpdateOrderCore(_currSelectedPaymentMethod!!.getString("account"),
+                                            _currSelectedPaymentMethod!!.get("type"),
+                                            OtcManager.EOtcOrderUpdateType.eoout_to_cancel)
+                                }
+                            }
+                        }
+                    }
                 }
                 OtcManager.EOtcOrderOperationType.eooot_confirm_paid -> {
-//                    curr_button.text = resources.getString(R.string.kOtcOdBtnConfirmPaid)
+                    UtilsAlert.showMessageConfirm(this, "确认付款", "我确认已按要求付款给商家。\\n注：恶意点击将会被冻结账号。\\n是否继续？").then {
+                        if (it != null && it as Boolean) {
+                            guardWalletUnlocked(true) { unlocked ->
+                                if (unlocked) {
+                                    _execUpdateOrderCore(_currSelectedPaymentMethod!!.getString("account"),
+                                            _currSelectedPaymentMethod!!.get("type"),
+                                            OtcManager.EOtcOrderUpdateType.eoout_to_paied)
+                                }
+                            }
+                        }
+                    }
                 }
                 OtcManager.EOtcOrderOperationType.eooot_confirm_received_refunded -> {
-//                    curr_button.text = resources.getString(R.string.kOtcOdBtnConfirmReceivedRefunded)
+                    UtilsAlert.showMessageConfirm(this, "确认收到退款", "我确认已登录原付款账户查看，并核对退款无误。是否继续？").then {
+                        if (it != null && it as Boolean) {
+                            guardWalletUnlocked(true) { unlocked ->
+                                if (unlocked) {
+                                    _execUpdateOrderCore(_order_details.getString("payAccount"),
+                                            _order_details.get("payChannel"),
+                                            OtcManager.EOtcOrderUpdateType.eoout_to_refunded_confirm)
+                                }
+                            }
+                        }
+                    }
                 }
                 //  商家 TODO:2.9 lang
-                OtcManager.EOtcOrderOperationType.eooot_mc_cancel_sell_order, OtcManager.EOtcOrderOperationType.eooot_mc_cancel_buy_order -> {
-//                    curr_button.text = "无法接单"
+                OtcManager.EOtcOrderOperationType.eooot_mc_cancel_sell_order -> {
+                    UtilsAlert.showMessageConfirm(this, "确认退币", "我由于个人原因无法接单，同意退币给用户。\\n\\n注：确定后将直接转帐给用户。拒绝接单将会影响您的订单完成率。是否继续？").then {
+                        if (it != null && it as Boolean) {
+                            _transferCoinToUserAndUpadteOrder(true, null, null,
+                                    OtcManager.EOtcOrderUpdateType.eoout_to_mc_return)
+                        }
+                    }
                 }
                 OtcManager.EOtcOrderOperationType.eooot_mc_confirm_paid -> {
-//                    curr_button.text = resources.getString(R.string.kOtcOdBtnConfirmPaid)
+                    UtilsAlert.showMessageConfirm(this, "确认付款", "我确认已按要求付款给用户。\\n注：恶意点击将会被冻结账号。\\n是否继续？").then {
+                        if (it != null && it as Boolean) {
+                            guardWalletUnlocked(true) { unlocked ->
+                                if (unlocked) {
+                                    _execUpdateOrderCore(_currSelectedPaymentMethod!!.getString("account"),
+                                            _currSelectedPaymentMethod!!.get("type"),
+                                            OtcManager.EOtcOrderUpdateType.eoout_to_mc_paied)
+                                }
+                            }
+                        }
+                    }
                 }
                 OtcManager.EOtcOrderOperationType.eooot_mc_confirm_received_money -> {
-//                    curr_button.text = "${resources.getString(R.string.kOtcOdBtnConfirmReceivedMoney)} ${_order_details.optString("assetSymbol")}"
+                    UtilsAlert.showMessageConfirm(this, "确认放行", "我确认已登录收款账户查看，并核对收款无误。是否放行？").then {
+                        if (it != null && it as Boolean) {
+                            _transferCoinToUserAndUpadteOrder(false, _order_details.getString("payAccount"), _order_details.get("payChannel"),
+                                    OtcManager.EOtcOrderUpdateType.eoout_to_mc_received_money)
+                        }
+                    }
+                }
+                OtcManager.EOtcOrderOperationType.eooot_mc_cancel_buy_order -> {
+                    UtilsAlert.showMessageConfirm(this, "确认退款", "我确认已从原路径退款给用户。\\n\\n注：拒绝接单将会影响您的订单完成率。恶意点击将直接冻结账号。是否继续？").then {
+                        if (it != null && it as Boolean) {
+                            guardWalletUnlocked(true) { unlocked ->
+                                if (unlocked) {
+                                    _execUpdateOrderCore(_order_details.getString("payAccount"),
+                                            _order_details.get("payChannel"),
+                                            OtcManager.EOtcOrderUpdateType.eoout_to_mc_cancel)
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
+    }
+
+    /**
+     *  (private) 执行更新订单。确认付款/取消订单/商家退款（用户收到退款后取消订单）等
+     */
+    private fun _execUpdateOrderCore(payAccount: String?, payChannel: Any?, type: OtcManager.EOtcOrderUpdateType, signatureTx: JSONObject? = null, prev_mask: ViewMask? = null) {
+        assert(!WalletManager.sharedWalletManager().isLocked())
+
+        val mask = prev_mask
+                ?: ViewMask(resources.getString(R.string.kTipsBeRequesting), this).apply { show() }
+
+        val otc = OtcManager.sharedOtcManager()
+        val userAccount = otc.getCurrentBtsAccount()
+        val orderId = _order_details.getString("orderId")
+        val p1 = if (_user_type == OtcManager.EOtcUserType.eout_normal_user) {
+            otc.updateUserOrder(userAccount, orderId, payAccount, payChannel, type)
+        } else {
+            otc.updateMerchantOrder(userAccount, orderId, payAccount, payChannel, type, signatureTx)
+        }
+
+        p1.then {
+            //  设置：订单状态已变更标记
+            _orderStatusDirty = true
+            //  停止付款计时器
+            _stopPaymentTimer()
+            //  更新状态成功、刷新界面。
+            val queryPromise = if (_user_type == OtcManager.EOtcUserType.eout_normal_user) {
+                otc.queryUserOrderDetails(userAccount, orderId)
+            } else {
+                otc.queryMerchantOrderDetails(userAccount, orderId)
+            }
+            return@then queryPromise.then {
+                //  获取新订单数据成功
+                mask.dismiss()
+                val details_responsed = it as? JSONObject
+                _refreshUI(details_responsed?.optJSONObject("data"))
+                return@then null
+            }
+        }.catch { err ->
+            mask.dismiss()
+            otc.showOtcError(this, err)
+        }
+
+    }
+
+    /**
+     *  (private) 执行转币
+     */
+    private fun _execTransferCore() {
+        guardWalletUnlocked(true) { unlocked ->
+            if (unlocked) {
+                val userAccount = OtcManager.sharedOtcManager().getCurrentBtsAccount()
+                val otcAccount = _order_details.getString("otcAccount")
+                val assetSymbol = _order_details.getString("assetSymbol")
+                val args_amount = _order_details.getString("quantity")
+
+                //  REMARK：转账memo格式：F(发币)T(退币) + 订单号后10位
+                val orderId = _order_details.getString("orderId")
+                val args_memo_str = "F${orderId.substring(max(orderId.length - 10, 0))}"
+
+                val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this)
+                mask.show()
+
+                val chainMgr = ChainObjectManager.sharedChainObjectManager()
+                val p1 = chainMgr.queryFullAccountInfo(userAccount)
+                val p2 = chainMgr.queryAccountData(otcAccount)
+                val p3 = chainMgr.queryAssetData(assetSymbol)
+                //  TODO:2.9 100? args
+                val p4 = chainMgr.queryAccountHistoryByOperations(userAccount, jsonArrayfrom(EBitsharesOperations.ebo_transfer.value), 100)
+                Promise.all(p1, p2, p3, p4).then {
+                    val promise_data_array = it as? JSONArray
+                    val full_from_account = promise_data_array?.optJSONObject(0)
+                    val to_account = promise_data_array?.optJSONObject(1)
+                    val asset = promise_data_array?.optJSONObject(2)
+                    val his_data_array = promise_data_array?.optJSONArray(3)
+                    if (full_from_account == null || to_account == null || asset == null) {
+                        mask.dismiss()
+                        showToast(resources.getString(R.string.kOtcOdOrderDataException))
+                        return@then null
+                    }
+
+                    val real_from_id = full_from_account.getJSONObject("account").getString("id")
+                    val real_to_id = to_account.getString("id")
+                    val real_amount = Utils.auxGetStringDecimalNumberValue(args_amount)
+                    val real_asset_id = asset.getString("id")
+                    val real_asset_precision = asset.getInt("precision")
+
+                    //  检测是否已经转币了。
+                    var bMatched = false
+                    if (his_data_array != null && his_data_array.length() > 0) {
+                        for (his_object in his_data_array.forin<JSONObject>()) {
+                            val op = his_object!!.getJSONArray("op")
+                            assert(op.getInt(0) == EBitsharesOperations.ebo_transfer.value)
+                            val opdata = op.optJSONObject(1)
+                            if (opdata == null) {
+                                continue
+                            }
+
+                            // 1、检测from、to、amount是否匹配
+                            val from_id = opdata.getString("from")
+                            val to_id = opdata.getString("to")
+                            if (from_id != real_from_id || to_id != real_to_id) {
+                                continue
+                            }
+
+                            // 2、检测转币数量是否匹配
+                            val op_amount = opdata.getJSONObject("amount")
+                            if (real_asset_id != op_amount.getString("asset_id")) {
+                                continue
+                            }
+                            val n_op_amount = bigDecimalfromAmount(op_amount.getString("amount"), real_asset_precision)
+                            if (n_op_amount != real_amount) {
+                                continue
+                            }
+
+                            // 3、检测memo中订单号信息是否匹配
+                            val memo_object = opdata.optJSONObject("memo")
+                            if (memo_object == null) {
+                                continue
+                            }
+                            val plain_memo = WalletManager.sharedWalletManager().decryptMemoObject(memo_object)
+                            if (plain_memo == null) {
+                                continue
+                            }
+                            if (plain_memo == args_memo_str) {
+                                bMatched = true
+                                break
+                            }
+                        }
+                    }
+
+                    if (bMatched) {
+                        //  已转过币了：仅更新订单状态
+                        _execUpdateOrderCore(null, null, OtcManager.EOtcOrderUpdateType.eoout_to_transferred, prev_mask = mask)
+                    } else {
+                        //  转币 & 更新订单状态
+                        BitsharesClientManager.sharedBitsharesClientManager().simpleTransfer2(this, full_from_account, to_account, asset,
+                                args_amount, args_memo_str, null, null, true).then {
+                            val tx_data = it as JSONObject
+                            val err = tx_data.optString("err", null)
+                            if (err != null) {
+                                mask.dismiss()
+                                showToast(err)
+                            } else {
+                                //  转币成功：更新订单状态
+                                _execUpdateOrderCore(null, null, OtcManager.EOtcOrderUpdateType.eoout_to_transferred, prev_mask = mask)
+                            }
+                        }.catch { err ->
+                            mask.dismiss()
+                            showGrapheneError(err)
+                        }
+                    }
+                    return@then null
+                }.catch {
+                    mask.dismiss()
+                    showToast(resources.getString(R.string.tip_network_error))
+                }
+            }
+        }
+    }
+
+    private fun _transferCoinToUserAndUpadteOrder(return_coin_to_user: Boolean, payAccount: String?, payChannel: Any?, type: OtcManager.EOtcOrderUpdateType) {
+        guardWalletUnlocked(true) { unlocked ->
+            if (unlocked) {
+                val otc = OtcManager.sharedOtcManager()
+                val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this).apply { show() }
+                otc.queryMerchantMemoKey(otc.getCurrentBtsAccount()).then {
+                    val responsed = it as? JSONObject
+                    val priKey = responsed?.opt("data") as? String
+                    val pubKey = OrgUtils.genBtsAddressFromWifPrivateKey(priKey ?: "")
+                    if (pubKey == null) {
+                        //  TODO:2.9 lang
+                        mask.dismiss()
+                        showToast("备注私钥无效。")
+//                        showToast(resources.getString(R.string.xxx))
+                        return@then null
+                    }
+                    //  签名
+                    _genTransferTransactionObject(return_coin_to_user, JSONObject().apply {
+                        put(pubKey, priKey)
+                    }).then {
+                        val tx_data = it as JSONObject
+                        val err = tx_data.optString("err", null)
+                        if (err != null) {
+                            //  错误
+                            mask.dismiss()
+                            showToast(err)
+                        } else {
+                            //  转账签名成功
+                            val tx = tx_data.getJSONObject("tx")
+                            //  更新订单状态
+                            _execUpdateOrderCore(payAccount, payChannel, type, signatureTx = tx, prev_mask = mask)
+                        }
+                        return@then null
+                    }.catch { err ->
+                        mask.dismiss()
+                        showGrapheneError(err)
+                    }
+                    return@then null
+                }.catch { err ->
+                    mask.dismiss()
+                    otc.showOtcError(this, err)
+                }
+            }
+        }
+    }
+
+    /**
+     *  (private) 生成转账数据结构。商家已签名的。
+     */
+    private fun _genTransferTransactionObject(return_coin_to_user: Boolean, memo_extra_keys: JSONObject?): Promise {
+        val walletMgr = WalletManager.sharedWalletManager()
+        assert(!walletMgr.isLocked())
+
+        val userAccount = _order_details.getString("userAccount")
+        val otcAccount = _order_details.getString("otcAccount")
+        val assetSymbol = _order_details.getString("assetSymbol")
+        val args_amount = _order_details.getString("quantity")
+
+        //  REMARK：转账memo格式：F(发币)T(退币) + 订单号后10位
+        val orderId = _order_details.getString("orderId")
+        val prefix = if (return_coin_to_user) "T" else "F"
+        val args_memo_str = "$prefix${orderId.substring(max(orderId.length - 10, 0))}"
+
+        //  获取用户自身的KEY进行签名。
+        val active_permission = walletMgr.getWalletAccountInfo()!!.getJSONObject("account").getJSONObject("active")
+        val sign_pub_keys = walletMgr.getSignKeys(active_permission, false)
+
+        return BitsharesClientManager.sharedBitsharesClientManager().simpleTransfer(this, otcAccount, userAccount, assetSymbol,
+                args_amount, args_memo_str, memo_extra_keys, sign_pub_keys, false)
     }
 
 }

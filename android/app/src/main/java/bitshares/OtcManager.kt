@@ -808,8 +808,8 @@ class OtcManager {
     }
 
     private fun _guardUserIdVerified(ctx: Activity, prev_mask: ViewMask?, askForIdVerifyMsg: String?, first_request: Boolean, keep_mask: Boolean, verifyed_callback: (auth_info: JSONObject, mask: ViewMask?) -> Unit) {
-        val mask = prev_mask ?: ViewMask(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
-        mask.show()
+        val mask = prev_mask ?: ViewMask(R.string.kTipsBeRequesting.xmlstring(ctx), ctx).apply { show() }
+
         queryIdVerify(getCurrentBtsAccount()).then {
             val responsed = it as? JSONObject
             if (isIdVerifyed(responsed)) {
@@ -872,8 +872,7 @@ class OtcManager {
         ctx.guardWalletUnlocked(true) { unlocked ->
             if (unlocked) {
                 //  如果之前的mask被关闭了，则这里重新创建。
-                val mask = currMask ?: ViewMask(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
-                mask.show()
+                val mask = currMask ?: ViewMask(R.string.kTipsBeRequesting.xmlstring(ctx), ctx).apply { show() }
                 val account_name = getCurrentBtsAccount()
                 login(account_name).then {
                     val login_responsed = it as? JSONObject
