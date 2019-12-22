@@ -386,13 +386,12 @@ class OtcManager {
             var showRemark = false
             var pending = true
 
-            //  TODO:2.9 状态描述待细化。!!!!
             if (bUserSell) {
                 //  -- 用户卖币提现
                 when (status) {
                     EOtcOrderProgressStatus.eoops_new.value -> {
-                        status_main = "待转币"
-                        status_desc = "您已成功下单，请转币。"
+                        status_main = R.string.kOtcOsUser_sell_new_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsUser_sell_new_desc.xmlstring(ctx)
                         //  按钮：联系客服 + 立即转币
                         actions.put(JSONObject().apply {
                             put("type", EOtcOrderOperationType.eooot_contact_customer_service)
@@ -404,16 +403,16 @@ class OtcManager {
                         })
                     }
                     EOtcOrderProgressStatus.eoops_already_transferred.value -> {
-                        status_main = "已转币"
-                        status_desc = "您已转币，正在等待区块确认。"
+                        status_main = R.string.kOtcOsUser_sell_transferred_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsUser_sell_transferred_desc.xmlstring(ctx)
                     }
                     EOtcOrderProgressStatus.eoops_already_confirmed.value -> {
-                        status_main = "待收款"
-                        status_desc = "区块已确认转币，等待商家付款。"
+                        status_main = R.string.kOtcOsUser_sell_confirmed_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsUser_sell_confirmed_desc.xmlstring(ctx)
                     }
                     EOtcOrderProgressStatus.eoops_already_paid.value -> {
-                        status_main = "请放行"               // 商家已付款(请放行) 申诉 + 确认收款(放行操作需二次确认)
-                        status_desc = "请查收对方付款，未收到请勿放行。"
+                        status_main = R.string.kOtcOsUser_sell_paid_main.xmlstring(ctx) // 商家已付款(请放行) 申诉 + 确认收款(放行操作需二次确认)
+                        status_desc = R.string.kOtcOsUser_sell_paid_desc.xmlstring(ctx)
                         //  按钮：联系客服 + 放行XXX资产
                         actions.put(JSONObject().apply {
                             put("type", EOtcOrderOperationType.eooot_contact_customer_service)
@@ -425,13 +424,13 @@ class OtcManager {
                         })
                     }
                     EOtcOrderProgressStatus.eoops_completed.value -> {
-                        status_main = "已完成"
-                        status_desc = "订单已完成。"
+                        status_main = R.string.kOtcOsUser_sell_completed_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsUser_sell_completed_desc.xmlstring(ctx)
                         pending = false
                     }
                     EOtcOrderProgressStatus.eoops_chain_failed.value -> {
-                        status_main = "异常中"
-                        status_desc = "区块确认异常，请联系客服。"
+                        status_main = R.string.kOtcOsUser_sell_chain_failed_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsUser_sell_chain_failed_desc.xmlstring(ctx)
                         //  按钮：联系客服
                         actions.put(JSONObject().apply {
                             put("type", EOtcOrderOperationType.eooot_contact_customer_service)
@@ -439,12 +438,12 @@ class OtcManager {
                         })
                     }
                     EOtcOrderProgressStatus.eoops_return_assets.value -> {
-                        status_main = "退币中"
-                        status_desc = "商家无法接单，退币处理中。"
+                        status_main = R.string.kOtcOsUser_sell_return_assets_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsUser_sell_return_assets_desc.xmlstring(ctx)
                     }
                     EOtcOrderProgressStatus.eoops_cancelled.value -> {
-                        status_main = "已取消"
-                        status_desc = "订单已取消。"
+                        status_main = R.string.kOtcOsUser_sell_cancelled_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsUser_sell_cancelled_desc.xmlstring(ctx)
                         pending = false
                     }
                 }   //  end when
@@ -452,8 +451,8 @@ class OtcManager {
                 //  -- 用户充值买币
                 when (status) {
                     EOtcOrderProgressStatus.eoops_new.value -> {
-                        status_main = "待付款"       // 已下单(待付款)     取消 + 确认付款
-                        status_desc = "请尽快付款给卖家。"
+                        status_main = R.string.kOtcOsUser_buy_new_main.xmlstring(ctx)       // 已下单(待付款)     取消 + 确认付款
+                        status_desc = R.string.kOtcOsUser_buy_new_desc.xmlstring(ctx)
                         showRemark = true
                         //  按钮：取消订单 + 确认付款
                         actions.put(JSONObject().apply {
@@ -466,25 +465,25 @@ class OtcManager {
                         })
                     }
                     EOtcOrderProgressStatus.eoops_already_paid.value -> {
-                        status_main = "待收币"       // 已付款(待收币)
-                        status_desc = "您已付款，请等待商家确认并放币。"
+                        status_main = R.string.kOtcOsUser_buy_paid_main.xmlstring(ctx)       // 已付款(待收币)
+                        status_desc = R.string.kOtcOsUser_buy_paid_desc.xmlstring(ctx)
                     }
                     EOtcOrderProgressStatus.eoops_already_transferred.value -> {
-                        status_main = "已转币"       //  已转币
-                        status_desc = "商家已转币，正在等待区块确认。"
+                        status_main = R.string.kOtcOsUser_buy_transferred_main.xmlstring(ctx)       //  已转币
+                        status_desc = R.string.kOtcOsUser_buy_transferred_desc.xmlstring(ctx)
                     }
                     EOtcOrderProgressStatus.eoops_already_confirmed.value -> {
-                        status_main = "已收币"       //  已收币 REMARK：这是中间状态，会自动跳转到已完成。
-                        status_desc = "商家转币已确认，请查收。"
+                        status_main = R.string.kOtcOsUser_buy_confirmed_main.xmlstring(ctx)       //  已收币 REMARK：这是中间状态，会自动跳转到已完成。
+                        status_desc = R.string.kOtcOsUser_buy_confirmed_desc.xmlstring(ctx)
                     }
                     EOtcOrderProgressStatus.eoops_completed.value -> {
-                        status_main = "已完成"
-                        status_desc = "订单已完成。"
+                        status_main = R.string.kOtcOsUser_buy_completed_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsUser_buy_completed_desc.xmlstring(ctx)
                         pending = false
                     }
                     EOtcOrderProgressStatus.eoops_refunded.value -> {
-                        status_main = "已退款"
-                        status_desc = "商家无法接单，已退款，请查收退款。"
+                        status_main = R.string.kOtcOsUser_buy_refunded_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsUser_buy_refunded_desc.xmlstring(ctx)
                         //  按钮：联系客服 + 我已收到退款（取消订单）
                         actions.put(JSONObject().apply {
                             put("type", EOtcOrderOperationType.eooot_contact_customer_service)
@@ -496,8 +495,8 @@ class OtcManager {
                         })
                     }
                     EOtcOrderProgressStatus.eoops_chain_failed.value -> {
-                        status_main = "异常中"
-                        status_desc = "区块确认异常，请联系客服。"
+                        status_main = R.string.kOtcOsUser_buy_chain_failed_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsUser_buy_chain_failed_desc.xmlstring(ctx)
                         //  按钮：联系客服
                         actions.put(JSONObject().apply {
                             put("type", EOtcOrderOperationType.eooot_contact_customer_service)
@@ -505,18 +504,18 @@ class OtcManager {
                         })
                     }
                     EOtcOrderProgressStatus.eoops_cancelled.value -> {
-                        status_main = "已取消"
-                        status_desc = "订单已取消。"
+                        status_main = R.string.kOtcOsUser_buy_cancelled_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsUser_buy_cancelled_desc.xmlstring(ctx)
                         pending = false
                     }
                 }   //  end when
             }
 
             if (status_main == null) {
-                status_main = "未知状态 $status"
+                status_main = String.format(R.string.kOtcOsUser_unknown_main.xmlstring(ctx), status.toString())
             }
             if (status_desc == null) {
-                status_desc = "未知状态 $status"
+                status_desc = String.format(R.string.kOtcOsUser_unknown_desc.xmlstring(ctx), status.toString())
             }
 
             //  返回数据
@@ -543,21 +542,20 @@ class OtcManager {
             val showRemark = false
             var pending = true
 
-            //  TODO:2.9 状态描述待细化。!!!!
             if (bUserSell) {
                 //  -- 用户卖币提现
                 when (status) {
                     EOtcOrderProgressStatus.eoops_new.value -> {
-                        status_main = "待收币"
-                        status_desc = "用户已下单，等待用户转币。"
+                        status_main = R.string.kOtcOsMerchant_sell_new_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsMerchant_sell_new_desc.xmlstring(ctx)
                     }
                     EOtcOrderProgressStatus.eoops_already_transferred.value -> {
-                        status_main = "已转币"
-                        status_desc = "用户已转币，正在等待区块确认。"
+                        status_main = R.string.kOtcOsMerchant_sell_transferred_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsMerchant_sell_transferred_desc.xmlstring(ctx)
                     }
                     EOtcOrderProgressStatus.eoops_already_confirmed.value -> {
-                        status_main = "请付款"               //  区块已确认(请付款) 【商家】
-                        status_desc = "区块已确认转币，请付款给用户。"
+                        status_main = R.string.kOtcOsMerchant_sell_confirmed_main.xmlstring(ctx)               //  区块已确认(请付款) 【商家】
+                        status_desc = R.string.kOtcOsMerchant_sell_confirmed_desc.xmlstring(ctx)
                         //  按钮：无法接(卖)单 + 确认付款
                         actions.put(JSONObject().apply {
                             put("type", EOtcOrderOperationType.eooot_mc_cancel_sell_order)
@@ -569,25 +567,25 @@ class OtcManager {
                         })
                     }
                     EOtcOrderProgressStatus.eoops_already_paid.value -> {
-                        status_main = "待放行"               // 商家已付款（等待用户确认放行）
-                        status_desc = "您已付款，等待用户放行。"
+                        status_main = R.string.kOtcOsMerchant_sell_paid_main.xmlstring(ctx)              // 商家已付款（等待用户确认放行）
+                        status_desc = R.string.kOtcOsMerchant_sell_paid_desc.xmlstring(ctx)
                     }
                     EOtcOrderProgressStatus.eoops_completed.value -> {
-                        status_main = "已完成"
-                        status_desc = "订单已完成。"
+                        status_main = R.string.kOtcOsMerchant_sell_completed_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsMerchant_sell_completed_desc.xmlstring(ctx)
                         pending = false
                     }
                     EOtcOrderProgressStatus.eoops_chain_failed.value -> {
-                        status_main = "异常中"
-                        status_desc = "区块确认异常。"
+                        status_main = R.string.kOtcOsMerchant_sell_chain_failed_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsMerchant_sell_chain_failed_desc.xmlstring(ctx)
                     }
                     EOtcOrderProgressStatus.eoops_return_assets.value -> {
-                        status_main = "退币中"
-                        status_desc = "您无法接单，平台退币中。"
+                        status_main = R.string.kOtcOsMerchant_sell_return_assets_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsMerchant_sell_return_assets_desc.xmlstring(ctx)
                     }
                     EOtcOrderProgressStatus.eoops_cancelled.value -> {
-                        status_main = "已取消"
-                        status_desc = "订单已取消。"
+                        status_main = R.string.kOtcOsMerchant_sell_cancelled_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsMerchant_sell_cancelled_desc.xmlstring(ctx)
                         pending = false
                     }
                 }   //  end when
@@ -595,13 +593,13 @@ class OtcManager {
                 //  -- 用户充值买币
                 when (status) {
                     EOtcOrderProgressStatus.eoops_new.value -> {
-                        status_main = "待收款"
-                        status_desc = "用户已下单，等待用户付款。"
+                        status_main = R.string.kOtcOsMerchant_buy_new_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsMerchant_buy_new_desc.xmlstring(ctx)
                     }
                     EOtcOrderProgressStatus.eoops_already_paid.value -> {
                         //  DONE!!!
-                        status_main = "请放行"
-                        status_desc = "用户已付款，请确认并放币。"
+                        status_main = R.string.kOtcOsMerchant_buy_paid_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsMerchant_buy_paid_desc.xmlstring(ctx)
                         //  按钮：无法接(买)单 + 放行资产
                         actions.put(JSONObject().apply {
                             put("type", EOtcOrderOperationType.eooot_mc_cancel_buy_order)
@@ -613,39 +611,39 @@ class OtcManager {
                         })
                     }
                     EOtcOrderProgressStatus.eoops_already_transferred.value -> {
-                        status_main = "已转币"       //  已转币
-                        status_desc = "您已放行，平台处理中。"
+                        status_main = R.string.kOtcOsMerchant_buy_transferred_main.xmlstring(ctx)      //  已转币
+                        status_desc = R.string.kOtcOsMerchant_buy_transferred_desc.xmlstring(ctx)
                     }
                     EOtcOrderProgressStatus.eoops_already_confirmed.value -> {
-                        status_main = "已转币"       //  已收币 REMARK：这是中间状态，会自动跳转到已完成。
-                        status_desc = "平台已验证，区块确认中。"
+                        status_main = R.string.kOtcOsMerchant_buy_confirmed_main.xmlstring(ctx)      //  已收币 REMARK：这是中间状态，会自动跳转到已完成。
+                        status_desc = R.string.kOtcOsMerchant_buy_confirmed_desc.xmlstring(ctx)
                     }
                     EOtcOrderProgressStatus.eoops_completed.value -> {
-                        status_main = "已完成"
-                        status_desc = "订单已完成。"
+                        status_main = R.string.kOtcOsMerchant_buy_completed_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsMerchant_buy_completed_desc.xmlstring(ctx)
                         pending = false
                     }
                     EOtcOrderProgressStatus.eoops_refunded.value -> {
-                        status_main = "已退款"
-                        status_desc = "您已退款，等待用户确认。"
+                        status_main = R.string.kOtcOsMerchant_buy_refunded_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsMerchant_buy_refunded_desc.xmlstring(ctx)
                     }
                     EOtcOrderProgressStatus.eoops_chain_failed.value -> {
-                        status_main = "异常中"
-                        status_desc = "区块确认异常"
+                        status_main = R.string.kOtcOsMerchant_buy_chain_failed_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsMerchant_buy_chain_failed_desc.xmlstring(ctx)
                     }
                     EOtcOrderProgressStatus.eoops_cancelled.value -> {
-                        status_main = "已取消"
-                        status_desc = "订单已取消。"
+                        status_main = R.string.kOtcOsMerchant_buy_cancelled_main.xmlstring(ctx)
+                        status_desc = R.string.kOtcOsMerchant_buy_cancelled_desc.xmlstring(ctx)
                         pending = false
                     }
                 }   //  end when
             }
 
             if (status_main == null) {
-                status_main = "未知状态 $status"
+                status_main = String.format(R.string.kOtcOsMerchant_unknown_main.xmlstring(ctx), status.toString())
             }
             if (status_desc == null) {
-                status_desc = "未知状态 $status"
+                status_desc = String.format(R.string.kOtcOsMerchant_unknown_desc.xmlstring(ctx), status.toString())
             }
 
             //  返回数据
@@ -959,27 +957,31 @@ class OtcManager {
                 error.message
             }
             if (json is JSONObject) {
-                val otcerror = json.optJSONObject("otcerror")
-                if (otcerror != null) {
-                    //  异常中包含 otcerror 的情况
-                    val errcode = otcerror.getInt("code")
-                    if ((errcode == EOtcErrorCode.eoerr_not_login.value || errcode == EOtcErrorCode.eoerr_token_is_empty.value) && not_login_callback != null) {
-                        not_login_callback()
-                        return
-                    } else {
-                        //  TODO:2.9 error code table 部分消息特化处理。
-                        when (errcode) {
-                            EOtcErrorCode.eoerr_too_often.value -> errmsg = "请求太频繁，请稍后再试。"
-                            EOtcErrorCode.eoerr_not_login.value, EOtcErrorCode.eoerr_token_is_empty.value -> errmsg = "请退出场外交易界面重新登录。"
-                            else -> {
-                                //  默认错误消息处理
-                                val tmpmsg = otcerror.optString("message", null)
-                                if (tmpmsg != null && tmpmsg.isNotEmpty()) {
-                                    //  显示 code 和 message
-                                    errmsg = otcerror.toString()
-                                } else {
-                                    //  仅显示 code TODO:2.9 lang
-                                    errmsg = "服务器或网络异常，请稍后再试。错误代码：$errcode"
+                if (json.has("err_string_id")) {
+                    errmsg = ctx.resources.getString(json.getInt("err_string_id"))
+                } else {
+                    val otcerror = json.optJSONObject("otcerror")
+                    if (otcerror != null) {
+                        //  异常中包含 otcerror 的情况
+                        val errcode = otcerror.getInt("code")
+                        if ((errcode == EOtcErrorCode.eoerr_not_login.value || errcode == EOtcErrorCode.eoerr_token_is_empty.value) && not_login_callback != null) {
+                            not_login_callback()
+                            return
+                        } else {
+                            //  TODO:2.9 error code table 部分消息特化处理。
+                            when (errcode) {
+                                EOtcErrorCode.eoerr_too_often.value -> errmsg = R.string.kOtcMgrErrTooOften.xmlstring(ctx)
+                                EOtcErrorCode.eoerr_not_login.value, EOtcErrorCode.eoerr_token_is_empty.value -> errmsg = R.string.kOtcMgrErrNotLoginOrTokenIsEmpty.xmlstring(ctx)
+                                else -> {
+                                    //  默认错误消息处理
+                                    val tmpmsg = otcerror.optString("message", null)
+                                    if (tmpmsg != null && tmpmsg.isNotEmpty()) {
+                                        //  显示 code 和 message
+                                        errmsg = otcerror.toString()
+                                    } else {
+                                        //  仅显示 code
+                                        errmsg = String.format(R.string.kOtcMgrErrNetworkOrServerFailedWithCode.xmlstring(ctx), errcode.toString())
+                                    }
                                 }
                             }
                         }
@@ -990,8 +992,7 @@ class OtcManager {
             }
         }
         if (errmsg == null || errmsg.isEmpty()) {
-            //  TODO:2.9 lang
-            errmsg = "服务器或网络异常，请稍后再试。"
+            errmsg = R.string.kOtcMgrErrNetworkOrServerFailed.xmlstring(ctx)
         }
         ctx.showToast(errmsg)
     }
@@ -1367,11 +1368,12 @@ class OtcManager {
     private fun _handle_otc_server_response(request_promise: Promise): Promise {
         val p = Promise()
 
-        //  TODO:2.9 lang
         request_promise.then {
             val responsed = it as? JSONObject
             if (responsed == null) {
-                p.reject("服务器或网络异常，请稍后再试。")
+                p.reject(JSONObject().apply {
+                    put("err_string_id", R.string.kOtcMgrErrNetworkOrServerFailed)
+                })
                 return@then null
             }
             val code = responsed.getInt("code")
@@ -1387,9 +1389,10 @@ class OtcManager {
             }
             return@then null
         }.catch {
-            p.reject("服务器或网络异常，请稍后再试。")
+            p.reject(JSONObject().apply {
+                put("err_string_id", R.string.kOtcMgrErrNetworkOrServerFailed)
+            })
         }
-
         return p
     }
 

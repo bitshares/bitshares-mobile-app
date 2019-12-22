@@ -116,6 +116,18 @@
                 android:textAllCaps="false"
                 android:text="@string/kOtcRmAddSubmitBtnName" />
 
+            <!-- 提示信息 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:singleLine="false"
+                android:textSize="12dp"
+                android:textColor="@color/theme01.textColorMain"
+                android:padding="5dp"
+                android:background="@color/theme01.textColorGray"
+                android:text="@string/kOtcRmAddCellTipsAlipay" />
+                
         </LinearLayout>
 
     </LinearLayout>
