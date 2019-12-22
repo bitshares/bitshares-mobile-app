@@ -121,10 +121,9 @@
     
     _lbStatusName.frame = CGRectMake(fOffsetX, 0, fWidth, 48);
     _lbStatusDesc.frame = CGRectMake(fOffsetX, 48, fWidth, 20);
-        
-    //  TODO:2.9
+    
     CGFloat fPhoneSize = 40.0f;
-    _lbPhone.text = @"联系对方";//_item[@"phone"] TODO:2.9
+    _lbPhone.text = NSLocalizedString(@"kOtcOdCellContactOthers", @"联系对方");
     _lbPhone.frame = CGRectMake(fOffsetX, 48, fWidth, 20);
     CGSize size = [self auxSizeWithText:_lbPhone.text font:_lbPhone.font maxsize:CGSizeMake(fWidth, 9999)];
     _imgPhone.tintColor = theme.textColorMain;

@@ -103,12 +103,11 @@
     _lbName.frame = CGRectMake(xOffset + iconOffset, yOffset, fWidth, fLineHeight);
     _lbName.textColor = theme.textColorMain;
     
-    //  TODO:2.9
     if ([[_item objectForKey:@"status"] integerValue] == eopms_enable) {
-        _lbStatus.text = @"已开启";
+        _lbStatus.text = NSLocalizedString(@"kOtcPmCellStatusEnabled", @"已开启");
         _lbStatus.textColor = theme.textColorHighlight;
     } else {
-        _lbStatus.text = @"未开启";
+        _lbStatus.text = NSLocalizedString(@"kOtcPmCellStatusDisabled", @"未开启");
         _lbStatus.textColor = theme.textColorGray;
     }
 
@@ -120,7 +119,7 @@
     _lbUserName.textColor = theme.textColorNormal;
     yOffset += fLineHeight;
     
-    _lbAccount.text = [_item objectForKey:@"account"];//TODO:2.9
+    _lbAccount.text = [_item objectForKey:@"account"];
     _lbAccount.frame = CGRectMake(xOffset, yOffset, fWidth, fLineHeight);
     _lbAccount.textColor = theme.textColorMain;
 }

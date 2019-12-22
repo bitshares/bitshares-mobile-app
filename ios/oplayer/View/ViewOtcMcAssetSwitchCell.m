@@ -69,7 +69,6 @@
         
         if (vc)
         {
-            //  TODO:2.9
             _btnSwitch = [UIButton buttonWithType:UIButtonTypeSystem];
             _btnSwitch.backgroundColor = [UIColor clearColor];
             _btnSwitch.titleLabel.font = [UIFont systemFontOfSize:13.0f];
@@ -123,22 +122,20 @@
     CGFloat fWidth = self.bounds.size.width - 2 * fOffsetX;
     CGFloat fLineHeight = 28.0f;
     
-    //  TODO:2.9 lang
     NSString* from;
     NSString* to;
     if ([[_item objectForKey:@"bFromIsMerchant"] boolValue]) {
-        from = @"(商家账号)";
-        to = @"(个人账号)";
+        from = NSLocalizedString(@"kOtcMcAssetTransferFromToMerchantAccount", @"(商家账号)");
+        to = NSLocalizedString(@"kOtcMcAssetTransferFromToUserAccount", @"(个人账号)");
     } else {
-        to = @"(商家账号)";
-        from = @"(个人账号)";
+        to = NSLocalizedString(@"kOtcMcAssetTransferFromToMerchantAccount", @"(商家账号)");
+        from = NSLocalizedString(@"kOtcMcAssetTransferFromToUserAccount", @"(个人账号)");
     }
-    
-    _lbFromTitle.attributedText = [self genAndColorAttributedText:@"从 "
+    _lbFromTitle.attributedText = [self genAndColorAttributedText:NSLocalizedString(@"kOtcMcAssetTransferFromTitle", @"从 ")
                                                             value:from
                                                        titleColor:theme.textColorMain
                                                        valueColor:theme.textColorGray];
-    _lbToTitle.attributedText = [self genAndColorAttributedText:@"到 "
+    _lbToTitle.attributedText = [self genAndColorAttributedText:NSLocalizedString(@"kOtcMcAssetTransferToTitle", @"到 ")
                                                           value:to
                                                      titleColor:theme.textColorMain
                                                      valueColor:theme.textColorGray];

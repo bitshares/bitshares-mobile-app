@@ -110,13 +110,12 @@ enum
         if (_user_type == eout_normal_user) {
             [_statusInfos setObject:[NSString stringWithFormat:NSLocalizedString(@"kOtcOdPaymentTimeLimit", @"请在 %@ 内付款给卖家。"), [OtcManager fmtPaymentExpireTime:left_ts]] forKey:@"desc"];
         } else {
-            //  TODO:2.9
-            [_statusInfos setObject:[NSString stringWithFormat:@"预计 %@ 内收到用户付款。", [OtcManager fmtPaymentExpireTime:left_ts]] forKey:@"desc"];
+            [_statusInfos setObject:[NSString stringWithFormat:NSLocalizedString(@"kOtcOdMcPaymentTimeLimit", @"预计 %@ 内收到用户付款。"), [OtcManager fmtPaymentExpireTime:left_ts]] forKey:@"desc"];
         }
         [_viewStatusCell setItem:_statusInfos];
         [_viewStatusCell refreshText];
     } else {
-        //  TODO:2.9 cancel?
+        //  TODO:2.9 cancel? 未完成 定时器到了应该是直接刷新页面？
     }
 }
 
@@ -172,11 +171,11 @@ enum
             [target_array addObject:@(kVcSubPaymentBankName)];
         }
     } else {
-        //  收款二维码 TODO:2.9 该版本考虑不支持二维码。不显示
-        NSString* qrCode = [NSString stringWithFormat:@"%@", [payment_info objectForKey:@"qrCode"]];
-        if (qrCode && ![qrCode isEqualToString:@""] && ![qrCode isEqualToString:@"0"]) {
-            [target_array addObject:@(kVcSubPaymentQrCode)];
-        }
+        //  收款二维码 TODO:3.0 该版本考虑不支持二维码。不显示
+//        NSString* qrCode = [NSString stringWithFormat:@"%@", [payment_info objectForKey:@"qrCode"]];
+//        if (qrCode && ![qrCode isEqualToString:@""] && ![qrCode isEqualToString:@"0"]) {
+//            [target_array addObject:@(kVcSubPaymentQrCode)];
+//        }
     }
     
     return target_array;
@@ -206,7 +205,6 @@ enum
     }
     
     //  UI - 订单详细信息（订单号等）
-    //  TODO:2.9 test  data
     id orderDetailRows = [[[NSMutableArray array] ruby_apply:^(id obj) {
         if (_user_type == eout_normal_user) {
             [obj addObject:@(kVcSubMerchantRealName)];
@@ -216,7 +214,7 @@ enum
         }
         [obj addObject:@(kVcSubOrderID)];
         [obj addObject:@(kVcSubOrderTime)];
-        //  TODO:2.9
+        //  收款方式 or 付款方式
         NSString* payAccount = [_orderDetails objectForKey:@"payAccount"];
         if (payAccount && ![payAccount isEqualToString:@""]) {
             [obj addObject:@(kVcSubPaymentMethod)];
@@ -297,9 +295,9 @@ enum
         //  更新状态成功、刷新界面。
         WsPromise* queryPromise;
         if (_user_type == eout_normal_user) {
-            queryPromise = [otc queryUserOrderDetails:userAccount order_id:_orderDetails[@"orderId"]];
+            queryPromise = [otc queryUserOrderDetails:userAccount order_id:orderId];
         } else {
-            queryPromise = [otc queryMerchantOrderDetails:userAccount order_id:_orderDetails[@"orderId"]];
+            queryPromise = [otc queryMerchantOrderDetails:userAccount order_id:orderId];
         }
         return [queryPromise then:^id(id details_responsed) {
             //  获取新订单数据成功
@@ -376,7 +374,7 @@ enum
                             continue;
                         }
                         
-                        // 2、检测转币数量是否撇皮
+                        // 2、检测转币数量是否匹配
                         id op_amount = [opdata objectForKey:@"amount"];
                         if (![real_asset_id isEqualToString:[op_amount objectForKey:@"asset_id"]]) {
                             continue;
@@ -462,8 +460,7 @@ enum
                 id pubKey = [OrgUtils genBtsAddressFromWifPrivateKey:priKey];
                 if (!pubKey) {
                     [self hideBlockView];
-                    //  TODO:2.9 lang
-                    [OrgUtils makeToast:@"备注私钥无效。"];
+                    [OrgUtils makeToast:NSLocalizedString(@"kTxInvalidMemoPriKey", @"备注私钥无效。")];
                     return nil;
                 }
                 id memo_extra_keys = @{pubKey:priKey};
@@ -808,10 +805,10 @@ enum
                 case eooot_confirm_received_refunded:
                     [btn setTitle:NSLocalizedString(@"kOtcOdBtnConfirmReceivedRefunded", @"我已收到退款") forState:UIControlStateNormal];
                     break;
-                    //  商家 TODO:lang
+                    //  商家
                 case eooot_mc_cancel_sell_order:
                 case eooot_mc_cancel_buy_order:
-                    [btn setTitle:@"无法接单" forState:UIControlStateNormal];
+                    [btn setTitle:NSLocalizedString(@"kOtcOdBtnMcCancelOrder", @"无法接单") forState:UIControlStateNormal];
                     break;
                 case eooot_mc_confirm_paid:
                     [btn setTitle:NSLocalizedString(@"kOtcOdBtnConfirmPaid", @"我已付款成功") forState:UIControlStateNormal];
@@ -1020,7 +1017,7 @@ enum
                     break;
                 case kVcSubMcUserAccount:
                 {
-                    cell.textLabel.text = @"用户账号";//TODO:2.9
+                    cell.textLabel.text = NSLocalizedString(@"kOtcOdCellLabelUserAccount", @"用户账号");
                     cell.detailTextLabel.text = [_orderDetails objectForKey:@"userAccount"] ?: @"";
                     cell.accessoryView = [self genCopyButton:rowType];
                 }
@@ -1214,7 +1211,7 @@ enum
  */
 - (void)_onViewPaymentQrCodeClicked
 {
-    //  TODO:2.9
+    //  TODO:3.0 暂时不支持查看二维码
     [OrgUtils makeToast:[NSString stringWithFormat:@"view qr code: %@", [_currSelectedPaymentMethod objectForKey:@"qrCode"]]];
 }
 

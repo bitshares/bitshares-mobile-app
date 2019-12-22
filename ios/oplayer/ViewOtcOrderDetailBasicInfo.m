@@ -97,12 +97,12 @@
     _lbTotal.text = [NSString stringWithFormat:@"%@ %@", fiat_symbol, n_amount];
     _lbTotal.textColor = theme.textColorHighlight;
     
-    _lbPrice.attributedText = [self genAndColorAttributedText:@"单价 "
+    _lbPrice.attributedText = [self genAndColorAttributedText:NSLocalizedString(@"kOtcOdCellUnitPrice", @"单价 ")
                                                         value:[NSString stringWithFormat:@"%@%@", fiat_symbol, _item[@"unitPrice"]]
                                                    titleColor:theme.textColorNormal
                                                    valueColor:theme.textColorMain];
     
-    _lbAmount.attributedText = [self genAndColorAttributedText:@"数量 "
+    _lbAmount.attributedText = [self genAndColorAttributedText:NSLocalizedString(@"kOtcOdCellAmount", @"数量 ")
                                                          value:[NSString stringWithFormat:@"%@ %@", [NSDecimalNumber decimalNumberWithString:[NSString stringWithFormat:@"%@", _item[@"quantity"]]],
                                                                 asset_symbol]
                                                     titleColor:theme.textColorNormal

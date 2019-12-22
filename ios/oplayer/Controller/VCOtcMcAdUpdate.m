@@ -483,7 +483,6 @@ enum
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
-        //  TODO:2.9 check logic
         NSInteger rowType = [[[_dataArray objectAtIndex:indexPath.section] objectAtIndex:indexPath.row] integerValue];
         switch (rowType) {
             case kVcSubAdType:
@@ -609,7 +608,7 @@ enum
                     @"merchantId": _merchant_detail[@"id"],
                     @"otcBtsId": _merchant_detail[@"otcAccountId"],
                     @"price": [NSString stringWithFormat:@"%@", n_price],
-                    @"priceType": @(eopt_price_fixed),
+                    @"priceType": _ad_infos[@"priceType"],
                     @"quantity": [NSString stringWithFormat:@"%@", n_quantity],
                     @"remark": [_ad_infos optString:@"remark"] ?: @""
                 };
@@ -690,7 +689,6 @@ enum
             if (!current_ad_type || [current_ad_type integerValue] != [select_ad_type integerValue]) {
                 current_ad_type = select_ad_type;
                 [_ad_infos setObject:current_ad_type forKey:@"adType"];
-                //  TODO:2.9 切换了广告类型，清空相关输入框数据？
                 [self refreshView];
             }
         }
@@ -721,7 +719,6 @@ enum
                 current_asset_symbol = select_asset_symbol;
                 [self onlyQueryBalance:current_asset_symbol success_callback:^{
                     [_ad_infos setObject:current_asset_symbol forKey:@"assetSymbol"];
-                    //  TODO:2.9 切换了广告类型，清空相关输入框数据？
                     
                     //  REMARK：切换数字资产的时候清空价格和交易数量。
                     [_ad_infos removeObjectForKey:@"price"];
@@ -807,12 +804,6 @@ enum
             } else {
                 [_ad_infos setObject:[NSString stringWithFormat:@"%@", n_value] forKey:@"quantity"];
             }
-            
-            //            [_ad_infos setObject:tfvalue forKey:@"quantity"];
-            //  TODO:2.9
-            //            id n_threshold = [OrgUtils auxGetStringDecimalNumberValue:tfvalue];
-            //            id n_min_threshold = [NSDecimalNumber decimalNumberWithString:@"1"];
-            //            _weightThreshold = [n_threshold integerValue];
             [_mainTableView reloadData];
         }
     })];
@@ -831,20 +822,12 @@ enum
     })
                                                      completion:(^(NSInteger buttonIndex, NSString *tfvalue) {
         if (buttonIndex != 0){
-            //            [_ad_infos setObject:[NSString stringWithFormat:@"%@", [OrgUtils auxGetStringDecimalNumberValue:tfvalue]] forKey:@"lowestLimit"];
-            
             NSDecimalNumber* n_value = [OrgUtils auxGetStringDecimalNumberValue:tfvalue];
             if ([n_value compare:[NSDecimalNumber zero]] == 0) {
                 [_ad_infos removeObjectForKey:@"lowestLimit"];
             } else {
                 [_ad_infos setObject:[NSString stringWithFormat:@"%@", n_value] forKey:@"lowestLimit"];
             }
-            
-            //            [_ad_infos setObject:tfvalue forKey:@"lowestLimit"];
-            //  TODO:2.9
-            //            id n_threshold = [OrgUtils auxGetStringDecimalNumberValue:tfvalue];
-            //            id n_min_threshold = [NSDecimalNumber decimalNumberWithString:@"1"];
-            //            _weightThreshold = [n_threshold integerValue];
             [_mainTableView reloadData];
         }
     })];
@@ -864,20 +847,12 @@ enum
                                                      completion:(^(NSInteger buttonIndex, NSString *tfvalue)
                                                                  {
         if (buttonIndex != 0){
-            //                        [_ad_infos setObject:[NSString stringWithFormat:@"%@", [OrgUtils auxGetStringDecimalNumberValue:tfvalue]] forKey:@"maxLimit"];
-            
             NSDecimalNumber* n_value = [OrgUtils auxGetStringDecimalNumberValue:tfvalue];
             if ([n_value compare:[NSDecimalNumber zero]] == 0) {
                 [_ad_infos removeObjectForKey:@"maxLimit"];
             } else {
                 [_ad_infos setObject:[NSString stringWithFormat:@"%@", n_value] forKey:@"maxLimit"];
             }
-            
-            //            [_ad_infos setObject:tfvalue forKey:@"maxLimit"];
-            //  TODO:2.9
-            //            id n_threshold = [OrgUtils auxGetStringDecimalNumberValue:tfvalue];
-            //            id n_min_threshold = [NSDecimalNumber decimalNumberWithString:@"1"];
-            //            _weightThreshold = [n_threshold integerValue];
             [_mainTableView reloadData];
         }
     })];
@@ -895,10 +870,6 @@ enum
                                                                  {
         if (buttonIndex != 0){
             [_ad_infos setObject:tfvalue forKey:@"remark"];
-            //  TODO:2.9
-            //            id n_threshold = [OrgUtils auxGetStringDecimalNumberValue:tfvalue];
-            //            id n_min_threshold = [NSDecimalNumber decimalNumberWithString:@"1"];
-            //            _weightThreshold = [n_threshold integerValue];
             [_mainTableView reloadData];
         }
     })];

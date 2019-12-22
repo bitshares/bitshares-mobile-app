@@ -746,6 +746,8 @@
 "kVcTitleOtcMcAsset" = "商家资产";
 "kVcTitleOtcMcAd" = "商家广告";
 "kVcTitleOtcMcOrder" = "商家订单";
+"kVcTitleOtcMcHome" = "商家信息";
+"kVcTitleOtcMcApply" = "商家申请";
 
 /* 钱包管理 */
 "kWalletUnlockFailedUnknowMode" = "解锁失败，未知的账号模式：%@。";
@@ -914,6 +916,9 @@
 "kOpDetailSubPrefixProxy" = "代理人";
 
 /* 场外交易相关 */
+"kOtcMgrNotSupportMultiSignAccount" = "多签账号不支持场外交易。";
+"kOtcMgrNoOpenAnyDigiAssets" = "场外交易暂不支持任何数字资产，请稍后再试。";
+"kOtcMgrNotSupportAsset" = "场外交易暂时不支持 %@ 资产，请稍后再试。";
 "kOtcPageTitleBuy" = "我要买";
 "kOtcPageTitleSell" = "我要卖";
 "kOtcAdTitleBase" = "市场◢";
@@ -921,6 +926,10 @@
 "kOtcAdCellLabelAmount" = "数量 ";
 "kOtcAdCellLabelLimit" = "限额 ";
 "kOtcAdCellLabelUnitPrice" = "单价";
+"kOtcAdCellLabelMcMerchantBuy" = "商家购买 ";
+"kOtcAdCellLabelMcMerchantSell" = "商家出售 ";
+"kOtcAdCellLabelMcBtnReup" = "上架";
+"kOtcAdCellLabelMcBtnDown" = "下架";
 "kOtcAdBtnBuy" = "购买";
 "kOtcAdBtnSell" = "出售";
 "kOtcAdSwitchAssetTips" = "请选择要交易的资产";
@@ -950,7 +959,12 @@
 "kOtcOrderEmptyLabelWaitProcessing" = "没有任何需处理的订单";
 "kOtcOrderCellTitleBuy" = "购买";
 "kOtcOrderCellTitleSell" = "出售";
+"kOtcOrderCellTitleMerchantPrefix" = "用户";
+"kOtcOdCellAmount" = "数量 ";
+"kOtcOdCellUnitPrice" = "单价 ";
+"kOtcOdCellContactOthers" = "联系对方";
 "kOtcOdPaymentTimeLimit" = "请在 %@ 内付款给卖家。";
+"kOtcOdMcPaymentTimeLimit" = "预计 %@ 内收到用户付款。";
 "kOtcOdPaymentTipsMcRemarkPrefix" = "商家：";
 "kOtcOdPaymentTipsSystemMsg" = "系统：在转账过程中请勿备注BTC、USDT等信息，防止汇款被拦截、银行卡被冻结等问题。";
 "kOtcOdOrderDataException" = "订单数据异常，请联系客服。";
@@ -959,14 +973,19 @@
 "kOtcOdBtnConfirmReceivedMoney" = "放行";
 "kOtcOdBtnCancelOrder" = "取消订单";
 "kOtcOdBtnConfirmPaid" = "我已付款成功";
+"kOtcOdBtnMcCancelOrder" = "无法接单";
 "kOtcOdBtnConfirmReceivedRefunded" = "我已收到退款";
 "kOtcOdCellLabelMcRealName" = "商家姓名";
 "kOtcOdCellLabelMcNickName" = "商家昵称";
 "kOtcOdCellLabelOrderID" = "订单编号";
 "kOtcOdCellLabelOrderDate" = "下单日期";
+"kOtcOdCellLabelUserAccount" = "用户账号";
 "kOtcOdCellPaymentSameNameTips01" = "请使用本人%@的%@向以下账户自行转账";
 "kOtcOdCellPaymentSameNameTips02" = "请使用本人名字的%@向以下账户自行转账";
 "kOtcOdCellPaymentSameNameTitle" = "本人名字";
+"kOtcOdCellPaymentSameNameTipsAndroidHeader01" = "请使用本人";
+"kOtcOdCellPaymentSameNameTipsAndroidHeader02" = "请使用";
+"kOtcOdCellPaymentSameNameTipsAndroidTailer" = "的%@向以下账户自行转账";
 "kOtcAdCellTipClickSwitchPayment" = "点此切换付款方式";
 "kOtcAdCellSelectMcReceiveMethodTitle" = "请选择商家收款方式";
 "kOtcAdCellLabelTitleReceiveMethod"= "收款方式";
@@ -1039,6 +1058,8 @@
 "kOtcMcAdSubmitTipBalanceNotEnough" = "可用余额不足。";
 "kOtcOdCopiedTips" = "已复制";
 "kOtcRmLabelEmpty" = "没有任何收款方式，点击右上角添加。";
+"kOtcPmCellStatusEnabled" = "已开启";
+"kOtcPmCellStatusDisabled" = "未开启";
 "kOtcPmActionBtnEnable" = "启用";
 "kOtcPmActionBtnDisable" = "禁用";
 "kOtcPmActionBtnDelete" = "删除";
@@ -1088,6 +1109,18 @@
 "kOtcMcAssetEmptyLabel" = "没有任何资产";
 "kOtcMcAssetSubmitBtnName" = "划转";
 "kOtcMcAssetCellAvailable" = "可用";
+"kOtcMcAssetTransferFromToMerchantAccount" = "(商家账号)";
+"kOtcMcAssetTransferFromToUserAccount" = "(个人账号)";
+"kOtcMcAssetTransferFromTitle" = "从 ";
+"kOtcMcAssetTransferToTitle" = "到 ";
+"kOtcMcAssetBtnTransferIn" = "转入";
+"kOtcMcAssetBtnTransferOut" = "转出";
+"kOtcMcAssetListCellAvailable" = "可用";
+"kOtcMcAssetListCellFreeze" = "冻结";
+"kOtcMcAssetListCellFees" = "平台手续费";
+"kOtcMcAssetTransferCellLabelAmount" = "数量";
+"kOtcMcAssetTransferTfAmountPlaeholder" = "请输入划转数量";
+"kOtcMcAssetTransferCellLabelAsset" = "资产";
 "kOtcMcAssetTransferBalanceNotEnough" = "余额不足";
 "kOtcMcAssetSubmitTipPleaseInputAmount" = "请输入划转金额。";
 "kOtcMcAssetSubmitTipBalanceNotEnough" = "余额不足。";
@@ -1135,6 +1168,7 @@
 "kTxBlockDataError" = "区块数据异常。";
 "kTxBalanceNotEnough" = "您的 %@ 余额不足。";
 "kTxMissMemoPriKey" = "缺少备注私钥。";
+"kTxInvalidMemoPriKey" = "备注私钥无效。";
 
 /* 通用字符串 */
 "kLangKeyZhSimple" = "简体中文";

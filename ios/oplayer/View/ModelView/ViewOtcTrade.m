@@ -595,8 +595,6 @@ enum
 #pragma mark- UITextFieldDelegate
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    //  TODO:2.9
-    //    [self onSubmitClicked];
     return YES;
 }
 
@@ -708,7 +706,7 @@ enum
 
 - (void)_draw_ui_trade_value:(NSDecimalNumber*)n_value
 {
-    //  TODO:2.9 是否超过。余额 以及。数量限制
+    //  TODO:2.9 是否超过。余额 以及。数量限制 着色
     NSString* asset_symbol = _adInfo[@"assetSymbol"];
     
     _tradeAmount.text = [NSString stringWithFormat:@"%@ %@ %@", NSLocalizedString(@"kOtcInputCellLabelTradeAmount", @"交易数量"),

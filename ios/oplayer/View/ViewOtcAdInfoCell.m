@@ -183,7 +183,7 @@
         //  TODO:2.9 lang
         //  UI - 第一行 商家订单统计信息
         _lbCompleteNumber.hidden = NO;
-        _lbCompleteNumber.text = @"3332笔 | 94%";//TODO:2.9 field?
+        _lbCompleteNumber.text = @"";// @"3332笔 | 94%";//TODO:2.9 field?
         CGSize size1 = [self auxSizeWithText:_lbCompleteNumber.text font:_lbCompleteNumber.font maxsize:CGSizeMake(fWidth, 9999)];
         _lbCompleteNumber.frame = CGRectMake(0, fOffsetY + (fDiameter - size1.height) / 2.0f, fWidth - fOffsetX, size1.height);
         _lbCompleteNumber.textColor = theme.textColorGray;
@@ -192,13 +192,12 @@
         _imageHeader.hidden = YES;
         _lbCompleteNumber.hidden = YES;
         if (adType == eoadt_merchant_buy) {
-            //  TODO:2.9 lang
-            _lbUsername.attributedText = [self genAndColorAttributedText:@"商家购买 "
+            _lbUsername.attributedText = [self genAndColorAttributedText:NSLocalizedString(@"kOtcAdCellLabelMcMerchantBuy", @"商家购买 ")
                                                                    value:assetSymbol
                                                               titleColor:theme.buyColor
                                                               valueColor:theme.textColorMain];
         } else {
-            _lbUsername.attributedText = [self genAndColorAttributedText:@"商家出售 "
+            _lbUsername.attributedText = [self genAndColorAttributedText:NSLocalizedString(@"kOtcAdCellLabelMcMerchantSell", @"商家出售 ")
                                                                    value:assetSymbol
                                                               titleColor:theme.sellColor
                                                               valueColor:theme.textColorMain];
@@ -271,10 +270,10 @@
         _lbSubmit.hidden = NO;
         switch ([[_item objectForKey:@"status"] integerValue]) {
             case eoads_online:
-                [_lbSubmit setTitle:@"下架" forState:UIControlStateNormal];
+                [_lbSubmit setTitle:NSLocalizedString(@"kOtcAdCellLabelMcBtnDown", @"下架") forState:UIControlStateNormal];
                 break;
             case eoads_offline:
-                [_lbSubmit setTitle:@"上架" forState:UIControlStateNormal];
+                [_lbSubmit setTitle:NSLocalizedString(@"kOtcAdCellLabelMcBtnReup", @"上架") forState:UIControlStateNormal];
                 break;
             case eoads_deleted:
                 _lbSubmit.hidden = YES;

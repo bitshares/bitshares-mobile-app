@@ -137,8 +137,8 @@
     //  第一行 买卖 SYMBOL
     id asset_symbol = _item[@"assetSymbol"];
     
-    //  TODO:2.9 userType
-    NSString* prefix = self.userType == eout_normal_user ? @"" : @"用户";
+    //  前缀
+    NSString* prefix = self.userType == eout_normal_user ? @"" : NSLocalizedString(@"kOtcOrderCellTitleMerchantPrefix", @"用户");
     
     if ([[status_infos objectForKey:@"sell"] boolValue]){
         _lbType.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@%@ ", prefix, NSLocalizedString(@"kOtcOrderCellTitleSell", @"出售")]
