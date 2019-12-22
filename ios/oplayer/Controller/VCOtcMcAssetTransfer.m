@@ -276,20 +276,20 @@ enum
     
     self.view.backgroundColor = theme.appBackColor;
     
-    //  初始化UI TODO:2.9 lang
+    //  初始化UI
     _cellAssetAvailable = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
     _cellAssetAvailable.backgroundColor = [UIColor clearColor];
     _cellAssetAvailable.hideBottomLine = YES;
     _cellAssetAvailable.accessoryType = UITableViewCellAccessoryNone;
     _cellAssetAvailable.selectionStyle = UITableViewCellSelectionStyleNone;
-    _cellAssetAvailable.textLabel.text = @"数量";
+    _cellAssetAvailable.textLabel.text = NSLocalizedString(@"kOtcMcAssetTransferCellLabelAmount", @"数量");
     _cellAssetAvailable.textLabel.font = [UIFont systemFontOfSize:13.0f];
     _cellAssetAvailable.textLabel.textColor = theme.textColorMain;
     _cellAssetAvailable.detailTextLabel.font = [UIFont systemFontOfSize:13.0f];
     _cellAssetAvailable.detailTextLabel.textColor = theme.textColorMain;
     [self _drawUI_Balance:NO];
     
-    NSString* placeHolderAmount = @"请输入划转数量";
+    NSString* placeHolderAmount = NSLocalizedString(@"kOtcMcAssetTransferTfAmountPlaeholder", @"请输入划转数量");
     _tf_amount = [self createTfWithRect:[self makeTextFieldRectFull] keyboard:UIKeyboardTypeDecimalPad placeholder:placeHolderAmount];
     _tf_amount.updateClearButtonTintColor = YES;
     _tf_amount.showBottomLine = YES;
@@ -441,7 +441,7 @@ enum
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             if (indexPath.row == 0) {
                 cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
-                cell.textLabel.text = @"资产";//TODO:2.9 lang
+                cell.textLabel.text = NSLocalizedString(@"kOtcMcAssetTransferCellLabelAsset", @"资产");
                 cell.hideBottomLine = YES;
             } else {
                 cell.showCustomBottomLine = YES;

@@ -86,11 +86,10 @@
         
         if (vc)
         {
-            //  TODO:2.9
             _btnTransferIn = [UIButton buttonWithType:UIButtonTypeSystem];
             _btnTransferIn.backgroundColor = [UIColor clearColor];
             
-            [_btnTransferIn setTitle:@"转入" forState:UIControlStateNormal];
+            [_btnTransferIn setTitle:NSLocalizedString(@"kOtcMcAssetBtnTransferIn", @"转入") forState:UIControlStateNormal];
             [_btnTransferIn setTitleColor:theme.textColorHighlight forState:UIControlStateNormal];
             _btnTransferIn.titleLabel.font = [UIFont systemFontOfSize:16.0];
             _btnTransferIn.userInteractionEnabled = YES;
@@ -99,7 +98,7 @@
             
             _btnTransferOut = [UIButton buttonWithType:UIButtonTypeSystem];
             _btnTransferOut.backgroundColor = [UIColor clearColor];
-            [_btnTransferOut setTitle:@"转出" forState:UIControlStateNormal];
+            [_btnTransferOut setTitle:NSLocalizedString(@"kOtcMcAssetBtnTransferOut", @"转出") forState:UIControlStateNormal];
             [_btnTransferOut setTitleColor:theme.textColorHighlight forState:UIControlStateNormal];
             _btnTransferOut.titleLabel.font = [UIFont systemFontOfSize:16.0];
             _btnTransferOut.userInteractionEnabled = YES;
@@ -166,9 +165,9 @@
     fOffsetY += fAssetLineHeight;
     
     //  第二行
-    _lbAvailTitle.text = @"可用";
-    _lbFreezeTitle.text = @"冻结";
-    _lbFeeTitle.text = @"平台手续费";
+    _lbAvailTitle.text = NSLocalizedString(@"kOtcMcAssetListCellAvailable", @"可用");
+    _lbFreezeTitle.text = NSLocalizedString(@"kOtcMcAssetListCellFreeze", @"冻结");
+    _lbFeeTitle.text = NSLocalizedString(@"kOtcMcAssetListCellFees", @"平台手续费");
     _lbAvailTitle.frame = CGRectMake(xOffset, fOffsetY, fCellWidth, fLineHeight);
     _lbFreezeTitle.frame = CGRectMake(xOffset, fOffsetY, fCellWidth, fLineHeight);
     _lbFeeTitle.frame = CGRectMake(xOffset, fOffsetY, fCellWidth, fLineHeight);

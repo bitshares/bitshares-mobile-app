@@ -620,7 +620,7 @@
                             return nil;
                         }
                     }
-                    //  3、查询余额&锁定价格&前往下单（TODO:2.9 是否先查询广告详情，目前数据一直）
+                    //  3、查询余额&锁定价格&前往下单
                     NSString* userAccount = [otc getCurrentBtsAccount];
                     return [[self _queryUserBalance:item userAccount:userAccount] then:^id(id userAssetBalance) {
                         //  卖出时候：获取余额异常

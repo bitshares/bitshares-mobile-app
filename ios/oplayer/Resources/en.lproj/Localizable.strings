@@ -746,6 +746,8 @@
 "kVcTitleOtcMcAsset" = "商家资产";//TODO:
 "kVcTitleOtcMcAd" = "商家广告";//TODO:
 "kVcTitleOtcMcOrder" = "商家订单";//TODO:
+"kVcTitleOtcMcHome" = "商家信息";//TODO:
+"kVcTitleOtcMcApply" = "商家申请";//TODO:
 
 /* 钱包管理 */
 "kWalletUnlockFailedUnknowMode" = "Unlock failed, unknown account mode: %@.";
@@ -914,6 +916,9 @@
 "kOpDetailSubPrefixProxy" = "Proxy";
 
 /* 场外交易相关 */
+"kOtcMgrNotSupportMultiSignAccount" = "多签账号不支持场外交易。";//TODO:
+"kOtcMgrNoOpenAnyDigiAssets" = "场外交易暂不支持任何数字资产，请稍后再试。";//TODO:
+"kOtcMgrNotSupportAsset" = "场外交易暂时不支持 %@ 资产，请稍后再试。";//TODO:
 "kOtcPageTitleBuy" = "BUY";
 "kOtcPageTitleSell" = "SELL";
 "kOtcAdTitleBase" = " Market◢";
@@ -921,6 +926,10 @@
 "kOtcAdCellLabelAmount" = "Amount ";
 "kOtcAdCellLabelLimit" = "Limit ";
 "kOtcAdCellLabelUnitPrice" = "Unit price";
+"kOtcAdCellLabelMcMerchantBuy" = "商家购买 ";//TODO:
+"kOtcAdCellLabelMcMerchantSell" = "商家出售 ";//TODO:
+"kOtcAdCellLabelMcBtnReup" = "上架";//TODO:
+"kOtcAdCellLabelMcBtnDown" = "下架";//TODO:
 "kOtcAdBtnBuy" = "BUY";
 "kOtcAdBtnSell" = "SELL";
 "kOtcAdSwitchAssetTips" = "请选择要交易的资产";//TODO:
@@ -950,7 +959,12 @@
 "kOtcOrderEmptyLabelWaitProcessing" = "没有任何需处理的订单";//TODO:
 "kOtcOrderCellTitleBuy" = "Buy";
 "kOtcOrderCellTitleSell" = "Sell";
+"kOtcOrderCellTitleMerchantPrefix" = "用户";//TODO:
+"kOtcOdCellAmount" = "数量 ";//TODO:
+"kOtcOdCellUnitPrice" = "单价 ";//TODO:
+"kOtcOdCellContactOthers" = "联系对方";//TODO:
 "kOtcOdPaymentTimeLimit" = "请在 %@ 内付款给卖家。";//TODO:
+"kOtcOdMcPaymentTimeLimit" = "预计 %@ 内收到用户付款。";//TODO:
 "kOtcOdPaymentTipsMcRemarkPrefix" = "商家：";//TODO:
 "kOtcOdPaymentTipsSystemMsg" = "系统：在转账过程中请勿备注BTC、USDT等信息，防止汇款被拦截、银行卡被冻结等问题。";//TODO:
 "kOtcOdOrderDataException" = "订单数据异常，请联系客服。";//TODO:
@@ -959,14 +973,19 @@
 "kOtcOdBtnConfirmReceivedMoney" = "放行";//TODO
 "kOtcOdBtnCancelOrder" = "取消订单";//TODO
 "kOtcOdBtnConfirmPaid" = "我已付款成功";//TODO
+"kOtcOdBtnMcCancelOrder" = "无法接单";//TODO:
 "kOtcOdBtnConfirmReceivedRefunded" = "我已收到退款";//TODO
 "kOtcOdCellLabelMcRealName" = "商家姓名";//TODO:
 "kOtcOdCellLabelMcNickName" = "商家昵称";//TODO:
 "kOtcOdCellLabelOrderID" = "订单编号";//TODO:
 "kOtcOdCellLabelOrderDate" = "下单日期";//TODO:
+"kOtcOdCellLabelUserAccount" = "用户账号";//TODO:
 "kOtcOdCellPaymentSameNameTips01" = "请使用本人%@的%@向以下账户自行转账";//TODO:
 "kOtcOdCellPaymentSameNameTips02" = "请使用本人名字的%@向以下账户自行转账";//TODO:
 "kOtcOdCellPaymentSameNameTitle" = "本人名字";//TODO:
+"kOtcOdCellPaymentSameNameTipsAndroidHeader01" = "请使用本人";//TODO:
+"kOtcOdCellPaymentSameNameTipsAndroidHeader02" = "请使用";//TODO:
+"kOtcOdCellPaymentSameNameTipsAndroidTailer" = "的%@向以下账户自行转账";//TODO:
 "kOtcAdCellTipClickSwitchPayment" = "点此切换付款方式";//TODO:
 "kOtcAdCellSelectMcReceiveMethodTitle" = "请选择商家收款方式";//TODO:
 "kOtcAdCellLabelTitleReceiveMethod"= "收款方式";//TODO:
@@ -1039,6 +1058,8 @@
 "kOtcMcAdSubmitTipBalanceNotEnough" = "可用余额不足。";//TODO:
 "kOtcOdCopiedTips" = "Copied";
 "kOtcRmLabelEmpty" = "没有任何收款方式，点击右上角添加。";//TODO:
+"kOtcPmCellStatusEnabled" = "已开启";//TODO:
+"kOtcPmCellStatusDisabled" = "未开启";//TODO:
 "kOtcPmActionBtnEnable" = "Enable";
 "kOtcPmActionBtnDisable" = "Disable";
 "kOtcPmActionBtnDelete" = "Delete";//TODO:
@@ -1086,18 +1107,30 @@
 "kOtcMcHomeCellLabelTitleReceiveMethod" = "收款方式";//TODO:
 "kOtcMcHomeCellLabelTitlePaymentMethod" = "付款方式";//TODO:
 "kOtcMcAssetEmptyLabel" = "没有任何资产";//TODO:
-"kOtcMcAssetSubmitBtnName" = "划转";//TOOD:
-"kOtcMcAssetCellAvailable" = "可用";//TOOD:
-"kOtcMcAssetTransferBalanceNotEnough" = "余额不足";//TOOD:
-"kOtcMcAssetSubmitTipPleaseInputAmount" = "请输入划转金额。";//TOOD:
-"kOtcMcAssetSubmitTipBalanceNotEnough" = "余额不足。";//TOOD:
-"kOtcMcAssetSubmitAskSelectTransferAsset" = "请选择划转资产";//TOOD:
-"kOtcMcAssetSubmitAskTransferOut" = "您确认转出 %@ %@ 到个人账号吗？";//TOOD:
-"kOtcMcAssetSubmitAskTransferIn" = "您确认转入 %@ %@ 到商家账号吗？";//TOOD:
-"kOtcMcAssetSubmitTipTransferInOK" = "转入成功。";//TOOD:
-"kOtcMcAssetSubmitTipTransferOutOK" = "转出请求已提交，请耐心等待平台处理，请勿重复操作。";//TOOD:
-"kOtcMcAssetCellTipsTransferOut" = "【温馨提示】\n从商家账号转账给个人账号，需要平台协同处理，划转成功后请耐心等待。";//TOOD:
-"kOtcMcAssetCellTipsTransferIn" = "【温馨提示】\n从个人账号直接转账给商家账号。";//TOOD:
+"kOtcMcAssetSubmitBtnName" = "划转";//TODO:
+"kOtcMcAssetCellAvailable" = "可用";//TODO:
+"kOtcMcAssetTransferFromToMerchantAccount" = "(商家账号)";//TODO:
+"kOtcMcAssetTransferFromToUserAccount" = "(个人账号)";//TODO:
+"kOtcMcAssetTransferFromTitle" = "从 ";//TODO:
+"kOtcMcAssetTransferToTitle" = "到 ";//TODO:
+"kOtcMcAssetBtnTransferIn" = "转入";//TODO:
+"kOtcMcAssetBtnTransferOut" = "转出";//TODO:
+"kOtcMcAssetListCellAvailable" = "可用";//TODO:
+"kOtcMcAssetListCellFreeze" = "冻结";//TODO:
+"kOtcMcAssetListCellFees" = "平台手续费";//TODO:
+"kOtcMcAssetTransferCellLabelAmount" = "数量";//TODO:
+"kOtcMcAssetTransferTfAmountPlaeholder" = "请输入划转数量";//TODO:
+"kOtcMcAssetTransferCellLabelAsset" = "资产";//TODO:
+"kOtcMcAssetTransferBalanceNotEnough" = "余额不足";//TODO:
+"kOtcMcAssetSubmitTipPleaseInputAmount" = "请输入划转金额。";//TODO:
+"kOtcMcAssetSubmitTipBalanceNotEnough" = "余额不足。";//TODO:
+"kOtcMcAssetSubmitAskSelectTransferAsset" = "请选择划转资产";//TODO:
+"kOtcMcAssetSubmitAskTransferOut" = "您确认转出 %@ %@ 到个人账号吗？";//TODO:
+"kOtcMcAssetSubmitAskTransferIn" = "您确认转入 %@ %@ 到商家账号吗？";//TODO:
+"kOtcMcAssetSubmitTipTransferInOK" = "转入成功。";//TODO:
+"kOtcMcAssetSubmitTipTransferOutOK" = "转出请求已提交，请耐心等待平台处理，请勿重复操作。";//TODO:
+"kOtcMcAssetCellTipsTransferOut" = "【温馨提示】\n从商家账号转账给个人账号，需要平台协同处理，划转成功后请耐心等待。";//TODO:
+"kOtcMcAssetCellTipsTransferIn" = "【温馨提示】\n从个人账号直接转账给商家账号。";//TODO:
 "kOtcMcPmSubmitTipCannotCloseAll" = "不能同时关闭所有付款方式。";//TODO:
 "kOtcMcPmSubmitTipEnableAlipay" = "已开启支付宝付款。";//TODO:
 "kOtcMcPmSubmitTipDisableAlipay" = "已关闭支付宝付款。";//TODO:
@@ -1135,6 +1168,7 @@
 "kTxBlockDataError" = "区块数据异常。";//TODO:
 "kTxBalanceNotEnough" = "您的 %@ 余额不足。";//TODO:
 "kTxMissMemoPriKey" = "缺少备注私钥。";//TODO:
+"kTxInvalidMemoPriKey" = "备注私钥无效。";//TODO:
 
 /* 通用字符串 */
 "kLangKeyZhSimple" = "简体中文 / Simplified Chinese";

@@ -214,7 +214,7 @@ static OtcManager *_sharedOtcManager = nil;
         name = [NSString stringWithFormat:NSLocalizedString(@"kOtcAdPmUnknownType", @"未知收款方式%@"), type];
     }
     if (!icon) {
-        icon = @"iconPmBankCard";//TODO:2.9 default  icon
+        icon = @"iconPmBankCard";   //  默认使用银行卡图标
     }
     return @{@"name":name, @"icon":icon, @"name_with_short_account":[NSString stringWithFormat:@"%@(%@)", name, short_account]};
 }
@@ -650,8 +650,7 @@ static OtcManager *_sharedOtcManager = nil;
     assert([walletMgr isWalletExist]);
     
     if ([WalletManager isMultiSignPermission:[walletMgr getWalletAccountInfo][@"account"][@"active"]]) {
-        //  TODO:2.9
-        [OrgUtils makeToast:@"多签账号不支持场外交易。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kOtcMgrNotSupportMultiSignAccount", @"多签账号不支持场外交易。")];
         return;
     }
     
@@ -666,14 +665,12 @@ static OtcManager *_sharedOtcManager = nil;
         //  获取数字货币信息
         self.asset_list_digital = [asset_data objectForKey:@"data"];
         if (!self.asset_list_digital || [self.asset_list_digital count] <= 0) {
-            //  TODO:2.9 lang
-            [OrgUtils makeToast:@"场外交易暂不支持任何数字资产，请稍后再试。"];
+            [OrgUtils makeToast:NSLocalizedString(@"kOtcMgrNoOpenAnyDigiAssets", @"场外交易暂不支持任何数字资产，请稍后再试。")];
             return nil;
         }
         //  是否支持判断
         if (![self isSupportDigital:asset_name]) {
-            //  TODO:2.9 lang
-            [OrgUtils makeToast:[NSString stringWithFormat:@"场外交易暂时不支持 %@ 资产，请稍后再试。", asset_name]];
+            [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kOtcMgrNotSupportAsset", @"场外交易暂时不支持 %@ 资产，请稍后再试。"), asset_name]];
             return nil;
         }
         //  转到场外交易界面
@@ -1232,7 +1229,7 @@ static OtcManager *_sharedOtcManager = nil;
         @"adId":ad_id,
         @"adType":@(ad_type),
         @"btsAccount":bts_account_name,
-        @"assetSymbol":asset_symbol,//@"￥",//TODO:2.9
+        @"assetSymbol":asset_symbol,
         @"price":price
     };
     return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_token];
@@ -1435,15 +1432,12 @@ static OtcManager *_sharedOtcManager = nil;
             merchant_detail = nil;
         }
         if (merchant_detail) {
-            //  TODO:2.9 lang
-            // `status` tinyint(2) NOT NULL DEFAULT '0' COMMENT '状态:0=默认,0=未激活,1=已激活,2=取消激活,3=冻结',
-            
             VCBase* vc = [[VCOtcMcHome alloc] initWithProgressInfo:nil merchantDetail:merchant_detail];
-            [owner pushViewController:vc vctitle:@"商家信息" backtitle:kVcDefaultBackTitleName];
+            [owner pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleOtcMcHome", @"商家信息") backtitle:kVcDefaultBackTitleName];
         } else {
-            //  TODO:2.9
+            //  TODO:2.9 暂时不开启申请
             VCBase* vc = [[VCOtcMcMerchantApply alloc] init];
-            [owner pushViewController:vc vctitle:@"商家申请" backtitle:kVcDefaultBackTitleName];
+            [owner pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleOtcMcApply", @"商家申请") backtitle:kVcDefaultBackTitleName];
         }
         return nil;
     }] catch:^id(id error) {
