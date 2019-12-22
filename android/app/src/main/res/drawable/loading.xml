@@ -6,7 +6,7 @@
             <!-- 圆角半径 -->
             <corners android:radius="10dp" />
             <!-- 背景颜色 -->
-            <solid android:color="@color/theme01.appBackColor" />
+            <solid android:color="@color/theme01.tabBarColor2" />
 
         </shape>
     </item>

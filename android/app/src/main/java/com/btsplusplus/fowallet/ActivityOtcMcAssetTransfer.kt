@@ -149,13 +149,12 @@ class ActivityOtcMcAssetTransfer : BtsppActivity() {
     }
 
     private fun _drawUI_switchCell() {
-        //  TODO:2.9 lang
         if (_argsFromTo.getBoolean("bFromIsMerchant")) {
-            tv_from_title.text = "(商家账号)"
-            tv_to_title.text = "(个人账号)"
+            tv_from_title.text = resources.getString(R.string.kOtcMcAssetTransferFromToMerchantAccount)
+            tv_to_title.text = resources.getString(R.string.kOtcMcAssetTransferFromToUserAccount)
         } else {
-            tv_from_title.text = "(个人账号)"
-            tv_to_title.text = "(商家账号)"
+            tv_from_title.text = resources.getString(R.string.kOtcMcAssetTransferFromToUserAccount)
+            tv_to_title.text = resources.getString(R.string.kOtcMcAssetTransferFromToMerchantAccount)
         }
         tv_from_value.text = _argsFromTo.getString("from")
         tv_to_value.text = _argsFromTo.getString("to")

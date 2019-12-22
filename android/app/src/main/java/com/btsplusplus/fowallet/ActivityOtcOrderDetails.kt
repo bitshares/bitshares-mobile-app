@@ -106,14 +106,13 @@ class ActivityOtcOrderDetails : BtsppActivity() {
             val desc = if (_user_type == OtcManager.EOtcUserType.eout_normal_user) {
                 String.format(resources.getString(R.string.kOtcOdPaymentTimeLimit), OtcManager.fmtPaymentExpireTime(left_ts))
             } else {
-                //   TODO:2.9 lang
-                String.format("预计 %s 内收到用户付款。", OtcManager.fmtPaymentExpireTime(left_ts))
+                String.format(resources.getString(R.string.kOtcOdMcPaymentTimeLimit), OtcManager.fmtPaymentExpireTime(left_ts))
             }
             _statusInfos.put("desc", desc)//        }
             //  刷新倒计时描述字符串
             tv_status_desc.text = _statusInfos.getString("desc")
         } else {
-            //  TODO:2.9 cancel?
+            //  TODO:2.9 cancel? 未完成 定时器到了应该是直接刷新页面？
         }
     }
 
@@ -265,7 +264,7 @@ class ActivityOtcOrderDetails : BtsppActivity() {
             layout_order_detail_merchant_nickname_cell.visibility = View.VISIBLE
             tv_order_detail_merchant_nickname_value.text = _order_details.optString("merchantsNickname")
         } else {
-            tv_order_detail_merchant_name_or_account_title.text = "用户账号"//TODO:2.9 lang
+            tv_order_detail_merchant_name_or_account_title.text = resources.getString(R.string.kOtcOdCellLabelUserAccount)
             tv_order_detail_merchant_name_or_account_value.text = _order_details.optString("userAccount")
 
             layout_order_detail_merchant_nickname_line.visibility = View.GONE
@@ -376,9 +375,9 @@ class ActivityOtcOrderDetails : BtsppActivity() {
                     OtcManager.EOtcOrderOperationType.eooot_confirm_received_refunded -> {
                         curr_button.text = resources.getString(R.string.kOtcOdBtnConfirmReceivedRefunded)
                     }
-                    //  商家 TODO:2.9 lang
+                    //  商家
                     OtcManager.EOtcOrderOperationType.eooot_mc_cancel_sell_order, OtcManager.EOtcOrderOperationType.eooot_mc_cancel_buy_order -> {
-                        curr_button.text = "无法接单"
+                        curr_button.text = resources.getString(R.string.kOtcOdBtnMcCancelOrder)
                     }
                     OtcManager.EOtcOrderOperationType.eooot_mc_confirm_paid -> {
                         curr_button.text = resources.getString(R.string.kOtcOdBtnConfirmPaid)
@@ -750,10 +749,8 @@ class ActivityOtcOrderDetails : BtsppActivity() {
                     val priKey = responsed?.opt("data") as? String
                     val pubKey = OrgUtils.genBtsAddressFromWifPrivateKey(priKey ?: "")
                     if (pubKey == null) {
-                        //  TODO:2.9 lang
                         mask.dismiss()
-                        showToast("备注私钥无效。")
-//                        showToast(resources.getString(R.string.xxx))
+                        showToast(resources.getString(R.string.kTxInvalidMemoPriKey))
                         return@then null
                     }
                     //  签名

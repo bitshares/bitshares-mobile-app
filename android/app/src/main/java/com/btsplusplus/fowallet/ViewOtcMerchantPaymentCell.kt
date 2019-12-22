@@ -29,7 +29,6 @@ class ViewOtcMerchantPaymentCell : LinearLayout {
                 _data.getInt("type"),
                 _data.optString("bankName"))
 
-        //  TODO:2.9 右边 已激活 未激活
         val layout_wrap = LinearLayout(_ctx)
         layout_wrap.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         layout_wrap.orientation = LinearLayout.VERTICAL
@@ -68,17 +67,19 @@ class ViewOtcMerchantPaymentCell : LinearLayout {
             addView(LinearLayout(_ctx).apply {
                 layoutParams = LinearLayout.LayoutParams(0.dp, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
                 gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
-
                 addView(TextView(_ctx).apply {
-                    text = "已支付"
+                    if (_data.getInt("status") == OtcManager.EOtcPaymentMethodStatus.eopms_enable.value) {
+                        text = resources.getString(R.string.kOtcPmCellStatusEnabled)
+                        setTextColor(resources.getColor(R.color.theme01_textColorHighlight))
+                    } else {
+                        text = resources.getString(R.string.kOtcPmCellStatusDisabled)
+                        setTextColor(resources.getColor(R.color.theme01_textColorGray))
+                    }
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15.0f)
-                    setTextColor(resources.getColor(R.color.theme01_textColorHighlight))
                     gravity = Gravity.CENTER
                     setPadding(5.dp, 0, 0, 0)
                 })
             })
-
-
         }
 
         // 第二行 姓名

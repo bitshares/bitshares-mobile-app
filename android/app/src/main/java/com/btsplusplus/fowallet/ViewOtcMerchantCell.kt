@@ -40,7 +40,7 @@ class ViewOtcMerchantCell : LinearLayout {
 
         //  获取数据
         val assetSymbol = _data.getString("assetSymbol")
-        val fiat_sym = OtcManager.sharedOtcManager().getFiatCnyInfo().getString("legalCurrencySymbol")//TODO:2.9
+        val fiat_sym = OtcManager.sharedOtcManager().getFiatCnyInfo().getString("legalCurrencySymbol")
 
         //  第一行
         //  用户端：商家头像 + 商家名称 ----- 统计数据
@@ -82,7 +82,7 @@ class ViewOtcMerchantCell : LinearLayout {
                     gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
 
                     addView(TextView(_ctx).apply {
-                        text = "333 | 44" //String.format("%s 笔 | %s", _data.getInt("total"), _data.getString("rate"))
+                        text = "" //String.format("%s 笔 | %s", _data.getInt("total"), _data.getString("rate"))
 
                         setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
                         setTextColor(_ctx.resources.getColor(R.color.theme01_textColorGray))
@@ -92,14 +92,13 @@ class ViewOtcMerchantCell : LinearLayout {
                 addView(LinearLayout(_ctx).apply {
                     layoutParams = LinearLayout.LayoutParams(0.dp, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
                     gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
-                    //  TODO:2.9 lang
                     addView(TextView(_ctx).apply {
                         setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
                         if (_data.getInt("adType") == OtcManager.EOtcAdType.eoadt_merchant_buy.value) {
-                            text = "商家购买"
+                            text = R.string.kOtcAdCellLabelMcMerchantBuy.xmlstring(_ctx)
                             setTextColor(_ctx.resources.getColor(R.color.theme01_buyColor))
                         } else {
-                            text = "商家出售"
+                            text = R.string.kOtcAdCellLabelMcMerchantSell.xmlstring(_ctx)
                             setTextColor(_ctx.resources.getColor(R.color.theme01_sellColor))
                         }
                     })
@@ -257,7 +256,11 @@ class ViewOtcMerchantCell : LinearLayout {
                     val ad_status = _data.getInt("status")
                     if (ad_status != OtcManager.EOtcAdStatus.eoads_deleted.value) {
                         val button_ad_down = TextView(_ctx).apply {
-                            text = if (ad_status == OtcManager.EOtcAdStatus.eoads_online.value) "下架" else "上架"//TODO:2.9 lang
+                            text = if (ad_status == OtcManager.EOtcAdStatus.eoads_online.value) {
+                                R.string.kOtcAdCellLabelMcBtnDown.xmlstring(_ctx)
+                            } else {
+                                R.string.kOtcAdCellLabelMcBtnReup.xmlstring(_ctx)
+                            }
                             setBackgroundColor(resources.getColor(R.color.theme01_textColorHighlight))
                             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
                             setTextColor(resources.getColor(R.color.theme01_textColorMain))

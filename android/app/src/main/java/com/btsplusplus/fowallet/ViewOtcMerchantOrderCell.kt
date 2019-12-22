@@ -1,10 +1,8 @@
 package com.btsplusplus.fowallet
 
-import android.app.Activity
 import android.content.Context
 import android.util.TypedValue
 import android.view.Gravity
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import bitshares.OtcManager
@@ -30,7 +28,7 @@ class ViewOtcMerchantOrderCell : LinearLayout {
         layout_params.gravity = Gravity.CENTER_VERTICAL
 
         val status_infos = OtcManager.auxGenOtcOrderStatusAndActions(_ctx, _data, _user_type)
-        val prefix = if (_user_type == OtcManager.EOtcUserType.eout_normal_user) "" else "用户"//:TODO:2.9
+        val prefix = if (_user_type == OtcManager.EOtcUserType.eout_normal_user) "" else R.string.kOtcOrderCellTitleMerchantPrefix.xmlstring(_ctx)
         val pending = status_infos.optBoolean("pending")
 
         val layout_wrap = LinearLayout(_ctx)
@@ -77,7 +75,7 @@ class ViewOtcMerchantOrderCell : LinearLayout {
 
                 addView(TextView(_ctx).apply {
                     text = "${status_infos.getString("main")} >"
-                    setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
+                    setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
                     if (pending) {
                         setTextColor(_ctx.resources.getColor(R.color.theme01_textColorHighlight))
                     } else {
@@ -85,19 +83,6 @@ class ViewOtcMerchantOrderCell : LinearLayout {
                     }
                     gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
                 })
-
-//                val iv = ImageView(_ctx).apply {
-//                    scaleType = ImageView.ScaleType.FIT_END
-//                    setImageDrawable(resources.getDrawable(R.drawable.ic_btn_right_arrow))
-//                    gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
-//                    setColorFilter(resources.getColor(R.color.theme01_textColorGray))
-//                }
-
-//                setOnClickListener {
-//                    onOrderClicked()
-//                }
-
-//                addView(iv)
             })
         }
 

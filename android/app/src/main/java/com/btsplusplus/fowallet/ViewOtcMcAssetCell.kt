@@ -1,6 +1,5 @@
 package com.btsplusplus.fowallet
 
-import android.app.Activity
 import android.content.Context
 import android.util.TypedValue
 import android.view.Gravity
@@ -17,7 +16,7 @@ class ViewOtcMcAssetCell : LinearLayout {
 
     private val content_fontsize = 12.0f
 
-    constructor(ctx: Context, data: JSONObject, callback: (Boolean)->Unit) : super(ctx) {
+    constructor(ctx: Context, data: JSONObject, callback: (Boolean) -> Unit) : super(ctx) {
         _ctx = ctx
         _data = data
         _callback = callback
@@ -28,7 +27,6 @@ class ViewOtcMcAssetCell : LinearLayout {
         val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 24.dp)
         layout_params.gravity = Gravity.CENTER_VERTICAL
 
-        //  TODO:2.9 lang
         val layout_wrap = LinearLayout(_ctx)
         layout_wrap.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         layout_wrap.orientation = LinearLayout.VERTICAL
@@ -63,7 +61,7 @@ class ViewOtcMcAssetCell : LinearLayout {
                 gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
 
                 addView(TextView(_ctx).apply {
-                    text = "可用"
+                    text = resources.getString(R.string.kOtcMcAssetListCellAvailable)
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
                     setTextColor(_ctx.resources.getColor(R.color.theme01_textColorGray))
                 })
@@ -75,7 +73,7 @@ class ViewOtcMcAssetCell : LinearLayout {
                 gravity = Gravity.CENTER_VERTICAL or Gravity.CENTER
 
                 addView(TextView(_ctx).apply {
-                    text = "冻结"
+                    text = resources.getString(R.string.kOtcMcAssetListCellFreeze)
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
                     setTextColor(_ctx.resources.getColor(R.color.theme01_textColorGray))
                 })
@@ -87,7 +85,7 @@ class ViewOtcMcAssetCell : LinearLayout {
                 gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
 
                 addView(TextView(_ctx).apply {
-                    text = "平台手续费"
+                    text = resources.getString(R.string.kOtcMcAssetListCellFees)
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
                     setTextColor(_ctx.resources.getColor(R.color.theme01_textColorGray))
                 })
@@ -149,7 +147,7 @@ class ViewOtcMcAssetCell : LinearLayout {
                 gravity = Gravity.CENTER_VERTICAL or Gravity.CENTER
 
                 addView(TextView(_ctx).apply {
-                    text = "转入"
+                    text = resources.getString(R.string.kOtcMcAssetBtnTransferIn)
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16.0f)
                     setTextColor(_ctx.resources.getColor(R.color.theme01_textColorHighlight))
                     setOnClickListener { _callback(true) }
@@ -162,7 +160,7 @@ class ViewOtcMcAssetCell : LinearLayout {
                 gravity = Gravity.CENTER_VERTICAL or Gravity.CENTER
 
                 addView(TextView(_ctx).apply {
-                    text = "转出"
+                    text = resources.getString(R.string.kOtcMcAssetBtnTransferOut)
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16.0f)
                     setTextColor(_ctx.resources.getColor(R.color.theme01_textColorHighlight))
                     setOnClickListener { _callback(false) }

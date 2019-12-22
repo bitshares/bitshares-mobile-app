@@ -49,6 +49,16 @@
                 android:text=""
                 style="@style/kNavigationBarTextStyle" />
 
+            <Button
+                android:id="@+id/btn_delete_ad"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                style="@style/kNavigationBarTextStyle"
+                android:background="#00000000"
+                android:text="@string/kOtcMcAdBtnNameDelete"
+                android:layout_marginRight="10dp"  />
+
         </FrameLayout>
 
         <ScrollView
@@ -65,7 +75,7 @@
 
                 <!-- 广告类型 -->
                 <LinearLayout
-                    android:id="@+id/layout_select_ad_type_from_otc_mc_ad_update"
+                    android:id="@+id/layout_ad_type"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
@@ -86,6 +96,7 @@
 
 
                         <TextView
+                            android:id="@+id/tv_ad_type"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -96,6 +107,7 @@
                             android:text="@string/kOtcMcAdEditCellAdTypeValueSelectPlaceholder"/>
 
                         <ImageView
+                            android:id="@+id/img_icon_arrow_ad_type"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:foregroundGravity="right"
@@ -107,7 +119,7 @@
 
                 <!-- 数字资产 -->
                 <LinearLayout
-                    android:id="@+id/layout_select_asset_type_from_otc_mc_ad_update"
+                    android:id="@+id/layout_asset_symbol"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
@@ -128,6 +140,7 @@
 
 
                         <TextView
+                            android:id="@+id/tv_asset_symbol"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -138,6 +151,7 @@
                             android:text="@string/kOtcMcAdEditCellAssetValueSelectPlaceholder"/>
 
                         <ImageView
+                            android:id="@+id/img_icon_arrow_asset_symbol"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:foregroundGravity="right"
@@ -168,6 +182,7 @@
                         android:layout_height="wrap_content">
 
                         <TextView
+                            android:id="@+id/tv_fiat_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -203,6 +218,7 @@
                         android:layout_height="wrap_content">
 
                         <TextView
+                            android:id="@+id/tv_price_type"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -218,7 +234,7 @@
 
                 <!-- 您的价格 -->
                 <LinearLayout
-                    android:id="@+id/layout_select_price_from_otc_mc_ad_update"
+                    android:id="@+id/layout_your_price"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
@@ -239,6 +255,7 @@
 
 
                         <TextView
+                            android:id="@+id/tv_your_price"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -262,7 +279,7 @@
 
                 <!-- 交易数量 -->
                 <LinearLayout
-                    android:id="@+id/layout_select_quantity_from_otc_mc_ad_update"
+                    android:id="@+id/layout_trade_amount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
@@ -283,6 +300,7 @@
 
 
                         <TextView
+                            android:id="@+id/tv_trade_amount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -324,13 +342,14 @@
                         android:layout_height="wrap_content">
 
                         <TextView
+                            android:id="@+id/tv_balance"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:gravity="center_vertical"
                             android:layout_marginLeft="5dp"
                             android:textSize="12dp"
-                            android:textColor="@color/theme01.textColorMain"
+                            android:textColor="@color/theme01.textColorNormal"
                             android:text=""/>
 
                     </LinearLayout>
@@ -341,7 +360,7 @@
 
                 <!-- 最小限额 -->
                 <LinearLayout
-                    android:id="@+id/layout_select_min_amount_limit_from_otc_mc_ad_update"
+                    android:id="@+id/layout_min_limit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
@@ -362,6 +381,7 @@
 
 
                         <TextView
+                            android:id="@+id/tv_min_limit"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -385,7 +405,7 @@
 
                 <!-- 最大限额 -->
                 <LinearLayout
-                    android:id="@+id/layout_select_max_amount_limit_from_otc_mc_ad_update"
+                    android:id="@+id/layout_max_limit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
@@ -406,6 +426,7 @@
 
 
                         <TextView
+                            android:id="@+id/tv_max_limit"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -425,11 +446,9 @@
                 </LinearLayout>
                 <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-
-
                 <!-- 交易说明 -->
                 <LinearLayout
-                    android:id="@+id/layout_select_trade_description_from_otc_mc_ad_update"
+                    android:id="@+id/layout_remark"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
@@ -450,6 +469,7 @@
 
 
                         <TextView
+                            android:id="@+id/tv_remark"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -469,16 +489,33 @@
                 </LinearLayout>
                 <View android:layout_marginTop="5dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-                <TextView
-                    android:id="@+id/tv_submit_ad_from_otc_mc_ad_update"
-                    android:gravity="center"
-                    android:layout_marginTop="30dp"
-                    android:textSize="14dp"
-                    android:textColor="@color/theme01.textColorMain"
-                    android:background="@color/theme01.sellColor"
-                    android:text="submit button"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="30dp" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/btn_submit_01"
+                        android:layout_width="match_parent"
+                        style="@style/kMainButtonStyle"
+                        android:gravity="center|center_vertical"
+                        android:textAllCaps="false"
+                        android:text="--" />
+
+                    <Button
+                        android:id="@+id/btn_submit_02"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_marginTop="20dp"
+                        android:gravity="center|center_vertical"
+                        android:background="@color/theme01.textColorGray"
+                        android:text="--"
+                        android:textColor="@color/theme01.mainButtonTextColor"
+                        android:textAllCaps="false"
+                        android:textSize="16dp" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
