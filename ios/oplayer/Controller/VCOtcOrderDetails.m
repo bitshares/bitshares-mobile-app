@@ -172,10 +172,10 @@ enum
         }
     } else {
         //  收款二维码 TODO:3.0 该版本考虑不支持二维码。不显示
-//        NSString* qrCode = [NSString stringWithFormat:@"%@", [payment_info objectForKey:@"qrCode"]];
-//        if (qrCode && ![qrCode isEqualToString:@""] && ![qrCode isEqualToString:@"0"]) {
-//            [target_array addObject:@(kVcSubPaymentQrCode)];
-//        }
+        //        NSString* qrCode = [NSString stringWithFormat:@"%@", [payment_info objectForKey:@"qrCode"]];
+        //        if (qrCode && ![qrCode isEqualToString:@""] && ![qrCode isEqualToString:@"0"]) {
+        //            [target_array addObject:@(kVcSubPaymentQrCode)];
+        //        }
     }
     
     return target_array;
@@ -527,13 +527,14 @@ enum
 
 - (void)onButtomButtonClicked:(UIButton*)sender
 {
-    //  TODO:2.9 lang
+    UIAlertViewManager* alertMgr = [UIAlertViewManager sharedUIAlertViewManager];
+    
     switch (sender.tag) {
         case eooot_transfer:
         {
-            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"确定转币给商家。是否继续？"
-                                                                   withTitle:@"确认转币"
-                                                                  completion:^(NSInteger buttonIndex)
+            [alertMgr showCancelConfirm:NSLocalizedString(@"kOtcOdUserAskTransferMessage", @"确定转币给商家。是否继续？")
+                              withTitle:NSLocalizedString(@"kOtcOdUserAskTransferTitle", @"确认转币")
+                             completion:^(NSInteger buttonIndex)
              {
                 if (buttonIndex == 1)
                 {
@@ -544,15 +545,15 @@ enum
             break;
         case eooot_contact_customer_service:
         {
-            //  TODO:2.9
+            //  TODO:2.9 未完成
             [OrgUtils makeToast:[NSString stringWithFormat:@"客服 buttom clicked %@", @(sender.tag)]];
         }
             break;
         case eooot_confirm_received_money:
         {
-            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"我确认已登录收款账户查看，并核对收款无误。是否放行？"
-                                                                   withTitle:@"确认放行"
-                                                                  completion:^(NSInteger buttonIndex)
+            [alertMgr showCancelConfirm:NSLocalizedString(@"kOtcOdUserConfirmReceiveMoneyMessage", @"我确认已登录收款账户查看，并核对收款无误。是否放行？")
+                              withTitle:NSLocalizedString(@"kOtcOdUserConfirmReceiveMoneyTitle", @"确认放行")
+                             completion:^(NSInteger buttonIndex)
              {
                 if (buttonIndex == 1)
                 {
@@ -570,9 +571,9 @@ enum
             
         case eooot_cancel_order:
         {
-            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"※ 如果您已经付款给商家，请不要取消订单！！！\n\n注：若用户当日累计取消3笔订单，会限制当日下单功能。是否继续？"
-                                                                   withTitle:@"确认取消订单"
-                                                                  completion:^(NSInteger buttonIndex)
+            [alertMgr showCancelConfirm:NSLocalizedString(@"kOtcOdUserConfirmCancelOrderMessage", @"※ 如果您已经付款给商家，请不要取消订单！！！\n\n注：若用户当日累计取消3笔订单，会限制当日下单功能。是否继续？")
+                              withTitle:NSLocalizedString(@"kOtcOdUserConfirmCancelOrderTitle", @"确认取消订单")
+                             completion:^(NSInteger buttonIndex)
              {
                 if (buttonIndex == 1)
                 {
@@ -589,9 +590,9 @@ enum
             break;
         case eooot_confirm_paid:
         {
-            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"我确认已按要求付款给商家。\n注：恶意点击将会被冻结账号。\n是否继续？"
-                                                                   withTitle:@"确认付款"
-                                                                  completion:^(NSInteger buttonIndex)
+            [alertMgr showCancelConfirm:NSLocalizedString(@"kOtcOdUserConfirmPaidMoneyMessage", @"我确认已按要求付款给商家。\n注：恶意点击将会被冻结账号。\n是否继续？")
+                              withTitle:NSLocalizedString(@"kOtcOdUserConfirmPaidMoneyTitle", @"确认付款")
+                             completion:^(NSInteger buttonIndex)
              {
                 if (buttonIndex == 1)
                 {
@@ -608,9 +609,9 @@ enum
             break;
         case eooot_confirm_received_refunded:
         {
-            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"我确认已登录原付款账户查看，并核对退款无误。是否继续？"
-                                                                   withTitle:@"确认收到退款"
-                                                                  completion:^(NSInteger buttonIndex)
+            [alertMgr showCancelConfirm:NSLocalizedString(@"kOtcOdUserConfirmReceiveRefundMessage", @"我确认已登录原付款账户查看，并核对退款无误。是否继续？")
+                              withTitle:NSLocalizedString(@"kOtcOdUserConfirmReceiveRefundTitle", @"确认收到退款")
+                             completion:^(NSInteger buttonIndex)
              {
                 if (buttonIndex == 1)
                 {
@@ -628,9 +629,9 @@ enum
             //  商家
         case eooot_mc_cancel_sell_order:
         {
-            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"我由于个人原因无法接单，同意退币给用户。\n\n注：确定后将直接转帐给用户。拒绝接单将会影响您的订单完成率。是否继续？"
-                                                                   withTitle:@"确认退币"
-                                                                  completion:^(NSInteger buttonIndex)
+            [alertMgr showCancelConfirm:NSLocalizedString(@"kOtcOdMerchantConfirmReturnAssetMessage", @"我由于个人原因无法接单，同意退币给用户。\n\n注：确定后将直接转帐给用户。拒绝接单将会影响您的订单完成率。是否继续？")
+                              withTitle:NSLocalizedString(@"kOtcOdMerchantConfirmReturnAssetTitle", @"确认退币")
+                             completion:^(NSInteger buttonIndex)
              {
                 if (buttonIndex == 1)
                 {
@@ -641,9 +642,9 @@ enum
             break;
         case eooot_mc_confirm_paid:
         {
-            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"我确认已按要求付款给用户。\n注：恶意点击将会被冻结账号。\n是否继续？"
-                                                                   withTitle:@"确认付款"
-                                                                  completion:^(NSInteger buttonIndex)
+            [alertMgr showCancelConfirm:NSLocalizedString(@"kOtcOdMerchantConfirmPaidMoneyMessage", @"我确认已按要求付款给用户。\n注：恶意点击将会被冻结账号。\n是否继续？")
+                              withTitle:NSLocalizedString(@"kOtcOdMerchantConfirmPaidMoneyTitle", @"确认付款")
+                             completion:^(NSInteger buttonIndex)
              {
                 if (buttonIndex == 1)
                 {
@@ -660,9 +661,9 @@ enum
             break;
         case eooot_mc_confirm_received_money:
         {
-            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"我确认已登录收款账户查看，并核对收款无误。是否放行？"
-                                                                   withTitle:@"确认放行"
-                                                                  completion:^(NSInteger buttonIndex)
+            [alertMgr showCancelConfirm:NSLocalizedString(@"kOtcOdMerchantConfirmReceiveMoneyMessage", @"我确认已登录收款账户查看，并核对收款无误。是否放行？")
+                              withTitle:NSLocalizedString(@"kOtcOdMerchantConfirmReceiveMoneyTitle", @"确认放行")
+                             completion:^(NSInteger buttonIndex)
              {
                 if (buttonIndex == 1)
                 {
@@ -676,9 +677,9 @@ enum
             break;
         case eooot_mc_cancel_buy_order:
         {
-            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"我确认已从原路径退款给用户。\n\n注：拒绝接单将会影响您的订单完成率。恶意点击将直接冻结账号。是否继续？"
-                                                                   withTitle:@"确认退款"
-                                                                  completion:^(NSInteger buttonIndex)
+            [alertMgr showCancelConfirm:NSLocalizedString(@"kOtcOdMerchantConfirmRefundMoneyMessage", @"我确认已从原路径退款给用户。\n\n注：拒绝接单将会影响您的订单完成率。恶意点击将直接冻结账号。是否继续？")
+                              withTitle:NSLocalizedString(@"kOtcOdMerchantConfirmRefundMoneyTitle", @"确认退款")
+                             completion:^(NSInteger buttonIndex)
              {
                 if (buttonIndex == 1)
                 {
@@ -694,8 +695,7 @@ enum
         }
             break;
         default:
-            //  TODO:2.9
-            [OrgUtils makeToast:[NSString stringWithFormat:@"TODO:button:%@", @(sender.tag)]];
+            assert(false);
             break;
     }
 }
