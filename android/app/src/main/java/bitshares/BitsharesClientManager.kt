@@ -184,7 +184,7 @@ class BitsharesClientManager {
         //  转账
         _transfer(op, broadcast, sign_pub_keys).then {
             p.resolve(JSONObject().apply {
-                put("tx", it as JSONObject)
+                put("tx", it)
             })
             return@then null
         }.catch {

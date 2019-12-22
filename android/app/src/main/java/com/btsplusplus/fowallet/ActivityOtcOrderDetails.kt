@@ -466,22 +466,21 @@ class ActivityOtcOrderDetails : BtsppActivity() {
     private fun onButtomButtonClicked(btn: View) {
         val btnType = btn.tag as? OtcManager.EOtcOrderOperationType
         if (btnType != null) {
-            //  TODO:2.9 lang
             when (btnType) {
                 //  卖单
                 OtcManager.EOtcOrderOperationType.eooot_transfer -> {
-                    UtilsAlert.showMessageConfirm(this, "确认转币", "确定转币给商家。是否继续？").then {
+                    UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kOtcOdUserAskTransferTitle), resources.getString(R.string.kOtcOdUserAskTransferMessage)).then {
                         if (it != null && it as Boolean) {
                             _execTransferCore()
                         }
                     }
                 }
                 OtcManager.EOtcOrderOperationType.eooot_contact_customer_service -> {
-                    //  TODO:2.9
+                    //  TODO:2.9 未完成
                     showToast("联系客服 ${btnType.value}")
                 }
                 OtcManager.EOtcOrderOperationType.eooot_confirm_received_money -> {
-                    UtilsAlert.showMessageConfirm(this, "确认放行", "我确认已登录收款账户查看，并核对收款无误。是否放行？").then {
+                    UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kOtcOdUserConfirmReceiveMoneyTitle), resources.getString(R.string.kOtcOdUserConfirmReceiveMoneyMessage)).then {
                         if (it != null && it as Boolean) {
                             guardWalletUnlocked(true) { unlocked ->
                                 if (unlocked) {
@@ -495,7 +494,7 @@ class ActivityOtcOrderDetails : BtsppActivity() {
                 }
                 //  买单
                 OtcManager.EOtcOrderOperationType.eooot_cancel_order -> {
-                    UtilsAlert.showMessageConfirm(this, "确认取消订单", "※ 如果您已经付款给商家，请不要取消订单！！！\\n\\n注：若用户当日累计取消3笔订单，会限制当日下单功能。是否继续？").then {
+                    UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kOtcOdUserConfirmCancelOrderTitle), resources.getString(R.string.kOtcOdUserConfirmCancelOrderMessage)).then {
                         if (it != null && it as Boolean) {
                             guardWalletUnlocked(true) { unlocked ->
                                 if (unlocked) {
@@ -508,7 +507,7 @@ class ActivityOtcOrderDetails : BtsppActivity() {
                     }
                 }
                 OtcManager.EOtcOrderOperationType.eooot_confirm_paid -> {
-                    UtilsAlert.showMessageConfirm(this, "确认付款", "我确认已按要求付款给商家。\\n注：恶意点击将会被冻结账号。\\n是否继续？").then {
+                    UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kOtcOdUserConfirmPaidMoneyTitle), resources.getString(R.string.kOtcOdUserConfirmPaidMoneyMessage)).then {
                         if (it != null && it as Boolean) {
                             guardWalletUnlocked(true) { unlocked ->
                                 if (unlocked) {
@@ -521,7 +520,7 @@ class ActivityOtcOrderDetails : BtsppActivity() {
                     }
                 }
                 OtcManager.EOtcOrderOperationType.eooot_confirm_received_refunded -> {
-                    UtilsAlert.showMessageConfirm(this, "确认收到退款", "我确认已登录原付款账户查看，并核对退款无误。是否继续？").then {
+                    UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kOtcOdUserConfirmReceiveRefundTitle), resources.getString(R.string.kOtcOdUserConfirmReceiveRefundMessage)).then {
                         if (it != null && it as Boolean) {
                             guardWalletUnlocked(true) { unlocked ->
                                 if (unlocked) {
@@ -533,9 +532,9 @@ class ActivityOtcOrderDetails : BtsppActivity() {
                         }
                     }
                 }
-                //  商家 TODO:2.9 lang
+                //  商家
                 OtcManager.EOtcOrderOperationType.eooot_mc_cancel_sell_order -> {
-                    UtilsAlert.showMessageConfirm(this, "确认退币", "我由于个人原因无法接单，同意退币给用户。\\n\\n注：确定后将直接转帐给用户。拒绝接单将会影响您的订单完成率。是否继续？").then {
+                    UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kOtcOdMerchantConfirmReturnAssetTitle), resources.getString(R.string.kOtcOdMerchantConfirmReturnAssetMessage)).then {
                         if (it != null && it as Boolean) {
                             _transferCoinToUserAndUpadteOrder(true, null, null,
                                     OtcManager.EOtcOrderUpdateType.eoout_to_mc_return)
@@ -543,7 +542,7 @@ class ActivityOtcOrderDetails : BtsppActivity() {
                     }
                 }
                 OtcManager.EOtcOrderOperationType.eooot_mc_confirm_paid -> {
-                    UtilsAlert.showMessageConfirm(this, "确认付款", "我确认已按要求付款给用户。\\n注：恶意点击将会被冻结账号。\\n是否继续？").then {
+                    UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kOtcOdMerchantConfirmPaidMoneyTitle), resources.getString(R.string.kOtcOdMerchantConfirmPaidMoneyMessage)).then {
                         if (it != null && it as Boolean) {
                             guardWalletUnlocked(true) { unlocked ->
                                 if (unlocked) {
@@ -556,7 +555,7 @@ class ActivityOtcOrderDetails : BtsppActivity() {
                     }
                 }
                 OtcManager.EOtcOrderOperationType.eooot_mc_confirm_received_money -> {
-                    UtilsAlert.showMessageConfirm(this, "确认放行", "我确认已登录收款账户查看，并核对收款无误。是否放行？").then {
+                    UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kOtcOdMerchantConfirmReceiveMoneyTitle), resources.getString(R.string.kOtcOdMerchantConfirmReceiveMoneyMessage)).then {
                         if (it != null && it as Boolean) {
                             _transferCoinToUserAndUpadteOrder(false, _order_details.getString("payAccount"), _order_details.get("payChannel"),
                                     OtcManager.EOtcOrderUpdateType.eoout_to_mc_received_money)
@@ -564,7 +563,7 @@ class ActivityOtcOrderDetails : BtsppActivity() {
                     }
                 }
                 OtcManager.EOtcOrderOperationType.eooot_mc_cancel_buy_order -> {
-                    UtilsAlert.showMessageConfirm(this, "确认退款", "我确认已从原路径退款给用户。\\n\\n注：拒绝接单将会影响您的订单完成率。恶意点击将直接冻结账号。是否继续？").then {
+                    UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kOtcOdMerchantConfirmRefundMoneyTitle), resources.getString(R.string.kOtcOdMerchantConfirmRefundMoneyMessage)).then {
                         if (it != null && it as Boolean) {
                             guardWalletUnlocked(true) { unlocked ->
                                 if (unlocked) {
