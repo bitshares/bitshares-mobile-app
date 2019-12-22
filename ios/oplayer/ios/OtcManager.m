@@ -233,15 +233,15 @@ static OtcManager *_sharedOtcManager = nil;
     NSMutableArray* actions = [NSMutableArray array];
     BOOL showRemark = NO;
     BOOL pending = YES;
-    //  TODO:2.9 状态描述待细化。!!!!
+    
     if (bUserSell) {
         //  -- 用户卖币提现
         switch (status) {
                 //  正常流程
             case eoops_new:
             {
-                status_main = @"待转币";               //  已下单(待转币)     正常情况下单自动转币、转币操作需二次确认
-                status_desc = @"您已成功下单，请转币。";
+                status_main = NSLocalizedString(@"kOtcOsUser_sell_new_main", @"待转币"); //  已下单(待转币)     正常情况下单自动转币、转币操作需二次确认
+                status_desc = NSLocalizedString(@"kOtcOsUser_sell_new_desc", @"您已成功下单，请转币。");
                 //  按钮：联系客服 + 立即转币
                 [actions addObject:@{@"type":@(eooot_contact_customer_service), @"color":theme.textColorGray}];
                 [actions addObject:@{@"type":@(eooot_transfer), @"color":theme.textColorHighlight}];
@@ -249,20 +249,20 @@ static OtcManager *_sharedOtcManager = nil;
                 break;
             case eoops_already_transferred:
             {
-                status_main = @"已转币";               //  已转币(待处理)
-                status_desc = @"您已转币，正在等待区块确认。";
+                status_main = NSLocalizedString(@"kOtcOsUser_sell_transferred_main", @"已转币");               //  已转币(待处理)
+                status_desc = NSLocalizedString(@"kOtcOsUser_sell_transferred_desc", @"您已转币，正在等待区块确认。");
             }
                 break;
             case eoops_already_confirmed:
             {
-                status_main = @"待收款";               //  区块已确认(待收款)
-                status_desc = @"区块已确认转币，等待商家付款。";
+                status_main = NSLocalizedString(@"kOtcOsUser_sell_confirmed_main", @"待收款");               //  区块已确认(待收款)
+                status_desc = NSLocalizedString(@"kOtcOsUser_sell_confirmed_desc", @"区块已确认转币，等待商家付款。");
             }
                 break;
             case eoops_already_paid:
             {
-                status_main = @"请放行";               // 商家已付款(请放行) 申诉 + 确认收款(放行操作需二次确认)
-                status_desc = @"请查收对方付款，未收到请勿放行。";
+                status_main = NSLocalizedString(@"kOtcOsUser_sell_paid_main", @"请放行");  // 商家已付款(请放行) 申诉 + 确认收款(放行操作需二次确认)
+                status_desc = NSLocalizedString(@"kOtcOsUser_sell_paid_desc", @"请查收对方付款，未收到请勿放行。");
                 //  按钮：联系客服 + 放行XXX资产
                 [actions addObject:@{@"type":@(eooot_contact_customer_service), @"color":theme.textColorGray}];
                 [actions addObject:@{@"type":@(eooot_confirm_received_money), @"color":theme.textColorHighlight}];
@@ -270,30 +270,30 @@ static OtcManager *_sharedOtcManager = nil;
                 break;
             case eoops_completed:
             {
-                status_main = @"已完成";
-                status_desc = @"订单已完成。";
+                status_main = NSLocalizedString(@"kOtcOsUser_sell_completed_main", @"已完成");
+                status_desc = NSLocalizedString(@"kOtcOsUser_sell_completed_desc", @"订单已完成。");
                 pending = NO;
             }
                 break;
                 //  异常流程
             case eoops_chain_failed:
             {
-                status_main = @"异常中";
-                status_desc = @"区块确认异常，请联系客服。";
+                status_main = NSLocalizedString(@"kOtcOsUser_sell_chain_failed_main", @"异常中");
+                status_desc = NSLocalizedString(@"kOtcOsUser_sell_chain_failed_desc", @"区块确认异常，请联系客服。");
                 //  按钮：联系客服
                 [actions addObject:@{@"type":@(eooot_contact_customer_service), @"color":theme.textColorGray}];
             }
                 break;
             case eoops_return_assets:
             {
-                status_main = @"退币中";
-                status_desc = @"商家无法接单，退币处理中。";
+                status_main = NSLocalizedString(@"kOtcOsUser_sell_return_assets_main", @"退币中");
+                status_desc = NSLocalizedString(@"kOtcOsUser_sell_return_assets_desc", @"商家无法接单，退币处理中。");
             }
                 break;
             case eoops_cancelled:
             {
-                status_main = @"已取消";
-                status_desc = @"订单已取消。";
+                status_main = NSLocalizedString(@"kOtcOsUser_sell_cancelled_main", @"已取消");
+                status_desc = NSLocalizedString(@"kOtcOsUser_sell_cancelled_desc", @"订单已取消。");
                 pending = NO;
             }
                 break;
@@ -306,8 +306,8 @@ static OtcManager *_sharedOtcManager = nil;
                 //  正常流程
             case eoops_new:
             {
-                status_main = @"待付款";       // 已下单(待付款)     取消 + 确认付款
-                status_desc = @"请尽快付款给卖家。";
+                status_main = NSLocalizedString(@"kOtcOsUser_buy_new_main", @"待付款");       // 已下单(待付款)     取消 + 确认付款
+                status_desc = NSLocalizedString(@"kOtcOsUser_buy_new_desc", @"请尽快付款给卖家。");
                 showRemark = YES;
                 //  按钮：取消订单 + 确认付款
                 [actions addObject:@{@"type":@(eooot_cancel_order), @"color":theme.textColorGray}];
@@ -316,34 +316,34 @@ static OtcManager *_sharedOtcManager = nil;
                 break;
             case eoops_already_paid:
             {
-                status_main = @"待收币";       // 已付款(待收币)
-                status_desc = @"您已付款，请等待商家确认并放币。";
+                status_main = NSLocalizedString(@"kOtcOsUser_buy_paid_main", @"待收币");       // 已付款(待收币)
+                status_desc = NSLocalizedString(@"kOtcOsUser_buy_paid_desc", @"您已付款，请等待商家确认并放币。");
             }
                 break;
             case eoops_already_transferred:
             {
-                status_main = @"已转币";       //  已转币
-                status_desc = @"商家已转币，正在等待区块确认。";
+                status_main = NSLocalizedString(@"kOtcOsUser_buy_transferred_main", @"已转币");       //  已转币
+                status_desc = NSLocalizedString(@"kOtcOsUser_buy_transferred_desc", @"商家已转币，正在等待区块确认。");
             }
                 break;
             case eoops_already_confirmed:
             {
-                status_main = @"已收币";       //  已收币 REMARK：这是中间状态，会自动跳转到已完成。
-                status_desc = @"商家转币已确认，请查收。";
+                status_main = NSLocalizedString(@"kOtcOsUser_buy_confirmed_main", @"已收币");       //  已收币 REMARK：这是中间状态，会自动跳转到已完成。
+                status_desc = NSLocalizedString(@"kOtcOsUser_buy_confirmed_desc", @"商家转币已确认，请查收。");
                 break;
             }
             case eoops_completed:
             {
-                status_main = @"已完成";
-                status_desc = @"订单已完成。";
+                status_main = NSLocalizedString(@"kOtcOsUser_buy_completed_main", @"已完成");
+                status_desc = NSLocalizedString(@"kOtcOsUser_buy_completed_desc", @"订单已完成。");
                 pending = NO;
             }
                 break;
                 //  异常流程
             case eoops_refunded:
             {
-                status_main = @"已退款";
-                status_desc = @"商家无法接单，已退款，请查收退款。";
+                status_main = NSLocalizedString(@"kOtcOsUser_buy_refunded_main", @"已退款");
+                status_desc = NSLocalizedString(@"kOtcOsUser_buy_refunded_desc", @"商家无法接单，已退款，请查收退款。");
                 //  按钮：联系客服 + 我已收到退款（取消订单）
                 [actions addObject:@{@"type":@(eooot_contact_customer_service), @"color":theme.textColorGray}];
                 [actions addObject:@{@"type":@(eooot_confirm_received_refunded), @"color":theme.textColorHighlight}];
@@ -351,16 +351,16 @@ static OtcManager *_sharedOtcManager = nil;
                 break;
             case eoops_chain_failed:
             {
-                status_main = @"异常中";
-                status_desc = @"区块确认异常，请联系客服。";
+                status_main = NSLocalizedString(@"kOtcOsUser_buy_chain_failed_main", @"异常中");
+                status_desc = NSLocalizedString(@"kOtcOsUser_buy_chain_failed_desc", @"区块确认异常，请联系客服。");
                 //  按钮：联系客服
                 [actions addObject:@{@"type":@(eooot_contact_customer_service), @"color":theme.textColorGray}];
             }
                 break;
             case eoops_cancelled:
             {
-                status_main = @"已取消";
-                status_desc = @"订单已取消。";
+                status_main = NSLocalizedString(@"kOtcOsUser_buy_cancelled_main", @"已取消");
+                status_desc = NSLocalizedString(@"kOtcOsUser_buy_cancelled_desc", @"订单已取消。");
                 pending = NO;
             }
                 break;
@@ -369,10 +369,10 @@ static OtcManager *_sharedOtcManager = nil;
         }
     }
     if (!status_main) {
-        status_main = [NSString stringWithFormat:@"未知状态 %@", @(status)];
+        status_main = [NSString stringWithFormat:NSLocalizedString(@"kOtcOsUser_unknown_main", @"未知状态 %@"), @(status)];
     }
     if (!status_desc) {
-        status_desc = [NSString stringWithFormat:@"未知状态 %@", @(status)];
+        status_desc = [NSString stringWithFormat:NSLocalizedString(@"kOtcOsUser_unknown_desc", @"未知状态 %@"), @(status)];
     }
     
     //  返回数据
@@ -396,7 +396,7 @@ static OtcManager *_sharedOtcManager = nil;
     NSMutableArray* actions = [NSMutableArray array];
     BOOL showRemark = NO;
     BOOL pending = YES;
-    //  TODO:2.9 状态描述待细化。!!!!
+    
     if (bUserSell) {
         //  -- 用户卖币提现
         switch (status) {
@@ -404,22 +404,22 @@ static OtcManager *_sharedOtcManager = nil;
             case eoops_new:
             {
                 //  DONE!!!
-                status_main = @"待收币";
-                status_desc = @"用户已下单，等待用户转币。";
+                status_main = NSLocalizedString(@"kOtcOsMerchant_sell_new_main", @"待收币");
+                status_desc = NSLocalizedString(@"kOtcOsMerchant_sell_new_desc", @"用户已下单，等待用户转币。");
             }
                 break;
             case eoops_already_transferred:
             {
                 //  DONE!!!
-                status_main = @"已转币";
-                status_desc = @"用户已转币，正在等待区块确认。";
+                status_main = NSLocalizedString(@"kOtcOsMerchant_sell_transferred_main", @"已转币");
+                status_desc = NSLocalizedString(@"kOtcOsMerchant_sell_transferred_desc", @"用户已转币，正在等待区块确认。");
             }
                 break;
             case eoops_already_confirmed:
             {
                 //  DONE!!!
-                status_main = @"请付款";               //  区块已确认(请付款) 【商家】
-                status_desc = @"区块已确认转币，请付款给用户。";
+                status_main = NSLocalizedString(@"kOtcOsMerchant_sell_confirmed_main", @"请付款"); //  区块已确认(请付款) 【商家】
+                status_desc = NSLocalizedString(@"kOtcOsMerchant_sell_confirmed_desc", @"区块已确认转币，请付款给用户。");
                 //  按钮：无法接(卖)单 + 确认付款
                 [actions addObject:@{@"type":@(eooot_mc_cancel_sell_order), @"color":theme.textColorGray}];
                 [actions addObject:@{@"type":@(eooot_mc_confirm_paid), @"color":theme.textColorHighlight}];
@@ -428,15 +428,15 @@ static OtcManager *_sharedOtcManager = nil;
             case eoops_already_paid:
             {
                 //  DONE!!!
-                status_main = @"待放行";               // 商家已付款（等待用户确认放行）
-                status_desc = @"您已付款，等待用户放行。";
+                status_main = NSLocalizedString(@"kOtcOsMerchant_sell_paid_main", @"待放行"); // 商家已付款（等待用户确认放行）
+                status_desc = NSLocalizedString(@"kOtcOsMerchant_sell_paid_desc", @"您已付款，等待用户放行。");
             }
                 break;
             case eoops_completed:
             {
                 //  DONE!!!
-                status_main = @"已完成";
-                status_desc = @"订单已完成。";
+                status_main = NSLocalizedString(@"kOtcOsMerchant_sell_completed_main", @"已完成");
+                status_desc = NSLocalizedString(@"kOtcOsMerchant_sell_completed_desc", @"订单已完成。");
                 pending = NO;
             }
                 break;
@@ -444,22 +444,22 @@ static OtcManager *_sharedOtcManager = nil;
             case eoops_chain_failed:
             {
                 //  DONE!!!
-                status_main = @"异常中";
-                status_desc = @"区块确认异常。";
+                status_main = NSLocalizedString(@"kOtcOsMerchant_sell_chain_failed_main", @"异常中");
+                status_desc = NSLocalizedString(@"kOtcOsMerchant_sell_chain_failed_desc", @"区块确认异常。");
             }
                 break;
             case eoops_return_assets:
             {
                 //  DONE!!!
-                status_main = @"退币中";
-                status_desc = @"您无法接单，平台退币中。";
+                status_main = NSLocalizedString(@"kOtcOsMerchant_sell_return_assets_main", @"退币中");
+                status_desc = NSLocalizedString(@"kOtcOsMerchant_sell_return_assets_desc", @"您无法接单，平台退币中。");
             }
                 break;
             case eoops_cancelled:
             {
                 //  DONE!!!
-                status_main = @"已取消";
-                status_desc = @"订单已取消。";
+                status_main = NSLocalizedString(@"kOtcOsMerchant_sell_cancelled_main", @"已取消");
+                status_desc = NSLocalizedString(@"kOtcOsMerchant_sell_cancelled_desc", @"订单已取消。");
                 pending = NO;
             }
                 break;
@@ -473,15 +473,15 @@ static OtcManager *_sharedOtcManager = nil;
             case eoops_new:
             {
                 //  DONE!!!
-                status_main = @"待收款";
-                status_desc = @"用户已下单，等待用户付款。";
+                status_main = NSLocalizedString(@"kOtcOsMerchant_buy_new_main", @"待收款");
+                status_desc = NSLocalizedString(@"kOtcOsMerchant_buy_new_desc", @"用户已下单，等待用户付款。");
             }
                 break;
             case eoops_already_paid:
             {
                 //  DONE!!!
-                status_main = @"请放行";
-                status_desc = @"用户已付款，请确认并放币。";
+                status_main = NSLocalizedString(@"kOtcOsMerchant_buy_paid_main", @"请放行");
+                status_desc = NSLocalizedString(@"kOtcOsMerchant_buy_paid_desc", @"用户已付款，请确认并放币。");
                 //  按钮：无法接(买)单 + 放行资产
                 [actions addObject:@{@"type":@(eooot_mc_cancel_buy_order), @"color":theme.textColorGray}];
                 [actions addObject:@{@"type":@(eooot_mc_confirm_received_money), @"color":theme.textColorHighlight}];
@@ -490,22 +490,22 @@ static OtcManager *_sharedOtcManager = nil;
             case eoops_already_transferred:
             {
                 //  DONE!!!
-                status_main = @"已转币";       //  已转币
-                status_desc = @"您已放行，平台处理中。";
+                status_main = NSLocalizedString(@"kOtcOsMerchant_buy_transferred_main", @"已转币");       //  已转币
+                status_desc = NSLocalizedString(@"kOtcOsMerchant_buy_transferred_desc", @"您已放行，平台处理中。");
             }
                 break;
             case eoops_already_confirmed:
             {
                 //  DONE!!!
-                status_main = @"已转币";       //  已收币 REMARK：这是中间状态，会自动跳转到已完成。
-                status_desc = @"平台已验证，区块确认中。";
+                status_main = NSLocalizedString(@"kOtcOsMerchant_buy_confirmed_main", @"已转币");       //  已收币 REMARK：这是中间状态，会自动跳转到已完成。
+                status_desc = NSLocalizedString(@"kOtcOsMerchant_buy_confirmed_desc", @"平台已验证，区块确认中。");
                 break;
             }
             case eoops_completed:
             {
                 //  DONE!!!
-                status_main = @"已完成";
-                status_desc = @"订单已完成。";
+                status_main = NSLocalizedString(@"kOtcOsMerchant_buy_completed_main", @"已完成");
+                status_desc = NSLocalizedString(@"kOtcOsMerchant_buy_completed_desc", @"订单已完成。");
                 pending = NO;
             }
                 break;
@@ -513,22 +513,22 @@ static OtcManager *_sharedOtcManager = nil;
             case eoops_refunded:
             {
                 //  DONE!!!
-                status_main = @"已退款";
-                status_desc = @"您已退款，等待用户确认。";
+                status_main = NSLocalizedString(@"kOtcOsMerchant_buy_refunded_main", @"已退款");
+                status_desc = NSLocalizedString(@"kOtcOsMerchant_buy_refunded_desc", @"您已退款，等待用户确认。");
             }
                 break;
             case eoops_chain_failed:
             {
                 //  DONE!!!
-                status_main = @"异常中";
-                status_desc = @"区块确认异常";
+                status_main = NSLocalizedString(@"kOtcOsMerchant_buy_chain_failed_main", @"异常中");
+                status_desc = NSLocalizedString(@"kOtcOsMerchant_buy_chain_failed_desc", @"区块确认异常。");
             }
                 break;
             case eoops_cancelled:
             {
                 //  DONE!!!
-                status_main = @"已取消";
-                status_desc = @"订单已取消。";
+                status_main = NSLocalizedString(@"kOtcOsMerchant_buy_cancelled_main", @"已取消");
+                status_desc = NSLocalizedString(@"kOtcOsMerchant_buy_cancelled_desc", @"订单已取消。");
                 pending = NO;
             }
                 break;
@@ -537,10 +537,10 @@ static OtcManager *_sharedOtcManager = nil;
         }
     }
     if (!status_main) {
-        status_main = [NSString stringWithFormat:@"未知状态 %@", @(status)];
+        status_main = [NSString stringWithFormat:NSLocalizedString(@"kOtcOsMerchant_unknown_main", @"未知状态 %@"), @(status)];
     }
     if (!status_desc) {
-        status_desc = [NSString stringWithFormat:@"未知状态 %@", @(status)];
+        status_desc = [NSString stringWithFormat:NSLocalizedString(@"kOtcOsMerchant_unknown_desc", @"未知状态 %@"), @(status)];
     }
     
     //  返回数据
@@ -858,11 +858,11 @@ static OtcManager *_sharedOtcManager = nil;
                     //  TODO:2.9 error code table 部分消息特化处理。
                     switch (errcode) {
                         case eoerr_too_often:
-                            errmsg = @"请求太频繁，请稍后再试。";
+                            errmsg = NSLocalizedString(@"kOtcMgrErrTooOften", @"请求太频繁，请稍后再试。");
                             break;
                         case eoerr_not_login:
                         case eoerr_token_is_empty:
-                            errmsg = @"请退出场外交易界面重新登录。";
+                            errmsg = NSLocalizedString(@"kOtcMgrErrNotLoginOrTokenIsEmpty", @"请退出场外交易界面重新登录。");
                             break;
                         default:
                         {
@@ -873,7 +873,7 @@ static OtcManager *_sharedOtcManager = nil;
                                 errmsg = [NSString stringWithFormat:@"%@", otcerror];
                             } else {
                                 //  仅显示 code
-                                errmsg = [NSString stringWithFormat:@"服务器或网络异常，请稍后再试。错误代码：%@", @(errcode)];//TODO:2.9 lang
+                                errmsg = [NSString stringWithFormat:NSLocalizedString(@"kOtcMgrErrNetworkOrServerFailedWithCode", @"服务器或网络异常，请稍后再试。错误代码：%@"), @(errcode)];
                             }
                         }
                             break;
@@ -888,7 +888,7 @@ static OtcManager *_sharedOtcManager = nil;
     }
     if (!errmsg || [errmsg isEqualToString:@""]) {
         //  没有任何错误信息的情况
-        errmsg = @"服务器或网络异常，请稍后再试。";//TODO:2.9
+        errmsg = NSLocalizedString(@"kOtcMgrErrNetworkOrServerFailed", @"服务器或网络异常，请稍后再试。");
     }
     [OrgUtils makeToast:errmsg];
 }
@@ -1323,9 +1323,8 @@ static OtcManager *_sharedOtcManager = nil;
     assert(request_promise);
     return [WsPromise promise:^(WsResolveHandler resolve, WsRejectHandler reject) {
         [[request_promise then:^id(id responsed) {
-            //  TODO:2.9 lang
             if (!responsed || ![responsed isKindOfClass:[NSDictionary class]]) {
-                reject(@"服务器或网络异常，请稍后再试。");
+                reject(NSLocalizedString(@"kOtcMgrErrNetworkOrServerFailed", @"服务器或网络异常，请稍后再试。"));
                 return nil;
             }
             NSInteger code = [[responsed objectForKey:@"code"] integerValue];
@@ -1336,7 +1335,7 @@ static OtcManager *_sharedOtcManager = nil;
             }
             return nil;
         }] catch:^id(id error) {
-            reject(@"服务器或网络异常，请稍后再试。");
+            reject(NSLocalizedString(@"kOtcMgrErrNetworkOrServerFailed", @"服务器或网络异常，请稍后再试。"));
             return nil;
         }];
     }];
