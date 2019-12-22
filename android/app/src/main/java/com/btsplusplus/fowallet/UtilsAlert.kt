@@ -3,7 +3,9 @@ package com.btsplusplus.fowallet
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.text.InputFilter
 import android.text.InputType
+import android.text.method.DigitsKeyListener
 import android.view.KeyEvent
 import android.widget.EditText
 import android.widget.Toast
@@ -30,7 +32,7 @@ class UtilsAlert {
         fun showInputBox(ctx: Context, title: String, placeholder: String,
                          btn_ok: String = ctx.resources.getString(R.string.kBtnOK),
                          btn_cancel: String = ctx.resources.getString(R.string.kBtnCancel),
-                         is_password: Boolean = true, tfcfg: ((tf: EditText) -> Unit)? = null): Promise {
+                         is_password: Boolean = true, tfcfg: ((tf: EditText) -> Unit)? = null, iDecimalPrecision: Int = -1, iMaxLength: Int = -1): Promise {
             val p = Promise()
 
             //  输入框
@@ -38,15 +40,47 @@ class UtilsAlert {
             val padding = Utils.toDp(20.0f, ctx.resources)
             edit.setPadding(padding, padding, padding, padding)
             edit.hint = placeholder
-            if (is_password) {
-                edit.inputType = InputType.TYPE_CLASS_TEXT.or(InputType.TYPE_TEXT_VARIATION_PASSWORD)
-            } else {
-                edit.inputType = InputType.TYPE_CLASS_TEXT
+
+            //  限制最大输入长度
+            if (iMaxLength > 0) {
+                edit.filters = arrayOf(InputFilter.LengthFilter(iMaxLength))
             }
-            //  配置输入框
+
+            if (iDecimalPrecision > 0) {
+                //  输入：小数
+                edit.inputType = InputType.TYPE_CLASS_NUMBER.or(InputType.TYPE_NUMBER_FLAG_DECIMAL)
+                edit.maxLines = 1
+                edit.setSingleLine(true)
+                //  小数输入的默认长度
+                if (iMaxLength <= 0) {
+                    edit.filters = arrayOf(InputFilter.LengthFilter(12 + iDecimalPrecision))
+                }
+                edit.keyListener = DigitsKeyListener.getInstance(".1234567890")
+                edit.addTextChangedListener(UtilsDigitTextWatcher().set_tf(edit).set_precision(iDecimalPrecision))
+            } else if (iDecimalPrecision == 0) {
+                //  输入：正整数
+                edit.inputType = InputType.TYPE_CLASS_NUMBER
+                edit.maxLines = 1
+                edit.setSingleLine(true)
+                //  整数输入的默认长度
+                if (iMaxLength <= 0) {
+                    edit.filters = arrayOf(InputFilter.LengthFilter(12))
+                }
+                edit.keyListener = DigitsKeyListener.getInstance("1234567890")
+            } else {
+                //  输入：普通文本or密码
+                if (is_password) {
+                    edit.inputType = InputType.TYPE_CLASS_TEXT.or(InputType.TYPE_TEXT_VARIATION_PASSWORD)
+                } else {
+                    edit.inputType = InputType.TYPE_CLASS_TEXT
+                }
+            }
+
+            //  自定义配置放在最后（可选）
             if (tfcfg != null) {
                 tfcfg(edit)
             }
+
             //  对话框
             val builder = AlertDialog.Builder(ctx)
             builder.setTitle(title)

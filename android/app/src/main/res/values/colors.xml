@@ -60,6 +60,7 @@
     <color name="theme01.sellColor2">#282732</color>
 
     <color name="theme01.tabBarColor">#172941</color>
+    <color name="theme01.tabBarColor2">#cc172941</color>
 
     <color name="theme01.mainButtonBackColor">#e76d42</color>
     <color name="theme01.mainButtonTextColor">#ffffff</color>

@@ -47,7 +47,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="商家信息"
+                android:text="@string/kVcTitleOtcMcHome"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>

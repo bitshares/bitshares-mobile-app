@@ -717,6 +717,8 @@
     <string name="kVcTitleOtcMcAsset">商家资产</string>
     <string name="kVcTitleOtcMcAd">商家广告</string>
     <string name="kVcTitleOtcMcOrder">商家订单</string>
+    <string name="kVcTitleOtcMcHome">商家信息</string>
+    <string name="kVcTitleOtcMcApply">商家申请</string>
     <!-- 钱包管理 -->
     <string name="kWalletUnlockFailedUnknowMode">錠解除に失敗する，未知のパターンです：%s。</string>
     <string name="kWalletInvalidWalletPassword">ウオレットのパスワードは無効です。</string>
@@ -880,6 +882,9 @@
     <string name="kOpDetailSubPrefixWitness">証人</string>
     <string name="kOpDetailSubPrefixProxy">エージェント</string>
     <!-- 场外交易相关 -->
+    <string name="kOtcMgrNotSupportMultiSignAccount">多签账号不支持场外交易。</string>
+    <string name="kOtcMgrNoOpenAnyDigiAssets">场外交易暂不支持任何数字资产，请稍后再试。</string>
+    <string name="kOtcMgrNotSupportAsset">场外交易暂时不支持 %s 资产，请稍后再试。</string>
     <string name="kOtcPageTitleBuy">買う</string>
     <string name="kOtcPageTitleSell">売る</string>
     <string name="kOtcAdTitleBase">市场◢</string>
@@ -887,6 +892,10 @@
     <string name="kOtcAdCellLabelAmount">数量 </string>
     <string name="kOtcAdCellLabelLimit">限额 </string>
     <string name="kOtcAdCellLabelUnitPrice">单价</string>
+    <string name="kOtcAdCellLabelMcMerchantBuy">商家购买 </string>
+    <string name="kOtcAdCellLabelMcMerchantSell">商家出售 </string>
+    <string name="kOtcAdCellLabelMcBtnReup">上架</string>
+    <string name="kOtcAdCellLabelMcBtnDown">下架</string>
     <string name="kOtcAdBtnBuy">购买</string>
     <string name="kOtcAdBtnSell">出售</string>
     <string name="kOtcAdSwitchAssetTips">请选择要交易的资产</string>
@@ -916,7 +925,12 @@
     <string name="kOtcOrderEmptyLabelWaitProcessing">没有任何需处理的订单</string>
     <string name="kOtcOrderCellTitleBuy">购买</string>
     <string name="kOtcOrderCellTitleSell">出售</string>
+    <string name="kOtcOrderCellTitleMerchantPrefix">用户</string>
+    <string name="kOtcOdCellAmount">数量 </string>
+    <string name="kOtcOdCellUnitPrice">单价 </string>
+    <string name="kOtcOdCellContactOthers">联系对方</string>
     <string name="kOtcOdPaymentTimeLimit">请在 %s 内付款给卖家。</string>
+    <string name="kOtcOdMcPaymentTimeLimit">预计 %s 内收到用户付款。</string>
     <string name="kOtcOdPaymentTipsMcRemarkPrefix">商家：</string>
     <string name="kOtcOdPaymentTipsSystemMsg">系统：在转账过程中请勿备注BTC、USDT等信息，防止汇款被拦截、银行卡被冻结等问题。</string>
     <string name="kOtcOdOrderDataException">订单数据异常，请联系客服。</string>
@@ -925,11 +939,13 @@
     <string name="kOtcOdBtnConfirmReceivedMoney">放行</string>
     <string name="kOtcOdBtnCancelOrder">取消订单</string>
     <string name="kOtcOdBtnConfirmPaid">我已付款成功</string>
+    <string name="kOtcOdBtnMcCancelOrder">无法接单</string>
     <string name="kOtcOdBtnConfirmReceivedRefunded">我已收到退款</string>
     <string name="kOtcOdCellLabelMcRealName">商家姓名</string>
     <string name="kOtcOdCellLabelMcNickName">商家昵称</string>
     <string name="kOtcOdCellLabelOrderID">订单编号</string>
     <string name="kOtcOdCellLabelOrderDate">下单日期</string>
+    <string name="kOtcOdCellLabelUserAccount">用户账号</string>
     <string name="kOtcOdCellPaymentSameNameTips01">请使用本人%s的%s向以下账户自行转账</string>
     <string name="kOtcOdCellPaymentSameNameTips02">请使用本人名字的%s向以下账户自行转账</string>
     <string name="kOtcOdCellPaymentSameNameTitle">本人名字</string>
@@ -1008,6 +1024,8 @@
     <string name="kOtcMcAdSubmitTipBalanceNotEnough">可用余额不足。</string>
     <string name="kOtcOdCopiedTips">已复制</string>
     <string name="kOtcRmLabelEmpty">没有任何收款方式，点击右上角添加。</string>
+    <string name="kOtcPmCellStatusEnabled">已开启</string>
+    <string name="kOtcPmCellStatusDisabled">未开启</string>
     <string name="kOtcPmActionBtnEnable">有効にする</string>
     <string name="kOtcPmActionBtnDisable">無効にする</string>
     <string name="kOtcPmActionBtnDelete">削除する</string>
@@ -1057,6 +1075,18 @@
     <string name="kOtcMcAssetEmptyLabel">没有任何资产</string>
     <string name="kOtcMcAssetSubmitBtnName">划转</string>
     <string name="kOtcMcAssetCellAvailable">可用</string>
+    <string name="kOtcMcAssetTransferFromToMerchantAccount">(商家账号)</string>
+    <string name="kOtcMcAssetTransferFromToUserAccount">(个人账号)</string>
+    <string name="kOtcMcAssetTransferFromTitle">从 </string>
+    <string name="kOtcMcAssetTransferToTitle">到 </string>
+    <string name="kOtcMcAssetBtnTransferIn">转入</string>
+    <string name="kOtcMcAssetBtnTransferOut">转出</string>
+    <string name="kOtcMcAssetListCellAvailable">可用</string>
+    <string name="kOtcMcAssetListCellFreeze">冻结</string>
+    <string name="kOtcMcAssetListCellFees">平台手续费</string>
+    <string name="kOtcMcAssetTransferCellLabelAmount">数量</string>
+    <string name="kOtcMcAssetTransferTfAmountPlaeholder">请输入划转数量</string>
+    <string name="kOtcMcAssetTransferCellLabelAsset">资产</string>
     <string name="kOtcMcAssetTransferBalanceNotEnough">余额不足</string>
     <string name="kOtcMcAssetSubmitTipPleaseInputAmount">请输入划转金额。</string>
     <string name="kOtcMcAssetSubmitTipBalanceNotEnough">余额不足。</string>
@@ -1103,6 +1133,7 @@
     <string name="kTxBlockDataError">区块数据异常。</string>
     <string name="kTxBalanceNotEnough">您的 %s 余额不足。</string>
     <string name="kTxMissMemoPriKey">缺少备注私钥。</string>
+    <string name="kTxInvalidMemoPriKey">备注私钥无效。</string>
     <!-- 通用字符串 -->
     <string name="kLangKeyZhSimple">简体中文 / 簡体字中国語</string>
     <string name="kLangKeyEn">English / 英語</string>

@@ -348,7 +348,7 @@ class OtcManager {
                     if (name == null || name.isEmpty()) {
                         name = R.string.kOtcAdPmNameBankCard.xmlstring(ctx)
                     }
-                    //  TODO:2.9
+                    //  TODO:2.9 未完成
 //                    NSString* card_no = [account stringByReplacingOccurrencesOfString:@" " withString:@""];
 //                    short_account = [card_no substringFromIndex:MAX((NSInteger)card_no.length - 4, 0)];
                 }
@@ -765,8 +765,7 @@ class OtcManager {
         assert(walletMgr.isWalletExist())
 
         if (WalletManager.isMultiSignPermission(walletMgr.getWalletAccountInfo()!!.getJSONObject("account").getJSONObject("active"))) {
-            //  TODO:2.9 lang
-            ctx.showToast("多签账号不支持场外交易")
+            ctx.showToast(R.string.kOtcMgrNotSupportMultiSignAccount.xmlstring(ctx))
             return
         }
 
@@ -783,15 +782,13 @@ class OtcManager {
             //  获取数字货币信息
             _asset_list_digital = asset_data?.optJSONArray("data")
             if (_asset_list_digital == null || _asset_list_digital!!.length() <= 0) {
-                //  TODO:2.9 lang
-                ctx.showToast("场外交易暂不支持任何数字资产，请稍后再试。")
+                ctx.showToast(R.string.kOtcMgrNoOpenAnyDigiAssets.xmlstring(ctx))
                 return@then null
             }
 
             //  是否支持判断
             if (!isSupportDigital(asset_name)) {
-                //  TODO:2.9 lang
-                ctx.showToast("场外交易暂时不支持 $asset_name 资产，请稍后再试。")
+                ctx.showToast(String.format(R.string.kOtcMgrNotSupportAsset.xmlstring(ctx), asset_name))
                 return@then null
             }
 

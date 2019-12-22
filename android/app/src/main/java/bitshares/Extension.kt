@@ -76,6 +76,21 @@ fun jsonObjectfromKVS(vararg args: Any): JSONObject {
 }
 
 /**
+ * 深拷贝和浅拷贝
+ */
+fun JSONObject.deepClone(): JSONObject {
+    return JSONObject(this.toString())
+}
+
+fun JSONObject.shadowClone(): JSONObject {
+    val news = JSONObject()
+    for (k in keys()) {
+        news.put(k, this.get(k))
+    }
+    return news
+}
+
+/**
  * 返回所有值
  */
 fun JSONObject.values(): JSONArray {

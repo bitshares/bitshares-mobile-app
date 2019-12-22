@@ -88,14 +88,14 @@
                                 android:textColor="@color/theme01.textColorMain"
                                 android:textSize="11dp"
                                 android:layout_marginRight="4dp"
-                                android:text="从"
+                                android:text="@string/kOtcMcAssetTransferFromTitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content" />
                             <TextView
                                 android:id="@+id/tv_from_title"
                                 android:textColor="@color/theme01.textColorGray"
                                 android:textSize="11dp"
-                                android:text="(个人账号)"
+                                android:text="from value"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content" />
                         </LinearLayout>
@@ -148,14 +148,14 @@
                                 android:textColor="@color/theme01.textColorMain"
                                 android:textSize="11dp"
                                 android:layout_marginRight="4dp"
-                                android:text="到"
+                                android:text="@string/kOtcMcAssetTransferToTitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content" />
                             <TextView
                                 android:id="@+id/tv_to_title"
                                 android:textColor="@color/theme01.textColorGray"
                                 android:textSize="11dp"
-                                android:text="(商家账号)"
+                                android:text="to value"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content" />
                         </LinearLayout>
@@ -178,7 +178,7 @@
                     android:textSize="11dp"
                     android:textColor="@color/theme01.textColorMain"
                     android:layout_marginTop="20dp"
-                    android:text="资产"
+                    android:text="@string/kOtcMcAssetTransferCellLabelAsset"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -231,7 +231,7 @@
                         android:gravity="center_vertical"
                         android:textSize="11dp"
                         android:textColor="@color/theme01.textColorMain"
-                        android:text="数量"/>
+                        android:text="@string/kOtcMcAssetTransferCellLabelAmount"/>
 
                     <TextView
                         android:id="@+id/tv_curr_balance"
@@ -267,7 +267,7 @@
                         android:textColor="@color/theme01.textColorMain"
                         android:background="@null"
                         android:textColorHint="@color/theme01.textColorGray"
-                        android:hint="@string/kVcTransferSubmitTipPleaseInputAmount"/>
+                        android:hint="@string/kOtcMcAssetTransferTfAmountPlaeholder"/>
 
                     <LinearLayout
                         android:layout_gravity="center_vertical"
@@ -307,17 +307,15 @@
                 </LinearLayout>
                 <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-                <!-- 提交按钮 -->
-                <TextView
+                <!-- 提交 -->
+                <Button
                     android:id="@+id/btn_submit"
-                    android:gravity="center"
                     android:layout_marginTop="30dp"
-                    android:textSize="14dp"
-                    android:textColor="@color/theme01.textColorMain"
-                    android:background="@color/theme01.sellColor"
-                    android:text="@string/kOtcMcAssetSubmitBtnName"
                     android:layout_width="match_parent"
-                    android:layout_height="30dp" />
+                    style="@style/kMainButtonStyle"
+                    android:gravity="center|center_vertical"
+                    android:textAllCaps="false"
+                    android:text="@string/kOtcMcAssetSubmitBtnName" />
 
                 <!-- 提示信息 -->
                 <TextView

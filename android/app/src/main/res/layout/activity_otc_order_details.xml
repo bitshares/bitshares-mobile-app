@@ -118,7 +118,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:textSize="12dp"
-                                android:text="联系对方"
+                                android:text="@string/kOtcOdCellContactOthers"
                                 android:textColor="@color/theme01.textColorMain"
                                 android:gravity="right|center_vertical" />
                         </LinearLayout>
@@ -142,13 +142,12 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
-                            <!-- TODO:2.9 lang -->
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textSize="12dp"
                                 android:textColor="@color/theme01.textColorNormal"
-                                android:text="单价"/>
+                                android:text="@string/kOtcOdCellUnitPrice"/>
 
                             <TextView
                                 android:id="@+id/tv_unit_price"
@@ -171,7 +170,7 @@
                                     android:layout_height="wrap_content"
                                     android:textSize="12dp"
                                     android:textColor="@color/theme01.textColorNormal"
-                                    android:text="数量"/>
+                                    android:text="@string/kOtcOdCellAmount"/>
 
                                 <TextView
                                     android:id="@+id/tv_order_amount"

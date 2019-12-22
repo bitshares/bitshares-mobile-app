@@ -4,20 +4,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center"
     android:layout_width="72dp"
-    android:paddingLeft="26dp"
+    android:paddingLeft="20dp"
     android:layout_marginTop="6dp"
     android:layout_marginBottom="6dp"
     android:layout_height="wrap_content">
 
     <com.btsplusplus.fowallet.indictorView.AVLoadingIndicatorView
-        android:layout_height="wrap_content"
+        android:layout_height="32dp"
         style="@style/AVLoadingIndicatorView.Small"
         android:visibility="visible"
         app:indicatorName="BallSpinFadeLoaderIndicator"
         app:indicatorColor="@color/theme01.textColorMain"
         android:id="@+id/avi"
         android:foregroundGravity="center"
-        android:layout_width="24dp" />
+        android:layout_width="32dp" />
     />
 
 </android.support.constraint.ConstraintLayout>

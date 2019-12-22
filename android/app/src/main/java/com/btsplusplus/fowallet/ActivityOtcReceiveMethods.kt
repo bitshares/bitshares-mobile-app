@@ -13,6 +13,7 @@ class ActivityOtcReceiveMethods : BtsppActivity() {
 
     private lateinit var _auth_info: JSONObject
     private var _user_type = OtcManager.EOtcUserType.eout_normal_user
+    private var _data_array: JSONArray? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +39,8 @@ class ActivityOtcReceiveMethods : BtsppActivity() {
     }
 
     private fun onQueryPaymentMethodsResponsed(responsed: JSONObject?) {
-        refreshUI(responsed?.optJSONArray("data"))
+        _data_array = responsed?.optJSONArray("data")
+        refreshUI(_data_array)
     }
 
     private fun queryPaymentMethods() {
@@ -78,8 +80,8 @@ class ActivityOtcReceiveMethods : BtsppActivity() {
         } else {
             resources.getString(R.string.kOtcPmActionBtnEnable)
         }
-        //  操作选项
-        ViewSelector.show(this, "", arrayOf(enable_or_disable, resources.getString(R.string.kOtcPmActionBtnDelete))) { index: Int, _: String ->
+        //  操作选项 TODO:2.9 lang only for android title
+        ViewSelector.show(this, "请选择要执行的操作", arrayOf(enable_or_disable, resources.getString(R.string.kOtcPmActionBtnDelete))) { index: Int, _: String ->
             if (index == 0) {
                 //  启用 or 禁用
                 guardWalletUnlocked(true) { unlocked ->
@@ -107,7 +109,7 @@ class ActivityOtcReceiveMethods : BtsppActivity() {
             mask.dismiss()
             //  刷新data & UI
             pm_item.put("status", new_status.value)
-            //  TODO:refresh 2.9 刷新
+            refreshUI(_data_array)
             //  提示信息
             if (_user_type == OtcManager.EOtcUserType.eout_normal_user) {
                 if (new_status == OtcManager.EOtcPaymentMethodStatus.eopms_enable) {

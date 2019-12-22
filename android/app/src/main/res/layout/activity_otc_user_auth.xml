@@ -175,17 +175,16 @@
             <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
             <!-- 提交按钮 -->
-            <TextView
+            <!-- 提交 -->
+            <Button
                 android:id="@+id/btn_submit"
-                android:gravity="center"
-                android:background="@color/theme01.sellColor"
-                android:layout_marginTop="10dp"
-                android:text="@string/kOtcRmAddSubmitBtnName"
-                android:textColor="@color/theme01.textColorMain"
-                android:textSize="14dp"
+                android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
-                android:layout_height="40dp" />
-
+                style="@style/kMainButtonStyle"
+                android:gravity="center|center_vertical"
+                android:textAllCaps="false"
+                android:text="@string/kOtcRmAddSubmitBtnName" />
+                
             <!-- 提示信息 -->
             <TextView
                 android:id="@+id/tv_tips_from_otc_user_auth"

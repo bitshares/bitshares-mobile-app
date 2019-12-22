@@ -481,14 +481,7 @@ class ActivityPermissionEdit : BtsppActivity() {
      */
     private fun _onPassThresholdClicked() {
         UtilsAlert.showInputBox(this, resources.getString(R.string.kVcPermissionEditNewPassThresholdTitle),
-                resources.getString(R.string.kVcPermissionEditNewPassThresholdPlaceholder), resources.getString(R.string.kBtnOK), is_password = false, tfcfg = { tf ->
-            tf.inputType = InputType.TYPE_CLASS_NUMBER
-            tf.maxLines = 1
-            tf.setSingleLine(true)
-            tf.filters = arrayOf(InputFilter.LengthFilter(7))
-            //  最大值：9999999
-            tf.keyListener = DigitsKeyListener.getInstance("1234567890")
-        }).then {
+                resources.getString(R.string.kVcPermissionEditNewPassThresholdPlaceholder), resources.getString(R.string.kBtnOK), is_password = false, iDecimalPrecision = 0, iMaxLength = 7).then {
             val threshold_value = it as? String
             if (threshold_value != null) {
                 val i_threshold = threshold_value.toInt()

@@ -44,7 +44,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="商家资产"
+                android:text="@string/kVcTitleOtcMcAsset"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
