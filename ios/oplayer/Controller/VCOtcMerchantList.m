@@ -274,13 +274,17 @@
 
 - (void)onQueryAdListResponsed:(id)responsed
 {
-    //  TODO:2.9 这里显示异常？
-    assert([[responsed objectForKey:@"code"] integerValue] == 0);
-    
     id list = [[responsed objectForKey:@"data"] objectForKey:@"records"];
     [_data_array removeAllObjects];
     if (list && [list isKindOfClass:[NSArray class]]) {
+        id n_zero = [NSDecimalNumber zero];
         for (id item in list) {
+            //  用户端：过滤掉0库存的广告
+            id n_stock = [OrgUtils auxGetStringDecimalNumberValue:[NSString stringWithFormat:@"%@", [item objectForKey:@"stock"]]];
+            if ([n_stock compare:n_zero] <= 0) {
+                continue;
+            }
+            //  TODO:2.9 xxx [item objectForKey:@"stock"]
             BOOL bankcardPaySwitch = [[item objectForKey:@"bankcardPaySwitch"] boolValue];
             BOOL aliPaySwitch = [[item objectForKey:@"aliPaySwitch"] boolValue];
             BOOL wechatPaySwitch = NO; //  TODO:3.0 默认false，ad数据里没微信。
