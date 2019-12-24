@@ -193,20 +193,13 @@
 
             <EditText
                 android:id="@+id/tf_amount"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:digits=".1234567890"
-                android:inputType="phone|number"
                 android:maxLength="24"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:textColor="@color/theme01.textColorMain"
-                android:background="@null"
-                android:textColorHint="@color/theme01.textColorGray"
+                style="@style/kTextFieldDecimalPad"
                 android:hint="@string/kVcTransferSubmitTipPleaseInputAmount"/>
 
             <TextView
@@ -241,17 +234,12 @@
 
             <EditText
                 android:id="@+id/tf_memo"
-                android:singleLine="true"
-                android:maxLines="1"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:textColor="@color/theme01.textColorMain"
-                android:background="@null"
-                android:textColorHint="@color/theme01.textColorGray"
+                style="@style/kTextFieldNormal"
                 android:hint="@string/kVcTransferTipInputMemo"/>
 
 

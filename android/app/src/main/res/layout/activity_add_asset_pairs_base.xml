@@ -74,19 +74,13 @@
 
             <EditText
                 android:id="@+id/edit_search_trade_obj"
-                android:singleLine="true"
-                android:maxLines="1"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical|right"
                 android:gravity="center_vertical|left"
                 android:layout_weight="6"
-                android:textColor="#ffffff"
-                android:textColorHint="@color/theme01.textColorGray"
-                android:hint="@string/kSearchPlaceholderAsset"
-                android:theme="@style/theme01.EditText"
-                android:background="@null"
-                android:textSize="16dp"/>
+                style="@style/kTextFieldNormal"
+                android:hint="@string/kSearchPlaceholderAsset"/>
 
 
         </LinearLayout>

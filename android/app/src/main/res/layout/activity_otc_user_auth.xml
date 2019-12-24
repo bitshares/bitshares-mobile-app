@@ -69,17 +69,11 @@
 
             <EditText
                 android:id="@+id/tf_realname"
-                android:singleLine="true"
-                android:maxLines="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:textColor="#ffffff"
-                android:textColorHint="@color/theme01.textColorGray"
-                android:hint="@string/kOtcRmAddPlaceholderRealname"
-                android:theme="@style/theme01.EditText"
-                android:background="@null"
-                android:textSize="16dp"/>
+                style="@style/kTextFieldNormal"
+                android:hint="@string/kOtcRmAddPlaceholderRealname"/>
 
             <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
@@ -94,20 +88,13 @@
 
             <EditText
                 android:id="@+id/tf_idcard_no"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:digits="1234567890"
-                android:inputType="phone|number"
+                android:digits="1234567890X"
                 android:maxLength="18"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:textColor="#ffffff"
-                android:textColorHint="@color/theme01.textColorGray"
-                android:hint="@string/kOtcAuthInfoPlaceholderIdNo"
-                android:theme="@style/theme01.EditText"
-                android:background="@null"
-                android:textSize="16dp"/>
+                style="@style/kTextFieldNormal"
+                android:hint="@string/kOtcAuthInfoPlaceholderIdNo"/>
 
             <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
@@ -121,23 +108,16 @@
                 android:textColor="@color/theme01.textColorMain"/>
             <EditText
                 android:id="@+id/tf_phone"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:digits="1234567890"
-                android:inputType="phone|number"
                 android:maxLength="11"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:textColor="#ffffff"
-                android:textColorHint="@color/theme01.textColorGray"
-                android:hint="@string/kOtcAuthInfoPlaceholderPhoneNo"
-                android:theme="@style/theme01.EditText"
-                android:background="@null"
-                android:textSize="16dp"/>
+                style="@style/kTextFieldPhonePad"
+                android:hint="@string/kOtcAuthInfoPlaceholderPhoneNo"/>
 
             <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
+            <!-- 验证码 -->
             <LinearLayout
                 android:layout_marginTop="10dp"
                 android:orientation="horizontal"
@@ -145,20 +125,13 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:id="@+id/tf_smscode"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-
-                    android:id="@+id/tf_smscode"
-                    android:singleLine="true"
-                    android:maxLines="1"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:textColor="#ffffff"
-                    android:textColorHint="@color/theme01.textColorGray"
-                    android:hint="@string/kOtcAuthInfoPlaceholderSmscode"
-                    android:theme="@style/theme01.EditText"
-                    android:background="@null"
-                    android:textSize="16dp"/>
+                    style="@style/kTextFieldNumberPad"
+                    android:hint="@string/kOtcAuthInfoPlaceholderSmscode"/>
 
                 <TextView
                     android:id="@+id/btn_getsmscode"

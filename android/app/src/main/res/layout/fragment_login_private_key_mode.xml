@@ -26,18 +26,14 @@
                 android:textSize="16dp"
                 android:textColor="@color/theme01.textColorMain"/>
 
+            <!-- 私钥 -->
             <EditText
                 android:id="@+id/tf_active_privatekey"
-                android:singleLine="true"
-                android:maxLines="1"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:hint="@string/kLoginTipsPlaceholderActiveKey"
-                android:textColor="@color/theme01.textColorMain"
-                android:textSize="16dp"
-                android:background="@null"
-                android:textColorHint="@color/theme01.textColorGray"/>
+                style="@style/kTextFieldNormal"
+                android:hint="@string/kLoginTipsPlaceholderActiveKey"/>
 
             <LinearLayout
                 android:gravity="right|center_vertical"
@@ -71,17 +67,11 @@
 
             <EditText
                 android:id="@+id/tf_trade_password"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:inputType="textPassword"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:hint="@string/kLoginTipsPlaceholderTradePassword"
-                android:textColor="@color/theme01.textColorMain"
-                android:textSize="16dp"
-                android:background="@null"
-                android:textColorHint="@color/theme01.textColorGray"/>
+                style="@style/kTextFieldPassword"
+                android:hint="@string/kLoginTipsPlaceholderTradePassword"/>
 
             <LinearLayout
                 android:gravity="right|center_vertical"

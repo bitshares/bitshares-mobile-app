@@ -28,16 +28,11 @@
 
             <EditText
                 android:id="@+id/tf_account_name"
-                android:singleLine="true"
-                android:maxLines="1"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:hint="@string/kLoginTipsPlaceholderAccount"
-                android:textColor="@color/theme01.textColorMain"
-                android:textSize="16dp"
-                android:background="@null"
-                android:textColorHint="@color/theme01.textColorGray"/>
+                style="@style/kTextFieldNormal"
+                android:hint="@string/kLoginTipsPlaceholderAccount"/>
 
             <LinearLayout
                 android:gravity="right|center_vertical"
@@ -70,17 +65,11 @@
 
             <EditText
                 android:id="@+id/tf_password"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:inputType="textPassword"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:hint="@string/tip_placeholder_password"
-                android:textColor="@color/theme01.textColorMain"
-                android:textSize="16dp"
-                android:background="@null"
-                android:textColorHint="@color/theme01.textColorGray"/>
+                style="@style/kTextFieldPassword"
+                android:hint="@string/tip_placeholder_password"/>
 
             <LinearLayout
                 android:gravity="right|center_vertical"
@@ -114,17 +103,11 @@
 
             <EditText
                 android:id="@+id/tf_confirm_password"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:inputType="textPassword"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:hint="@string/kLoginTipsPlaceholderConfirmPassword"
-                android:textColor="@color/theme01.textColorMain"
-                android:textSize="16dp"
-                android:background="@null"
-                android:textColorHint="@color/theme01.textColorGray"/>
+                style="@style/kTextFieldPassword"
+                android:hint="@string/kLoginTipsPlaceholderConfirmPassword"/>
 
         </LinearLayout>
 
@@ -143,17 +126,11 @@
 
             <EditText
                 android:id="@+id/tf_refcode"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:inputType="textPassword"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:hint="@string/kLoginTipsPlaceholderInputRefCode"
-                android:textColor="@color/theme01.textColorMain"
-                android:textSize="16dp"
-                android:background="@null"
-                android:textColorHint="@color/theme01.textColorGray"/>
+                style="@style/kTextFieldNormal"
+                android:hint="@string/kLoginTipsPlaceholderInputRefCode"/>
 
             <LinearLayout
                 android:gravity="right|center_vertical"

@@ -159,19 +159,12 @@
 
             <EditText
                 android:id="@+id/et_amount_from_create_htlc_contract"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:digits=".1234567890"
-                android:inputType="phone|number"
                 android:maxLength="24"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="7"
                 android:gravity="center_vertical"
-                android:textSize="16dp"
-                android:textColor="@color/theme01.textColorMain"
-                android:background="@null"
-                android:textColorHint="@color/theme01.textColorGray"
+                style="@style/kTextFieldDecimalPad"
                 android:hint="@string/kVcTransferSubmitTipPleaseInputAmount"/>
 
             <TextView
@@ -239,17 +232,12 @@
                     android:text="@string/kVcHtlcCellTitlePreimage"/>
                 <EditText
                     android:id="@+id/tv_preimage"
-                    android:singleLine="true"
-                    android:maxLines="1"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="30dp"
                     android:layout_weight="5"
                     android:gravity="center_vertical"
-                    android:textSize="16dp"
-                    android:textColor="@color/theme01.textColorMain"
-                    android:background="@null"
-                    android:textColorHint="@color/theme01.textColorGray"
+                    style="@style/kTextFieldNormal"
                     android:hint="@string/kVcHtlcPlaceholderInputPreimage"/>
                 <TextView
                     android:id="@+id/tv_copy_preimage"
@@ -277,17 +265,12 @@
                     android:text="@string/kVcHtlcCellTitlePreimageHash"/>
                 <EditText
                     android:id="@+id/tv_hashcode"
-                    android:singleLine="true"
-                    android:maxLines="1"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="30dp"
                     android:layout_weight="5"
                     android:gravity="center_vertical"
-                    android:textSize="16dp"
-                    android:textColor="@color/theme01.textColorMain"
-                    android:background="@null"
-                    android:textColorHint="@color/theme01.textColorGray"
+                    style="@style/kTextFieldNormal"
                     android:hint="@string/kVcHtlcPlaceholderInputPreimageHash"/>
                 <TextView
                     android:id="@+id/tv_paste_preimage_value"

@@ -72,20 +72,13 @@
 
                     <EditText
                         android:id="@+id/tf_price"
-                        android:singleLine="true"
-                        android:maxLines="1"
-                        android:digits=".1234567890"
-                        android:inputType="phone|number"
                         android:maxLength="24"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textSize="16dp"
                         android:ems="10"
-                        android:background="@null"
-                        android:hint="@string/kPlaceHolderBuyPrice"
-                        android:textColorHint="@color/theme01.textColorGray"
-                        android:textColor="@color/theme01.textColorMain" />
+                        style="@style/kTextFieldDecimalPad"
+                        android:hint="@string/kPlaceHolderBuyPrice"/>
 
                     <TextView
                         android:id="@+id/label_txt_tf_price_tailer"
@@ -132,20 +125,13 @@
 
                     <EditText
                         android:id="@+id/tf_amount"
-                        android:singleLine="true"
-                        android:maxLines="1"
-                        android:digits=".1234567890"
-                        android:inputType="phone|number"
                         android:maxLength="24"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
-                        android:background="@null"
-                        android:hint="@string/kPlaceHolderBuyAmount"
-                        android:textSize="16dp"
-                        android:textColorHint="@color/theme01.textColorGray"
-                        android:textColor="@color/theme01.textColorMain" />
+                        style="@style/kTextFieldDecimalPad"
+                        android:hint="@string/kPlaceHolderBuyAmount"/>
 
                     <TextView
                         android:id="@+id/label_txt_tf_amount_tailer"
@@ -200,20 +186,13 @@
 
                     <EditText
                         android:id="@+id/tf_total"
-                        android:singleLine="true"
-                        android:maxLines="1"
-                        android:digits=".1234567890"
-                        android:inputType="phone|number"
                         android:maxLength="24"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
-                        android:background="@null"
-                        android:hint="@string/kLableTotalPrice"
-                        android:textSize="16dp"
-                        android:textColorHint="@color/theme01.textColorGray"
-                        android:textColor="@color/theme01.textColorMain" />
+                        style="@style/kTextFieldDecimalPad"
+                        android:hint="@string/kLableTotalPrice"/>
 
                     <TextView
                         android:id="@+id/label_txt_tf_total_tailer"

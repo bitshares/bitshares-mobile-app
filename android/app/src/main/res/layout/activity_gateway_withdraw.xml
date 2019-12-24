@@ -81,16 +81,10 @@
 
                 <EditText
                     android:id="@+id/tf_withdraw_address"
-                    android:singleLine="true"
-                    android:maxLines="1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/theme01.textColorMain"
-                    android:textColorHint="@color/theme01.textColorGray"
-                    android:cursorVisible="true"
-                    android:textCursorDrawable="@null"
+                    style="@style/kTextFieldNormal"
                     android:hint="@string/kVcDWCellWithdrawPlaceholderAddress"
-                    android:theme="@style/theme01.EditText"
                     android:paddingLeft="0dp"
                     android:textSize="17dp" />
 
@@ -134,23 +128,14 @@
 
                     <EditText
                         android:id="@+id/tf_withdraw_amount"
-                        android:singleLine="true"
-                        android:maxLines="1"
-                        android:digits=".1234567890"
-                        android:inputType="phone|number"
                         android:maxLength="24"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="5"
                         android:gravity="center_vertical"
-                        android:textSize="17dp"
-                        android:textColor="@color/theme01.textColorMain"
-                        android:background="@null"
-                        android:textCursorDrawable="@null"
-                        android:textColorHint="@color/theme01.textColorGray"
                         android:paddingLeft="0dp"
-                        android:cursorVisible="true"
-                        android:theme="@style/theme01.EditText"
+                        style="@style/kTextFieldDecimalPad"
+                        android:textSize="17dp"
                         android:hint="@string/kVcDWCellWithdrawPlaceholderAmount"/>
 
                     <TextView
