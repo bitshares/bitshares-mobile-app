@@ -829,7 +829,7 @@ static OtcManager *_sharedOtcManager = nil;
  */
 - (BOOL)isOtcUserNotLoginError:(id)error
 {
-    return [self isOtcError:error errcode:eoerr_not_login] || [self isOtcError:error errcode:eoerr_token_is_empty];
+    return [self isOtcError:error errcode:eoerr_user_account_not_login];
 }
 
 /*
@@ -851,19 +851,80 @@ static OtcManager *_sharedOtcManager = nil;
             if (otcerror) {
                 //  异常中包含 otcerror 的情况
                 NSInteger errcode = [[otcerror objectForKey:@"code"] integerValue];
-                if ((errcode == eoerr_not_login || errcode == eoerr_token_is_empty) && not_login_callback) {
+                if (errcode == eoerr_user_account_not_login && not_login_callback) {
                     not_login_callback();
                     return;
                 } else {
-                    //  TODO:2.9 error code table 部分消息特化处理。
+                    //  REMARK：部分消息特化处理，如有需要可继续添加。
                     switch (errcode) {
                         case eoerr_too_often:
                             errmsg = NSLocalizedString(@"kOtcMgrErrTooOften", @"请求太频繁，请稍后再试。");
                             break;
-                        case eoerr_not_login:
-                        case eoerr_token_is_empty:
+                        case eoerr_user_frozen:
+                            errmsg = NSLocalizedString(@"kOtcMgrErrUserFrozen", @"账号已被冻结。");
+                            break;
+                        case eoerr_user_idcard_verify_failed:
+                            errmsg = NSLocalizedString(@"kOtcMgrErrUserIdCardVerifyFailed", @"身份认证失败。");
+                            break;
+                        case eoerr_user_idcard_bind_other_account:
+                            errmsg = NSLocalizedString(@"kOtcMgrErrUserIdCardBindOtherBtsAccount", @"您的身份信息已经绑定其他BTS账号。");
+                            break;
+                        case eoerr_user_account_not_login:
                             errmsg = NSLocalizedString(@"kOtcMgrErrNotLoginOrTokenIsEmpty", @"请退出场外交易界面重新登录。");
                             break;
+                            
+                        case eoerr_ad_existed_ad:
+                            errmsg = NSLocalizedString(@"kOtcMgrErrAdExistSameTypeAd", @"已经存在相同类型的广告。");
+                            break;
+                        case eoerr_ad_price_lock_expired:
+                            errmsg = NSLocalizedString(@"kOtcMgrErrAdLockPriceExpired", @"价格已变化，请重新下单。");
+                            break;
+                        case eoerr_ad_exist_ing_order:
+                            errmsg = NSLocalizedString(@"kOtcMgrErrAdExistPendingOrder", @"该广告存在未完成的订单。");
+                            break;
+                        case eoerr_ad_less_than_lowest_num:
+                            errmsg = NSLocalizedString(@"kOtcMgrErrAdLessthanMinLimit", @"订单金额不能低于最小限额。");
+                            break;
+                        case eoerr_ad_more_than_useable_num:
+                            errmsg = NSLocalizedString(@"kOtcMgrErrAdMorethanUseableNum", @"不能超过可用余额。");
+                            break;
+                        case eoerr_ad_more_than_highest_num:
+                            errmsg = NSLocalizedString(@"kOtcMgrErrAdMorethanMaxLimit", @"订单金额不能高于最大限额。");
+                            break;
+                            
+                        case eoerr_order_cancel_to_go_online:
+                            errmsg = NSLocalizedString(@"kOtcMgrErrOrderCancelTooMuch", @"今日取消订单数量过多。");
+                            break;
+                        case eoerr_order_more_than_useable_num:
+                            errmsg = NSLocalizedString(@"kOtcMgrErrOrderMorethanUseableNum", @"超过最大可交易数量。");
+                            break;
+                        case eoerr_merchant_free:
+                            errmsg = NSLocalizedString(@"kOtcMgrErrMerchantBtsFeeNotEnough", @"商家账号手续费不足，请转入对应BTS手续费后继续操作。");
+                            break;
+                        case eoerr_order_in_progress_online:
+                            errmsg = NSLocalizedString(@"kOtcMgrErrOrderExistTooMuchPendingOrder", @"未完成订单数达到上限。");
+                            break;
+                        case eoerr_amount_to_large:
+                            errmsg = NSLocalizedString(@"kOtcMgrErrOrderTotalTooLarge", @"订单金额太大。");
+                            break;
+                        case eoerr_amount_to_small:
+                            errmsg = NSLocalizedString(@"kOtcMgrErrOrderTotalTooSmall", @"订单金额太小。");
+                            break;
+                            
+                        case eoerr_sms_upper_limit:
+                            errmsg = NSLocalizedString(@"kOtcMgrErrSmsSendLimit", @"验证发送太多，请稍后再试。");
+                            break;
+                        case eoerr_sms_code_wrong:
+                            errmsg = NSLocalizedString(@"kOtcMgrErrSmsCodeWrong", @"验证码不正确或已过期。");
+                            break;
+                        case eoerr_sms_code_exist:
+                            errmsg = NSLocalizedString(@"kOtcMgrErrSmsCodeExist", @"请不要重复发送验证码。");
+                            break;
+                            
+                        case eoerr_bankcard_verify:
+                            errmsg = NSLocalizedString(@"kOtcMgrErrBankcardVerifyFailed", @"银行卡号校验失败。");
+                            break;
+                            
                         default:
                         {
                             //  默认错误消息处理
@@ -1291,7 +1352,8 @@ static OtcManager *_sharedOtcManager = nil;
         } else {
             assert(auth_flag == eoaf_token);
             auth_key = @"token";
-            auth_value = [self _loadUserTokenCookie:[self getCurrentBtsAccount]];
+            //  REMARK：需要token的时候如果本地不存在，则传递一个无效token。否则服务器会报1002，缺少参数错误。
+            auth_value = [self _loadUserTokenCookie:[self getCurrentBtsAccount]] ?: @"invalidtoken";
         }
         //  合并请求header
         id new_headers = headers ? [headers mutableCopy] : [NSMutableDictionary dictionary];

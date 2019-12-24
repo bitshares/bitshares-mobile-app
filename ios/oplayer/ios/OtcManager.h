@@ -20,19 +20,105 @@ typedef enum EOtcAuthFlag
 } EOtcAuthFlag;
 
 /*
- *  错误码
+ *  错误码 带 ※ 号的客户端需要反馈给用户。
  */
 typedef enum EOtcErrorCode
 {
-    eoerr_ok = 0,                           //  正常
-    eoerr_too_often = 1012,                 //  请求太频繁
-    eoerr_token_is_empty = 1002,            //  TOEKN不能为空
-    eoerr_user_not_exist = 2001,            //  用户不存在
-    eoerr_not_login = 2011,                 //  未登录
-    eoerr_merchant_not_exist = 3002,        //  商家不存在
+    eoerr_ok = 0,                                   //  正常
+    eoerr_system = 1,                               //  系统错误
+    eoerr_internal = 1001,                          //  内部错误
+    eoerr_miss_param = 1002,                        //  参数错误
+    eoerr_miss_db = 1003,                           //  数据库错误
+    eoerr_rpc_error = 1004,                         //  RPC错误
+    eoerr_id_alloc = 1005,                          //  ID分配错误
+    eoerr_system_close = 1006,                      //  系统关闭
+    eoerr_system_config_missing = 1007,             //  缺少配置信息
+    eoerr_miss_io = 1008,                           //  IO错误
+    eoerr_req_limit = 1009,                         //  请求错误限制
+    eoerr_address_query = 1010,                     //  查询地址错误
+    eoerr_sign_blank = 1011,                        //  签名为空
+    eoerr_too_often = 1012,                         //  ※ 请求太频繁
+    eoerr_sign_error = 1013,                        //  签名错误
+    eoerr_request_expired = 1014,                   //  请求已经过期
     
-    eoerr_order_cancel_to_go_online = 5001, //  取消订单数量太多？TODO:2.9
-    //  TODO:2.9 其他待添加
+    //  用户部分
+    eoerr_user_not_exist = 2001,                    //  用户不存在
+    eoerr_user_frozen = 2002,                       //  ※ 账号已被冻结
+    eoerr_user_idcard_not_verify = 2003,            //  身份未验证
+    eoerr_user_idcard_verifyed = 2004,              //  身份已验证，不用重复验证。
+    eoerr_user_idcard_verify_failed = 2005,         //  ※ 身份认证失败。
+    eoerr_user_idcard_bind_other_account = 2006,    //  ※ 身份已绑定其他BTS账户
+    eoerr_user_change_same_phone = 2007,            //  用户替换相同的手机号码
+    eoerr_user_sms_type_failed = 2008,              //  无法获取短信模版
+    eoerr_user_account_not_exist = 2009,            //  BTS账号不存在
+    eoerr_user_account_not_empty = 2010,            //  BTS账号不为空
+    eoerr_user_account_not_login = 2011,            //  ※ BTS账号未登录
+    
+    //  商家部分
+    eoerr_merchant_not_actived = 3001,              //  商家未激活
+    eoerr_merchant_not_exist = 3002,                //  商家不存在
+    eoerr_bts_account_isnt_merchant = 3003,         //  BTS账号暂不是商家
+    eoerr_bak_account_is_merchant = 3004,           //  备用BTS账号已经是商家了
+    eoerr_nickname_already_exist = 3005,            //  商家昵称被占用
+    eoerr_insufficient_conditions = 3006,           //  不符合申请条件
+    eoerr_unapplied_merchant = 3007,                //  未申请的商家
+    eoerr_insufficient_margin = 3008,               //  保证金不足
+    
+    //  广告部分
+    eoerr_ad_existed_ad = 4001,                     //  ※ 已存在相同的广告
+    eoerr_ad_info = 4002,                           //  广告信息错误
+    eoerr_ad_price_changed = 4003,                  //  广告价格变化了
+    eoerr_ad_price_lock_expired = 4004,             //  ※ 广告价格锁定已过期
+    eoerr_ad_price_not_match = 4005,                //  价格不匹配
+    eoerr_ad_exist_ing_order = 4006,                //  ※ 广告存在进行中的订单
+    eoerr_ad_less_than_lowest_num = 4007,           //  ※ 参数错误：小于最低限额
+    eoerr_ad_more_than_useable_num = 4008,          //  ※ 参数错误：商家库存（余额）不足
+    eoerr_ad_status_not_valid = 4009,               //  无效广告（广告已下架等
+    eoerr_ad_price_not_equal_zero = 4010,           //  广告价格非零
+    eoerr_ad_more_than_highest_num = 4011,          //  ※ 参数错误：超过最大限额
+    
+    //  订单相关
+    eoerr_order_cancel_to_go_online = 5001,         //  ※ 取消订单数量达到上限
+    eoerr_order_business_type_error = 5002,         //  业务类型错误
+    eoerr_order_more_than_useable_num = 5003,       //  ※ 超过广告可交易数量
+    eoerr_merchant_free = 5004,                     //  ※ BTS手续费余额不足，最低50。
+    eoerr_order_in_progress_online = 5005,          //  ※ 进行中的订单达到上限
+    eoerr_asset_not_exist = 5006,                   //  资产不存在
+    eoerr_amount_to_large = 5007,                   //  ※ 订单金额太大
+    eoerr_amount_to_small = 5008,                   //  ※ 订单金额太小
+    eoerr_error_order = 5009,                       //  订单不存在or状态错误
+    eoerr_order_payment_methods = 5010,             //  商家广告缺少付款方式
+    eoerr_order_no_payment = 5011,                  //  未添加付款方式
+    eoerr_order_not_exist = 5012,                   //  订单不存在
+    
+    //  短信相关
+    eoerr_sms_upper_limit = 6001,                   //  ※ 短信验证码条数超过限制
+    eoerr_sms_code_wrong = 6002,                    //  ※ 验证码不正确或已过期
+    eoerr_sms_code_exist = 6003,                    //  ※ 请不要重复发送短信验证码
+    eoerr_sms_template_not_find_key = 6004,         //  解析SMS模版错误-找不到需要替换到密钥
+    
+    //  文件相关
+    eoerr_file_blank = 7001,                        //  文件为空
+    eoerr_file_not_upload = 7002,                   //  文件未上传
+    eoerr_file_format = 7003,                       //  文件格式错误
+    eoerr_file_too_large = 7004,                    //  文件过大
+    eoerr_file_type = 7005,                         //  文件类型错误
+    eoerr_file_upload_too_often = 7006,             //  文件上传太频繁
+    
+    //  付款方式相关
+    eoerr_pay_method = 8001,                        //  付款方式不正确
+    eoerr_bankcard_blank = 8002,                    //  银行卡号不能为空
+    eoerr_bankcard_reserved_phone = 8003,           //  预留手机号不能为空
+    eoerr_bankcard_type_blank = 8004,               //  需要银行卡类型
+    eoerr_bankcard_type = 8005,                     //  银行卡类型不正确
+    eoerr_pay_account_blank = 8006,                 //  付款账号为空
+    eoerr_bankcard_verify = 8007,                   //  ※ 银行卡四元素验证失败
+    eoerr_receive_method_exist = 8009,              //  付款方式已经存在
+    eoerr_no_payment_account = 8010,                //  请添加一个付款账号
+    
+    //  juhe
+    eoerr_api_call = 9001,                          //  调用API异常
+    
 } EOtcErrorCode;
 
 /*
