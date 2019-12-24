@@ -70,22 +70,15 @@
 
             <EditText
                 android:id="@+id/tf_authority_name"
-                android:singleLine="true"
-                android:maxLines="1"
                 android:maxLength="64"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical|right"
                 android:gravity="center_vertical|left"
                 android:layout_weight="6"
-                android:textColor="@color/theme01.textColorMain"
-                android:textColorHint="@color/theme01.textColorGray"
-                android:cursorVisible="true"
-                android:textCursorDrawable="@null"
                 android:paddingLeft="0dp"
-                android:hint="@string/kVcPermissionAddOnePlaceholderAuthority"
-                android:theme="@style/theme01.EditText"
-                android:textSize="16dp" />
+                style="@style/kTextFieldNormal"
+                android:hint="@string/kVcPermissionAddOnePlaceholderAuthority"/>
 
             <TextView
                 android:id="@+id/btn_search"
@@ -120,24 +113,15 @@
 
             <EditText
                 android:id="@+id/tf_weight"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:digits="1234567890"
-                android:inputType="phone|number"
                 android:maxLength="5"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical|right"
                 android:gravity="center_vertical|left"
                 android:layout_weight="6"
-                android:textColor="@color/theme01.textColorMain"
-                android:textColorHint="@color/theme01.textColorGray"
-                android:cursorVisible="true"
-                android:textCursorDrawable="@null"
                 android:paddingLeft="0dp"
-                android:hint="@string/kVcPermissionAddOnePlaceholderWeight"
-                android:theme="@style/theme01.EditText"
-                android:textSize="16dp" />
+                style="@style/kTextFieldNumberPad"
+                android:hint="@string/kVcPermissionAddOnePlaceholderWeight"/>
 
         </LinearLayout>
 

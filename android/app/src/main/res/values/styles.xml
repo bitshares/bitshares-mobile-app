@@ -85,6 +85,44 @@
         <item name="android:windowExitAnimation">@anim/dialog_exit</item>
     </style>
 
+    <!-- 输入框：默认 -->
+    <style name="kTextFieldNormal">
+        <!-- 单行 -->
+        <item name="android:singleLine">true</item>
+        <item name="android:maxLines">1</item>
+        <!-- 颜色 -->
+        <item name="android:textColor">@color/theme01.textColorMain</item>
+        <item name="android:textColorHint">@color/theme01.textColorGray</item>
+        <item name="android:background">@null</item>
+        <item name="android:textSize">16dp</item>
+        <!-- 光标 -->
+        <item name="android:cursorVisible">true</item>
+        <item name="android:textCursorDrawable">@drawable/tfcursor</item>
+    </style>
+
+    <!-- 输入框：密码 -->
+    <style name="kTextFieldPassword" parent="kTextFieldNormal">
+        <item name="android:inputType">textPassword</item>
+    </style>
+    
+    <!-- 输入框：整数 -->
+    <style name="kTextFieldNumberPad" parent="kTextFieldNormal">
+        <item name="android:digits">1234567890</item>
+        <item name="android:inputType">number</item>
+    </style>
+
+    <!-- 输入框：小数 -->
+    <style name="kTextFieldDecimalPad" parent="kTextFieldNormal">
+        <item name="android:digits">.1234567890</item>
+        <item name="android:inputType">numberDecimal</item>
+    </style>
+
+    <!-- 输入框：电话号码 -->
+    <style name="kTextFieldPhonePad" parent="kTextFieldNormal">
+        <item name="android:digits">1234567890</item>
+        <item name="android:inputType">phone</item>
+    </style>
+
     <!--  以下是 LoadingView用 -->
     <style name="AVLoadingIndicatorView">
         <item name="minWidth">76dp</item>

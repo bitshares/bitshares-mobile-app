@@ -67,17 +67,11 @@
 
             <EditText
                 android:id="@+id/tf_realname"
-                android:singleLine="true"
-                android:maxLines="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:textColor="#ffffff"
-                android:textColorHint="@color/theme01.textColorGray"
-                android:hint="@string/kOtcRmAddPlaceholderRealname"
-                android:theme="@style/theme01.EditText"
-                android:background="@null"
-                android:textSize="16dp"/>
+                style="@style/kTextFieldNormal"
+                android:hint="@string/kOtcRmAddPlaceholderRealname"/>
 
             <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
@@ -92,17 +86,11 @@
 
             <EditText
                 android:id="@+id/tf_account"
-                android:singleLine="true"
-                android:maxLines="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:textColor="#ffffff"
-                android:textColorHint="@color/theme01.textColorGray"
-                android:hint="@string/kOtcRmAddPlaceholderAccountName"
-                android:theme="@style/theme01.EditText"
-                android:background="@null"
-                android:textSize="16dp"/>
+                style="@style/kTextFieldNormal"
+                android:hint="@string/kOtcRmAddPlaceholderAccountName"/>
 
             <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 

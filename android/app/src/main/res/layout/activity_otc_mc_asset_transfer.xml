@@ -243,7 +243,7 @@
                         android:layout_height="wrap_content" />
 
                 </LinearLayout>
-                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+                <!-- <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View> -->
 
                 <!-- 输入框 -->
                 <LinearLayout
@@ -253,19 +253,11 @@
 
                     <EditText
                         android:id="@+id/tf_amount"
-                        android:singleLine="true"
-                        android:maxLines="1"
-                        android:digits=".1234567890"
-                        android:inputType="phone|number"
                         android:maxLength="24"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-
                         android:gravity="center_vertical"
-                        android:textSize="14dp"
-                        android:textColor="@color/theme01.textColorMain"
-                        android:background="@null"
-                        android:textColorHint="@color/theme01.textColorGray"
+                        style="@style/kTextFieldDecimalPad"
                         android:hint="@string/kOtcMcAssetTransferTfAmountPlaeholder"/>
 
                     <LinearLayout

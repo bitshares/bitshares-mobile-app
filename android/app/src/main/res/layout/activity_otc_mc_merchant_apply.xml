@@ -78,16 +78,10 @@
                     <EditText
                         android:id="@+id/et_input_nickname_from_otc_mc_merchant_apply"
                         android:layout_marginLeft="10dp"
-                        android:singleLine="true"
-                        android:maxLines="1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="#ffffff"
-                        android:textColorHint="@color/theme01.textColorGray"
-                        android:hint="请输入姓名"
-                        android:theme="@style/theme01.EditText"
-                        android:background="@null"
-                        android:textSize="16dp"/>
+                        style="@style/kTextFieldNormal"
+                        android:hint="请输入姓名"/>
 
                 </LinearLayout>
                 <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
