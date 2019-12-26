@@ -1,16 +1,23 @@
 package com.btsplusplus.fowallet
 
+import android.app.ActionBar
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.graphics.Color
 import android.text.InputFilter
 import android.text.InputType
 import android.text.method.DigitsKeyListener
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.KeyEvent
+import android.view.WindowManager
 import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
-import bitshares.Promise
-import bitshares.Utils
+import bitshares.*
+import org.json.JSONObject
 
 class UtilsAlert {
     companion object {
@@ -108,7 +115,13 @@ class UtilsAlert {
         /**
          * 显示确认对话框
          */
-        fun showMessageConfirm(ctx: Context, title: String?, message: String, btn_ok: String? = ctx.resources.getString(R.string.kBtnOK), btn_cancel: String? = ctx.resources.getString(R.string.kBtnCancel)): Promise {
+        fun showMessageConfirm(
+                ctx: Context, title: String?,
+                message: String,
+                btn_ok: String? = ctx.resources.getString(R.string.kBtnOK),
+                btn_cancel: String? = ctx.resources.getString(R.string.kBtnCancel),
+                link: JSONObject? = null
+                ): Promise {
             val p = Promise()
 
             var dig: AlertDialog? = null
@@ -116,6 +129,31 @@ class UtilsAlert {
 
             builder.setTitle(title ?: "")
             builder.setMessage(message)
+
+            if (link != null){
+                val link_text = link.getString("text")
+                val link_url = link.getString("url")
+
+                builder.setView(TextView(ctx).apply {
+
+                    layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP).apply {
+                        gravity = Gravity.CENTER
+                    }
+                    gravity = Gravity.CENTER
+
+                    setPadding(0,40.dp,0,0)
+
+                    text = link_text
+
+                    setTextSize(TypedValue.COMPLEX_UNIT_DIP, 17.0f)
+                    setTextColor(resources.getColor(R.color.theme01_textColorHighlight))
+
+                    setOnClickListener {
+                        (ctx as Activity).goToWebView(link_text,link_url)
+                    }
+                })
+            }
+
             builder.setOnKeyListener { _, keyCode, _ ->
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
                     //  REMARK：cancel 按钮存在的时候，返回键才默认按照 cancel 行为处理。不存在则禁止返回键。

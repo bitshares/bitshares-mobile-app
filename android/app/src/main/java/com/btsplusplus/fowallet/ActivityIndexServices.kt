@@ -8,6 +8,7 @@ import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_index_services.*
 import org.json.JSONArray
+import org.json.JSONObject
 
 class ActivityIndexServices : BtsppActivity() {
 
@@ -134,10 +135,24 @@ class ActivityIndexServices : BtsppActivity() {
         }
 
         if (BuildConfig.kAppModuleEnableOTC) {
+
+            val message = "亲爱的用户您好，如果您需要使用场外交易服务，需要仔细阅读并同意以下协议。"
+            val link = JSONObject().apply {
+                put("text","《点击查看OTC用户协议》")
+                put("url","https://docs.ofree.vip/v1/user_agreement.html")
+
+            }
+
             layout_otc_user.setOnClickListener {
                 guardWalletExist {
-                    //  TODO:2.9 默認參數
-                    OtcManager.sharedOtcManager().gotoOtc(this, "CNY", OtcManager.EOtcAdType.eoadt_user_buy)
+                    UtilsAlert.showMessageConfirm(this,"用户须知",message,"同意协议","取消", link = link).then {
+                        var result = (it!! as Boolean)
+                        if (result){
+                            //  TODO:2.9 默認參數
+                            OtcManager.sharedOtcManager().gotoOtc(this, "CNY", OtcManager.EOtcAdType.eoadt_user_buy)
+                        }
+                        return@then null
+                    }
                 }
             }
             layout_otc_merchant.setOnClickListener {
