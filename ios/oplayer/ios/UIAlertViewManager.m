@@ -46,6 +46,17 @@ static UIAlertViewManager *_sharedUIAlertViewManager = nil;
 {
 }
 
+- (void)closeLastAlertView
+{
+    if ([_alertViewList count] > 0) {
+        SCLAlertView* alert = [_alertViewList lastObject];
+        [alert hideView];
+        [_alertViewList removeObject:alert];
+        [NativeAppDelegate sharedAppDelegate].alertViewWindow.hidden = YES;
+        [[NativeAppDelegate sharedAppDelegate].window makeKeyWindow];
+    }
+}
+
 /**
  *  重置（关闭所有 alert ）
  */
@@ -96,6 +107,7 @@ static UIAlertViewManager *_sharedUIAlertViewManager = nil;
              withTitle:(NSString*)pTitle
           cancelButton:(NSString*)cancel
           otherButtons:(NSArray*)otherButtons
+            customView:(UIView*)customView
              textfield:(NSString*)placeholder
             ispassword:(BOOL)ispassword
                  tfcfg:(ArgConfigTextFieldBlock)tfcfg
@@ -140,6 +152,11 @@ static UIAlertViewManager *_sharedUIAlertViewManager = nil;
         if (tfcfg) {
             tfcfg(textfield);
         }
+    }
+    
+    //  添加自定义VIEW
+    if (customView) {
+        [alert addCustomView:customView];
     }
     
     //  其它按钮（有取消按钮则其它按钮索引从1开始，否则从0开始。）
@@ -187,6 +204,25 @@ static UIAlertViewManager *_sharedUIAlertViewManager = nil;
                withTitle:pTitle
             cancelButton:cancel
             otherButtons:otherButtons
+              customView:nil
+               textfield:nil
+              ispassword:NO
+                   tfcfg:nil
+              completion:completion];
+}
+
+- (void)showMessageEx:(NSString*)pMessage
+            withTitle:(NSString*)pTitle
+         cancelButton:(NSString*)cancel
+         otherButtons:(NSArray*)otherButtons
+           customView:(UIView*)customView
+           completion:(Arg1CompletionBlock)completion
+{
+    [self _showMessageEx:pMessage
+               withTitle:pTitle
+            cancelButton:cancel
+            otherButtons:otherButtons
+              customView:customView
                textfield:nil
               ispassword:NO
                    tfcfg:nil
@@ -232,6 +268,7 @@ static UIAlertViewManager *_sharedUIAlertViewManager = nil;
                withTitle:title
             cancelButton:NSLocalizedString(@"kBtnCancel", @"取消")
             otherButtons:[NSArray arrayWithObject:okbutton]
+              customView:nil
                textfield:placeholder
               ispassword:ispassword
                    tfcfg:tfcfg

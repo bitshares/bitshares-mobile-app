@@ -244,6 +244,19 @@ enum
  */
 -(void)gotoSubmitCore
 {
+    //  是否开启新用户认证功能判断
+    OtcManager* otc = [OtcManager sharedOtcManager];
+    assert(otc.server_config);
+    id auth_config = [otc.server_config objectForKey:@"auth"];
+    if (![[auth_config objectForKey:@"enable"] boolValue]) {
+        NSString* msg = [auth_config objectForKey:@"msg"];
+        if (!msg || [msg isEqualToString:@""]) {
+            msg = NSLocalizedString(@"kOtcEntryDisableDefaultMsg", @"系统维护中，请稍后再试。");
+        }
+        [OrgUtils makeToast:msg];
+        return;
+    }
+    
     NSString* str_name = _tf_name.text;
     NSString* str_cardno = _tf_idnumber.text;
     NSString* str_phone_num = _tf_phonenumber.text;
@@ -267,7 +280,6 @@ enum
     }
     
     //  认证
-    OtcManager* otc = [OtcManager sharedOtcManager];
     id args = @{
         @"btsAccount":[otc getCurrentBtsAccount],
         @"idcardNo":str_cardno,

@@ -3475,6 +3475,9 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 
 + (id)parse_json:(id)json_string
 {
+    if (!json_string) {
+        return nil;
+    }
     NSData* data = nil;
     if ([json_string isKindOfClass:[NSString class]]){
         data = [json_string dataUsingEncoding:NSUTF8StringEncoding];

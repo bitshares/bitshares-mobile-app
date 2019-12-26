@@ -378,7 +378,7 @@
      {
         if (buttonIndex == 1)
         {
-            // TODO:2.9 客服界面是什么样的...
+            [[OtcManager sharedOtcManager] gotoSupportPage:_owner];
         }
     }];
 }
@@ -563,6 +563,19 @@
         }
     }
     
+    //  是否开启下单功能判断
+    assert(otc.server_config);
+    id order_config = [otc.server_config objectForKey:@"order"];
+    if (![[order_config objectForKey:@"enable"] boolValue]) {
+        NSString* msg = [order_config objectForKey:@"msg"];
+        if (!msg || [msg isEqualToString:@""]) {
+            msg = NSLocalizedString(@"kOtcEntryDisableDefaultMsg", @"系统维护中，请稍后再试。");
+        }
+        [OrgUtils makeToast:msg];
+        return;
+    }
+    
+    //  开启下单功能
     [_owner GuardWalletUnlocked:YES body:^(BOOL unlocked) {
         if (unlocked) {
             [otc guardUserIdVerified:_owner
@@ -661,6 +674,7 @@
             }];
         }
     }];
+    return;
 }
 
 @end
