@@ -170,7 +170,7 @@ static const char* __picker_view_args_addr__ = "__picker_view_args_addr__";
                    reserve_secure_text:(NSString*)reserve_secure_text
                               paytitle:(NSString*)paytitle
 {
-    //  TODO:2.9
+    //  TODO:3.0 暂时不支持
     ViewWebviewPayment* view = [[ViewWebviewPayment alloc] init];
     [view showInView:[self getFullScreenSuperView:vc]];
     return nil;

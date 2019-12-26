@@ -46,6 +46,7 @@ enum
 {    
     UITableView*            _mainTableView;
     NSArray*                _dataArray; //  assgin
+    BOOL                    _bFirstShow;
 }
 
 @end
@@ -61,14 +62,8 @@ enum
     }
 }
 
-- (void)viewDidLoad
+- (void)_genDataArray
 {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    
-    self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
-    
-    //  初始化数据
     _dataArray = [[[NSMutableArray array] ruby_apply:(^(id ary) {
         NSArray* pSection1 = [NSArray arrayWithObjects:
                               @[@(kVcSubTransfer),          @"kServicesCellLabelTransfer"],         //  转账
@@ -99,10 +94,22 @@ enum
         }
         
         NSArray* pSection4 = [[[NSMutableArray array] ruby_apply:(^(id obj) {
+            //  入口可见性判断
+            //  1 - 编译时宏判断
+            //  2 - 根据语言判断
+            //  3 - 根据服务器配置判断
 #if kAppModuleEnableOTC
-            [obj addObject:@[@(kVcOtcUser), @"kServicesCellLabelOtcUser"]];                         //  场外交易
-            [obj addObject:@[@(kVcOtcMerchant), @"kServicesCellLabelOtcMerchant"]];                 //  商家信息
+            if ([NSLocalizedString(@"enableOtcEntry", @"enableOtcEntry") boolValue]) {
+                id cfg = [OtcManager sharedOtcManager].server_config;
+                if (cfg && [[[[cfg objectForKey:@"user"] objectForKey:@"entry"] objectForKey:@"type"] integerValue] != eoet_gone) {
+                    [obj addObject:@[@(kVcOtcUser), @"kServicesCellLabelOtcUser"]];                 //  场外交易
+                }
+                if (cfg && [[[[cfg objectForKey:@"merchant"] objectForKey:@"entry"] objectForKey:@"type"] integerValue] != eoet_gone) {
+                    [obj addObject:@[@(kVcOtcMerchant), @"kServicesCellLabelOtcMerchant"]];         //  商家信息
+                }
+            }
 #endif  //  kAppModuleEnableOTC
+            
 #if kAppModuleEnableGateway
             [obj addObject:@[@(kVcSubDepositWithdraw),   @"kServicesCellLabelDepositWithdraw"]];    //  充币提币
 #endif  //  kAppModuleEnableGateway
@@ -126,7 +133,20 @@ enum
         }
         
     })] copy];
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
     
+    self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
+    
+    //  初始化数据
+    _bFirstShow = YES;
+    [self _genDataArray];
+    
+    //  UI - 列表
     _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutNaviAndTab] style:UITableViewStyleGrouped];
     _mainTableView.delegate = self;
     _mainTableView.dataSource = self;
@@ -138,14 +158,17 @@ enum
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    //    [self.navigationController setNavigationBarHidden:YES animated:animated];
+    //  重新初始化需要显示的数据
+    if (!_bFirstShow) {
+        [self _genDataArray];
+    }
+    _bFirstShow = NO;
     //  登录后返回需要重新刷新列表
     [_mainTableView reloadData];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-    //    [self.navigationController setNavigationBarHidden:NO animated:animated];
     [super viewWillDisappear:animated];
 }
 
@@ -248,6 +271,25 @@ enum
     return cell;
 }
 
+- (void)onViewAgreementClicked:(UIButton*)sender
+{
+    [[UIAlertViewManager sharedUIAlertViewManager] closeLastAlertView];
+    
+    //  转到用户协议界面
+    [[OtcManager sharedOtcManager] gotoUrlPages:self pagename:@"agreement"];
+}
+
+/*
+ *  (private) 进入场外交易界面
+ */
+- (void)_gotoOtcUserEntry
+{
+    [self GuardWalletExist:^{
+        //  TODO:2.9 默认参数？
+        [[OtcManager sharedOtcManager] gotoOtc:self asset_name:@"CNY" ad_type:eoadt_user_buy];
+    }];
+}
+
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -335,17 +377,67 @@ enum
                 
             case kVcOtcUser:            //  场外交易（需要登录）
             {
-                [self GuardWalletExist:^{
-                    //  TODO:2.9 默认参数？
-                    [[OtcManager sharedOtcManager] gotoOtc:self asset_name:@"CNY" ad_type:eoadt_user_buy];
-                }];
+                id cfg = [OtcManager sharedOtcManager].server_config;
+                assert(cfg);
+                id entry = [[cfg objectForKey:@"user"] objectForKey:@"entry"];
+                if ([[entry objectForKey:@"type"] integerValue] == eoet_enabled) {
+                    
+                    NSString* otcUserAgreementKeyName = @"kOtcUserAgreementApprovedVer";
+                    NSString* approvedVer = (NSString*)[[AppCacheManager sharedAppCacheManager] getPref:otcUserAgreementKeyName];
+                    if (approvedVer && ![approvedVer isEqualToString:@""]) {
+                        //  已同意 TODO:3.0 暂时不处理协议更新。
+                        [self _gotoOtcUserEntry];
+                    } else {
+                        //  未同意 弹出协议对话框
+                        UIButton* btnViewAgreement = [UIButton buttonWithType:UIButtonTypeSystem];
+                        btnViewAgreement.titleLabel.font = [UIFont systemFontOfSize:15.0f];
+                        [btnViewAgreement setTitle:NSLocalizedString(@"kOtcEntryUserAgreementLinkName", @"《点击查看OTC用户协议》") forState:UIControlStateNormal];
+                        [btnViewAgreement setTitleColor:[ThemeManager sharedThemeManager].textColorHighlight forState:UIControlStateNormal];
+                        btnViewAgreement.userInteractionEnabled = YES;
+                        [btnViewAgreement addTarget:self
+                                             action:@selector(onViewAgreementClicked:)
+                                   forControlEvents:UIControlEventTouchUpInside];
+                        btnViewAgreement.frame = CGRectMake(0, 0, 200, 60);
+                        [[UIAlertViewManager sharedUIAlertViewManager] showMessageEx:NSLocalizedString(@"kOtcEntryUserAgreementAskMessage", @"亲爱的用户您好，如果您需要使用场外交易服务，需要仔细阅读并同意以下协议。")
+                                                                           withTitle:NSLocalizedString(@"kOtcEntryUserAgreementAskTitle", @"用户须知")
+                                                                        cancelButton:NSLocalizedString(@"kBtnCancel", @"取消")
+                                                                        otherButtons:@[NSLocalizedString(@"kOtcEntryUserAgreementBtnOK", @"同意协议")]
+                                                                          customView:btnViewAgreement
+                                                                          completion:^(NSInteger buttonIndex) {
+                            if (buttonIndex == 1) {
+                                //  记录：同意协议
+                                id value = [[cfg objectForKey:@"urls"] objectForKey:@"agreement"] ?: @"approved";
+                                [[[AppCacheManager sharedAppCacheManager] setPref:otcUserAgreementKeyName value:value] saveCacheToFile];
+                                //  继续处理
+                                [self _gotoOtcUserEntry];
+                            }
+                        }];
+                    }
+                } else {
+                    NSString* msg = [entry objectForKey:@"msg"];
+                    if (!msg || [msg isEqualToString:@""]) {
+                        msg = NSLocalizedString(@"kOtcEntryDisableDefaultMsg", @"系统维护中，请稍后再试。");
+                    }
+                    [OrgUtils makeToast:msg];
+                }
             }
                 break;
             case kVcOtcMerchant:        //  商家信息（需要登录）
             {
-                [self GuardWalletExist:^{
-                    [[OtcManager sharedOtcManager] gotoOtcMerchantHome:self];
-                }];
+                id cfg = [OtcManager sharedOtcManager].server_config;
+                assert(cfg);
+                id entry = [[cfg objectForKey:@"merchant"] objectForKey:@"entry"];
+                if ([[entry objectForKey:@"type"] integerValue] == eoet_enabled) {
+                    [self GuardWalletExist:^{
+                        [[OtcManager sharedOtcManager] gotoOtcMerchantHome:self];
+                    }];
+                } else {
+                    NSString* msg = [entry objectForKey:@"msg"];
+                    if (!msg || [msg isEqualToString:@""]) {
+                        msg = NSLocalizedString(@"kOtcEntryDisableDefaultMsg", @"系统维护中，请稍后再试。");
+                    }
+                    [OrgUtils makeToast:msg];
+                }
             }
                 break;
             case kVcSubDepositWithdraw: //  充提（需要登录）

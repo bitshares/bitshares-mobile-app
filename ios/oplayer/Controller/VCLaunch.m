@@ -10,6 +10,7 @@
 #import "OrgUtils.h"
 #import "MySecurityFileMgr.h"
 #import "ScheduleManager.h"
+#import "OtcManager.h"
 
 @interface VCLaunch ()
 {
@@ -274,7 +275,8 @@
                 if ([walletMgr isWalletExist]){
                     initFullUserData = [chainMgr queryFullAccountInfo:[[walletMgr getWalletInfo] objectForKey:@"kAccountName"]];
                 }
-                return [[WsPromise all:@[initTickerData, initGlobalProperties, initFeeAssetInfo, initFullUserData]] then:(^id(id data_array) {
+                WsPromise* initOtc = [[OtcManager sharedOtcManager] queryConfig];
+                return [[WsPromise all:@[initTickerData, initGlobalProperties, initFeeAssetInfo, initFullUserData, initOtc]] then:(^id(id data_array) {
                     [self hideBlockView];
                     //  更新全局属性
                     [chainMgr updateObjectGlobalProperties:[data_array objectAtIndex:1]];

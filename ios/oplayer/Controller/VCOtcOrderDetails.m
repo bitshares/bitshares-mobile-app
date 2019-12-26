@@ -545,8 +545,7 @@ enum
             break;
         case eooot_contact_customer_service:
         {
-            //  TODO:2.9 未完成
-            [OrgUtils makeToast:[NSString stringWithFormat:@"客服 buttom clicked %@", @(sender.tag)]];
+            [[OtcManager sharedOtcManager] gotoSupportPage:self];
         }
             break;
         case eooot_confirm_received_money:

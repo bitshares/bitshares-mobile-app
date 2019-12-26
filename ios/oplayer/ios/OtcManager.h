@@ -10,6 +10,16 @@
 #import "WsPromise.h"
 
 /*
+ *  入口类型
+ */
+typedef enum EOtcEntryType
+{
+    eoet_enabled = 1,       //  启用。不需要msg。
+    eoet_disabled = 2,      //  禁用。可见，不可进入。提示msg。
+    eoet_gone = 3           //  不可见。不需要msg。
+} EOtcEntryType;
+
+/*
  *  API认证方式
  */
 typedef enum EOtcAuthFlag
@@ -324,6 +334,7 @@ typedef enum EOtcMcProgress
 
 @interface OtcManager : NSObject
 
+@property (nonatomic, strong) NSDictionary* server_config;  //  服务器配置
 @property (nonatomic, strong) NSArray* asset_list_digital;  //  支持的数字资产列表
 
 + (OtcManager*)sharedOtcManager;
@@ -397,6 +408,17 @@ typedef enum EOtcMcProgress
  *  (public) 获取资产信息。OTC运营方配置的，非链上数据。
  */
 - (NSDictionary*)getAssetInfo:(NSString*)asset_name;
+
+/*
+ *  (public) 查询动态配置信息
+ */
+- (WsPromise*)queryConfig;
+
+/*
+ *  (public) 跳转到客服支持页面
+ */
+- (void)gotoSupportPage:(VCBase*)owner;
+- (void)gotoUrlPages:(VCBase*)owner pagename:(NSString*)pagename;
 
 /*
  *  (public) 转到OTC界面，会自动初始化必要信息。

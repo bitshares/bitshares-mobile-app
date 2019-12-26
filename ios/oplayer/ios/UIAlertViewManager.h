@@ -18,10 +18,17 @@ typedef void (^ArgConfigTextFieldBlock)(SCLTextView* tf);
 
 + (UIAlertViewManager*)sharedUIAlertViewManager;
 
+- (void)closeLastAlertView;
 - (void)reset;
 
 - (void)showMessage:(NSString*)pMessage withTitle:(NSString*)pTitle completion:(Arg1CompletionBlock)completion;
 - (void)showMessageEx:(NSString*)pMessage withTitle:(NSString*)pTitle cancelButton:(NSString*)cancel otherButtons:(NSArray*)otherButtons completion:(Arg1CompletionBlock)completion;
+- (void)showMessageEx:(NSString*)pMessage
+            withTitle:(NSString*)pTitle
+         cancelButton:(NSString*)cancel
+         otherButtons:(NSArray*)otherButtons
+           customView:(UIView*)customView
+           completion:(Arg1CompletionBlock)completion;
 
 #pragma mark- indirect call showMessageEx
 - (void)showCancelConfirm:(NSString*)pMessage withTitle:(NSString*)pTitle completion:(Arg1CompletionBlock)completion;

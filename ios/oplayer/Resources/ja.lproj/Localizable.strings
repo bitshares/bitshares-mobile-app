@@ -916,6 +916,11 @@
 "kOpDetailSubPrefixProxy" = "エージェント";
 
 /* 场外交易相关 */
+"kOtcEntryUserAgreementLinkName" = "《点击查看OTC用户协议》";//TODO:
+"kOtcEntryUserAgreementAskMessage" = "亲爱的用户您好，如果您需要使用场外交易服务，需要仔细阅读并同意以下协议。";//TODO:
+"kOtcEntryUserAgreementAskTitle" = "用户须知";//TODO:
+"kOtcEntryUserAgreementBtnOK" = "同意协议";//TODO:
+"kOtcEntryDisableDefaultMsg" = "系统维护中，请稍后再试。";//TODO:
 "kOtcMgrNotSupportMultiSignAccount" = "多签账号不支持场外交易。";//TODO:
 "kOtcMgrNoOpenAnyDigiAssets" = "场外交易暂不支持任何数字资产，请稍后再试。";//TODO:
 "kOtcMgrNotSupportAsset" = "场外交易暂时不支持 %@ 资产，请稍后再试。";//TODO:
@@ -1359,6 +1364,7 @@
 "serverWssLangKey" = "cn";
 "appDepositWithdrawDefaultGateway" = "GDEX";
 "btsaiLangKey" = "en";
+"enableOtcEntry" = "0";
 
 /* Android专有字符串 */
 "action_settings" = "Settings";

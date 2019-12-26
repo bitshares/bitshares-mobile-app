@@ -14,11 +14,14 @@
 #import "VCOtcMcHome.h"
 
 #import "VCOtcUserAuth.h"
+#import "VCBtsaiWebView.h"
 
 static OtcManager *_sharedOtcManager = nil;
 
 @interface OtcManager()
 {
+    NSDictionary*   _server_config;
+    
     NSString*       _base_api;
     NSDictionary*   _fiat_cny_info;         //  法币信息 TODO:2.9 默认只支持一种
     NSArray*        _asset_list_digital;    //  支持的数字资产列表
@@ -29,6 +32,7 @@ static OtcManager *_sharedOtcManager = nil;
 
 @implementation OtcManager
 
+@synthesize server_config = _server_config;
 @synthesize asset_list_digital = _asset_list_digital;
 
 +(OtcManager *)sharedOtcManager
@@ -63,6 +67,7 @@ static OtcManager *_sharedOtcManager = nil;
     _fiat_cny_info = nil;
     _cache_merchant_detail = nil;
     self.asset_list_digital = nil;
+    self.server_config = nil;
 }
 
 /*
@@ -639,6 +644,86 @@ static OtcManager *_sharedOtcManager = nil;
     assert(false);
     //  not reached
     return nil;
+}
+
+/*
+ *  (public) 查询动态配置信息
+ */
+- (WsPromise*)queryConfig
+{
+    return [WsPromise promise:^(WsResolveHandler resolve, WsRejectHandler reject) {
+        //  TODO:2.9 asste name encode
+        [[[[ChainObjectManager sharedChainObjectManager] queryAssetData:@"CCTEST"] then:^id(id asset_data) {
+            id config = nil;
+            if (asset_data) {
+                NSString* main = [[OrgUtils parse_json:[[asset_data objectForKey:@"options"] objectForKey:@"description"]] objectForKey:@"main"];
+                if (main && ![main isEqualToString:@""] && main.length % 2 == 0) {
+                    //{
+                    //    merchant =     {
+                    //        entry =         {
+                    //            msg = "";
+                    //            type = 1;
+                    //        };
+                    //    };
+                    //    order =     {
+                    //        enable = 1;
+                    //        msg = "";
+                    //    };
+                    //    urls =     {
+                    //        agreement = "https://www.baidu.com/";
+                    //        api = "http://otc-api.gdex.vip";
+                    //    };
+                    //    user =     {
+                    //        entry =         {
+                    //            msg = "";
+                    //            type = 1;
+                    //        };
+                    //    };
+                    //}
+                    config = [OrgUtils parse_json:[OrgUtils hexDecode:main]];
+                }
+            }
+            if (config) {
+                //  更新节点URL
+                NSString* api = [[config objectForKey:@"urls"] objectForKey:@"api"];
+                if (api && ![api isEqualToString:@""]) {
+                    _base_api = [api copy];
+                }
+                //  更新配置
+                _server_config = config;
+            }
+            resolve(_server_config);
+            return nil;
+        }] catch:^id(id error) {
+            //  查询失败，返回之前的数据。
+            resolve(_server_config);
+            return nil;
+        }];
+    }];
+}
+
+/*
+ *  (public) 跳转到客服支持页面
+ */
+- (void)gotoSupportPage:(VCBase*)owner
+{
+    [self gotoUrlPages:owner pagename:@"support"];
+}
+
+- (void)gotoUrlPages:(VCBase*)owner pagename:(NSString*)pagename
+{
+    assert(owner);
+    assert(pagename);
+    if (_server_config) {
+        id url = [[_server_config objectForKey:@"urls"] objectForKey:pagename];
+        assert(url);
+        if (url) {
+            url = [NSString stringWithFormat:@"%@?v=%@", url, @(ceil([[NSDate date] timeIntervalSince1970]))];
+            VCBtsaiWebView* vc = [[VCBtsaiWebView alloc] initWithUrl:url];
+            vc.title = @"";
+            [owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+        }
+    }
 }
 
 /*
@@ -1496,9 +1581,11 @@ static OtcManager *_sharedOtcManager = nil;
             VCBase* vc = [[VCOtcMcHome alloc] initWithProgressInfo:nil merchantDetail:merchant_detail];
             [owner pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleOtcMcHome", @"商家信息") backtitle:kVcDefaultBackTitleName];
         } else {
-            //  TODO:2.9 暂时不开启申请
-            VCBase* vc = [[VCOtcMcMerchantApply alloc] init];
-            [owner pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleOtcMcApply", @"商家申请") backtitle:kVcDefaultBackTitleName];
+            //  TODO:3.0 暂时不开放申请，跳转说明页面，联系客服。
+            [self gotoUrlPages:owner pagename:@"apply"];
+            ////  TODO:3.0 暂时不开启申请
+            //VCBase* vc = [[VCOtcMcMerchantApply alloc] init];
+            //[owner pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleOtcMcApply", @"商家申请") backtitle:kVcDefaultBackTitleName];
         }
         return nil;
     }] catch:^id(id error) {
