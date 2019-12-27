@@ -3,6 +3,7 @@ package bitshares
 import android.app.Activity
 import android.content.Context
 import com.btsplusplus.fowallet.*
+import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
 import org.json.JSONArray
 import org.json.JSONObject
@@ -10,6 +11,15 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class OtcManager {
+
+    /**
+     *  入口类型
+     */
+    enum class EOtcEntryType(val value: Int) {
+        eoet_enabled(1),       //  启用。不需要msg。
+        eoet_disabled(2),      //  禁用。可见，不可进入。提示msg。
+        eoet_gone(3)           //  不可见。不需要msg。
+    }
 
     /**
      * API认证方式
@@ -755,6 +765,7 @@ class OtcManager {
         }
     }
 
+    var server_config: JSONObject? = null                   //  服务器配置
     private var _base_api = "http://otc-api.gdex.vip"       //  TODO:2.9 test url
     private var _fiat_cny_info: JSONObject? = null          //  法币信息 TODO:2.9 默认只支持一种
     private var _asset_list_digital: JSONArray? = null      //  支持的数字资产列表
@@ -838,6 +849,59 @@ class OtcManager {
         assert(false)
         //  not reached
         return JSONObject()
+    }
+
+
+    /**
+     *  (public) 查询动态配置信息
+     */
+    fun queryConfig(): Promise {
+        val p = Promise()
+        //  TODO:2.9 asste name encode
+        ChainObjectManager.sharedChainObjectManager().queryAssetData("CCTEST").then {
+            var config: JSONObject? = null
+            val asset_data = it as? JSONObject
+            if (asset_data != null) {
+                val json = asset_data.getJSONObject("options").getString("description").to_json_object()
+                val main = json?.optString("main", null)
+                if (main != null && main.isNotEmpty() && main.length % 2 == 0) {
+                    config = main.hexDecode().utf8String().to_json_object()
+                }
+            }
+            if (config != null) {
+                //  更新节点URL
+                val api = config.optJSONObject("urls")?.optString("api", null)
+                if (api != null && api.isNotEmpty()) {
+                    _base_api = api.toString()
+                }
+                //  更新配置
+                server_config = config
+            }
+            p.resolve(server_config)
+            return@then null
+        }.catch {
+            //  查询失败，返回之前的数据。
+            p.resolve(server_config)
+        }
+        return p
+    }
+
+    /**
+     *  (public) 跳转到客服支持页面
+     */
+    fun gotoSupportPage(ctx: Activity) {
+        gotoUrlPages(ctx, pagename = "support")
+    }
+
+    fun gotoUrlPages(ctx: Activity, pagename: String) {
+        server_config?.let {
+            var url = it.optJSONObject("urls")?.optString(pagename, null)
+            assert(url != null)
+            if (url != null) {
+                url = String.format("%s?v=%s", url, Utils.now_ts().toString())
+                ctx.goToWebView("", url)
+            }
+        }
     }
 
     /**
@@ -1583,15 +1647,15 @@ class OtcManager {
             val data_array = it as? JSONArray
             val merchant_detail = data_array?.optJSONObject(0)
             if (merchant_detail != null) {
-                //  TODO:2.9 lang
                 // `status` tinyint(2) NOT NULL DEFAULT '0' COMMENT '状态:0=默认,0=未激活,1=已激活,2=取消激活,3=冻结',
                 //  TODO:2.9 args progressInfo:nil
                 ctx.goTo(ActivityOtcMcHome::class.java, true, args = JSONObject().apply {
                     put("merchant_detail", merchant_detail)
                 })
             } else {
-                //  TODO:2.9 未完成
-                ctx.goTo(ActivityOtcMcMerchantApply::class.java, true)
+                //  TODO:3.0 暂时不开放申请，跳转说明页面，联系客服。
+                gotoUrlPages(ctx, pagename = "apply")
+                //ctx.goTo(ActivityOtcMcMerchantApply::class.java, true)
             }
             return@then null
         }.catch { err ->

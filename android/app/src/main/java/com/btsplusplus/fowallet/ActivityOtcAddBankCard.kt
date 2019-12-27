@@ -1,8 +1,6 @@
 package com.btsplusplus.fowallet
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.widget.EditText
 import bitshares.OtcManager
 import bitshares.Promise
 import kotlinx.android.synthetic.main.activity_otc_add_bank_card.*

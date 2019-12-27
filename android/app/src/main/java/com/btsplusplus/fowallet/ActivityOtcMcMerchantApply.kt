@@ -29,11 +29,11 @@ class ActivityOtcMcMerchantApply : BtsppActivity() {
         layout_back_from_otc_mc_merchant_apply.setOnClickListener { finish() }
     }
 
-    private fun onApplySubmit(){
+    private fun onApplySubmit() {
 
     }
 
-    private fun onSelectBakAccount(){
+    private fun onSelectBakAccount() {
 
         val bak_acconts = JSONArray().apply {
             put("susu02")

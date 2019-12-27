@@ -3,6 +3,7 @@ package com.btsplusplus.fowallet
 import android.os.Bundle
 import bitshares.AsyncTaskManager
 import bitshares.OtcManager
+import bitshares.isTrue
 import kotlinx.android.synthetic.main.activity_otc_user_auth.*
 import org.json.JSONObject
 
@@ -70,6 +71,19 @@ class ActivityOtcUserAuth : BtsppActivity() {
     }
 
     private fun onSubmit() {
+        //  是否开启新用户认证功能判断
+        val otc = OtcManager.sharedOtcManager()
+        assert(otc.server_config != null)
+        val auth_config = otc.server_config!!.optJSONObject("order")
+        if (auth_config == null || !auth_config.isTrue("enable")) {
+            var msg = auth_config?.optString("msg", null)
+            if (msg == null || msg.isEmpty()) {
+                msg = resources.getString(R.string.kOtcEntryDisableDefaultMsg)
+            }
+            showToast(msg!!)
+            return
+        }
+
         val str_realname = tf_realname.text.toString()
         val str_idcard_no = tf_idcard_no.text.toString()
         val str_phone = tf_phone.text.toString()
@@ -96,7 +110,6 @@ class ActivityOtcUserAuth : BtsppActivity() {
         }
 
         //  认证
-        val otc = OtcManager.sharedOtcManager()
         val args = JSONObject().apply {
             put("btsAccount", otc.getCurrentBtsAccount())
             put("idcardNo", str_idcard_no)

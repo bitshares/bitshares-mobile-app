@@ -1,7 +1,6 @@
 package com.btsplusplus.fowallet
 
 import android.os.Bundle
-import android.widget.EditText
 import bitshares.OtcManager
 import bitshares.Promise
 import kotlinx.android.synthetic.main.activity_otc_add_alipay.*

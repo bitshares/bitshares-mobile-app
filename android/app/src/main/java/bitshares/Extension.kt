@@ -362,5 +362,16 @@ inline fun String.fixComma(): String {
     return this.replace(",", ".")
 }
 
+/**
+ * 转JSON Object对象。不支持 JSON ARRAY
+ */
+fun String.to_json_object(): JSONObject? {
+    return try {
+        JSONObject(this)
+    } catch (e: Exception) {
+        null
+    }
+}
+
 const val LLAYOUT_MATCH = LinearLayout.LayoutParams.MATCH_PARENT
 const val LLAYOUT_WARP = LinearLayout.LayoutParams.WRAP_CONTENT
