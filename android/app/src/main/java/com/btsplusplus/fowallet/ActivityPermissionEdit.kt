@@ -2,10 +2,7 @@ package com.btsplusplus.fowallet
 
 import android.content.Context
 import android.os.Bundle
-import android.text.InputFilter
-import android.text.InputType
 import android.text.TextUtils
-import android.text.method.DigitsKeyListener
 import android.util.TypedValue
 import android.view.Gravity
 import android.widget.LinearLayout

@@ -3,25 +3,16 @@ package com.btsplusplus.fowallet
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.EditText
 import android.widget.LinearLayout
-import android.widget.NumberPicker
 import android.widget.TextView
 import bitshares.LLAYOUT_MATCH
 import bitshares.LLAYOUT_WARP
 import bitshares.dp
-import bitshares.forEach
-import org.json.JSONArray
-import org.json.JSONObject
-import kotlin.math.max
 
 class ViewCustomDialogConfirm : Dialog {
 

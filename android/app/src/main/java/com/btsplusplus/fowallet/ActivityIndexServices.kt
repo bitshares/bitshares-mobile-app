@@ -45,9 +45,24 @@ class ActivityIndexServices : BtsppActivity() {
         } else {
             layout_recharge_and_withdraw_of_service.visibility = View.GONE
         }
-        if (BuildConfig.kAppModuleEnableOTC) {
-            layout_otc_user.visibility = View.VISIBLE
-            layout_otc_merchant.visibility = View.VISIBLE
+        //  入口可见性判断
+        //  1 - 编译时宏判断
+        //  2 - 根据语言判断
+        //  3 - 根据服务器配置判断
+        if (BuildConfig.kAppModuleEnableOTC && resources.getString(R.string.enableOtcEntry).toInt() != 0) {
+            val cfg = OtcManager.sharedOtcManager().server_config
+            if (cfg != null && cfg.getJSONObject("user").getJSONObject("entry").getInt("type") != OtcManager.EOtcEntryType.eoet_gone.value) {
+                layout_otc_user.visibility = View.VISIBLE
+                layout_otc_user.setOnClickListener { onOtcUsrEntryClicked() }
+            } else {
+                layout_otc_user.visibility = View.GONE
+            }
+            if (cfg != null && cfg.getJSONObject("merchant").getJSONObject("entry").getInt("type") != OtcManager.EOtcEntryType.eoet_gone.value) {
+                layout_otc_merchant.visibility = View.VISIBLE
+                layout_otc_merchant.setOnClickListener { onOtcMerchantEntryClicked() }
+            } else {
+                layout_otc_merchant.visibility = View.GONE
+            }
         } else {
             layout_otc_user.visibility = View.GONE
             layout_otc_merchant.visibility = View.GONE
@@ -134,32 +149,6 @@ class ActivityIndexServices : BtsppActivity() {
             }
         }
 
-        if (BuildConfig.kAppModuleEnableOTC) {
-
-            val message = "亲爱的用户您好，如果您需要使用场外交易服务，需要仔细阅读并同意以下协议。"
-            val link = JSONObject().apply {
-                put("text","《点击查看OTC用户协议》")
-                put("url","https://docs.ofree.vip/v1/user_agreement.html")
-
-            }
-
-            layout_otc_user.setOnClickListener {
-                guardWalletExist {
-                    UtilsAlert.showMessageConfirm(this,"用户须知",message,"同意协议","取消", link = link).then {
-                        var result = (it!! as Boolean)
-                        if (result){
-                            //  TODO:2.9 默認參數
-                            OtcManager.sharedOtcManager().gotoOtc(this, "CNY", OtcManager.EOtcAdType.eoadt_user_buy)
-                        }
-                        return@then null
-                    }
-                }
-            }
-            layout_otc_merchant.setOnClickListener {
-                guardWalletExist { OtcManager.sharedOtcManager().gotoOtcMerchantHome(this) }
-            }
-        }
-
         layout_advanced_feature_of_service.setOnClickListener {
             goTo(ActivityAdvancedFeature::class.java, true)
         }
@@ -167,6 +156,66 @@ class ActivityIndexServices : BtsppActivity() {
         layout_bts_explorer.setOnClickListener {
             //  TODO:插件配置url
             openURL("https://bts.ai?lang=${resources.getString(R.string.btsaiLangKey)}")
+        }
+    }
+
+    /**
+     *  (private) 进入场外交易界面
+     */
+    private fun _gotoOtcUserEntry() {
+        guardWalletExist {
+            //  TODO:2.9 默認參數
+            OtcManager.sharedOtcManager().gotoOtc(this, "CNY", OtcManager.EOtcAdType.eoadt_user_buy)
+        }
+    }
+
+    private fun onOtcUsrEntryClicked() {
+        val cfg = OtcManager.sharedOtcManager().server_config!!
+        val entry = cfg.getJSONObject("user").getJSONObject("entry")
+        if (entry.getInt("type") == OtcManager.EOtcEntryType.eoet_enabled.value) {
+            val otcUserAgreementKeyName = "kOtcUserAgreementApprovedVer"
+            val approvedVer = AppCacheManager.sharedAppCacheManager().getPref(otcUserAgreementKeyName) as? String
+            if (approvedVer != null && approvedVer.isNotEmpty()) {
+                //  已同意 TODO:3.0 暂时不处理协议更新。
+                _gotoOtcUserEntry()
+            } else {
+                //  未同意 弹出协议对话框
+                val agreement_url = cfg.getJSONObject("urls").getString("agreement")
+                val message = resources.getString(R.string.kOtcEntryUserAgreementAskMessage)
+                val link = JSONObject().apply {
+                    put("text", resources.getString(R.string.kOtcEntryUserAgreementLinkName))
+                    put("url", String.format("%s?v=%s", agreement_url, Utils.now_ts().toString()))
+                }
+                UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kOtcEntryUserAgreementAskTitle), message, btn_ok = resources.getString(R.string.kOtcEntryUserAgreementBtnOK), link = link).then {
+                    if (it != null && it as Boolean) {
+                        //  记录：同意协议
+                        AppCacheManager.sharedAppCacheManager().setPref(otcUserAgreementKeyName, agreement_url).saveCacheToFile()
+                        //  继续处理
+                        _gotoOtcUserEntry()
+                    }
+                    return@then null
+                }
+            }
+        } else {
+            var msg = entry.optString("msg", null)
+            if (msg == null || msg.isEmpty()) {
+                msg = resources.getString(R.string.kOtcEntryDisableDefaultMsg)
+            }
+            showToast(msg)
+        }
+    }
+
+    private fun onOtcMerchantEntryClicked() {
+        val cfg = OtcManager.sharedOtcManager().server_config!!
+        val entry = cfg.getJSONObject("merchant").getJSONObject("entry")
+        if (entry.getInt("type") == OtcManager.EOtcEntryType.eoet_enabled.value) {
+            guardWalletExist { OtcManager.sharedOtcManager().gotoOtcMerchantHome(this) }
+        } else {
+            var msg = entry.optString("msg", null)
+            if (msg == null || msg.isEmpty()) {
+                msg = resources.getString(R.string.kOtcEntryDisableDefaultMsg)
+            }
+            showToast(msg)
         }
     }
 }

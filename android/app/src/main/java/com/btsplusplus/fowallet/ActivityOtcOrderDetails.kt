@@ -282,7 +282,7 @@ class ActivityOtcOrderDetails : BtsppActivity() {
         if (payAccount != null && payAccount.isNotEmpty()) {
             layout_order_detail_payment_or_receive_item_cell.visibility = View.VISIBLE
             layout_order_detail_payment_or_receive_item_line.visibility = View.VISIBLE
-            
+
             val pminfos = OtcManager.auxGenPaymentMethodInfos(this, payAccount, _order_details.optInt("payChannel"), null)
 
             //  标题
@@ -476,8 +476,7 @@ class ActivityOtcOrderDetails : BtsppActivity() {
                     }
                 }
                 OtcManager.EOtcOrderOperationType.eooot_contact_customer_service -> {
-                    //  TODO:2.9 未完成
-                    showToast("联系客服 ${btnType.value}")
+                    OtcManager.sharedOtcManager().gotoSupportPage(this)
                 }
                 OtcManager.EOtcOrderOperationType.eooot_confirm_received_money -> {
                     UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kOtcOdUserConfirmReceiveMoneyTitle), resources.getString(R.string.kOtcOdUserConfirmReceiveMoneyMessage)).then {

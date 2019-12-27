@@ -190,6 +190,8 @@ class ActivityLaunch : BtsppActivity() {
                     if (walletMgr.isWalletExist()) {
                         put("kInitFullUserData", chainMgr.queryFullAccountInfo(walletMgr.getWalletInfo().getString("kAccountName")))
                     }
+                    //  初始化OTC数据
+                    put("kQueryConfig", OtcManager.sharedOtcManager().queryConfig())
                 }
                 return@then Promise.map(promise_map).then {
                     //  更新全局属性

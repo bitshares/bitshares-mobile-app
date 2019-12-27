@@ -8,7 +8,6 @@ import android.view.animation.OvershootInterpolator
 import bitshares.OtcManager
 import bitshares.Promise
 import kotlinx.android.synthetic.main.activity_otc_mc_ad_list.*
-import org.json.JSONArray
 import org.json.JSONObject
 import java.lang.reflect.Field
 

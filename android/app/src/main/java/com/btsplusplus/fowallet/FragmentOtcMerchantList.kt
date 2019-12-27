@@ -13,6 +13,7 @@ import bitshares.*
 import com.fowallet.walletcore.bts.ChainObjectManager
 import org.json.JSONArray
 import org.json.JSONObject
+import java.math.BigDecimal
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -80,8 +81,14 @@ class FragmentOtcMerchantList : BtsppFragment() {
         val data_array = JSONArray()
         if (list != null && list.length() > 0) {
             if (_user_type == OtcManager.EOtcUserType.eout_normal_user) {
+                val n_zero = BigDecimal.ZERO
                 for (item in list.forin<JSONObject>()) {
-                    val bankcardPaySwitch = item!!.isTrue("bankcardPaySwitch")
+                    //  用户端：过滤掉0库存的广告
+                    val n_stock = Utils.auxGetStringDecimalNumberValue(item!!.getString("stock"))
+                    if (n_stock <= n_zero) {
+                        continue
+                    }
+                    val bankcardPaySwitch = item.isTrue("bankcardPaySwitch")
                     val aliPaySwitch = item.isTrue("aliPaySwitch")
                     val wechatPaySwitch = false     //  TODO:3.0 默认false，ad数据里没微信。
                     if (aliPaySwitch || bankcardPaySwitch || wechatPaySwitch) {
@@ -153,7 +160,7 @@ class FragmentOtcMerchantList : BtsppFragment() {
     private fun _askForContactCustomerService(ctx: Context, auth_info: JSONObject) {
         UtilsAlert.showMessageConfirm(ctx, R.string.kWarmTips.xmlstring(ctx), R.string.kOtcAdUserFreezeAsk.xmlstring(ctx)).then {
             if (it != null && it as Boolean) {
-                //  TODO:2.9 客服界面是什么样的...
+                OtcManager.sharedOtcManager().gotoSupportPage(ctx as Activity)
             }
         }
     }
@@ -296,6 +303,18 @@ class FragmentOtcMerchantList : BtsppFragment() {
                 showToast(R.string.kOtcAdSubmitTipCannotTradeWithSelf.xmlstring(ctx))
                 return
             }
+        }
+
+        //  是否开启下单功能判断
+        assert(otc.server_config != null)
+        val order_config = otc.server_config!!.optJSONObject("order")
+        if (order_config == null || !order_config.isTrue("enable")) {
+            var msg = order_config?.optString("msg", null)
+            if (msg == null || msg.isEmpty()) {
+                msg = R.string.kOtcEntryDisableDefaultMsg.xmlstring(ctx)
+            }
+            showToast(msg)
+            return
         }
 
         (ctx as Activity).guardWalletUnlocked(true) { unlocked ->

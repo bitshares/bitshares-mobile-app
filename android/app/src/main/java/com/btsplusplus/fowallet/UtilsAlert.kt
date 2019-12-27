@@ -1,17 +1,14 @@
 package com.btsplusplus.fowallet
 
-import android.app.ActionBar
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
-import android.graphics.Color
 import android.text.InputFilter
 import android.text.InputType
 import android.text.method.DigitsKeyListener
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.KeyEvent
-import android.view.WindowManager
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -121,7 +118,7 @@ class UtilsAlert {
                 btn_ok: String? = ctx.resources.getString(R.string.kBtnOK),
                 btn_cancel: String? = ctx.resources.getString(R.string.kBtnCancel),
                 link: JSONObject? = null
-                ): Promise {
+        ): Promise {
             val p = Promise()
 
             var dig: AlertDialog? = null
@@ -130,7 +127,7 @@ class UtilsAlert {
             builder.setTitle(title ?: "")
             builder.setMessage(message)
 
-            if (link != null){
+            if (link != null) {
                 val link_text = link.getString("text")
                 val link_url = link.getString("url")
 
@@ -141,7 +138,7 @@ class UtilsAlert {
                     }
                     gravity = Gravity.CENTER
 
-                    setPadding(0,40.dp,0,0)
+                    setPadding(0, 40.dp, 0, 0)
 
                     text = link_text
 
@@ -149,7 +146,7 @@ class UtilsAlert {
                     setTextColor(resources.getColor(R.color.theme01_textColorHighlight))
 
                     setOnClickListener {
-                        (ctx as Activity).goToWebView(link_text,link_url)
+                        (ctx as Activity).goToWebView("", link_url)
                     }
                 })
             }

@@ -882,6 +882,11 @@
     <string name="kOpDetailSubPrefixWitness">Witness</string>
     <string name="kOpDetailSubPrefixProxy">Proxy</string>
     <!-- 场外交易相关 -->
+    <string name="kOtcEntryUserAgreementLinkName">《点击查看OTC用户协议》</string>
+    <string name="kOtcEntryUserAgreementAskMessage">亲爱的用户您好，如果您需要使用场外交易服务，需要仔细阅读并同意以下协议。</string>
+    <string name="kOtcEntryUserAgreementAskTitle">用户须知</string>
+    <string name="kOtcEntryUserAgreementBtnOK">同意协议</string>
+    <string name="kOtcEntryDisableDefaultMsg">系统维护中，请稍后再试。</string>
     <string name="kOtcMgrNotSupportMultiSignAccount">多签账号不支持场外交易。</string>
     <string name="kOtcMgrNoOpenAnyDigiAssets">场外交易暂不支持任何数字资产，请稍后再试。</string>
     <string name="kOtcMgrNotSupportAsset">场外交易暂时不支持 %s 资产，请稍后再试。</string>
@@ -1321,6 +1326,7 @@
     <string name="serverWssLangKey">en</string>
     <string name="appDepositWithdrawDefaultGateway">RuDEX</string>
     <string name="btsaiLangKey">en</string>
+    <string name="enableOtcEntry">0</string>
     <!-- Android专有字符串 -->
     <string name="action_settings">Settings</string>
     <string name="title_home">Home</string>

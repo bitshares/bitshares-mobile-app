@@ -1,7 +1,6 @@
 package com.btsplusplus.fowallet
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import bitshares.OtcManager
 import kotlinx.android.synthetic.main.activity_otc_user_auth_infos.*
 
