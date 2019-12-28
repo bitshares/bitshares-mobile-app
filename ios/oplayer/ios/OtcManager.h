@@ -518,7 +518,7 @@ typedef enum EOtcMcStatus
 /*
  *  (public) 查询用户收款方式/增加收款方式/删除收款方式/编辑收款方式
  */
-- (WsPromise*)queryPaymentMethods:(NSString*)bts_account_name;
+- (WsPromise*)queryReceiveMethods:(NSString*)bts_account_name;
 - (WsPromise*)addPaymentMethods:(id)args;
 - (WsPromise*)delPaymentMethods:(NSString*)bts_account_name pmid:(id)pmid;
 - (WsPromise*)editPaymentMethods:(NSString*)bts_account_name new_status:(EOtcPaymentMethodStatus)new_status pmid:(id)pmid;
