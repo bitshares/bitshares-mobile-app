@@ -260,12 +260,13 @@ class FragmentOtcMerchantList : BtsppFragment() {
                         adType, lock_info.getString("legalCurrencySymbol"),
                         lock_info.getString("unitPrice"), result.getString("total")).then {
                     mask.dismiss()
-                    //  TODO:3.0 暂时不自动更新，可能转账失败等。手续费不足。
-                    //if (adType == eoadt_user_sell) {
-                    //    //  REMARK：用户出售的情况下考虑自动转币
-                    //    id orderId = [[responsed objectForKey:@"data"] objectForKey:@"orderId"];
-                    //}
-                    UtilsAlert.showMessageConfirm(ctx, resources.getString(R.string.kWarmTips), resources.getString(R.string.kOtcAdSubmitTipOrderOK), btn_cancel = null).then {
+                    //  TODO:3.0 暂时不自动转账，可能转账失败等。手续费不足。
+                    val msg = if (adType == OtcManager.EOtcAdType.eoadt_user_sell.value) {
+                        resources.getString(R.string.kOtcAdSubmitTipOrderOK_Sell)
+                    } else {
+                        resources.getString(R.string.kOtcAdSubmitTipOrderOK_Buy)
+                    }
+                    UtilsAlert.showMessageConfirm(ctx, resources.getString(R.string.kWarmTips), msg, btn_cancel = null).then {
                         (ctx as Activity).goTo(ActivityOtcOrderList::class.java, true, args = JSONObject().apply {
                             put("auth_info", auth_info)
                             put("user_type", OtcManager.EOtcUserType.eout_normal_user)

@@ -115,7 +115,11 @@ fun JSONObject.isTrue(key: String): Boolean {
     if (s.equals("false", true)) {
         return false
     }
-    return s.toLong() != 0L
+    //  null 也作为false处理。
+    if (s.equals("null", true)) {
+        return false
+    }
+    return (s.toLongOrNull() ?: 0) != 0L
 }
 
 /**

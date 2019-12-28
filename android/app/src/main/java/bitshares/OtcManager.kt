@@ -304,13 +304,24 @@ class OtcManager {
      *  商家：申请进度
      */
     enum class EOtcMcProgress(val value: Int) {
-        eomp_default(0),                   //  未申请：默认值
-        eomp_applying(1),                      //  申请中
-        eomp_approved(2),                      //  已同意
-        eomp_rejected(3),                      //  已拒绝
-        eomp_activated(4),                     //  已激活
+        eomp_default(0),                    //  未申请：默认值
+        eomp_applying(1),                   //  申请中
+        eomp_approved(2),                   //  已同意
+        eomp_rejected(3),                   //  已拒绝
+        eomp_activated(4),                  //  已激活
     }
 
+    /**
+     *  商家：状态
+     */
+    enum class EOtcMcStatus(val value: Int) {
+        eoms_default(0),
+        eoms_not_active(0),                //  未激活
+        eoms_activated(1),                 //  已激活
+        eoms_activat_cancelled(2),         //  取消激活
+        eoms_freezed(3),                   //  冻结
+    }
+    
     companion object {
 
         private var _spInstanceAppCacheMgr: OtcManager? = null
@@ -1677,6 +1688,30 @@ class OtcManager {
     //    };
     //    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
     //}
+
+    /**
+     *  (public) API - 商家制度查询
+     *  认证：无
+     */
+    fun merchantPolicy(bts_account_name: String): Promise {
+        val url = "$_base_api/merchant/policy"
+        val args = JSONObject().apply {
+            put("btsAccount", bts_account_name)
+        }
+        return _queryApiCore(url, args = args, auth_flag = EOtcAuthFlag.eoaf_none)
+    }
+
+    /**
+     *  (public) API - 商家激活
+     *  认证：SIGN 方式
+     */
+    fun merchantActive(bts_account_name: String): Promise {
+        val url = "$_base_api/merchant/active"
+        val args = JSONObject().apply {
+            put("btsAccount", bts_account_name)
+        }
+        return _queryApiCore(url, args = args, auth_flag = EOtcAuthFlag.eoaf_sign)
+    }
 
     /**
      *  (public) API - 商家申请
