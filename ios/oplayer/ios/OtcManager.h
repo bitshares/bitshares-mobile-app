@@ -330,6 +330,18 @@ typedef enum EOtcMcProgress
     eomp_activated,                     //  已激活
 } EOtcMcProgress;
 
+/*
+ *  商家：状态
+ */
+typedef enum EOtcMcStatus
+{
+    eoms_default = 0,
+    eoms_not_active = 0,                //  未激活
+    eoms_activated = 1,                 //  已激活
+    eoms_activat_cancelled = 2,         //  取消激活
+    eoms_freezed = 3,                   //  冻结
+} EOtcMcStatus;
+
 @class VCBase;
 
 @interface OtcManager : NSObject
@@ -577,6 +589,18 @@ typedef enum EOtcMcProgress
 // *  (public) API - 商家申请进度查询
 // */
 //- (WsPromise*)merchantProgress:(NSString*)bts_account_name;
+
+/*
+ *  (public) API - 商家制度查询
+ *  认证：无
+ */
+- (WsPromise*)merchantPolicy:(NSString*)bts_account_name;
+
+/*
+ *  (public) API - 商家激活
+ *  认证：SIGN 方式
+ */
+- (WsPromise*)merchantActive:(NSString*)bts_account_name;
 
 /*
  *  (public) API - 商家申请

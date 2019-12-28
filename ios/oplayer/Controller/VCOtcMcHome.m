@@ -21,7 +21,7 @@
 enum
 {
     kVcSecMerchantBasic = 0,    //  基本信息
-//    kVcSecMerchantStatistics,   //  统计信息（成交单数等）
+    //    kVcSecMerchantStatistics,   //  统计信息（成交单数等）
     kVcSecActions,              //  各种管理入口
     kVcSecReceiveAndPayment,    //  收付款管理
 };
@@ -43,7 +43,7 @@ enum
 @interface VCOtcMcHome ()
 {
     NSDictionary*           _progress_info;     //  申请状态进度
-    NSDictionary*           _merchant_detail;   //  商家详情（已同意之后才有，否则为nil。）
+    NSMutableDictionary*    _merchant_detail;   //  商家详情（已同意之后才有，否则为nil。）
     
     UITableViewBase*        _mainTableView;
     NSArray*                _dataArray;
@@ -70,7 +70,11 @@ enum
     self = [super init];
     if (self) {
         _progress_info = progress_info;
-        _merchant_detail = merchant_detail;
+        if (merchant_detail) {
+            _merchant_detail = merchant_detail;
+        } else {
+            _merchant_detail = [merchant_detail mutableCopy];
+        }
     }
     return self;
 }
@@ -78,7 +82,7 @@ enum
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
@@ -222,7 +226,7 @@ enum
                                                  auto_hide:YES
                                          askForIdVerifyMsg:nil
                                                   callback:^(id auth_info)
-        {
+         {
             id secinfos = [_dataArray objectAtIndex:indexPath.section];
             NSInteger rowType = [[[secinfos objectForKey:@"rows"] objectAtIndex:indexPath.row] integerValue];
             switch (rowType) {
@@ -242,7 +246,14 @@ enum
                     [self gotoOtcAssetClicked:auth_info];
                     break;
                 case kVcSubOtcAd:
-                    [self gotoOtcAdClicked:auth_info];
+                {
+                    //  TODO:3.0 激活代码临时放在这里
+                    if ([[_merchant_detail objectForKey:@"status"] integerValue] == eoms_not_active) {
+                        [self processMerchantActive:auth_info];
+                    } else {
+                        [self gotoOtcAdClicked:auth_info];
+                    }
+                }
                     break;
                 case kVcSubOtcOrder:
                     [self gotoOtcOrderClicked:auth_info];
@@ -289,6 +300,74 @@ enum
 {
     VCBase* vc = [[VCOtcOrdersPages alloc] initWithAuthInfo:auth_info user_type:eout_merchant];
     [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleOtcMcOrder", @"商家订单") backtitle:kVcDefaultBackTitleName];
+}
+
+- (void)processMerchantActive:(id)auth_info
+{
+    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    //  查询商家制度
+    OtcManager* otc = [OtcManager sharedOtcManager];
+    [[[otc merchantPolicy:[otc getCurrentBtsAccount]] then:^id(id responsed) {
+        [self hideBlockView];
+        
+        id data = [responsed objectForKey:@"data"];
+        id merchantPolicyList = [data objectForKey:@"merchantPolicyList"];
+        if (!merchantPolicyList || [merchantPolicyList count] <= 0) {
+            [OrgUtils makeToast:NSLocalizedString(@"kOtcMgrMcActiveNoPolicy", @"商家制度未分配，请稍后再试。")];
+            return nil;
+        }
+        
+        id assetSymbol = [data objectForKey:@"mortgageAssetSymbol"];
+        
+        //  按照保证金升序排列
+        NSMutableArray* mutableMerchantPolicyList = [merchantPolicyList mutableCopy];
+        [mutableMerchantPolicyList sortUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+            return [[obj1 objectForKey:@"mortgage"] integerValue] > [[obj2 objectForKey:@"mortgage"] integerValue];
+        }];
+        
+        //  选择第一个保证金最低的商家制度
+        id firstMerchantPolicy = [mutableMerchantPolicyList firstObject];
+        assert(firstMerchantPolicy);
+        
+        //  提示信息
+        id msg = [NSString stringWithFormat:NSLocalizedString(@"kOtcMgrMcActiveAskMessage", @"该功能需要先激活商家账号后才可使用，激活需要 %@%@ 作为保证金，可在商家资产里转入。"),
+                  firstMerchantPolicy[@"mortgage"],
+                  assetSymbol];
+        
+        //  激活提示
+        [[UIAlertViewManager sharedUIAlertViewManager] showMessageEx:msg
+                                                           withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                        cancelButton:NSLocalizedString(@"kBtnCancel", @"取消")
+                                                        otherButtons:@[NSLocalizedString(@"kOtcMgrMcActiveAskBtnActiveNow", @"立即激活")]
+                                                          completion:^(NSInteger buttonIndex)
+         {
+            if (buttonIndex == 1) {
+                [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+                    if (unlocked) {
+                        [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+                        OtcManager* otc = [OtcManager sharedOtcManager];
+                        [[[otc merchantActive:[otc getCurrentBtsAccount]] then:^id(id data) {
+                            [self hideBlockView];
+                            [OrgUtils makeToast:NSLocalizedString(@"kOtcMgrMcActiveTipsOK", @"激活成功。")];
+                            //  本地设置已激活标记
+                            [_merchant_detail setObject:@(eoms_activated) forKey:@"status"];
+                            [_mainTableView reloadData];
+                            return nil;
+                        }] catch:^id(id error) {
+                            [self hideBlockView];
+                            [otc showOtcError:error];
+                            return nil;
+                        }];
+                    }
+                }];
+            }
+        }];
+        return nil;
+    }] catch:^id(id error) {
+        [self hideBlockView];
+        [otc showOtcError:error];
+        return nil;
+    }];
 }
 
 @end
