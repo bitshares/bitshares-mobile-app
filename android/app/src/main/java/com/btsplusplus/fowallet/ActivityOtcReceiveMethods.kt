@@ -47,7 +47,7 @@ class ActivityOtcReceiveMethods : BtsppActivity() {
         val otc = OtcManager.sharedOtcManager()
         val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this)
         mask.show()
-        otc.queryPaymentMethods(otc.getCurrentBtsAccount()).then {
+        otc.queryReceiveMethods(otc.getCurrentBtsAccount()).then {
             mask.dismiss()
             onQueryPaymentMethodsResponsed(it as? JSONObject)
             return@then null

@@ -1294,7 +1294,7 @@ class OtcManager {
      *  (public) API - 查询用户收款方式
      *  认证：TOKEN 方式
      */
-    fun queryPaymentMethods(bts_account_name: String): Promise {
+    fun queryReceiveMethods(bts_account_name: String): Promise {
         val url = "$_base_api/payMethod/query"
         val args = JSONObject().apply {
             put("btsAccount", bts_account_name)
