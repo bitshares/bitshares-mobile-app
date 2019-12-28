@@ -501,13 +501,13 @@
 /*
  *  (private) 用户卖出时 - 查询用户的收款方式列表。
  */
-- (WsPromise*)_queryPaymentMethodList
+- (WsPromise*)_queryReceiveMethodList
 {
     if (_ad_type == eoadt_user_buy) {
         return [WsPromise resolve:@YES];
     } else {
         OtcManager* otc = [OtcManager sharedOtcManager];
-        return [[otc queryPaymentMethods:[otc getCurrentBtsAccount]] then:^id(id payment_responsed) {
+        return [[otc queryReceiveMethods:[otc getCurrentBtsAccount]] then:^id(id payment_responsed) {
             return [payment_responsed objectForKey:@"data"];
         }];
     }
@@ -533,6 +533,48 @@
             return nil;
         }];
     }
+}
+
+/*
+ *  (private) 检测用户是否存在对应的收款方式。
+ */
+- (BOOL)_checkUserReceiveMethod:(id)rminfo_list
+              bankcardPaySwitch:(BOOL)bankcardPaySwitch
+                   aliPaySwitch:(BOOL)aliPaySwitch
+                wechatPaySwitch:(BOOL)wechatPaySwitch
+{
+    if (rminfo_list && [rminfo_list isKindOfClass:[NSArray class]] && [rminfo_list count] > 0) {
+        for (id rminfo in rminfo_list) {
+            if ([[rminfo objectForKey:@"status"] integerValue] == eopms_enable) {
+                switch ([rminfo[@"type"] integerValue]) {
+                    case eopmt_alipay:
+                    {
+                        if (aliPaySwitch) {
+                            return YES;
+                        }
+                    }
+                        break;
+                    case eopmt_bankcard:
+                    {
+                        if (bankcardPaySwitch) {
+                            return YES;
+                        }
+                    }
+                        break;
+                    case eopmt_wechatpay:
+                    {
+                        if (wechatPaySwitch) {
+                            return YES;
+                        }
+                    }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+    return NO;
 }
 
 /*
@@ -565,18 +607,6 @@
         }
     }
     
-    //  是否开启下单功能判断
-    assert(otc.server_config);
-    id order_config = [otc.server_config objectForKey:@"order"];
-    if (![[order_config objectForKey:@"enable"] boolValue]) {
-        NSString* msg = [order_config objectForKey:@"msg"];
-        if (!msg || [msg isEqualToString:@""]) {
-            msg = NSLocalizedString(@"kOtcEntryDisableDefaultMsg", @"系统维护中，请稍后再试。");
-        }
-        [OrgUtils makeToast:msg];
-        return;
-    }
-    
     //  开启下单功能
     [_owner GuardWalletUnlocked:YES body:^(BOOL unlocked) {
         if (unlocked) {
@@ -593,47 +623,28 @@
                 }
                 
                 //  2、仅针对用户卖出的情况：收款方式和商家付款方式是否匹配 REMARK：用户买入不用check，只要商家开启任意收款方式即可。
-                [[[self _queryPaymentMethodList] then:^id(id pminfo_list) {
-                    //  仅卖出的情况
-                    if (_ad_type == eoadt_user_sell) {
-                        BOOL bPaymentMatch = NO;
-                        if (pminfo_list && [pminfo_list isKindOfClass:[NSArray class]] && [pminfo_list count] > 0) {
-                            for (id pminfo in pminfo_list) {
-                                if ([[pminfo objectForKey:@"status"] integerValue] == eopms_enable) {
-                                    NSInteger pmtype = [pminfo[@"type"] integerValue];
-                                    switch (pmtype) {
-                                        case eopmt_alipay:
-                                        {
-                                            if (aliPaySwitch) {
-                                                bPaymentMatch = YES;
-                                            }
-                                        }
-                                            break;
-                                        case eopmt_bankcard:
-                                        {
-                                            if (bankcardPaySwitch) {
-                                                bPaymentMatch = YES;
-                                            }
-                                        }
-                                            break;
-                                        case eopmt_wechatpay:
-                                        {
-                                            if (wechatPaySwitch) {
-                                                bPaymentMatch = YES;
-                                            }
-                                        }
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                    //  已匹配
-                                    if (bPaymentMatch) {
-                                        break;
-                                    }
-                                }
-                            }
+                id p1 = [otc queryConfig];
+                id p2 = [self _queryReceiveMethodList];
+                [[[WsPromise all:@[p1, p2]] then:^id(id data_array) {
+                    //  a. 检测服务器配置 是否开启下单功能判断
+                    id order_config = [[data_array objectAtIndex:0] objectForKey:@"order"];
+                    assert(order_config);
+                    if (![[order_config objectForKey:@"enable"] boolValue]) {
+                        NSString* msg = [order_config objectForKey:@"msg"];
+                        if (!msg || [msg isEqualToString:@""]) {
+                            msg = NSLocalizedString(@"kOtcEntryDisableDefaultMsg", @"系统维护中，请稍后再试。");
                         }
-                        if (!bPaymentMatch) {
+                        [OrgUtils makeToast:msg];
+                        return nil;
+                    }
+                    
+                    //  b. 仅卖出的情况 检测用户是否存在对应的收款方式
+                    if (_ad_type == eoadt_user_sell) {
+                        if (![self _checkUserReceiveMethod:[data_array objectAtIndex:1]
+                                         bankcardPaySwitch:bankcardPaySwitch
+                                              aliPaySwitch:aliPaySwitch
+                                           wechatPaySwitch:wechatPaySwitch])
+                        {
                             [_owner hideBlockView];
                             [self askForAddNewPaymentMethod:item auth_info:auth_info];
                             return nil;

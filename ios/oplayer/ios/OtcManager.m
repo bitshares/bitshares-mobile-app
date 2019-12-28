@@ -1169,7 +1169,7 @@ static OtcManager *_sharedOtcManager = nil;
  *  (public) API - 查询用户收款方式
  *  认证：TOKEN 方式
  */
-- (WsPromise*)queryPaymentMethods:(NSString*)bts_account_name
+- (WsPromise*)queryReceiveMethods:(NSString*)bts_account_name
 {
     id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/payMethod/query"];
     id args = @{

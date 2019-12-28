@@ -69,12 +69,9 @@ enum
 {
     self = [super init];
     if (self) {
+        assert(merchant_detail);
         _progress_info = progress_info;
-        if (merchant_detail) {
-            _merchant_detail = merchant_detail;
-        } else {
-            _merchant_detail = [merchant_detail mutableCopy];
-        }
+        _merchant_detail = [merchant_detail mutableCopy];
     }
     return self;
 }

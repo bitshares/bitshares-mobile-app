@@ -108,7 +108,7 @@
 {
     OtcManager* otc = [OtcManager sharedOtcManager];
     [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    [[[otc queryPaymentMethods:[otc getCurrentBtsAccount]] then:^id(id data) {
+    [[[otc queryReceiveMethods:[otc getCurrentBtsAccount]] then:^id(id data) {
         [self hideBlockView];
         [self onQueryPaymentMethodsResponsed:data];
         return nil;
