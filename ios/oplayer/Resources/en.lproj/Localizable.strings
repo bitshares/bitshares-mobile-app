@@ -921,6 +921,10 @@
 "kOtcEntryUserAgreementAskTitle" = "用户须知";//TODO:
 "kOtcEntryUserAgreementBtnOK" = "同意协议";//TODO:
 "kOtcEntryDisableDefaultMsg" = "系统维护中，请稍后再试。";//TODO:
+"kOtcMgrMcActiveNoPolicy" = "商家制度未分配，请稍后再试。";//TODO:
+"kOtcMgrMcActiveAskMessage" = "该功能需要先激活商家账号后才可使用，激活需要 %@%@ 作为保证金，可在商家资产里转入。";//TODO:
+"kOtcMgrMcActiveAskBtnActiveNow" = "立即激活";//TODO:
+"kOtcMgrMcActiveTipsOK" = "激活成功。";//TODO:
 "kOtcMgrNotSupportMultiSignAccount" = "多签账号不支持场外交易。";//TODO:
 "kOtcMgrNoOpenAnyDigiAssets" = "场外交易暂不支持任何数字资产，请稍后再试。";//TODO:
 "kOtcMgrNotSupportAsset" = "场外交易暂时不支持 %@ 资产，请稍后再试。";//TODO:
@@ -1044,7 +1048,8 @@
 "kOtcAdOrderPriceChangeAsk" = "您当前选择的订单价格有变动，是否继续下单？";//TODO:
 "kOtcAdUserActionItemAuthInfo" = "认证信息";//TODO:
 "kOtcAdUserActionItemReceiveMethod" = "收款方式";//TODO:
-"kOtcAdSubmitTipOrderOK" = "下单成功。";//TODO:
+"kOtcAdSubmitTipOrderOK_Sell" = "下单成功，请在 10 分钟内完成转币。";//TODO:
+"kOtcAdSubmitTipOrderOK_Buy" = "下单成功，请在 10 分钟内完成付款。";//TODO:
 "kOtcAdSubmitTipCannotTradeWithSelf" = "不能和自己进行交易。";//TODO:
 "kOtcOrderPageTitlePending" = "进行中";//TODO:
 "kOtcOrderPageTitleCompleted" = "已完成";//TODO:

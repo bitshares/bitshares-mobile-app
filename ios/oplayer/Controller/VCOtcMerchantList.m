@@ -472,12 +472,14 @@
                 //    };
                 //    message = success;
                 //}
-                //  TODO:3.0 暂时不自动更新，可能转账失败等。手续费不足。
-                //if (adType == eoadt_user_sell) {
-                //    //  REMARK：用户出售的情况下考虑自动转币
-                //    id orderId = [[responsed objectForKey:@"data"] objectForKey:@"orderId"];
-                //}
-                [[UIAlertViewManager sharedUIAlertViewManager] showMessage:NSLocalizedString(@"kOtcAdSubmitTipOrderOK", @"下单成功。")
+                //  TODO:3.0 暂时不自动转账，可能转账失败等。手续费不足。
+                NSString* msg = nil;
+                if (adType == eoadt_user_sell) {
+                    msg = NSLocalizedString(@"kOtcAdSubmitTipOrderOK_Sell", @"下单成功，请在 10 分钟内完成转币。");
+                } else {
+                    msg = NSLocalizedString(@"kOtcAdSubmitTipOrderOK_Buy", @"下单成功，请在 10 分钟内完成付款。");
+                }
+                [[UIAlertViewManager sharedUIAlertViewManager] showMessage:msg
                                                                  withTitle:nil
                                                                 completion:^(NSInteger buttonIndex) {
                     VCBase* vc = [[VCOtcOrdersPages alloc] initWithAuthInfo:auth_info user_type:eout_normal_user];

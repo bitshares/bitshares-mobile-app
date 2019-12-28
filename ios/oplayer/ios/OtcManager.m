@@ -1609,6 +1609,34 @@ static OtcManager *_sharedOtcManager = nil;
 //}
 
 /*
+ *  (public) API - 商家制度查询
+ *  认证：无
+ */
+- (WsPromise*)merchantPolicy:(NSString*)bts_account_name
+{
+    assert(bts_account_name);
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/policy"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+    };
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_none];
+}
+
+/*
+ *  (public) API - 商家激活
+ *  认证：SIGN 方式
+ */
+- (WsPromise*)merchantActive:(NSString*)bts_account_name
+{
+    assert(bts_account_name);
+    id url = [NSString stringWithFormat:@"%@%@", _base_api, @"/merchant/active"];
+    id args = @{
+        @"btsAccount":bts_account_name,
+    };
+    return [self _queryApiCore:url args:args headers:nil auth_flag:eoaf_sign];
+}
+
+/*
  *  (public) API - 商家申请
  *  认证：SIGN 方式
  */
