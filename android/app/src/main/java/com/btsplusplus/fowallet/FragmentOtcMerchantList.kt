@@ -168,12 +168,12 @@ class FragmentOtcMerchantList : BtsppFragment() {
     /**
      *  (private) 用户卖出时 - 查询用户的收款方式列表。
      */
-    private fun _queryPaymentMethodList(): Promise {
+    private fun _queryReceiveMethodList(): Promise {
         if (_ad_type == OtcManager.EOtcAdType.eoadt_user_buy) {
             return Promise._resolve(true)
         } else {
             val otc = OtcManager.sharedOtcManager()
-            return otc.queryPaymentMethods(otc.getCurrentBtsAccount()).then {
+            return otc.queryReceiveMethods(otc.getCurrentBtsAccount()).then {
                 val payment_responsed = it as? JSONObject
                 return@then payment_responsed?.optJSONArray("data")
             }
@@ -283,6 +283,37 @@ class FragmentOtcMerchantList : BtsppFragment() {
     }
 
     /**
+     *  (private) 检测用户是否存在对应的收款方式。
+     */
+    private fun _checkUserReceiveMethod(pminfo_list: JSONArray?, aliPaySwitch: Boolean, bankcardPaySwitch: Boolean, wechatPaySwitch: Boolean) : Boolean {
+        if (pminfo_list != null && pminfo_list.length() > 0) {
+            for (pminfo in pminfo_list.forin<JSONObject>()) {
+                if (pminfo!!.getInt("status") != OtcManager.EOtcPaymentMethodStatus.eopms_enable.value) {
+                    continue
+                }
+                when (pminfo.getInt("type")) {
+                    OtcManager.EOtcPaymentMethodType.eopmt_alipay.value -> {
+                        if (aliPaySwitch) {
+                            return true
+                        }
+                    }
+                    OtcManager.EOtcPaymentMethodType.eopmt_bankcard.value -> {
+                        if (bankcardPaySwitch) {
+                            return true
+                        }
+                    }
+                    OtcManager.EOtcPaymentMethodType.eopmt_wechatpay.value -> {
+                        if (wechatPaySwitch) {
+                            return true
+                        }
+                    }
+                }
+            }
+        }
+        return false
+    }
+
+    /**
      * 事件 - 点击购买or出售按钮。
      */
     private fun onBuyOrSellButtonClicked(ctx: Context, ad_item: JSONObject) {
@@ -306,18 +337,6 @@ class FragmentOtcMerchantList : BtsppFragment() {
             }
         }
 
-        //  是否开启下单功能判断
-        assert(otc.server_config != null)
-        val order_config = otc.server_config!!.optJSONObject("order")
-        if (order_config == null || !order_config.isTrue("enable")) {
-            var msg = order_config?.optString("msg", null)
-            if (msg == null || msg.isEmpty()) {
-                msg = R.string.kOtcEntryDisableDefaultMsg.xmlstring(ctx)
-            }
-            showToast(msg)
-            return
-        }
-
         (ctx as Activity).guardWalletUnlocked(true) { unlocked ->
             if (unlocked) {
                 otc.guardUserIdVerified(ctx, R.string.kOtcAdAskIdVerifyTips03.xmlstring(ctx), keep_mask = true) { auth_info, new_mask ->
@@ -328,40 +347,23 @@ class FragmentOtcMerchantList : BtsppFragment() {
                         _askForContactCustomerService(ctx, auth_info)
                         return@guardUserIdVerified
                     }
-                    _queryPaymentMethodList().then {
-                        //  仅卖出的情况
-                        if (_ad_type == OtcManager.EOtcAdType.eoadt_user_sell) {
-                            val pminfo_list = it as? JSONArray
-                            var bPaymentMatch = false
-                            if (pminfo_list != null && pminfo_list.length() > 0) {
-                                for (pminfo in pminfo_list.forin<JSONObject>()) {
-                                    if (pminfo!!.getInt("status") != OtcManager.EOtcPaymentMethodStatus.eopms_enable.value) {
-                                        continue
-                                    }
-                                    when (pminfo.getInt("type")) {
-                                        OtcManager.EOtcPaymentMethodType.eopmt_alipay.value -> {
-                                            if (aliPaySwitch) {
-                                                bPaymentMatch = true
-                                            }
-                                        }
-                                        OtcManager.EOtcPaymentMethodType.eopmt_bankcard.value -> {
-                                            if (bankcardPaySwitch) {
-                                                bPaymentMatch = true
-                                            }
-                                        }
-                                        OtcManager.EOtcPaymentMethodType.eopmt_wechatpay.value -> {
-                                            if (wechatPaySwitch) {
-                                                bPaymentMatch = true
-                                            }
-                                        }
-                                    }
-                                    //  已匹配
-                                    if (bPaymentMatch) {
-                                        break
-                                    }
-                                }
+                    val p1 = otc.queryConfig()
+                    val p2 = _queryReceiveMethodList()
+                    Promise.all(p1, p2).then {
+                        val data_array = it as JSONArray
+                        //  a. 检测服务器配置 是否开启下单功能判断
+                        val order_config = data_array.getJSONObject(0).optJSONObject("order")
+                        if (order_config == null || !order_config.isTrue("enable")) {
+                            var msg = order_config?.optString("msg", null)
+                            if (msg == null || msg.isEmpty()) {
+                                msg = R.string.kOtcEntryDisableDefaultMsg.xmlstring(ctx)
                             }
-                            if (!bPaymentMatch) {
+                            showToast(msg)
+                            return@then null
+                        }
+                        //  b. 仅卖出的情况 检测用户是否存在对应的收款方式
+                        if (_ad_type == OtcManager.EOtcAdType.eoadt_user_sell) {
+                            if (!_checkUserReceiveMethod(data_array.optJSONArray(1), aliPaySwitch, bankcardPaySwitch, wechatPaySwitch)) {
                                 mask.dismiss()
                                 askForAddNewPaymentMethod(ctx, ad_item, auth_info)
                                 return@then null
