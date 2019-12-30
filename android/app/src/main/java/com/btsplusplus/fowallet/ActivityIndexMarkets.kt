@@ -1,7 +1,9 @@
 package com.btsplusplus.fowallet
 
 import android.os.Bundle
+import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
+import android.widget.LinearLayout
 import bitshares.*
 import com.fowallet.walletcore.bts.ChainObjectManager
 import kotlinx.android.synthetic.main.activity_index_markets.*
@@ -48,11 +50,20 @@ class ActivityIndexMarkets : BtsppActivity() {
         super.onCreate(savedInstanceState)
         setAutoLayoutContentView(R.layout.activity_index_markets, navigationBarColor = R.color.theme01_tabBarColor)
 
-        // 设置 fragment
+        //  动态初始化TabItem
+        findViewById<TabLayout>(R.id.tablayout).let { tab ->
+            tab.addTab(tab.newTab().apply {
+                text = resources.getString(R.string.kLabelMarketFavorites)
+            })
+            ChainObjectManager.sharedChainObjectManager().getMergedMarketInfos().forEach { market ->
+                tab.addTab(tab.newTab().apply {
+                    text = market.getJSONObject("base").getString("name")
+                })
+            }
+        }
+        //  设置 fragment
         setFragments()
         setViewPager(1, R.id.view_pager, R.id.tablayout, fragmens)
-
-        // 监听 tab 并设置选中 item
         setTabListener(R.id.tablayout, R.id.view_pager)
 
         // 监听 + 按钮事件
@@ -139,18 +150,18 @@ class ActivityIndexMarkets : BtsppActivity() {
         }
     }
 
-    fun getTitleStringArray(): MutableList<String> {
-        var ary = mutableListOf<String>(resources.getString(R.string.kLabelMarketFavorites))
-        ary.addAll(ChainObjectManager.sharedChainObjectManager().getMergedMarketInfos().map { market: JSONObject ->
-            market.getJSONObject("base").getString("name")
-        })
-        return ary
-    }
-
-    fun getTitleDefaultSelectedIndex(): Int {
-        //  REMARK：默认选中第二个市场（第一个是自选市场）
-        return 2
-    }
+//    fun getTitleStringArray(): MutableList<String> {
+//        var ary = mutableListOf<String>(resources.getString(R.string.kLabelMarketFavorites))
+//        ary.addAll(ChainObjectManager.sharedChainObjectManager().getMergedMarketInfos().map { market: JSONObject ->
+//            market.getJSONObject("base").getString("name")
+//        })
+//        return ary
+//    }
+//
+//    fun getTitleDefaultSelectedIndex(): Int {
+//        //  REMARK：默认选中第二个市场（第一个是自选市场）
+//        return 2
+//    }
 
     private fun setAddBtnListener() {
         button_add.setOnClickListener {

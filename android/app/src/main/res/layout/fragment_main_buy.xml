@@ -113,7 +113,7 @@
                         android:textColor="@color/theme01.textColorHighlight" />
                 </LinearLayout>
 
-                <View android:layout_height="1dp" android:background="@color/theme01.textColorGray" android:layout_width="fill_parent"></View>
+                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
                 <!-- 买卖数量 -->
                 <LinearLayout
@@ -174,7 +174,7 @@
 
 
                 </LinearLayout>
-                <View android:layout_height="1dp" android:background="@color/theme01.textColorGray" android:layout_width="fill_parent"></View>
+                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
                 <!-- 交易总额 -->
                 <LinearLayout
@@ -204,7 +204,7 @@
                         android:textColor="@color/theme01.textColorNormal" />
                 </LinearLayout>
 
-                <View android:layout_height="1dp" android:background="@color/theme01.textColorGray" android:layout_width="fill_parent"></View>
+                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
                 <LinearLayout
                     android:layout_width="match_parent"

@@ -319,7 +319,7 @@ class FragmentMarketInfo : BtsppFragment() {
         tv2.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10f)
 
         tv1.text = quote_name
-        tv2.text = "  /${chainMgr.getDefaultMarketInfoByBaseSymbol(base_symbol).getJSONObject("base").getString("name")}"
+        tv2.text = "  / ${chainMgr.getDefaultMarketInfoByBaseSymbol(base_symbol).getJSONObject("base").getString("name")}"
 
         val tv1_paint = tv1.paint
         val tv1_width = tv1_paint.measureText(quote_name)

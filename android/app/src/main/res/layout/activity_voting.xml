@@ -159,7 +159,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
-            android:background="@color/theme01.bottomLineColor"
+            android:background="@color/theme01.tabBarColor"
             android:layout_height="52dp">
 
             <TextView
