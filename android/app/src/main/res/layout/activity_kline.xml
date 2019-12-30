@@ -443,6 +443,7 @@
         android:layout_height="56dp"
         android:orientation="horizontal"
         android:padding="10dp"
+        android:background="@color/theme01.tabBarColor"
         app:layout_constraintBottom_toBottomOf="@+id/linearLayout">
 
         <Button
