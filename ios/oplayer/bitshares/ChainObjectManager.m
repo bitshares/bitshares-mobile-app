@@ -117,12 +117,8 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     }
     
     NSString* bundlePath = [NSBundle mainBundle].resourcePath;
-    //  正式网络和测试网络加载不同的配置文件。
-#if GRAPHENE_BITSHARES_TESTNET
-    NSString* fullPathInApp = [NSString stringWithFormat:@"%@/%@/%@", bundlePath, kAppStaticDir, @"fowallet_config_testnet.json"];
-#else
+    //  加载配置文件
     NSString* fullPathInApp = [NSString stringWithFormat:@"%@/%@/%@", bundlePath, kAppStaticDir, kAppConfigFile];
-#endif
     NSData* data = [NSData dataWithContentsOfFile:fullPathInApp];
     if (!data){
         return;

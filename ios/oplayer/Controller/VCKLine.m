@@ -232,18 +232,41 @@ enum
     return @{@"button_list":buttonArray, @"default_value":@([[kline_period_ary objectAtIndex:kline_period_default] integerValue])};
 }
 
-//- (void)onFLipMarketClicked
-//{
-//      TODO:flip pairs and request again...
+/*
+ *  (private) 事件 - 翻转交易对点击
+ */
+- (void)onTitleSwitchButtonClicked:(UIButton*)sender
+{
+//    //      TODO:2.9 flip pairs and request again...
+//    _tradingPair = [[TradingPair alloc] initWithBaseAsset:_tradingPair.quoteAsset quoteAsset:_tradingPair.baseAsset];
+//    NSString* title = [NSString stringWithFormat:@"%@/%@", _tradingPair.quoteAsset[@"symbol"], _tradingPair.baseAsset[@"symbol"]];
+//    UIButton* btn = (UIButton*)self.navigationItem.titleView;
+//    [btn updateTitleWithoutAnimation:title];
 //    [self _queryInitData];
-//}
+}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
+    ThemeManager* theme = [ThemeManager sharedThemeManager];
+    
+    self.view.backgroundColor = theme.appBackColor;
   
+    //  TODO:3.0 临时
+//    //  导航栏中间标题
+//    NSString* title = [NSString stringWithFormat:@"%@/%@", _tradingPair.quoteAsset[@"symbol"], _tradingPair.baseAsset[@"symbol"]];
+//    UIButton* btnSwitch = [UIButton buttonWithType:UIButtonTypeSystem];
+//    btnSwitch.titleLabel.font = [UIFont boldSystemFontOfSize:17];
+//    [btnSwitch setTitle:title forState:UIControlStateNormal];
+//    [btnSwitch setTitleColor:theme.textColorMain forState:UIControlStateNormal];
+//    [btnSwitch setImage:[UIImage templateImageNamed:@"iconSwitch"] forState:UIControlStateNormal];
+//    btnSwitch.userInteractionEnabled = YES;
+//    [btnSwitch addTarget:self action:@selector(onTitleSwitchButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+//    [btnSwitch relayoutTitleImageStyle:ebils_right space:4.0f];
+//    btnSwitch.frame = CGRectMake(0, 0, self.view.bounds.size.width * 0.6f, [self heightForNavigationBar]);
+//    self.navigationItem.titleView = btnSwitch;
+    
     CGFloat safeHeight = [self heightForBottomSafeArea];
     CGFloat fBottomViewHeight = 60.0f;
     
@@ -289,7 +312,7 @@ enum
     //  UI - 顶部按钮：买入、卖出、收藏
     UIView* pBottomView = [[UIView alloc] initWithFrame:CGRectMake(0, tableViewHeight, screenRect.size.width, fBottomViewHeight + safeHeight)];
     [self.view addSubview:pBottomView];
-    pBottomView.backgroundColor = [ThemeManager sharedThemeManager].tabBarColor;
+    pBottomView.backgroundColor = theme.tabBarColor;
     
     //  底部按钮尺寸
     CGFloat fBottomBuySellWidth = screenRect.size.width * 0.75;
@@ -301,12 +324,12 @@ enum
     btnBottomBuy.titleLabel.font = [UIFont boldSystemFontOfSize:16];
     btnBottomBuy.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
     [btnBottomBuy setTitle:NSLocalizedString(@"kLabelTitleBuy", @"买入") forState:UIControlStateNormal];
-    [btnBottomBuy setTitleColor:[ThemeManager sharedThemeManager].textColorPercent forState:UIControlStateNormal];
+    [btnBottomBuy setTitleColor:theme.textColorPercent forState:UIControlStateNormal];
     btnBottomBuy.userInteractionEnabled = YES;
     [btnBottomBuy addTarget:self action:@selector(onButtomButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     btnBottomBuy.frame = CGRectMake(12, (fBottomViewHeight  - fBottomButton) / 2, fBottomButtonWidth, fBottomButton);
     btnBottomBuy.tag = kBottomButtonTagBuy;
-    btnBottomBuy.backgroundColor = [ThemeManager sharedThemeManager].buyColor;
+    btnBottomBuy.backgroundColor = theme.buyColor;
     [pBottomView addSubview:btnBottomBuy];
     
     //  - 卖
@@ -314,12 +337,12 @@ enum
     btnBottomSell.titleLabel.font = [UIFont boldSystemFontOfSize:16];
     btnBottomSell.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
     [btnBottomSell setTitle:NSLocalizedString(@"kLabelTitleSell", @"卖出") forState:UIControlStateNormal];
-    [btnBottomSell setTitleColor:[ThemeManager sharedThemeManager].textColorPercent forState:UIControlStateNormal];
+    [btnBottomSell setTitleColor:theme.textColorPercent forState:UIControlStateNormal];
     btnBottomSell.userInteractionEnabled = YES;
     [btnBottomSell addTarget:self action:@selector(onButtomButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     btnBottomSell.frame = CGRectMake(12 + fBottomButtonWidth + 12, (fBottomViewHeight  - fBottomButton) / 2, fBottomButtonWidth, fBottomButton);
     btnBottomSell.tag = kBottomButtonTagSell;
-    btnBottomSell.backgroundColor = [ThemeManager sharedThemeManager].sellColor;
+    btnBottomSell.backgroundColor = theme.sellColor;
     [pBottomView addSubview:btnBottomSell];
     
     //  - 收藏

@@ -135,6 +135,14 @@ static UIAlertViewManager *_sharedUIAlertViewManager = nil;
     if (placeholder){
         //  输入框样式定制
         textfield = [alert addTextField:placeholder];
+        
+        //  REMARK：测试网络&调试版 输入框默认值。
+#if GRAPHENE_BITSHARES_TESTNET && DEBUG
+        if (ispassword) {
+            textfield.text = @"123456";
+        }
+#endif  //  GRAPHENE_BITSHARES_TESTNET
+        
         textfield.secureTextEntry = ispassword;
         textfield.textColor = theme.textColorMain;
         textfield.tintColor = theme.tintColor;
