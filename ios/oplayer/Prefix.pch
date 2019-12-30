@@ -21,7 +21,7 @@
 //  运行模式
 
 //  比特股正式网络（可配置）
-#define GRAPHENE_BITSHARES_MAINNET  0   //  TODO:2.9
+#define GRAPHENE_BITSHARES_MAINNET  1
 
 //  比特股测试网络（不用配置）
 #if GRAPHENE_BITSHARES_MAINNET
@@ -44,9 +44,9 @@
 #define kUseCommunityFaucet         0
 #define kAppCommunityFaucetAddress  @""
 
-//  TODO:2.9
-//#define kAppConfigFile              @"fowallet_config_testnet.json"
-#define kAppConfigFile              @"fowallet_config_otctest.json"
+//  REMARK: 这里可以更换测试用配置文件链接不同的私链）
+#define kAppConfigFile              @"fowallet_config_testnet.json"
+//#define kAppConfigFile              @"fowallet_config_otctest.json"
 
 #else
 
