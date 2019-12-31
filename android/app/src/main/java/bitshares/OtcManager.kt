@@ -54,7 +54,7 @@ class OtcManager {
         //  用户部分
         eoerr_user_not_exist(2001),                    //  用户不存在
         eoerr_user_frozen(2002),                       //  ※ 账号已被冻结
-        eoerr_user_idcard_not_verify(2003),            //  身份未验证
+        eoerr_user_idcard_not_verify(2003),            //  ※ 身份未验证
         eoerr_user_idcard_verifyed(2004),              //  身份已验证，不用重复验证。
         eoerr_user_idcard_verify_failed(2005),         //  ※ 身份认证失败。
         eoerr_user_idcard_bind_other_account(2006),    //  ※ 身份已绑定其他BTS账户
@@ -98,7 +98,7 @@ class OtcManager {
         eoerr_amount_to_small(5008),                   //  ※ 订单金额太小
         eoerr_error_order(5009),                       //  订单不存在or状态错误
         eoerr_order_payment_methods(5010),             //  商家广告缺少付款方式
-        eoerr_order_no_payment(5011),                  //  未添加付款方式
+        eoerr_order_no_payment(5011),                  //  ※ 未添加付款方式
         eoerr_order_not_exist(5012),                   //  订单不存在
 
         //  短信相关
@@ -321,7 +321,7 @@ class OtcManager {
         eoms_activat_cancelled(2),         //  取消激活
         eoms_freezed(3),                   //  冻结
     }
-    
+
     companion object {
 
         private var _spInstanceAppCacheMgr: OtcManager? = null
@@ -1134,6 +1134,7 @@ class OtcManager {
                             when (errcode) {
                                 EOtcErrorCode.eoerr_too_often.value -> errmsg = R.string.kOtcMgrErrTooOften.xmlstring(ctx)
                                 EOtcErrorCode.eoerr_user_frozen.value -> errmsg = R.string.kOtcMgrErrUserFrozen.xmlstring(ctx)
+                                EOtcErrorCode.eoerr_user_idcard_not_verify.value -> errmsg = R.string.kOtcMgrErrUserIdCardNotVerify.xmlstring(ctx)
                                 EOtcErrorCode.eoerr_user_idcard_verify_failed.value -> errmsg = R.string.kOtcMgrErrUserIdCardVerifyFailed.xmlstring(ctx)
                                 EOtcErrorCode.eoerr_user_idcard_bind_other_account.value -> errmsg = R.string.kOtcMgrErrUserIdCardBindOtherBtsAccount.xmlstring(ctx)
                                 EOtcErrorCode.eoerr_user_account_not_login.value -> errmsg = R.string.kOtcMgrErrNotLoginOrTokenIsEmpty.xmlstring(ctx)
@@ -1151,6 +1152,7 @@ class OtcManager {
                                 EOtcErrorCode.eoerr_order_in_progress_online.value -> errmsg = R.string.kOtcMgrErrOrderExistTooMuchPendingOrder.xmlstring(ctx)
                                 EOtcErrorCode.eoerr_amount_to_large.value -> errmsg = R.string.kOtcMgrErrOrderTotalTooLarge.xmlstring(ctx)
                                 EOtcErrorCode.eoerr_amount_to_small.value -> errmsg = R.string.kOtcMgrErrOrderTotalTooSmall.xmlstring(ctx)
+                                EOtcErrorCode.eoerr_order_no_payment.value -> errmsg = R.string.kOtcMgrErrOrderNoPaymentMethod.xmlstring(ctx)
 
                                 EOtcErrorCode.eoerr_sms_upper_limit.value -> errmsg = R.string.kOtcMgrErrSmsSendLimit.xmlstring(ctx)
                                 EOtcErrorCode.eoerr_sms_code_wrong.value -> errmsg = R.string.kOtcMgrErrSmsCodeWrong.xmlstring(ctx)

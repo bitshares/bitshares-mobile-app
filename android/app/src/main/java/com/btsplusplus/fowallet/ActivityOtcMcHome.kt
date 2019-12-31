@@ -2,6 +2,7 @@ package com.btsplusplus.fowallet
 
 import android.os.Bundle
 import bitshares.OtcManager
+import bitshares.isTrue
 import bitshares.toList
 import kotlinx.android.synthetic.main.activity_otc_mc_home.*
 import org.json.JSONObject
@@ -61,7 +62,8 @@ class ActivityOtcMcHome : BtsppActivity() {
         layout_ad_list_from_otc_mc_home.setOnClickListener {
             OtcManager.sharedOtcManager().guardUserIdVerified(this, null) { auth_info, _ ->
                 //  TODO:3.0 激活代码临时放在这里
-                if (merchant_detail.getInt("status") == OtcManager.EOtcMcStatus.eoms_not_active.value) {
+                if (merchant_detail.getInt("status") == OtcManager.EOtcMcStatus.eoms_not_active.value ||
+                        merchant_detail.getInt("level") <= 0) {
                     processMerchantActive(auth_info, merchant_detail)
                 } else {
                     goTo(ActivityOtcMcAdList::class.java, true, args = JSONObject().apply {
@@ -140,9 +142,18 @@ class ActivityOtcMcHome : BtsppActivity() {
                             val mask2 = ViewMask(resources.getString(R.string.kTipsBeRequesting), this).apply { show() }
                             otc.merchantActive(otc.getCurrentBtsAccount()).then {
                                 mask2.dismiss()
-                                showToast(resources.getString(R.string.kOtcMgrMcActiveTipsOK))
-                                //  本地设置已激活标记
-                                merchant_detail.put("status", OtcManager.EOtcMcStatus.eoms_activated.value)
+                                val responsed2 = it as? JSONObject
+                                val succ = responsed2?.isTrue("data") ?: false
+                                if (succ) {
+                                    showToast(resources.getString(R.string.kOtcMgrMcActiveTipsOK))
+                                    //  本地设置已激活标记
+                                    merchant_detail.put("status", OtcManager.EOtcMcStatus.eoms_activated.value)
+                                    //  TODO:2.9 商家等级暂时设置为 1
+                                    merchant_detail.put("level", 1)
+                                } else {
+                                    //  激活失败
+                                    showToast(resources.getString(R.string.kOtcMgrMcActiveFailedTipMessage))
+                                }
                                 //  TODO:3.0 如果界面有区别显示则需要刷新
                                 return@then null
                             }.catch { err ->

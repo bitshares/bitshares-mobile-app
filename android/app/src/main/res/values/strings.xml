@@ -889,6 +889,7 @@
     <string name="kOtcEntryDisableDefaultMsg">系统维护中，请稍后再试。</string>
     <string name="kOtcMgrMcActiveNoPolicy">商家制度未分配，请稍后再试。</string>
     <string name="kOtcMgrMcActiveAskMessage">该功能需要先激活商家账号后才可使用，激活需要 %s%s 作为保证金，可在商家资产里转入。</string>
+    <string name="kOtcMgrMcActiveFailedTipMessage">激活失败，请往商家账号转入足够的保证金。</string>
     <string name="kOtcMgrMcActiveAskBtnActiveNow">立即激活</string>
     <string name="kOtcMgrMcActiveTipsOK">激活成功。</string>
     <string name="kOtcMgrNotSupportMultiSignAccount">多签账号不支持场外交易。</string>
@@ -898,6 +899,7 @@
     <string name="kOtcMgrErrNetworkOrServerFailedWithCode">服务器或网络异常，请稍后再试。错误代码：%s</string>
     <string name="kOtcMgrErrTooOften">请求太频繁，请稍后再试。</string>
     <string name="kOtcMgrErrUserFrozen">账号已被冻结。</string>
+    <string name="kOtcMgrErrUserIdCardNotVerify">身份信息验证失败。</string>
     <string name="kOtcMgrErrUserIdCardVerifyFailed">身份认证失败。</string>
     <string name="kOtcMgrErrUserIdCardBindOtherBtsAccount">您的身份信息已经绑定其他BTS账号。</string>
     <string name="kOtcMgrErrNotLoginOrTokenIsEmpty">请退出场外交易界面重新登录。</string>
@@ -913,6 +915,7 @@
     <string name="kOtcMgrErrOrderExistTooMuchPendingOrder">未完成订单数达到上限。</string>
     <string name="kOtcMgrErrOrderTotalTooLarge">订单金额太大。</string>
     <string name="kOtcMgrErrOrderTotalTooSmall">订单金额太小。</string>
+    <string name="kOtcMgrErrOrderNoPaymentMethod">商家未添加收款方式。</string>
     <string name="kOtcMgrErrSmsSendLimit">验证发送太多，请稍后再试。</string>
     <string name="kOtcMgrErrSmsCodeWrong">验证码不正确或已过期。</string>
     <string name="kOtcMgrErrSmsCodeExist">请不要重复发送验证码。</string>
