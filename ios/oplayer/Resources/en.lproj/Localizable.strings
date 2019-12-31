@@ -923,6 +923,7 @@
 "kOtcEntryDisableDefaultMsg" = "系统维护中，请稍后再试。";//TODO:
 "kOtcMgrMcActiveNoPolicy" = "商家制度未分配，请稍后再试。";//TODO:
 "kOtcMgrMcActiveAskMessage" = "该功能需要先激活商家账号后才可使用，激活需要 %@%@ 作为保证金，可在商家资产里转入。";//TODO:
+"kOtcMgrMcActiveFailedTipMessage" = "激活失败，请往商家账号转入足够的保证金。";//TODO:
 "kOtcMgrMcActiveAskBtnActiveNow" = "立即激活";//TODO:
 "kOtcMgrMcActiveTipsOK" = "激活成功。";//TODO:
 "kOtcMgrNotSupportMultiSignAccount" = "多签账号不支持场外交易。";//TODO:
@@ -932,6 +933,7 @@
 "kOtcMgrErrNetworkOrServerFailedWithCode" = "服务器或网络异常，请稍后再试。错误代码：%@";//TODO:
 "kOtcMgrErrTooOften" = "请求太频繁，请稍后再试。";//TODO:
 "kOtcMgrErrUserFrozen" = "账号已被冻结。";//TODO:
+"kOtcMgrErrUserIdCardNotVerify" = "身份信息验证失败。";//TODO:
 "kOtcMgrErrUserIdCardVerifyFailed" = "身份认证失败。";//TODO:
 "kOtcMgrErrUserIdCardBindOtherBtsAccount" = "您的身份信息已经绑定其他BTS账号。";//TODO:
 "kOtcMgrErrNotLoginOrTokenIsEmpty" = "请退出场外交易界面重新登录。";//TODO:
@@ -947,6 +949,7 @@
 "kOtcMgrErrOrderExistTooMuchPendingOrder" = "未完成订单数达到上限。";//TODO:
 "kOtcMgrErrOrderTotalTooLarge" = "订单金额太大。";//TODO:
 "kOtcMgrErrOrderTotalTooSmall" = "订单金额太小。";//TODO:
+"kOtcMgrErrOrderNoPaymentMethod" = "商家未添加收款方式。";//TODO:
 "kOtcMgrErrSmsSendLimit" = "验证发送太多，请稍后再试。";//TODO:
 "kOtcMgrErrSmsCodeWrong" = "验证码不正确或已过期。";//TODO:
 "kOtcMgrErrSmsCodeExist" = "请不要重复发送验证码。";//TODO:

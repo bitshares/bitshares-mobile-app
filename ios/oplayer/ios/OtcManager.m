@@ -948,6 +948,9 @@ static OtcManager *_sharedOtcManager = nil;
                         case eoerr_user_frozen:
                             errmsg = NSLocalizedString(@"kOtcMgrErrUserFrozen", @"账号已被冻结。");
                             break;
+                        case eoerr_user_idcard_not_verify:
+                            errmsg = NSLocalizedString(@"kOtcMgrErrUserIdCardNotVerify", @"身份信息验证失败。");
+                            break;
                         case eoerr_user_idcard_verify_failed:
                             errmsg = NSLocalizedString(@"kOtcMgrErrUserIdCardVerifyFailed", @"身份认证失败。");
                             break;
@@ -994,6 +997,9 @@ static OtcManager *_sharedOtcManager = nil;
                             break;
                         case eoerr_amount_to_small:
                             errmsg = NSLocalizedString(@"kOtcMgrErrOrderTotalTooSmall", @"订单金额太小。");
+                            break;
+                        case eoerr_order_no_payment:
+                            errmsg = NSLocalizedString(@"kOtcMgrErrOrderNoPaymentMethod", @"商家未添加收款方式。");
                             break;
                             
                         case eoerr_sms_upper_limit:

@@ -54,7 +54,7 @@ typedef enum EOtcErrorCode
     //  用户部分
     eoerr_user_not_exist = 2001,                    //  用户不存在
     eoerr_user_frozen = 2002,                       //  ※ 账号已被冻结
-    eoerr_user_idcard_not_verify = 2003,            //  身份未验证
+    eoerr_user_idcard_not_verify = 2003,            //  ※ 身份未验证
     eoerr_user_idcard_verifyed = 2004,              //  身份已验证，不用重复验证。
     eoerr_user_idcard_verify_failed = 2005,         //  ※ 身份认证失败。
     eoerr_user_idcard_bind_other_account = 2006,    //  ※ 身份已绑定其他BTS账户
@@ -98,7 +98,7 @@ typedef enum EOtcErrorCode
     eoerr_amount_to_small = 5008,                   //  ※ 订单金额太小
     eoerr_error_order = 5009,                       //  订单不存在or状态错误
     eoerr_order_payment_methods = 5010,             //  商家广告缺少付款方式
-    eoerr_order_no_payment = 5011,                  //  未添加付款方式
+    eoerr_order_no_payment = 5011,                  //  ※ 未添加付款方式
     eoerr_order_not_exist = 5012,                   //  订单不存在
     
     //  短信相关

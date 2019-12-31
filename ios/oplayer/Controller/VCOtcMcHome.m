@@ -245,7 +245,8 @@ enum
                 case kVcSubOtcAd:
                 {
                     //  TODO:3.0 激活代码临时放在这里
-                    if ([[_merchant_detail objectForKey:@"status"] integerValue] == eoms_not_active) {
+                    if ([[_merchant_detail objectForKey:@"status"] integerValue] == eoms_not_active ||
+                        [[_merchant_detail objectForKey:@"level"] integerValue] <= 0) {
                         [self processMerchantActive:auth_info];
                     } else {
                         [self gotoOtcAdClicked:auth_info];
@@ -345,10 +346,17 @@ enum
                         OtcManager* otc = [OtcManager sharedOtcManager];
                         [[[otc merchantActive:[otc getCurrentBtsAccount]] then:^id(id data) {
                             [self hideBlockView];
-                            [OrgUtils makeToast:NSLocalizedString(@"kOtcMgrMcActiveTipsOK", @"激活成功。")];
-                            //  本地设置已激活标记
-                            [_merchant_detail setObject:@(eoms_activated) forKey:@"status"];
-                            [_mainTableView reloadData];
+                            if ([[data objectForKey:@"data"] boolValue]) {
+                                [OrgUtils makeToast:NSLocalizedString(@"kOtcMgrMcActiveTipsOK", @"激活成功。")];
+                                //  本地设置已激活标记
+                                [_merchant_detail setObject:@(eoms_activated) forKey:@"status"];
+                                //  TODO:2.9 商家等级暂时设置为 1
+                                [_merchant_detail setObject:@(1) forKey:@"level"];
+                                [_mainTableView reloadData];
+                            } else {
+                                //  激活失败
+                                [OrgUtils makeToast:NSLocalizedString(@"kOtcMgrMcActiveFailedTipMessage", @"激活失败，请往商家账号转入足够的保证金。")];
+                            }
                             return nil;
                         }] catch:^id(id error) {
                             [self hideBlockView];
