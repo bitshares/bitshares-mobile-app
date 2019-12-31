@@ -578,8 +578,8 @@ enum
                 {
                     [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
                         if (unlocked) {
-                            [self _execUpdateOrderCore:_currSelectedPaymentMethod[@"account"]
-                                            payChannel:_currSelectedPaymentMethod[@"type"]
+                            [self _execUpdateOrderCore:nil
+                                            payChannel:nil
                                                   type:eoout_to_cancel];
                         }
                     }];
@@ -589,6 +589,10 @@ enum
             break;
         case eooot_confirm_paid:
         {
+            if (!_currSelectedPaymentMethod) {
+                [OrgUtils makeToast:NSLocalizedString(@"kOtcMgrErrOrderNoPaymentMethod", @"商家未添加收款方式。")];
+                return;
+            }
             [alertMgr showCancelConfirm:NSLocalizedString(@"kOtcOdUserConfirmPaidMoneyMessage", @"我确认已按要求付款给商家。\n注：恶意点击将会被冻结账号。\n是否继续？")
                               withTitle:NSLocalizedString(@"kOtcOdUserConfirmPaidMoneyTitle", @"确认付款")
                              completion:^(NSInteger buttonIndex)
