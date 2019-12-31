@@ -412,7 +412,7 @@
                                                       memo:(NSString*)memo
                                    intermediateAccountData:(NSDictionary*)intermediateAccountData
 {
-    //  GDEX & RUDEX 格式
+    //  GDEX 格式
     assert(intermediateAccountData);
     
     //  TODO:fowallet 很多特殊处理

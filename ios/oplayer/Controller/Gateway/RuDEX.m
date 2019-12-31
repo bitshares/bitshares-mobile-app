@@ -173,5 +173,34 @@
     }];
 }
 
+/**
+ *  (public) 查询提币网关中间账号以及转账需要备注的memo信息。
+ */
+- (WsPromise*)queryWithdrawIntermediateAccountAndFinalMemo:(GatewayAssetItemData*)appext
+                                                   address:(NSString*)address
+                                                      memo:(NSString*)memo
+                                   intermediateAccountData:(NSDictionary*)intermediateAccountData
+{
+    //  RUDEX 格式
+    assert(intermediateAccountData);
+    
+    //  TODO:fowallet 很多特殊处理
+    //  useFullAssetName        - 部分网关提币备注资产名需要 网关.资产
+    //  assetWithdrawlAlias     - 部分网关部分币种提币备注和bts上资产名字不同。
+    NSString* assetName = appext.backSymbol;
+    assert(assetName);
+    NSString* final_memo;
+    
+    //  REMARK：RUDEX 网关背书资产需要小写。
+    if (memo && ![memo isEqualToString:@""]){
+        final_memo = [NSString stringWithFormat:@"%@:%@:%@", [assetName lowercaseString], address, memo];
+    }else{
+        final_memo = [NSString stringWithFormat:@"%@:%@", [assetName lowercaseString], address];
+    }
+    return [WsPromise resolve:@{@"intermediateAccount":appext.intermediateAccount,
+                                @"finalMemo":final_memo,
+                                @"intermediateAccountData":intermediateAccountData}];
+}
+
 @end
 
