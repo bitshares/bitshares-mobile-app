@@ -167,7 +167,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:foregroundGravity="right"
-                        android:src="@drawable/icon_otc_mc_ad" />
+                        android:src="@drawable/icon_otc_mc_asset" />
 
                     <TextView
                         android:layout_width="0dp"

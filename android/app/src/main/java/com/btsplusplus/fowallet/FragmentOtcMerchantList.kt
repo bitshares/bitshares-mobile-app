@@ -384,8 +384,9 @@ class FragmentOtcMerchantList : BtsppFragment() {
                                 val responsed = it as JSONObject
                                 val lock_info = responsed.getJSONObject("data")
 
-                                val oldprice = ad_item.getString("price")
-                                val newprice = lock_info.getString("unitPrice")
+                                //  REMARK：这里必须设置精度，不然 5 和 5.0 大数比较会不同。
+                                val oldprice = Utils.auxGetStringDecimalNumberValue(ad_item.getString("price")).setScale(12)
+                                val newprice = Utils.auxGetStringDecimalNumberValue(lock_info.getString("unitPrice")).setScale(12)
 
                                 //  价格变化
                                 if (oldprice != newprice) {

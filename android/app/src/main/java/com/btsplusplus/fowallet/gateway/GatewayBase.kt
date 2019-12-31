@@ -366,7 +366,7 @@ open class GatewayBase {
      *  (public) 查询提币网关中间账号以及转账需要备注的memo信息。
      */
     open fun queryWithdrawIntermediateAccountAndFinalMemo(appext: GatewayAssetItemData, address: String, memo: String?, intermediateAccountData: JSONObject?): Promise {
-        //  GDEX & RUDEX 格式
+        //  GDEX 格式
         assert(intermediateAccountData != null)
         //  TODO:fowallet 很多特殊处理
         //  useFullAssetName        - 部分网关提币备注资产名需要 网关.资产
