@@ -139,4 +139,27 @@ class RuDEX : GatewayBase() {
         }
         return p
     }
+
+    /**
+     *  (public) 查询提币网关中间账号以及转账需要备注的memo信息。
+     */
+    override fun queryWithdrawIntermediateAccountAndFinalMemo(appext: GatewayAssetItemData, address: String, memo: String?, intermediateAccountData: JSONObject?): Promise {
+        //  RUDEX 格式
+        assert(intermediateAccountData != null)
+        //  TODO:fowallet 很多特殊处理
+        //  useFullAssetName        - 部分网关提币备注资产名需要 网关.资产
+        //  assetWithdrawlAlias     - 部分网关部分币种提币备注和bts上资产名字不同。
+        //  REMARK：RUDEX 网关背书资产需要小写。
+        val assetName = appext.backSymbol.toLowerCase()
+        val final_memo = if (memo != null && memo != "") {
+            String.format("%s:%s:%s", assetName, address, memo)
+        } else {
+            String.format("%s:%s", assetName, address)
+        }
+        return Promise._resolve(JSONObject().apply {
+            put("intermediateAccount", appext.intermediateAccount)
+            put("finalMemo", final_memo)
+            put("intermediateAccountData", intermediateAccountData)
+        })
+    }
 }
