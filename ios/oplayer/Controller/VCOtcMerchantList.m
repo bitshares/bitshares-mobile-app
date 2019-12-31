@@ -668,10 +668,10 @@
                             [_owner hideBlockView];
                             id lock_info = [data objectForKey:@"data"];
                             assert(lock_info);
-                            NSString* oldprice = [NSString stringWithFormat:@"%@", [item objectForKey:@"price"]];
-                            NSString* newprice = [NSString stringWithFormat:@"%@", [lock_info objectForKey:@"unitPrice"]];
+                            id oldprice = [OrgUtils auxGetStringDecimalNumberValue:[NSString stringWithFormat:@"%@", [item objectForKey:@"price"]]];
+                            id newprice = [OrgUtils auxGetStringDecimalNumberValue:[NSString stringWithFormat:@"%@", [lock_info objectForKey:@"unitPrice"]]];
                             //  价格变化
-                            if (![oldprice isEqualToString:newprice]) {
+                            if ([oldprice compare:newprice] != 0) {
                                 [self askForPriceChanged:item lock_info:lock_info auth_info:auth_info sell_user_balance:userAssetBalance];
                             } else {
                                 [self gotoInputOrderCore:item lock_info:lock_info auth_info:auth_info sell_user_balance:userAssetBalance];
