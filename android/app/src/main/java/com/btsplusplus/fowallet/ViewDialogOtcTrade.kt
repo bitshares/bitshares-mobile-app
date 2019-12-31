@@ -403,7 +403,7 @@ class ViewDialogOtcTrade : Dialog {
                 _layoutParams.setMargins(0, 0, 3.dp, 0)
                 layoutParams = _layoutParams
                 gravity = Gravity.CENTER
-                setBackgroundColor(ctx.resources.getColor(R.color.theme01_textColorNormal))
+                setBackgroundColor(ctx.resources.getColor(R.color.theme01_textColorGray))
 
                 _btnAutoClose = TextView(ctx).apply {
                     text = String.format(R.string.kOtcInputAutoCloseSecTips.xmlstring(ctx), _autoCloseSeconds.toString())

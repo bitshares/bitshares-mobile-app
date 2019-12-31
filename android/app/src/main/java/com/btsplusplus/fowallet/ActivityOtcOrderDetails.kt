@@ -497,15 +497,17 @@ class ActivityOtcOrderDetails : BtsppActivity() {
                         if (it != null && it as Boolean) {
                             guardWalletUnlocked(true) { unlocked ->
                                 if (unlocked) {
-                                    _execUpdateOrderCore(_currSelectedPaymentMethod!!.getString("account"),
-                                            _currSelectedPaymentMethod!!.get("type"),
-                                            OtcManager.EOtcOrderUpdateType.eoout_to_cancel)
+                                    _execUpdateOrderCore(null, null, OtcManager.EOtcOrderUpdateType.eoout_to_cancel)
                                 }
                             }
                         }
                     }
                 }
                 OtcManager.EOtcOrderOperationType.eooot_confirm_paid -> {
+                    if (_currSelectedPaymentMethod == null) {
+                        showToast(resources.getString(R.string.kOtcMgrErrOrderNoPaymentMethod))
+                        return
+                    }
                     UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kOtcOdUserConfirmPaidMoneyTitle), resources.getString(R.string.kOtcOdUserConfirmPaidMoneyMessage)).then {
                         if (it != null && it as Boolean) {
                             guardWalletUnlocked(true) { unlocked ->
