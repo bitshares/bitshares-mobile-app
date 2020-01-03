@@ -634,6 +634,7 @@
                         if (!msg || [msg isEqualToString:@""]) {
                             msg = NSLocalizedString(@"kOtcEntryDisableDefaultMsg", @"系统维护中，请稍后再试。");
                         }
+                        [_owner hideBlockView];
                         [OrgUtils makeToast:msg];
                         return nil;
                     }

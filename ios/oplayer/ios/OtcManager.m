@@ -128,7 +128,8 @@ static OtcManager *_sharedOtcManager = nil;
 {
     NSDateFormatter* dateFormat = [[NSDateFormatter alloc] init];
     [dateFormat setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSZ"];
-    [dateFormat setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
+    //  REMARK：格式化字符串已经有Z结尾表示时区了，这里可以不用设置。服务器数据是东8区。
+    //  [dateFormat setTimeZone:[NSTimeZone timeZoneWithName:@"Asia/Shanghai"]];
     NSDate* date = [dateFormat dateFromString:time];
     return ceil([date timeIntervalSince1970]);
 }
