@@ -358,6 +358,7 @@ class FragmentOtcMerchantList : BtsppFragment() {
                             if (msg == null || msg.isEmpty()) {
                                 msg = R.string.kOtcEntryDisableDefaultMsg.xmlstring(ctx)
                             }
+                            mask.dismiss()
                             showToast(msg)
                             return@then null
                         }
