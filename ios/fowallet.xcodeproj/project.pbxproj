@@ -4488,7 +4488,7 @@
 						DevelopmentTeam = 8R3442PYU5;
 					};
 					ED37767D1654A8E90016EC64 = {
-						DevelopmentTeam = 8R3442PYU5;
+						DevelopmentTeam = B4D4NP92X3;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
 								enabled = 0;
@@ -6805,9 +6805,9 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2.8.0.1020;
+				CURRENT_PROJECT_VERSION = 3.0.0.1231;
 				DEPLOYMENT_POSTPROCESSING = NO;
-				DEVELOPMENT_TEAM = 8R3442PYU5;
+				DEVELOPMENT_TEAM = B4D4NP92X3;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6835,7 +6835,7 @@
 					"$(PROJECT_DIR)/oplayer/libs/secp256k1",
 					"$(PROJECT_DIR)/oplayer/libs/Flurry",
 				);
-				MARKETING_VERSION = 2.8;
+				MARKETING_VERSION = 3.0;
 				OTHER_LDFLAGS = (
 					"-lxml2",
 					"-lz",
@@ -6863,9 +6863,9 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 2.8.0.1020;
+				CURRENT_PROJECT_VERSION = 3.0.0.1231;
 				DEPLOYMENT_POSTPROCESSING = YES;
-				DEVELOPMENT_TEAM = 8R3442PYU5;
+				DEVELOPMENT_TEAM = B4D4NP92X3;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6892,7 +6892,7 @@
 					"$(PROJECT_DIR)/oplayer/libs/secp256k1",
 					"$(PROJECT_DIR)/oplayer/libs/Flurry",
 				);
-				MARKETING_VERSION = 2.8;
+				MARKETING_VERSION = 3.0;
 				OTHER_LDFLAGS = (
 					"-lxml2",
 					"-lz",

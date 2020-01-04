@@ -83,7 +83,7 @@
 #define kAppModuleEnableTabDebt     1
 #define kAppModuleEnableRank        1
 #define kAppModuleEnableFeedPrice   1
-#define kAppModuleEnableOTC         0
+#define kAppModuleEnableOTC         1
 #define kAppModuleEnableGateway     1
 #define kAppModuleEnableFaq         0
 #define kAppCheckUpdate             1
