@@ -481,9 +481,9 @@ class ActivityPermissionEdit : BtsppActivity() {
                 resources.getString(R.string.kVcPermissionEditNewPassThresholdPlaceholder), resources.getString(R.string.kBtnOK), is_password = false, iDecimalPrecision = 0, iMaxLength = 7).then {
             val threshold_value = it as? String
             if (threshold_value != null) {
-                val i_threshold = threshold_value.toInt()
+                val i_threshold = threshold_value.toIntOrNull()
                 //  REMARK：单个 authority 的最大值是 65535，目前理事会参数最多10个 authority。这里目前配置最大范围可以容量 100+ authority。
-                if (i_threshold < 1 || i_threshold > 9999999) {
+                if (i_threshold == null || i_threshold < 1 || i_threshold > 9999999) {
                     showToast(resources.getString(R.string.kVcPermissionEditTipsInvalidPassThreshold))
                 } else {
                     _weightThreshold = i_threshold
