@@ -54,8 +54,8 @@ class ActivityPermissionAddOne : BtsppActivity() {
             return
         }
 
-        val i_threshold = str_weight.toInt()
-        if (i_threshold < 1 || i_threshold > 65535) {
+        val i_threshold = str_weight.toIntOrNull()
+        if (i_threshold == null || i_threshold < 1 || i_threshold > 65535) {
             showToast(resources.getString(R.string.kVcPermissionAddOneDoneTipsInvalidWeight))
             return
         }
