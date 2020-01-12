@@ -236,6 +236,11 @@
  */
 - (WsPromise*)queryAccountHistoryByOperations:(NSString*)account_id_or_name optype_array:(NSArray*)optype_array limit:(NSInteger)limit;
 
+/*
+ *  (public) 根据资产创建者查询资产信息。
+ */
+- (WsPromise*)queryAssetsByIssuer:(NSString*)issuer_name_or_id start:(NSString*)start limit:(NSInteger)limit;
+
 /**
  *  (public) 查询最近成交记录
  */

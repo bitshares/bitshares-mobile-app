@@ -13,6 +13,7 @@
 #import "BitsharesClientManager.h"
 
 #import "VCProposal.h"
+#import "VCAssetManager.h"
 #import "VCWalletManager.h"
 #import "VCUserAssets.h"
 #import "VCUserOrders.h"
@@ -46,6 +47,7 @@ enum
     kVcSubUserOrder,            //  订单管理
     kVcSubWalletMgr,            //  钱包管理
     kVcSubProposal,             //  提案管理
+    kVcSubAssetMgr,             //  资产管理
 };
 
 enum
@@ -104,6 +106,7 @@ enum
                               @"kLblCellOrderManagement",       //  订单管理,
                               @"kLblCellWalletAndMultiSign",    //  钱包&多签
                               @"kLblCellMyProposal",            //  待处理提案,
+                              @"kLblCellAssetMgr",              //  资产管理,
                               nil];
         [obj addObject:@{@"type":@(kVcAssets), @"rows":pSection2}];
         
@@ -230,6 +233,13 @@ enum
                     cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
                 }
                     break;
+                case kVcSubAssetMgr:
+                {
+                    //  TODO:4.0 icon
+                    cell.imageView.image = [UIImage templateImageNamed:@"iconProposal"];
+                    cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
+                }
+                    break;
                 case kVcSubWalletMgr:
                 {
                     cell.imageView.image = [UIImage templateImageNamed:@"iconWallet"];
@@ -325,6 +335,15 @@ enum
                         [self GuardWalletExist:^{
                             VCProposal* vc = [[VCProposal alloc] init];
                             vc.title = NSLocalizedString(@"kVcTitleMyProposal", @"待处理提案");
+                            [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+                        }];
+                    }
+                        break;
+                    case kVcSubAssetMgr:
+                    {
+                        [self GuardWalletExist:^{
+                            VCAssetManager* vc = [[VCAssetManager alloc] init];
+                            vc.title = NSLocalizedString(@"kVcTitleAssetMgr", @"资产管理");
                             [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
                         }];
                     }

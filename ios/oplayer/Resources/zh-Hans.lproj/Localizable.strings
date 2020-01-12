@@ -176,6 +176,7 @@
 "kLblAccountLocked" = "锁定中";
 "kLblAccountUnlocked" = "未锁定";
 "kLblCellMyProposal" = "提案管理";
+"kLblCellAssetMgr" = "资产管理";
 "kLblCellWalletAndMultiSign" = "钱包&多签";
 "kLblCellMyBalance" = "我的资产";
 "kLblCellOrderManagement" = "订单管理";
@@ -720,6 +721,7 @@
 "kVcTitleFAQ" = "常见问题";
 "kVcTitleVoting" = "投票";
 "kVcTitleMyProposal" = "提案管理";
+"kVcTitleAssetMgr" = "资产管理";
 "kVcTitleWalletAndMultiSign" = "钱包&多签";
 "kVcTitleConvertToWalletMode" = "升级钱包模式";
 "kVcTitleSelectMultiSigndAccount" = "选择多签管理账号";
