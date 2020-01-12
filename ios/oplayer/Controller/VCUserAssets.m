@@ -229,7 +229,7 @@
                           name, @"name",
                           precision, @"precision", nil];
         
-        //  资产类型（核心、智能、普通）
+        //  资产类型（核心、智能、普通）TODO:4.0 预测市场
         if ([asset_type isEqualToString:chainMgr.grapheneCoreAssetID]){
             [asset_final setObject:@"1" forKey:@"is_core"];
         }else{

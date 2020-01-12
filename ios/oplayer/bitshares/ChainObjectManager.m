@@ -1246,6 +1246,17 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     }];
 }
 
+/*
+ *  (public) 根据资产创建者查询资产信息。
+ */
+- (WsPromise*)queryAssetsByIssuer:(NSString*)issuer_name_or_id start:(NSString*)start limit:(NSInteger)limit
+{
+    assert(issuer_name_or_id);
+    assert(start);
+    GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
+    return [api exec:@"get_assets_by_issuer" params:@[issuer_name_or_id, start, @(limit)]];
+}
+
 /**
  *  (public) 查询最近成交记录
  */

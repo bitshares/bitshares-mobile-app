@@ -176,6 +176,7 @@
 "kLblAccountLocked" = "ロックする中";
 "kLblAccountUnlocked" = "ロックしていません";
 "kLblCellMyProposal" = "提案管理";
+"kLblCellAssetMgr" = "資産管理";
 "kLblCellWalletAndMultiSign" = "ウオレット&多く署名";
 "kLblCellMyBalance" = "私の資産";
 "kLblCellOrderManagement" = "注文管理";
@@ -720,6 +721,7 @@
 "kVcTitleFAQ" = "よくある問題";
 "kVcTitleVoting" = "投票";
 "kVcTitleMyProposal" = "提案管理";
+"kVcTitleAssetMgr" = "資産管理";
 "kVcTitleWalletAndMultiSign" = "ウオレット&多く署名";
 "kVcTitleConvertToWalletMode" = "ウオレットをアップグレードします";
 "kVcTitleSelectMultiSigndAccount" = "多く署名してアカウントを管理するのを選びます";

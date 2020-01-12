@@ -762,6 +762,9 @@
 		3FB038242398AA4200FC859C /* iconPhone@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB0381F2398AA4100FC859C /* iconPhone@3x.png */; };
 		3FB038252398AA4200FC859C /* iconPhone@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB0381F2398AA4100FC859C /* iconPhone@3x.png */; };
 		3FB5BFB62181B5250009C346 /* VCFeedPriceDetail.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB5BFB42181B5250009C346 /* VCFeedPriceDetail.m */; };
+		3FB83CDF23C19A2200CD3EF1 /* VCAssetManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB83CDD23C19A2200CD3EF1 /* VCAssetManager.m */; };
+		3FB83CE023C19A2200CD3EF1 /* VCAssetManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB83CDD23C19A2200CD3EF1 /* VCAssetManager.m */; };
+		3FB83CE123C19A2200CD3EF1 /* VCAssetManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB83CDD23C19A2200CD3EF1 /* VCAssetManager.m */; };
 		3FB8F88D21CA4BA000DA88E2 /* DFReachabilityUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB8F88A21CA4BA000DA88E2 /* DFReachabilityUtil.m */; };
 		3FB8F88E21CA4BA000DA88E2 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB8F88C21CA4BA000DA88E2 /* Reachability.m */; };
 		3FB8F89421CCD10400DA88E2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3FB8F89021CCD10300DA88E2 /* InfoPlist.strings */; };
@@ -1293,6 +1296,12 @@
 		3FCC8B85237A7C1F00F5664D /* iconPmWechat@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B75237A7C1F00F5664D /* iconPmWechat@3x.png */; };
 		3FCC8B86237A7C1F00F5664D /* iconPmWechat@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B75237A7C1F00F5664D /* iconPmWechat@3x.png */; };
 		3FCC8B87237A7C1F00F5664D /* iconPmWechat@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCC8B75237A7C1F00F5664D /* iconPmWechat@3x.png */; };
+		3FD0AD5023C1A3F20035018E /* ViewAssetBasicInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD0AD4F23C1A3F20035018E /* ViewAssetBasicInfoCell.m */; };
+		3FD0AD5123C1A3F20035018E /* ViewAssetBasicInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD0AD4F23C1A3F20035018E /* ViewAssetBasicInfoCell.m */; };
+		3FD0AD5223C1A3F20035018E /* ViewAssetBasicInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD0AD4F23C1A3F20035018E /* ViewAssetBasicInfoCell.m */; };
+		3FD0AD5523C1FA9D0035018E /* VCAssetDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD0AD5423C1FA9D0035018E /* VCAssetDetails.m */; };
+		3FD0AD5623C1FA9D0035018E /* VCAssetDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD0AD5423C1FA9D0035018E /* VCAssetDetails.m */; };
+		3FD0AD5723C1FA9D0035018E /* VCAssetDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD0AD5423C1FA9D0035018E /* VCAssetDetails.m */; };
 		3FD3DD2E2316A579009760A0 /* VCScanAccountName.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD3DD2C2316A578009760A0 /* VCScanAccountName.m */; };
 		3FD3DD2F2316A579009760A0 /* VCScanAccountName.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD3DD2C2316A578009760A0 /* VCScanAccountName.m */; };
 		3FD3DD302316A579009760A0 /* VCScanAccountName.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD3DD2C2316A578009760A0 /* VCScanAccountName.m */; };
@@ -2056,6 +2065,8 @@
 		3FB0381F2398AA4100FC859C /* iconPhone@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconPhone@3x.png"; path = "Images/iconPhone@3x.png"; sourceTree = "<group>"; };
 		3FB5BFB42181B5250009C346 /* VCFeedPriceDetail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCFeedPriceDetail.m; path = Controller/VCFeedPriceDetail.m; sourceTree = "<group>"; };
 		3FB5BFB52181B5250009C346 /* VCFeedPriceDetail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCFeedPriceDetail.h; path = Controller/VCFeedPriceDetail.h; sourceTree = "<group>"; };
+		3FB83CDD23C19A2200CD3EF1 /* VCAssetManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAssetManager.m; path = Controller/VCAssetManager.m; sourceTree = "<group>"; };
+		3FB83CDE23C19A2200CD3EF1 /* VCAssetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAssetManager.h; path = Controller/VCAssetManager.h; sourceTree = "<group>"; };
 		3FB8F88921CA4BA000DA88E2 /* DFReachabilityUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFReachabilityUtil.h; sourceTree = "<group>"; };
 		3FB8F88A21CA4BA000DA88E2 /* DFReachabilityUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFReachabilityUtil.m; sourceTree = "<group>"; };
 		3FB8F88B21CA4BA000DA88E2 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
@@ -2084,6 +2095,10 @@
 		3FCC8B73237A7C1F00F5664D /* iconPmAlipay@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconPmAlipay@2x.png"; path = "Images/iconPmAlipay@2x.png"; sourceTree = "<group>"; };
 		3FCC8B74237A7C1F00F5664D /* iconPmWechat@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconPmWechat@2x.png"; path = "Images/iconPmWechat@2x.png"; sourceTree = "<group>"; };
 		3FCC8B75237A7C1F00F5664D /* iconPmWechat@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconPmWechat@3x.png"; path = "Images/iconPmWechat@3x.png"; sourceTree = "<group>"; };
+		3FD0AD4E23C1A3F20035018E /* ViewAssetBasicInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewAssetBasicInfoCell.h; path = View/ViewAssetBasicInfoCell.h; sourceTree = "<group>"; };
+		3FD0AD4F23C1A3F20035018E /* ViewAssetBasicInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewAssetBasicInfoCell.m; path = View/ViewAssetBasicInfoCell.m; sourceTree = "<group>"; };
+		3FD0AD5323C1FA9D0035018E /* VCAssetDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAssetDetails.h; path = Controller/VCAssetDetails.h; sourceTree = "<group>"; };
+		3FD0AD5423C1FA9D0035018E /* VCAssetDetails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAssetDetails.m; path = Controller/VCAssetDetails.m; sourceTree = "<group>"; };
 		3FD3DD2C2316A578009760A0 /* VCScanAccountName.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCScanAccountName.m; sourceTree = "<group>"; };
 		3FD3DD2D2316A579009760A0 /* VCScanAccountName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VCScanAccountName.h; sourceTree = "<group>"; };
 		3FD3DD312317B8FC009760A0 /* VCScanTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCScanTransfer.m; sourceTree = "<group>"; };
@@ -2990,6 +3005,10 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3FD0AD5323C1FA9D0035018E /* VCAssetDetails.h */,
+				3FD0AD5423C1FA9D0035018E /* VCAssetDetails.m */,
+				3FB83CDE23C19A2200CD3EF1 /* VCAssetManager.h */,
+				3FB83CDD23C19A2200CD3EF1 /* VCAssetManager.m */,
 				3FE23E30236D6A07006BF999 /* OTC */,
 				3FC36F132340413D00464422 /* VCPermissionAddOne.h */,
 				3FC36F122340413C00464422 /* VCPermissionAddOne.m */,
@@ -3119,6 +3138,8 @@
 		18FF069017E00C5C0088405E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				3FD0AD4E23C1A3F20035018E /* ViewAssetBasicInfoCell.h */,
+				3FD0AD4F23C1A3F20035018E /* ViewAssetBasicInfoCell.m */,
 				3F009A2123A2176000A77E4A /* ViewOtcMcAssetSwitchCell.h */,
 				3F009A2023A2176000A77E4A /* ViewOtcMcAssetSwitchCell.m */,
 				3F009A1B23A212DF00A77E4A /* ViewUtils.h */,
@@ -5666,6 +5687,7 @@
 				3F6768A5230E9EC100E98C14 /* GCDWebServerDataResponse.m in Sources */,
 				3F6768A6230E9EC100E98C14 /* MyPopviewManager.m in Sources */,
 				3F6768A7230E9EC100E98C14 /* ViewFaceCell.m in Sources */,
+				3FB83CE123C19A2200CD3EF1 /* VCAssetManager.m in Sources */,
 				3F6768A8230E9EC100E98C14 /* AesOpt.c in Sources */,
 				3F6768A9230E9EC100E98C14 /* LangManager.m in Sources */,
 				3F6768AA230E9EC100E98C14 /* zip.c in Sources */,
@@ -5730,6 +5752,7 @@
 				3F6768DE230E9EC100E98C14 /* Reachability.m in Sources */,
 				3F21FB77235749B600CF9F20 /* ViewSecTipsLineCell.m in Sources */,
 				3F23B788231CCCCA00EEEE78 /* VCPaySuccess.m in Sources */,
+				3FD0AD5723C1FA9D0035018E /* VCAssetDetails.m in Sources */,
 				3F6768DF230E9EC100E98C14 /* VCBtsaiWebView.m in Sources */,
 				3F6768E0230E9EC100E98C14 /* VCNotice.m in Sources */,
 				3F6768E1230E9EC100E98C14 /* VCWebView.m in Sources */,
@@ -5739,6 +5762,7 @@
 				3F6768E3230E9EC100E98C14 /* VCTest.m in Sources */,
 				3F6768E4230E9EC100E98C14 /* Ppmd7Enc.c in Sources */,
 				3F6768E5230E9EC100E98C14 /* VCCommonLogic.m in Sources */,
+				3FD0AD5223C1A3F20035018E /* ViewAssetBasicInfoCell.m in Sources */,
 				3F6768E6230E9EC100E98C14 /* VCServices.m in Sources */,
 				3F6768E7230E9EC100E98C14 /* bts_wallet_core.c in Sources */,
 				3F6768E8230E9EC100E98C14 /* RuDEX.m in Sources */,
@@ -5992,6 +6016,7 @@
 				3FB8F93121CE66C200DA88E2 /* GCDWebServerDataResponse.m in Sources */,
 				3FB8F93221CE66C200DA88E2 /* MyPopviewManager.m in Sources */,
 				3FB8F93321CE66C200DA88E2 /* ViewFaceCell.m in Sources */,
+				3FB83CE023C19A2200CD3EF1 /* VCAssetManager.m in Sources */,
 				3FB8F93421CE66C200DA88E2 /* AesOpt.c in Sources */,
 				3FF3550721FECDF4008EF213 /* LangManager.m in Sources */,
 				3FB8F93521CE66C200DA88E2 /* zip.c in Sources */,
@@ -6056,6 +6081,7 @@
 				3FB8F96221CE66C200DA88E2 /* Reachability.m in Sources */,
 				3F21FB76235749B600CF9F20 /* ViewSecTipsLineCell.m in Sources */,
 				3F23B787231CCCCA00EEEE78 /* VCPaySuccess.m in Sources */,
+				3FD0AD5623C1FA9D0035018E /* VCAssetDetails.m in Sources */,
 				3FB8F96321CE66C200DA88E2 /* VCBtsaiWebView.m in Sources */,
 				3FB8F96421CE66C200DA88E2 /* VCNotice.m in Sources */,
 				3FB8F96521CE66C200DA88E2 /* VCWebView.m in Sources */,
@@ -6065,6 +6091,7 @@
 				3FB8F96721CE66C200DA88E2 /* VCTest.m in Sources */,
 				3FB8F96821CE66C200DA88E2 /* Ppmd7Enc.c in Sources */,
 				3FB8F96921CE66C200DA88E2 /* VCCommonLogic.m in Sources */,
+				3FD0AD5123C1A3F20035018E /* ViewAssetBasicInfoCell.m in Sources */,
 				3FB8F96A21CE66C200DA88E2 /* VCServices.m in Sources */,
 				3FB8F96B21CE66C200DA88E2 /* bts_wallet_core.c in Sources */,
 				3F6C35B221EC8650008E2903 /* RuDEX.m in Sources */,
@@ -6318,6 +6345,7 @@
 				B73B4D931CC9D4E90049D9F5 /* MyPopviewManager.m in Sources */,
 				EDFB5514186DCA16005FB755 /* ViewFaceCell.m in Sources */,
 				B7BDAA8420B3C77500738F12 /* AesOpt.c in Sources */,
+				3FB83CDF23C19A2200CD3EF1 /* VCAssetManager.m in Sources */,
 				3FF3550621FECDF4008EF213 /* LangManager.m in Sources */,
 				B7A13B7A1CA1443A0096A6A4 /* zip.c in Sources */,
 				B7E690EF1C16BD3600EF32EF /* ViewSimulateActionSheet.m in Sources */,
@@ -6382,6 +6410,7 @@
 				3F23B786231CCCCA00EEEE78 /* VCPaySuccess.m in Sources */,
 				3F21FB75235749B600CF9F20 /* ViewSecTipsLineCell.m in Sources */,
 				B72A844820CA628800D92A25 /* VCBtsaiWebView.m in Sources */,
+				3FD0AD5523C1FA9D0035018E /* VCAssetDetails.m in Sources */,
 				B79FC2D41A45E8A0000D49D5 /* VCNotice.m in Sources */,
 				B7BEC2821A4601440049EB1F /* VCWebView.m in Sources */,
 				3F2E6E2C233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */,
@@ -6391,6 +6420,7 @@
 				B7BDAA9A20B3C77500738F12 /* Ppmd7Enc.c in Sources */,
 				B78EAFFC1C4DD0C600F4DCE9 /* VCCommonLogic.m in Sources */,
 				B764AEA320B5160000BDFC1B /* VCServices.m in Sources */,
+				3FD0AD5023C1A3F20035018E /* ViewAssetBasicInfoCell.m in Sources */,
 				B7BDA98E20B39BC500738F12 /* bts_wallet_core.c in Sources */,
 				3F6C35B121EC8650008E2903 /* RuDEX.m in Sources */,
 				B782F0C71D6E94C600F61571 /* UIImage+ImageEffects.m in Sources */,
