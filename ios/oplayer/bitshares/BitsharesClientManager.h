@@ -92,6 +92,11 @@
 - (WsPromise*)proposalUpdate:(NSDictionary*)opdata;
 
 /**
+ *  OP -发行资产给某人
+ */
+- (WsPromise*)assetIssue:(NSDictionary*)opdata;
+
+/**
  *  OP - 更新资产发行者
  */
 - (WsPromise*)assetUpdateIssuer:(NSDictionary*)opdata;
