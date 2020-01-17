@@ -1358,6 +1358,9 @@
 		3FEFFD35237A83D90019799D /* ViewWebviewPayment.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FEFFD31237A83D90019799D /* ViewWebviewPayment.m */; };
 		3FEFFD36237A83D90019799D /* ViewWebviewPayment.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FEFFD31237A83D90019799D /* ViewWebviewPayment.m */; };
 		3FEFFD37237A83D90019799D /* ViewWebviewPayment.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FEFFD31237A83D90019799D /* ViewWebviewPayment.m */; };
+		3FF2E98A23D0691C006F98D0 /* VCAssetOpIssue.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF2E98923D0691C006F98D0 /* VCAssetOpIssue.m */; };
+		3FF2E98B23D0691C006F98D0 /* VCAssetOpIssue.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF2E98923D0691C006F98D0 /* VCAssetOpIssue.m */; };
+		3FF2E98C23D0691C006F98D0 /* VCAssetOpIssue.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF2E98923D0691C006F98D0 /* VCAssetOpIssue.m */; };
 		3FF31CE023A8D80700CD758D /* iconOtcMcAsset@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FF31CD623A8D80500CD758D /* iconOtcMcAsset@3x.png */; };
 		3FF31CE123A8D80700CD758D /* iconOtcMcAsset@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FF31CD623A8D80500CD758D /* iconOtcMcAsset@3x.png */; };
 		3FF31CE223A8D80700CD758D /* iconOtcMcAsset@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FF31CD623A8D80500CD758D /* iconOtcMcAsset@3x.png */; };
@@ -2137,6 +2140,8 @@
 		3FEFFD2F237A83D90019799D /* ViewWebviewPayment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewWebviewPayment.h; path = oplayer/View/ModelView/ViewWebviewPayment.h; sourceTree = SOURCE_ROOT; };
 		3FEFFD30237A83D90019799D /* ViewFullScreenBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewFullScreenBase.m; path = oplayer/View/ModelView/ViewFullScreenBase.m; sourceTree = SOURCE_ROOT; };
 		3FEFFD31237A83D90019799D /* ViewWebviewPayment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewWebviewPayment.m; path = oplayer/View/ModelView/ViewWebviewPayment.m; sourceTree = SOURCE_ROOT; };
+		3FF2E98823D0691C006F98D0 /* VCAssetOpIssue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAssetOpIssue.h; path = Controller/VCAssetOpIssue.h; sourceTree = "<group>"; };
+		3FF2E98923D0691C006F98D0 /* VCAssetOpIssue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAssetOpIssue.m; path = Controller/VCAssetOpIssue.m; sourceTree = "<group>"; };
 		3FF31CD623A8D80500CD758D /* iconOtcMcAsset@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtcMcAsset@3x.png"; path = "Images/iconOtcMcAsset@3x.png"; sourceTree = "<group>"; };
 		3FF31CD723A8D80500CD758D /* iconOtcMcAd@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtcMcAd@3x.png"; path = "Images/iconOtcMcAd@3x.png"; sourceTree = "<group>"; };
 		3FF31CD823A8D80500CD758D /* iconOtcMerchant@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtcMerchant@3x.png"; path = "Images/iconOtcMerchant@3x.png"; sourceTree = "<group>"; };
@@ -3005,6 +3010,8 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3FF2E98823D0691C006F98D0 /* VCAssetOpIssue.h */,
+				3FF2E98923D0691C006F98D0 /* VCAssetOpIssue.m */,
 				3FD0AD5323C1FA9D0035018E /* VCAssetDetails.h */,
 				3FD0AD5423C1FA9D0035018E /* VCAssetDetails.m */,
 				3FB83CDE23C19A2200CD3EF1 /* VCAssetManager.h */,
@@ -5535,6 +5542,7 @@
 				3F009A2423A2176100A77E4A /* ViewOtcMcAssetSwitchCell.m in Sources */,
 				3F676822230E9EC100E98C14 /* WjCryptLib_AesCtr.c in Sources */,
 				3F676823230E9EC100E98C14 /* AWActionSheet.m in Sources */,
+				3FF2E98C23D0691C006F98D0 /* VCAssetOpIssue.m in Sources */,
 				3F676824230E9EC100E98C14 /* VCBackupWallet.m in Sources */,
 				3F676825230E9EC100E98C14 /* ViewLoading.m in Sources */,
 				3F676826230E9EC100E98C14 /* VCGatewayDeposit.m in Sources */,
@@ -5864,6 +5872,7 @@
 				3F009A2323A2176100A77E4A /* ViewOtcMcAssetSwitchCell.m in Sources */,
 				3FB8F8BA21CE66C200DA88E2 /* WjCryptLib_AesCtr.c in Sources */,
 				3FB8F8BB21CE66C200DA88E2 /* AWActionSheet.m in Sources */,
+				3FF2E98B23D0691C006F98D0 /* VCAssetOpIssue.m in Sources */,
 				3FB8F8BC21CE66C200DA88E2 /* VCBackupWallet.m in Sources */,
 				3FB8F8BD21CE66C200DA88E2 /* ViewLoading.m in Sources */,
 				3F9A731521E729FE00DAF7A2 /* VCGatewayDeposit.m in Sources */,
@@ -6193,6 +6202,7 @@
 				3F009A2223A2176100A77E4A /* ViewOtcMcAssetSwitchCell.m in Sources */,
 				B7BDA9A420B3A3D100738F12 /* WjCryptLib_AesCtr.c in Sources */,
 				F51D13FA1C59C45800FBB748 /* AWActionSheet.m in Sources */,
+				3FF2E98A23D0691C006F98D0 /* VCAssetOpIssue.m in Sources */,
 				B77EBBEF213A4416009AC776 /* VCBackupWallet.m in Sources */,
 				B7030DF91E2FB64600791B47 /* ViewLoading.m in Sources */,
 				3F9A731421E729FE00DAF7A2 /* VCGatewayDeposit.m in Sources */,
