@@ -92,6 +92,11 @@
 - (WsPromise*)proposalUpdate:(NSDictionary*)opdata;
 
 /**
+ *  OP -销毁资产（减少当前供应量）REMARK：不能对智能资产进行操作。
+ */
+- (WsPromise*)assetReserve:(NSDictionary*)opdata;
+
+/**
  *  OP -发行资产给某人
  */
 - (WsPromise*)assetIssue:(NSDictionary*)opdata;

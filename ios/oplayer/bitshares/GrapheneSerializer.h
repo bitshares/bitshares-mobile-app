@@ -187,6 +187,9 @@
 /**
  *  OP - 资产相关操作
  */
+@interface T_asset_reserve : T_Base
+@end
+
 @interface T_asset_issue : T_Base
 @end
 
