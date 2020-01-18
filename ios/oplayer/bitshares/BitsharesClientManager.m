@@ -13,6 +13,7 @@
 #import "ChainObjectManager.h"
 #import "GrapheneSerializer.h"
 #import "WalletManager.h"
+#import "ModelUtils.h"
 
 static BitsharesClientManager *_sharedBitsharesClientManager = nil;
 
@@ -189,21 +190,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
     id n_amount = [NSDecimalNumber decimalNumberWithString:amount];
     id n_amount_pow = [NSString stringWithFormat:@"%@", [n_amount decimalNumberByMultiplyingByPowerOf10:asset_precision]];
     
-    BOOL bBalanceEnough = NO;
-    id balances = [full_from_account objectForKey:@"balances"];
-    if (balances && [balances isKindOfClass:[NSArray class]] && [balances count] > 0) {
-        for (id balance_object in balances) {
-            if ([asset_id isEqualToString:[balance_object objectForKey:@"asset_type"]]) {
-                id n_balance = [NSDecimalNumber decimalNumberWithMantissa:[[balance_object objectForKey:@"balance"] unsignedLongLongValue]
-                                                                 exponent:-asset_precision
-                                                               isNegative:NO];
-                if ([n_balance compare:n_amount] >= 0) {
-                    bBalanceEnough = YES;
-                    break;
-                }
-            }
-        }
-    }
+    BOOL bBalanceEnough = [[ModelUtils findAssetBalance:full_from_account asset_id:asset_id asset_precision:asset_precision] compare:n_amount] >= 0;
     if (!bBalanceEnough) {
         resolve(@{@"err":[NSString stringWithFormat:NSLocalizedString(@"kTxBalanceNotEnough", @"您的 %@ 余额不足。"), asset[@"symbol"]]});
         return;
@@ -513,6 +500,18 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
     //  手续费支付账号也需要签名
     [tr addSignKeys:[walletMgr getSignKeysFromFeePayingAccount:[opdata objectForKey:@"fee_paying_account"]]];
     
+    return [self process_transaction:tr];
+}
+
+
+/**
+ *  OP -销毁资产（减少当前供应量）REMARK：不能对智能资产进行操作。
+ */
+- (WsPromise*)assetReserve:(NSDictionary*)opdata
+{
+    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
+    [tr add_operation:ebo_asset_reserve opdata:opdata];
+    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"payer"]]];
     return [self process_transaction:tr];
 }
 

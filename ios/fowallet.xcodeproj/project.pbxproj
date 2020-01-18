@@ -96,6 +96,12 @@
 		3F23B788231CCCCA00EEEE78 /* VCPaySuccess.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F23B785231CCCCA00EEEE78 /* VCPaySuccess.m */; };
 		3F291BD922B48EFB002E0CBD /* GatewayAssetItemData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F291BD722B48EFA002E0CBD /* GatewayAssetItemData.m */; };
 		3F291BDA22B48EFB002E0CBD /* GatewayAssetItemData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F291BD722B48EFA002E0CBD /* GatewayAssetItemData.m */; };
+		3F2B7A5723D2E819006B1359 /* ViewTextFieldAmountCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2B7A5623D2E819006B1359 /* ViewTextFieldAmountCell.m */; };
+		3F2B7A5823D2E819006B1359 /* ViewTextFieldAmountCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2B7A5623D2E819006B1359 /* ViewTextFieldAmountCell.m */; };
+		3F2B7A5923D2E819006B1359 /* ViewTextFieldAmountCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2B7A5623D2E819006B1359 /* ViewTextFieldAmountCell.m */; };
+		3F2B7A5C23D301D3006B1359 /* ModelUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2B7A5A23D301D3006B1359 /* ModelUtils.m */; };
+		3F2B7A5D23D301D3006B1359 /* ModelUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2B7A5A23D301D3006B1359 /* ModelUtils.m */; };
+		3F2B7A5E23D301D3006B1359 /* ModelUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2B7A5A23D301D3006B1359 /* ModelUtils.m */; };
 		3F2E6E27233DF5A600BF4B78 /* VCPermissionEdit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E25233DF5A600BF4B78 /* VCPermissionEdit.m */; };
 		3F2E6E2C233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E2A233E0B3500BF4B78 /* ViewPermissionInfoCellB.m */; };
 		3F2E6E2D233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E2A233E0B3500BF4B78 /* ViewPermissionInfoCellB.m */; };
@@ -1361,6 +1367,9 @@
 		3FF2E98A23D0691C006F98D0 /* VCAssetOpIssue.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF2E98923D0691C006F98D0 /* VCAssetOpIssue.m */; };
 		3FF2E98B23D0691C006F98D0 /* VCAssetOpIssue.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF2E98923D0691C006F98D0 /* VCAssetOpIssue.m */; };
 		3FF2E98C23D0691C006F98D0 /* VCAssetOpIssue.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF2E98923D0691C006F98D0 /* VCAssetOpIssue.m */; };
+		3FF2E98F23D1C360006F98D0 /* VCAssetOpReserve.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF2E98D23D1C360006F98D0 /* VCAssetOpReserve.m */; };
+		3FF2E99023D1C360006F98D0 /* VCAssetOpReserve.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF2E98D23D1C360006F98D0 /* VCAssetOpReserve.m */; };
+		3FF2E99123D1C360006F98D0 /* VCAssetOpReserve.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF2E98D23D1C360006F98D0 /* VCAssetOpReserve.m */; };
 		3FF31CE023A8D80700CD758D /* iconOtcMcAsset@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FF31CD623A8D80500CD758D /* iconOtcMcAsset@3x.png */; };
 		3FF31CE123A8D80700CD758D /* iconOtcMcAsset@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FF31CD623A8D80500CD758D /* iconOtcMcAsset@3x.png */; };
 		3FF31CE223A8D80700CD758D /* iconOtcMcAsset@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FF31CD623A8D80500CD758D /* iconOtcMcAsset@3x.png */; };
@@ -1980,6 +1989,10 @@
 		3F23B785231CCCCA00EEEE78 /* VCPaySuccess.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCPaySuccess.m; path = Controller/VCPaySuccess.m; sourceTree = "<group>"; };
 		3F291BD722B48EFA002E0CBD /* GatewayAssetItemData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GatewayAssetItemData.m; sourceTree = "<group>"; };
 		3F291BD822B48EFB002E0CBD /* GatewayAssetItemData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GatewayAssetItemData.h; sourceTree = "<group>"; };
+		3F2B7A5523D2E819006B1359 /* ViewTextFieldAmountCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewTextFieldAmountCell.h; path = View/ViewTextFieldAmountCell.h; sourceTree = "<group>"; };
+		3F2B7A5623D2E819006B1359 /* ViewTextFieldAmountCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewTextFieldAmountCell.m; path = View/ViewTextFieldAmountCell.m; sourceTree = "<group>"; };
+		3F2B7A5A23D301D3006B1359 /* ModelUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelUtils.m; sourceTree = "<group>"; };
+		3F2B7A5B23D301D3006B1359 /* ModelUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelUtils.h; sourceTree = "<group>"; };
 		3F2E6E25233DF5A600BF4B78 /* VCPermissionEdit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCPermissionEdit.m; path = Controller/VCPermissionEdit.m; sourceTree = "<group>"; };
 		3F2E6E26233DF5A600BF4B78 /* VCPermissionEdit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCPermissionEdit.h; path = Controller/VCPermissionEdit.h; sourceTree = "<group>"; };
 		3F2E6E2A233E0B3500BF4B78 /* ViewPermissionInfoCellB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewPermissionInfoCellB.m; path = View/ViewPermissionInfoCellB.m; sourceTree = "<group>"; };
@@ -2142,6 +2155,8 @@
 		3FEFFD31237A83D90019799D /* ViewWebviewPayment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewWebviewPayment.m; path = oplayer/View/ModelView/ViewWebviewPayment.m; sourceTree = SOURCE_ROOT; };
 		3FF2E98823D0691C006F98D0 /* VCAssetOpIssue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAssetOpIssue.h; path = Controller/VCAssetOpIssue.h; sourceTree = "<group>"; };
 		3FF2E98923D0691C006F98D0 /* VCAssetOpIssue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAssetOpIssue.m; path = Controller/VCAssetOpIssue.m; sourceTree = "<group>"; };
+		3FF2E98D23D1C360006F98D0 /* VCAssetOpReserve.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAssetOpReserve.m; path = Controller/VCAssetOpReserve.m; sourceTree = "<group>"; };
+		3FF2E98E23D1C360006F98D0 /* VCAssetOpReserve.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAssetOpReserve.h; path = Controller/VCAssetOpReserve.h; sourceTree = "<group>"; };
 		3FF31CD623A8D80500CD758D /* iconOtcMcAsset@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtcMcAsset@3x.png"; path = "Images/iconOtcMcAsset@3x.png"; sourceTree = "<group>"; };
 		3FF31CD723A8D80500CD758D /* iconOtcMcAd@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtcMcAd@3x.png"; path = "Images/iconOtcMcAd@3x.png"; sourceTree = "<group>"; };
 		3FF31CD823A8D80500CD758D /* iconOtcMerchant@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtcMerchant@3x.png"; path = "Images/iconOtcMerchant@3x.png"; sourceTree = "<group>"; };
@@ -3010,6 +3025,8 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3FF2E98E23D1C360006F98D0 /* VCAssetOpReserve.h */,
+				3FF2E98D23D1C360006F98D0 /* VCAssetOpReserve.m */,
 				3FF2E98823D0691C006F98D0 /* VCAssetOpIssue.h */,
 				3FF2E98923D0691C006F98D0 /* VCAssetOpIssue.m */,
 				3FD0AD5323C1FA9D0035018E /* VCAssetDetails.h */,
@@ -3145,6 +3162,8 @@
 		18FF069017E00C5C0088405E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				3F2B7A5523D2E819006B1359 /* ViewTextFieldAmountCell.h */,
+				3F2B7A5623D2E819006B1359 /* ViewTextFieldAmountCell.m */,
 				3FD0AD4E23C1A3F20035018E /* ViewAssetBasicInfoCell.h */,
 				3FD0AD4F23C1A3F20035018E /* ViewAssetBasicInfoCell.m */,
 				3F009A2123A2176000A77E4A /* ViewOtcMcAssetSwitchCell.h */,
@@ -3940,6 +3959,8 @@
 		B737850A21002607001EEA8C /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				3F2B7A5B23D301D3006B1359 /* ModelUtils.h */,
+				3F2B7A5A23D301D3006B1359 /* ModelUtils.m */,
 				3F291BD822B48EFB002E0CBD /* GatewayAssetItemData.h */,
 				3F291BD722B48EFA002E0CBD /* GatewayAssetItemData.m */,
 				3F9F2C3C2229051600D49165 /* MKlineIndex.h */,
@@ -5590,6 +5611,7 @@
 				3F676848230E9EC100E98C14 /* SRSIMDHelpers.m in Sources */,
 				3F676849230E9EC100E98C14 /* VCLoginBrainKeyMode.m in Sources */,
 				3F67684A230E9EC100E98C14 /* ViewGatewayCoinInfoCell.m in Sources */,
+				3F2B7A5923D2E819006B1359 /* ViewTextFieldAmountCell.m in Sources */,
 				3F67684B230E9EC100E98C14 /* NativeAppDelegate.mm in Sources */,
 				3F67684C230E9EC100E98C14 /* MyLabel.m in Sources */,
 				3F67684D230E9EC100E98C14 /* VCLaunch.m in Sources */,
@@ -5656,6 +5678,7 @@
 				3F676883230E9EC100E98C14 /* ViewEmptyInfoCell.m in Sources */,
 				3F676884230E9EC100E98C14 /* MKlineIndex.m in Sources */,
 				3F676885230E9EC100E98C14 /* WjCryptLib_Rc4.c in Sources */,
+				3FF2E99123D1C360006F98D0 /* VCAssetOpReserve.m in Sources */,
 				3F676886230E9EC100E98C14 /* DFReachabilityUtil.m in Sources */,
 				3F676887230E9EC100E98C14 /* SphereMenu.m in Sources */,
 				3F676888230E9EC100E98C14 /* VCProposalAuthorizeEdit.m in Sources */,
@@ -5716,6 +5739,7 @@
 				3F6768B7230E9EC100E98C14 /* VCBase.m in Sources */,
 				3F6768B8230E9EC100E98C14 /* SRWebSocket.m in Sources */,
 				3F6768B9230E9EC100E98C14 /* ViewTickerHeader.m in Sources */,
+				3F2B7A5E23D301D3006B1359 /* ModelUtils.m in Sources */,
 				3F6768BA230E9EC100E98C14 /* GRCustomUITabBarItem.m in Sources */,
 				3F6768BB230E9EC100E98C14 /* VCSearchNetwork.m in Sources */,
 				3FD3DD302316A579009760A0 /* VCScanAccountName.m in Sources */,
@@ -5920,6 +5944,7 @@
 				3FB8F8DD21CE66C200DA88E2 /* SRSIMDHelpers.m in Sources */,
 				3F86510422EEA228000D496A /* VCLoginBrainKeyMode.m in Sources */,
 				3F9A730D21E5C20500DAF7A2 /* ViewGatewayCoinInfoCell.m in Sources */,
+				3F2B7A5823D2E819006B1359 /* ViewTextFieldAmountCell.m in Sources */,
 				3FB8F8DE21CE66C200DA88E2 /* NativeAppDelegate.mm in Sources */,
 				3FB8F8DF21CE66C200DA88E2 /* MyLabel.m in Sources */,
 				3F05DDBE230B7D76002934DA /* VCLaunch.m in Sources */,
@@ -5986,6 +6011,7 @@
 				3FB8F91421CE66C200DA88E2 /* ViewEmptyInfoCell.m in Sources */,
 				3F9F2C3F2229051700D49165 /* MKlineIndex.m in Sources */,
 				3FB8F91521CE66C200DA88E2 /* WjCryptLib_Rc4.c in Sources */,
+				3FF2E99023D1C360006F98D0 /* VCAssetOpReserve.m in Sources */,
 				3FB8F91621CE66C200DA88E2 /* DFReachabilityUtil.m in Sources */,
 				3FB8F91721CE66C200DA88E2 /* SphereMenu.m in Sources */,
 				3FDD800F21D8C68600DA61FC /* VCProposalAuthorizeEdit.m in Sources */,
@@ -6046,6 +6072,7 @@
 				3FB8F94021CE66C200DA88E2 /* VCBase.m in Sources */,
 				3FB8F94121CE66C200DA88E2 /* SRWebSocket.m in Sources */,
 				3FB8F94221CE66C200DA88E2 /* ViewTickerHeader.m in Sources */,
+				3F2B7A5D23D301D3006B1359 /* ModelUtils.m in Sources */,
 				3FB8F94321CE66C200DA88E2 /* GRCustomUITabBarItem.m in Sources */,
 				3FB8F94421CE66C200DA88E2 /* VCSearchNetwork.m in Sources */,
 				3FD3DD2F2316A579009760A0 /* VCScanAccountName.m in Sources */,
@@ -6250,6 +6277,7 @@
 				3F86510322EEA228000D496A /* VCLoginBrainKeyMode.m in Sources */,
 				3F9A730C21E5C20500DAF7A2 /* ViewGatewayCoinInfoCell.m in Sources */,
 				EDDB1BF717AA093000E892BA /* NativeAppDelegate.mm in Sources */,
+				3F2B7A5723D2E819006B1359 /* ViewTextFieldAmountCell.m in Sources */,
 				B7F9DA71212A6A1300185503 /* MyLabel.m in Sources */,
 				3F05DDBD230B7D76002934DA /* VCLaunch.m in Sources */,
 				B737851321017782001EEA8C /* DirectionPanGestureRecognizer.m in Sources */,
@@ -6316,6 +6344,7 @@
 				3F9F2C3E2229051700D49165 /* MKlineIndex.m in Sources */,
 				B7BDA9A720B3A3D100738F12 /* WjCryptLib_Rc4.c in Sources */,
 				3FB8F88D21CA4BA000DA88E2 /* DFReachabilityUtil.m in Sources */,
+				3FF2E98F23D1C360006F98D0 /* VCAssetOpReserve.m in Sources */,
 				F5666A3B1D631D2800ADA3C6 /* SphereMenu.m in Sources */,
 				3FDD800E21D8C68600DA61FC /* VCProposalAuthorizeEdit.m in Sources */,
 				B76133021DBE0EE100F61A37 /* NJKWebViewProgress.m in Sources */,
@@ -6376,6 +6405,7 @@
 				B714094E20A31CC300003311 /* SRWebSocket.m in Sources */,
 				B737850620FF8547001EEA8C /* ViewTickerHeader.m in Sources */,
 				ED96A08F186C62AD002181D4 /* GRCustomUITabBarItem.m in Sources */,
+				3F2B7A5C23D301D3006B1359 /* ModelUtils.m in Sources */,
 				B72A845020CA776900D92A25 /* VCSearchNetwork.m in Sources */,
 				3FD3DD2E2316A579009760A0 /* VCScanAccountName.m in Sources */,
 				3F6C35AD21EC83AB008E2903 /* GatewayBase.m in Sources */,

@@ -20,6 +20,7 @@
 
 #import "MyTextField.h"
 
+#import "ModelUtils.h"
 #import "ViewUtils.h"
 #import "VCCommonLogic.h"
 

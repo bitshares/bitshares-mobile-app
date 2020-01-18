@@ -22,7 +22,6 @@ enum
     kVcSubToTitle = 0,      //  发行给
     kVcSubToValue,
     
-    kVcSubAmountTitle,      //  发行数量（标题） + 可用余额
     kVcSubAmountTextField,  //  发行数量输入框
     
     kVcSubEmpty,            //  空行（间隔用）
@@ -36,22 +35,21 @@ enum
 
 @interface VCAssetOpIssue ()
 {
-    NSDictionary*           _to_account;
-    NSDictionary*           _asset;
-    NSDictionary*           _dynamic_asset_data;
-    NSInteger               _precision;
-    NSDecimalNumber*        _n_max_supply;
-    NSDecimalNumber*        _n_cur_supply;
-    NSDecimalNumber*        _n_balance;
+    NSDictionary*               _to_account;
+    NSDictionary*               _asset;
+    NSDictionary*               _dynamic_asset_data;
+    NSInteger                   _precision;
+    NSDecimalNumber*            _n_max_supply;
+    NSDecimalNumber*            _n_cur_supply;
+    NSDecimalNumber*            _n_balance;
     
-    UITableViewBase*        _mainTableView;
-    ViewBlockLabel*         _btnCommit;
+    UITableViewBase*            _mainTableView;
+    ViewBlockLabel*             _btnCommit;
     
-    MyTextField*            _tf_amount;
-    MyTextField*            _tf_memo;
-    UITableViewCellBase*    _lb_available;
+    ViewTextFieldAmountCell*    _tf_amount;
+    MyTextField*                _tf_memo;
     
-    NSArray*                _dataArray;
+    NSArray*                    _dataArray;
 }
 
 @end
@@ -60,7 +58,7 @@ enum
 
 -(void)dealloc
 {
-    if (_tf_amount){
+    if (_tf_amount) {
         _tf_amount.delegate = nil;
         _tf_amount = nil;
     }
@@ -74,7 +72,6 @@ enum
         _mainTableView = nil;
     }
     _dataArray = nil;
-    _lb_available = nil;
     _btnCommit = nil;
     _to_account = nil;
     _asset = nil;
@@ -112,33 +109,15 @@ enum
     //  背景颜色
     self.view.backgroundColor = theme.appBackColor;
     
-    //  初始化UI
-    _tf_amount = nil;
-    _tf_memo = nil;
+    //  TODO:4.0 lang
+    //  UI - 数量输入框
+    _tf_amount = [[ViewTextFieldAmountCell alloc] initWithTitle:@"发行数量"
+                                                    placeholder:@"请输入发行数量"
+                                                         tailer:[_asset objectForKey:@"symbol"]];
+    _tf_amount.delegate = self;
+    [self _drawUI_Balance:NO];
     
-    //  - 金额输入框 TODO:4.0 lang
-    NSString* placeHolderAmount = @"请输入发行数量";
-    _tf_amount = [self createTfWithRect:[self makeTextFieldRectFull] keyboard:UIKeyboardTypeDecimalPad placeholder:placeHolderAmount];
-    _tf_amount.showBottomLine = YES;
-    
-    _tf_amount.updateClearButtonTintColor = YES;
-    _tf_amount.textColor = theme.textColorMain;
-    _tf_amount.attributedPlaceholder = [ViewUtils placeholderAttrString:placeHolderAmount];
-    
-    [_tf_amount addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
-    
-    UILabel* tailer_total_price = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 80, 31)];
-    tailer_total_price.lineBreakMode = NSLineBreakByTruncatingTail;
-    tailer_total_price.numberOfLines = 1;
-    tailer_total_price.textAlignment = NSTextAlignmentRight;
-    tailer_total_price.backgroundColor = [UIColor clearColor];
-    tailer_total_price.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    tailer_total_price.font = [UIFont systemFontOfSize:14];
-    tailer_total_price.text = [_asset objectForKey:@"symbol"];
-    _tf_amount.rightView = tailer_total_price;
-    _tf_amount.rightViewMode = UITextFieldViewModeAlways;
-    
-    //  - 备注输入框
+    //  UI - 备注输入框
     NSString* placeHolderMemo = NSLocalizedString(@"kVcTransferTipInputMemo", @"请输入备注信息（可选）");
     CGRect rect = [self makeTextFieldRect];
     _tf_memo = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolderMemo];
@@ -154,7 +133,6 @@ enum
         [obj addObject:@(kVcSubEmpty)];
         
         //  amount
-        [obj addObject:@(kVcSubAmountTitle)];
         [obj addObject:@(kVcSubAmountTextField)];
         [obj addObject:@(kVcSubEmpty)];
         
@@ -176,19 +154,6 @@ enum
     _mainTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:_mainTableView];
     
-    //  余额
-    _lb_available = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-    _lb_available.backgroundColor = [UIColor clearColor];
-    _lb_available.hideBottomLine = YES;
-    _lb_available.accessoryType = UITableViewCellAccessoryNone;
-    _lb_available.selectionStyle = UITableViewCellSelectionStyleNone;
-    _lb_available.textLabel.text = @"发行数量";
-    _lb_available.textLabel.font = [UIFont systemFontOfSize:13.0f];
-    _lb_available.textLabel.textColor = theme.textColorMain;
-    _lb_available.detailTextLabel.font = [UIFont systemFontOfSize:13.0f];
-    _lb_available.detailTextLabel.textColor = theme.textColorMain;
-    [self _drawUI_Balance:NO];
-    
     //  点击事件
     UITapGestureRecognizer* pTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTap:)];
     pTap.cancelsTouchesInView = NO; //  IOS 5.0系列导致按钮没响应
@@ -205,35 +170,22 @@ enum
 
 #pragma mark- for UITextFieldDelegate
 
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+- (BOOL)textField:(UITextField*)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    if (textField != _tf_amount){
+    if (textField == _tf_memo) {
         return YES;
     }
-    
-    return [OrgUtils isValidAmountOrPriceInput:textField.text
-                                         range:range
-                                    new_string:string
-                                     precision:_precision];
+    return [OrgUtils isValidAmountOrPriceInput:textField.text range:range new_string:string precision:_precision];
 }
 
-- (void)onTextFieldDidChange:(UITextField*)textField
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    if (textField != _tf_amount){
-        return;
+    if (textField == _tf_memo) {
+        [self endInput];
+    } else {
+        [_tf_memo becomeFirstResponder];
     }
-    
-    //  更新小数点为APP默认小数点样式（可能和输入法中下小数点不同，比如APP里是`.`号，而输入法则是`,`号。
-    [OrgUtils correctTextFieldDecimalSeparatorDisplayStyle:textField];
-    [self onAmountChanged];
-}
-
-/**
- *  (private) 数量发生变化。
- */
-- (void)onAmountChanged
-{
-    [self _drawUI_Balance:[_n_balance compare:[OrgUtils auxGetStringDecimalNumberValue:_tf_amount.text]] < 0];
+    return YES;
 }
 
 - (void)_drawUI_Balance:(BOOL)not_enough
@@ -241,35 +193,19 @@ enum
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     NSString* symbol = [_asset objectForKey:@"symbol"];
     if (not_enough) {
-        _lb_available.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@ %@(%@)",
-                                              NSLocalizedString(@"kOtcMcAssetCellAvailable", @"可用"),
-                                              [OrgUtils formatFloatValue:_n_balance],
-                                              symbol,
-                                              NSLocalizedString(@"kOtcMcAssetTransferBalanceNotEnough", @"余额不足")];
-        _lb_available.detailTextLabel.textColor = theme.tintColor;
+        NSString* value = [NSString stringWithFormat:@"%@ %@ %@(%@)",
+                           NSLocalizedString(@"kOtcMcAssetCellAvailable", @"可用"),
+                           [OrgUtils formatFloatValue:_n_balance],
+                           symbol,
+                           NSLocalizedString(@"kOtcMcAssetTransferBalanceNotEnough", @"余额不足")];
+        [_tf_amount drawUI_titleValue:value color:theme.tintColor];
     } else {
-        _lb_available.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@ %@",
-                                              NSLocalizedString(@"kOtcMcAssetCellAvailable", @"可用"),
-                                              [OrgUtils formatFloatValue:_n_balance],
-                                              symbol];
-        _lb_available.detailTextLabel.textColor = theme.textColorMain;
+        NSString* value = [NSString stringWithFormat:@"%@ %@ %@",
+                           NSLocalizedString(@"kOtcMcAssetCellAvailable", @"可用"),
+                           [OrgUtils formatFloatValue:_n_balance],
+                           symbol];
+        [_tf_amount drawUI_titleValue:value color:theme.textColorMain];
     }
-}
-
-#pragma mark-
-#pragma UITextFieldDelegate delegate method
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-    if (textField == _tf_amount && _tf_memo)
-    {
-        [_tf_memo becomeFirstResponder];
-    }
-    else
-    {
-        [self endInput];
-    }
-    return YES;
 }
 
 /**
@@ -285,7 +221,7 @@ enum
         return;
     }
     
-    id n_amount = [OrgUtils auxGetStringDecimalNumberValue:_tf_amount.text];
+    id n_amount = [OrgUtils auxGetStringDecimalNumberValue:[_tf_amount getInputTextValue]];
     NSDecimalNumber* n_zero = [NSDecimalNumber zero];
     if ([n_amount compare:n_zero] <= 0) {
         [OrgUtils makeToast:@"请输入发行数量。"];
@@ -380,10 +316,11 @@ enum
                 [self hideBlockView];
                 //  刷新UI（直接本地修改、不查询）
                 _to_account = nil;
-                _tf_amount.text = @"";
+                [_tf_amount clearInputTextValue];
                 _tf_memo.text = @"";
                 _n_cur_supply = [_n_cur_supply decimalNumberByAdding:n_amount];
                 _n_balance = [_n_balance decimalNumberBySubtracting:n_amount];
+                [self _drawUI_Balance:NO];
                 [_mainTableView reloadData];
                 // TODO:4.0 lang
                 [OrgUtils makeToast:@"发行成功。"];
@@ -428,9 +365,10 @@ enum
     if (indexPath.section == kVcSectionInfo) {
         switch ([[_dataArray objectAtIndex:indexPath.row] integerValue]) {
             case kVcSubToTitle:
-            case kVcSubAmountTitle:
             case kVcSubMemoTitle:
                 return 28.0f;
+            case kVcSubAmountTextField:
+                return 28.0f + 44.0f;
             case kVcSubEmpty:
                 return 12.0f;
             case kVcSubMaxSupply:
@@ -496,8 +434,12 @@ enum
                     if (_to_account) {
                         cell.textLabel.textColor = theme.buyColor;
                         cell.textLabel.text = [_to_account objectForKey:@"name"];
-                        cell.detailTextLabel.textColor = theme.textColorGray;
+                        //                        cell.detailTextLabel.textColor = theme.textColorGray;
                         //                        cell.detailTextLabel.font = [UIFont systemFontOfSize:13.0f];
+                        
+                        cell.detailTextLabel.font = [UIFont systemFontOfSize:14.0f];
+                        cell.detailTextLabel.textColor = theme.textColorMain;
+                        
                         cell.detailTextLabel.text = [_to_account objectForKey:@"id"];
                     } else {
                         cell.textLabel.textColor = theme.textColorGray;
@@ -508,24 +450,8 @@ enum
                 }
                     break;
                     
-                case kVcSubAmountTitle:
-                    return _lb_available;
-                    
                 case kVcSubAmountTextField:
-                {
-                    assert(_tf_amount);
-                    UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-                    cell.backgroundColor = [UIColor clearColor];
-                    cell.accessoryType = UITableViewCellAccessoryNone;
-                    cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                    cell.textLabel.text = @" ";
-                    cell.textLabel.textColor = theme.textColorMain;
-                    [_mainTableView attachTextfieldToCell:cell tf:_tf_amount];
-                    cell.hideTopLine = YES;
-                    cell.hideBottomLine = YES;
-                    return cell;
-                }
-                    break;
+                    return _tf_amount;
                     
                 case kVcSubEmpty:
                 {
@@ -657,9 +583,7 @@ enum
 - (void)endInput
 {
     [self.view endEditing:YES];
-    if (_tf_amount) {
-        [_tf_amount safeResignFirstResponder];
-    }
+    [_tf_amount endInput];
     if (_tf_memo) {
         [_tf_memo safeResignFirstResponder];
     }
@@ -668,6 +592,29 @@ enum
 -(void)scrollViewDidScroll:(UIScrollView*)scrollView
 {
     [self endInput];
+}
+
+#pragma mark- for ViewTextFieldAmountCellDelegate
+- (void)textFieldAmount:(ViewTextFieldAmountCell*)sheet onAmountChanged:(NSDecimalNumber*)newValue
+{
+    [self onAmountChanged:newValue];
+}
+
+- (void)textFieldAmount:(ViewTextFieldAmountCell*)sheet onTailerClicked:(UIButton*)sender
+{
+    [_tf_amount setInputTextValue:[OrgUtils formatFloatValue:_n_balance usesGroupingSeparator:NO]];
+    [self onAmountChanged:nil];
+}
+
+/*
+ *  (private) 数量发生变化。
+ */
+- (void)onAmountChanged:(NSDecimalNumber*)newValue
+{
+    if (!newValue) {
+        newValue = [OrgUtils auxGetStringDecimalNumberValue:[_tf_amount getInputTextValue]];
+    }
+    [self _drawUI_Balance:[_n_balance compare:newValue] < 0];
 }
 
 @end
