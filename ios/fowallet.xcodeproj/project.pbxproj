@@ -85,6 +85,9 @@
 		3F21FB75235749B600CF9F20 /* ViewSecTipsLineCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F21FB74235749B600CF9F20 /* ViewSecTipsLineCell.m */; };
 		3F21FB76235749B600CF9F20 /* ViewSecTipsLineCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F21FB74235749B600CF9F20 /* ViewSecTipsLineCell.m */; };
 		3F21FB77235749B600CF9F20 /* ViewSecTipsLineCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F21FB74235749B600CF9F20 /* ViewSecTipsLineCell.m */; };
+		3F22F88423D410D500CDC59A /* VCAssetCreate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F22F88323D410D500CDC59A /* VCAssetCreate.m */; };
+		3F22F88523D410D500CDC59A /* VCAssetCreate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F22F88323D410D500CDC59A /* VCAssetCreate.m */; };
+		3F22F88623D410D500CDC59A /* VCAssetCreate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F22F88323D410D500CDC59A /* VCAssetCreate.m */; };
 		3F23B77E231CCC7000EEEE78 /* paysuccess@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F23B77C231CCC7000EEEE78 /* paysuccess@3x.png */; };
 		3F23B77F231CCC7000EEEE78 /* paysuccess@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F23B77C231CCC7000EEEE78 /* paysuccess@3x.png */; };
 		3F23B780231CCC7000EEEE78 /* paysuccess@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F23B77C231CCC7000EEEE78 /* paysuccess@3x.png */; };
@@ -1983,6 +1986,8 @@
 		3F216570226FEF5500AB5A3D /* ViewActionsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewActionsCell.m; path = View/ViewActionsCell.m; sourceTree = "<group>"; };
 		3F21FB73235749B500CF9F20 /* ViewSecTipsLineCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewSecTipsLineCell.h; path = View/ViewSecTipsLineCell.h; sourceTree = "<group>"; };
 		3F21FB74235749B600CF9F20 /* ViewSecTipsLineCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewSecTipsLineCell.m; path = View/ViewSecTipsLineCell.m; sourceTree = "<group>"; };
+		3F22F88223D410D400CDC59A /* VCAssetCreate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAssetCreate.h; path = Controller/VCAssetCreate.h; sourceTree = "<group>"; };
+		3F22F88323D410D500CDC59A /* VCAssetCreate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAssetCreate.m; path = Controller/VCAssetCreate.m; sourceTree = "<group>"; };
 		3F23B77C231CCC7000EEEE78 /* paysuccess@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "paysuccess@3x.png"; path = "Images/paysuccess@3x.png"; sourceTree = "<group>"; };
 		3F23B77D231CCC7000EEEE78 /* paysuccess@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "paysuccess@2x.png"; path = "Images/paysuccess@2x.png"; sourceTree = "<group>"; };
 		3F23B784231CCCCA00EEEE78 /* VCPaySuccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCPaySuccess.h; path = Controller/VCPaySuccess.h; sourceTree = "<group>"; };
@@ -3025,6 +3030,8 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3F22F88223D410D400CDC59A /* VCAssetCreate.h */,
+				3F22F88323D410D500CDC59A /* VCAssetCreate.m */,
 				3FF2E98E23D1C360006F98D0 /* VCAssetOpReserve.h */,
 				3FF2E98D23D1C360006F98D0 /* VCAssetOpReserve.m */,
 				3FF2E98823D0691C006F98D0 /* VCAssetOpIssue.h */,
@@ -5563,6 +5570,7 @@
 				3F009A2423A2176100A77E4A /* ViewOtcMcAssetSwitchCell.m in Sources */,
 				3F676822230E9EC100E98C14 /* WjCryptLib_AesCtr.c in Sources */,
 				3F676823230E9EC100E98C14 /* AWActionSheet.m in Sources */,
+				3F22F88623D410D500CDC59A /* VCAssetCreate.m in Sources */,
 				3FF2E98C23D0691C006F98D0 /* VCAssetOpIssue.m in Sources */,
 				3F676824230E9EC100E98C14 /* VCBackupWallet.m in Sources */,
 				3F676825230E9EC100E98C14 /* ViewLoading.m in Sources */,
@@ -5896,6 +5904,7 @@
 				3F009A2323A2176100A77E4A /* ViewOtcMcAssetSwitchCell.m in Sources */,
 				3FB8F8BA21CE66C200DA88E2 /* WjCryptLib_AesCtr.c in Sources */,
 				3FB8F8BB21CE66C200DA88E2 /* AWActionSheet.m in Sources */,
+				3F22F88523D410D500CDC59A /* VCAssetCreate.m in Sources */,
 				3FF2E98B23D0691C006F98D0 /* VCAssetOpIssue.m in Sources */,
 				3FB8F8BC21CE66C200DA88E2 /* VCBackupWallet.m in Sources */,
 				3FB8F8BD21CE66C200DA88E2 /* ViewLoading.m in Sources */,
@@ -6229,6 +6238,7 @@
 				3F009A2223A2176100A77E4A /* ViewOtcMcAssetSwitchCell.m in Sources */,
 				B7BDA9A420B3A3D100738F12 /* WjCryptLib_AesCtr.c in Sources */,
 				F51D13FA1C59C45800FBB748 /* AWActionSheet.m in Sources */,
+				3F22F88423D410D500CDC59A /* VCAssetCreate.m in Sources */,
 				3FF2E98A23D0691C006F98D0 /* VCAssetOpIssue.m in Sources */,
 				B77EBBEF213A4416009AC776 /* VCBackupWallet.m in Sources */,
 				B7030DF91E2FB64600791B47 /* ViewLoading.m in Sources */,

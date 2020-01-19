@@ -9,7 +9,9 @@
 #import "VCAssetManager.h"
 #import "ViewAssetBasicInfoCell.h"
 
+#import "VCAssetCreate.h"
 #import "VCAssetDetails.h"
+#import "VCAssetOpIssue.h"
 
 @interface VCAssetManager ()
 {
@@ -114,8 +116,9 @@
 
 - (void)onAddNewAssetClicked
 {
-    //  TODO:4.0 todo
-    [OrgUtils makeToast:@"发行资产"];
+    //  TODO:4.0 lang
+    VCAssetCreate* vc = [[VCAssetCreate alloc] init];
+    [self pushViewController:vc vctitle:@"创建资产" backtitle:kVcDefaultBackTitleName];
 }
 
 - (void)viewDidLoad
@@ -183,22 +186,68 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
     [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
-        id asset = [_dataArray objectAtIndex:indexPath.row];
-        assert(asset);
-        ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
-        NSString* bitasset_data_id = [asset objectForKey:@"bitasset_data_id"];
-        id bitasset_data = nil;
-        if (bitasset_data_id && ![bitasset_data_id isEqualToString:@""]) {
-            bitasset_data = [chainMgr getChainObjectByID:bitasset_data_id];
+        [self _onCellClicked:[_dataArray objectAtIndex:indexPath.row]];
+    }];
+}
+
+- (void)_onCellClicked:(id)asset
+{
+    assert(asset);
+    
+    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+    NSString* bitasset_data_id = [asset objectForKey:@"bitasset_data_id"];
+    id bitasset_data = nil;
+    if (bitasset_data_id && ![bitasset_data_id isEqualToString:@""]) {
+        bitasset_data = [chainMgr getChainObjectByID:bitasset_data_id];
+    }
+
+    //  TODO:4.0 lang
+    id list = [[[NSMutableArray array] ruby_apply:^(id ary) {
+        [ary addObject:@{@"type":@(ebaok_view), @"title":@"详情"}];
+        [ary addObject:@{@"type":@(ebaok_edit), @"title":@"编辑"}];
+        if (!bitasset_data) {
+            [ary addObject:@{@"type":@(ebaok_issue), @"title":@"发行"}];
         }
-        VCAssetDetails* vc = [[VCAssetDetails alloc] initWithAssetID:asset[@"id"]
-                                                               asset:asset
-                                                       bitasset_data:bitasset_data
-                                                  dynamic_asset_data:[chainMgr getChainObjectByID:[asset objectForKey:@"dynamic_asset_data_id"]]];
-        //  TODO:4.0 lang
-        [self pushViewController:vc vctitle:[NSString stringWithFormat:@"%@ 详情", asset[@"symbol"]] backtitle:kVcDefaultBackTitleName];
+    }] copy];
+    
+    [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
+                                                       message:NSLocalizedString(@"kOtcAdSwitchAssetTips", @"请选择要交易的资产")
+                                                        cancel:NSLocalizedString(@"kBtnCancel", @"取消")
+                                                         items:list
+                                                           key:@"title"
+                                                      callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
+     {
+        if (buttonIndex != cancelIndex){
+            id item = [list objectAtIndex:buttonIndex];
+            switch ([[item objectForKey:@"type"] integerValue]) {
+                case ebaok_view:
+                {
+                    VCAssetDetails* vc = [[VCAssetDetails alloc] initWithAssetID:asset[@"id"]
+                                                                           asset:asset
+                                                                   bitasset_data:bitasset_data
+                                                              dynamic_asset_data:[chainMgr getChainObjectByID:[asset objectForKey:@"dynamic_asset_data_id"]]];
+                    //  TODO:4.0 lang
+                    [self pushViewController:vc vctitle:[NSString stringWithFormat:@"%@ 详情", asset[@"symbol"]] backtitle:kVcDefaultBackTitleName];
+                }
+                    break;
+                case ebaok_edit:
+                {
+                    //  TODO:4.0
+                }
+                    break;
+                case ebaok_issue:
+                {
+                    VCAssetOpIssue* vc = [[VCAssetOpIssue alloc] initWithAsset:asset
+                                                            dynamic_asset_data:[chainMgr getChainObjectByID:[asset objectForKey:@"dynamic_asset_data_id"]]];
+                    [self pushViewController:vc vctitle:@"发行资产" backtitle:kVcDefaultBackTitleName];
+                }
+                    break;
+                default:
+                    break;
+            }
+            
+        }
     }];
 }
 

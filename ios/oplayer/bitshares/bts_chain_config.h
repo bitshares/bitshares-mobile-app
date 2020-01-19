@@ -19,6 +19,31 @@ typedef enum EBitsharesHtlcHashType
     EBHHT_SHA256
 } EBitsharesHtlcHashType;
 
+/*
+ *  资产各种操作类型枚举 TODO:4.0 预测市场暂不考虑
+ */
+typedef enum EBitsharesAssetOpKind
+{
+    //  管理员的操作
+    ebaok_view = 0,             //  资产详情
+    ebaok_edit,                 //  资产编辑（基本信息）
+    ebaok_issue,                //  资产发行（仅UIA资产）
+    ebaok_override_transfer,    //  强制回收（需要开启对应权限标记）
+    ebaok_global_settle,        //  全局清算（仅Smart资产，并且需要开启对应权限标记）
+    ebaok_claim_pool,           //  提取手续费池（除Core外的所有资产）
+    ebaok_claim_fees,           //  提取交易手续费（除Core外的所有资产）
+    ebaok_fund_fee_pool,        //  注资手续费池（除Core外的所有资产）
+    ebaok_update_issuer,        //  变更所有者（需要owner权限，且UIA不能转移给理事会）
+    ebaok_publish_feed,         //  发布喂价（仅Smart资产）
+    ebaok_update_feed_producers,//  更新喂价人员（仅Smart资产）
+    ebaok_update_bitasset,      //  编辑智能币相关信息（仅Smart资产）
+    
+    //  资产持有者的操作
+    ebaok_reserve,              //  资产销毁（仅UIA资产）
+    ebaok_settle,               //  资产清算（仅Smart资产）
+    ebaok_call_order_update,    //  调整债仓（仅Smart资产）
+} EBitsharesAssetOpKind;
+
 /**
     石墨烯网络资产的各种标记。
  */
