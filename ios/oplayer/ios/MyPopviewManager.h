@@ -19,6 +19,13 @@ typedef void (^Arg2CompletionBlock)(NSInteger buttonIndex, NSInteger cancelIndex
 /**
  *  显示 ActionSheet。
  */
+- (void)showActionSheet:(UIViewController*)vc
+                message:(NSString*)message
+                 cancel:(NSString*)cancelbuttonname
+                  items:(NSArray*)items
+                    key:(NSString*)key
+               callback:(Arg2CompletionBlock)callback;
+
 - (void)showActionSheet:(UIViewController*)vc message:(NSString*)message cancel:(NSString*)cancelbuttonname items:(NSArray*)itemnamelist callback:(Arg2CompletionBlock)callback;
 
 /**

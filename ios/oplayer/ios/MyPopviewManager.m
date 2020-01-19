@@ -13,6 +13,7 @@
 #import "ViewFullScreenBase.h"
 #import "ViewWebviewPayment.h"
 #import "ViewOtcTrade.h"
+#import "Extension.h"
 
 #import "objc/runtime.h"
 
@@ -58,6 +59,19 @@ static const char* __picker_view_args_addr__ = "__picker_view_args_addr__";
 - (void)dealloc
 {
     [_popViewIdBlockHash removeAllObjects];
+}
+
+- (void)showActionSheet:(UIViewController*)vc
+                message:(NSString*)message
+                 cancel:(NSString*)cancelbuttonname
+                  items:(NSArray*)items
+                    key:(NSString*)key
+               callback:(Arg2CompletionBlock)callback
+{
+    id itemnamelist = [items ruby_map:^id(id v) {
+        return [v objectForKey:key];
+    }];
+    [self showActionSheet:vc message:message cancel:cancelbuttonname items:itemnamelist callback:callback];
 }
 
 - (void)showActionSheet:(UIViewController*)vc message:(NSString*)message cancel:(NSString*)cancelbuttonname items:(NSArray*)itemnamelist callback:(Arg2CompletionBlock)callback
