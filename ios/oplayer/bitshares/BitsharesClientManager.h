@@ -92,6 +92,26 @@
 - (WsPromise*)proposalUpdate:(NSDictionary*)opdata;
 
 /**
+ *  OP -创建资产。
+ */
+- (WsPromise*)assetCreate:(NSDictionary*)opdata;
+
+/**
+ *  OP -更新资产基本信息。
+ */
+- (WsPromise*)assetUpdate:(NSDictionary*)opdata;
+
+/**
+ *  OP -更新智能币相关信息。
+ */
+- (WsPromise*)assetUpdateBitasset:(NSDictionary*)opdata;
+
+/**
+ *  OP -更新智能币的喂价人员信息。
+ */
+- (WsPromise*)assetUpdateFeedProducers:(NSDictionary*)opdata;
+
+/**
  *  OP -销毁资产（减少当前供应量）REMARK：不能对智能资产进行操作。
  */
 - (WsPromise*)assetReserve:(NSDictionary*)opdata;
@@ -100,6 +120,11 @@
  *  OP -发行资产给某人
  */
 - (WsPromise*)assetIssue:(NSDictionary*)opdata;
+
+/**
+ *  OP -提取资产等手续费池资金
+ */
+- (WsPromise*)assetClaimPool:(NSDictionary*)opdata;
 
 /**
  *  OP - 更新资产发行者

@@ -9,7 +9,7 @@
 #import "VCAssetManager.h"
 #import "ViewAssetBasicInfoCell.h"
 
-#import "VCAssetCreate.h"
+#import "VCAssetCreateOrEdit.h"
 #import "VCAssetDetails.h"
 #import "VCAssetOpIssue.h"
 
@@ -117,7 +117,7 @@
 - (void)onAddNewAssetClicked
 {
     //  TODO:4.0 lang
-    VCAssetCreate* vc = [[VCAssetCreate alloc] init];
+    VCAssetCreateOrEdit* vc = [[VCAssetCreateOrEdit alloc] initWithEditAssetOptions:nil editBitassetOpts:nil];
     [self pushViewController:vc vctitle:@"创建资产" backtitle:kVcDefaultBackTitleName];
 }
 
@@ -212,7 +212,7 @@
     }] copy];
     
     [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
-                                                       message:NSLocalizedString(@"kOtcAdSwitchAssetTips", @"请选择要交易的资产")
+                                                       message:nil
                                                         cancel:NSLocalizedString(@"kBtnCancel", @"取消")
                                                          items:list
                                                            key:@"title"

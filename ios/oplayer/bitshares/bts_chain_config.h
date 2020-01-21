@@ -45,7 +45,7 @@ typedef enum EBitsharesAssetOpKind
 } EBitsharesAssetOpKind;
 
 /**
-    石墨烯网络资产的各种标记。
+ 石墨烯网络资产的各种标记。
  */
 typedef enum EBitsharesAssetFlags
 {
@@ -54,10 +54,17 @@ typedef enum EBitsharesAssetFlags
     ebat_override_authority   = 0x04,   //  发行人可将资产收回
     ebat_transfer_restricted  = 0x08,   //  所有转账必须通过发行人审核同意
     ebat_disable_force_settle = 0x10,   //  禁止强制清算
-    ebat_global_settle        = 0x20,   //  允许发行人进行全局强制清算
+    ebat_global_settle        = 0x20,   //  允许发行人进行全局强制清算（仅可设置permission，不可设置flags）
     ebat_disable_confidential = 0x40,   //  禁止隐私交易
-    ebat_witness_fed_asset    = 0x80,   //  允许见证人提供喂价
-    ebat_committee_fed_asset  = 0x100   //  允许理事会成员提供喂价
+    ebat_witness_fed_asset    = 0x80,   //  允许见证人提供喂价（和理事会喂价不可同时激活）
+    ebat_committee_fed_asset  = 0x100,  //  允许理事会成员提供喂价（和见证人喂价不可同时激活）
+    
+    //  UIA资产默认权限mask
+    ebat_issuer_permission_mask_uia = ebat_charge_market_fee | ebat_white_list | ebat_override_authority | ebat_transfer_restricted | ebat_disable_confidential,
+    //  Smart资产扩展的权限mask
+    ebat_issuer_permission_mask_smart_only = ebat_disable_force_settle | ebat_global_settle | ebat_witness_fed_asset | ebat_committee_fed_asset,
+    //  Smart资产默认权限mask
+    ebat_issuer_permission_mask_smart = ebat_issuer_permission_mask_uia | ebat_issuer_permission_mask_smart_only,
 } EBitsharesAssetFlags;
 
 /**
@@ -227,6 +234,8 @@ typedef enum EBitsharesOperations
 //  交易过期时间？
 #define BTS_CHAIN_EXPIRE_IN_SECS            15
 
+//  TODO:4.0 大部分参数可通过 get_config 接口返回。
+
 //  BTS主网公链ID（正式网络）
 #define BTS_NETWORK_CHAIN_ID                "4018d7844c78f6a6c41c6a552b898022310fc5dec06da467ee7905a8dad512c8"
 
@@ -252,6 +261,11 @@ typedef enum EBitsharesOperations
 
 //  黑名单意见账号：btspp-team
 #define BTS_GRAPHENE_ACCOUNT_BTSPP_TEAM     @"1.2.1031560"
+
+//  资产最大供应量
+#define GRAPHENE_MAX_SHARE_SUPPLY           1000000000000000ll
+#define GRAPHENE_100_PERCENT                10000
+#define GRAPHENE_1_PERCENT                  (GRAPHENE_100_PERCENT/100)
 
 //  BTS网络动态全局信息对象ID号
 //  格式：

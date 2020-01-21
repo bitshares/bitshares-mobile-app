@@ -85,9 +85,6 @@
 		3F21FB75235749B600CF9F20 /* ViewSecTipsLineCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F21FB74235749B600CF9F20 /* ViewSecTipsLineCell.m */; };
 		3F21FB76235749B600CF9F20 /* ViewSecTipsLineCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F21FB74235749B600CF9F20 /* ViewSecTipsLineCell.m */; };
 		3F21FB77235749B600CF9F20 /* ViewSecTipsLineCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F21FB74235749B600CF9F20 /* ViewSecTipsLineCell.m */; };
-		3F22F88423D410D500CDC59A /* VCAssetCreate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F22F88323D410D500CDC59A /* VCAssetCreate.m */; };
-		3F22F88523D410D500CDC59A /* VCAssetCreate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F22F88323D410D500CDC59A /* VCAssetCreate.m */; };
-		3F22F88623D410D500CDC59A /* VCAssetCreate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F22F88323D410D500CDC59A /* VCAssetCreate.m */; };
 		3F23B77E231CCC7000EEEE78 /* paysuccess@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F23B77C231CCC7000EEEE78 /* paysuccess@3x.png */; };
 		3F23B77F231CCC7000EEEE78 /* paysuccess@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F23B77C231CCC7000EEEE78 /* paysuccess@3x.png */; };
 		3F23B780231CCC7000EEEE78 /* paysuccess@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F23B77C231CCC7000EEEE78 /* paysuccess@3x.png */; };
@@ -740,6 +737,9 @@
 		3FA72B5A2340BC2500EE3DC9 /* iconEdit@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FA72B562340BC2500EE3DC9 /* iconEdit@3x.png */; };
 		3FA72B5B2340BC2500EE3DC9 /* iconEdit@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FA72B562340BC2500EE3DC9 /* iconEdit@3x.png */; };
 		3FA72B5C2340BC2500EE3DC9 /* iconEdit@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FA72B562340BC2500EE3DC9 /* iconEdit@3x.png */; };
+		3FADCF8B23D69B4600043305 /* VCAssetCreateOrEdit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FADCF8923D69B4500043305 /* VCAssetCreateOrEdit.m */; };
+		3FADCF8C23D69B4600043305 /* VCAssetCreateOrEdit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FADCF8923D69B4500043305 /* VCAssetCreateOrEdit.m */; };
+		3FADCF8D23D69B4600043305 /* VCAssetCreateOrEdit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FADCF8923D69B4500043305 /* VCAssetCreateOrEdit.m */; };
 		3FB038002398A73F00FC859C /* iconOtc@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB037FE2398A73E00FC859C /* iconOtc@2x.png */; };
 		3FB038012398A73F00FC859C /* iconOtc@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB037FE2398A73E00FC859C /* iconOtc@2x.png */; };
 		3FB038022398A73F00FC859C /* iconOtc@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB037FE2398A73E00FC859C /* iconOtc@2x.png */; };
@@ -1986,8 +1986,6 @@
 		3F216570226FEF5500AB5A3D /* ViewActionsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewActionsCell.m; path = View/ViewActionsCell.m; sourceTree = "<group>"; };
 		3F21FB73235749B500CF9F20 /* ViewSecTipsLineCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewSecTipsLineCell.h; path = View/ViewSecTipsLineCell.h; sourceTree = "<group>"; };
 		3F21FB74235749B600CF9F20 /* ViewSecTipsLineCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewSecTipsLineCell.m; path = View/ViewSecTipsLineCell.m; sourceTree = "<group>"; };
-		3F22F88223D410D400CDC59A /* VCAssetCreate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAssetCreate.h; path = Controller/VCAssetCreate.h; sourceTree = "<group>"; };
-		3F22F88323D410D500CDC59A /* VCAssetCreate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAssetCreate.m; path = Controller/VCAssetCreate.m; sourceTree = "<group>"; };
 		3F23B77C231CCC7000EEEE78 /* paysuccess@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "paysuccess@3x.png"; path = "Images/paysuccess@3x.png"; sourceTree = "<group>"; };
 		3F23B77D231CCC7000EEEE78 /* paysuccess@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "paysuccess@2x.png"; path = "Images/paysuccess@2x.png"; sourceTree = "<group>"; };
 		3F23B784231CCCCA00EEEE78 /* VCPaySuccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCPaySuccess.h; path = Controller/VCPaySuccess.h; sourceTree = "<group>"; };
@@ -2074,6 +2072,8 @@
 		3F9F2C3D2229051600D49165 /* MKlineIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKlineIndex.m; sourceTree = "<group>"; };
 		3FA72B552340BC2400EE3DC9 /* iconEdit@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconEdit@2x.png"; path = "Images/iconEdit@2x.png"; sourceTree = "<group>"; };
 		3FA72B562340BC2500EE3DC9 /* iconEdit@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconEdit@3x.png"; path = "Images/iconEdit@3x.png"; sourceTree = "<group>"; };
+		3FADCF8923D69B4500043305 /* VCAssetCreateOrEdit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAssetCreateOrEdit.m; path = Controller/VCAssetCreateOrEdit.m; sourceTree = "<group>"; };
+		3FADCF8A23D69B4600043305 /* VCAssetCreateOrEdit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAssetCreateOrEdit.h; path = Controller/VCAssetCreateOrEdit.h; sourceTree = "<group>"; };
 		3FB037FE2398A73E00FC859C /* iconOtc@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtc@2x.png"; path = "Images/iconOtc@2x.png"; sourceTree = "<group>"; };
 		3FB037FF2398A73F00FC859C /* iconOtc@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtc@3x.png"; path = "Images/iconOtc@3x.png"; sourceTree = "<group>"; };
 		3FB038062398A8AD00FC859C /* iconOtcUser@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtcUser@3x.png"; path = "Images/iconOtcUser@3x.png"; sourceTree = "<group>"; };
@@ -3030,8 +3030,8 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				3F22F88223D410D400CDC59A /* VCAssetCreate.h */,
-				3F22F88323D410D500CDC59A /* VCAssetCreate.m */,
+				3FADCF8A23D69B4600043305 /* VCAssetCreateOrEdit.h */,
+				3FADCF8923D69B4500043305 /* VCAssetCreateOrEdit.m */,
 				3FF2E98E23D1C360006F98D0 /* VCAssetOpReserve.h */,
 				3FF2E98D23D1C360006F98D0 /* VCAssetOpReserve.m */,
 				3FF2E98823D0691C006F98D0 /* VCAssetOpIssue.h */,
@@ -5570,7 +5570,6 @@
 				3F009A2423A2176100A77E4A /* ViewOtcMcAssetSwitchCell.m in Sources */,
 				3F676822230E9EC100E98C14 /* WjCryptLib_AesCtr.c in Sources */,
 				3F676823230E9EC100E98C14 /* AWActionSheet.m in Sources */,
-				3F22F88623D410D500CDC59A /* VCAssetCreate.m in Sources */,
 				3FF2E98C23D0691C006F98D0 /* VCAssetOpIssue.m in Sources */,
 				3F676824230E9EC100E98C14 /* VCBackupWallet.m in Sources */,
 				3F676825230E9EC100E98C14 /* ViewLoading.m in Sources */,
@@ -5831,6 +5830,7 @@
 				3F6768FD230E9EC100E98C14 /* SRConstants.m in Sources */,
 				3F6768FE230E9EC100E98C14 /* GrapheneConnectionManager.m in Sources */,
 				3F6768FF230E9EC100E98C14 /* SRRandom.m in Sources */,
+				3FADCF8D23D69B4600043305 /* VCAssetCreateOrEdit.m in Sources */,
 				3F6471C623A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m in Sources */,
 				3F676900230E9EC100E98C14 /* UIImage+Template.m in Sources */,
 				3F676901230E9EC100E98C14 /* ViewTradeHistoryCell.m in Sources */,
@@ -5904,7 +5904,6 @@
 				3F009A2323A2176100A77E4A /* ViewOtcMcAssetSwitchCell.m in Sources */,
 				3FB8F8BA21CE66C200DA88E2 /* WjCryptLib_AesCtr.c in Sources */,
 				3FB8F8BB21CE66C200DA88E2 /* AWActionSheet.m in Sources */,
-				3F22F88523D410D500CDC59A /* VCAssetCreate.m in Sources */,
 				3FF2E98B23D0691C006F98D0 /* VCAssetOpIssue.m in Sources */,
 				3FB8F8BC21CE66C200DA88E2 /* VCBackupWallet.m in Sources */,
 				3FB8F8BD21CE66C200DA88E2 /* ViewLoading.m in Sources */,
@@ -6165,6 +6164,7 @@
 				3FB8F97F21CE66C200DA88E2 /* SRConstants.m in Sources */,
 				3FB8F98021CE66C200DA88E2 /* GrapheneConnectionManager.m in Sources */,
 				3FB8F98121CE66C200DA88E2 /* SRRandom.m in Sources */,
+				3FADCF8C23D69B4600043305 /* VCAssetCreateOrEdit.m in Sources */,
 				3F6471C523A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m in Sources */,
 				3FB8F98221CE66C200DA88E2 /* UIImage+Template.m in Sources */,
 				3FB8F98321CE66C200DA88E2 /* ViewTradeHistoryCell.m in Sources */,
@@ -6238,7 +6238,6 @@
 				3F009A2223A2176100A77E4A /* ViewOtcMcAssetSwitchCell.m in Sources */,
 				B7BDA9A420B3A3D100738F12 /* WjCryptLib_AesCtr.c in Sources */,
 				F51D13FA1C59C45800FBB748 /* AWActionSheet.m in Sources */,
-				3F22F88423D410D500CDC59A /* VCAssetCreate.m in Sources */,
 				3FF2E98A23D0691C006F98D0 /* VCAssetOpIssue.m in Sources */,
 				B77EBBEF213A4416009AC776 /* VCBackupWallet.m in Sources */,
 				B7030DF91E2FB64600791B47 /* ViewLoading.m in Sources */,
@@ -6499,6 +6498,7 @@
 				B714094120A31CC300003311 /* SRConstants.m in Sources */,
 				B7C041202109BDC400848CBC /* GrapheneConnectionManager.m in Sources */,
 				B714094720A31CC300003311 /* SRRandom.m in Sources */,
+				3FADCF8B23D69B4600043305 /* VCAssetCreateOrEdit.m in Sources */,
 				3F6471C423A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m in Sources */,
 				B707E5971C5D09BE003B652F /* UIImage+Template.m in Sources */,
 				B741A75420D9FFE0000FBC00 /* ViewTradeHistoryCell.m in Sources */,

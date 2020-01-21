@@ -419,6 +419,55 @@
 "kVcActivityDescCreateProposal" = "创建提案。";
 "kVcActivityDescUpdateProposal" = "更新提案。#%@";
 
+/* 资产管理相关 */
+"kVcAssetMgrAssetCreateButton" = "创建";
+"kVcAssetMgrSegInfoBasicInfo" = "基本信息";
+"kVcAssetMgrSegInfoPermissionInfo" = "权限信息";
+"kVcAssetMgrSegInfoSmartCoinInfo" = "智能币信息";
+"kVcAssetMgrCellTitleAssetName" = "资产名称";
+"kVcAssetMgrCellTitleMaxSupply" = "最大供应量";
+"kVcAssetMgrCellTitleAssetDesc" = "资产描述";
+"kVcAssetMgrCellTitleAdvSwitch" = "高级设置";
+"kVcAssetMgrCellTitleAssetPrecision" = "资产精度";
+"kVcAssetMgrCellTitleSmartBackingAsset" = "借贷抵押资产";
+"kVcAssetMgrCellTitleSmartFeedLifeTime" = "喂价有效期";
+"kVcAssetMgrCellTitleSmartMinFeedNum" = "最少喂价数量";
+"kVcAssetMgrCellTitleSmartDelayForSettle" = "强清延迟时间";
+"kVcAssetMgrCellTitleSmartOffsetSettle" = "强清补偿比例";
+"kVcAssetMgrCellTitleSmartMaxSettleValuePerHour" = "每周期最大清算量";
+"kVcAssetMgrCellTitlePermMarketFee" = "收取市场手续费";
+"kVcAssetMgrCellTitlePermWhiteListed" = "需资产持有人在白名单中";
+"kVcAssetMgrCellTitlePermOverrideTransfer" = "发行人可回收资产";
+"kVcAssetMgrCellTitlePermNeedIssuerApprove" = "所有转账需发行人审核";
+"kVcAssetMgrCellTitlePermDisableCondTransfer" = "禁止隐私转账";
+"kVcAssetMgrCellTitlePermDisableForceSettle" = "禁止强制清算";
+"kVcAssetMgrCellTitlePermAllowGlobalSettle" = "允许发行人全局清算";
+"kVcAssetMgrCellTitlePermAllowWitnessFeed" = "允许见证人提供喂价";
+"kVcAssetMgrCellTitlePermAllowCommitteeFeed" = "允许理事会成员提供喂价";
+
+"kVcAssetMgrInputTitleSmartFeedLifeTime" = "喂价有效期（分钟）";
+"kVcAssetMgrInputTitleSmartDelayForSettle" = "强清延迟（分钟）";
+"kVcAssetMgrInputPlaceholderSmartFeedLifeTime" = "请输入过期时间";
+"kVcAssetMgrInputPlaceholderSmartMinFeedNum" = "请输入最小喂价数";
+"kVcAssetMgrInputPlaceholderSmartDelayForSettle" = "请输入强清延迟";
+"kVcAssetMgrInputPlaceholderSmartOffsetSettle" = "请输入强清补偿";
+"kVcAssetMgrInputPlaceholderSmartMaxSettleValuePerHour" = "请输入每小强清百分比";
+
+"kVcAssetMgrCellPlaceholderAssetName" = "请输入资产名称";
+"kVcAssetMgrCellPlaceholderMaxSupply" = "请输入最大供应量";
+"kVcAssetMgrCellPlaceholderAssetDesc" = "请输入描述（可选）";
+"kVcAssetMgrCellValueAssetPrecision" = "%@ 位小数";
+"kVcAssetMgrCellValueSmartBackingAssetNone" = "无";
+"kVcAssetMgrCellValueSmartMinN" = "%@ 分钟";
+"kVcAssetMgrCellValueNotSet" = "未设置";
+
+"kVcAssetMgrPermissionActionDisablePermanently" = "永久禁用（不可再开启）";
+"kVcAssetMgrPermissionActionActivateLater" = "暂不激活（后续可开启）";
+"kVcAssetMgrPermissionActionActivateNow" = "立即激活（创建后开启）";
+"kVcAssetMgrPermissionStatusDisablePermanently" = "永久禁用";
+"kVcAssetMgrPermissionStatusActivateLater" = "暂不激活";
+"kVcAssetMgrPermissionStatusActivateNow" = "立即激活";
+
 /* 订单界面 */
 "kVcOrderPageOpenOrders" = "当前订单";
 "kVcOrderPageHistory" = "历史订单";

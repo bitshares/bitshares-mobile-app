@@ -187,10 +187,34 @@
 /**
  *  OP - 资产相关操作
  */
+@interface T_price : T_Base
+@end
+
+@interface T_asset_options : T_Base
+@end
+
+@interface T_bitasset_options : T_Base
+@end
+
+@interface T_asset_create : T_Base
+@end
+
+@interface T_asset_update : T_Base
+@end
+
+@interface T_asset_update_bitasset : T_Base
+@end
+
+@interface T_asset_update_feed_producers : T_Base
+@end
+
 @interface T_asset_reserve : T_Base
 @end
 
 @interface T_asset_issue : T_Base
+@end
+
+@interface T_asset_claim_pool : T_Base
 @end
 
 @interface T_asset_update_issuer : T_Base
