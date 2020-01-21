@@ -503,6 +503,51 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
     return [self process_transaction:tr];
 }
 
+/**
+ *  OP -创建资产。
+ */
+- (WsPromise*)assetCreate:(NSDictionary*)opdata
+{
+    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
+    [tr add_operation:ebo_asset_create opdata:opdata];
+    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"issuer"]]];
+    return [self process_transaction:tr];
+}
+
+/**
+ *  OP -更新资产基本信息。
+ */
+- (WsPromise*)assetUpdate:(NSDictionary*)opdata
+{
+    //  REMARK：HARDFORK_CORE_199_TIME 硬分叉之后 new_issuer 不可更新，需要更新调用单独的接口更新。
+    assert(![opdata objectForKey:@"new_issuer"]);
+    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
+    [tr add_operation:ebo_asset_update opdata:opdata];
+    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"issuer"]]];
+    return [self process_transaction:tr];
+}
+
+/**
+ *  OP -更新智能币相关信息。
+ */
+- (WsPromise*)assetUpdateBitasset:(NSDictionary*)opdata
+{
+    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
+    [tr add_operation:ebo_asset_update_bitasset opdata:opdata];
+    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"issuer"]]];
+    return [self process_transaction:tr];
+}
+
+/**
+ *  OP -更新智能币的喂价人员信息。
+ */
+- (WsPromise*)assetUpdateFeedProducers:(NSDictionary*)opdata
+{
+    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
+    [tr add_operation:ebo_asset_update_feed_producers opdata:opdata];
+    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"issuer"]]];
+    return [self process_transaction:tr];
+}
 
 /**
  *  OP -销毁资产（减少当前供应量）REMARK：不能对智能资产进行操作。
@@ -522,6 +567,17 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
 {
     TransactionBuilder* tr = [[TransactionBuilder alloc] init];
     [tr add_operation:ebo_asset_issue opdata:opdata];
+    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"issuer"]]];
+    return [self process_transaction:tr];
+}
+
+/**
+ *  OP -提取资产等手续费池资金
+ */
+- (WsPromise*)assetClaimPool:(NSDictionary*)opdata
+{
+    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
+    [tr add_operation:ebo_asset_claim_pool opdata:opdata];
     [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"issuer"]]];
     return [self process_transaction:tr];
 }

@@ -227,7 +227,7 @@ enum
     switch (rowType) {
         case kVcSubAssetName:
         {
-            cell.textLabel.text = @"资产名称";
+            cell.textLabel.text = NSLocalizedString(@"kVcAssetMgrCellTitleAssetName", @"资产名称");
             cell.detailTextLabel.text = [_asset objectForKey:@"symbol"];
         }
             break;
@@ -239,8 +239,8 @@ enum
             break;
         case kVcSubPrecision:
         {
-            cell.textLabel.text = @"资产精度";
-            cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ 位小数", @(precision)];
+            cell.textLabel.text = NSLocalizedString(@"kVcAssetMgrCellTitleAssetPrecision", @"资产精度");
+            cell.detailTextLabel.text = [NSString stringWithFormat:NSLocalizedString(@"kVcAssetMgrCellValueAssetPrecision", @"%@ 位小数"), @(precision)];
         }
             break;
         case kVcSubCurSupply:
@@ -260,7 +260,7 @@ enum
                                                                 exponent:-precision
                                                               isNegative:NO];
             
-            cell.textLabel.text = @"最大供应量";
+            cell.textLabel.text = NSLocalizedString(@"kVcAssetMgrCellTitleMaxSupply", @"最大供应量");
             cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@", [OrgUtils formatFloatValue:n_max_supply], _asset[@"symbol"]];
         }
             break;

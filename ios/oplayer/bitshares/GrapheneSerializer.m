@@ -95,8 +95,16 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [T_proposal_update performSelector:@selector(register_subfields)];
     [T_proposal_delete performSelector:@selector(register_subfields)];
     
+    [T_price performSelector:@selector(register_subfields)];
+    [T_asset_options performSelector:@selector(register_subfields)];
+    [T_bitasset_options performSelector:@selector(register_subfields)];
+    [T_asset_create performSelector:@selector(register_subfields)];
+    [T_asset_update performSelector:@selector(register_subfields)];
+    [T_asset_update_bitasset performSelector:@selector(register_subfields)];
+    [T_asset_update_feed_producers performSelector:@selector(register_subfields)];
     [T_asset_reserve performSelector:@selector(register_subfields)];
     [T_asset_issue performSelector:@selector(register_subfields)];
+    [T_asset_claim_pool performSelector:@selector(register_subfields)];
     [T_asset_update_issuer performSelector:@selector(register_subfields)];
     
     [T_htlc_create performSelector:@selector(register_subfields)];
@@ -749,12 +757,12 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 
 + (id)_get_optype_from_opcode:(NSInteger)opcode
 {
-//    ebo_transfer = 0,           //  转账
-//    ebo_limit_order_create,     //  (创建)限价单
-//    ebo_limit_order_cancel,     //  取消限价单
-//    ebo_call_order_update,      //  更新保证金（抵押借贷）
-//
-//    ebo_fill_order,             //  4
+    //    ebo_transfer = 0,           //  转账
+    //    ebo_limit_order_create,     //  (创建)限价单
+    //    ebo_limit_order_cancel,     //  取消限价单
+    //    ebo_call_order_update,      //  更新保证金（抵押借贷）
+    //
+    //    ebo_fill_order,             //  4
     
     //  TODO:add new op here...
     switch (opcode) {
@@ -782,10 +790,20 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
             return [T_proposal_update class];
         case ebo_proposal_delete:
             return [T_proposal_delete class];
+        case ebo_asset_create:
+            return [T_asset_create class];
+        case ebo_asset_update:
+            return [T_asset_update class];
+        case ebo_asset_update_bitasset:
+            return [T_asset_update_bitasset class];
+        case ebo_asset_update_feed_producers:
+            return [T_asset_update_feed_producers class];
         case ebo_asset_reserve:
             return [T_asset_reserve class];
         case ebo_asset_issue:
             return [T_asset_issue class];
+        case ebo_asset_claim_pool:
+            return [T_asset_claim_pool class];
         case ebo_asset_update_issuer:
             return [T_asset_update_issuer class];
         case ebo_htlc_create:
@@ -1052,6 +1070,109 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 
 @end
 
+@implementation T_price
+
++ (void)register_subfields
+{
+    [self add_field:@"base" class:[T_asset class]];
+    [self add_field:@"quote" class:[T_asset class]];
+}
+
+@end
+
+@implementation T_asset_options
+
++ (void)register_subfields
+{
+    [self add_field:@"max_supply" class:[T_int64 class]];
+    [self add_field:@"market_fee_percent" class:[T_uint16 class]];
+    [self add_field:@"max_market_fee" class:[T_int64 class]];
+    [self add_field:@"issuer_permissions" class:[T_uint16 class]];
+    [self add_field:@"flags" class:[T_uint16 class]];
+    [self add_field:@"core_exchange_rate" class:[T_price class]];
+    [self add_field:@"whitelist_authorities" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithName:@"account"]]];
+    [self add_field:@"blacklist_authorities" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithName:@"account"]]];
+    [self add_field:@"whitelist_markets" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithName:@"asset"]]];
+    [self add_field:@"blacklist_markets" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithName:@"asset"]]];
+    [self add_field:@"description" class:[T_string class]];
+    [self add_field:@"extensions"
+              class:[[Tm_extension alloc] initWithFieldsDef:@[@{@"name":@"reward_percent", @"type":[T_uint16 class]},
+                                                              @{@"name":@"whitelist_market_fee_sharing", @"type":[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithName:@"account"]]}]]];
+}
+
+@end
+
+@implementation T_bitasset_options
+
++ (void)register_subfields
+{
+    [self add_field:@"feed_lifetime_sec" class:[T_uint32 class]];
+    [self add_field:@"minimum_feeds" class:[T_uint8 class]];
+    [self add_field:@"force_settlement_delay_sec" class:[T_uint32 class]];
+    [self add_field:@"force_settlement_offset_percent" class:[T_uint16 class]];
+    [self add_field:@"maximum_force_settlement_volume" class:[T_uint16 class]];
+    [self add_field:@"short_backing_asset" class:[[Tm_protocol_id_type alloc] initWithName:@"asset"]];
+    [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
+}
+
+@end
+
+@implementation T_asset_create
+
++ (void)register_subfields
+{
+    [self add_field:@"fee" class:[T_asset class]];
+    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"symbol" class:[T_string class]];
+    [self add_field:@"precision" class:[T_uint8 class]];
+    [self add_field:@"common_options" class:[T_asset_options class]];
+    [self add_field:@"bitasset_opts" class:[[Tm_optional alloc] initWithType:[T_bitasset_options class]]];
+    [self add_field:@"is_prediction_market" class:[T_bool class]];
+    [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
+}
+
+@end
+
+@implementation T_asset_update
+
++ (void)register_subfields
+{
+    [self add_field:@"fee" class:[T_asset class]];
+    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"asset_to_update" class:[[Tm_protocol_id_type alloc] initWithName:@"asset"]];
+    [self add_field:@"new_issuer" class:[[Tm_optional alloc] initWithType:[[Tm_protocol_id_type alloc] initWithName:@"account"]]];
+    [self add_field:@"new_options" class:[T_asset_options class]];
+    [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
+}
+
+@end
+
+@implementation T_asset_update_bitasset
+
++ (void)register_subfields
+{
+    [self add_field:@"fee" class:[T_asset class]];
+    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"asset_to_update" class:[[Tm_protocol_id_type alloc] initWithName:@"asset"]];
+    [self add_field:@"new_options" class:[T_bitasset_options class]];
+    [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
+}
+
+@end
+
+@implementation T_asset_update_feed_producers
+
++ (void)register_subfields
+{
+    [self add_field:@"fee" class:[T_asset class]];
+    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"asset_to_update" class:[[Tm_protocol_id_type alloc] initWithName:@"asset"]];
+    [self add_field:@"new_feed_producers" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithName:@"account"]]];
+    [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
+}
+
+@end
+
 @implementation T_asset_reserve
 
 + (void)register_subfields
@@ -1073,6 +1194,19 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [self add_field:@"asset_to_issue" class:[T_asset class]];
     [self add_field:@"issue_to_account" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
     [self add_field:@"memo" class:[[Tm_optional alloc] initWithType:[T_memo_data class]]];
+    [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
+}
+
+@end
+
+@implementation T_asset_claim_pool
+
++ (void)register_subfields
+{
+    [self add_field:@"fee" class:[T_asset class]];
+    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"asset_id" class:[[Tm_protocol_id_type alloc] initWithName:@"asset"]]; //  fee.asset_id must != asset_id
+    [self add_field:@"amount_to_claim" class:[T_asset class]];                              //  only core asset
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
 
@@ -1100,10 +1234,10 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [self add_field:@"to" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
     [self add_field:@"amount" class:[T_asset class]];
     [self add_field:@"preimage_hash" class:[[Tm_static_variant alloc] initWithTypeArray:@[
-                                                                                          [[Tm_bytes alloc] initWithSize:@(20)],    //  RMD160
-                                                                                          [[Tm_bytes alloc] initWithSize:@(20)],    //  SHA1 or SHA160
-                                                                                          [[Tm_bytes alloc] initWithSize:@(32)]     //  SHA256
-                                                                                          ]]];
+        [[Tm_bytes alloc] initWithSize:@(20)],    //  RMD160
+        [[Tm_bytes alloc] initWithSize:@(20)],    //  SHA1 or SHA160
+        [[Tm_bytes alloc] initWithSize:@(32)]     //  SHA256
+    ]]];
     [self add_field:@"preimage_size" class:[T_uint16 class]];
     [self add_field:@"claim_period_seconds" class:[T_uint32 class]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
