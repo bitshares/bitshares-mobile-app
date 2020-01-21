@@ -204,7 +204,7 @@
 {
     id to = [_to_account objectForKey:@"id"] ?: @"";
     if (to && ![to isEqualToString:@""]){
-        [VCCommonLogic viewUserAssets:self account:to];
+        [VcUtils viewUserAssets:self account:to];
     }
 }
 

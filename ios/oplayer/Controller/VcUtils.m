@@ -1,18 +1,18 @@
 //
-//  VCCommonLogic.m
+//  VcUtils.m
 //  oplayer
 //
 //  Created by SYALON on 13-9-11.
 //
 //
 #import "VCBase.h"
-#import "VCCommonLogic.h"
+#import "VcUtils.h"
 #import "VCUserAssets.h"
 #import "VCUserOrders.h"
 #import "WalletManager.h"
 #import "OrgUtils.h"
 
-@implementation VCCommonLogic
+@implementation VcUtils
 
 + (void)viewUserLimitOrders:(VCBase*)this account:(NSString*)account_id tradingPair:(TradingPair*)tradingPair
 {
@@ -287,6 +287,29 @@
              callback([object_lists objectAtIndex:buttonIndex]);
          }
      }];
+}
+
+/*
+ *  确保依赖
+ */
++ (void)GuardGrapheneObjectDependence:(VCBase*)vc object_ids:(id)object_ids body:(void (^)())body
+{
+    assert(vc);
+    assert(object_ids);
+    assert(body);
+    if (![object_ids isKindOfClass:[NSArray class]]) {
+        object_ids = @[object_ids];
+    }
+    [vc showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    [[[[ChainObjectManager sharedChainObjectManager] queryAllGrapheneObjects:object_ids] then:^id(id data) {
+        [vc hideBlockView];
+        body();
+        return nil;
+    }] catch:^id(id error) {
+        [vc hideBlockView];
+        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+        return nil;
+    }];
 }
 
 @end

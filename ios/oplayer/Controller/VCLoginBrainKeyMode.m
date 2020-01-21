@@ -67,7 +67,7 @@ enum
         _tv_brain_key.delegate = nil;
         _tv_brain_key = nil;
     }
-
+    
     if (_tf_trade_password){
         _tf_trade_password.delegate = nil;
         _tf_trade_password = nil;
@@ -229,16 +229,16 @@ enum
         NSString* pub_key = [OrgUtils genBtsAddressFromWifPrivateKey:pri_key];
         [pub_pri_keys_hash setObject:pri_key forKey:pub_key];
     }
-
+    
     //  从各种私钥登录。
-    [VCCommonLogic onLoginWithKeysHash:_owner
-                                  keys:[pub_pri_keys_hash copy]
-                 checkActivePermission:_checkActivePermission
-                        trade_password:pTradePassword ?: @""
-                            login_mode:kwmBrainKeyWithWallet
-                            login_desc:@"login with brainkey"
-               errMsgInvalidPrivateKey:NSLocalizedString(@"kLoginSubmitTipsBrainKeyIncorrect", @"助记词不正确，请重新输入。")
-       errMsgActivePermissionNotEnough:NSLocalizedString(@"kLoginSubmitTipsPermissionNotEnoughAndCannotBeImported", @"资金权限不足，不可导入。")];
+    [VcUtils onLoginWithKeysHash:_owner
+                            keys:[pub_pri_keys_hash copy]
+           checkActivePermission:_checkActivePermission
+                  trade_password:pTradePassword ?: @""
+                      login_mode:kwmBrainKeyWithWallet
+                      login_desc:@"login with brainkey"
+         errMsgInvalidPrivateKey:NSLocalizedString(@"kLoginSubmitTipsBrainKeyIncorrect", @"助记词不正确，请重新输入。")
+ errMsgActivePermissionNotEnough:NSLocalizedString(@"kLoginSubmitTipsPermissionNotEnoughAndCannotBeImported", @"资金权限不足，不可导入。")];
 }
 
 - (void)didReceiveMemoryWarning

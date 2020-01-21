@@ -94,7 +94,7 @@ enum
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     
     //  背景颜色
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
@@ -356,25 +356,25 @@ enum
         switch (indexPath.section) {
             case kVcTargetAccount:
             {
-                [VCCommonLogic showPicker:self
-                             object_lists:_dataArray
-                                      key:@"name"
-                                    title:[self getSelectTargetAccountTipMessage]
-                                 callback:^(id selectItem)
+                [VcUtils showPicker:self
+                       object_lists:_dataArray
+                                key:@"name"
+                              title:[self getSelectTargetAccountTipMessage]
+                           callback:^(id selectItem)
                  {
-                     _target_account = selectItem;
-                     [_mainTableView reloadData];
-                 }];
+                    _target_account = selectItem;
+                    [_mainTableView reloadData];
+                }];
             }
                 break;
             case kVcFeePayingAccount:
             {
-                [VCCommonLogic showPicker:self
-                             object_lists:_permissionAccountArray
-                                      key:@"name"
-                                    title:NSLocalizedString(@"kProposalEditTipsSelectFeePayingAccount", @"请选择手续费支付账号。")
-                                 callback:^(id selectItem)
-                {
+                [VcUtils showPicker:self
+                       object_lists:_permissionAccountArray
+                                key:@"name"
+                              title:NSLocalizedString(@"kProposalEditTipsSelectFeePayingAccount", @"请选择手续费支付账号。")
+                           callback:^(id selectItem)
+                 {
                     _fee_paying_account = selectItem;
                     [_mainTableView reloadData];
                 }];

@@ -104,7 +104,7 @@ enum
  */
 - (void)onViewDetail
 {
-    [VCCommonLogic viewUserAssets:self account:[_accountData objectForKey:@"name"]];
+    [VcUtils viewUserAssets:self account:[_accountData objectForKey:@"name"]];
 }
 
 #pragma mark- TableView delegate method

@@ -13,8 +13,6 @@
 #import "OrgUtils.h"
 #import "TradingPair.h"
 
-#import "VCCommonLogic.h"
-
 #import "VCBtsaiWebView.h"
 
 @interface VCCallOrderRanking ()
@@ -331,7 +329,7 @@
     [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
         id item = [_dataCallOrders objectAtIndex:indexPath.row];
         assert(item);
-        [VCCommonLogic viewUserAssets:_owner account:[item objectForKey:@"borrower"]];
+        [VcUtils viewUserAssets:_owner account:[item objectForKey:@"borrower"]];
     }];
 }
 

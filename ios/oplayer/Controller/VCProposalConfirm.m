@@ -105,10 +105,10 @@ enum
 - (void)onQueryGrapheneObjectResponsed:(id)resultHash
 {
     _processedOpData = @{
-                         @"opcode":@(_opcode),
-                         @"opdata":_opdata,
-                         @"uidata":[OrgUtils processOpdata2UiData:_opcode opdata:_opdata opresult:nil isproposal:YES]
-                         };
+        @"opcode":@(_opcode),
+        @"opdata":_opdata,
+        @"uidata":[OrgUtils processOpdata2UiData:_opcode opdata:_opdata opresult:nil isproposal:YES]
+    };
     _mainTableView.hidden = NO;
     [_mainTableView reloadData];
 }
@@ -130,7 +130,7 @@ enum
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     
     //  背景颜色
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
@@ -362,12 +362,12 @@ enum
         switch (indexPath.section) {
             case kVcFeePayingAccount:
             {
-                [VCCommonLogic showPicker:self
-                             object_lists:_permissionAccountArray
-                                      key:@"name"
-                                    title:NSLocalizedString(@"kProposalTipsSelectFeePayingAccount", @"请选择提案发起账号")
-                                 callback:^(id selectItem)
-                {
+                [VcUtils showPicker:self
+                       object_lists:_permissionAccountArray
+                                key:@"name"
+                              title:NSLocalizedString(@"kProposalTipsSelectFeePayingAccount", @"请选择提案发起账号")
+                           callback:^(id selectItem)
+                 {
                     _fee_paying_account = selectItem;
                     [_mainTableView reloadData];
                 }];
@@ -394,7 +394,7 @@ enum
     
     //  默认值选项：单位（小时）
     NSArray* default_list = @[@(1 * 24), @(2 * 24), @(3 * 24), @(5 * 24), @(7 * 24), @(15 * 24)];
- 
+    
     NSMutableArray* data_array = [NSMutableArray array];
     NSInteger default_select = -1;
     for (id value in default_list) {

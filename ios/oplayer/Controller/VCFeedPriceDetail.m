@@ -13,8 +13,6 @@
 #import "OrgUtils.h"
 #import "TradingPair.h"
 
-#import "VCCommonLogic.h"
-
 #import "VCBtsaiWebView.h"
 #import "ViewFeedPriceDataCell.h"
 

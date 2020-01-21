@@ -1,5 +1,5 @@
 //
-//  VCCommonLogic.h
+//  VcUtils.h
 //  oplayer
 //
 //  Created by SYALON on 13-9-11.
@@ -12,7 +12,7 @@
 #import "AppCacheManager.h"
 
 @class VCBase;
-@interface VCCommonLogic : NSObject
+@interface VcUtils : NSObject
 
 /**
  *  查询&显示用户委托(限价单)信息
@@ -45,5 +45,10 @@
  */
 + (void)showPicker:(VCBase*)this_ object_lists:(NSArray*)object_lists key:(NSString*)key title:(NSString*)title
           callback:(void (^)(id selectItem))callback;
+
+/*
+ *  确保依赖
+ */
++ (void)GuardGrapheneObjectDependence:(VCBase*)vc object_ids:(id)object_ids body:(void (^)())body;
 
 @end

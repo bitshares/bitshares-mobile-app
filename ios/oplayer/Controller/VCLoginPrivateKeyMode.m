@@ -161,7 +161,7 @@ enum
     [self.view endEditing:YES];
     
     [_tf_private_key safeResignFirstResponder];
-//    [_tf_username safeResignFirstResponder];
+    //    [_tf_username safeResignFirstResponder];
     if (_tf_trade_password){
         [_tf_trade_password safeResignFirstResponder];
     }
@@ -198,14 +198,14 @@ enum
         return;
     }
     
-    [VCCommonLogic onLoginWithKeysHash:_owner
-                                  keys:@{pPublicKey:pPrivateKey}
-                 checkActivePermission:_checkActivePermission
-                        trade_password:pTradePassword ?: @""
-                            login_mode:kwmPrivateKeyWithWallet
-                            login_desc:@"login with privatekey"
-               errMsgInvalidPrivateKey:NSLocalizedString(@"kLoginSubmitTipsPrivateKeyIncorrect", @"私钥不正确，请重新输入。")
-       errMsgActivePermissionNotEnough:NSLocalizedString(@"kLoginSubmitTipsPermissionNotEnoughAndCannotBeImported", @"资金权限不足，不可导入。")];
+    [VcUtils onLoginWithKeysHash:_owner
+                            keys:@{pPublicKey:pPrivateKey}
+           checkActivePermission:_checkActivePermission
+                  trade_password:pTradePassword ?: @""
+                      login_mode:kwmPrivateKeyWithWallet
+                      login_desc:@"login with privatekey"
+         errMsgInvalidPrivateKey:NSLocalizedString(@"kLoginSubmitTipsPrivateKeyIncorrect", @"私钥不正确，请重新输入。")
+ errMsgActivePermissionNotEnough:NSLocalizedString(@"kLoginSubmitTipsPermissionNotEnoughAndCannotBeImported", @"资金权限不足，不可导入。")];
 }
 
 - (void)didReceiveMemoryWarning
