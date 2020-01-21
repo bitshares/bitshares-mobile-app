@@ -14,8 +14,6 @@
 #import "MBProgressHUDSingleton.h"
 #import "OrgUtils.h"
 
-#import "VCCommonLogic.h"
-
 #import "VCSearchNetwork.h"
 #import "VCBtsaiWebView.h"
 

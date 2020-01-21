@@ -206,7 +206,7 @@ enum
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
@@ -215,59 +215,59 @@ enum
     
     //  TODO:1.6 动态加载配置数据
     _gatewayArray = @[
-                      //    TODO:2.5 open的新api还存在部分bug，open那边再进行修复，待修复完毕之后再开放该功能。
-//                      @{
-//                          //    API reference: https://github.com/bitshares/bitshares-ui/files/3068123/OL-gateways-api.pdf
-//                          @"name":@"OpenLedger",
-//                          @"api":[[OpenLedger alloc] initWithApiConfig:@{
-//                                                                         @"base":@"https://gateway.openledger.io",
-//                                                                         @"assets":@"/assets",
-//                                                                         @"exchanges":@"/exchanges",
-//                                                                         @"request_deposit_address":@"/exchanges/%@/transfer/source/prototype",
-//                                                                         @"validate":@"/exchanges/%@/transfer/destination",
-//                                                                         }],
-//                          @"helps":@[
-//                                  @{@"title":NSLocalizedString(@"kVcDWHelpTitleSupport", @"帮助"), @"value":@"https://openledger.freshdesk.com", @"url":@YES},
-//                                  ],
-//                          },
-                      @{
-                          @"name":@"GDEX",
-                          @"api":[[GatewayBase alloc] initWithApiConfig:@{
-                                                                          @"base":@"https://api.gdex.io/adjust",
-                                                                          @"coin_list":@"/coins",
-                                                                          @"active_wallets":@"/active-wallets",
-                                                                          @"trading_pairs":@"/trading-pairs",
-                                                                          @"request_deposit_address":@"/simple-api/initiate-trade",
-                                                                          @"check_address":@"/wallets/%@/address-validator",
-                                                                          }],
-                          @"helps":@[
-                                  @{@"title":NSLocalizedString(@"kVcDWHelpTitleSupport", @"帮助"),
-                                    @"value":@"https://support.gdex.io/", @"url":@YES},
-                                  @{@"title":NSLocalizedString(@"kVcDWHelpTitleQQ", @"客服QQ"),
-                                    @"value":@"602573197"},
-                                  @{@"title":NSLocalizedString(@"kVcDWHelpTitleTelegram", @"电报"),
-                                    @"value":@"https://t.me/GDEXer", @"url":@YES}
-                                  ],
-                          },
-                      @{
-                          //    API reference: https://docs.google.com/document/d/196hdHb1BTGdmuVi_w74y7lt4Acl0mqt8P02Xg4GSkcI/edit
-                          @"name":@"RuDEX",
-                          @"api":[[RuDEX alloc] initWithApiConfig:@{
-                                                                    @"base":@"https://gateway.rudex.org/api/v0_3",
-                                                                    @"coin_list":@"/coins",
-                                                                    @"request_deposit_address":@"/wallets/%@/new-deposit-address",
-                                                                    @"check_address":@"/wallets/%@/check-address",
-                                                                    }],
-                          @"helps":@[
-                                  @{@"title":NSLocalizedString(@"kVcDWHelpTitleSupport", @"帮助"),
-                                    @"value":@"https://rudex.freshdesk.com", @"url":@YES},
-                                  @{@"title":@"Twitter",
-                                    @"value":@"https://twitter.com/rudex_bitshares", @"url":@YES},
-                                  @{@"title":NSLocalizedString(@"kVcDWHelpTitleTelegram", @"电报"),
-                                    @"value":@"https://t.me/BitSharesDEX_RU", @"url":@YES},
-                                  ],
-                          },
-                      ];
+        //    TODO:2.5 open的新api还存在部分bug，open那边再进行修复，待修复完毕之后再开放该功能。
+        //                      @{
+        //                          //    API reference: https://github.com/bitshares/bitshares-ui/files/3068123/OL-gateways-api.pdf
+        //                          @"name":@"OpenLedger",
+        //                          @"api":[[OpenLedger alloc] initWithApiConfig:@{
+        //                                                                         @"base":@"https://gateway.openledger.io",
+        //                                                                         @"assets":@"/assets",
+        //                                                                         @"exchanges":@"/exchanges",
+        //                                                                         @"request_deposit_address":@"/exchanges/%@/transfer/source/prototype",
+        //                                                                         @"validate":@"/exchanges/%@/transfer/destination",
+        //                                                                         }],
+        //                          @"helps":@[
+        //                                  @{@"title":NSLocalizedString(@"kVcDWHelpTitleSupport", @"帮助"), @"value":@"https://openledger.freshdesk.com", @"url":@YES},
+        //                                  ],
+        //                          },
+        @{
+            @"name":@"GDEX",
+            @"api":[[GatewayBase alloc] initWithApiConfig:@{
+                @"base":@"https://api.gdex.io/adjust",
+                @"coin_list":@"/coins",
+                @"active_wallets":@"/active-wallets",
+                @"trading_pairs":@"/trading-pairs",
+                @"request_deposit_address":@"/simple-api/initiate-trade",
+                @"check_address":@"/wallets/%@/address-validator",
+            }],
+            @"helps":@[
+                    @{@"title":NSLocalizedString(@"kVcDWHelpTitleSupport", @"帮助"),
+                      @"value":@"https://support.gdex.io/", @"url":@YES},
+                    @{@"title":NSLocalizedString(@"kVcDWHelpTitleQQ", @"客服QQ"),
+                      @"value":@"602573197"},
+                    @{@"title":NSLocalizedString(@"kVcDWHelpTitleTelegram", @"电报"),
+                      @"value":@"https://t.me/GDEXer", @"url":@YES}
+            ],
+        },
+        @{
+            //    API reference: https://docs.google.com/document/d/196hdHb1BTGdmuVi_w74y7lt4Acl0mqt8P02Xg4GSkcI/edit
+            @"name":@"RuDEX",
+            @"api":[[RuDEX alloc] initWithApiConfig:@{
+                @"base":@"https://gateway.rudex.org/api/v0_3",
+                @"coin_list":@"/coins",
+                @"request_deposit_address":@"/wallets/%@/new-deposit-address",
+                @"check_address":@"/wallets/%@/check-address",
+            }],
+            @"helps":@[
+                    @{@"title":NSLocalizedString(@"kVcDWHelpTitleSupport", @"帮助"),
+                      @"value":@"https://rudex.freshdesk.com", @"url":@YES},
+                    @{@"title":@"Twitter",
+                      @"value":@"https://twitter.com/rudex_bitshares", @"url":@YES},
+                    @{@"title":NSLocalizedString(@"kVcDWHelpTitleTelegram", @"电报"),
+                      @"value":@"https://t.me/BitSharesDEX_RU", @"url":@YES},
+            ],
+        },
+    ];
     
     assert([_gatewayArray count] > 0);
     id defaultGatewayName = NSLocalizedString(@"appDepositWithdrawDefaultGateway", @"defaultGatewayName");
@@ -463,17 +463,17 @@ enum
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if (indexPath.section == kVcGateway){
         if (indexPath.row == 0){
-            [VCCommonLogic showPicker:self
-                         object_lists:_gatewayArray
-                                  key:@"name"
-                                title:NSLocalizedString(@"kVcDWTipsSelectGateway", @"请选择要进行充提的网关")
-                             callback:^(id selectItem)
+            [VcUtils showPicker:self
+                   object_lists:_gatewayArray
+                            key:@"name"
+                          title:NSLocalizedString(@"kVcDWTipsSelectGateway", @"请选择要进行充提的网关")
+                       callback:^(id selectItem)
              {
-                 if (selectItem && ![selectItem[@"name"] isEqualToString:_currGateway[@"name"]]){
-                     _currGateway = selectItem;
-                     [self queryFullAccountDataAndCoinList];
-                 }
-             }];
+                if (selectItem && ![selectItem[@"name"] isEqualToString:_currGateway[@"name"]]){
+                    _currGateway = selectItem;
+                    [self queryFullAccountDataAndCoinList];
+                }
+            }];
         }else{
             id helps = [_currGateway objectForKey:@"helps"];
             assert(helps && [helps count] > 0);

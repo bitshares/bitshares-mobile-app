@@ -202,7 +202,7 @@ enum
     id asset_list = [[chainMgr getDebtAssetList] ruby_map:(^id(id symbol) {
         return [chainMgr getAssetBySymbol:symbol];
     })];
-    [VCCommonLogic showPicker:self selectAsset:asset_list title:NSLocalizedString(@"kDebtTipSelectDebtAsset", @"请选择要借入的资产")
+    [VcUtils showPicker:self selectAsset:asset_list title:NSLocalizedString(@"kDebtTipSelectDebtAsset", @"请选择要借入的资产")
                      callback:^(id selectItem) {
         [self processSelectNewDebtAsset:selectItem];
     }];

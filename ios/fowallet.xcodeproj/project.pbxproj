@@ -358,7 +358,6 @@
 		3F6768E2230E9EC100E98C14 /* StyledPageControl.m in Sources */ = {isa = PBXBuildFile; fileRef = ED96A08C186C62AD002181D4 /* StyledPageControl.m */; };
 		3F6768E3230E9EC100E98C14 /* VCTest.m in Sources */ = {isa = PBXBuildFile; fileRef = EDC7D39B1869D430009F40F1 /* VCTest.m */; };
 		3F6768E4230E9EC100E98C14 /* Ppmd7Enc.c in Sources */ = {isa = PBXBuildFile; fileRef = B7BDAA6820B3C77400738F12 /* Ppmd7Enc.c */; };
-		3F6768E5230E9EC100E98C14 /* VCCommonLogic.m in Sources */ = {isa = PBXBuildFile; fileRef = B78EAFFB1C4DD0C600F4DCE9 /* VCCommonLogic.m */; };
 		3F6768E6230E9EC100E98C14 /* VCServices.m in Sources */ = {isa = PBXBuildFile; fileRef = B764AEA220B515FF00BDFC1B /* VCServices.m */; };
 		3F6768E7230E9EC100E98C14 /* bts_wallet_core.c in Sources */ = {isa = PBXBuildFile; fileRef = B7BDA98D20B39BC400738F12 /* bts_wallet_core.c */; };
 		3F6768E8230E9EC100E98C14 /* RuDEX.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6C35B021EC864F008E2903 /* RuDEX.m */; };
@@ -740,6 +739,15 @@
 		3FADCF8B23D69B4600043305 /* VCAssetCreateOrEdit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FADCF8923D69B4500043305 /* VCAssetCreateOrEdit.m */; };
 		3FADCF8C23D69B4600043305 /* VCAssetCreateOrEdit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FADCF8923D69B4500043305 /* VCAssetCreateOrEdit.m */; };
 		3FADCF8D23D69B4600043305 /* VCAssetCreateOrEdit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FADCF8923D69B4500043305 /* VCAssetCreateOrEdit.m */; };
+		3FADCF9023D6EE9D00043305 /* ViewSettlementOrderInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FADCF8E23D6EE9C00043305 /* ViewSettlementOrderInfoCell.m */; };
+		3FADCF9123D6EE9D00043305 /* ViewSettlementOrderInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FADCF8E23D6EE9C00043305 /* ViewSettlementOrderInfoCell.m */; };
+		3FADCF9223D6EE9D00043305 /* ViewSettlementOrderInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FADCF8E23D6EE9C00043305 /* ViewSettlementOrderInfoCell.m */; };
+		3FADCF9523D6EF1F00043305 /* VCSettlementOrders.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FADCF9423D6EF1F00043305 /* VCSettlementOrders.m */; };
+		3FADCF9623D6EF1F00043305 /* VCSettlementOrders.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FADCF9423D6EF1F00043305 /* VCSettlementOrders.m */; };
+		3FADCF9723D6EF1F00043305 /* VCSettlementOrders.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FADCF9423D6EF1F00043305 /* VCSettlementOrders.m */; };
+		3FADCF9A23D6FA3500043305 /* VcUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FADCF9923D6FA3500043305 /* VcUtils.m */; };
+		3FADCF9B23D6FA3500043305 /* VcUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FADCF9923D6FA3500043305 /* VcUtils.m */; };
+		3FADCF9C23D6FA3500043305 /* VcUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FADCF9923D6FA3500043305 /* VcUtils.m */; };
 		3FB038002398A73F00FC859C /* iconOtc@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB037FE2398A73E00FC859C /* iconOtc@2x.png */; };
 		3FB038012398A73F00FC859C /* iconOtc@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB037FE2398A73E00FC859C /* iconOtc@2x.png */; };
 		3FB038022398A73F00FC859C /* iconOtc@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB037FE2398A73E00FC859C /* iconOtc@2x.png */; };
@@ -979,7 +987,6 @@
 		3FB8F96621CE66C200DA88E2 /* StyledPageControl.m in Sources */ = {isa = PBXBuildFile; fileRef = ED96A08C186C62AD002181D4 /* StyledPageControl.m */; };
 		3FB8F96721CE66C200DA88E2 /* VCTest.m in Sources */ = {isa = PBXBuildFile; fileRef = EDC7D39B1869D430009F40F1 /* VCTest.m */; };
 		3FB8F96821CE66C200DA88E2 /* Ppmd7Enc.c in Sources */ = {isa = PBXBuildFile; fileRef = B7BDAA6820B3C77400738F12 /* Ppmd7Enc.c */; };
-		3FB8F96921CE66C200DA88E2 /* VCCommonLogic.m in Sources */ = {isa = PBXBuildFile; fileRef = B78EAFFB1C4DD0C600F4DCE9 /* VCCommonLogic.m */; };
 		3FB8F96A21CE66C200DA88E2 /* VCServices.m in Sources */ = {isa = PBXBuildFile; fileRef = B764AEA220B515FF00BDFC1B /* VCServices.m */; };
 		3FB8F96B21CE66C200DA88E2 /* bts_wallet_core.c in Sources */ = {isa = PBXBuildFile; fileRef = B7BDA98D20B39BC400738F12 /* bts_wallet_core.c */; };
 		3FB8F96C21CE66C200DA88E2 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = B782F0BF1D6E94C600F61571 /* UIImage+ImageEffects.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
@@ -1549,7 +1556,6 @@
 		B786D51D20EF9E1800427C08 /* VCSelectEstimateUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B786D51B20EF9E1700427C08 /* VCSelectEstimateUnit.m */; };
 		B786D52020F1FE7200427C08 /* ViewLimitOrderInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B786D51E20F1FE7100427C08 /* ViewLimitOrderInfoCell.m */; };
 		B78E84D21CCA28CB0033B258 /* MySecurityFileMgr.m in Sources */ = {isa = PBXBuildFile; fileRef = B78E84D11CCA28CB0033B258 /* MySecurityFileMgr.m */; };
-		B78EAFFC1C4DD0C600F4DCE9 /* VCCommonLogic.m in Sources */ = {isa = PBXBuildFile; fileRef = B78EAFFB1C4DD0C600F4DCE9 /* VCCommonLogic.m */; };
 		B78F251E1C5B4CF200B3D087 /* TrainDistance@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B78F251C1C5B4CF200B3D087 /* TrainDistance@2x.png */; };
 		B78F251F1C5B4CF200B3D087 /* TrainRoute@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B78F251D1C5B4CF200B3D087 /* TrainRoute@2x.png */; };
 		B78FFC0C1C03220D00AB7F1F /* tapicon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B78FFC0A1C03220D00AB7F1F /* tapicon@2x.png */; };
@@ -2074,6 +2080,12 @@
 		3FA72B562340BC2500EE3DC9 /* iconEdit@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconEdit@3x.png"; path = "Images/iconEdit@3x.png"; sourceTree = "<group>"; };
 		3FADCF8923D69B4500043305 /* VCAssetCreateOrEdit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAssetCreateOrEdit.m; path = Controller/VCAssetCreateOrEdit.m; sourceTree = "<group>"; };
 		3FADCF8A23D69B4600043305 /* VCAssetCreateOrEdit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAssetCreateOrEdit.h; path = Controller/VCAssetCreateOrEdit.h; sourceTree = "<group>"; };
+		3FADCF8E23D6EE9C00043305 /* ViewSettlementOrderInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewSettlementOrderInfoCell.m; path = View/ViewSettlementOrderInfoCell.m; sourceTree = "<group>"; };
+		3FADCF8F23D6EE9C00043305 /* ViewSettlementOrderInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewSettlementOrderInfoCell.h; path = View/ViewSettlementOrderInfoCell.h; sourceTree = "<group>"; };
+		3FADCF9323D6EF1F00043305 /* VCSettlementOrders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCSettlementOrders.h; path = Controller/VCSettlementOrders.h; sourceTree = "<group>"; };
+		3FADCF9423D6EF1F00043305 /* VCSettlementOrders.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCSettlementOrders.m; path = Controller/VCSettlementOrders.m; sourceTree = "<group>"; };
+		3FADCF9823D6FA3500043305 /* VcUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VcUtils.h; path = Controller/VcUtils.h; sourceTree = "<group>"; };
+		3FADCF9923D6FA3500043305 /* VcUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VcUtils.m; path = Controller/VcUtils.m; sourceTree = "<group>"; };
 		3FB037FE2398A73E00FC859C /* iconOtc@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtc@2x.png"; path = "Images/iconOtc@2x.png"; sourceTree = "<group>"; };
 		3FB037FF2398A73F00FC859C /* iconOtc@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtc@3x.png"; path = "Images/iconOtc@3x.png"; sourceTree = "<group>"; };
 		3FB038062398A8AD00FC859C /* iconOtcUser@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtcUser@3x.png"; path = "Images/iconOtcUser@3x.png"; sourceTree = "<group>"; };
@@ -2424,8 +2436,6 @@
 		B786D51F20F1FE7200427C08 /* ViewLimitOrderInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewLimitOrderInfoCell.h; path = View/ViewLimitOrderInfoCell.h; sourceTree = "<group>"; };
 		B78E84D01CCA28CB0033B258 /* MySecurityFileMgr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MySecurityFileMgr.h; path = ios/MySecurityFileMgr.h; sourceTree = "<group>"; };
 		B78E84D11CCA28CB0033B258 /* MySecurityFileMgr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MySecurityFileMgr.m; path = ios/MySecurityFileMgr.m; sourceTree = "<group>"; };
-		B78EAFFA1C4DD0C600F4DCE9 /* VCCommonLogic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCCommonLogic.h; path = Controller/VCCommonLogic.h; sourceTree = "<group>"; };
-		B78EAFFB1C4DD0C600F4DCE9 /* VCCommonLogic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCCommonLogic.m; path = Controller/VCCommonLogic.m; sourceTree = "<group>"; };
 		B78F251C1C5B4CF200B3D087 /* TrainDistance@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "TrainDistance@2x.png"; path = "Images/TrainDistance@2x.png"; sourceTree = "<group>"; };
 		B78F251D1C5B4CF200B3D087 /* TrainRoute@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "TrainRoute@2x.png"; path = "Images/TrainRoute@2x.png"; sourceTree = "<group>"; };
 		B78FFC0A1C03220D00AB7F1F /* tapicon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "tapicon@2x.png"; path = "Images/tapicon@2x.png"; sourceTree = "<group>"; };
@@ -3030,6 +3040,10 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3FADCF9823D6FA3500043305 /* VcUtils.h */,
+				3FADCF9923D6FA3500043305 /* VcUtils.m */,
+				3FADCF9323D6EF1F00043305 /* VCSettlementOrders.h */,
+				3FADCF9423D6EF1F00043305 /* VCSettlementOrders.m */,
 				3FADCF8A23D69B4600043305 /* VCAssetCreateOrEdit.h */,
 				3FADCF8923D69B4500043305 /* VCAssetCreateOrEdit.m */,
 				3FF2E98E23D1C360006F98D0 /* VCAssetOpReserve.h */,
@@ -3145,7 +3159,6 @@
 				B7B1E3311DBF3E1C000B9635 /* VCBaseWebView.m */,
 				B7D7DFEE1C5CEFBF007D13DA /* VCSelectTheme.h */,
 				B7D7DFEF1C5CEFBF007D13DA /* VCSelectTheme.m */,
-				B78EAFF91C4DD0BA00F4DCE9 /* Common */,
 				B7BEC2801A4601440049EB1F /* VCWebView.h */,
 				B7BEC2811A4601440049EB1F /* VCWebView.m */,
 				ED75E626186C63C9009BEF5E /* MyNavigationController.h */,
@@ -3169,6 +3182,8 @@
 		18FF069017E00C5C0088405E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				3FADCF8F23D6EE9C00043305 /* ViewSettlementOrderInfoCell.h */,
+				3FADCF8E23D6EE9C00043305 /* ViewSettlementOrderInfoCell.m */,
 				3F2B7A5523D2E819006B1359 /* ViewTextFieldAmountCell.h */,
 				3F2B7A5623D2E819006B1359 /* ViewTextFieldAmountCell.m */,
 				3FD0AD4E23C1A3F20035018E /* ViewAssetBasicInfoCell.h */,
@@ -4019,15 +4034,6 @@
 			);
 			name = SCLAlertView;
 			path = libs/SCLAlertView;
-			sourceTree = "<group>";
-		};
-		B78EAFF91C4DD0BA00F4DCE9 /* Common */ = {
-			isa = PBXGroup;
-			children = (
-				B78EAFFA1C4DD0C600F4DCE9 /* VCCommonLogic.h */,
-				B78EAFFB1C4DD0C600F4DCE9 /* VCCommonLogic.m */,
-			);
-			name = Common;
 			sourceTree = "<group>";
 		};
 		B7A13B6D1CA1443A0096A6A4 /* minizip */ = {
@@ -5551,6 +5557,7 @@
 				3F676810230E9EC100E98C14 /* VCTradeHor.m in Sources */,
 				3F676811230E9EC100E98C14 /* WjCryptLib_Sha512.c in Sources */,
 				3F676812230E9EC100E98C14 /* WjCryptLib_AesCbc.c in Sources */,
+				3FADCF9C23D6FA3500043305 /* VcUtils.m in Sources */,
 				3F676813230E9EC100E98C14 /* Bcj2Enc.c in Sources */,
 				3F676814230E9EC100E98C14 /* GCDWebServerRequest.m in Sources */,
 				3F676815230E9EC100E98C14 /* WjCryptLib_Sha1.c in Sources */,
@@ -5643,6 +5650,7 @@
 				3F67685F230E9EC100E98C14 /* LzFindMt.c in Sources */,
 				3F676860230E9EC100E98C14 /* VCVote.m in Sources */,
 				3F676861230E9EC100E98C14 /* GrapheneWebSocket.m in Sources */,
+				3FADCF9223D6EE9D00043305 /* ViewSettlementOrderInfoCell.m in Sources */,
 				3F676862230E9EC100E98C14 /* XzCrc64Opt.c in Sources */,
 				3F676863230E9EC100E98C14 /* VCWalletManager.m in Sources */,
 				3F676864230E9EC100E98C14 /* Lzma2DecMt.c in Sources */,
@@ -5791,6 +5799,7 @@
 				3F6768DE230E9EC100E98C14 /* Reachability.m in Sources */,
 				3F21FB77235749B600CF9F20 /* ViewSecTipsLineCell.m in Sources */,
 				3F23B788231CCCCA00EEEE78 /* VCPaySuccess.m in Sources */,
+				3FADCF9723D6EF1F00043305 /* VCSettlementOrders.m in Sources */,
 				3FD0AD5723C1FA9D0035018E /* VCAssetDetails.m in Sources */,
 				3F6768DF230E9EC100E98C14 /* VCBtsaiWebView.m in Sources */,
 				3F6768E0230E9EC100E98C14 /* VCNotice.m in Sources */,
@@ -5800,7 +5809,6 @@
 				3F6768E2230E9EC100E98C14 /* StyledPageControl.m in Sources */,
 				3F6768E3230E9EC100E98C14 /* VCTest.m in Sources */,
 				3F6768E4230E9EC100E98C14 /* Ppmd7Enc.c in Sources */,
-				3F6768E5230E9EC100E98C14 /* VCCommonLogic.m in Sources */,
 				3FD0AD5223C1A3F20035018E /* ViewAssetBasicInfoCell.m in Sources */,
 				3F6768E6230E9EC100E98C14 /* VCServices.m in Sources */,
 				3F6768E7230E9EC100E98C14 /* bts_wallet_core.c in Sources */,
@@ -5885,6 +5893,7 @@
 				3FB8F8A821CE66C200DA88E2 /* VCTradeHor.m in Sources */,
 				3FB8F8A921CE66C200DA88E2 /* WjCryptLib_Sha512.c in Sources */,
 				3FB8F8AA21CE66C200DA88E2 /* WjCryptLib_AesCbc.c in Sources */,
+				3FADCF9B23D6FA3500043305 /* VcUtils.m in Sources */,
 				3FB8F8AB21CE66C200DA88E2 /* Bcj2Enc.c in Sources */,
 				3FB8F8AC21CE66C200DA88E2 /* GCDWebServerRequest.m in Sources */,
 				3FB8F8AD21CE66C200DA88E2 /* WjCryptLib_Sha1.c in Sources */,
@@ -5977,6 +5986,7 @@
 				3FB8F8EF21CE66C200DA88E2 /* LzFindMt.c in Sources */,
 				3FB8F8F021CE66C200DA88E2 /* VCVote.m in Sources */,
 				3FB8F8F121CE66C200DA88E2 /* GrapheneWebSocket.m in Sources */,
+				3FADCF9123D6EE9D00043305 /* ViewSettlementOrderInfoCell.m in Sources */,
 				3FB8F8F221CE66C200DA88E2 /* XzCrc64Opt.c in Sources */,
 				3FB8F8F421CE66C200DA88E2 /* VCWalletManager.m in Sources */,
 				3FB8F8F521CE66C200DA88E2 /* Lzma2DecMt.c in Sources */,
@@ -6125,6 +6135,7 @@
 				3FB8F96221CE66C200DA88E2 /* Reachability.m in Sources */,
 				3F21FB76235749B600CF9F20 /* ViewSecTipsLineCell.m in Sources */,
 				3F23B787231CCCCA00EEEE78 /* VCPaySuccess.m in Sources */,
+				3FADCF9623D6EF1F00043305 /* VCSettlementOrders.m in Sources */,
 				3FD0AD5623C1FA9D0035018E /* VCAssetDetails.m in Sources */,
 				3FB8F96321CE66C200DA88E2 /* VCBtsaiWebView.m in Sources */,
 				3FB8F96421CE66C200DA88E2 /* VCNotice.m in Sources */,
@@ -6134,7 +6145,6 @@
 				3FB8F96621CE66C200DA88E2 /* StyledPageControl.m in Sources */,
 				3FB8F96721CE66C200DA88E2 /* VCTest.m in Sources */,
 				3FB8F96821CE66C200DA88E2 /* Ppmd7Enc.c in Sources */,
-				3FB8F96921CE66C200DA88E2 /* VCCommonLogic.m in Sources */,
 				3FD0AD5123C1A3F20035018E /* ViewAssetBasicInfoCell.m in Sources */,
 				3FB8F96A21CE66C200DA88E2 /* VCServices.m in Sources */,
 				3FB8F96B21CE66C200DA88E2 /* bts_wallet_core.c in Sources */,
@@ -6219,6 +6229,7 @@
 				B72A84AA20D4D4CE00D92A25 /* VCTradeHor.m in Sources */,
 				B7BDA9AA20B3A3D100738F12 /* WjCryptLib_Sha512.c in Sources */,
 				B7BDA9A320B3A3D100738F12 /* WjCryptLib_AesCbc.c in Sources */,
+				3FADCF9A23D6FA3500043305 /* VcUtils.m in Sources */,
 				B7BDAA8720B3C77500738F12 /* Bcj2Enc.c in Sources */,
 				B72A848320CCD18B00D92A25 /* GCDWebServerRequest.m in Sources */,
 				B7BDA9A820B3A3D100738F12 /* WjCryptLib_Sha1.c in Sources */,
@@ -6311,6 +6322,7 @@
 				B7C0411121081D7200848CBC /* VCVote.m in Sources */,
 				B741A76620DCA45D000FBC00 /* GrapheneWebSocket.m in Sources */,
 				B7BDAAA020B3C77500738F12 /* XzCrc64Opt.c in Sources */,
+				3FADCF9023D6EE9D00043305 /* ViewSettlementOrderInfoCell.m in Sources */,
 				3F0AE342219319BE00E4144C /* VCWalletManager.m in Sources */,
 				B7BDAA9020B3C77500738F12 /* Lzma2DecMt.c in Sources */,
 				B7BDAA9720B3C77500738F12 /* MtCoder.c in Sources */,
@@ -6459,6 +6471,7 @@
 				3F23B786231CCCCA00EEEE78 /* VCPaySuccess.m in Sources */,
 				3F21FB75235749B600CF9F20 /* ViewSecTipsLineCell.m in Sources */,
 				B72A844820CA628800D92A25 /* VCBtsaiWebView.m in Sources */,
+				3FADCF9523D6EF1F00043305 /* VCSettlementOrders.m in Sources */,
 				3FD0AD5523C1FA9D0035018E /* VCAssetDetails.m in Sources */,
 				B79FC2D41A45E8A0000D49D5 /* VCNotice.m in Sources */,
 				B7BEC2821A4601440049EB1F /* VCWebView.m in Sources */,
@@ -6467,7 +6480,6 @@
 				ED96A096186C62AD002181D4 /* StyledPageControl.m in Sources */,
 				EDC7D39C1869D430009F40F1 /* VCTest.m in Sources */,
 				B7BDAA9A20B3C77500738F12 /* Ppmd7Enc.c in Sources */,
-				B78EAFFC1C4DD0C600F4DCE9 /* VCCommonLogic.m in Sources */,
 				B764AEA320B5160000BDFC1B /* VCServices.m in Sources */,
 				3FD0AD5023C1A3F20035018E /* ViewAssetBasicInfoCell.m in Sources */,
 				B7BDA98E20B39BC500738F12 /* bts_wallet_core.c in Sources */,

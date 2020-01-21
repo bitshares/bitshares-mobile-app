@@ -22,7 +22,7 @@
 
 #import "ModelUtils.h"
 #import "ViewUtils.h"
-#import "VCCommonLogic.h"
+#import "VcUtils.h"
 
 #import "ViewBlockButton.h"
 #import "ViewBlockLabel.h"

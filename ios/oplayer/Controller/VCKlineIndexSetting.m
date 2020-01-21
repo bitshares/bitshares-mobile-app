@@ -69,7 +69,7 @@ enum
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     
     _configValueHash = [OrgUtils deepClone:[[SettingManager sharedSettingManager] getKLineIndexInfos]];
     
@@ -273,12 +273,12 @@ enum
             {
                 if (indexPath.row == 0){
                     id list = @[
-                                @{@"name":NSLocalizedString(@"kKlineIndexCellHide", @"不显示"), @"value":@""},
-                                @{@"name":@"MA", @"value":@"ma"},
-                                @{@"name":@"EMA", @"value":@"ema"},
-                                @{@"name":@"BOLL", @"value":@"boll"},
-                                ];
-                    [VCCommonLogic showPicker:self object_lists:list key:@"name" title:nil callback:^(id selectItem) {
+                        @{@"name":NSLocalizedString(@"kKlineIndexCellHide", @"不显示"), @"value":@""},
+                        @{@"name":@"MA", @"value":@"ma"},
+                        @{@"name":@"EMA", @"value":@"ema"},
+                        @{@"name":@"BOLL", @"value":@"boll"},
+                    ];
+                    [VcUtils showPicker:self object_lists:list key:@"name" title:nil callback:^(id selectItem) {
                         if (![[_configValueHash objectForKey:@"kMain"] isEqualToString:selectItem[@"value"]]){
                             [_configValueHash setObject:selectItem[@"value"] forKey:@"kMain"];
                             [_mainTableView reloadData];
@@ -300,10 +300,10 @@ enum
             {
                 if (indexPath.row == 0){
                     id list = @[
-                                @{@"name":NSLocalizedString(@"kKlineIndexCellHide", @"不显示"), @"value":@""},
-                                @{@"name":@"MACD", @"value":@"macd"},
-                                ];
-                    [VCCommonLogic showPicker:self object_lists:list key:@"name" title:nil callback:^(id selectItem) {
+                        @{@"name":NSLocalizedString(@"kKlineIndexCellHide", @"不显示"), @"value":@""},
+                        @{@"name":@"MACD", @"value":@"macd"},
+                    ];
+                    [VcUtils showPicker:self object_lists:list key:@"name" title:nil callback:^(id selectItem) {
                         if (![[_configValueHash objectForKey:@"kSub"] isEqualToString:selectItem[@"value"]]){
                             [_configValueHash setObject:selectItem[@"value"] forKey:@"kSub"];
                             [_mainTableView reloadData];
