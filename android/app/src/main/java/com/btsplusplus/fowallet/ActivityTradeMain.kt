@@ -242,22 +242,28 @@ class ActivityTradeMain : BtsppActivity() {
     }
 
     fun onFullAccountInfoResponsed(full_account_data: JSONObject?) {
-        fragmens.forEach {
-            (it as FragmentTradeMainPage).onFullAccountDataResponsed(full_account_data)
+        fragmens.forEachIndexed { index, it ->
+            if (index < 2) {
+                (it as FragmentTradeMainPage).onFullAccountDataResponsed(full_account_data)
+            }
         }
     }
 
     private fun onQueryTickerDataResponse(ticker_data: JSONObject) {
-        fragmens.forEach {
-            (it as FragmentTradeMainPage).onQueryTickerDataResponse(ticker_data)
+        fragmens.forEachIndexed { index, it ->
+            if (index < 2) {
+                (it as FragmentTradeMainPage).onQueryTickerDataResponse(ticker_data)
+            }
         }
     }
 
     private fun onQueryFillOrderHistoryResponsed(data: JSONArray?) {
         //  订阅市场返回的数据可能为 nil。
         if (data != null) {
-            fragmens.forEach {
-                (it as FragmentTradeMainPage).onQueryFillOrderHistoryResponsed(data)
+            fragmens.forEachIndexed { index, it ->
+                if (index < 2) {
+                    (it as FragmentTradeMainPage).onQueryFillOrderHistoryResponsed(data)
+                }
             }
         }
     }
@@ -265,8 +271,11 @@ class ActivityTradeMain : BtsppActivity() {
     private fun onQueryOrderBookResponse(normal_order_book: JSONObject?, settlement_data: JSONObject?) {
         if (normal_order_book != null) {
             val merged_order_book = OrgUtils.mergeOrderBook(normal_order_book, settlement_data)
-            fragmens.forEach {
-                (it as FragmentTradeMainPage).onQueryOrderBookResponse(merged_order_book)
+            fragmens.forEachIndexed { index, it ->
+                if (index < 2) {
+                    (it as FragmentTradeMainPage).onQueryOrderBookResponse(merged_order_book)
+                }
+
             }
         }
     }
@@ -274,5 +283,16 @@ class ActivityTradeMain : BtsppActivity() {
     private fun setFragments() {
         fragmens.add(FragmentTradeMainPage().initialize(jsonArrayfrom(true, _tradingPair)))
         fragmens.add(FragmentTradeMainPage().initialize(jsonArrayfrom(false, _tradingPair)))
+
+
+        // REMARK 这里的数据格式跟我的订单 历史订单数据格式一致
+        val data = JSONObject().apply {
+            put("from","settlement_orders")
+            put("data", JSONArray().apply {
+
+            })
+        }
+        fragmens.add(FragmentOrderHistory().initialize(data))
+
     }
 }

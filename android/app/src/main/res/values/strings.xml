@@ -1361,4 +1361,7 @@
     <string name="myAssetsPageUnknowOperationContent">Unknown operation content</string>
     <string name="kWalletMemuTipsPleaseSelectCellAction">Please select the action to perform</string>
     <string name="kWalletMenuTipsPleaseSelectImportType">Please select the type of account to import</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
