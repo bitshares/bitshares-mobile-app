@@ -49,6 +49,11 @@
 /*
  *  确保依赖
  */
-+ (void)GuardGrapheneObjectDependence:(VCBase*)vc object_ids:(id)object_ids body:(void (^)())body;
++ (void)guardGrapheneObjectDependence:(VCBase*)vc object_ids:(id)object_ids body:(void (^)())body;
+
+/*
+ *  (public) 判断两个资产哪个作为base资产，返回base资产的symbol。
+ */
++ (NSString*)calcBaseAsset:(NSString*)asset_symbol01 asset_symbol02:(NSString*)asset_symbol02;
 
 @end

@@ -8,7 +8,9 @@
 
 #import "VCTradeHor.h"
 #import "VCTradeMain.h"
+#import "VCSettlementOrders.h"
 #import "OrgUtils.h"
+#import "MBProgressHUDSingleton.h"
 #import "BitsharesClientManager.h"
 #import "WalletManager.h"
 #import "TempManager.h"
@@ -39,17 +41,17 @@
     _quote = nil;
 }
 
-- (id)initWithBaseInfo:(NSDictionary*)base quoteInfo:(NSDictionary*)quote selectBuy:(BOOL)selectBuy
+- (id)initWithTradingPair:(TradingPair*)tradingPair selectBuy:(BOOL)selectBuy
 {
     self = [super init];
     if (self) {
-        // Custom initialization
-        _base = base;
-        _quote = quote;
+        //  确保智能资产信息已经初始化
+        assert(tradingPair && tradingPair.bCoreMarketInited);
+        
+        _base = tradingPair.baseAsset;
+        _quote = tradingPair.quoteAsset;
         _selectBuy = selectBuy;
-        
-        _tradingPair = [[TradingPair alloc] initWithBaseAsset:base quoteAsset:quote];
-        
+        _tradingPair = tradingPair;
         //  REMARK：在初始化的时候判断帐号信息
         _haveAccountOnInit = [[WalletManager sharedWalletManager] isWalletExist];
     }
@@ -63,14 +65,24 @@
 
 - (NSArray*)getTitleStringArray
 {
-    return @[NSLocalizedString(@"kLabelTitleBuy", @"买入"), NSLocalizedString(@"kLabelTitleSell", @"卖出")];
+    NSMutableArray* ary = [NSMutableArray arrayWithObjects:NSLocalizedString(@"kLabelTitleBuy", @"买入"),
+                           NSLocalizedString(@"kLabelTitleSell", @"卖出"),
+                           nil];
+    if (_tradingPair.isCoreMarket) {
+        [ary addObject:NSLocalizedString(@"kVcOrderPageSettleOrders", @"清算单")];
+    }
+    return [ary copy];
 }
 
 - (NSArray*)getSubPageVCArray
 {
-    return @[[[VCTradeMain alloc] initWithOwner:self baseInfo:_base quoteInfo:_quote isbuy:YES],
-             [[VCTradeMain alloc] initWithOwner:self baseInfo:_base quoteInfo:_quote isbuy:NO],
-             ];
+    NSMutableArray* ary = [NSMutableArray arrayWithObjects:[[VCTradeMain alloc] initWithOwner:self baseInfo:_base quoteInfo:_quote isbuy:YES],
+                           [[VCTradeMain alloc] initWithOwner:self baseInfo:_base quoteInfo:_quote isbuy:NO],
+                           nil];
+    if (_tradingPair.isCoreMarket) {
+        [ary addObject:[[VCSettlementOrders alloc] initWithOwner:self tradingPair:_tradingPair fullAccountInfo:nil]];
+    }
+    return [ary copy];
 }
 
 - (void)onRightButtonClicked
@@ -126,6 +138,9 @@
     
     //  b、刷新登录按钮状态
     for (VCTradeMain* vc in _subvcArrays) {
+        if (![vc isKindOfClass:[VCTradeMain class]]) {
+            continue;
+        }
         [vc onRefreshLoginStatus];
     }
 }
@@ -186,10 +201,7 @@
     
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     //  优先查询智能背书资产信息（之后才考虑是否查询喂价、爆仓单等信息）
-    [[[chainMgr queryShortBackingAssetInfos:@[_tradingPair.baseId, _tradingPair.quoteId]] then:(^id(id sba_hash) {
-        //  更新智能资产信息
-        [_tradingPair RefreshCoreMarketFlag:sba_hash];
-        
+    [[[_tradingPair queryBitassetMarketInfo] then:(^id(id isCoreMarket) {
         GrapheneApi* api_db = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
         
         WalletManager* wallet_mgr = [WalletManager sharedWalletManager];
@@ -305,6 +317,9 @@
 {
     if (_subvcArrays){
         for (VCTradeMain* vc in _subvcArrays) {
+            if (![vc isKindOfClass:[VCTradeMain class]]) {
+                continue;
+            }
             [vc onFullAccountDataResponsed:full_account_info];
         }
     }
@@ -318,6 +333,9 @@
     }
     if (_subvcArrays){
         for (VCTradeMain* vc in _subvcArrays) {
+            if (![vc isKindOfClass:[VCTradeMain class]]) {
+                continue;
+            }
             [vc onQueryFillOrderHistoryResponsed:data];
         }
     }
@@ -332,6 +350,9 @@
     if (_subvcArrays){
         id merged_order_book = [OrgUtils mergeOrderBook:normal_order_book settlement_data:settlement_data];
         for (VCTradeMain* vc in _subvcArrays) {
+            if (![vc isKindOfClass:[VCTradeMain class]]) {
+                continue;
+            }
             [vc onQueryOrderBookResponse:merged_order_book];
         }
     }
@@ -341,6 +362,9 @@
 {
     if (_subvcArrays){
         for (VCTradeMain* vc in _subvcArrays) {
+            if (![vc isKindOfClass:[VCTradeMain class]]) {
+                continue;
+            }
             [vc onQueryTickerDataResponse:data];
         }
     }
@@ -359,12 +383,36 @@
 
 - (void)resignAllFirstResponder
 {
-//    //  REMARK：强制结束键盘
+    //    //  REMARK：强制结束键盘
     [self.view endEditing:YES];
     
     if (_subvcArrays){
         for (VCTradeMain* vc in _subvcArrays) {
+            if (![vc isKindOfClass:[VCTradeMain class]]) {
+                continue;
+            }
             [vc resignAllFirstResponder];
+        }
+    }
+}
+
+- (void)onPageChanged:(NSInteger)tag
+{
+    NSLog(@"onPageChanged: %@", @(tag));
+    
+    //  gurad
+    if ([[MBProgressHUDSingleton sharedMBProgressHUDSingleton] is_showing]){
+        return;
+    }
+    
+    //  query
+    if (_subvcArrays){
+        id vc = [_subvcArrays safeObjectAtIndex:tag - 1];
+        if (vc){
+            if ([vc isKindOfClass:[VCSettlementOrders class]]){
+                VCSettlementOrders* vc_settlement_orders = (VCSettlementOrders*)vc;
+                [vc_settlement_orders querySettlementOrders];
+            }
         }
     }
 }

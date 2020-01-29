@@ -419,11 +419,62 @@
 "kVcActivityDescCreateProposal" = "提案作成。";
 "kVcActivityDescUpdateProposal" = "提案更新。#%@";
 
+/* 资产管理相关 */
+"kVcAssetMgrAssetCreateButton" = "创建";//TODO:
+"kVcAssetMgrSegInfoBasicInfo" = "基本信息";//TODO:
+"kVcAssetMgrSegInfoPermissionInfo" = "权限信息";//TODO:
+"kVcAssetMgrSegInfoSmartCoinInfo" = "智能币信息";//TODO:
+"kVcAssetMgrCellTitleAssetName" = "资产名称";//TODO:
+"kVcAssetMgrCellTitleMaxSupply" = "最大供应量";//TODO:
+"kVcAssetMgrCellTitleAssetDesc" = "资产描述";//TODO:
+"kVcAssetMgrCellTitleAdvSwitch" = "高级设置";//TODO:
+"kVcAssetMgrCellTitleAssetPrecision" = "资产精度";//TODO:
+"kVcAssetMgrCellTitleSmartBackingAsset" = "借贷抵押资产";//TODO:
+"kVcAssetMgrCellTitleSmartFeedLifeTime" = "喂价有效期";//TODO:
+"kVcAssetMgrCellTitleSmartMinFeedNum" = "最少喂价数量";//TODO:
+"kVcAssetMgrCellTitleSmartDelayForSettle" = "强清延迟时间";//TODO:
+"kVcAssetMgrCellTitleSmartOffsetSettle" = "强清补偿比例";//TODO:
+"kVcAssetMgrCellTitleSmartMaxSettleValuePerHour" = "每周期最大清算量";//TODO:
+"kVcAssetMgrCellTitlePermMarketFee" = "收取市场手续费";//TODO:
+"kVcAssetMgrCellTitlePermWhiteListed" = "需资产持有人在白名单中";//TODO:
+"kVcAssetMgrCellTitlePermOverrideTransfer" = "发行人可回收资产";//TODO:
+"kVcAssetMgrCellTitlePermNeedIssuerApprove" = "所有转账需发行人审核";//TODO:
+"kVcAssetMgrCellTitlePermDisableCondTransfer" = "禁止隐私转账";//TODO:
+"kVcAssetMgrCellTitlePermDisableForceSettle" = "禁止强制清算";//TODO:
+"kVcAssetMgrCellTitlePermAllowGlobalSettle" = "允许发行人全局清算";//TODO:
+"kVcAssetMgrCellTitlePermAllowWitnessFeed" = "允许见证人提供喂价";//TODO:
+"kVcAssetMgrCellTitlePermAllowCommitteeFeed" = "允许理事会成员提供喂价";//TODO:
+
+"kVcAssetMgrInputTitleSmartFeedLifeTime" = "喂价有效期（分钟）";//TODO:
+"kVcAssetMgrInputTitleSmartDelayForSettle" = "强清延迟（分钟）";//TODO:
+"kVcAssetMgrInputPlaceholderSmartFeedLifeTime" = "请输入过期时间";//TODO:
+"kVcAssetMgrInputPlaceholderSmartMinFeedNum" = "请输入最小喂价数";//TODO:
+"kVcAssetMgrInputPlaceholderSmartDelayForSettle" = "请输入强清延迟";//TODO:
+"kVcAssetMgrInputPlaceholderSmartOffsetSettle" = "请输入强清补偿";//TODO:
+"kVcAssetMgrInputPlaceholderSmartMaxSettleValuePerHour" = "请输入每小强清百分比";//TODO:
+
+"kVcAssetMgrCellPlaceholderAssetName" = "请输入资产名称";//TODO:
+"kVcAssetMgrCellPlaceholderMaxSupply" = "请输入最大供应量";//TODO:
+"kVcAssetMgrCellPlaceholderAssetDesc" = "请输入描述（可选）";//TODO:
+"kVcAssetMgrCellValueAssetPrecision" = "%@ 位小数";//TODO:
+"kVcAssetMgrCellValueSmartBackingAssetNone" = "无";//TODO:
+"kVcAssetMgrCellValueSmartMinN" = "%@ 分钟";//TODO:
+"kVcAssetMgrCellValueNotSet" = "未设置";//TODO:
+
+"kVcAssetMgrPermissionActionDisablePermanently" = "永久禁用（不可再开启）";//TODO:
+"kVcAssetMgrPermissionActionActivateLater" = "暂不激活（后续可开启）";//TODO:
+"kVcAssetMgrPermissionActionActivateNow" = "立即激活（创建后开启）";//TODO:
+"kVcAssetMgrPermissionStatusDisablePermanently" = "永久禁用";//TODO:
+"kVcAssetMgrPermissionStatusActivateLater" = "暂不激活";//TODO:
+"kVcAssetMgrPermissionStatusActivateNow" = "立即激活";//TODO:
+
 /* 订单界面 */
 "kVcOrderPageOpenOrders" = "現在の注文";
 "kVcOrderPageHistory" = "注文履歴";
+"kVcOrderPageSettleOrders" = "清算单";//TODO:
 "kVcOrderTipNoHistory" = "最近の取引履歴はありません";
 "kVcOrderTipNoOpenOrder" = "今注文がありません";
+"kVcOrderTipNoSettleOrder" = "没有任何清算单";//TODO:
 "kVcOrderBtnCancel" = "キャンセル";
 "kVcOrderExpired" = "%@ 期限が切れる";
 "kVcOrderTotal" = "合計金額";
@@ -498,6 +549,8 @@
 "kLabelTitleSell" = "売り出";
 "kLabelTradeTypeBuy" = "購い";
 "kLabelTradeTypeSell" = "売り出";
+"kLabelTradeSettleTypeBuy" = "清算买入";//TODO:
+"kLabelTradeSettleTypeSell" = "清算卖出";//TODO:
 "kLabelTradeHisTitleTime" = "時間";
 "kLabelTradeHisTitleType" = "方向";
 "kLabelTradeHisTitlePrice" = "価格";

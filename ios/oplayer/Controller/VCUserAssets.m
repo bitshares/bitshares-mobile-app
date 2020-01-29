@@ -18,6 +18,7 @@
 #import "VCTransfer.h"
 #import "VCTradeHor.h"
 #import "VCUserActivity.h"
+#import "VCAssetOpReserve.h"
 
 #import "MBProgressHUD.h"
 #import "OrgUtils.h"
@@ -201,7 +202,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
@@ -321,7 +322,7 @@
     _totalAssetsTitle.font = [UIFont boldSystemFontOfSize:18];
     _totalAssetsTitle.text = [NSString stringWithFormat:NSLocalizedString(@"kVcAssetTotalValue", @"总资产折合(%@)"), [[SettingManager sharedSettingManager] getEstimateAssetSymbol]];
     [self.view addSubview:_totalAssetsTitle];
-
+    
     //  总资产值
     _totalAssetsValues = [[UILabel alloc] initWithFrame:CGRectMake(0, 22, screenRect.size.width, 66)];
     _totalAssetsValues.lineBreakMode = NSLineBreakByWordWrapping;
@@ -333,7 +334,7 @@
     _totalAssetsValues.font = [UIFont boldSystemFontOfSize:20];
     _totalAssetsValues.text = NSLocalizedString(@"kVcAssetTipsEstimating", @"估算中...");
     [self.view addSubview:_totalAssetsValues];
-
+    
     CGFloat offset = 32 + 56;
     
     //  UI-分隔线
@@ -341,7 +342,7 @@
     UIView* tmpSepLine = [[UIView alloc] initWithFrame:CGRectMake(0, offset-fSepLineHeight, screenRect.size.width, fSepLineHeight)];
     tmpSepLine.backgroundColor = [ThemeManager sharedThemeManager].textColorGray;
     [self.view addSubview:tmpSepLine];
-
+    
     //  是否显示所有资产标记
     if ([_assetDataArray count] <= kAppUserAssetDefaultShowNum){
         _showAllAssets = YES;
@@ -587,8 +588,37 @@
 
 #pragma mark- for actions
 
+/*
+ *  操作 - 资产销毁
+ */
+- (void)onButtonClicked_AssetReserve:(UIButton*)button
+{
+    //  TODO:4.0
+    id clicked_asset = [_assetDataArray objectAtIndex:button.tag];
+    assert(clicked_asset);
+    WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
+    VCAssetOpReserve* vc = [[VCAssetOpReserve alloc] initWithCurrAsset:[[ChainObjectManager sharedChainObjectManager] getChainObjectByID:clicked_asset[@"id"]]
+                                                     full_account_data:_accountInfo
+                                                        result_promise:result_promise];
+    [_owner pushViewController:vc vctitle:@"销毁资产" backtitle:kVcDefaultBackTitleName];
+    [result_promise then:^id(id dirty) {
+        //  刷新UI
+        //        if (dirty && [dirty boolValue]) {
+        //            [self refreshCurrentAdPage];
+        //        }
+        return nil;
+    }];
+}
+
+/*
+ *  操作 - 转账
+ */
 - (void)onButtonClicked_Transfer:(UIButton*)button
 {
+//    //  TODO:4.0 test data
+//    [self onButtonClicked_AssetReserve:button];
+//    return;
+    
     //  获取资产
     id clicked_asset = [_assetDataArray objectAtIndex:button.tag];
     assert(clicked_asset);
@@ -604,6 +634,9 @@
     [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
 }
 
+/*
+ *  操作 - 交易
+ */
 - (void)onButtonClicked_Trade:(UIButton*)button
 {
     //  获取设置界面的计价货币资产。
@@ -650,10 +683,21 @@
         }
     }
     
-    VCTradeHor* vc = [[VCTradeHor alloc] initWithBaseInfo:base quoteInfo:quote selectBuy:YES];
-    vc.title = [NSString stringWithFormat:@"%@/%@", quote_symbol, base_symbol];
-    assert(_owner);
-    [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    TradingPair* tradingPair = [[TradingPair alloc] initWithBaseAsset:base quoteAsset:quote];
+    [[[tradingPair queryBitassetMarketInfo] then:^id(id data) {
+        [_owner hideBlockView];
+        
+        VCTradeHor* vc = [[VCTradeHor alloc] initWithTradingPair:tradingPair selectBuy:YES];
+        vc.title = [NSString stringWithFormat:@"%@/%@", quote_symbol, base_symbol];
+        assert(_owner);
+        [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+        return nil;
+    }] catch:^id(id error) {
+        [_owner hideBlockView];
+        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+        return nil;
+    }];
 }
 
 @end

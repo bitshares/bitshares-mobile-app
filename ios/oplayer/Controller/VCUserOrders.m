@@ -11,6 +11,8 @@
 #import "ViewLimitOrderInfoCell.h"
 #import "OrgUtils.h"
 #import "ScheduleManager.h"
+#import "VCSettlementOrders.h"
+#import "MBProgressHUDSingleton.h"
 
 @interface VCUserOrdersPages ()
 {
@@ -32,14 +34,17 @@
 
 - (NSArray*)getTitleStringArray
 {
-    return @[NSLocalizedString(@"kVcOrderPageOpenOrders", @"当前订单"), NSLocalizedString(@"kVcOrderPageHistory", @"历史订单")];
+    return @[NSLocalizedString(@"kVcOrderPageOpenOrders", @"当前订单"),
+             NSLocalizedString(@"kVcOrderPageHistory", @"历史订单"),
+             NSLocalizedString(@"kVcOrderPageSettleOrders", @"清算单")];
 }
 
 - (NSArray*)getSubPageVCArray
 {
     id vc01 = [[VCUserOrders alloc] initWithOwner:self data:_userFullInfo history:NO tradingPair:_tradingPair];
     id vc02 = [[VCUserOrders alloc] initWithOwner:self data:_tradeHistory history:YES tradingPair:_tradingPair];
-    return @[vc01, vc02];
+    id vc03 = [[VCSettlementOrders alloc] initWithOwner:self tradingPair:nil fullAccountInfo:_userFullInfo];
+    return @[vc01, vc02, vc03];
 }
 
 - (id)initWithUserFullInfo:(NSDictionary*)userFullInfo tradeHistory:(NSArray*)tradeHistory tradingPair:(TradingPair*)tradingPair;
@@ -58,6 +63,27 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
+}
+
+- (void)onPageChanged:(NSInteger)tag
+{
+    NSLog(@"onPageChanged: %@", @(tag));
+    
+    //  gurad
+    if ([[MBProgressHUDSingleton sharedMBProgressHUDSingleton] is_showing]){
+        return;
+    }
+    
+    //  query
+    if (_subvcArrays){
+        id vc = [_subvcArrays safeObjectAtIndex:tag - 1];
+        if (vc){
+            if ([vc isKindOfClass:[VCSettlementOrders class]]){
+                VCSettlementOrders* vc_settlement_orders = (VCSettlementOrders*)vc;
+                [vc_settlement_orders querySettlementOrders];
+            }
+        }
+    }
 }
 
 @end

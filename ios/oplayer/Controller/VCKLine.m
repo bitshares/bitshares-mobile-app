@@ -132,9 +132,8 @@ enum
 - (void)onButtomButtonClicked:(UIButton*)sender
 {
     assert(sender.tag != kBottomButtonTagFav);
-    VCTradeHor* vc = [[VCTradeHor alloc] initWithBaseInfo:_tradingPair.baseAsset
-                                                quoteInfo:_tradingPair.quoteAsset
-                                                selectBuy:sender.tag == kBottomButtonTagBuy];
+    VCTradeHor* vc = [[VCTradeHor alloc] initWithTradingPair:_tradingPair
+                                                   selectBuy:sender.tag == kBottomButtonTagBuy];
     vc.title = [NSString stringWithFormat:@"%@/%@", [_tradingPair.quoteAsset objectForKey:@"symbol"], [_tradingPair.baseAsset objectForKey:@"symbol"]];
     [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
 }
@@ -374,10 +373,7 @@ enum
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     
     //  优先查询智能背书资产信息（之后才考虑是否查询喂价、爆仓单等信息）
-    [[[chainMgr queryShortBackingAssetInfos:@[_tradingPair.baseId, _tradingPair.quoteId]] then:(^id(id sba_hash) {
-        //  更新智能资产信息
-        [_tradingPair RefreshCoreMarketFlag:sba_hash];
-        
+    [[[_tradingPair queryBitassetMarketInfo] then:(^id(id isCoreMarket) {
         //  1、查询K线基本数据
         id parameters = [chainMgr getDefaultParameters];
         id kline_period_ary = parameters[@"kline_period_ary"];

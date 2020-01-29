@@ -471,8 +471,10 @@
 /* 订单界面 */
 "kVcOrderPageOpenOrders" = "当前订单";
 "kVcOrderPageHistory" = "历史订单";
+"kVcOrderPageSettleOrders" = "清算单";
 "kVcOrderTipNoHistory" = "近期没有交易记录";
 "kVcOrderTipNoOpenOrder" = "当前没有任何订单";
+"kVcOrderTipNoSettleOrder" = "没有任何清算单";
 "kVcOrderBtnCancel" = "撤销";
 "kVcOrderExpired" = "%@过期";
 "kVcOrderTotal" = "总金额";
@@ -547,6 +549,8 @@
 "kLabelTitleSell" = "卖出";
 "kLabelTradeTypeBuy" = "买入";
 "kLabelTradeTypeSell" = "卖出";
+"kLabelTradeSettleTypeBuy" = "清算买入";
+"kLabelTradeSettleTypeSell" = "清算卖出";
 "kLabelTradeHisTitleTime" = "时间";
 "kLabelTradeHisTitleType" = "方向";
 "kLabelTradeHisTitlePrice" = "价格";

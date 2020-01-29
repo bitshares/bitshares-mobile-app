@@ -11,7 +11,7 @@
 
 @interface VCTradeHor : VCSlideControllerBase
 
-- (id)initWithBaseInfo:(NSDictionary*)base quoteInfo:(NSDictionary*)quote selectBuy:(BOOL)selectBuy;
+- (id)initWithTradingPair:(TradingPair*)tradingPair selectBuy:(BOOL)selectBuy;
 
 /**
  *  (public) 帐号信息更新，刷新界面。

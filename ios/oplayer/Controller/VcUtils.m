@@ -69,7 +69,9 @@
         return [[[ChainObjectManager sharedChainObjectManager] queryAllAssetsInfo:[asset_id_hash allKeys]] then:(^id(id asset_hash) {
             [this hideBlockView];
             //  忽略该参数 asset_hash，因为 ChainObjectManager 已经缓存。
-            VCUserOrdersPages* vc = [[VCUserOrdersPages alloc] initWithUserFullInfo:full_account_data tradeHistory:tradeHistory tradingPair:tradingPair];
+            VCUserOrdersPages* vc = [[VCUserOrdersPages alloc] initWithUserFullInfo:full_account_data
+                                                                       tradeHistory:tradeHistory
+                                                                        tradingPair:tradingPair];
             vc.title = NSLocalizedString(@"kVcTitleOrderManagement", @"订单管理");
             [this pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
             return nil;
@@ -261,10 +263,10 @@
                                                          items:itemlist
                                                       callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
      {
-         if (buttonIndex != cancelIndex){
-             callback([assets objectAtIndex:buttonIndex]);
-         }
-     }];
+        if (buttonIndex != cancelIndex){
+            callback([assets objectAtIndex:buttonIndex]);
+        }
+    }];
 }
 
 + (void)showPicker:(VCBase*)this
@@ -283,16 +285,16 @@
                                                          items:itemlist
                                                       callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
      {
-         if (buttonIndex != cancelIndex){
-             callback([object_lists objectAtIndex:buttonIndex]);
-         }
-     }];
+        if (buttonIndex != cancelIndex){
+            callback([object_lists objectAtIndex:buttonIndex]);
+        }
+    }];
 }
 
 /*
  *  确保依赖
  */
-+ (void)GuardGrapheneObjectDependence:(VCBase*)vc object_ids:(id)object_ids body:(void (^)())body
++ (void)guardGrapheneObjectDependence:(VCBase*)vc object_ids:(id)object_ids body:(void (^)())body
 {
     assert(vc);
     assert(object_ids);
@@ -310,6 +312,22 @@
         [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
         return nil;
     }];
+}
+
+/*
+ *  (public) 判断两个资产哪个作为base资产，返回base资产的symbol。
+ */
++ (NSString*)calcBaseAsset:(NSString*)asset_symbol01 asset_symbol02:(NSString*)asset_symbol02
+{
+    id priorityHash = [[ChainObjectManager sharedChainObjectManager] genAssetBasePriorityHash];
+    assert(priorityHash);
+    NSInteger priority01 = [[priorityHash objectForKey:asset_symbol01] integerValue];
+    NSInteger priority02 = [[priorityHash objectForKey:asset_symbol02] integerValue];
+    if (priority01 > priority02) {
+        return asset_symbol01;
+    } else {
+        return asset_symbol02;
+    }
 }
 
 @end

@@ -1048,7 +1048,7 @@ enum
     }
     [self GuardWalletExist:^{
         id uid = [[[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"] objectForKey:@"id"];
-        [VCCommonLogic viewUserLimitOrders:_owner account:uid tradingPair:_tradingPair];
+        [VcUtils viewUserLimitOrders:_owner account:uid tradingPair:_tradingPair];
     }];
 }
 
