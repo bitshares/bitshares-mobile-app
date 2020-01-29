@@ -16,4 +16,19 @@
 + (NSDecimalNumber*)findAssetBalance:(NSDictionary*)full_account_data asset_id:(NSString*)asset_id asset_precision:(NSInteger)asset_precision;
 + (NSDecimalNumber*)findAssetBalance:(NSDictionary*)full_account_data asset:(NSDictionary*)asset;
 
+/*
+ *  (public) 从石墨烯ID列表获取依赖的ID列表。
+ */
++ (NSArray*)collectDependence:(NSArray*)source_oid_list level_keys:(id)keystring_or_keyarray;
+
+/*
+ *  (public) 计算平均数
+ */
++ (NSDecimalNumber*)calculateAverage:(NSDecimalNumber*)total n:(NSDecimalNumber*)n result_precision:(NSInteger)result_precision;
+
+/*
+ *  (public) 计算总数
+ */
++ (NSDecimalNumber*)calTotal:(NSDecimalNumber*)avg n:(NSDecimalNumber*)n result_precision:(NSInteger)result_precision;
+
 @end

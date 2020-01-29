@@ -199,10 +199,7 @@
  *  (public) 查询手续费资产的详细信息（包括动态信息）
  */
 - (WsPromise*)queryFeeAssetListDynamicInfo;
-/**
- *  (public) 查询智能资产信息（非智能资产返回nil）
- */
-- (WsPromise*)queryShortBackingAssetInfos:(NSArray*)asset_id_list;
+
 /**
  *  (public) 查询所有投票ID信息
  */
@@ -245,6 +242,16 @@
  *  (public) 查询最近成交记录
  */
 - (WsPromise*)queryFillOrderHistory:(TradingPair*)tradingPair number:(NSInteger)number;
+
+/*
+ *  (public) 根据资产 - 查询强清单
+ */
+- (WsPromise*)querySettlementOrders:(NSString*)smart_asset_symbol_or_id number:(NSInteger)number;
+
+/*
+ *  (public) 根据用户 - 查询强清单
+ */
+- (WsPromise*)querySettlementOrdersByAccount:(NSString*)account_name_or_id number:(NSInteger)number;
 
 /**
  *  (public) 查询爆仓单

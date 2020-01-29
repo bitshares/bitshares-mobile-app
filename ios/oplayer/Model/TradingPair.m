@@ -8,6 +8,7 @@
 
 #import "TradingPair.h"
 #import "ChainObjectManager.h"
+#import "WsPromise.h"
 
 @interface TradingPair()
 {
@@ -18,6 +19,7 @@
     BOOL            _baseIsSmart;
     BOOL            _quoteIsSmart;
     
+    BOOL            _bCoreMarketInited;
     BOOL            _isCoreMarket;              //  是否是智能资产市场（该标记需要后期更新）
     NSString*       _smartAssetId;              //  智能资产ID
     NSString*       _sbaAssetId;                //  背书资产ID
@@ -45,6 +47,7 @@
 @synthesize quoteAsset = _quoteAsset;
 @synthesize baseIsSmart = _baseIsSmart;
 @synthesize quoteIsSmart = _quoteIsSmart;
+@synthesize bCoreMarketInited = _bCoreMarketInited;
 @synthesize isCoreMarket = _isCoreMarket;
 @synthesize smartAssetId = _smartAssetId;
 @synthesize sbaAssetId = _sbaAssetId;
@@ -103,6 +106,7 @@
         _baseIsSmart = [self _is_smart:_baseAsset];
         _quoteIsSmart = [self _is_smart:_quoteAsset];
         
+        _bCoreMarketInited = NO;
         _isCoreMarket = NO;
         _smartAssetId = nil;
         _sbaAssetId = nil;
@@ -130,33 +134,91 @@
     id bitasset_data_id = [asset objectForKey:@"bitasset_data_id"];
     return bitasset_data_id && ![bitasset_data_id isEqualToString:@""];
 }
+//
+///**
+// *  (public) 刷新智能资产交易对（市场）标记。即：quote是base的背书资产，或者base是quote的背书资产。
+// */
+//- (void)RefreshCoreMarketFlag:(NSDictionary*)sba_hash
+//{
+//    assert(sba_hash);
+//
+//    _isCoreMarket = NO;
+//    _smartAssetId = nil;
+//    _sbaAssetId = nil;
+//
+//    id base_sba = [sba_hash objectForKey:_baseId];
+//    if (base_sba && [base_sba isEqualToString:_quoteId]){
+//        _isCoreMarket = YES;
+//        _smartAssetId = _baseId;
+//        _sbaAssetId = _quoteId;
+//        return;
+//    }
+//
+//    id quote_sba = [sba_hash objectForKey:_quoteId];
+//    if (quote_sba && [quote_sba isEqualToString:_baseId]){
+//        _isCoreMarket = YES;
+//        _smartAssetId = _quoteId;
+//        _sbaAssetId = _baseId;
+//        return;
+//    }
+//}
 
-/**
- *  (public) 刷新智能资产交易对（市场）标记。即：quote是base的背书资产，或者base是quote的背书资产。
+/*
+ *  (public) 查询base和quote资产的智能币相关信息
  */
-- (void)RefreshCoreMarketFlag:(NSDictionary*)sba_hash
+- (WsPromise*)queryBitassetMarketInfo
 {
-    assert(sba_hash);
+    if (_bCoreMarketInited) {
+        return [WsPromise resolve:@(_isCoreMarket)];
+    }
     
     _isCoreMarket = NO;
     _smartAssetId = nil;
     _sbaAssetId = nil;
     
-    id base_sba = [sba_hash objectForKey:_baseId];
-    if (base_sba && [base_sba isEqualToString:_quoteId]){
-        _isCoreMarket = YES;
-        _smartAssetId = _baseId;
-        _sbaAssetId = _quoteId;
-        return;
+    if (!_baseIsSmart && !_quoteIsSmart) {
+        _bCoreMarketInited = YES;
+        return [WsPromise resolve:@(_isCoreMarket)];
     }
     
-    id quote_sba = [sba_hash objectForKey:_quoteId];
-    if (quote_sba && [quote_sba isEqualToString:_baseId]){
-        _isCoreMarket = YES;
-        _smartAssetId = _quoteId;
-        _sbaAssetId = _baseId;
-        return;
+    NSString* bitasset_data_id_base = [_baseAsset objectForKey:@"bitasset_data_id"];
+    NSString* bitasset_data_id_quote = [_quoteAsset objectForKey:@"bitasset_data_id"];
+    
+    NSMutableDictionary* ids = [NSMutableDictionary dictionary];
+    if (bitasset_data_id_base && ![bitasset_data_id_base isEqualToString:@""]) {
+        [ids setObject:@YES forKey:bitasset_data_id_base];
     }
+    if (bitasset_data_id_quote && ![bitasset_data_id_quote isEqualToString:@""]) {
+        [ids setObject:@YES forKey:bitasset_data_id_quote];
+    }
+    
+    return [[[ChainObjectManager sharedChainObjectManager] queryAllGrapheneObjects:[ids allKeys]] then:^id(id bitasset_hash) {
+        
+        if (bitasset_data_id_base && ![bitasset_data_id_base isEqualToString:@""]) {
+            id bitasset_data = [bitasset_hash objectForKey:bitasset_data_id_base];
+            assert(bitasset_data);
+            id short_backing_asset = [[bitasset_data objectForKey:@"options"] objectForKey:@"short_backing_asset"];
+            //  1、Base资产的背书资产是Quote资产的情况
+            if ([short_backing_asset isEqualToString:_quoteId]) {
+                _isCoreMarket = YES;
+                _smartAssetId = _baseId;
+                _sbaAssetId = _quoteId;
+            }
+        } else if (bitasset_data_id_quote && ![bitasset_data_id_quote isEqualToString:@""]) {
+            id bitasset_data = [bitasset_hash objectForKey:bitasset_data_id_quote];
+            assert(bitasset_data);
+            id short_backing_asset = [[bitasset_data objectForKey:@"options"] objectForKey:@"short_backing_asset"];
+            //  2、Quote资产的背书资产是Base资产的情况
+            if ([short_backing_asset isEqualToString:_baseId]) {
+                _isCoreMarket = YES;
+                _smartAssetId = _quoteId;
+                _sbaAssetId = _baseId;
+            }
+        }
+        
+        _bCoreMarketInited = YES;
+        return @(_isCoreMarket);
+    }];
 }
 
 /**

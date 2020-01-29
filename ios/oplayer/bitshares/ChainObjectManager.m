@@ -32,6 +32,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     NSDictionary*           _defaultMarketInfos;            //  ipa自带的默认配置信息（fowallet_config.json）
     NSMutableDictionary*    _defaultMarketPairs;            //  默认内置交易对。交易对格式：#{base_symbol}_#{quote_symbol}
     NSMutableDictionary*    _defaultMarketBaseHash;         //  默认内置市场的 Hash 格式。base_symbol => market_info
+    NSDictionary*           _assetBasePriority;             //  资产作为交易对中base资产（报价资产）的优先级。两资产优先级高的作为base。
     
     NSArray*                _defaultGroupList;              //  默认分组信息列表（按照id升序列排列）
     
@@ -79,6 +80,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
         _cacheUserFullAccountData = [NSMutableDictionary dictionary];
         _cacheVoteIdInfoHash = [NSMutableDictionary dictionary];
         _defaultMarketInfos = nil;
+        _assetBasePriority = nil;
         _defaultMarketPairs = nil;
         _defaultGroupList = nil;
         
@@ -96,6 +98,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     _cacheAccountName2ObjectHash = nil;
     _cacheUserFullAccountData = nil;
     _cacheVoteIdInfoHash = nil;
+    _assetBasePriority = nil;
     
     _tickerDatas = nil;
     _mergedMarketInfoList = nil;
@@ -390,15 +393,18 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
  */
 - (NSDictionary*)genAssetBasePriorityHash
 {
-    NSMutableDictionary* asset_base_priority = [NSMutableDictionary dictionary];
-    NSInteger max_priority = 1000;
-    //  REMARK：优先级 从 CNY 到 BTS 逐渐降低，其他非市场 base 的资产优先级默认为 0。
-    for (id market in [self getDefaultMarketInfos]) {
-        id symbol = [[market objectForKey:@"base"] objectForKey:@"symbol"];
-        [asset_base_priority setObject:@(max_priority) forKey:symbol];
-        max_priority -= 1;
+    if (!_assetBasePriority) {
+        NSMutableDictionary* asset_base_priority = [NSMutableDictionary dictionary];
+        NSInteger max_priority = 1000;
+        //  REMARK：优先级 从 CNY 到 BTS 逐渐降低，其他非市场 base 的资产优先级默认为 0。
+        for (id market in [self getDefaultMarketInfos]) {
+            id symbol = [[market objectForKey:@"base"] objectForKey:@"symbol"];
+            [asset_base_priority setObject:@(max_priority) forKey:symbol];
+            max_priority -= 1;
+        }
+        _assetBasePriority = [asset_base_priority copy];
     }
-    return [asset_base_priority copy];
+    return _assetBasePriority;
 }
 
 /**
@@ -942,42 +948,6 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
 }
 
 /**
- *  (public) 查询智能资产的信息（非智能资产返回nil）
- */
-- (WsPromise*)queryShortBackingAssetInfos:(NSArray*)asset_id_list
-{
-    return [[self queryAllAssetsInfo:asset_id_list] then:(^id(id asset_hash) {
-        NSMutableDictionary* asset_bitasset_hash = [NSMutableDictionary dictionary];
-        
-        NSMutableArray* bitasset_id_list = [NSMutableArray array];
-        for (id asset_id in asset_id_list) {
-            id asset = [asset_hash objectForKey:asset_id];
-            assert(asset);
-            id bitasset_data_id = [asset objectForKey:@"bitasset_data_id"];
-            if (bitasset_data_id && ![bitasset_data_id isEqualToString:@""]){
-                [bitasset_id_list addObject:bitasset_data_id];
-                [asset_bitasset_hash setObject:bitasset_data_id forKey:asset_id];
-            }
-        }
-        
-        return [[self queryAllGrapheneObjects:bitasset_id_list] then:(^id(id bitasset_hash) {
-            
-            NSMutableDictionary* sba_hash = [NSMutableDictionary dictionary];
-            for (id asset_id in asset_bitasset_hash) {
-                id bitasset_data_id = [asset_bitasset_hash objectForKey:asset_id];
-                assert(bitasset_data_id);
-                id bitasset_data = [bitasset_hash objectForKey:bitasset_data_id];
-                id short_backing_asset = [[bitasset_data objectForKey:@"options"] objectForKey:@"short_backing_asset"];
-                assert(short_backing_asset);
-                [sba_hash setObject:short_backing_asset forKey:asset_id];
-            }
-            
-            return [sba_hash copy];
-        })];
-    })];
-}
-
-/**
  *  (public) 查询所有投票ID信息
  */
 - (WsPromise*)queryAllVoteIds:(NSArray*)vote_id_array
@@ -1096,7 +1066,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
             return [WsPromise resolve:resultHash];
         }
     }
-
+    
     //  从网络查询。
     GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
     
@@ -1348,6 +1318,31 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     })];
 }
 
+/*
+ *  (public) 根据资产 - 查询强清单
+ */
+- (WsPromise*)querySettlementOrders:(NSString*)smart_asset_symbol_or_id number:(NSInteger)number
+{
+    GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
+    return [[api exec:@"get_settle_orders" params:@[smart_asset_symbol_or_id, @(number)]] then:^id(id data_array) {
+        NSLog(@"%@", data_array);
+        return data_array;
+    }];
+}
+
+/*
+ *  (public) 根据用户 - 查询强清单
+ */
+- (WsPromise*)querySettlementOrdersByAccount:(NSString*)account_name_or_id number:(NSInteger)number
+{
+    id start = [NSString stringWithFormat:@"1.%@.0", @(ebot_force_settlement)];
+    GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
+    return [[api exec:@"get_settle_orders_by_account" params:@[account_name_or_id, start, @(number)]] then:^id(id data_array) {
+        NSLog(@"%@", data_array);
+        return data_array;
+    }];
+}
+
 /**
  *  (public) 查询爆仓单
  */
@@ -1491,10 +1486,10 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
 {
     GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
     
-//    id p1 = [api exec:@"get_call_orders" params:@[[asset objectForKey:@"id"], @50]];
-//    id p2 = [[api exec:@"get_objects" params:@[@[[asset objectForKey:@"bitasset_data_id"]]]] then:(^id(id data) {
-//        return [data objectAtIndex:0];
-//    })];
+    //    id p1 = [api exec:@"get_call_orders" params:@[[asset objectForKey:@"id"], @50]];
+    //    id p2 = [[api exec:@"get_objects" params:@[@[[asset objectForKey:@"bitasset_data_id"]]]] then:(^id(id data) {
+    //        return [data objectAtIndex:0];
+    //    })];
     
     return [[api exec:@"get_limit_orders" params:@[tradingPair.baseId, tradingPair.quoteId, @(number)]] then:(^id(id data_array) {
         
@@ -1778,7 +1773,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
 }
 
 /*
-    (public) 获取活跃的见证人信息列表。
+ (public) 获取活跃的见证人信息列表。
  */
 - (WsPromise*)queryActiveWitnessDataList
 {
@@ -1791,8 +1786,8 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
 }
 
 /*
-   (public) 获取活跃的理事会成员信息列表。
-*/
+ (public) 获取活跃的理事会成员信息列表。
+ */
 - (WsPromise*)queryActiveCommitteeDataList
 {
     GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;

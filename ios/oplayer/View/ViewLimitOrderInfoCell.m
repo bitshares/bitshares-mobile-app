@@ -69,7 +69,7 @@
         _lbType.backgroundColor = [UIColor clearColor];
         _lbType.font = [UIFont boldSystemFontOfSize:16];
         [self addSubview:_lbType];
-     
+        
         _lbDate = [[UILabel alloc] initWithFrame:CGRectZero];
         _lbDate.lineBreakMode = NSLineBreakByTruncatingTail;
         _lbDate.textAlignment = NSTextAlignmentLeft;
@@ -195,30 +195,39 @@
     
     //  第一行 买卖 PAIR
     BOOL iscall = [[_item objectForKey:@"iscall"] boolValue];
+    BOOL bIsHistory = [[_item objectForKey:@"ishistory"] boolValue];
+    BOOL bIsSettle = [[_item objectForKey:@"issettle"] boolValue];
     id pair = [NSString stringWithFormat:@"%@/%@", _item[@"quote_symbol"], _item[@"base_symbol"]];
     if ([[_item objectForKey:@"issell"] boolValue]){
-        _lbType.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@ ", NSLocalizedString(@"kLabelTradeTypeSell", @"卖出")]
+        NSString* name = bIsSettle ?
+        [NSString stringWithFormat:@"%@ ", NSLocalizedString(@"kLabelTradeSettleTypeSell", @"清算卖出")] :
+        [NSString stringWithFormat:@"%@ ", NSLocalizedString(@"kLabelTradeTypeSell", @"卖出")];
+        _lbType.attributedText = [self genAndColorAttributedText:name
                                                            value:pair
                                                       titleColor:iscall ? theme.callOrderColor : theme.sellColor
                                                       valueColor:theme.textColorMain];
     }else{
-        _lbType.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@ ", NSLocalizedString(@"kLabelTradeTypeBuy", @"买入")]
+        
+        NSString* name = bIsSettle ?
+        [NSString stringWithFormat:@"%@ ", NSLocalizedString(@"kLabelTradeSettleTypeBuy", @"清算买入")] :
+        [NSString stringWithFormat:@"%@ ", NSLocalizedString(@"kLabelTradeTypeBuy", @"买入")];
+        _lbType.attributedText = [self genAndColorAttributedText:name
                                                            value:pair
                                                       titleColor:iscall ? theme.callOrderColor : theme.buyColor
                                                       valueColor:theme.textColorMain];
     }
     _lbType.frame = CGRectMake(xOffset, yOffset, fWidth, 28);
     
-    //  限价单过期时间 or 交易历史时间
-    if ([[_item objectForKey:@"ishistory"] boolValue]){
+    //  限价单过期时间 or 交易历史时间 or 清算时间
+    if (bIsHistory || bIsSettle){
         if (_btnCancel){
             _btnCancel.hidden = YES;
         }
         _lbDate.textAlignment = NSTextAlignmentRight;
-        id block_time = [_item objectForKey:@"block_time"];
-        if (block_time){
+        id time = bIsHistory ? [_item objectForKey:@"block_time"] : [_item objectForKey:@"time"];
+        if (time){
             _lbDate.hidden = NO;
-            _lbDate.text = [OrgUtils fmtAccountHistoryTimeShowString:block_time];
+            _lbDate.text = [OrgUtils fmtAccountHistoryTimeShowString:time];
             _lbDate.frame = CGRectMake(xOffset, yOffset + 1, fWidth, 28);
             _lbDate.textColor = theme.textColorGray;
         }else{
@@ -231,9 +240,9 @@
         if (_btnCancel){
             _btnCancel.hidden = NO;
         }
-        CGSize size1 = CGSizeMake(fWidth, 9999);
-        size1 = [_lbType.attributedText.string sizeWithFont:_lbType.font constrainedToSize:size1 lineBreakMode:NSLineBreakByWordWrapping];
-        _lbDate.text = [NSString stringWithFormat:NSLocalizedString(@"kVcOrderExpired", @"%@过期"), [OrgUtils fmtLimitOrderTimeShowString:[_item objectForKey:@"time"]]];
+        CGSize size1 = [ViewUtils auxSizeWithText:_lbType.attributedText.string font:_lbType.font];
+        _lbDate.text = [NSString stringWithFormat:NSLocalizedString(@"kVcOrderExpired", @"%@过期"),
+                        [OrgUtils fmtLimitOrderTimeShowString:[_item objectForKey:@"time"]]];
         _lbDate.frame = CGRectMake(xOffset + 8 + size1.width, yOffset + 1, fWidth, 28);
         _lbDate.textColor = theme.textColorGray;
     }
@@ -246,7 +255,6 @@
     yOffset += 28;
     
     //  第二行 数量和价格标题
-    
     _lbPriceTitle.text = [NSString stringWithFormat:@"%@(%@)", NSLocalizedString(@"kLabelTradeHisTitlePrice", @"价格"), _item[@"base_symbol"]];
     _lbNumTitle.text = [NSString stringWithFormat:@"%@(%@)", NSLocalizedString(@"kLabelTradeHisTitleAmount", @"数量"), _item[@"quote_symbol"]];
     _lbTotalTitle.text = [NSString stringWithFormat:@"%@(%@)", NSLocalizedString(@"kVcOrderTotal", @"总金额"), _item[@"base_symbol"]];

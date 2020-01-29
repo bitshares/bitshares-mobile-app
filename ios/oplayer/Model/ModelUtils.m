@@ -7,6 +7,7 @@
 //
 
 #import "ModelUtils.h"
+#import "ChainObjectManager.h"
 
 @implementation ModelUtils
 
@@ -36,6 +37,64 @@
     return [self findAssetBalance:full_account_data
                          asset_id:[asset objectForKey:@"id"]
                   asset_precision:[[asset objectForKey:@"precision"] integerValue]];
+}
+
+/*
+ *  (public) 从石墨烯ID列表获取依赖的ID列表。
+ */
++ (NSArray*)collectDependence:(NSArray*)source_oid_list level_keys:(id)keystring_or_keyarray
+{
+    if ([keystring_or_keyarray isKindOfClass:[NSString class]]) {
+        keystring_or_keyarray = @[keystring_or_keyarray];
+    }
+    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+    NSMutableDictionary* id_hash = [NSMutableDictionary dictionary];
+    for (id oid in source_oid_list) {
+        id obj = [chainMgr getChainObjectByID:oid];
+        assert(obj);
+        id target_obj = obj;
+        for (id level_key in keystring_or_keyarray) {
+            assert([target_obj isKindOfClass:[NSDictionary class]]);
+            target_obj = [target_obj objectForKey:level_key];
+            if (!target_obj) {
+                break;
+            }
+        }
+        if (target_obj && [target_obj isKindOfClass:[NSString class]]) {
+            [id_hash setObject:@YES forKey:target_obj];;
+        }
+    }
+    return [id_hash allKeys];
+}
+
+/*
+ *  (public) 计算平均数
+ */
++ (NSDecimalNumber*)calculateAverage:(NSDecimalNumber*)total n:(NSDecimalNumber*)n result_precision:(NSInteger)result_precision
+{
+    NSDecimalNumberHandler* handler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundDown
+                                                                                             scale:result_precision
+                                                                                  raiseOnExactness:NO
+                                                                                   raiseOnOverflow:NO
+                                                                                  raiseOnUnderflow:NO
+                                                                               raiseOnDivideByZero:NO];
+    
+    return [total decimalNumberByDividingBy:n withBehavior:handler];
+}
+
+/*
+ *  (public) 计算总数
+ */
++ (NSDecimalNumber*)calTotal:(NSDecimalNumber*)avg n:(NSDecimalNumber*)n result_precision:(NSInteger)result_precision
+{
+    NSDecimalNumberHandler* handler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundDown
+                                                                                             scale:result_precision
+                                                                                  raiseOnExactness:NO
+                                                                                   raiseOnOverflow:NO
+                                                                                  raiseOnUnderflow:NO
+                                                                               raiseOnDivideByZero:NO];
+    
+    return [avg decimalNumberByMultiplyingBy:n withBehavior:handler];
 }
 
 @end
