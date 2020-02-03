@@ -99,6 +99,7 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [T_asset_options performSelector:@selector(register_subfields)];
     [T_bitasset_options performSelector:@selector(register_subfields)];
     [T_asset_create performSelector:@selector(register_subfields)];
+    [T_asset_settle performSelector:@selector(register_subfields)];
     [T_asset_update performSelector:@selector(register_subfields)];
     [T_asset_update_bitasset performSelector:@selector(register_subfields)];
     [T_asset_update_feed_producers performSelector:@selector(register_subfields)];
@@ -792,6 +793,8 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
             return [T_proposal_delete class];
         case ebo_asset_create:
             return [T_asset_create class];
+        case ebo_asset_settle:
+            return [T_asset_settle class];
         case ebo_asset_update:
             return [T_asset_update class];
         case ebo_asset_update_bitasset:
@@ -1128,6 +1131,18 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [self add_field:@"common_options" class:[T_asset_options class]];
     [self add_field:@"bitasset_opts" class:[[Tm_optional alloc] initWithType:[T_bitasset_options class]]];
     [self add_field:@"is_prediction_market" class:[T_bool class]];
+    [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
+}
+
+@end
+
+@implementation T_asset_settle
+
++ (void)register_subfields
+{
+    [self add_field:@"fee" class:[T_asset class]];
+    [self add_field:@"account" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"amount" class:[T_asset class]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
 

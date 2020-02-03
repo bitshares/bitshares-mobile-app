@@ -199,6 +199,9 @@
 @interface T_asset_create : T_Base
 @end
 
+@interface T_asset_settle : T_Base
+@end
+
 @interface T_asset_update : T_Base
 @end
 

@@ -1374,9 +1374,9 @@
 		3FF2E98A23D0691C006F98D0 /* VCAssetOpIssue.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF2E98923D0691C006F98D0 /* VCAssetOpIssue.m */; };
 		3FF2E98B23D0691C006F98D0 /* VCAssetOpIssue.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF2E98923D0691C006F98D0 /* VCAssetOpIssue.m */; };
 		3FF2E98C23D0691C006F98D0 /* VCAssetOpIssue.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF2E98923D0691C006F98D0 /* VCAssetOpIssue.m */; };
-		3FF2E98F23D1C360006F98D0 /* VCAssetOpReserve.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF2E98D23D1C360006F98D0 /* VCAssetOpReserve.m */; };
-		3FF2E99023D1C360006F98D0 /* VCAssetOpReserve.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF2E98D23D1C360006F98D0 /* VCAssetOpReserve.m */; };
-		3FF2E99123D1C360006F98D0 /* VCAssetOpReserve.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF2E98D23D1C360006F98D0 /* VCAssetOpReserve.m */; };
+		3FF2E98F23D1C360006F98D0 /* VCAssetOpCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF2E98D23D1C360006F98D0 /* VCAssetOpCommon.m */; };
+		3FF2E99023D1C360006F98D0 /* VCAssetOpCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF2E98D23D1C360006F98D0 /* VCAssetOpCommon.m */; };
+		3FF2E99123D1C360006F98D0 /* VCAssetOpCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF2E98D23D1C360006F98D0 /* VCAssetOpCommon.m */; };
 		3FF31CE023A8D80700CD758D /* iconOtcMcAsset@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FF31CD623A8D80500CD758D /* iconOtcMcAsset@3x.png */; };
 		3FF31CE123A8D80700CD758D /* iconOtcMcAsset@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FF31CD623A8D80500CD758D /* iconOtcMcAsset@3x.png */; };
 		3FF31CE223A8D80700CD758D /* iconOtcMcAsset@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FF31CD623A8D80500CD758D /* iconOtcMcAsset@3x.png */; };
@@ -2167,8 +2167,8 @@
 		3FEFFD31237A83D90019799D /* ViewWebviewPayment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewWebviewPayment.m; path = oplayer/View/ModelView/ViewWebviewPayment.m; sourceTree = SOURCE_ROOT; };
 		3FF2E98823D0691C006F98D0 /* VCAssetOpIssue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAssetOpIssue.h; path = Controller/VCAssetOpIssue.h; sourceTree = "<group>"; };
 		3FF2E98923D0691C006F98D0 /* VCAssetOpIssue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAssetOpIssue.m; path = Controller/VCAssetOpIssue.m; sourceTree = "<group>"; };
-		3FF2E98D23D1C360006F98D0 /* VCAssetOpReserve.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAssetOpReserve.m; path = Controller/VCAssetOpReserve.m; sourceTree = "<group>"; };
-		3FF2E98E23D1C360006F98D0 /* VCAssetOpReserve.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAssetOpReserve.h; path = Controller/VCAssetOpReserve.h; sourceTree = "<group>"; };
+		3FF2E98D23D1C360006F98D0 /* VCAssetOpCommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAssetOpCommon.m; path = Controller/VCAssetOpCommon.m; sourceTree = "<group>"; };
+		3FF2E98E23D1C360006F98D0 /* VCAssetOpCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAssetOpCommon.h; path = Controller/VCAssetOpCommon.h; sourceTree = "<group>"; };
 		3FF31CD623A8D80500CD758D /* iconOtcMcAsset@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtcMcAsset@3x.png"; path = "Images/iconOtcMcAsset@3x.png"; sourceTree = "<group>"; };
 		3FF31CD723A8D80500CD758D /* iconOtcMcAd@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtcMcAd@3x.png"; path = "Images/iconOtcMcAd@3x.png"; sourceTree = "<group>"; };
 		3FF31CD823A8D80500CD758D /* iconOtcMerchant@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtcMerchant@3x.png"; path = "Images/iconOtcMerchant@3x.png"; sourceTree = "<group>"; };
@@ -3041,8 +3041,8 @@
 				3FADCF9423D6EF1F00043305 /* VCSettlementOrders.m */,
 				3FADCF8A23D69B4600043305 /* VCAssetCreateOrEdit.h */,
 				3FADCF8923D69B4500043305 /* VCAssetCreateOrEdit.m */,
-				3FF2E98E23D1C360006F98D0 /* VCAssetOpReserve.h */,
-				3FF2E98D23D1C360006F98D0 /* VCAssetOpReserve.m */,
+				3FF2E98E23D1C360006F98D0 /* VCAssetOpCommon.h */,
+				3FF2E98D23D1C360006F98D0 /* VCAssetOpCommon.m */,
 				3FF2E98823D0691C006F98D0 /* VCAssetOpIssue.h */,
 				3FF2E98923D0691C006F98D0 /* VCAssetOpIssue.m */,
 				3FD0AD5323C1FA9D0035018E /* VCAssetDetails.h */,
@@ -5685,7 +5685,7 @@
 				3F676883230E9EC100E98C14 /* ViewEmptyInfoCell.m in Sources */,
 				3F676884230E9EC100E98C14 /* MKlineIndex.m in Sources */,
 				3F676885230E9EC100E98C14 /* WjCryptLib_Rc4.c in Sources */,
-				3FF2E99123D1C360006F98D0 /* VCAssetOpReserve.m in Sources */,
+				3FF2E99123D1C360006F98D0 /* VCAssetOpCommon.m in Sources */,
 				3F676886230E9EC100E98C14 /* DFReachabilityUtil.m in Sources */,
 				3F676887230E9EC100E98C14 /* SphereMenu.m in Sources */,
 				3F676888230E9EC100E98C14 /* VCProposalAuthorizeEdit.m in Sources */,
@@ -6020,7 +6020,7 @@
 				3FB8F91421CE66C200DA88E2 /* ViewEmptyInfoCell.m in Sources */,
 				3F9F2C3F2229051700D49165 /* MKlineIndex.m in Sources */,
 				3FB8F91521CE66C200DA88E2 /* WjCryptLib_Rc4.c in Sources */,
-				3FF2E99023D1C360006F98D0 /* VCAssetOpReserve.m in Sources */,
+				3FF2E99023D1C360006F98D0 /* VCAssetOpCommon.m in Sources */,
 				3FB8F91621CE66C200DA88E2 /* DFReachabilityUtil.m in Sources */,
 				3FB8F91721CE66C200DA88E2 /* SphereMenu.m in Sources */,
 				3FDD800F21D8C68600DA61FC /* VCProposalAuthorizeEdit.m in Sources */,
@@ -6355,7 +6355,7 @@
 				3F9F2C3E2229051700D49165 /* MKlineIndex.m in Sources */,
 				B7BDA9A720B3A3D100738F12 /* WjCryptLib_Rc4.c in Sources */,
 				3FB8F88D21CA4BA000DA88E2 /* DFReachabilityUtil.m in Sources */,
-				3FF2E98F23D1C360006F98D0 /* VCAssetOpReserve.m in Sources */,
+				3FF2E98F23D1C360006F98D0 /* VCAssetOpCommon.m in Sources */,
 				F5666A3B1D631D2800ADA3C6 /* SphereMenu.m in Sources */,
 				3FDD800E21D8C68600DA61FC /* VCProposalAuthorizeEdit.m in Sources */,
 				B76133021DBE0EE100F61A37 /* NJKWebViewProgress.m in Sources */,

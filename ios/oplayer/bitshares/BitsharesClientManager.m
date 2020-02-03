@@ -515,6 +515,17 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
 }
 
 /**
+ *  OP -清算资产。
+ */
+- (WsPromise*)assetSettle:(NSDictionary*)opdata
+{
+    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
+    [tr add_operation:ebo_asset_settle opdata:opdata];
+    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"account"]]];
+    return [self process_transaction:tr];
+}
+
+/**
  *  OP -更新资产基本信息。
  */
 - (WsPromise*)assetUpdate:(NSDictionary*)opdata

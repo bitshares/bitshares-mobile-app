@@ -52,6 +52,11 @@
 + (void)guardGrapheneObjectDependence:(VCBase*)vc object_ids:(id)object_ids body:(void (^)())body;
 
 /*
+ *  (public) 封装基本的请求操作。
+ */
++ (void)simpleRequest:(VCBase*)vc request:(WsPromise*)request callback:(void (^)(id data))callback;
+
+/*
  *  (public) 判断两个资产哪个作为base资产，返回base资产的symbol。
  */
 + (NSString*)calcBaseAsset:(NSString*)asset_symbol01 asset_symbol02:(NSString*)asset_symbol02;

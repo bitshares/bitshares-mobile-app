@@ -11,9 +11,12 @@
 #import "ThemeManager.h"
 #import "OrgUtils.h"
 #import "SettingManager.h"
+#import "bts_chain_config.h"
+#import "Extension.h"
 
 @interface ViewAssetInfoCell()
 {
+    __weak UIViewController*  _owner;
     NSDictionary*   _item;
     
     UILabel*        _lbTitle;
@@ -24,9 +27,8 @@
     UILabel*        _lbAssetFreeFrozen;
     
     NSMutableArray* _lbAssetOptional;       //  可选的资产信息（抵押、负债、强平 三个）
-
-    UIButton*       _btnTransfer;
-    UIButton*       _btnTrade;
+    
+    NSMutableArray* _btnArray;
 }
 
 @end
@@ -34,9 +36,11 @@
 @implementation ViewAssetInfoCell
 
 @synthesize item=_item;
+@synthesize row;
 
 - (void)dealloc
 {
+    _owner = nil;
     _item = nil;
     
     _lbTitle = nil;
@@ -51,8 +55,10 @@
         _lbAssetOptional = nil;
     }
     
-    _btnTransfer = nil;
-    _btnTrade = nil;
+    if (_btnArray) {
+        [_btnArray removeAllObjects];
+        _btnArray = nil;
+    }
 }
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier vc:(UIViewController*)vc
@@ -128,41 +134,36 @@
             [_lbAssetOptional addObject:lbOptional];
         }
         
+        //  保存引用
+        _owner = vc;
+        
         if (vc)
         {
-            _btnTransfer = [UIButton buttonWithType:UIButtonTypeSystem];
-            _btnTransfer.backgroundColor = [UIColor clearColor];
-            
-            [_btnTransfer setTitle:NSLocalizedString(@"kVcAssetBtnTransfer", @"转账") forState:UIControlStateNormal];
-            [_btnTransfer setTitleColor:[ThemeManager sharedThemeManager].textColorHighlight forState:UIControlStateNormal];
-            _btnTransfer.titleLabel.font = [UIFont systemFontOfSize:16.0];
-            _btnTransfer.userInteractionEnabled = YES;
-            [_btnTransfer addTarget:vc action:@selector(onButtonClicked_Transfer:) forControlEvents:UIControlEventTouchUpInside];
-            [self addSubview:_btnTransfer];
-            
-            _btnTrade = [UIButton buttonWithType:UIButtonTypeSystem];
-            _btnTrade.backgroundColor = [UIColor clearColor];
-            [_btnTrade setTitle:NSLocalizedString(@"kVcAssetBtnTrade", @"交易") forState:UIControlStateNormal];
-            [_btnTrade setTitleColor:[ThemeManager sharedThemeManager].textColorHighlight forState:UIControlStateNormal];
-            _btnTrade.titleLabel.font = [UIFont systemFontOfSize:16.0];
-            _btnTrade.userInteractionEnabled = YES;
-            [_btnTrade addTarget:vc action:@selector(onButtonClicked_Trade:) forControlEvents:UIControlEventTouchUpInside];
-            [self addSubview:_btnTrade];
+            _btnArray = [NSMutableArray array];
+            for (NSInteger i = 0; i < 3; ++i) {
+                UIButton* btn = [UIButton buttonWithType:UIButtonTypeSystem];
+                btn.backgroundColor = [UIColor clearColor];
+                [btn setTitle:@"placeholder" forState:UIControlStateNormal];
+                [btn setTitleColor:[ThemeManager sharedThemeManager].textColorHighlight forState:UIControlStateNormal];
+                btn.titleLabel.font = [UIFont systemFontOfSize:16.0];
+                btn.userInteractionEnabled = YES;
+                [btn addTarget:self action:@selector(onActionButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+                [self addSubview:btn];
+                [_btnArray addObject:btn];
+            }
         }
         else
         {
-            _btnTransfer = nil;
-            _btnTrade = nil;
+            _btnArray = nil;
         }
     }
     return self;
 }
 
-- (void)setTagData:(NSInteger)tag
+- (void)onActionButtonClicked:(UIButton*)button
 {
-    if (_btnTrade && _btnTransfer){
-        _btnTrade.tag = tag;
-        _btnTransfer.tag = tag;
+    if (_owner && [_owner respondsToSelector:@selector(onActionButtonClicked:row:)]){
+        [_owner performSelector:@selector(onActionButtonClicked:row:) withObject:button withObject:@(self.row)];
     }
 }
 
@@ -214,9 +215,9 @@
     CGFloat fOffsetY = 0.0f;
     CGFloat fLineHeight = 28;
     
-//    [asset setObject:@(estimate_value) forKey:@"estimate_value_real"];
-//    [asset setObject:[OrgUtils formatFloatValue:estimate_value precision:display_precision] forKey:@"estimate_value"];
-//    
+    //    [asset setObject:@(estimate_value) forKey:@"estimate_value_real"];
+    //    [asset setObject:[OrgUtils formatFloatValue:estimate_value precision:display_precision] forKey:@"estimate_value"];
+    //
     //  第一行
     _lbTitle.text = [_item objectForKey:@"name"];
     _lbTitle.frame = CGRectMake(xOffset, fOffsetY, fCellWidth, fLineHeight);
@@ -235,10 +236,16 @@
     _lbTitleValue.frame = CGRectMake(xOffset, fOffsetY, fCellWidth, fLineHeight);
     
     //  Core、Smart资产标签
-    if ([[_item objectForKey:@"is_core"] boolValue]){
+    BOOL bIsCore = [[_item objectForKey:@"is_core"] boolValue];
+    BOOL bIsPredictionMarket = [[_item objectForKey:@"is_prediction_market"] boolValue];
+    BOOL bIsSmart = [[_item objectForKey:@"is_smart"] boolValue];
+    if (bIsCore){
         _lbAssetType.text = @"Core";    //  TODO:fowallet 是否需要多语言 核心、智能资产
         _lbAssetType.hidden = NO;
-    }else if ([[_item objectForKey:@"is_smart"] boolValue]){
+    } else if (bIsPredictionMarket) {
+        _lbAssetType.text = @"Prediction";   //  TODO:fowallet 是否需要多语言 核心、智能资产
+        _lbAssetType.hidden = NO;
+    }else if (bIsSmart){
         _lbAssetType.text = @"Smart";   //  TODO:fowallet 是否需要多语言 核心、智能资产
         _lbAssetType.hidden = NO;
     }else{
@@ -261,7 +268,7 @@
                                [OrgUtils formatAssetString:[_item objectForKey:@"limit_order_value"] precision:precision]];
     _lbAssetFreeFrozen.frame = CGRectMake(xOffset, fOffsetY, fCellWidth, fLineHeight);
     _lbAssetFreeFrozen.textAlignment = NSTextAlignmentRight;
-//
+    //
     fOffsetY += fLineHeight;
     
     //  第三行     抵押资产    负债资产
@@ -294,9 +301,44 @@
     fOffsetY += ((showIndex + 1) / 2) * fLineHeight;
     
     //  第四行 action
-    if (_btnTrade && _btnTransfer){
-        _btnTransfer.frame = CGRectMake(xOffset, fOffsetY, fCellWidth / 2, fLineHeight);
-        _btnTrade.frame = CGRectMake(xOffset + fCellWidth / 2, fOffsetY, fCellWidth / 2, fLineHeight);
+    if (_btnArray) {
+        //  TODO:4.0 后续可扩展【更多】按钮
+        NSMutableArray* actions = [NSMutableArray arrayWithObjects:@(ebaok_transfer), @(ebaok_trade), nil];
+        if (bIsSmart) {
+            [actions addObject:@(ebaok_settle)];
+        } else if (!bIsPredictionMarket) {
+            [actions addObject:@(ebaok_reserve)];
+        }
+        for (UIButton* btn in _btnArray) {
+            btn.hidden = YES;
+        }
+        NSInteger nTotal = [actions count];
+        CGFloat fButtonWidth = fCellWidth / nTotal;
+        [actions ruby_each_with_index:^(id src, NSInteger idx) {
+            NSInteger kActionType = [src integerValue];
+            UIButton* btn = [_btnArray objectAtIndex:idx];
+            //  TODO:4.0 lang
+            switch (kActionType) {
+                case ebaok_transfer:
+                    [btn updateTitleWithoutAnimation:NSLocalizedString(@"kVcAssetBtnTransfer", @"转账")];
+                    break;
+                case ebaok_trade:
+                    [btn updateTitleWithoutAnimation:NSLocalizedString(@"kVcAssetBtnTrade", @"交易")];
+                    break;
+                case ebaok_settle:
+                    [btn updateTitleWithoutAnimation:@"清算"];
+                    break;
+                case ebaok_reserve:
+                    [btn updateTitleWithoutAnimation:@"销毁"];
+                    break;
+                default:
+                    assert(false);
+                    break;
+            }
+            btn.tag = kActionType;
+            btn.frame = CGRectMake(xOffset + fButtonWidth * idx, fOffsetY, fButtonWidth, fLineHeight);
+            btn.hidden = NO;
+        }];
     }
 }
 
