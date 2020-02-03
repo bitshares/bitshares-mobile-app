@@ -39,6 +39,8 @@ typedef enum EBitsharesAssetOpKind
     ebaok_update_bitasset,      //  编辑智能币相关信息（仅Smart资产）
     
     //  资产持有者的操作
+    ebaok_transfer,             //  转账（所有资产）
+    ebaok_trade,                //  交易（所有资产）
     ebaok_reserve,              //  资产销毁（仅UIA资产）
     ebaok_settle,               //  资产清算（仅Smart资产）
     ebaok_call_order_update,    //  调整债仓（仅Smart资产）

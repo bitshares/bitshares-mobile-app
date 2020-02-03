@@ -12,6 +12,47 @@
 @implementation ModelUtils
 
 /*
+ *  (public) 资产 - 判断资产是否允许强清
+ */
++ (BOOL)assetCanForceSettle:(id)asset_object
+{
+    NSInteger flags = [[[asset_object objectForKey:@"options"] objectForKey:@"flags"] integerValue];
+    if ((flags & ebat_disable_force_settle) != 0) {
+        return NO;
+    }
+    return YES;
+}
+
+/*
+ *  (public) 资产 - 判断资产是否允许发行人全局清算
+ */
++ (BOOL)assetCanGlobalSettle:(id)asset_object
+{
+    NSInteger issuer_permissions = [[[asset_object objectForKey:@"options"] objectForKey:@"issuer_permissions"] integerValue];
+    return (issuer_permissions & ebat_global_settle) != 0;
+}
+
+/*
+ *  (public) 资产 - 是否已经全局清算判断
+ */
++ (BOOL)assetHasGlobalSettle:(id)bitasset_object
+{
+    return ![self isNullPrice:[bitasset_object objectForKey:@"settlement_price"]];
+}
+
+/*
+ *  (public) 判断是否价格无效
+ */
++ (BOOL)isNullPrice:(id)price
+{
+    if ([[[price objectForKey:@"base"] objectForKey:@"amount"] unsignedLongLongValue] == 0 ||
+        [[[price objectForKey:@"quote"] objectForKey:@"amount"] unsignedLongLongValue] == 0) {
+        return YES;
+    }
+    return NO;
+}
+
+/*
  *  (public) 辅助方法 - 从full account data获取指定资产等余额信息，返回 NSDecimalNumber 对象，没有找到对应资产则返回 ZERO 对象。
  */
 + (NSDecimalNumber*)findAssetBalance:(NSDictionary*)full_account_data asset_id:(NSString*)asset_id asset_precision:(NSInteger)asset_precision

@@ -96,16 +96,19 @@
         
         NSDictionary* userAssetDetailInfos = [OrgUtils calcUserAssetDetailInfos:full_account_data];
         NSArray* args = [[userAssetDetailInfos objectForKey:@"validBalancesHash"] allKeys];
-        NSArray* debt_asset_ids = [[userAssetDetailInfos objectForKey:@"debtValuesHash"] allKeys];
         
         //  查询所有资产信息
         return [[chainMgr queryAllAssetsInfo:args] then:(^id(id asset_hash) {
-            id debt_bitasset_data_id_list = [debt_asset_ids ruby_map:(^id(id debt_asset_id) {
-                return [chainMgr getChainObjectByID:debt_asset_id][@"bitasset_data_id"];
-            })];
+            NSMutableArray* bitasset_data_id_list = [NSMutableArray array];
+            for (id asset_id in args) {
+                NSString* bitasset_data_id = [chainMgr getChainObjectByID:asset_id][@"bitasset_data_id"];
+                if (bitasset_data_id && ![bitasset_data_id isEqualToString:@""]) {
+                    [bitasset_data_id_list addObject:bitasset_data_id];
+                }
+            }
             
             //  查询所有智能资产的喂价和MCR、MSSR等信息
-            return [[chainMgr queryAllGrapheneObjects:debt_bitasset_data_id_list] then:(^id(id data) {
+            return [[chainMgr queryAllGrapheneObjects:bitasset_data_id_list] then:(^id(id data) {
                 [this hideBlockView];
                 
                 VCAccountInfoPages* vc = [[VCAccountInfoPages alloc] initWithUserAssetDetailInfos:userAssetDetailInfos
@@ -306,6 +309,23 @@
     [[[[ChainObjectManager sharedChainObjectManager] queryAllGrapheneObjects:object_ids] then:^id(id data) {
         [vc hideBlockView];
         body();
+        return nil;
+    }] catch:^id(id error) {
+        [vc hideBlockView];
+        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+        return nil;
+    }];
+}
+
+/*
+ *  (public) 封装基本的请求操作。
+ */
++ (void)simpleRequest:(VCBase*)vc request:(WsPromise*)request callback:(void (^)(id data))callback
+{
+    [vc showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    [[request then:^id(id data) {
+        [vc hideBlockView];
+        callback(data);
         return nil;
     }] catch:^id(id error) {
         [vc hideBlockView];

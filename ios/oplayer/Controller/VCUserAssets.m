@@ -18,7 +18,7 @@
 #import "VCTransfer.h"
 #import "VCTradeHor.h"
 #import "VCUserActivity.h"
-#import "VCAssetOpReserve.h"
+#import "VCAssetOpCommon.h"
 
 #import "MBProgressHUD.h"
 #import "OrgUtils.h"
@@ -222,6 +222,13 @@
         id asset_detail = [_assethash objectForKey:asset_type];
         NSAssert(asset_detail, @"data missing...");
         
+        //  智能资产信息
+        NSDictionary* bitasset_data = nil;
+        NSString* bitasset_data_id = [asset_detail objectForKey:@"bitasset_data_id"];
+        if (bitasset_data_id && ![bitasset_data_id isEqualToString:@""]) {
+            bitasset_data = [chainMgr getChainObjectByID:bitasset_data_id];
+        }
+        
         id name = [asset_detail objectForKey:@"symbol"];
         id precision = [asset_detail objectForKey:@"precision"];
         
@@ -234,9 +241,12 @@
         if ([asset_type isEqualToString:chainMgr.grapheneCoreAssetID]){
             [asset_final setObject:@"1" forKey:@"is_core"];
         }else{
-            id bitasset_data_id = [asset_detail objectForKey:@"bitasset_data_id"];
-            if (bitasset_data_id && ![bitasset_data_id isEqualToString:@""]){
-                [asset_final setObject:@"1" forKey:@"is_smart"];
+            if (bitasset_data){
+                if ([[bitasset_data objectForKey:@"is_prediction_market"] boolValue]) {
+                    [asset_final setObject:@"1" forKey:@"is_prediction_market"];
+                } else {
+                    [asset_final setObject:@"1" forKey:@"is_smart"];
+                }
             }else{
                 [asset_final setObject:@"1" forKey:@"is_simple"];
             }
@@ -276,7 +286,8 @@
             //  REMARK：collateral_asset_id 是 debt 的背书资产，那么用户的资产余额里肯定有 抵押中 的背书资产。
             NSInteger debt_precision = [[asset_detail objectForKey:@"precision"] integerValue];
             NSInteger collateral_precision = [[collateral_asset objectForKey:@"precision"] integerValue];
-            id mcr = [[[chainMgr getChainObjectByID:[asset_detail objectForKey:@"bitasset_data_id"]] objectForKey:@"current_feed"] objectForKey:@"maintenance_collateral_ratio"];
+            assert(bitasset_data);
+            id mcr = [[bitasset_data objectForKey:@"current_feed"] objectForKey:@"maintenance_collateral_ratio"];
             id trigger_price = [OrgUtils calcSettlementTriggerPrice:asset_call_order[@"debt"]
                                                          collateral:asset_call_order[@"collateral"]
                                                      debt_precision:debt_precision
@@ -566,7 +577,7 @@
         }
         cell.showCustomBottomLine = YES;
         cell.backgroundColor = [UIColor clearColor];
-        [cell setTagData:indexPath.row];
+        cell.row = indexPath.row;
         [cell setItem:[_assetDataArray objectAtIndex:indexPath.row]];
         return cell;
     }
@@ -588,39 +599,149 @@
 
 #pragma mark- for actions
 
+- (void)onActionButtonClicked:(UIButton*)button row:(id)row
+{
+    switch (button.tag) {
+        case ebaok_transfer:
+            [self onButtonClicked_Transfer:button row:[row integerValue]];
+            break;
+        case ebaok_trade:
+            [self onButtonClicked_Trade:button row:[row integerValue]];
+            break;
+        case ebaok_settle:
+            [self onButtonClicked_AssetSettle:button row:[row integerValue]];
+            break;
+        case ebaok_reserve:
+            [self onButtonClicked_AssetReserve:button row:[row integerValue]];
+            break;
+        default:
+            assert(false);
+            break;
+    }
+}
+
+/*
+ *  操作 - 资产清算
+ */
+- (void)onButtonClicked_AssetSettle:(UIButton*)button row:(NSInteger)row
+{
+    //  TODO:4.0 清算界面 lang
+    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+    
+    id clicked_asset = [_assetDataArray objectAtIndex:row];
+    assert(clicked_asset);
+    id oid = clicked_asset[@"id"];
+    id curAsset = [chainMgr getChainObjectByID:oid];
+    id bitasset_data_id = [curAsset objectForKey:@"bitasset_data_id"];
+    
+    id p1 = [chainMgr queryFullAccountInfo:[[_accountInfo objectForKey:@"account"] objectForKey:@"id"]];
+    id p2 = [chainMgr queryAllGrapheneObjectsSkipCache:@[oid, bitasset_data_id]];
+    
+    [VcUtils simpleRequest:_owner
+                   request:[WsPromise all:@[p1, p2]]
+                  callback:^(id data_array) {
+        id full_account = [data_array objectAtIndex:0];
+        id result_hash = [data_array objectAtIndex:1];
+        id newAsset = [result_hash objectForKey:oid];
+        assert(newAsset);
+        id newBitassetData = [result_hash objectForKey:bitasset_data_id];
+        assert(newBitassetData);
+        
+        //  检测资产是否禁止强清
+        if (![ModelUtils assetCanForceSettle:newAsset]) {
+            //  禁止清算 TODO:4.0 lang
+            [OrgUtils makeToast:@"该资产禁止清算。"];
+            return;
+        }
+        
+        if ([ModelUtils isNullPrice:[[newBitassetData objectForKey:@"current_feed"] objectForKey:@"settlement_price"]]) {
+            [OrgUtils makeToast:@"该资产没有有效的喂价，不可清算。"];
+            return;
+        }
+        
+        //  TODO:5.0 预测市场清算操作必须在全局清算之后。
+        //  "global settlement must occur before force settling a prediction market"
+        
+        id options = [newBitassetData objectForKey:@"options"];
+        
+        NSInteger force_settlement_delay_sec = [[options objectForKey:@"force_settlement_delay_sec"] integerValue];
+        id s_delay_hour = [NSString stringWithFormat:@"%i小时", (int)(force_settlement_delay_sec / 3600)];
+        
+        NSInteger force_settlement_offset_percent = [[options objectForKey:@"force_settlement_offset_percent"] integerValue];
+        id n_force_settlement_offset_percent = [NSDecimalNumber decimalNumberWithMantissa:force_settlement_offset_percent
+                                                                                 exponent:-4
+                                                                               isNegative:NO];
+        id n_final = [n_force_settlement_offset_percent decimalNumberByAdding:[NSDecimalNumber one]];
+        
+        id opArgs = @{
+            @"kOpType":@(button.tag),
+            @"kMsgTips":[NSString stringWithFormat:@"【温馨提示】\n1、清算操作强制把清算资产换回背书资产。此操作不可撤销，请谨慎操作。\n2、发起清算后将在%@后排队执行，并以当时的清算价格成交。\n3、清算价 = 成交时的喂价 × %@", s_delay_hour, n_final],
+            @"kMsgAmountPlaceholder":@"请输入清算数量",
+            @"kMsgBtnName":@"发起清算",
+            @"kMsgSubmitInputValidAmount":@"请输入要清算的资产数量。",
+            @"kMsgSubmitOK":@"发起清算成功。"
+        };
+        WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
+        VCAssetOpCommon* vc = [[VCAssetOpCommon alloc] initWithCurrAsset:[[ChainObjectManager sharedChainObjectManager] getChainObjectByID:clicked_asset[@"id"]]
+                                                       full_account_data:full_account
+                                                           op_extra_args:opArgs
+                                                          result_promise:result_promise];
+        [_owner pushViewController:vc vctitle:@"发起清算" backtitle:kVcDefaultBackTitleName];
+        [result_promise then:^id(id dirty) {
+            //  刷新UI
+            if (dirty && [dirty boolValue]) {
+                //  TODO:5.0 考虑刷新界面
+            }
+            return nil;
+        }];
+    }];
+}
+
 /*
  *  操作 - 资产销毁
  */
-- (void)onButtonClicked_AssetReserve:(UIButton*)button
+- (void)onButtonClicked_AssetReserve:(UIButton*)button row:(NSInteger)row
 {
-    //  TODO:4.0
-    id clicked_asset = [_assetDataArray objectAtIndex:button.tag];
+    id clicked_asset = [_assetDataArray objectAtIndex:row];
     assert(clicked_asset);
-    WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
-    VCAssetOpReserve* vc = [[VCAssetOpReserve alloc] initWithCurrAsset:[[ChainObjectManager sharedChainObjectManager] getChainObjectByID:clicked_asset[@"id"]]
-                                                     full_account_data:_accountInfo
-                                                        result_promise:result_promise];
-    [_owner pushViewController:vc vctitle:@"销毁资产" backtitle:kVcDefaultBackTitleName];
-    [result_promise then:^id(id dirty) {
-        //  刷新UI
-        //        if (dirty && [dirty boolValue]) {
-        //            [self refreshCurrentAdPage];
-        //        }
-        return nil;
+    
+    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+    
+    [VcUtils simpleRequest:_owner
+                   request:[chainMgr queryFullAccountInfo:[[_accountInfo objectForKey:@"account"] objectForKey:@"id"]]
+                  callback:^(id full_account) {
+        //  TODO:4.0 lang
+        id opArgs = @{
+            @"kOpType":@(button.tag),
+            @"kMsgTips":@"【温馨提示】\n销毁会减少当前流通量。此操作不可逆，请谨慎操作。",
+            @"kMsgAmountPlaceholder":@"请输入销毁数量",
+            @"kMsgBtnName":@"立即销毁",
+            @"kMsgSubmitInputValidAmount":@"请输入要销毁的资产数量。",
+            @"kMsgSubmitOK":@"销毁成功。"
+        };
+        WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
+        VCAssetOpCommon* vc = [[VCAssetOpCommon alloc] initWithCurrAsset:[chainMgr getChainObjectByID:clicked_asset[@"id"]]
+                                                       full_account_data:full_account
+                                                           op_extra_args:opArgs
+                                                          result_promise:result_promise];
+        [_owner pushViewController:vc vctitle:@"销毁资产" backtitle:kVcDefaultBackTitleName];
+        [result_promise then:^id(id dirty) {
+            //  刷新UI
+            if (dirty && [dirty boolValue]) {
+                //  TODO:5.0 考虑刷新界面
+            }
+            return nil;
+        }];
     }];
 }
 
 /*
  *  操作 - 转账
  */
-- (void)onButtonClicked_Transfer:(UIButton*)button
+- (void)onButtonClicked_Transfer:(UIButton*)button row:(NSInteger)row
 {
-//    //  TODO:4.0 test data
-//    [self onButtonClicked_AssetReserve:button];
-//    return;
-    
     //  获取资产
-    id clicked_asset = [_assetDataArray objectAtIndex:button.tag];
+    id clicked_asset = [_assetDataArray objectAtIndex:row];
     assert(clicked_asset);
     id default_asset = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:[clicked_asset objectForKey:@"id"]];
     
@@ -637,7 +758,7 @@
 /*
  *  操作 - 交易
  */
-- (void)onButtonClicked_Trade:(UIButton*)button
+- (void)onButtonClicked_Trade:(UIButton*)button row:(NSInteger)row
 {
     //  获取设置界面的计价货币资产。
     NSString* estimateAssetSymbol = [[SettingManager sharedSettingManager] getEstimateAssetSymbol];
@@ -663,7 +784,7 @@
     
     //  转到交易界面
     id base = [chainMgr getAssetBySymbol:[[baseMarket objectForKey:@"base"] objectForKey:@"symbol"]];
-    id clicked_asset = [_assetDataArray objectAtIndex:button.tag];
+    id clicked_asset = [_assetDataArray objectAtIndex:row];
     assert(clicked_asset);
     id quote = [chainMgr getChainObjectByID:[clicked_asset objectForKey:@"id"]];
     
@@ -683,20 +804,13 @@
         }
     }
     
-    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     TradingPair* tradingPair = [[TradingPair alloc] initWithBaseAsset:base quoteAsset:quote];
-    [[[tradingPair queryBitassetMarketInfo] then:^id(id data) {
-        [_owner hideBlockView];
-        
+    
+    [VcUtils simpleRequest:_owner request:[tradingPair queryBitassetMarketInfo] callback:^(id data) {
         VCTradeHor* vc = [[VCTradeHor alloc] initWithTradingPair:tradingPair selectBuy:YES];
         vc.title = [NSString stringWithFormat:@"%@/%@", quote_symbol, base_symbol];
         assert(_owner);
         [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-        return nil;
-    }] catch:^id(id error) {
-        [_owner hideBlockView];
-        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
-        return nil;
     }];
 }
 

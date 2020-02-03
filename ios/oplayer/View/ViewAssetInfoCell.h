@@ -12,8 +12,8 @@
 @interface ViewAssetInfoCell : UITableViewCellBase
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier vc:(UIViewController*)vc;
-- (void)setTagData:(NSInteger)tag;
 
 @property (nonatomic, strong) NSDictionary* item;
+@property (nonatomic, assign) NSInteger row;
 
 @end

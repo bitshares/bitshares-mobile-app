@@ -97,6 +97,11 @@
 - (WsPromise*)assetCreate:(NSDictionary*)opdata;
 
 /**
+ *  OP -清算资产。
+ */
+- (WsPromise*)assetSettle:(NSDictionary*)opdata;
+
+/**
  *  OP -更新资产基本信息。
  */
 - (WsPromise*)assetUpdate:(NSDictionary*)opdata;

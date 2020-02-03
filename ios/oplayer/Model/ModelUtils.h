@@ -11,6 +11,26 @@
 @interface ModelUtils : NSObject
 
 /*
+ *  (public) 资产 - 判断资产是否允许强清
+ */
++ (BOOL)assetCanForceSettle:(id)asset_object;
+
+/*
+ *  (public) 资产 - 判断资产是否允许发行人全局清算
+ */
++ (BOOL)assetCanGlobalSettle:(id)asset_object;
+
+/*
+ *  (public) 资产 - 是否已经全局清算判断
+ */
++ (BOOL)assetHasGlobalSettle:(id)bitasset_object;
+
+/*
+ *  (public) 判断是否价格无效
+ */
++ (BOOL)isNullPrice:(id)price;
+
+/*
  *  (public) 辅助方法 - 从full account data获取指定资产等余额信息，返回 NSDecimalNumber 对象，没有找到对应资产则返回 ZERO 对象。
  */
 + (NSDecimalNumber*)findAssetBalance:(NSDictionary*)full_account_data asset_id:(NSString*)asset_id asset_precision:(NSInteger)asset_precision;
