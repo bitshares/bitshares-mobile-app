@@ -10,6 +10,6 @@
 
 @interface VCAssetCreateOrEdit : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
-- (id)initWithEditAssetOptions:(NSDictionary*)asset_options editBitassetOpts:(NSDictionary*)bitasset_opts;
+- (id)initWithEditAsset:(NSDictionary*)asset editBitassetOpts:(NSDictionary*)bitasset_opts result_promise:(WsPromiseObject*)result_promise;
 
 @end

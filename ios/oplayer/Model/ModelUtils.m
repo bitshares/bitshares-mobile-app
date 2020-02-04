@@ -41,6 +41,23 @@
 }
 
 /*
+ *  (public) 资产 - 是否是智能币判断
+ */
++ (BOOL)assetIsSmart:(id)asset
+{
+    NSString* bitasset_data_id = [asset objectForKey:@"bitasset_data_id"];
+    return bitasset_data_id && ![bitasset_data_id isEqualToString:@""];
+}
+
+/*
+ *  (public) 资产 - 是否是链核心资产判断
+ */
++ (BOOL)assetIsCore:(id)asset
+{
+    return [[asset objectForKey:@"id"] isEqualToString:[ChainObjectManager sharedChainObjectManager].grapheneCoreAssetID];
+}
+
+/*
  *  (public) 判断是否价格无效
  */
 + (BOOL)isNullPrice:(id)price

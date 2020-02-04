@@ -313,6 +313,30 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     }
 }
 
+/*
+ *  (public) 是否是字母判断。
+ */
++ (BOOL)isAlpha:(unichar)c
+{
+    return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+}
+
+/*
+ *  (public) 是否是数字判断。
+ */
++ (BOOL)isDigit:(unichar)c
+{
+    return c >= '0' && c <= '9';
+}
+
+/*
+ *  (public) 是否是字母 或 数字判断。
+ */
++ (BOOL)isAlnum:(unichar)c
+{
+    return [self isAlpha:c] || [self isDigit:c];
+}
+
 /**
  *  是否是有效的阈值（仅可以输入数字）
  */

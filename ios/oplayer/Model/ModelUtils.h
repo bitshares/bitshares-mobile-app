@@ -26,6 +26,16 @@
 + (BOOL)assetHasGlobalSettle:(id)bitasset_object;
 
 /*
+ *  (public) 资产 - 是否是智能币判断
+ */
++ (BOOL)assetIsSmart:(id)asset;
+
+/*
+ *  (public) 资产 - 是否是链核心资产判断
+ */
++ (BOOL)assetIsCore:(id)asset;
+
+/*
  *  (public) 判断是否价格无效
  */
 + (BOOL)isNullPrice:(id)price;

@@ -94,7 +94,10 @@ enum
                                                           exponent:-_precision
                                                         isNegative:NO];
         _n_balance = [_n_max_supply decimalNumberBySubtracting:_n_cur_supply];
-        assert([_n_balance compare:[NSDecimalNumber zero]] >= 0);
+        //  REMARK：发行出去之后又更新了最大供应量，则最大供应量可能小于当前供应量，则这里可能为负数。
+        if ([_n_balance compare:[NSDecimalNumber zero]] < 0) {
+            _n_balance = [NSDecimalNumber zero];
+        }
     }
     return self;
 }

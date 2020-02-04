@@ -62,6 +62,21 @@ typedef void (^YklUserCallback)(id data);
  */
 + (BOOL)isValidAmountOrPriceInput:(NSString*)origin_string range:(NSRange)range new_string:(NSString*)new_string precision:(NSInteger)precision;
 
+/*
+ *  (public) 是否是字母判断。
+ */
++ (BOOL)isAlpha:(unichar)c;
+
+/*
+ *  (public) 是否是数字判断。
+ */
++ (BOOL)isDigit:(unichar)c;
+
+/*
+ *  (public) 是否是字母 或 数字判断。
+ */
++ (BOOL)isAlnum:(unichar)c;
+
 /**
  *  是否是有效的阈值（仅可以输入数字）
  */

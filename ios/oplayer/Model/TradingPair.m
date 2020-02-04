@@ -9,6 +9,7 @@
 #import "TradingPair.h"
 #import "ChainObjectManager.h"
 #import "WsPromise.h"
+#import "ModelUtils.h"
 
 @interface TradingPair()
 {
@@ -131,8 +132,7 @@
 - (BOOL)_is_smart:(NSDictionary*)asset
 {
     assert(asset);
-    id bitasset_data_id = [asset objectForKey:@"bitasset_data_id"];
-    return bitasset_data_id && ![bitasset_data_id isEqualToString:@""];
+    return [ModelUtils assetIsSmart:asset];
 }
 //
 ///**

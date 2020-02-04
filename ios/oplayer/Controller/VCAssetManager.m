@@ -97,10 +97,9 @@
             assert(dynamic_asset_data_id);
             [dynamic_asset_data_id_list addObject:dynamic_asset_data_id];
         }
-        //  账号名和预测市场等信息允许查询缓存
+        //  全部都查询都忽略缓存
         [bitasset_data_id_list addObjectsFromArray:[issuerHash allKeys]];
-        id p1 = [chainMgr queryAllGrapheneObjects:bitasset_data_id_list];
-        //  供应量等数据跳过缓存
+        id p1 = [chainMgr queryAllGrapheneObjectsSkipCache:bitasset_data_id_list];
         id p2 = [chainMgr queryAllGrapheneObjectsSkipCache:dynamic_asset_data_id_list];
         return [[WsPromise all:@[p1, p2]] then:^id(id data) {
             [self hideBlockView];
@@ -117,8 +116,18 @@
 - (void)onAddNewAssetClicked
 {
     //  TODO:4.0 lang
-    VCAssetCreateOrEdit* vc = [[VCAssetCreateOrEdit alloc] initWithEditAssetOptions:nil editBitassetOpts:nil];
+    WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
+    VCAssetCreateOrEdit* vc = [[VCAssetCreateOrEdit alloc] initWithEditAsset:nil
+                                                            editBitassetOpts:nil
+                                                              result_promise:result_promise];
     [self pushViewController:vc vctitle:@"创建资产" backtitle:kVcDefaultBackTitleName];
+    [result_promise then:^id(id dirty) {
+        //  刷新UI
+        if (dirty && [dirty boolValue]) {
+            [self queryMyIssuedAssets];
+        }
+        return nil;
+    }];
 }
 
 - (void)viewDidLoad
@@ -147,7 +156,7 @@
     
     //  TODO:4.0 lang
     //  UI - 空
-    _lbEmpty = [self genCenterEmptyLabel:rect txt:@"尚未发行任何资产。"];
+    _lbEmpty = [self genCenterEmptyLabel:rect txt:@"未发行任何资产，点击右上角创建资产。"];
     _lbEmpty.hidden = YES;
     [self.view addSubview:_lbEmpty];
     
@@ -201,12 +210,14 @@
     if (bitasset_data_id && ![bitasset_data_id isEqualToString:@""]) {
         bitasset_data = [chainMgr getChainObjectByID:bitasset_data_id];
     }
-
+    
     //  TODO:4.0 lang
     id list = [[[NSMutableArray array] ruby_apply:^(id ary) {
         [ary addObject:@{@"type":@(ebaok_view), @"title":@"详情"}];
-        [ary addObject:@{@"type":@(ebaok_edit), @"title":@"编辑"}];
-        if (!bitasset_data) {
+        [ary addObject:@{@"type":@(ebaok_edit), @"title":@"更新资产"}];
+        if (bitasset_data) {
+            [ary addObject:@{@"type":@(ebaok_update_bitasset), @"title":@"更新智能币"}];
+        } else {
             [ary addObject:@{@"type":@(ebaok_issue), @"title":@"发行"}];
         }
     }] copy];
@@ -220,6 +231,7 @@
      {
         if (buttonIndex != cancelIndex){
             id item = [list objectAtIndex:buttonIndex];
+            //  TODO:4.0 lang
             switch ([[item objectForKey:@"type"] integerValue]) {
                 case ebaok_view:
                 {
@@ -233,7 +245,56 @@
                     break;
                 case ebaok_edit:
                 {
-                    //  TODO:4.0
+                    //  查询黑白名单中各种ID依赖。编辑黑白名单列表需要显示名称。
+                    id options = [asset objectForKey:@"options"];
+                    NSMutableDictionary* ids_hash = [NSMutableDictionary dictionary];
+                    for (id oid in [options objectForKey:@"whitelist_authorities"]) {
+                        [ids_hash setObject:@YES forKey:oid];
+                    }
+                    for (id oid in [options objectForKey:@"blacklist_authorities"]) {
+                        [ids_hash setObject:@YES forKey:oid];
+                    }
+                    for (id oid in [options objectForKey:@"whitelist_markets"]) {
+                        [ids_hash setObject:@YES forKey:oid];
+                    }
+                    for (id oid in [options objectForKey:@"blacklist_markets"]) {
+                        [ids_hash setObject:@YES forKey:oid];
+                    }
+                    [VcUtils simpleRequest:self
+                                   request:[chainMgr queryAllGrapheneObjects:[ids_hash allKeys]]
+                                  callback:^(id result_hash) {
+                        WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
+                        VCAssetCreateOrEdit* vc = [[VCAssetCreateOrEdit alloc] initWithEditAsset:asset
+                                                                                editBitassetOpts:nil
+                                                                                  result_promise:result_promise];
+                        [self pushViewController:vc vctitle:@"更新资产" backtitle:kVcDefaultBackTitleName];
+                        [result_promise then:^id(id dirty) {
+                            //  刷新UI
+                            if (dirty && [dirty boolValue]) {
+                                [self queryMyIssuedAssets];
+                            }
+                            return nil;
+                        }];
+                    }];
+                }
+                    break;
+                case ebaok_update_bitasset:
+                {
+                    //  查询背书资产名称依赖
+                    [VcUtils guardGrapheneObjectDependence:self object_ids:bitasset_data[@"options"][@"short_backing_asset"] body:^{
+                        WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
+                        VCAssetCreateOrEdit* vc = [[VCAssetCreateOrEdit alloc] initWithEditAsset:asset
+                                                                                editBitassetOpts:bitasset_data
+                                                                                  result_promise:result_promise];
+                        [self pushViewController:vc vctitle:@"更新智能币" backtitle:kVcDefaultBackTitleName];
+                        [result_promise then:^id(id dirty) {
+                            //  刷新UI
+                            if (dirty && [dirty boolValue]) {
+                                [self queryMyIssuedAssets];
+                            }
+                            return nil;
+                        }];
+                    }];
                 }
                     break;
                 case ebaok_issue:

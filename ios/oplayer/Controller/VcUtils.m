@@ -302,18 +302,13 @@
     assert(vc);
     assert(object_ids);
     assert(body);
+    
     if (![object_ids isKindOfClass:[NSArray class]]) {
         object_ids = @[object_ids];
     }
-    [vc showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    [[[[ChainObjectManager sharedChainObjectManager] queryAllGrapheneObjects:object_ids] then:^id(id data) {
-        [vc hideBlockView];
+    
+    [self simpleRequest:vc request:[[ChainObjectManager sharedChainObjectManager] queryAllGrapheneObjects:object_ids] callback:^(id data) {
         body();
-        return nil;
-    }] catch:^id(id error) {
-        [vc hideBlockView];
-        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
-        return nil;
     }];
 }
 
@@ -322,6 +317,10 @@
  */
 + (void)simpleRequest:(VCBase*)vc request:(WsPromise*)request callback:(void (^)(id data))callback
 {
+    assert(vc);
+    assert(request);
+    assert(callback);
+    
     [vc showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     [[request then:^id(id data) {
         [vc hideBlockView];
