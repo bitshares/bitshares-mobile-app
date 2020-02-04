@@ -150,7 +150,7 @@ class ActivityIndexServices : BtsppActivity() {
         }
 
         layout_advanced_feature_of_service.setOnClickListener {
-            goTo(ActivityAdvancedFeature::class.java, true)
+             goTo(ActivityAdvancedFeature::class.java, true)
         }
 
         layout_bts_explorer.setOnClickListener {

@@ -1,0 +1,619 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/theme01.appBackColor"
+    tools:context="com.btsplusplus.fowallet.ActivityAssetCreateOrEdit">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="25dp"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+
+            <LinearLayout
+                android:id="@+id/layout_back_from_assets_create_or_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_btn_back"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/kBtnBack"
+                    style="@style/kNavigationBarTextStyle"
+                    android:gravity="center_vertical"
+                    />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:text="创建资产"
+                style="@style/kNavigationBarTextStyle" />
+
+        </FrameLayout>
+
+        <ScrollView
+            android:fillViewport="true"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:textSize="17dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/theme01.textColorHighlight"
+                    android:text="基本信息"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <!-- 资产名称 -->
+                <LinearLayout
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="16dp"
+                        android:layout_weight="1"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="资产名称"/>
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:gravity="right"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/et_asset_name_from_assets_create_or_edit"
+                            android:maxLength="24"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            style="@style/kTextFieldDecimalPad"
+                            android:hint="请输入资产名称"/>
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical|right"
+                            android:foregroundGravity="right"
+                            android:src="@drawable/ic_btn_right_arrow" />
+
+                    </LinearLayout>
+                </LinearLayout>
+                <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+                <!-- 最大供应量 -->
+                <LinearLayout
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="16dp"
+                        android:layout_weight="1"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="最大供应量"/>
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:gravity="right"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/et_max_supply_from_assets_create_or_edit"
+                            android:maxLength="24"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            style="@style/kTextFieldDecimalPad"
+                            android:hint="请输入最大供应量"/>
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical|right"
+                            android:foregroundGravity="right"
+                            android:src="@drawable/ic_btn_right_arrow" />
+
+                    </LinearLayout>
+                </LinearLayout>
+                <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+                <!-- 资产描述 -->
+                <LinearLayout
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="16dp"
+                        android:layout_weight="1"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="资产描述"/>
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:gravity="right"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/et_asset_description_from_assets_create_or_edit"
+                            android:maxLength="24"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            style="@style/kTextFieldDecimalPad"
+                            android:hint="请输入描述(可选)"/>
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical|right"
+                            android:foregroundGravity="right"
+                            android:src="@drawable/ic_btn_right_arrow" />
+
+                    </LinearLayout>
+                </LinearLayout>
+                <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+                <!-- 高级设置 -->
+                <LinearLayout
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="16dp"
+                        android:layout_weight="1"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="高级设置"/>
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:gravity="right"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content">
+
+                        <Switch
+                            android:id="@+id/switch_advance_from_assets_create_or_edit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical|right"
+                            android:foregroundGravity="right"
+                            android:src="@drawable/ic_btn_right_arrow" />
+
+                    </LinearLayout>
+                </LinearLayout>
+                <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+                <LinearLayout
+                    android:id="@+id/layout_advance_from_assets_create_or_edit"
+                    android:visibility="gone"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <!-- 资产精度 -->
+                    <LinearLayout
+                        android:id="@+id/layout_asset_precision_from_assets_create_or_edit"
+                        android:layout_marginTop="15dp"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:textSize="16dp"
+                            android:layout_weight="1"
+                            android:textColor="@color/theme01.textColorNormal"
+                            android:text="资产精度"/>
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:gravity="right"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/tv_asset_precision_from_assets_create_or_edit"
+                                android:textColor="@color/theme01.textColorMain"
+                                android:textSize="14dp"
+                                android:text="5位小数"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center_vertical|right"
+                                android:foregroundGravity="right"
+                                android:src="@drawable/ic_btn_right_arrow" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+                    <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+                    <TextView
+                        android:layout_marginTop="15dp"
+                        android:textSize="17dp"
+                        android:textStyle="bold"
+                        android:textColor="@color/theme01.textColorHighlight"
+                        android:text="智能货币信息"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+
+
+                    <!-- 借贷抵押资产 -->
+                    <LinearLayout
+                        android:id="@+id/layout_debit_asset_from_assets_create_or_edit"
+                        android:layout_marginTop="15dp"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:textSize="16dp"
+                            android:layout_weight="1"
+                            android:textColor="@color/theme01.textColorNormal"
+                            android:text="借贷抵押资产"/>
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:gravity="right"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/tv_debit_asset_from_assets_create_or_edit"
+                                android:textColor="@color/theme01.textColorMain"
+                                android:textSize="14dp"
+                                android:text="BTS"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center_vertical|right"
+                                android:foregroundGravity="right"
+                                android:src="@drawable/ic_btn_right_arrow" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+                    <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+
+                    <!-- 喂价有效期 -->
+                    <LinearLayout
+                        android:id="@+id/layout_feed_valid_date_from_assets_create_or_edit"
+                        android:layout_marginTop="15dp"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:textSize="16dp"
+                            android:layout_weight="1"
+                            android:textColor="@color/theme01.textColorNormal"
+                            android:text="喂价有效期"/>
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:gravity="right"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/tv_feed_valid_date_from_assets_create_or_edit"
+                                android:textColor="@color/theme01.textColorMain"
+                                android:textSize="14dp"
+                                android:text="1440 分钟"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center_vertical|right"
+                                android:foregroundGravity="right"
+                                android:src="@drawable/ic_btn_right_arrow" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+                    <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+
+
+                    <!-- 最少喂价数量 -->
+                    <LinearLayout
+                        android:id="@+id/layout_min_feed_quantity_from_assets_create_or_edit"
+                        android:layout_marginTop="15dp"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:textSize="16dp"
+                            android:layout_weight="1"
+                            android:textColor="@color/theme01.textColorNormal"
+                            android:text="最少喂价数量"/>
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:gravity="right"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/tv_min_feed_quantity_from_assets_create_or_edit"
+                                android:textColor="@color/theme01.textColorMain"
+                                android:textSize="14dp"
+                                android:text="1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center_vertical|right"
+                                android:foregroundGravity="right"
+                                android:src="@drawable/ic_btn_right_arrow" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+                    <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+
+                    <!-- 强清延迟时间 -->
+                    <LinearLayout
+                        android:id="@+id/layout_force_clear_delay_from_assets_create_or_edit"
+                        android:layout_marginTop="15dp"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:textSize="16dp"
+                            android:layout_weight="1"
+                            android:textColor="@color/theme01.textColorNormal"
+                            android:text="强清延迟时间"/>
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:gravity="right"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/tv_force_clear_delay_from_assets_create_or_edit"
+                                android:textColor="@color/theme01.textColorMain"
+                                android:textSize="14dp"
+                                android:text="1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center_vertical|right"
+                                android:foregroundGravity="right"
+                                android:src="@drawable/ic_btn_right_arrow" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+                    <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+
+                    <!-- 强清补偿比例 -->
+                    <LinearLayout
+                        android:id="@+id/layout_force_clear_compensation_rate_from_assets_create_or_edit"
+                        android:layout_marginTop="15dp"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:textSize="16dp"
+                            android:layout_weight="1"
+                            android:textColor="@color/theme01.textColorNormal"
+                            android:text="强清补偿比例"/>
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:gravity="right"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/tv_force_clear_compensation_rate_from_assets_create_or_edit"
+                                android:textColor="@color/theme01.textColorMain"
+                                android:textSize="14dp"
+                                android:text="5%"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center_vertical|right"
+                                android:foregroundGravity="right"
+                                android:src="@drawable/ic_btn_right_arrow" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+                    <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+
+                    <!-- 每周最大清算量 -->
+                    <LinearLayout
+                        android:id="@+id/layout_preweek_max_clear_rate_from_assets_create_or_edit"
+                        android:layout_marginTop="15dp"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:textSize="16dp"
+                            android:layout_weight="1"
+                            android:textColor="@color/theme01.textColorNormal"
+                            android:text="每周最大清算量"/>
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:gravity="right"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/tv_preweek_max_clear_rate_from_assets_create_or_edit"
+                                android:textColor="@color/theme01.textColorMain"
+                                android:textSize="14dp"
+                                android:text="5%"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center_vertical|right"
+                                android:foregroundGravity="right"
+                                android:src="@drawable/ic_btn_right_arrow" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+                    <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+                </LinearLayout>
+
+
+                <!-- 创建按钮 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@color/colorPrimary"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_create_from_assets_create_or_edit"
+                        android:layout_width="wrap_content"
+                        style="@style/kMainButtonStyle"
+                        android:gravity="center|center_vertical"
+                        android:layout_weight="1"
+                        android:padding="5dp"
+                        android:text="创建" />
+                </LinearLayout>
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:singleLine="false"
+                    android:textSize="12dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:padding="5dp"
+                    android:background="@color/theme01.textColorGray"
+                    android:text="【温馨提示】\n1、资产创建后不可更改\n2、资产精度即资产支持的小数位数\n3、资产精度创建后不可更改\n4、创建资产的手续费由资产名称长度决定"
+                    />
+
+
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>
