@@ -304,6 +304,16 @@
  */
 - (WsPromise*)queryUserLimitOrders:(NSString*)account_name_or_id;
 
+/*
+ *  (public) 查询指定【智能资产】的【背书资产】数据。
+ */
+- (WsPromise*)queryBackingAsset:(id)smart_asset;
+
+/*
+ *  (public) 查询指定背书资产的次级背书资产信息。
+ */
+- (WsPromise*)queryBackingBackingAsset:(id)backing_asset;
+
 /**
  *  (public) 查询最新的预算项目
  */

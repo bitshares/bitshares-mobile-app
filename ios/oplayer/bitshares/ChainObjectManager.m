@@ -8,6 +8,7 @@
 
 #import "ChainObjectManager.h"
 #import "OrgUtils.h"
+#import "ModelUtils.h"
 
 #import "AppCommon.h"
 #import "ThemeManager.h"
@@ -1726,6 +1727,35 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
             return full_account_data;
         })];
     })];
+}
+
+/*
+ *  (public) 查询指定【智能资产】的【背书资产】数据。
+ */
+- (WsPromise*)queryBackingAsset:(id)smart_asset
+{
+    NSString* bitasset_data_id = [smart_asset objectForKey:@"bitasset_data_id"];
+    assert(bitasset_data_id && ![bitasset_data_id isEqualToString:@""]);
+    return [[self queryAllGrapheneObjects:@[bitasset_data_id]] then:^id(id result_hash) {
+        id bitasset_data = [result_hash objectForKey:bitasset_data_id];
+        NSString* short_backing_asset = [[bitasset_data objectForKey:@"options"] objectForKey:@"short_backing_asset"];
+        return [[self queryAllGrapheneObjects:@[short_backing_asset]] then:^id(id result_hash02) {
+            return [result_hash02 objectForKey:short_backing_asset];
+        }];
+    }];
+}
+
+/*
+ *  (public) 查询指定背书资产的次级背书资产信息。
+ */
+- (WsPromise*)queryBackingBackingAsset:(id)backing_asset
+{
+    assert(backing_asset);
+    if ([ModelUtils assetIsSmart:backing_asset]) {
+        return [self queryBackingAsset:backing_asset];
+    } else {
+        return [WsPromise resolve:backing_asset];
+    }
 }
 
 /**
