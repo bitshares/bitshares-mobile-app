@@ -12,7 +12,7 @@
 
     <!-- 打电话权限 -->
     <uses-permission android:name="android.permission.CALL_PHONE" />
-    
+
     <!-- 摄像头权限 -->
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -322,6 +322,25 @@
             android:name=".ActivityOtcMcMerchantApply"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".ActivityAssetManager"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ActivityAssetOpissue"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ActivityAssetOpCommon"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ActivityAssetCreateOrEdit"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+
     </application>
 
 </manifest>

@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/theme01.appBackColor"
+    tools:context="com.btsplusplus.fowallet.ActivityAssetOpissue">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="25dp"
+        android:orientation="vertical">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+
+            <LinearLayout
+                android:id="@+id/layout_back_from_assets_opissue"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_btn_back"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/kBtnBack"
+                    style="@style/kNavigationBarTextStyle"
+                    android:gravity="center_vertical"
+                    />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:text="发行资产"
+                style="@style/kNavigationBarTextStyle" />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:textSize="13dp"
+                android:text="目标账户"
+                android:textColor="@color/theme01.textColorMain"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:id="@+id/layout_select_account_from_assets_opissue"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_select_account_from_assets_opissue"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:layout_weight="9"
+                    android:textColor="@color/theme01.textColorGray"
+                    android:text="选择目标账户"/>
+
+                <ImageView
+                    android:id="@+id/iv_select_account_right_arrow"
+                    android:layout_width="0dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical|right"
+                    android:layout_weight="1"
+                    android:foregroundGravity="right"
+                    android:src="@drawable/ic_btn_right_arrow" />
+
+            </LinearLayout>
+
+            <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginTop="25dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:textSize="13dp"
+                    android:text="发行数量"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tv_available_assets_from_assets_opissue"
+                    android:textSize="13dp"
+                    android:text="可用 3,000,000,000 FEEFREE"
+                    android:gravity="right"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/et_issue_asset_quantity_from_assets_opissue"
+                    android:maxLength="24"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    style="@style/kTextFieldDecimalPad"
+                    android:hint="请输入发行数量"/>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:gravity="right"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tv_issue_asset_symbol_from_assets_opissue"
+                        android:textSize="13dp"
+                        android:text="FEEFREE"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:textSize="13dp"
+                        android:text="|"
+                        android:layout_marginLeft="7dp"
+                        android:layout_marginRight="7dp"
+                        android:textColor="@color/theme01.textColorGray"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/tv_select_total_quantity_from_assets_opissue"
+                        android:textSize="13dp"
+                        android:text="全部"
+                        android:textColor="@color/theme01.textColorHighlight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </LinearLayout>
+            <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+
+            <TextView
+                android:layout_marginTop="25dp"
+                android:textSize="13dp"
+                android:text="目标账户"
+                android:textColor="@color/theme01.textColorMain"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/et_memo_info_from_assets_opissue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    style="@style/kTextFieldNormal"
+                    android:hint="@string/kVcTransferTipInputMemo"/>
+
+            </LinearLayout>
+
+            <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginTop="25dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:textSize="13dp"
+                    android:text="最大发行量"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tv_max_issue_quantity_from_assets_opissue"
+                    android:textSize="13dp"
+                    android:text="3,000,000,000 FEEFREE"
+                    android:gravity="right"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:textSize="13dp"
+                    android:text="当前发行量"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tv_current_issue_quantity_from_assets_opissue"
+                    android:textSize="13dp"
+                    android:text="3,000,000 FEEFREE"
+                    android:gravity="right"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <!-- 发行按钮 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@color/colorPrimary"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_issue_from_assets_opissue"
+                    android:layout_width="wrap_content"
+                    style="@style/kMainButtonStyle"
+                    android:gravity="center|center_vertical"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    android:text="发行" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>

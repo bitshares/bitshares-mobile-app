@@ -1,6 +1,5 @@
 package com.btsplusplus.fowallet
 
-import android.app.Activity
 import android.content.Context
 import android.util.TypedValue
 import android.view.Gravity
@@ -11,16 +10,15 @@ import bitshares.Utils
 import bitshares.xmlstring
 import org.json.JSONObject
 
-class ViewOrderCell : LinearLayout {
+
+class ViewAssetCell : LinearLayout {
 
     private var _ctx: Context
     private var _data: JSONObject
-    private lateinit var _from: String
 
-    constructor(ctx: Context, data: JSONObject, from: String) : super(ctx) {
+    constructor(ctx: Context, data: JSONObject) : super(ctx) {
         _ctx = ctx
         _data = data
-        _from = from
         createUI()
     }
 
@@ -41,77 +39,42 @@ class ViewOrderCell : LinearLayout {
         ly1.layoutParams = layout_params
         ly1.setPadding(0, Utils.toDp(5.0f,_ctx.resources), 0, 0)
         val tv1 = TextView(ctx)
-        if (data.getBoolean("issell")) {
-            tv1.text = ctx.resources.getString(R.string.kBtnSell)
-            if (data.getBoolean("iscall")) {
-                tv1.setTextColor(resources.getColor(R.color.theme01_callOrderColor))
-            } else {
-                tv1.setTextColor(resources.getColor(R.color.theme01_sellColor))
-            }
-        } else {
-            tv1.text = ctx.resources.getString(R.string.kBtnBuy)
-            if (data.getBoolean("iscall")) {
-                tv1.setTextColor(resources.getColor(R.color.theme01_callOrderColor))
-            } else {
-                tv1.setTextColor(resources.getColor(R.color.theme01_buyColor))
-            }
-        }
-        if (_from == "settlement_orders"){
-            tv1.text = "清算${tv1.text}"
-        }
 
+        tv1.text = _data.getString("asset_symbol")
+        tv1.setTextColor(resources.getColor(R.color.theme01_textColorMain))
         tv1.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
         tv1.gravity = Gravity.CENTER_VERTICAL
+        tv1.setPadding(0,0,Utils.toDp(5.0f,_ctx.resources),0)
 
         val tv2 = TextView(ctx)
-        val quote_symbol = data.getString("quote_symbol")
-        val base_symbol = data.getString("base_symbol")
-        tv2.text = "${quote_symbol}/${base_symbol}"
-        tv2.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.0f)
+        tv2.text = "Smart"
+        tv2.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11.0f)
         tv2.setTextColor(resources.getColor(R.color.theme01_textColorMain))
         tv2.gravity = Gravity.CENTER_VERTICAL
+        tv2.setBackgroundColor(resources.getColor(R.color.theme01_textColorHighlight))
+        tv2.setPadding(Utils.toDp(5.0f,_ctx.resources), 0, Utils.toDp(5.0f,_ctx.resources), 0)
 
-
-        tv2.setPadding(Utils.toDp(5.0f,_ctx.resources), 0, 0, 0)
-
-        val tv3 = TextView(ctx)
-        val block_time = data.optString("block_time", "")
-        if (block_time == "") {
-            tv3.visibility = android.view.View.INVISIBLE
-        } else {
-            tv3.visibility = android.view.View.VISIBLE
-            tv3.text = Utils.fmtAccountHistoryTimeShowString(block_time)
-        }
-        tv3.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10.0f)
-        tv3.setTextColor(resources.getColor(R.color.theme01_textColorGray))
-        tv3.gravity = Gravity.BOTTOM or Gravity.RIGHT
-        var layout_tv3 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-        layout_tv3.weight = 1.0f
-        layout_tv3.gravity = Gravity.RIGHT or Gravity.BOTTOM
-        tv3.layoutParams = layout_tv3
-
-
-        // layout2 左: price(CNY) 中 Amount(SEED) 右 总金额(CNY)
+        // layout2 左: 供应量 中 最大供应量 右 隐私供应量
         val ly2: LinearLayout = LinearLayout(ctx)
         ly2.orientation = LinearLayout.HORIZONTAL
         ly2.layoutParams = layout_params
 
         val tv4 = TextView(ctx)
-        tv4.text = "${R.string.kLableBidPrice.xmlstring(ctx)}(${base_symbol})"
+        tv4.text = "供应量"
         tv4.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
         tv4.setTextColor(resources.getColor(R.color.theme01_textColorGray))
         tv4.gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
         tv4.layoutParams = createLayout(Gravity.CENTER_VERTICAL or Gravity.LEFT)
 
         val tv5 = TextView(ctx)
-        tv5.text = "${R.string.kLabelTradeHisTitleAmount.xmlstring(ctx)}(${quote_symbol})"
+        tv5.text = "最大供应量"
         tv5.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
         tv5.setTextColor(resources.getColor(R.color.theme01_textColorGray))
         tv5.gravity = Gravity.CENTER_VERTICAL or Gravity.CENTER
         tv5.layoutParams = createLayout(Gravity.CENTER_VERTICAL or Gravity.CENTER)
 
         val tv6 = TextView(ctx)
-        tv6.text = "${R.string.kVcOrderTotal.xmlstring(ctx)}(${base_symbol})"
+        tv6.text = "隐私供应量"
         tv6.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
         tv6.setTextColor(resources.getColor(R.color.theme01_textColorGray))
         tv6.gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
@@ -124,35 +87,48 @@ class ViewOrderCell : LinearLayout {
         ly3.layoutParams = layout_params
 
         val tv7 = TextView(ctx)
-        tv7.text = data.getString("price")
+        tv7.text = data.getString("supply")
         tv7.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
         tv7.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
         tv7.gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
         tv7.layoutParams = createLayout(Gravity.CENTER_VERTICAL or Gravity.LEFT)
 
         val tv8 = TextView(ctx)
-        tv8.text = data.getString("amount")
+        tv8.text = data.getString("max_supply")
         tv8.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
         tv8.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
         tv8.gravity = Gravity.CENTER_VERTICAL or Gravity.CENTER
         tv8.layoutParams = createLayout(Gravity.CENTER_VERTICAL or Gravity.CENTER)
 
         val tv9 = TextView(ctx)
-        tv9.text = data.getString("total")
+        tv9.text = data.getString("privacy_supply")
         tv9.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
         tv9.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
         tv9.gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
         tv9.layoutParams = createLayout(Gravity.CENTER_VERTICAL or Gravity.RIGHT)
 
+        // layout4
+        val ly4: LinearLayout = LinearLayout(ctx)
+        ly4.orientation = LinearLayout.HORIZONTAL
+        ly4.layoutParams = layout_params
+
+        val tv10 = TextView(ctx)
+        tv10.text = String.format("%s %s",data.getString("asset_quantity"), data.getString("asset_name"))
+        tv10.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
+        tv10.setTextColor(resources.getColor(R.color.theme01_textColorMain))
+        tv10.gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
+        tv10.layoutParams = createLayout(Gravity.CENTER_VERTICAL or Gravity.LEFT)
+
+
         // 线
         val lv_line = View(ctx)
         var layout_tv9 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.toDp(1.0f,_ctx.resources))
+        layout_tv9.setMargins(0,Utils.toDp(10.0f,_ctx.resources),0,Utils.toDp(10.0f,_ctx.resources))
         lv_line.setBackgroundColor(resources.getColor(R.color.theme01_bottomLineColor))
         lv_line.layoutParams = layout_tv9
 
         ly1.addView(tv1)
         ly1.addView(tv2)
-        ly1.addView(tv3)
 
         ly2.addView(tv4)
         ly2.addView(tv5)
@@ -162,10 +138,12 @@ class ViewOrderCell : LinearLayout {
         ly3.addView(tv8)
         ly3.addView(tv9)
 
+        ly4.addView(tv10)
 
         ly_wrap.addView(ly1)
         ly_wrap.addView(ly2)
         ly_wrap.addView(ly3)
+        ly_wrap.addView(ly4)
         ly_wrap.addView(lv_line)
 
         this.addView(ly_wrap)
