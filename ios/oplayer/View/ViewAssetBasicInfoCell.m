@@ -168,9 +168,9 @@
     yOffset += firstLineHeight;
     
     //  第二行 各种供应量标题
-    _lbSupplyTitle.text = @"供应量";
-    _lbMaxSupplyTitle.text = @"最大供应量";
-    _lbConfidentialSupplyTitle.text = @"隐私供应量";
+    _lbSupplyTitle.text = NSLocalizedString(@"kVcAssetMgrCellInfoCurSupply", @"当前供应量");
+    _lbMaxSupplyTitle.text = NSLocalizedString(@"kVcAssetMgrCellInfoMaxSupply", @"最大供应量");
+    _lbConfidentialSupplyTitle.text = NSLocalizedString(@"kVcAssetMgrCellInfoConSupply", @"隐私供应量");
     _lbSupplyTitle.textColor = theme.textColorGray;
     _lbMaxSupplyTitle.textColor = theme.textColorGray;
     _lbConfidentialSupplyTitle.textColor = theme.textColorGray;

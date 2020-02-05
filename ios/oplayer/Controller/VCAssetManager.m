@@ -115,12 +115,11 @@
 
 - (void)onAddNewAssetClicked
 {
-    //  TODO:4.0 lang
     WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
     VCAssetCreateOrEdit* vc = [[VCAssetCreateOrEdit alloc] initWithEditAsset:nil
                                                             editBitassetOpts:nil
                                                               result_promise:result_promise];
-    [self pushViewController:vc vctitle:@"创建资产" backtitle:kVcDefaultBackTitleName];
+    [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleAssetOpCreate", @"创建资产") backtitle:kVcDefaultBackTitleName];
     [result_promise then:^id(id dirty) {
         //  刷新UI
         if (dirty && [dirty boolValue]) {
@@ -154,9 +153,8 @@
     [self.view addSubview:_mainTableView];
     _mainTableView.hidden = NO;
     
-    //  TODO:4.0 lang
     //  UI - 空
-    _lbEmpty = [self genCenterEmptyLabel:rect txt:@"未发行任何资产，点击右上角创建资产。"];
+    _lbEmpty = [self genCenterEmptyLabel:rect txt:NSLocalizedString(@"kVcAssetMgrEmptyList", @"未发行任何资产，点击右上角创建资产。")];
     _lbEmpty.hidden = YES;
     [self.view addSubview:_lbEmpty];
     
@@ -211,14 +209,13 @@
         bitasset_data = [chainMgr getChainObjectByID:bitasset_data_id];
     }
     
-    //  TODO:4.0 lang
     id list = [[[NSMutableArray array] ruby_apply:^(id ary) {
-        [ary addObject:@{@"type":@(ebaok_view), @"title":@"详情"}];
-        [ary addObject:@{@"type":@(ebaok_edit), @"title":@"更新资产"}];
+        //[ary addObject:@{@"type":@(ebaok_view), @"title":NSLocalizedString(@"kVcAssetMgrCellActionViewDetail", @"资产详情")}];//TODO:5.0 暂时去掉
+        [ary addObject:@{@"type":@(ebaok_edit), @"title":NSLocalizedString(@"kVcAssetMgrCellActionUpdateAsset", @"更新资产")}];
         if (bitasset_data) {
-            [ary addObject:@{@"type":@(ebaok_update_bitasset), @"title":@"更新智能币"}];
+            [ary addObject:@{@"type":@(ebaok_update_bitasset), @"title":NSLocalizedString(@"kVcAssetMgrCellActionUpdateBitasset", @"更新智能币")}];
         } else {
-            [ary addObject:@{@"type":@(ebaok_issue), @"title":@"发行"}];
+            [ary addObject:@{@"type":@(ebaok_issue), @"title":NSLocalizedString(@"kVcAssetMgrCellActionIssueAsset", @"发行资产")}];
         }
     }] copy];
     
@@ -231,7 +228,7 @@
      {
         if (buttonIndex != cancelIndex){
             id item = [list objectAtIndex:buttonIndex];
-            //  TODO:4.0 lang
+            
             switch ([[item objectForKey:@"type"] integerValue]) {
                 case ebaok_view:
                 {
@@ -239,8 +236,8 @@
                                                                            asset:asset
                                                                    bitasset_data:bitasset_data
                                                               dynamic_asset_data:[chainMgr getChainObjectByID:[asset objectForKey:@"dynamic_asset_data_id"]]];
-                    //  TODO:4.0 lang
-                    [self pushViewController:vc vctitle:[NSString stringWithFormat:@"%@ 详情", asset[@"symbol"]] backtitle:kVcDefaultBackTitleName];
+                    [self pushViewController:vc vctitle:[NSString stringWithFormat:NSLocalizedString(@"kVcTitleAssetOpViewDetail", @"%@ 详情"),
+                                                         asset[@"symbol"]] backtitle:kVcDefaultBackTitleName];
                 }
                     break;
                 case ebaok_edit:
@@ -267,7 +264,9 @@
                         VCAssetCreateOrEdit* vc = [[VCAssetCreateOrEdit alloc] initWithEditAsset:asset
                                                                                 editBitassetOpts:nil
                                                                                   result_promise:result_promise];
-                        [self pushViewController:vc vctitle:@"更新资产" backtitle:kVcDefaultBackTitleName];
+                        [self pushViewController:vc
+                                         vctitle:NSLocalizedString(@"kVcTitleAssetOpUpdateBasic", @"更新资产")
+                                       backtitle:kVcDefaultBackTitleName];
                         [result_promise then:^id(id dirty) {
                             //  刷新UI
                             if (dirty && [dirty boolValue]) {
@@ -286,7 +285,9 @@
                         VCAssetCreateOrEdit* vc = [[VCAssetCreateOrEdit alloc] initWithEditAsset:asset
                                                                                 editBitassetOpts:bitasset_data
                                                                                   result_promise:result_promise];
-                        [self pushViewController:vc vctitle:@"更新智能币" backtitle:kVcDefaultBackTitleName];
+                        [self pushViewController:vc
+                                         vctitle:NSLocalizedString(@"kVcTitleAssetOpUpdateBitasset", @"更新智能币")
+                                       backtitle:kVcDefaultBackTitleName];
                         [result_promise then:^id(id dirty) {
                             //  刷新UI
                             if (dirty && [dirty boolValue]) {
@@ -299,9 +300,18 @@
                     break;
                 case ebaok_issue:
                 {
+                    WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
                     VCAssetOpIssue* vc = [[VCAssetOpIssue alloc] initWithAsset:asset
-                                                            dynamic_asset_data:[chainMgr getChainObjectByID:[asset objectForKey:@"dynamic_asset_data_id"]]];
-                    [self pushViewController:vc vctitle:@"发行资产" backtitle:kVcDefaultBackTitleName];
+                                                            dynamic_asset_data:[chainMgr getChainObjectByID:[asset objectForKey:@"dynamic_asset_data_id"]]
+                                                                result_promise:result_promise];
+                    [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleAssetOpIssue", @"发行资产") backtitle:kVcDefaultBackTitleName];
+                    [result_promise then:^id(id dirty) {
+                        //  刷新UI
+                        if (dirty && [dirty boolValue]) {
+                            [self queryMyIssuedAssets];
+                        }
+                        return nil;
+                    }];
                 }
                     break;
                 default:

@@ -112,7 +112,7 @@
         
         //  设置各种属性标记
         switch (_searchType) {
-            case enstAccount:   //  搜索帐号：添加我的关注
+            case enstAccount:       //  搜索帐号：添加我的关注
             {
                 _bEnableSelectRow = YES;
                 
@@ -125,12 +125,26 @@
                 })] mutableCopy];
             }
                 break;
-            case enstAsset:     //  搜索资产：添加所有市场交易对
+            case enstTradingPair:   //  搜索资产：添加所有市场交易对
             {
                 _bEnableSelectRow = NO;
                 _bEnableSectionIndexTitle = NO;
                 _array_data = nil;
                 [self reinitCustomMarketList];
+            }
+                break;
+            case enstAssetAll:         //  搜索资产
+            case enstAssetSmart:
+            case enstAssetUIA:
+            {
+                _bEnableSelectRow = YES;
+                
+                _bEnableSectionIndexTitle = NO;
+                _pSectionHash = nil;
+                _pSectionTitle = nil;
+                
+                _array_data = [NSMutableArray array];
+                //  TODO:4.0 我收藏的资产
             }
                 break;
             default:
@@ -174,7 +188,7 @@
     {
         _pSectionTitle = nil;
     }
-
+    
     //  搜索框
     _searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
     _searchController.searchBar.delegate = self;
@@ -182,7 +196,10 @@
         case enstAccount:
             _searchController.searchBar.placeholder = NSLocalizedString(@"kSearchPlaceholderAccount", @"请输入有效的 Bitshares 帐号名");
             break;
-        case enstAsset:
+        case enstTradingPair:
+        case enstAssetAll:
+        case enstAssetSmart:
+        case enstAssetUIA:
             _searchController.searchBar.placeholder = NSLocalizedString(@"kSearchPlaceholderAsset", @"点击搜索新资产");
             break;
         default:
@@ -199,7 +216,7 @@
     _searchController.searchBar.backgroundColor = theme.appBackColor;
     [self.view addSubview:_searchController.searchBar];
     self.definesPresentationContext = YES;  //  REMARK：解决SearchController偏移问题
-        
+    
     //  [兼容性] REMARK：iOS13 采用这种方法获取 TF 对象。直接 KVC 会崩溃。设置搜索框文字颜色和占位符颜色。
     UITextField* tf = (UITextField*)[_searchController.searchBar findSubview:[UITextField class] resursion:YES];
     tf.textColor = theme.textColorMain;
@@ -264,7 +281,7 @@
 #pragma mark- TableView delegate method
 
 /**
-    (private) 是否显示搜索结果，否则显示默认列表数据。
+ (private) 是否显示搜索结果，否则显示默认列表数据。
  */
 - (BOOL)_showSearchResultData
 {
@@ -318,8 +335,14 @@
             case enstAccount:
                 titleLabel.text = [NSString stringWithFormat:NSLocalizedString(@"kSearchTipsMyFavAccount", @"我的关注(%@人)"), @([_array_data count])];
                 break;
-            case enstAsset:
+            case enstTradingPair:
                 titleLabel.text = [NSString stringWithFormat:NSLocalizedString(@"kSearchTipsMyCustomPairs", @"我的交易对(%@个)"), @([_array_data count])];
+                break;
+            case enstAssetAll:
+            case enstAssetSmart:
+            case enstAssetUIA:
+                //  TODO:4.0 lang
+                titleLabel.text = [NSString stringWithFormat:@"我的收藏(%@个)", @([_array_data count])];
                 break;
             default:
                 break;
@@ -456,7 +479,7 @@
             }
         }
             break;
-        case enstAsset:     //  资产信息
+        case enstTradingPair:     //  资产信息（交易对）
         {
             id base_markets = [[ChainObjectManager sharedChainObjectManager] getDefaultMarketInfos];
             sortKey = @"symbol";
@@ -480,6 +503,39 @@
                 }];
             }
             
+        }
+            break;
+        case enstAssetAll:         //  资产信息
+        case enstAssetSmart:
+        case enstAssetUIA:
+        {
+            sortKey = @"symbol";
+            for (id asset in data) {
+                id symbol = [asset objectForKey:sortKey];
+                
+                if (_searchType == enstAssetSmart) {
+                    //  跳过UIA
+                    NSString* bitasset_data_id = [asset objectForKey:@"bitasset_data_id"];
+                    if (!bitasset_data_id || [bitasset_data_id isEqualToString:@""]) {
+                        continue;
+                    }
+                } else if (_searchType == enstAssetUIA) {
+                    //  跳过智能币
+                    if ([ModelUtils assetIsSmart:asset]) {
+                        continue;
+                    }
+                }
+                
+                if ([self isSearchMatched:symbol match:_currSearchText]){
+                    [_searchDataArray addObject:asset];
+                }
+            }
+            //  按照名字长度升序排列（即匹配度高的排在前面） 比如 搜索：freedom16，那么 freedom168就排在freedom1613前面。
+            if ([_searchDataArray count] > 0){
+                [_searchDataArray sortUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+                    return [[obj1 objectForKey:sortKey] length] > [[obj2 objectForKey:sortKey] length];
+                }];
+            }
         }
             break;
         default:
@@ -508,7 +564,10 @@
             searchText = [searchText lowercaseString];  //  帐号搜索全小写字母
         }
             break;
-        case enstAsset:
+        case enstTradingPair:
+        case enstAssetAll:
+        case enstAssetSmart:
+        case enstAssetUIA:
         {
             api_string = @"list_assets";
             searchText = [searchText uppercaseString];  //  资产搜索全大写字母
@@ -611,7 +670,7 @@
                                   base:[base objectForKey:@"symbol"]] saveCustomMarketsToFile];
         //  [统计]
         [OrgUtils logEvents:@"event_custommarket_add"
-                       params:@{@"base":[base objectForKey:@"symbol"], @"quote":[quote objectForKey:@"symbol"]}];
+                     params:@{@"base":[base objectForKey:@"symbol"], @"quote":[quote objectForKey:@"symbol"]}];
     }else{
         id quote = [linedata objectForKey:@"quote"];
         id base = [linedata objectForKey:@"base"];
@@ -619,7 +678,7 @@
                                      base:[base objectForKey:@"symbol"]] saveCustomMarketsToFile];
         //  [统计]
         [OrgUtils logEvents:@"event_custommarket_remove"
-                       params:@{@"base":[base objectForKey:@"symbol"], @"quote":[quote objectForKey:@"symbol"]}];
+                     params:@{@"base":[base objectForKey:@"symbol"], @"quote":[quote objectForKey:@"symbol"]}];
     }
     
     //  刷新 mainTableView
@@ -647,7 +706,7 @@
             cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
         }
             break;
-        case enstAsset:
+        case enstTradingPair:
         {
             id quote = [linedata objectForKey:@"quote"];
             id base = [linedata objectForKey:@"base"];
@@ -675,6 +734,16 @@
                 [pSwitch addTarget:self action:@selector(onSwitchAction:) forControlEvents:UIControlEventValueChanged];
                 cell.accessoryView = pSwitch;
             }
+        }
+            break;
+        case enstAssetAll:
+        case enstAssetSmart:
+        case enstAssetUIA:
+        {
+            cell.textLabel.text = [linedata objectForKey:@"symbol"];
+            cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+            cell.detailTextLabel.text = [NSString stringWithFormat:@"#%@", [[[linedata objectForKey:@"id"] componentsSeparatedByString:@"."] lastObject]];
+            cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
         }
             break;
         default:
