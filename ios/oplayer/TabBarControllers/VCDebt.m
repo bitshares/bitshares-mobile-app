@@ -8,6 +8,7 @@
 
 #import "VCDebt.h"
 
+#import "VCSearchNetwork.h"
 #import "VCImportAccount.h"
 #import "VCCallOrderRanking.h"
 #import "VCBtsaiWebView.h"
@@ -198,6 +199,28 @@ enum
 
 - (void)onSelectDebtAssetClicked
 {
+//    VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:enstAssetSmart callback:^(id asset_info) {
+//        if (asset_info){
+//            //            NSString* new_id = [asset_info objectForKey:@"id"];
+//            //            NSString* old_id = [_curr_asset objectForKey:@"id"];
+//            //            if (![new_id isEqualToString:old_id]) {
+//            //                _curr_asset = asset_info;
+//            //                //  切换资产后重新输入
+//            //                _nCurrBalance = [ModelUtils findAssetBalance:_full_account_data asset:_curr_asset];
+//            //                [_tf_amount clearInputTextValue];
+//            //                [_tf_amount drawUI_newTailer:[_curr_asset objectForKey:@"symbol"]];
+//            //                [self _drawUI_Balance:NO];
+//            //                [_mainTableView reloadData];
+//            //            }
+//            [self processSelectNewDebtAsset:asset_info];
+//        }
+//    }];
+//    //    vc.title = @"资产查询";//TODO:4.0 lang
+//    [self pushViewController:vc
+//                     vctitle:@"搜索资产"
+//                   backtitle:kVcDefaultBackTitleName];
+    
+    //  TODO:5.0 原来的逻辑
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     id asset_list = [[chainMgr getDebtAssetList] ruby_map:(^id(id symbol) {
         return [chainMgr getAssetBySymbol:symbol];
@@ -214,20 +237,20 @@ enum
     if ([[newDebtAsset objectForKey:@"id"] isEqualToString:_debtPair.baseAsset[@"id"]]){
         return;
     }
-    //  获取背书资产 TODO:fowallet
-    //  获取当前资产喂价信息
-    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    [[[self asyncQueryFeedPrice:newDebtAsset] then:(^id(id data) {
-        [self hideBlockView];
-        //  TODO:fowallet 背书资产是否动态查询？？？
-        _debtPair = [[TradingPair alloc] initWithBaseAsset:newDebtAsset quoteAsset:_debtPair.quoteAsset];
-        [self refreshUI:[self isUserLogined] new_feed_price_data:data];
-        return nil;
-    })] catch:(^id(id error) {
-        [self hideBlockView];
-        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
-        return nil;
-    })];
+    
+    //  更新缓存
+    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+    [chainMgr appendAssetCore:newDebtAsset];
+    
+    //  查询喂价、查询背书资产信息
+    id p1 = [self asyncQueryFeedPrice:newDebtAsset];
+    id p2 = [chainMgr queryBackingAsset:newDebtAsset];
+    [VcUtils simpleRequest:self request:[WsPromise all:@[p1, p2]] callback:^(id data_array) {
+        id feed_data = [data_array objectAtIndex:0];
+        id backing_asset = [data_array objectAtIndex:1];
+        _debtPair = [[TradingPair alloc] initWithBaseAsset:newDebtAsset quoteAsset:backing_asset];
+        [self refreshUI:[self isUserLogined] new_feed_price_data:feed_data];
+    }];
 }
 
 /**
@@ -250,7 +273,7 @@ enum
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     
     [self showLeftButton:NSLocalizedString(@"kDebtLableReset", @"重置") action:@selector(onResetCLicked)];
     [self showRightButton:NSLocalizedString(@"kDebtLableSelectAsset", @"选择资产") action:@selector(onSelectDebtAssetClicked)];
@@ -349,7 +372,7 @@ enum
     UIView* tmpSepLine = [[UIView alloc] initWithFrame:CGRectMake(0, offset-fSepLineHeight, screenRect.size.width, fSepLineHeight)];
     tmpSepLine.backgroundColor = [ThemeManager sharedThemeManager].textColorGray;
     [self.view addSubview:tmpSepLine];
-
+    
     //  UI - 下面主表格区域
     CGRect rect = CGRectMake(0, offset, screenRect.size.width, screenRect.size.height - [self heightForStatusAndNaviBar] - [self heightForTabBar] - offset - [self heightForBottomSafeArea]);
     _mainTableView = [[UITableViewBase alloc] initWithFrame:rect style:UITableViewStyleGrouped];
@@ -432,7 +455,7 @@ enum
     _collRateSlider.tag = kVcSubRateSlider;
     _curve_ratio = [[CurveSlider alloc] initWithSlider:_collRateSlider max:400.0f mapping_min:0.0f mapping_max:6.0f];
     _curve_ratio.delegate = self;
-//    [_collRateSlider addTarget:self action:@selector(onCollRateChanged:) forControlEvents:UIControlEventValueChanged];
+    //    [_collRateSlider addTarget:self action:@selector(onCollRateChanged:) forControlEvents:UIControlEventValueChanged];
     //  初始化抵押率文字和滑动条
     [self _refreshUI_ratio:YES];
     
@@ -442,7 +465,7 @@ enum
     _collTargetRateSlider.tag = kVcSubTargetRateSlider;
     _curve_target_ratio = [[CurveSlider alloc] initWithSlider:_collTargetRateSlider max:400.0f mapping_min:0.0f mapping_max:4.0f];
     _curve_target_ratio.delegate = self;
-//    [_collTargetRateSlider addTarget:self action:@selector(onCollRateChanged:) forControlEvents:UIControlEventValueChanged];
+    //    [_collTargetRateSlider addTarget:self action:@selector(onCollRateChanged:) forControlEvents:UIControlEventValueChanged];
     //  初始化属性
     [self _refreshUI_target_ratio:nil reset_slider:YES];
     
@@ -489,8 +512,8 @@ enum
         
         ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
         
-        id debt_asset_list = [chainMgr getDebtAssetList];
-        assert(debt_asset_list);
+        //        id debt_asset_list = [chainMgr getDebtAssetList];
+        //        assert(debt_asset_list);
         
         //  REMARK：如果没执行 get_full_accounts 请求，则内存缓存不存在，则默认从登录时的帐号信息里获取。
         id full_account_data = [chainMgr getFullAccountDataFromCache:account_id];
@@ -506,7 +529,7 @@ enum
             [balances_hash setObject:@{@"asset_id":asset_type, @"amount":balance} forKey:asset_type];
         }
         id balances_list = [balances_hash allValues];
-
+        
         //  2、计算手续费对象（更新手续费资产的可用余额，即减去手续费需要的amount）
         _fee_item = [chainMgr estimateFeeObject:ebo_call_order_update balances:balances_list];
         if (_fee_item){
@@ -525,10 +548,10 @@ enum
             }
         }
         
-        //  3、获取抵押物（BTS）的余额信息（TODO:fowallet ！！！如果以后支持其他资产作为抵押物，则需要调整。）
-        _collateralBalance = [balances_hash objectForKey:chainMgr.grapheneCoreAssetID];
+        //  3、获取抵押物（BTS）的余额信息
+        _collateralBalance = [balances_hash objectForKey:_debtPair.quoteId];
         if (!_collateralBalance){
-            _collateralBalance = @{@"asset_id":chainMgr.grapheneCoreAssetID, @"amount":@0};
+            _collateralBalance = @{@"asset_id":_debtPair.quoteId, @"amount":@0};
         }
         
         //  4、获取当前持有的债仓
@@ -542,26 +565,25 @@ enum
         
         //  5、债仓和余额关联
         _callOrderHash = [NSMutableDictionary dictionary];
-        for (id debt_symbol in debt_asset_list) {
-            id debt_asset = [chainMgr getAssetBySymbol:debt_symbol];
-            id oid = [debt_asset objectForKey:@"id"];
-            id balance = [balances_hash objectForKey:oid];
-            if (!balance){
-                //  默认值
-                balance = @{@"asset_id":oid, @"amount":@0};
-            }
-            //  callorder可能不存在
-            id info;
-            id callorder = [call_orders_hash objectForKey:oid];
-            if (callorder){
-                info = @{@"balance":balance, @"callorder":callorder, @"debt_asset":debt_asset};
-            }else{
-                info = @{@"balance":balance, @"debt_asset":debt_asset};
-            }
-            //  保存到Hash
-            [_callOrderHash setObject:info forKey:debt_symbol];
-            [_callOrderHash setObject:info forKey:oid];
+        id debt_symbol = _debtPair.baseAsset[@"symbol"];
+        id debt_asset = _debtPair.baseAsset;//[chainMgr getAssetBySymbol:debt_symbol];
+        id oid = [debt_asset objectForKey:@"id"];
+        id balance = [balances_hash objectForKey:oid];
+        if (!balance){
+            //  默认值
+            balance = @{@"asset_id":oid, @"amount":@0};
         }
+        //  callorder可能不存在
+        id info;
+        id callorder = [call_orders_hash objectForKey:oid];
+        if (callorder){
+            info = @{@"balance":balance, @"callorder":callorder, @"debt_asset":debt_asset};
+        }else{
+            info = @{@"balance":balance, @"debt_asset":debt_asset};
+        }
+        //  保存到Hash
+        [_callOrderHash setObject:info forKey:debt_symbol];
+        [_callOrderHash setObject:info forKey:oid];
     }else{
         if (_callOrderHash){
             [_callOrderHash removeAllObjects];
@@ -764,7 +786,7 @@ enum
         _currFeedPriceTitle.text = [NSString stringWithFormat:@"%@ --%@/%@",
                                     NSLocalizedString(@"kDebtLableFeedPrice", @"当前喂价"), _debtPair.baseAsset[@"symbol"], _debtPair.quoteAsset[@"symbol"]];
     }
-
+    
     //  UI - 你的强平触发价
     [self onResetCLicked];
     
@@ -834,7 +856,7 @@ enum
             id debt_callorder = [self _getCallOrder];
             if (debt_callorder){
                 id n_curr_debt = [NSDecimalNumber decimalNumberWithMantissa:[debt_callorder[@"debt"] unsignedLongLongValue]
-                                                                exponent:-_debtPair.basePrecision isNegative:NO];
+                                                                   exponent:-_debtPair.basePrecision isNegative:NO];
                 id balance = [self _getDebtBalance];
                 //  balance < n_curr_debt
                 if ([balance compare:n_curr_debt] == NSOrderedAscending){
@@ -1136,11 +1158,10 @@ enum
         ratio = [NSDecimalNumber zero];
     }
     
-    float value = [ratio floatValue];
-    
     if (reset_slider){
         id parameters = [[ChainObjectManager sharedChainObjectManager] getDefaultParameters];
         assert(parameters);
+        float value = [ratio floatValue];
         [_curve_target_ratio set_min:fmaxf([_nMaintenanceCollateralRatio floatValue] - 0.3f, 0.0f)];
         [_curve_target_ratio set_max:fmaxf(value, [parameters[@"max_target_ratio"] floatValue])];
         [_curve_target_ratio set_value:value];
@@ -1152,7 +1173,8 @@ enum
         _cellLabelTargetRate.textLabel.text = NSLocalizedString(@"kDebtTipTargetRatioNotSet", @"目标抵押率 未设置");
     }else{
         _cellLabelTargetRate.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-        _cellLabelTargetRate.textLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kDebtTipTargetRatio", @"目标抵押率"), [OrgUtils formatFloatValue:value precision:2]];
+        _cellLabelTargetRate.textLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kDebtTipTargetRatio", @"目标抵押率"),
+                                               [OrgUtils formatFloatValue:ratio usesGroupingSeparator:NO minimumFractionDigits:2]];
     }
 }
 
@@ -1164,12 +1186,13 @@ enum
     assert(_nMaintenanceCollateralRatio);
     _cellLabelRate.textLabel.textColor = [self _getCollateralRatioColor];
     if (_nCurrMortgageRate){
-        float value = [_nCurrMortgageRate floatValue];
-        _cellLabelRate.textLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kDebtLableRatio", @"抵押率"), [OrgUtils formatFloatValue:value precision:2]];
+        _cellLabelRate.textLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kDebtLableRatio", @"抵押率"),
+                                         [OrgUtils formatFloatValue:_nCurrMortgageRate usesGroupingSeparator:NO minimumFractionDigits:2]];
         if (reset_slider){
             id parameters = [[ChainObjectManager sharedChainObjectManager] getDefaultParameters];
             assert(parameters);
             float mcr = [_nMaintenanceCollateralRatio floatValue];
+            float value = [_nCurrMortgageRate floatValue];
             [_curve_ratio set_min:fminf(value, mcr)];
             [_curve_ratio set_max:fmaxf(value, [parameters[@"max_ratio"] floatValue])];
             [_curve_ratio set_value:value];
@@ -1325,7 +1348,7 @@ enum
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
                     cell.textLabel.text = @" ";
                     [cell.contentView addSubview:_collRateSlider];
-//                    cell.showCustomBottomLine = YES;
+                    //                    cell.showCustomBottomLine = YES;
                     cell.hideTopLine = YES;
                     cell.hideBottomLine = YES;
                     return cell;
@@ -1508,21 +1531,21 @@ enum
         target_ratio = [s_target_ratio unsignedLongLongValue];
     }
     id op = @{
-              @"fee":@{
-                      @"amount":@0,
-                      @"asset_id":[_fee_item objectForKey:@"fee_asset_id"],
-                      },
-              @"funding_account":funding_account,
-              @"delta_collateral":@{
-                      @"amount":@([coll longLongValue]),
-                      @"asset_id":_debtPair.quoteId,
-                      },
-              @"delta_debt":@{
-                      @"amount":@([debt longLongValue]),
-                      @"asset_id":_debtPair.baseId,
-                      },
-              @"extensions":(n_target_ratio ? @{@"target_collateral_ratio":@(target_ratio)} : @{})
-              };
+        @"fee":@{
+                @"amount":@0,
+                @"asset_id":[_fee_item objectForKey:@"fee_asset_id"],
+        },
+        @"funding_account":funding_account,
+        @"delta_collateral":@{
+                @"amount":@([coll longLongValue]),
+                @"asset_id":_debtPair.quoteId,
+        },
+        @"delta_debt":@{
+                @"amount":@([debt longLongValue]),
+                @"asset_id":_debtPair.baseId,
+        },
+        @"extensions":(n_target_ratio ? @{@"target_collateral_ratio":@(target_ratio)} : @{})
+    };
     
     //  确保有权限发起普通交易，否则作为提案交易处理。
     [self GuardProposalOrNormalTransaction:ebo_call_order_update
@@ -1532,38 +1555,38 @@ enum
                                  opaccount:account
                                       body:^(BOOL isProposal, NSDictionary *proposal_create_args)
      {
-         assert(!isProposal);
-         //  请求网络广播
-         [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-         [[[[BitsharesClientManager sharedBitsharesClientManager] callOrderUpdate:op] then:(^id(id data) {
-             [[[[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:funding_account] then:(^id(id full_data) {
-                 NSLog(@"callorder_update & refresh: %@", full_data);
-                 [self hideBlockView];
-                 //  刷新UI
-                 [self refreshUI:YES new_feed_price_data:nil];
-                 [OrgUtils makeToast:NSLocalizedString(@"kDebtTipTxUpdatePositionFullOK", @"债仓调整完毕。")];
-                 //  [统计]
-                 [OrgUtils logEvents:@"txCallOrderUpdateFullOK"
-                                params:@{@"account":funding_account, @"debt_asset":_debtPair.baseAsset[@"symbol"]}];
-                 return nil;
-             })] catch:(^id(id error) {
-                 [self hideBlockView];
-                 [OrgUtils makeToast:NSLocalizedString(@"kDebtTipTxUpdatePositionOK", @"债仓调整完毕，但刷新界面数据失败，请稍后再试。")];
-                 //  [统计]
-                 [OrgUtils logEvents:@"txCallOrderUpdateOK"
-                                params:@{@"account":funding_account, @"debt_asset":_debtPair.baseAsset[@"symbol"]}];
-                 return nil;
-             })];
-             return nil;
-         })] catch:(^id(id error) {
-             [self hideBlockView];
-             [OrgUtils showGrapheneError:error];
-             //  [统计]
-             [OrgUtils logEvents:@"txCallOrderUpdateFailed"
-                            params:@{@"account":funding_account, @"debt_asset":_debtPair.baseAsset[@"symbol"]}];
-             return nil;
-         })];
-     }];
+        assert(!isProposal);
+        //  请求网络广播
+        [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+        [[[[BitsharesClientManager sharedBitsharesClientManager] callOrderUpdate:op] then:(^id(id data) {
+            [[[[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:funding_account] then:(^id(id full_data) {
+                NSLog(@"callorder_update & refresh: %@", full_data);
+                [self hideBlockView];
+                //  刷新UI
+                [self refreshUI:YES new_feed_price_data:nil];
+                [OrgUtils makeToast:NSLocalizedString(@"kDebtTipTxUpdatePositionFullOK", @"债仓调整完毕。")];
+                //  [统计]
+                [OrgUtils logEvents:@"txCallOrderUpdateFullOK"
+                             params:@{@"account":funding_account, @"debt_asset":_debtPair.baseAsset[@"symbol"]}];
+                return nil;
+            })] catch:(^id(id error) {
+                [self hideBlockView];
+                [OrgUtils makeToast:NSLocalizedString(@"kDebtTipTxUpdatePositionOK", @"债仓调整完毕，但刷新界面数据失败，请稍后再试。")];
+                //  [统计]
+                [OrgUtils logEvents:@"txCallOrderUpdateOK"
+                             params:@{@"account":funding_account, @"debt_asset":_debtPair.baseAsset[@"symbol"]}];
+                return nil;
+            })];
+            return nil;
+        })] catch:(^id(id error) {
+            [self hideBlockView];
+            [OrgUtils showGrapheneError:error];
+            //  [统计]
+            [OrgUtils logEvents:@"txCallOrderUpdateFailed"
+                         params:@{@"account":funding_account, @"debt_asset":_debtPair.baseAsset[@"symbol"]}];
+            return nil;
+        })];
+    }];
 }
 
 #pragma mark- switch theme

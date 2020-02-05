@@ -262,8 +262,12 @@ typedef void (^YklUserCallback)(id data);
  */
 + (NSString*)formatFloatValue:(double)value precision:(NSInteger)precision usesGroupingSeparator:(BOOL)usesGroupingSeparator;
 + (NSString*)formatFloatValue:(double)value precision:(NSInteger)precision;
++ (NSString*)formatFloatValue:(NSDecimalNumber*)value
+        usesGroupingSeparator:(BOOL)usesGroupingSeparator
+        minimumFractionDigits:(NSInteger)minimumFractionDigits;
 + (NSString*)formatFloatValue:(NSDecimalNumber*)value usesGroupingSeparator:(BOOL)usesGroupingSeparator;
 + (NSString*)formatFloatValue:(NSDecimalNumber*)value;
++ (NSString*)formatFloatValue:(NSDecimalNumber*)value minimumFractionDigits:(NSInteger)minimumFractionDigits;
 
 /**
  *  根据 get_full_accounts 接口返回的所有用户信息计算用户所有资产信息、挂单信息、抵押信息、债务信息等。

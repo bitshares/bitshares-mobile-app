@@ -561,13 +561,17 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     }
 }
 
-//  (private) 添加到内存 cache
+/*
+ *  (public) 添加到内存 cache
+ */
 - (void)appendAssetCore:(id)asset
 {
     assert(asset);
-    
-    [_cacheObjectID2ObjectHash setObject:asset forKey:asset[@"id"]];         //  1.3.0格式
-    [_cacheAssetSymbol2ObjectHash setObject:asset forKey:asset[@"symbol"]];
+    id oid = asset[@"id"];
+    if (![_cacheObjectID2ObjectHash objectForKey:oid]) {
+        [_cacheObjectID2ObjectHash setObject:asset forKey:oid];         //  1.3.0格式
+        [_cacheAssetSymbol2ObjectHash setObject:asset forKey:asset[@"symbol"]];
+    }
 }
 
 /**
@@ -1739,7 +1743,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     return [[self queryAllGrapheneObjects:@[bitasset_data_id]] then:^id(id result_hash) {
         id bitasset_data = [result_hash objectForKey:bitasset_data_id];
         NSString* short_backing_asset = [[bitasset_data objectForKey:@"options"] objectForKey:@"short_backing_asset"];
-        return [[self queryAllGrapheneObjects:@[short_backing_asset]] then:^id(id result_hash02) {
+        return [[self queryAllAssetsInfo:@[short_backing_asset]] then:^id(id result_hash02) {
             return [result_hash02 objectForKey:short_backing_asset];
         }];
     }];

@@ -383,7 +383,7 @@ enum
                     case kVcSubUserAsset:
                     {
                         [self GuardWalletExist:^{
-                            [VCCommonLogic viewUserAssets:self account:[[WalletManager sharedWalletManager] getWalletAccountName]];
+                            [VcUtils viewUserAssets:self account:[[WalletManager sharedWalletManager] getWalletAccountName]];
                         }];
                     }
                         break;
@@ -391,7 +391,7 @@ enum
                     {
                         [self GuardWalletExist:^{
                             id uid = [[[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"] objectForKey:@"id"];
-                            [VCCommonLogic viewUserLimitOrders:self account:uid tradingPair:nil];
+                            [VcUtils viewUserLimitOrders:self account:uid tradingPair:nil];
                         }];
                     }
                         break;

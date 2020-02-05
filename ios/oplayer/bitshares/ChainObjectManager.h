@@ -147,6 +147,11 @@
  */
 - (void)appendAssets:(NSDictionary*)assets_name2obj_hash;
 
+/*
+ *  (public) 添加到内存 cache
+ */
+- (void)appendAssetCore:(id)asset;
+
 /**
  *  (public) 更新缓存
  */

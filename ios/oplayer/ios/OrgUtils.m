@@ -1964,20 +1964,36 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     return [self formatFloatValue:value precision:precision usesGroupingSeparator:YES];
 }
 
-+ (NSString*)formatFloatValue:(NSDecimalNumber*)value usesGroupingSeparator:(BOOL)usesGroupingSeparator
++ (NSString*)formatFloatValue:(NSDecimalNumber*)value
+        usesGroupingSeparator:(BOOL)usesGroupingSeparator
+        minimumFractionDigits:(NSInteger)minimumFractionDigits
 {
     NSNumberFormatter* asset_formatter = [[NSNumberFormatter alloc] init];
     [asset_formatter setLocale:[LangManager sharedLangManager].appLocale];
     [asset_formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     //  REMARK：大部分NSDecimalNumber在计算的时候就已经制定了小数点精度和四舍五入模式等，故这里直接设置一个最大小数位数即可。
     [asset_formatter setMaximumFractionDigits:14];
+    //  保留最低小数位数（末尾可填充0）
+    if (minimumFractionDigits > 0) {
+        [asset_formatter setMinimumFractionDigits:minimumFractionDigits];
+    }
     [asset_formatter setUsesGroupingSeparator:usesGroupingSeparator];
     return [asset_formatter stringFromNumber:value];
+}
+
++ (NSString*)formatFloatValue:(NSDecimalNumber*)value usesGroupingSeparator:(BOOL)usesGroupingSeparator
+{
+    return [self formatFloatValue:value usesGroupingSeparator:usesGroupingSeparator minimumFractionDigits:-1];
 }
 
 + (NSString*)formatFloatValue:(NSDecimalNumber*)value
 {
     return [self formatFloatValue:value usesGroupingSeparator:YES];
+}
+
++ (NSString*)formatFloatValue:(NSDecimalNumber*)value minimumFractionDigits:(NSInteger)minimumFractionDigits
+{
+    return [self formatFloatValue:value usesGroupingSeparator:NO minimumFractionDigits:minimumFractionDigits];
 }
 
 /**
