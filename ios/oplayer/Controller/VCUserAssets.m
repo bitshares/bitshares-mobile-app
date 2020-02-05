@@ -237,7 +237,7 @@
                           name, @"name",
                           precision, @"precision", nil];
         
-        //  资产类型（核心、智能、普通）TODO:4.0 预测市场
+        //  资产类型（核心、智能、普通、预测市场）
         if ([asset_type isEqualToString:chainMgr.grapheneCoreAssetID]){
             [asset_final setObject:@"1" forKey:@"is_core"];
         }else{
@@ -625,7 +625,6 @@
  */
 - (void)onButtonClicked_AssetSettle:(UIButton*)button row:(NSInteger)row
 {
-    //  TODO:4.0 清算界面 lang
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     
     id clicked_asset = [_assetDataArray objectAtIndex:row];
@@ -649,13 +648,12 @@
         
         //  检测资产是否禁止强清
         if (![ModelUtils assetCanForceSettle:newAsset]) {
-            //  禁止清算 TODO:4.0 lang
-            [OrgUtils makeToast:@"该资产禁止清算。"];
+            [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpSettleTipsDisableSettle", @"该资产禁止清算。")];
             return;
         }
         
         if ([ModelUtils isNullPrice:[[newBitassetData objectForKey:@"current_feed"] objectForKey:@"settlement_price"]]) {
-            [OrgUtils makeToast:@"该资产没有有效的喂价，不可清算。"];
+            [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpSettleTipsNoFeedData", @"该资产没有有效的喂价，不可清算。")];
             return;
         }
         
@@ -665,7 +663,8 @@
         id options = [newBitassetData objectForKey:@"options"];
         
         NSInteger force_settlement_delay_sec = [[options objectForKey:@"force_settlement_delay_sec"] integerValue];
-        id s_delay_hour = [NSString stringWithFormat:@"%i小时", (int)(force_settlement_delay_sec / 3600)];
+        id s_delay_hour = [NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpSettleDelayHoursN", @"%@小时"),
+                           @((int)(force_settlement_delay_sec / 3600))];
         
         NSInteger force_settlement_offset_percent = [[options objectForKey:@"force_settlement_offset_percent"] integerValue];
         id n_force_settlement_offset_percent = [NSDecimalNumber decimalNumberWithMantissa:force_settlement_offset_percent
@@ -675,18 +674,18 @@
         
         id opArgs = @{
             @"kOpType":@(button.tag),
-            @"kMsgTips":[NSString stringWithFormat:@"【温馨提示】\n1、清算操作强制把清算资产换回背书资产。此操作不可撤销，请谨慎操作。\n2、发起清算后将在%@后排队执行，并以当时的清算价格成交。\n3、清算价 = 成交时的喂价 × %@", s_delay_hour, n_final],
-            @"kMsgAmountPlaceholder":@"请输入清算数量",
-            @"kMsgBtnName":@"发起清算",
-            @"kMsgSubmitInputValidAmount":@"请输入要清算的资产数量。",
-            @"kMsgSubmitOK":@"发起清算成功。"
+            @"kMsgTips":[NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpSettleUiTips", @"【温馨提示】\n1、清算操作强制把清算资产换回背书资产。此操作不可撤销，请谨慎操作。\n2、发起清算后将在%@后排队执行，并以当时的清算价格成交。\n3、清算价 = 成交时的喂价 × %@"), s_delay_hour, n_final],
+            @"kMsgAmountPlaceholder":NSLocalizedString(@"kVcAssetOpSettleCellPlaceholderAmount", @"请输入清算数量"),
+            @"kMsgBtnName":NSLocalizedString(@"kVcAssetOpSettleBtnName", @"发起清算"),
+            @"kMsgSubmitInputValidAmount":NSLocalizedString(@"kVcAssetOpSettleSubmitTipsPleaseInputAmount", @"请输入要清算的资产数量。"),
+            @"kMsgSubmitOK":NSLocalizedString(@"kVcAssetOpSettleSubmitTipSettleOK", @"发起清算成功。")
         };
         WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
         VCAssetOpCommon* vc = [[VCAssetOpCommon alloc] initWithCurrAsset:[[ChainObjectManager sharedChainObjectManager] getChainObjectByID:clicked_asset[@"id"]]
                                                        full_account_data:full_account
                                                            op_extra_args:opArgs
                                                           result_promise:result_promise];
-        [_owner pushViewController:vc vctitle:@"发起清算" backtitle:kVcDefaultBackTitleName];
+        [_owner pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleAssetOpSettle", @"发起清算") backtitle:kVcDefaultBackTitleName];
         [result_promise then:^id(id dirty) {
             //  刷新UI
             if (dirty && [dirty boolValue]) {
@@ -710,21 +709,21 @@
     [VcUtils simpleRequest:_owner
                    request:[chainMgr queryFullAccountInfo:[[_accountInfo objectForKey:@"account"] objectForKey:@"id"]]
                   callback:^(id full_account) {
-        //  TODO:4.0 lang
+        
         id opArgs = @{
             @"kOpType":@(button.tag),
-            @"kMsgTips":@"【温馨提示】\n销毁会减少当前流通量。此操作不可逆，请谨慎操作。",
-            @"kMsgAmountPlaceholder":@"请输入销毁数量",
-            @"kMsgBtnName":@"立即销毁",
-            @"kMsgSubmitInputValidAmount":@"请输入要销毁的资产数量。",
-            @"kMsgSubmitOK":@"销毁成功。"
+            @"kMsgTips":NSLocalizedString(@"kVcAssetOpReserveUiTips", @"【温馨提示】\n销毁会减少当前流通量。此操作不可逆，请谨慎操作。"),
+            @"kMsgAmountPlaceholder":NSLocalizedString(@"kVcAssetOpReserveCellPlaceholderAmount", @"请输入销毁数量"),
+            @"kMsgBtnName":NSLocalizedString(@"kVcAssetOpReserveBtnName", @"立即销毁"),
+            @"kMsgSubmitInputValidAmount":NSLocalizedString(@"kVcAssetOpReserveSubmitTipsPleaseInputAmount", @"请输入要销毁的资产数量。"),
+            @"kMsgSubmitOK":NSLocalizedString(@"kVcAssetOpReserveSubmitTipOK", @"销毁成功。")
         };
         WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
         VCAssetOpCommon* vc = [[VCAssetOpCommon alloc] initWithCurrAsset:[chainMgr getChainObjectByID:clicked_asset[@"id"]]
                                                        full_account_data:full_account
                                                            op_extra_args:opArgs
                                                           result_promise:result_promise];
-        [_owner pushViewController:vc vctitle:@"销毁资产" backtitle:kVcDefaultBackTitleName];
+        [_owner pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleAssetOpReserve", @"销毁资产") backtitle:kVcDefaultBackTitleName];
         [result_promise then:^id(id dirty) {
             //  刷新UI
             if (dirty && [dirty boolValue]) {

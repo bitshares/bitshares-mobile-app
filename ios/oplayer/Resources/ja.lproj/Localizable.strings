@@ -420,10 +420,25 @@
 "kVcActivityDescUpdateProposal" = "提案更新。#%@";
 
 /* 资产管理相关 */
+"kVcAssetMgrEmptyList" = "未发行任何资产，点击右上角创建资产。";//TODO:
+"kVcAssetMgrCellActionViewDetail" = "资产详情";//TODO:
+"kVcAssetMgrCellActionUpdateAsset" = "更新资产";//TODO:
+"kVcAssetMgrCellActionUpdateBitasset" = "更新智能币";//TODO:
+"kVcAssetMgrCellActionIssueAsset" = "发行资产";//TODO:
+"kVcAssetMgrCellInfoCurSupply" = "当前供应量";//TODO:
+"kVcAssetMgrCellInfoMaxSupply" = "最大供应量";//TODO:
+"kVcAssetMgrCellInfoConSupply" = "隐私供应量";//TODO:
+
 "kVcAssetMgrAssetCreateButton" = "创建";//TODO:
+"kVcAssetMgrAssetUpdateAssetButton" = "更新资产";//TODO:
+"kVcAssetMgrAssetUpdateBitassetButton" = "更新智能币";//TODO:
+"kVcAssetMgrSegInfoFixInfo" = "固定信息";//TODO:
 "kVcAssetMgrSegInfoBasicInfo" = "基本信息";//TODO:
+"kVcAssetMgrSegInfoMarketFeeInfo" = "手续费信息";//TODO:
 "kVcAssetMgrSegInfoPermissionInfo" = "权限信息";//TODO:
 "kVcAssetMgrSegInfoSmartCoinInfo" = "智能币信息";//TODO:
+"kVcAssetMgrCreateUiTipsCreate" = "【温馨提示】\n1、资产名称创建后不可更改。\n2、资产精度即资产支持的小数位数。\n3、资产精度创建后不可更改。\n4、创建资产的手续费由资产名称长度决定。";//TODO:
+"kVcAssetMgrCreateUiTipsUpdateAsset" = "【温馨提示】\n资产权限一旦永久禁用后则后续不可再启用。";//TODO:
 "kVcAssetMgrCellTitleAssetName" = "资产名称";//TODO:
 "kVcAssetMgrCellTitleMaxSupply" = "最大供应量";//TODO:
 "kVcAssetMgrCellTitleAssetDesc" = "资产描述";//TODO:
@@ -435,6 +450,10 @@
 "kVcAssetMgrCellTitleSmartDelayForSettle" = "强清延迟时间";//TODO:
 "kVcAssetMgrCellTitleSmartOffsetSettle" = "强清补偿比例";//TODO:
 "kVcAssetMgrCellTitleSmartMaxSettleValuePerHour" = "每周期最大清算量";//TODO:
+"kVcAssetMgrCellTitleFeeMarketFeeRatio" = "交易手续费比例";//TODO:
+"kVcAssetMgrCellTitleFeeMaxFeeValue" = "单笔最大手续费";//TODO:
+"kVcAssetMgrCellTitleFeeRefPercent" = "引荐人分成比例";//TODO:
+"kVcAssetMgrCellTitleFeeRefWhitelist" = "引荐人白名单";//TODO:
 "kVcAssetMgrCellTitlePermMarketFee" = "收取市场手续费";//TODO:
 "kVcAssetMgrCellTitlePermWhiteListed" = "需资产持有人在白名单中";//TODO:
 "kVcAssetMgrCellTitlePermOverrideTransfer" = "发行人可回收资产";//TODO:
@@ -445,6 +464,7 @@
 "kVcAssetMgrCellTitlePermAllowWitnessFeed" = "允许见证人提供喂价";//TODO:
 "kVcAssetMgrCellTitlePermAllowCommitteeFeed" = "允许理事会成员提供喂价";//TODO:
 
+"kVcAssetMgrInputTitleSelectBackAsset" = "请选择抵押资产";//TODO:
 "kVcAssetMgrInputTitleSmartFeedLifeTime" = "喂价有效期（分钟）";//TODO:
 "kVcAssetMgrInputTitleSmartDelayForSettle" = "强清延迟（分钟）";//TODO:
 "kVcAssetMgrInputPlaceholderSmartFeedLifeTime" = "请输入过期时间";//TODO:
@@ -452,14 +472,19 @@
 "kVcAssetMgrInputPlaceholderSmartDelayForSettle" = "请输入强清延迟";//TODO:
 "kVcAssetMgrInputPlaceholderSmartOffsetSettle" = "请输入强清补偿";//TODO:
 "kVcAssetMgrInputPlaceholderSmartMaxSettleValuePerHour" = "请输入每小强清百分比";//TODO:
+"kVcAssetMgrInputPlaceholderFeeMarketFeeRatio" = "请输入手续费比例";//TODO:
+"kVcAssetMgrInputPlaceholderFeeMaxFeeValue" = "请输入单笔最大手续费";//TODO:
+"kVcAssetMgrInputPlaceholderFeeRefPercent" = "请输入引荐人分成比例";//TODO:
 
 "kVcAssetMgrCellPlaceholderAssetName" = "请输入资产名称";//TODO:
 "kVcAssetMgrCellPlaceholderMaxSupply" = "请输入最大供应量";//TODO:
 "kVcAssetMgrCellPlaceholderAssetDesc" = "请输入描述（可选）";//TODO:
 "kVcAssetMgrCellValueAssetPrecision" = "%@ 位小数";//TODO:
 "kVcAssetMgrCellValueSmartBackingAssetNone" = "无";//TODO:
+"kVcAssetMgrCellValueSmartBackingAssetCustom" = "自定义";//TODO:
 "kVcAssetMgrCellValueSmartMinN" = "%@ 分钟";//TODO:
 "kVcAssetMgrCellValueNotSet" = "未设置";//TODO:
+"kVcAssetMgrCellValueALL" = "全部";//TODO:
 
 "kVcAssetMgrPermissionActionDisablePermanently" = "永久禁用（不可再开启）";//TODO:
 "kVcAssetMgrPermissionActionActivateLater" = "暂不激活（后续可开启）";//TODO:
@@ -467,6 +492,61 @@
 "kVcAssetMgrPermissionStatusDisablePermanently" = "永久禁用";//TODO:
 "kVcAssetMgrPermissionStatusActivateLater" = "暂不激活";//TODO:
 "kVcAssetMgrPermissionStatusActivateNow" = "立即激活";//TODO:
+"kVcAssetMgrPermissionStatusAlreadyDisablePermanently" = "已经永久禁用";//TODO:
+
+"kVcAssetOpCreateSubmitTipsInputMaxSupply" = "请输入最大供应量。";//TODO:
+"kVcAssetOpCreateSubmitTipsInvalidPermissionWitnessAndCommittee" = "不能同时激活见证人喂价和理事会成员喂价权限标记。";//TODO:
+"kVcAssetOpCreateSubmitTipsPleaseAssetSymbol" = "请输入有效的资产名称。";//TODO:
+"kVcAssetOpCreateSubmitTipsInvalidAssetSymbolLength" = "资产名称长度范围 3 ～ 16。";//TODO:
+"kVcAssetOpCreateSubmitTipsInvalidFirstSymbol" = "资产名称必须以大写字母开头。";//TODO:
+"kVcAssetOpCreateSubmitTipsInvalidLastSymbol" = "资产名称必须以大写字母或数字结尾。";//TODO:
+"kVcAssetOpCreateSubmitTipsInvalidDotSymbol" = "资产名称只能包含一个小数点符号。";//TODO:
+"kVcAssetOpCreateSubmitTipsInvalidOtherSymbols" = "资产名称只能包含数字和字母。";//TODO:
+"kVcAssetOpCreateSubmitTipsSmartInputFeedLifeTime" = "请输入喂价有效期。";//TODO:
+"kVcAssetOpCreateSubmitTipsSmartInputMinFeedNumber" = "请输入最少喂价人数。";//TODO:
+"kVcAssetOpCreateSubmitTipsSmartInputSettleDelaySec" = "请输入强清延迟执行时间。";//TODO:
+"kVcAssetOpCreateSubmitTipsSmartInputSettleOffsetPercent" = "请输入强清补偿比例。";//TODO:
+"kVcAssetOpCreateSubmitTipsSmartInputMaxSettleVolumePerHour" = "请输入每周期内可强清的总数量比例。";//TODO:
+"kVcAssetOpCreateSubmitAskTipsDisableSomePermission" = "您永久禁用了部分权限，此操作不可逆，请谨慎操作。是否继续更新资产？";//TODO:
+"kVcAssetOpCreateSubmitAskTipsForCostConfirm" = "创建 %@ 资产预计花费 %@，是否继续？";//TODO:
+"kVcAssetOpCreateSubmitTipsInvalidAssetPrefixNameNone" = "创建 %@ 资产之前需要先创建前缀资产 %@。";//TODO:
+"kVcAssetOpCreateSubmitTipsInvalidAssetPrefixNameNoPermission" = "您没有权限创建前缀为 %@ 的资产。";//TODO:
+"kVcAssetOpCreateSubmitTipsInvalidBackBackAssetType" = "借贷抵押资产 %@ 的抵押资产 %@ 不能是智能币。";//TODO:
+"kVcAssetOpCreateSubmitTipsInvalidBackAssetForCommittee" = "理事会创建的智能币的抵押资产必须是 %@ 或以 %@ 作为背书的资产。";//TODO:
+"kVcAssetOpCreateAssetSubmitTipsOK" = "创建资产成功。";//TODO:
+"kVcAssetOpUpdateAssetSubmitTipsOK" = "更新资产成功。";//TODO:
+"kVcAssetOpUpdateBitassetSubmitTipsOK" = "更新智能币成功。";//TODO:
+
+"kVcAssetOpSettleTipsDisableSettle" = "该资产禁止清算。";//TODO:
+"kVcAssetOpSettleTipsNoFeedData" = "该资产没有有效的喂价，不可清算。";//TODO:
+"kVcAssetOpSettleDelayHoursN" = "%@小时";//TODO:
+"kVcAssetOpSettleUiTips" = "【温馨提示】\n1、清算操作强制把清算资产换回背书资产。此操作不可撤销，请谨慎操作。\n2、发起清算后将在%@后排队执行，并以当时的清算价格成交。\n3、清算价 = 成交时的喂价 × %@";//TODO:
+"kVcAssetOpSettleCellPlaceholderAmount" = "请输入清算数量";//TODO:
+"kVcAssetOpSettleBtnName" = "发起清算";//TODO:
+"kVcAssetOpSettleSubmitTipsPleaseInputAmount" = "请输入要清算的资产数量。";//TODO:
+"kVcAssetOpSettleSubmitTipSettleOK" = "发起清算成功。";//TODO:
+
+"kVcAssetOpReserveUiTips" = "【温馨提示】\n销毁会减少当前流通量。此操作不可逆，请谨慎操作。";//TODO:
+"kVcAssetOpReserveCellPlaceholderAmount" = "请输入销毁数量";//TODO:
+"kVcAssetOpReserveBtnName" = "立即销毁";//TODO:
+"kVcAssetOpReserveSubmitTipsPleaseInputAmount" = "请输入要销毁的资产数量。";//TODO:
+"kVcAssetOpReserveSubmitTipOK" = "销毁成功。";//TODO:
+
+"kVcAssetOpCellTitleIssueAmount" = "发行数量";//TODO:
+"kVcAssetOpCellPlaceholderIssueAmount" = "请输入发行数量";//TODO:
+"kVcAssetOpCellTitleIssueTargetAccount" = "目标账户";//TODO:
+"kVcAssetOpCellValueIssueTargetAccountDefault" = "请选择目标账户";//TODO:
+"kVcAssetOpCellTitleIssueMemo" = "备注信息";//TODO:
+"kVcAssetOpCellTitleMaxSupply" = "最大供应量";//TODO:
+"kVcAssetOpCellTitleCurSupply" = "当前供应量";//TODO:
+"kVcAssetOpCellBtnNameIssueAsset" = "发行";//TODO:
+"kVcAssetOpSubmitTipsIssuePleaseSelectTargetAccount" = "请选择发行目标账号。";//TODO:
+"kVcAssetOpSubmitTipsIssuePleaseInputIssueAmount" = "请输入发行数量。";//TODO:
+"kVcAssetOpSubmitTipsIssueNotEnough" = "超过剩余可发行数量。";//TODO:
+"kVcAssetOpSubmitTipsIssueOK" = "发行成功。";//TODO:
+"kVcAssetOpSubmitAskIssue" = "您确认发行 %@ %@ 给 %@ 吗？";//TODO:
+"kVcAssetOpSubmitAskSettle" = "您确认清算 %@ %@ 吗？\n\n※ 发起清算之后将延后执行，并且不可撤销，请谨慎操作。";//TODO:
+"kVcAssetOpSubmitAskReserve" = "您确认销毁 %@ %@ 吗？\n\n※ 此操作不可逆，请谨慎操作。";//TODO:
 
 /* 订单界面 */
 "kVcOrderPageOpenOrders" = "現在の注文";
@@ -803,6 +883,15 @@
 "kVcTitleOtcMcOrder" = "商家订单";//TODO:
 "kVcTitleOtcMcHome" = "商家信息";//TODO:
 "kVcTitleOtcMcApply" = "商家申请";//TODO:
+"kVcTitleSearchAssets" = "搜索资产";//TODO:
+"kVcTitleSearchBackAsset" = "搜索抵押物";//TODO:
+"kVcTitleAssetOpSettle" = "发起清算";//TODO:
+"kVcTitleAssetOpReserve" = "销毁资产";//TODO:
+"kVcTitleAssetOpIssue" = "发行资产";//TODO:
+"kVcTitleAssetOpViewDetail" = "%@ 详情";//TODO:
+"kVcTitleAssetOpUpdateBasic" = "更新资产";//TODO:
+"kVcTitleAssetOpUpdateBitasset" = "更新智能币";//TODO:
+"kVcTitleAssetOpCreate" = "创建资产";//TODO:
 
 /* 钱包管理 */
 "kWalletUnlockFailedUnknowMode" = "錠解除に失敗する，未知のパターンです：%@。";

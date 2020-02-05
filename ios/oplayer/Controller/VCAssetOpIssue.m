@@ -35,6 +35,8 @@ enum
 
 @interface VCAssetOpIssue ()
 {
+    WsPromiseObject*            _result_promise;
+    
     NSDictionary*               _to_account;
     NSDictionary*               _asset;
     NSDictionary*               _dynamic_asset_data;
@@ -75,14 +77,16 @@ enum
     _btnCommit = nil;
     _to_account = nil;
     _asset = nil;
+    _result_promise = nil;
 }
 
-- (id)initWithAsset:(NSDictionary*)asset dynamic_asset_data:(id)dynamic_asset_data
+- (id)initWithAsset:(NSDictionary*)asset dynamic_asset_data:(id)dynamic_asset_data result_promise:(WsPromiseObject*)result_promise
 {
     self = [super init];
     if (self) {
         assert(asset);
         assert(dynamic_asset_data);
+        _result_promise = result_promise;
         _to_account = nil;
         _asset = asset;
         _dynamic_asset_data = dynamic_asset_data;
@@ -112,10 +116,9 @@ enum
     //  背景颜色
     self.view.backgroundColor = theme.appBackColor;
     
-    //  TODO:4.0 lang
     //  UI - 数量输入框
-    _tf_amount = [[ViewTextFieldAmountCell alloc] initWithTitle:@"发行数量"
-                                                    placeholder:@"请输入发行数量"
+    _tf_amount = [[ViewTextFieldAmountCell alloc] initWithTitle:NSLocalizedString(@"kVcAssetOpCellTitleIssueAmount", @"发行数量")
+                                                    placeholder:NSLocalizedString(@"kVcAssetOpCellPlaceholderIssueAmount", @"请输入发行数量")
                                                          tailer:[_asset objectForKey:@"symbol"]];
     _tf_amount.delegate = self;
     [self _drawUI_Balance:NO];
@@ -162,8 +165,8 @@ enum
     pTap.cancelsTouchesInView = NO; //  IOS 5.0系列导致按钮没响应
     [self.view addGestureRecognizer:pTap];
     
-    //  按钮 TODO:4.0 lang
-    _btnCommit = [self createCellLableButton:@"发行"];
+    //  按钮
+    _btnCommit = [self createCellLableButton:NSLocalizedString(@"kVcAssetOpCellBtnNameIssueAsset", @"发行")];
 }
 
 -(void)onTap:(UITapGestureRecognizer*)pTap
@@ -218,22 +221,21 @@ enum
 {
     [self endInput];
     
-    //  TODO:4.0 lang
     if (!_to_account) {
-        [OrgUtils makeToast:@"请选择发行目标账号。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpSubmitTipsIssuePleaseSelectTargetAccount", @"请选择发行目标账号。")];
         return;
     }
     
     id n_amount = [OrgUtils auxGetStringDecimalNumberValue:[_tf_amount getInputTextValue]];
     NSDecimalNumber* n_zero = [NSDecimalNumber zero];
     if ([n_amount compare:n_zero] <= 0) {
-        [OrgUtils makeToast:@"请输入发行数量。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpSubmitTipsIssuePleaseInputIssueAmount", @"请输入发行数量。")];
         return;
     }
     
     //  _n_balance < n_amount
     if ([_n_balance compare:n_amount] < 0) {
-        [OrgUtils makeToast:@"超过剩余可发行数量。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpSubmitTipsIssueNotEnough", @"超过剩余可发行数量。")];
         return;
     }
     
@@ -244,7 +246,7 @@ enum
     }
     
     //  --- 参数大部分检测合法 执行请求 ---
-    id value = [NSString stringWithFormat:@"您确认发行 %@ %@ 给 %@ 吗？",
+    id value = [NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpSubmitAskIssue", @"您确认发行 %@ %@ 给 %@ 吗？"),
                 [OrgUtils formatFloatValue:n_amount], _asset[@"symbol"], _to_account[@"name"]];
     [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:value
                                                            withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
@@ -325,11 +327,15 @@ enum
                 _n_balance = [_n_balance decimalNumberBySubtracting:n_amount];
                 [self _drawUI_Balance:NO];
                 [_mainTableView reloadData];
-                // TODO:4.0 lang
-                [OrgUtils makeToast:@"发行成功。"];
+                [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpSubmitTipsIssueOK", @"发行成功。")];
                 //  [统计]
                 [OrgUtils logEvents:@"txAssetIssueFullOK"
                              params:@{@"issuer":from}];
+                //  返回上一个界面并刷新
+                if (_result_promise) {
+                    [_result_promise resolve:@YES];
+                }
+                [self closeOrPopViewController];
                 return nil;
             })] catch:(^id(id error) {
                 [self hideBlockView];
@@ -419,7 +425,7 @@ enum
                     cell.hideBottomLine = YES;
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                    cell.textLabel.text = @"目标账户";//TODO:4.0 lang
+                    cell.textLabel.text = NSLocalizedString(@"kVcAssetOpCellTitleIssueTargetAccount", @"目标账户");
                     cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
                     cell.textLabel.textColor = theme.textColorMain;
                     return cell;
@@ -437,16 +443,12 @@ enum
                     if (_to_account) {
                         cell.textLabel.textColor = theme.buyColor;
                         cell.textLabel.text = [_to_account objectForKey:@"name"];
-                        //                        cell.detailTextLabel.textColor = theme.textColorGray;
-                        //                        cell.detailTextLabel.font = [UIFont systemFontOfSize:13.0f];
-                        
                         cell.detailTextLabel.font = [UIFont systemFontOfSize:14.0f];
                         cell.detailTextLabel.textColor = theme.textColorMain;
-                        
                         cell.detailTextLabel.text = [_to_account objectForKey:@"id"];
                     } else {
                         cell.textLabel.textColor = theme.textColorGray;
-                        cell.textLabel.text = @"请选择目标账户";
+                        cell.textLabel.text = NSLocalizedString(@"kVcAssetOpCellValueIssueTargetAccountDefault", @"请选择目标账户");
                         cell.detailTextLabel.text = @"";
                     }
                     return cell;
@@ -476,7 +478,7 @@ enum
                     cell.hideBottomLine = YES;
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                    cell.textLabel.text = @"备注信息";
+                    cell.textLabel.text = NSLocalizedString(@"kVcAssetOpCellTitleIssueMemo", @"备注信息");
                     cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
                     cell.textLabel.textColor = theme.textColorMain;
                     return cell;
@@ -505,7 +507,7 @@ enum
                     cell.hideBottomLine = YES;
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                    cell.textLabel.text = @"最大发行量";
+                    cell.textLabel.text = NSLocalizedString(@"kVcAssetOpCellTitleMaxSupply", @"最大发行量");
                     cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                     cell.detailTextLabel.font = [UIFont systemFontOfSize:13.0f];
@@ -521,7 +523,7 @@ enum
                     cell.hideBottomLine = YES;
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                    cell.textLabel.text = @"当前发行量";
+                    cell.textLabel.text = NSLocalizedString(@"kVcAssetOpCellTitleCurSupply", @"当前发行量");
                     cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                     cell.detailTextLabel.font = [UIFont systemFontOfSize:13.0f];

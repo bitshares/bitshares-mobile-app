@@ -173,7 +173,7 @@
  */
 - (void)onAddMarketInfos
 {
-    VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:enstAsset callback:nil];
+    VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:enstTradingPair callback:nil];
     vc.title = NSLocalizedString(@"kVcTitleCustomPairs", @"添加交易对");
     [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
 }

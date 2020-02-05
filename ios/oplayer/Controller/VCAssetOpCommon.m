@@ -288,8 +288,22 @@ enum
 
 - (void)onSelectAssetClicked
 {
-    //  TODO:4.0 type
-    VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:enstAssetUIA callback:^(id asset_info) {
+    ENetworkSearchType kSearchType;
+    switch ([[_opExtraArgs objectForKey:@"kOpType"] integerValue]) {
+        case ebaok_settle:
+            kSearchType = enstAssetSmart;
+            break;
+        case ebaok_reserve:
+            kSearchType = enstAssetUIA;
+            break;
+        default:
+            assert(false);
+            break;
+    }
+    
+    //  TODO:4.0 考虑默认备选列表？
+    
+    VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:kSearchType callback:^(id asset_info) {
         if (asset_info){
             NSString* new_id = [asset_info objectForKey:@"id"];
             NSString* old_id = [_curr_asset objectForKey:@"id"];
@@ -304,9 +318,9 @@ enum
             }
         }
     }];
-    //    vc.title = @"资产查询";//TODO:4.0 lang
+    
     [self pushViewController:vc
-                     vctitle:@"搜索资产"
+                     vctitle:NSLocalizedString(@"kVcTitleSearchAssets", @"搜索资产")
                    backtitle:kVcDefaultBackTitleName];
 }
 
@@ -324,13 +338,13 @@ enum
         [OrgUtils makeToast:NSLocalizedString(@"kOtcMcAssetSubmitTipBalanceNotEnough", @"余额不足。")];
         return;
     }
-    //  TODO:4.0 lang
+    
     switch ([[_opExtraArgs objectForKey:@"kOpType"] integerValue]) {
         case ebaok_settle:
         {
-            id value = [NSString stringWithFormat:@"您确认清算 %@ %@ 吗？\n\n※ 发起清算之后将延后执行，并且不可撤销，请谨慎操作。", n_amount, _curr_asset[@"symbol"]];
+            id value = [NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpSubmitAskSettle", @"您确认清算 %@ %@ 吗？\n\n※ 发起清算之后将延后执行，并且不可撤销，请谨慎操作。"), n_amount, _curr_asset[@"symbol"]];
             [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:value
-                                                                   withTitle:@"风险提示"
+                                                                   withTitle:NSLocalizedString(@"kVcHtlcMessageTipsTitle", @"风险提示")
                                                                   completion:^(NSInteger buttonIndex)
              {
                 if (buttonIndex == 1)
@@ -346,9 +360,9 @@ enum
             break;
         case ebaok_reserve:
         {
-            id value = [NSString stringWithFormat:@"您确认销毁 %@ %@ 吗？\n\n※ 此操作不可逆，请谨慎操作。", n_amount, _curr_asset[@"symbol"]];
+            id value = [NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpSubmitAskReserve", @"您确认销毁 %@ %@ 吗？\n\n※ 此操作不可逆，请谨慎操作。"), n_amount, _curr_asset[@"symbol"]];
             [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:value
-                                                                   withTitle:@"风险提示"
+                                                                   withTitle:NSLocalizedString(@"kVcHtlcMessageTipsTitle", @"风险提示")
                                                                   completion:^(NSInteger buttonIndex)
              {
                 if (buttonIndex == 1)
@@ -363,6 +377,7 @@ enum
         }
             break;
         default:
+            assert(false);
             break;
     }
 }

@@ -420,10 +420,25 @@
 "kVcActivityDescUpdateProposal" = "更新提案。#%@";
 
 /* 资产管理相关 */
+"kVcAssetMgrEmptyList" = "未发行任何资产，点击右上角创建资产。";
+"kVcAssetMgrCellActionViewDetail" = "资产详情";
+"kVcAssetMgrCellActionUpdateAsset" = "更新资产";
+"kVcAssetMgrCellActionUpdateBitasset" = "更新智能币";
+"kVcAssetMgrCellActionIssueAsset" = "发行资产";
+"kVcAssetMgrCellInfoCurSupply" = "当前供应量";
+"kVcAssetMgrCellInfoMaxSupply" = "最大供应量";
+"kVcAssetMgrCellInfoConSupply" = "隐私供应量";
+
 "kVcAssetMgrAssetCreateButton" = "创建";
+"kVcAssetMgrAssetUpdateAssetButton" = "更新资产";
+"kVcAssetMgrAssetUpdateBitassetButton" = "更新智能币";
+"kVcAssetMgrSegInfoFixInfo" = "固定信息";
 "kVcAssetMgrSegInfoBasicInfo" = "基本信息";
+"kVcAssetMgrSegInfoMarketFeeInfo" = "手续费信息";
 "kVcAssetMgrSegInfoPermissionInfo" = "权限信息";
 "kVcAssetMgrSegInfoSmartCoinInfo" = "智能币信息";
+"kVcAssetMgrCreateUiTipsCreate" = "【温馨提示】\n1、资产名称创建后不可更改。\n2、资产精度即资产支持的小数位数。\n3、资产精度创建后不可更改。\n4、创建资产的手续费由资产名称长度决定。";
+"kVcAssetMgrCreateUiTipsUpdateAsset" = "【温馨提示】\n资产权限一旦永久禁用后则后续不可再启用。";
 "kVcAssetMgrCellTitleAssetName" = "资产名称";
 "kVcAssetMgrCellTitleMaxSupply" = "最大供应量";
 "kVcAssetMgrCellTitleAssetDesc" = "资产描述";
@@ -435,6 +450,10 @@
 "kVcAssetMgrCellTitleSmartDelayForSettle" = "强清延迟时间";
 "kVcAssetMgrCellTitleSmartOffsetSettle" = "强清补偿比例";
 "kVcAssetMgrCellTitleSmartMaxSettleValuePerHour" = "每周期最大清算量";
+"kVcAssetMgrCellTitleFeeMarketFeeRatio" = "交易手续费比例";
+"kVcAssetMgrCellTitleFeeMaxFeeValue" = "单笔最大手续费";
+"kVcAssetMgrCellTitleFeeRefPercent" = "引荐人分成比例";
+"kVcAssetMgrCellTitleFeeRefWhitelist" = "引荐人白名单";
 "kVcAssetMgrCellTitlePermMarketFee" = "收取市场手续费";
 "kVcAssetMgrCellTitlePermWhiteListed" = "需资产持有人在白名单中";
 "kVcAssetMgrCellTitlePermOverrideTransfer" = "发行人可回收资产";
@@ -445,6 +464,7 @@
 "kVcAssetMgrCellTitlePermAllowWitnessFeed" = "允许见证人提供喂价";
 "kVcAssetMgrCellTitlePermAllowCommitteeFeed" = "允许理事会成员提供喂价";
 
+"kVcAssetMgrInputTitleSelectBackAsset" = "请选择抵押资产";
 "kVcAssetMgrInputTitleSmartFeedLifeTime" = "喂价有效期（分钟）";
 "kVcAssetMgrInputTitleSmartDelayForSettle" = "强清延迟（分钟）";
 "kVcAssetMgrInputPlaceholderSmartFeedLifeTime" = "请输入过期时间";
@@ -452,14 +472,19 @@
 "kVcAssetMgrInputPlaceholderSmartDelayForSettle" = "请输入强清延迟";
 "kVcAssetMgrInputPlaceholderSmartOffsetSettle" = "请输入强清补偿";
 "kVcAssetMgrInputPlaceholderSmartMaxSettleValuePerHour" = "请输入每小强清百分比";
+"kVcAssetMgrInputPlaceholderFeeMarketFeeRatio" = "请输入手续费比例";
+"kVcAssetMgrInputPlaceholderFeeMaxFeeValue" = "请输入单笔最大手续费";
+"kVcAssetMgrInputPlaceholderFeeRefPercent" = "请输入引荐人分成比例";
 
 "kVcAssetMgrCellPlaceholderAssetName" = "请输入资产名称";
 "kVcAssetMgrCellPlaceholderMaxSupply" = "请输入最大供应量";
 "kVcAssetMgrCellPlaceholderAssetDesc" = "请输入描述（可选）";
 "kVcAssetMgrCellValueAssetPrecision" = "%@ 位小数";
 "kVcAssetMgrCellValueSmartBackingAssetNone" = "无";
+"kVcAssetMgrCellValueSmartBackingAssetCustom" = "自定义";
 "kVcAssetMgrCellValueSmartMinN" = "%@ 分钟";
 "kVcAssetMgrCellValueNotSet" = "未设置";
+"kVcAssetMgrCellValueALL" = "全部";
 
 "kVcAssetMgrPermissionActionDisablePermanently" = "永久禁用（不可再开启）";
 "kVcAssetMgrPermissionActionActivateLater" = "暂不激活（后续可开启）";
@@ -467,6 +492,61 @@
 "kVcAssetMgrPermissionStatusDisablePermanently" = "永久禁用";
 "kVcAssetMgrPermissionStatusActivateLater" = "暂不激活";
 "kVcAssetMgrPermissionStatusActivateNow" = "立即激活";
+"kVcAssetMgrPermissionStatusAlreadyDisablePermanently" = "已经永久禁用";
+
+"kVcAssetOpCreateSubmitTipsInputMaxSupply" = "请输入最大供应量。";
+"kVcAssetOpCreateSubmitTipsInvalidPermissionWitnessAndCommittee" = "不能同时激活见证人喂价和理事会成员喂价权限标记。";
+"kVcAssetOpCreateSubmitTipsPleaseAssetSymbol" = "请输入有效的资产名称。";
+"kVcAssetOpCreateSubmitTipsInvalidAssetSymbolLength" = "资产名称长度范围 3 ～ 16。";
+"kVcAssetOpCreateSubmitTipsInvalidFirstSymbol" = "资产名称必须以大写字母开头。";
+"kVcAssetOpCreateSubmitTipsInvalidLastSymbol" = "资产名称必须以大写字母或数字结尾。";
+"kVcAssetOpCreateSubmitTipsInvalidDotSymbol" = "资产名称只能包含一个小数点符号。";
+"kVcAssetOpCreateSubmitTipsInvalidOtherSymbols" = "资产名称只能包含数字和字母。";
+"kVcAssetOpCreateSubmitTipsSmartInputFeedLifeTime" = "请输入喂价有效期。";
+"kVcAssetOpCreateSubmitTipsSmartInputMinFeedNumber" = "请输入最少喂价人数。";
+"kVcAssetOpCreateSubmitTipsSmartInputSettleDelaySec" = "请输入强清延迟执行时间。";
+"kVcAssetOpCreateSubmitTipsSmartInputSettleOffsetPercent" = "请输入强清补偿比例。";
+"kVcAssetOpCreateSubmitTipsSmartInputMaxSettleVolumePerHour" = "请输入每周期内可强清的总数量比例。";
+"kVcAssetOpCreateSubmitAskTipsDisableSomePermission" = "您永久禁用了部分权限，此操作不可逆，请谨慎操作。是否继续更新资产？";
+"kVcAssetOpCreateSubmitAskTipsForCostConfirm" = "创建 %@ 资产预计花费 %@，是否继续？";
+"kVcAssetOpCreateSubmitTipsInvalidAssetPrefixNameNone" = "创建 %@ 资产之前需要先创建前缀资产 %@。";
+"kVcAssetOpCreateSubmitTipsInvalidAssetPrefixNameNoPermission" = "您没有权限创建前缀为 %@ 的资产。";
+"kVcAssetOpCreateSubmitTipsInvalidBackBackAssetType" = "借贷抵押资产 %@ 的抵押资产 %@ 不能是智能币。";
+"kVcAssetOpCreateSubmitTipsInvalidBackAssetForCommittee" = "理事会创建的智能币的抵押资产必须是 %@ 或以 %@ 作为背书的资产。";
+"kVcAssetOpCreateAssetSubmitTipsOK" = "创建资产成功。";
+"kVcAssetOpUpdateAssetSubmitTipsOK" = "更新资产成功。";
+"kVcAssetOpUpdateBitassetSubmitTipsOK" = "更新智能币成功。";
+
+"kVcAssetOpSettleTipsDisableSettle" = "该资产禁止清算。";
+"kVcAssetOpSettleTipsNoFeedData" = "该资产没有有效的喂价，不可清算。";
+"kVcAssetOpSettleDelayHoursN" = "%@小时";
+"kVcAssetOpSettleUiTips" = "【温馨提示】\n1、清算操作强制把清算资产换回背书资产。此操作不可撤销，请谨慎操作。\n2、发起清算后将在%@后排队执行，并以当时的清算价格成交。\n3、清算价 = 成交时的喂价 × %@";
+"kVcAssetOpSettleCellPlaceholderAmount" = "请输入清算数量";
+"kVcAssetOpSettleBtnName" = "发起清算";
+"kVcAssetOpSettleSubmitTipsPleaseInputAmount" = "请输入要清算的资产数量。";
+"kVcAssetOpSettleSubmitTipSettleOK" = "发起清算成功。";
+
+"kVcAssetOpReserveUiTips" = "【温馨提示】\n销毁会减少当前流通量。此操作不可逆，请谨慎操作。";
+"kVcAssetOpReserveCellPlaceholderAmount" = "请输入销毁数量";
+"kVcAssetOpReserveBtnName" = "立即销毁";
+"kVcAssetOpReserveSubmitTipsPleaseInputAmount" = "请输入要销毁的资产数量。";
+"kVcAssetOpReserveSubmitTipOK" = "销毁成功。";
+
+"kVcAssetOpCellTitleIssueAmount" = "发行数量";
+"kVcAssetOpCellPlaceholderIssueAmount" = "请输入发行数量";
+"kVcAssetOpCellTitleIssueTargetAccount" = "目标账户";
+"kVcAssetOpCellValueIssueTargetAccountDefault" = "请选择目标账户";
+"kVcAssetOpCellTitleIssueMemo" = "备注信息";
+"kVcAssetOpCellTitleMaxSupply" = "最大供应量";
+"kVcAssetOpCellTitleCurSupply" = "当前供应量";
+"kVcAssetOpCellBtnNameIssueAsset" = "发行";
+"kVcAssetOpSubmitTipsIssuePleaseSelectTargetAccount" = "请选择发行目标账号。";
+"kVcAssetOpSubmitTipsIssuePleaseInputIssueAmount" = "请输入发行数量。";
+"kVcAssetOpSubmitTipsIssueNotEnough" = "超过剩余可发行数量。";
+"kVcAssetOpSubmitTipsIssueOK" = "发行成功。";
+"kVcAssetOpSubmitAskIssue" = "您确认发行 %@ %@ 给 %@ 吗？";
+"kVcAssetOpSubmitAskSettle" = "您确认清算 %@ %@ 吗？\n\n※ 发起清算之后将延后执行，并且不可撤销，请谨慎操作。";
+"kVcAssetOpSubmitAskReserve" = "您确认销毁 %@ %@ 吗？\n\n※ 此操作不可逆，请谨慎操作。";
 
 /* 订单界面 */
 "kVcOrderPageOpenOrders" = "当前订单";
@@ -803,6 +883,15 @@
 "kVcTitleOtcMcOrder" = "商家订单";
 "kVcTitleOtcMcHome" = "商家信息";
 "kVcTitleOtcMcApply" = "商家申请";
+"kVcTitleSearchAssets" = "搜索资产";
+"kVcTitleSearchBackAsset" = "搜索抵押物";
+"kVcTitleAssetOpSettle" = "发起清算";
+"kVcTitleAssetOpReserve" = "销毁资产";
+"kVcTitleAssetOpIssue" = "发行资产";
+"kVcTitleAssetOpViewDetail" = "%@ 详情";
+"kVcTitleAssetOpUpdateBasic" = "更新资产";
+"kVcTitleAssetOpUpdateBitasset" = "更新智能币";
+"kVcTitleAssetOpCreate" = "创建资产";
 
 /* 钱包管理 */
 "kWalletUnlockFailedUnknowMode" = "解锁失败，未知的账号模式：%@。";

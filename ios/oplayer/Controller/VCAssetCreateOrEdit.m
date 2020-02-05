@@ -382,23 +382,29 @@ enum
     [self.view addSubview:_mainTableView];
     
     //  UI - 提示信息
-    NSString* tips01 = @"【温馨提示】\n1、资产名称创建后不可更改。\n2、资产精度即资产支持的小数位数。\n3、资产精度创建后不可更改。\n4、创建资产的手续费由资产名称长度决定。";
-    //    NSString* tips01 = @"【温馨提示】\n1、资产精度即资产支持的小数位数。\n2、资产精度创建后不可更改。\n3、资产创建手续费由资产名称长度决定。\n4、资产权限一旦永久禁用后则后续不可开启。";
-    _cell_tips = [[ViewTipsInfoCell alloc] initWithText:tips01];
-    _cell_tips.hideBottomLine = YES;
-    _cell_tips.hideTopLine = YES;
-    _cell_tips.backgroundColor = [UIColor clearColor];
+    NSString* tips = nil;
+    if ([self isCreateAsset]) {
+        tips = NSLocalizedString(@"kVcAssetMgrCreateUiTipsCreate", @"【温馨提示】\n1、资产名称创建后不可更改。\n2、资产精度即资产支持的小数位数。\n3、资产精度创建后不可更改。\n4、创建资产的手续费由资产名称长度决定。");
+    } else if ([self isEditBasicInfo]){
+        tips = NSLocalizedString(@"kVcAssetMgrCreateUiTipsUpdateAsset", @"【温馨提示】\n资产权限一旦永久禁用后则后续不可再启用。");
+    }
+    if (tips) {
+        _cell_tips = [[ViewTipsInfoCell alloc] initWithText:tips];
+        _cell_tips.hideBottomLine = YES;
+        _cell_tips.hideTopLine = YES;
+        _cell_tips.backgroundColor = [UIColor clearColor];
+    }
     
-    //  UI - 提交按钮 TODO:4.0 lang
+    //  UI - 提交按钮
     switch (_vcType) {
         case kVcOpCreateAsset:
             _lbCommit = [self createCellLableButton:NSLocalizedString(@"kVcAssetMgrAssetCreateButton", @"创建")];
             break;
         case kVcOpEditBasic:
-            _lbCommit = [self createCellLableButton:@"更新资产"];
+            _lbCommit = [self createCellLableButton:NSLocalizedString(@"kVcAssetMgrAssetUpdateAssetButton", @"更新资产")];
             break;
         case kVcOpEditSmart:
-            _lbCommit = [self createCellLableButton:@"更新智能币"];
+            _lbCommit = [self createCellLableButton:NSLocalizedString(@"kVcAssetMgrAssetUpdateBitassetButton", @"更新智能币")];
             break;
         default:
             assert(false);
@@ -459,16 +465,13 @@ enum
             
             switch (secType) {
                 case kVcSecReadonly:
-                    titleLabel.text = @"固定信息";
-                    //  TODO:4.0
-                    break;
+                    titleLabel.text = NSLocalizedString(@"kVcAssetMgrSegInfoFixInfo", @"固定信息");
                     break;
                 case kVcSecBasic:
                     titleLabel.text = NSLocalizedString(@"kVcAssetMgrSegInfoBasicInfo", @"基本信息");
                     break;
                 case kVcSecMarketFee:
-                    titleLabel.text = @"手续费信息";
-                    //  TODO:4.0
+                    titleLabel.text = NSLocalizedString(@"kVcAssetMgrSegInfoMarketFeeInfo", @"手续费信息");
                     break;
                 case kVcSecPermission:
                     titleLabel.text = NSLocalizedString(@"kVcAssetMgrSegInfoPermissionInfo", @"权限信息");
@@ -552,7 +555,6 @@ enum
 
 - (void)_drawUI_onePermission:(UITableViewCellBase*)cell checkFeature:(EBitsharesAssetFlags)checkFeature
 {
-    //  TODO:4.0 lang
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     cell.textLabel.textColor = theme.textColorNormal;
     if (checkFeature == ebat_global_settle) {
@@ -562,7 +564,7 @@ enum
         } else {
             //  编辑之前就已经永久禁用的属性，去掉末尾箭头。
             if ([self isEditAsset] && (_old_issuer_permissions & checkFeature) == 0) {
-                cell.detailTextLabel.text = @"已经永久禁用";
+                cell.detailTextLabel.text = NSLocalizedString(@"kVcAssetMgrPermissionStatusAlreadyDisablePermanently", @"已经永久禁用");
                 cell.accessoryType = UITableViewCellAccessoryNone;
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 cell.textLabel.textColor = theme.textColorGray;
@@ -583,7 +585,7 @@ enum
         } else {
             //  编辑之前就已经永久禁用的属性，去掉末尾箭头。
             if ([self isEditAsset] && (_old_issuer_permissions & checkFeature) == 0) {
-                cell.detailTextLabel.text = @"已经永久禁用";
+                cell.detailTextLabel.text = NSLocalizedString(@"kVcAssetMgrPermissionStatusAlreadyDisablePermanently", @"已经永久禁用");
                 cell.accessoryType = UITableViewCellAccessoryNone;
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 cell.textLabel.textColor = theme.textColorGray;
@@ -806,7 +808,7 @@ enum
             break;
         case kVcSubPermissionMarketFeePercent:
         {
-            cell.textLabel.text = @"交易手续费比例";
+            cell.textLabel.text = NSLocalizedString(@"kVcAssetMgrCellTitleFeeMarketFeeRatio", @"交易手续费比例");
             id n_100 = [NSDecimalNumber decimalNumberWithMantissa:GRAPHENE_1_PERCENT exponent:0 isNegative:NO];
             id n_percent = [[NSDecimalNumber decimalNumberWithMantissa:_market_fee_percent
                                                               exponent:0
@@ -816,19 +818,19 @@ enum
             break;
         case kVcSubPermissionMaxMarketFee:
         {
-            cell.textLabel.text = @"单笔最大手续费";
+            cell.textLabel.text = NSLocalizedString(@"kVcAssetMgrCellTitleFeeMaxFeeValue", @"单笔最大手续费");
             if (_max_market_fee) {
                 cell.detailTextLabel.text = [OrgUtils formatFloatValue:_max_market_fee];
                 cell.detailTextLabel.textColor = theme.textColorMain;
             } else {
-                cell.detailTextLabel.text = @"未设置";
+                cell.detailTextLabel.text = NSLocalizedString(@"kVcAssetMgrCellValueNotSet", @"未设置");
                 cell.detailTextLabel.textColor = theme.textColorGray;
             }
         }
             break;
         case kVcSubPermissionMarketFeeRewardPercent:
         {
-            cell.textLabel.text = @"引荐人分成比例";
+            cell.textLabel.text = NSLocalizedString(@"kVcAssetMgrCellTitleFeeRefPercent", @"引荐人分成比例");
             id n_100 = [NSDecimalNumber decimalNumberWithMantissa:GRAPHENE_1_PERCENT exponent:0 isNegative:NO];
             id n_percent = [[NSDecimalNumber decimalNumberWithMantissa:_reward_percent
                                                               exponent:0
@@ -839,12 +841,12 @@ enum
         case kVcSubPermissionMarketFeeSharingWhitelist:
         {
             //  TODO:5.0
-            cell.textLabel.text = @"引荐人白名单";
-            id value = nil;//TODO:4.0
+            cell.textLabel.text = NSLocalizedString(@"kVcAssetMgrCellTitleFeeRefWhitelist", @"引荐人白名单");
+            id value = nil;//TODO:5.0 暂不支持
             if (value) {
                 cell.detailTextLabel.text = [NSString stringWithFormat:@"%@%%", value];
             } else {
-                cell.detailTextLabel.text = @"全部";
+                cell.detailTextLabel.text = NSLocalizedString(@"kVcAssetMgrCellValueALL", @"全部");
             }
         }
             break;
@@ -1010,9 +1012,8 @@ enum
                 
             case kVcSubPermissionMarketFeePercent:
             {
-                //  TODO:4.0 lang
-                [self onInputDecimalClicked:@"交易手续费比例"
-                                placeholder:@"请输入手续费比例"
+                [self onInputDecimalClicked:NSLocalizedString(@"kVcAssetMgrCellTitleFeeMarketFeeRatio", @"交易手续费比例")
+                                placeholder:NSLocalizedString(@"kVcAssetMgrInputPlaceholderFeeMarketFeeRatio", @"请输入手续费比例")
                                   precision:2
                                   max_value:[NSDecimalNumber decimalNumberWithString:@"100"]
                                       scale:[NSDecimalNumber decimalNumberWithMantissa:GRAPHENE_1_PERCENT exponent:0 isNegative:NO]
@@ -1024,9 +1025,8 @@ enum
                 break;
             case kVcSubPermissionMaxMarketFee:
             {
-                //  TODO:4.0 lang
-                [self onInputDecimalClicked:@"单笔最大手续费"
-                                placeholder:@"请输入单笔最大手续费"
+                [self onInputDecimalClicked:NSLocalizedString(@"kVcAssetMgrCellTitleFeeMaxFeeValue", @"单笔最大手续费")
+                                placeholder:NSLocalizedString(@"kVcAssetMgrInputPlaceholderFeeMaxFeeValue", @"请输入单笔最大手续费")
                                   precision:_precision
                                   max_value:_max_supply_editable
                                       scale:nil
@@ -1038,9 +1038,8 @@ enum
                 break;
             case kVcSubPermissionMarketFeeRewardPercent:
             {
-                //  TODO:4.0 lang
-                [self onInputDecimalClicked:@"引荐人分成"
-                                placeholder:@"请输入引荐人分成比例"
+                [self onInputDecimalClicked:NSLocalizedString(@"kVcAssetMgrCellTitleFeeRefPercent", @"引荐人分成")
+                                placeholder:NSLocalizedString(@"kVcAssetMgrInputPlaceholderFeeRefPercent", @"请输入引荐人分成比例")
                                   precision:2
                                   max_value:[NSDecimalNumber decimalNumberWithString:@"100"]
                                       scale:[NSDecimalNumber decimalNumberWithMantissa:GRAPHENE_1_PERCENT exponent:0 isNegative:NO]
@@ -1076,23 +1075,23 @@ enum
 {
     //  TODO:4.0 config GRAPHENE_MIN_ASSET_SYMBOL_LENGTH GRAPHENE_MAX_ASSET_SYMBOL_LENGTH
     if (!symbol) {
-        [OrgUtils makeToast:@"请输入有效的资产名称。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpCreateSubmitTipsPleaseAssetSymbol", @"请输入有效的资产名称。")];
         return NO;
     }
     if (symbol.length < 3 || symbol.length > 16) {
-        [OrgUtils makeToast:@"资产名称长度范围 3 ～ 16。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpCreateSubmitTipsInvalidAssetSymbolLength", @"资产名称长度范围 3 ～ 16。")];
         return NO;
     }
     
     unichar first_symbol = [symbol characterAtIndex:0];
     if (![OrgUtils isAlpha:first_symbol]) {
-        [OrgUtils makeToast:@"资产名称必须以大写字母开头。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpCreateSubmitTipsInvalidFirstSymbol", @"资产名称必须以大写字母开头。")];
         return NO;
     }
     
     unichar last_symbol = [symbol characterAtIndex:symbol.length - 1];
     if (![OrgUtils isAlnum:last_symbol]) {
-        [OrgUtils makeToast:@"资产名称必须以大写字母或数字结尾。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpCreateSubmitTipsInvalidLastSymbol", @"资产名称必须以大写字母或数字结尾。")];
         return NO;
     }
     
@@ -1105,13 +1104,13 @@ enum
         }
         if (c == '.') {
             if (dot_already_present) {
-                [OrgUtils makeToast:@"资产名称只能包含一个小数点符号。"];
+                [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpCreateSubmitTipsInvalidDotSymbol", @"资产名称只能包含一个小数点符号。")];
                 return NO;
             }
             dot_already_present = YES;
             continue;
         }
-        [OrgUtils makeToast:@"资产名称只能包含数字和字母。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpCreateSubmitTipsInvalidOtherSymbols", @"资产名称只能包含数字和字母。")];
         return NO;
     }
     
@@ -1125,31 +1124,31 @@ enum
 {
     id feed_lifetime_sec = [_bitasset_options_args objectForKey:@"feed_lifetime_sec"];
     if (!feed_lifetime_sec || [feed_lifetime_sec unsignedLongLongValue] == 0) {
-        [OrgUtils makeToast:@"请输入喂价有效期。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpCreateSubmitTipsSmartInputFeedLifeTime", @"请输入喂价有效期。")];
         return NO;
     }
     
     id minimum_feeds = [_bitasset_options_args objectForKey:@"minimum_feeds"];
     if (!minimum_feeds || [minimum_feeds integerValue] == 0) {
-        [OrgUtils makeToast:@"请输入最少喂价人数。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpCreateSubmitTipsSmartInputMinFeedNumber", @"请输入最少喂价人数。")];
         return NO;
     }
     
     id force_settlement_delay_sec = [_bitasset_options_args objectForKey:@"force_settlement_delay_sec"];
     if (!force_settlement_delay_sec) {
-        [OrgUtils makeToast:@"请输入强清延迟执行时间。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpCreateSubmitTipsSmartInputSettleDelaySec", @"请输入强清延迟执行时间。")];
         return NO;
     }
     
     id force_settlement_offset_percent = [_bitasset_options_args objectForKey:@"force_settlement_offset_percent"];
     if (!force_settlement_offset_percent) {
-        [OrgUtils makeToast:@"请输入强清补偿比例。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpCreateSubmitTipsSmartInputSettleOffsetPercent", @"请输入强清补偿比例。")];
         return NO;
     }
     
     id maximum_force_settlement_volume = [_bitasset_options_args objectForKey:@"maximum_force_settlement_volume"];
     if (!maximum_force_settlement_volume || [maximum_force_settlement_volume integerValue] == 0) {
-        [OrgUtils makeToast:@"请输入每周期内可强清的总数量比例。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpCreateSubmitTipsSmartInputMaxSettleVolumePerHour", @"请输入每周期内可强清的总数量比例。")];
         return NO;
     }
     return YES;
@@ -1195,7 +1194,7 @@ enum
                 [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
                 [[[[BitsharesClientManager sharedBitsharesClientManager] assetUpdateBitasset:opdata] then:(^id(id data) {
                     [self hideBlockView];
-                    [OrgUtils makeToast:@"更新智能币成功。"];//TODO:4.0
+                    [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpUpdateBitassetSubmitTipsOK", @"更新智能币成功。")];
                     //  [统计]
                     [OrgUtils logEvents:@"txAssetUpdateBitassetFullOK" params:@{@"account":opaccount[@"id"]}];
                     //  返回上一个界面并刷新
@@ -1223,14 +1222,14 @@ enum
 {
     NSDecimalNumber* zero = [NSDecimalNumber zero];
     if (!_max_supply || [_max_supply compare:zero] <= 0) {
-        [OrgUtils makeToast:@"请输入最大供应量。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpCreateSubmitTipsInputMaxSupply", @"请输入最大供应量。")];
         return;
     }
     
     if ([ModelUtils assetIsSmart:_edit_asset]) {
         uint32_t merged_flags = ebat_witness_fed_asset | ebat_committee_fed_asset;
         if ((_flags & merged_flags) == merged_flags) {
-            [OrgUtils makeToast:@"不能同时激活见证人喂价和理事会成员喂价权限标记。"];
+            [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpCreateSubmitTipsInvalidPermissionWitnessAndCommittee", @"不能同时激活见证人喂价和理事会成员喂价权限标记。")];
             return;
         }
     }
@@ -1269,7 +1268,7 @@ enum
     
     //  永久禁用某些属性，需要二次确认操作不可逆。
     if ((_issuer_permissions & _old_issuer_permissions) != _old_issuer_permissions) {
-        [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"您永久禁用了部分权限，此操作不可逆，请谨慎操作。是否继续更新资产？"
+        [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:NSLocalizedString(@"kVcAssetOpCreateSubmitAskTipsDisableSomePermission", @"您永久禁用了部分权限，此操作不可逆，请谨慎操作。是否继续更新资产？")
                                                                withTitle:NSLocalizedString(@"kVcHtlcMessageTipsTitle", @"风险提示")
                                                               completion:^(NSInteger buttonIndex)
          {
@@ -1303,7 +1302,7 @@ enum
                 [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
                 [[[[BitsharesClientManager sharedBitsharesClientManager] assetUpdate:opdata] then:(^id(id data) {
                     [self hideBlockView];
-                    [OrgUtils makeToast:@"更新资产成功。"];//TODO:4.0
+                    [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpUpdateAssetSubmitTipsOK", @"更新资产成功。")];
                     //  [统计]
                     [OrgUtils logEvents:@"txAssetUpdateFullOK" params:@{@"account":opaccount[@"id"]}];
                     //  返回上一个界面并刷新
@@ -1347,20 +1346,10 @@ enum
     
     NSDecimalNumber* zero = [NSDecimalNumber zero];
     if (!_max_supply || [_max_supply compare:zero] <= 0) {
-        [OrgUtils makeToast:@"请输入最大供应量。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpCreateSubmitTipsInputMaxSupply", @"请输入最大供应量。")];
         return;
     }
     
-    //    NSString*               _symbol;                    //  资产符号
-    //    NSDecimalNumber*        _max_supply;                //  最大供应量
-    //    NSString*               _description;               //  描述信息
-    //    NSInteger               _precision;                 //  资产精度
-    //    BOOL                    _enable_more_args;
-    //    NSMutableDictionary*    _bitasset_options_args;     //  智能币相关参数（默认为空）
-    //    uint32_t                _issuer_permissions;        //  权限
-    //    uint32_t                _flags;                     //  激活标记
-    
-    //  TODO:4.0
     id bitasset_opts = nil;
     if (_bitasset_options_args) {
         //  智能币 - 附加校验
@@ -1441,12 +1430,15 @@ enum
         if (prefix_symbol) {
             id prefix_asset = [data_array safeObjectAtIndex:1];
             if (!prefix_asset || [prefix_asset isKindOfClass:[NSNull class]]) {
-                [OrgUtils makeToast:[NSString stringWithFormat:@"创建 %@ 资产之前需要先创建前缀资产 %@。", sym, prefix_symbol]];
+                [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpCreateSubmitTipsInvalidAssetPrefixNameNone", @"创建 %@ 资产之前需要先创建前缀资产 %@。"),
+                                     sym,
+                                     prefix_symbol]];
                 return;
             }
             NSString* prefix_issuer = [prefix_asset objectForKey:@"issuer"];
             if (!prefix_issuer || ![prefix_issuer isEqualToString:uid]) {
-                [OrgUtils makeToast:[NSString stringWithFormat:@"您没有权限创建前缀为 %@ 的资产。", prefix_symbol]];
+                [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpCreateSubmitTipsInvalidAssetPrefixNameNoPermission", @"您没有权限创建前缀为 %@ 的资产。"),
+                                     prefix_symbol]];
                 return;
             }
         }
@@ -1454,21 +1446,23 @@ enum
         if (_bitasset_options_args) {
             id backing_backing_asset = [data_array safeObjectAtIndex:2];
             if ([ModelUtils assetIsSmart:backing_backing_asset]) {
-                [OrgUtils makeToast:[NSString stringWithFormat:@"借贷抵押资产 %@ 的抵押资产 %@ 不能是智能币。",
+                [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpCreateSubmitTipsInvalidBackBackAssetType", @"借贷抵押资产 %@ 的抵押资产 %@ 不能是智能币。"),
                                      [[_bitasset_options_args objectForKey:@"short_backing_asset"] objectForKey:@"symbol"],
                                      backing_backing_asset[@"symbol"]]];
                 return;
             }
             if ([uid isEqualToString:BTS_GRAPHENE_COMMITTEE_ACCOUNT] && ![ModelUtils assetIsCore:backing_backing_asset]) {
                 id core_sym = [ChainObjectManager sharedChainObjectManager].grapheneCoreAssetSymbol;
-                [OrgUtils makeToast:[NSString stringWithFormat:@"理事会创建的智能币的抵押资产必须是 %@ 或以 %@ 作为背书的资产。", core_sym, core_sym]];
+                [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpCreateSubmitTipsInvalidBackAssetForCommittee", @"理事会创建的智能币的抵押资产必须是 %@ 或以 %@ 作为背书的资产。"),
+                                     core_sym, core_sym]];
                 return;
             }
         }
         //  创建资产手续费确认
         id fee_price_item = [data_array objectAtIndex:0];
         NSString* price = [OrgUtils formatAssetAmountItem:fee_price_item];
-        [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:[NSString stringWithFormat:@"创建 %@ 资产预计花费 %@，是否继续？", sym, price]
+        [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:[NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpCreateSubmitAskTipsForCostConfirm", @"创建 %@ 资产预计花费 %@，是否继续？"),
+                                                                          sym, price]
                                                                withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
                                                               completion:^(NSInteger buttonIndex)
          {
@@ -1498,7 +1492,7 @@ enum
         [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
         [[[[BitsharesClientManager sharedBitsharesClientManager] assetCreate:opdata] then:(^id(id data) {
             [self hideBlockView];
-            [OrgUtils makeToast:@"创建资产成功。"];//TODO:4.0
+            [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpCreateAssetSubmitTipsOK", @"创建资产成功。")];
             //  [统计]
             [OrgUtils logEvents:@"txAssetCreateFullOK" params:@{@"account":opaccount[@"id"]}];
             //  返回上一个界面并刷新
@@ -1534,7 +1528,7 @@ enum
                                                      completion:(^(NSInteger buttonIndex, NSString *tfvalue)
                                                                  {
         if (buttonIndex != 0){
-            //  TODO:4.0 有效性检测
+            //  资产名称有效性再提交的时候检测
             _symbol = [tfvalue uppercaseString];
             [_mainTableView reloadData];
         }
@@ -1570,7 +1564,6 @@ enum
     if (![self isCreateAsset]) {
         return;
     }
-    //  TODO:4.0 lang
     NSMutableArray* data_list = [NSMutableArray array];
     NSInteger default_select = -1;
     for (NSInteger i = 0; i <= 12; ++i) {
@@ -1604,7 +1597,6 @@ enum
  */
 - (void)onSmartPermissionClicked:(NSInteger)rowType
 {
-    //  TODO:4.0 lang
     NSArray* items;
     NSInteger defaultIndex = 0;
     uint32_t feature = [self _permissionRowType2Feature:rowType];
@@ -1701,11 +1693,13 @@ enum
     }
     
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
-    //  TODO:4.0 lang
+    
     [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
-                                                       message:@"请选择抵押资产"
+                                                       message:NSLocalizedString(@"kVcAssetMgrInputTitleSelectBackAsset", @"请选择抵押资产")
                                                         cancel:NSLocalizedString(@"kBtnCancel", @"取消")
-                                                         items:@[@"无", chainMgr.grapheneCoreAssetSymbol, @"自定义"]
+                                                         items:@[NSLocalizedString(@"kVcAssetMgrCellValueSmartBackingAssetNone", @"无"),
+                                                                 chainMgr.grapheneCoreAssetSymbol,
+                                                                 NSLocalizedString(@"kVcAssetMgrCellValueSmartBackingAssetCustom", @"自定义")]
                                                       callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
      {
         if (buttonIndex != cancelIndex){
@@ -1733,7 +1727,6 @@ enum
                     break;
                 case 2: //  自定义
                 {
-                    //  TODO:4.0 type
                     VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:enstAssetAll callback:^(id asset_info) {
                         if (asset_info){
                             [self genDefaultSmartCoinArgs];
@@ -1744,9 +1737,8 @@ enum
                             [self refreshUI];
                         }
                     }];
-                    //    vc.title = @"资产查询";//TODO:4.0 lang
                     [self pushViewController:vc
-                                     vctitle:@"搜索抵押物"
+                                     vctitle:NSLocalizedString(@"kVcTitleSearchBackAsset", @"搜索抵押物")
                                    backtitle:kVcDefaultBackTitleName];
                 }
                     break;
