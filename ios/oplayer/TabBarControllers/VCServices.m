@@ -10,6 +10,7 @@
 
 #import "VCQrScan.h"
 #import "VCSearchNetwork.h"
+#import "VCAssetDetails.h"
 #import "VCCallOrderRanking.h"
 #import "VCFeedPriceDetail.h"
 #import "VCBtsaiWebView.h"
@@ -30,6 +31,7 @@ enum
     kVcSubVote,             //  投票
     
     kVcSubAccountQuery,     //  帐号查询
+//    kVcSubAssetQuery,       //  资产查询 TODO:5.0
     kVcSubCallRanking,      //  抵押排行
     kVcSubFeedPriceDetail,  //  喂价详情
     
@@ -82,6 +84,7 @@ enum
         
         NSArray* pSection3 = [[[NSMutableArray array] ruby_apply:(^(id obj) {
             [obj addObject:@[@(kVcSubAccountQuery),      @"kServicesCellLabelAccountSearch"]];      //  帐号查询
+//            [obj addObject:@[@(kVcSubAssetQuery),       @"TODO:4.0资产查询"]];//TODO:4.0 lang
 #if kAppModuleEnableRank
             [obj addObject:@[@(kVcSubCallRanking),       @"kServicesCellLabelRank"]];               //  抵押排行
 #endif  //  kAppModuleEnableRank
@@ -236,6 +239,7 @@ enum
             break;
             
         case kVcSubAccountQuery:
+//        case kVcSubAssetQuery:
             cell.imageView.image = [UIImage templateImageNamed:@"iconQuery"];
             break;
         case kVcSubCallRanking:
@@ -350,12 +354,29 @@ enum
             {
                 vc = [[VCSearchNetwork alloc] initWithSearchType:enstAccount callback:^(id account_info) {
                     if (account_info){
-                        [VCCommonLogic viewUserAssets:self account:[account_info objectForKey:@"name"]];
+                        [VcUtils viewUserAssets:self account:[account_info objectForKey:@"name"]];
                     }
                 }];
                 vc.title = NSLocalizedString(@"kVcTitleAccountSearch", @"帐号查询");
                 break;
             }
+//            case kVcSubAssetQuery:
+//            {
+//                vc = [[VCSearchNetwork alloc] initWithSearchType:enstAssetAll callback:^(id asset_info) {
+//                    if (asset_info){
+//                        VCAssetDetails* vc = [[VCAssetDetails alloc] initWithAssetID:[asset_info objectForKey:@"id"]
+//                                                                               asset:nil
+//                                                                       bitasset_data:nil
+//                                                                  dynamic_asset_data:nil];
+//                        //  TODO:4.0 lang
+//                        [self pushViewController:vc
+//                                         vctitle:[NSString stringWithFormat:@"%@ 详情", asset_info[@"symbol"]]
+//                                       backtitle:kVcDefaultBackTitleName];
+//                    }
+//                }];
+//                vc.title = @"资产查询";//TODO:4.0 lang
+//            }
+//                break;
             case kVcSubCallRanking:     //  抵押排行
             {
                 vc = [[VCCallOrderRanking alloc] init];
