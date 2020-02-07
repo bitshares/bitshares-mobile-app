@@ -385,6 +385,8 @@
 "kVcAssetTotalValue" = "总资产折合(%@)";
 "kVcAssetBtnTransfer" = "转账";
 "kVcAssetBtnTrade" = "交易";
+"kVcAssetBtnSettle" = "清算";
+"kVcAssetBtnReserve" = "销毁";
 "kVcAssetTipsEstimating" = "估算中...";
 "kVcAssetAvailable" = "可用";
 "kVcAssetOnOrder" = "挂单";
@@ -509,7 +511,7 @@
 "kVcAssetOpCreateSubmitTipsSmartInputMaxSettleVolumePerHour" = "请输入每周期内可强清的总数量比例。";
 "kVcAssetOpCreateSubmitAskTipsDisableSomePermission" = "您永久禁用了部分权限，此操作不可逆，请谨慎操作。是否继续更新资产？";
 "kVcAssetOpCreateSubmitAskTipsForCostConfirm" = "创建 %@ 资产预计花费 %@，是否继续？";
-"kVcAssetOpCreateSubmitTipsInvalidAssetPrefixNameNone" = "创建 %@ 资产之前需要先创建前缀资产 %@。";
+"kVcAssetOpCreateSubmitTipsInvalidAssetPrefixNameNone" = "创建 %1$@ 资产之前需要先创建前缀资产 %2$@。";
 "kVcAssetOpCreateSubmitTipsInvalidAssetPrefixNameNoPermission" = "您没有权限创建前缀为 %@ 的资产。";
 "kVcAssetOpCreateSubmitTipsInvalidBackBackAssetType" = "借贷抵押资产 %@ 的抵押资产 %@ 不能是智能币。";
 "kVcAssetOpCreateSubmitTipsInvalidBackAssetForCommittee" = "理事会创建的智能币的抵押资产必须是 %@ 或以 %@ 作为背书的资产。";
@@ -1463,6 +1465,7 @@
 "kSearchPlaceholderAsset" = "点击搜索新资产";
 "kSearchTipsMyFavAccount" = "我的关注(%@人)";
 "kSearchTipsMyCustomPairs" = "我的交易对(%@个)";
+"kSearchTipsMyFavAssets" = "我的收藏(%@个)";
 "kSearchTipsMaxCustomParisNumber" = "最多只能自定义 %@ 个交易对。";
 "kSearchTipsForbidden" = "不可更改";
 "kMsgUsenameCannotBeNull" = "账号不能为空，请重新输入。";
