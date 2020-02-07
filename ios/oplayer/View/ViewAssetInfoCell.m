@@ -317,7 +317,6 @@
         [actions ruby_each_with_index:^(id src, NSInteger idx) {
             NSInteger kActionType = [src integerValue];
             UIButton* btn = [_btnArray objectAtIndex:idx];
-            //  TODO:4.0 lang
             switch (kActionType) {
                 case ebaok_transfer:
                     [btn updateTitleWithoutAnimation:NSLocalizedString(@"kVcAssetBtnTransfer", @"转账")];
@@ -326,10 +325,10 @@
                     [btn updateTitleWithoutAnimation:NSLocalizedString(@"kVcAssetBtnTrade", @"交易")];
                     break;
                 case ebaok_settle:
-                    [btn updateTitleWithoutAnimation:@"清算"];
+                    [btn updateTitleWithoutAnimation:NSLocalizedString(@"kVcAssetBtnSettle", @"清算")];
                     break;
                 case ebaok_reserve:
-                    [btn updateTitleWithoutAnimation:@"销毁"];
+                    [btn updateTitleWithoutAnimation:NSLocalizedString(@"kVcAssetBtnReserve", @"销毁")];
                     break;
                 default:
                     assert(false);

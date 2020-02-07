@@ -341,8 +341,7 @@
             case enstAssetAll:
             case enstAssetSmart:
             case enstAssetUIA:
-                //  TODO:4.0 lang
-                titleLabel.text = [NSString stringWithFormat:@"我的收藏(%@个)", @([_array_data count])];
+                titleLabel.text = [NSString stringWithFormat:NSLocalizedString(@"kSearchTipsMyFavAssets", @"我的收藏(%@个)"), @([_array_data count])];
                 break;
             default:
                 break;
