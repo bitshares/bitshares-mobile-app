@@ -4,17 +4,19 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.TextView
 import bitshares.*
+import com.btsplusplus.fowallet.kline.TradingPair
+import com.btsplusplus.fowallet.utils.ModelUtils
+import com.btsplusplus.fowallet.utils.VcUtils
 import com.fowallet.walletcore.bts.ChainObjectManager
 import org.json.JSONArray
 import org.json.JSONObject
+import java.math.BigDecimal
 
 /**
  * A simple [Fragment] subclass.
@@ -32,25 +34,185 @@ class FragmentOrderHistory : BtsppFragment() {
     private var _ctx: Context? = null
     private var _view: View? = null
     private var _dataArray = mutableListOf<JSONObject>()
-    private var _from: String? = null
+    private var _isSettlementsOrder = false
 
     override fun onInitParams(args: Any?) {
         val _args = args as JSONObject
-        val tradeHistory = _args.getJSONArray("data")
-        _from = _args.getString("from")
-        genTradeHistoryData(tradeHistory)
-        //  查询历史交易的时间戳信息
-        if (_dataArray.size > 0) {
-            val block_num_hash = JSONObject()
-            _dataArray.forEach {
-                block_num_hash.put(it.getString("block_num"), true)
-            }
-            ChainObjectManager.sharedChainObjectManager().queryAllBlockHeaderInfos(block_num_hash.keys().toJSONArray(), false).then {
-                _onQueryAllBlockHeaderInfosResponsed()
-                return@then null
-            }.catch {
+        if (_args.has("isSettlementsOrder") && _args.getBoolean("isSettlementsOrder")) {
+            //  init for settlements orders
+            _isSettlementsOrder = true
+        } else {
+            val tradeHistory = _args.getJSONArray("data")
+            genTradeHistoryData(tradeHistory)
+            //  查询历史交易的时间戳信息
+            if (_dataArray.size > 0) {
+                val block_num_hash = JSONObject()
+                _dataArray.forEach {
+                    block_num_hash.put(it.getString("block_num"), true)
+                }
+                ChainObjectManager.sharedChainObjectManager().queryAllBlockHeaderInfos(block_num_hash.keys().toJSONArray(),
+                        false).then {
+                    _onQueryAllBlockHeaderInfosResponsed()
+                    return@then null
+                }.catch {
+                }
             }
         }
+    }
+
+    /**
+     *  (public) 查询清算单
+     */
+    fun querySettlementOrders(tradingPair: TradingPair? = null, full_account_data: JSONObject? = null) {
+        if (!_isSettlementsOrder) {
+            return
+        }
+        activity?.let { ctx ->
+            val chainMgr = ChainObjectManager.sharedChainObjectManager()
+            val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(ctx), ctx).apply { show() }
+            //  TODO:4.0 limit number?
+            val p1 = if (tradingPair != null) {
+                chainMgr.querySettlementOrders(tradingPair._smartAssetId, 100)
+            } else {
+                chainMgr.querySettlementOrdersByAccount(full_account_data!!.getJSONObject("account").getString("name"), 100)
+            }
+            p1.then {
+                val data_array = it as? JSONArray
+                //  查询依赖
+                val ids = JSONObject()
+                if (data_array != null && data_array.length() > 0) {
+                    for (item in data_array.forin<JSONObject>()) {
+                        ids.put(item!!.getJSONObject("balance").getString("asset_id"), true)
+                        ids.put(item.getString("owner"), true)
+                    }
+                }
+                val ids01_array = ids.keys().toJSONArray()
+                return@then chainMgr.queryAllGrapheneObjects(ids01_array).then {
+                    //  查询智能资产信息
+                    val ids02_array = ModelUtils.collectDependence(ids01_array, jsonArrayfrom("bitasset_data_id"))
+                    return@then chainMgr.queryAllGrapheneObjectsSkipCache(ids02_array).then {
+                        //  查询背书资产信息
+                        val ids03_array = ModelUtils.collectDependence(ids02_array, jsonArrayfrom("options", "short_backing_asset"))
+                        return@then chainMgr.queryAllGrapheneObjects(ids03_array).then {
+                            mask.dismiss()
+                            onQuerySettlementOrdersResponsed(data_array, tradingPair)
+                            return@then null
+                        }
+                    }
+                }
+            }.catch {
+                mask.dismiss()
+                ctx.showToast(R.string.tip_network_error.xmlstring(ctx))
+            }
+            return@let
+        }
+    }
+
+    private fun onQuerySettlementOrdersResponsed(data_array: JSONArray?, tradingPair: TradingPair?) {
+        _dataArray.clear()
+
+        if (data_array != null && data_array.length() > 0) {
+            val chainMgr = ChainObjectManager.sharedChainObjectManager()
+            for (settle_order in data_array.forin<JSONObject>()) {
+                //  获取清算资产信息
+                val settle_asset = chainMgr.getChainObjectByID(settle_order!!.getJSONObject("balance").getString("asset_id"))
+                val settle_asset_precision = settle_asset.getInt("precision")
+
+                //  获取背书资产信息
+                val bitasset_data = chainMgr.getChainObjectByID(settle_asset.getString("bitasset_data_id"))
+                val short_backing_asset_id = bitasset_data.getJSONObject("options").getString("short_backing_asset")
+                val sba_asset = chainMgr.getChainObjectByID(short_backing_asset_id)
+                val sba_asset_precision = sba_asset.getInt("precision")
+
+                //  计算喂价
+                val n_feed_price = OrgUtils.calcPriceFromPriceObject(bitasset_data.getJSONObject("current_feed").getJSONObject("settlement_price"),
+                        short_backing_asset_id,
+                        sba_asset_precision, settle_asset_precision, false, BigDecimal.ROUND_DOWN, true)
+
+                //  获取强清补偿系数
+                val n_one = BigDecimal.ONE
+                val n_force_settlement_offset_percent_add1 = bigDecimalfromAmount(bitasset_data.getJSONObject("options").getString("force_settlement_offset_percent"), 4).add(n_one)
+
+                //  计算清算价格 = 喂价 * （1 + 补偿系数）
+                var n_settle_price = n_force_settlement_offset_percent_add1.multiply(n_feed_price)
+
+                //  自动计算base资产
+                val settle_asset_symbol = settle_asset.getString("symbol")
+                val sba_asset_symbol = sba_asset.getString("symbol")
+                val baseAssetSymbol = if (tradingPair != null) {
+                    tradingPair._baseAsset.getString("symbol")
+                } else {
+                    VcUtils.calcBaseAsset(settle_asset_symbol, sba_asset_symbol)
+                }
+
+                val issell: Boolean
+                val price: Double
+                var price_str: String
+                val amount_str: String
+                val total_str: String
+                val base_sym: String
+                val quote_sym: String
+
+                val n_balance = bigDecimalfromAmount(settle_order.getJSONObject("balance").getString("amount"), settle_asset_precision)
+                if (baseAssetSymbol == settle_asset_symbol) {
+                    //  买入 BTS/CNY [清算]
+                    issell = false
+                    price = n_settle_price.toDouble()
+                    price_str = OrgUtils.formatFloatValue(price, settle_asset_precision, has_comma = false)
+
+                    val n_total = n_balance
+                    val n_amount = ModelUtils.calculateAverage(n_total, n_settle_price, sba_asset_precision)
+
+                    amount_str = n_amount.toPriceAmountString()
+                    total_str = n_total.toPriceAmountString()
+
+                    base_sym = settle_asset_symbol
+                    quote_sym = sba_asset_symbol
+                } else {
+                    //  卖出 CNY/BTS [清算]
+                    issell = true
+                    n_settle_price = n_one.divide(n_settle_price, kBigDecimalDefaultMaxPrecision, kBigDecimalDefaultRoundingMode)
+                    price = n_settle_price.toDouble()
+                    price_str = OrgUtils.formatFloatValue(price, sba_asset_precision)
+
+                    val n_amount = n_balance
+                    val n_total = ModelUtils.calTotal(n_settle_price, n_amount, sba_asset_precision)
+
+                    amount_str = n_amount.toPriceAmountString()
+                    total_str = n_total.toPriceAmountString()
+
+                    base_sym = sba_asset_symbol
+                    quote_sym = settle_asset_symbol
+                }
+
+                //  REMARK：特殊处理，如果按照 base or quote 的精度格式化出价格为0了，则扩大精度重新格式化。
+                if (price_str == "0") {
+                    price_str = OrgUtils.formatFloatValue(price, 8)
+                }
+
+                _dataArray.add(JSONObject().apply {
+                    put("time", settle_order.getString("settlement_date"))
+                    put("issettle", true)
+                    put("issell", issell)
+                    put("price", price_str)
+                    put("amount", amount_str)
+                    put("total", total_str)
+                    put("base_symbol", base_sym)
+                    put("quote_symbol", quote_sym)
+                    put("id", settle_order.getString("id"))
+                    put("seller", settle_order.getString("owner"))
+                    put("raw_order", settle_order)  //  原始数据
+                })
+            }
+        }
+
+        //  根据ID升序排列
+        if (_dataArray.size > 0) {
+            _dataArray.sortBy { it.getString("id").split(".").last().toInt() }
+        }
+
+        //  更新显示
+        refreshUI()
     }
 
     /**
@@ -154,12 +316,14 @@ class FragmentOrderHistory : BtsppFragment() {
             val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, toDp(24f))
             layout_params.gravity = Gravity.CENTER_VERTICAL
             for (item in _dataArray) {
-                // createCell(_ctx!!, layout_params, container, item)
-                container.addView(ViewOrderCell(_ctx!!,item,_from!!))
+                container.addView(ViewOrderCell(_ctx!!, item, _isSettlementsOrder))
             }
         } else {
-            val string_no_data = if (_from == "settlement_orders") {"没有任何清算单"} else {resources.getString(R.string.kVcOrderTipNoHistory)}
-
+            val string_no_data = if (_isSettlementsOrder) {
+                resources.getString(R.string.kVcOrderTipNoSettleOrder)
+            } else {
+                resources.getString(R.string.kVcOrderTipNoHistory)
+            }
             container.addView(ViewUtils.createEmptyCenterLabel(_ctx!!, string_no_data))
         }
     }

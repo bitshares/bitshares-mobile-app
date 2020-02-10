@@ -134,20 +134,20 @@
             app:tabRippleColor="#aaaaaa"
             app:tabTextColor="#ffffff">
 
-            <android.support.design.widget.TabItem
+            <!-- <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/kBtnBuy" />
+                android:text="@string/kLabelTitleBuy" />
 
             <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/kBtnSell" />
+                android:text="@string/kLabelTitleSell" />
 
             <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="清算单" />
+                android:text="@string/kVcOrderPageSettleOrders" /> -->
 
         </android.support.design.widget.TabLayout>
 

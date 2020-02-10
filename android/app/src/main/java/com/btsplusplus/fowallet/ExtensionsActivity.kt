@@ -597,11 +597,15 @@ fun AppCompatActivity.setViewPager(default_select_index: Int, view_pager_id: Int
     })
 }
 
-fun AppCompatActivity.setTabListener(tablayout_id: Int, view_pager_id: Int) {
+fun AppCompatActivity.setTabListener(tablayout_id: Int, view_pager_id: Int, tab_clicked: ((pos: Int) -> Unit)? = null) {
     val _view_pager = findViewById<ViewPager>(view_pager_id)
     findViewById<TabLayout>(tablayout_id).setOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
         override fun onTabSelected(tab: TabLayout.Tab) {
-            _view_pager.setCurrentItem(tab.position, true)
+            val pos = tab.position
+            _view_pager.setCurrentItem(pos, true)
+            if (tab_clicked != null) {
+                tab_clicked(pos)
+            }
         }
 
         override fun onTabUnselected(tab: TabLayout.Tab) {

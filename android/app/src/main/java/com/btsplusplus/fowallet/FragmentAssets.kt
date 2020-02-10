@@ -13,6 +13,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import bitshares.*
 import com.btsplusplus.fowallet.kline.TradingPair
+import com.btsplusplus.fowallet.utils.VcUtils
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
 import org.json.JSONArray
@@ -499,7 +500,12 @@ class FragmentAssets : BtsppFragment() {
         }
 
         //  转到交易界面
-        activity!!.goTo(ActivityTradeMain::class.java, true, args = jsonArrayfrom(TradingPair().initWithBaseAsset(base, quote), true))
+        activity!!.let { ctx ->
+            val tradingPair = TradingPair().initWithBaseAsset(base, quote)
+            VcUtils.simpleRequest(ctx, tradingPair.queryBitassetMarketInfo()) {
+                ctx.goTo(ActivityTradeMain::class.java, true, args = jsonArrayfrom(tradingPair, true))
+            }
+        }
     }
 
     private fun refreshList(ly: LinearLayout, layout_params: LinearLayout.LayoutParams) {

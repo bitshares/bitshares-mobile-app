@@ -123,7 +123,7 @@ class ModelUtils {
          *  (public) 计算总数
          */
         fun calTotal(avg: BigDecimal, n: BigDecimal, result_precision: Int): BigDecimal {
-            return avg.multiply(n).setScale(result_precision)
+            return avg.multiply(n).setScale(result_precision, BigDecimal.ROUND_DOWN)
         }
 
     }

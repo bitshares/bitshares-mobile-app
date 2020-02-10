@@ -1,6 +1,5 @@
 package com.btsplusplus.fowallet
 
-import android.app.Activity
 import android.content.Context
 import android.util.TypedValue
 import android.view.Gravity
@@ -15,12 +14,12 @@ class ViewOrderCell : LinearLayout {
 
     private var _ctx: Context
     private var _data: JSONObject
-    private lateinit var _from: String
+    private var _isSettlementsOrder: Boolean
 
-    constructor(ctx: Context, data: JSONObject, from: String) : super(ctx) {
+    constructor(ctx: Context, data: JSONObject, isSettlementsOrder: Boolean) : super(ctx) {
         _ctx = ctx
         _data = data
-        _from = from
+        _isSettlementsOrder = isSettlementsOrder
         createUI()
     }
 
@@ -29,7 +28,7 @@ class ViewOrderCell : LinearLayout {
         val ctx = _ctx
         val data = _data
 
-        val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.toDp(24f,_ctx.resources))
+        val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.toDp(24f, _ctx.resources))
         layout_params.gravity = Gravity.CENTER_VERTICAL
 
         val ly_wrap: LinearLayout = LinearLayout(ctx)
@@ -39,25 +38,22 @@ class ViewOrderCell : LinearLayout {
         val ly1: LinearLayout = LinearLayout(ctx)
         ly1.orientation = LinearLayout.HORIZONTAL
         ly1.layoutParams = layout_params
-        ly1.setPadding(0, Utils.toDp(5.0f,_ctx.resources), 0, 0)
+        ly1.setPadding(0, Utils.toDp(5.0f, _ctx.resources), 0, 0)
         val tv1 = TextView(ctx)
         if (data.getBoolean("issell")) {
-            tv1.text = ctx.resources.getString(R.string.kBtnSell)
-            if (data.getBoolean("iscall")) {
+            tv1.text = if (_isSettlementsOrder) ctx.resources.getString(R.string.kLabelTradeSettleTypeSell) else ctx.resources.getString(R.string.kBtnSell)
+            if (data.optBoolean("iscall")) {
                 tv1.setTextColor(resources.getColor(R.color.theme01_callOrderColor))
             } else {
                 tv1.setTextColor(resources.getColor(R.color.theme01_sellColor))
             }
         } else {
-            tv1.text = ctx.resources.getString(R.string.kBtnBuy)
-            if (data.getBoolean("iscall")) {
+            tv1.text = if (_isSettlementsOrder) ctx.resources.getString(R.string.kLabelTradeSettleTypeBuy) else ctx.resources.getString(R.string.kBtnBuy)
+            if (data.optBoolean("iscall")) {
                 tv1.setTextColor(resources.getColor(R.color.theme01_callOrderColor))
             } else {
                 tv1.setTextColor(resources.getColor(R.color.theme01_buyColor))
             }
-        }
-        if (_from == "settlement_orders"){
-            tv1.text = "清算${tv1.text}"
         }
 
         tv1.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
@@ -72,7 +68,7 @@ class ViewOrderCell : LinearLayout {
         tv2.gravity = Gravity.CENTER_VERTICAL
 
 
-        tv2.setPadding(Utils.toDp(5.0f,_ctx.resources), 0, 0, 0)
+        tv2.setPadding(Utils.toDp(5.0f, _ctx.resources), 0, 0, 0)
 
         val tv3 = TextView(ctx)
         val block_time = data.optString("block_time", "")
@@ -146,7 +142,7 @@ class ViewOrderCell : LinearLayout {
 
         // 线
         val lv_line = View(ctx)
-        var layout_tv9 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.toDp(1.0f,_ctx.resources))
+        var layout_tv9 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.toDp(1.0f, _ctx.resources))
         lv_line.setBackgroundColor(resources.getColor(R.color.theme01_bottomLineColor))
         lv_line.layoutParams = layout_tv9
 
@@ -174,7 +170,7 @@ class ViewOrderCell : LinearLayout {
     }
 
     private fun createLayout(gr: Int): LinearLayout.LayoutParams {
-        var layout = LinearLayout.LayoutParams(Utils.toDp(0f,_ctx.resources), Utils.toDp(24.0f,_ctx.resources))
+        var layout = LinearLayout.LayoutParams(Utils.toDp(0f, _ctx.resources), Utils.toDp(24.0f, _ctx.resources))
         layout.weight = 1.0f
         layout.gravity = gr
         return layout
