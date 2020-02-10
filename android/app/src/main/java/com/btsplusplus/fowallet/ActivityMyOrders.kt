@@ -78,13 +78,13 @@ class ActivityMyOrders : BtsppActivity() {
 //        fragmens.add(FragmentOrderHistory().initialize(_tradeHistory!!))
 
         fragmens.add(FragmentOrderHistory().initialize(JSONObject().apply {
-            put("from","history_orders")
+            put("from", "history_orders")
             put("data", _tradeHistory!!)
         }))
 
         // REMARK 测试数据: 这里暂时用历史订单数据代替
         fragmens.add(FragmentOrderHistory().initialize(JSONObject().apply {
-            put("from","settlement_orders")
+            put("from", "settlement_orders")
             put("data", _tradeHistory!!)
         }))
     }

@@ -37,6 +37,7 @@ class ActivityIndexMy : BtsppActivity() {
         img_icon_orders.setColorFilter(iconcolor)
         img_icon_wallet.setColorFilter(iconcolor)
         img_icon_proposal.setColorFilter(iconcolor)
+        img_icon_asset_mgr.setColorFilter(iconcolor)
         img_icon_faq.setColorFilter(iconcolor)
         img_icon_setting.setColorFilter(iconcolor)
         img_icon_about.setColorFilter(iconcolor)
@@ -68,6 +69,13 @@ class ActivityIndexMy : BtsppActivity() {
         layout_my_proposal_waiting_for_process.setOnClickListener {
             guardWalletExist {
                 goTo(ActivityProposal::class.java, true)
+            }
+        }
+
+        //  资产管理
+        layout_asset_mgr.setOnClickListener {
+            guardWalletExist {
+                goTo(ActivityAssetManager::class.java, true)
             }
         }
 

@@ -3,7 +3,6 @@ package com.btsplusplus.fowallet
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
-import android.widget.LinearLayout
 import bitshares.*
 import com.fowallet.walletcore.bts.ChainObjectManager
 import kotlinx.android.synthetic.main.activity_index_markets.*

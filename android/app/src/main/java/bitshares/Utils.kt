@@ -275,6 +275,27 @@ class Utils {
         }
 
         /**
+         *  (public) 是否是字母判断。
+         */
+        fun isAlpha(c: Char): Boolean {
+            return (c in 'A'..'Z') || (c in 'a'..'z')
+        }
+
+        /**
+         *  (public) 是否是数字判断。
+         */
+        fun isDigit(c: Char): Boolean {
+            return c in '0'..'9'
+        }
+
+        /**
+         *  (public) 是否是字母 或 数字判断。
+         */
+        fun isAlnum(c: Char): Boolean {
+            return isAlpha(c) || isDigit(c)
+        }
+
+        /**
          * 格式化时间戳为 BTS 网络时间字符串格式。格式：2018-06-04T13:03:57。
          */
         fun formatBitsharesTimeString(ts: Long): String {

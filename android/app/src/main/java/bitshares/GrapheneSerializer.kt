@@ -61,6 +61,17 @@ open class T_Base_companion {
         T_proposal_update.register_subfields()
         T_proposal_delete.register_subfields()
 
+        T_price.register_subfields()
+        T_asset_options.register_subfields()
+        T_bitasset_options.register_subfields()
+        T_asset_create.register_subfields()
+        T_asset_settle.register_subfields()
+        T_asset_update.register_subfields()
+        T_asset_update_bitasset.register_subfields()
+        T_asset_update_feed_producers.register_subfields()
+        T_asset_reserve.register_subfields()
+        T_asset_issue.register_subfields()
+        T_asset_claim_pool.register_subfields()
         T_asset_update_issuer.register_subfields()
 
         T_transaction.register_subfields()
@@ -659,7 +670,12 @@ class T_call_order_update : T_Base() {
             add_field("funding_account", Tm_protocol_id_type("account"))
             add_field("delta_collateral", T_asset)
             add_field("delta_debt", T_asset)
-            add_field("extensions", Tm_extension(jsonArrayfrom(jsonObjectfromKVS("name", "target_collateral_ratio", "type", T_uint16))))
+            add_field("extensions", Tm_extension(JSONArray().apply {
+                put(JSONObject().apply {
+                    put("name", "target_collateral_ratio")
+                    put("type", T_uint16)
+                })
+            }))
         }
     }
 }
@@ -789,6 +805,156 @@ class T_proposal_delete : T_Base() {
     }
 }
 
+class T_price : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("base", T_asset)
+            add_field("quote", T_asset)
+        }
+    }
+}
+
+class T_asset_options : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("max_supply", T_int64)
+            add_field("market_fee_percent", T_uint16)
+            add_field("max_market_fee", T_int64)
+            add_field("issuer_permissions", T_uint16)
+            add_field("flags", T_uint16)
+            add_field("core_exchange_rate", T_price)
+            add_field("whitelist_authorities", Tm_set(Tm_protocol_id_type("account")))
+            add_field("blacklist_authorities", Tm_set(Tm_protocol_id_type("account")))
+            add_field("whitelist_markets", Tm_set(Tm_protocol_id_type("asset")))
+            add_field("blacklist_markets", Tm_set(Tm_protocol_id_type("asset")))
+            add_field("description", T_string)
+            add_field("extensions", Tm_extension(JSONArray().apply {
+                put(JSONObject().apply {
+                    put("name", "reward_percent")
+                    put("type", T_uint16)
+                })
+                put(JSONObject().apply {
+                    put("name", "whitelist_market_fee_sharing")
+                    put("type", Tm_set(Tm_protocol_id_type("account")))
+                })
+            }))
+        }
+    }
+}
+
+class T_bitasset_options : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("feed_lifetime_sec", T_uint32)
+            add_field("minimum_feeds", T_uint8)
+            add_field("force_settlement_delay_sec", T_uint32)
+            add_field("force_settlement_offset_percent", T_uint16)
+            add_field("maximum_force_settlement_volume", T_uint16)
+            add_field("short_backing_asset", Tm_protocol_id_type("asset"))
+            add_field("extensions", Tm_set(T_future_extensions))
+        }
+    }
+}
+
+class T_asset_create : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("fee", T_asset)
+            add_field("issuer", Tm_protocol_id_type("account"))
+            add_field("symbol", T_string)
+            add_field("precision", T_uint8)
+            add_field("common_options", T_asset_options)
+            add_field("bitasset_opts", Tm_optional(T_bitasset_options))
+            add_field("is_prediction_market", T_bool)
+            add_field("extensions", Tm_set(T_future_extensions))
+        }
+    }
+}
+
+class T_asset_settle : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("fee", T_asset)
+            add_field("account", Tm_protocol_id_type("account"))
+            add_field("amount", T_asset)
+            add_field("extensions", Tm_set(T_future_extensions))
+        }
+    }
+}
+
+class T_asset_update : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("fee", T_asset)
+            add_field("issuer", Tm_protocol_id_type("account"))
+            add_field("asset_to_update", Tm_protocol_id_type("asset"))
+            add_field("new_issuer", Tm_optional(Tm_protocol_id_type("account")))
+            add_field("new_options", T_asset_options)
+            add_field("extensions", Tm_set(T_future_extensions))
+        }
+    }
+}
+
+class T_asset_update_bitasset : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("fee", T_asset)
+            add_field("issuer", Tm_protocol_id_type("account"))
+            add_field("asset_to_update", Tm_protocol_id_type("asset"))
+            add_field("new_options", T_bitasset_options)
+            add_field("extensions", Tm_set(T_future_extensions))
+        }
+    }
+}
+
+class T_asset_update_feed_producers : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("fee", T_asset)
+            add_field("issuer", Tm_protocol_id_type("account"))
+            add_field("asset_to_update", Tm_protocol_id_type("asset"))
+            add_field("new_feed_producers", Tm_set(Tm_protocol_id_type("account")))
+            add_field("extensions", Tm_set(T_future_extensions))
+        }
+    }
+}
+
+class T_asset_reserve : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("fee", T_asset)
+            add_field("payer", Tm_protocol_id_type("account"))
+            add_field("amount_to_reserve", T_asset)
+            add_field("extensions", Tm_set(T_future_extensions))
+        }
+    }
+}
+
+class T_asset_issue : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("fee", T_asset)
+            add_field("issuer", Tm_protocol_id_type("account"))
+            add_field("asset_to_issue", T_asset)
+            add_field("issue_to_account", Tm_protocol_id_type("account"))
+            add_field("memo", Tm_optional(T_memo_data))
+            add_field("extensions", Tm_set(T_future_extensions))
+        }
+    }
+}
+
+class T_asset_claim_pool : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("fee", T_asset)
+            add_field("issuer", Tm_protocol_id_type("account"))
+            add_field("asset_id", Tm_protocol_id_type("asset"))     //  fee.asset_id must != asset_id
+            add_field("amount_to_claim", T_asset)                           //  only core asset
+            add_field("extensions", Tm_set(T_future_extensions))
+        }
+    }
+}
+
 class T_asset_update_issuer : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
@@ -886,6 +1052,14 @@ class T_operation : T_Base() {
                 EBitsharesOperations.ebo_proposal_create.value -> T_proposal_create
                 EBitsharesOperations.ebo_proposal_update.value -> T_proposal_update
                 EBitsharesOperations.ebo_proposal_delete.value -> T_proposal_delete
+                EBitsharesOperations.ebo_asset_create.value -> T_asset_create
+                EBitsharesOperations.ebo_asset_settle.value -> T_asset_settle
+                EBitsharesOperations.ebo_asset_update.value -> T_asset_update
+                EBitsharesOperations.ebo_asset_update_bitasset.value -> T_asset_update_bitasset
+                EBitsharesOperations.ebo_asset_update_feed_producers.value -> T_asset_update_feed_producers
+                EBitsharesOperations.ebo_asset_reserve.value -> T_asset_reserve
+                EBitsharesOperations.ebo_asset_issue.value -> T_asset_issue
+                EBitsharesOperations.ebo_asset_claim_pool.value -> T_asset_claim_pool
                 EBitsharesOperations.ebo_asset_update_issuer.value -> T_asset_update_issuer
                 EBitsharesOperations.ebo_htlc_create.value -> T_htlc_create
                 EBitsharesOperations.ebo_htlc_redeem.value -> T_htlc_redeem

@@ -141,7 +141,7 @@
                     android:textSize="16dp"
                     android:layout_weight="9"
                     android:textColor="@color/theme01.textColorMain"
-                    android:text="@string/kVcTitleOrderManagement"/>
+                    android:text="@string/kLblCellOrderManagement"/>
 
                 <ImageView
                     android:layout_width="0dp"
@@ -178,7 +178,7 @@
                     android:textSize="16dp"
                     android:layout_weight="9"
                     android:textColor="@color/theme01.textColorMain"
-                    android:text="@string/kVcTitleWalletAndMultiSign"/>
+                    android:text="@string/kLblCellWalletAndMultiSign"/>
 
                 <ImageView
                     android:layout_width="0dp"
@@ -214,7 +214,7 @@
                     android:textSize="16dp"
                     android:layout_weight="9"
                     android:textColor="@color/theme01.textColorMain"
-                    android:text="@string/kVcTitleMyProposal"/>
+                    android:text="@string/kLblCellMyProposal"/>
 
                 <ImageView
                     android:layout_width="0dp"
@@ -227,23 +227,21 @@
 
             </LinearLayout>
 
-
-            <!-- TODO：待解冻金额，未完成。 -->
+            <!-- asset manager TODO:4.0 icon -->
             <LinearLayout
-                android:id="@+id/layout_unfreeze_amount_of_my"
-                android:visibility="gone"
+                android:id="@+id/layout_asset_mgr"
                 android:layout_width="match_parent"
                 android:layout_height="34dp"
                 android:layout_marginTop="12dp"
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/img_icon_vesting_balance"
+                    android:id="@+id/img_icon_asset_mgr"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/orders"/>
+                    android:src="@drawable/proposal"/>
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -252,7 +250,7 @@
                     android:textSize="16dp"
                     android:layout_weight="9"
                     android:textColor="@color/theme01.textColorMain"
-                    android:text="@string/kLblCellVestingBalance"/>
+                    android:text="@string/kLblCellAssetMgr"/>
 
                 <ImageView
                     android:layout_width="0dp"

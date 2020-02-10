@@ -3,6 +3,7 @@ package com.fowallet.walletcore.bts
 import android.content.Context
 import bitshares.*
 import com.btsplusplus.fowallet.R
+import com.btsplusplus.fowallet.utils.ModelUtils
 import org.json.JSONArray
 import org.json.JSONObject
 import kotlin.math.max
@@ -137,20 +138,7 @@ class BitsharesClientManager {
         val n_amount = Utils.auxGetStringDecimalNumberValue(amount)
         val n_amount_pow = n_amount.multiplyByPowerOf10(asset_precision)
 
-        var bBalanceEnough = false
-        val balances = full_from_account.optJSONArray("balances")
-        if (balances != null && balances.length() > 0) {
-            for (balance_object in balances.forin<JSONObject>()) {
-                if (asset_id == balance_object!!.getString("asset_type")) {
-                    val n_balance = bigDecimalfromAmount(balance_object.getString("balance"), asset_precision)
-                    if (n_balance >= n_amount) {
-                        bBalanceEnough = true
-                        break
-                    }
-                }
-            }
-        }
-
+        val bBalanceEnough = ModelUtils.findAssetBalance(full_from_account, asset_id, asset_precision) >= n_amount
         if (!bBalanceEnough) {
             p.resolve(JSONObject().apply {
                 put("err", String.format(R.string.kTxBalanceNotEnough.xmlstring(ctx), asset.getString("symbol")))
@@ -400,6 +388,88 @@ class BitsharesClientManager {
         //  手续费支付账号也需要签名
         tr.addSignKeys(walletMgr.getSignKeysFromFeePayingAccount(opdata.getString("fee_paying_account")))
 
+        return process_transaction(tr)
+    }
+
+    /**
+     *  OP -创建资产。
+     */
+    fun assetCreate(opdata: JSONObject): Promise {
+        val tr = TransactionBuilder()
+        tr.add_operation(EBitsharesOperations.ebo_asset_create, opdata)
+        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("issuer")))
+        return process_transaction(tr)
+    }
+
+    /**
+     *  OP -清算资产。
+     */
+    fun assetSettle(opdata: JSONObject): Promise {
+        val tr = TransactionBuilder()
+        tr.add_operation(EBitsharesOperations.ebo_asset_settle, opdata)
+        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("account")))
+        return process_transaction(tr)
+    }
+
+    /**
+     *  OP -更新资产基本信息。
+     */
+    fun assetUpdate(opdata: JSONObject): Promise {
+        //  REMARK：HARDFORK_CORE_199_TIME 硬分叉之后 new_issuer 不可更新，需要更新调用单独的接口更新。
+        assert(!opdata.has("new_issuer"))
+        val tr = TransactionBuilder()
+        tr.add_operation(EBitsharesOperations.ebo_asset_update, opdata)
+        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("issuer")))
+        return process_transaction(tr)
+    }
+
+    /**
+     *  OP -更新智能币相关信息。
+     */
+    fun assetUpdateBitasset(opdata: JSONObject): Promise {
+        val tr = TransactionBuilder()
+        tr.add_operation(EBitsharesOperations.ebo_asset_update_bitasset, opdata)
+        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("issuer")))
+        return process_transaction(tr)
+    }
+
+    /**
+     *  OP -更新智能币的喂价人员信息。
+     */
+    fun assetUpdateFeedProducers(opdata: JSONObject): Promise {
+        val tr = TransactionBuilder()
+        tr.add_operation(EBitsharesOperations.ebo_asset_update_feed_producers, opdata)
+        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("issuer")))
+        return process_transaction(tr)
+    }
+
+    /**
+     *  OP -销毁资产（减少当前供应量）REMARK：不能对智能资产进行操作。
+     */
+    fun assetReserve(opdata: JSONObject): Promise {
+        val tr = TransactionBuilder()
+        tr.add_operation(EBitsharesOperations.ebo_asset_reserve, opdata)
+        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("payer")))
+        return process_transaction(tr)
+    }
+
+    /**
+     *  OP -发行资产给某人
+     */
+    fun assetIssue(opdata: JSONObject): Promise {
+        val tr = TransactionBuilder()
+        tr.add_operation(EBitsharesOperations.ebo_asset_issue, opdata)
+        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("issuer")))
+        return process_transaction(tr)
+    }
+
+    /**
+     *  OP -提取资产等手续费池资金
+     */
+    fun assetClaimPool(opdata: JSONObject): Promise {
+        val tr = TransactionBuilder()
+        tr.add_operation(EBitsharesOperations.ebo_asset_claim_pool, opdata)
+        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("issuer")))
         return process_transaction(tr)
     }
 
