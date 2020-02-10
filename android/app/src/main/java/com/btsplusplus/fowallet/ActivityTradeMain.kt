@@ -3,6 +3,7 @@ package com.btsplusplus.fowallet
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import bitshares.*
 import com.btsplusplus.fowallet.kline.TradingPair
@@ -49,6 +50,8 @@ class ActivityTradeMain : BtsppActivity() {
         val params = btspp_args_as_JSONArray()
         _tradingPair = params.get(0) as TradingPair
         _defaultSelectBuy = params.getBoolean(1)
+        //  确保智能资产信息已经初始化
+        assert(_tradingPair._bCoreMarketInited)
         //  REMARK：在初始化的时候判断帐号信息
         _haveAccountOnInit = WalletManager.sharedWalletManager().isWalletExist()
         _notify_handler = object : Handler() {
@@ -74,12 +77,32 @@ class ActivityTradeMain : BtsppActivity() {
         }
         btn_fav.setOnClickListener { _onFavClicked() }
 
+        //  动态初始化TabItem
+        findViewById<TabLayout>(R.id.tablayout_of_main_buy_and_sell).let { tab ->
+            tab.addTab(tab.newTab().apply {
+                text = resources.getString(R.string.kLabelTitleBuy)
+            })
+            tab.addTab(tab.newTab().apply {
+                text = resources.getString(R.string.kLabelTitleSell)
+            })
+            if (_tradingPair._isCoreMarket) {
+                tab.addTab(tab.newTab().apply {
+                    text = resources.getString(R.string.kVcOrderPageSettleOrders)
+                })
+            }
+        }
         //  添加 fargments
         setFragments()
         //  设置 viewPager 并配置滚动速度
         setViewPager(if (_defaultSelectBuy) 0 else 1, R.id.view_pager_of_main_buy_and_sell, R.id.tablayout_of_main_buy_and_sell, fragmens)
         //  监听 tab 并设置选中 item
-        setTabListener(R.id.tablayout_of_main_buy_and_sell, R.id.view_pager_of_main_buy_and_sell)
+        setTabListener(R.id.tablayout_of_main_buy_and_sell, R.id.view_pager_of_main_buy_and_sell) { pos ->
+            fragmens[pos].let {
+                if (it is FragmentOrderHistory) {
+                    it.querySettlementOrders(tradingPair = _tradingPair)
+                }
+            }
+        }
         //  设置全屏(隐藏状态栏和虚拟导航栏)
         setFullScreen()
 
@@ -212,7 +235,9 @@ class ActivityTradeMain : BtsppActivity() {
 
         //  b、刷新登录按钮状态
         fragmens.forEach {
-            (it as FragmentTradeMainPage).onRefreshLoginStatus()
+            if (it is FragmentTradeMainPage) {
+                it.onRefreshLoginStatus()
+            }
         }
     }
 
@@ -238,17 +263,17 @@ class ActivityTradeMain : BtsppActivity() {
     }
 
     fun onFullAccountInfoResponsed(full_account_data: JSONObject?) {
-        fragmens.forEachIndexed { index, it ->
-            if (index < 2) {
-                (it as FragmentTradeMainPage).onFullAccountDataResponsed(full_account_data)
+        fragmens.forEach {
+            if (it is FragmentTradeMainPage) {
+                it.onFullAccountDataResponsed(full_account_data)
             }
         }
     }
 
     private fun onQueryTickerDataResponse(ticker_data: JSONObject) {
-        fragmens.forEachIndexed { index, it ->
-            if (index < 2) {
-                (it as FragmentTradeMainPage).onQueryTickerDataResponse(ticker_data)
+        fragmens.forEach {
+            if (it is FragmentTradeMainPage) {
+                it.onQueryTickerDataResponse(ticker_data)
             }
         }
     }
@@ -256,9 +281,9 @@ class ActivityTradeMain : BtsppActivity() {
     private fun onQueryFillOrderHistoryResponsed(data: JSONArray?) {
         //  订阅市场返回的数据可能为 nil。
         if (data != null) {
-            fragmens.forEachIndexed { index, it ->
-                if (index < 2) {
-                    (it as FragmentTradeMainPage).onQueryFillOrderHistoryResponsed(data)
+            fragmens.forEach {
+                if (it is FragmentTradeMainPage) {
+                    it.onQueryFillOrderHistoryResponsed(data)
                 }
             }
         }
@@ -267,11 +292,10 @@ class ActivityTradeMain : BtsppActivity() {
     private fun onQueryOrderBookResponse(normal_order_book: JSONObject?, settlement_data: JSONObject?) {
         if (normal_order_book != null) {
             val merged_order_book = OrgUtils.mergeOrderBook(normal_order_book, settlement_data)
-            fragmens.forEachIndexed { index, it ->
-                if (index < 2) {
-                    (it as FragmentTradeMainPage).onQueryOrderBookResponse(merged_order_book)
+            fragmens.forEach {
+                if (it is FragmentTradeMainPage) {
+                    it.onQueryOrderBookResponse(merged_order_book)
                 }
-
             }
         }
     }
@@ -279,16 +303,10 @@ class ActivityTradeMain : BtsppActivity() {
     private fun setFragments() {
         fragmens.add(FragmentTradeMainPage().initialize(jsonArrayfrom(true, _tradingPair)))
         fragmens.add(FragmentTradeMainPage().initialize(jsonArrayfrom(false, _tradingPair)))
-
-
-        // REMARK 这里的数据格式跟我的订单 历史订单数据格式一致
-        val data = JSONObject().apply {
-            put("from", "settlement_orders")
-            put("data", JSONArray().apply {
-
-            })
+        if (_tradingPair._isCoreMarket) {
+            fragmens.add(FragmentOrderHistory().initialize(JSONObject().apply {
+                put("isSettlementsOrder", true)
+            }))
         }
-        fragmens.add(FragmentOrderHistory().initialize(data))
-
     }
 }

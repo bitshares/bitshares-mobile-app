@@ -18,7 +18,7 @@ class ActivityMyOrders : BtsppActivity() {
     private var tablayout: TabLayout? = null
     private var view_pager: ViewPager? = null
 
-    private var _full_account_data: JSONObject? = null
+    private lateinit var _full_account_data: JSONObject
     private var _tradeHistory: JSONArray? = null
     private var _tradingPair: TradingPair? = null
 
@@ -27,7 +27,7 @@ class ActivityMyOrders : BtsppActivity() {
         setAutoLayoutContentView(R.layout.activity_my_orders)
 
         //  获取参数
-        var args = btspp_args_as_JSONArray()
+        val args = btspp_args_as_JSONArray()
         _full_account_data = args[0] as JSONObject
         _tradeHistory = args[1] as JSONArray
         _tradingPair = args[2] as? TradingPair
@@ -74,25 +74,25 @@ class ActivityMyOrders : BtsppActivity() {
     }
 
     private fun setFragments() {
-        fragmens.add(FragmentOrderCurrent().initialize(_full_account_data!!))
-//        fragmens.add(FragmentOrderHistory().initialize(_tradeHistory!!))
-
+        fragmens.add(FragmentOrderCurrent().initialize(_full_account_data))
         fragmens.add(FragmentOrderHistory().initialize(JSONObject().apply {
-            put("from", "history_orders")
             put("data", _tradeHistory!!)
         }))
-
-        // REMARK 测试数据: 这里暂时用历史订单数据代替
         fragmens.add(FragmentOrderHistory().initialize(JSONObject().apply {
-            put("from", "settlement_orders")
-            put("data", _tradeHistory!!)
+            put("isSettlementsOrder", true)
         }))
     }
 
     private fun setTabListener() {
         tablayout!!.setOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-                view_pager!!.setCurrentItem(tab.position, true)
+                val pos = tab.position
+                view_pager!!.setCurrentItem(pos, true)
+                fragmens[pos].let {
+                    if (it is FragmentOrderHistory) {
+                        it.querySettlementOrders(full_account_data = _full_account_data)
+                    }
+                }
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {
