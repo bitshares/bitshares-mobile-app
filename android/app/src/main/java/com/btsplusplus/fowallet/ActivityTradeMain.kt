@@ -88,11 +88,7 @@ class ActivityTradeMain : BtsppActivity() {
         mask.show()
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
         //  优先查询智能背书资产信息（之后才考虑是否查询喂价、爆仓单等信息）
-        chainMgr.queryShortBackingAssetInfos(jsonArrayfrom(_tradingPair._baseId, _tradingPair._quoteId)).then {
-            //  更新智能资产信息
-            val sba_hash = it as JSONObject
-            _tradingPair.refreshCoreMarketFlag(sba_hash)
-
+        _tradingPair.queryBitassetMarketInfo().then {
             //  获取参数
             val parameters = chainMgr.getDefaultParameters()
             val n_callorder = parameters.getInt("trade_query_callorder_number")
@@ -287,7 +283,7 @@ class ActivityTradeMain : BtsppActivity() {
 
         // REMARK 这里的数据格式跟我的订单 历史订单数据格式一致
         val data = JSONObject().apply {
-            put("from","settlement_orders")
+            put("from", "settlement_orders")
             put("data", JSONArray().apply {
 
             })

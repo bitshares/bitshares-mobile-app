@@ -4,6 +4,7 @@ import android.content.Context
 import bitshares.*
 import com.btsplusplus.fowallet.kline.TradingPair
 import com.btsplusplus.fowallet.utils.BigDecimalHandler
+import com.btsplusplus.fowallet.utils.ModelUtils
 import com.orhanobut.logger.Logger
 import org.json.JSONArray
 import org.json.JSONObject
@@ -32,7 +33,7 @@ class ChainObjectManager {
     var _defaultMarketInfos: JSONObject?                                         //  ipa自带的默认配置信息（fowallet_market.json）
     var _defaultMarketPairs: JSONObject? = null                             //  默认内置交易对。交易对格式：#{base_symbol}_#{quote_symbol}
     lateinit var _defaultMarketBaseHash: MutableMap<String, JSONObject>          //  默认内置市场的 Hash 格式。base_symbol => market_info
-
+    var _assetBasePriority: JSONObject? = null
     var _defaultGroupList: JSONArray? = null                            //  默认分组信息列表（按照id升序列排列）
 
     var _tickerDatas: MutableMap<String, Any>                           //  行情 ticker 数据 格式：#{base_symbol}_#{quote_symbol} => ticker_data
@@ -71,6 +72,7 @@ class ChainObjectManager {
         _cacheVoteIdInfoHash = mutableMapOf()
 
         _defaultMarketInfos = null
+        _assetBasePriority = null
         _defaultMarketPairs = null
         _defaultGroupList = null
 
@@ -359,17 +361,20 @@ class ChainObjectManager {
      *  (public) 获取资产作为交易对中的 base 资产的优先级，两者之中，优先级高的作为 base，另外一个作为 quote。
      */
     fun genAssetBasePriorityHash(): JSONObject {
-        val asset_base_priority = JSONObject()
-        var max_priority = 1000
-        //  REMARK：优先级 从 CNY 到 BTS 逐渐降低，其他非市场 base 的资产优先级默认为 0。
-        val default_markets = getDefaultMarketInfos()
-        for (i in 0 until default_markets.length()) {
-            val market = default_markets.getJSONObject(i)
-            val symbol = market.getJSONObject("base").getString("symbol")
-            asset_base_priority.put(symbol, max_priority)
-            max_priority -= 1
+        if (_assetBasePriority == null) {
+            val asset_base_priority = JSONObject()
+            var max_priority = 1000
+            //  REMARK：优先级 从 CNY 到 BTS 逐渐降低，其他非市场 base 的资产优先级默认为 0。
+            val default_markets = getDefaultMarketInfos()
+            for (i in 0 until default_markets.length()) {
+                val market = default_markets.getJSONObject(i)
+                val symbol = market.getJSONObject("base").getString("symbol")
+                asset_base_priority.put(symbol, max_priority)
+                max_priority -= 1
+            }
+            _assetBasePriority = asset_base_priority
         }
-        return asset_base_priority
+        return _assetBasePriority!!
     }
 
     /**
@@ -510,10 +515,16 @@ class ChainObjectManager {
         }
     }
 
-    private fun appendAssetCore(asset: JSONObject) {
+    /**
+     *  (public) 添加到内存 cache
+     */
+    fun appendAssetCore(asset: JSONObject) {
         assert(asset != null)
-        _cacheObjectID2ObjectHash[asset.getString("id")] = asset          //  1.3.0格式
-        _cacheAssetSymbol2ObjectHash[asset.getString("symbol")] = asset
+        val oid = asset.getString("id")
+        if (!_cacheObjectID2ObjectHash.containsKey(oid)) {
+            _cacheObjectID2ObjectHash[oid] = asset          //  1.3.0格式
+            _cacheAssetSymbol2ObjectHash[asset.getString("symbol")] = asset
+        }
     }
 
     /**
@@ -900,33 +911,33 @@ class ChainObjectManager {
     /**
      *  (public) 查询智能资产的信息（非智能资产返回nil）
      */
-    fun queryShortBackingAssetInfos(asset_id_list: JSONArray): Promise {
-        return queryAllAssetsInfo(asset_id_list).then {
-            val asset_hash = it as JSONObject
-            val asset_bitasset_hash = JSONObject()
-            val bitasset_id_list = JSONArray()
-            asset_id_list.forEach<String> { item ->
-                val asset_id = item!!
-                val asset = asset_hash.getJSONObject(asset_id)
-                val bitasset_data_id = asset.optString("bitasset_data_id")
-                if (bitasset_data_id != "") {
-                    bitasset_id_list.put(bitasset_data_id)
-                    asset_bitasset_hash.put(asset_id, bitasset_data_id)
-                }
-            }
-            return@then queryAllGrapheneObjects(bitasset_id_list).then { resultHash ->
-                val bitasset_hash = resultHash as JSONObject
-                val sba_hash = JSONObject()
-                asset_bitasset_hash.keys().forEach { asset_id ->
-                    val bitasset_data_id = asset_bitasset_hash.getString(asset_id)
-                    val bitasset_data = bitasset_hash.getJSONObject(bitasset_data_id)
-                    val short_backing_asset = bitasset_data.getJSONObject("options").getString("short_backing_asset")
-                    sba_hash.put(asset_id, short_backing_asset)
-                }
-                return@then sba_hash
-            }
-        }
-    }
+//    fun queryShortBackingAssetInfos(asset_id_list: JSONArray): Promise {
+//        return queryAllAssetsInfo(asset_id_list).then {
+//            val asset_hash = it as JSONObject
+//            val asset_bitasset_hash = JSONObject()
+//            val bitasset_id_list = JSONArray()
+//            asset_id_list.forEach<String> { item ->
+//                val asset_id = item!!
+//                val asset = asset_hash.getJSONObject(asset_id)
+//                val bitasset_data_id = asset.optString("bitasset_data_id")
+//                if (bitasset_data_id != "") {
+//                    bitasset_id_list.put(bitasset_data_id)
+//                    asset_bitasset_hash.put(asset_id, bitasset_data_id)
+//                }
+//            }
+//            return@then queryAllGrapheneObjects(bitasset_id_list).then { resultHash ->
+//                val bitasset_hash = resultHash as JSONObject
+//                val sba_hash = JSONObject()
+//                asset_bitasset_hash.keys().forEach { asset_id ->
+//                    val bitasset_data_id = asset_bitasset_hash.getString(asset_id)
+//                    val bitasset_data = bitasset_hash.getJSONObject(bitasset_data_id)
+//                    val short_backing_asset = bitasset_data.getJSONObject("options").getString("short_backing_asset")
+//                    sba_hash.put(asset_id, short_backing_asset)
+//                }
+//                return@then sba_hash
+//            }
+//        }
+//    }
 
     /**
      *  (public) 查询所有投票ID信息
@@ -1170,6 +1181,14 @@ class ChainObjectManager {
     }
 
     /**
+     *  (public) 根据资产创建者查询资产信息。
+     */
+    fun queryAssetsByIssuer(issuer_name_or_id: String, start: String, limit: Int): Promise {
+        val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
+        return conn.async_exec_db("get_assets_by_issuer", jsonArrayfrom(issuer_name_or_id, start, limit))
+    }
+
+    /**
      *  (public) 查询最近成交记录
      */
 
@@ -1242,6 +1261,27 @@ class ChainObjectManager {
                 fillOrders.put(jsonObjectfromKVS("time", time, "issell", isSell, "iscall", isCallOrder, "price", price, "amount", amount))
             }
             return@then fillOrders
+        }
+    }
+
+    /**
+     *  (public) 根据资产 - 查询强清单
+     */
+    fun querySettlementOrders(smart_asset_symbol_or_id: String, number: Int): Promise {
+        val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
+        return conn.async_exec_db("get_settle_orders", jsonArrayfrom(smart_asset_symbol_or_id, number)).then {
+            return@then it as? JSONArray
+        }
+    }
+
+    /**
+     *  (public) 根据用户 - 查询强清单
+     */
+    fun querySettlementOrdersByAccount(account_name_or_id: String, number: Int): Promise {
+        val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
+        val start = "1.${EBitsharesObjectType.ebot_force_settlement.value}.0"
+        return conn.async_exec_db("get_settle_orders_by_account", jsonArrayfrom(account_name_or_id, start, number)).then {
+            return@then it as? JSONArray
         }
     }
 
@@ -1579,6 +1619,34 @@ class ChainObjectManager {
             return@then queryAllAssetsInfo(asset_id_hash.keys().toJSONArray()).then {
                 return@then full_account_data
             }
+        }
+    }
+
+    /**
+     *  (public) 查询指定【智能资产】的【背书资产】数据。
+     */
+    fun queryBackingAsset(smart_asset: JSONObject): Promise {
+        val bitasset_data_id = smart_asset.getString("bitasset_data_id")
+        assert(bitasset_data_id.isNotEmpty())
+        return queryAllGrapheneObjects(jsonArrayfrom(bitasset_data_id)).then {
+            val resultHash = it as JSONObject
+            val bitasset_data = resultHash.getJSONObject(bitasset_data_id)
+            val short_backing_asset = bitasset_data.getJSONObject("options").getString("short_backing_asset")
+            return@then queryAllAssetsInfo(jsonArrayfrom(short_backing_asset)).then {
+                val resultHash02 = it as JSONObject
+                return@then resultHash02.getJSONObject(short_backing_asset)
+            }
+        }
+    }
+
+    /**
+     *  (public) 查询指定背书资产的次级背书资产信息。
+     */
+    fun queryBackingBackingAsset(backing_asset: JSONObject): Promise {
+        if (ModelUtils.assetIsSmart(backing_asset)) {
+            return queryBackingAsset(backing_asset)
+        } else {
+            return Promise._resolve(backing_asset)
         }
     }
 

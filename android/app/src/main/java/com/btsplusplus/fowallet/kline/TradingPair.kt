@@ -1,7 +1,10 @@
 package com.btsplusplus.fowallet.kline
 
+import bitshares.Promise
 import bitshares.bigDecimalfromAmount
 import bitshares.fixComma
+import bitshares.toJSONArray
+import com.btsplusplus.fowallet.utils.ModelUtils
 import com.fowallet.walletcore.bts.ChainObjectManager
 import org.json.JSONArray
 import org.json.JSONObject
@@ -18,6 +21,7 @@ class TradingPair {
     var _baseIsSmart: Boolean = false
     var _quoteIsSmart: Boolean = false
 
+    var _bCoreMarketInited = false
     var _isCoreMarket = false                       //  是否是智能资产市场（该标记需要后期更新）
     var _smartAssetId = ""                          //  智能资产ID
     var _sbaAssetId = ""                            //  背书资产ID
@@ -38,10 +42,6 @@ class TradingPair {
     constructor()
 
     fun initWithBaseID(baseId: String, quoteId: String): TradingPair {
-
-        assert(baseId != null)
-        assert(quoteId != null)
-
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
 
         val base = chainMgr.getChainObjectByID(baseId)
@@ -50,22 +50,13 @@ class TradingPair {
     }
 
     fun initWithBaseSymbol(baseSymbol: String, quoteSymbol: String): TradingPair {
-
-        assert(baseSymbol != null)
-        assert(quoteSymbol != null)
-
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
         val base = chainMgr.getAssetBySymbol(baseSymbol)
         val quote = chainMgr.getAssetBySymbol(quoteSymbol)
         return initWithBaseAsset(base, quote)
-
     }
 
     fun initWithBaseAsset(baseAsset: JSONObject, quoteAsset: JSONObject): TradingPair {
-
-        assert(baseAsset != null)
-        assert(quoteAsset != null)
-
         _pair = String.format("%s_%s", baseAsset.getString("symbol"), quoteAsset.getString("symbol"))
 
         _baseAsset = baseAsset
@@ -92,32 +83,84 @@ class TradingPair {
      *  (private) 是否是智能货币判断
      */
     private fun _is_smart(asset: JSONObject): Boolean {
-        val bitasset_data_id = asset.optString("bitasset_data_id")
-        return bitasset_data_id != ""
+        return ModelUtils.assetIsSmart(asset)
     }
 
+//    /**
+//     *  (public) 刷新智能资产交易对（市场）标记。即：quote是base的背书资产，或者base是quote的背书资产。
+//     */
+//    fun refreshCoreMarketFlag(sba_hash: JSONObject) {
+//        _isCoreMarket = false
+//        _smartAssetId = ""
+//        _sbaAssetId = ""
+//
+//        val base_sba = sba_hash.optString(_baseId, null)
+//        if (base_sba != null && base_sba == _quoteId) {
+//            _isCoreMarket = true
+//            _smartAssetId = _baseId
+//            _sbaAssetId = _quoteId
+//            return
+//        }
+//
+//        val quote_sba = sba_hash.optString(_quoteId, null)
+//        if (quote_sba != null && quote_sba == _baseId) {
+//            _isCoreMarket = true
+//            _smartAssetId = _quoteId
+//            _sbaAssetId = _baseId
+//            return
+//        }
+//    }
+
     /**
-     *  (public) 刷新智能资产交易对（市场）标记。即：quote是base的背书资产，或者base是quote的背书资产。
+     *  (public) 查询base和quote资产的智能币相关信息
      */
-    fun refreshCoreMarketFlag(sba_hash: JSONObject) {
+    fun queryBitassetMarketInfo(): Promise {
+        if (_bCoreMarketInited) {
+            return Promise._resolve(_isCoreMarket)
+        }
         _isCoreMarket = false
         _smartAssetId = ""
         _sbaAssetId = ""
 
-        val base_sba = sba_hash.optString(_baseId, null)
-        if (base_sba != null && base_sba == _quoteId) {
-            _isCoreMarket = true
-            _smartAssetId = _baseId
-            _sbaAssetId = _quoteId
-            return
+        if (!_baseIsSmart && !_quoteIsSmart) {
+            _bCoreMarketInited = true
+            return Promise._resolve(_isCoreMarket)
         }
 
-        val quote_sba = sba_hash.optString(_quoteId, null)
-        if (quote_sba != null && quote_sba == _baseId) {
-            _isCoreMarket = true
-            _smartAssetId = _quoteId
-            _sbaAssetId = _baseId
-            return
+        val bitasset_data_id_base = _baseAsset.optString("bitasset_data_id", "")
+        val bitasset_data_id_quote = _quoteAsset.optString("bitasset_data_id", "")
+
+        val ids = JSONObject()
+        if (bitasset_data_id_base.isNotEmpty()) {
+            ids.put(bitasset_data_id_base, true)
+        }
+        if (bitasset_data_id_quote.isNotEmpty()) {
+            ids.put(bitasset_data_id_quote, true)
+        }
+
+        return ChainObjectManager.sharedChainObjectManager().queryAllGrapheneObjects(ids.keys().toJSONArray()).then {
+            val bitasset_hash = it as JSONObject
+            if (bitasset_data_id_base.isNotEmpty()) {
+                val bitasset_data = bitasset_hash.getJSONObject(bitasset_data_id_base)
+                val short_backing_asset = bitasset_data.getJSONObject("options").getString("short_backing_asset")
+                //  1、Base资产的背书资产是Quote资产的情况
+                if (short_backing_asset == _quoteId) {
+                    _isCoreMarket = true
+                    _smartAssetId = _baseId
+                    _sbaAssetId = _quoteId
+                }
+            } else if (bitasset_data_id_quote.isNotEmpty()) {
+                val bitasset_data = bitasset_hash.getJSONObject(bitasset_data_id_quote)
+                val short_backing_asset = bitasset_data.getJSONObject("options").getString("short_backing_asset")
+                //  2、Quote资产的背书资产是Base资产的情况
+                if (short_backing_asset == _baseId) {
+                    _isCoreMarket = true
+                    _smartAssetId = _quoteId
+                    _sbaAssetId = _baseId
+                }
+            }
+            _bCoreMarketInited = true
+            return@then _isCoreMarket
         }
     }
 

@@ -151,11 +151,7 @@ class ActivityKLine : BtsppActivity() {
         val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this)
         mask.show()
 
-        chainMgr.queryShortBackingAssetInfos(jsonArrayfrom(_tradingPair._baseId, _tradingPair._quoteId)).then {
-            //  更新智能资产信息
-            val sba_hash = it as JSONObject
-            _tradingPair.refreshCoreMarketFlag(sba_hash)
-
+        _tradingPair.queryBitassetMarketInfo().then {
             //  1、查询K线基本数据
             val parameters = chainMgr.getDefaultParameters()
             val kline_period_ary = parameters.getJSONArray("kline_period_ary")

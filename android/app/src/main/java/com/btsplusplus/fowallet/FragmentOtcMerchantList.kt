@@ -285,7 +285,7 @@ class FragmentOtcMerchantList : BtsppFragment() {
     /**
      *  (private) 检测用户是否存在对应的收款方式。
      */
-    private fun _checkUserReceiveMethod(pminfo_list: JSONArray?, aliPaySwitch: Boolean, bankcardPaySwitch: Boolean, wechatPaySwitch: Boolean) : Boolean {
+    private fun _checkUserReceiveMethod(pminfo_list: JSONArray?, aliPaySwitch: Boolean, bankcardPaySwitch: Boolean, wechatPaySwitch: Boolean): Boolean {
         if (pminfo_list != null && pminfo_list.length() > 0) {
             for (pminfo in pminfo_list.forin<JSONObject>()) {
                 if (pminfo!!.getInt("status") != OtcManager.EOtcPaymentMethodStatus.eopms_enable.value) {

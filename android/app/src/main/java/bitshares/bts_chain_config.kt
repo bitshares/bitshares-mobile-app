@@ -9,6 +9,32 @@ enum class EBitsharesHtlcHashType(val value: Int) {
     EBHHT_SHA256(2)
 }
 
+/*
+ *  资产各种操作类型枚举 TODO:4.0 预测市场暂不考虑
+ */
+enum class EBitsharesAssetOpKind(val value: Int) {
+    //  管理员的操作
+    ebaok_view(0),                      //  资产详情
+    ebaok_edit(1),                      //  资产编辑（基本信息）
+    ebaok_issue(2),                     //  资产发行（仅UIA资产）
+    ebaok_override_transfer(3),         //  强制回收（需要开启对应权限标记）
+    ebaok_global_settle(4),             //  全局清算（仅Smart资产，并且需要开启对应权限标记）
+    ebaok_claim_pool(5),                //  提取手续费池（除Core外的所有资产）
+    ebaok_claim_fees(6),                //  提取交易手续费（除Core外的所有资产）
+    ebaok_fund_fee_pool(7),             //  注资手续费池（除Core外的所有资产）
+    ebaok_update_issuer(8),             //  变更所有者（需要owner权限，且UIA不能转移给理事会）
+    ebaok_publish_feed(9),              //  发布喂价（仅Smart资产）
+    ebaok_update_feed_producers(10),    //  更新喂价人员（仅Smart资产）
+    ebaok_update_bitasset(11),          //  编辑智能币相关信息（仅Smart资产）
+
+    //  资产持有者的操作
+    ebaok_transfer(100),                //  转账（所有资产）
+    ebaok_trade(101),                   //  交易（所有资产）
+    ebaok_reserve(102),                 //  资产销毁（仅UIA资产）
+    ebaok_settle(103),                  //  资产清算（仅Smart资产）
+    ebaok_call_order_update(104),       //  调整债仓（仅Smart资产）
+}
+
 /**
  *  石墨烯网络资产的各种标记。
  */
@@ -18,10 +44,17 @@ enum class EBitsharesAssetFlags(val value: Int) {
     ebat_override_authority(0x04),      //  发行人可将资产收回
     ebat_transfer_restricted(0x08),     //  所有转账必须通过发行人审核同意
     ebat_disable_force_settle(0x10),    //  禁止强制清算
-    ebat_global_settle(0x20),           //  允许发行人进行全局强制清算
+    ebat_global_settle(0x20),           //  允许发行人进行全局强制清算（仅可设置permission，不可设置flags）
     ebat_disable_confidential(0x40),    //  禁止隐私交易
-    ebat_witness_fed_asset(0x80),       //  允许见证人提供喂价
-    ebat_committee_fed_asset(0x100),    //  允许理事会成员提供喂价
+    ebat_witness_fed_asset(0x80),       //  允许见证人提供喂价（和理事会喂价不可同时激活）
+    ebat_committee_fed_asset(0x100),    //  允许理事会成员提供喂价（和见证人喂价不可同时激活）
+
+    //  UIA资产默认权限mask
+    ebat_issuer_permission_mask_uia(ebat_charge_market_fee.value.or(ebat_white_list.value).or(ebat_override_authority.value).or(ebat_transfer_restricted.value).or(ebat_disable_confidential.value)),
+    //  Smart资产扩展的权限mask
+    ebat_issuer_permission_mask_smart_only(ebat_disable_force_settle.value.or(ebat_global_settle.value).or(ebat_witness_fed_asset.value).or(ebat_committee_fed_asset.value)),
+    //  Smart资产默认权限mask
+    ebat_issuer_permission_mask_smart(ebat_issuer_permission_mask_uia.value.or(ebat_issuer_permission_mask_smart_only.value)),
 }
 
 /**
@@ -181,6 +214,7 @@ const val BTS_ADDRESS_PREFIX_LENGTH: Int = 3
 //  交易过期时间？
 const val BTS_CHAIN_EXPIRE_IN_SECS: Int = 15
 
+//  TODO:4.0 大部分参数可通过 get_config 接口返回。
 //  BTS主网公链ID（正式网络）
 const val BTS_NETWORK_CHAIN_ID: String = "4018d7844c78f6a6c41c6a552b898022310fc5dec06da467ee7905a8dad512c8"
 
@@ -207,6 +241,11 @@ const val BTS_GRAPHENE_PROXY_TO_SELF = "1.2.5"
 
 //  黑名单意见账号：btspp-team
 const val BTS_GRAPHENE_ACCOUNT_BTSPP_TEAM = "1.2.1031560"
+
+//  资产最大供应量
+const val GRAPHENE_MAX_SHARE_SUPPLY = 1000000000000000L
+const val GRAPHENE_100_PERCENT = 10000
+const val GRAPHENE_1_PERCENT = (GRAPHENE_100_PERCENT / 100)
 
 //  BTS网络动态全局信息对象ID号
 //  格式：
