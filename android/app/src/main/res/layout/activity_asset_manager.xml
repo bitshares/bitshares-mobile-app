@@ -7,15 +7,13 @@
     android:background="@color/theme01.appBackColor"
     tools:context="com.btsplusplus.fowallet.ActivityAssetManager">
 
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="25dp"
         android:orientation="vertical">
 
-
+        <!-- 导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -50,7 +48,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="资产管理"
+                android:text="@string/kVcTitleAssetMgr"
                 style="@style/kNavigationBarTextStyle" />
 
             <Button
@@ -73,7 +71,7 @@
             android:layout_height="match_parent">
 
             <LinearLayout
-                android:id="@+id/layout_wrap_from_assets_manager"
+                android:id="@+id/lay_cell_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
