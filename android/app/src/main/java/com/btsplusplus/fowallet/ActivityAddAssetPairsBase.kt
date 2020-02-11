@@ -99,7 +99,7 @@ class ActivityAddAssetPairsBase : BtsppActivity() {
 
     private fun createCell(data: JSONObject) {
         val v = LinearLayout(this)
-        val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, toDp(30f))
+        val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, toDp(34f))
         layout_params.gravity = Gravity.CENTER_VERTICAL
 
         v.layoutParams = layout_params
@@ -117,7 +117,7 @@ class ActivityAddAssetPairsBase : BtsppActivity() {
         //  开关
         val switch = Switch(this)
         switch.gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
-        val layout_switch_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, toDp(30f))
+        val layout_switch_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, toDp(34f))
         layout_switch_params.weight = 1.0f
         switch.layoutParams = layout_switch_params
         //  默认值
