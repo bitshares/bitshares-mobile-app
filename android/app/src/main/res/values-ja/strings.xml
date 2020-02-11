@@ -501,7 +501,8 @@
     <string name="kVcAssetOpSettleBtnName">发起清算</string>
     <string name="kVcAssetOpSettleSubmitTipsPleaseInputAmount">请输入要清算的资产数量。</string>
     <string name="kVcAssetOpSettleSubmitTipSettleOK">发起清算成功。</string>
-    <string name="kVcAssetOpReserveUiTips">【温馨提示】\n销毁会减少当前流通量。此操作不可逆，请谨慎操作。</string>
+    <string name="kVcAssetOpReserveEntrySafeTips">销毁操作会减少您对应的资产和资产当前流通量，该操作不可逆，请谨慎操作。是否继续？</string>
+    <string name="kVcAssetOpReserveUiTips">【温馨提示】\n执行销毁操作后您会减少对应数量的资产，并且会减少该资产当前流通量。此操作不可逆，请谨慎操作。</string>
     <string name="kVcAssetOpReserveCellPlaceholderAmount">请输入销毁数量</string>
     <string name="kVcAssetOpReserveBtnName">立即销毁</string>
     <string name="kVcAssetOpReserveSubmitTipsPleaseInputAmount">请输入要销毁的资产数量。</string>

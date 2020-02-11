@@ -3,6 +3,7 @@ package com.btsplusplus.fowallet
 import android.os.Bundle
 import android.widget.TextView
 import bitshares.AppCacheManager
+import bitshares.TempManager
 import bitshares.toList
 import bitshares.values
 import kotlinx.android.synthetic.main.activity_account_query_base.*
@@ -30,8 +31,14 @@ class ActivityAccountQueryBase : BtsppActivity() {
 
         //  获取参数
         val args = _btspp_params as? JSONObject
-        if (args != null && args.has("kSearchType")) {
-            _searchType = args.get("kSearchType") as ENetworkSearchType
+        if (args != null) {
+            if (args.has("kSearchType")) {
+                _searchType = args.get("kSearchType") as ENetworkSearchType
+            }
+            val title = args.optString("kTitle")
+            if (title.isNotEmpty()) {
+                findViewById<TextView>(R.id.title).text = title
+            }
         }
 
         //  初始化UI
@@ -61,7 +68,10 @@ class ActivityAccountQueryBase : BtsppActivity() {
 
                 lyt_default_result_view.removeAllViews()
                 for (data in data_array) {
-                    lyt_default_result_view.addView(ViewUtils.auxGenSearchAccountLineView(this, data.getString("name"), data.getString("id")))
+                    val v = ViewUtils.auxGenSearchAccountLineView(this, data.getString("name"), data.getString("id"), data) {
+                        TempManager.sharedTempManager().call_query_account_callback(this, it as JSONObject)
+                    }
+                    lyt_default_result_view.addView(v)
                 }
             }
             ENetworkSearchType.enstAssetAll -> {

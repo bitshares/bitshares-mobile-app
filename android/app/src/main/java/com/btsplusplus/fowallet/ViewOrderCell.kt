@@ -31,11 +31,11 @@ class ViewOrderCell : LinearLayout {
         val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.toDp(24f, _ctx.resources))
         layout_params.gravity = Gravity.CENTER_VERTICAL
 
-        val ly_wrap: LinearLayout = LinearLayout(ctx)
+        val ly_wrap = LinearLayout(ctx)
         ly_wrap.orientation = LinearLayout.VERTICAL
 
         // layout1 左: Buy SEED/CNY 右: 07-11 11:50
-        val ly1: LinearLayout = LinearLayout(ctx)
+        val ly1 = LinearLayout(ctx)
         ly1.orientation = LinearLayout.HORIZONTAL
         ly1.layoutParams = layout_params
         ly1.setPadding(0, Utils.toDp(5.0f, _ctx.resources), 0, 0)
@@ -71,24 +71,24 @@ class ViewOrderCell : LinearLayout {
         tv2.setPadding(Utils.toDp(5.0f, _ctx.resources), 0, 0, 0)
 
         val tv3 = TextView(ctx)
-        val block_time = data.optString("block_time", "")
-        if (block_time == "") {
+        val time = if (_isSettlementsOrder) data.optString("time") else data.optString("block_time")
+        if (time == "") {
             tv3.visibility = android.view.View.INVISIBLE
         } else {
             tv3.visibility = android.view.View.VISIBLE
-            tv3.text = Utils.fmtAccountHistoryTimeShowString(block_time)
+            tv3.text = Utils.fmtAccountHistoryTimeShowString(time)
         }
         tv3.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10.0f)
         tv3.setTextColor(resources.getColor(R.color.theme01_textColorGray))
         tv3.gravity = Gravity.BOTTOM or Gravity.RIGHT
-        var layout_tv3 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        val layout_tv3 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         layout_tv3.weight = 1.0f
         layout_tv3.gravity = Gravity.RIGHT or Gravity.BOTTOM
         tv3.layoutParams = layout_tv3
 
 
         // layout2 左: price(CNY) 中 Amount(SEED) 右 总金额(CNY)
-        val ly2: LinearLayout = LinearLayout(ctx)
+        val ly2 = LinearLayout(ctx)
         ly2.orientation = LinearLayout.HORIZONTAL
         ly2.layoutParams = layout_params
 
@@ -115,7 +115,7 @@ class ViewOrderCell : LinearLayout {
 
 
         // layout3
-        val ly3: LinearLayout = LinearLayout(ctx)
+        val ly3 = LinearLayout(ctx)
         ly3.orientation = LinearLayout.HORIZONTAL
         ly3.layoutParams = layout_params
 
@@ -142,7 +142,7 @@ class ViewOrderCell : LinearLayout {
 
         // 线
         val lv_line = View(ctx)
-        var layout_tv9 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.toDp(1.0f, _ctx.resources))
+        val layout_tv9 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.toDp(1.0f, _ctx.resources))
         lv_line.setBackgroundColor(resources.getColor(R.color.theme01_bottomLineColor))
         lv_line.layoutParams = layout_tv9
 
@@ -170,7 +170,7 @@ class ViewOrderCell : LinearLayout {
     }
 
     private fun createLayout(gr: Int): LinearLayout.LayoutParams {
-        var layout = LinearLayout.LayoutParams(Utils.toDp(0f, _ctx.resources), Utils.toDp(24.0f, _ctx.resources))
+        val layout = LinearLayout.LayoutParams(Utils.toDp(0f, _ctx.resources), Utils.toDp(24.0f, _ctx.resources))
         layout.weight = 1.0f
         layout.gravity = gr
         return layout

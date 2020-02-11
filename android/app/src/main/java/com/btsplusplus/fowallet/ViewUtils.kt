@@ -8,15 +8,48 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TableRow
 import android.widget.TextView
-import bitshares.Utils
-import bitshares.dp
-import bitshares.xmlstring
+import bitshares.*
 import org.json.JSONObject
 import kotlin.math.max
 
 
 class ViewUtils {
     companion object {
+
+        /**
+         *  辅助 - 创建账号搜索框结果CELL视图
+         */
+        fun auxGenSearchAccountLineView(ctx: BtsppActivity, name: String, oid: String, raw_data: Any, click_callback: ((data: Any) -> Unit)? = null): LinearLayout {
+            val v = LinearLayout(ctx)
+            val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 34.dp)
+            layout_params.gravity = Gravity.CENTER_VERTICAL
+
+            v.layoutParams = layout_params
+
+            val tv = TextView(ctx)
+            tv.text = name
+            tv.gravity = Gravity.CENTER_VERTICAL
+            tv.setTextColor(ctx.resources!!.getColor(R.color.theme01_textColorMain))
+
+            val tv2 = TextView(ctx)
+            tv2.text = "#$oid"
+            tv2.gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
+            tv2.setTextColor(ctx.resources!!.getColor(R.color.theme01_textColorNormal))
+
+            val layout_params2 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 34.dp)
+            layout_params2.weight = 1.0f
+            tv2.layoutParams = layout_params2
+
+            v.addView(tv)
+            v.addView(tv2)
+
+            //  事件 - 点击搜索结果
+            if (click_callback != null) {
+                v.setOnClickListener { click_callback(raw_data) }
+            }
+
+            return v
+        }
 
         /**
          * 创建垂直/水平居中的空描述Label。
@@ -36,7 +69,7 @@ class ViewUtils {
         fun createLine(ctx: Context): View {
             // 线
             val line = View(ctx)
-            var layout_tv9 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1.dp)
+            val layout_tv9 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1.dp)
             line.setBackgroundColor(ctx.resources.getColor(R.color.theme01_bottomLineColor))
             line.layoutParams = layout_tv9
             return line
@@ -75,13 +108,13 @@ class ViewUtils {
 
         private fun createLinearLayoutParams(ctx: Context, layout_width: Float, layout_height: Float, weight: Float, gravity: Int): LinearLayout.LayoutParams {
             val res = ctx.resources
-            var params = LinearLayout.LayoutParams(Utils.toDp(layout_width, res), Utils.toDp(layout_height, res), weight)
+            val params = LinearLayout.LayoutParams(Utils.toDp(layout_width, res), Utils.toDp(layout_height, res), weight)
             params.gravity = gravity
             return params
         }
 
 
-        fun createLayoutParamsForOrderBookTextView(ctx: Context, weight: Float, layout_height: Int): LinearLayout.LayoutParams {
+        private fun createLayoutParamsForOrderBookTextView(ctx: Context, weight: Float, layout_height: Int): LinearLayout.LayoutParams {
             val layout_params = TableRow.LayoutParams(0, layout_height)
             layout_params.weight = weight
             layout_params.gravity = Gravity.CENTER_VERTICAL
@@ -174,13 +207,13 @@ class ViewUtils {
             layout_of_left.addView(tv2)
             layout_of_left.gravity = Gravity.CENTER_VERTICAL
 
-            var time = Utils.fmtLimitOrderTimeShowString(data.getString("time"))
+            val time = Utils.fmtLimitOrderTimeShowString(data.getString("time"))
             val tv3 = TextView(ctx)
             tv3.text = String.format(R.string.kVcOrderExpired.xmlstring(ctx), time)
             tv3.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11.0f)
             tv3.setTextColor(resources.getColor(R.color.theme01_textColorGray))
             tv3.gravity = Gravity.CENTER
-            var layout_tv3 = LinearLayout.LayoutParams(Utils.toDp(0f, resources), LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+            val layout_tv3 = LinearLayout.LayoutParams(Utils.toDp(0f, resources), LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
             layout_tv3.gravity = Gravity.CENTER_VERTICAL
             tv3.layoutParams = layout_tv3
 
@@ -244,7 +277,7 @@ class ViewUtils {
 
             // 线
             val lv_line = View(ctx)
-            var layout_tv9 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.toDp(1.0f, resources))
+            val layout_tv9 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.toDp(1.0f, resources))
             lv_line.setBackgroundColor(resources.getColor(R.color.theme01_bottomLineColor))
             lv_line.layoutParams = layout_tv9
 

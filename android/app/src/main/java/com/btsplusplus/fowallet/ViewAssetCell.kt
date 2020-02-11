@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import bitshares.Utils
-import bitshares.xmlstring
 import org.json.JSONObject
 
 
@@ -27,7 +26,7 @@ class ViewAssetCell : LinearLayout {
         val ctx = _ctx
         val data = _data
 
-        val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.toDp(24f,_ctx.resources))
+        val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.toDp(24f, _ctx.resources))
         layout_params.gravity = Gravity.CENTER_VERTICAL
 
         val ly_wrap: LinearLayout = LinearLayout(ctx)
@@ -37,14 +36,14 @@ class ViewAssetCell : LinearLayout {
         val ly1: LinearLayout = LinearLayout(ctx)
         ly1.orientation = LinearLayout.HORIZONTAL
         ly1.layoutParams = layout_params
-        ly1.setPadding(0, Utils.toDp(5.0f,_ctx.resources), 0, 0)
+        ly1.setPadding(0, Utils.toDp(5.0f, _ctx.resources), 0, 0)
         val tv1 = TextView(ctx)
 
         tv1.text = _data.getString("asset_symbol")
         tv1.setTextColor(resources.getColor(R.color.theme01_textColorMain))
         tv1.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
         tv1.gravity = Gravity.CENTER_VERTICAL
-        tv1.setPadding(0,0,Utils.toDp(5.0f,_ctx.resources),0)
+        tv1.setPadding(0, 0, Utils.toDp(5.0f, _ctx.resources), 0)
 
         val tv2 = TextView(ctx)
         tv2.text = "Smart"
@@ -52,7 +51,7 @@ class ViewAssetCell : LinearLayout {
         tv2.setTextColor(resources.getColor(R.color.theme01_textColorMain))
         tv2.gravity = Gravity.CENTER_VERTICAL
         tv2.setBackgroundColor(resources.getColor(R.color.theme01_textColorHighlight))
-        tv2.setPadding(Utils.toDp(5.0f,_ctx.resources), 0, Utils.toDp(5.0f,_ctx.resources), 0)
+        tv2.setPadding(Utils.toDp(5.0f, _ctx.resources), 0, Utils.toDp(5.0f, _ctx.resources), 0)
 
         // layout2 左: 供应量 中 最大供应量 右 隐私供应量
         val ly2: LinearLayout = LinearLayout(ctx)
@@ -113,7 +112,7 @@ class ViewAssetCell : LinearLayout {
         ly4.layoutParams = layout_params
 
         val tv10 = TextView(ctx)
-        tv10.text = String.format("%s %s",data.getString("asset_quantity"), data.getString("asset_name"))
+        tv10.text = String.format("%s %s", data.getString("asset_quantity"), data.getString("asset_name"))
         tv10.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
         tv10.setTextColor(resources.getColor(R.color.theme01_textColorMain))
         tv10.gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
@@ -122,8 +121,8 @@ class ViewAssetCell : LinearLayout {
 
         // 线
         val lv_line = View(ctx)
-        var layout_tv9 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.toDp(1.0f,_ctx.resources))
-        layout_tv9.setMargins(0,Utils.toDp(10.0f,_ctx.resources),0,Utils.toDp(10.0f,_ctx.resources))
+        var layout_tv9 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.toDp(1.0f, _ctx.resources))
+        layout_tv9.setMargins(0, Utils.toDp(10.0f, _ctx.resources), 0, Utils.toDp(10.0f, _ctx.resources))
         lv_line.setBackgroundColor(resources.getColor(R.color.theme01_bottomLineColor))
         lv_line.layoutParams = layout_tv9
 
@@ -152,7 +151,7 @@ class ViewAssetCell : LinearLayout {
     }
 
     private fun createLayout(gr: Int): LinearLayout.LayoutParams {
-        var layout = LinearLayout.LayoutParams(Utils.toDp(0f,_ctx.resources), Utils.toDp(24.0f,_ctx.resources))
+        var layout = LinearLayout.LayoutParams(Utils.toDp(0f, _ctx.resources), Utils.toDp(24.0f, _ctx.resources))
         layout.weight = 1.0f
         layout.gravity = gr
         return layout

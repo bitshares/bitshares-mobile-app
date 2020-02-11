@@ -94,8 +94,14 @@ class FragmentOrderHistory : BtsppFragment() {
                         //  查询背书资产信息
                         val ids03_array = ModelUtils.collectDependence(ids02_array, jsonArrayfrom("options", "short_backing_asset"))
                         return@then chainMgr.queryAllGrapheneObjects(ids03_array).then {
-                            mask.dismiss()
-                            onQuerySettlementOrdersResponsed(data_array, tradingPair)
+                            //  异步计算订单数据
+                            BtsppAsyncTask().run {
+                                onGenerateSettlementorders(data_array, tradingPair)
+                            }.then {
+                                //  刷新显示
+                                refreshUI()
+                                mask.dismiss()
+                            }
                             return@then null
                         }
                     }
@@ -108,7 +114,10 @@ class FragmentOrderHistory : BtsppFragment() {
         }
     }
 
-    private fun onQuerySettlementOrdersResponsed(data_array: JSONArray?, tradingPair: TradingPair?) {
+    /**
+     *  (private) 生成订单数据
+     */
+    private fun onGenerateSettlementorders(data_array: JSONArray?, tradingPair: TradingPair?) {
         _dataArray.clear()
 
         if (data_array != null && data_array.length() > 0) {
@@ -210,10 +219,15 @@ class FragmentOrderHistory : BtsppFragment() {
         if (_dataArray.size > 0) {
             _dataArray.sortBy { it.getString("id").split(".").last().toInt() }
         }
-
-        //  更新显示
-        refreshUI()
     }
+
+//    private fun onQuerySettlementOrdersResponsed(data_array: JSONArray?, tradingPair: TradingPair?) {
+//        //  生成订单数据
+//        onGenerateSettlementorders(data_array, tradingPair)
+//
+//        //  更新显示
+//        refreshUI()
+//    }
 
     /**
      * (private) 处理查询区块头信息返回结果
