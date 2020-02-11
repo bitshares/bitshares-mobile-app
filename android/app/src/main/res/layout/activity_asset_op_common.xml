@@ -14,7 +14,7 @@
         android:layout_marginTop="25dp"
         android:orientation="vertical">
 
-
+        <!-- 导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -46,7 +46,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="销毁资产"
+                android:text="title value"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
@@ -59,14 +59,15 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-
+            <!-- 资产标题 -->
             <TextView
                 android:textSize="13dp"
-                android:text="资产"
+                android:text="@string/kOtcMcAssetTransferCellLabelAsset"
                 android:textColor="@color/theme01.textColorMain"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
+            <!-- 资产值 -->
             <LinearLayout
                 android:id="@+id/layout_select_asset_from_assets_op_common"
                 android:layout_marginTop="10dp"
@@ -75,15 +76,15 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/tv_select_asset_from_assets_op_common"
+                    android:id="@+id/tv_asset_symbol"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:textSize="16dp"
                     android:layout_weight="9"
-                    android:textColor="@color/theme01.textColorGray"
-                    android:text="请选择资产"/>
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text=""/>
 
                 <ImageView
                     android:id="@+id/iv_select_asset_right_arrow"
@@ -98,7 +99,7 @@
 
             <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-
+            <!-- 数量标题 & 余额 -->
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_marginTop="25dp"
@@ -107,15 +108,15 @@
 
                 <TextView
                     android:textSize="13dp"
-                    android:text="数量"
+                    android:text="@string/kOtcMcAssetTransferCellLabelAmount"
                     android:textColor="@color/theme01.textColorMain"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
                 <TextView
-                    android:id="@+id/tv_available_assets_from_assets_op_common"
+                    android:id="@+id/tv_curr_balance"
                     android:textSize="13dp"
-                    android:text="可用 3,000,000,000 BTS"
+                    android:text="-- -- ---"
                     android:gravity="right"
                     android:textColor="@color/theme01.textColorMain"
                     android:layout_width="match_parent"
@@ -130,14 +131,14 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/et_issue_asset_quantity_from_assets_op_common"
+                    android:id="@+id/tf_amount"
                     android:maxLength="24"
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     style="@style/kTextFieldDecimalPad"
-                    android:hint="请输入数量"/>
+                    android:hint="placeholder"/>
 
                 <LinearLayout
                     android:orientation="horizontal"
@@ -147,9 +148,9 @@
                     android:layout_height="wrap_content">
 
                     <TextView
-                        android:id="@+id/tv_issue_asset_symbol_from_assets_op_common"
+                        android:id="@+id/tv_tf_tailer_asset_symbol"
                         android:textSize="13dp"
-                        android:text="BTS"
+                        android:text="---"
                         android:textColor="@color/theme01.textColorMain"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
@@ -164,9 +165,9 @@
                         android:layout_height="wrap_content" />
 
                     <TextView
-                        android:id="@+id/tv_select_total_quantity_from_assets_op_common"
+                        android:id="@+id/btn_tf_tailer_all"
                         android:textSize="13dp"
-                        android:text="全部"
+                        android:text="@string/kLabelSendAll"
                         android:textColor="@color/theme01.textColorHighlight"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
@@ -174,9 +175,7 @@
             </LinearLayout>
             <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-
-
-            <!-- 发行按钮 -->
+            <!-- OP按钮 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
@@ -185,16 +184,17 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/btn_submit_from_assets_op_common"
+                    android:id="@+id/btn_op_submit"
                     android:layout_width="wrap_content"
                     style="@style/kMainButtonStyle"
                     android:gravity="center|center_vertical"
                     android:layout_weight="1"
                     android:padding="5dp"
-                    android:text="立即销毁" />
+                    android:text="action name" />
             </LinearLayout>
 
             <TextView
+                android:id="@+id/tv_ui_msg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -203,7 +203,7 @@
                 android:textColor="@color/theme01.textColorMain"
                 android:padding="5dp"
                 android:background="@color/theme01.textColorGray"
-                android:text="【温馨提示】\n销毁会减少当前流通。此操作不可逆，请谨慎操作。"
+                android:text="tips msg"
                 />
 
         </LinearLayout>

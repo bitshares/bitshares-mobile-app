@@ -47,6 +47,12 @@ class UtilsDigitTextWatcher : TextWatcher {
         _callback = callback
     }
 
+    fun set_alpha_text_inputfield(is_alpha_text_inputfield: Boolean): UtilsDigitTextWatcher {
+        _is_alpha_text_inputfield = is_alpha_text_inputfield
+        return this
+    }
+
+    private var _is_alpha_text_inputfield = false
     private var _precision: Int = 5
     private var _tf: EditText? = null
     private var _valid_string: String = ""
@@ -82,7 +88,7 @@ class UtilsDigitTextWatcher : TextWatcher {
      * 限制数字输入框输入格式
      */
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-        if (!Utils.isValidAmountOrPriceInput(s.toString(), _precision)) {
+        if (!_is_alpha_text_inputfield && !Utils.isValidAmountOrPriceInput(s.toString(), _precision)) {
             _tf!!.setText(_valid_string)
             _tf!!.setSelection(_valid_string.length)
         } else {

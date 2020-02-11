@@ -3,6 +3,7 @@ package com.btsplusplus.fowallet
 import android.os.Bundle
 import android.widget.EditText
 import bitshares.GrapheneConnectionManager
+import bitshares.TempManager
 import bitshares.forin
 import bitshares.jsonArrayfrom
 import com.btsplusplus.fowallet.utils.ModelUtils
@@ -24,6 +25,9 @@ class ActivityAccountQueryResult : BtsppActivity() {
         val args = btspp_args_as_JSONObject()
         _searchType = args.get("kSearchType") as ENetworkSearchType
 
+        //  初始化UI
+        drawUI()
+
         //  事件 - 取消按钮
         text_cancel_from_service_account_query.setOnClickListener { view ->
             this.hideSoftKeyboard()
@@ -35,6 +39,18 @@ class ActivityAccountQueryResult : BtsppActivity() {
         _tf_search_watcher = UtilsDigitTextWatcher().set_tf(tf).set_alpha_text_inputfield(true)
         tf.addTextChangedListener(_tf_search_watcher)
         _tf_search_watcher.on_value_changed(::onSearchTextChanged)
+    }
+
+    private fun drawUI() {
+        when (_searchType) {
+            ENetworkSearchType.enstAccount -> {
+                tf_search_field.hint = resources.getString(R.string.kSearchPlaceholderAccount)
+            }
+            ENetworkSearchType.enstAssetAll, ENetworkSearchType.enstAssetSmart, ENetworkSearchType.enstAssetUIA -> {
+                tf_search_field.hint = resources.getString(R.string.kSearchPlaceholderAsset)
+            }
+            else -> assert(false)
+        }
     }
 
     /**
@@ -103,7 +119,15 @@ class ActivityAccountQueryResult : BtsppActivity() {
         list.sortBy { it[0].toString().length }
         //  添加到列表
         for (data in list) {
-            lyt_search_result_view.addView(ViewUtils.auxGenSearchAccountLineView(this, data[0].toString(), data[1].toString()))
+            val name = data[0].toString()
+            val oid = data[1].toString()
+            val v = ViewUtils.auxGenSearchAccountLineView(this, name, oid, data) {
+                TempManager.sharedTempManager().call_query_account_callback(this, JSONObject().apply {
+                    put("name", name)
+                    put("id", oid)
+                })
+            }
+            lyt_search_result_view.addView(v)
         }
     }
 
@@ -133,7 +157,10 @@ class ActivityAccountQueryResult : BtsppActivity() {
 
         //  添加到列表
         for (data in list) {
-            lyt_search_result_view.addView(ViewUtils.auxGenSearchAccountLineView(this, data.getString("symbol"), data.getString("id")))
+            val v = ViewUtils.auxGenSearchAccountLineView(this, data.getString("symbol"), data.getString("id"), data) {
+                TempManager.sharedTempManager().call_query_account_callback(this, it as JSONObject)
+            }
+            lyt_search_result_view.addView(v)
         }
     }
 

@@ -165,20 +165,16 @@ fun android.app.Activity.viewUserAssets(account_name_or_id: String) {
     chainMgr.queryFullAccountInfo(account_name_or_id).then {
         val full_account_data = it as JSONObject
         val userAssetDetailInfos = OrgUtils.calcUserAssetDetailInfos(full_account_data)
-        val debtValuesHashKeys = userAssetDetailInfos.getJSONObject("debtValuesHash").keys().toJSONArray()
-        var debt_asset_ids = Array(debtValuesHashKeys.length()) { return@Array "" }
-        var i = 0
-        debtValuesHashKeys.forEach<String> {
-            debt_asset_ids.set(i, it!!)
-            i++
-        }
         val args = userAssetDetailInfos.getJSONObject("validBalancesHash").keys().toJSONArray()
         return@then chainMgr.queryAllAssetsInfo(args).then {
-            val debt_bitasset_data_id_list = debt_asset_ids.map {
-                val debt_asset_id = it
-                return@map chainMgr.getChainObjectByID(debt_asset_id).getString("bitasset_data_id")
+            val bitasset_data_id_list = JSONArray()
+            for (asset_id in args.forin<String>()) {
+                val bitasset_data_id = chainMgr.getChainObjectByID(asset_id!!).optString("bitasset_data_id")
+                if (bitasset_data_id.isNotEmpty()) {
+                    bitasset_data_id_list.put(bitasset_data_id)
+                }
             }
-            return@then chainMgr.queryAllGrapheneObjects(debt_bitasset_data_id_list.toJsonArray()).then {
+            return@then chainMgr.queryAllGrapheneObjects(bitasset_data_id_list).then {
                 mask.dismiss()
                 goTo(ActivityMyAssets::class.java, true, args = jsonArrayfrom(userAssetDetailInfos, full_account_data))
                 return@then null
@@ -457,6 +453,10 @@ fun android.app.Activity.openURL(url: String) {
     }
 }
 
+/**
+ *  (public) 跳转界面
+ *      REMARK：back参数跳转和finish不同，finish只关闭当前activity，back可能直接退回多个界面。比如从搜索结果界面，直接跳过搜索界面，回到外层界面。
+ */
 fun android.app.Activity.goTo(cls: Class<*>, transition_animation: Boolean = false, back: Boolean = false, args: Any? = null, request_code: Int = -1, close_self: Boolean = false) {
     val intent = Intent()
     intent.setClass(this, cls)

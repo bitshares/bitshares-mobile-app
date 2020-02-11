@@ -46,7 +46,7 @@ class ActivityAddAssetPairsBase : BtsppActivity() {
     /**
      * 重新加载数据&刷新列表。
      */
-    fun reloadAndRefresh() {
+    private fun reloadAndRefresh() {
         reinitCustomMarketList()
         _refreshUI()
     }
@@ -62,7 +62,7 @@ class ActivityAddAssetPairsBase : BtsppActivity() {
             return
         }
 
-        var market_hash = JSONObject()
+        val market_hash = JSONObject()
         ChainObjectManager.sharedChainObjectManager().getDefaultMarketInfos().forEach<JSONObject> {
             val market = it!!
             val base = market.getJSONObject("base")

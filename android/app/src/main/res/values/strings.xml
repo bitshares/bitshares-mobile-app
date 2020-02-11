@@ -501,7 +501,8 @@
     <string name="kVcAssetOpSettleBtnName">Settle asset</string>
     <string name="kVcAssetOpSettleSubmitTipsPleaseInputAmount">Please enter the amount of assets to be settled.</string>
     <string name="kVcAssetOpSettleSubmitTipSettleOK">The settlement was initiated successfully.</string>
-    <string name="kVcAssetOpReserveUiTips">[Reminder] \nReserve operation will reduce the current supply. This operation is irreversible, please proceed with caution.</string>
+    <string name="kVcAssetOpReserveEntrySafeTips">The reserve operation will reduce your corresponding assets and the current supply of the assets. This operation is irreversible, please exercise caution. Continue?</string>
+    <string name="kVcAssetOpReserveUiTips">[Reminder] \nAfter the reserve operation, you will reduce the corresponding amount of assets and reduce the current supply of the assets. This operation is irreversible, please proceed with caution.</string>
     <string name="kVcAssetOpReserveCellPlaceholderAmount">Please enter the amount</string>
     <string name="kVcAssetOpReserveBtnName">Reserve asset</string>
     <string name="kVcAssetOpReserveSubmitTipsPleaseInputAmount">Please enter the amount of assets to be reserved.</string>
