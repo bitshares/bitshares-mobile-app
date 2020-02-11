@@ -54,7 +54,7 @@ class ActivityAddAssetPairsResult : BtsppActivity() {
 
         private fun createCell(data: JSONObject) {
             val v = LinearLayout(ctx)
-            val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ctx!!.toDp(30f))
+            val layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ctx!!.toDp(34f))
             layout_params.gravity = Gravity.CENTER_VERTICAL
 
             v.layoutParams = layout_params
@@ -81,7 +81,7 @@ class ActivityAddAssetPairsResult : BtsppActivity() {
             } else {
                 val switch = Switch(ctx)
                 switch.gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
-                val layout_switch_params = LinearLayout.LayoutParams(0, ctx!!.toDp(30f), 3f)
+                val layout_switch_params = LinearLayout.LayoutParams(0, ctx!!.toDp(34f), 3f)
                 layout_switch_params.weight = 1.0f
                 switch.layoutParams = layout_switch_params
                 //  默认值
@@ -129,6 +129,10 @@ class ActivityAddAssetPairsResult : BtsppActivity() {
         }
 
         private fun processSearchResult(data_array: JSONArray, searchString: String) {
+            if (ctx!!.isFinishing) {
+                return
+            }
+
             ctx!!.layout_search!!.removeAllViews()
 
             val base_markets = ChainObjectManager.sharedChainObjectManager().getDefaultMarketInfos()

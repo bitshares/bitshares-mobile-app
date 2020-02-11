@@ -73,7 +73,7 @@
                 android:src="@drawable/ic_btn_search"/>
 
             <EditText
-                android:id="@+id/edit_search_services_account_query"
+                android:id="@+id/tf_search_entry"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical|right"
@@ -87,7 +87,7 @@
         <View android:layout_height="1dp" android:background="@color/theme01.textColorNormal" android:layout_width="fill_parent"></View>
 
         <TextView
-            android:id="@+id/label_my_fav_n"
+            android:id="@+id/tv_my_favs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/theme01.color03"
@@ -102,7 +102,7 @@
             android:layout_height="match_parent">
 
             <LinearLayout
-                android:id="@+id/layout_search_from_service_account_query_index"
+                android:id="@+id/lyt_default_result_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
