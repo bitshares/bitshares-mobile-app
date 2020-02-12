@@ -2,6 +2,10 @@ package com.btsplusplus.fowallet
 
 import android.app.AlertDialog
 import android.content.Context
+import bitshares.forEach
+import bitshares.toList
+import org.json.JSONArray
+import org.json.JSONObject
 
 
 class ViewSelector {
@@ -9,14 +13,12 @@ class ViewSelector {
     companion object {
 
         fun create(ctx: Context, title: String, list: Array<String>, callback: (index: Int, result: String) -> Unit): AlertDialog {
-            val items = list
-
             val builder = AlertDialog.Builder(ctx, 5)
             builder.setTitle(title)
 
-            builder.setItems(items) { dialog, which ->
+            builder.setItems(list) { dialog, which ->
                 dialog.dismiss()
-                callback.invoke(which, items[which])
+                callback.invoke(which, list[which])
             }
             builder.setPositiveButton(ctx.resources.getString(R.string.kBtnCancel)) { dialog, _ ->
                 dialog.dismiss()
@@ -25,10 +27,14 @@ class ViewSelector {
         }
 
         fun show(ctx: Context, title: String, list: Array<String>, callback: (index: Int, result: String) -> Unit): AlertDialog {
-            val dig = ViewSelector.create(ctx, title, list, callback)
-
-            dig.show()
-            return dig
+            return ViewSelector.create(ctx, title, list, callback).apply { show() }
         }
+
+        fun show(ctx: Context, title: String, array: JSONArray, key: String, callback: (index: Int, result: String) -> Unit): AlertDialog {
+            val list = JSONArray()
+            array.forEach<JSONObject> { list.put(it!!.getString(key)) }
+            return show(ctx, title, list.toList<String>().toTypedArray(), callback)
+        }
+
     }
 }
