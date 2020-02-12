@@ -201,6 +201,13 @@ class T_uint16 : T_Base() {
                 else -> assert(false)
             }
         }
+//        override fun to_object(opdata: Any?): Any? {
+//            return when (opdata) {
+//                is Number -> opdata.toInt()
+//                is String -> opdata.toInt()
+//                else -> 0
+//            }
+//        }
     }
 }
 
