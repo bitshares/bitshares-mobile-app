@@ -124,25 +124,7 @@ enum
         _nCurrBalance = [NSDecimalNumber decimalNumberWithString:[NSString stringWithFormat:@"%@", [_curr_merchant_asset objectForKey:@"available"]]];
     } else {
         //  链上余额
-        _nCurrBalance = nil;
-        id balances = [_full_account_data objectForKey:@"balances"];
-        if (balances) {
-            id curr_asset = [_curr_merchant_asset objectForKey:@"kExtChainAsset"];
-            NSString* curr_asset_id = [curr_asset objectForKey:@"id"];
-            NSInteger precision = [[curr_asset objectForKey:@"precision"] integerValue];
-            for (id balance_object in balances) {
-                if ([curr_asset_id isEqualToString:[balance_object objectForKey:@"asset_type"]]) {
-                    _nCurrBalance = [NSDecimalNumber decimalNumberWithMantissa:[[balance_object objectForKey:@"balance"] unsignedLongLongValue]
-                                                                      exponent:-precision
-                                                                    isNegative:NO];
-                    
-                    break;
-                }
-            }
-        }
-        if (!_nCurrBalance) {
-            _nCurrBalance = [NSDecimalNumber zero];
-        }
+        _nCurrBalance = [ModelUtils findAssetBalance:_full_account_data asset:[_curr_merchant_asset objectForKey:@"kExtChainAsset"]];
     }
 }
 - (void)_drawUI_Balance:(BOOL)not_enough

@@ -612,7 +612,18 @@
             [self onButtonClicked_AssetSettle:button row:[row integerValue]];
             break;
         case ebaok_reserve:
-            [self onButtonClicked_AssetReserve:button row:[row integerValue]];
+        {
+            id value = NSLocalizedString(@"kVcAssetOpReserveEntrySafeTips", @"销毁操作会减少您对应的资产和资产当前流通量，该操作不可逆，请谨慎操作。是否继续？");
+            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:value
+                                                                   withTitle:NSLocalizedString(@"kVcHtlcMessageTipsTitle", @"风险提示")
+                                                                  completion:^(NSInteger buttonIndex)
+             {
+                if (buttonIndex == 1)
+                {
+                    [self onButtonClicked_AssetReserve:button row:[row integerValue]];
+                }
+            }];
+        }
             break;
         default:
             assert(false);

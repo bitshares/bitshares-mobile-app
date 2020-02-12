@@ -126,18 +126,9 @@ enum
         return;
     }
     assert(fullAccountData);
-    id asset_id = [_asset objectForKey:@"id"];
-    unsigned long long asset_value = 0;
-    for (id balance_item in [fullAccountData objectForKey:@"balances"]) {
-        id asset_type = [balance_item objectForKey:@"asset_type"];
-        if ([asset_type isEqualToString:asset_id]){
-            asset_value = [[balance_item objectForKey:@"balance"] unsignedLongLongValue];
-            break;
-        }
-    }
-    _n_available = [NSDecimalNumber decimalNumberWithMantissa:asset_value
-                                                     exponent:-_precision_amount
-                                                   isNegative:NO];
+    _n_available = [ModelUtils findAssetBalance:fullAccountData
+                                       asset_id:[_asset objectForKey:@"id"]
+                                asset_precision:_precision_amount];
 }
 
 - (id)initWithFullAccountData:(NSDictionary*)fullAccountData

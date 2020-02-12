@@ -203,7 +203,6 @@
         p1 = [chainMgr querySettlementOrdersByAccount:[[_fullAccountInfo objectForKey:@"account"] objectForKey:@"name"] number:100];
     }
     [[p1 then:^id(id data_array) {
-        [_owner hideBlockView];
         //  查询依赖
         NSMutableDictionary* ids = [NSMutableDictionary dictionary];
         for (id item in data_array) {
@@ -218,6 +217,7 @@
                 //  查询背书资产信息
                 id ids03_array = [ModelUtils collectDependence:ids02_array level_keys:@[@"options", @"short_backing_asset"]];
                 return [[chainMgr queryAllGrapheneObjects:ids03_array] then:^id(id data) {
+                    [_owner hideBlockView];
                     [self onQuerySettlementOrdersResponsed:data_array];
                     return nil;
                 }];

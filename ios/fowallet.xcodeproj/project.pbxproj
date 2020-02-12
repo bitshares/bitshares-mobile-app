@@ -45,6 +45,12 @@
 		3F009A2723A2386300A77E4A /* VCOtcMcAdUpdate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A2523A2386300A77E4A /* VCOtcMcAdUpdate.m */; };
 		3F009A2823A2386300A77E4A /* VCOtcMcAdUpdate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A2523A2386300A77E4A /* VCOtcMcAdUpdate.m */; };
 		3F009A2923A2386300A77E4A /* VCOtcMcAdUpdate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F009A2523A2386300A77E4A /* VCOtcMcAdUpdate.m */; };
+		3F023DA023F14515006D11FA /* iconAssetMgr@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F023D9E23F14514006D11FA /* iconAssetMgr@3x.png */; };
+		3F023DA123F14515006D11FA /* iconAssetMgr@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F023D9E23F14514006D11FA /* iconAssetMgr@3x.png */; };
+		3F023DA223F14515006D11FA /* iconAssetMgr@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F023D9E23F14514006D11FA /* iconAssetMgr@3x.png */; };
+		3F023DA323F14515006D11FA /* iconAssetMgr@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F023D9F23F14515006D11FA /* iconAssetMgr@2x.png */; };
+		3F023DA423F14515006D11FA /* iconAssetMgr@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F023D9F23F14515006D11FA /* iconAssetMgr@2x.png */; };
+		3F023DA523F14515006D11FA /* iconAssetMgr@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F023D9F23F14515006D11FA /* iconAssetMgr@2x.png */; };
 		3F05DDBD230B7D76002934DA /* VCLaunch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F05DDBB230B7D75002934DA /* VCLaunch.m */; };
 		3F05DDBE230B7D76002934DA /* VCLaunch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F05DDBB230B7D75002934DA /* VCLaunch.m */; };
 		3F0AE33A2192C97800E4144C /* iconWallet@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F0AE3342192C97700E4144C /* iconWallet@3x.png */; };
@@ -1951,6 +1957,8 @@
 		3F009A2123A2176000A77E4A /* ViewOtcMcAssetSwitchCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewOtcMcAssetSwitchCell.h; path = View/ViewOtcMcAssetSwitchCell.h; sourceTree = "<group>"; };
 		3F009A2523A2386300A77E4A /* VCOtcMcAdUpdate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcMcAdUpdate.m; path = Controller/VCOtcMcAdUpdate.m; sourceTree = "<group>"; };
 		3F009A2623A2386300A77E4A /* VCOtcMcAdUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcMcAdUpdate.h; path = Controller/VCOtcMcAdUpdate.h; sourceTree = "<group>"; };
+		3F023D9E23F14514006D11FA /* iconAssetMgr@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconAssetMgr@3x.png"; path = "Images/iconAssetMgr@3x.png"; sourceTree = "<group>"; };
+		3F023D9F23F14515006D11FA /* iconAssetMgr@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconAssetMgr@2x.png"; path = "Images/iconAssetMgr@2x.png"; sourceTree = "<group>"; };
 		3F05DDBB230B7D75002934DA /* VCLaunch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCLaunch.m; path = Controller/VCLaunch.m; sourceTree = "<group>"; };
 		3F05DDBC230B7D75002934DA /* VCLaunch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCLaunch.h; path = Controller/VCLaunch.h; sourceTree = "<group>"; };
 		3F0AE3342192C97700E4144C /* iconWallet@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconWallet@3x.png"; path = "Images/iconWallet@3x.png"; sourceTree = "<group>"; };
@@ -3295,6 +3303,8 @@
 		18FF069417E00D870088405E /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				3F023D9F23F14515006D11FA /* iconAssetMgr@2x.png */,
+				3F023D9E23F14514006D11FA /* iconAssetMgr@3x.png */,
 				3FF31CDF23A8D80600CD758D /* iconOtcMcAd@2x.png */,
 				3FF31CD723A8D80500CD758D /* iconOtcMcAd@3x.png */,
 				3FF31CDB23A8D80600CD758D /* iconOtcMcAsset@2x.png */,
@@ -4618,6 +4628,7 @@
 				3F676951230E9EC100E98C14 /* Refresh-64@2x.png in Resources */,
 				3F676952230E9EC100E98C14 /* Localizable.strings in Resources */,
 				3F676953230E9EC100E98C14 /* first1.png in Resources */,
+				3F023DA523F14515006D11FA /* iconAssetMgr@2x.png in Resources */,
 				3FA72B592340BC2500EE3DC9 /* iconEdit@2x.png in Resources */,
 				3F676954230E9EC100E98C14 /* tabDebt@2x.png in Resources */,
 				3F676955230E9EC100E98C14 /* icon_1_1@2x.png in Resources */,
@@ -4829,6 +4840,7 @@
 				3F676A06230E9EC100E98C14 /* Map Marker@2x.png in Resources */,
 				3F676A07230E9EC100E98C14 /* icon_3_1@2x.png in Resources */,
 				3F676A08230E9EC100E98C14 /* page_1_b@2x.png in Resources */,
+				3F023DA223F14515006D11FA /* iconAssetMgr@3x.png in Resources */,
 				3F676A09230E9EC100E98C14 /* Home@2x.png in Resources */,
 				3F676A0A230E9EC100E98C14 /* Info-50@2x.png in Resources */,
 				3F676A0B230E9EC100E98C14 /* Leaving Geo Fence@2x.png in Resources */,
@@ -4889,6 +4901,7 @@
 				3FB8F9CD21CE66C200DA88E2 /* Refresh-64@2x.png in Resources */,
 				3FB8F9CE21CE66C200DA88E2 /* Localizable.strings in Resources */,
 				3FB8F9CF21CE66C200DA88E2 /* first1.png in Resources */,
+				3F023DA423F14515006D11FA /* iconAssetMgr@2x.png in Resources */,
 				3FA72B582340BC2500EE3DC9 /* iconEdit@2x.png in Resources */,
 				3FB8F9D021CE66C200DA88E2 /* tabDebt@2x.png in Resources */,
 				3FB8F9D121CE66C200DA88E2 /* icon_1_1@2x.png in Resources */,
@@ -5100,6 +5113,7 @@
 				3FB8FA7921CE66C200DA88E2 /* Map Marker@2x.png in Resources */,
 				3FB8FA7A21CE66C200DA88E2 /* icon_3_1@2x.png in Resources */,
 				3FB8FA7B21CE66C200DA88E2 /* page_1_b@2x.png in Resources */,
+				3F023DA123F14515006D11FA /* iconAssetMgr@3x.png in Resources */,
 				3FB8FA7C21CE66C200DA88E2 /* Home@2x.png in Resources */,
 				3FB8FA7D21CE66C200DA88E2 /* Info-50@2x.png in Resources */,
 				3FB8FA7E21CE66C200DA88E2 /* Leaving Geo Fence@2x.png in Resources */,
@@ -5169,6 +5183,7 @@
 				F5D19DDF1CA6D68400321C82 /* Offline@2x.png in Resources */,
 				B79EE9FB1C061EDF00AB58F1 /* icon_3_2@2x.png in Resources */,
 				F55325A21C075D3200EC3F95 /* Christmas Star@2x.png in Resources */,
+				3F023DA023F14515006D11FA /* iconAssetMgr@3x.png in Resources */,
 				F5D935431DC6F05A00E663FC /* Sorting Arrows Horizontal-50@2x.png in Resources */,
 				F59016921CE6DAF300898B70 /* Car@2x.png in Resources */,
 				F55325921C075D3200EC3F95 /* Advertising@2x.png in Resources */,
@@ -5327,6 +5342,7 @@
 				ED055C6618607ECF00515EA2 /* avatarmask.png in Resources */,
 				F565D8DA1C19CFF000814662 /* pay_1@3x.png in Resources */,
 				F51D13F31C51115F00FBB748 /* tabUser@2x.png in Resources */,
+				3F023DA323F14515006D11FA /* iconAssetMgr@2x.png in Resources */,
 				B7973C4F20E4E43E0052A5F5 /* iconAbout@3x.png in Resources */,
 				3FB0381B2398A93400FC859C /* iconCopy@3x.png in Resources */,
 				F553259E1C075D3200EC3F95 /* Cancel@2x.png in Resources */,
