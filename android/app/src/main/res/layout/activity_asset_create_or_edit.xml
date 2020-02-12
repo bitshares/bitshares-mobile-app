@@ -212,6 +212,7 @@
 
                     <!-- 基本信息：最大供应量 -->
                     <LinearLayout
+                        android:id="@+id/layout_basic_max_supply"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="15dp"
@@ -251,6 +252,7 @@
                     
                     <!-- 基本信息：资产描述 -->
                     <LinearLayout
+                        android:id="@+id/layout_basic_desc"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="15dp"
@@ -260,6 +262,7 @@
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorNormal"
                             android:text="@string/kVcAssetMgrCellTitleAssetDesc"
+                            android:layout_marginRight="5dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
 
@@ -276,6 +279,9 @@
                                 android:gravity="center_vertical"
                                 android:layout_marginLeft="5dp"
                                 android:textSize="12dp"
+                                android:singleLine="true"
+                                android:maxLines="1"
+                                android:ellipsize = "end"
                                 android:textColor="@color/theme01.textColorMain"
                                 android:text="@string/kVcAssetMgrCellPlaceholderAssetDesc"/>
 
@@ -393,6 +399,7 @@
 
                     <!-- 手续费信息：手续费比例 -->
                     <LinearLayout
+                        android:id="@+id/layout_market_fee_percent"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="15dp"
@@ -433,6 +440,7 @@
 
                     <!-- 手续费信息：单笔最大手续费 -->
                     <LinearLayout
+                        android:id="@+id/layout_fee_max_value"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="15dp"
@@ -472,6 +480,7 @@
                     
                     <!-- 手续费信息：引荐人分成比例 -->
                     <LinearLayout
+                        android:id="@+id/layout_fee_ref_percent"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="15dp"
@@ -530,12 +539,14 @@
 
                     <!-- 权限信息：收取市场手续费 -->
                     <LinearLayout
+                        android:id="@+id/layout_permission_market_fee"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="15dp"
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/tv_title_permission_market_fee"
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorNormal"
                             android:text="@string/kVcAssetMgrCellTitlePermMarketFee"
@@ -570,12 +581,14 @@
 
                     <!-- 权限信息：需要资产持有人在白名单中 -->
                     <LinearLayout
+                        android:id="@+id/layout_permission_whitelisted"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="15dp"
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/tv_title_permission_whitelisted"
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorNormal"
                             android:text="@string/kVcAssetMgrCellTitlePermWhiteListed"
@@ -611,12 +624,14 @@
 
                     <!-- 权限信息：发行人可回收资产 -->
                     <LinearLayout
+                        android:id="@+id/layout_permission_override_transfer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="15dp"
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/tv_title_permission_override_transfer"
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorNormal"
                             android:text="@string/kVcAssetMgrCellTitlePermOverrideTransfer"
@@ -651,12 +666,14 @@
 
                     <!-- 权限信息：所有转账需要发行人审核 -->
                     <LinearLayout
+                        android:id="@+id/layout_permission_need_issuer_approved"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="15dp"
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/tv_title_permission_need_issuer_approved"
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorNormal"
                             android:text="@string/kVcAssetMgrCellTitlePermNeedIssuerApprove"
@@ -691,12 +708,14 @@
 
                     <!-- 权限信息：禁止隐私转账 -->
                     <LinearLayout
+                        android:id="@+id/layout_permission_disabled_cond_transfer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="15dp"
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/tv_title_permission_disabled_cond_transfer"
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorNormal"
                             android:text="@string/kVcAssetMgrCellTitlePermDisableCondTransfer"
@@ -739,6 +758,7 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/tv_title_permission_disabled_force_settlements"
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorNormal"
                             android:text="@string/kVcAssetMgrCellTitlePermDisableForceSettle"
@@ -787,6 +807,7 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/tv_title_permission_allow_global_settle"
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorNormal"
                             android:text="@string/kVcAssetMgrCellTitlePermAllowGlobalSettle"
@@ -834,6 +855,7 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/tv_title_permission_allow_witness_feed"
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorNormal"
                             android:text="@string/kVcAssetMgrCellTitlePermAllowWitnessFeed"
@@ -881,6 +903,7 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/tv_title_permission_allow_committee_feed"
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorNormal"
                             android:text="@string/kVcAssetMgrCellTitlePermAllowCommitteeFeed"
@@ -940,6 +963,7 @@
 
                     <!-- 智能币信息：借贷抵押资产 -->
                     <LinearLayout
+                        android:id="@+id/layout_smart_backing_asset"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="15dp"

@@ -1527,7 +1527,7 @@ class ChainObjectManager {
                 p.resolve(null)
                 return@then null
             }
-            p.resolve(data_array.getJSONObject(0))
+            p.resolve(data_array.get(0) as? JSONObject)
             return@then null
         }.catch {
             p.resolve(null)
