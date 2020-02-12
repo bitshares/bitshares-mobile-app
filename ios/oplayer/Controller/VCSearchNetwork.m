@@ -514,8 +514,7 @@
                 
                 if (_searchType == enstAssetSmart) {
                     //  跳过UIA
-                    NSString* bitasset_data_id = [asset objectForKey:@"bitasset_data_id"];
-                    if (!bitasset_data_id || [bitasset_data_id isEqualToString:@""]) {
+                    if (![ModelUtils assetIsSmart:asset]) {
                         continue;
                     }
                 } else if (_searchType == enstAssetUIA) {

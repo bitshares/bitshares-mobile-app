@@ -528,7 +528,8 @@
 "kVcAssetOpSettleSubmitTipsPleaseInputAmount" = "请输入要清算的资产数量。";
 "kVcAssetOpSettleSubmitTipSettleOK" = "发起清算成功。";
 
-"kVcAssetOpReserveUiTips" = "【温馨提示】\n销毁会减少当前流通量。此操作不可逆，请谨慎操作。";
+"kVcAssetOpReserveEntrySafeTips" = "销毁操作会减少您对应的资产和资产当前流通量，该操作不可逆，请谨慎操作。是否继续？";
+"kVcAssetOpReserveUiTips" = "【温馨提示】\n执行销毁操作后您会减少对应数量的资产，并且会减少该资产当前流通量。此操作不可逆，请谨慎操作。";
 "kVcAssetOpReserveCellPlaceholderAmount" = "请输入销毁数量";
 "kVcAssetOpReserveBtnName" = "立即销毁";
 "kVcAssetOpReserveSubmitTipsPleaseInputAmount" = "请输入要销毁的资产数量。";

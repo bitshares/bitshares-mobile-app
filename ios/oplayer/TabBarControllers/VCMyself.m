@@ -235,8 +235,7 @@ enum
                     break;
                 case kVcSubAssetMgr:
                 {
-                    //  TODO:4.0 icon
-                    cell.imageView.image = [UIImage templateImageNamed:@"iconProposal"];
+                    cell.imageView.image = [UIImage templateImageNamed:@"iconAssetMgr"];
                     cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
                 }
                     break;
