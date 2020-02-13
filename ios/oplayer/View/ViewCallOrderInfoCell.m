@@ -155,8 +155,6 @@
     double f_collateral = [OrgUtils calcAssetRealPrice:[_item objectForKey:@"collateral"] precision:self.collateral_precision];
     double f_debt = [OrgUtils calcAssetRealPrice:[_item objectForKey:@"debt"] precision:self.debt_precision];
     
-    double rate_percent100 = 100 * [self.feedPriceInfo doubleValue] * f_collateral / f_debt;
-    
     //  第一行
     NSString* borrower_str = nil;
     id borrower_id = [_item objectForKey:@"borrower"];
@@ -191,8 +189,16 @@
                                                              valueColor:theme.textColorMain];
     _lbTriggerPrice.frame = CGRectMake(fOffsetX, fOffsetY, fWidth - fOffsetX_2x, 28);
     
+    NSString* rate_string;
+    if (self.feedPriceInfo) {
+        double rate_percent100 = 100 * [self.feedPriceInfo doubleValue] * f_collateral / f_debt;
+        rate_string = [NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:rate_percent100 precision:2]];
+    } else {
+        rate_string = @"--%";
+    }
+    
     _lbRate.attributedText = [self genAndColorAttributedText:NSLocalizedString(@"kVcRankRatio", @"抵押率 ")
-                                                       value:[NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:rate_percent100 precision:2]]
+                                                       value:rate_string
                                                   titleColor:theme.textColorNormal
                                                   valueColor:theme.tintColor];
     _lbRate.frame = CGRectMake(fOffsetX, fOffsetY, fWidth - fOffsetX_2x, 28);

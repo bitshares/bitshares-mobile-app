@@ -1000,9 +1000,9 @@
 "kOpDesc_account_transfer" = "转移账号。";
 "kOpDesc_asset_create" = "%@ 创建资产 %@。";
 "kOpDesc_asset_update" = "更新资产 %@。";
-"kOpDesc_asset_update_bitasset" = "更新智能币。";
+"kOpDesc_asset_update_bitasset" = "更新智能币 %@。";
 "kOpDesc_asset_update_feed_producers" = "%@ 资产更新发布喂价的账号信息。";
-"kOpDesc_asset_issue" = "资产发行。";
+"kOpDesc_asset_issue" = "%@ 发行 %@ 到 %@。";
 "kOpDesc_asset_reserve" = "%@ 销毁 %@。";
 "kOpDesc_asset_fund_fee_pool" = "注资手续费池。";
 "kOpDesc_asset_settle" = "%@ 强制清算 %@。";
