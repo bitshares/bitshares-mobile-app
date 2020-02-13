@@ -959,9 +959,9 @@
     <string name="kOpDesc_account_transfer">transfer account.</string>
     <string name="kOpDesc_asset_create">%s create asset %s.</string>
     <string name="kOpDesc_asset_update">update assets %s.</string>
-    <string name="kOpDesc_asset_update_bitasset">update bitasset.</string>
+    <string name="kOpDesc_asset_update_bitasset">update bitasset %s.</string>
     <string name="kOpDesc_asset_update_feed_producers">%s update feed publisher.</string>
-    <string name="kOpDesc_asset_issue">issue assets.</string>
+    <string name="kOpDesc_asset_issue">%s issued %s to %s.</string>
     <string name="kOpDesc_asset_reserve">%s reserves %s.</string>
     <string name="kOpDesc_asset_fund_fee_pool">fund the fee pool.</string>
     <string name="kOpDesc_asset_settle">%s settles %s.</string>

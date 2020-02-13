@@ -94,13 +94,13 @@ class FragmentAssets : BtsppFragment() {
             if (asset_type == chainMgr.grapheneCoreAssetID) {
                 asset_final.put("is_core", "1")
             } else {
-                if (bitasset_data != null){
+                if (bitasset_data != null) {
                     if (bitasset_data.isTrue("is_prediction_market")) {
                         asset_final.put("is_prediction_market", "1")
                     } else {
                         asset_final.put("is_smart", "1")
                     }
-                }else{
+                } else {
                     asset_final.put("is_simple", "1")
                 }
             }

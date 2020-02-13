@@ -897,7 +897,7 @@
     <string name="kOpType_account_transfer">アカウントを移転します</string>
     <string name="kOpType_asset_create">資産は創建します</string>
     <string name="kOpType_asset_update">資産を更新します</string>
-    <string name="kOpType_asset_update_bitasset">知能貨幣を更新します</string>
+    <string name="kOpType_asset_update_bitasset">スマートマネーを更新します</string>
     <string name="kOpType_asset_update_feed_producers">更新はフィード価格者にえさをやります</string>
     <string name="kOpType_asset_issue">資産は発行します</string>
     <string name="kOpType_asset_reserve">資産は廃棄します</string>
@@ -959,10 +959,10 @@
     <string name="kOpDesc_account_transfer">アカウントの移転。</string>
     <string name="kOpDesc_asset_create">%s 資産の創建 %s。</string>
     <string name="kOpDesc_asset_update">資産 %s を更新する。</string>
-    <string name="kOpDesc_asset_update_bitasset">スマートマネーを更新する。</string>
+    <string name="kOpDesc_asset_update_bitasset">スマートマネー %s を更新する。</string>
     <string name="kOpDesc_asset_update_feed_producers">%s フィード者を更新します。</string>
-    <string name="kOpDesc_asset_issue">資産発行。</string>
-    <string name="kOpDesc_asset_reserve">%s は %s を資産消却。</string>
+    <string name="kOpDesc_asset_issue">%s 発行 %s と %s。 </string>
+    <string name="kOpDesc_asset_reserve">%s は %s を資産廃棄。</string>
     <string name="kOpDesc_asset_fund_fee_pool">手数料池を資金注入します。</string>
     <string name="kOpDesc_asset_settle">%s 強制清算 %s。</string>
     <string name="kOpDesc_asset_global_settle">資産のグローバル清算。。</string>

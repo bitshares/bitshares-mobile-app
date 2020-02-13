@@ -3,6 +3,7 @@ package com.btsplusplus.fowallet
 import android.os.Bundle
 import android.widget.EditText
 import bitshares.*
+import com.btsplusplus.fowallet.utils.ModelUtils
 import com.fowallet.walletcore.bts.BitsharesClientManager
 import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_otc_mc_asset_transfer.*
@@ -126,19 +127,8 @@ class ActivityOtcMcAssetTransfer : BtsppActivity() {
             return BigDecimal(_curr_merchant_asset.getString("available"))
         } else {
             //  链上余额
-            val balances = _full_account_data.optJSONArray("balances")
-            if (balances != null) {
-                val curr_asset = _curr_merchant_asset.getJSONObject("kExtChainAsset")
-                val curr_asset_id = curr_asset.getString("id")
-                val precision = curr_asset.getInt("precision")
-                for (balance_object in balances.forin<JSONObject>()) {
-                    if (balance_object!!.getString("asset_type") == curr_asset_id) {
-                        return bigDecimalfromAmount(balance_object.getString("balance"), precision)
-                    }
-                }
-            }
+            return ModelUtils.findAssetBalance(_full_account_data, _curr_merchant_asset.getJSONObject("kExtChainAsset"))
         }
-        return BigDecimal.ZERO
     }
 
     private fun _drawUI_all() {

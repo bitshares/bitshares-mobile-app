@@ -9,6 +9,7 @@ import bitshares.*
 import com.fowallet.walletcore.bts.ChainObjectManager
 import kotlinx.android.synthetic.main.activity_margin_ranking.*
 import org.json.JSONArray
+import org.json.JSONObject
 import java.lang.reflect.Field
 
 class ActivityMarginRanking : BtsppActivity() {
@@ -21,6 +22,8 @@ class ActivityMarginRanking : BtsppActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setAutoLayoutContentView(R.layout.activity_margin_ranking)
+        // 设置全屏(隐藏状态栏和虚拟导航栏)
+        setFullScreen()
 
         //  初始化参数
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
@@ -28,9 +31,17 @@ class ActivityMarginRanking : BtsppActivity() {
             _assetList.put(chainMgr.getAssetBySymbol(symbol!!))
         }
 
-        // 设置全屏(隐藏状态栏和虚拟导航栏)
-        setFullScreen()
+        //  动态初始化TabItem
+        findViewById<TabLayout>(R.id.tablayout_of_diya_ranking).let { tab ->
+            _assetList.forEach<JSONObject> {
+                val asset = it!!
+                tab.addTab(tab.newTab().apply {
+                    text = asset.getString("symbol")
+                })
+            }
+        }
 
+        //  事件 - 返回
         layout_back_from_diya_ranking.setOnClickListener { finish() }
 
         // 设置 tablelayout 和 view_pager

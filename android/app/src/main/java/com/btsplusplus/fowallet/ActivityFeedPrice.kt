@@ -22,6 +22,8 @@ class ActivityFeedPrice : BtsppActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setAutoLayoutContentView(R.layout.activity_feed_price)
+        //  设置全屏(隐藏状态栏和虚拟导航栏)
+        setFullScreen()
 
         //  初始化参数
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
@@ -29,8 +31,15 @@ class ActivityFeedPrice : BtsppActivity() {
             _assetList.put(chainMgr.getAssetBySymbol(symbol!!))
         }
 
-        //  设置全屏(隐藏状态栏和虚拟导航栏)
-        setFullScreen()
+        //  动态初始化TabItem
+        findViewById<TabLayout>(R.id.tablayout_detail_feedprice).let { tab ->
+            _assetList.forEach<JSONObject> {
+                val asset = it!!
+                tab.addTab(tab.newTab().apply {
+                    text = asset.getString("symbol")
+                })
+            }
+        }
 
         //  返回
         layout_back.setOnClickListener { finish() }
