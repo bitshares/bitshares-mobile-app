@@ -14,12 +14,11 @@
         android:layout_marginTop="25dp"
         android:orientation="vertical">
 
-
+        <!-- 导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:orientation="horizontal">
-
 
             <LinearLayout
                 android:id="@+id/layout_back_from_assets_opissue"
@@ -41,11 +40,12 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="发行资产"
+                android:text="@string/kVcTitleAssetOpIssue"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
@@ -58,44 +58,57 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <!-- 目标账户 -->
             <TextView
                 android:textSize="13dp"
-                android:text="目标账户"
+                android:text="@string/kVcAssetOpCellTitleIssueTargetAccount"
                 android:textColor="@color/theme01.textColorMain"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <LinearLayout
-                android:id="@+id/layout_select_account_from_assets_opissue"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal"
+                android:id="@+id/layout_target_account"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/tv_select_account_from_assets_opissue"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical"
+                    android:id="@+id/tv_target_account_main"
                     android:textSize="16dp"
-                    android:layout_weight="9"
                     android:textColor="@color/theme01.textColorGray"
-                    android:text="选择目标账户"/>
+                    android:text="@string/kVcAssetOpCellValueIssueTargetAccountDefault"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
-                <ImageView
-                    android:id="@+id/iv_select_account_right_arrow"
-                    android:layout_width="0dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="center_vertical|right"
-                    android:layout_weight="1"
-                    android:foregroundGravity="right"
-                    android:src="@drawable/ic_btn_right_arrow" />
+                <LinearLayout
+                    android:gravity="center_vertical|right"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
+                    <TextView
+                        android:id="@+id/tv_target_account_detail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:layout_marginLeft="5dp"
+                        android:textSize="16dp"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text=""/>
+
+                    <ImageView
+                        android:id="@+id/img_arrow_target_account"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:foregroundGravity="right"
+                        android:src="@drawable/ic_btn_right_arrow" />
+                        
+                </LinearLayout>
             </LinearLayout>
-
             <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
+            <!-- 发行数量 -->
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_marginTop="25dp"
@@ -104,15 +117,15 @@
 
                 <TextView
                     android:textSize="13dp"
-                    android:text="发行数量"
+                    android:text="@string/kVcAssetOpCellTitleIssueAmount"
                     android:textColor="@color/theme01.textColorMain"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
                 <TextView
-                    android:id="@+id/tv_available_assets_from_assets_opissue"
+                    android:id="@+id/tv_curr_balance"
                     android:textSize="13dp"
-                    android:text="可用 3,000,000,000 FEEFREE"
+                    android:text="-- -- --"
                     android:gravity="right"
                     android:textColor="@color/theme01.textColorMain"
                     android:layout_width="match_parent"
@@ -127,14 +140,14 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/et_issue_asset_quantity_from_assets_opissue"
+                    android:id="@+id/tf_amount"
                     android:maxLength="24"
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     style="@style/kTextFieldDecimalPad"
-                    android:hint="请输入发行数量"/>
+                    android:hint="@string/kVcAssetOpCellPlaceholderIssueAmount"/>
 
                 <LinearLayout
                     android:orientation="horizontal"
@@ -144,9 +157,9 @@
                     android:layout_height="wrap_content">
 
                     <TextView
-                        android:id="@+id/tv_issue_asset_symbol_from_assets_opissue"
+                        android:id="@+id/tv_tf_tailer_asset_symbol"
                         android:textSize="13dp"
-                        android:text="FEEFREE"
+                        android:text="--"
                         android:textColor="@color/theme01.textColorMain"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
@@ -161,9 +174,9 @@
                         android:layout_height="wrap_content" />
 
                     <TextView
-                        android:id="@+id/tv_select_total_quantity_from_assets_opissue"
+                        android:id="@+id/btn_tf_tailer_all"
                         android:textSize="13dp"
-                        android:text="全部"
+                        android:text="@string/kLabelSendAll"
                         android:textColor="@color/theme01.textColorHighlight"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
@@ -171,12 +184,11 @@
             </LinearLayout>
             <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-
-
+            <!-- 备注信息 -->
             <TextView
                 android:layout_marginTop="25dp"
                 android:textSize="13dp"
-                android:text="目标账户"
+                android:text="@string/kVcAssetOpCellTitleIssueMemo"
                 android:textColor="@color/theme01.textColorMain"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -188,7 +200,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/et_memo_info_from_assets_opissue"
+                    android:id="@+id/tf_memo"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -200,8 +212,7 @@
 
             <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-
-
+            <!-- 最大发行量 -->
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_marginTop="25dp"
@@ -210,15 +221,15 @@
 
                 <TextView
                     android:textSize="13dp"
-                    android:text="最大发行量"
+                    android:text="@string/kVcAssetOpCellTitleMaxSupply"
                     android:textColor="@color/theme01.textColorMain"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
                 <TextView
-                    android:id="@+id/tv_max_issue_quantity_from_assets_opissue"
+                    android:id="@+id/tv_max_supply"
                     android:textSize="13dp"
-                    android:text="3,000,000,000 FEEFREE"
+                    android:text="-- --"
                     android:gravity="right"
                     android:textColor="@color/theme01.textColorMain"
                     android:layout_width="match_parent"
@@ -226,6 +237,7 @@
 
             </LinearLayout>
 
+            <!-- 当前发行量 -->
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_marginTop="10dp"
@@ -234,15 +246,15 @@
 
                 <TextView
                     android:textSize="13dp"
-                    android:text="当前发行量"
+                    android:text="@string/kVcAssetOpCellTitleCurSupply"
                     android:textColor="@color/theme01.textColorMain"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
                 <TextView
-                    android:id="@+id/tv_current_issue_quantity_from_assets_opissue"
+                    android:id="@+id/tv_cur_supply"
                     android:textSize="13dp"
-                    android:text="3,000,000 FEEFREE"
+                    android:text="-- --"
                     android:gravity="right"
                     android:textColor="@color/theme01.textColorMain"
                     android:layout_width="match_parent"
@@ -259,15 +271,14 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/btn_issue_from_assets_opissue"
+                    android:id="@+id/btn_submit"
                     android:layout_width="wrap_content"
                     style="@style/kMainButtonStyle"
                     android:gravity="center|center_vertical"
                     android:layout_weight="1"
                     android:padding="5dp"
-                    android:text="发行" />
+                    android:text="@string/kVcAssetOpCellBtnNameIssueAsset" />
             </LinearLayout>
-
 
         </LinearLayout>
 
