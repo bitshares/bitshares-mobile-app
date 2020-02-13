@@ -79,10 +79,9 @@
 - (WsPromise*)calcOperationFee:(EBitsharesOperations)opcode opdata:(id)opdata;
 
 /**
- *  创建提案
+ *  OP - 创建提案
  */
-- (WsPromise*)proposalCreate:(EBitsharesOperations)opcode
-                      opdata:(id)opdata
+- (WsPromise*)proposalCreate:(NSArray*)opcode_data_object_array
                    opaccount:(id)opaccount
         proposal_create_args:(id)proposal_create_args;
 

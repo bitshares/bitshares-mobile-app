@@ -34,13 +34,12 @@ enum
     NSArray*                _dataArray;
     NSArray*                _permissionAccountArray;
     
-    EBitsharesOperations    _opcode;
-    NSDictionary*           _opdata;
+    NSArray*                _opCodeDataObjectArray;
+    NSMutableArray*         _processedOpDataArray;
+    
     BOOL                    _bForceAddReviewTime;           //  是否必须添加审核周期
     NSInteger               _iProposalLifetime;             //  有效期
     NSInteger               _iProposalReviewtime;           //  审核周期
-    
-    NSDictionary*           _processedOpData;
     
     NSDictionary*           _fee_paying_account;            //  手续费支付账号（提案发起账号）
 }
@@ -61,24 +60,23 @@ enum
     _btnCommit = nil;
     _callback = nil;
     _fee_paying_account = nil;
-    _processedOpData = nil;
+    _processedOpDataArray = nil;
+    _opCodeDataObjectArray = nil;
 }
 
-- (id)initWithOpcode:(EBitsharesOperations)opcode
-              opdata:(NSDictionary*)opdata
-           opaccount:(NSDictionary*)opaccount
-            callback:(BtsppConfirmCallback)callback
+- (id)initWithOpcodedataArray:(NSArray*)opcode_data_object_array
+                    opaccount:(NSDictionary*)opaccount
+                     callback:(BtsppConfirmCallback)callback
 {
     self = [super init];
     if (self) {
         // Custom initialization
-        _opcode = opcode;
-        _opdata = opdata;
+        _opCodeDataObjectArray = opcode_data_object_array;
         _bForceAddReviewTime = [[opaccount objectForKey:@"id"] isEqualToString:BTS_GRAPHENE_COMMITTEE_ACCOUNT];
         _callback = callback;
         _bResultCannelled = YES;
         _fee_paying_account = nil;
-        _processedOpData = nil;
+        _processedOpDataArray = nil;
         _permissionAccountArray = [[WalletManager sharedWalletManager] getFeePayingAccountList:YES];
         if ([_permissionAccountArray count] > 0){
             //  默认第一个
@@ -104,11 +102,14 @@ enum
 
 - (void)onQueryGrapheneObjectResponsed:(id)resultHash
 {
-    _processedOpData = @{
-        @"opcode":@(_opcode),
-        @"opdata":_opdata,
-        @"uidata":[OrgUtils processOpdata2UiData:_opcode opdata:_opdata opresult:nil isproposal:YES]
-    };
+    _processedOpDataArray = [NSMutableArray array];
+    for (id obj in _opCodeDataObjectArray) {
+        NSInteger opcode = [[obj objectForKey:@"opcode"] integerValue];
+        id opdata = [obj objectForKey:@"opdata"];
+        [_processedOpDataArray addObject:@{@"opcode":@(opcode),
+                                           @"opdata":opdata,
+                                           @"uidata":[OrgUtils processOpdata2UiData:opcode opdata:opdata opresult:nil isproposal:YES]}];
+    }
     _mainTableView.hidden = NO;
     [_mainTableView reloadData];
 }
@@ -135,7 +136,13 @@ enum
     //  背景颜色
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
-    _dataArray = @[];
+    _dataArray = @[
+        @(kVcFeePayingAccount),
+        @(kVcProposalLifetime),
+        @(kVcProposalReviewtime),
+        @(kVcProposalDetails),
+        @(kVcBtnSubmit)
+    ];
     
     //  导航条按钮
     [self showLeftButton:NSLocalizedString(@"kBtnCancel", @"取消") action:@selector(onCancelButtonClicked:)];
@@ -153,7 +160,11 @@ enum
     
     //  查询依赖
     NSMutableDictionary* queryIds = [NSMutableDictionary dictionary];
-    [OrgUtils extractObjectID:_opcode opdata:_opdata container:queryIds];
+    for (id obj in _opCodeDataObjectArray) {
+        [OrgUtils extractObjectID:[[obj objectForKey:@"opcode"] integerValue]
+                           opdata:[obj objectForKey:@"opdata"]
+                        container:queryIds];
+    }
     [self queryMissedIds:[queryIds allKeys]];
 }
 
@@ -209,18 +220,22 @@ enum
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return kVcMax;
+    return [_dataArray count];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if ([[_dataArray objectAtIndex:section] integerValue] == kVcProposalDetails) {
+        return [_opCodeDataObjectArray count];
+    }
     return 1;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == kVcProposalDetails && _processedOpData){
-        return [ViewProposalOpInfoCell getCellHeight:_processedOpData leftOffset:tableView.layoutMargins.left];
+    if ([[_dataArray objectAtIndex:indexPath.section] integerValue] == kVcProposalDetails && _processedOpDataArray) {
+        return [ViewProposalOpInfoCell getCellHeight:[_processedOpDataArray objectAtIndex:indexPath.row]
+                                          leftOffset:tableView.layoutMargins.left];
     }
     return tableView.rowHeight;
 }
@@ -267,7 +282,7 @@ enum
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    switch (indexPath.section) {
+    switch ([[_dataArray objectAtIndex:indexPath.section] integerValue]) {
         case kVcProposalDetails:
         {
             static NSString* identify = @"id_opinfo_cell";
@@ -281,8 +296,8 @@ enum
             }
             cell.showCustomBottomLine = YES;
             cell.useLabelFont = YES;
-            if (_processedOpData){
-                [cell setItem:_processedOpData];
+            if (_processedOpDataArray) {
+                [cell setItem:[_processedOpDataArray objectAtIndex:indexPath.row]];
             }
             return cell;
         }
@@ -359,7 +374,7 @@ enum
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
-        switch (indexPath.section) {
+        switch ([[_dataArray objectAtIndex:indexPath.section] integerValue]) {
             case kVcFeePayingAccount:
             {
                 [VcUtils showPicker:self

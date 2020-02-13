@@ -120,7 +120,7 @@ static NSInteger gen_notify_unique_id()
     //  [统计]
     [OrgUtils logEvents:@"viewDidLoad" params:@{@"view":className}];
     
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor whiteColor];
     self.edgesForExtendedLayout = UIRectEdgeNone;
 }
@@ -141,10 +141,10 @@ static NSInteger gen_notify_unique_id()
 {
     self.e = nil;
     
-//    //  清除所有 tableView 的所有代理 执行到这里很多对象都释放了 crash
-//    for (UITableView* tableView in [self getIvarList:[UITableView class]]) {
-//        tableView.delegate = nil;
-//    }
+    //    //  清除所有 tableView 的所有代理 执行到这里很多对象都释放了 crash
+    //    for (UITableView* tableView in [self getIvarList:[UITableView class]]) {
+    //        tableView.delegate = nil;
+    //    }
 }
 
 #pragma mark- bitshares api wapper
@@ -236,7 +236,7 @@ static NSInteger gen_notify_unique_id()
     label.layer.borderColor = backColor.CGColor;
     //  REMARK：去除登录等按钮等弧度
     label.layer.cornerRadius = 0.0f;
-//    label.layer.cornerRadius = 3.0f;
+    //    label.layer.cornerRadius = 3.0f;
     label.layer.masksToBounds = YES;
     
     label.layer.backgroundColor = backColor.CGColor;
@@ -264,13 +264,13 @@ static NSInteger gen_notify_unique_id()
     }
     
     CGSize limitSize = CGSizeMake(self.view.bounds.size.width, cell.bounds.size.height);
-
+    
     CGFloat w = self.view.bounds.size.width - leftEdge * 2;
     CGFloat h = 38; //  REMARK：主要按钮高度
     
     label.frame = CGRectMake((limitSize.width - w) / 2.0f, (limitSize.height - h) / 2.0f, w, h);
     cell.accessibilityTraits = UIAccessibilityTraitButton;
-
+    
     [cell.contentView addSubview:label];
 }
 
@@ -715,7 +715,7 @@ static NSInteger gen_notify_unique_id()
 - (void)closeModelViewController:(NSDictionary*)args
 {
     [self.presentingViewController dismissViewControllerAnimated:YES completion:^
-    {
+     {
         NSString* kNotifyName = [NSString stringWithFormat:@"%@_%@", kNoticeOnModelViewControllerClosed, @(self.notify_unique_id)];
         NSDictionary* userInfo;
         if (args){
@@ -745,13 +745,12 @@ static NSInteger gen_notify_unique_id()
 /**
  *  (private) 创建提案请求
  */
-- (void)onExecuteCreateProposalCore:(EBitsharesOperations)opcode
-                             opdata:(id)opdata
+- (void)onExecuteCreateProposalCore:(NSArray*)opcode_data_object_array
                           opaccount:(id)opaccount
                proposal_create_args:(id)proposal_create_args
                    success_callback:(void (^)())success_callback
 {
-    assert(opdata);
+    assert(opcode_data_object_array);
     assert(proposal_create_args);
     id fee_paying_account = [proposal_create_args objectForKey:@"kFeePayingAccount"];
     assert(fee_paying_account);
@@ -759,11 +758,10 @@ static NSInteger gen_notify_unique_id()
     assert(fee_paying_account_id);
     
     [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    [[[[BitsharesClientManager sharedBitsharesClientManager] proposalCreate:opcode
-                                                                     opdata:opdata
+    [[[[BitsharesClientManager sharedBitsharesClientManager] proposalCreate:opcode_data_object_array
                                                                   opaccount:opaccount
-                                                       proposal_create_args:proposal_create_args] then:(^id(id data)
-    {
+                                                       proposal_create_args:proposal_create_args] then:^id(id data)
+      {
         [self hideBlockView];
         //  成功回调
         if (success_callback){
@@ -772,24 +770,23 @@ static NSInteger gen_notify_unique_id()
             [OrgUtils makeToast:NSLocalizedString(@"kProposalSubmitTipTxOK", @"创建提案成功。")];
         }
         //  [统计]
-        [OrgUtils logEvents:@"txProposalCreateOK" params:@{@"opcode":@(opcode), @"account":fee_paying_account_id}];
+        [OrgUtils logEvents:@"txProposalCreateOK" params:@{@"account":fee_paying_account_id}];
         return nil;
-    })] catch:(^id(id error) {
+    }] catch:^id(id error) {
         [self hideBlockView];
         [OrgUtils showGrapheneError:error];
         //  [统计]
-        [OrgUtils logEvents:@"txProposalCreateFailed" params:@{@"opcode":@(opcode), @"account":fee_paying_account_id}];
+        [OrgUtils logEvents:@"txProposalCreateFailed" params:@{@"account":fee_paying_account_id}];
         return nil;
-    })];
+    }];
 }
 
 /**
  *  (public)权限不足时，询问用户是否发起提案交易。
  */
-- (void)askForCreateProposal:(EBitsharesOperations)opcode
+- (void)askForCreateProposal:(NSArray*)opcode_data_object_array
        using_owner_authority:(BOOL)using_owner_authority
     invoke_proposal_callback:(BOOL)invoke_proposal_callback
-                      opdata:(id)opdata
                    opaccount:(id)opaccount
                         body:(void (^)(BOOL isProposal, NSDictionary* proposal_create_args))body
             success_callback:(void (^)())success_callback
@@ -806,34 +803,50 @@ static NSInteger gen_notify_unique_id()
                                                            withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
                                                           completion:^(NSInteger buttonIndex)
      {
-         if (buttonIndex == 1)
-         {
-             // 转到提案确认界面
-             VCProposalConfirm* vc = [[VCProposalConfirm alloc] initWithOpcode:opcode
-                                                                        opdata:opdata
-                                                                     opaccount:opaccount
-                                                                      callback:^(BOOL isOk, NSDictionary* proposal_create_args)
-                                      {
-                                          if (isOk){
-                                              if (invoke_proposal_callback){
-                                                  assert(body);
-                                                  body(YES, proposal_create_args);
-                                              }else{
-                                                  [self onExecuteCreateProposalCore:opcode
-                                                                             opdata:opdata
-                                                                          opaccount:opaccount
-                                                               proposal_create_args:proposal_create_args
-                                                                   success_callback:success_callback];
-                                              }
-                                          }else{
-                                              NSLog(@"cancel create proposal...");
-                                          }
-                                      }];
-             vc.title = NSLocalizedString(@"kVcTitleCreateProposal", @"请确认提案");
-             vc.hidesBottomBarWhenPushed = YES;
-             [self showModelViewController:vc tag:0];
-         }
-     }];
+        if (buttonIndex == 1)
+        {
+            // 转到提案确认界面
+            VCProposalConfirm* vc = [[VCProposalConfirm alloc] initWithOpcodedataArray:opcode_data_object_array
+                                                                             opaccount:opaccount
+                                                                              callback:^(BOOL isOk, NSDictionary* proposal_create_args) {
+                if (isOk){
+                    if (invoke_proposal_callback){
+                        assert(body);
+                        body(YES, proposal_create_args);
+                    }else{
+                        [self onExecuteCreateProposalCore:opcode_data_object_array
+                                                opaccount:opaccount
+                                     proposal_create_args:proposal_create_args
+                                         success_callback:success_callback];
+                    }
+                }else{
+                    NSLog(@"cancel create proposal...");
+                }
+            }];
+            vc.title = NSLocalizedString(@"kVcTitleCreateProposal", @"请确认提案");
+            vc.hidesBottomBarWhenPushed = YES;
+            [self showModelViewController:vc tag:0];
+        }
+    }];
+}
+
+/**
+ *  (public)权限不足时，询问用户是否发起提案交易。
+ */
+- (void)askForCreateProposal:(EBitsharesOperations)opcode
+       using_owner_authority:(BOOL)using_owner_authority
+    invoke_proposal_callback:(BOOL)invoke_proposal_callback
+                      opdata:(id)opdata
+                   opaccount:(id)opaccount
+                        body:(void (^)(BOOL isProposal, NSDictionary* proposal_create_args))body
+            success_callback:(void (^)())success_callback
+{
+    [self askForCreateProposal:@[@{@"opcode":@(opcode), @"opdata":opdata}]
+         using_owner_authority:using_owner_authority
+      invoke_proposal_callback:invoke_proposal_callback
+                     opaccount:opaccount
+                          body:body
+              success_callback:success_callback];
 }
 
 /**
@@ -847,7 +860,24 @@ static NSInteger gen_notify_unique_id()
                                opaccount:(id)opaccount
                                     body:(void (^)(BOOL isProposal, NSDictionary* proposal_create_args))body
 {
-    assert(opdata);
+    [self GuardProposalOrNormalTransaction:@[@{@"opcode":@(opcode), @"opdata":opdata}]
+                     using_owner_authority:using_owner_authority
+                  invoke_proposal_callback:invoke_proposal_callback
+                                 opaccount:opaccount
+                                      body:body];
+}
+
+/**
+ *  (public) 确保交易权限。足够-发起普通交易，不足-提醒用户发起提案交易。
+ *  using_owner_authority - 是否使用owner授权，否则验证active权限。
+ */
+- (void)GuardProposalOrNormalTransaction:(NSArray*)opcode_data_object_array
+                   using_owner_authority:(BOOL)using_owner_authority
+                invoke_proposal_callback:(BOOL)invoke_proposal_callback
+                               opaccount:(id)opaccount
+                                    body:(void (^)(BOOL isProposal, NSDictionary* proposal_create_args))body
+{
+    assert(opcode_data_object_array);
     assert(opaccount);
     
     NSDictionary* permission_json = using_owner_authority ? [opaccount objectForKey:@"owner"] : [opaccount objectForKey:@"active"];
@@ -857,10 +887,9 @@ static NSInteger gen_notify_unique_id()
         body(NO, nil);
     }else{
         //  没权限，询问用户是否发起提案。
-        [self askForCreateProposal:opcode
+        [self askForCreateProposal:opcode_data_object_array
              using_owner_authority:using_owner_authority
           invoke_proposal_callback:invoke_proposal_callback
-                            opdata:opdata
                          opaccount:opaccount
                               body:body
                   success_callback:nil];
@@ -891,23 +920,23 @@ static NSInteger gen_notify_unique_id()
                                                                   tfcfg:nil
                                                              completion:^(NSInteger buttonIndex, NSString *tfvalue)
              {
-                 if (buttonIndex != 0){
-                     id unlockInfos = [[WalletManager sharedWalletManager] unLock:tfvalue];
-                     BOOL unlockSuccess = [[unlockInfos objectForKey:@"unlockSuccess"] boolValue];
-                     if (unlockSuccess && checkActivePermission && ![[unlockInfos objectForKey:@"haveActivePermission"] boolValue]){
-                         unlockSuccess = NO;
-                     }
-                     if (unlockSuccess){
-                         body(YES);
-                     }else{
-                         [OrgUtils makeToast:[unlockInfos objectForKey:@"err"]];
-                         body(NO);
-                     }
-                 }else{
-                     NSLog(@"User cancel unlock account.");
-                     body(NO);
-                 }
-             }];
+                if (buttonIndex != 0){
+                    id unlockInfos = [[WalletManager sharedWalletManager] unLock:tfvalue];
+                    BOOL unlockSuccess = [[unlockInfos objectForKey:@"unlockSuccess"] boolValue];
+                    if (unlockSuccess && checkActivePermission && ![[unlockInfos objectForKey:@"haveActivePermission"] boolValue]){
+                        unlockSuccess = NO;
+                    }
+                    if (unlockSuccess){
+                        body(YES);
+                    }else{
+                        [OrgUtils makeToast:[unlockInfos objectForKey:@"err"]];
+                        body(NO);
+                    }
+                }else{
+                    NSLog(@"User cancel unlock account.");
+                    body(NO);
+                }
+            }];
         }else{
             body(YES);
         }
@@ -948,9 +977,9 @@ static NSInteger gen_notify_unique_id()
                            time:1
                          parent:self.navigationController.view
                 completionBlock:^{
-                    [self.myNavigationController tempEnableDragBack];
-                    [self.navigationController popViewControllerAnimated:YES];
-                }];
+        [self.myNavigationController tempEnableDragBack];
+        [self.navigationController popViewControllerAnimated:YES];
+    }];
 }
 
 #pragma mark - delay
@@ -972,7 +1001,7 @@ static NSInteger gen_notify_unique_id()
         [indent appendString:@"\t"];
     }
     NSString* indent2 = [indent copy];
-//    [indent release];
+    //    [indent release];
     for (UIView* v1 in view.subviews) {
         
         NSLog(@"%@level=%d:%@", indent2, (int)level, v1);

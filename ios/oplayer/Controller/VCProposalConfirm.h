@@ -13,9 +13,8 @@ typedef void (^BtsppConfirmCallback)(BOOL isOk, NSDictionary* proposal_create_ar
 
 @interface VCProposalConfirm : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
-- (id)initWithOpcode:(EBitsharesOperations)opcode
-              opdata:(NSDictionary*)opdata
-           opaccount:(NSDictionary*)opaccount
-            callback:(BtsppConfirmCallback)callback;
+- (id)initWithOpcodedataArray:(NSArray*)opcode_data_object_array
+                    opaccount:(NSDictionary*)opaccount
+                     callback:(BtsppConfirmCallback)callback;
 
 @end
