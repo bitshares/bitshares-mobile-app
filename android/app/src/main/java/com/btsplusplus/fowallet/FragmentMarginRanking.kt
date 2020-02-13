@@ -65,9 +65,15 @@ class FragmentMarginRanking : BtsppFragment() {
         val mcr = feedPriceData.getJSONObject("current_feed").getString("maintenance_collateral_ratio")
         _mcr = bigDecimalfromAmount(mcr, 3)
 
-        //  刷新UI
-        //  喂价
-        _currentView!!.findViewById<TextView>(R.id.label_txt_curr_feed).text = "${_ctx!!.resources.getString(R.string.kVcRankCurrentFeedPrice)} ${_feedPriceInfo!!.toPriceAmountString()}"
+        //  刷新UI - 当前喂价
+        _currentView!!.findViewById<TextView>(R.id.label_txt_curr_feed).let { label ->
+            if (_feedPriceInfo != null) {
+                label.text = "${resources.getString(R.string.kVcRankCurrentFeedPrice)} ${_feedPriceInfo!!.toPriceAmountString()}"
+            } else {
+                label.text = "${resources.getString(R.string.kVcRankCurrentFeedPrice)} ${resources.getString(R.string.kVcFeedNoData)}"
+            }
+        }
+
         //  列表
         val lay = _currentView!!.findViewById<LinearLayout>(R.id.layout_fragment_of_diya_ranking_cny)
         lay.removeAllViews()
@@ -199,17 +205,24 @@ class FragmentMarginRanking : BtsppFragment() {
         //  计算抵押率
         val n_coll = bigDecimalfromAmount(str_collateral, collateral_precision)
         val n_debt = bigDecimalfromAmount(str_debt, debt_precision)
-        val n_ratio = BigDecimal.valueOf(100.0).multiply(n_coll).multiply(_feedPriceInfo!!).divide(n_debt, 2, BigDecimal.ROUND_UP)
+
+        val rate_string: String
+        if (_feedPriceInfo != null) {
+            val n_ratio = BigDecimal.valueOf(100.0).multiply(n_coll).multiply(_feedPriceInfo!!).divide(n_debt, 2, BigDecimal.ROUND_UP)
+            rate_string = "${n_ratio.toPlainString()}%"
+        } else {
+            rate_string = "--%"
+        }
 
         //  强平触发价 高精度计算
         tv2.text = OrgUtils.calcSettlementTriggerPrice(str_debt, str_collateral, debt_precision, collateral_precision, _mcr!!, false, null, true).toPriceAmountString()
-        tv4.text = "${n_ratio.toPlainString()}%"
+        tv4.text = rate_string
         tv6.text = OrgUtils.formatAssetString(str_collateral, collateral_precision)
         tv8.text = OrgUtils.formatAssetString(str_debt, debt_precision)
 
         // 线
         val lv_line = View(ctx)
-        var layout_tv9 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, toDp(1.0f))
+        val layout_tv9 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, toDp(1.0f))
         lv_line.setBackgroundColor(resources.getColor(R.color.theme01_bottomLineColor))
         lv_line.layoutParams = layout_tv9
 
