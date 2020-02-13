@@ -8,7 +8,9 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TableRow
 import android.widget.TextView
-import bitshares.*
+import bitshares.Utils
+import bitshares.dp
+import bitshares.xmlstring
 import org.json.JSONObject
 import kotlin.math.max
 

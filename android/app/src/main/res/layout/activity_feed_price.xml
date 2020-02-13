@@ -62,7 +62,7 @@
             app:tabRippleColor="#aaaaaa"
             app:tabTextColor="#ffffff">
 
-            <android.support.design.widget.TabItem
+            <!-- <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="CNY" />
@@ -70,7 +70,7 @@
             <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="USD" />
+                android:text="USD" /> -->
 
 
         </android.support.design.widget.TabLayout>

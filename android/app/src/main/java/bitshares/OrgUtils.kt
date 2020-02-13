@@ -1175,8 +1175,8 @@ class OrgUtils {
                 }
                 EBitsharesOperations.ebo_asset_update_bitasset.value -> {
                     name = R.string.kOpType_asset_update_bitasset.xmlstring(ctx)
-                    desc = R.string.kOpDesc_asset_update_bitasset.xmlstring(ctx)
-                    //  TODO:待细化
+                    val symbol = chainMgr.getChainObjectByID(opdata.getString("asset_to_update")).getString("symbol")
+                    desc = String.format(R.string.kOpDesc_asset_update_bitasset.xmlstring(ctx), symbol)
                 }
                 EBitsharesOperations.ebo_asset_update_feed_producers.value -> {
                     name = R.string.kOpType_asset_update_feed_producers.xmlstring(ctx)
@@ -1185,8 +1185,10 @@ class OrgUtils {
                 }
                 EBitsharesOperations.ebo_asset_issue.value -> {
                     name = R.string.kOpType_asset_issue.xmlstring(ctx)
-                    desc = R.string.kOpDesc_asset_issue.xmlstring(ctx)
-                    //  TODO:待细化
+                    val issuer = chainMgr.getChainObjectByID(opdata.getString("issuer")).getString("name")
+                    val to = chainMgr.getChainObjectByID(opdata.getString("issue_to_account")).getString("name")
+                    val str_amount = formatAssetAmountItem(opdata.getJSONObject("asset_to_issue"))
+                    desc = String.format(R.string.kOpDesc_asset_issue.xmlstring(ctx), issuer, str_amount, to)
                 }
                 EBitsharesOperations.ebo_asset_reserve.value -> {
                     name = R.string.kOpType_asset_reserve.xmlstring(ctx)

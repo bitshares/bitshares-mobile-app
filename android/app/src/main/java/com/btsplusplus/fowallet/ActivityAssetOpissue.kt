@@ -1,8 +1,6 @@
 package com.btsplusplus.fowallet
 
 import android.os.Bundle
-import android.text.SpannableStringBuilder
-import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import bitshares.*
@@ -11,7 +9,6 @@ import com.fowallet.walletcore.bts.BitsharesClientManager
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_asset_op_issue.*
-import org.json.JSONArray
 import org.json.JSONObject
 import java.math.BigDecimal
 

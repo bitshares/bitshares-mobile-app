@@ -959,9 +959,9 @@
     <string name="kOpDesc_account_transfer">转移账号。</string>
     <string name="kOpDesc_asset_create">%s 创建资产 %s。</string>
     <string name="kOpDesc_asset_update">更新资产 %s。</string>
-    <string name="kOpDesc_asset_update_bitasset">更新智能币。</string>
+    <string name="kOpDesc_asset_update_bitasset">更新智能币 %s。</string>
     <string name="kOpDesc_asset_update_feed_producers">%s 资产更新发布喂价的账号信息。</string>
-    <string name="kOpDesc_asset_issue">资产发行。</string>
+    <string name="kOpDesc_asset_issue">%s 发行 %s 到 %s。</string>
     <string name="kOpDesc_asset_reserve">%s 销毁 %s。</string>
     <string name="kOpDesc_asset_fund_fee_pool">注资手续费池。</string>
     <string name="kOpDesc_asset_settle">%s 强制清算 %s。</string>

@@ -10,6 +10,7 @@ import com.btsplusplus.fowallet.ViewEx.EditTextEx
 import com.btsplusplus.fowallet.ViewEx.TextViewEx
 import com.btsplusplus.fowallet.gateway.GatewayAssetItemData
 import com.btsplusplus.fowallet.gateway.GatewayBase
+import com.btsplusplus.fowallet.utils.ModelUtils
 import com.fowallet.walletcore.bts.BitsharesClientManager
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
@@ -131,16 +132,7 @@ class ActivityGatewayWithdraw : BtsppActivity() {
         if (_asset == null) {
             return
         }
-        val asset_id = _asset!!.getString("id")
-        var asset_value = "0"
-        for (balance_item in full_account_data.getJSONArray("balances").forin<JSONObject>()) {
-            val asset_type = balance_item!!.getString("asset_type")
-            if (asset_type == asset_id) {
-                asset_value = balance_item.getString("balance")
-                break
-            }
-        }
-        _n_available = bigDecimalfromAmount(asset_value, _precision_amount)
+        _n_available = ModelUtils.findAssetBalance(full_account_data, _asset!!.getString("id"), _precision_amount)
     }
 
     /**

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.*
 import bitshares.*
 import com.btsplusplus.fowallet.kline.TradingPair
+import com.btsplusplus.fowallet.utils.VcUtils
 import com.fowallet.walletcore.bts.BitsharesClientManager
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
@@ -344,33 +345,39 @@ class ActivityIndexCollateral : BtsppActivity() {
      * 选择借贷资产
      */
     private fun onSelectDebtAssetClicked() {
-        var list = ChainObjectManager.sharedChainObjectManager().getDebtAssetList()
-        ViewSelector.show(this, resources.getString(R.string.kDebtTipSelectDebtAsset), list.toList<String>().toTypedArray()) { index: Int, result: String ->
-            processSelectNewDebtAsset(list.getString(index))
+        val chainMgr = ChainObjectManager.sharedChainObjectManager()
+        val asset_list = JSONArray()
+        chainMgr.getDebtAssetList().forEach<String> { symbol ->
+            asset_list.put(chainMgr.getAssetBySymbol(symbol!!))
+        }
+        ViewSelector.show(this, resources.getString(R.string.kDebtTipSelectDebtAsset), asset_list, "symbol") { index: Int, result: String ->
+            processSelectNewDebtAsset(asset_list.getJSONObject(index))
         }
     }
 
-    private fun processSelectNewDebtAsset(newDebtAssetSymbol: String) {
+    private fun processSelectNewDebtAsset(newDebtAsset: JSONObject) {
         //   选择的就是当前资产，直接返回。
-        if (newDebtAssetSymbol == _debtPair!!._baseAsset.getString("symbol")) {
+        if (newDebtAsset.getString("id") == _debtPair!!._baseAsset.getString("id")) {
             return
         }
-        //  获取背书资产
-        val newDebtAsset = ChainObjectManager.sharedChainObjectManager().getAssetBySymbol(newDebtAssetSymbol)
-        //  获取当前资产喂价信息
-        val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this), this)
-        mask.show()
-        _asyncQueryFeedPrice(newDebtAsset).then {
-            mask.dismiss()
-            _debtPair = TradingPair().initWithBaseAsset(newDebtAsset, _debtPair!!._quoteAsset)
+
+        //  更新缓存
+        val chainMgr = ChainObjectManager.sharedChainObjectManager()
+        chainMgr.appendAssetCore(newDebtAsset)
+
+        //  查询喂价、查询背书资产信息
+        val p1 = _asyncQueryFeedPrice(newDebtAsset)
+        val p2 = chainMgr.queryBackingAsset(newDebtAsset)
+
+        VcUtils.simpleRequest(this, Promise.all(p1, p2)) {
+            val data_array = it as JSONArray
+            val feed_data = data_array.getJSONObject(0)
+            val backing_asset = data_array.getJSONObject(1)
+            _debtPair = TradingPair().initWithBaseAsset(newDebtAsset, backing_asset)
             //  切换了资产（更新输入框可输入的精度信息）
             _tf_debt_watcher?.set_precision(_debtPair!!._basePrecision)?.clear()
             _tf_coll_watcher?.set_precision(_debtPair!!._quotePrecision)?.clear()
-            _refreshUI(_isUserLogined(), it as JSONObject)
-            return@then null
-        }.catch {
-            mask.dismiss()
-            showToast(resources.getString(R.string.tip_network_error))
+            _refreshUI(_isUserLogined(), feed_data)
         }
     }
 
@@ -780,7 +787,7 @@ class ActivityIndexCollateral : BtsppActivity() {
             val account_id = wallet_account_info.getJSONObject("account").getString("id")
 
             val chainMgr = ChainObjectManager.sharedChainObjectManager()
-            val debt_asset_list = chainMgr.getDebtAssetList()
+//            val debt_asset_list = chainMgr.getDebtAssetList()
 
             //  REMARK：如果没执行 get_full_accounts 请求，则内存缓存不存在，则默认从登录时的帐号信息里获取。
             var full_account_data = chainMgr.getFullAccountDataFromCache(account_id)
@@ -816,9 +823,9 @@ class ActivityIndexCollateral : BtsppActivity() {
 
 
             //  3、获取抵押物（BTS）的余额信息
-            _collateralBalance = balances_hash.optJSONObject(BTS_NETWORK_CORE_ASSET_ID)
+            _collateralBalance = balances_hash.optJSONObject(_debtPair!!._quoteId)
             if (_collateralBalance == null) {
-                _collateralBalance = jsonObjectfromKVS("asset_id", BTS_NETWORK_CORE_ASSET_ID, "amount", 0)
+                _collateralBalance = jsonObjectfromKVS("asset_id", _debtPair!!._quoteId, "amount", 0)
             }
 
             //  4、获取当前持有的债仓
@@ -833,26 +840,24 @@ class ActivityIndexCollateral : BtsppActivity() {
 
             //  5、债仓和余额关联
             _callOrderHash = JSONObject()
-            debt_asset_list.forEach<String> {
-                val debt_symbol = it!!
-                val debt_asset = chainMgr.getAssetBySymbol(debt_symbol)
-                val oid = debt_asset.getString("id")
-                var balance = balances_hash.optJSONObject(oid)
-                if (balance == null) {
-                    //  默认值
-                    balance = jsonObjectfromKVS("asset_id", oid, "amount", 0)
-                }
-                var info: JSONObject
-                val callorder = call_orders_hash.optJSONObject(oid)
-                if (callorder != null) {
-                    info = jsonObjectfromKVS("balance", balance, "debt_asset", debt_asset, "callorder", callorder)
-                } else {
-                    info = jsonObjectfromKVS("balance", balance, "debt_asset", debt_asset)
-                }
-                //  保存到Hash
-                _callOrderHash!!.put(debt_symbol, info)
-                _callOrderHash!!.put(oid, info)
+            val debt_symbol = _debtPair!!._baseAsset.getString("symbol")
+            val debt_asset = _debtPair!!._baseAsset
+            val oid = debt_asset.getString("id")
+            var balance = balances_hash.optJSONObject(oid)
+            if (balance == null) {
+                //  默认值
+                balance = jsonObjectfromKVS("asset_id", oid, "amount", 0)
             }
+            val info: JSONObject
+            val callorder = call_orders_hash.optJSONObject(oid)
+            if (callorder != null) {
+                info = jsonObjectfromKVS("balance", balance, "debt_asset", debt_asset, "callorder", callorder)
+            } else {
+                info = jsonObjectfromKVS("balance", balance, "debt_asset", debt_asset)
+            }
+            //  保存到Hash
+            _callOrderHash!!.put(debt_symbol, info)
+            _callOrderHash!!.put(oid, info)
         } else {
             _callOrderHash = null
             _collateralBalance = null
