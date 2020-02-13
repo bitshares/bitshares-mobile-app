@@ -137,6 +137,16 @@
 /**
  *  (public)权限不足时，询问用户是否发起提案交易。
  */
+- (void)askForCreateProposal:(NSArray*)opcode_data_object_array
+       using_owner_authority:(BOOL)using_owner_authority
+    invoke_proposal_callback:(BOOL)invoke_proposal_callback
+                   opaccount:(id)opaccount
+                        body:(void (^)(BOOL isProposal, NSDictionary* proposal_create_args))body
+            success_callback:(void (^)())success_callback;
+
+/**
+ *  (public)权限不足时，询问用户是否发起提案交易。
+ */
 - (void)askForCreateProposal:(EBitsharesOperations)opcode
        using_owner_authority:(BOOL)using_owner_authority
     invoke_proposal_callback:(BOOL)invoke_proposal_callback

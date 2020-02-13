@@ -386,12 +386,11 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
 /**
  *  OP - 创建提案
  */
-- (WsPromise*)proposalCreate:(EBitsharesOperations)opcode
-                      opdata:(id)opdata
+- (WsPromise*)proposalCreate:(NSArray*)opcode_data_object_array
                    opaccount:(id)opaccount
         proposal_create_args:(id)proposal_create_args
 {
-    assert(opdata);
+    assert(opcode_data_object_array && [opcode_data_object_array count] > 0);
     assert(opaccount);
     assert(proposal_create_args);
     
@@ -405,7 +404,12 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
     NSString* fee_paying_account_id = [kFeePayingAccount objectForKey:@"id"];
     assert(fee_paying_account_id);
     
-    return [[self _wrap_opdata_with_fee:opcode opdata:opdata] then:(^id(id opdata_with_fee) {
+    id promise_array = [opcode_data_object_array ruby_map:^id(id opcode_data_obj) {
+        return [self _wrap_opdata_with_fee:(EBitsharesOperations)[[opcode_data_obj objectForKey:@"opcode"] integerValue]
+                                    opdata:[opcode_data_obj objectForKey:@"opdata"]];
+    }];
+    
+    return [[WsPromise all:promise_array] then:^id(id data_array) {
         
         //  提案有效期
         NSUInteger proposal_lifetime_sec = kApprovePeriod + kReviewPeriod;
@@ -434,11 +438,19 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
         NSTimeInterval now_sec = ceil([[NSDate date] timeIntervalSince1970]);
         uint32_t expiration_ts = (uint32_t)(now_sec + proposal_lifetime_sec);
         
+        //  生成提案operations数组
+        assert([opcode_data_object_array count] == [data_array count]);
+        NSMutableArray* operations_array = [NSMutableArray array];
+        [data_array ruby_each_with_index:^(id opdata_with_fee, NSInteger idx) {
+            id opcode = [[opcode_data_object_array objectAtIndex:idx] objectForKey:@"opcode"];
+            [operations_array addObject:@{@"op":@[opcode, opdata_with_fee]}];
+        }];
+        
         id op = @{
             @"fee":@{@"amount":@0, @"asset_id":[ChainObjectManager sharedChainObjectManager].grapheneCoreAssetID},
             @"fee_paying_account":fee_paying_account_id,
             @"expiration_time":@(expiration_ts),
-            @"proposed_ops":@[@{@"op":@[@(opcode), opdata_with_fee]}],
+            @"proposed_ops":[operations_array copy],
         };
         
         //  REMARK：理事会提案必须添加审核期。
@@ -455,7 +467,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
         [tr add_operation:ebo_proposal_create opdata:op];
         [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:fee_paying_account_id]];
         return [self process_transaction:tr];
-    })];
+    }];
 }
 
 /**
@@ -598,7 +610,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
  */
 - (WsPromise*)assetUpdateIssuer:(NSDictionary*)opdata
 {
-    //  TODO:待测试
+    //  TODO:5.0 待测试
     TransactionBuilder* tr = [[TransactionBuilder alloc] init];
     [tr add_operation:ebo_asset_update_issuer opdata:opdata];
     [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"issuer"]
