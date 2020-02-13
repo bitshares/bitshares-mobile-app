@@ -1038,10 +1038,11 @@ enum
                 break;
             case kVcSubPermissionMarketFeeRewardPercent:
             {
+                //  REMARK：这个最大值小于 100
                 [self onInputDecimalClicked:NSLocalizedString(@"kVcAssetMgrCellTitleFeeRefPercent", @"引荐人分成")
                                 placeholder:NSLocalizedString(@"kVcAssetMgrInputPlaceholderFeeRefPercent", @"请输入引荐人分成比例")
                                   precision:2
-                                  max_value:[NSDecimalNumber decimalNumberWithString:@"100"]
+                                  max_value:[NSDecimalNumber decimalNumberWithString:@"99.99"]
                                       scale:[NSDecimalNumber decimalNumberWithMantissa:GRAPHENE_1_PERCENT exponent:0 isNegative:NO]
                                    callback:^(NSDecimalNumber *n_value) {
                     _reward_percent = [n_value integerValue];
