@@ -1264,8 +1264,8 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
         case ebo_asset_update_bitasset:
         {
             name = NSLocalizedString(@"kOpType_asset_update_bitasset", @"更新智能币");
-            desc = NSLocalizedString(@"kOpDesc_asset_update_bitasset", @"更新智能资产信息");
-            //  TODO:待细化
+            id symbol = GRAPHENE_ASSET_SYMBOL(@"asset_to_update");
+            desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_asset_update_bitasset", @"更新智能币 %@。"), symbol];
         }
             break;
         case ebo_asset_update_feed_producers:
@@ -1277,8 +1277,10 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
         case ebo_asset_issue:
         {
             name = NSLocalizedString(@"kOpType_asset_issue", @"资产发行");
-            desc = NSLocalizedString(@"kOpDesc_asset_issue", @"资产发行。");
-            //  TODO:待细化
+            id issuer = GRAPHENE_NAME(@"issuer");
+            id to = GRAPHENE_NAME(@"issue_to_account");
+            id str_amount = GRAPHENE_ASSET_N(@"asset_to_issue");
+            desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_asset_issue", @"%@ 发行 %@ 到 %@。"), issuer, str_amount, to];
         }
             break;
         case ebo_asset_reserve:

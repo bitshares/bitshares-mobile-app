@@ -937,7 +937,7 @@
 "kOpType_account_transfer" = "アカウントを移転します";
 "kOpType_asset_create" = "資産は創建します";
 "kOpType_asset_update" = "資産を更新します";
-"kOpType_asset_update_bitasset" = "知能貨幣を更新します";
+"kOpType_asset_update_bitasset" = "スマートマネーを更新します";
 "kOpType_asset_update_feed_producers" = "更新はフィード価格者にえさをやります";
 "kOpType_asset_issue" = "資産は発行します";
 "kOpType_asset_reserve" = "資産は廃棄します";
@@ -1000,10 +1000,10 @@
 "kOpDesc_account_transfer" = "アカウントの移転。";
 "kOpDesc_asset_create" = "%@ 資産の創建 %@。";
 "kOpDesc_asset_update" = "資産 %@ を更新する。";
-"kOpDesc_asset_update_bitasset" = "スマートマネーを更新する。";
+"kOpDesc_asset_update_bitasset" = "スマートマネー %@ を更新する。";
 "kOpDesc_asset_update_feed_producers" = "%@ フィード者を更新します。";
-"kOpDesc_asset_issue" = "資産発行。";
-"kOpDesc_asset_reserve" = "%@ は %@ を資産消却。";
+"kOpDesc_asset_issue" = "%@ 発行 %@ と %@。 ";
+"kOpDesc_asset_reserve" = "%@ は %@ を資産廃棄。";
 "kOpDesc_asset_fund_fee_pool" = "手数料池を資金注入します。";
 "kOpDesc_asset_settle" = "%@ 強制清算 %@。";
 "kOpDesc_asset_global_settle" = "資産のグローバル清算。。";

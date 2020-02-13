@@ -1000,9 +1000,9 @@
 "kOpDesc_account_transfer" = "transfer account.";
 "kOpDesc_asset_create" = "%@ create asset %@.";
 "kOpDesc_asset_update" = "update assets %@.";
-"kOpDesc_asset_update_bitasset" = "update bitasset.";
+"kOpDesc_asset_update_bitasset" = "update bitasset %@.";
 "kOpDesc_asset_update_feed_producers" = "%@ update feed publisher.";
-"kOpDesc_asset_issue" = "issue assets.";
+"kOpDesc_asset_issue" = "%@ issued %@ to %@.";
 "kOpDesc_asset_reserve" = "%@ reserves %@.";
 "kOpDesc_asset_fund_fee_pool" = "fund the fee pool.";
 "kOpDesc_asset_settle" = "%@ settles %@.";

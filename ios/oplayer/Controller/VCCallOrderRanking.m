@@ -273,7 +273,12 @@
         
         id asset = [[ChainObjectManager sharedChainObjectManager] getAssetBySymbol:[_asset objectForKey:@"symbol"]];
         assert(asset);
-        titleLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kVcRankCurrentFeedPrice", @"当前喂价"), [OrgUtils formatFloatValue:_feedPriceInfo]];
+        
+        if (_feedPriceInfo) {
+            titleLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kVcRankCurrentFeedPrice", @"当前喂价"), [OrgUtils formatFloatValue:_feedPriceInfo]];
+        } else {
+            titleLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kVcFeedCurrentFeedPrice", @"当前喂价"), [NSLocalizedString(@"kVcFeedNoData", @"未发布") uppercaseString]];
+        }
         
         [myView addSubview:titleLabel];
         

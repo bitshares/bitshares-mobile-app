@@ -319,14 +319,7 @@ enum
             [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
             [[[[BitsharesClientManager sharedBitsharesClientManager] assetIssue:op] then:(^id(id data) {
                 [self hideBlockView];
-                //  刷新UI（直接本地修改、不查询）
-                _to_account = nil;
-                [_tf_amount clearInputTextValue];
-                _tf_memo.text = @"";
-                _n_cur_supply = [_n_cur_supply decimalNumberByAdding:n_amount];
-                _n_balance = [_n_balance decimalNumberBySubtracting:n_amount];
-                [self _drawUI_Balance:NO];
-                [_mainTableView reloadData];
+                //  发行成功
                 [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpSubmitTipsIssueOK", @"发行成功。")];
                 //  [统计]
                 [OrgUtils logEvents:@"txAssetIssueFullOK"
