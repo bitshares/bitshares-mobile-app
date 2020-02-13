@@ -97,9 +97,10 @@ class ActivityAssetCreateOrEdit : BtsppActivity() {
             }
         }
         layout_fee_ref_percent.setOnClickListener {
+            //  REMARK：这个最大值小于 100
             onInputDecimalClicked(resources.getString(R.string.kVcAssetMgrCellTitleFeeRefPercent),
                     resources.getString(R.string.kVcAssetMgrInputPlaceholderFeeRefPercent), 2,
-                    BigDecimal.valueOf(100),
+                    BigDecimal("99.99"),
                     Utils.auxGetStringDecimalNumberValue(GRAPHENE_1_PERCENT.toString())) { n_value ->
                 _reward_percent = n_value.toInt()
                 _drawValue_percentValue(tv_fee_ref_percent, _reward_percent)
@@ -1095,14 +1096,149 @@ class ActivityAssetCreateOrEdit : BtsppActivity() {
      *  事件 - 更新智能币
      */
     private fun onSubmitUpdateBitAssetsClicked() {
+        //  校验参数
+        if (!_validationBitAssetsArgs()) {
+            return
+        }
 
+        //  解锁
+        guardWalletUnlocked(false) { unlocked ->
+            if (unlocked) {
+                //  参数
+                val opaccount = WalletManager.sharedWalletManager().getWalletAccountInfo()!!.getJSONObject("account")
+                val uid = opaccount.getString("id")
+
+                //  交易数据
+                val opdata = JSONObject().apply {
+                    put("fee", JSONObject().apply {
+                        put("asset_id", ChainObjectManager.sharedChainObjectManager().grapheneCoreAssetID)
+                        put("amount", 0)
+                    })
+                    put("issuer", uid)
+                    put("asset_to_update", _edit_asset!!.getString("id"))
+                    put("new_options", _bitasset_options_args!!.shadowClone())
+                }
+
+                //  确保有权限发起普通交易，否则作为提案交易处理。
+                GuardProposalOrNormalTransaction(EBitsharesOperations.ebo_asset_update_bitasset, false, false,
+                        opdata, opaccount) { isProposal, _ ->
+                    assert(!isProposal)
+                    //  请求网络广播
+                    val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this).apply { show() }
+                    BitsharesClientManager.sharedBitsharesClientManager().assetUpdateBitasset(opdata).then {
+                        mask.dismiss()
+                        showToast(resources.getString(R.string.kVcAssetOpUpdateBitassetSubmitTipsOK))
+                        //  [统计]
+                        btsppLogCustom("txAssetUpdateBitassetFullOK", jsonObjectfromKVS("account", opaccount.getString("id")))
+                        //  返回上一个界面并刷新
+                        _result_promise?.resolve(true)
+                        _result_promise = null
+                        finish()
+                        return@then null
+                    }.catch { err ->
+                        mask.dismiss()
+                        showGrapheneError(err)
+                        //  [统计]
+                        btsppLogCustom("txAssetUpdateBitassetFailed", jsonObjectfromKVS("account", opaccount.getString("id")))
+                    }
+                }
+            }
+        }
     }
 
     /**
      *  事件 - 更新资产
      */
     private fun onSubmitEditClicked() {
+        if (_max_supply == null || _max_supply!! <= BigDecimal.ZERO) {
+            showToast(resources.getString(R.string.kVcAssetOpCreateSubmitTipsInputMaxSupply))
+            return
+        }
 
+        if (ModelUtils.assetIsSmart(_edit_asset!!)) {
+            val merged_flags = EBitsharesAssetFlags.ebat_witness_fed_asset.value.or(EBitsharesAssetFlags.ebat_committee_fed_asset.value)
+            if (_flags.and(merged_flags) == merged_flags) {
+                showToast(resources.getString(R.string.kVcAssetOpCreateSubmitTipsInvalidPermissionWitnessAndCommittee))
+                return
+            }
+        }
+
+        val chainMgr = ChainObjectManager.sharedChainObjectManager()
+        val opaccount = WalletManager.sharedWalletManager().getWalletAccountInfo()!!.getJSONObject("account")
+        val uid = opaccount.getString("id")
+
+        val n_max_supply_pow = _max_supply!!.multiplyByPowerOf10(_precision)
+        val n_max_market_fee_pow = _max_market_fee!!.multiplyByPowerOf10(_precision)
+
+        //  更新部分字段，其他字段维持原样。
+        val asset_options = _edit_asset!!.getJSONObject("options").shadowClone()
+        asset_options.put("max_supply", n_max_supply_pow.toPlainString())
+        asset_options.put("market_fee_percent", _market_fee_percent)
+        asset_options.put("max_market_fee", n_max_market_fee_pow.toPlainString())
+        asset_options.put("issuer_permissions", _issuer_permissions)
+        asset_options.put("flags", _flags)
+        asset_options.put("description", _description)
+
+        //  更新扩展字段中的引荐人分成比例，维持其他字段不变。
+        asset_options.getJSONObject("extensions").put("reward_percent", _reward_percent)
+
+        val opdata = JSONObject().apply {
+            put("fee", JSONObject().apply {
+                put("asset_id", chainMgr.grapheneCoreAssetID)
+                put("amount", 0)
+            })
+            put("issuer", uid)
+            put("asset_to_update", _edit_asset!!.getString("id"))
+            put("new_options", asset_options)
+        }
+
+        //  永久禁用某些属性，需要二次确认操作不可逆。
+        if (_issuer_permissions.and(_old_issuer_permissions) != _old_issuer_permissions) {
+
+            val value = resources.getString(R.string.kVcAssetOpCreateSubmitAskTipsDisableSomePermission)
+            UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kVcHtlcMessageTipsTitle), value).then {
+                if (it != null && it as Boolean) {
+                    //  二次确认后更新。
+                    onSubmitEditCore(opdata, opaccount)
+                }
+            }
+        } else {
+            //  不用提示，继续更新。
+            onSubmitEditCore(opdata, opaccount)
+        }
+    }
+
+    /**
+     *  (private) 更新资产 - 核心逻辑
+     */
+    private fun onSubmitEditCore(opdata: JSONObject, opaccount: JSONObject) {
+        guardWalletUnlocked(false) { unlocked ->
+            if (unlocked) {
+                //  确保有权限发起普通交易，否则作为提案交易处理。
+                GuardProposalOrNormalTransaction(EBitsharesOperations.ebo_asset_update, false, false,
+                        opdata, opaccount) { isProposal, _ ->
+                    assert(!isProposal)
+                    //  请求网络广播
+                    val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this).apply { show() }
+                    BitsharesClientManager.sharedBitsharesClientManager().assetUpdate(opdata).then {
+                        mask.dismiss()
+                        showToast(resources.getString(R.string.kVcAssetOpUpdateAssetSubmitTipsOK))
+                        //  [统计]
+                        btsppLogCustom("txAssetUpdateFullOK", jsonObjectfromKVS("account", opaccount.getString("id")))
+                        //  返回上一个界面并刷新
+                        _result_promise?.resolve(true)
+                        _result_promise = null
+                        finish()
+                        return@then null
+                    }.catch { err ->
+                        mask.dismiss()
+                        showGrapheneError(err)
+                        //  [统计]
+                        btsppLogCustom("txAssetUpdateFailed", jsonObjectfromKVS("account", opaccount.getString("id")))
+                    }
+                }
+            }
+        }
     }
 
     private fun _checkAssetSymbolName(symbol: String): Boolean {
