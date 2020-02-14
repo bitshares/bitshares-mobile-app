@@ -13,6 +13,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import bitshares.*
 import com.btsplusplus.fowallet.utils.CommonLogic
+import com.btsplusplus.fowallet.utils.VcUtils
 import com.fowallet.walletcore.bts.WalletManager
 import org.json.JSONObject
 
@@ -81,9 +82,7 @@ class FragmentLoginBrainKeyMode : Fragment() {
         }
 
         v.findViewById<ImageView>(R.id.tip_link_trading_password_from_brain_key_mode).setOnClickListener {
-            //  [统计]
-            btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_trading_password"))
-            activity!!.goToWebView(_ctx!!.resources.getString(R.string.kVcTitleWhatIsTradePassowrd), "https://btspp.io/qam.html#qa_trading_password")
+            VcUtils.gotoQaView(activity!!, "qa_trading_password", resources.getString(R.string.kVcTitleWhatIsTradePassowrd))
         }
 
         return v

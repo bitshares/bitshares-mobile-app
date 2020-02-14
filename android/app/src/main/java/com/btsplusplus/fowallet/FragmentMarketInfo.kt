@@ -14,6 +14,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import bitshares.*
+import com.btsplusplus.fowallet.utils.VcUtils
 import com.crashlytics.android.Crashlytics
 import com.fowallet.walletcore.bts.ChainObjectManager
 import org.json.JSONArray
@@ -214,9 +215,7 @@ class FragmentMarketInfo : BtsppFragment() {
                     inmain.setTextColor(resources.getColor(R.color.theme01_textColorGray))
                     inmain.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12f)
                     inmain.setOnClickListener {
-                        //  [统计]
-                        btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_gateway"))
-                        activity!!.goToWebView(_context!!.resources.getString(R.string.kVcTitleWhatIsGateway), "https://btspp.io/qam.html#qa_gateway")
+                        VcUtils.gotoQaView(activity!!, "qa_gateway", resources.getString(R.string.kVcTitleWhatIsGateway))
                     }
                     flmain.addView(inmain, inmain_layout_params)
                 }

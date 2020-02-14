@@ -9,6 +9,7 @@ import bitshares.*
 import com.btsplusplus.fowallet.gateway.GatewayAssetItemData
 import com.btsplusplus.fowallet.gateway.GatewayBase
 import com.btsplusplus.fowallet.gateway.RuDEX
+import com.btsplusplus.fowallet.utils.VcUtils
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_deposit_and_withdraw.*
@@ -139,9 +140,7 @@ class ActivityDepositAndWithdraw : BtsppActivity() {
     }
 
     private fun onGatewayAssetsFAQClicked() {
-        //  [统计]
-        btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_deposit_withdraw"))
-        goToWebView(resources.getString(R.string.kVcTitleWhatIsGatewayAssets), "https://btspp.io/qam.html#qa_deposit_withdraw")
+        VcUtils.gotoQaView(this, "qa_deposit_withdraw", resources.getString(R.string.kVcTitleWhatIsGatewayAssets))
     }
 
     private fun onCurrentGatewayClicked() {

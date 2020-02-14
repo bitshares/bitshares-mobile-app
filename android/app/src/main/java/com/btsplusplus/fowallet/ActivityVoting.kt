@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment
 import android.view.View
 import android.widget.TextView
 import bitshares.*
+import com.btsplusplus.fowallet.utils.VcUtils
 import com.fowallet.walletcore.bts.BitsharesClientManager
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
@@ -48,9 +49,7 @@ class ActivityVoting : BtsppActivity() {
         current_proxy_of_voting.visibility = View.INVISIBLE
         current_proxy_name_of_voting.text = ""
         current_proxy_help_of_voting.setOnClickListener {
-            //  [统计]
-            btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_proxy"))
-            goToWebView(resources.getString(R.string.kVcVoteWhatIsProxy), "https://btspp.io/qam.html#qa_proxy")
+            VcUtils.gotoQaView(this, "qa_proxy", resources.getString(R.string.kVcVoteWhatIsProxy))
         }
 
         //  底部按钮

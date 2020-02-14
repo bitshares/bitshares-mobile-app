@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import bitshares.*
+import com.btsplusplus.fowallet.utils.VcUtils
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
 import org.json.JSONObject
@@ -138,8 +139,7 @@ class FragmentRegisterWalletMode : Fragment() {
         view.findViewById<ImageView>(R.id.tip_account_name).setOnClickListener { UtilsAlert.showMessageBox(activity!!, R.string.kLoginRegTipsAccountFormat.xmlstring(_ctx!!)) }
         view.findViewById<ImageView>(R.id.tip_password).setOnClickListener { UtilsAlert.showMessageBox(activity!!, R.string.kLoginRegTipsWalletPasswordFormat.xmlstring(_ctx!!)) }
         view.findViewById<ImageView>(R.id.tip_refcode).setOnClickListener {
-            btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_refcode"))
-            activity!!.goToWebView(_ctx!!.resources.getString(R.string.kVcTitleWhatIsRefcode), "https://btspp.io/qam.html#qa_refcode")
+            VcUtils.gotoQaView(activity!!, "qa_refcode", resources.getString(R.string.kVcTitleWhatIsRefcode))
         }
         return view
     }
