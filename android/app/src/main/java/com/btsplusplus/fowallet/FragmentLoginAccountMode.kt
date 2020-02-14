@@ -12,6 +12,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import bitshares.*
+import com.btsplusplus.fowallet.utils.VcUtils
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
 import org.json.JSONObject
@@ -191,9 +192,7 @@ class FragmentLoginAccountMode : Fragment() {
             loginBitshares_AccountMode(account_name, password, trade_password)
         }
         v.findViewById<ImageView>(R.id.tip_link_trading_password).setOnClickListener {
-            //  [统计]
-            btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_trading_password"))
-            activity!!.goToWebView(_ctx!!.resources.getString(R.string.kVcTitleWhatIsTradePassowrd), "https://btspp.io/qam.html#qa_trading_password")
+            VcUtils.gotoQaView(activity!!, "qa_trading_password", resources.getString(R.string.kVcTitleWhatIsTradePassowrd))
         }
         //  导入到已有钱包：隐藏交易密码。
         if (!_checkActivePermission) {

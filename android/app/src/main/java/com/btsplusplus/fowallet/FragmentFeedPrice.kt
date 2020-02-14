@@ -14,6 +14,7 @@ import android.widget.LinearLayout
 import android.widget.TableRow
 import android.widget.TextView
 import bitshares.*
+import com.btsplusplus.fowallet.utils.VcUtils
 import com.fowallet.walletcore.bts.ChainObjectManager
 import org.json.JSONArray
 import org.json.JSONObject
@@ -262,9 +263,7 @@ class FragmentFeedPrice : BtsppFragment() {
         _ctx = inflater.context
         val v: View = inflater.inflate(R.layout.fragment_feed_price, container, false)
         v.findViewById<ImageView>(R.id.tip_link_feedprice).setOnClickListener {
-            //  [统计]
-            btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", "qa_feedprice"))
-            activity!!.goToWebView(_ctx!!.resources.getString(R.string.kVcTitleWhatIsFeedPrice), "https://btspp.io/qam.html#qa_feedprice")
+            VcUtils.gotoQaView(activity!!, "qa_feedprice", resources.getString(R.string.kVcTitleWhatIsFeedPrice))
         }
         _currentView = v
         //  refresh UI

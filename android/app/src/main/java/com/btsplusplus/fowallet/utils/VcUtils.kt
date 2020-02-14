@@ -2,17 +2,31 @@ package com.btsplusplus.fowallet.utils
 
 import android.app.Activity
 import bitshares.Promise
+import bitshares.btsppLogCustom
 import bitshares.jsonArrayfrom
 import bitshares.xmlstring
 import com.btsplusplus.fowallet.R
 import com.btsplusplus.fowallet.ViewMask
+import com.btsplusplus.fowallet.goToWebView
 import com.btsplusplus.fowallet.showToast
 import com.fowallet.walletcore.bts.ChainObjectManager
 import org.json.JSONArray
+import org.json.JSONObject
 
 class VcUtils {
 
     companion object {
+
+        /**
+         *  (public) 转到问号QA提示页面。
+         */
+        fun gotoQaView(ctx: Activity, anchor_name: String, title: String) {
+            //  [统计]
+            btsppLogCustom("qa_tip_click", JSONObject().apply {
+                put("qa", anchor_name)
+            })
+            ctx.goToWebView(title, "https://btspp.io/${ctx.resources.getString(R.string.qaHtmlFileName)}#$anchor_name")
+        }
 
         /**
          *  确保依赖

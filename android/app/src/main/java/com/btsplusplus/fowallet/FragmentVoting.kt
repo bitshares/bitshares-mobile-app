@@ -15,6 +15,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import bitshares.*
+import com.btsplusplus.fowallet.utils.VcUtils
 import com.fowallet.walletcore.bts.ChainObjectManager
 import org.json.JSONArray
 import org.json.JSONObject
@@ -218,14 +219,7 @@ class FragmentVoting : BtsppFragment() {
                 val tv_header_link_layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
                 tv_header_link_layout_params.gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
                 tv_header_link.layoutParams = tv_header_link_layout_params
-
-                val link_title = auxArgs.getString("kTitle")
-                val link_url = auxArgs.getString("kURL")
-                tv_header_link.setOnClickListener {
-                    //  [统计]
-                    btsppLogCustom("qa_tip_click", jsonObjectfromKVS("qa", link_url.split('#').last()))
-                    activity!!.goToWebView(link_title, link_url)
-                }
+                tv_header_link.setOnClickListener { VcUtils.gotoQaView(activity!!, auxArgs.getString("kAnchorName"), auxArgs.getString("kTitle")) }
                 ly_header.addView(tv_header_link)
             }
         } else {
@@ -667,22 +661,22 @@ class FragmentVoting : BtsppFragment() {
                 kSecTypeCommitteeActive -> {
                     segtitle = String.format(_ctx!!.resources.getString(R.string.kLabelVotingActiveCommittees), n.toString())
                     auxArgs.put("kTitle", _ctx!!.resources.getString(R.string.kVcVoteWhatIsActiveCommittee))
-                    auxArgs.put("kURL", "https://btspp.io/qam.html#qa_committee")
+                    auxArgs.put("kAnchorName", "qa_committee")
                 }
                 kSecTypeCommitteeCandidate -> {
                     segtitle = String.format(_ctx!!.resources.getString(R.string.kLabelVotingStandbyCommittees), n.toString())
                     auxArgs.put("kTitle", _ctx!!.resources.getString(R.string.kVcVoteWhatIsStandbyCommittee))
-                    auxArgs.put("kURL", "https://btspp.io/qam.html#qa_committee_c")
+                    auxArgs.put("kAnchorName", "qa_committee_c")
                 }
                 kSecTypeWitnessActive -> {
                     segtitle = String.format(_ctx!!.resources.getString(R.string.kLabelVotingActiveWitnesses), n.toString())
                     auxArgs.put("kTitle", _ctx!!.resources.getString(R.string.kVcVoteWhatIsActiveWitness))
-                    auxArgs.put("kURL", "https://btspp.io/qam.html#qa_witness")
+                    auxArgs.put("kAnchorName", "qa_witness")
                 }
                 kSecTypeWitnessCandidate -> {
                     segtitle = String.format(_ctx!!.resources.getString(R.string.kLabelVotingStandbyWitnesses), n.toString())
                     auxArgs.put("kTitle", _ctx!!.resources.getString(R.string.kVcVoteWhatIsStandbyWitness))
-                    auxArgs.put("kURL", "https://btspp.io/qam.html#qa_witness_c")
+                    auxArgs.put("kAnchorName", "qa_witness_c")
                 }
                 kSecTypeWorkerExpired -> {
                     segtitle = String.format(_ctx!!.resources.getString(R.string.kLabelVotingExpiredWP), n.toString())
