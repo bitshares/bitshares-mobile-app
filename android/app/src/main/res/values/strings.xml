@@ -804,6 +804,7 @@
     <string name="kVcTitleCustomPairs">Custom pairs</string>
     <string name="kVcTitleSelectProxy">Select proxy</string>
     <string name="kVcTitleTheme">Theme</string>
+    <string name="kVcTitleApiNode">API server</string>
     <string name="kVcTitleLanguage">Language</string>
     <string name="kVcTitleOrderManagement">Order management</string>
     <string name="kVcTitleMyBalance">My balance</string>
@@ -1409,6 +1410,7 @@
     <string name="kAboutTestnet">(Test network)</string>
     <string name="kSettingEx">Setting</string>
     <string name="setting_theme">Theme</string>
+    <string name="setting_apinode">API server</string>
     <string name="kThemeNameBlue">Quiet blue</string>
     <string name="kThemeNameWhite">Pearl white</string>
     <string name="kNormalCellBtnLogin">Login</string>

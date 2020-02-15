@@ -804,6 +804,7 @@
     <string name="kVcTitleCustomPairs">添加取引隊</string>
     <string name="kVcTitleSelectProxy">代理アカウントを選択します</string>
     <string name="kVcTitleTheme">テーマの風格</string>
+    <string name="kVcTitleApiNode">APIサーバー</string>
     <string name="kVcTitleLanguage">言語</string>
     <string name="kVcTitleOrderManagement">注文管理</string>
     <string name="kVcTitleMyBalance">私の資産</string>
@@ -1409,6 +1410,7 @@
     <string name="kAboutTestnet">(测试网络)</string>
     <string name="kSettingEx">設定</string>
     <string name="setting_theme">テーマの風格</string>
+    <string name="setting_apinode">APIサーバー</string>
     <string name="kThemeNameBlue">紺色</string>
     <string name="kThemeNameWhite">真珠白</string>
     <string name="kNormalCellBtnLogin">ログイン</string>

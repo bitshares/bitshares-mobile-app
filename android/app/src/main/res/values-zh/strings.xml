@@ -804,6 +804,7 @@
     <string name="kVcTitleCustomPairs">添加交易对</string>
     <string name="kVcTitleSelectProxy">选择代理账号</string>
     <string name="kVcTitleTheme">主题风格</string>
+    <string name="kVcTitleApiNode">接入点</string>
     <string name="kVcTitleLanguage">语言</string>
     <string name="kVcTitleOrderManagement">订单管理</string>
     <string name="kVcTitleMyBalance">我的资产</string>
@@ -1409,6 +1410,7 @@
     <string name="kAboutTestnet">(测试网络)</string>
     <string name="kSettingEx">设置</string>
     <string name="setting_theme">主题风格</string>
+    <string name="setting_apinode">接入点</string>
     <string name="kThemeNameBlue">静谧蓝</string>
     <string name="kThemeNameWhite">珍珠白</string>
     <string name="kNormalCellBtnLogin">登录</string>
