@@ -13,6 +13,7 @@
 #import "VCSelectLanguage.h"
 #import "VCSelectTheme.h"
 #import "VCSelectEstimateUnit.h"
+#import "VCSelectApiNode.h"
 #import "UIDevice+Helper.h"
 #import "OrgUtils.h"
 
@@ -21,6 +22,7 @@ enum
     kSetting_language = 0,      //  多语言
     kSetting_estimate_unit,     //  记账单位
     kSetting_theme,             //  主题风格
+    kSetting_apinode,           //  API节点
     
     kSetting_Max
 };
@@ -54,6 +56,7 @@ enum
                   @"setting_language",  //  语言
                   @"setting_currency",  //  计价方式
                   @"setting_theme",     //  主题风格
+//                  @"setting_apinode",   //  API节点
                   nil];
     
     _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];
@@ -162,6 +165,18 @@ enum
             cell.selectionStyle = UITableViewCellSelectionStyleBlue;
         }
             break;
+        case kSetting_apinode:
+        {
+//            NSString* assetSymbol = [[SettingManager sharedSettingManager] getEstimateAssetSymbol];
+//            id currency = [[ChainObjectManager sharedChainObjectManager] getEstimateUnitBySymbol:assetSymbol];
+//            assert(currency);
+            //  TODO:5.0
+            cell.detailTextLabel.text = @"随机";// NSLocalizedString([currency objectForKey:@"namekey"], @"计价单位名称");
+            cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+        }
+            break;
         default:
             break;
     }
@@ -202,6 +217,11 @@ enum
                 [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
             }
                 break;
+            case kSetting_apinode:
+            {
+                VCSelectApiNode* vc = [[VCSelectApiNode alloc] init];
+                [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleApiNode", @"API节点") backtitle:kVcDefaultBackTitleName];
+            }
             default:
                 break;
         }

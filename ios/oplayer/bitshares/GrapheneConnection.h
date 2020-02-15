@@ -23,6 +23,10 @@
 
 - (WsPromise*)run_connection;
 - (BOOL)isClosed;
+/**
+ *  关闭连接
+ */
+- (void)close_connection;
 
 /**
  *  (public) 执行请求，可指定是否重连。

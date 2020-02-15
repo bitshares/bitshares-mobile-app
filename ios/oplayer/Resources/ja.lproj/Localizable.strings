@@ -842,6 +842,7 @@
 "kVcTitleCustomPairs" = "添加取引隊";
 "kVcTitleSelectProxy" = "代理アカウントを選択します";
 "kVcTitleTheme" = "テーマの風格";
+"kVcTitleApiNode" = "APIサーバー";
 "kVcTitleLanguage" = "言語";
 "kVcTitleOrderManagement" = "注文管理";
 "kVcTitleMyBalance" = "私の資産";
@@ -1454,6 +1455,7 @@
 "kAboutTestnet" = "(测试网络)";
 "kSettingEx" = "設定";
 "setting_theme" = "テーマの風格";
+"setting_apinode" = "APIサーバー";
 "kThemeNameBlue" = "紺色";
 "kThemeNameWhite" = "真珠白";
 "kNormalCellBtnLogin" = "ログイン";
