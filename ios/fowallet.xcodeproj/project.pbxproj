@@ -1348,6 +1348,9 @@
 		3FE23E33236D6A1F006BF999 /* VCOtcUserAuth.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE23E32236D6A1F006BF999 /* VCOtcUserAuth.m */; };
 		3FE23E34236D6A1F006BF999 /* VCOtcUserAuth.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE23E32236D6A1F006BF999 /* VCOtcUserAuth.m */; };
 		3FE23E35236D6A1F006BF999 /* VCOtcUserAuth.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE23E32236D6A1F006BF999 /* VCOtcUserAuth.m */; };
+		3FE31D5223F67C7E009CA77E /* VCSelectApiNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE31D5123F67C7E009CA77E /* VCSelectApiNode.m */; };
+		3FE31D5323F67C7E009CA77E /* VCSelectApiNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE31D5123F67C7E009CA77E /* VCSelectApiNode.m */; };
+		3FE31D5423F67C7E009CA77E /* VCSelectApiNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE31D5123F67C7E009CA77E /* VCSelectApiNode.m */; };
 		3FE4E94922F698DC0056A44F /* MyTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E94822F698DC0056A44F /* MyTextView.m */; };
 		3FE4E94A22F698DC0056A44F /* MyTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E94822F698DC0056A44F /* MyTextView.m */; };
 		3FE4E94D22F7C0480056A44F /* HDWallet.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E94C22F7C0480056A44F /* HDWallet.m */; };
@@ -2155,6 +2158,8 @@
 		3FE19E9D235858A3000D1C54 /* iconExplorer@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconExplorer@3x.png"; path = "Images/iconExplorer@3x.png"; sourceTree = "<group>"; };
 		3FE23E31236D6A1F006BF999 /* VCOtcUserAuth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcUserAuth.h; path = Controller/VCOtcUserAuth.h; sourceTree = "<group>"; };
 		3FE23E32236D6A1F006BF999 /* VCOtcUserAuth.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcUserAuth.m; path = Controller/VCOtcUserAuth.m; sourceTree = "<group>"; };
+		3FE31D5023F67C7E009CA77E /* VCSelectApiNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCSelectApiNode.h; path = Controller/VCSelectApiNode.h; sourceTree = "<group>"; };
+		3FE31D5123F67C7E009CA77E /* VCSelectApiNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCSelectApiNode.m; path = Controller/VCSelectApiNode.m; sourceTree = "<group>"; };
 		3FE4E94722F698DC0056A44F /* MyTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MyTextView.h; path = View/MyTextView.h; sourceTree = "<group>"; };
 		3FE4E94822F698DC0056A44F /* MyTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MyTextView.m; path = View/MyTextView.m; sourceTree = "<group>"; };
 		3FE4E94B22F7C0480056A44F /* HDWallet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HDWallet.h; path = bitshares/HDWallet.h; sourceTree = "<group>"; };
@@ -3043,6 +3048,8 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3FE31D5023F67C7E009CA77E /* VCSelectApiNode.h */,
+				3FE31D5123F67C7E009CA77E /* VCSelectApiNode.m */,
 				3FADCF9823D6FA3500043305 /* VcUtils.h */,
 				3FADCF9923D6FA3500043305 /* VcUtils.m */,
 				3FADCF9323D6EF1F00043305 /* VCSettlementOrders.h */,
@@ -5596,6 +5603,7 @@
 				3F67682A230E9EC100E98C14 /* ViewFeedPriceDataCell.m in Sources */,
 				3F67682B230E9EC100E98C14 /* VCUserOrders.m in Sources */,
 				3F67682C230E9EC100E98C14 /* ViewProposalInfoCell.m in Sources */,
+				3FE31D5423F67C7E009CA77E /* VCSelectApiNode.m in Sources */,
 				3FFFA11D238673F800E25CFA /* ViewOtcPaymentMethodInfoCell.m in Sources */,
 				3F12F441237D0E2E001FBAD8 /* VCOtcOrders.m in Sources */,
 				3F67682D230E9EC100E98C14 /* SCLButton.m in Sources */,
@@ -5931,6 +5939,7 @@
 				3FB8F8C121CE66C200DA88E2 /* ViewFeedPriceDataCell.m in Sources */,
 				3FB8F8C221CE66C200DA88E2 /* VCUserOrders.m in Sources */,
 				3FB8F8C321CE66C200DA88E2 /* ViewProposalInfoCell.m in Sources */,
+				3FE31D5323F67C7E009CA77E /* VCSelectApiNode.m in Sources */,
 				3FFFA11C238673F800E25CFA /* ViewOtcPaymentMethodInfoCell.m in Sources */,
 				3F12F440237D0E2E001FBAD8 /* VCOtcOrders.m in Sources */,
 				3FB8F8C421CE66C200DA88E2 /* SCLButton.m in Sources */,
@@ -6266,6 +6275,7 @@
 				B7F9DA77212BD76200185503 /* ViewFeedPriceDataCell.m in Sources */,
 				B741A76320DBE77C000FBC00 /* VCUserOrders.m in Sources */,
 				3FC43A232196EF91004DFFA5 /* ViewProposalInfoCell.m in Sources */,
+				3FE31D5223F67C7E009CA77E /* VCSelectApiNode.m in Sources */,
 				3FFFA11B238673F800E25CFA /* ViewOtcPaymentMethodInfoCell.m in Sources */,
 				3F12F43F237D0E2E001FBAD8 /* VCOtcOrders.m in Sources */,
 				B782F0C31D6E94C600F61571 /* SCLButton.m in Sources */,
@@ -6731,7 +6741,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 3.0.1.1231;
+				CURRENT_PROJECT_VERSION = 4.0.0.0215;
 				DEPLOYMENT_POSTPROCESSING = NO;
 				DEVELOPMENT_TEAM = 8R3442PYU5;
 				ENABLE_BITCODE = NO;
@@ -6761,7 +6771,7 @@
 					"$(PROJECT_DIR)/oplayer/libs/secp256k1",
 					"$(PROJECT_DIR)/oplayer/libs/Flurry",
 				);
-				MARKETING_VERSION = 3.0;
+				MARKETING_VERSION = 4.0;
 				OTHER_LDFLAGS = (
 					"-lxml2",
 					"-lz",
@@ -6789,7 +6799,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 3.0.1.1231;
+				CURRENT_PROJECT_VERSION = 4.0.0.0215;
 				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = 8R3442PYU5;
 				ENABLE_BITCODE = NO;
@@ -6818,7 +6828,7 @@
 					"$(PROJECT_DIR)/oplayer/libs/secp256k1",
 					"$(PROJECT_DIR)/oplayer/libs/Flurry",
 				);
-				MARKETING_VERSION = 3.0;
+				MARKETING_VERSION = 4.0;
 				OTHER_LDFLAGS = (
 					"-lxml2",
 					"-lz",

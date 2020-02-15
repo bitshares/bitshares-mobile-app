@@ -842,6 +842,7 @@
 "kVcTitleCustomPairs" = "Custom pairs";
 "kVcTitleSelectProxy" = "Select proxy";
 "kVcTitleTheme" = "Theme";
+"kVcTitleApiNode" = "API server";
 "kVcTitleLanguage" = "Language";
 "kVcTitleOrderManagement" = "Order management";
 "kVcTitleMyBalance" = "My balance";
@@ -1454,6 +1455,7 @@
 "kAboutTestnet" = "(Test network)";
 "kSettingEx" = "Setting";
 "setting_theme" = "Theme";
+"setting_apinode" = "API server";
 "kThemeNameBlue" = "Quiet blue";
 "kThemeNameWhite" = "Pearl white";
 "kNormalCellBtnLogin" = "Login";

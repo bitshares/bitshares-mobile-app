@@ -842,6 +842,7 @@
 "kVcTitleCustomPairs" = "添加交易对";
 "kVcTitleSelectProxy" = "选择代理账号";
 "kVcTitleTheme" = "主题风格";
+"kVcTitleApiNode" = "接入点";
 "kVcTitleLanguage" = "语言";
 "kVcTitleOrderManagement" = "订单管理";
 "kVcTitleMyBalance" = "我的资产";
@@ -1454,6 +1455,7 @@
 "kAboutTestnet" = "(测试网络)";
 "kSettingEx" = "设置";
 "setting_theme" = "主题风格";
+"setting_apinode" = "接入点";
 "kThemeNameBlue" = "静谧蓝";
 "kThemeNameWhite" = "珍珠白";
 "kNormalCellBtnLogin" = "登录";
