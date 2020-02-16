@@ -369,8 +369,8 @@ class ActivityIndexCollateral : BtsppActivity() {
             val backing_asset = data_array.getJSONObject(1)
             _debtPair = TradingPair().initWithBaseAsset(newDebtAsset, backing_asset)
             //  切换了资产（更新输入框可输入的精度信息）
-            _tf_debt_watcher?.set_precision(_debtPair!!._basePrecision)?.clear()
-            _tf_coll_watcher?.set_precision(_debtPair!!._quotePrecision)?.clear()
+            _tf_debt_watcher?.set_precision(_debtPair!!._basePrecision)?.set_new_text("")
+            _tf_coll_watcher?.set_precision(_debtPair!!._quotePrecision)?.set_new_text("")
             _refreshUI(_isUserLogined(), feed_data)
         }
     }
@@ -806,7 +806,7 @@ class ActivityIndexCollateral : BtsppActivity() {
             if (fee_balance != null) {
                 val fee = _fee_item!!.getString("amount").toDouble()
                 val old = fee_balance.getString("amount").toDouble()
-                var new_balance: JSONObject
+                val new_balance: JSONObject
                 if (old >= fee) {
                     new_balance = jsonObjectfromKVS("asset_id", fee_asset_id, "amount", old - fee)
                 } else {
