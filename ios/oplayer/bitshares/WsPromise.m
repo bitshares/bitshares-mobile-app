@@ -368,7 +368,7 @@ static NSInteger __staticPromiseAliveNumber = 0;    //  当前活动的promise�
     [self state_changed:WsPromiseStateRejected];
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        CLS_LOG(@"my_reject: error: %@", error);
+//        CLS_LOG(@"my_reject: error: %@", error);
         for (WsRejectHandler callback in _reject_callbacks){
             callback(error);
         }

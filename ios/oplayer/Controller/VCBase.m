@@ -116,7 +116,7 @@ static NSInteger gen_notify_unique_id()
 {
     [super viewDidLoad];
     NSString *className = [NSString stringWithUTF8String:object_getClassName(self)];
-    CLS_LOG(@"viewDidLoad: %@", className);
+//    CLS_LOG(@"viewDidLoad: %@", className);
     //  [统计]
     [OrgUtils logEvents:@"viewDidLoad" params:@{@"view":className}];
     
@@ -127,7 +127,7 @@ static NSInteger gen_notify_unique_id()
 
 - (void)viewDidDisappear:(BOOL)animated
 {
-    CLS_LOG(@"viewDidDisappear: %@", [NSString stringWithUTF8String:object_getClassName(self)]);
+//    CLS_LOG(@"viewDidDisappear: %@", [NSString stringWithUTF8String:object_getClassName(self)]);
     [super viewDidDisappear:animated];
 }
 
@@ -415,7 +415,7 @@ static NSInteger gen_notify_unique_id()
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    CLS_LOG(@"viewDidAppear: %@", [NSString stringWithUTF8String:object_getClassName(self)]);
+//    CLS_LOG(@"viewDidAppear: %@", [NSString stringWithUTF8String:object_getClassName(self)]);
     [super viewDidAppear:animated];
     //  REMARK: 在push完毕后清除堆栈
     id pushClearVc = [TempManager sharedTempManager].clearNavbarStackOnVcPushCompleted;

@@ -162,7 +162,7 @@
             NSString* name_join_strings = [[account_data_list ruby_map:(^id(id src) {
                 return [src objectForKey:@"name"];
             })] componentsJoinedByString:@","];
-            CLS_LOG(@"ONE KEY %@ ACCOUNTS: %@", @([account_data_list count]), name_join_strings);
+//            CLS_LOG(@"ONE KEY %@ ACCOUNTS: %@", @([account_data_list count]), name_join_strings);
         }
 #endif
         //  默认选择第一个账号 TODO:弹框选择一个

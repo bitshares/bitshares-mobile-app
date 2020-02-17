@@ -270,7 +270,7 @@
                     }
                 }
                 if (detail_error_message){
-                    CLS_LOG(@"graphene api error: %@", detail_error_message);
+//                    CLS_LOG(@"graphene api error: %@", detail_error_message);
                 }
             }
             //  resp_error 可能为 {message, data, code} 格式的 Hash。

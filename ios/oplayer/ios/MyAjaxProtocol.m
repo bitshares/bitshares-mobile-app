@@ -125,32 +125,32 @@ static AFURLSessionManager *_manager = nil;
     self.task = [theManager dataTaskWithRequest:newRequest completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
         //  DEBUG: TODO：是否两次响应检测
         if (taskResponsed){
-            CLS_LOG(@"NetworkError double responsed...");
+//            CLS_LOG(@"NetworkError double responsed...");
         }
         taskResponsed = YES;
         
         //  请求开始的时间戳不为负数则check是否达到重置时间
         if (taskStartRequestTS >= 0){
             if ([[NSDate date] timeIntervalSince1970] - taskStartRequestTS >= 4.0f){
-                CLS_LOG(@"Network Too Slow, reset session manager at next request...");
+//                CLS_LOG(@"Network Too Slow, reset session manager at next request...");
             }
         }
         
         //  REMARK：如果是被取消，则什么都不处理。如果继续回调 didFailWithError 则会触发两次响应。参考，搜索关键字：Error Domain=NSURLErrorDomain Code=-999
         if (error && [error code] == NSURLErrorCancelled){
-            CLS_LOG("NetworkError NSURLErrorCancelled");
+//            CLS_LOG("NetworkError NSURLErrorCancelled");
             return;
         }
         
         NSLog(@"response %@ responseObject %@ error %@",NSStringFromClass([response classForCoder]), NSStringFromClass([responseObject classForCoder]), error);
         if (![response isKindOfClass:[NSHTTPURLResponse class]] || (responseObject && ![responseObject isKindOfClass:[NSData class]]))
         {
-            CLS_LOG(@"response %@ responseObject %@ error %@",NSStringFromClass([response classForCoder]), NSStringFromClass([responseObject classForCoder]), error);
+//            CLS_LOG(@"response %@ responseObject %@ error %@",NSStringFromClass([response classForCoder]), NSStringFromClass([responseObject classForCoder]), error);
         }
         //  REMARK：这个error和NSURLSession代理中出现的error不同，这个仅仅是AF decode 原始数据产生的错误。
         if(error)
         {
-            CLS_LOG(@"NetworkError response %@ responseObject %@ error %@",NSStringFromClass([response classForCoder]), NSStringFromClass([responseObject classForCoder]), error);
+//            CLS_LOG(@"NetworkError response %@ responseObject %@ error %@",NSStringFromClass([response classForCoder]), NSStringFromClass([responseObject classForCoder]), error);
             NSLog(@"NetworkError response %@ responseObject %@ error %@",NSStringFromClass([response classForCoder]), NSStringFromClass([responseObject classForCoder]), error);
         }
         if (!response || !responseObject)
