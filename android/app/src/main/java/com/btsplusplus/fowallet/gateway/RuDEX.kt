@@ -62,7 +62,7 @@ class RuDEX : GatewayBase() {
             appext.balance = balance_item
             appext.depositMinAmount = n_minAmount.toString()
             appext.withdrawMinAmount = n_minAmount.toString()
-            appext.withdrawGateFee = ""
+            appext.withdrawGateFee = item.optString("gateFee")
             appext.supportMemo = item.getBoolean("memoSupport")
             appext.confirm_block_number = confirm_block_number
             appext.coinType = item.getString("symbol")
