@@ -6,9 +6,6 @@
 //
 //
 
-#import <Fabric/Fabric.h>
-#import <Crashlytics/Crashlytics.h>
-
 #import "IntervalManager.h"
 #import "OrgUtils.h"
 
@@ -74,7 +71,7 @@ static IntervalManager *_sharedIntervalManager = nil;
     }
     else
     {
-        CLS_LOG(@"interval call~ ignore~ ");
+//        CLS_LOG(@"interval call~ ignore~ ");
     }
 }
 

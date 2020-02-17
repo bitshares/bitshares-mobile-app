@@ -32,9 +32,6 @@
 #import "NSObject+Reflection.h"
 #import "UIImage+Template.h"
 
-#import <Fabric/Fabric.h>
-#import <Crashlytics/Crashlytics.h>
-
 #import "IntervalManager.h"
 #import "ChainObjectManager.h"
 #import "WalletManager.h"

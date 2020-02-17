@@ -29,9 +29,6 @@
 #include <sys/sysctl.h>
 #import <sys/utsname.h>
 
-#import <Fabric/Fabric.h>
-#import <Crashlytics/Crashlytics.h>
-
 //  for hook test
 #import <objc/objc.h>
 #import <objc/runtime.h>
@@ -226,8 +223,8 @@
     MyNavigationController* vcNav = [[MyNavigationController alloc] initWithRootViewController:vc];
     [self setupNavigationAttribute:vcNav];
     
-//    //  REMARK：统计navibar vc
-//    [Flurry logAllPageViewsForTarget:vcNav];
+    //    //  REMARK：统计navibar vc
+    //    [Flurry logAllPageViewsForTarget:vcNav];
     
     return vcNav;
 }
@@ -240,8 +237,8 @@
     MyNavigationController* vcNav = [[MyNavigationController alloc] initWithRootViewController:vc];
     [self setupNavigationAttribute:vcNav];
     
-//    //  REMARK：统计navibar vc
-//    [Flurry logAllPageViewsForTarget:vcNav];
+    //    //  REMARK：统计navibar vc
+    //    [Flurry logAllPageViewsForTarget:vcNav];
     
     return vcNav;
 }
@@ -304,11 +301,11 @@
     
     [[UITextField appearance] setTintColor:theme.tintColor];
     //    [[UIImageView appearance] setTintColor:theme.iconColor];
-//    //  REMARK: 这个会影响 tableView 中的问号按钮等色调
-//    [[UIImageView appearanceWhenContainedIn:[UITableView class], nil] setTintColor:theme.tintColor];
+    //    //  REMARK: 这个会影响 tableView 中的问号按钮等色调
+    //    [[UIImageView appearanceWhenContainedIn:[UITableView class], nil] setTintColor:theme.tintColor];
     [[UIImageView appearanceWhenContainedIn:[UISegmentedControl class], nil] setTintColor:theme.tintColor];
-//    //  REMARK: 这个会影响关注、收藏按钮等色调
-//    [[UIImageView appearanceWhenContainedIn:[UINavigationBar class], nil] setTintColor:theme.navigationBarTextColor];
+    //    //  REMARK: 这个会影响关注、收藏按钮等色调
+    //    [[UIImageView appearanceWhenContainedIn:[UINavigationBar class], nil] setTintColor:theme.navigationBarTextColor];
 }
 
 - (void)switchTheme
@@ -318,7 +315,7 @@
     }
     
     [self resetAppearanceColors];
-   
+    
     if ([_mainTabController.view respondsToSelector:@selector(setTintColor:)])
     {
         _mainTabController.view.tintColor = [ThemeManager sharedThemeManager].tabBarColor;
@@ -355,24 +352,24 @@
     
     //  navibar 中间 title 文字颜色和字号
     NSDictionary *textAttributes = @{
-                                     NSForegroundColorAttributeName : theme.navigationBarTextColor,
-                                     NSFontAttributeName            : [UIFont boldSystemFontOfSize:17]
-                                     };
-    nav.navigationBar.titleTextAttributes = textAttributes;
-    
-    //    //  UIBarButtonItem 的文字颜色，不包含 返回的左边按钮颜色。左边按钮颜色用 navigationBar 的 tintColor 设置。
-    //    [[UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil]
-    //     setTitleTextAttributes:
-    //     @{NSForegroundColorAttributeName:[UIColor greenColor],
-    //       NSFontAttributeName:[UIFont systemFontOfSize:17.0]
-    //       }
-    //     forState:UIControlStateNormal];
+    NSForegroundColorAttributeName : theme.navigationBarTextColor,
+    NSFontAttributeName            : [UIFont boldSystemFontOfSize:17]
+};
+nav.navigationBar.titleTextAttributes = textAttributes;
 
-    //  REMARK：这条横线可以考虑隐藏
-    [nav.navigationBar setBackgroundImage:[[UIImage alloc] init]
-                           forBarPosition:UIBarPositionAny
-                               barMetrics:UIBarMetricsDefault];
-    [nav.navigationBar setShadowImage:[[UIImage alloc] init]];
+//    //  UIBarButtonItem 的文字颜色，不包含 返回的左边按钮颜色。左边按钮颜色用 navigationBar 的 tintColor 设置。
+//    [[UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil]
+//     setTitleTextAttributes:
+//     @{NSForegroundColorAttributeName:[UIColor greenColor],
+//       NSFontAttributeName:[UIFont systemFontOfSize:17.0]
+//       }
+//     forState:UIControlStateNormal];
+
+//  REMARK：这条横线可以考虑隐藏
+[nav.navigationBar setBackgroundImage:[[UIImage alloc] init]
+                       forBarPosition:UIBarPositionAny
+                           barMetrics:UIBarMetricsDefault];
+[nav.navigationBar setShadowImage:[[UIImage alloc] init]];
 }
 
 - (UIImage*)imageWithColor:(UIColor*)color
@@ -428,11 +425,11 @@
     vcServices.tabBarItem = tabarItem;
     [tabControllers addObject:vcServices];
     
-//    //  占位VC（空）
-//    VCBase* tmpVC = [[[VCBase alloc] init] autorelease];
-//    UITabBarItem* tmpTabBarItem = [[[UITabBarItem alloc] initWithTitle:nil image:nil tag:0] autorelease];
-//    tmpTabBarItem.enabled = NO;
-//    tmpVC.tabBarItem = tmpTabBarItem;
+    //    //  占位VC（空）
+    //    VCBase* tmpVC = [[[VCBase alloc] init] autorelease];
+    //    UITabBarItem* tmpTabBarItem = [[[UITabBarItem alloc] initWithTitle:nil image:nil tag:0] autorelease];
+    //    tmpTabBarItem.enabled = NO;
+    //    tmpVC.tabBarItem = tmpTabBarItem;
     
     VCMyself *vcMyself = [[VCMyself alloc] init];
     vcMyself.title = NSLocalizedString(@"kTabBarNameMy", @"我的");
@@ -517,12 +514,6 @@
     return self.alertViewWindow.rootViewController;
 }
 
-void uncaughtExceptionHandler(NSException *exception)
-{
-    //  [统计]
-    [OrgUtils logEvents:@"crash" params:@{@"name":exception.name, @"reason":exception.reason}];
-}
-
 - (void)initLanguageInfo
 {
     self.currLanguage = [[self class] getSystemLanguage];
@@ -539,17 +530,6 @@ void uncaughtExceptionHandler(NSException *exception)
     ///<    初始化状态栏：渐变
     [application setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
     [application setStatusBarStyle:UIStatusBarStyleLightContent];
-    
-    //  Crashlytics
-    NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);   //  REMARK：must before init crashlytics
-    [Fabric with:@[[Crashlytics class]]];
-    
-    NSString* uuid = [NativeAppDelegate deviceUniqueID];
-    id device_info = [NativeAppDelegate deviceInfo];
-    CLS_LOG(@"%@",uuid);
-    CLS_LOG(@"UserDeviceInfo: %@", device_info);
-    
-    [CrashlyticsKit setUserIdentifier:uuid];
     
     [Flurry startSession:@"WY5BMPMSZTXNCC2X986X" withSessionBuilder:[[[[[FlurrySessionBuilder new]
                                                                         withLogLevel:FlurryLogLevelAll]
@@ -586,14 +566,19 @@ void uncaughtExceptionHandler(NSException *exception)
     if (login_account_id && ![login_account_id isEqualToString:@""]){
         [Flurry setUserID:login_account_id];
     }
-    [OrgUtils logEvents:@"startSession" params:@{@"uuid":uuid, @"lang":self.currLanguage ? : @"", @"device_info":device_info}];
+    NSString* uuid = [NativeAppDelegate deviceUniqueID];
+    id device_info = [NativeAppDelegate deviceInfo];
+    [OrgUtils logEvents:@"startSession" params:@{@"uuid":uuid,
+                                                 @"lang":self.currLanguage ?: @"",
+                                                 @"device_info":device_info,
+                                                 @"curr_account": login_account_id ?: @""}];
     
     //  LOG
 #ifndef DEBUG
     if ([TempManager sharedTempManager].appFirstLaunch){
-        CLS_LOG(@"AppFirstLaunch YES");
+        //        CLS_LOG(@"AppFirstLaunch YES");
     }else{
-        CLS_LOG(@"AppFirstLaunch NO, first launch time: %@", @((uint32_t)[[AppCacheManager sharedAppCacheManager] getFirstRunTime]));
+        //        CLS_LOG(@"AppFirstLaunch NO, first launch time: %@", @((uint32_t)[[AppCacheManager sharedAppCacheManager] getFirstRunTime]));
     }
 #endif
     

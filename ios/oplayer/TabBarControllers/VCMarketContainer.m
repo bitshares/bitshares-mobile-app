@@ -130,7 +130,6 @@
 //  事件：将要进入后台
 - (void)onUIApplicationWillResignActiveNotification
 {
-    CLS_LOG(@"will enter background");
     //  [统计]
     [OrgUtils logEvents:@"enterBackground" params:@{}];
     //  处理逻辑
@@ -144,13 +143,12 @@
 //  事件：已经进入后台
 - (void)onUIApplicationDidEnterBackgroundNotification
 {
-    CLS_LOG(@"did enter background");
+    //  ...
 }
 
 //  事件：将要进入前台
 - (void)onUIApplicationWillEnterForegroundNotification
 {
-    CLS_LOG(@"will enter foreground");
     //  [统计]
     [OrgUtils logEvents:@"enterForeground" params:@{}];
 }

@@ -3344,7 +3344,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     NSDate* date = [dateFormat dateFromString:datestring];
     if (!date){
         //  DEBUG
-        CLS_LOG(@"dateFromString date is nil, datestring is: %@", datestring);
+//        CLS_LOG(@"dateFromString date is nil, datestring is: %@", datestring);
     }
     
 //    [dateFormat release];

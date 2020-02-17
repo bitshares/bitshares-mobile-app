@@ -10,9 +10,6 @@
 #import "OrgUtils.h"
 #import "VCBase.h"
 
-#import <Fabric/Fabric.h>
-#import <Crashlytics/Crashlytics.h>
-
 @interface GatewayBase()
 {
     NSDictionary*   _api_config_json;
@@ -245,7 +242,7 @@
             id backingCoinWalletSymbol = [[backingCoinItem objectForKey:@"walletSymbol"] lowercaseString];
             if (![backingCoinWalletSymbol isEqualToString:backingCoinType]){
                 //  TODO:openledger eosdac、eos.eosdac
-                CLS_LOG(@"incorrect backingCoinType: %@", backingCoinType);
+//                CLS_LOG(@"incorrect backingCoinType: %@", backingCoinType);
                 backingCoinType = backingCoinWalletSymbol;
             }
             
