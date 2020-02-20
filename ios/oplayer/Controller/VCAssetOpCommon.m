@@ -32,8 +32,9 @@ enum
     WsPromiseObject*            _result_promise;
     
     NSDictionary*               _opExtraArgs;
-    NSDictionary*               _curr_asset;
-    NSDictionary*               _full_account_data;
+    NSDictionary*               _curr_selected_asset;   //  当前选中资产
+    NSDictionary*               _curr_balance_asset;    //  当前余额资产（输入数量对应的资产）REMARK：和选中资产可能不相同。
+    NSDictionary*               _full_account_data;     //  REMARK：提取手续费池等部分操作该参数为nil。
     NSDecimalNumber*            _nCurrBalance;
     
     UITableViewBase*            _mainTableView;
@@ -75,9 +76,9 @@ enum
         assert(op_extra_args);
         _result_promise = result_promise;
         _opExtraArgs = op_extra_args;
-        _curr_asset = curr_asset;
+        _curr_selected_asset = curr_asset;
         _full_account_data = full_account_data;
-        _nCurrBalance = [ModelUtils findAssetBalance:_full_account_data asset:_curr_asset];
+        [self _auxGenCurrBalanceAndBalanceAsset];
     }
     return self;
 }
@@ -87,10 +88,40 @@ enum
     [_mainTableView reloadData];
 }
 
+/*
+ *  (private) 生成当前余额 以及 余额对应的资产。
+ */
+- (void)_auxGenCurrBalanceAndBalanceAsset
+{
+    switch ([[_opExtraArgs objectForKey:@"kOpType"] integerValue]) {
+        case ebaok_claim_pool:
+        {
+            //  REMARK：计算手续费池余额。
+            ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+            id core_asset = [chainMgr getChainObjectByID:chainMgr.grapheneCoreAssetID];
+            assert(core_asset);
+            _curr_balance_asset = core_asset;
+            id dynamic_asset_data = [chainMgr getChainObjectByID:[_curr_selected_asset objectForKey:@"dynamic_asset_data_id"]];
+            _nCurrBalance = [NSDecimalNumber decimalNumberWithMantissa:[[dynamic_asset_data objectForKey:@"fee_pool"] unsignedLongLongValue]
+                                                              exponent:-[[_curr_balance_asset objectForKey:@"precision"] integerValue]
+                                                            isNegative:NO];
+        }
+            break;
+        default:
+        {
+            //  其他操作，从账号获取余额。
+            assert(_full_account_data);
+            _curr_balance_asset = _curr_selected_asset;
+            _nCurrBalance = [ModelUtils findAssetBalance:_full_account_data asset:_curr_selected_asset];
+        }
+            break;
+    }
+}
+
 - (void)_drawUI_Balance:(BOOL)not_enough
 {
     ThemeManager* theme = [ThemeManager sharedThemeManager];
-    NSString* symbol = [_curr_asset objectForKey:@"symbol"];
+    NSString* symbol = [_curr_balance_asset objectForKey:@"symbol"];
     if (not_enough) {
         NSString* value = [NSString stringWithFormat:@"%@ %@ %@(%@)",
                            NSLocalizedString(@"kOtcMcAssetCellAvailable", @"可用"),
@@ -123,7 +154,7 @@ enum
     //  UI - 数量输入框
     _tf_amount = [[ViewTextFieldAmountCell alloc] initWithTitle:NSLocalizedString(@"kOtcMcAssetTransferCellLabelAmount", @"数量")
                                                     placeholder:[_opExtraArgs objectForKey:@"kMsgAmountPlaceholder"] ?: @""
-                                                         tailer:[_curr_asset objectForKey:@"symbol"]];
+                                                         tailer:[_curr_balance_asset objectForKey:@"symbol"]];
     _tf_amount.delegate = self;
     [self _drawUI_Balance:NO];
     
@@ -167,7 +198,7 @@ enum
     return [OrgUtils isValidAmountOrPriceInput:textField.text
                                          range:range
                                     new_string:string
-                                     precision:[[_curr_asset objectForKey:@"precision"] integerValue]];
+                                     precision:[[_curr_balance_asset objectForKey:@"precision"] integerValue]];
 }
 
 #pragma mark- TableView delegate method
@@ -228,9 +259,11 @@ enum
     switch (indexPath.section) {
         case kVcSecOpAsst:
         {
+            ThemeManager* theme = [ThemeManager sharedThemeManager];
+            
             UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
             cell.backgroundColor = [UIColor clearColor];
-            cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+            cell.textLabel.textColor = theme.textColorMain;
             cell.accessoryType = UITableViewCellAccessoryNone;
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             if (indexPath.row == 0) {
@@ -239,9 +272,25 @@ enum
                 cell.hideBottomLine = YES;
             } else {
                 cell.showCustomBottomLine = YES;
-                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-                cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-                cell.textLabel.text = [_curr_asset objectForKey:@"symbol"];
+                //  REMARK：这里显示选中资产名称，而不是余额资产名称。
+                cell.textLabel.text = [_curr_selected_asset objectForKey:@"symbol"];
+                switch ([[_opExtraArgs objectForKey:@"kOpType"] integerValue]) {
+                    case ebaok_claim_pool:
+                    {
+                        //  REMARK：提取手续费池 不可点击，不可切换资产。
+                        cell.accessoryType = UITableViewCellAccessoryNone;
+                        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                        cell.textLabel.textColor = theme.textColorGray;
+                    }
+                        break;
+                    default:
+                    {
+                        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                        cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+                        cell.textLabel.textColor = theme.textColorMain;
+                    }
+                        break;
+                }
             }
             return cell;
         }
@@ -296,23 +345,24 @@ enum
         case ebaok_reserve:
             kSearchType = enstAssetUIA;
             break;
+        case ebaok_claim_pool:      //  REMARK：提取手续费池不可切换资产。
+            return;
         default:
             assert(false);
             break;
     }
     
     //  TODO:4.0 考虑默认备选列表？
-    
     VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:kSearchType callback:^(id asset_info) {
         if (asset_info){
             NSString* new_id = [asset_info objectForKey:@"id"];
-            NSString* old_id = [_curr_asset objectForKey:@"id"];
+            NSString* old_id = [_curr_selected_asset objectForKey:@"id"];
             if (![new_id isEqualToString:old_id]) {
-                _curr_asset = asset_info;
+                _curr_selected_asset = asset_info;
                 //  切换资产后重新输入
-                _nCurrBalance = [ModelUtils findAssetBalance:_full_account_data asset:_curr_asset];
+                [self _auxGenCurrBalanceAndBalanceAsset];
                 [_tf_amount clearInputTextValue];
-                [_tf_amount drawUI_newTailer:[_curr_asset objectForKey:@"symbol"]];
+                [_tf_amount drawUI_newTailer:[_curr_balance_asset objectForKey:@"symbol"]];
                 [self _drawUI_Balance:NO];
                 [_mainTableView reloadData];
             }
@@ -342,7 +392,7 @@ enum
     switch ([[_opExtraArgs objectForKey:@"kOpType"] integerValue]) {
         case ebaok_settle:
         {
-            id value = [NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpSubmitAskSettle", @"您确认清算 %@ %@ 吗？\n\n※ 发起清算之后将延后执行，并且不可撤销，请谨慎操作。"), n_amount, _curr_asset[@"symbol"]];
+            id value = [NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpSubmitAskSettle", @"您确认清算 %@ %@ 吗？\n\n※ 发起清算之后将延后执行，并且不可撤销，请谨慎操作。"), n_amount, _curr_balance_asset[@"symbol"]];
             [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:value
                                                                    withTitle:NSLocalizedString(@"kVcHtlcMessageTipsTitle", @"风险提示")
                                                                   completion:^(NSInteger buttonIndex)
@@ -360,7 +410,7 @@ enum
             break;
         case ebaok_reserve:
         {
-            id value = [NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpSubmitAskReserve", @"您确认销毁 %@ %@ 吗？\n\n※ 此操作不可逆，请谨慎操作。"), n_amount, _curr_asset[@"symbol"]];
+            id value = [NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpSubmitAskReserve", @"您确认销毁 %@ %@ 吗？\n\n※ 此操作不可逆，请谨慎操作。"), n_amount, _curr_balance_asset[@"symbol"]];
             [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:value
                                                                    withTitle:NSLocalizedString(@"kVcHtlcMessageTipsTitle", @"风险提示")
                                                                   completion:^(NSInteger buttonIndex)
@@ -372,6 +422,15 @@ enum
                             [self _execAssetReserveCore:n_amount];
                         }
                     }];
+                }
+            }];
+        }
+            break;
+        case ebaok_claim_pool:
+        {
+            [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
+                if (unlocked) {
+                    [self _execAssetClaimPoolCore:n_amount];
                 }
             }];
         }
@@ -391,11 +450,11 @@ enum
     id op_account = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
     assert(op_account);
     
-    id n_amount_pow = [NSString stringWithFormat:@"%@", [n_amount decimalNumberByMultiplyingByPowerOf10:[_curr_asset[@"precision"] integerValue]]];
+    id n_amount_pow = [NSString stringWithFormat:@"%@", [n_amount decimalNumberByMultiplyingByPowerOf10:[_curr_balance_asset[@"precision"] integerValue]]];
     id op = @{
         @"fee":@{@"amount":@0, @"asset_id":chainMgr.grapheneCoreAssetID},
         @"account":op_account[@"id"],
-        @"amount":@{@"amount":@([n_amount_pow unsignedLongLongValue]), @"asset_id":_curr_asset[@"id"]}
+        @"amount":@{@"amount":@([n_amount_pow unsignedLongLongValue]), @"asset_id":_curr_balance_asset[@"id"]}
     };
     
     //  确保有权限发起普通交易，否则作为提案交易处理。
@@ -438,11 +497,11 @@ enum
     id op_account = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
     assert(op_account);
     
-    id n_amount_pow = [NSString stringWithFormat:@"%@", [n_amount decimalNumberByMultiplyingByPowerOf10:[_curr_asset[@"precision"] integerValue]]];
+    id n_amount_pow = [NSString stringWithFormat:@"%@", [n_amount decimalNumberByMultiplyingByPowerOf10:[_curr_balance_asset[@"precision"] integerValue]]];
     id op = @{
         @"fee":@{@"amount":@0, @"asset_id":chainMgr.grapheneCoreAssetID},
         @"payer":op_account[@"id"],
-        @"amount_to_reserve":@{@"amount":@([n_amount_pow unsignedLongLongValue]), @"asset_id":_curr_asset[@"id"]}
+        @"amount_to_reserve":@{@"amount":@([n_amount_pow unsignedLongLongValue]), @"asset_id":_curr_balance_asset[@"id"]}
     };
     
     //  确保有权限发起普通交易，否则作为提案交易处理。
@@ -471,6 +530,57 @@ enum
             [OrgUtils showGrapheneError:error];
             //  [统计]
             [OrgUtils logEvents:@"txAssetReserveFailed" params:@{@"account":op_account[@"id"]}];
+            return nil;
+        })];
+    }];
+}
+
+/*
+ *  (private) 执行提取手续费池操作
+ */
+- (void)_execAssetClaimPoolCore:(NSDecimalNumber*)n_amount
+{
+    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+    id op_account = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
+    assert(op_account);
+    
+    assert([chainMgr.grapheneCoreAssetID isEqualToString:_curr_balance_asset[@"id"]]);
+    
+    id n_amount_pow = [NSString stringWithFormat:@"%@", [n_amount decimalNumberByMultiplyingByPowerOf10:[_curr_balance_asset[@"precision"] integerValue]]];
+    
+    id op = @{
+        @"fee":@{@"amount":@0, @"asset_id":chainMgr.grapheneCoreAssetID},
+        @"issuer":op_account[@"id"],
+        @"asset_id":_curr_selected_asset[@"id"],
+        @"amount_to_claim":@{@"amount":@([n_amount_pow unsignedLongLongValue]), @"asset_id":_curr_balance_asset[@"id"]}
+    };
+    
+    //  确保有权限发起普通交易，否则作为提案交易处理。
+    [self GuardProposalOrNormalTransaction:ebo_asset_claim_pool
+                     using_owner_authority:NO
+                  invoke_proposal_callback:NO
+                                    opdata:op
+                                 opaccount:op_account
+                                      body:^(BOOL isProposal, NSDictionary *proposal_create_args)
+     {
+        assert(!isProposal);
+        [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+        [[[[BitsharesClientManager sharedBitsharesClientManager] assetClaimPool:op] then:(^id(id data) {
+            [self hideBlockView];
+            [OrgUtils makeToast:[_opExtraArgs objectForKey:@"kMsgSubmitOK"] ?: @""];
+            //  [统计]
+            [OrgUtils logEvents:@"txAssetClaimPoolFullOK" params:@{@"account":op_account[@"id"]}];
+            //  返回上一个界面并刷新
+            if (_result_promise) {
+                [_result_promise resolve:@YES];
+            }
+            [self closeOrPopViewController];
+            return nil;
+        })] catch:(^id(id error) {
+            [self hideBlockView];
+            [OrgUtils showGrapheneError:error];
+            //  [统计]
+            [OrgUtils logEvents:@"txAssetClaimPoolFailed" params:@{@"account":op_account[@"id"]}];
             return nil;
         })];
     }];
