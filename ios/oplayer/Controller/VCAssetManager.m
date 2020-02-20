@@ -12,6 +12,7 @@
 #import "VCAssetCreateOrEdit.h"
 #import "VCAssetDetails.h"
 #import "VCAssetOpIssue.h"
+#import "VCAssetOpCommon.h"
 
 @interface VCAssetManager ()
 {
@@ -108,7 +109,7 @@
         }];
     }] catch:^id(id error) {
         [self hideBlockView];
-        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+        [OrgUtils showGrapheneError:error];
         return nil;
     }];
 }
@@ -217,6 +218,11 @@
         } else {
             [ary addObject:@{@"type":@(ebaok_issue), @"title":NSLocalizedString(@"kVcAssetMgrCellActionIssueAsset", @"发行资产")}];
         }
+        //  非核心资产，都可以提取手续费池。
+        if (![[asset objectForKey:@"id"] isEqualToString:chainMgr.grapheneCoreAssetID]) {
+            //  TODO:5.0 lang
+            [ary addObject:@{@"type":@(ebaok_claim_pool), @"title":@"提取手续费池"}];
+        }
     }] copy];
     
     [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
@@ -311,6 +317,34 @@
                             [self queryMyIssuedAssets];
                         }
                         return nil;
+                    }];
+                }
+                    break;
+                case ebaok_claim_pool:
+                {
+                    [VcUtils guardGrapheneObjectDependence:self object_ids:[asset objectForKey:@"dynamic_asset_data_id"] body:^{
+                        //  TODO:5.0 lang
+                        id opArgs = @{
+                            @"kOpType":@(ebaok_claim_pool),
+                            @"kMsgTips":@"【温馨提示】\n资产手续费池可用于抵扣网络广播手续费，如果手续费池余额不足，则不能抵扣。",
+                            @"kMsgAmountPlaceholder":@"请输入提取数量",
+                            @"kMsgBtnName":@"提取",
+                            @"kMsgSubmitInputValidAmount":@"请输入要提取的资产数量。",
+                            @"kMsgSubmitOK":@"提取成功。"
+                        };
+                        WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
+                        VCAssetOpCommon* vc = [[VCAssetOpCommon alloc] initWithCurrAsset:asset
+                                                                       full_account_data:nil
+                                                                           op_extra_args:opArgs
+                                                                          result_promise:result_promise];
+                        [self pushViewController:vc vctitle:@"提取手续费池" backtitle:kVcDefaultBackTitleName];
+                        [result_promise then:^id(id dirty) {
+                            //  刷新UI
+                            if (dirty && [dirty boolValue]) {
+                                [self queryMyIssuedAssets];
+                            }
+                            return nil;
+                        }];
                     }];
                 }
                     break;
