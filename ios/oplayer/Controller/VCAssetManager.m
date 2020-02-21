@@ -285,6 +285,12 @@
                     break;
                 case ebaok_update_bitasset:
                 {
+                    if ([ModelUtils assetHasGlobalSettle:bitasset_data]) {
+                        //  TODO:5.0 lang
+                        [OrgUtils makeToast:@"资产已经全局清算了，不可更新智能币。"];
+                        return;
+                    }
+                    
                     //  查询背书资产名称依赖
                     [VcUtils guardGrapheneObjectDependence:self object_ids:bitasset_data[@"options"][@"short_backing_asset"] body:^{
                         WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
@@ -318,6 +324,15 @@
                         }
                         return nil;
                     }];
+                }
+                    break;
+                case ebaok_global_settle:
+                {
+                    if ([ModelUtils assetHasGlobalSettle:bitasset_data]) {
+                        //  TODO:5.0 lang
+                        [OrgUtils makeToast:@"资产已经全局清算了，不可重复执行全局清算操作。"];
+                        return;
+                    }
                 }
                     break;
                 case ebaok_claim_pool:
