@@ -645,47 +645,80 @@
     id bitasset_data_id = [curAsset objectForKey:@"bitasset_data_id"];
     
     id p1 = [chainMgr queryFullAccountInfo:[[_accountInfo objectForKey:@"account"] objectForKey:@"id"]];
-    id p2 = [chainMgr queryAllGrapheneObjectsSkipCache:@[oid, bitasset_data_id]];
+    id p2 = [chainMgr queryAllGrapheneObjectsSkipCache:@[oid]];
+    id p3 = [chainMgr queryBackingAsset:curAsset];
     
     [VcUtils simpleRequest:_owner
-                   request:[WsPromise all:@[p1, p2]]
+                   request:[WsPromise all:@[p1, p2, p3]]
                   callback:^(id data_array) {
         id full_account = [data_array objectAtIndex:0];
         id result_hash = [data_array objectAtIndex:1];
+        id backing_asset = [data_array objectAtIndex:2];
+        assert(backing_asset);
         id newAsset = [result_hash objectForKey:oid];
         assert(newAsset);
-        id newBitassetData = [result_hash objectForKey:bitasset_data_id];
+        id newBitassetData = [chainMgr getChainObjectByID:bitasset_data_id];
         assert(newBitassetData);
         
-        //  检测资产是否禁止强清
-        if (![ModelUtils assetCanForceSettle:newAsset]) {
+        //  资产未禁止强清操作 或 全局清算了 才可进行清算操作。
+        BOOL hasAlreadyGlobalSettled = [ModelUtils assetHasGlobalSettle:newBitassetData];
+        if (![ModelUtils assetCanForceSettle:newAsset] && !hasAlreadyGlobalSettled) {
             [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpSettleTipsDisableSettle", @"该资产禁止清算。")];
             return;
         }
         
-        if ([ModelUtils isNullPrice:[[newBitassetData objectForKey:@"current_feed"] objectForKey:@"settlement_price"]]) {
-            [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpSettleTipsNoFeedData", @"该资产没有有效的喂价，不可清算。")];
-            return;
+        if ([[newBitassetData objectForKey:@"is_prediction_market"] boolValue]) {
+            //  预测市场：必须全局清算之后才可以进行清算操作。
+            if (!hasAlreadyGlobalSettled) {
+                //  TODO:5.0 lang
+                [OrgUtils makeToast:@"预测市场全局清算完成之后才可以进行清算操作。"];
+                return;
+            }
+        } else {
+            //  普通智能币
+            //  1、需要有喂价数据才可以进行清算操作。
+            //  2、如果已经黑天鹅了也可以进行清算操作。
+            if ([ModelUtils isNullPrice:[[newBitassetData objectForKey:@"current_feed"] objectForKey:@"settlement_price"]] &&
+                ![ModelUtils assetHasGlobalSettle:newBitassetData]) {
+                [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpSettleTipsNoFeedData", @"该资产没有有效的喂价，不可清算。")];
+                return;
+            }
         }
         
-        //  TODO:5.0 预测市场清算操作必须在全局清算之后。
-        //  "global settlement must occur before force settling a prediction market"
-        
-        id options = [newBitassetData objectForKey:@"options"];
-        
-        NSInteger force_settlement_delay_sec = [[options objectForKey:@"force_settlement_delay_sec"] integerValue];
-        id s_delay_hour = [NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpSettleDelayHoursN", @"%@小时"),
-                           @((int)(force_settlement_delay_sec / 3600))];
-        
-        NSInteger force_settlement_offset_percent = [[options objectForKey:@"force_settlement_offset_percent"] integerValue];
-        id n_force_settlement_offset_percent = [NSDecimalNumber decimalNumberWithMantissa:force_settlement_offset_percent
-                                                                                 exponent:-4
-                                                                               isNegative:NO];
-        id n_final = [n_force_settlement_offset_percent decimalNumberByAdding:[NSDecimalNumber one]];
-        
+        NSString* settleMsgTips;
+        if (hasAlreadyGlobalSettled) {
+            id n_price = [OrgUtils calcPriceFromPriceObject:[newBitassetData objectForKey:@"settlement_price"]
+                                                    base_id:[newAsset objectForKey:@"id"]
+                                             base_precision:[[newAsset objectForKey:@"precision"] integerValue]
+                                            quote_precision:[[backing_asset objectForKey:@"precision"] integerValue]
+                                                     invert:NO
+                                               roundingMode:NSRoundDown
+                                       set_divide_precision:YES];
+            NSString* global_settle_price = [NSString stringWithFormat:@"%@ %@/%@",
+                                             [OrgUtils formatFloatValue:n_price usesGroupingSeparator:NO],
+                                             backing_asset[@"symbol"], newAsset[@"symbol"]];
+            //  TODO:5.0 lang
+            settleMsgTips = [NSString stringWithFormat:@"【温馨提示】\n1、清算操作强制把清算资产换回背书资产。此操作不可撤销，请谨慎操作。\n2、该资产已经触发全局清算，清算操作将立即执行。\n3、清算价 = %@", global_settle_price];
+        } else {
+            id options = [newBitassetData objectForKey:@"options"];
+            
+            NSInteger force_settlement_delay_sec = [[options objectForKey:@"force_settlement_delay_sec"] integerValue];
+            id s_delay_hour = [NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpSettleDelayHoursN", @"%@小时"),
+                               @((int)(force_settlement_delay_sec / 3600))];
+            
+            NSInteger force_settlement_offset_percent = [[options objectForKey:@"force_settlement_offset_percent"] integerValue];
+            id n_force_settlement_offset_percent = [NSDecimalNumber decimalNumberWithMantissa:force_settlement_offset_percent
+                                                                                     exponent:-4
+                                                                                   isNegative:NO];
+            id n_final = [n_force_settlement_offset_percent decimalNumberByAdding:[NSDecimalNumber one]];
+            
+            settleMsgTips = [NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpSettleUiTips", @"【温馨提示】\n1、清算操作强制把清算资产换回背书资产。此操作不可撤销，请谨慎操作。\n2、发起清算后将在%@后排队执行，并以当时的清算价格成交。\n3、清算价 = 成交时的喂价 × %@"),
+                             s_delay_hour,
+                             n_final];
+        }
         id opArgs = @{
             @"kOpType":@(button.tag),
-            @"kMsgTips":[NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpSettleUiTips", @"【温馨提示】\n1、清算操作强制把清算资产换回背书资产。此操作不可撤销，请谨慎操作。\n2、发起清算后将在%@后排队执行，并以当时的清算价格成交。\n3、清算价 = 成交时的喂价 × %@"), s_delay_hour, n_final],
+            @"kMsgTips":settleMsgTips,
             @"kMsgAmountPlaceholder":NSLocalizedString(@"kVcAssetOpSettleCellPlaceholderAmount", @"请输入清算数量"),
             @"kMsgBtnName":NSLocalizedString(@"kVcAssetOpSettleBtnName", @"发起清算"),
             @"kMsgSubmitInputValidAmount":NSLocalizedString(@"kVcAssetOpSettleSubmitTipsPleaseInputAmount", @"请输入要清算的资产数量。"),

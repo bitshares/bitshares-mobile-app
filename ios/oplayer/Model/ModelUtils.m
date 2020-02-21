@@ -62,8 +62,9 @@
  */
 + (BOOL)isNullPrice:(id)price
 {
-    if ([[[price objectForKey:@"base"] objectForKey:@"amount"] unsignedLongLongValue] == 0 ||
-        [[[price objectForKey:@"quote"] objectForKey:@"amount"] unsignedLongLongValue] == 0) {
+    NSString* core_asset_id = [ChainObjectManager sharedChainObjectManager].grapheneCoreAssetID;
+    if ([core_asset_id isEqualToString:[[price objectForKey:@"base"] objectForKey:@"asset_id"]] &&
+        [core_asset_id isEqualToString:[[price objectForKey:@"quote"] objectForKey:@"asset_id"]]) {
         return YES;
     }
     return NO;

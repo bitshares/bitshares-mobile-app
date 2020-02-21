@@ -276,8 +276,11 @@ enum
                 cell.textLabel.text = [_curr_selected_asset objectForKey:@"symbol"];
                 switch ([[_opExtraArgs objectForKey:@"kOpType"] integerValue]) {
                     case ebaok_claim_pool:
+                    case ebaok_settle:
                     {
-                        //  REMARK：提取手续费池 不可点击，不可切换资产。
+                        //  部分切换资产
+                        //  1、提取手续费池 - 不可切换，需要查询手续费池。暂不支持 TODO:5.0
+                        //  2、清算操作 - 不可切换，需要刷新各种标记，是否黑天鹅等。暂不支持 TODO:5.0
                         cell.accessoryType = UITableViewCellAccessoryNone;
                         cell.selectionStyle = UITableViewCellSelectionStyleNone;
                         cell.textLabel.textColor = theme.textColorGray;
@@ -340,7 +343,8 @@ enum
     ENetworkSearchType kSearchType;
     switch ([[_opExtraArgs objectForKey:@"kOpType"] integerValue]) {
         case ebaok_settle:
-            kSearchType = enstAssetSmart;
+            //            kSearchType = enstAssetSmart;
+            return;                 //  REMARK：清算不可切换资产。需要动态查询是否黑天鹅等。后续考虑支持。TODO:5.0
             break;
         case ebaok_reserve:
             kSearchType = enstAssetUIA;
@@ -392,7 +396,16 @@ enum
     switch ([[_opExtraArgs objectForKey:@"kOpType"] integerValue]) {
         case ebaok_settle:
         {
-            id value = [NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpSubmitAskSettle", @"您确认清算 %@ %@ 吗？\n\n※ 发起清算之后将延后执行，并且不可撤销，请谨慎操作。"), n_amount, _curr_balance_asset[@"symbol"]];
+            NSString* value;
+            id bitasset_data = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:[_curr_selected_asset objectForKey:@"bitasset_data_id"]];
+            if ([ModelUtils assetHasGlobalSettle:bitasset_data]) {
+                //  TODO:5.0 lang
+                value = [NSString stringWithFormat:@"您确认清算 %@ %@ 吗？\n\n※ 该资产已经触发全局清算，发起清算之后将立即执行，并且不可撤销，请谨慎操作。",
+                         n_amount, _curr_balance_asset[@"symbol"]];
+            } else {
+                value = [NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpSubmitAskSettle", @"您确认清算 %@ %@ 吗？\n\n※ 发起清算之后将延后执行，并且不可撤销，请谨慎操作。"),
+                         n_amount, _curr_balance_asset[@"symbol"]];;
+            }
             [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:value
                                                                    withTitle:NSLocalizedString(@"kVcHtlcMessageTipsTitle", @"风险提示")
                                                                   completion:^(NSInteger buttonIndex)
