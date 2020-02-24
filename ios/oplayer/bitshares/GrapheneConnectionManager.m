@@ -117,6 +117,14 @@ static GrapheneConnectionManager *_sharedGrapheneConnectionManager = nil;
         }
     }
     
+#ifdef DEBUG
+#if GRAPHENE_BITSHARES_MAINNET
+    //  REMARK：DEBUG调试阶段仅连接一个节点，否则其他节点连接不上会抛出异常。（Promise中）
+    [wssUrlHash removeAllObjects];
+    [wssUrlHash setObject:@YES forKey:@"wss://api.weaccount.cn"];
+#endif
+#endif
+    
     //  初始化所有结点
     for (id url in [wssUrlHash allKeys]) {
         [_connection_list addObject:[[GrapheneConnection alloc] initWithNode:url max_retry_num:max_retry_num connect_timeout:connect_timeout]];
