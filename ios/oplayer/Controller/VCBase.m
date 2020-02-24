@@ -1058,4 +1058,14 @@ static NSInteger gen_notify_unique_id()
     }
 }
 
+#pragma mark- VCSlideControllerBase events
+
+/*
+ *  (public) 分页控件页VC切换事件，子类可重载。
+ */
+- (void)onControllerPageChanged
+{
+    //  子类可重载
+}
+
 @end

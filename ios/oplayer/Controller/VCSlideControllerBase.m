@@ -7,8 +7,11 @@
 //
 
 #import "VCSlideControllerBase.h"
-#import "OrgUtils.h"
+
 #import "MyScrollView.h"
+
+#import "OrgUtils.h"
+#import "MBProgressHUDSingleton.h"
 #import "ThemeManager.h"
 
 @interface VCSlideControllerBase ()
@@ -252,8 +255,19 @@
  */
 - (void)onPageChanged:(NSInteger)tag
 {
-    //  REMARK：子类可覆盖
-    NSLog(@"onPageChanged: %@", @(tag));
+    if ([[MBProgressHUDSingleton sharedMBProgressHUDSingleton] is_showing]){
+        return;
+    }
+    
+    if (_subvcArrays){
+        id vc = [_subvcArrays safeObjectAtIndex:tag - 1];
+        if (vc){
+            if ([vc isKindOfClass:[VCBase class]]){
+                VCBase* vc_base = (VCBase*)vc;
+                [vc_base onControllerPageChanged];
+            }
+        }
+    }
 }
 
 - (void)resignAllFirstResponder

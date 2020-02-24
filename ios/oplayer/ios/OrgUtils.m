@@ -1789,7 +1789,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
             
             new_amount_sum += f_quote;
             id base = [order objectForKey:@"base"];
-            [new_array addObject:@{@"price":price, @"quote":quote, @"base":base, @"sum":@(new_amount_sum)}];
+            [new_array addObject:@{@"oid":order[@"oid"], @"price":price, @"quote":quote, @"base":base, @"sum":@(new_amount_sum)}];
         }
         if (invert){
             bidArray = new_array;

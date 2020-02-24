@@ -18,6 +18,7 @@
 #import "ViewTradeHistoryCell.h"
 
 #import "VCTradeHor.h"
+#import "VCTradeVertical.h"
 
 #import "NativeAppDelegate.h"
 #import "ScheduleManager.h"
@@ -132,8 +133,8 @@ enum
 - (void)onButtomButtonClicked:(UIButton*)sender
 {
     assert(sender.tag != kBottomButtonTagFav);
-    VCTradeHor* vc = [[VCTradeHor alloc] initWithTradingPair:_tradingPair
-                                                   selectBuy:sender.tag == kBottomButtonTagBuy];
+    //  TODO:6.0 VCTradeHor横版改竖版界面。以后考虑设置界面设置。
+    VCTradeVertical* vc = [[VCTradeVertical alloc] initWithTradingPair:_tradingPair selectBuy:sender.tag == kBottomButtonTagBuy];
     vc.title = [NSString stringWithFormat:@"%@/%@", [_tradingPair.quoteAsset objectForKey:@"symbol"], [_tradingPair.baseAsset objectForKey:@"symbol"]];
     [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
 }

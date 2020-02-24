@@ -672,6 +672,12 @@
 "kVcTradeSubmitTotalTooLow" = "交易额太低";
 "kVcTradeSubmitTotalNotEnough" = "金额不足";
 "kVcTradeSubmitAmountNotEnough" = "数量不足";
+"kVcVerTradeLabelPrice" = "价格 %@";
+"kVcVerTradeLabelAmount" = "数量 %@";
+"kVcVerTradeLabelTotal" = "交易额 %@";
+"kVcVerTradeLabelMarketFee" = "手续费";
+"kVcVerTradeLabelTradeHistory" = "交易历史";
+"kVcVerTradeLabelOrderBookID" = "档";
 
 /* 转账界面 */
 "kLabelSendAll" = "全部";

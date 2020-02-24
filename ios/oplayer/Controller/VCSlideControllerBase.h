@@ -16,4 +16,9 @@
 - (VCBase*)currentPage;
 - (UIButton*)buttonWithTag:(NSInteger)tag;
 
+/**
+ *  (protected) 页面切换事件
+ */
+- (void)onPageChanged:(NSInteger)tag;
+
 @end

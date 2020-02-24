@@ -672,6 +672,12 @@
 "kVcTradeSubmitTotalTooLow" = "取引额太低";
 "kVcTradeSubmitTotalNotEnough" = "資金不足";
 "kVcTradeSubmitAmountNotEnough" = "数量不足";
+"kVcVerTradeLabelPrice" = "单价 %@";
+"kVcVerTradeLabelAmount" = "数量 %@";
+"kVcVerTradeLabelTotal" = "取引額 %@";
+"kVcVerTradeLabelMarketFee" = "手数料";
+"kVcVerTradeLabelTradeHistory" = "取引履歴";
+"kVcVerTradeLabelOrderBookID" = "数";
 
 /* 转账界面 */
 "kLabelSendAll" = "全部";

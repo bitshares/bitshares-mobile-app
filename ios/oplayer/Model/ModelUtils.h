@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class TradingPair;
+
 @interface ModelUtils : NSObject
 
 /*
@@ -60,5 +62,11 @@
  *  (public) 计算总数
  */
 + (NSDecimalNumber*)calTotal:(NSDecimalNumber*)avg n:(NSDecimalNumber*)n result_precision:(NSInteger)result_precision;
+
+/*
+ *  (public) 处理链上返回的限价单信息，方便UI显示。
+ *  filterTradingPair - 筛选当前交易对相关订单，可为nil。
+ */
++ (NSMutableArray*)processLimitOrders:(NSArray*)limit_orders filter:(TradingPair*)filterTradingPair;
 
 @end

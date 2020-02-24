@@ -1515,6 +1515,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
             //    {"base"=>{"amount"=>169535062, "asset_id"=>"1.3.0"},          #   base 是卖出的资产
             //        "quote"=>{"amount"=>15970314, "asset_id"=>"1.3.113"}},
             //    "deferred_fee"=>0},
+            id oid = [limitOrder objectForKey:@"id"];
             id sell_price = [limitOrder objectForKey:@"sell_price"];
             id base = [sell_price objectForKey:@"base"];
             id quote = [sell_price objectForKey:@"quote"];
@@ -1533,7 +1534,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
                 
                 //  累积
                 bid_amount_sum += quote_amount;
-                [bidArray addObject:@{@"price":@(price), @"quote":@(quote_amount), @"base":@(base_amount), @"sum":@(bid_amount_sum)}];
+                [bidArray addObject:@{@"oid":oid, @"price":@(price), @"quote":@(quote_amount), @"base":@(base_amount), @"sum":@(bid_amount_sum)}];
             }else{
                 //  ask order
                 
@@ -1550,7 +1551,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
                 
                 //  累积
                 ask_amount_sum += quote_amount;
-                [askArray addObject:@{@"price":@(price), @"quote":@(quote_amount), @"base":@(base_amount), @"sum":@(ask_amount_sum)}];
+                [askArray addObject:@{@"oid":oid, @"price":@(price), @"quote":@(quote_amount), @"base":@(base_amount), @"sum":@(ask_amount_sum)}];
             }
         }
         
