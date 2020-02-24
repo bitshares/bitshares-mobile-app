@@ -7,7 +7,10 @@
 //
 
 #import "ModelUtils.h"
+
 #import "ChainObjectManager.h"
+#import "OrgUtils.h"
+#import "TradingPair.h"
 
 @implementation ModelUtils
 
@@ -154,6 +157,118 @@
                                                                                raiseOnDivideByZero:NO];
     
     return [avg decimalNumberByMultiplyingBy:n withBehavior:handler];
+}
+
+/*
+ *  (public) 处理链上返回的限价单信息，方便UI显示。
+ *  filterTradingPair - 筛选当前交易对相关订单，可为nil。
+ */
++ (NSMutableArray*)processLimitOrders:(NSArray*)limit_orders filter:(TradingPair*)filterTradingPair
+{
+    NSMutableArray* dataArray = [NSMutableArray array];
+    if (!limit_orders) {
+        return dataArray;
+    }
+    
+    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+    
+    for (id order in limit_orders) {
+        id sell_price = [order objectForKey:@"sell_price"];
+        id base = [sell_price objectForKey:@"base"];
+        id quote = [sell_price objectForKey:@"quote"];
+        id base_id = [base objectForKey:@"asset_id"];
+        id quote_id = [quote objectForKey:@"asset_id"];
+        
+        //  筛选当前交易对相关订单，并根据当前交易对确定买卖方向。
+        BOOL issell;
+        if (filterTradingPair) {
+            if ([base_id isEqualToString:filterTradingPair.baseId] && [quote_id isEqualToString:filterTradingPair.quoteId]){
+                //  买单：卖出 CNY
+                issell = NO;
+            }else if ([base_id isEqualToString:filterTradingPair.quoteId] && [quote_id isEqualToString:filterTradingPair.baseId]){
+                //  卖单：卖出 BTS
+                issell = YES;
+            }else{
+                //  其他交易对的订单
+                continue;
+            }
+        }
+        
+        id base_asset = [chainMgr getChainObjectByID:base_id];
+        id quote_asset = [chainMgr getChainObjectByID:quote_id];
+        assert(base_asset);
+        assert(quote_asset);
+        
+        NSInteger base_precision = [[base_asset objectForKey:@"precision"] integerValue];
+        NSInteger quote_precision = [[quote_asset objectForKey:@"precision"] integerValue];
+        double base_value = [OrgUtils calcAssetRealPrice:base[@"amount"] precision:base_precision];
+        double quote_value = [OrgUtils calcAssetRealPrice:quote[@"amount"] precision:quote_precision];
+        
+        //  REMARK：没筛选的情况下，根据资产优先级自动计算买卖方向。
+        if (!filterTradingPair) {
+            id assetBasePriority = [chainMgr genAssetBasePriorityHash];
+            NSInteger base_priority = [[assetBasePriority objectForKey:[base_asset objectForKey:@"symbol"]] integerValue];
+            NSInteger quote_priority = [[assetBasePriority objectForKey:[quote_asset objectForKey:@"symbol"]] integerValue];
+            if (base_priority > quote_priority) {
+                issell = NO;
+            } else {
+                issell = YES;
+            }
+        }
+        
+        double price;
+        NSString* price_str;
+        NSString* amount_str;
+        NSString* total_str;
+        NSString* base_sym;
+        NSString* quote_sym;
+        //  REMARK: base 是卖出的资产，除以 base 则为卖价(每1个 base 资产的价格)。反正 base / quote 则为买入价。
+        if (!issell){
+            //  buy     price = base / quote
+            price = base_value / quote_value;
+            price_str = [OrgUtils formatFloatValue:price precision:base_precision];
+            double total_real = [OrgUtils calcAssetRealPrice:order[@"for_sale"] precision:base_precision];
+            double amount_real = total_real / price;
+            amount_str = [OrgUtils formatFloatValue:amount_real precision:quote_precision];
+            total_str = [OrgUtils formatAssetString:order[@"for_sale"] precision:base_precision];
+            base_sym = [base_asset objectForKey:@"symbol"];
+            quote_sym = [quote_asset objectForKey:@"symbol"];
+        }else{
+            //  sell    price = quote / base
+            price = quote_value / base_value;
+            price_str = [OrgUtils formatFloatValue:price precision:quote_precision];
+            amount_str = [OrgUtils formatAssetString:order[@"for_sale"] precision:base_precision];
+            double for_sale_real = [OrgUtils calcAssetRealPrice:order[@"for_sale"] precision:base_precision];
+            double total_real = price * for_sale_real;
+            total_str = [OrgUtils formatFloatValue:total_real precision:quote_precision];
+            base_sym = [quote_asset objectForKey:@"symbol"];
+            quote_sym = [base_asset objectForKey:@"symbol"];
+        }
+        //  REMARK：特殊处理，如果按照 base or quote 的精度格式化出价格为0了，则扩大精度重新格式化。
+        if ([price_str isEqualToString:@"0"]){
+            price_str = [OrgUtils formatFloatValue:price precision:8];
+        }
+        
+        [dataArray addObject:@{@"time":order[@"expiration"],
+                               @"issell":@(issell),
+                               @"price":price_str,
+                               @"amount":amount_str,
+                               @"total":total_str,
+                               @"base_symbol":base_sym,
+                               @"quote_symbol":quote_sym,
+                               @"id": order[@"id"],
+                               @"seller": order[@"seller"],
+                               @"raw_order": order  //  原始数据
+        }];
+    }
+    
+    //  按照ID降序排列
+    [dataArray sortUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        NSDecimalNumber* n1 = [NSDecimalNumber decimalNumberWithString:[[[obj1 objectForKey:@"id"] componentsSeparatedByString:@"."] lastObject]];
+        NSDecimalNumber* n2 = [NSDecimalNumber decimalNumberWithString:[[[obj2 objectForKey:@"id"] componentsSeparatedByString:@"."] lastObject]];
+        return [n2 compare:n1];
+    })];
+    return dataArray;
 }
 
 @end

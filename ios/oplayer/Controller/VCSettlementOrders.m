@@ -190,6 +190,14 @@
     }
 }
 
+/*
+ *  事件 - 页VC切换。
+ */
+- (void)onControllerPageChanged
+{
+    [self querySettlementOrders];
+}
+
 - (void)querySettlementOrders
 {
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];

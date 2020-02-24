@@ -551,97 +551,6 @@ enum
 
 #pragma mark- parent call
 
-/**
- *  (private) 生成当前交易对下的当前委托数据
- */
-- (NSMutableArray*)genCurrentLimitOrderData:(NSArray*)limit_orders
-{
-    NSMutableArray* dataArray = [NSMutableArray array];
-    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
-    for (id order in limit_orders) {
-        id sell_price = [order objectForKey:@"sell_price"];
-        id base = [sell_price objectForKey:@"base"];
-        id quote = [sell_price objectForKey:@"quote"];
-        id base_id = base[@"asset_id"];
-        id quote_id = quote[@"asset_id"];
-        
-        BOOL issell;
-        if ([base_id isEqualToString:_tradingPair.baseId] && [quote_id isEqualToString:_tradingPair.quoteId]){
-            //  买单：卖出 CNY
-            issell = NO;
-        }else if ([base_id isEqualToString:_tradingPair.quoteId] && [quote_id isEqualToString:_tradingPair.baseId]){
-            //  卖单：卖出 BTS
-            issell = YES;
-        }else{
-            //  其他交易对的订单
-            continue;
-        }
-
-        id base_asset = [chainMgr getChainObjectByID:base_id];
-        id quote_asset = [chainMgr getChainObjectByID:quote_id];
-        assert(base_asset);
-        assert(quote_asset);
-        
-        NSInteger base_precision = [[base_asset objectForKey:@"precision"] integerValue];
-        NSInteger quote_precision = [[quote_asset objectForKey:@"precision"] integerValue];
-        double base_value = [OrgUtils calcAssetRealPrice:base[@"amount"] precision:base_precision];
-        double quote_value = [OrgUtils calcAssetRealPrice:quote[@"amount"] precision:quote_precision];
-
-        double price;
-        NSString* price_str;
-        NSString* amount_str;
-        NSString* total_str;
-        NSString* base_sym;
-        NSString* quote_sym;
-        //  REMARK: base 是卖出的资产，除以 base 则为卖价(每1个 base 资产的价格)。反正 base / quote 则为买入价。
-        if (!issell){
-            //  buy     price = base / quote
-            price = base_value / quote_value;
-            price_str = [OrgUtils formatFloatValue:price precision:base_precision];
-            double total_real = [OrgUtils calcAssetRealPrice:order[@"for_sale"] precision:base_precision];
-            double amount_real = total_real / price;
-            amount_str = [OrgUtils formatFloatValue:amount_real precision:quote_precision];
-            total_str = [OrgUtils formatAssetString:order[@"for_sale"] precision:base_precision];
-            base_sym = [base_asset objectForKey:@"symbol"];
-            quote_sym = [quote_asset objectForKey:@"symbol"];
-        }else{
-            //  sell    price = quote / base
-            price = quote_value / base_value;
-            price_str = [OrgUtils formatFloatValue:price precision:quote_precision];
-            //            amount_str = [OrgUtils formatAmountString:order[@"for_sale"] asset:base_asset];
-            amount_str = [OrgUtils formatAssetString:order[@"for_sale"] precision:base_precision];
-            double for_sale_real = [OrgUtils calcAssetRealPrice:order[@"for_sale"] precision:base_precision];
-            double total_real = price * for_sale_real;
-            total_str = [OrgUtils formatFloatValue:total_real precision:quote_precision];
-            base_sym = [quote_asset objectForKey:@"symbol"];
-            quote_sym = [base_asset objectForKey:@"symbol"];
-        }
-        //  REMARK：特殊处理，如果按照 base or quote 的精度格式化出价格为0了，则扩大精度重新格式化。
-        if ([price_str isEqualToString:@"0"]){
-            price_str = [OrgUtils formatFloatValue:price precision:8];
-        }
-
-        [dataArray addObject:@{@"time":order[@"expiration"],
-                               @"issell":@(issell),
-                               @"price":price_str,
-                               @"amount":amount_str,
-                               @"total":total_str,
-                               @"base_symbol":base_sym,
-                               @"quote_symbol":quote_sym,
-                               @"id": order[@"id"],
-                               @"seller": order[@"seller"],
-                               @"raw_order":order   //  原始数据
-                               }];
-    }
-    //  按照ID降序排列
-    [dataArray sortUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-        NSDecimalNumber* n1 = [NSDecimalNumber decimalNumberWithString:[[[obj1 objectForKey:@"id"] componentsSeparatedByString:@"."] lastObject]];
-        NSDecimalNumber* n2 = [NSDecimalNumber decimalNumberWithString:[[[obj2 objectForKey:@"id"] componentsSeparatedByString:@"."] lastObject]];
-        return [n2 compare:n1];
-    })];
-    return dataArray;
-}
-
 - (NSDictionary*)genBalanceInfos:(NSDictionary*)full_account_data
 {
     id base_id = [_base objectForKey:@"id"];
@@ -757,7 +666,7 @@ enum
     if (_userOrderDataArray){
         [_userOrderDataArray removeAllObjects];
     }
-    _userOrderDataArray = [self genCurrentLimitOrderData:[full_account_data objectForKey:@"limit_orders"]];
+    _userOrderDataArray = [ModelUtils processLimitOrders:[full_account_data objectForKey:@"limit_orders"] filter:_tradingPair];
     
     //  3.1、订阅委托状态变化
     id order_ids = [_userOrderDataArray ruby_map:(^id(id order) {
@@ -1471,6 +1380,7 @@ enum
          [[[[BitsharesClientManager sharedBitsharesClientManager] createLimitOrder:op] then:(^id(id tx_data) {
              // 刷新UI（清除输入框）
              _tfNumber.text = @"";
+             _tfTotal.text = @"";
              //  获取新的限价单ID号
              id new_order_id = [OrgUtils extractNewObjectID:tx_data];
              [[[[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:seller] then:(^id(id full_data) {

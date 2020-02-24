@@ -41,8 +41,8 @@
 
 - (NSArray*)getSubPageVCArray
 {
-    id vc01 = [[VCUserOrders alloc] initWithOwner:self data:_userFullInfo history:NO tradingPair:_tradingPair];
-    id vc02 = [[VCUserOrders alloc] initWithOwner:self data:_tradeHistory history:YES tradingPair:_tradingPair];
+    id vc01 = [[VCUserOrders alloc] initWithOwner:self data:_userFullInfo history:NO tradingPair:_tradingPair filter:NO];
+    id vc02 = [[VCUserOrders alloc] initWithOwner:self data:_tradeHistory history:YES tradingPair:_tradingPair filter:NO];
     id vc03 = [[VCSettlementOrders alloc] initWithOwner:self tradingPair:nil fullAccountInfo:_userFullInfo];
     return @[vc01, vc02, vc03];
 }
@@ -93,6 +93,7 @@
     __weak VCBase*          _owner;                 //  REMARK：声明为 weak，否则会导致循环引用。
     
     TradingPair*            _tradingPair;
+    BOOL                    _filterWithTradingPair;
     
     BOOL                    _isHistory;
     NSDictionary*           _assetBasePriority;                 //  asset资产作为 base 交易对的优先级。
@@ -108,88 +109,6 @@
 @end
 
 @implementation VCUserOrders
-
-/**
- *  (private) 生成当前订单列表信息
- */
-- (NSMutableArray*)genCurrentLimitOrderData:(NSArray*)limit_orders
-{
-    NSMutableArray* dataArray = [NSMutableArray array];
-    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
-    //  - 当前委托
-    for (id order in limit_orders) {
-        id sell_price = [order objectForKey:@"sell_price"];
-        id base = [sell_price objectForKey:@"base"];
-        id quote = [sell_price objectForKey:@"quote"];
-        id base_asset = [chainMgr getChainObjectByID:base[@"asset_id"]];
-        id quote_asset = [chainMgr getChainObjectByID:quote[@"asset_id"]];
-        assert(base_asset);
-        assert(quote_asset);
-        NSInteger base_priority = [[_assetBasePriority objectForKey:[base_asset objectForKey:@"symbol"]] integerValue];
-        NSInteger quote_priority = [[_assetBasePriority objectForKey:[quote_asset objectForKey:@"symbol"]] integerValue];
-        
-        NSInteger base_precision = [[base_asset objectForKey:@"precision"] integerValue];
-        NSInteger quote_precision = [[quote_asset objectForKey:@"precision"] integerValue];
-        double base_value = [OrgUtils calcAssetRealPrice:base[@"amount"] precision:base_precision];
-        double quote_value = [OrgUtils calcAssetRealPrice:quote[@"amount"] precision:quote_precision];
-        
-        BOOL issell;
-        double price;
-        NSString* price_str;
-        NSString* amount_str;
-        NSString* total_str;
-        NSString* base_sym;
-        NSString* quote_sym;
-        //  REMARK: base 是卖出的资产，除以 base 则为卖价(每1个 base 资产的价格)。反正 base / quote 则为买入价。
-        if (base_priority > quote_priority){
-            //  buy     price = base / quote
-            issell = NO;
-            price = base_value / quote_value;
-            price_str = [OrgUtils formatFloatValue:price precision:base_precision];
-            double total_real = [OrgUtils calcAssetRealPrice:order[@"for_sale"] precision:base_precision];
-            double amount_real = total_real / price;
-            amount_str = [OrgUtils formatFloatValue:amount_real precision:quote_precision];
-            total_str = [OrgUtils formatAssetString:order[@"for_sale"] precision:base_precision];
-            base_sym = [base_asset objectForKey:@"symbol"];
-            quote_sym = [quote_asset objectForKey:@"symbol"];
-        }else{
-            //  sell    price = quote / base
-            issell = YES;
-            price = quote_value / base_value;
-            price_str = [OrgUtils formatFloatValue:price precision:quote_precision];
-//            amount_str = [OrgUtils formatAmountString:order[@"for_sale"] asset:base_asset];
-            amount_str = [OrgUtils formatAssetString:order[@"for_sale"] precision:base_precision];
-            double for_sale_real = [OrgUtils calcAssetRealPrice:order[@"for_sale"] precision:base_precision];
-            double total_real = price * for_sale_real;
-            total_str = [OrgUtils formatFloatValue:total_real precision:quote_precision];
-            base_sym = [quote_asset objectForKey:@"symbol"];
-            quote_sym = [base_asset objectForKey:@"symbol"];
-        }
-        //  REMARK：特殊处理，如果按照 base or quote 的精度格式化出价格为0了，则扩大精度重新格式化。
-        if ([price_str isEqualToString:@"0"]){
-            price_str = [OrgUtils formatFloatValue:price precision:8];
-        }
-        
-        [dataArray addObject:@{@"time":order[@"expiration"],
-                               @"issell":@(issell),
-                               @"price":price_str,
-                               @"amount":amount_str,
-                               @"total":total_str,
-                               @"base_symbol":base_sym,
-                               @"quote_symbol":quote_sym,
-                               @"id": order[@"id"],
-                               @"seller": order[@"seller"],
-                               @"raw_order": order  //  原始数据
-                               }];
-    }
-    //  按照ID降序排列
-    [dataArray sortUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-        NSDecimalNumber* n1 = [NSDecimalNumber decimalNumberWithString:[[[obj1 objectForKey:@"id"] componentsSeparatedByString:@"."] lastObject]];
-        NSDecimalNumber* n2 = [NSDecimalNumber decimalNumberWithString:[[[obj2 objectForKey:@"id"] componentsSeparatedByString:@"."] lastObject]];
-        return [n2 compare:n1];
-    })];
-    return dataArray;
-}
 
 /**
  *  (private) 生成历史订单列表信息
@@ -293,13 +212,54 @@
     _tradingPair = nil;
 }
 
-- (id)initWithOwner:(VCBase*)owner data:(id)data history:(BOOL)history tradingPair:(TradingPair*)tradingPair
+/*
+ *  事件 - 页面切换
+ */
+- (void)onControllerPageChanged
+{
+    if (!_filterWithTradingPair) {
+        return;
+    }
+    //  尚未登录
+    if (![[WalletManager sharedWalletManager] isWalletExist]) {
+        return;
+    }
+    id op_account = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
+    id uid = [op_account objectForKey:@"id"];
+    //  查询用户所有订单
+    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+    [[[chainMgr queryFullAccountInfo:uid] then:^id(id full_account_data) {
+        //  查询所有订单相关依赖
+        NSMutableDictionary* asset_id_hash = [NSMutableDictionary dictionary];
+        id limit_orders = [full_account_data objectForKey:@"limit_orders"];
+        if (limit_orders && [limit_orders count] > 0){
+            for (id order in limit_orders) {
+                id sell_price = [order objectForKey:@"sell_price"];
+                [asset_id_hash setObject:@YES forKey:[[sell_price objectForKey:@"base"] objectForKey:@"asset_id"]];
+                [asset_id_hash setObject:@YES forKey:[[sell_price objectForKey:@"quote"] objectForKey:@"asset_id"]];
+            }
+        }
+        return [[chainMgr queryAllGrapheneObjects:[asset_id_hash allKeys]] then:^id(id data) {
+            [_owner hideBlockView];
+            [self refreshWithFullUserData:full_account_data reloadView:YES];
+            return nil;
+        }];
+    }] catch:^id(id error) {
+        [_owner hideBlockView];
+        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+        return nil;
+    }];
+}
+
+- (id)initWithOwner:(VCBase*)owner data:(id)data history:(BOOL)history tradingPair:(TradingPair*)tradingPair filter:(BOOL)filterWithTradingPair
 {
     self = [super init];
     if (self) {
         _owner = owner;
         _isHistory = history;
         _tradingPair = tradingPair;
+        _filterWithTradingPair = filterWithTradingPair;
         _fullUserData = nil;
         ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
         _assetBasePriority = [chainMgr genAssetBasePriorityHash];
@@ -335,7 +295,12 @@
  */
 - (void)refreshWithFullUserData:(id)full_user_info reloadView:(BOOL)reload
 {
-    _dataArray = [self genCurrentLimitOrderData:[full_user_info objectForKey:@"limit_orders"]];
+    if (full_user_info) {
+        _dataArray = [ModelUtils processLimitOrders:[full_user_info objectForKey:@"limit_orders"]
+                                             filter:_filterWithTradingPair ? _tradingPair : nil];
+    } else {
+        _dataArray = [NSMutableArray array];
+    }
     //  计算手续费对象
     _fullUserData = full_user_info;
     if (reload){
@@ -355,7 +320,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
@@ -425,7 +390,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     CGFloat baseHeight = 8.0 + 28 + 24 * 2;
-
+    
     return baseHeight;
 }
 
@@ -482,10 +447,10 @@
     id fee_asset_id = [fee_item objectForKey:@"fee_asset_id"];
     id account_id = [[_fullUserData objectForKey:@"account"] objectForKey:@"id"];
     id op = @{
-              @"fee":@{@"amount":@0, @"asset_id":fee_asset_id},
-              @"fee_paying_account":account_id,
-              @"order":order_id
-              };
+        @"fee":@{@"amount":@0, @"asset_id":fee_asset_id},
+        @"fee_paying_account":account_id,
+        @"order":order_id
+    };
     
     //  确保有权限发起普通交易，否则作为提案交易处理。
     [_owner GuardProposalOrNormalTransaction:ebo_limit_order_cancel
@@ -495,41 +460,41 @@
                                    opaccount:[_fullUserData objectForKey:@"account"]
                                         body:^(BOOL isProposal, NSDictionary *proposal_create_args)
      {
-         assert(!isProposal);
-         //  请求网络广播
-         [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-         [[[[BitsharesClientManager sharedBitsharesClientManager] cancelLimitOrders:@[op]] then:(^id(id data) {
-             //  订单取消了：设置待更新标记
-             if (_tradingPair){
-                 [[ScheduleManager sharedScheduleManager] sub_market_monitor_order_update:_tradingPair updated:YES];
-                 //  设置订单变化标记
-                 [TempManager sharedTempManager].userLimitOrderDirty = YES;
-             }
-             [[[[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:account_id] then:(^id(id full_data) {
-                 NSLog(@"cancel order & refresh: %@", full_data);
-                 [_owner hideBlockView];
-                 //  刷新
-                 [self refreshWithFullUserData:full_data reloadView:YES];
-                 [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcOrderTipTxCancelFullOK", @"订单 #%@ 已取消。"), order_id]];
-                 //  [统计]
-                 [OrgUtils logEvents:@"txCancelLimitOrderFullOK" params:@{@"account":account_id}];
-                 return nil;
-             })] catch:(^id(id error) {
-                 [_owner hideBlockView];
-                 [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcOrderTipTxCancelOK", @"订单 #%@ 已取消，但刷新界面失败，请稍后再试。"), order_id]];
-                 //  [统计]
-                 [OrgUtils logEvents:@"txCancelLimitOrderOK" params:@{@"account":account_id}];
-                 return nil;
-             })];
-             return nil;
-         })] catch:(^id(id error) {
-             [_owner hideBlockView];
-             [OrgUtils showGrapheneError:error];
-             //  [统计]
-             [OrgUtils logEvents:@"txCancelLimitOrderFailed" params:@{@"account":account_id}];
-             return nil;
-         })];
-     }];
+        assert(!isProposal);
+        //  请求网络广播
+        [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+        [[[[BitsharesClientManager sharedBitsharesClientManager] cancelLimitOrders:@[op]] then:(^id(id data) {
+            //  订单取消了：设置待更新标记
+            if (_tradingPair){
+                [[ScheduleManager sharedScheduleManager] sub_market_monitor_order_update:_tradingPair updated:YES];
+                //  设置订单变化标记
+                [TempManager sharedTempManager].userLimitOrderDirty = YES;
+            }
+            [[[[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:account_id] then:(^id(id full_data) {
+                NSLog(@"cancel order & refresh: %@", full_data);
+                [_owner hideBlockView];
+                //  刷新
+                [self refreshWithFullUserData:full_data reloadView:YES];
+                [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcOrderTipTxCancelFullOK", @"订单 #%@ 已取消。"), order_id]];
+                //  [统计]
+                [OrgUtils logEvents:@"txCancelLimitOrderFullOK" params:@{@"account":account_id}];
+                return nil;
+            })] catch:(^id(id error) {
+                [_owner hideBlockView];
+                [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcOrderTipTxCancelOK", @"订单 #%@ 已取消，但刷新界面失败，请稍后再试。"), order_id]];
+                //  [统计]
+                [OrgUtils logEvents:@"txCancelLimitOrderOK" params:@{@"account":account_id}];
+                return nil;
+            })];
+            return nil;
+        })] catch:(^id(id error) {
+            [_owner hideBlockView];
+            [OrgUtils showGrapheneError:error];
+            //  [统计]
+            [OrgUtils logEvents:@"txCancelLimitOrderFailed" params:@{@"account":account_id}];
+            return nil;
+        })];
+    }];
 }
 
 - (void)onButtonClicked_CancelOrder:(UIButton*)button

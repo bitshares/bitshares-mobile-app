@@ -554,7 +554,7 @@
 /* 订单界面 */
 "kVcOrderPageOpenOrders" = "Open Orders";
 "kVcOrderPageHistory" = "History";
-"kVcOrderPageSettleOrders" = "Settle Order";
+"kVcOrderPageSettleOrders" = "Settle Orders";
 "kVcOrderTipNoHistory" = "No data";
 "kVcOrderTipNoOpenOrder" = "No order";
 "kVcOrderTipNoSettleOrder" = "No any settle order";
@@ -672,6 +672,12 @@
 "kVcTradeSubmitTotalTooLow" = "The order total is too low.";
 "kVcTradeSubmitTotalNotEnough" = "Insufficient base asset.";
 "kVcTradeSubmitAmountNotEnough" = "Insufficient quote asset.";
+"kVcVerTradeLabelPrice" = "Price %@";
+"kVcVerTradeLabelAmount" = "Amount %@";
+"kVcVerTradeLabelTotal" = "Total %@";
+"kVcVerTradeLabelMarketFee" = "Market fee";
+"kVcVerTradeLabelTradeHistory" = "Trade history";
+"kVcVerTradeLabelOrderBookID" = "ID";
 
 /* 转账界面 */
 "kLabelSendAll" = "All";

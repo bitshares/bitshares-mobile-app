@@ -15,7 +15,7 @@
 
 @end
 
-@interface VCTradeVerticalBuyOrSell : VCBase<UITableViewDelegate, UITableViewDataSource>
+@interface VCTradeVerticalBuyOrSell : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
 - (id)initWithOwner:(VCTradeVertical*)owner tradingPair:(TradingPair*)tradingPair isbuy:(BOOL)isbuy;
 

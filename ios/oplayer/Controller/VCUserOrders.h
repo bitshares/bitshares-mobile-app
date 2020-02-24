@@ -18,6 +18,6 @@
 
 @interface VCUserOrders : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
-- (id)initWithOwner:(VCBase*)owner data:(id)data history:(BOOL)history tradingPair:(TradingPair*)tradingPair;
+- (id)initWithOwner:(VCBase*)owner data:(id)data history:(BOOL)history tradingPair:(TradingPair*)tradingPair filter:(BOOL)filterWithTradingPair;
 
 @end
