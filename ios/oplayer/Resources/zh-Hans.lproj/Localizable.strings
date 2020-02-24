@@ -1517,6 +1517,7 @@
 "kGPErrorAccountNotExist" = "账号不存在。";
 "kGPErrorInsufficientBalance" = "手续费不足。";
 "kGPErrorRedeemInvalidPreimage" = "原像不正确。";
+"kGPErrorApiNodeVersionTooLow" = "当前API节点版本太低。";
 
 /* 特殊用途字符串KEY */
 "serverWssLangKey" = "cn";

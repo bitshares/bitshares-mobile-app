@@ -164,7 +164,7 @@
     //  2、填充封闭区域背景
     CGFloat red, green, blue, alpha;
     [color getRed:&red green:&green blue:&blue alpha:&alpha];
-    UIColor* fillColor = [UIColor colorWithRed:red green:green blue:blue alpha:0.1f];
+    UIColor* fillColor = [UIColor colorWithRed:red green:green blue:blue alpha:0.15f];
     CGPoint firstPoint = [[points firstObject] CGPointValue];
     CGPoint lastPoint = [[points lastObject] CGPointValue];
     CGFloat maxOffsetY = self.fMainGraphOffset + self.fMainGraphHeight;

@@ -1517,6 +1517,7 @@
 "kGPErrorAccountNotExist" = "アカウントは存在しません。";
 "kGPErrorInsufficientBalance" = "手数料は不足します。";
 "kGPErrorRedeemInvalidPreimage" = "元の画像が正しくありません。";
+"kGPErrorApiNodeVersionTooLow" = "現在のAPIノードのバージョンが低すぎます。";
 
 /* 特殊用途字符串KEY */
 "serverWssLangKey" = "cn";

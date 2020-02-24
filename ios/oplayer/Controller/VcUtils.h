@@ -11,6 +11,14 @@
 #import "TradingPair.h"
 #import "AppCacheManager.h"
 
+/*
+ *  封装类 - 点击手势转block。
+ */
+typedef void (^UITapGestureRecognizerBlockHandler)(id weak_self, UITapGestureRecognizer* tap);
+
+@interface UITapGestureRecognizer2Block : UITapGestureRecognizer
+@end
+
 @class VCBase;
 @interface VcUtils : NSObject
 
@@ -60,5 +68,10 @@
  *  (public) 判断两个资产哪个作为base资产，返回base资产的symbol。
  */
 + (NSString*)calcBaseAsset:(NSString*)asset_symbol01 asset_symbol02:(NSString*)asset_symbol02;
+
+/*
+ *  (public) 添加空白处点击事件
+ */
++ (void)addSpaceTapHandler:(VCBase*)vc body:(UITapGestureRecognizerBlockHandler)body;
 
 @end

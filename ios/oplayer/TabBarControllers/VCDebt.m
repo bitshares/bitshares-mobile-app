@@ -14,6 +14,7 @@
 #import "VCBtsaiWebView.h"
 #import "ViewTipsInfoCell.h"
 
+#import "MySlider.h"
 #import "TradingPair.h"
 #import "WalletManager.h"
 #import "OrgUtils.h"
@@ -66,8 +67,8 @@ enum
     UITableViewCellBase*    _cellLabelTargetRate;
     UITableViewCellBase*    _cellDebtAvailable;
     UITableViewCellBase*    _cellCollAvailable;
-    UISlider*               _collRateSlider;
-    UISlider*               _collTargetRateSlider;
+    MySlider*               _collRateSlider;
+    MySlider*               _collTargetRateSlider;
     CurveSlider*            _curve_ratio;
     CurveSlider*            _curve_target_ratio;
     ViewBlockLabel*         _btnOk;
@@ -278,8 +279,10 @@ enum
     [self showLeftButton:NSLocalizedString(@"kDebtLableReset", @"重置") action:@selector(onResetCLicked)];
     [self showRightButton:NSLocalizedString(@"kDebtLableSelectAsset", @"选择资产") action:@selector(onSelectDebtAssetClicked)];
     
+    ThemeManager* theme = [ThemeManager sharedThemeManager];
+    
     //  背景颜色
-    self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
+    self.view.backgroundColor = theme.appBackColor;
     
     //  初始化默认 maintenance_collateral_ratio 值
     id parameters = [[ChainObjectManager sharedChainObjectManager] getDefaultParameters];
@@ -306,8 +309,8 @@ enum
     CGRect tfrect = [self makeTextFieldRectFull];
     _tfDebtValue = [self createTfWithRect:tfrect keyboard:UIKeyboardTypeDecimalPad placeholder:debtPlaceHolder];
     _tfCollateralValue = [self createTfWithRect:tfrect keyboard:UIKeyboardTypeDecimalPad placeholder:collateralPlaceHolder];
-    _tfDebtValue.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    _tfCollateralValue.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    _tfDebtValue.textColor = theme.textColorMain;
+    _tfCollateralValue.textColor = theme.textColorMain;
     
     _tfDebtValue.attributedPlaceholder = [ViewUtils placeholderAttrString:_tfDebtValue.placeholder];
     _tfCollateralValue.attributedPlaceholder = [ViewUtils placeholderAttrString:_tfCollateralValue.placeholder];
@@ -335,7 +338,7 @@ enum
     _currFeedPriceTitle.lineBreakMode = NSLineBreakByWordWrapping;
     _currFeedPriceTitle.numberOfLines = 1;
     _currFeedPriceTitle.backgroundColor = [UIColor clearColor];
-    _currFeedPriceTitle.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    _currFeedPriceTitle.textColor = theme.textColorMain;
     _currFeedPriceTitle.textAlignment = NSTextAlignmentCenter;
     _currFeedPriceTitle.font = [UIFont fontWithName:@"Helvetica" size:15.0f];
     _currFeedPriceTitle.text = [NSString stringWithFormat:@"%@ --%@/%@",
@@ -346,7 +349,7 @@ enum
     _triggerSettlementPriceTitle.lineBreakMode = NSLineBreakByWordWrapping;
     _triggerSettlementPriceTitle.numberOfLines = 1;
     _triggerSettlementPriceTitle.backgroundColor = [UIColor clearColor];
-    _triggerSettlementPriceTitle.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    _triggerSettlementPriceTitle.textColor = theme.textColorMain;
     _triggerSettlementPriceTitle.textAlignment = NSTextAlignmentCenter;
     _triggerSettlementPriceTitle.font = [UIFont fontWithName:@"Helvetica" size:15.0f];
     _triggerSettlementPriceTitle.text = [NSString stringWithFormat:@"%@ --%@/%@",
@@ -362,7 +365,7 @@ enum
     btnTipsFeed.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
     [btnTipsFeed addTarget:self action:@selector(onTipFeedPriceButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     btnTipsFeed.frame = CGRectMake(screenRect.size.width - btn_size.width - 15, (50 - btn_size.height) / 2, btn_size.width, btn_size.height);
-    btnTipsFeed.tintColor = [ThemeManager sharedThemeManager].textColorHighlight;
+    btnTipsFeed.tintColor = theme.textColorHighlight;
     [self.view addSubview:btnTipsFeed];
     
     CGFloat offset = 32 + 56;
@@ -370,7 +373,7 @@ enum
     //  UI-分隔线
     CGFloat fSepLineHeight = 0.5f;
     UIView* tmpSepLine = [[UIView alloc] initWithFrame:CGRectMake(0, offset-fSepLineHeight, screenRect.size.width, fSepLineHeight)];
-    tmpSepLine.backgroundColor = [ThemeManager sharedThemeManager].textColorGray;
+    tmpSepLine.backgroundColor = theme.textColorGray;
     [self.view addSubview:tmpSepLine];
     
     //  UI - 下面主表格区域
@@ -388,7 +391,7 @@ enum
     _cellLabelRate.backgroundColor = [UIColor clearColor];
     _cellLabelRate.accessoryType = UITableViewCellAccessoryNone;
     _cellLabelRate.selectionStyle = UITableViewCellSelectionStyleNone;
-    _cellLabelRate.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    _cellLabelRate.textLabel.textColor = theme.textColorMain;
     _cellLabelRate.hideBottomLine = YES;
     _cellLabelRate.hideTopLine = YES;
     _cellLabelRate.accessoryView = [self _genHelpButton:kVcSubRateValue];
@@ -398,7 +401,7 @@ enum
     _cellLabelTargetRate.backgroundColor = [UIColor clearColor];
     _cellLabelTargetRate.accessoryType = UITableViewCellAccessoryNone;
     _cellLabelTargetRate.selectionStyle = UITableViewCellSelectionStyleNone;
-    _cellLabelTargetRate.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    _cellLabelTargetRate.textLabel.textColor = theme.textColorMain;
     _cellLabelTargetRate.hideBottomLine = YES;
     _cellLabelTargetRate.hideTopLine = YES;
     _cellLabelTargetRate.accessoryView = [self _genHelpButton:kVcSubTargetRateValue];
@@ -428,7 +431,7 @@ enum
         _cellDebtAvailable.textLabel.text = [NSString stringWithFormat:@"%@ --%@", NSLocalizedString(@"kDebtLableAvailable", @"可用余额"), _debtPair.baseAsset[@"symbol"]];
     }
     _cellDebtAvailable.textLabel.font = [UIFont systemFontOfSize:12.0f];
-    _cellDebtAvailable.textLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+    _cellDebtAvailable.textLabel.textColor = theme.textColorNormal;
     _cellDebtAvailable.detailTextLabel.font = [UIFont systemFontOfSize:12.0f];
     
     //  UI - 抵押物可用余额
@@ -446,12 +449,12 @@ enum
         _cellCollAvailable.textLabel.text = [NSString stringWithFormat:@"%@ --%@", NSLocalizedString(@"kDebtLableAvailable", @"可用余额"), _debtPair.quoteAsset[@"symbol"]];
     }
     _cellCollAvailable.textLabel.font = [UIFont systemFontOfSize:12.0f];
-    _cellCollAvailable.textLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+    _cellCollAvailable.textLabel.textColor = theme.textColorNormal;
     _cellCollAvailable.detailTextLabel.font = [UIFont systemFontOfSize:12.0f];
     
     //  UI - 抵押率滑动条
-    _collRateSlider = [[UISlider alloc] initWithFrame:CGRectZero];
-    _collRateSlider.tintColor = [ThemeManager sharedThemeManager].textColorGray;
+    _collRateSlider = [[MySlider alloc] init];
+    _collRateSlider.tintColor = theme.textColorHighlight;
     _collRateSlider.tag = kVcSubRateSlider;
     _curve_ratio = [[CurveSlider alloc] initWithSlider:_collRateSlider max:400.0f mapping_min:0.0f mapping_max:6.0f];
     _curve_ratio.delegate = self;
@@ -460,8 +463,8 @@ enum
     [self _refreshUI_ratio:YES];
     
     //  UI - 目标抵押率滑动条
-    _collTargetRateSlider = [[UISlider alloc] initWithFrame:CGRectZero];
-    _collTargetRateSlider.tintColor = [ThemeManager sharedThemeManager].textColorGray;
+    _collTargetRateSlider = [[MySlider alloc] init];
+    _collTargetRateSlider.tintColor = theme.textColorHighlight;
     _collTargetRateSlider.tag = kVcSubTargetRateSlider;
     _curve_target_ratio = [[CurveSlider alloc] initWithSlider:_collTargetRateSlider max:400.0f mapping_min:0.0f mapping_max:4.0f];
     _curve_target_ratio.delegate = self;
@@ -469,15 +472,10 @@ enum
     //  初始化属性
     [self _refreshUI_target_ratio:nil reset_slider:YES];
     
-    //  点击取消键盘焦点
-    UITapGestureRecognizer* pTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTap:)];
-    pTap.cancelsTouchesInView = NO; //  IOS 5.0系列导致按钮没响应
-    [self.view addGestureRecognizer:pTap];
-}
-
--(void)onTap:(UITapGestureRecognizer*)pTap
-{
-    [self resignAllFirstResponder];
+    //  事件 - 空白处点击
+    [VcUtils addSpaceTapHandler:self body:^(id weak_self, UITapGestureRecognizer *tap) {
+        [weak_self resignAllFirstResponder];
+    }];
 }
 
 - (void)resignAllFirstResponder

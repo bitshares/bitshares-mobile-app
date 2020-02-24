@@ -977,11 +977,15 @@ enum
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    if (_balanceData){
-        return kVcMainTableMax;
-    }else{
-        //  未登录则没有当前委托信息
-        return kVcMainTableMax - 1;
+    if (tableView == _mainTableView) {
+        if (_balanceData){
+            return kVcMainTableMax;
+        }else{
+            //  未登录则没有当前委托信息
+            return kVcMainTableMax - 1;
+        }
+    } else {
+        return 1;
     }
 }
 

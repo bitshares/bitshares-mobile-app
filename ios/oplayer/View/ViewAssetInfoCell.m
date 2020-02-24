@@ -304,9 +304,9 @@
     if (_btnArray) {
         //  TODO:4.0 后续可扩展【更多】按钮
         NSMutableArray* actions = [NSMutableArray arrayWithObjects:@(ebaok_transfer), @(ebaok_trade), nil];
-        if (bIsSmart) {
+        if (bIsSmart || bIsPredictionMarket) {
             [actions addObject:@(ebaok_settle)];
-        } else if (!bIsPredictionMarket) {
+        } else {
             [actions addObject:@(ebaok_reserve)];
         }
         for (UIButton* btn in _btnArray) {

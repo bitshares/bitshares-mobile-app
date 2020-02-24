@@ -89,6 +89,7 @@
 - (ViewBlockLabel*)createCellLableButton:(NSString*)text;
 - (ViewBlockLabel*)createCellLableButtonCore:(NSString*)text isnextbutton:(BOOL)isnextbutton;
 - (void)refreshCellLabelColor:(ViewBlockLabel*)label;
+- (void)addLabelButtonToCell:(ViewBlockLabel*)label cell:(UITableViewCell*)cell leftEdge:(CGFloat)leftEdge width_factor:(CGFloat)width_factor;
 - (void)addLabelButtonToCell:(ViewBlockLabel*)label cell:(UITableViewCell*)cell leftEdge:(CGFloat)leftEdge;
 - (void)updateCellLabelButtonText:(ViewBlockLabel*)label text:(NSString*)text;
 

@@ -122,6 +122,10 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
                         [self makeToast:NSLocalizedString(@"kGPErrorRedeemInvalidPreimage", @"原像不正确。")];
                         return;
                     }
+                    if ([lowermsg rangeOfString:@"no method with"].location != NSNotFound) {
+                        [self makeToast:NSLocalizedString(@"kGPErrorApiNodeVersionTooLow", @"当前API节点版本太低。")];
+                        return;
+                    }
                     //  TODO:fowallet 提案等手续费不足等情况显示
                 }
             }
@@ -1835,10 +1839,6 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     
     unsigned long long i_base_amount = [[base objectForKey:@"amount"] unsignedLongLongValue];
     unsigned long long i_quote_amount = [[quote objectForKey:@"amount"] unsignedLongLongValue];
-    //  REMARK：价格失效（比如喂价过期等情况）
-    if (i_base_amount == 0 || i_quote_amount == 0){
-        return nil;
-    }
     
     id n_base = [NSDecimalNumber decimalNumberWithMantissa:i_base_amount exponent:-base_precision isNegative:NO];
     id n_quote = [NSDecimalNumber decimalNumberWithMantissa:i_quote_amount exponent:-quote_precision isNegative:NO];
@@ -1852,14 +1852,30 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
                                                                                       raiseOnUnderflow:NO
                                                                                    raiseOnDivideByZero:NO];
         if (invert){
+            //  REMARK：价格失效，分母不能为0，直接返回。（比如喂价过期等情况、预测清算等）
+            if (i_quote_amount == 0) {
+                return nil;
+            }
             return [n_base decimalNumberByDividingBy:n_quote withBehavior:handler];
         }else{
+            //  REMARK：价格失效，分母不能为0，直接返回。（比如喂价过期等情况、预测清算等）
+            if (i_base_amount == 0) {
+                return nil;
+            }
             return [n_quote decimalNumberByDividingBy:n_base withBehavior:handler];
         }
     }else{
         if (invert){
+            //  REMARK：价格失效，分母不能为0，直接返回。（比如喂价过期等情况、预测清算等）
+            if (i_quote_amount == 0) {
+                return nil;
+            }
             return [n_base decimalNumberByDividingBy:n_quote];
         }else{
+            //  REMARK：价格失效，分母不能为0，直接返回。（比如喂价过期等情况、预测清算等）
+            if (i_base_amount == 0) {
+                return nil;
+            }
             return [n_quote decimalNumberByDividingBy:n_base];
         }
     }
@@ -1957,6 +1973,20 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     [asset_formatter setLocale:[LangManager sharedLangManager].appLocale];
     [asset_formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [asset_formatter setMaximumFractionDigits:precision];
+    [asset_formatter setUsesGroupingSeparator:usesGroupingSeparator];
+    return [asset_formatter stringFromNumber:@(value)];
+}
+
+/*
+ *  (public) 格式化订单薄数字。
+ */
++ (NSString*)formatOrderBookValue:(double)value precision:(NSInteger)precision usesGroupingSeparator:(BOOL)usesGroupingSeparator
+{
+    NSNumberFormatter* asset_formatter = [[NSNumberFormatter alloc] init];
+    [asset_formatter setLocale:[LangManager sharedLangManager].appLocale];
+    [asset_formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [asset_formatter setMaximumFractionDigits:precision];
+    [asset_formatter setMinimumFractionDigits:precision];
     [asset_formatter setUsesGroupingSeparator:usesGroupingSeparator];
     return [asset_formatter stringFromNumber:@(value)];
 }

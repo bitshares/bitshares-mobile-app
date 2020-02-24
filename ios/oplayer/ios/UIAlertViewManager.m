@@ -143,6 +143,8 @@ static UIAlertViewManager *_sharedUIAlertViewManager = nil;
         }
 #endif  //  GRAPHENE_BITSHARES_TESTNET
         
+        textfield.colorClearButtonNormal = theme.textColorHighlight;
+        textfield.colorClearButtonHighlighted = theme.textColorHighlight;
         textfield.secureTextEntry = ispassword;
         textfield.textColor = theme.textColorMain;
         textfield.tintColor = theme.tintColor;

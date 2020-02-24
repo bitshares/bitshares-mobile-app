@@ -66,7 +66,7 @@
             [[ThemeManager sharedThemeManager].sellColor getRed:&red green:&green blue:&blue alpha:&alpha];
         }
         _bgDeepBar = [[UIView alloc] init];
-        _bgDeepBar.backgroundColor = [UIColor colorWithRed:red green:green blue:blue alpha:0.1f];   //  REMARK: 透明度
+        _bgDeepBar.backgroundColor = [UIColor colorWithRed:red green:green blue:blue alpha:0.15f];   //  REMARK: 透明度
         [self addSubview:_bgDeepBar];
         
         //  TODO:fowallet 这个是等宽字体，数字看着舒服点。。新版ios字体太难看。
@@ -174,8 +174,10 @@
         else
         {
             _lbID.text = [NSString stringWithFormat:@"%@", @(_row_id)];
-            _lbNum.text = [OrgUtils formatFloatValue:[[_item objectForKey:@"quote"] doubleValue] precision:self.numPrecision];
-            _lbPrice.text = [OrgUtils formatFloatValue:[[_item objectForKey:@"price"] doubleValue] precision:self.displayPrecision];
+            _lbNum.text = [OrgUtils formatOrderBookValue:[[_item objectForKey:@"quote"] doubleValue]
+                                               precision:self.numPrecision usesGroupingSeparator:NO];
+            _lbPrice.text = [OrgUtils formatOrderBookValue:[[_item objectForKey:@"price"] doubleValue]
+                                                 precision:self.displayPrecision usesGroupingSeparator:NO];
         }
     }
     //  _item:
