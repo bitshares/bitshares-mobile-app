@@ -68,6 +68,28 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
 
 #pragma mark- api
 
+/*
+ *  OP - 执行单个 operation 的交易。（可指定是否需要 owner 权限。）
+ */
+- (WsPromise*)runSingleTransaction:(NSDictionary*)opdata
+                            opcode:(EBitsharesOperations)opcode
+                fee_paying_account:(NSString*)fee_paying_account
+          require_owner_permission:(BOOL)require_owner_permission
+{
+    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
+    [tr add_operation:opcode opdata:opdata];
+    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:fee_paying_account
+                                                                  requireOwnerPermission:require_owner_permission]];
+    return [self process_transaction:tr];
+}
+
+- (WsPromise*)runSingleTransaction:(NSDictionary*)opdata
+                            opcode:(EBitsharesOperations)opcode
+                fee_paying_account:(NSString*)fee_paying_account
+{
+    return [self runSingleTransaction:opdata opcode:opcode fee_paying_account:fee_paying_account require_owner_permission:NO];
+}
+
 /**
  *  创建理事会成员 REMARK：需要终身会员权限。    TODO：未完成
  */
@@ -258,16 +280,16 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
  */
 - (WsPromise*)accountUpdate:(NSDictionary*)account_update_op_data
 {
-    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
-    [tr add_operation:ebo_account_update opdata:account_update_op_data];
     //  REMARK：修改 owner 需要 owner 权限。
     BOOL requireOwnerPermission = NO;
     if ([account_update_op_data objectForKey:@"owner"]) {
         requireOwnerPermission = YES;
     }
-    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[account_update_op_data objectForKey:@"account"]
-                                                                  requireOwnerPermission:requireOwnerPermission]];
-    return [self process_transaction:tr];
+    
+    return [self runSingleTransaction:account_update_op_data
+                               opcode:ebo_account_update
+                   fee_paying_account:[account_update_op_data objectForKey:@"account"]
+             require_owner_permission:requireOwnerPermission];
 }
 
 /**
@@ -275,10 +297,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
  */
 - (WsPromise*)accountUpgrade:(NSDictionary*)op_data
 {
-    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
-    [tr add_operation:ebo_account_upgrade opdata:op_data];
-    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[op_data objectForKey:@"account_to_upgrade"]]];
-    return [self process_transaction:tr];
+    return [self runSingleTransaction:op_data opcode:ebo_account_upgrade fee_paying_account:[op_data objectForKey:@"account_to_upgrade"]];
 }
 
 /**
@@ -286,10 +305,9 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
  */
 - (WsPromise*)callOrderUpdate:(NSDictionary*)callorder_update_op
 {
-    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
-    [tr add_operation:ebo_call_order_update opdata:callorder_update_op];
-    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[callorder_update_op objectForKey:@"funding_account"]]];
-    return [self process_transaction:tr];
+    return [self runSingleTransaction:callorder_update_op
+                               opcode:ebo_call_order_update
+                   fee_paying_account:[callorder_update_op objectForKey:@"funding_account"]];
 }
 
 /**
@@ -297,10 +315,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
  */
 - (WsPromise*)createLimitOrder:(NSDictionary*)limit_order_op
 {
-    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
-    [tr add_operation:ebo_limit_order_create opdata:limit_order_op];
-    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[limit_order_op objectForKey:@"seller"]]];
-    return [self process_transaction:tr];
+    return [self runSingleTransaction:limit_order_op opcode:ebo_limit_order_create fee_paying_account:[limit_order_op objectForKey:@"seller"]];
 }
 
 /**
@@ -321,10 +336,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
  */
 - (WsPromise*)vestingBalanceCreate:(NSDictionary*)opdata
 {
-    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
-    [tr add_operation:ebo_vesting_balance_create opdata:opdata];
-    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"creator"]]];
-    return [self process_transaction:tr];
+    return [self runSingleTransaction:opdata opcode:ebo_vesting_balance_create fee_paying_account:[opdata objectForKey:@"creator"]];
 }
 
 /**
@@ -332,10 +344,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
  */
 - (WsPromise*)vestingBalanceWithdraw:(NSDictionary*)opdata
 {
-    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
-    [tr add_operation:ebo_vesting_balance_withdraw opdata:opdata];
-    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"owner"]]];
-    return [self process_transaction:tr];
+    return [self runSingleTransaction:opdata opcode:ebo_vesting_balance_withdraw fee_paying_account:[opdata objectForKey:@"owner"]];
 }
 
 /**
@@ -463,10 +472,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
             op = [mutable_op copy];
         }
         
-        TransactionBuilder* tr = [[TransactionBuilder alloc] init];
-        [tr add_operation:ebo_proposal_create opdata:op];
-        [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:fee_paying_account_id]];
-        return [self process_transaction:tr];
+        return [self runSingleTransaction:op opcode:ebo_proposal_create fee_paying_account:fee_paying_account_id];
     }];
 }
 
@@ -520,10 +526,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
  */
 - (WsPromise*)assetCreate:(NSDictionary*)opdata
 {
-    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
-    [tr add_operation:ebo_asset_create opdata:opdata];
-    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"issuer"]]];
-    return [self process_transaction:tr];
+    return [self runSingleTransaction:opdata opcode:ebo_asset_create fee_paying_account:[opdata objectForKey:@"issuer"]];
 }
 
 /**
@@ -531,10 +534,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
  */
 - (WsPromise*)assetSettle:(NSDictionary*)opdata
 {
-    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
-    [tr add_operation:ebo_asset_settle opdata:opdata];
-    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"account"]]];
-    return [self process_transaction:tr];
+    return [self runSingleTransaction:opdata opcode:ebo_asset_settle fee_paying_account:[opdata objectForKey:@"account"]];
 }
 
 /**
@@ -544,10 +544,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
 {
     //  REMARK：HARDFORK_CORE_199_TIME 硬分叉之后 new_issuer 不可更新，需要更新调用单独的接口更新。
     assert(![opdata objectForKey:@"new_issuer"]);
-    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
-    [tr add_operation:ebo_asset_update opdata:opdata];
-    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"issuer"]]];
-    return [self process_transaction:tr];
+    return [self runSingleTransaction:opdata opcode:ebo_asset_update fee_paying_account:[opdata objectForKey:@"issuer"]];
 }
 
 /**
@@ -555,10 +552,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
  */
 - (WsPromise*)assetUpdateBitasset:(NSDictionary*)opdata
 {
-    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
-    [tr add_operation:ebo_asset_update_bitasset opdata:opdata];
-    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"issuer"]]];
-    return [self process_transaction:tr];
+    return [self runSingleTransaction:opdata opcode:ebo_asset_update_bitasset fee_paying_account:[opdata objectForKey:@"issuer"]];
 }
 
 /**
@@ -566,10 +560,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
  */
 - (WsPromise*)assetUpdateFeedProducers:(NSDictionary*)opdata
 {
-    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
-    [tr add_operation:ebo_asset_update_feed_producers opdata:opdata];
-    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"issuer"]]];
-    return [self process_transaction:tr];
+    return [self runSingleTransaction:opdata opcode:ebo_asset_update_feed_producers fee_paying_account:[opdata objectForKey:@"issuer"]];
 }
 
 /**
@@ -577,10 +568,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
  */
 - (WsPromise*)assetReserve:(NSDictionary*)opdata
 {
-    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
-    [tr add_operation:ebo_asset_reserve opdata:opdata];
-    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"payer"]]];
-    return [self process_transaction:tr];
+    return [self runSingleTransaction:opdata opcode:ebo_asset_reserve fee_paying_account:[opdata objectForKey:@"payer"]];
 }
 
 /**
@@ -588,10 +576,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
  */
 - (WsPromise*)assetIssue:(NSDictionary*)opdata
 {
-    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
-    [tr add_operation:ebo_asset_issue opdata:opdata];
-    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"issuer"]]];
-    return [self process_transaction:tr];
+    return [self runSingleTransaction:opdata opcode:ebo_asset_issue fee_paying_account:[opdata objectForKey:@"issuer"]];
 }
 
 /**
@@ -599,10 +584,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
  */
 - (WsPromise*)assetClaimPool:(NSDictionary*)opdata
 {
-    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
-    [tr add_operation:ebo_asset_claim_pool opdata:opdata];
-    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"issuer"]]];
-    return [self process_transaction:tr];
+    return [self runSingleTransaction:opdata opcode:ebo_asset_claim_pool fee_paying_account:[opdata objectForKey:@"issuer"]];
 }
 
 /**
@@ -611,11 +593,10 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
 - (WsPromise*)assetUpdateIssuer:(NSDictionary*)opdata
 {
     //  TODO:5.0 待测试
-    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
-    [tr add_operation:ebo_asset_update_issuer opdata:opdata];
-    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"issuer"]
-                                                                  requireOwnerPermission:YES]];
-    return [self process_transaction:tr];
+    return [self runSingleTransaction:opdata
+                               opcode:ebo_asset_update_issuer
+                   fee_paying_account:[opdata objectForKey:@"issuer"]
+             require_owner_permission:YES];
 }
 
 /**
@@ -623,10 +604,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
  */
 - (WsPromise*)htlcCreate:(NSDictionary*)opdata
 {
-    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
-    [tr add_operation:ebo_htlc_create opdata:opdata];
-    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"from"]]];
-    return [self process_transaction:tr];
+    return [self runSingleTransaction:opdata opcode:ebo_htlc_create fee_paying_account:[opdata objectForKey:@"from"]];
 }
 
 /**
@@ -634,10 +612,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
  */
 - (WsPromise*)htlcRedeem:(NSDictionary*)opdata
 {
-    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
-    [tr add_operation:ebo_htlc_redeem opdata:opdata];
-    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"redeemer"]]];
-    return [self process_transaction:tr];
+    return [self runSingleTransaction:opdata opcode:ebo_htlc_redeem fee_paying_account:[opdata objectForKey:@"redeemer"]];
 }
 
 /**
@@ -645,10 +620,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
  */
 - (WsPromise*)htlcExtend:(NSDictionary*)opdata
 {
-    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
-    [tr add_operation:ebo_htlc_extend opdata:opdata];
-    [tr addSignKeys:[[WalletManager sharedWalletManager] getSignKeysFromFeePayingAccount:[opdata objectForKey:@"update_issuer"]]];
-    return [self process_transaction:tr];
+    return [self runSingleTransaction:opdata opcode:ebo_htlc_extend fee_paying_account:[opdata objectForKey:@"update_issuer"]];
 }
 
 @end

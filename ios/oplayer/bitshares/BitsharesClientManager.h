@@ -18,6 +18,19 @@
 + (BitsharesClientManager*)sharedBitsharesClientManager;
 
 #pragma mark- api
+
+/*
+ *  OP - 执行单个 operation 的交易。（可指定是否需要 owner 权限。）
+ */
+- (WsPromise*)runSingleTransaction:(NSDictionary*)opdata
+                            opcode:(EBitsharesOperations)opcode
+                fee_paying_account:(NSString*)fee_paying_account
+          require_owner_permission:(BOOL)require_owner_permission;
+
+- (WsPromise*)runSingleTransaction:(NSDictionary*)opdata
+                            opcode:(EBitsharesOperations)opcode
+                fee_paying_account:(NSString*)fee_paying_account;
+
 /**
  *  创建理事会成员 TODO：未完成
  */
