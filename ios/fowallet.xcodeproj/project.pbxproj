@@ -122,6 +122,9 @@
 		3F3E5849218310E900F1DC24 /* iconFeedDetail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F3E5847218310E800F1DC24 /* iconFeedDetail@2x.png */; };
 		3F475CDF21945A12009DD5C1 /* VCScanNormalString.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F475CDE21945A12009DD5C1 /* VCScanNormalString.m */; };
 		3F475CE221946712009DD5C1 /* VCScanPrivateKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F475CE021946712009DD5C1 /* VCScanPrivateKey.m */; };
+		3F488D5F2400ECE6004A2F03 /* MySlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F488D5E2400ECE6004A2F03 /* MySlider.m */; };
+		3F488D602400ECE6004A2F03 /* MySlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F488D5E2400ECE6004A2F03 /* MySlider.m */; };
+		3F488D612400ECE6004A2F03 /* MySlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F488D5E2400ECE6004A2F03 /* MySlider.m */; };
 		3F4D9A562294E476000BFD82 /* FlurryEmpty.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4D9A532294E476000BFD82 /* FlurryEmpty.m */; };
 		3F4D9A572294E476000BFD82 /* FlurryEmpty.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4D9A532294E476000BFD82 /* FlurryEmpty.m */; };
 		3F4D9A582294E476000BFD82 /* libFlurry_9.3.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F4D9A552294E476000BFD82 /* libFlurry_9.3.1.a */; };
@@ -736,6 +739,9 @@
 		3F9A731521E729FE00DAF7A2 /* VCGatewayDeposit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9A731221E729FD00DAF7A2 /* VCGatewayDeposit.m */; };
 		3F9F2C3E2229051700D49165 /* MKlineIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9F2C3D2229051600D49165 /* MKlineIndex.m */; };
 		3F9F2C3F2229051700D49165 /* MKlineIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9F2C3D2229051600D49165 /* MKlineIndex.m */; };
+		3FA70FA423FCFAC7007ABD15 /* ViewBidAskCellVer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FA70FA323FCFAC7007ABD15 /* ViewBidAskCellVer.m */; };
+		3FA70FA523FCFAC7007ABD15 /* ViewBidAskCellVer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FA70FA323FCFAC7007ABD15 /* ViewBidAskCellVer.m */; };
+		3FA70FA623FCFAC7007ABD15 /* ViewBidAskCellVer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FA70FA323FCFAC7007ABD15 /* ViewBidAskCellVer.m */; };
 		3FA72B572340BC2500EE3DC9 /* iconEdit@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FA72B552340BC2400EE3DC9 /* iconEdit@2x.png */; };
 		3FA72B582340BC2500EE3DC9 /* iconEdit@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FA72B552340BC2400EE3DC9 /* iconEdit@2x.png */; };
 		3FA72B592340BC2500EE3DC9 /* iconEdit@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FA72B552340BC2400EE3DC9 /* iconEdit@2x.png */; };
@@ -1294,6 +1300,24 @@
 		3FC4D44C226F2EEB00787082 /* VCHtlcList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D44A226F2EEA00787082 /* VCHtlcList.m */; };
 		3FC4D44D226F2EEB00787082 /* VCHtlcList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D44A226F2EEA00787082 /* VCHtlcList.m */; };
 		3FCA2DC9219EC45900A5F4E9 /* VCProposalConfirm.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FCA2DC8219EC45900A5F4E9 /* VCProposalConfirm.m */; };
+		3FCB3D44240231FB00BA13A0 /* ViewFillOrderCellVer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FCB3D43240231FA00BA13A0 /* ViewFillOrderCellVer.m */; };
+		3FCB3D45240231FB00BA13A0 /* ViewFillOrderCellVer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FCB3D43240231FA00BA13A0 /* ViewFillOrderCellVer.m */; };
+		3FCB3D46240231FB00BA13A0 /* ViewFillOrderCellVer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FCB3D43240231FA00BA13A0 /* ViewFillOrderCellVer.m */; };
+		3FCB3D4924024D1300BA13A0 /* iconClear@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCB3D4724024D1300BA13A0 /* iconClear@2x.png */; };
+		3FCB3D4A24024D1300BA13A0 /* iconClear@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCB3D4724024D1300BA13A0 /* iconClear@2x.png */; };
+		3FCB3D4B24024D1300BA13A0 /* iconClear@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCB3D4724024D1300BA13A0 /* iconClear@2x.png */; };
+		3FCB3D4C24024D1300BA13A0 /* iconClear@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCB3D4824024D1300BA13A0 /* iconClear@3x.png */; };
+		3FCB3D4D24024D1300BA13A0 /* iconClear@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCB3D4824024D1300BA13A0 /* iconClear@3x.png */; };
+		3FCB3D4E24024D1300BA13A0 /* iconClear@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCB3D4824024D1300BA13A0 /* iconClear@3x.png */; };
+		3FCB3D5124024D7700BA13A0 /* iconSlider@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCB3D4F24024D7600BA13A0 /* iconSlider@3x.png */; };
+		3FCB3D5224024D7700BA13A0 /* iconSlider@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCB3D4F24024D7600BA13A0 /* iconSlider@3x.png */; };
+		3FCB3D5324024D7700BA13A0 /* iconSlider@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCB3D4F24024D7600BA13A0 /* iconSlider@3x.png */; };
+		3FCB3D5424024D7700BA13A0 /* iconSlider@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCB3D5024024D7600BA13A0 /* iconSlider@2x.png */; };
+		3FCB3D5524024D7700BA13A0 /* iconSlider@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCB3D5024024D7600BA13A0 /* iconSlider@2x.png */; };
+		3FCB3D5624024D7700BA13A0 /* iconSlider@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FCB3D5024024D7600BA13A0 /* iconSlider@2x.png */; };
+		3FCB3D592402A03D00BA13A0 /* ViewTitleValueCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FCB3D582402A03D00BA13A0 /* ViewTitleValueCell.m */; };
+		3FCB3D5A2402A03D00BA13A0 /* ViewTitleValueCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FCB3D582402A03D00BA13A0 /* ViewTitleValueCell.m */; };
+		3FCB3D5B2402A03D00BA13A0 /* ViewTitleValueCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FCB3D582402A03D00BA13A0 /* ViewTitleValueCell.m */; };
 		3FCC8B6D237A562D00F5664D /* OtcManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FCC8B6C237A562D00F5664D /* OtcManager.m */; };
 		3FCC8B6E237A562D00F5664D /* OtcManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FCC8B6C237A562D00F5664D /* OtcManager.m */; };
 		3FCC8B6F237A562D00F5664D /* OtcManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FCC8B6C237A562D00F5664D /* OtcManager.m */; };
@@ -1321,6 +1345,9 @@
 		3FD0AD5523C1FA9D0035018E /* VCAssetDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD0AD5423C1FA9D0035018E /* VCAssetDetails.m */; };
 		3FD0AD5623C1FA9D0035018E /* VCAssetDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD0AD5423C1FA9D0035018E /* VCAssetDetails.m */; };
 		3FD0AD5723C1FA9D0035018E /* VCAssetDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD0AD5423C1FA9D0035018E /* VCAssetDetails.m */; };
+		3FD351172400FC6C009F8D0A /* MyScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD351152400FC6B009F8D0A /* MyScrollView.m */; };
+		3FD351182400FC6C009F8D0A /* MyScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD351152400FC6B009F8D0A /* MyScrollView.m */; };
+		3FD351192400FC6C009F8D0A /* MyScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD351152400FC6B009F8D0A /* MyScrollView.m */; };
 		3FD3DD2E2316A579009760A0 /* VCScanAccountName.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD3DD2C2316A578009760A0 /* VCScanAccountName.m */; };
 		3FD3DD2F2316A579009760A0 /* VCScanAccountName.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD3DD2C2316A578009760A0 /* VCScanAccountName.m */; };
 		3FD3DD302316A579009760A0 /* VCScanAccountName.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD3DD2C2316A578009760A0 /* VCScanAccountName.m */; };
@@ -2026,6 +2053,8 @@
 		3F475CDE21945A12009DD5C1 /* VCScanNormalString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCScanNormalString.m; sourceTree = "<group>"; };
 		3F475CE021946712009DD5C1 /* VCScanPrivateKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCScanPrivateKey.m; sourceTree = "<group>"; };
 		3F475CE121946712009DD5C1 /* VCScanPrivateKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VCScanPrivateKey.h; sourceTree = "<group>"; };
+		3F488D5D2400ECE6004A2F03 /* MySlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MySlider.h; path = View/MySlider.h; sourceTree = "<group>"; };
+		3F488D5E2400ECE6004A2F03 /* MySlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MySlider.m; path = View/MySlider.m; sourceTree = "<group>"; };
 		3F4D9A512294E476000BFD82 /* Flurry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
 		3F4D9A522294E476000BFD82 /* FlurryConsent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlurryConsent.h; sourceTree = "<group>"; };
 		3F4D9A532294E476000BFD82 /* FlurryEmpty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlurryEmpty.m; sourceTree = "<group>"; };
@@ -2084,6 +2113,8 @@
 		3F9A731321E729FE00DAF7A2 /* VCGatewayDeposit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCGatewayDeposit.h; path = Controller/VCGatewayDeposit.h; sourceTree = "<group>"; };
 		3F9F2C3C2229051600D49165 /* MKlineIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKlineIndex.h; sourceTree = "<group>"; };
 		3F9F2C3D2229051600D49165 /* MKlineIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKlineIndex.m; sourceTree = "<group>"; };
+		3FA70FA223FCFAC7007ABD15 /* ViewBidAskCellVer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewBidAskCellVer.h; path = View/ViewBidAskCellVer.h; sourceTree = "<group>"; };
+		3FA70FA323FCFAC7007ABD15 /* ViewBidAskCellVer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewBidAskCellVer.m; path = View/ViewBidAskCellVer.m; sourceTree = "<group>"; };
 		3FA72B552340BC2400EE3DC9 /* iconEdit@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconEdit@2x.png"; path = "Images/iconEdit@2x.png"; sourceTree = "<group>"; };
 		3FA72B562340BC2500EE3DC9 /* iconEdit@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconEdit@3x.png"; path = "Images/iconEdit@3x.png"; sourceTree = "<group>"; };
 		3FADCF8923D69B4500043305 /* VCAssetCreateOrEdit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAssetCreateOrEdit.m; path = Controller/VCAssetCreateOrEdit.m; sourceTree = "<group>"; };
@@ -2126,6 +2157,14 @@
 		3FC4D44B226F2EEB00787082 /* VCHtlcList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCHtlcList.h; path = Controller/VCHtlcList.h; sourceTree = "<group>"; };
 		3FCA2DC7219EC45800A5F4E9 /* VCProposalConfirm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCProposalConfirm.h; path = Controller/VCProposalConfirm.h; sourceTree = "<group>"; };
 		3FCA2DC8219EC45900A5F4E9 /* VCProposalConfirm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCProposalConfirm.m; path = Controller/VCProposalConfirm.m; sourceTree = "<group>"; };
+		3FCB3D42240231FA00BA13A0 /* ViewFillOrderCellVer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewFillOrderCellVer.h; path = View/ViewFillOrderCellVer.h; sourceTree = "<group>"; };
+		3FCB3D43240231FA00BA13A0 /* ViewFillOrderCellVer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewFillOrderCellVer.m; path = View/ViewFillOrderCellVer.m; sourceTree = "<group>"; };
+		3FCB3D4724024D1300BA13A0 /* iconClear@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconClear@2x.png"; path = "Images/iconClear@2x.png"; sourceTree = "<group>"; };
+		3FCB3D4824024D1300BA13A0 /* iconClear@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconClear@3x.png"; path = "Images/iconClear@3x.png"; sourceTree = "<group>"; };
+		3FCB3D4F24024D7600BA13A0 /* iconSlider@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconSlider@3x.png"; path = "Images/iconSlider@3x.png"; sourceTree = "<group>"; };
+		3FCB3D5024024D7600BA13A0 /* iconSlider@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconSlider@2x.png"; path = "Images/iconSlider@2x.png"; sourceTree = "<group>"; };
+		3FCB3D572402A03D00BA13A0 /* ViewTitleValueCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewTitleValueCell.h; path = View/ViewTitleValueCell.h; sourceTree = "<group>"; };
+		3FCB3D582402A03D00BA13A0 /* ViewTitleValueCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewTitleValueCell.m; path = View/ViewTitleValueCell.m; sourceTree = "<group>"; };
 		3FCC8B6B237A562D00F5664D /* OtcManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OtcManager.h; path = ios/OtcManager.h; sourceTree = "<group>"; };
 		3FCC8B6C237A562D00F5664D /* OtcManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OtcManager.m; path = ios/OtcManager.m; sourceTree = "<group>"; };
 		3FCC8B70237A7C1E00F5664D /* iconPmBankCard@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconPmBankCard@2x.png"; path = "Images/iconPmBankCard@2x.png"; sourceTree = "<group>"; };
@@ -2138,6 +2177,8 @@
 		3FD0AD4F23C1A3F20035018E /* ViewAssetBasicInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewAssetBasicInfoCell.m; path = View/ViewAssetBasicInfoCell.m; sourceTree = "<group>"; };
 		3FD0AD5323C1FA9D0035018E /* VCAssetDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAssetDetails.h; path = Controller/VCAssetDetails.h; sourceTree = "<group>"; };
 		3FD0AD5423C1FA9D0035018E /* VCAssetDetails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAssetDetails.m; path = Controller/VCAssetDetails.m; sourceTree = "<group>"; };
+		3FD351152400FC6B009F8D0A /* MyScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MyScrollView.m; path = View/MyScrollView.m; sourceTree = "<group>"; };
+		3FD351162400FC6C009F8D0A /* MyScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MyScrollView.h; path = View/MyScrollView.h; sourceTree = "<group>"; };
 		3FD3DD2C2316A578009760A0 /* VCScanAccountName.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCScanAccountName.m; sourceTree = "<group>"; };
 		3FD3DD2D2316A579009760A0 /* VCScanAccountName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VCScanAccountName.h; sourceTree = "<group>"; };
 		3FD3DD312317B8FC009760A0 /* VCScanTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCScanTransfer.m; sourceTree = "<group>"; };
@@ -3192,6 +3233,12 @@
 		18FF069017E00C5C0088405E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				3FCB3D572402A03D00BA13A0 /* ViewTitleValueCell.h */,
+				3FCB3D582402A03D00BA13A0 /* ViewTitleValueCell.m */,
+				3FCB3D42240231FA00BA13A0 /* ViewFillOrderCellVer.h */,
+				3FCB3D43240231FA00BA13A0 /* ViewFillOrderCellVer.m */,
+				3FA70FA223FCFAC7007ABD15 /* ViewBidAskCellVer.h */,
+				3FA70FA323FCFAC7007ABD15 /* ViewBidAskCellVer.m */,
 				3F2B7A5523D2E819006B1359 /* ViewTextFieldAmountCell.h */,
 				3F2B7A5623D2E819006B1359 /* ViewTextFieldAmountCell.m */,
 				3FD0AD4E23C1A3F20035018E /* ViewAssetBasicInfoCell.h */,
@@ -3248,6 +3295,10 @@
 				3F0AE34321931F2400E4144C /* ViewWalletAccountInfoCell.m */,
 				B7F9DA75212BD76200185503 /* ViewFeedPriceDataCell.h */,
 				B7F9DA76212BD76200185503 /* ViewFeedPriceDataCell.m */,
+				3FD351162400FC6C009F8D0A /* MyScrollView.h */,
+				3FD351152400FC6B009F8D0A /* MyScrollView.m */,
+				3F488D5D2400ECE6004A2F03 /* MySlider.h */,
+				3F488D5E2400ECE6004A2F03 /* MySlider.m */,
 				3FE4E94722F698DC0056A44F /* MyTextView.h */,
 				3FE4E94822F698DC0056A44F /* MyTextView.m */,
 				B7F9DA70212A6A1300185503 /* MyLabel.h */,
@@ -3310,6 +3361,10 @@
 		18FF069417E00D870088405E /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				3FCB3D5024024D7600BA13A0 /* iconSlider@2x.png */,
+				3FCB3D4F24024D7600BA13A0 /* iconSlider@3x.png */,
+				3FCB3D4724024D1300BA13A0 /* iconClear@2x.png */,
+				3FCB3D4824024D1300BA13A0 /* iconClear@3x.png */,
 				3F023D9F23F14515006D11FA /* iconAssetMgr@2x.png */,
 				3F023D9E23F14514006D11FA /* iconAssetMgr@3x.png */,
 				3FF31CDF23A8D80600CD758D /* iconOtcMcAd@2x.png */,
@@ -4665,6 +4720,7 @@
 				3F676969230E9EC100E98C14 /* User Male@2x.png in Resources */,
 				3F67696A230E9EC100E98C14 /* iconSetting@2x.png in Resources */,
 				3F67696B230E9EC100E98C14 /* iconProposal@2x.png in Resources */,
+				3FCB3D4B24024D1300BA13A0 /* iconClear@2x.png in Resources */,
 				3F67696C230E9EC100E98C14 /* share_wechat_timeline@2x.png in Resources */,
 				3F67696D230E9EC100E98C14 /* Speech Bubble@2x.png in Resources */,
 				3F67696E230E9EC100E98C14 /* tabMarket@2x.png in Resources */,
@@ -4713,6 +4769,7 @@
 				3F676993230E9EC100E98C14 /* Arrow@2x.png in Resources */,
 				3F676994230E9EC100E98C14 /* Entering Geo Fence@2x.png in Resources */,
 				3F676995230E9EC100E98C14 /* iconAvatar@3x.png in Resources */,
+				3FCB3D5324024D7700BA13A0 /* iconSlider@3x.png in Resources */,
 				3FB038222398AA4200FC859C /* iconPhone@2x.png in Resources */,
 				3F676996230E9EC100E98C14 /* iconFeedDetail@2x.png in Resources */,
 				3F676997230E9EC100E98C14 /* Help@2x.png in Resources */,
@@ -4742,6 +4799,7 @@
 				3F6769AD230E9EC100E98C14 /* InfoPlist.strings in Resources */,
 				3F6769AE230E9EC100E98C14 /* Cancel-64@2x.png in Resources */,
 				3F6769AF230E9EC100E98C14 /* icon_2_3@2x.png in Resources */,
+				3FCB3D5624024D7700BA13A0 /* iconSlider@2x.png in Resources */,
 				3F6769B0230E9EC100E98C14 /* end@2x.png in Resources */,
 				3F6769B1230E9EC100E98C14 /* Plus@2x.png in Resources */,
 				3F6769B2230E9EC100E98C14 /* share_line.png in Resources */,
@@ -4803,6 +4861,7 @@
 				3FEA20E72398DF890097F1FF /* iconOtcQrcode@3x.png in Resources */,
 				3F6769DF230E9EC100E98C14 /* arrow right long bold@2x.png in Resources */,
 				3F6769E0230E9EC100E98C14 /* page_4@2x.png in Resources */,
+				3FCB3D4E24024D1300BA13A0 /* iconClear@3x.png in Resources */,
 				3FCC8B7E237A7C1F00F5664D /* iconPmBankCard@3x.png in Resources */,
 				3F6769E1230E9EC100E98C14 /* Car-50@2x.png in Resources */,
 				3F6769E2230E9EC100E98C14 /* avatarmask.png in Resources */,
@@ -4938,6 +4997,7 @@
 				3FB8F9E321CE66C200DA88E2 /* User Male@2x.png in Resources */,
 				3FB8F9E421CE66C200DA88E2 /* iconSetting@2x.png in Resources */,
 				3FEBEEF621DDBBE600C124CF /* iconProposal@2x.png in Resources */,
+				3FCB3D4A24024D1300BA13A0 /* iconClear@2x.png in Resources */,
 				3FB8F9E521CE66C200DA88E2 /* share_wechat_timeline@2x.png in Resources */,
 				3FB8F9E621CE66C200DA88E2 /* Speech Bubble@2x.png in Resources */,
 				3FB8F9E721CE66C200DA88E2 /* tabMarket@2x.png in Resources */,
@@ -4986,6 +5046,7 @@
 				3FB8FA0821CE66C200DA88E2 /* Arrow@2x.png in Resources */,
 				3FB8FA0921CE66C200DA88E2 /* Entering Geo Fence@2x.png in Resources */,
 				3FB8FA0A21CE66C200DA88E2 /* iconAvatar@3x.png in Resources */,
+				3FCB3D5224024D7700BA13A0 /* iconSlider@3x.png in Resources */,
 				3FB038212398AA4200FC859C /* iconPhone@2x.png in Resources */,
 				3FB8FA0B21CE66C200DA88E2 /* iconFeedDetail@2x.png in Resources */,
 				3FB8FA0C21CE66C200DA88E2 /* Help@2x.png in Resources */,
@@ -5015,6 +5076,7 @@
 				3F767B10224B7B310012822D /* InfoPlist.strings in Resources */,
 				3FB8FA2221CE66C200DA88E2 /* Cancel-64@2x.png in Resources */,
 				3FB8FA2321CE66C200DA88E2 /* icon_2_3@2x.png in Resources */,
+				3FCB3D5524024D7700BA13A0 /* iconSlider@2x.png in Resources */,
 				3FB8FA2421CE66C200DA88E2 /* end@2x.png in Resources */,
 				3FB8FA2521CE66C200DA88E2 /* Plus@2x.png in Resources */,
 				3FB8FA2621CE66C200DA88E2 /* share_line.png in Resources */,
@@ -5076,6 +5138,7 @@
 				3FEA20E62398DF890097F1FF /* iconOtcQrcode@3x.png in Resources */,
 				3FB8FA5321CE66C200DA88E2 /* arrow right long bold@2x.png in Resources */,
 				3FB8FA5421CE66C200DA88E2 /* page_4@2x.png in Resources */,
+				3FCB3D4D24024D1300BA13A0 /* iconClear@3x.png in Resources */,
 				3FCC8B7D237A7C1F00F5664D /* iconPmBankCard@3x.png in Resources */,
 				3FB8FA5521CE66C200DA88E2 /* Car-50@2x.png in Resources */,
 				3FB8FA5621CE66C200DA88E2 /* avatarmask.png in Resources */,
@@ -5257,6 +5320,7 @@
 				3FEA20EA23993B520097F1FF /* iconSwitch@3x.png in Resources */,
 				F55325B21C075D3200EC3F95 /* Help@2x.png in Resources */,
 				3FCC8B7C237A7C1F00F5664D /* iconPmBankCard@3x.png in Resources */,
+				3FCB3D4924024D1300BA13A0 /* iconClear@2x.png in Resources */,
 				F55325AA1C075D3200EC3F95 /* Edit User@2x.png in Resources */,
 				F565D8D91C19CFF000814662 /* pay_0@3x.png in Resources */,
 				3FB8F89521CCD10400DA88E2 /* Localizable.strings in Resources */,
@@ -5269,6 +5333,7 @@
 				F55325C91C075D3200EC3F95 /* User Groups@2x.png in Resources */,
 				F55325951C075D3200EC3F95 /* Approval@2x.png in Resources */,
 				B7973C3B20E205560052A5F5 /* tabMyself@2x.png in Resources */,
+				3FCB3D5424024D7700BA13A0 /* iconSlider@2x.png in Resources */,
 				B7973C6320E520100052A5F5 /* iconFav@3x.png in Resources */,
 				B786D51A20EB793500427C08 /* iconQuery@3x.png in Resources */,
 				F5BF57B91E307A0B00DEDE38 /* sns_comment@2x.png in Resources */,
@@ -5311,6 +5376,7 @@
 				3F0AE33B2192C97800E4144C /* iconGame@2x.png in Resources */,
 				3FF31CF523A8D80700CD758D /* iconOtcReceive@2x.png in Resources */,
 				3F7ED8E82276937D00082680 /* iconHtlcHashcode@3x.png in Resources */,
+				3FCB3D4C24024D1300BA13A0 /* iconClear@3x.png in Resources */,
 				F538707D1DC3508B00F56EAA /* useravatar@2x.png in Resources */,
 				B7A8E4F61DBDE30F00CFD9E8 /* abouticon@2x.png in Resources */,
 				F51D13F21C51115F00FBB748 /* tabUser_b@2x.png in Resources */,
@@ -5423,6 +5489,7 @@
 				3F6C35B521EE0AB1008E2903 /* iconDepositWithdraw@2x.png in Resources */,
 				3FF31CEF23A8D80700CD758D /* iconOtcMcAsset@2x.png in Resources */,
 				B7ED5E3A1D6BF6FD0043338B /* first2.png in Resources */,
+				3FCB3D5124024D7700BA13A0 /* iconSlider@3x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5564,6 +5631,7 @@
 				3F676808230E9EC100E98C14 /* Ppmd7Dec.c in Sources */,
 				3F676809230E9EC100E98C14 /* SCLSwitchView.m in Sources */,
 				3F67680A230E9EC100E98C14 /* VCUserCenter.m in Sources */,
+				3FCB3D46240231FB00BA13A0 /* ViewFillOrderCellVer.m in Sources */,
 				3F67680B230E9EC100E98C14 /* Delta.c in Sources */,
 				3F67680C230E9EC100E98C14 /* WjCryptLib_Md5.c in Sources */,
 				3F67680D230E9EC100E98C14 /* main.m in Sources */,
@@ -5634,6 +5702,7 @@
 				3F676840230E9EC100E98C14 /* GCDWebServerFileResponse.m in Sources */,
 				3F676841230E9EC100E98C14 /* TempManager.m in Sources */,
 				3F676842230E9EC100E98C14 /* AsyncTaskManager.m in Sources */,
+				3FD351192400FC6C009F8D0A /* MyScrollView.m in Sources */,
 				3F676843230E9EC100E98C14 /* VCFeedPriceDetail.m in Sources */,
 				3F676844230E9EC100E98C14 /* Threads.c in Sources */,
 				3F676845230E9EC100E98C14 /* varint.c in Sources */,
@@ -5703,6 +5772,7 @@
 				3F67687D230E9EC100E98C14 /* GrapheneConnection.m in Sources */,
 				3F67687E230E9EC100E98C14 /* SRIOConsumer.m in Sources */,
 				3F67687F230E9EC100E98C14 /* Alloc.c in Sources */,
+				3FA70FA623FCFAC7007ABD15 /* ViewBidAskCellVer.m in Sources */,
 				3F676880230E9EC100E98C14 /* ViewMemoKeyCell.m in Sources */,
 				3F676881230E9EC100E98C14 /* SCLAlertView.m in Sources */,
 				3F676882230E9EC100E98C14 /* UIView+Toast.m in Sources */,
@@ -5727,6 +5797,7 @@
 				3F676892230E9EC100E98C14 /* GCDWebServerResponse.m in Sources */,
 				3F009A06239FAA9A00A77E4A /* VCOtcMcPaymentMethods.m in Sources */,
 				3F676893230E9EC100E98C14 /* TransactionBuilder.m in Sources */,
+				3FCB3D5B2402A03D00BA13A0 /* ViewTitleValueCell.m in Sources */,
 				3F009A1A23A2099D00A77E4A /* VCOtcMcAssetTransfer.m in Sources */,
 				3F676894230E9EC100E98C14 /* VCLoginPrivateKeyMode.m in Sources */,
 				3F676895230E9EC100E98C14 /* VCBaseWebView.m in Sources */,
@@ -5882,6 +5953,7 @@
 				3F676916230E9EC100E98C14 /* IntervalManager.m in Sources */,
 				3F676917230E9EC100E98C14 /* AppCacheManager.m in Sources */,
 				3F676918230E9EC100E98C14 /* ThemeManager.m in Sources */,
+				3F488D612400ECE6004A2F03 /* MySlider.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5900,6 +5972,7 @@
 				3FB8F8A121CE66C200DA88E2 /* Ppmd7Dec.c in Sources */,
 				3FB8F8A221CE66C200DA88E2 /* SCLSwitchView.m in Sources */,
 				3FB8F8A321CE66C200DA88E2 /* VCUserCenter.m in Sources */,
+				3FCB3D45240231FB00BA13A0 /* ViewFillOrderCellVer.m in Sources */,
 				3FB8F8A421CE66C200DA88E2 /* Delta.c in Sources */,
 				3FB8F8A521CE66C200DA88E2 /* WjCryptLib_Md5.c in Sources */,
 				3FB8F8A621CE66C200DA88E2 /* main.m in Sources */,
@@ -5970,6 +6043,7 @@
 				3FB8F8D521CE66C200DA88E2 /* GCDWebServerFileResponse.m in Sources */,
 				3FB8F8D621CE66C200DA88E2 /* TempManager.m in Sources */,
 				3FB8F8D721CE66C200DA88E2 /* AsyncTaskManager.m in Sources */,
+				3FD351182400FC6C009F8D0A /* MyScrollView.m in Sources */,
 				3FB8F8D821CE66C200DA88E2 /* VCFeedPriceDetail.m in Sources */,
 				3FB8F8D921CE66C200DA88E2 /* Threads.c in Sources */,
 				3FB8F8DA21CE66C200DA88E2 /* varint.c in Sources */,
@@ -6039,6 +6113,7 @@
 				3FB8F90F21CE66C200DA88E2 /* GrapheneConnection.m in Sources */,
 				3FB8F91021CE66C200DA88E2 /* SRIOConsumer.m in Sources */,
 				3FB8F91121CE66C200DA88E2 /* Alloc.c in Sources */,
+				3FA70FA523FCFAC7007ABD15 /* ViewBidAskCellVer.m in Sources */,
 				3F6E4F2A227AC15E00FE3C72 /* ViewMemoKeyCell.m in Sources */,
 				3FB8F91221CE66C200DA88E2 /* SCLAlertView.m in Sources */,
 				3FB8F91321CE66C200DA88E2 /* UIView+Toast.m in Sources */,
@@ -6063,6 +6138,7 @@
 				3FB8F92021CE66C200DA88E2 /* GCDWebServerResponse.m in Sources */,
 				3F009A05239FAA9A00A77E4A /* VCOtcMcPaymentMethods.m in Sources */,
 				3FB8F92121CE66C200DA88E2 /* TransactionBuilder.m in Sources */,
+				3FCB3D5A2402A03D00BA13A0 /* ViewTitleValueCell.m in Sources */,
 				3F009A1923A2099D00A77E4A /* VCOtcMcAssetTransfer.m in Sources */,
 				3FB8F92221CE66C200DA88E2 /* VCLoginPrivateKeyMode.m in Sources */,
 				3FB8F92321CE66C200DA88E2 /* VCBaseWebView.m in Sources */,
@@ -6218,6 +6294,7 @@
 				3FB8F99321CE66C200DA88E2 /* IntervalManager.m in Sources */,
 				3FB8F99421CE66C200DA88E2 /* AppCacheManager.m in Sources */,
 				3FB8F99521CE66C200DA88E2 /* ThemeManager.m in Sources */,
+				3F488D602400ECE6004A2F03 /* MySlider.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6236,6 +6313,7 @@
 				B7BDAA9920B3C77500738F12 /* Ppmd7Dec.c in Sources */,
 				B782F0C41D6E94C600F61571 /* SCLSwitchView.m in Sources */,
 				B7F288841DC5EDCA00B93ED7 /* VCUserCenter.m in Sources */,
+				3FCB3D44240231FB00BA13A0 /* ViewFillOrderCellVer.m in Sources */,
 				B7BDAA8C20B3C77500738F12 /* Delta.c in Sources */,
 				B7BDA9A620B3A3D100738F12 /* WjCryptLib_Md5.c in Sources */,
 				ED3778E81654A8FA0016EC64 /* main.m in Sources */,
@@ -6306,6 +6384,7 @@
 				B741F0291C27A6A000F3803A /* TempManager.m in Sources */,
 				B7B1D9D21C154EB80059E71A /* AsyncTaskManager.m in Sources */,
 				3FB5BFB62181B5250009C346 /* VCFeedPriceDetail.m in Sources */,
+				3FD351172400FC6C009F8D0A /* MyScrollView.m in Sources */,
 				B7BDAA9D20B3C77500738F12 /* Threads.c in Sources */,
 				B7B8811420C51BB200DBCD45 /* varint.c in Sources */,
 				F531ECBD1D670895009328A4 /* AFURLRequestSerialization.m in Sources */,
@@ -6375,6 +6454,7 @@
 				B714093C20A31CC300003311 /* SRIOConsumer.m in Sources */,
 				B7BDAA8520B3C77500738F12 /* Alloc.c in Sources */,
 				3F6E4F29227AC15E00FE3C72 /* ViewMemoKeyCell.m in Sources */,
+				3FA70FA423FCFAC7007ABD15 /* ViewBidAskCellVer.m in Sources */,
 				B782F0C01D6E94C600F61571 /* SCLAlertView.m in Sources */,
 				F5A162841E0BCEBA0001C99C /* UIView+Toast.m in Sources */,
 				B7A1A245211D34A400333B00 /* ViewEmptyInfoCell.m in Sources */,
@@ -6399,6 +6479,7 @@
 				B79F1E2320B90730004A8B7F /* TransactionBuilder.m in Sources */,
 				3F009A04239FAA9A00A77E4A /* VCOtcMcPaymentMethods.m in Sources */,
 				B7272F4320F3148000B5CBA8 /* VCLoginPrivateKeyMode.m in Sources */,
+				3FCB3D592402A03D00BA13A0 /* ViewTitleValueCell.m in Sources */,
 				3F009A1823A2099D00A77E4A /* VCOtcMcAssetTransfer.m in Sources */,
 				B7B1E3321DBF3E1C000B9635 /* VCBaseWebView.m in Sources */,
 				3FB8FAA121CF361900DA88E2 /* VCConvertToWalletMode.m in Sources */,
@@ -6554,6 +6635,7 @@
 				B75EF4D31D599179003DE28A /* IntervalManager.m in Sources */,
 				ED1AB88C18781B3B007DC42C /* AppCacheManager.m in Sources */,
 				B7E7564C1C5CDAAE00DCCB6F /* ThemeManager.m in Sources */,
+				3F488D5F2400ECE6004A2F03 /* MySlider.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

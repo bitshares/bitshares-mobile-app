@@ -12,6 +12,42 @@
 #import "WalletManager.h"
 #import "OrgUtils.h"
 
+@interface UITapGestureRecognizer2Block()
+{
+    __weak VCBase* _self;
+    UITapGestureRecognizerBlockHandler _body;
+}
+
+@end
+
+@implementation UITapGestureRecognizer2Block
+
+- (void)dealloc
+{
+    _self = nil;
+    _body = nil;
+}
+
+- (instancetype)initWithWeakSelf:(id)weak_self body:(UITapGestureRecognizerBlockHandler)body
+{
+    self = [super init];
+    if (self) {
+        [self addTarget:self action:@selector(onTap:)];
+        _body = body;
+        _self = weak_self;
+    }
+    return self;
+}
+
+- (void)onTap:(UITapGestureRecognizer*)pTap
+{
+    if (_body) {
+        _body(_self, pTap);
+    }
+}
+
+@end
+
 @implementation VcUtils
 
 + (void)viewUserLimitOrders:(VCBase*)this account:(NSString*)account_id tradingPair:(TradingPair*)tradingPair
@@ -347,6 +383,16 @@
     } else {
         return asset_symbol02;
     }
+}
+
+/*
+ *  (public) 添加空白处点击事件
+ */
++ (void)addSpaceTapHandler:(VCBase*)vc body:(UITapGestureRecognizerBlockHandler)body
+{
+    UITapGestureRecognizer2Block* pTap = [[UITapGestureRecognizer2Block alloc] initWithWeakSelf:vc body:body];
+    pTap.cancelsTouchesInView = NO; //  IOS 5.0系列导致按钮没响应
+    [vc.view addGestureRecognizer:pTap];
 }
 
 @end

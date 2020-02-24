@@ -241,7 +241,6 @@
     [super viewWillLayoutSubviews];
     
     //  [兼容性] REMARK：iOS13 BUG，attributedPlaceholder 在 viewDidLoad 中设置无效，改到这里修改。
-    ThemeManager* theme = [ThemeManager sharedThemeManager];
     UITextField* tf = (UITextField*)[_searchController.searchBar findSubview:[UITextField class] resursion:YES];
     if (tf) {
         tf.attributedPlaceholder = [ViewUtils placeholderAttrString:_searchController.searchBar.placeholder];

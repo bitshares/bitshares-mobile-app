@@ -256,22 +256,27 @@ static NSInteger gen_notify_unique_id()
     label.layer.backgroundColor = backColor.CGColor;
 }
 
-- (void)addLabelButtonToCell:(ViewBlockLabel*)label cell:(UITableViewCell*)cell leftEdge:(CGFloat)leftEdge
+- (void)addLabelButtonToCell:(ViewBlockLabel*)label cell:(UITableViewCell*)cell leftEdge:(CGFloat)leftEdge width_factor:(CGFloat)width_factor
 {
     if (label.superview)
     {
         [label removeFromSuperview];
     }
     
-    CGSize limitSize = CGSizeMake(self.view.bounds.size.width, cell.bounds.size.height);
+    CGSize limitSize = CGSizeMake(self.view.bounds.size.width * width_factor, cell.bounds.size.height);
     
-    CGFloat w = self.view.bounds.size.width - leftEdge * 2;
+    CGFloat w = limitSize.width - leftEdge * 2;
     CGFloat h = 38; //  REMARK：主要按钮高度
     
     label.frame = CGRectMake((limitSize.width - w) / 2.0f, (limitSize.height - h) / 2.0f, w, h);
     cell.accessibilityTraits = UIAccessibilityTraitButton;
     
     [cell.contentView addSubview:label];
+}
+
+- (void)addLabelButtonToCell:(ViewBlockLabel*)label cell:(UITableViewCell*)cell leftEdge:(CGFloat)leftEdge
+{
+    [self addLabelButtonToCell:label cell:cell leftEdge:leftEdge width_factor:1.0f];
 }
 
 - (void)updateCellLabelButtonText:(ViewBlockLabel*)label text:(NSString*)text
@@ -286,8 +291,7 @@ static NSInteger gen_notify_unique_id()
     label.text = text;
     
     CGSize limitSize = CGSizeMake(self.view.bounds.size.width, cell.bounds.size.height);
-    
-    CGSize textSize = [label.text sizeWithFont:label.font constrainedToSize:limitSize];
+    CGSize textSize = [ViewUtils auxSizeWithLabel:label maxsize:limitSize];
     
     CGFloat w = textSize.width + 8;
     CGFloat h = textSize.height + 10;

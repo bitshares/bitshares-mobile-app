@@ -8,13 +8,14 @@
 
 #import "VCSlideControllerBase.h"
 #import "OrgUtils.h"
+#import "MyScrollView.h"
 #import "ThemeManager.h"
 
 @interface VCSlideControllerBase ()
 {
     NSMutableArray*             _slideButtonArrays;
     
-    UIScrollView*               _mainScrollView;
+    MyScrollView*               _mainScrollView;
     UIView*                     _navView;
     UILabel*                    _sliderLabel;
     
@@ -118,7 +119,7 @@
     CGFloat kScreenWidth = screenRect.size.width;
     CGFloat kScreenHeight = screenRect.size.height;
     
-    _mainScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 32, kScreenWidth, kScreenHeight-[self heightForTabBar])];
+    _mainScrollView = [[MyScrollView alloc]initWithFrame:CGRectMake(0, 32, kScreenWidth, kScreenHeight-[self heightForTabBar])];
     _mainScrollView.delegate = self;
     _mainScrollView.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     _mainScrollView.pagingEnabled = YES;

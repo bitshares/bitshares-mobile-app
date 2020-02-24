@@ -1517,6 +1517,7 @@
 "kGPErrorAccountNotExist" = "Account does not exist.";
 "kGPErrorInsufficientBalance" = "Insufficient balance.";
 "kGPErrorRedeemInvalidPreimage" = "The preimage is incorrect.";
+"kGPErrorApiNodeVersionTooLow" = "The current API node version is too low.";
 
 /* 特殊用途字符串KEY */
 "serverWssLangKey" = "en";

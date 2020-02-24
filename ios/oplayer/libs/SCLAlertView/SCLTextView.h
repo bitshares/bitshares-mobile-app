@@ -12,7 +12,9 @@
 #import <UIKit/UIKit.h>
 #endif
 
-@interface SCLTextView : UITextField
+#import "MyTextField.h"
+
+@interface SCLTextView : MyTextField
 
 @property (nonatomic, assign) NSInteger iDecimalPrecision;  //  小数精度：0 - 整数键盘 >0 - 小数键盘(该参数指定小数位数) <0 - 普通键盘
 

@@ -7,9 +7,39 @@
 //
 
 #import "ViewUtils.h"
+#import "UITableViewCellBase.h"
+
+#import "VerticalAlignmentLabel.h"
+
 #import "ThemeManager.h"
 
 @implementation ViewUtils
+
+/*
+ *  (public) 辅助方法 - 生成 TableView 用的 CELL 视图对象。
+ */
++ (UITableViewCellBase*)auxGenTableViewCellLine:(NSString*)title_string
+{
+    return [self auxGenTableViewCellLine:title_string value:nil];
+}
+
++ (UITableViewCellBase*)auxGenTableViewCellLine:(NSString*)title_string value:(NSString*)value_string
+{
+    ThemeManager* theme = [ThemeManager sharedThemeManager];
+    
+    UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+    cell.backgroundColor = [UIColor clearColor];
+    cell.hideBottomLine = YES;
+    cell.accessoryType = UITableViewCellAccessoryNone;
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    cell.textLabel.text = title_string;
+    cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
+    cell.textLabel.textColor = theme.textColorNormal;
+    cell.detailTextLabel.text = value_string ?: @"";
+    cell.detailTextLabel.font = [UIFont systemFontOfSize:13.0f];
+    cell.detailTextLabel.textColor = theme.textColorMain;
+    return cell;
+}
 
 /*
  *  (public) 辅助方法 - 生成Label。
@@ -26,6 +56,19 @@
     if (superview) {
         [superview addSubview:label];
     }
+    return label;
+}
+
++ (VerticalAlignmentLabel*)auxGenVerLabel:(UIFont*)font
+{
+    VerticalAlignmentLabel* label = [[VerticalAlignmentLabel alloc] initWithFrame:CGRectZero];
+    label.lineBreakMode = NSLineBreakByTruncatingTail;
+    label.numberOfLines = 1;
+    label.backgroundColor = [UIColor clearColor];
+    label.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    label.font = font;
+    label.text = @"";
+    label.verticalAlignment = VerticalAlignmentMiddle;
     return label;
 }
 

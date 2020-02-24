@@ -287,7 +287,7 @@
                 {
                     if ([ModelUtils assetHasGlobalSettle:bitasset_data]) {
                         //  TODO:5.0 lang
-                        [OrgUtils makeToast:@"资产已经全局清算了，不可更新智能币。"];
+                        [OrgUtils makeToast:@"该资产已经触发全局清算，不可更新智能币。"];
                         return;
                     }
                     
@@ -330,7 +330,7 @@
                 {
                     if ([ModelUtils assetHasGlobalSettle:bitasset_data]) {
                         //  TODO:5.0 lang
-                        [OrgUtils makeToast:@"资产已经全局清算了，不可重复执行全局清算操作。"];
+                        [OrgUtils makeToast:@"该资产已经触发全局清算，不可重复执行全局清算操作。"];
                         return;
                     }
                 }

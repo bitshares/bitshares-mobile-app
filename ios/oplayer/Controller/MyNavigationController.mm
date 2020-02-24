@@ -26,6 +26,9 @@
 {
     [super viewDidLoad];
     _tempEnableDragBack = NO;
+    _disablePopGesture = NO;
+//    self.interactivePopGestureRecognizer.delegate = self;
+//    [self.interactivePopGestureRecognizer requireGestureRecognizerToFail:nil];
 }
 
 /**
@@ -72,12 +75,15 @@
 
 #pragma mark- drag back control
 
+/*
+ *  (public) 启用/禁用 拖拽返回上一个界面。
+ */
 - (void)tempEnableDragBack
 {
     if (!_tempEnableDragBack)
     {
         _tempEnableDragBack = YES;
-        self.interactivePopGestureRecognizer.enabled = _tempEnableDragBack;
+        self.interactivePopGestureRecognizer.enabled = _tempEnableDragBack && !_disablePopGesture;
     }
 }
 
@@ -86,8 +92,14 @@
     if (_tempEnableDragBack)
     {
         _tempEnableDragBack = NO;
-        self.interactivePopGestureRecognizer.enabled = _tempEnableDragBack;
+        self.interactivePopGestureRecognizer.enabled = _tempEnableDragBack && !_disablePopGesture;
     }
+}
+
+- (void)setDisablePopGesture:(BOOL)value
+{
+    _disablePopGesture = value;
+    self.interactivePopGestureRecognizer.enabled = _tempEnableDragBack && !_disablePopGesture;
 }
 
 #pragma mark- switch theme
@@ -107,5 +119,14 @@
         [vc switchLanguage];
     }
 }
+
+//-(BOOL)gestureRecognizer:(UIGestureRecognizer*)gestureRecognizer shouldReceiveTouch:(UITouch*)touch {
+//
+////    if ([touch.view isKindOfClass:[UISlider class]]) {
+////        return NO;
+////    }
+//
+//    return YES;
+//}
 
 @end
