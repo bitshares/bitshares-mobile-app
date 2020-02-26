@@ -1666,14 +1666,17 @@ enum
     self.navigationItem.leftBarButtonItem.title = NSLocalizedString(@"kDebtLableReset", @"重置");
     self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"kDebtLableSelectAsset", @"选择资产");
     
-    if (_tfDebtValue && [_tfDebtValue.rightView isKindOfClass:[UIButton class]]){
-        UIButton* btn = (UIButton*)_tfDebtValue.rightView;
-        [btn setTitle:NSLocalizedString(@"kDebtLablePayMaxDebt", @"还款") forState:UIControlStateNormal];
+    _cellDebtAvailable.textLabel.text = NSLocalizedString(@"kDebtLabelCellTitleDebtValue", @"借款金额");
+    _cellCollAvailable.textLabel.text = NSLocalizedString(@"kDebtLabelCellTitleCollAmount", @"抵押物");
+    
+    if (_tfDebtValue && [_tfDebtValue.rightView isKindOfClass:[TailerViewAssetAndButtons class]]) {
+        TailerViewAssetAndButtons* debtTailer = (TailerViewAssetAndButtons*)_tfDebtValue.rightView;
+        [debtTailer drawButtonNames:@[NSLocalizedString(@"kDebtLablePayMaxDebt", @"还款")]];
     }
     
-    if (_tfCollateralValue.rightView && [_tfCollateralValue.rightView isKindOfClass:[UIButton class]]){
-        UIButton* btn = (UIButton*)_tfCollateralValue.rightView;
-        [btn setTitle:NSLocalizedString(@"kDebtLableUseMax", @"全部") forState:UIControlStateNormal];
+    if (_tfCollateralValue && [_tfCollateralValue.rightView isKindOfClass:[TailerViewAssetAndButtons class]]) {
+        TailerViewAssetAndButtons* collTailer = (TailerViewAssetAndButtons*)_tfCollateralValue.rightView;
+        [collTailer drawButtonNames:@[NSLocalizedString(@"kDebtLableUseMax", @"全部")]];
     }
     
     _tfDebtValue.attributedPlaceholder = [ViewUtils placeholderAttrString:NSLocalizedString(@"kDebtTipInputDebtValue", @"请输入借款金额")];
