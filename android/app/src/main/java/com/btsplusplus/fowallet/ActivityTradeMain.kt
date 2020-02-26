@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Message
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
+import android.util.DisplayMetrics
 import bitshares.*
 import com.btsplusplus.fowallet.kline.TradingPair
 import com.fowallet.walletcore.bts.ChainObjectManager
@@ -84,6 +85,9 @@ class ActivityTradeMain : BtsppActivity() {
             })
             tab.addTab(tab.newTab().apply {
                 text = resources.getString(R.string.kLabelTitleSell)
+            })
+            tab.addTab(tab.newTab().apply {
+                text = "当前委托"
             })
             if (_tradingPair._isCoreMarket) {
                 tab.addTab(tab.newTab().apply {
@@ -301,12 +305,16 @@ class ActivityTradeMain : BtsppActivity() {
     }
 
     private fun setFragments() {
-        fragmens.add(FragmentTradeMainPage().initialize(jsonArrayfrom(true, _tradingPair)))
-        fragmens.add(FragmentTradeMainPage().initialize(jsonArrayfrom(false, _tradingPair)))
+        fragmens.add(FragmentTradeBuyOrSell().initialize(jsonArrayfrom(true, _tradingPair)))
+        fragmens.add(FragmentTradeBuyOrSell().initialize(jsonArrayfrom(false, _tradingPair)))
+
+        fragmens.add(FragmentTradeDelegate())
+
         if (_tradingPair._isCoreMarket) {
             fragmens.add(FragmentOrderHistory().initialize(JSONObject().apply {
                 put("isSettlementsOrder", true)
             }))
         }
     }
+
 }

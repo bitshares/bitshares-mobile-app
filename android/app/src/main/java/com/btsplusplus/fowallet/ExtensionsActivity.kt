@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
+import android.util.DisplayMetrics
 import android.view.View
 import android.view.animation.OvershootInterpolator
 import android.view.inputmethod.InputMethodManager
@@ -617,4 +618,3 @@ fun AppCompatActivity.setTabListener(tablayout_id: Int, view_pager_id: Int, tab_
         }
     })
 }
-
