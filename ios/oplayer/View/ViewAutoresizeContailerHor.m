@@ -126,4 +126,20 @@
     [self resizeFrame];
 }
 
+- (void)drawButtonNames:(NSArray*)button_names
+{
+    NSInteger idx = 0;
+    for (UIView* view in self.subviews) {
+        if ([view isKindOfClass:[UIButton class]]) {
+            if (idx >= [button_names count]) {
+                break;
+            }
+            UIButton* btn = (UIButton*)view;
+            [btn setTitle:[button_names objectAtIndex:idx] forState:UIControlStateNormal];
+            ++idx;
+        }
+    }
+    [self resizeFrame];
+}
+
 @end

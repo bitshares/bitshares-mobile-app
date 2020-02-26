@@ -22,6 +22,7 @@
 - (id)initWithHeight:(CGFloat)fHeight asset_name:(NSString*)asset_name button_names:(NSArray*)button_names target:(id)target action:(SEL)action;
 
 - (void)drawAssetName:(NSString*)asset_name;
+- (void)drawButtonNames:(NSArray*)button_names;
 
 @property (nonatomic, strong) UILabel* lbAssetName;
 
