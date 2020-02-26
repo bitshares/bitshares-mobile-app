@@ -28,15 +28,19 @@
 "kDebtLableSelectAsset" = "Select asset";
 "kDebtLableFeedPrice" = "Feed price";
 "kDebtLableCallPrice" = "Call price";
-"kDebtLablePayMaxDebt" = "Pay Max Debt";
-"kDebtLableUseMax" = "Use Max";
+"kDebtLablePayMaxDebt" = "Pay Debt";
+"kDebtLableUseMax" = "All";
 "kDebtLableAvailable" = "Available";
 "kDebtLableRatio" = "Ratio";
 "kDebtLableUpdatePosition" = "Update position";
 "kDebtLableLogin" = "Login";
+"kDebtLabelCellTitleDebtValue" = "Debt";
+"kDebtLabelCellTitleCollAmount" = "Margin";
 "kDebtTipSelectDebtAsset" = "Please select the asset to borrow";
 "kDebtTipInputDebtValue" = "Please input debt value";
 "kDebtTipInputCollAmount" = "Please input collateral amount";
+"kDebtTipPleaseInputDebtValueFirst" = "Please enter the debt value first.";
+"kDebtTipPleaseAdjustRatioFirst" = "Please adjust the ratio first.";
 "kDebtTipTargetRatioNotSet" = "Target ratio not set";
 "kDebtTipTargetRatio" = "Target ratio";
 "kDebtTipTitleFeedAndCallPrice" = "Feed & Call price";
@@ -48,7 +52,7 @@
 "kDebtTipRatioTooLow" = "The ratio is lower than %@ and you cannot borrow more.";
 "kDebtTipTxUpdatePositionFullOK" = "Update position successfully.";
 "kDebtTipTxUpdatePositionOK" = "Update position successfully, but the refresh failed. Please try again later.";
-"kDebtWarmTips" = "[Tips]\n When the feed price drops to the call price, the system will automatically sell your collateral assets for debt repayment. Please pay attention to adjusting the ratio to control the risk.";
+"kDebtWarmTips" = "[Tips]\n1. When the feed price drops to the call price, the system will automatically sell your collateral assets for debt repayment. Please pay attention to adjusting the ratio control risks. \n2. When the debt field is locked, the ratio will change with the collateral. \n3. When the ratio field is locked, the debt will change with the collateral.";
 
 /* 服务界面 */
 "kServicesCellLabelQrScan" = "Scan QR code";
