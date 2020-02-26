@@ -28,15 +28,19 @@
 "kDebtLableSelectAsset" = "选择资产";
 "kDebtLableFeedPrice" = "当前喂价";
 "kDebtLableCallPrice" = "强平价格";
-"kDebtLablePayMaxDebt" = "最大还款";
-"kDebtLableUseMax" = "全部抵押";
+"kDebtLablePayMaxDebt" = "还款";
+"kDebtLableUseMax" = "全部";
 "kDebtLableAvailable" = "可用余额";
 "kDebtLableRatio" = "抵押率";
 "kDebtLableUpdatePosition" = "调整债仓";
 "kDebtLableLogin" = "登录";
+"kDebtLabelCellTitleDebtValue" = "借款金额";
+"kDebtLabelCellTitleCollAmount" = "抵押物";
 "kDebtTipSelectDebtAsset" = "请选择要借入的资产";
 "kDebtTipInputDebtValue" = "请输入借款金额";
 "kDebtTipInputCollAmount" = "请输入抵押物数量";
+"kDebtTipPleaseInputDebtValueFirst" = "请先输入借款金额。";
+"kDebtTipPleaseAdjustRatioFirst" = "请先调整抵押率。";
 "kDebtTipTargetRatioNotSet" = "目标抵押率 未设置";
 "kDebtTipTargetRatio" = "目标抵押率";
 "kDebtTipTitleFeedAndCallPrice" = "喂价和强平触发价";
@@ -48,7 +52,7 @@
 "kDebtTipRatioTooLow" = "抵押率低于 %@，不能追加借贷。";
 "kDebtTipTxUpdatePositionFullOK" = "债仓调整完毕。";
 "kDebtTipTxUpdatePositionOK" = "债仓调整完毕，但刷新界面数据失败，请稍后再试。";
-"kDebtWarmTips" = "【温馨提示】\n当喂价下降到强平触发价时，系统将会自动出售您的抵押资产用于归还借款。请注意调整抵押率控制风险。";
+"kDebtWarmTips" = "【温馨提示】\n1、当喂价下降到强平触发价时，系统将会自动出售您的抵押资产用于归还借款。请注意调整抵押率控制风险。\n2、当锁定借款金额时，抵押率会随抵押物数量变化而变化。\n3、当锁定抵押率时，借款金额会随抵押物数量变化而变化。";
 
 /* 服务界面 */
 "kServicesCellLabelQrScan" = "扫一扫";

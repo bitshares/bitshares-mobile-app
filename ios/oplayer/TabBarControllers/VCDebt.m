@@ -13,6 +13,7 @@
 #import "VCCallOrderRanking.h"
 #import "VCBtsaiWebView.h"
 #import "ViewTipsInfoCell.h"
+#import "ViewAutoresizeContailerHor.h"
 
 #import "MySlider.h"
 #import "TradingPair.h"
@@ -60,6 +61,7 @@ enum
     BOOL                    _bReadyToUpdateUserData;    //  准备更新用户数据（每次切换 tab 的时候考虑更新）
     BOOL                    _bLoginedOnDisappear;       //  记录界面消失事件触发时帐号是否已经登录。
     
+    BOOL                    _bLockDebt;                 //  是否锁定负债字段。
     MyTextField*            _tfDebtValue;
     MyTextField*            _tfCollateralValue;
     
@@ -136,22 +138,11 @@ enum
     return self;
 }
 
-- (UIButton*)genButtonForTailer:(NSString*)percent_name tag:(NSInteger)tag frame:(CGRect)frame
-{
-    UIButton* btn = [UIButton buttonWithType:UIButtonTypeSystem];
-    btn.titleLabel.font = [UIFont systemFontOfSize:13];
-    [btn setTitle:percent_name forState:UIControlStateNormal];
-    [btn setTitleColor:[ThemeManager sharedThemeManager].textColorHighlight forState:UIControlStateNormal];
-    btn.userInteractionEnabled = YES;
-    [btn addTarget:self action:@selector(onTailerButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-    btn.frame = frame;
-    btn.tag = tag;
-    btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
-    return btn;
-}
-
 - (void)onResetCLicked
 {
+    //  重置 - 锁定状态
+    [self setNewLockStatus:YES];
+    
     //  重置 - 借款数量、抵押数量、抵押率、目标抵押率
     id debt_callorder = [self _getCallOrder];
     if (debt_callorder){
@@ -162,7 +153,7 @@ enum
         _tfDebtValue.text = [OrgUtils formatFloatValue:n_debt usesGroupingSeparator:NO];
         _tfCollateralValue.text = [OrgUtils formatFloatValue:n_coll usesGroupingSeparator:NO];
         
-        //  计算抵押率
+        //  计算抵押率（这里有债仓，debt不为0。）
         if (_nCurrFeedPrice){
             _nCurrMortgageRate = [self _calcCollRate:n_debt coll:n_coll percent_result:NO];
         }else{
@@ -200,26 +191,26 @@ enum
 
 - (void)onSelectDebtAssetClicked
 {
-//    VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:enstAssetSmart callback:^(id asset_info) {
-//        if (asset_info){
-//            //            NSString* new_id = [asset_info objectForKey:@"id"];
-//            //            NSString* old_id = [_curr_asset objectForKey:@"id"];
-//            //            if (![new_id isEqualToString:old_id]) {
-//            //                _curr_asset = asset_info;
-//            //                //  切换资产后重新输入
-//            //                _nCurrBalance = [ModelUtils findAssetBalance:_full_account_data asset:_curr_asset];
-//            //                [_tf_amount clearInputTextValue];
-//            //                [_tf_amount drawUI_newTailer:[_curr_asset objectForKey:@"symbol"]];
-//            //                [self _drawUI_Balance:NO];
-//            //                [_mainTableView reloadData];
-//            //            }
-//            [self processSelectNewDebtAsset:asset_info];
-//        }
-//    }];
-//    //    vc.title = @"资产查询";//TODO:4.0 lang
-//    [self pushViewController:vc
-//                     vctitle:@"搜索资产"
-//                   backtitle:kVcDefaultBackTitleName];
+    //    VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:enstAssetSmart callback:^(id asset_info) {
+    //        if (asset_info){
+    //            //            NSString* new_id = [asset_info objectForKey:@"id"];
+    //            //            NSString* old_id = [_curr_asset objectForKey:@"id"];
+    //            //            if (![new_id isEqualToString:old_id]) {
+    //            //                _curr_asset = asset_info;
+    //            //                //  切换资产后重新输入
+    //            //                _nCurrBalance = [ModelUtils findAssetBalance:_full_account_data asset:_curr_asset];
+    //            //                [_tf_amount clearInputTextValue];
+    //            //                [_tf_amount drawUI_newTailer:[_curr_asset objectForKey:@"symbol"]];
+    //            //                [self _drawUI_Balance:NO];
+    //            //                [_mainTableView reloadData];
+    //            //            }
+    //            [self processSelectNewDebtAsset:asset_info];
+    //        }
+    //    }];
+    //    //    vc.title = @"资产查询";//TODO:4.0 lang
+    //    [self pushViewController:vc
+    //                     vctitle:@"搜索资产"
+    //                   backtitle:kVcDefaultBackTitleName];
     
     //  TODO:5.0 原来的逻辑
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
@@ -227,7 +218,7 @@ enum
         return [chainMgr getAssetBySymbol:symbol];
     })];
     [VcUtils showPicker:self selectAsset:asset_list title:NSLocalizedString(@"kDebtTipSelectDebtAsset", @"请选择要借入的资产")
-                     callback:^(id selectItem) {
+               callback:^(id selectItem) {
         [self processSelectNewDebtAsset:selectItem];
     }];
 }
@@ -319,18 +310,24 @@ enum
     [_tfCollateralValue addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
     
     //  UI - 借款数量尾部辅助按钮
-    _tfDebtValue.rightView = [self genButtonForTailer:NSLocalizedString(@"kDebtLablePayMaxDebt", @"最大还款")
-                                                  tag:kTailerButtonPayMax frame:CGRectMake(0, 2, 96, 27)];
+    _tfDebtValue.rightView = [[TailerViewAssetAndButtons alloc] initWithHeight:31
+                                                                    asset_name:_debtPair.baseAsset[@"symbol"]
+                                                                  button_names:@[NSLocalizedString(@"kDebtLablePayMaxDebt", @"还款")]
+                                                                        target:self
+                                                                        action:@selector(onDebtTailerButtonClicked:)];
+    
     _tfDebtValue.rightViewMode = UITextFieldViewModeAlways;
     //  UI - 抵押物数量尾部辅助按钮
-    _tfCollateralValue.rightView = [self genButtonForTailer:NSLocalizedString(@"kDebtLableUseMax", @"全部抵押")
-                                                        tag:kTailerButtonCollMax frame:CGRectMake(0, 2, 96, 27)];
+    _tfCollateralValue.rightView = [[TailerViewAssetAndButtons alloc] initWithHeight:31
+                                                                          asset_name:_debtPair.quoteAsset[@"symbol"]
+                                                                        button_names:@[NSLocalizedString(@"kDebtLableUseMax", @"全部")]
+                                                                              target:self
+                                                                              action:@selector(onCollTailerButtonClicked:)];
     _tfCollateralValue.rightViewMode = UITextFieldViewModeAlways;
+    
     //  UI - 输入框标题
     _tfCollateralValue.showBottomLine = YES;
-    [_tfCollateralValue setLeftTitleView:_debtPair.quoteAsset[@"symbol"] frame:CGRectMake(0, 0, 80, 31)];
     _tfDebtValue.showBottomLine = YES;
-    [_tfDebtValue setLeftTitleView:_debtPair.baseAsset[@"symbol"] frame:CGRectMake(0, 0, 80, 31)];
     
     //  UI - 顶部喂价和强平触发价格 REMARK：这两个标签使用等宽字体
     CGRect screenRect = [[UIScreen mainScreen] bounds];
@@ -392,6 +389,7 @@ enum
     _cellLabelRate.accessoryType = UITableViewCellAccessoryNone;
     _cellLabelRate.selectionStyle = UITableViewCellSelectionStyleNone;
     _cellLabelRate.textLabel.textColor = theme.textColorMain;
+    _cellLabelRate.textLabel.font = [UIFont systemFontOfSize:13.0f];
     _cellLabelRate.hideBottomLine = YES;
     _cellLabelRate.hideTopLine = YES;
     _cellLabelRate.accessoryView = [self _genHelpButton:kVcSubRateValue];
@@ -402,11 +400,13 @@ enum
     _cellLabelTargetRate.accessoryType = UITableViewCellAccessoryNone;
     _cellLabelTargetRate.selectionStyle = UITableViewCellSelectionStyleNone;
     _cellLabelTargetRate.textLabel.textColor = theme.textColorMain;
+    _cellLabelTargetRate.textLabel.font = [UIFont systemFontOfSize:13.0f];
     _cellLabelTargetRate.hideBottomLine = YES;
     _cellLabelTargetRate.hideTopLine = YES;
     _cellLabelTargetRate.accessoryView = [self _genHelpButton:kVcSubTargetRateValue];
     
-    _cellTips = [[ViewTipsInfoCell alloc] initWithText:NSLocalizedString(@"kDebtWarmTips", @"【温馨提示】\n当喂价下降到强平触发价时，系统将会自动出售您的抵押资产用于归还借款。请注意调整抵押率控制风险。")];
+    //  UI - 提示信息
+    _cellTips = [[ViewTipsInfoCell alloc] initWithText:NSLocalizedString(@"kDebtWarmTips", @"【温馨提示】\n1、当喂价下降到强平触发价时，系统将会自动出售您的抵押资产用于归还借款。请注意调整抵押率控制风险。\n2、当锁定借款金额时，抵押率会随抵押物数量变化而变化。\n3、当锁定抵押率时，借款金额会随抵押物数量变化而变化。")];
     _cellTips.hideBottomLine = YES;
     _cellTips.hideTopLine = YES;
     _cellTips.backgroundColor = [UIColor clearColor];
@@ -425,14 +425,15 @@ enum
     _cellDebtAvailable.hideBottomLine = YES;
     _cellDebtAvailable.accessoryType = UITableViewCellAccessoryNone;
     _cellDebtAvailable.selectionStyle = UITableViewCellSelectionStyleNone;
+    _cellDebtAvailable.textLabel.text = NSLocalizedString(@"kDebtLabelCellTitleDebtValue", @"借款金额");
     if (_callOrderHash){
-        _cellDebtAvailable.textLabel.text = [NSString stringWithFormat:@"%@ %@%@", NSLocalizedString(@"kDebtLableAvailable", @"可用余额"), [OrgUtils formatFloatValue:[self _getDebtBalance]], _debtPair.baseAsset[@"symbol"]];
+        _cellDebtAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@ %@", NSLocalizedString(@"kDebtLableAvailable", @"可用余额"), [OrgUtils formatFloatValue:[self _getDebtBalance]], _debtPair.baseAsset[@"symbol"]];
     }else{
-        _cellDebtAvailable.textLabel.text = [NSString stringWithFormat:@"%@ --%@", NSLocalizedString(@"kDebtLableAvailable", @"可用余额"), _debtPair.baseAsset[@"symbol"]];
+        _cellDebtAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@ -- %@", NSLocalizedString(@"kDebtLableAvailable", @"可用余额"), _debtPair.baseAsset[@"symbol"]];
     }
-    _cellDebtAvailable.textLabel.font = [UIFont systemFontOfSize:12.0f];
-    _cellDebtAvailable.textLabel.textColor = theme.textColorNormal;
-    _cellDebtAvailable.detailTextLabel.font = [UIFont systemFontOfSize:12.0f];
+    _cellDebtAvailable.textLabel.font = [UIFont systemFontOfSize:13.0f];
+    _cellDebtAvailable.textLabel.textColor = theme.textColorMain;
+    _cellDebtAvailable.detailTextLabel.font = [UIFont systemFontOfSize:13.0f];
     
     //  UI - 抵押物可用余额
     _cellCollAvailable = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
@@ -440,17 +441,18 @@ enum
     _cellCollAvailable.hideBottomLine = YES;
     _cellCollAvailable.accessoryType = UITableViewCellAccessoryNone;
     _cellCollAvailable.selectionStyle = UITableViewCellSelectionStyleNone;
+    _cellCollAvailable.textLabel.text = NSLocalizedString(@"kDebtLabelCellTitleCollAmount", @"抵押物");
     if (_collateralBalance){
         id n = [NSDecimalNumber decimalNumberWithMantissa:[_collateralBalance[@"amount"] unsignedLongLongValue]
                                                  exponent:-_debtPair.quotePrecision
                                                isNegative:NO];
-        _cellCollAvailable.textLabel.text = [NSString stringWithFormat:@"%@ %@%@", NSLocalizedString(@"kDebtLableAvailable", @"可用余额"), [OrgUtils formatFloatValue:n], _debtPair.quoteAsset[@"symbol"]];
+        _cellCollAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@ %@", NSLocalizedString(@"kDebtLableAvailable", @"可用余额"), [OrgUtils formatFloatValue:n], _debtPair.quoteAsset[@"symbol"]];
     }else{
-        _cellCollAvailable.textLabel.text = [NSString stringWithFormat:@"%@ --%@", NSLocalizedString(@"kDebtLableAvailable", @"可用余额"), _debtPair.quoteAsset[@"symbol"]];
+        _cellCollAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@ -- %@", NSLocalizedString(@"kDebtLableAvailable", @"可用余额"), _debtPair.quoteAsset[@"symbol"]];
     }
-    _cellCollAvailable.textLabel.font = [UIFont systemFontOfSize:12.0f];
-    _cellCollAvailable.textLabel.textColor = theme.textColorNormal;
-    _cellCollAvailable.detailTextLabel.font = [UIFont systemFontOfSize:12.0f];
+    _cellCollAvailable.textLabel.font = [UIFont systemFontOfSize:13.0f];
+    _cellCollAvailable.textLabel.textColor = theme.textColorMain;
+    _cellCollAvailable.detailTextLabel.font = [UIFont systemFontOfSize:13.0f];
     
     //  UI - 抵押率滑动条
     _collRateSlider = [[MySlider alloc] init];
@@ -458,7 +460,6 @@ enum
     _collRateSlider.tag = kVcSubRateSlider;
     _curve_ratio = [[CurveSlider alloc] initWithSlider:_collRateSlider max:400.0f mapping_min:0.0f mapping_max:6.0f];
     _curve_ratio.delegate = self;
-    //    [_collRateSlider addTarget:self action:@selector(onCollRateChanged:) forControlEvents:UIControlEventValueChanged];
     //  初始化抵押率文字和滑动条
     [self _refreshUI_ratio:YES];
     
@@ -468,9 +469,19 @@ enum
     _collTargetRateSlider.tag = kVcSubTargetRateSlider;
     _curve_target_ratio = [[CurveSlider alloc] initWithSlider:_collTargetRateSlider max:400.0f mapping_min:0.0f mapping_max:4.0f];
     _curve_target_ratio.delegate = self;
-    //    [_collTargetRateSlider addTarget:self action:@selector(onCollRateChanged:) forControlEvents:UIControlEventValueChanged];
     //  初始化属性
     [self _refreshUI_target_ratio:nil reset_slider:YES];
+    
+    //  初始化 - 锁定状态
+    [self setNewLockStatus:YES];
+    UITapGestureRecognizer* pDebtIconGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onLockClicked)];
+    pDebtIconGesture.cancelsTouchesInView = NO; //  IOS 5.0系列导致按钮没响应
+    _cellDebtAvailable.imageView.userInteractionEnabled = YES;
+    [_cellDebtAvailable.imageView addGestureRecognizer:pDebtIconGesture];
+    UITapGestureRecognizer* pRateIconGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onLockClicked)];
+    pRateIconGesture.cancelsTouchesInView = NO; //  IOS 5.0系列导致按钮没响应
+    _cellLabelRate.imageView.userInteractionEnabled = YES;
+    [_cellLabelRate.imageView addGestureRecognizer:pRateIconGesture];
     
     //  事件 - 空白处点击
     [VcUtils addSpaceTapHandler:self body:^(id weak_self, UITapGestureRecognizer *tap) {
@@ -665,7 +676,7 @@ enum
 - (id)_calcCollRate:(NSDecimalNumber*)n_debt coll:(NSDecimalNumber*)n_coll percent_result:(BOOL)percent_result
 {
     assert(_nCurrFeedPrice);
-    assert([n_debt compare:[NSDecimalNumber zero]] != NSOrderedSame);
+    assert([n_debt compare:[NSDecimalNumber zero]] > 0);
     NSDecimalNumberHandler* ceilHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundUp
                                                                                                  scale:4
                                                                                       raiseOnExactness:NO
@@ -689,7 +700,11 @@ enum
 - (id)_calcDebtNumber:(NSDecimalNumber*)n_coll rate:(NSDecimalNumber*)rate
 {
     assert(_nCurrFeedPrice);
-    assert([rate compare:[NSDecimalNumber zero]] != NSOrderedSame);
+    //  抵押率为0，则债务为0，不随抵押物变化。
+    id n_zero = [NSDecimalNumber zero];
+    if ([rate compare:n_zero] <= 0) {
+        return n_zero;
+    }
     NSDecimalNumberHandler* downHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundDown
                                                                                                  scale:_debtPair.basePrecision
                                                                                       raiseOnExactness:NO
@@ -766,8 +781,10 @@ enum
     [self genCallOrderHash:bLogined];
     
     //  更新UI
-    [_tfDebtValue setLeftTitleView:_debtPair.baseAsset[@"symbol"]];
-    [_tfCollateralValue setLeftTitleView:_debtPair.quoteAsset[@"symbol"]];
+    TailerViewAssetAndButtons* debtTailer = (TailerViewAssetAndButtons*)_tfDebtValue.rightView;
+    [debtTailer drawAssetName:_debtPair.baseAsset[@"symbol"]];
+    TailerViewAssetAndButtons* collTailer = (TailerViewAssetAndButtons*)_tfCollateralValue.rightView;
+    [collTailer drawAssetName:_debtPair.quoteAsset[@"symbol"]];
     
     //  UI - 按钮
     if (bLogined){
@@ -812,6 +829,19 @@ enum
 
 #pragma mark- for UITextFieldDelegate
 
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+    if (textField == _tfCollateralValue) {
+        NSDecimalNumber* n_debt = [OrgUtils auxGetStringDecimalNumberValue:_tfDebtValue.text];
+        if ([n_debt compare:[NSDecimalNumber zero]] <= 0) {
+            [self resignAllFirstResponder];
+            [OrgUtils makeToast:NSLocalizedString(@"kDebtTipPleaseInputDebtValueFirst", @"请先输入借款金额。")];
+            return NO;
+        }
+    }
+    return YES;
+}
+
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
     if (textField != _tfDebtValue && textField != _tfCollateralValue){
@@ -838,57 +868,96 @@ enum
     if (textField == _tfDebtValue){
         [self onTfDebtChanged:textField];
     }else if (textField == _tfCollateralValue){
-        [self onTfCollChanged:textField];
+        [self onTfCollChanged:textField affect_mortgage_rate_changed:_bLockDebt];
     }else{
         assert(false);
     }
 }
 
-- (void)onTailerButtonClicked:(UIButton*)sender
+/*
+ *  (private) 事件 - 锁 or 解锁按钮点击
+ */
+- (void)onLockClicked
 {
-    switch (sender.tag) {
-        case kTailerButtonPayMax:
-        {
-            NSDecimalNumber* new_debt = nil;
-            //  计算执行最大还款之后，剩余的负债信息。
-            id debt_callorder = [self _getCallOrder];
-            if (debt_callorder){
-                id n_curr_debt = [NSDecimalNumber decimalNumberWithMantissa:[debt_callorder[@"debt"] unsignedLongLongValue]
-                                                                   exponent:-_debtPair.basePrecision isNegative:NO];
-                id balance = [self _getDebtBalance];
-                //  balance < n_curr_debt
-                if ([balance compare:n_curr_debt] == NSOrderedAscending){
-                    new_debt = [n_curr_debt decimalNumberBySubtracting:balance];
-                }else{
-                    new_debt = [NSDecimalNumber zero];
-                }
-            }else{
-                new_debt = [NSDecimalNumber zero];
-            }
-            //  赋值
-            assert(new_debt);
-            if ([new_debt compare:[NSDecimalNumber zero]] == NSOrderedSame){
-                _tfDebtValue.text = @"";
-            }else{
-                _tfDebtValue.text = [OrgUtils formatFloatValue:new_debt usesGroupingSeparator:NO];
-            }
-            [self onTfDebtChanged:_tfDebtValue];
-        }
-            break;
-        case kTailerButtonCollMax:
-        {
-            id n_total = [self _getTotalCollateralNumber];
-            if ([n_total compare:[NSDecimalNumber zero]] == NSOrderedSame){
-                _tfCollateralValue.text = @"";
-            }else{
-                _tfCollateralValue.text = [OrgUtils formatFloatValue:n_total usesGroupingSeparator:NO];
-            }
-            [self onTfCollChanged:_tfCollateralValue];
-        }
-            break;
-        default:
-            break;
+    [self setNewLockStatus:!_bLockDebt];
+}
+
+- (void)setNewLockStatus:(BOOL)bLockDebt
+{
+    ThemeManager* theme = [ThemeManager sharedThemeManager];
+    
+    _bLockDebt = bLockDebt;
+    
+    if (_bLockDebt) {
+        _cellDebtAvailable.imageView.image = [UIImage templateImageNamed:@"iconLocked"];
+        _cellDebtAvailable.imageView.tintColor = theme.textColorNormal;
+        
+        _cellLabelRate.imageView.image  = [UIImage templateImageNamed:@"iconUnlocked"];
+        _cellLabelRate.imageView.tintColor = theme.textColorHighlight;
+    } else {
+        _cellDebtAvailable.imageView.image = [UIImage templateImageNamed:@"iconUnlocked"];
+        _cellDebtAvailable.imageView.tintColor = theme.textColorHighlight;
+        
+        _cellLabelRate.imageView.image  = [UIImage templateImageNamed:@"iconLocked"];
+        _cellLabelRate.imageView.tintColor = theme.textColorNormal;
     }
+}
+
+/*
+ *  事件 - 还款按钮点击
+ */
+- (void)onDebtTailerButtonClicked:(UIButton*)sender
+{
+    NSDecimalNumber* new_debt = nil;
+    //  计算执行最大还款之后，剩余的负债信息。
+    id debt_callorder = [self _getCallOrder];
+    if (debt_callorder){
+        id n_curr_debt = [NSDecimalNumber decimalNumberWithMantissa:[debt_callorder[@"debt"] unsignedLongLongValue]
+                                                           exponent:-_debtPair.basePrecision isNegative:NO];
+        id balance = [self _getDebtBalance];
+        //  balance < n_curr_debt
+        if ([balance compare:n_curr_debt] == NSOrderedAscending){
+            new_debt = [n_curr_debt decimalNumberBySubtracting:balance];
+        }else{
+            new_debt = [NSDecimalNumber zero];
+        }
+    }else{
+        new_debt = [NSDecimalNumber zero];
+    }
+    //  赋值
+    assert(new_debt);
+    if ([new_debt compare:[NSDecimalNumber zero]] == NSOrderedSame){
+        _tfDebtValue.text = @"";
+    }else{
+        _tfDebtValue.text = [OrgUtils formatFloatValue:new_debt usesGroupingSeparator:NO];
+    }
+    [self onTfDebtChanged:_tfDebtValue];
+}
+
+/*
+ *  事件 - 全部按钮点击
+ */
+- (void)onCollTailerButtonClicked:(UIButton*)sender
+{
+    if (_bLockDebt) {
+        NSDecimalNumber* n_debt = [OrgUtils auxGetStringDecimalNumberValue:_tfDebtValue.text];
+        if ([n_debt compare:[NSDecimalNumber zero]] <= 0) {
+            [OrgUtils makeToast:NSLocalizedString(@"kDebtTipPleaseInputDebtValueFirst", @"请先输入借款金额。")];
+            return;
+        }
+    } else {
+        if (!_nCurrMortgageRate || [_nCurrMortgageRate compare:[NSDecimalNumber zero]] <= 0) {
+            [OrgUtils makeToast:NSLocalizedString(@"kDebtTipPleaseAdjustRatioFirst", @"请先调整抵押率。")];
+            return;
+        }
+    }
+    id n_total = [self _getTotalCollateralNumber];
+    if ([n_total compare:[NSDecimalNumber zero]] == NSOrderedSame){
+        _tfCollateralValue.text = @"";
+    }else{
+        _tfCollateralValue.text = [OrgUtils formatFloatValue:n_total usesGroupingSeparator:NO];
+    }
+    [self onTfCollChanged:_tfCollateralValue affect_mortgage_rate_changed:_bLockDebt];
 }
 
 /**
@@ -940,7 +1009,7 @@ enum
 /**
  *  (private) 输入框值变化 - 抵押物数量
  */
-- (void)onTfCollChanged:(UITextField*)textField
+- (void)onTfCollChanged:(UITextField*)textField affect_mortgage_rate_changed:(BOOL)affect_mortgage_rate_changed
 {
     if (!_nCurrFeedPrice){
         return;
@@ -950,10 +1019,23 @@ enum
         textField = _tfCollateralValue;
     }
     NSDecimalNumber* n_coll = [OrgUtils auxGetStringDecimalNumberValue:textField.text];
-    id n_debt = [self _calcDebtNumber:n_coll rate:_nCurrMortgageRate];
-    [self _refreshUI_coll_available:n_coll update_textfield:NO];
-    [self _refreshUI_debt_available:n_debt update_textfield:YES];
-    [self _refreshUI_SettlementTriggerPrice];
+    
+    if (affect_mortgage_rate_changed) {
+        //  抵押物变化 - 影响抵押率变化（负债不变）
+        //  这里手动输入抵押物or点击全部按钮导致变化，都已经确保了debt不能为0。
+        NSDecimalNumber* n_debt = [OrgUtils auxGetStringDecimalNumberValue:_tfDebtValue.text];
+        _nCurrMortgageRate = [self _calcCollRate:n_debt coll:n_coll percent_result:NO];
+        [self _refreshUI_coll_available:n_coll update_textfield:NO];
+        [self _refreshUI_debt_available:n_debt update_textfield:NO];
+        [self _refreshUI_ratio:YES];
+        [self _refreshUI_SettlementTriggerPrice];
+    } else {
+        //  抵押物变化 - 影响债务变化（抵押率不变）
+        id n_debt = [self _calcDebtNumber:n_coll rate:_nCurrMortgageRate];
+        [self _refreshUI_coll_available:n_coll update_textfield:NO];
+        [self _refreshUI_debt_available:n_debt update_textfield:YES];
+        [self _refreshUI_SettlementTriggerPrice];
+    }
 }
 
 /**
@@ -989,36 +1071,6 @@ enum
     }
 }
 
-//- (void)onCollRateChanged:(UISlider*)sender
-//{
-//    switch (sender.tag) {
-//        case kVcSubRateSlider:
-//        {
-//            //  抵押率滑动条拖动
-//            _nCurrMortgageRate = [NSDecimalNumber decimalNumberWithString:[NSString stringWithFormat:@"%.2f", sender.value]];
-//            [self _refreshUI_ratio:NO];
-//            if (!_nCurrFeedPrice){
-//                return;
-//            }
-//            assert(_nCurrMortgageRate);
-//            NSDecimalNumber* n_debt = [OrgUtils auxGetStringDecimalNumberValue:_tfDebtValue.text];
-//            id n_coll = [self _calcCollNumber:n_debt rate:_nCurrMortgageRate];
-//            [self _refreshUI_coll_available:n_coll update_textfield:YES];
-//            [self _refreshUI_SettlementTriggerPrice];
-//        }
-//            break;
-//        case kVcSubTargetRateSlider:
-//        {
-//            //  目标抵押率滑动条拖动
-//            id n = [NSDecimalNumber decimalNumberWithString:[NSString stringWithFormat:@"%.2f", sender.value]];
-//            [self _refreshUI_target_ratio:n reset_slider:NO];
-//        }
-//            break;
-//        default:
-//            break;
-//    }
-//}
-
 /**
  *  (private) 刷新UI - 抵押物可用余额
  */
@@ -1036,37 +1088,37 @@ enum
     NSDecimalNumber* n_total = [self _getTotalCollateralNumber];
     id n_available = [n_total decimalNumberBySubtracting:new_tf_value];
     
-    _cellCollAvailable.textLabel.text = [NSString stringWithFormat:@"%@ %@%@",
-                                         NSLocalizedString(@"kDebtLableAvailable", @"可用余额"),
-                                         [OrgUtils formatFloatValue:n_available], _debtPair.quoteAsset[@"symbol"]];
+    _cellCollAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@ %@",
+                                               NSLocalizedString(@"kDebtLableAvailable", @"可用余额"),
+                                               [OrgUtils formatFloatValue:n_available], _debtPair.quoteAsset[@"symbol"]];
     
     //  变化量
-    NSDecimalNumber* n_balance = [NSDecimalNumber zero];
-    if (_collateralBalance){
-        n_balance = [NSDecimalNumber decimalNumberWithMantissa:[_collateralBalance[@"amount"] unsignedLongLongValue]
-                                                      exponent:-_debtPair.quotePrecision
-                                                    isNegative:NO];
-    }
-    id n_diff = [n_available decimalNumberBySubtracting:n_balance];
-    NSComparisonResult result = [n_diff compare:[NSDecimalNumber zero]];
-    if (result != NSOrderedSame){
-        //  n_diff < 0
-        if (result == NSOrderedAscending){
-            _cellCollAvailable.detailTextLabel.text = [OrgUtils formatFloatValue:n_diff];
-            _cellCollAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].sellColor;
-        }else{
-            _cellCollAvailable.detailTextLabel.text = [NSString stringWithFormat:@"+%@", [OrgUtils formatFloatValue:n_diff]];
-            _cellCollAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].buyColor;
-        }
-    }else{
-        _cellCollAvailable.detailTextLabel.text = @"";
-    }
+    //    NSDecimalNumber* n_balance = [NSDecimalNumber zero];
+    //    if (_collateralBalance){
+    //        n_balance = [NSDecimalNumber decimalNumberWithMantissa:[_collateralBalance[@"amount"] unsignedLongLongValue]
+    //                                                      exponent:-_debtPair.quotePrecision
+    //                                                    isNegative:NO];
+    //    }
+    //    id n_diff = [n_available decimalNumberBySubtracting:n_balance];
+    //    NSComparisonResult result = [n_diff compare:[NSDecimalNumber zero]];
+    //    if (result != NSOrderedSame){
+    //        //  n_diff < 0
+    //        if (result == NSOrderedAscending){
+    //            _cellCollAvailable.detailTextLabel.text = [OrgUtils formatFloatValue:n_diff];
+    //            _cellCollAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].sellColor;
+    //        }else{
+    //            _cellCollAvailable.detailTextLabel.text = [NSString stringWithFormat:@"+%@", [OrgUtils formatFloatValue:n_diff]];
+    //            _cellCollAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].buyColor;
+    //        }
+    //    }else{
+    //        _cellCollAvailable.detailTextLabel.text = @"";
+    //    }
     
     //  n_available < 0
     if ([n_available compare:[NSDecimalNumber zero]] == NSOrderedAscending){
-        _cellCollAvailable.textLabel.textColor = [ThemeManager sharedThemeManager].tintColor;
+        _cellCollAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].tintColor;
     }else{
-        _cellCollAvailable.textLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+        _cellCollAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
     }
 }
 /**
@@ -1094,29 +1146,29 @@ enum
     
     //  可用余额
     id n_available = [[self _getDebtBalance] decimalNumberByAdding:n_add_debt];
-    _cellDebtAvailable.textLabel.text = [NSString stringWithFormat:@"%@ %@%@",
-                                         NSLocalizedString(@"kDebtLableAvailable", @"可用余额"), [OrgUtils formatFloatValue:n_available], _debtPair.baseAsset[@"symbol"]];
+    _cellDebtAvailable.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@ %@",
+                                               NSLocalizedString(@"kDebtLableAvailable", @"可用余额"), [OrgUtils formatFloatValue:n_available], _debtPair.baseAsset[@"symbol"]];
     
-    //  变化量
-    NSComparisonResult result = [n_add_debt compare:[NSDecimalNumber zero]];
-    if (result != NSOrderedSame){
-        //  n_add_debt < 0
-        if (result == NSOrderedAscending){
-            _cellDebtAvailable.detailTextLabel.text = [OrgUtils formatFloatValue:n_add_debt];
-            _cellDebtAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].sellColor;
-        }else{
-            _cellDebtAvailable.detailTextLabel.text = [NSString stringWithFormat:@"+%@", [OrgUtils formatFloatValue:n_add_debt]];
-            _cellDebtAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].buyColor;
-        }
-    }else{
-        _cellDebtAvailable.detailTextLabel.text = @"";
-    }
+    //    //  变化量
+    //    NSComparisonResult result = [n_add_debt compare:[NSDecimalNumber zero]];
+    //    if (result != NSOrderedSame){
+    //        //  n_add_debt < 0
+    //        if (result == NSOrderedAscending){
+    //            _cellDebtAvailable.detailTextLabel.text = [OrgUtils formatFloatValue:n_add_debt];
+    //            _cellDebtAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].sellColor;
+    //        }else{
+    //            _cellDebtAvailable.detailTextLabel.text = [NSString stringWithFormat:@"+%@", [OrgUtils formatFloatValue:n_add_debt]];
+    //            _cellDebtAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].buyColor;
+    //        }
+    //    }else{
+    //        _cellDebtAvailable.detailTextLabel.text = @"";
+    //    }
     
     //  n_available < 0
     if ([n_available compare:[NSDecimalNumber zero]] == NSOrderedAscending){
-        _cellDebtAvailable.textLabel.textColor = [ThemeManager sharedThemeManager].tintColor;
+        _cellDebtAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].tintColor;
     }else{
-        _cellDebtAvailable.textLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+        _cellDebtAvailable.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
     }
 }
 
@@ -1189,9 +1241,8 @@ enum
         if (reset_slider){
             id parameters = [[ChainObjectManager sharedChainObjectManager] getDefaultParameters];
             assert(parameters);
-            float mcr = [_nMaintenanceCollateralRatio floatValue];
             float value = [_nCurrMortgageRate floatValue];
-            [_curve_ratio set_min:fminf(value, mcr)];
+            [_curve_ratio set_min:0.0f];
             [_curve_ratio set_max:fmaxf(value, [parameters[@"max_ratio"] floatValue])];
             [_curve_ratio set_value:value];
         }
@@ -1617,18 +1668,18 @@ enum
     
     if (_tfDebtValue && [_tfDebtValue.rightView isKindOfClass:[UIButton class]]){
         UIButton* btn = (UIButton*)_tfDebtValue.rightView;
-        [btn setTitle:NSLocalizedString(@"kDebtLablePayMaxDebt", @"最大还款") forState:UIControlStateNormal];
+        [btn setTitle:NSLocalizedString(@"kDebtLablePayMaxDebt", @"还款") forState:UIControlStateNormal];
     }
     
     if (_tfCollateralValue.rightView && [_tfCollateralValue.rightView isKindOfClass:[UIButton class]]){
         UIButton* btn = (UIButton*)_tfCollateralValue.rightView;
-        [btn setTitle:NSLocalizedString(@"kDebtLableUseMax", @"全部抵押") forState:UIControlStateNormal];
+        [btn setTitle:NSLocalizedString(@"kDebtLableUseMax", @"全部") forState:UIControlStateNormal];
     }
     
     _tfDebtValue.attributedPlaceholder = [ViewUtils placeholderAttrString:NSLocalizedString(@"kDebtTipInputDebtValue", @"请输入借款金额")];
     _tfCollateralValue.attributedPlaceholder = [ViewUtils placeholderAttrString:NSLocalizedString(@"kDebtTipInputCollAmount", @"请输入抵押物数量")];
     
-    [_cellTips updateLabelText:NSLocalizedString(@"kDebtWarmTips", @"【温馨提示】\n当喂价下降到强平触发价时，系统将会自动出售您的抵押资产用于归还借款。请注意调整抵押率控制风险。")];
+    [_cellTips updateLabelText:NSLocalizedString(@"kDebtWarmTips", @"【温馨提示】\n1、当喂价下降到强平触发价时，系统将会自动出售您的抵押资产用于归还借款。请注意调整抵押率控制风险。\n2、当锁定借款金额时，抵押率会随抵押物数量变化而变化。\n3、当锁定抵押率时，借款金额会随抵押物数量变化而变化。")];
     
     if (_mainTableView){
         [_mainTableView reloadData];
