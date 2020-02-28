@@ -373,6 +373,18 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
  */
 + (BOOL)isValidBitsharesAccountName:(NSString*)name
 {
+    //  TODO:5.0 更详细的规则
+    
+    //  所有有效的账号名由 . 分割的1个或多个标签组成。其中每个标签遵循以下规则：
+    //  1、每个标签由3个极其以上字符组成。
+    //  2、每个标签必须以字母开头。
+    //  3、每个标签必须以字母或数字结尾。
+    //  4、每个标签只能包含 字母、数字和 -（短横线）。
+    
+    //  高级账号名称规则：
+    //  1、必须包含 aeiouy 中任意字符。
+    //  2、不包含 数字、.（点）、-（短横线），包含这些的都属于普通账号名。
+    
     if (!name || [name length] <= 0){
         return NO;
     }
@@ -1609,11 +1621,53 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
         name = [NSString stringWithFormat:NSLocalizedString(@"kOpType_proposal_prefix", @"提议%@"), name];
     }
     
+    //  REMARK：部分交易包含备注数据：转账、强制转账、资产发行、从指定账号提款
+    NSDictionary* processedMemoObject = nil;
+    id memo = [opdata objectForKey:@"memo"];
+    if (memo && [memo objectForKey:@"from"] && [memo objectForKey:@"to"] && [memo objectForKey:@"nonce"] && [memo objectForKey:@"message"]) {
+        WalletManager* walletMgr = [WalletManager sharedWalletManager];
+        //  TODO:5.0 lang
+        if ([walletMgr isLocked]) {
+            processedMemoObject = @{
+                @"tips":@"备注：解锁钱包查看备注信息。",
+                @"locked":@YES,
+                @"decryptSuccessed":@NO,
+                @"isBlank":@YES,
+            };
+        } else {
+            NSString* plain_memo = [walletMgr decryptMemoObject:memo];
+            if (plain_memo) {
+                if ([plain_memo isEqualToString:@""]) {
+                    processedMemoObject = @{
+                        @"tips":@"备注：空白。",
+                        @"locked":@NO,
+                        @"decryptSuccessed":@YES,
+                        @"isBlank":@YES,
+                    };
+                } else {
+                    processedMemoObject = @{
+                        @"tips":plain_memo,
+                        @"locked":@NO,
+                        @"decryptSuccessed":@YES,
+                        @"isBlank":@NO,
+                    };
+                }
+            } else {
+                processedMemoObject = @{
+                    @"tips":@"备注：无法查看该条备注信息。",
+                    @"locked":@NO,
+                    @"decryptSuccessed":@NO,
+                    @"isBlank":@YES,
+                };
+            }
+        }
+    }
+    
 #undef GRAPHENE_NAME
 #undef GRAPHENE_ASSET_SYMBOL
 #undef GRAPHENE_ASSET_N
     
-    return @{@"name":name, @"desc":desc, @"color":color ?: theme.textColorMain};
+    return @{@"name":name, @"desc":desc, @"color":color ?: theme.textColorMain, @"processed_memo":processedMemoObject ?: [NSNull null]};
 }
 
 /**
