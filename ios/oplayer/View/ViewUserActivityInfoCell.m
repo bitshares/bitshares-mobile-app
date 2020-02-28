@@ -16,13 +16,11 @@
 {
     NSDictionary*   _item;
     
-    //  ---                 ----
-    //  ------------------------
-    //  -------
     UILabel*        _lbTransferName;    //  交易类型描述 转账、限价单等
     UILabel*        _lbDate;            //  日期
     
     UILabel*        _lbMainDesc;        //  描述
+    UILabel*        _lbMemo;            //  备注信息（可选）
 }
 
 @end
@@ -38,6 +36,7 @@
     _lbTransferName = nil;
     _lbMainDesc = nil;
     _lbDate = nil;
+    _lbMemo = nil;
 }
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -71,8 +70,13 @@
         _lbMainDesc.numberOfLines = 0;
         _lbMainDesc.backgroundColor = [UIColor clearColor];
         _lbMainDesc.font = [UIFont systemFontOfSize:14];
-//        _lbMainDesc.adjustsFontSizeToFitWidth = YES;
         [self addSubview:_lbMainDesc];
+        
+        _lbMemo = [ViewUtils auxGenLabel:[UIFont systemFontOfSize:13] superview:self];
+        _lbMemo.textAlignment = NSTextAlignmentLeft;
+        _lbMemo.lineBreakMode = NSLineBreakByWordWrapping;
+        _lbMemo.numberOfLines = 0;
+        _lbMemo.hidden = YES;
     }
     return self;
 }
@@ -98,20 +102,28 @@
     }
 }
 
-+ (CGFloat)getCellHeight:(NSDictionary*)item
++ (CGFloat)getCellHeight:(NSDictionary*)item leftMargin:(CGFloat)leftMargin
 {
     assert(item);
     
-    //  这里 12 和 layoutSubviews 里的 xOffset 一致。
-    CGFloat fWidth = [[UIScreen mainScreen] bounds].size.width - 16 * 2;
-    UIFont* font = [UIFont systemFontOfSize:14];
-    CGSize size = [[item objectForKey:@"desc"] boundingRectWithSize:CGSizeMake(fWidth, 9999)
-                                                            options:NSStringDrawingUsesLineFragmentOrigin
-                                                         attributes:@{NSFontAttributeName:font} context:nil].size;
+    id uidata = [item objectForKey:@"uidata"];
     
+    CGFloat fWidth = [[UIScreen mainScreen] bounds].size.width - leftMargin * 2;
+    CGSize maxSize = CGSizeMake(fWidth, 9999);
+    
+    CGSize size = [ViewUtils auxSizeWithText:[uidata objectForKey:@"desc"] font:[UIFont systemFontOfSize:14] maxsize:maxSize];
     CGFloat dynamic_height = size.height;
     
-    return 4 + 28 + dynamic_height + 12;
+    CGFloat fBase = 4 + 28 + dynamic_height + 12;
+    
+    //  备注
+    id processed_memo = [uidata objectForKey:@"processed_memo"];
+    if (processed_memo && [processed_memo isKindOfClass:[NSDictionary class]]) {
+        CGSize memo_size = [ViewUtils auxSizeWithText:processed_memo[@"tips"] font:[UIFont systemFontOfSize:13] maxsize:maxSize];
+        fBase += 6 + memo_size.height;
+    }
+    
+    return fBase;
 }
 
 - (void)layoutSubviews
@@ -122,42 +134,56 @@
         return;
     }
     
+    id uidata = [_item objectForKey:@"uidata"];
+    
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     
-    CGFloat xOffset = 16;//self.textLabel.frame.origin.x;
+    CGFloat xOffset = self.layoutMargins.left;
     CGFloat yOffset = 4;
     CGFloat fWidth = self.bounds.size.width - xOffset * 2;
     CGFloat fHeight = self.bounds.size.height;
     CGFloat fLineHeight = 28;
     
-    _lbTransferName.text = [_item objectForKey:@"typename"];
-    id typecolor = [_item objectForKey:@"typecolor"];
-    if (typecolor){
-        _lbTransferName.textColor = typecolor;
-    }else{
-        _lbTransferName.textColor = theme.textColorMain;
-    }
+    _lbTransferName.text = [uidata objectForKey:@"name"];
+    _lbTransferName.textColor = [uidata objectForKey:@"color"];
     _lbTransferName.frame = CGRectMake(xOffset, yOffset, fWidth, fLineHeight);
     
     //  TODO:fowallet 手续费是否显示在日期后面？？？待确认
     id block_time_str = [OrgUtils fmtAccountHistoryTimeShowString:[_item objectForKey:@"block_time"]];
-//    id fee = [opdata objectForKey:@"fee"];
-//    if (fee){
-//        id asset = [chainMgr getChainObjectByID:fee[@"asset_id"]];
-//        id num = [OrgUtils genAssetAmountDecimalNumber:fee[@"amount"] asset:asset];
-//        _lbDate.text = [NSString stringWithFormat:@"%@ %@%@", block_time_str, num, asset[@"symbol"]];
-//    }else{
-        _lbDate.text = block_time_str;
-//    }
+    //    id fee = [opdata objectForKey:@"fee"];
+    //    if (fee){
+    //        id asset = [chainMgr getChainObjectByID:fee[@"asset_id"]];
+    //        id num = [OrgUtils genAssetAmountDecimalNumber:fee[@"amount"] asset:asset];
+    //        _lbDate.text = [NSString stringWithFormat:@"%@ %@%@", block_time_str, num, asset[@"symbol"]];
+    //    }else{
+    _lbDate.text = block_time_str;
+    //    }
     _lbDate.textColor = theme.textColorGray;
     _lbDate.frame = CGRectMake(xOffset, yOffset+1, fWidth, fLineHeight);
     
     yOffset += fLineHeight;
     
-    //  第二行 动态计算高度 TODO:fowallet 是否有需要
-    _lbMainDesc.text = [_item objectForKey:@"desc"];
+    //  第二行 动态计算高度
+    _lbMainDesc.text = [uidata objectForKey:@"desc"];
     _lbMainDesc.textColor = theme.textColorNormal;
-    _lbMainDesc.frame = CGRectMake(xOffset, yOffset, fWidth, fHeight - fLineHeight - 12);
+    CGSize desc_size = [ViewUtils auxSizeWithText:_lbMainDesc.text font:_lbMainDesc.font maxsize:CGSizeMake(fWidth, 9999)];
+    _lbMainDesc.frame = CGRectMake(xOffset, yOffset, fWidth, desc_size.height);
+    yOffset += desc_size.height + 6;
+    
+    //  第三行 备注（可选）
+    id processed_memo = [uidata objectForKey:@"processed_memo"];
+    if (processed_memo && [processed_memo isKindOfClass:[NSDictionary class]]) {
+        _lbMemo.hidden = NO;
+        _lbMemo.text = [processed_memo objectForKey:@"tips"];
+        _lbMemo.frame = CGRectMake(xOffset, yOffset, fWidth, fHeight - yOffset - 12);
+        if ([[processed_memo objectForKey:@"decryptSuccessed"] boolValue] && ![[processed_memo objectForKey:@"isBlank"] boolValue]) {
+            _lbMemo.textColor = theme.textColorMain;
+        } else {
+            _lbMemo.textColor = theme.textColorGray;
+        }
+    } else {
+        _lbMemo.hidden = YES;
+    }
 }
 
 @end

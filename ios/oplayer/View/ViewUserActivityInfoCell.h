@@ -13,6 +13,6 @@
 
 @property (nonatomic, strong) NSDictionary* item;
 
-+ (CGFloat)getCellHeight:(NSDictionary*)item;
++ (CGFloat)getCellHeight:(NSDictionary*)item leftMargin:(CGFloat)leftMargin;
 
 @end

@@ -58,52 +58,52 @@
     if (!data_array || [data_array count] <= 0){
         return data_array;
     }
-
     
-//    NSMutableDictionary* last_fill_order_opdata_item = nil;
-//    unsigned long long pays_ammount = 0;
-//    unsigned long long receives_amount = 0;
-//    NSString* last_order_id = nil;
-//    NSString* last_pays_asset_id;
-//    NSString* last_receives_asset_id;
-//    id new_array = [NSMutableArray array];
-//    for (id history in data) {
-//        id op = [history objectForKey:@"op"];
-//        NSInteger optype = [[op objectAtIndex:0] integerValue];
-//        if (optype == ebo_fill_order){
-//            id opdata = [op objectAtIndex:1];
-//
-//            if (!last_fill_order_opdata_item){
-//                last_fill_order_opdata_item = [opdata mutableCopy];
-//                last_order_id = opdata[@"order_id"];
-//                id pays = opdata[@"pays"];
-//                id receives = opdata[@"receives"];
-//                last_pays_asset_id = pays[@"asset_id"];
-//                last_receives_asset_id = receives[@"asset_id"];
-//            }else{
-//                id order_id = opdata[@"order_id"];
-//                id pays = opdata[@"pays"];
-//                id receives = opdata[@"receives"];
-//                id pays_asset_id = pays[@"asset_id"];
-//                id receives_asset_id = receives[@"asset_id"];
-//                if ([order_id isEqualToString:last_order_id] &&
-//                    [pays_asset_id isEqualToString:last_pays_asset_id] &&
-//                    [receives_asset_id isEqualToString:last_receives_asset_id])
-//                {
-//                    pays_ammount += [pays[@"amount"] unsignedLongLongValue];
-//                    receives_amount += [receives[@"amount"] unsignedLongLongValue];
-//                    last_fill_order_opdata_item = opdata;
-//                }
-//                else
-//                {
-//                    //  ...
-//                }
-//            }
-//        }else{
-//            [new_array addObject:history];
-//        }
-//    }
-//
+    
+    //    NSMutableDictionary* last_fill_order_opdata_item = nil;
+    //    unsigned long long pays_ammount = 0;
+    //    unsigned long long receives_amount = 0;
+    //    NSString* last_order_id = nil;
+    //    NSString* last_pays_asset_id;
+    //    NSString* last_receives_asset_id;
+    //    id new_array = [NSMutableArray array];
+    //    for (id history in data) {
+    //        id op = [history objectForKey:@"op"];
+    //        NSInteger optype = [[op objectAtIndex:0] integerValue];
+    //        if (optype == ebo_fill_order){
+    //            id opdata = [op objectAtIndex:1];
+    //
+    //            if (!last_fill_order_opdata_item){
+    //                last_fill_order_opdata_item = [opdata mutableCopy];
+    //                last_order_id = opdata[@"order_id"];
+    //                id pays = opdata[@"pays"];
+    //                id receives = opdata[@"receives"];
+    //                last_pays_asset_id = pays[@"asset_id"];
+    //                last_receives_asset_id = receives[@"asset_id"];
+    //            }else{
+    //                id order_id = opdata[@"order_id"];
+    //                id pays = opdata[@"pays"];
+    //                id receives = opdata[@"receives"];
+    //                id pays_asset_id = pays[@"asset_id"];
+    //                id receives_asset_id = receives[@"asset_id"];
+    //                if ([order_id isEqualToString:last_order_id] &&
+    //                    [pays_asset_id isEqualToString:last_pays_asset_id] &&
+    //                    [receives_asset_id isEqualToString:last_receives_asset_id])
+    //                {
+    //                    pays_ammount += [pays[@"amount"] unsignedLongLongValue];
+    //                    receives_amount += [receives[@"amount"] unsignedLongLongValue];
+    //                    last_fill_order_opdata_item = opdata;
+    //                }
+    //                else
+    //                {
+    //                    //  ...
+    //                }
+    //            }
+    //        }else{
+    //            [new_array addObject:history];
+    //        }
+    //    }
+    //
     return data_array;
 }
 
@@ -121,8 +121,8 @@
     data = [self mergeFillOrderHistory:data];
     
     //  TODO:fowallet 加载更多（待处理。）
-//    id first_item = [data firstObject];
-//    NSInteger history_id = [[[[first_item objectForKey:@"id"] componentsSeparatedByString:@"."] lastObject] integerValue];
+    //    id first_item = [data firstObject];
+    //    NSInteger history_id = [[[[first_item objectForKey:@"id"] componentsSeparatedByString:@"."] lastObject] integerValue];
     
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     for (id history in data) {
@@ -137,15 +137,6 @@
         id opresult = [history objectForKey:@"result"];
         
         id uidata = [OrgUtils processOpdata2UiData:optype opdata:opdata opresult:opresult isproposal:NO];
-        //  TODO:2.9
-//        if (optype == ebo_transfer) {
-//            id memo_object = [opdata objectForKey:@"memo"];
-//            if (memo_object) {
-//                id ss = [[WalletManager sharedWalletManager] decryptMemoObject:memo_object];
-//                 NSLog(@"%@", ss);
-//            }
-//        }
-        
         //  REMARK：未知操作不显示，略过。
         if (!uidata){
             continue;
@@ -153,9 +144,7 @@
         
         [_dataArray addObject:@{@"block_time":[block_header objectForKey:@"timestamp"] ?: @"",
                                 @"history":history,
-                                @"typename":uidata[@"name"],
-                                @"desc":uidata[@"desc"],
-                                @"typecolor":uidata[@"color"],
+                                @"uidata":uidata,
                                 @"optype":@(optype),
                                 @"opdata":opdata}];
     }
@@ -207,8 +196,6 @@
     id start = [NSString stringWithFormat:@"1.%@.%@", @(ebot_operation_history), @(_loadStartID)];
     //  start - 从指定ID号往前查询（包含该ID号），如果指定ID为0，则从最新的历史记录往前查询。结果包含 start。
     //  stop  - 指定停止查询ID号（结果不包含该ID），如果指定为0，则查询到最早的记录位置（or达到limit停止。）结果不包含该 stop ID。
-//    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    
     //  这里面引用的变量必须是 weak 的，不然该 vc 没法释放。
     __weak id this = self;
     WsPromise* p = [api_history exec:@"get_account_history" params:@[[_accountInfo objectForKey:@"id"], stop, @100, start]];
@@ -227,7 +214,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
@@ -287,7 +274,7 @@
         //  loading cell
         return tableView.rowHeight;
     }
-    return [ViewUserActivityInfoCell getCellHeight:[_dataArray objectAtIndex:indexPath.row]];
+    return [ViewUserActivityInfoCell getCellHeight:[_dataArray objectAtIndex:indexPath.row] leftMargin:tableView.layoutMargins.left];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
