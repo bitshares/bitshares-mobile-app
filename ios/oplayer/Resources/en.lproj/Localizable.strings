@@ -46,6 +46,10 @@
 "kDebtTipTitleFeedAndCallPrice" = "Feed & Call price";
 "kDebtTipTitleWhatIsRatio" = "What is the ratio?";
 "kDebtTipTitleWhatIsTargetRatio" = "What is the target ratio?";
+"kDebtTipAssetHasGlobalSettled" = "该资产已经全局清算，不可调整债仓。";//TODO:
+"kDebtTipAssetNoValidFeedData" = "该资产没有有效的喂价，不可调整债仓。";//TODO:
+"kDebtTipCollRatioCannotLessThanMCR" = "抵押率不能低于 %@。";//TODO:
+"kDebtTipCannotAdjustMoreLowerRatio" = "您已经处于强制平仓状态，不能降低抵押率。";//TODO:
 "kDebtTipValueAndAmountNotChange" = "The amount of borrowings and collateral did not change.";
 "kDebtTipCollNotEnough" = "The collateral balance is insufficient.";
 "kDebtTipAvailableNotEnough" = "%@ balance is insufficient, please adjust the amount of repayment.";
