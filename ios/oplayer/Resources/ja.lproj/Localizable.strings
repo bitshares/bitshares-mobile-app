@@ -46,6 +46,10 @@
 "kDebtTipTitleFeedAndCallPrice" = "フィード価格と強制単価";
 "kDebtTipTitleWhatIsRatio" = "何がマージン率？";
 "kDebtTipTitleWhatIsTargetRatio" = "何が目标マージン率？";
+"kDebtTipAssetHasGlobalSettled" = "该资产已经全局清算，不可调整债仓。";//TODO:
+"kDebtTipAssetNoValidFeedData" = "该资产没有有效的喂价，不可调整债仓。";//TODO:
+"kDebtTipCollRatioCannotLessThanMCR" = "抵押率不能低于 %@。";//TODO:
+"kDebtTipCannotAdjustMoreLowerRatio" = "您已经处于强制平仓状态，不能降低抵押率。";//TODO:
 "kDebtTipValueAndAmountNotChange" ="借金の数量はと物を抵当にして変化が発生していません。";
 "kDebtTipCollNotEnough" = "担保残高が不足しています，数量を調整してください。。";
 "kDebtTipAvailableNotEnough" = "%@残高は不足して、調整して数量を返済してください。";

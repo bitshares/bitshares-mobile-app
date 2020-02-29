@@ -191,26 +191,27 @@ enum
 
 - (void)onSelectDebtAssetClicked
 {
-    //    VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:enstAssetSmart callback:^(id asset_info) {
-    //        if (asset_info){
-    //            //            NSString* new_id = [asset_info objectForKey:@"id"];
-    //            //            NSString* old_id = [_curr_asset objectForKey:@"id"];
-    //            //            if (![new_id isEqualToString:old_id]) {
-    //            //                _curr_asset = asset_info;
-    //            //                //  切换资产后重新输入
-    //            //                _nCurrBalance = [ModelUtils findAssetBalance:_full_account_data asset:_curr_asset];
-    //            //                [_tf_amount clearInputTextValue];
-    //            //                [_tf_amount drawUI_newTailer:[_curr_asset objectForKey:@"symbol"]];
-    //            //                [self _drawUI_Balance:NO];
-    //            //                [_mainTableView reloadData];
-    //            //            }
-    //            [self processSelectNewDebtAsset:asset_info];
-    //        }
-    //    }];
-    //    //    vc.title = @"资产查询";//TODO:4.0 lang
-    //    [self pushViewController:vc
-    //                     vctitle:@"搜索资产"
-    //                   backtitle:kVcDefaultBackTitleName];
+    //        VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:enstAssetSmart callback:^(id asset_info) {
+    //            if (asset_info){
+    //                //            NSString* new_id = [asset_info objectForKey:@"id"];
+    //                //            NSString* old_id = [_curr_asset objectForKey:@"id"];
+    //                //            if (![new_id isEqualToString:old_id]) {
+    //                //                _curr_asset = asset_info;
+    //                //                //  切换资产后重新输入
+    //                //                _nCurrBalance = [ModelUtils findAssetBalance:_full_account_data asset:_curr_asset];
+    //                //                [_tf_amount clearInputTextValue];
+    //                //                [_tf_amount drawUI_newTailer:[_curr_asset objectForKey:@"symbol"]];
+    //                //                [self _drawUI_Balance:NO];
+    //                //                [_mainTableView reloadData];
+    //                //            }
+    //                [self processSelectNewDebtAsset:asset_info];
+    //            }
+    //        }];
+    //        //    vc.title = @"资产查询";//TODO:4.0 lang
+    //        [self pushViewController:vc
+    //                         vctitle:@"搜索资产"
+    //                       backtitle:kVcDefaultBackTitleName];
+    //    return;
     
     //  TODO:5.0 原来的逻辑
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
@@ -612,10 +613,11 @@ enum
         debtAsset = _debtPair.baseAsset;
     }
     assert(debtAsset);
-    id api_db = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
-    return [[api_db exec:@"get_objects" params:@[@[debtAsset[@"bitasset_data_id"]]]] then:(^id(id data_array) {
-        return [data_array objectAtIndex:0];
-    })];
+    NSString* bitasset_data_id = debtAsset[@"bitasset_data_id"];
+    assert(bitasset_data_id && ![bitasset_data_id isEqualToString:@""]);
+    return [[[ChainObjectManager sharedChainObjectManager] queryAllGrapheneObjectsSkipCache:@[bitasset_data_id]] then:^id(id result_hash) {
+        return [result_hash objectForKey:bitasset_data_id];
+    }];
 }
 
 /**
@@ -1489,6 +1491,20 @@ enum
  */
 - (void)onDebtActionClicked
 {
+    id bitasset_data = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:[_debtPair.baseAsset objectForKey:@"bitasset_data_id"]];
+    if ([ModelUtils assetHasGlobalSettle:bitasset_data]) {
+        [OrgUtils makeToast:NSLocalizedString(@"kDebtTipAssetHasGlobalSettled", @"该资产已经全局清算，不可调整债仓。")];
+        return;
+    }
+    
+    //  TODO:5.0 一键平仓？添加，即主动爆仓。
+    
+    //  TODO:5.0 预测市场不用喂价
+    if (!_nCurrFeedPrice) {
+        [OrgUtils makeToast:NSLocalizedString(@"kDebtTipAssetNoValidFeedData", @"该资产没有有效的喂价，不可调整债仓。")];
+        return;
+    }
+    
     //  --- 检查参数有效性 ---
     id zero = [NSDecimalNumber zero];
     
@@ -1534,13 +1550,47 @@ enum
         return;
     }
     
-    //  抵押率判断
-    //  【BSIP30】在爆仓状态可以上调抵押率，不再强制要求必须上调到多少，但抵押率不足最低要求时不能增加借款
-    assert(_nCurrMortgageRate);
-    //  _nCurrMortgageRate < _nMaintenanceCollateralRatio && n_delta_debt > 0
-    if ([_nCurrMortgageRate compare:_nMaintenanceCollateralRatio] == NSOrderedAscending && [zero compare:n_delta_debt] == NSOrderedAscending){
-        [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kDebtTipRatioTooLow", @"抵押率低于 %@，不能追加借贷。"), _nMaintenanceCollateralRatio]];
-        return;
+    //  各种情况下的抵押率判断
+    if ([n_old_debt compare:zero] > 0) {
+        if ([n_new_debt compare:zero] > 0) {
+            //  更新债仓：新负债和旧负债都存在。
+            id n_new_ratio = [self _calcCollRate:n_new_debt coll:n_new_coll percent_result:NO];
+            assert([n_old_debt compare:zero] > 0);
+            id n_old_ratio = [self _calcCollRate:n_old_debt coll:n_old_coll percent_result:NO];
+            if ([n_old_ratio compare:_nMaintenanceCollateralRatio] < 0) {
+                //  已经处于爆仓中
+                //  【BSIP30】在爆仓状态可以上调抵押率，不再强制要求必须上调到多少，但抵押率不足最低要求时不能增加借款
+                if ([n_new_ratio compare:_nMaintenanceCollateralRatio] < 0 && [n_delta_debt compare:zero] > 0){
+                    [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kDebtTipRatioTooLow", @"抵押率低于 %@，不能追加借贷。"), _nMaintenanceCollateralRatio]];
+                    return;
+                }
+                if ([n_new_ratio compare:n_old_ratio] <= 0) {
+                    [OrgUtils makeToast:NSLocalizedString(@"kDebtTipCannotAdjustMoreLowerRatio", @"您已经处于强制平仓状态，不能降低抵押率。")];
+                    return;
+                }
+            } else {
+                //  尚未爆仓
+                if ([n_new_ratio compare:_nMaintenanceCollateralRatio] < 0) {
+                    [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kDebtTipCollRatioCannotLessThanMCR", @"抵押率不能低于 %@。"),
+                                         _nMaintenanceCollateralRatio]];
+                    return;
+                }
+            }
+        } else {
+            //  关闭债仓：旧负债存在，新负债不存在。
+        }
+    } else {
+        //  新开债仓：没有旧的负债
+        if ([n_new_debt compare:zero] <= 0) {
+            [OrgUtils makeToast:NSLocalizedString(@"kDebtTipPleaseInputDebtValueFirst", @"请先输入借款金额。")];
+            return;
+        }
+        id n_new_ratio = [self _calcCollRate:n_new_debt coll:n_new_coll percent_result:NO];
+        if ([n_new_ratio compare:_nMaintenanceCollateralRatio] < 0) {
+            [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kDebtTipCollRatioCannotLessThanMCR", @"抵押率不能低于 %@。"),
+                                 _nMaintenanceCollateralRatio]];
+            return;
+        }
     }
     
     //  TODO:fowallet 不足的时候否直接提示显示？？？

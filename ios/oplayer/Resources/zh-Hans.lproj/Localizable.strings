@@ -46,6 +46,10 @@
 "kDebtTipTitleFeedAndCallPrice" = "喂价和强平触发价";
 "kDebtTipTitleWhatIsRatio" = "什么是抵押率？";
 "kDebtTipTitleWhatIsTargetRatio" = "什么是目标抵押率？";
+"kDebtTipAssetHasGlobalSettled" = "该资产已经全局清算，不可调整债仓。";
+"kDebtTipAssetNoValidFeedData" = "该资产没有有效的喂价，不可调整债仓。";
+"kDebtTipCollRatioCannotLessThanMCR" = "抵押率不能低于 %@。";
+"kDebtTipCannotAdjustMoreLowerRatio" = "您已经处于强制平仓状态，不能降低抵押率。";
 "kDebtTipValueAndAmountNotChange" = "借款数量和抵押物没发生变化。";
 "kDebtTipCollNotEnough" = "抵押物余额不足，请调整数量。";
 "kDebtTipAvailableNotEnough" = "%@余额不足，请调整还款数量。";
