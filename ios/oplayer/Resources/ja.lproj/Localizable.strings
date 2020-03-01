@@ -46,6 +46,7 @@
 "kDebtTipTitleFeedAndCallPrice" = "フィード価格と強制単価";
 "kDebtTipTitleWhatIsRatio" = "何がマージン率？";
 "kDebtTipTitleWhatIsTargetRatio" = "何が目标マージン率？";
+"kDebtTipNetworkErrorPleaseRefresh" = "网络异常，请重新刷新界面。";//TODO:
 "kDebtTipAssetHasGlobalSettled" = "该资产已经全局清算，不可调整债仓。";//TODO:
 "kDebtTipAssetNoValidFeedData" = "该资产没有有效的喂价，不可调整债仓。";//TODO:
 "kDebtTipCollRatioCannotLessThanMCR" = "抵押率不能低于 %@。";//TODO:
@@ -57,6 +58,7 @@
 "kDebtTipTxUpdatePositionFullOK" = "ポジションを更新。";
 "kDebtTipTxUpdatePositionOK" = "ポジションを更新，しかしネットワークが異常で、少しの後でまた試みてください。";
 "kDebtWarmTips" = "【暖かいヒント】]\n1、フィード価格が強制単価まで下がると、負債を返済するためにシステムが自動的に資産を売却します。 リスクを管理するように注意してください。 \n2、借金がロックされると、担保によってマージン率が変化します。 \n3、マージン率がロックされると、担保によって借金が変化します。";
+"kDebtWarmTipsForPM" = "【温馨提示】\n当前资产为预测市场资产。借款金额和抵押物数量恒定为 1:1。";//TODO:
 
 /* 服务界面 */
 "kServicesCellLabelQrScan" = "スキャン";
