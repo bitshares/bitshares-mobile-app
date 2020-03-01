@@ -37,10 +37,10 @@ enum
 
 enum
 {
-    kVcSubDebtAvailable = 0,    //  当前可用余额
-    kVcSubDebtValue,            //  借款金额输入框
-    kVcSubCollAvailable,        //  抵押物可用余额
-    kVcSubCollValue,            //  抵押数量输入框
+    kVcSubDebtAvailable = 0,    //  借款金额：标题&余额
+    kVcSubDebtValue,            //  借款金额：输入框
+    kVcSubCollAvailable,        //  抵押物：标题&余额
+    kVcSubCollValue,            //  抵押数：入框
     
     kVcSubRateValue,            //  抵押率
     kVcSubRateSlider,           //  抵押率滑动输入
@@ -57,6 +57,7 @@ enum
     UILabel*                _triggerSettlementPriceTitle;
     
     UITableViewBase*        _mainTableView;
+    NSMutableArray*         _rowTypeArray;
     
     BOOL                    _bReadyToUpdateUserData;    //  准备更新用户数据（每次切换 tab 的时候考虑更新）
     BOOL                    _bLoginedOnDisappear;       //  记录界面消失事件触发时帐号是否已经登录。
@@ -79,7 +80,8 @@ enum
     NSMutableDictionary*    _callOrderHash;                 //  各种资产的债仓信息（未登录该Hash为空。）
     TradingPair*            _debtPair;                      //  抵押借款资产和背书资产交易对（借款资产是 BASE、背书资产是 QUOTE）
     NSDecimalNumber*        _nMaintenanceCollateralRatio;   //  抵押维持率（默认1750）
-    NSDecimalNumber*        _nCurrFeedPrice;                //  当前喂价
+    NSDecimalNumber*        _nCurrFeedPrice;                //  当前喂价（如果查询数据失败，则可能为 nil。）
+    BOOL                    _currAssetIsPredictionmarket;   //  当前借款资产是否是预测市场（默认NO）
     NSDecimalNumber*        _nCurrMortgageRate;             //  当前抵押率
     NSDictionary*           _collateralBalance;             //  抵押物可用余额
     
@@ -125,6 +127,7 @@ enum
 {
     self = [super init];
     if (self) {
+        _rowTypeArray = [NSMutableArray array];
         _bReadyToUpdateUserData = NO;
         _bLoginedOnDisappear = NO;
         _callOrderHash = nil;
@@ -132,6 +135,7 @@ enum
         _collateralBalance = nil;
         _debtPair = nil;
         _nCurrFeedPrice = nil;
+        _currAssetIsPredictionmarket = NO;
         _nCurrMortgageRate = nil;
         _nMaintenanceCollateralRatio = nil;
     }
@@ -191,36 +195,26 @@ enum
 
 - (void)onSelectDebtAssetClicked
 {
-    //        VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:enstAssetSmart callback:^(id asset_info) {
-    //            if (asset_info){
-    //                //            NSString* new_id = [asset_info objectForKey:@"id"];
-    //                //            NSString* old_id = [_curr_asset objectForKey:@"id"];
-    //                //            if (![new_id isEqualToString:old_id]) {
-    //                //                _curr_asset = asset_info;
-    //                //                //  切换资产后重新输入
-    //                //                _nCurrBalance = [ModelUtils findAssetBalance:_full_account_data asset:_curr_asset];
-    //                //                [_tf_amount clearInputTextValue];
-    //                //                [_tf_amount drawUI_newTailer:[_curr_asset objectForKey:@"symbol"]];
-    //                //                [self _drawUI_Balance:NO];
-    //                //                [_mainTableView reloadData];
-    //                //            }
-    //                [self processSelectNewDebtAsset:asset_info];
-    //            }
-    //        }];
-    //        //    vc.title = @"资产查询";//TODO:4.0 lang
-    //        [self pushViewController:vc
-    //                         vctitle:@"搜索资产"
-    //                       backtitle:kVcDefaultBackTitleName];
-    //    return;
-    
-    //  TODO:5.0 原来的逻辑
+    NSMutableArray* asset_list = [NSMutableArray array];
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
-    id asset_list = [[chainMgr getDebtAssetList] ruby_map:(^id(id symbol) {
-        return [chainMgr getAssetBySymbol:symbol];
-    })];
+    for (id symbol in [chainMgr getDebtAssetList]) {
+        [asset_list addObject:[chainMgr getAssetBySymbol:symbol]];
+    }
+    [asset_list addObject:@{@"symbol":NSLocalizedString(@"kVcAssetMgrCellValueSmartBackingAssetCustom", @"自定义"), @"is_custom":@YES}];
     [VcUtils showPicker:self selectAsset:asset_list title:NSLocalizedString(@"kDebtTipSelectDebtAsset", @"请选择要借入的资产")
                callback:^(id selectItem) {
-        [self processSelectNewDebtAsset:selectItem];
+        if ([[selectItem objectForKey:@"is_custom"] boolValue]) {
+            VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:enstAssetSmart callback:^(id asset_info) {
+                if (asset_info){
+                    [self processSelectNewDebtAsset:asset_info];
+                }
+            }];
+            [self pushViewController:vc
+                             vctitle:NSLocalizedString(@"kVcTitleSearchAssets", @"搜索资产")
+                           backtitle:kVcDefaultBackTitleName];
+        } else {
+            [self processSelectNewDebtAsset:selectItem];
+        }
     }];
 }
 
@@ -261,6 +255,24 @@ enum
     btnTips.tintColor = [ThemeManager sharedThemeManager].textColorHighlight;
     btnTips.tag = tag;
     return btnTips;
+}
+
+- (void)_genRowTypeArray
+{
+    [_rowTypeArray removeAllObjects];
+    
+    [_rowTypeArray addObject:@(kVcSubDebtAvailable)];
+    [_rowTypeArray addObject:@(kVcSubDebtValue)];
+    [_rowTypeArray addObject:@(kVcSubCollAvailable)];
+    [_rowTypeArray addObject:@(kVcSubCollValue)];
+    
+    //  预测市场不显示以下字段
+    if (!_currAssetIsPredictionmarket) {
+        [_rowTypeArray addObject:@(kVcSubRateValue)];
+        [_rowTypeArray addObject:@(kVcSubRateSlider)];
+        [_rowTypeArray addObject:@(kVcSubTargetRateValue)];
+        [_rowTypeArray addObject:@(kVcSubTargetRateSlider)];
+    }
 }
 
 - (void)viewDidLoad
@@ -375,6 +387,7 @@ enum
     [self.view addSubview:tmpSepLine];
     
     //  UI - 下面主表格区域
+    [self _genRowTypeArray];
     CGRect rect = CGRectMake(0, offset, screenRect.size.width, screenRect.size.height - [self heightForStatusAndNaviBar] - [self heightForTabBar] - offset - [self heightForBottomSafeArea]);
     _mainTableView = [[UITableViewBase alloc] initWithFrame:rect style:UITableViewStyleGrouped];
     _mainTableView.delegate = self;
@@ -677,6 +690,10 @@ enum
  */
 - (id)_calcCollRate:(NSDecimalNumber*)n_debt coll:(NSDecimalNumber*)n_coll percent_result:(BOOL)percent_result
 {
+    //  REMARK：预测市场，抵押物数量和借款数量必须一致，不需要喂价。
+    if (_currAssetIsPredictionmarket) {
+        return [NSDecimalNumber one];
+    }
     assert(_nCurrFeedPrice);
     assert([n_debt compare:[NSDecimalNumber zero]] > 0);
     NSDecimalNumberHandler* ceilHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundUp
@@ -701,6 +718,11 @@ enum
  */
 - (id)_calcDebtNumber:(NSDecimalNumber*)n_coll rate:(NSDecimalNumber*)rate
 {
+    //  REMARK：预测市场，抵押物数量和借款数量必须一致，不需要喂价。
+    if (_currAssetIsPredictionmarket) {
+        return n_coll;
+    }
+    assert(rate);
     assert(_nCurrFeedPrice);
     //  抵押率为0，则债务为0，不随抵押物变化。
     id n_zero = [NSDecimalNumber zero];
@@ -723,6 +745,11 @@ enum
  */
 - (id)_calcCollNumber:(NSDecimalNumber*)n_debt rate:(NSDecimalNumber*)rate
 {
+    //  REMARK：预测市场，抵押物数量和借款数量必须一致，不需要喂价。
+    if (_currAssetIsPredictionmarket) {
+        return n_debt;
+    }
+    assert(rate);
     assert(_nCurrFeedPrice);
     assert([_nCurrFeedPrice compare:[NSDecimalNumber zero]] != NSOrderedSame);
     NSDecimalNumberHandler* ceilHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundUp
@@ -775,6 +802,7 @@ enum
     //  更新喂价 和 MCR。
     if (new_feed_price_data){
         _nCurrFeedPrice = [_debtPair calcShowFeedInfo:@[new_feed_price_data]];
+        _currAssetIsPredictionmarket = [[new_feed_price_data objectForKey:@"is_prediction_market"] boolValue];
         id mcr = [[new_feed_price_data objectForKey:@"current_feed"] objectForKey:@"maintenance_collateral_ratio"];
         _nMaintenanceCollateralRatio = [NSDecimalNumber decimalNumberWithMantissa:[mcr unsignedLongLongValue] exponent:-3 isNegative:NO];
     }
@@ -796,7 +824,7 @@ enum
     }
     
     //  UI - 喂价
-    if (_nCurrFeedPrice){
+    if (!_currAssetIsPredictionmarket && _nCurrFeedPrice){
         _currFeedPriceTitle.text = [NSString stringWithFormat:@"%@ %@%@/%@",
                                     NSLocalizedString(@"kDebtLableFeedPrice", @"当前喂价"), [OrgUtils formatFloatValue:_nCurrFeedPrice], _debtPair.baseAsset[@"symbol"], _debtPair.quoteAsset[@"symbol"]];
     }else{
@@ -807,7 +835,15 @@ enum
     //  UI - 你的强平触发价
     [self onResetCLicked];
     
+    //  UI - 提示信息
+    if (_currAssetIsPredictionmarket) {
+        [_cellTips updateLabelText:NSLocalizedString(@"kDebtWarmTipsForPM", @"【温馨提示】\n当前资产为预测市场资产。借款金额和抵押物数量恒定为 1:1。")];
+    } else {
+        [_cellTips updateLabelText:NSLocalizedString(@"kDebtWarmTips", @"【温馨提示】\n1、当喂价下降到强平触发价时，系统将会自动出售您的抵押资产用于归还借款。请注意调整抵押率控制风险。\n2、当锁定借款金额时，抵押率会随抵押物数量变化而变化。\n3、当锁定抵押率时，借款金额会随抵押物数量变化而变化。")];
+    }
+    
     //  UI - 列表
+    [self _genRowTypeArray];
     [_mainTableView reloadData];
 }
 
@@ -833,7 +869,7 @@ enum
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
-    if (textField == _tfCollateralValue) {
+    if (!_currAssetIsPredictionmarket && textField == _tfCollateralValue) {
         NSDecimalNumber* n_debt = [OrgUtils auxGetStringDecimalNumberValue:_tfDebtValue.text];
         if ([n_debt compare:[NSDecimalNumber zero]] <= 0) {
             [self resignAllFirstResponder];
@@ -870,7 +906,7 @@ enum
     if (textField == _tfDebtValue){
         [self onTfDebtChanged:textField];
     }else if (textField == _tfCollateralValue){
-        [self onTfCollChanged:textField affect_mortgage_rate_changed:_bLockDebt];
+        [self onTfCollChanged:textField affect_mortgage_rate_changed:_currAssetIsPredictionmarket ? NO : _bLockDebt];
     }else{
         assert(false);
     }
@@ -886,6 +922,13 @@ enum
 
 - (void)setNewLockStatus:(BOOL)bLockDebt
 {
+    //  预测市场不用锁
+    if (_currAssetIsPredictionmarket) {
+        _cellDebtAvailable.imageView.image = nil;
+        _cellLabelRate.imageView.image = nil;
+        return;
+    }
+    
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     
     _bLockDebt = bLockDebt;
@@ -941,16 +984,18 @@ enum
  */
 - (void)onCollTailerButtonClicked:(UIButton*)sender
 {
-    if (_bLockDebt) {
-        NSDecimalNumber* n_debt = [OrgUtils auxGetStringDecimalNumberValue:_tfDebtValue.text];
-        if ([n_debt compare:[NSDecimalNumber zero]] <= 0) {
-            [OrgUtils makeToast:NSLocalizedString(@"kDebtTipPleaseInputDebtValueFirst", @"请先输入借款金额。")];
-            return;
-        }
-    } else {
-        if (!_nCurrMortgageRate || [_nCurrMortgageRate compare:[NSDecimalNumber zero]] <= 0) {
-            [OrgUtils makeToast:NSLocalizedString(@"kDebtTipPleaseAdjustRatioFirst", @"请先调整抵押率。")];
-            return;
+    if (!_currAssetIsPredictionmarket) {
+        if (_bLockDebt) {
+            NSDecimalNumber* n_debt = [OrgUtils auxGetStringDecimalNumberValue:_tfDebtValue.text];
+            if ([n_debt compare:[NSDecimalNumber zero]] <= 0) {
+                [OrgUtils makeToast:NSLocalizedString(@"kDebtTipPleaseInputDebtValueFirst", @"请先输入借款金额。")];
+                return;
+            }
+        } else {
+            if (!_nCurrMortgageRate || [_nCurrMortgageRate compare:[NSDecimalNumber zero]] <= 0) {
+                [OrgUtils makeToast:NSLocalizedString(@"kDebtTipPleaseAdjustRatioFirst", @"请先调整抵押率。")];
+                return;
+            }
         }
     }
     id n_total = [self _getTotalCollateralNumber];
@@ -959,7 +1004,7 @@ enum
     }else{
         _tfCollateralValue.text = [OrgUtils formatFloatValue:n_total usesGroupingSeparator:NO];
     }
-    [self onTfCollChanged:_tfCollateralValue affect_mortgage_rate_changed:_bLockDebt];
+    [self onTfCollChanged:_tfCollateralValue affect_mortgage_rate_changed:_currAssetIsPredictionmarket ? NO : _bLockDebt];
 }
 
 /**
@@ -995,10 +1040,9 @@ enum
  */
 - (void)onTfDebtChanged:(UITextField*)textField
 {
-    if (!_nCurrFeedPrice){
+    if (!_currAssetIsPredictionmarket && !_nCurrFeedPrice){
         return;
     }
-    assert(_nCurrMortgageRate);
     if (!textField){
         textField = _tfDebtValue;
     }
@@ -1013,15 +1057,13 @@ enum
  */
 - (void)onTfCollChanged:(UITextField*)textField affect_mortgage_rate_changed:(BOOL)affect_mortgage_rate_changed
 {
-    if (!_nCurrFeedPrice){
+    if (!_currAssetIsPredictionmarket && !_nCurrFeedPrice){
         return;
     }
-    assert(_nCurrMortgageRate);
     if (!textField){
         textField = _tfCollateralValue;
     }
     NSDecimalNumber* n_coll = [OrgUtils auxGetStringDecimalNumberValue:textField.text];
-    
     if (affect_mortgage_rate_changed) {
         //  抵押物变化 - 影响抵押率变化（负债不变）
         //  这里手动输入抵押物or点击全部按钮导致变化，都已经确保了debt不能为0。
@@ -1206,6 +1248,11 @@ enum
  */
 - (void)_refreshUI_target_ratio:(NSDecimalNumber*)ratio reset_slider:(BOOL)reset_slider
 {
+    //  预测市场不显示
+    if (_currAssetIsPredictionmarket) {
+        return;
+    }
+    
     if (!ratio){
         ratio = [NSDecimalNumber zero];
     }
@@ -1235,6 +1282,11 @@ enum
  */
 - (void)_refreshUI_ratio:(BOOL)reset_slider
 {
+    //  预测市场不显示
+    if (_currAssetIsPredictionmarket) {
+        return;
+    }
+    
     assert(_nMaintenanceCollateralRatio);
     _cellLabelRate.textLabel.textColor = [self _getCollateralRatioColor];
     if (_nCurrMortgageRate){
@@ -1270,7 +1322,7 @@ enum
     NSDecimalNumber* n_coll = [OrgUtils auxGetStringDecimalNumberValue:_tfCollateralValue.text];
     
     NSDecimalNumber* n_zero = [NSDecimalNumber zero];
-    if ([n_debt compare:n_zero] == NSOrderedSame || [n_coll compare:n_zero] == NSOrderedSame){
+    if (_currAssetIsPredictionmarket || [n_debt compare:n_zero] == NSOrderedSame || [n_coll compare:n_zero] == NSOrderedSame){
         _triggerSettlementPriceTitle.text = [NSString stringWithFormat:@"%@ --%@", price_title, suffix];
         _triggerSettlementPriceTitle.textColor = [ThemeManager sharedThemeManager].textColorMain;
     }else{
@@ -1300,7 +1352,7 @@ enum
 {
     switch (section) {
         case kVcFormData:
-            return kVcSubFormDataMax;
+            return [_rowTypeArray count];
         case kVcFormAction:
             return 1;
         case kVcFromTips:
@@ -1317,7 +1369,7 @@ enum
     switch (indexPath.section) {
         case kVcFormData:
         {
-            switch (indexPath.row) {
+            switch ([[_rowTypeArray objectAtIndex:indexPath.row] integerValue]) {
                 case kVcSubDebtAvailable:
                 case kVcSubCollAvailable:
                     return 24.0f;
@@ -1345,7 +1397,7 @@ enum
     switch (indexPath.section) {
         case kVcFormData:
         {
-            switch (indexPath.row) {
+            switch ([[_rowTypeArray objectAtIndex:indexPath.row] integerValue]) {
                 case kVcSubDebtAvailable:
                 {
                     return _cellDebtAvailable;
@@ -1492,15 +1544,18 @@ enum
 - (void)onDebtActionClicked
 {
     id bitasset_data = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:[_debtPair.baseAsset objectForKey:@"bitasset_data_id"]];
+    if (!bitasset_data) {
+        [OrgUtils makeToast:NSLocalizedString(@"kDebtTipNetworkErrorPleaseRefresh", @"网络异常，请重新刷新界面。")];
+        return;
+    }
+    
     if ([ModelUtils assetHasGlobalSettle:bitasset_data]) {
         [OrgUtils makeToast:NSLocalizedString(@"kDebtTipAssetHasGlobalSettled", @"该资产已经全局清算，不可调整债仓。")];
         return;
     }
     
-    //  TODO:5.0 一键平仓？添加，即主动爆仓。
-    
-    //  TODO:5.0 预测市场不用喂价
-    if (!_nCurrFeedPrice) {
+    //  非预测市场并且没有喂价
+    if (!_currAssetIsPredictionmarket && !_nCurrFeedPrice) {
         [OrgUtils makeToast:NSLocalizedString(@"kDebtTipAssetNoValidFeedData", @"该资产没有有效的喂价，不可调整债仓。")];
         return;
     }
@@ -1550,46 +1605,48 @@ enum
         return;
     }
     
-    //  各种情况下的抵押率判断
-    if ([n_old_debt compare:zero] > 0) {
-        if ([n_new_debt compare:zero] > 0) {
-            //  更新债仓：新负债和旧负债都存在。
-            id n_new_ratio = [self _calcCollRate:n_new_debt coll:n_new_coll percent_result:NO];
-            assert([n_old_debt compare:zero] > 0);
-            id n_old_ratio = [self _calcCollRate:n_old_debt coll:n_old_coll percent_result:NO];
-            if ([n_old_ratio compare:_nMaintenanceCollateralRatio] < 0) {
-                //  已经处于爆仓中
-                //  【BSIP30】在爆仓状态可以上调抵押率，不再强制要求必须上调到多少，但抵押率不足最低要求时不能增加借款
-                if ([n_new_ratio compare:_nMaintenanceCollateralRatio] < 0 && [n_delta_debt compare:zero] > 0){
-                    [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kDebtTipRatioTooLow", @"抵押率低于 %@，不能追加借贷。"), _nMaintenanceCollateralRatio]];
-                    return;
-                }
-                if ([n_new_ratio compare:n_old_ratio] <= 0) {
-                    [OrgUtils makeToast:NSLocalizedString(@"kDebtTipCannotAdjustMoreLowerRatio", @"您已经处于强制平仓状态，不能降低抵押率。")];
-                    return;
+    //  非预测市场：各种情况下的抵押率判断
+    if (!_currAssetIsPredictionmarket) {
+        if ([n_old_debt compare:zero] > 0) {
+            if ([n_new_debt compare:zero] > 0) {
+                //  更新债仓：新负债和旧负债都存在。
+                id n_new_ratio = [self _calcCollRate:n_new_debt coll:n_new_coll percent_result:NO];
+                assert([n_old_debt compare:zero] > 0);
+                id n_old_ratio = [self _calcCollRate:n_old_debt coll:n_old_coll percent_result:NO];
+                if ([n_old_ratio compare:_nMaintenanceCollateralRatio] < 0) {
+                    //  已经处于爆仓中
+                    //  【BSIP30】在爆仓状态可以上调抵押率，不再强制要求必须上调到多少，但抵押率不足最低要求时不能增加借款
+                    if ([n_new_ratio compare:_nMaintenanceCollateralRatio] < 0 && [n_delta_debt compare:zero] > 0){
+                        [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kDebtTipRatioTooLow", @"抵押率低于 %@，不能追加借贷。"), _nMaintenanceCollateralRatio]];
+                        return;
+                    }
+                    if ([n_new_ratio compare:n_old_ratio] <= 0) {
+                        [OrgUtils makeToast:NSLocalizedString(@"kDebtTipCannotAdjustMoreLowerRatio", @"您已经处于强制平仓状态，不能降低抵押率。")];
+                        return;
+                    }
+                } else {
+                    //  尚未爆仓
+                    if ([n_new_ratio compare:_nMaintenanceCollateralRatio] < 0) {
+                        [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kDebtTipCollRatioCannotLessThanMCR", @"抵押率不能低于 %@。"),
+                                             _nMaintenanceCollateralRatio]];
+                        return;
+                    }
                 }
             } else {
-                //  尚未爆仓
-                if ([n_new_ratio compare:_nMaintenanceCollateralRatio] < 0) {
-                    [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kDebtTipCollRatioCannotLessThanMCR", @"抵押率不能低于 %@。"),
-                                         _nMaintenanceCollateralRatio]];
-                    return;
-                }
+                //  关闭债仓：旧负债存在，新负债不存在。
             }
         } else {
-            //  关闭债仓：旧负债存在，新负债不存在。
-        }
-    } else {
-        //  新开债仓：没有旧的负债
-        if ([n_new_debt compare:zero] <= 0) {
-            [OrgUtils makeToast:NSLocalizedString(@"kDebtTipPleaseInputDebtValueFirst", @"请先输入借款金额。")];
-            return;
-        }
-        id n_new_ratio = [self _calcCollRate:n_new_debt coll:n_new_coll percent_result:NO];
-        if ([n_new_ratio compare:_nMaintenanceCollateralRatio] < 0) {
-            [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kDebtTipCollRatioCannotLessThanMCR", @"抵押率不能低于 %@。"),
-                                 _nMaintenanceCollateralRatio]];
-            return;
+            //  新开债仓：没有旧的负债
+            if ([n_new_debt compare:zero] <= 0) {
+                [OrgUtils makeToast:NSLocalizedString(@"kDebtTipPleaseInputDebtValueFirst", @"请先输入借款金额。")];
+                return;
+            }
+            id n_new_ratio = [self _calcCollRate:n_new_debt coll:n_new_coll percent_result:NO];
+            if ([n_new_ratio compare:_nMaintenanceCollateralRatio] < 0) {
+                [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kDebtTipCollRatioCannotLessThanMCR", @"抵押率不能低于 %@。"),
+                                     _nMaintenanceCollateralRatio]];
+                return;
+            }
         }
     }
     

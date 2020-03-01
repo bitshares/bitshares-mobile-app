@@ -46,6 +46,7 @@
 "kDebtTipTitleFeedAndCallPrice" = "喂价和强平触发价";
 "kDebtTipTitleWhatIsRatio" = "什么是抵押率？";
 "kDebtTipTitleWhatIsTargetRatio" = "什么是目标抵押率？";
+"kDebtTipNetworkErrorPleaseRefresh" = "网络异常，请重新刷新界面。";
 "kDebtTipAssetHasGlobalSettled" = "该资产已经全局清算，不可调整债仓。";
 "kDebtTipAssetNoValidFeedData" = "该资产没有有效的喂价，不可调整债仓。";
 "kDebtTipCollRatioCannotLessThanMCR" = "抵押率不能低于 %@。";
@@ -57,6 +58,7 @@
 "kDebtTipTxUpdatePositionFullOK" = "债仓调整完毕。";
 "kDebtTipTxUpdatePositionOK" = "债仓调整完毕，但刷新界面数据失败，请稍后再试。";
 "kDebtWarmTips" = "【温馨提示】\n1、当喂价下降到强平触发价时，系统将会自动出售您的抵押资产用于归还借款。请注意调整抵押率控制风险。\n2、当锁定借款金额时，抵押率会随抵押物数量变化而变化。\n3、当锁定抵押率时，借款金额会随抵押物数量变化而变化。";
+"kDebtWarmTipsForPM" = "【温馨提示】\n当前资产为预测市场资产。借款金额和抵押物数量恒定为 1:1。";
 
 /* 服务界面 */
 "kServicesCellLabelQrScan" = "扫一扫";

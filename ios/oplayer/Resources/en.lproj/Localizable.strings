@@ -46,6 +46,7 @@
 "kDebtTipTitleFeedAndCallPrice" = "Feed & Call price";
 "kDebtTipTitleWhatIsRatio" = "What is the ratio?";
 "kDebtTipTitleWhatIsTargetRatio" = "What is the target ratio?";
+"kDebtTipNetworkErrorPleaseRefresh" = "网络异常，请重新刷新界面。";//TODO:
 "kDebtTipAssetHasGlobalSettled" = "该资产已经全局清算，不可调整债仓。";//TODO:
 "kDebtTipAssetNoValidFeedData" = "该资产没有有效的喂价，不可调整债仓。";//TODO:
 "kDebtTipCollRatioCannotLessThanMCR" = "抵押率不能低于 %@。";//TODO:
@@ -57,6 +58,7 @@
 "kDebtTipTxUpdatePositionFullOK" = "Update position successfully.";
 "kDebtTipTxUpdatePositionOK" = "Update position successfully, but the refresh failed. Please try again later.";
 "kDebtWarmTips" = "[Tips]\n1. When the feed price drops to the call price, the system will automatically sell your collateral assets for debt repayment. Please pay attention to adjusting the ratio control risks. \n2. When the debt field is locked, the ratio will change with the collateral. \n3. When the ratio field is locked, the debt will change with the collateral.";
+"kDebtWarmTipsForPM" = "【温馨提示】\n当前资产为预测市场资产。借款金额和抵押物数量恒定为 1:1。";//TODO:
 
 /* 服务界面 */
 "kServicesCellLabelQrScan" = "Scan QR code";
