@@ -877,7 +877,7 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
     
     NSString* from = [memo_object objectForKey:@"from"];
     NSString* to = [memo_object objectForKey:@"to"];
-    NSString* nonce = [memo_object objectForKey:@"nonce"];
+    id nonce = [memo_object objectForKey:@"nonce"];
     NSString* message = [memo_object objectForKey:@"message"];
     assert(from && to && nonce && message);
     
@@ -917,8 +917,9 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
     size_t output_size = (size_t)raw_message.length;
     unsigned char output[output_size];
     
+    NSString* nonce_str = [NSString stringWithFormat:@"%@", nonce];
     unsigned char* plain_ptr = __bts_aes256_decrypt_with_checksum(memo_private_key32, &s_pubkey,
-                                                                  [nonce UTF8String], [nonce length],
+                                                                  [nonce_str UTF8String], [nonce_str length],
                                                                   raw_message.bytes, raw_message.length,
                                                                   output, &output_size);
     if (!plain_ptr) {
