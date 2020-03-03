@@ -19,6 +19,7 @@
     NSMutableArray*             _slideButtonArrays;
     
     MyScrollView*               _mainScrollView;
+    UITapGestureRecognizer*     _pSpaceTapGesture;
     UIView*                     _navView;
     UILabel*                    _sliderLabel;
     
@@ -31,6 +32,10 @@
 
 -(void)dealloc
 {
+    if (_pSpaceTapGesture) {
+        _pSpaceTapGesture.delegate = nil;
+        _pSpaceTapGesture = nil;
+    }
     if (_mainScrollView){
         _mainScrollView.delegate = nil;
         _mainScrollView = nil;
@@ -142,6 +147,48 @@
     _mainScrollView.contentSize = CGSizeMake(kScreenWidth * (_subvcArrays.count), 0);
     //  默认偏移
     _mainScrollView.contentOffset = CGPointMake(kScreenWidth * (_currentSelectedTag - 1), 0);
+    
+    //  初始化默认值
+    _enableTapSpaceEndInput = NO;
+    _pSpaceTapGesture = nil;
+}
+
+- (void)setEnableTapSpaceEndInput:(BOOL)enableTapSpaceEndInput
+{
+    _enableTapSpaceEndInput = enableTapSpaceEndInput;
+    if (_enableTapSpaceEndInput) {
+        //  添加手势
+        if (!_pSpaceTapGesture) {
+            _pSpaceTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onSpaceTap:)];
+            _pSpaceTapGesture.delegate = self;
+            [_mainScrollView addGestureRecognizer:_pSpaceTapGesture];
+        }
+    } else {
+        //  移除手势
+        if (_pSpaceTapGesture) {
+            [_mainScrollView removeGestureRecognizer:_pSpaceTapGesture];
+            _pSpaceTapGesture.delegate = nil;
+            _pSpaceTapGesture = nil;
+        }
+    }
+}
+
+/*
+ *  (private) 空白处点击
+ */
+- (void)onSpaceTap:(UITapGestureRecognizer*)tap
+{
+    [self endInput];
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    if (_pSpaceTapGesture && gestureRecognizer &&
+        touch.view &&
+        [touch.view findSubview:[ViewBlockLabel class] resursion:YES]) {
+        return NO;
+    }
+    return YES;
 }
 
 - (UIButton*)buttonWithTag:(NSInteger)tag
@@ -255,6 +302,8 @@
  */
 - (void)onPageChanged:(NSInteger)tag
 {
+    [self endInput];
+    
     if ([[MBProgressHUDSingleton sharedMBProgressHUDSingleton] is_showing]){
         return;
     }
@@ -266,6 +315,22 @@
                 VCBase* vc_base = (VCBase*)vc;
                 [vc_base onControllerPageChanged];
             }
+        }
+    }
+}
+
+/*
+ *  关闭键盘
+ */
+- (void)endInput
+{
+    [super endInput];
+    if (_subvcArrays){
+        for (VCBase* vc in _subvcArrays) {
+            if (![vc isKindOfClass:[VCBase class]]) {
+                continue;
+            }
+            [vc endInput];
         }
     }
 }

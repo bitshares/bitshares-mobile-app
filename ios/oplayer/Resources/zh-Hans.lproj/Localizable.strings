@@ -252,17 +252,31 @@
 "kVcPermissionAddOneDontTipsCantAddSelf" = "不能添加自身账号。";
 
 /* 登录&注册&备份 */
+"kFmtConditionContains2UpperLettersNonConsecutive" = "必须包含2个以上且不连续的大写字母";
+"kFmtConditioncontainsUpperLetters" = "必须包含大写字母";
+"kFmtConditionContainsLowerLetters" = "必须包含小写字母";
+"kFmtConditionContainsDigits" = "必须包含数字";
+"kFmtConditionLen12To40Chars" = "长度12到40个字符";
+"kFmtConditionLen3To32Chars" = "长度3到32个字符";
+"kFmtConditionLen32To40Chars" = "长度32到40个字符";
+"kFmtConditionOnlyContainsLetterDigitAndHyphens" = "由字母、数字或短横线组成";
+"kFmtConditionBeginwithLetters" = "必须以字母开头";
+"kFmtConditionEndWithLetterOrDigits" = "必须以字母或数字结尾";
 "kLoginPageModePassword" = "账号模式";
 "kLoginPageModeBrainKey" = "助记词";
 "kLoginPageModePrivateKey" = "私钥模式";
 "kLoginPageModeWallet" = "钱包模式";
 "kLoginTipsPlaceholderAccount" = "请输入 Bitshares 账号名";
 "kLoginTipsPlaceholderBrainKey" = "请输入助记词，每个单词之间按空格分割。";
-"kLoginTipsPlaceholderTradePassword" = "请输入交易密码";
+"kLoginTipsPlaceholderTradePassword" = "设置新的解锁密码";
 "kLoginTipsPlaceholderActiveKey" = "请输入资金权限私钥";
 "kLoginTipsPlaceholderConfirmPassword" =  "请确认密码";
 "kLoginTipsPlaceholderWalletPassword" = "8位以上钱包文件密码";
 "kLoginTipsPlaceholderInputRefCode" = "引荐人推荐码（选填）";
+"kRegTipsPlaceholderNewAccount" = "请输入新的账号名";
+"kRegTipsPlaceholderNewPassword" = "请输入新的密码";
+"kRegTipsPlaceholderNewWalletPassword" = "请输入新的钱包密码";
+"kRegCellLabelWalletPassword" = "钱包密码";
 "kLoginCellLabelRefCode" = "推荐码";
 "kLoginTipsLoginOK" = "登录成功。";
 "kLoginTipsRegFullOK" = "注册成功。";
@@ -293,7 +307,7 @@
 "kLoginImportTipsWalletNoActiveKey" = "该钱包不包含资金权限密钥，请重新导入。";
 "kLoginImportTipsWalletNoFullActiveKey" =  "该钱包不包含完整资金权限密钥，请重新导入。";
 "kLoginSubmitTipsAccountIsEmpty" = "账号名不能为空，请重新输入。";
-"kLoginSubmitTipsTradePasswordFmtIncorrect" = "交易密码格式不正确，请重新输入。";
+"kLoginSubmitTipsTradePasswordFmtIncorrect" = "解锁密码格式不正确，请重新输入。";
 "kLoginSubmitTipsWalletPasswordFmtIncorrect" = "钱包密码格式不正确，请重新输入。";
 "kLoginSubmitTipsPasswordFmtIncorrect" = "密码格式不正确，请重新输入。";
 "kLoginSubmitTipsConfirmPasswordFailed" = "两次输入的密码不一致，请重新输入。";
@@ -309,10 +323,9 @@
 "kLoginRegTipsRegOK" = "注册成功，但刷新失败，稍后直接登录即可。";
 "kLoginTipsWalletModeRegOK" = "注册成功，但获取账号信息失败，请重新启动APP。";
 "kLoginCellAccountName" = "账号 ";
-"kLoginCellSetupTradePassword" =  "设置交易密码";
-"kLoginCellTradePassword" = "交易密码";
+"kLoginCellSetupTradePassword" =  "解锁密码";
 "kLoginCellWalletPassword" = "钱包密码";
-"kLoginCellActivePrivateKey" = "资金私钥 ";
+"kLoginCellActivePrivateKey" = "资金私钥";
 "kLoginCellConfirmPassword" = "确认密码";
 "kLoginRegTipsAccountMode" = "提示：账号密码对应格式要求可以点击问号查看。\n注意：比特股是去中心化区块链应用密码一旦丢失或遗忘将无法找回，请务必妥善保管。";
 "kLoginRegTipsWalletMode" = "提示：钱包密码对应格式要求可以点击问号查看。\n注意：比特股是去中心化区块链应用，钱包文件和密码一旦丢失或遗忘将无法找回，建议您注册后将钱包文件做好备份，并妥善保管。※ 推荐使用钱包模式。";
@@ -866,7 +879,7 @@
 "kVcTitleBackupWallet" = "备份钱包";
 "kVcTitleSelectToAccount" = "搜索目标账号";
 "kVcTitleWhatIsFeedPrice" = "什么是喂价？";
-"kVcTitleWhatIsTradePassowrd" = "什么是交易密码？";
+"kVcTitleWhatIsTradePassowrd" = "什么是解锁密码？";
 "kVcTitleWhatIsActivePrivateKey" = "什么是资金私钥？";
 "kVcTitleWhatIsGatewayAssets" = "什么是网关资产？";
 "kVcTitleWhatIsGateway" = "什么是网关？";
@@ -1523,7 +1536,6 @@
 "tip_member_expired" = "会员：已过期";
 "tip_member_timeleft_fmt" = "会员：%@天后到期";
 "unlockTipsPleaseInputAccountPassword" = "请输入账号密码";
-"unlockTipsPleaseInputTradePassword" = "请输入交易密码";
 "unlockTipsPleaseInputWalletPassword" = "请输入钱包密码";
 "unlockTipsUnlockAccount" = "解锁账号";
 "unlockTipsUnlockWallet" = "解锁钱包";

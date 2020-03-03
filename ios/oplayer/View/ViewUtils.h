@@ -14,6 +14,12 @@
 @interface ViewUtils : NSObject
 
 /*
+ *  (public) 辅助方法 - 查找指定类型的父类对象。
+ */
++ (UIView*)findSuperView:(UIView*)view klass:(Class)super_view_class;
++ (UITableView*)findSuperTableView:(UIView*)view;
+
+/*
  *  (public) 辅助方法 - 生成 TableView 用的 CELL 视图对象。
  */
 + (UITableViewCellBase*)auxGenTableViewCellLine:(NSString*)title_string;

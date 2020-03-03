@@ -405,16 +405,7 @@ enum
 
 - (void)resignAllFirstResponder
 {
-    //  REMARK：强制结束键盘
-    [self.view endEditing:YES];
-    if (_subvcArrays){
-        for (VCTradeVerticalBuyOrSell* vc in _subvcArrays) {
-            if (![vc isKindOfClass:[VCTradeVerticalBuyOrSell class]]) {
-                continue;
-            }
-            [vc endInput];
-        }
-    }
+    [self endInput];
 }
 
 - (void)onPageChanged:(NSInteger)tag
@@ -823,7 +814,7 @@ enum
  */
 - (void)endInput
 {
-    [self.view endEditing:YES];
+    [super endInput];
     [_tfNumber safeResignFirstResponder];
     [_tfPrice safeResignFirstResponder];
     [_tfTotal safeResignFirstResponder];

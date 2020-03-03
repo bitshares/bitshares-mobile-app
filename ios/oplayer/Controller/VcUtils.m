@@ -14,7 +14,7 @@
 
 @interface UITapGestureRecognizer2Block()
 {
-    __weak VCBase* _self;
+    __weak id _self;
     UITapGestureRecognizerBlockHandler _body;
 }
 

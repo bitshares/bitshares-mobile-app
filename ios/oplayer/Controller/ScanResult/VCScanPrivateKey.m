@@ -188,7 +188,7 @@ enum
     if (_tf_wallet_password) {
         pTradePassword = [NSString trim:_tf_wallet_password.text];
         if (![OrgUtils isValidBitsharesWalletPassword:pTradePassword]){
-            [OrgUtils makeToast:NSLocalizedString(@"kLoginSubmitTipsTradePasswordFmtIncorrect", @"交易密码格式不正确，请重新输入。")];
+            [OrgUtils makeToast:NSLocalizedString(@"kLoginSubmitTipsTradePasswordFmtIncorrect", @"解锁密码格式不正确，请重新输入。")];
             return;
         }
     }

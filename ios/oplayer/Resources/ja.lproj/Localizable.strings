@@ -252,17 +252,31 @@
 "kVcPermissionAddOneDontTipsCantAddSelf" = "自分のアカウントを追加できません。";
 
 /* 登录&注册&备份 */
+"kFmtConditionContains2UpperLettersNonConsecutive" = "2つ以上の連続しない大文字を含む";
+"kFmtConditioncontainsUpperLetters" = "大文字を含む";
+"kFmtConditionContainsLowerLetters" = "小文字を含む";
+"kFmtConditionContainsDigits" = "数字を含む";
+"kFmtConditionLen12To40Chars" = "長さは12〜40文字";
+"kFmtConditionLen3To32Chars" = "長さは3〜32文字";
+"kFmtConditionLen32To40Chars" = "長さは32〜40文字";
+"kFmtConditionOnlyContainsLetterDigitAndHyphens" = "文字、数字、またはハイフンで構成";
+"kFmtConditionBeginwithLetters" = "文字で始まる必要があります";
+"kFmtConditionEndWithLetterOrDigits" = "文字または数字で終わる";
 "kLoginPageModePassword" = "アカウントモード";
 "kLoginPageModeBrainKey" = "ブレインキー";
 "kLoginPageModePrivateKey" = "キーファイルモード";
 "kLoginPageModeWallet" = "ウオレットモード";
 "kLoginTipsPlaceholderAccount" = "アカウントを入力してください";
 "kLoginTipsPlaceholderBrainKey" = "各言葉の間にスペースを入れて、ニーモニックを入力してください。";
-"kLoginTipsPlaceholderTradePassword" = "取引パスワードを入力してください";
+"kLoginTipsPlaceholderTradePassword" = "新しい取引パスワードを設定する";
 "kLoginTipsPlaceholderActiveKey" = "資金キーファイルを入力してください";
 "kLoginTipsPlaceholderConfirmPassword" =  "パスワードを確認してください";
 "kLoginTipsPlaceholderWalletPassword" = "8位以上のファイルパスワード";
 "kLoginTipsPlaceholderInputRefCode" = "推薦コード（オプション）";
+"kRegTipsPlaceholderNewAccount" = "新しいアカウント";
+"kRegTipsPlaceholderNewPassword" = "新しいパスワード";
+"kRegTipsPlaceholderNewWalletPassword" = "新しいウォレットのパスワード";
+"kRegCellLabelWalletPassword" = "ウォレットのパスワード";
 "kLoginCellLabelRefCode" = "推薦コード";
 "kLoginTipsLoginOK" = "ログイン成功。";
 "kLoginTipsRegFullOK" = "新規登録成功。";
@@ -310,9 +324,8 @@
 "kLoginTipsWalletModeRegOK" = "新規登録成功，アカウントの情報を得て失敗します，APPに再起動してください。";
 "kLoginCellAccountName" = "アカウント ";
 "kLoginCellSetupTradePassword" =  "取引パスワードの設定";
-"kLoginCellTradePassword" = "取引パスワード";
 "kLoginCellWalletPassword" = "アカウントパスワード";
-"kLoginCellActivePrivateKey" = "資金キーファイル ";
+"kLoginCellActivePrivateKey" = "資金秘密鍵";
 "kLoginCellConfirmPassword" = "パスワードを確認してください";
 "kLoginRegTipsAccountMode" = "提示:アカウントパスワード対応フォーマット要求は疑問符をクリックして見ることができます。\n注意:BitSharesは、中心化ブロックチェーンへのアクセス暗証番号の応用が失われたり、忘れたりするとなかなか戻ってこないので、必ずきちんと保管してください。";
 "kLoginRegTipsWalletMode" = "ヒント:おウオレットパスワード対応フォーマット要件は闻き番号をクリックしてチェックすることができます。\n注意:BitSharesは中心化ブロックチェーンのアプリケーションで、ファイルやパスワードを失うと、忘れてしまうと戻ってきません。登录した后、ファイルをバックアップし、适切に保管することをお勧めします。※ ウオレットモードのご利用はお勧めです。";
@@ -1523,7 +1536,6 @@
 "tip_member_expired" = "会员:期限を切れました";
 "tip_member_timeleft_fmt" = "会员：%@日で期限が切れる";
 "unlockTipsPleaseInputAccountPassword" = "アカウントのパスワードを入力してください";
-"unlockTipsPleaseInputTradePassword" = "取引のパスワードを入力してください";
 "unlockTipsPleaseInputWalletPassword" = "ウオレットのパスワードを入力してください";
 "unlockTipsUnlockAccount" = "アンロックのパスワード";
 "unlockTipsUnlockWallet" = "アンロックのアカウント";

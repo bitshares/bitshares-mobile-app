@@ -369,7 +369,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 }
 
 /**
- *  (public) 帐号格式有效性判断　TODO:fowallet 格式细节
+ *  (public) 帐号格式有效性判断　TODO:fowallet 格式细节  TODO:5.0 废弃
  */
 + (BOOL)isValidBitsharesAccountName:(NSString*)name
 {
@@ -416,7 +416,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     return NO;;
 }
 /**
- *  (public) 帐号模式：帐号密码格式是否正确　TODO:fowallet 格式细节
+ *  (public) 帐号模式：帐号密码格式是否正确　TODO:fowallet 格式细节 TODO:5.0 废弃
  *  格式：12位以上，包含大小写和数字。
  */
 + (BOOL)isValidBitsharesAccountPassword:(NSString*)password
@@ -438,7 +438,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     return YES;
 }
 /**
- *  (public) 钱包模式：钱包密码格式是否正确 TODO:fowallet 格式细节
+ *  (public) 钱包模式：钱包密码格式是否正确 TODO:fowallet 格式细节 TODO:5.0 尚未完全替换完毕
  *  格式：8位以上，包含大小写和数字。
  */
 + (BOOL)isValidBitsharesWalletPassword:(NSString*)password
