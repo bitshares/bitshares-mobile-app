@@ -131,10 +131,27 @@ enum
     
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     
-    if ([_fullAccountInfo objectForKey:@"htlcs"]){
-        //  3.0.1 之后版本添加了获取HTLC相关API，full accounts也包含了HTLC对象信息。直接查询账号信息即可。
+    //  [兼容适配]
+    //  3.0.1 之后版本添加了获取HTLC相关API，full accounts也包含了HTLC对象信息。直接查询账号信息即可。
+    //  3.2.0 之后，htlcs 字段更改为 htlcs_from 和 htlcs_to。
+    if ([_fullAccountInfo objectForKey:@"htlcs"] ||
+        [_fullAccountInfo objectForKey:@"htlcs_from"] ||
+        [_fullAccountInfo objectForKey:@"htlcs_to"]){
         return [[chainMgr queryFullAccountInfo:uid] then:(^id(id full_data) {
-            return [full_data objectForKey:@"htlcs"];
+            id htlcs = [full_data objectForKey:@"htlcs"];
+            id htlcs_from = [full_data objectForKey:@"htlcs_from"];
+            id htlcs_to = [full_data objectForKey:@"htlcs_to"];
+            NSMutableArray* list = [NSMutableArray array];
+            if (htlcs) {
+                [list addObjectsFromArray:htlcs];
+            }
+            if (htlcs_from) {
+                [list addObjectsFromArray:htlcs_from];
+            }
+            if (htlcs_to) {
+                [list addObjectsFromArray:htlcs_to];
+            }
+            return [list copy];
         })];
     }else{
         //  3.0.1 及其之前版本，获取HTLC的接口尚未完成。full accounts也未包含HTLC对象信息。这里直接从账号明细里获取。但存在缺陷。
