@@ -1068,4 +1068,12 @@ static NSInteger gen_notify_unique_id()
     //  子类可重载
 }
 
+/*
+ *  (public) 关闭键盘，子类可重载。
+ */
+- (void)endInput
+{
+    [self.view endEditing:YES];
+}
+
 @end

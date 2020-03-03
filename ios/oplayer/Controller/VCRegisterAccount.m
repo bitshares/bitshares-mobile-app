@@ -62,6 +62,9 @@
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
+    //  事件 - 空白处点击
+    self.enableTapSpaceEndInput = YES;
+    
     [self showRightButton:NSLocalizedString(@"kBtnAppAgreement", @"服务条款") action:@selector(onRBtnAgreementClicked)];
 }
 

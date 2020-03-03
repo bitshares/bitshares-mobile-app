@@ -252,17 +252,31 @@
 "kVcPermissionAddOneDontTipsCantAddSelf" = "Can't add your own account.";
 
 /* 登录&注册&备份 */
+"kFmtConditionContains2UpperLettersNonConsecutive" = "Contain more than 2 and non-continuous uppercase letters";
+"kFmtConditioncontainsUpperLetters" = "Contain uppercase letters";
+"kFmtConditionContainsLowerLetters" = "Contains lowercase letters";
+"kFmtConditionContainsDigits" = "Contains numbers";
+"kFmtConditionLen12To40Chars" = "12 to 40 characters in length";
+"kFmtConditionLen3To32Chars" = "3 to 32 characters in length";
+"kFmtConditionLen32To40Chars" = "32 to 40 characters in length";
+"kFmtConditionOnlyContainsLetterDigitAndHyphens" = "Composed of letters, numbers, or hyphens";
+"kFmtConditionBeginwithLetters" = "Begin with a letter";
+"kFmtConditionEndWithLetterOrDigits" = "End with a letter or number";
 "kLoginPageModePassword" = "Normal";
 "kLoginPageModeBrainKey" = "Brain Key";
 "kLoginPageModePrivateKey" = "Private Key";
 "kLoginPageModeWallet" = "Wallet";
 "kLoginTipsPlaceholderAccount" = "Please input bitshares account";
 "kLoginTipsPlaceholderBrainKey" = "Please enter a mnemonic, separated by spaces between each word.";
-"kLoginTipsPlaceholderTradePassword" = "Please input wallet password";
+"kLoginTipsPlaceholderTradePassword" = "Set a new unlock password";
 "kLoginTipsPlaceholderActiveKey" = "Please input active private key";
 "kLoginTipsPlaceholderConfirmPassword" =  "Please confirm password";
 "kLoginTipsPlaceholderWalletPassword" = "Please input wallet passwrod";
 "kLoginTipsPlaceholderInputRefCode" = "Referrer code (optional)";
+"kRegTipsPlaceholderNewAccount" = "Please enter a new account";
+"kRegTipsPlaceholderNewPassword" = "Please enter a new password";
+"kRegTipsPlaceholderNewWalletPassword" = "Please enter a new wallet password";
+"kRegCellLabelWalletPassword" = "Wallet password";
 "kLoginCellLabelRefCode" = "Referrer";
 "kLoginTipsLoginOK" = "Login successful.";
 "kLoginTipsRegFullOK" = "Register successful.";
@@ -293,7 +307,7 @@
 "kLoginImportTipsWalletNoActiveKey" = "The wallet does not contain an active key. Please re-import.";
 "kLoginImportTipsWalletNoFullActiveKey" =  "The wallet does not contain the full active permission key, please re-import.";
 "kLoginSubmitTipsAccountIsEmpty" = "The account name cannot be empty. Please re-enter.";
-"kLoginSubmitTipsTradePasswordFmtIncorrect" = "The wallet password format is incorrect. Please re-enter.";
+"kLoginSubmitTipsTradePasswordFmtIncorrect" = "The unlock password format is incorrect. Please re-enter.";
 "kLoginSubmitTipsWalletPasswordFmtIncorrect" = "The wallet password format is incorrect. Please re-enter.";
 "kLoginSubmitTipsPasswordFmtIncorrect" = "The wallet password format is incorrect. Please re-enter.";
 "kLoginSubmitTipsConfirmPasswordFailed" = "The password is different, please re-enter.";
@@ -309,10 +323,9 @@
 "kLoginRegTipsRegOK" = "Registration is successful, but the refresh fails. You can log in directly later.";
 "kLoginTipsWalletModeRegOK" = "The registration is successful, but query account data failed. Please restart the app.";
 "kLoginCellAccountName" = "Account ";
-"kLoginCellSetupTradePassword" =  "Enable trade password";
-"kLoginCellTradePassword" = "W-pwd";
+"kLoginCellSetupTradePassword" =  "Unlock password";
 "kLoginCellWalletPassword" = "W-pwd";
-"kLoginCellActivePrivateKey" = "key ";
+"kLoginCellActivePrivateKey" = "Active private key";
 "kLoginCellConfirmPassword" = "Confirm ";
 "kLoginRegTipsAccountMode" = "Tip: The password format can be viewed by clicking on the question mark. \nNote: Bitshares is a decentralized blockchain application. Once the password is lost or forgotten, it will not be retrieved. Please keep it in a safe place.";
 "kLoginRegTipsWalletMode" = "Tip: The password format can be viewed by clicking on the question mark. \nNote: Bitshares is a decentralized blockchain application. If the wallet file or password is lost or forgotten, it is not possible to retrieve it. It is recommended that you back up the wallet file after registration and keep it in a safe place. \n※ Wallet mode is recommended.";
@@ -866,7 +879,7 @@
 "kVcTitleBackupWallet" = "Backup";
 "kVcTitleSelectToAccount" = "Search account";
 "kVcTitleWhatIsFeedPrice" = "What is the feed price?";
-"kVcTitleWhatIsTradePassowrd" = "What is trading password?";
+"kVcTitleWhatIsTradePassowrd" = "What is unlock password?";
 "kVcTitleWhatIsActivePrivateKey" = "What is active private key?";
 "kVcTitleWhatIsGatewayAssets" = "What is gateway assets?";
 "kVcTitleWhatIsGateway" = "What is a gateway?";
@@ -1523,7 +1536,6 @@
 "tip_member_expired" = "Member: Expired";
 "tip_member_timeleft_fmt" = "Member:%@ days left";
 "unlockTipsPleaseInputAccountPassword" = "Please input account password";
-"unlockTipsPleaseInputTradePassword" = "Please input trade password";
 "unlockTipsPleaseInputWalletPassword" = "Please input wallet password";
 "unlockTipsUnlockAccount" = "Unlock account";
 "unlockTipsUnlockWallet" = "Unlock wallet";

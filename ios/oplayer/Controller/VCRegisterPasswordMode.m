@@ -11,6 +11,7 @@
 #import "VCRegisterWalletMode.h"
 #import "BitsharesClientManager.h"
 
+#import "ViewAdvTextFieldCell.h"
 #import "ViewTextFieldOwner.h"
 #import "ViewTipsInfoCell.h"
 
@@ -51,10 +52,15 @@ enum
     
     UITableView *           _mainTableView;
     
-    MyTextField*            _tf_username;
-    MyTextField*            _tf_password;
-    MyTextField*            _tf_confirm;
-    MyTextField*            _tf_refcode;
+    ViewAdvTextFieldCell*   _cell_account;
+    ViewAdvTextFieldCell*   _cell_password;
+    ViewAdvTextFieldCell*   _cell_confirm;
+    ViewAdvTextFieldCell*   _cell_refcode;
+    
+    //    MyTextField*            _tf_username;
+    //    MyTextField*            _tf_password;
+    //    MyTextField*            _tf_confirm;
+    //    MyTextField*            _tf_refcode;
     
     ViewBlockLabel*         _lbSubmit;
     ViewTipsInfoCell*       _cellTips;
@@ -68,10 +74,10 @@ enum
 {
     _cellTips = nil;
     
-    _tf_username.delegate = nil;
-    _tf_password.delegate = nil;
-    _tf_confirm.delegate = nil;
-    _tf_refcode.delegate = nil;
+    _cell_account = nil;
+    _cell_password = nil;
+    _cell_confirm = nil;
+    _cell_refcode = nil;
     
     if (_mainTableView){
         [[IntervalManager sharedIntervalManager] releaseLock:_mainTableView];
@@ -96,35 +102,26 @@ enum
     
     self.view.backgroundColor = [UIColor clearColor];
     
-    CGRect rect = [self makeTextFieldRect];
+    //  UI - 账号输入框
+    _cell_account = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kLoginCellAccountName", @"帐号 ")
+                                                    placeholder:NSLocalizedString(@"kRegTipsPlaceholderNewAccount", @"请输入新的账号名")];
+    [_cell_account auxFastConditionsViewForAccountNameFormat];
     
-    _tf_username = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault
-                                    placeholder:NSLocalizedString(@"kLoginTipsPlaceholderAccount", @"请输入 Bitshares 帐号名")
-                                         action:@selector(onTipButtonClicked:) tag:kVcSubAccountName];
-    _tf_password = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault
-                                    placeholder:NSLocalizedString(@"tip_placeholder_password", @"请输入密码")
-                                         action:@selector(onTipButtonClicked:) tag:kVcSubPassword];
-    [_tf_password setSecureTextEntry:YES];
-    _tf_confirm = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:NSLocalizedString(@"kLoginTipsPlaceholderConfirmPassword", @"请确认密码")];
-    [_tf_confirm setSecureTextEntry:YES];
-    _tf_refcode = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault
-                             placeholder:NSLocalizedString(@"kLoginTipsPlaceholderInputRefCode", @"引荐人推荐码（选填）")
-                                  action:@selector(onTipButtonClicked:) tag:kVcSubRefCode];
+    //  UI - 密码输入框
+    _cell_password = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kLoginPassword", @"密码 ")
+                                                     placeholder:NSLocalizedString(@"kRegTipsPlaceholderNewPassword", @"请输入新的密码")];
+    _cell_password.mainTextfield.secureTextEntry = YES;
+    [_cell_password auxFastConditionsViewForAccountPassword];
     
-    //  颜色字号下划线
-    _tf_username.updateClearButtonTintColor = YES;
-    _tf_password.updateClearButtonTintColor = YES;
-    _tf_confirm.updateClearButtonTintColor = YES;
-    _tf_refcode.updateClearButtonTintColor = YES;
-    _tf_username.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    _tf_password.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    _tf_confirm.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    _tf_refcode.textColor = [ThemeManager sharedThemeManager].textColorMain;
-    _tf_username.attributedPlaceholder = [ViewUtils placeholderAttrString:_tf_username.placeholder];
-    _tf_password.attributedPlaceholder = [ViewUtils placeholderAttrString:_tf_password.placeholder];
-    _tf_confirm.attributedPlaceholder = [ViewUtils placeholderAttrString:_tf_confirm.placeholder];
-    _tf_refcode.attributedPlaceholder = [ViewUtils placeholderAttrString:_tf_refcode.placeholder];
+    //  UI - 确认密码
+    _cell_confirm = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kLoginCellConfirmPassword", @"确认密码")
+                                                    placeholder:NSLocalizedString(@"kLoginTipsPlaceholderConfirmPassword", @"请确认密码")];
+    _cell_confirm.mainTextfield.secureTextEntry = YES;
     
+    //  UI - 推荐码
+    _cell_refcode = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kLoginCellLabelRefCode", @"推荐码")
+                                                    placeholder:NSLocalizedString(@"kLoginTipsPlaceholderInputRefCode", @"引荐人推荐码（选填）")];
+    [_cell_refcode genHelpButton:self action:@selector(onTipButtonClicked:) tag:kVcSubRefCode];
     
     //  UI - 主列表
     _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];
@@ -133,11 +130,6 @@ enum
     _mainTableView.backgroundColor = [UIColor clearColor];
     _mainTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:_mainTableView];
-    
-    //  点击事件
-    UITapGestureRecognizer* pTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTap:)];
-    pTap.cancelsTouchesInView = NO; //  IOS 5.0系列导致按钮没响应
-    [self.view addGestureRecognizer:pTap];
     
     _cellTips = [[ViewTipsInfoCell alloc] initWithText:NSLocalizedString(@"kLoginRegTipsAccountMode", @"提示：账号密码对应格式要求可以点击问号查看。\n注意：BTS++是去中心化区块链应用密码一旦丢失或遗忘将无法找回，请务必妥善保管。")];
     _cellTips.hideBottomLine = YES;
@@ -168,14 +160,18 @@ enum
     [super viewDidDisappear:animated];
 }
 
--(void)onTap:(UITapGestureRecognizer*)pTap
+- (void)endInput
 {
-    [self.view endEditing:YES];
-    
-    [_tf_password safeResignFirstResponder];
-    [_tf_username safeResignFirstResponder];
-    [_tf_confirm safeResignFirstResponder];
-    [_tf_refcode safeResignFirstResponder];
+    [super endInput];
+    [_cell_account endInput];
+    [_cell_password endInput];
+    [_cell_confirm endInput];
+    [_cell_refcode endInput];
+}
+
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    [self endInput];
 }
 
 /**
@@ -183,17 +179,17 @@ enum
  */
 - (void)process_register
 {
-    NSString* username = [NSString trim:_tf_username.text];
-    NSString* password = [NSString trim:_tf_password.text];
-    NSString* confirm_password = [NSString trim:_tf_confirm.text];
-    NSString* refcode = [NSString trim:_tf_refcode.text];
+    NSString* username = [NSString trim:_cell_account.mainTextfield.text];
+    NSString* password = [NSString trim:_cell_password.mainTextfield.text];
+    NSString* confirm_password = [NSString trim:_cell_confirm.mainTextfield.text];
+    NSString* refcode = [NSString trim:_cell_refcode.mainTextfield.text];
     
     //  检测参数有效性
-    if (![OrgUtils isValidBitsharesAccountName:username]){
+    if (!_cell_account.isAllConditionsMatched) {
         [OrgUtils makeToast:NSLocalizedString(@"kLoginSubmitTipsAccountFmtIncorrect", @"帐号格式不正确，请重新输入。")];
         return;
     }
-    if (![OrgUtils isValidBitsharesAccountPassword:password]){
+    if (!_cell_password.isAllConditionsMatched) {
         [OrgUtils makeToast:NSLocalizedString(@"kLoginSubmitTipsPasswordFmtIncorrect", @"密码格式不正确，请重新输入。")];
         return;
     }
@@ -203,11 +199,7 @@ enum
     }
     
     //  隐藏键盘
-    [self.view endEditing:YES];
-    [_tf_password safeResignFirstResponder];
-    [_tf_username safeResignFirstResponder];
-    [_tf_confirm safeResignFirstResponder];
-    [_tf_refcode safeResignFirstResponder];
+    [self endInput];
     
     //   --- 开始注册 ---
     [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
@@ -309,36 +301,21 @@ enum
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    if (textField == _tf_username)
-    {
-        [_tf_password becomeFirstResponder];
-    }
-    else
-    {
-        [self.view endEditing:YES];
-        [_tf_username safeResignFirstResponder];
-        [_tf_password safeResignFirstResponder];
-        [_tf_confirm safeResignFirstResponder];
-        [_tf_refcode safeResignFirstResponder];
-    }
+    //  TODO:5.0 未完成
+    //    if (textField == _tf_username)
+    //    {
+    //        [_tf_password becomeFirstResponder];
+    //    }
+    //    else
+    //    {
+    //        [self.view endEditing:YES];
+    //        [_tf_username safeResignFirstResponder];
+    //        [_tf_password safeResignFirstResponder];
+    //        [_tf_confirm safeResignFirstResponder];
+    //        [_tf_refcode safeResignFirstResponder];
+    //    }
+    [self endInput];
     return YES;
-}
-
-#pragma mark- UITableView Delegate For Fast Login
-
-- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return UITableViewCellEditingStyleDelete;
-}
-
-- (nullable NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-    return nil;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
-    return 15.0f;
 }
 
 #pragma mark- tip button
@@ -373,6 +350,19 @@ enum
 {
     if (indexPath.section == kVcTips){
         return [_cellTips calcCellDynamicHeight:tableView.layoutMargins.left];
+    } else if (indexPath.section == kVcUser) {
+        switch (indexPath.row) {
+            case kVcSubAccountName:
+                return _cell_account.cellHeight;
+            case kVcSubPassword:
+                return _cell_password.cellHeight;
+            case kVcSubConfirmPassword:
+                return _cell_confirm.cellHeight;
+            case kVcSubRefCode:
+                return _cell_refcode.cellHeight;
+            default:
+                break;
+        }
     }
     return tableView.rowHeight;
 }
@@ -401,57 +391,16 @@ enum
     {
         switch (indexPath.row) {
             case kVcSubAccountName:
-            {
-                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-                cell.showCustomBottomLine = YES;
-                cell.backgroundColor = [UIColor clearColor];
-                cell.accessoryType = UITableViewCellAccessoryNone;
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.textLabel.text = NSLocalizedString(@"kLoginCellAccountName", @"帐号 ");
-                cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                cell.accessoryView = _tf_username;
-                return cell;
-            }
-                break;
+                return _cell_account;
+                
             case kVcSubPassword:
-            {
-                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-                cell.showCustomBottomLine = YES;
-                cell.backgroundColor = [UIColor clearColor];
-                cell.accessoryType = UITableViewCellAccessoryNone;
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.textLabel.text = NSLocalizedString(@"kLoginPassword", @"密码 ");
-                cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                cell.accessoryView = _tf_password;
-                return cell;
-            }
-                break;
+                return _cell_password;
+                
             case kVcSubConfirmPassword:
-            {
-                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-                cell.showCustomBottomLine = YES;
-                cell.backgroundColor = [UIColor clearColor];
-                cell.accessoryType = UITableViewCellAccessoryNone;
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.textLabel.text = NSLocalizedString(@"kLoginCellConfirmPassword", @"确认密码");
-                cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                cell.accessoryView = _tf_confirm;
-                return cell;
-            }
-                break;
+                return _cell_confirm;
+                
             case kVcSubRefCode:
-            {
-                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-                cell.showCustomBottomLine = YES;
-                cell.backgroundColor = [UIColor clearColor];
-                cell.accessoryType = UITableViewCellAccessoryNone;
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.textLabel.text = NSLocalizedString(@"kLoginCellLabelRefCode", @"推荐码");
-                cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                cell.accessoryView = _tf_refcode;
-                return cell;
-            }
-                break;
+                return _cell_refcode;
             default:
                 break;
         }
@@ -482,15 +431,6 @@ enum
             [self process_register];
         }
     }];
-}
-
--(void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
-    [self.view endEditing:YES];
-    [_tf_password safeResignFirstResponder];
-    [_tf_username safeResignFirstResponder];
-    [_tf_confirm safeResignFirstResponder];
-    [_tf_refcode safeResignFirstResponder];
 }
 
 @end

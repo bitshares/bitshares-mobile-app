@@ -16,6 +16,29 @@
 @implementation ViewUtils
 
 /*
+ *  (public) 辅助方法 - 查找指定类型的父类对象。
+ */
++ (UIView*)findSuperView:(UIView*)view klass:(Class)super_view_class
+{
+    assert(view);
+    assert(super_view_class);
+    UIView* it = view;
+    while (it.superview)
+    {
+        if ([it.superview isKindOfClass:super_view_class]) {
+            return it.superview;
+        }
+        it = it.superview;
+    }
+    return nil;
+}
+
++ (UITableView*)findSuperTableView:(UIView*)view
+{
+    return (UITableView*)[self findSuperView:view klass:[UITableView class]];
+}
+
+/*
  *  (public) 辅助方法 - 生成 TableView 用的 CELL 视图对象。
  */
 + (UITableViewCellBase*)auxGenTableViewCellLine:(NSString*)title_string

@@ -1378,6 +1378,27 @@
 		3FE31D5223F67C7E009CA77E /* VCSelectApiNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE31D5123F67C7E009CA77E /* VCSelectApiNode.m */; };
 		3FE31D5323F67C7E009CA77E /* VCSelectApiNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE31D5123F67C7E009CA77E /* VCSelectApiNode.m */; };
 		3FE31D5423F67C7E009CA77E /* VCSelectApiNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE31D5123F67C7E009CA77E /* VCSelectApiNode.m */; };
+		3FE4E8DE240665AE002518BD /* ViewAdvTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E8DC240665AD002518BD /* ViewAdvTextFieldCell.m */; };
+		3FE4E8DF240665AE002518BD /* ViewAdvTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E8DC240665AD002518BD /* ViewAdvTextFieldCell.m */; };
+		3FE4E8E0240665AE002518BD /* ViewAdvTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E8DC240665AD002518BD /* ViewAdvTextFieldCell.m */; };
+		3FE4E8E324067CBF002518BD /* ViewFormatConditons.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E8E224067CBF002518BD /* ViewFormatConditons.m */; };
+		3FE4E8E424067CBF002518BD /* ViewFormatConditons.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E8E224067CBF002518BD /* ViewFormatConditons.m */; };
+		3FE4E8E524067CBF002518BD /* ViewFormatConditons.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E8E224067CBF002518BD /* ViewFormatConditons.m */; };
+		3FE4E8E82408C1BB002518BD /* ViewCheckBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E8E72408C1BB002518BD /* ViewCheckBox.m */; };
+		3FE4E8E92408C1BB002518BD /* ViewCheckBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E8E72408C1BB002518BD /* ViewCheckBox.m */; };
+		3FE4E8EA2408C1BB002518BD /* ViewCheckBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E8E72408C1BB002518BD /* ViewCheckBox.m */; };
+		3FE4E8EF2408C299002518BD /* iconUnchecked@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FE4E8EB2408C298002518BD /* iconUnchecked@3x.png */; };
+		3FE4E8F02408C299002518BD /* iconUnchecked@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FE4E8EB2408C298002518BD /* iconUnchecked@3x.png */; };
+		3FE4E8F12408C299002518BD /* iconUnchecked@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FE4E8EB2408C298002518BD /* iconUnchecked@3x.png */; };
+		3FE4E8F22408C299002518BD /* iconChecked@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FE4E8EC2408C298002518BD /* iconChecked@2x.png */; };
+		3FE4E8F32408C299002518BD /* iconChecked@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FE4E8EC2408C298002518BD /* iconChecked@2x.png */; };
+		3FE4E8F42408C299002518BD /* iconChecked@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FE4E8EC2408C298002518BD /* iconChecked@2x.png */; };
+		3FE4E8F52408C299002518BD /* iconChecked@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FE4E8ED2408C299002518BD /* iconChecked@3x.png */; };
+		3FE4E8F62408C299002518BD /* iconChecked@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FE4E8ED2408C299002518BD /* iconChecked@3x.png */; };
+		3FE4E8F72408C299002518BD /* iconChecked@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FE4E8ED2408C299002518BD /* iconChecked@3x.png */; };
+		3FE4E8F82408C299002518BD /* iconUnchecked@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FE4E8EE2408C299002518BD /* iconUnchecked@2x.png */; };
+		3FE4E8F92408C299002518BD /* iconUnchecked@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FE4E8EE2408C299002518BD /* iconUnchecked@2x.png */; };
+		3FE4E8FA2408C299002518BD /* iconUnchecked@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FE4E8EE2408C299002518BD /* iconUnchecked@2x.png */; };
 		3FE4E94922F698DC0056A44F /* MyTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E94822F698DC0056A44F /* MyTextView.m */; };
 		3FE4E94A22F698DC0056A44F /* MyTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E94822F698DC0056A44F /* MyTextView.m */; };
 		3FE4E94D22F7C0480056A44F /* HDWallet.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE4E94C22F7C0480056A44F /* HDWallet.m */; };
@@ -2216,6 +2237,16 @@
 		3FE23E32236D6A1F006BF999 /* VCOtcUserAuth.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcUserAuth.m; path = Controller/VCOtcUserAuth.m; sourceTree = "<group>"; };
 		3FE31D5023F67C7E009CA77E /* VCSelectApiNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCSelectApiNode.h; path = Controller/VCSelectApiNode.h; sourceTree = "<group>"; };
 		3FE31D5123F67C7E009CA77E /* VCSelectApiNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCSelectApiNode.m; path = Controller/VCSelectApiNode.m; sourceTree = "<group>"; };
+		3FE4E8DC240665AD002518BD /* ViewAdvTextFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewAdvTextFieldCell.m; path = View/ViewAdvTextFieldCell.m; sourceTree = "<group>"; };
+		3FE4E8DD240665AE002518BD /* ViewAdvTextFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewAdvTextFieldCell.h; path = View/ViewAdvTextFieldCell.h; sourceTree = "<group>"; };
+		3FE4E8E124067CBF002518BD /* ViewFormatConditons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewFormatConditons.h; path = View/ViewFormatConditons.h; sourceTree = "<group>"; };
+		3FE4E8E224067CBF002518BD /* ViewFormatConditons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewFormatConditons.m; path = View/ViewFormatConditons.m; sourceTree = "<group>"; };
+		3FE4E8E62408C1BB002518BD /* ViewCheckBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewCheckBox.h; path = View/ViewCheckBox.h; sourceTree = "<group>"; };
+		3FE4E8E72408C1BB002518BD /* ViewCheckBox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewCheckBox.m; path = View/ViewCheckBox.m; sourceTree = "<group>"; };
+		3FE4E8EB2408C298002518BD /* iconUnchecked@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconUnchecked@3x.png"; path = "Images/iconUnchecked@3x.png"; sourceTree = "<group>"; };
+		3FE4E8EC2408C298002518BD /* iconChecked@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconChecked@2x.png"; path = "Images/iconChecked@2x.png"; sourceTree = "<group>"; };
+		3FE4E8ED2408C299002518BD /* iconChecked@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconChecked@3x.png"; path = "Images/iconChecked@3x.png"; sourceTree = "<group>"; };
+		3FE4E8EE2408C299002518BD /* iconUnchecked@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconUnchecked@2x.png"; path = "Images/iconUnchecked@2x.png"; sourceTree = "<group>"; };
 		3FE4E94722F698DC0056A44F /* MyTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MyTextView.h; path = View/MyTextView.h; sourceTree = "<group>"; };
 		3FE4E94822F698DC0056A44F /* MyTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MyTextView.m; path = View/MyTextView.m; sourceTree = "<group>"; };
 		3FE4E94B22F7C0480056A44F /* HDWallet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HDWallet.h; path = bitshares/HDWallet.h; sourceTree = "<group>"; };
@@ -3254,6 +3285,12 @@
 		18FF069017E00C5C0088405E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				3FE4E8E62408C1BB002518BD /* ViewCheckBox.h */,
+				3FE4E8E72408C1BB002518BD /* ViewCheckBox.m */,
+				3FE4E8E124067CBF002518BD /* ViewFormatConditons.h */,
+				3FE4E8E224067CBF002518BD /* ViewFormatConditons.m */,
+				3FE4E8DD240665AE002518BD /* ViewAdvTextFieldCell.h */,
+				3FE4E8DC240665AD002518BD /* ViewAdvTextFieldCell.m */,
 				3FEF11322404F89600E5509D /* ViewAutoresizeContailerHor.h */,
 				3FEF11332404F89600E5509D /* ViewAutoresizeContailerHor.m */,
 				3FCB3D572402A03D00BA13A0 /* ViewTitleValueCell.h */,
@@ -3384,6 +3421,10 @@
 		18FF069417E00D870088405E /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				3FE4E8EC2408C298002518BD /* iconChecked@2x.png */,
+				3FE4E8ED2408C299002518BD /* iconChecked@3x.png */,
+				3FE4E8EE2408C299002518BD /* iconUnchecked@2x.png */,
+				3FE4E8EB2408C298002518BD /* iconUnchecked@3x.png */,
 				3FEF11222404D15500E5509D /* iconLocked@2x.png */,
 				3FEF11242404D15500E5509D /* iconLocked@3x.png */,
 				3FEF11252404D15600E5509D /* iconUnlocked@2x.png */,
@@ -4803,6 +4844,7 @@
 				3F676997230E9EC100E98C14 /* Help@2x.png in Resources */,
 				3F676998230E9EC100E98C14 /* Edit User@2x.png in Resources */,
 				3F676999230E9EC100E98C14 /* pay_0@3x.png in Resources */,
+				3FE4E8F42408C299002518BD /* iconChecked@2x.png in Resources */,
 				3F67699A230E9EC100E98C14 /* Localizable.strings in Resources */,
 				3F67699B230E9EC100E98C14 /* tabService@3x.png in Resources */,
 				3F67699C230E9EC100E98C14 /* Living Room@2x.png in Resources */,
@@ -4823,6 +4865,7 @@
 				3F6769A9230E9EC100E98C14 /* tabService_b@3x.png in Resources */,
 				3F6769AA230E9EC100E98C14 /* kefuavatar@2x.png in Resources */,
 				3FEF11282404D15600E5509D /* iconLocked@2x.png in Resources */,
+				3FE4E8FA2408C299002518BD /* iconUnchecked@2x.png in Resources */,
 				3F6769AB230E9EC100E98C14 /* iconQuery@2x.png in Resources */,
 				3F6769AC230E9EC100E98C14 /* Support@2x.png in Resources */,
 				3F6769AD230E9EC100E98C14 /* InfoPlist.strings in Resources */,
@@ -4904,6 +4947,7 @@
 				3F6769E9230E9EC100E98C14 /* Attention@2x.png in Resources */,
 				3F6769EA230E9EC100E98C14 /* iconAssets@2x.png in Resources */,
 				3F6769EB230E9EC100E98C14 /* share_passbook@2x.png in Resources */,
+				3FE4E8F12408C299002518BD /* iconUnchecked@3x.png in Resources */,
 				3F6769EC230E9EC100E98C14 /* begin@2x.png in Resources */,
 				3F6769ED230E9EC100E98C14 /* flight order@2x.png in Resources */,
 				3F6769EE230E9EC100E98C14 /* iconDebtRank@2x.png in Resources */,
@@ -4942,6 +4986,7 @@
 				3F23B780231CCC7000EEEE78 /* paysuccess@3x.png in Resources */,
 				3FB0381A2398A93400FC859C /* iconCopy@2x.png in Resources */,
 				3F676A0C230E9EC100E98C14 /* share_wechat_friend@2x.png in Resources */,
+				3FE4E8F72408C299002518BD /* iconChecked@3x.png in Resources */,
 				3F676A0D230E9EC100E98C14 /* Calendar@2x.png in Resources */,
 				3F676A0E230E9EC100E98C14 /* Find User@2x.png in Resources */,
 				3F676A0F230E9EC100E98C14 /* Contacts@2x.png in Resources */,
@@ -5084,6 +5129,7 @@
 				3FB8FA0C21CE66C200DA88E2 /* Help@2x.png in Resources */,
 				3FB8FA0D21CE66C200DA88E2 /* Edit User@2x.png in Resources */,
 				3FB8FA0E21CE66C200DA88E2 /* pay_0@3x.png in Resources */,
+				3FE4E8F32408C299002518BD /* iconChecked@2x.png in Resources */,
 				3FB8FA0F21CE66C200DA88E2 /* Localizable.strings in Resources */,
 				3FB8FA1021CE66C200DA88E2 /* tabService@3x.png in Resources */,
 				3FB8FA1121CE66C200DA88E2 /* Living Room@2x.png in Resources */,
@@ -5104,6 +5150,7 @@
 				3FB8FA1E21CE66C200DA88E2 /* tabService_b@3x.png in Resources */,
 				3FB8FA1F21CE66C200DA88E2 /* kefuavatar@2x.png in Resources */,
 				3FEF11272404D15600E5509D /* iconLocked@2x.png in Resources */,
+				3FE4E8F92408C299002518BD /* iconUnchecked@2x.png in Resources */,
 				3FB8FA2021CE66C200DA88E2 /* iconQuery@2x.png in Resources */,
 				3FB8FA2121CE66C200DA88E2 /* Support@2x.png in Resources */,
 				3F767B10224B7B310012822D /* InfoPlist.strings in Resources */,
@@ -5185,6 +5232,7 @@
 				3FB8FA5D21CE66C200DA88E2 /* Attention@2x.png in Resources */,
 				3FB8FA5E21CE66C200DA88E2 /* iconAssets@2x.png in Resources */,
 				3FB8FA5F21CE66C200DA88E2 /* share_passbook@2x.png in Resources */,
+				3FE4E8F02408C299002518BD /* iconUnchecked@3x.png in Resources */,
 				3FB8FA6021CE66C200DA88E2 /* begin@2x.png in Resources */,
 				3FB8FA6121CE66C200DA88E2 /* flight order@2x.png in Resources */,
 				3FB8FA6221CE66C200DA88E2 /* iconDebtRank@2x.png in Resources */,
@@ -5223,6 +5271,7 @@
 				3F23B77F231CCC7000EEEE78 /* paysuccess@3x.png in Resources */,
 				3FB038192398A93400FC859C /* iconCopy@2x.png in Resources */,
 				3FB8FA7F21CE66C200DA88E2 /* share_wechat_friend@2x.png in Resources */,
+				3FE4E8F62408C299002518BD /* iconChecked@3x.png in Resources */,
 				3FB8FA8021CE66C200DA88E2 /* Calendar@2x.png in Resources */,
 				3FB8FA8121CE66C200DA88E2 /* Find User@2x.png in Resources */,
 				3FB8FA8221CE66C200DA88E2 /* Contacts@2x.png in Resources */,
@@ -5291,6 +5340,7 @@
 				F55325A21C075D3200EC3F95 /* Christmas Star@2x.png in Resources */,
 				3F023DA023F14515006D11FA /* iconAssetMgr@3x.png in Resources */,
 				F5D935431DC6F05A00E663FC /* Sorting Arrows Horizontal-50@2x.png in Resources */,
+				3FE4E8EF2408C299002518BD /* iconUnchecked@3x.png in Resources */,
 				F59016921CE6DAF300898B70 /* Car@2x.png in Resources */,
 				F55325921C075D3200EC3F95 /* Advertising@2x.png in Resources */,
 				3FB8FA9B21CE6A5000DA88E2 /* fowallet-website.plist in Resources */,
@@ -5371,6 +5421,7 @@
 				B7973C3B20E205560052A5F5 /* tabMyself@2x.png in Resources */,
 				3FCB3D5424024D7700BA13A0 /* iconSlider@2x.png in Resources */,
 				B7973C6320E520100052A5F5 /* iconFav@3x.png in Resources */,
+				3FE4E8F82408C299002518BD /* iconUnchecked@2x.png in Resources */,
 				B786D51A20EB793500427C08 /* iconQuery@3x.png in Resources */,
 				F5BF57B91E307A0B00DEDE38 /* sns_comment@2x.png in Resources */,
 				F553259B1C075D3200EC3F95 /* Businesswoman@2x.png in Resources */,
@@ -5421,6 +5472,7 @@
 				F55325B91C075D3200EC3F95 /* Message@2x.png in Resources */,
 				F50C496E1C1355790001D9EA /* Upload-64@2x.png in Resources */,
 				ED9CB6071879388E00C4E2C0 /* icon_1_0@2x.png in Resources */,
+				3FE4E8F22408C299002518BD /* iconChecked@2x.png in Resources */,
 				3FCC8B79237A7C1F00F5664D /* iconPmAlipay@3x.png in Resources */,
 				3F7ED8DC227691BA00082680 /* iconAdvFunction@2x.png in Resources */,
 				F5F114791C230908006AE655 /* Forward-44@2x.png in Resources */,
@@ -5466,6 +5518,7 @@
 				F55E1D2A1C5F30010072FF99 /* begin@2x.png in Resources */,
 				F5EA29761DC77A7D00574ECC /* flight order@2x.png in Resources */,
 				3FB038232398AA4200FC859C /* iconPhone@3x.png in Resources */,
+				3FE4E8F52408C299002518BD /* iconChecked@3x.png in Resources */,
 				B786D51520EB793500427C08 /* iconDebtRank@2x.png in Resources */,
 				EDC4D6EA1869D84200D0A23E /* Static in Resources */,
 				B7973C4720E4C8EF0052A5F5 /* iconFaq@2x.png in Resources */,
@@ -5708,6 +5761,7 @@
 				3F676828230E9EC100E98C14 /* BitsharesClientManager.m in Sources */,
 				3F676829230E9EC100E98C14 /* TradingPair.m in Sources */,
 				3F67682A230E9EC100E98C14 /* ViewFeedPriceDataCell.m in Sources */,
+				3FE4E8EA2408C1BB002518BD /* ViewCheckBox.m in Sources */,
 				3F67682B230E9EC100E98C14 /* VCUserOrders.m in Sources */,
 				3F67682C230E9EC100E98C14 /* ViewProposalInfoCell.m in Sources */,
 				3FE31D5423F67C7E009CA77E /* VCSelectApiNode.m in Sources */,
@@ -5883,6 +5937,7 @@
 				3F6768B9230E9EC100E98C14 /* ViewTickerHeader.m in Sources */,
 				3F2B7A5E23D301D3006B1359 /* ModelUtils.m in Sources */,
 				3F6768BA230E9EC100E98C14 /* GRCustomUITabBarItem.m in Sources */,
+				3FE4E8E524067CBF002518BD /* ViewFormatConditons.m in Sources */,
 				3F6768BB230E9EC100E98C14 /* VCSearchNetwork.m in Sources */,
 				3FD3DD302316A579009760A0 /* VCScanAccountName.m in Sources */,
 				3F6768BC230E9EC100E98C14 /* GatewayBase.m in Sources */,
@@ -5979,6 +6034,7 @@
 				3F676908230E9EC100E98C14 /* MyNavigationController.mm in Sources */,
 				3F676909230E9EC100E98C14 /* ViewProposalAuthorizedStatusCell.m in Sources */,
 				3F67690A230E9EC100E98C14 /* VCHtlcTransfer.m in Sources */,
+				3FE4E8E0240665AE002518BD /* ViewAdvTextFieldCell.m in Sources */,
 				3F67690B230E9EC100E98C14 /* ViewOrderBookCell.m in Sources */,
 				3F67690C230E9EC100E98C14 /* ViewTextFieldOwner.m in Sources */,
 				3F67690D230E9EC100E98C14 /* Sha256.c in Sources */,
@@ -6050,6 +6106,7 @@
 				3FB8F8BF21CE66C200DA88E2 /* BitsharesClientManager.m in Sources */,
 				3FB8F8C021CE66C200DA88E2 /* TradingPair.m in Sources */,
 				3FB8F8C121CE66C200DA88E2 /* ViewFeedPriceDataCell.m in Sources */,
+				3FE4E8E92408C1BB002518BD /* ViewCheckBox.m in Sources */,
 				3FB8F8C221CE66C200DA88E2 /* VCUserOrders.m in Sources */,
 				3FB8F8C321CE66C200DA88E2 /* ViewProposalInfoCell.m in Sources */,
 				3FE31D5323F67C7E009CA77E /* VCSelectApiNode.m in Sources */,
@@ -6225,6 +6282,7 @@
 				3FB8F94221CE66C200DA88E2 /* ViewTickerHeader.m in Sources */,
 				3F2B7A5D23D301D3006B1359 /* ModelUtils.m in Sources */,
 				3FB8F94321CE66C200DA88E2 /* GRCustomUITabBarItem.m in Sources */,
+				3FE4E8E424067CBF002518BD /* ViewFormatConditons.m in Sources */,
 				3FB8F94421CE66C200DA88E2 /* VCSearchNetwork.m in Sources */,
 				3FD3DD2F2316A579009760A0 /* VCScanAccountName.m in Sources */,
 				3F6C35AE21EC83AB008E2903 /* GatewayBase.m in Sources */,
@@ -6321,6 +6379,7 @@
 				3FB8F98721CE66C200DA88E2 /* MyNavigationController.mm in Sources */,
 				3FDD800B21D77A0700DA61FC /* ViewProposalAuthorizedStatusCell.m in Sources */,
 				3F78E07722630585007D41A3 /* VCHtlcTransfer.m in Sources */,
+				3FE4E8DF240665AE002518BD /* ViewAdvTextFieldCell.m in Sources */,
 				3FB8F98821CE66C200DA88E2 /* ViewOrderBookCell.m in Sources */,
 				3FB8F98921CE66C200DA88E2 /* ViewTextFieldOwner.m in Sources */,
 				3FB8F98A21CE66C200DA88E2 /* Sha256.c in Sources */,
@@ -6392,6 +6451,7 @@
 				B7BDA95620B114DC00738F12 /* BitsharesClientManager.m in Sources */,
 				B7A288A4211843BC00339FAE /* TradingPair.m in Sources */,
 				B7F9DA77212BD76200185503 /* ViewFeedPriceDataCell.m in Sources */,
+				3FE4E8E82408C1BB002518BD /* ViewCheckBox.m in Sources */,
 				B741A76320DBE77C000FBC00 /* VCUserOrders.m in Sources */,
 				3FC43A232196EF91004DFFA5 /* ViewProposalInfoCell.m in Sources */,
 				3FE31D5223F67C7E009CA77E /* VCSelectApiNode.m in Sources */,
@@ -6567,6 +6627,7 @@
 				ED96A08F186C62AD002181D4 /* GRCustomUITabBarItem.m in Sources */,
 				3F2B7A5C23D301D3006B1359 /* ModelUtils.m in Sources */,
 				B72A845020CA776900D92A25 /* VCSearchNetwork.m in Sources */,
+				3FE4E8E324067CBF002518BD /* ViewFormatConditons.m in Sources */,
 				3FD3DD2E2316A579009760A0 /* VCScanAccountName.m in Sources */,
 				3F6C35AD21EC83AB008E2903 /* GatewayBase.m in Sources */,
 				B7BDAA8F20B3C77500738F12 /* Lzma2Dec.c in Sources */,
@@ -6663,6 +6724,7 @@
 				ED75E62A186C63C9009BEF5E /* MyNavigationController.mm in Sources */,
 				3FDD800A21D77A0700DA61FC /* ViewProposalAuthorizedStatusCell.m in Sources */,
 				3F78E07622630585007D41A3 /* VCHtlcTransfer.m in Sources */,
+				3FE4E8DE240665AE002518BD /* ViewAdvTextFieldCell.m in Sources */,
 				B7A288A72119401700339FAE /* ViewOrderBookCell.m in Sources */,
 				B78639E61C1878A600B55506 /* ViewTextFieldOwner.m in Sources */,
 				B7BDAA9B20B3C77500738F12 /* Sha256.c in Sources */,

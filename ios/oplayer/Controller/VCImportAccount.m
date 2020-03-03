@@ -85,11 +85,8 @@
 
 - (void)onRegisterBtnClicked
 {
-    //  TODO:子view需要处理键盘焦点
-//    [self.view endEditing:YES];
-//
-//    [_tf_password safeResignFirstResponder];
-//    [_tf_username safeResignFirstResponder];
+    [self endInput];
+    
     VCRegisterAccount* vc = [[VCRegisterAccount alloc] init];
     [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleRegister", @"注册") backtitle:kVcDefaultBackTitleName];
 }
@@ -101,6 +98,9 @@
     
     //  背景颜色
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
+    
+    //  事件 - 空白处点击
+    self.enableTapSpaceEndInput = YES;
     
     //  导入账号不提供注册（登录账号时候提供 ）& TODO:fowallet 测试网络暂时不提供注册。
     if (checkActivePermission && ![ChainObjectManager sharedChainObjectManager].isTestNetwork){

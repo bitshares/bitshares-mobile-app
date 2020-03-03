@@ -9,6 +9,7 @@
 
 #import "VCLoginBrainKeyMode.h"
 #import "BitsharesClientManager.h"
+#import "ViewAdvTextFieldCell.h"
 
 #import "MBProgressHUD.h"
 #import "OrgUtils.h"
@@ -50,7 +51,7 @@ enum
     UITableView *           _mainTableView;
     
     MyTextView*             _tv_brain_key;
-    MyTextField*            _tf_trade_password;
+    ViewAdvTextFieldCell*   _cell_wallet_password;
     
     ViewBlockLabel*         _lbLogin;
 }
@@ -67,11 +68,11 @@ enum
         _tv_brain_key.delegate = nil;
         _tv_brain_key = nil;
     }
-    
-    if (_tf_trade_password){
-        _tf_trade_password.delegate = nil;
-        _tf_trade_password = nil;
-    }
+    _cell_wallet_password = nil;
+    //    if (_tf_trade_password){
+    //        _tf_trade_password.delegate = nil;
+    //        _tf_trade_password = nil;
+    //    }
     
     if (_mainTableView){
         [[IntervalManager sharedIntervalManager] releaseLock:_mainTableView];
@@ -111,20 +112,14 @@ enum
     _tv_brain_key.textColor = theme.textColorMain;
     _tv_brain_key.tintColor = theme.tintColor;
     
-    CGRect rect = [self makeTextFieldRect];
     if (_checkActivePermission){
-        _tf_trade_password = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault
-                                        placeholder:NSLocalizedString(@"kLoginTipsPlaceholderTradePassword", @"请输入交易密码")
-                                             action:@selector(onTipButtonClicked:) tag:kVcSubUserTradingPassword];
-        [_tf_trade_password setSecureTextEntry:YES];
+        _cell_wallet_password = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kLoginCellSetupTradePassword", @"解锁密码")
+                                                                placeholder:NSLocalizedString(@"kLoginTipsPlaceholderTradePassword", @"设置新的解锁密码")];
+        _cell_wallet_password.mainTextfield.secureTextEntry = YES;
+        [_cell_wallet_password genHelpButton:self action:@selector(onTipButtonClicked:) tag:kVcSubUserTradingPassword];
+        [_cell_wallet_password auxFastConditionsViewForWalletPassword];
     }else{
-        _tf_trade_password = nil;
-    }
-    
-    if (_tf_trade_password){
-        _tf_trade_password.updateClearButtonTintColor = YES;
-        _tf_trade_password.textColor = theme.textColorMain;
-        _tf_trade_password.attributedPlaceholder = [ViewUtils placeholderAttrString:_tf_trade_password.placeholder];
+        _cell_wallet_password = nil;
     }
     
     //  UI - 主列表
@@ -134,11 +129,6 @@ enum
     _mainTableView.backgroundColor = [UIColor clearColor];
     _mainTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:_mainTableView];
-    
-    //  点击事件
-    UITapGestureRecognizer* pTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTap:)];
-    pTap.cancelsTouchesInView = NO; //  IOS 5.0系列导致按钮没响应
-    [self.view addGestureRecognizer:pTap];
     
     //  登录按钮
     _lbLogin = [self createCellLableButton:NSLocalizedString(@"kBtnLogin", @"登录")];
@@ -165,13 +155,13 @@ enum
     [super viewDidDisappear:animated];
 }
 
--(void)onTap:(UITapGestureRecognizer*)pTap
+- (void)endInput
 {
-    [self.view endEditing:YES];
+    [super endInput];
     
     [_tv_brain_key safeResignFirstResponder];
-    if (_tf_trade_password){
-        [_tf_trade_password safeResignFirstResponder];
+    if (_cell_wallet_password) {
+        [_cell_wallet_password endInput];
     }
 }
 
@@ -191,18 +181,14 @@ enum
     //  校验：交易密码
     NSString* pTradePassword = @"";
     if (_checkActivePermission){
-        pTradePassword = [NSString trim:_tf_trade_password.text];
-        if (![OrgUtils isValidBitsharesWalletPassword:pTradePassword]){
-            [OrgUtils makeToast:NSLocalizedString(@"kLoginSubmitTipsTradePasswordFmtIncorrect", @"交易密码格式不正确，请重新输入。")];
+        pTradePassword = [NSString trim:_cell_wallet_password.mainTextfield.text];
+        if (!_cell_wallet_password.isAllConditionsMatched){
+            [OrgUtils makeToast:NSLocalizedString(@"kLoginSubmitTipsTradePasswordFmtIncorrect", @"解锁密码格式不正确，请重新输入。")];
             return;
         }
     }
     
-    [self.view endEditing:YES];
-    [_tv_brain_key safeResignFirstResponder];
-    if (_tf_trade_password){
-        [_tf_trade_password safeResignFirstResponder];
-    }
+    [self endInput];
     
     //  开始登录
     
@@ -252,30 +238,26 @@ enum
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    [self.view endEditing:YES];
-    [_tv_brain_key safeResignFirstResponder];
-    if (_tf_trade_password){
-        [_tf_trade_password safeResignFirstResponder];
-    }
+    [self endInput];
     return YES;
 }
 
-#pragma mark- UITableView Delegate For Fast Login
-
-- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return UITableViewCellEditingStyleDelete;
-}
-
-- (nullable NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-    return nil;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
-    return 15.0f;
-}
+//#pragma mark- UITableView Delegate For Fast Login
+//
+//- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    return UITableViewCellEditingStyleDelete;
+//}
+//
+//- (nullable NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+//{
+//    return nil;
+//}
+//
+//- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+//{
+//    return 15.0f;
+//}
 
 #pragma mark- TableView delegate method
 
@@ -286,8 +268,15 @@ enum
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == kVcUser && indexPath.row == 0){
-        return _tv_brain_key.bounds.size.height;
+    if (indexPath.section == kVcUser) {
+        switch (indexPath.row) {
+            case kVcSubUserBrainKeyWorkds:
+                return _tv_brain_key.bounds.size.height;;
+            case kVcSubUserTradingPassword:
+                return _cell_wallet_password.cellHeight;
+            default:
+                break;
+        }
     }
     return tableView.rowHeight;
 }
@@ -331,19 +320,8 @@ enum
             }
                 break;
             case kVcSubUserTradingPassword:
-            {
                 assert(_checkActivePermission);
-                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-                cell.showCustomBottomLine = YES;
-                cell.backgroundColor = [UIColor clearColor];
-                cell.accessoryType = UITableViewCellAccessoryNone;
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.textLabel.text = NSLocalizedString(@"kLoginCellTradePassword", @"交易密码");
-                cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                cell.accessoryView = _tf_trade_password;
-                return cell;
-            }
-                break;
+                return _cell_wallet_password;
             default:
                 break;
         }
@@ -376,11 +354,7 @@ enum
 
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    [self.view endEditing:YES];
-    [_tv_brain_key safeResignFirstResponder];
-    if (_tf_trade_password){
-        [_tf_trade_password safeResignFirstResponder];
-    }
+    [self endInput];
 }
 
 #pragma mark- tip button
@@ -390,7 +364,7 @@ enum
         case kVcSubUserTradingPassword:
         {
             [_owner gotoQaView:@"qa_trading_password"
-                         title:NSLocalizedString(@"kVcTitleWhatIsTradePassowrd", @"什么是交易密码？")];
+                         title:NSLocalizedString(@"kVcTitleWhatIsTradePassowrd", @"什么是解锁密码？")];
         }
             break;
             

@@ -8,10 +8,12 @@
 
 #import "VCBase.h"
 
-@interface VCSlideControllerBase : VCBase
+@interface VCSlideControllerBase : VCBase<UIGestureRecognizerDelegate>
 {
     NSArray*    _subvcArrays;
 }
+
+@property (nonatomic, assign) BOOL enableTapSpaceEndInput;  //  点击空白区域关闭键盘（调用endInput方法）
 
 - (VCBase*)currentPage;
 - (UIButton*)buttonWithTag:(NSInteger)tag;

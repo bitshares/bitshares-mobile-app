@@ -222,4 +222,9 @@
  */
 - (void)onControllerPageChanged;
 
+/*
+ *  (public) 关闭键盘，子类可重载。
+ */
+- (void)endInput;
+
 @end
