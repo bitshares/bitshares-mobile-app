@@ -30,14 +30,15 @@
 
                     <!-- 价格 -->
                     <TextView
+                        android:id="@+id/tf_price_title"
                         android:textSize="12dp"
                         android:textColor="@color/theme01.textColorNormal"
-                        android:text="价格 CNY"
+                        android:text="price XXX"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                     <EditText
                         android:background="@drawable/rectangle_border_drawable"
-                        android:id="@+id/et_price_from_trade_buy_or_sell"
+                        android:id="@+id/tf_price"
                         android:textSize="14dp"
                         android:maxLength="24"
                         android:layout_width="match_parent"
@@ -46,19 +47,20 @@
                         android:padding="12dp"
                         android:layout_marginTop="5dp"
                         style="@style/kTextFieldDecimalPad"
-                        android:hint="请输入价格"/>
+                        android:hint="--"/>
 
                     <!-- 数量 -->
                     <TextView
+                        android:id="@+id/tf_amount_title"
                         android:layout_marginTop="5dp"
                         android:textSize="12dp"
                         android:textColor="@color/theme01.textColorNormal"
-                        android:text="数量 BTS"
+                        android:text="amount XXX"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                     <EditText
                         android:background="@drawable/rectangle_border_drawable"
-                        android:id="@+id/et_quantity_from_trade_buy_or_sell"
+                        android:id="@+id/tf_amount"
                         android:textSize="14dp"
                         android:maxLength="24"
                         android:layout_width="match_parent"
@@ -67,7 +69,7 @@
                         android:padding="12dp"
                         android:layout_marginTop="5dp"
                         style="@style/kTextFieldDecimalPad"
-                        android:hint="请输入数量"/>
+                        android:hint="--"/>
 
                     <!-- 数量滑动条 -->
                     <SeekBar
@@ -76,7 +78,7 @@
                         android:paddingStart="10dp"
                         android:layout_marginTop="5dp"
                         android:thumbOffset="0dp"
-                        android:id="@+id/seekbar_from_trade_buy_or_sell"
+                        android:id="@+id/id_slider_amount_percent"
                         android:layout_width="match_parent"
                         android:layout_height="32dp"
                         android:max="400"
@@ -84,15 +86,16 @@
 
                     <!-- 交易额 -->
                     <TextView
+                        android:id="@+id/tf_total_title"
                         android:layout_marginTop="5dp"
                         android:textSize="12dp"
                         android:textColor="@color/theme01.textColorNormal"
-                        android:text="交易额 CNY"
+                        android:text="total XXX"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                     <EditText
                         android:background="@drawable/rectangle_border_drawable"
-                        android:id="@+id/et_amount_from_trade_buy_or_sell"
+                        android:id="@+id/tf_total"
                         android:textSize="14dp"
                         android:maxLength="24"
                         android:layout_width="match_parent"
@@ -101,7 +104,7 @@
                         android:padding="12dp"
                         android:layout_marginTop="5dp"
                         style="@style/kTextFieldDecimalPad"
-                        android:hint="请输入交易额"/>
+                        android:hint="@string/kLableTotalPrice"/>
 
                     <!-- 可用 -->
                     <LinearLayout
@@ -119,12 +122,12 @@
                             android:layout_height="wrap_content" />
 
                         <TextView
-                            android:id="@+id/tv_available_from_trade_buy_or_sell"
+                            android:id="@+id/label_txt_available_n"
                             android:gravity="right"
                             android:layout_marginTop="5dp"
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorNormal"
-                            android:text="19.9992923819BTS"
+                            android:text="--"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
 
@@ -142,17 +145,17 @@
                             android:layout_marginTop="5dp"
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorNormal"
-                            android:text="@string/kVcConfirmTipFee"
+                            android:text="@string/kVcVerTradeLabelMarketFee"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
 
                         <TextView
-                            android:id="@+id/tv_fee_from_trade_buy_or_sell"
+                            android:id="@+id/label_txt_market_fee"
                             android:gravity="right"
                             android:layout_marginTop="5dp"
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorNormal"
-                            android:text="0.1%"
+                            android:text="--%"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
 
@@ -161,7 +164,7 @@
                     <!-- 提交按钮 -->
                     <Button
                         android:layout_marginTop="5dp"
-                        android:id="@+id/btn_submit_from_trade_buy_or_sell"
+                        android:id="@+id/btn_submit_core"
                         android:layout_width="match_parent"
                         style="@style/kMainButtonStyle"
                         android:gravity="center|center_vertical"
@@ -172,19 +175,19 @@
                     <!-- 交易历史 -->
                     <TextView
                         android:layout_marginTop="10dp"
+                        android:textStyle="bold"
                         android:textSize="15dp"
                         android:textColor="@color/theme01.textColorMain"
-                        android:text="交易历史"
+                        android:text="@string/kVcVerTradeLabelTradeHistory"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent" />
-
 
                     <ScrollView
                         android:id="@+id/sv_trade_histroy_from_trade_buy_or_sell"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
                         <LinearLayout
-                            android:id="@+id/layout_trade_histroy_from_trade_buy_or_sell"
+                            android:id="@+id/layout_history_list"
                             android:orientation="vertical"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"></LinearLayout>
@@ -224,14 +227,14 @@
                             <TextView
                                 android:textSize="11dp"
                                 android:textColor="@color/theme01.textColorGray"
-                                android:text="档"
+                                android:text="@string/kVcVerTradeLabelOrderBookID"
                                 android:layout_width="16dp"
                                 android:layout_height="wrap_content" />
 
                             <TextView
                                 android:textSize="11dp"
                                 android:textColor="@color/theme01.textColorGray"
-                                android:text="价格"
+                                android:text="@string/kLableBidPrice"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content" />
 
@@ -239,7 +242,7 @@
                                 android:paddingRight="5dp"
                                 android:textSize="11dp"
                                 android:textColor="@color/theme01.textColorGray"
-                                android:text="数量"
+                                android:text="@string/kLableBidAmount"
                                 android:gravity="right"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
@@ -247,12 +250,12 @@
                         </LinearLayout>
 
                         <ScrollView
-                            android:id="@+id/sv_sell_list_from_trade_buy_or_sell"
+                            android:id="@+id/sv_ask_listview"
                             android:layout_width="match_parent"
                             android:layout_height="260dp">
 
                             <LinearLayout
-                                android:id="@+id/layout_sell_list_from_trade_buy_or_sell"
+                                android:id="@+id/layout_ask_list"
                                 android:orientation="vertical"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent">
@@ -269,6 +272,7 @@
 
                     <!-- 价格 涨跌幅百分比 -->
                     <LinearLayout
+                        android:layout_marginLeft="12dp"
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_gravity="center_vertical"
@@ -276,20 +280,19 @@
                         android:layout_height="48dp">
 
                         <TextView
-                            android:id="@+id/tv_last_price_from_trade_buy_or_sell"
+                            android:id="@+id/label_txt_curr_price"
                             android:textSize="17dp"
-                            android:text="0.236"
+                            android:text="0.00000"
                             android:textStyle="bold"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
 
                         <TextView
-                            android:id="@+id/tv_last_price_rate_from_trade_buy_or_sell"
+                            android:id="@+id/label_txt_curr_price_percent"
                             android:textSize="12dp"
-                            android:text="+0.63%"
+                            android:text="0.00%"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
-
 
                     </LinearLayout>
 
@@ -299,12 +302,12 @@
                         android:layout_height="wrap_content">
 
                         <ScrollView
-                            android:id="@+id/sv_buy_list_from_trade_buy_or_sell"
+                            android:id="@+id/sv_bid_listview"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
 
                             <LinearLayout
-                                android:id="@+id/layout_buy_list_from_trade_buy_or_sell"
+                                android:id="@+id/layout_bid_list"
                                 android:orientation="vertical"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"></LinearLayout>

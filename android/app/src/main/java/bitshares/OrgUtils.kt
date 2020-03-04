@@ -319,6 +319,7 @@ class OrgUtils {
                     new_amount_sum += f_quote
                     val base = order.get("base")
                     new_array.put(JSONObject().apply {
+                        put("oid", order.getString("oid"))
                         put("price", f_price)
                         put("quote", f_quote)
                         put("base", base)

@@ -8,6 +8,7 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
+import android.os.Looper
 import android.telephony.TelephonyManager
 import android.util.TypedValue
 import com.btsplusplus.fowallet.BuildConfig
@@ -693,6 +694,13 @@ class Utils {
                 }
             }
             return ""
+        }
+
+        /**
+         *  (public) 延迟执行
+         */
+        fun delay(body: () -> Unit) {
+            android.os.Handler(Looper.getMainLooper()).postDelayed({ body() }, 1L)
         }
     }
 }

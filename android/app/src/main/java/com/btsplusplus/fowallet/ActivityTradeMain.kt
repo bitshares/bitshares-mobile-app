@@ -21,6 +21,7 @@ class ActivityTradeMain : BtsppActivity() {
     private var _defaultSelectBuy: Boolean = true
     private var _haveAccountOnInit: Boolean = true
     private var _notify_handler: Handler? = null
+    private var _enableVerticalTradeUI = true           //  TODO:5.0 可修改，启用竖版交易界面
 
     override fun onResume() {
         super.onResume()
@@ -86,9 +87,12 @@ class ActivityTradeMain : BtsppActivity() {
             tab.addTab(tab.newTab().apply {
                 text = resources.getString(R.string.kLabelTitleSell)
             })
-            tab.addTab(tab.newTab().apply {
-                text = "当前委托"
-            })
+            if (_enableVerticalTradeUI) {
+                //  当前委托 - 竖版界面才存在
+                tab.addTab(tab.newTab().apply {
+                    text = resources.getString(R.string.kLabelOpenOrders)
+                })
+            }
             if (_tradingPair._isCoreMarket) {
                 tab.addTab(tab.newTab().apply {
                     text = resources.getString(R.string.kVcOrderPageSettleOrders)
@@ -134,6 +138,9 @@ class ActivityTradeMain : BtsppActivity() {
             promise_map.put("kTickerData", conn.async_exec_db("get_ticker", jsonArrayfrom(_tradingPair._baseId, _tradingPair._quoteId)))
             promise_map.put("kFee", chainMgr.queryFeeAssetListDynamicInfo())    //  查询手续费兑换比例、手续费池等信息
             promise_map.put("kSettlementData", chainMgr.queryCallOrders(_tradingPair, n_callorder))
+            if (_enableVerticalTradeUI) {
+                promise_map.put("kFillOrders", chainMgr.queryFillOrderHistory(_tradingPair, n_fillorder))
+            }
 
             return@then Promise.map(promise_map).then {
                 mask.dismiss()
@@ -210,8 +217,11 @@ class ActivityTradeMain : BtsppActivity() {
         TempManager.sharedTempManager().tickerDataDirty = true
         onQueryTickerDataResponse(ticker_data)
 
-        //  3、更新限价单
+        //  3、更新限价单（普通盘口+爆仓单）
         onQueryOrderBookResponse(datamap.getJSONObject("kLimitOrder"), datamap.optJSONObject("kSettlementData"))
+
+        //  4、更新成交记录
+        onQueryFillOrderHistoryResponsed(datamap.optJSONArray("kFillOrders"))
     }
 
     /**
@@ -240,6 +250,8 @@ class ActivityTradeMain : BtsppActivity() {
         //  b、刷新登录按钮状态
         fragmens.forEach {
             if (it is FragmentTradeMainPage) {
+                it.onRefreshLoginStatus()
+            } else if (it is FragmentTradeBuyOrSell) {
                 it.onRefreshLoginStatus()
             }
         }
@@ -270,6 +282,8 @@ class ActivityTradeMain : BtsppActivity() {
         fragmens.forEach {
             if (it is FragmentTradeMainPage) {
                 it.onFullAccountDataResponsed(full_account_data)
+            } else if (it is FragmentTradeBuyOrSell) {
+                it.onFullAccountDataResponsed(full_account_data)
             }
         }
     }
@@ -278,15 +292,19 @@ class ActivityTradeMain : BtsppActivity() {
         fragmens.forEach {
             if (it is FragmentTradeMainPage) {
                 it.onQueryTickerDataResponse(ticker_data)
+            } else if (it is FragmentTradeBuyOrSell) {
+                it.onQueryTickerDataResponse(ticker_data)
             }
         }
     }
 
     private fun onQueryFillOrderHistoryResponsed(data: JSONArray?) {
-        //  订阅市场返回的数据可能为 nil。
+        //  订阅市场返回的数据可能为 nil。横板交易界面初始化时也会返回nil。
         if (data != null) {
             fragmens.forEach {
                 if (it is FragmentTradeMainPage) {
+                    it.onQueryFillOrderHistoryResponsed(data)
+                } else if (it is FragmentTradeBuyOrSell) {
                     it.onQueryFillOrderHistoryResponsed(data)
                 }
             }
@@ -299,17 +317,27 @@ class ActivityTradeMain : BtsppActivity() {
             fragmens.forEach {
                 if (it is FragmentTradeMainPage) {
                     it.onQueryOrderBookResponse(merged_order_book)
+                } else if (it is FragmentTradeBuyOrSell) {
+                    it.onQueryOrderBookResponse(merged_order_book)
                 }
             }
         }
     }
 
     private fun setFragments() {
-        fragmens.add(FragmentTradeBuyOrSell().initialize(jsonArrayfrom(true, _tradingPair)))
-        fragmens.add(FragmentTradeBuyOrSell().initialize(jsonArrayfrom(false, _tradingPair)))
+        if (_enableVerticalTradeUI) {
+            //  竖版 买卖界面 + 委托界面
+            fragmens.add(FragmentTradeBuyOrSell().initialize(jsonArrayfrom(true, _tradingPair)))
+            fragmens.add(FragmentTradeBuyOrSell().initialize(jsonArrayfrom(false, _tradingPair)))
+            //  TODO:5.0 采用当前订单界面 不用单独的
+            fragmens.add(FragmentTradeDelegate())
+        } else {
+            //  横板 买卖界面
+            fragmens.add(FragmentTradeMainPage().initialize(jsonArrayfrom(true, _tradingPair)))
+            fragmens.add(FragmentTradeMainPage().initialize(jsonArrayfrom(false, _tradingPair)))
+        }
 
-        fragmens.add(FragmentTradeDelegate())
-
+        //  清算单界面（横板竖版都有）
         if (_tradingPair._isCoreMarket) {
             fragmens.add(FragmentOrderHistory().initialize(JSONObject().apply {
                 put("isSettlementsOrder", true)
