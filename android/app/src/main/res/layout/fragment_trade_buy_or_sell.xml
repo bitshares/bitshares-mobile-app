@@ -73,11 +73,13 @@
 
                     <!-- 数量滑动条 -->
                     <SeekBar
-                        android:padding="0dp"
-                        android:paddingEnd="10dp"
-                        android:paddingStart="10dp"
-                        android:layout_marginTop="5dp"
                         android:thumbOffset="0dp"
+                        android:paddingLeft="0dp"
+                        android:paddingRight="0dp"
+                        android:paddingEnd="0dp"
+                        android:paddingStart="0dp"
+                        android:thumb="@drawable/icon_slider"
+                        android:layout_marginTop="5dp"
                         android:id="@+id/id_slider_amount_percent"
                         android:layout_width="match_parent"
                         android:layout_height="32dp"

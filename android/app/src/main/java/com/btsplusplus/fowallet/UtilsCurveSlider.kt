@@ -56,15 +56,15 @@ class UtilsCurveSlider {
     constructor(slider: SeekBar) {
         _slider = slider
 
-        // REMARK 调整 条和块的颜色
-        val color = (_slider.context as AppCompatActivity).resources.getColor(R.color.theme01_textColorMain)
-        val layerDrawable = _slider.progressDrawable as? LayerDrawable
-        if (layerDrawable != null) {
-            val dra = layerDrawable.getDrawable(2)
-            dra.setColorFilter(color, PorterDuff.Mode.SRC)
-        }
-        _slider.thumb.setColorFilter(color, PorterDuff.Mode.SRC_ATOP)
-        _slider.invalidate()
+//        // REMARK 调整 条和块的颜色
+//        val color = (_slider.context as AppCompatActivity).resources.getColor(R.color.theme01_textColorMain)
+//        val layerDrawable = _slider.progressDrawable as? LayerDrawable
+//        if (layerDrawable != null) {
+//            val dra = layerDrawable.getDrawable(2)
+//            dra.setColorFilter(color, PorterDuff.Mode.SRC)
+//        }
+//        _slider.thumb.setColorFilter(color, PorterDuff.Mode.SRC_ATOP)
+//        _slider.invalidate()
 
         _slider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(slider: SeekBar?, progress: Int, fromUser: Boolean) {

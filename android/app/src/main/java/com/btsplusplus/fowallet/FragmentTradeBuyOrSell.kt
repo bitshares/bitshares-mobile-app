@@ -646,7 +646,6 @@ class FragmentTradeBuyOrSell : BtsppFragment() {
             R.color.theme01_sellColor
         }
         _view.findViewById<SeekBar>(R.id.id_slider_amount_percent).let { seek ->
-            seek.thumb = resources.getDrawable(R.drawable.icon_slider)
             seek.progressDrawable.setColorFilter(resources.getColor(seek_color), PorterDuff.Mode.SRC_ATOP)
         }
 
