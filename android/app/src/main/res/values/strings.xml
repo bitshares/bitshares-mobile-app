@@ -21,27 +21,37 @@
     <string name="kDebtLableSelectAsset">Select asset</string>
     <string name="kDebtLableFeedPrice">Feed price</string>
     <string name="kDebtLableCallPrice">Call price</string>
-    <string name="kDebtLablePayMaxDebt">Pay Max Debt</string>
-    <string name="kDebtLableUseMax">Use Max</string>
+    <string name="kDebtLablePayMaxDebt">Pay Debt</string>
+    <string name="kDebtLableUseMax">All</string>
     <string name="kDebtLableAvailable">Available</string>
     <string name="kDebtLableRatio">Ratio</string>
     <string name="kDebtLableUpdatePosition">Update position</string>
     <string name="kDebtLableLogin">Login</string>
+    <string name="kDebtLabelCellTitleDebtValue">Debt</string>
+    <string name="kDebtLabelCellTitleCollAmount">Margin</string>
     <string name="kDebtTipSelectDebtAsset">Please select the asset to borrow</string>
     <string name="kDebtTipInputDebtValue">Please input debt value</string>
     <string name="kDebtTipInputCollAmount">Please input collateral amount</string>
+    <string name="kDebtTipPleaseInputDebtValueFirst">Please enter the debt value first.</string>
+    <string name="kDebtTipPleaseAdjustRatioFirst">Please adjust the ratio first.</string>
     <string name="kDebtTipTargetRatioNotSet">Target ratio not set</string>
     <string name="kDebtTipTargetRatio">Target ratio</string>
     <string name="kDebtTipTitleFeedAndCallPrice">Feed &amp; Call price</string>
     <string name="kDebtTipTitleWhatIsRatio">What is the ratio?</string>
     <string name="kDebtTipTitleWhatIsTargetRatio">What is the target ratio?</string>
+    <string name="kDebtTipNetworkErrorPleaseRefresh">网络异常，请重新刷新界面。</string>
+    <string name="kDebtTipAssetHasGlobalSettled">该资产已经全局清算，不可调整债仓。</string>
+    <string name="kDebtTipAssetNoValidFeedData">该资产没有有效的喂价，不可调整债仓。</string>
+    <string name="kDebtTipCollRatioCannotLessThanMCR">抵押率不能低于 %s。</string>
+    <string name="kDebtTipCannotAdjustMoreLowerRatio">您已经处于强制平仓状态，不能降低抵押率。</string>
     <string name="kDebtTipValueAndAmountNotChange">The amount of borrowings and collateral did not change.</string>
     <string name="kDebtTipCollNotEnough">The collateral balance is insufficient.</string>
     <string name="kDebtTipAvailableNotEnough">%s balance is insufficient, please adjust the amount of repayment.</string>
     <string name="kDebtTipRatioTooLow">The ratio is lower than %s and you cannot borrow more.</string>
     <string name="kDebtTipTxUpdatePositionFullOK">Update position successfully.</string>
     <string name="kDebtTipTxUpdatePositionOK">Update position successfully, but the refresh failed. Please try again later.</string>
-    <string name="kDebtWarmTips">[Tips]\n When the feed price drops to the call price, the system will automatically sell your collateral assets for debt repayment. Please pay attention to adjusting the ratio to control the risk.</string>
+    <string name="kDebtWarmTips">[Tips]\n1. When the feed price drops to the call price, the system will automatically sell your collateral assets for debt repayment. Please pay attention to adjusting the ratio control risks. \n2. When the debt field is locked, the ratio will change with the collateral. \n3. When the ratio field is locked, the debt will change with the collateral.</string>
+    <string name="kDebtWarmTipsForPM">【温馨提示】\n当前资产为预测市场资产。借款金额和抵押物数量恒定为 1:1。</string>
     <!-- 服务界面 -->
     <string name="kServicesCellLabelQrScan">Scan QR code</string>
     <string name="kServicesCellLabelTransfer">Transfer</string>
@@ -226,17 +236,31 @@
     <string name="kVcPermissionAddOneDoneTipsInvalidWeight">Please enter a valid weight value. Range 1 - 65535.</string>
     <string name="kVcPermissionAddOneDontTipsCantAddSelf">Can't add your own account.</string>
     <!-- 登录&注册&备份 -->
+    <string name="kFmtConditionContains2UpperLettersNonConsecutive">Contain more than 2 and non-continuous uppercase letters</string>
+    <string name="kFmtConditioncontainsUpperLetters">Contain uppercase letters</string>
+    <string name="kFmtConditionContainsLowerLetters">Contains lowercase letters</string>
+    <string name="kFmtConditionContainsDigits">Contains numbers</string>
+    <string name="kFmtConditionLen12To40Chars">12 to 40 characters in length</string>
+    <string name="kFmtConditionLen3To32Chars">3 to 32 characters in length</string>
+    <string name="kFmtConditionLen32To40Chars">32 to 40 characters in length</string>
+    <string name="kFmtConditionOnlyContainsLetterDigitAndHyphens">Composed of letters, numbers, or hyphens</string>
+    <string name="kFmtConditionBeginwithLetters">Begin with a letter</string>
+    <string name="kFmtConditionEndWithLetterOrDigits">End with a letter or number</string>
     <string name="kLoginPageModePassword">Normal</string>
     <string name="kLoginPageModeBrainKey">Brain Key</string>
     <string name="kLoginPageModePrivateKey">Private Key</string>
     <string name="kLoginPageModeWallet">Wallet</string>
     <string name="kLoginTipsPlaceholderAccount">Please input bitshares account</string>
     <string name="kLoginTipsPlaceholderBrainKey">Please enter a mnemonic, separated by spaces between each word.</string>
-    <string name="kLoginTipsPlaceholderTradePassword">Please input wallet password</string>
+    <string name="kLoginTipsPlaceholderTradePassword">Set a new unlock password</string>
     <string name="kLoginTipsPlaceholderActiveKey">Please input active private key</string>
     <string name="kLoginTipsPlaceholderConfirmPassword">Please confirm password</string>
     <string name="kLoginTipsPlaceholderWalletPassword">Please input wallet passwrod</string>
     <string name="kLoginTipsPlaceholderInputRefCode">Referrer code (optional)</string>
+    <string name="kRegTipsPlaceholderNewAccount">Please enter a new account</string>
+    <string name="kRegTipsPlaceholderNewPassword">Please enter a new password</string>
+    <string name="kRegTipsPlaceholderNewWalletPassword">Please enter a new wallet password</string>
+    <string name="kRegCellLabelWalletPassword">Wallet password</string>
     <string name="kLoginCellLabelRefCode">Referrer</string>
     <string name="kLoginTipsLoginOK">Login successful.</string>
     <string name="kLoginTipsRegFullOK">Register successful.</string>
@@ -267,7 +291,7 @@
     <string name="kLoginImportTipsWalletNoActiveKey">The wallet does not contain an active key. Please re-import.</string>
     <string name="kLoginImportTipsWalletNoFullActiveKey">The wallet does not contain the full active permission key, please re-import.</string>
     <string name="kLoginSubmitTipsAccountIsEmpty">The account name cannot be empty. Please re-enter.</string>
-    <string name="kLoginSubmitTipsTradePasswordFmtIncorrect">The wallet password format is incorrect. Please re-enter.</string>
+    <string name="kLoginSubmitTipsTradePasswordFmtIncorrect">The unlock password format is incorrect. Please re-enter.</string>
     <string name="kLoginSubmitTipsWalletPasswordFmtIncorrect">The wallet password format is incorrect. Please re-enter.</string>
     <string name="kLoginSubmitTipsPasswordFmtIncorrect">The wallet password format is incorrect. Please re-enter.</string>
     <string name="kLoginSubmitTipsConfirmPasswordFailed">The password is different, please re-enter.</string>
@@ -283,10 +307,9 @@
     <string name="kLoginRegTipsRegOK">Registration is successful, but the refresh fails. You can log in directly later.</string>
     <string name="kLoginTipsWalletModeRegOK">The registration is successful, but query account data failed. Please restart the app.</string>
     <string name="kLoginCellAccountName">Account </string>
-    <string name="kLoginCellSetupTradePassword">Enable trade password</string>
-    <string name="kLoginCellTradePassword">W-pwd</string>
+    <string name="kLoginCellSetupTradePassword">Unlock password</string>
     <string name="kLoginCellWalletPassword">W-pwd</string>
-    <string name="kLoginCellActivePrivateKey">key </string>
+    <string name="kLoginCellActivePrivateKey">Active private key</string>
     <string name="kLoginCellConfirmPassword">Confirm </string>
     <string name="kLoginRegTipsAccountMode">Tip: The password format can be viewed by clicking on the question mark. \nNote: Bitshares is a decentralized blockchain application. Once the password is lost or forgotten, it will not be retrieved. Please keep it in a safe place.</string>
     <string name="kLoginRegTipsWalletMode">Tip: The password format can be viewed by clicking on the question mark. \nNote: Bitshares is a decentralized blockchain application. If the wallet file or password is lost or forgotten, it is not possible to retrieve it. It is recommended that you back up the wallet file after registration and keep it in a safe place. \n※ Wallet mode is recommended.</string>
@@ -525,7 +548,7 @@
     <!-- 订单界面 -->
     <string name="kVcOrderPageOpenOrders">Open Orders</string>
     <string name="kVcOrderPageHistory">History</string>
-    <string name="kVcOrderPageSettleOrders">Settle Order</string>
+    <string name="kVcOrderPageSettleOrders">Settle Orders</string>
     <string name="kVcOrderTipNoHistory">No data</string>
     <string name="kVcOrderTipNoOpenOrder">No order</string>
     <string name="kVcOrderTipNoSettleOrder">No any settle order</string>
@@ -640,6 +663,12 @@
     <string name="kVcTradeSubmitTotalTooLow">The order total is too low.</string>
     <string name="kVcTradeSubmitTotalNotEnough">Insufficient base asset.</string>
     <string name="kVcTradeSubmitAmountNotEnough">Insufficient quote asset.</string>
+    <string name="kVcVerTradeLabelPrice">Price %s</string>
+    <string name="kVcVerTradeLabelAmount">Amount %s</string>
+    <string name="kVcVerTradeLabelTotal">Total %s</string>
+    <string name="kVcVerTradeLabelMarketFee">Market fee</string>
+    <string name="kVcVerTradeLabelTradeHistory">Trade history</string>
+    <string name="kVcVerTradeLabelOrderBookID">ID</string>
     <!-- 转账界面 -->
     <string name="kLabelSendAll">All</string>
     <string name="kLabelSendBtn">Send</string>
@@ -812,7 +841,7 @@
     <string name="kVcTitleBackupWallet">Backup</string>
     <string name="kVcTitleSelectToAccount">Search account</string>
     <string name="kVcTitleWhatIsFeedPrice">What is the feed price?</string>
-    <string name="kVcTitleWhatIsTradePassowrd">What is trading password?</string>
+    <string name="kVcTitleWhatIsTradePassowrd">What is unlock password?</string>
     <string name="kVcTitleWhatIsActivePrivateKey">What is active private key?</string>
     <string name="kVcTitleWhatIsGatewayAssets">What is gateway assets?</string>
     <string name="kVcTitleWhatIsGateway">What is a gateway?</string>
@@ -1462,7 +1491,6 @@
     <string name="tip_member_expired">Member: Expired</string>
     <string name="tip_member_timeleft_fmt">Member:%s days left</string>
     <string name="unlockTipsPleaseInputAccountPassword">Please input account password</string>
-    <string name="unlockTipsPleaseInputTradePassword">Please input trade password</string>
     <string name="unlockTipsPleaseInputWalletPassword">Please input wallet password</string>
     <string name="unlockTipsUnlockAccount">Unlock account</string>
     <string name="unlockTipsUnlockWallet">Unlock wallet</string>
@@ -1471,6 +1499,7 @@
     <string name="kGPErrorAccountNotExist">Account does not exist.</string>
     <string name="kGPErrorInsufficientBalance">Insufficient balance.</string>
     <string name="kGPErrorRedeemInvalidPreimage">The preimage is incorrect.</string>
+    <string name="kGPErrorApiNodeVersionTooLow">The current API node version is too low.</string>
     <!-- 特殊用途字符串KEY -->
     <string name="serverWssLangKey">en</string>
     <string name="appDepositWithdrawDefaultGateway">RuDEX</string>
@@ -1504,7 +1533,4 @@
     <string name="myAssetsPageUnknowOperationContent">Unknown operation content</string>
     <string name="kWalletMemuTipsPleaseSelectCellAction">Please select the action to perform</string>
     <string name="kWalletMenuTipsPleaseSelectImportType">Please select the type of account to import</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

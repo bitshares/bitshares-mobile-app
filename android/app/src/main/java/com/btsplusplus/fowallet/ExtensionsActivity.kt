@@ -358,8 +358,8 @@ fun android.app.Activity.guardWalletUnlocked(checkActivePermission: Boolean, bod
             AppCacheManager.EWalletMode.kwmPasswordOnlyMode.value -> resources.getString(R.string.unlockTipsPleaseInputAccountPassword)
             //  交易密码
             AppCacheManager.EWalletMode.kwmPasswordWithWallet.value -> resources.getString(R.string.kLoginTipsPlaceholderTradePassword)
-            AppCacheManager.EWalletMode.kwmPrivateKeyWithWallet.value -> resources.getString(R.string.unlockTipsPleaseInputTradePassword)
-            AppCacheManager.EWalletMode.kwmBrainKeyWithWallet.value -> resources.getString(R.string.unlockTipsPleaseInputTradePassword)
+            AppCacheManager.EWalletMode.kwmPrivateKeyWithWallet.value -> resources.getString(R.string.kLoginTipsPlaceholderTradePassword)
+            AppCacheManager.EWalletMode.kwmBrainKeyWithWallet.value -> resources.getString(R.string.kLoginTipsPlaceholderTradePassword)
             //  钱包密码
             AppCacheManager.EWalletMode.kwmFullWalletMode.value -> resources.getString(R.string.registerLoginPagePleaseInputWalletPws)
             else -> resources.getString(R.string.kLoginImportTipsPleaseInputPassword)

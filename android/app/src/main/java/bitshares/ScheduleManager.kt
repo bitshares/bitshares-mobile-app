@@ -567,8 +567,8 @@ class ScheduleManager {
                 if (updateLimitOrder && s.cfgLimitOrderNum > 0) {
                     promise_map.put("kLimitOrders", chainMgr.queryLimitOrders(s.tradingPair!!, s.cfgLimitOrderNum))
                 }
-                if (hasFillOrder && s.cfgLimitOrderNum > 0) {
-                    promise_map.put("kFillOrders", chainMgr.queryFillOrderHistory(s.tradingPair!!, s.cfgLimitOrderNum))
+                if (hasFillOrder && s.cfgFillOrderNum > 0) {
+                    promise_map.put("kFillOrders", chainMgr.queryFillOrderHistory(s.tradingPair!!, s.cfgFillOrderNum))
                 }
                 if (hasFillOrder) {
                     promise_map.put("kTickerData", conn.async_exec_db("get_ticker", jsonArrayfrom(s.tradingPair!!._baseId, s.tradingPair!!._quoteId)))

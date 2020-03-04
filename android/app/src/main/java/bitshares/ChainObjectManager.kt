@@ -1413,6 +1413,7 @@ class ChainObjectManager {
             val data_array = data_array as JSONArray
             for (i in 0 until data_array.length()) {
                 val limitOrder = data_array.getJSONObject(i)
+                val oid = limitOrder.getString("id")
                 val sell_price = limitOrder.getJSONObject("sell_price")
                 val base = sell_price.getJSONObject("base")
                 val quote = sell_price.getJSONObject("quote")
@@ -1432,7 +1433,7 @@ class ChainObjectManager {
                     //  累积
                     bid_amount_sum += quote_amount
 
-                    bidArray.put(jsonObjectfromKVS("price", price, "quote", quote_amount, "base", base_amount, "sum", bid_amount_sum))
+                    bidArray.put(jsonObjectfromKVS("oid", oid, "price", price, "quote", quote_amount, "base", base_amount, "sum", bid_amount_sum))
                 } else {
 
                     //  ask order
@@ -1450,7 +1451,7 @@ class ChainObjectManager {
 
                     //  累积
                     ask_amount_sum += quote_amount
-                    askArray.put(jsonObjectfromKVS("price", price, "quote", quote_amount, "base", base_amount, "sum", ask_amount_sum))
+                    askArray.put(jsonObjectfromKVS("oid", oid, "price", price, "quote", quote_amount, "base", base_amount, "sum", ask_amount_sum))
                 }
             }
             return@then jsonObjectfromKVS("bids", bidArray, "asks", askArray)
