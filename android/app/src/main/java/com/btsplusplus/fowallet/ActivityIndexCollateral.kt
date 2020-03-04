@@ -1,5 +1,6 @@
 package com.btsplusplus.fowallet
 
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.widget.*
 import bitshares.*
@@ -87,6 +88,13 @@ class ActivityIndexCollateral : BtsppActivity() {
         _curve_slider_target_ratio = UtilsCurveSlider(findViewById<SeekBar>(R.id.slider_target_ratio)).init_with_range(400, 0.0, 4.0)
         _curve_slider_ratio.on_value_changed { onSliderRatioValueChanged(it) }
         _curve_slider_target_ratio.on_value_changed { onSliderTargetRatioValueChanged(it) }
+        //  初始化滑动条颜色和图标
+        findViewById<SeekBar>(R.id.slider_ratio).let { seek ->
+            seek.progressDrawable.setColorFilter(resources.getColor(R.color.theme01_textColorHighlight), PorterDuff.Mode.SRC_ATOP)
+        }
+        findViewById<SeekBar>(R.id.slider_target_ratio).let { seek ->
+            seek.progressDrawable.setColorFilter(resources.getColor(R.color.theme01_textColorHighlight), PorterDuff.Mode.SRC_ATOP)
+        }
 
         var tf = findViewById<EditText>(R.id.tf_debt)
         _tf_debt_watcher = UtilsDigitTextWatcher().set_tf(tf).set_precision(_debtPair!!._basePrecision)

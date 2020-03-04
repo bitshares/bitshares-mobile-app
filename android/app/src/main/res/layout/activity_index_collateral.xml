@@ -363,6 +363,12 @@
                     android:orientation="horizontal">
                     <SeekBar
                         android:id="@+id/slider_ratio"
+                        android:thumbOffset="0dp"
+                        android:paddingLeft="0dp"
+                        android:paddingRight="0dp"
+                        android:paddingEnd="0dp"
+                        android:paddingStart="0dp"
+                        android:thumb="@drawable/icon_slider"
                         android:layout_width="match_parent"
                         android:layout_height="32dp"
                         android:layout_weight="1" />
@@ -411,6 +417,12 @@
                     android:orientation="horizontal">
                     <SeekBar
                         android:id="@+id/slider_target_ratio"
+                        android:thumbOffset="0dp"
+                        android:paddingLeft="0dp"
+                        android:paddingRight="0dp"
+                        android:paddingEnd="0dp"
+                        android:paddingStart="0dp"
+                        android:thumb="@drawable/icon_slider"
                         android:layout_width="match_parent"
                         android:layout_height="32dp"
                         android:max="400"
