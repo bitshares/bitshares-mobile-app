@@ -1180,7 +1180,7 @@ class OrgUtils {
                 }
                 EBitsharesOperations.ebo_asset_update_feed_producers.value -> {
                     name = R.string.kOpType_asset_update_feed_producers.xmlstring(ctx)
-                    val user = chainMgr.getChainObjectByID(opdata.getString("asset_to_update")).getString("name")
+                    val user = chainMgr.getChainObjectByID(opdata.getString("asset_to_update")).getString("symbol")
                     desc = String.format(R.string.kOpDesc_asset_update_feed_producers.xmlstring(ctx), user)
                 }
                 EBitsharesOperations.ebo_asset_issue.value -> {
