@@ -11,7 +11,6 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
-import android.util.DisplayMetrics
 import android.view.View
 import android.view.animation.OvershootInterpolator
 import android.view.inputmethod.InputMethodManager
@@ -145,8 +144,11 @@ fun android.app.Activity.viewUserLimitOrders(account_id: String, tradingPair: Tr
         //  查询 & 缓存
         return@then ChainObjectManager.sharedChainObjectManager().queryAllAssetsInfo(asset_id_hash.keys().toJSONArray()).then {
             mask.dismiss()
-            goTo(ActivityMyOrders::class.java, true, args = jsonArrayfrom(full_account_data, tradeHistory, tradingPair
-                    ?: "null"))
+            goTo(ActivityMyOrders::class.java, true, args = JSONObject().apply {
+                put("full_account_data", full_account_data)
+                put("trade_history", tradeHistory)
+                put("tradingPair", tradingPair)
+            })
             return@then null
         }
     }.catch {

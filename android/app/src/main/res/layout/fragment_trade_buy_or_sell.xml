@@ -84,7 +84,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="32dp"
                         android:max="400"
-                        android:progress="1" />
+                        android:progress="0" />
 
                     <!-- 交易额 -->
                     <TextView

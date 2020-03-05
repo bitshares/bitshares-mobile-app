@@ -809,7 +809,7 @@ class FragmentTradeMainPage : BtsppFragment() {
     private fun onAllOrderButtonClicked() {
         activity!!.guardWalletExist {
             val uid = WalletManager.sharedWalletManager().getWalletAccountInfo()!!.getJSONObject("account").getString("id")
-            activity!!.viewUserLimitOrders(uid, null)
+            activity!!.viewUserLimitOrders(uid, _tradingPair)
         }
     }
 

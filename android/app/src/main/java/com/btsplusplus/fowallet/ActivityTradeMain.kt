@@ -5,7 +5,6 @@ import android.os.Handler
 import android.os.Message
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
-import android.util.DisplayMetrics
 import bitshares.*
 import com.btsplusplus.fowallet.kline.TradingPair
 import com.fowallet.walletcore.bts.ChainObjectManager
@@ -106,7 +105,9 @@ class ActivityTradeMain : BtsppActivity() {
         //  监听 tab 并设置选中 item
         setTabListener(R.id.tablayout_of_main_buy_and_sell, R.id.view_pager_of_main_buy_and_sell) { pos ->
             fragmens[pos].let {
-                if (it is FragmentOrderHistory) {
+                if (it is FragmentOrderCurrent) {
+                    it.onControllerPageChanged()
+                } else if (it is FragmentOrderHistory) {
                     it.querySettlementOrders(tradingPair = _tradingPair)
                 }
             }
@@ -329,8 +330,15 @@ class ActivityTradeMain : BtsppActivity() {
             //  竖版 买卖界面 + 委托界面
             fragmens.add(FragmentTradeBuyOrSell().initialize(jsonArrayfrom(true, _tradingPair)))
             fragmens.add(FragmentTradeBuyOrSell().initialize(jsonArrayfrom(false, _tradingPair)))
+
+            fragmens.add(FragmentOrderCurrent().initialize(JSONObject().apply {
+                put("full_account_data", null)
+                put("tradingPair", _tradingPair)
+                put("filter", true)
+            }))
+
             //  TODO:5.0 采用当前订单界面 不用单独的
-            fragmens.add(FragmentTradeDelegate())
+//            fragmens.add(FragmentTradeDelegate())
         } else {
             //  横板 买卖界面
             fragmens.add(FragmentTradeMainPage().initialize(jsonArrayfrom(true, _tradingPair)))
