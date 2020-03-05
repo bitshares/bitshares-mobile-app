@@ -55,9 +55,13 @@ typedef BOOL (^ViewCallback)(UIView* view);
 
 @end
 
-//  TODO:fowallet 临时用，后期移除。
 @interface NSDate (WQCalendarLogic)
+
+/*
+ *  (public) 获取公历日历，不然日本等区域日历格式不同。
+ */
 + (NSCalendar*)gregorianCalendar;
+
 @end
 
 @interface NSString (BtsppExt)

@@ -1068,6 +1068,9 @@ enum
         //  抵押物变化 - 影响抵押率变化（负债不变）
         //  这里手动输入抵押物or点击全部按钮导致变化，都已经确保了debt不能为0。
         NSDecimalNumber* n_debt = [OrgUtils auxGetStringDecimalNumberValue:_tfDebtValue.text];
+        if ([n_debt compare:[NSDecimalNumber zero]] <= 0) {
+            return;
+        }
         _nCurrMortgageRate = [self _calcCollRate:n_debt coll:n_coll percent_result:NO];
         [self _refreshUI_coll_available:n_coll update_textfield:NO];
         [self _refreshUI_debt_available:n_debt update_textfield:NO];
