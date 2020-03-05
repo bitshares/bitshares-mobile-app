@@ -54,7 +54,7 @@ NSString* gSmallDataEncode(NSString* str, NSString* key)
     //  base64 编码
     NSData* d1 = [[NSData alloc] initWithBytes:outbuf length:outsize];
     NSString* base64str = [d1 base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
-//    [d1 release];
+    //    [d1 release];
     
     return base64str;
 }
@@ -586,6 +586,14 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     return [dateFormat stringFromDate:[NSDate dateWithTimeIntervalSince1970:ts]];
 }
 
++ (NSInteger)getYearWithDate:(NSDate*)date calendar:(NSCalendar*)calendar
+{
+    if (!calendar) {
+        calendar = [NSDate gregorianCalendar];
+    }
+    return [calendar components:NSCalendarUnitYear fromDate:date].year;
+}
+
 /**
  *  格式化：帐号历史日期显示格式。REMARK：以当前时区格式化，BTS默认时间是UTC。北京时间当前时区会+8。
  */
@@ -595,9 +603,23 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
         return @"00-00 00:00";
     }
     NSTimeInterval ts = [self parseBitsharesTimeString:time];
-    NSDateFormatter* dateFormat = [[NSDateFormatter alloc] init];
-    [dateFormat setDateFormat:@"MM-dd HH:mm"];
-    return [dateFormat stringFromDate:[NSDate dateWithTimeIntervalSince1970:ts]];
+    NSDate* time_date = [NSDate dateWithTimeIntervalSince1970:ts];
+    
+    id calendar = [NSDate gregorianCalendar];
+    NSInteger now_year = [self getYearWithDate:[NSDate date] calendar:calendar];
+    NSInteger time_year = [self getYearWithDate:time_date calendar:calendar];
+    
+    if (now_year != time_year) {
+        //  非今年
+        NSDateFormatter* dateFormat = [[NSDateFormatter alloc] init];
+        [dateFormat setDateFormat:@"yy-MM-dd HH:mm"];
+        return [dateFormat stringFromDate:time_date];
+    } else {
+        //  今年
+        NSDateFormatter* dateFormat = [[NSDateFormatter alloc] init];
+        [dateFormat setDateFormat:@"MM-dd HH:mm"];
+        return [dateFormat stringFromDate:time_date];
+    }
 }
 
 /**
@@ -1896,7 +1918,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     
     id n_base = [NSDecimalNumber decimalNumberWithMantissa:i_base_amount exponent:-base_precision isNegative:NO];
     id n_quote = [NSDecimalNumber decimalNumberWithMantissa:i_quote_amount exponent:-quote_precision isNegative:NO];
-
+    
     if (set_divide_precision){
         NSInteger precision = invert ? base_precision : quote_precision;
         NSDecimalNumberHandler* handler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:roundingMode
@@ -2446,7 +2468,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     
     NSError* error = nil;
     [fileManager createDirectoryAtPath:dirpath withIntermediateDirectories:YES attributes:nil error:&error];
-
+    
     if (error)
     {
         NSLog(@"createDirectoryAtPath error:%@", error);
@@ -2592,8 +2614,8 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 +(BOOL)renameFile:(NSString*)srcpath dst:(NSString*)dstpath
 {
     //  TODO:未完成 暂时也没用到
-//    NSError* error = nil;
-//    [[NSFileManager defaultManager] moveItemAtPath:srcpath toPath:dstpath error:&error];
+    //    NSError* error = nil;
+    //    [[NSFileManager defaultManager] moveItemAtPath:srcpath toPath:dstpath error:&error];
     return NO;
 }
 
@@ -2841,14 +2863,14 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 #if kUseCommunityFaucet
         //  參考：https://bitshares.eu/referral/info/api
         id args = @{
-                    @"account":@{
-                            @"name":name,
-                            @"owner_key":owner_key,
-                            @"active_key":active_key,
-                            @"memo_key":active_key,
-                            @"refcode":refcode
-                            }
-                    };
+            @"account":@{
+                    @"name":name,
+                    @"owner_key":owner_key,
+                    @"active_key":active_key,
+                    @"memo_key":active_key,
+                    @"refcode":refcode
+            }
+        };
         [[self asyncPostUrl_jsonBody:kAppCommunityFaucetAddress args:args] then:(^id(id response) {
             NSString* err_msg = nil;
             if (!response) {
@@ -2880,13 +2902,13 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
         })];
 #else
         id args = @{
-                    @"account_name":name,
-                    @"owner_key":owner_key,
-                    @"active_key":active_key,
-                    @"memo_key":active_key,
-                    @"chid":@(chid),
-                    @"referrer_code":refcode
-                    };
+            @"account_name":name,
+            @"owner_key":owner_key,
+            @"active_key":active_key,
+            @"memo_key":active_key,
+            @"chid":@(chid),
+            @"referrer_code":refcode
+        };
         [[self asyncPostUrl:[[ChainObjectManager sharedChainObjectManager] getFinalFaucetURL] args:args] then:(^id(id response) {
             NSString* err_msg = nil;
             if (!response) {
@@ -3009,7 +3031,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     NSString* boundary_bgn = [NSString stringWithFormat:@"--%@", boundary_base];
     //  结束符 --btspp_boundary_1qaz2wsx_2019--
     NSString* boundary_end = [NSString stringWithFormat:@"%@--", boundary_bgn];
-
+    
     //  2、初始化body字符串
     NSMutableString* body = [[NSMutableString alloc] init];
     //  添加所有参数
@@ -3428,11 +3450,11 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     NSDate* date = [dateFormat dateFromString:datestring];
     if (!date){
         //  DEBUG
-//        CLS_LOG(@"dateFromString date is nil, datestring is: %@", datestring);
+        //        CLS_LOG(@"dateFromString date is nil, datestring is: %@", datestring);
     }
     
-//    [dateFormat release];
-//    [locale release];
+    //    [dateFormat release];
+    //    [locale release];
     return date;
 }
 
@@ -3520,7 +3542,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
         [indent appendString:@"\t"];
     }
     NSString* indent2 = [indent copy];
-//    [indent release];
+    //    [indent release];
     for (UIView* v1 in view.subviews) {
         
         NSLog(@"%@level=%d:%@", indent2, (int)level, v1);
@@ -3550,7 +3572,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     [[ThemeManager sharedThemeManager].tabBarColor getRed:&red green:&green blue:&blue alpha:&alpha];
     CSToastStyle* style = [CSToastManager sharedStyle];
     style.backgroundColor = [UIColor colorWithRed:red green:green blue:blue alpha:0.95f];
-//    style.cornerRadius = 2;
+    //    style.cornerRadius = 2;
     style.messageColor = [ThemeManager sharedThemeManager].textColorMain;
     
     //  REMARK：定制 toast 风格

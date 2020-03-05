@@ -1564,6 +1564,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
  */
 - (WsPromise*)queryFullAccountInfo:(NSString*)account_name_or_id
 {
+    //  TODO:5.0 账号余额查询，订单查询等。用该api都有限制，需要适配。!!!!TODO:5.0 !!!!
     return [self queryFullAccountInfo:account_name_or_id retry_num:1];
 }
 

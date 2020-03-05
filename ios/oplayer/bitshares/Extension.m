@@ -139,17 +139,19 @@
 
 @end
 
-//  TODO:fowallet tmp
 @implementation NSDate (WQCalendarLogic)
 
+/*
+ *  (public) 获取公历日历，不然日本等区域日历格式不同。
+ */
 + (NSCalendar*)gregorianCalendar
 {
-    static NSCalendar *_gregorianCalendar;
+    static NSCalendar* _gregorianCalendar = nil;
     @synchronized(self)
     {
         if (!_gregorianCalendar)
         {
-            _gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+            _gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
         }
     }
     return _gregorianCalendar;
