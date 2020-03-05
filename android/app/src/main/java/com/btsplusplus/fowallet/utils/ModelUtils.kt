@@ -1,6 +1,7 @@
 package com.btsplusplus.fowallet.utils
 
 import bitshares.*
+import com.btsplusplus.fowallet.kline.TradingPair
 import com.fowallet.walletcore.bts.ChainObjectManager
 import org.json.JSONArray
 import org.json.JSONObject
@@ -56,8 +57,9 @@ class ModelUtils {
          *  (public) 判断是否价格无效
          */
         fun isNullPrice(price: JSONObject): Boolean {
-            if (price.getJSONObject("base").getString("amount").toLong() == 0L ||
-                    price.getJSONObject("quote").getString("amount").toLong() == 0L) {
+            val core_asset_id = ChainObjectManager.sharedChainObjectManager().grapheneCoreAssetID
+            if (core_asset_id == price.getJSONObject("base").getString("asset_id") &&
+                    core_asset_id == price.getJSONObject("quote").getString("asset_id")) {
                 return true
             }
             return false
@@ -126,5 +128,103 @@ class ModelUtils {
             return avg.multiply(n).setScale(result_precision, BigDecimal.ROUND_DOWN)
         }
 
+        /**
+         *  (public) 处理链上返回的限价单信息，方便UI显示。
+         *  filterTradingPair - 筛选当前交易对相关订单，可为nil。
+         */
+        fun processLimitOrders(limit_orders: JSONArray?, filterTradingPair: TradingPair?): MutableList<JSONObject> {
+            val dataArray = mutableListOf<JSONObject>()
+
+            if (limit_orders == null) {
+                return dataArray
+            }
+
+            val chainMgr = ChainObjectManager.sharedChainObjectManager()
+            for (order in limit_orders.forin<JSONObject>()) {
+                val sell_price = order!!.getJSONObject("sell_price")
+                val base = sell_price.getJSONObject("base")
+                val quote = sell_price.getJSONObject("quote")
+                val base_id = base.getString("asset_id")
+                val quote_id = quote.getString("asset_id")
+
+                //  筛选当前交易对相关订单，并根据当前交易对确定买卖方向。
+                var issell = false
+                if (filterTradingPair != null) {
+                    if (base_id == filterTradingPair._baseId && quote_id == filterTradingPair._quoteId) {
+                        //  买单：卖出 CNY
+                        issell = false
+                    } else if (base_id == filterTradingPair._quoteId && quote_id == filterTradingPair._baseId) {
+                        //  卖单：卖出 BTS
+                        issell = true
+                    } else {
+                        //  其他交易对的订单
+                        continue
+                    }
+                }
+                val base_asset = chainMgr.getChainObjectByID(base_id)
+                val quote_asset = chainMgr.getChainObjectByID(quote_id)
+                val base_precision = base_asset.getInt("precision")
+                val quote_precision = quote_asset.getInt("precision")
+                val base_value = OrgUtils.calcAssetRealPrice(base.getString("amount"), base_precision)
+                val quote_value = OrgUtils.calcAssetRealPrice(quote.getString("amount"), quote_precision)
+                //  REMARK：没筛选的情况下，根据资产优先级自动计算买卖方向。
+                if (filterTradingPair == null) {
+                    val assetBasePriority = chainMgr.genAssetBasePriorityHash()
+                    val base_priority = assetBasePriority.optInt(base_asset.getString("symbol"), 0)
+                    val quote_priority = assetBasePriority.optInt(quote_asset.getString("symbol"), 0)
+                    issell = base_priority <= quote_priority
+                }
+
+                //  REMARK: base 是卖出的资产，除以 base 则为卖价(每1个 base 资产的价格)。反正 base / quote 则为买入价。
+                var price: Double
+                var price_str: String
+                var amount_str: String
+                var total_str: String
+                var base_sym: String
+                var quote_sym: String
+                if (!issell) {
+                    //  buy     price = base / quote
+                    price = base_value / quote_value
+                    price_str = OrgUtils.formatFloatValue(price, base_precision)
+                    val total_real = OrgUtils.calcAssetRealPrice(order.getString("for_sale"), base_precision)
+                    val amount_real = total_real / price
+                    amount_str = OrgUtils.formatFloatValue(amount_real, quote_precision)
+                    total_str = OrgUtils.formatAssetString(order.getString("for_sale"), base_precision)
+                    base_sym = base_asset.getString("symbol")
+                    quote_sym = quote_asset.getString("symbol")
+                } else {
+                    //  sell    price = quote / base
+                    price = quote_value / base_value
+                    price_str = OrgUtils.formatFloatValue(price, quote_precision)
+                    amount_str = OrgUtils.formatAssetString(order.getString("for_sale"), base_precision)
+                    val for_sale_real = OrgUtils.calcAssetRealPrice(order.getString("for_sale"), base_precision)
+                    val total_real = price * for_sale_real
+                    total_str = OrgUtils.formatFloatValue(total_real, quote_precision)
+                    base_sym = quote_asset.getString("symbol")
+                    quote_sym = base_asset.getString("symbol")
+                }
+                //  REMARK：特殊处理，如果按照 base or quote 的精度格式化出价格为0了，则扩大精度重新格式化。
+                if (price_str == "0") {
+                    price_str = OrgUtils.formatFloatValue(price, 8)
+                }
+
+                dataArray.add(JSONObject().apply {
+                    put("time", order.getString("expiration"))
+                    put("issell", issell)
+                    put("price", price_str)
+                    put("amount", amount_str)
+                    put("total", total_str)
+                    put("base_symbol", base_sym)
+                    put("quote_symbol", quote_sym)
+                    put("id", order.getString("id"))
+                    put("seller", order.getString("seller"))
+                    put("raw_order", order)
+                })
+            }
+            //  按照ID降序
+            dataArray.sortByDescending { it.getString("id").split(".").last().toInt() }
+            //  返回
+            return dataArray
+        }
     }
 }

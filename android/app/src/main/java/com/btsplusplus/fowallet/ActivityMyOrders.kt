@@ -19,7 +19,7 @@ class ActivityMyOrders : BtsppActivity() {
     private var view_pager: ViewPager? = null
 
     private lateinit var _full_account_data: JSONObject
-    private var _tradeHistory: JSONArray? = null
+    private lateinit var _tradeHistory: JSONArray
     private var _tradingPair: TradingPair? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,11 +27,12 @@ class ActivityMyOrders : BtsppActivity() {
         setAutoLayoutContentView(R.layout.activity_my_orders)
 
         //  获取参数
-        val args = btspp_args_as_JSONArray()
-        _full_account_data = args[0] as JSONObject
-        _tradeHistory = args[1] as JSONArray
-        _tradingPair = args[2] as? TradingPair
+        val args = btspp_args_as_JSONObject()
+        _full_account_data = args.getJSONObject("full_account_data")
+        _tradeHistory = args.getJSONArray("trade_history")
+        _tradingPair = args.opt("tradingPair") as? TradingPair
 
+        //  事件 - 返回
         layout_back_from_my_orders.setOnClickListener { finish() }
 
         setFullScreen()
@@ -74,9 +75,13 @@ class ActivityMyOrders : BtsppActivity() {
     }
 
     private fun setFragments() {
-        fragmens.add(FragmentOrderCurrent().initialize(_full_account_data))
+        fragmens.add(FragmentOrderCurrent().initialize(JSONObject().apply {
+            put("full_account_data", _full_account_data)
+            put("tradingPair", _tradingPair)
+            put("filter", false)
+        }))
         fragmens.add(FragmentOrderHistory().initialize(JSONObject().apply {
-            put("data", _tradeHistory!!)
+            put("data", _tradeHistory)
         }))
         fragmens.add(FragmentOrderHistory().initialize(JSONObject().apply {
             put("isSettlementsOrder", true)
@@ -89,7 +94,9 @@ class ActivityMyOrders : BtsppActivity() {
                 val pos = tab.position
                 view_pager!!.setCurrentItem(pos, true)
                 fragmens[pos].let {
-                    if (it is FragmentOrderHistory) {
+                    if (it is FragmentOrderCurrent) {
+                        it.onControllerPageChanged()
+                    } else if (it is FragmentOrderHistory) {
                         it.querySettlementOrders(full_account_data = _full_account_data)
                     }
                 }

@@ -13,9 +13,10 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import bitshares.*
 import com.btsplusplus.fowallet.kline.TradingPair
+import com.btsplusplus.fowallet.utils.ModelUtils
 import com.fowallet.walletcore.bts.BitsharesClientManager
 import com.fowallet.walletcore.bts.ChainObjectManager
-import org.json.JSONArray
+import com.fowallet.walletcore.bts.WalletManager
 import org.json.JSONObject
 
 /**
@@ -34,88 +35,77 @@ class FragmentOrderCurrent : BtsppFragment() {
     private var _ctx: Context? = null
     private var _view: View? = null
     private var _dataArray = mutableListOf<JSONObject>()
-    lateinit var _full_account_data: JSONObject
+    private var _full_account_data: JSONObject? = null
     private var _tradingPair: TradingPair? = null
+    private var _filterWithTradingPair = false
 
     override fun onInitParams(args: Any?) {
-        val full_account_data = args as JSONObject
-        refreshWithFullUserData(full_account_data)
+        val json = args as JSONObject
+        _tradingPair = json.opt("tradingPair") as? TradingPair
+        _filterWithTradingPair = json.getBoolean("filter")
+        refreshWithFullUserData(json.optJSONObject("full_account_data"), false)
+    }
+
+    /**
+     *  (public) 事件 - 页面切换
+     */
+    fun onControllerPageChanged() {
+        if (!_filterWithTradingPair) {
+            return
+        }
+
+        //  尚未登录
+        val walletMgr = WalletManager.sharedWalletManager()
+        if (!walletMgr.isWalletExist()) {
+            return
+        }
+
+        activity?.let { ctx ->
+            val op_account = walletMgr.getWalletAccountInfo()!!.getJSONObject("account")
+            val uid = op_account.getString("id")
+            //  查询用户所有订单
+            val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(ctx), ctx).apply { show() }
+            val chainMgr = ChainObjectManager.sharedChainObjectManager()
+            chainMgr.queryFullAccountInfo(uid).then {
+                val full_account_data = it as JSONObject
+                //  查询所有订单相关依赖
+                val asset_id_hash = JSONObject()
+                val limit_orders = full_account_data.optJSONArray("limit_orders")
+                if (limit_orders != null && limit_orders.length() > 0) {
+                    for (order in limit_orders.forin<JSONObject>()) {
+                        val sell_price = order!!.getJSONObject("sell_price")
+                        asset_id_hash.put(sell_price.getJSONObject("base").getString("asset_id"), true)
+                        asset_id_hash.put(sell_price.getJSONObject("quote").getString("asset_id"), true)
+                    }
+                }
+                return@then chainMgr.queryAllGrapheneObjects(asset_id_hash.keys().toJSONArray()).then {
+                    mask.dismiss()
+                    refreshWithFullUserData(full_account_data, true)
+                    return@then null
+                }
+            }.catch {
+                mask.dismiss()
+                showToast(resources.getString(R.string.tip_network_error))
+            }
+            return@let
+        }
     }
 
     /**
      *  (private) 刷新数据
      */
-    private fun refreshWithFullUserData(full_account_data: JSONObject) {
-        _full_account_data = full_account_data
-        genCurrentLimitOrderData(full_account_data.getJSONArray("limit_orders"))
-    }
-
-    /**
-     * 当前订单：生成当前订单列表信息
-     */
-    private fun genCurrentLimitOrderData(limit_orders: JSONArray) {
-        _dataArray.clear()
-        val chainMgr = ChainObjectManager.sharedChainObjectManager()
-        val assetBasePriority = chainMgr.genAssetBasePriorityHash()
-        for (order in limit_orders) {
-            val sell_price = order!!.getJSONObject("sell_price")
-            val base = sell_price.getJSONObject("base")
-            val quote = sell_price.getJSONObject("quote")
-            val base_asset = chainMgr.getChainObjectByID(base.getString("asset_id"))
-            val quote_asset = chainMgr.getChainObjectByID(quote.getString("asset_id"))
-            val base_priority = assetBasePriority.optInt(base_asset.getString("symbol"), 0)
-            val quote_priority = assetBasePriority.optInt(quote_asset.getString("symbol"), 0)
-            val base_precision = base_asset.getInt("precision")
-            val quote_precision = quote_asset.getInt("precision")
-            val base_value = OrgUtils.calcAssetRealPrice(base.getString("amount"), base_precision)
-            val quote_value = OrgUtils.calcAssetRealPrice(quote.getString("amount"), quote_precision)
-
-            //  REMARK: base 是卖出的资产，除以 base 则为卖价(每1个 base 资产的价格)。反正 base / quote 则为买入价。
-            var issell: Boolean
-            var price: Double
-            var price_str: String
-            var amount_str: String
-            var total_str: String
-            var base_sym: String
-            var quote_sym: String
-            if (base_priority > quote_priority) {
-                //  buy     price = base / quote
-                issell = false
-                price = base_value / quote_value
-                price_str = OrgUtils.formatFloatValue(price, base_precision)
-                val total_real = OrgUtils.calcAssetRealPrice(order.getString("for_sale"), base_precision)
-                val amount_real = total_real / price
-                amount_str = OrgUtils.formatFloatValue(amount_real, quote_precision)
-                total_str = OrgUtils.formatAssetString(order.getString("for_sale"), base_precision)
-                base_sym = base_asset.getString("symbol")
-                quote_sym = quote_asset.getString("symbol")
-            } else {
-                //  sell    price = quote / base
-                issell = true
-                price = quote_value / base_value
-                price_str = OrgUtils.formatFloatValue(price, quote_precision)
-                amount_str = OrgUtils.formatAssetString(order.getString("for_sale"), base_precision)
-                val for_sale_real = OrgUtils.calcAssetRealPrice(order.getString("for_sale"), base_precision)
-                val total_real = price * for_sale_real
-                total_str = OrgUtils.formatFloatValue(total_real, quote_precision)
-                base_sym = quote_asset.getString("symbol")
-                quote_sym = base_asset.getString("symbol")
-            }
-            //  REMARK：特殊处理，如果按照 base or quote 的精度格式化出价格为0了，则扩大精度重新格式化。
-            if (price_str == "0") {
-                price_str = OrgUtils.formatFloatValue(price, 8)
-            }
-            val data_item = jsonObjectfromKVS("time", order.getString("expiration"),
-                    "issell", issell, "price", price_str,
-                    "amount", amount_str, "total", total_str,
-                    "base_symbol", base_sym, "quote_symbol", quote_sym,
-                    "id", order.getString("id"),
-                    "seller", order.getString("seller"),
-                    "raw_order", order)
-            _dataArray.add(data_item)
+    private fun refreshWithFullUserData(full_account_data: JSONObject?, reloadView: Boolean) {
+        if (full_account_data != null) {
+            _dataArray = ModelUtils.processLimitOrders(full_account_data.optJSONArray("limit_orders"), if (_filterWithTradingPair) _tradingPair else null)
+        } else {
+            _dataArray.clear()
         }
-        //  按照ID降序
-        _dataArray.sortByDescending { it.getString("id").split(".").last().toInt() }
+        //  计算手续费对象
+        _full_account_data = full_account_data
+        //  刷新
+        if (reloadView) {
+            refreshUI()
+        }
     }
 
     private fun refreshUI() {
@@ -137,7 +127,7 @@ class FragmentOrderCurrent : BtsppFragment() {
     }
 
     private fun createCell(ctx: Context, layout_params: LinearLayout.LayoutParams, ly: LinearLayout, data: JSONObject) {
-        val ly_wrap: LinearLayout = LinearLayout(ctx)
+        val ly_wrap = LinearLayout(ctx)
         ly_wrap.orientation = LinearLayout.VERTICAL
 
 
@@ -161,7 +151,7 @@ class FragmentOrderCurrent : BtsppFragment() {
         val tv2 = TextView(ctx)
         val quote_symbol = data.getString("quote_symbol")
         val base_symbol = data.getString("base_symbol")
-        tv2.text = "${quote_symbol}/${base_symbol}"
+        tv2.text = String.format("%s/%s", quote_symbol, base_symbol)
         tv2.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.0f)
         tv2.setTextColor(resources.getColor(R.color.theme01_textColorMain))
         tv2.gravity = Gravity.CENTER_VERTICAL
@@ -173,13 +163,13 @@ class FragmentOrderCurrent : BtsppFragment() {
         layout_of_left.addView(tv2)
         layout_of_left.gravity = Gravity.CENTER_VERTICAL
 
-        var time = Utils.fmtLimitOrderTimeShowString(data.getString("time"))
+        val time = Utils.fmtLimitOrderTimeShowString(data.getString("time"))
         val tv3 = TextView(ctx)
         tv3.text = String.format(R.string.kVcOrderExpired.xmlstring(ctx), time)
         tv3.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11.0f)
         tv3.setTextColor(resources.getColor(R.color.theme01_textColorGray))
         tv3.gravity = Gravity.CENTER
-        var layout_tv3 = LinearLayout.LayoutParams(0.dp, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+        val layout_tv3 = LinearLayout.LayoutParams(0.dp, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
         layout_tv3.gravity = Gravity.CENTER_VERTICAL
         tv3.layoutParams = layout_tv3
 
@@ -216,7 +206,7 @@ class FragmentOrderCurrent : BtsppFragment() {
         tv6.layoutParams = createLayout(Gravity.CENTER_VERTICAL or Gravity.RIGHT)
 
         // layout3
-        val ly3: LinearLayout = LinearLayout(ctx)
+        val ly3 = LinearLayout(ctx)
         ly3.orientation = LinearLayout.HORIZONTAL
         ly3.layoutParams = layout_params
 
@@ -243,7 +233,7 @@ class FragmentOrderCurrent : BtsppFragment() {
 
         // 线
         val lv_line = View(ctx)
-        var layout_tv9 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1.dp)
+        val layout_tv9 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1.dp)
         lv_line.setBackgroundColor(resources.getColor(R.color.theme01_bottomLineColor))
         lv_line.layoutParams = layout_tv9
 
@@ -285,6 +275,7 @@ class FragmentOrderCurrent : BtsppFragment() {
         }
 
         //  计算手续费对象
+        assert(_full_account_data != null)
         val fee_item = ChainObjectManager.sharedChainObjectManager().getFeeItem(EBitsharesOperations.ebo_limit_order_cancel, _full_account_data, extra_balance = extra_balance)
         if (!fee_item.getBoolean("sufficient")) {
             showToast(_ctx!!.resources.getString(R.string.kTipsTxFeeNotEnough))
@@ -299,8 +290,9 @@ class FragmentOrderCurrent : BtsppFragment() {
     }
 
     private fun processCancelOrderCore(fee_item: JSONObject, order_id: String) {
+        assert(_full_account_data != null)
         val fee_asset_id = fee_item.getString("fee_asset_id")
-        val account_data = _full_account_data.getJSONObject("account")
+        val account_data = _full_account_data!!.getJSONObject("account")
         val account_id = account_data.getString("id")
 
         val op = jsonObjectfromKVS("fee", jsonObjectfromKVS("amount", 0, "asset_id", fee_asset_id),
@@ -323,8 +315,7 @@ class FragmentOrderCurrent : BtsppFragment() {
                 }
                 ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(account_id).then {
                     mask.dismiss()
-                    refreshWithFullUserData(it as JSONObject)
-                    refreshUI()
+                    refreshWithFullUserData(it as JSONObject, true)
                     showToast(String.format(_ctx!!.resources.getString(R.string.kVcOrderTipTxCancelFullOK), order_id))
                     //  [统计]
                     btsppLogCustom("txCancelLimitOrderFullOK", jsonObjectfromKVS("account", account_id))
