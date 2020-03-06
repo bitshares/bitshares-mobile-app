@@ -166,30 +166,43 @@
                 android:paddingBottom="48dp"
                 android:orientation="vertical">
 
-                <!-- 借款资产可用余额信息 -->
+                <!-- 借款资产标题 & 可用余额信息 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="34dp"
                     android:layout_marginTop="15dp"
                     android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|left"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/img_icon_lock_debt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:tint="@color/theme01.textColorHighlight"
+                            android:layout_marginRight="4dp"
+                            android:src="@drawable/icon_unlocked"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="13dp"
+                            android:text="@string/kDebtLabelCellTitleDebtValue"
+                            android:textColor="@color/theme01.textColorMain" />
+                    </LinearLayout>
+
                     <TextView
                         android:id="@+id/label_txt_debt_available"
                         android:layout_weight="1"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:gravity="center_vertical|left"
-                        android:textSize="10dp"
-                        android:text="--"
-                        android:textColor="@color/theme01.textColorNormal" />
-                    <TextView
-                        android:id="@+id/label_txt_debt_available_changed"
-                        android:layout_weight="1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
                         android:gravity="center_vertical|right"
-                        android:textSize="10dp"
+                        android:textSize="13dp"
                         android:text="1232132"
                         android:textColor="@color/theme01.textColorNormal"
                         />
@@ -197,237 +210,269 @@
 
                 </LinearLayout>
 
-                <!-- focusable、focusableInTouchMode 和 默认不激活键盘 -->
+                <!-- 借款金额输入框 XXX | 全部  属性：focusable、focusableInTouchMode 和 默认不激活键盘-->
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/txt_debt_asset_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="10dp"
-                        android:gravity="center_vertical|left"
-                        android:textColor="@color/theme01.textColorMain"
-                        android:layout_weight="1"
-                        android:text="CNY"
-                        android:textSize="15dp"
-                        />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <EditText
                         android:id="@+id/tf_debt"
                         android:maxLength="24"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical|right"
-                        android:gravity="center_vertical|left"
-                        android:layout_weight="6"
-                        style="@style/kTextFieldDecimalPad"
-                        android:hint="@string/kDebtTipInputDebtValue"
-                        android:textSize="15dp" />
-                    <TextView
-                        android:id="@+id/btn_pay_max"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical|right"
-                        android:textColor="@color/theme01.textColorHighlight"
                         android:layout_weight="1"
-                        android:text="@string/kDebtLablePayMaxDebt"
-                        android:textSize="12dp"
-                        />
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        style="@style/kTextFieldDecimalPad"
+                        android:hint="@string/kDebtTipInputDebtValue"/>
 
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:gravity="right"
+                        android:layout_marginLeft="4dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/tf_tailer_debt_asset_symbol"
+                            android:textSize="13dp"
+                            android:text="---"
+                            android:textColor="@color/theme01.textColorMain"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:textSize="13dp"
+                            android:text="|"
+                            android:layout_marginLeft="7dp"
+                            android:layout_marginRight="7dp"
+                            android:textColor="@color/theme01.textColorGray"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:id="@+id/btn_pay_max"
+                            android:textSize="13dp"
+                            android:text="@string/kDebtLablePayMaxDebt"
+                            android:textColor="@color/theme01.textColorHighlight"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
                 </LinearLayout>
+                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="10dp" android:layout_width="fill_parent"></View>
 
-                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
-
-                <!-- 抵押资产可用余额信息 -->
+                <!-- 抵押物标题 & 可用余额信息 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="34dp"
                     android:layout_marginTop="5dp"
                     android:orientation="horizontal">
                     <TextView
-                        android:id="@+id/label_txt_coll_available"
                         android:layout_weight="1"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
                         android:gravity="center_vertical|left"
-                        android:textSize="10dp"
-                        android:text="--"
-                        android:textColor="@color/theme01.textColorNormal" />
+                        android:textSize="13dp"
+                        android:text="@string/kDebtLabelCellTitleCollAmount"
+                        android:textColor="@color/theme01.textColorMain" />
                     <TextView
-                        android:id="@+id/label_txt_coll_available_changed"
+                        android:id="@+id/label_txt_coll_available"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
                         android:gravity="center_vertical|right"
-                        android:textSize="10dp"
+                        android:textSize="13dp"
                         android:layout_weight="1"
                         android:textColor="@color/theme01.textColorNormal"
                         android:text="0.000001"/>
                 </LinearLayout>
 
-                <!-- 抵押物输入框 -->
+                <!-- 抵押物输入框 XXX | 全部 属性：focusable、focusableInTouchMode 和 默认不激活键盘-->
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/txt_coll_asset_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="10dp"
-                        android:gravity="center_vertical|left"
-                        android:textColor="@color/theme01.textColorMain"
-                        android:layout_weight="1"
-                        android:text="BTS"
-                        android:textSize="15dp"
-                        />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <EditText
                         android:id="@+id/tf_coll"
                         android:maxLength="24"
-                        android:layout_width="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical|right"
-                        android:gravity="center_vertical|left"
-                        android:layout_weight="6"
+                        android:gravity="center_vertical"
                         style="@style/kTextFieldDecimalPad"
-                        android:hint="@string/kDebtTipInputCollAmount"
-                        android:textSize="15dp" />
-
-
-
-                    <TextView
-                        android:id="@+id/btn_debt_max"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical|right"
-                        android:textColor="@color/theme01.textColorHighlight"
-                        android:layout_weight="1"
-                        android:text="@string/kDebtLableUseMax"
-                        android:textSize="12dp"
-                        />
-
-                </LinearLayout>
-
-                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="0dp" android:layout_width="fill_parent"></View>
-
-                <!-- 抵押率 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/label_txt_curr_ratio"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="10dp"
-                        android:gravity="center_vertical|left"
-                        android:textColor="@color/theme01.textColorMain"
-                        android:layout_weight="1"
-                        android:text="@string/kDebtLableRatio"
-                        android:textSize="15dp"
-                        />
+                        android:hint="@string/kDebtTipInputCollAmount"/>
 
                     <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:gravity="right|center_vertical"
-                        android:layout_weight="1">
+                        android:orientation="horizontal"
+                        android:gravity="right"
+                        android:layout_marginLeft="4dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
 
-                        <ImageView
-                            android:id="@+id/tip_link_ratio"
-                            android:src="@drawable/icon_tip"
-                            android:tint="@color/theme01.textColorHighlight"
-                            android:gravity="right"
+                        <TextView
+                            android:id="@+id/tf_tailer_coll_asset_symbol"
+                            android:textSize="13dp"
+                            android:text="---"
+                            android:textColor="@color/theme01.textColorMain"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
 
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <!-- 抵押率滑动条 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="32dp"
-                    android:orientation="horizontal">
-                    <SeekBar
-                        android:id="@+id/slider_ratio"
-                        android:thumbOffset="0dp"
-                        android:paddingLeft="0dp"
-                        android:paddingRight="0dp"
-                        android:paddingEnd="0dp"
-                        android:paddingStart="0dp"
-                        android:thumb="@drawable/icon_slider"
-                        android:layout_width="match_parent"
-                        android:layout_height="32dp"
-                        android:layout_weight="1" />
-                </LinearLayout>
-
-                <!-- 目标抵押率 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/label_txt_target_ratio"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="10dp"
-                        android:gravity="center_vertical|left"
-                        android:textColor="@color/theme01.textColorGray"
-                        android:layout_weight="1"
-                        android:text="@string/kDebtTipTargetRatioNotSet"
-                        android:textSize="15dp"
-                        />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:gravity="right|center_vertical"
-                        android:layout_weight="1">
-
-                        <ImageView
-                            android:id="@+id/tip_link_target_ratio"
-                            android:src="@drawable/icon_tip"
-                            android:tint="@color/theme01.textColorHighlight"
-                            android:gravity="right"
+                        <TextView
+                            android:textSize="13dp"
+                            android:text="|"
+                            android:layout_marginLeft="7dp"
+                            android:layout_marginRight="7dp"
+                            android:textColor="@color/theme01.textColorGray"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
 
+                        <TextView
+                            android:id="@+id/btn_debt_max"
+                            android:textSize="13dp"
+                            android:text="@string/kDebtLableUseMax"
+                            android:textColor="@color/theme01.textColorHighlight"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+                </LinearLayout>
+                <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="10dp" android:layout_width="fill_parent"></View>
+
+                <!-- 抵押率和目标抵押率部分 预测市场资产需要隐藏 -->
+                <LinearLayout
+                    android:id="@+id/layout_ratio_and_tcr"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <!-- 抵押率 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical|left"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:id="@+id/img_icon_lock_ratio"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:tint="@color/theme01.textColorHighlight"
+                                android:layout_marginRight="4dp"
+                                android:src="@drawable/icon_unlocked"/>
+
+                            <TextView
+                                android:id="@+id/label_txt_curr_ratio"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/theme01.textColorMain"
+                                android:text="@string/kDebtLableRatio"
+                                android:textSize="13dp"
+                                />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:gravity="right|center_vertical"
+                            android:layout_weight="1">
+
+                            <ImageView
+                                android:id="@+id/tip_link_ratio"
+                                android:src="@drawable/icon_tip"
+                                android:tint="@color/theme01.textColorHighlight"
+                                android:gravity="right"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+                        </LinearLayout>
+
                     </LinearLayout>
 
-                </LinearLayout>
-
-                <!-- 目标抵押率滑动条 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="32dp"
-                    android:orientation="horizontal">
-                    <SeekBar
-                        android:id="@+id/slider_target_ratio"
-                        android:thumbOffset="0dp"
-                        android:paddingLeft="0dp"
-                        android:paddingRight="0dp"
-                        android:paddingEnd="0dp"
-                        android:paddingStart="0dp"
-                        android:thumb="@drawable/icon_slider"
+                    <!-- 抵押率滑动条 -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="32dp"
-                        android:max="400"
-                        android:progress="2"
-                        android:layout_weight="1" />
+                        android:orientation="horizontal">
+                        <SeekBar
+                            android:id="@+id/slider_ratio"
+                            android:thumbOffset="0dp"
+                            android:paddingLeft="0dp"
+                            android:paddingRight="0dp"
+                            android:paddingEnd="0dp"
+                            android:paddingStart="0dp"
+                            android:thumb="@drawable/icon_slider"
+                            android:layout_width="match_parent"
+                            android:layout_height="32dp"
+                            android:layout_weight="1" />
+                    </LinearLayout>
+
+                    <!-- 目标抵押率 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/label_txt_target_ratio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="10dp"
+                            android:gravity="center_vertical|left"
+                            android:textColor="@color/theme01.textColorGray"
+                            android:layout_weight="1"
+                            android:text="@string/kDebtTipTargetRatioNotSet"
+                            android:textSize="13dp"
+                            />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:gravity="right|center_vertical"
+                            android:layout_weight="1">
+
+                            <ImageView
+                                android:id="@+id/tip_link_target_ratio"
+                                android:src="@drawable/icon_tip"
+                                android:tint="@color/theme01.textColorHighlight"
+                                android:gravity="right"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!-- 目标抵押率滑动条 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="32dp"
+                        android:orientation="horizontal">
+                        <SeekBar
+                            android:id="@+id/slider_target_ratio"
+                            android:thumbOffset="0dp"
+                            android:paddingLeft="0dp"
+                            android:paddingRight="0dp"
+                            android:paddingEnd="0dp"
+                            android:paddingStart="0dp"
+                            android:thumb="@drawable/icon_slider"
+                            android:layout_width="match_parent"
+                            android:layout_height="32dp"
+                            android:max="400"
+                            android:progress="2"
+                            android:layout_weight="1" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <!-- 登录/调整债仓按钮 -->
@@ -450,6 +495,7 @@
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/tv_ui_tips"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
