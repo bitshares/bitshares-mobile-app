@@ -107,9 +107,9 @@
 "kVcRankCurrentFeedPrice" = "当前喂价";
 "kVcTipsNoCallOrder" = "还没有用户进行抵押";
 "kVcRankRatio" = "抵押率 ";
-"kVcRankCallPrice" = "强平触发价 ";
-"kVcRankColl" = "抵押";
-"kVcRankDebt" = "借入";
+"kVcRankCallPrice" = "强平触发价";
+"kVcRankColl" = "抵押物";
+"kVcRankDebt" = "借款金额";
 
 /* 喂价详情界面 */
 "kVcFeedCurrentFeedPrice" = "当前喂价";

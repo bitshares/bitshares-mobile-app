@@ -107,7 +107,7 @@
 "kVcRankCurrentFeedPrice" = "現在のフィード価格";
 "kVcTipsNoCallOrder" = "まだユーザーが担保を入れていない";
 "kVcRankRatio" = "担保比率 ";
-"kVcRankCallPrice" = "強制単価 ";
+"kVcRankCallPrice" = "強制単価";
 "kVcRankColl" = "担保";
 "kVcRankDebt" = "借金";
 
