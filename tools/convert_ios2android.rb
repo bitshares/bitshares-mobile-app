@@ -31,7 +31,10 @@ module AndroidI18nGeneration
         k = $1
         v = $2
         # => process special characters
-        v.gsub!(/@/, 's')
+        # => 占位符格式化
+        v.gsub!(/%(\d+)\$@/){ "%#{$1}$s" }
+        # => 基本格式化
+        v.gsub!(/%@/, '%s')
         group[:values] << {k:k, v:v}
       end
     end
