@@ -1,10 +1,15 @@
 package com.btsplusplus.fowallet
 
+import android.content.Context
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.view.MotionEvent
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import bitshares.*
 import com.btsplusplus.fowallet.kline.TradingPair
+import com.btsplusplus.fowallet.utils.ModelUtils
 import com.btsplusplus.fowallet.utils.VcUtils
 import com.fowallet.walletcore.bts.BitsharesClientManager
 import com.fowallet.walletcore.bts.ChainObjectManager
@@ -20,7 +25,10 @@ class ActivityIndexCollateral : BtsppActivity() {
     private var _debtPair: TradingPair? = null
     private var _nMaintenanceCollateralRatio: BigDecimal? = null
     private var _nCurrMortgageRate: BigDecimal? = null
-    private var _nCurrFeedPrice: BigDecimal? = null
+    private var _nCurrFeedPrice: BigDecimal? = null                 //  当前喂价（如果查询数据失败，则可能为 nil。）
+
+    private var _currAssetIsPredictionmarket = false                //  当前借款资产是否是预测市场（默认NO）
+    private var _bLockDebt = true                                   //  是否锁定负债字段。
 
     private var _callOrderHash: JSONObject? = null
     private var _collateralBalance: JSONObject? = null
@@ -105,10 +113,24 @@ class ActivityIndexCollateral : BtsppActivity() {
         _tf_coll_watcher = UtilsDigitTextWatcher().set_tf(tf).set_precision(_debtPair!!._quotePrecision)
         tf.addTextChangedListener(_tf_coll_watcher!!)
         _tf_coll_watcher!!.on_value_changed(::onCollAmountChanged)
+        //  REMARK：重写数量输入框的touch事件，在没有输入借款金额的前提下，不弹出键盘（直接消耗掉事件)。
+        tf.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                if (!_currAssetIsPredictionmarket) {
+                    val n_debt = Utils.auxGetStringDecimalNumberValue(_tf_debt_watcher!!.get_tf_string())
+                    if (n_debt <= BigDecimal.ZERO) {
+                        showToast(resources.getString(R.string.kDebtTipPleaseInputDebtValueFirst))
+                        endInput()
+                        return@setOnTouchListener true
+                    }
+                }
+            }
+            return@setOnTouchListener false
+        }
 
         //  最大还款、全部抵押
-        findViewById<TextView>(R.id.btn_pay_max).setOnClickListener { onTailerPayMaxClicked() }
-        findViewById<TextView>(R.id.btn_debt_max).setOnClickListener { onTailerDebtMaxClicked() }
+        findViewById<TextView>(R.id.btn_pay_max).setOnClickListener { onDebtTailerButtonClicked() }
+        findViewById<TextView>(R.id.btn_debt_max).setOnClickListener { onCollTailerButtonClicked() }
 
         //  登录、调整债仓
         findViewById<Button>(R.id.btn_submit_core).setOnClickListener { onSubmitCoreClicked() }
@@ -131,6 +153,21 @@ class ActivityIndexCollateral : BtsppActivity() {
      * 执行调整债仓操作
      */
     private fun _onDebtActionClicked() {
+        val bitasset_data = ChainObjectManager.sharedChainObjectManager().getChainObjectByIDSafe(_debtPair!!._baseAsset.getString("bitasset_data_id"))
+        if (bitasset_data == null) {
+            showToast(resources.getString(R.string.kDebtTipNetworkErrorPleaseRefresh))
+            return
+        }
+        if (ModelUtils.assetHasGlobalSettle(bitasset_data)) {
+            showToast(resources.getString(R.string.kDebtTipAssetHasGlobalSettled))
+            return
+        }
+        //  非预测市场并且没有喂价
+        if (!_currAssetIsPredictionmarket && _nCurrFeedPrice == null) {
+            showToast(resources.getString(R.string.kDebtTipAssetNoValidFeedData))
+            return
+        }
+
         //  --- 检查参数有效性 ---
         val zero = BigDecimal.ZERO
 
@@ -158,7 +195,7 @@ class ActivityIndexCollateral : BtsppActivity() {
         //  抵押物不足
         val n_balance_coll = bigDecimalfromAmount(_collateralBalance!!.getString("amount"), _debtPair!!._quotePrecision)
         val n_rest_coll = n_balance_coll.subtract(n_delta_coll)
-        if (n_rest_coll.compareTo(zero) < 0) {
+        if (n_rest_coll < zero) {
             showToast(resources.getString(R.string.kDebtTipCollNotEnough))
             return
         }
@@ -166,17 +203,51 @@ class ActivityIndexCollateral : BtsppActivity() {
         //  可用余额不足
         val n_balance_debt = _getDebtBalance()
         val n_rest_debt = n_balance_debt.add(n_delta_debt)
-        if (n_rest_debt.compareTo(zero) < 0) {
+        if (n_rest_debt < zero) {
             showToast(String.format(resources.getString(R.string.kDebtTipAvailableNotEnough), _debtPair!!._baseAsset.getString("symbol")))
             return
         }
 
-        //  抵押率判断
-        //  【BSIP30】在爆仓状态可以上调抵押率，不再强制要求必须上调到多少，但抵押率不足最低要求时不能增加借款
-        assert(_nCurrMortgageRate != null)
-        if (_nCurrMortgageRate!!.compareTo(_nMaintenanceCollateralRatio) < 0 && n_delta_debt.compareTo(zero) > 0) {
-            showToast(String.format(resources.getString(R.string.kDebtTipRatioTooLow), _nMaintenanceCollateralRatio!!.toPlainString()))
-            return
+        //  非预测市场：各种情况下的抵押率判断
+        if (!_currAssetIsPredictionmarket) {
+            if (n_old_debt > zero) {
+                if (n_new_debt > zero) {
+                    //  更新债仓：新负债和旧负债都存在。
+                    val n_new_ratio = _calcCollRate(n_new_debt, n_new_coll, false)
+                    val n_old_ratio = _calcCollRate(n_old_debt, n_old_coll, false)
+                    if (n_old_ratio < _nMaintenanceCollateralRatio!!) {
+                        //  已经处于爆仓中
+                        //  【BSIP30】在爆仓状态可以上调抵押率，不再强制要求必须上调到多少，但抵押率不足最低要求时不能增加借款
+                        if (n_new_ratio < _nMaintenanceCollateralRatio!! && n_delta_debt > zero) {
+                            showToast(String.format(resources.getString(R.string.kDebtTipRatioTooLow), _nMaintenanceCollateralRatio!!.toPlainString()))
+                            return
+                        }
+                        if (n_new_ratio <= n_old_ratio) {
+                            showToast(resources.getString(R.string.kDebtTipCannotAdjustMoreLowerRatio))
+                            return
+                        }
+                    } else {
+                        //  尚未爆仓
+                        if (n_new_ratio < _nMaintenanceCollateralRatio!!) {
+                            showToast(String.format(resources.getString(R.string.kDebtTipCollRatioCannotLessThanMCR), _nMaintenanceCollateralRatio!!.toPlainString()))
+                            return
+                        }
+                    }
+                } else {
+                    //  关闭债仓：旧负债存在，新负债不存在。
+                }
+            } else {
+                //  新开债仓：没有旧的负债
+                if (n_new_debt <= zero) {
+                    showToast(resources.getString(R.string.kDebtTipPleaseInputDebtValueFirst))
+                    return
+                }
+                val n_new_ratio = _calcCollRate(n_new_debt, n_new_coll, false)
+                if (n_new_ratio < _nMaintenanceCollateralRatio!!) {
+                    showToast(String.format(resources.getString(R.string.kDebtTipCollRatioCannotLessThanMCR), _nMaintenanceCollateralRatio!!.toPlainString()))
+                    return
+                }
+            }
         }
 
         if (!_fee_item!!.getBoolean("sufficient")) {
@@ -253,9 +324,77 @@ class ActivityIndexCollateral : BtsppActivity() {
     }
 
     /**
-     * 事件 - 最大还款
+     *  (private) 事件 - 锁 or 解锁按钮点击
      */
-    private fun onTailerPayMaxClicked() {
+    private fun onLockClicked() {
+        setNewLockStatus(!_bLockDebt)
+    }
+
+    private fun setNewLockStatus(bLockDebt: Boolean) {
+        findViewById<ImageView>(R.id.img_icon_lock_debt).let { icon_lock_debt ->
+            findViewById<ImageView>(R.id.img_icon_lock_ratio).let { icon_lock_ratio ->
+                if (_currAssetIsPredictionmarket) {
+                    //  预测市场不用锁
+                    icon_lock_debt.visibility = View.GONE
+                    icon_lock_ratio.visibility = View.GONE
+                    //  取消事件
+                    icon_lock_debt.setOnClickListener(null)
+                    icon_lock_ratio.setOnClickListener(null)
+                } else {
+                    //  保存
+                    _bLockDebt = bLockDebt
+                    if (_bLockDebt) {
+                        icon_lock_debt.visibility = View.VISIBLE
+                        icon_lock_debt.setImageDrawable(resources.getDrawable(R.drawable.icon_locked))
+                        icon_lock_debt.setColorFilter(resources.getColor(R.color.theme01_textColorNormal))
+
+                        icon_lock_ratio.visibility = View.VISIBLE
+                        icon_lock_ratio.setImageDrawable(resources.getDrawable(R.drawable.icon_unlocked))
+                        icon_lock_ratio.setColorFilter(resources.getColor(R.color.theme01_textColorHighlight))
+                    } else {
+                        icon_lock_debt.visibility = View.VISIBLE
+                        icon_lock_debt.setImageDrawable(resources.getDrawable(R.drawable.icon_unlocked))
+                        icon_lock_debt.setColorFilter(resources.getColor(R.color.theme01_textColorHighlight))
+
+                        icon_lock_ratio.visibility = View.VISIBLE
+                        icon_lock_ratio.setImageDrawable(resources.getDrawable(R.drawable.icon_locked))
+                        icon_lock_ratio.setColorFilter(resources.getColor(R.color.theme01_textColorNormal))
+                    }
+                    //  绑定事件
+                    if (!icon_lock_debt.hasOnClickListeners()) {
+                        icon_lock_debt.setOnClickListener { onLockClicked() }
+                    }
+                    if (!icon_lock_ratio.hasOnClickListeners()) {
+                        icon_lock_ratio.setOnClickListener { onLockClicked() }
+                    }
+                }
+                return@let
+            }
+            return@let
+        }
+    }
+
+    /**
+     *  关闭键盘
+     */
+    private fun endInput() {
+        _tf_debt_watcher?.endInput()
+        _tf_coll_watcher?.endInput()
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.let {
+            it.hideSoftInputFromWindow(findViewById<EditText>(R.id.tf_coll).windowToken, 0)
+            it.hideSoftInputFromWindow(findViewById<EditText>(R.id.tf_debt).windowToken, 0)
+            return@let
+        }
+    }
+
+    /**
+     * 事件 - 还款按钮点击
+     */
+    private fun onDebtTailerButtonClicked() {
+        //  关闭键盘
+        endInput()
+
         //  计算执行最大还款之后，剩余的负债信息。
         var new_debt: BigDecimal = BigDecimal.ZERO
         val debt_callorder = _getCallOrder()
@@ -277,23 +416,40 @@ class ActivityIndexCollateral : BtsppActivity() {
     }
 
     /**
-     * 事件 - 全部抵押
+     * 事件 - 全部按钮点击
      */
-    private fun onTailerDebtMaxClicked() {
+    private fun onCollTailerButtonClicked() {
+        //  关闭键盘
+        endInput()
+
+        if (!_currAssetIsPredictionmarket) {
+            if (_bLockDebt) {
+                val n_debt = Utils.auxGetStringDecimalNumberValue(_tf_debt_watcher!!.get_tf_string())
+                if (n_debt <= BigDecimal.ZERO) {
+                    showToast(resources.getString(R.string.kDebtTipPleaseInputDebtValueFirst))
+                    return
+                }
+            } else {
+                if (_nCurrMortgageRate == null || _nCurrMortgageRate!! <= BigDecimal.ZERO) {
+                    showToast(resources.getString(R.string.kDebtTipPleaseAdjustRatioFirst))
+                    return
+                }
+            }
+        }
         val n_total = _getTotalCollateralNumber()
-        var new_str: String = ""
+        var new_str = ""
         if (n_total.compareTo(BigDecimal.ZERO) != 0) {
             new_str = n_total.toPlainString()
         }
         _tf_coll_watcher?.set_new_text(new_str)
-        onCollAmountChanged(new_str)
+        onCollAmountChangedCore(new_str, if (_currAssetIsPredictionmarket) false else _bLockDebt)
     }
 
     /**
      * (private) 输入框值变化 - 借款数量
      */
     private fun onDebtAmountChanged(str: String) {
-        if (_nCurrFeedPrice == null) {
+        if (!_currAssetIsPredictionmarket && _nCurrFeedPrice == null){
             return
         }
         val n_debt = Utils.auxGetStringDecimalNumberValue(str)
@@ -307,15 +463,36 @@ class ActivityIndexCollateral : BtsppActivity() {
      * (private) 输入框值变化 - 抵押物数量
      */
     private fun onCollAmountChanged(str: String) {
-        if (_nCurrFeedPrice == null) {
+        onCollAmountChangedCore(str, if (_currAssetIsPredictionmarket) false else _bLockDebt)
+    }
+
+    /**
+     *  (private) 输入框值变化 - 抵押物数量 核心逻辑
+     */
+    private fun onCollAmountChangedCore(str: String, affect_mortgage_rate_changed: Boolean) {
+        if (!_currAssetIsPredictionmarket && _nCurrFeedPrice == null){
             return
         }
-        assert(_nCurrMortgageRate != null)
         val n_coll = Utils.auxGetStringDecimalNumberValue(str)
-        val n_debt = _calcDebtNumber(n_coll, _nCurrMortgageRate!!)
-        _refreshUI_coll_available(n_coll, false)
-        _refreshUI_debt_available(n_debt, true)
-        _refreshUI_SettlementTriggerPrice()
+        if (affect_mortgage_rate_changed) {
+            //  抵押物变化 - 影响抵押率变化（负债不变）
+            //  这里手动输入抵押物or点击全部按钮导致变化，都已经确保了debt不能为0。
+            val n_debt = Utils.auxGetStringDecimalNumberValue(_tf_debt_watcher!!.get_tf_string())
+            if (n_debt <= BigDecimal.ZERO) {
+                return
+            }
+            _nCurrMortgageRate = _calcCollRate(n_debt, n_coll, false)
+            _refreshUI_coll_available(n_coll, false)
+            _refreshUI_debt_available(n_debt, false)
+            _refreshUI_ratio(true)
+            _refreshUI_SettlementTriggerPrice()
+        } else {
+            //  抵押物变化 - 影响债务变化（抵押率不变）
+            val n_debt = _calcDebtNumber(n_coll, _nCurrMortgageRate!!)
+            _refreshUI_coll_available(n_coll, false)
+            _refreshUI_debt_available(n_debt, true)
+            _refreshUI_SettlementTriggerPrice()
+        }
     }
 
     /**
@@ -347,13 +524,38 @@ class ActivityIndexCollateral : BtsppActivity() {
      * 选择借贷资产
      */
     private fun onSelectDebtAssetClicked() {
+        val self = this
+
+        //  获取配置的默认列表
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
         val asset_list = JSONArray()
         chainMgr.getDebtAssetList().forEach<String> { symbol ->
             asset_list.put(chainMgr.getAssetBySymbol(symbol!!))
         }
+
+        //  添加自定义选项
+        asset_list.put(JSONObject().apply {
+            put("symbol", self.resources.getString(R.string.kVcAssetMgrCellValueSmartBackingAssetCustom))
+            put("is_custom", true)
+        })
+
+        //  选择列表
         ViewSelector.show(this, resources.getString(R.string.kDebtTipSelectDebtAsset), asset_list, "symbol") { index: Int, result: String ->
-            processSelectNewDebtAsset(asset_list.getJSONObject(index))
+            val select_item = asset_list.getJSONObject(index)
+            if (select_item.isTrue("is_custom")) {
+                //  自定义搜索借贷资产
+                TempManager.sharedTempManager().set_query_account_callback { last_activity, asset_info ->
+                    last_activity.goTo(ActivityIndexCollateral::class.java, true, back = true)
+                    processSelectNewDebtAsset(asset_info)
+                }
+                goTo(ActivityAccountQueryBase::class.java, true, args = JSONObject().apply {
+                    put("kSearchType", ENetworkSearchType.enstAssetSmart)
+                    put("kTitle", self.resources.getString(R.string.kVcTitleSearchAssets))
+                })
+            } else {
+                //  从列表中选择结果
+                processSelectNewDebtAsset(select_item)
+            }
         }
     }
 
@@ -387,13 +589,17 @@ class ActivityIndexCollateral : BtsppActivity() {
      *  重置 - 借款数量、抵押数量、抵押率、目标抵押率
      */
     private fun onResetCLicked() {
+        //  重置 - 锁定状态
+        setNewLockStatus(true)
+
+        //  重置 - 借款数量、抵押数量、抵押率、目标抵押率
         val debt_callorder = _getCallOrder()
         if (debt_callorder != null) {
             val n_debt = bigDecimalfromAmount(debt_callorder.getString("debt"), _debtPair!!._basePrecision)
             val n_coll = bigDecimalfromAmount(debt_callorder.getString("collateral"), _debtPair!!._quotePrecision)
             _tf_debt_watcher!!.set_new_text(n_debt.toPriceAmountString())
             _tf_coll_watcher!!.set_new_text(n_coll.toPriceAmountString())
-            //  计算抵押率
+            //  计算抵押率（这里有债仓，debt不为0。）
             if (_nCurrFeedPrice != null) {
                 _nCurrMortgageRate = _calcCollRate(n_debt, n_coll, false)
             } else {
@@ -429,7 +635,12 @@ class ActivityIndexCollateral : BtsppActivity() {
     /**
      * (private) 刷新抵押率
      */
-    fun _refreshUI_ratio(reset_slider: Boolean) {
+    private fun _refreshUI_ratio(reset_slider: Boolean) {
+        //  预测市场不显示
+        if (_currAssetIsPredictionmarket) {
+            return
+        }
+
         assert(_nMaintenanceCollateralRatio != null)
         val label = findViewById<TextView>(R.id.label_txt_curr_ratio)
         label.setTextColor(resources.getColor(_getCollateralRatioColor()))
@@ -438,8 +649,7 @@ class ActivityIndexCollateral : BtsppActivity() {
             label.text = String.format("%s %.2f", resources.getString(R.string.kVcRankRatio), value.toFloat())
             if (reset_slider) {
                 val parameters = ChainObjectManager.sharedChainObjectManager().getDefaultParameters()
-                val mcr = _nMaintenanceCollateralRatio!!.toDouble()
-                _curve_slider_ratio.set_min(min(value, mcr))
+                _curve_slider_ratio.set_min(0.0)
                 _curve_slider_ratio.set_max(max(value, parameters.getDouble("max_ratio")))
                 _curve_slider_ratio.set_value(value)
             }
@@ -456,7 +666,7 @@ class ActivityIndexCollateral : BtsppActivity() {
     /**
      *  根据质押率获取对应颜色。
      */
-    fun _getCollateralRatioColor(): Int {
+    private fun _getCollateralRatioColor(): Int {
         //  0 - mcr     黄色（爆仓中）
         //  mcr - 250   红色（危险） - 卖出颜色
         //  250 - 400   白色（普通）
@@ -492,7 +702,7 @@ class ActivityIndexCollateral : BtsppActivity() {
         val n_zero = BigDecimal.ZERO
 
         val label = findViewById<TextView>(R.id.label_txt_trigger_price)
-        if (n_debt.compareTo(n_zero) == 0 || n_coll.compareTo(n_zero) == 0) {
+        if (_currAssetIsPredictionmarket || n_debt.compareTo(n_zero) == 0 || n_coll.compareTo(n_zero) == 0) {
             label.text = "${price_title} --${suffix}"
             label.setTextColor(resources.getColor(R.color.theme01_textColorMain))
         } else {
@@ -517,31 +727,12 @@ class ActivityIndexCollateral : BtsppActivity() {
         }
 
         val lbl_available = findViewById<TextView>(R.id.label_txt_coll_available)
-        val lbl_changed = findViewById<TextView>(R.id.label_txt_coll_available_changed)
 
         val n_total = _getTotalCollateralNumber()
         val n_available = n_total.subtract(new_tf_value)
         val quote_symbol = _debtPair!!._quoteAsset.getString("symbol")
-        lbl_available.text = "${resources.getString(R.string.kDebtLableAvailable)} $n_available${quote_symbol}"
+        lbl_available.text = "${resources.getString(R.string.kDebtLableAvailable)} $n_available ${quote_symbol}"
 
-        //  变化量
-        var n_balance = BigDecimal.ZERO
-        if (_collateralBalance != null) {
-            n_balance = bigDecimalfromAmount(_collateralBalance!!.getString("amount"), _debtPair!!._quotePrecision)
-        }
-        val n_diff = n_available.subtract(n_balance)
-        val result = n_diff.compareTo(BigDecimal.ZERO)
-        if (result != 0) {
-            if (result > 0) {
-                lbl_changed.text = "+${n_diff}"
-                lbl_changed.setTextColor(resources.getColor(R.color.theme01_buyColor))
-            } else {
-                lbl_changed.text = "${n_diff}"
-                lbl_changed.setTextColor(resources.getColor(R.color.theme01_sellColor))
-            }
-        } else {
-            lbl_changed.text = ""
-        }
         if (n_available.compareTo(BigDecimal.ZERO) < 0) {
             lbl_available.setTextColor(resources.getColor(R.color.theme01_tintColor))
         } else {
@@ -570,26 +761,11 @@ class ActivityIndexCollateral : BtsppActivity() {
 
         //  UI获取
         val lbl_available = findViewById<TextView>(R.id.label_txt_debt_available)
-        val lbl_changed = findViewById<TextView>(R.id.label_txt_debt_available_changed)
 
         //  可用余额
         val n_available = _getDebtBalance().add(n_add_debt)
         val base_symbol = _debtPair!!._baseAsset.getString("symbol")
-        lbl_available.text = "${resources.getString(R.string.kDebtLableAvailable)} $n_available${base_symbol}"
-
-        //  变化量
-        val result = n_add_debt.compareTo(BigDecimal.ZERO)
-        if (result != 0) {
-            if (result > 0) {
-                lbl_changed.text = "+${n_add_debt}"
-                lbl_changed.setTextColor(resources.getColor(R.color.theme01_buyColor))
-            } else {
-                lbl_changed.text = "${n_add_debt}"
-                lbl_changed.setTextColor(resources.getColor(R.color.theme01_sellColor))
-            }
-        } else {
-            lbl_changed.text = ""
-        }
+        lbl_available.text = "${resources.getString(R.string.kDebtLableAvailable)} $n_available ${base_symbol}"
 
         if (n_available.compareTo(BigDecimal.ZERO) < 0) {
             lbl_available.setTextColor(resources.getColor(R.color.theme01_tintColor))
@@ -602,8 +778,12 @@ class ActivityIndexCollateral : BtsppActivity() {
      * 计算抵押率       公式：抵押率 = 抵押物数量 * 喂价 / 负债
      */
     private fun _calcCollRate(n_debt: BigDecimal, n_coll: BigDecimal, percent_result: Boolean): BigDecimal {
+        //  REMARK：预测市场，抵押物数量和借款数量必须一致，不需要喂价。
+        if (_currAssetIsPredictionmarket) {
+            return BigDecimal.ONE
+        }
         assert(_nCurrFeedPrice != null)
-        assert(n_debt.compareTo(BigDecimal.ZERO) != 0)
+        assert(n_debt != BigDecimal.ZERO)
         val n = n_coll.multiply(_nCurrFeedPrice).divide(n_debt, 4, BigDecimal.ROUND_UP)
         if (percent_result) {
             //  返回百分比结果（精度2位）
@@ -617,16 +797,29 @@ class ActivityIndexCollateral : BtsppActivity() {
     /**
      *  计算可借款数量  公式：借款 = 抵押物数量 * 喂价 / 抵押率
      */
-    private fun _calcDebtNumber(n_coll: BigDecimal, rate: BigDecimal): BigDecimal {
+    private fun _calcDebtNumber(n_coll: BigDecimal, rate: BigDecimal?): BigDecimal {
+        //  REMARK：预测市场，抵押物数量和借款数量必须一致，不需要喂价。
+        if (_currAssetIsPredictionmarket) {
+            return n_coll
+        }
+        assert(rate != null)
         assert(_nCurrFeedPrice != null)
-        assert(rate.compareTo(BigDecimal.ZERO) != 0)
+        //  抵押率为0，则债务为0，不随抵押物变化。
+        if (rate!! <= BigDecimal.ZERO) {
+            return BigDecimal.ZERO
+        }
         return n_coll.multiply(_nCurrFeedPrice!!).divide(rate, _debtPair!!._basePrecision, BigDecimal.ROUND_DOWN)
     }
 
     /**
      *  计算抵押物数量  公式：抵押物数量 = 抵押率 * 负债 / 喂价
      */
-    private fun _calcCollNumber(n_debt: BigDecimal, rate: BigDecimal): BigDecimal {
+    private fun _calcCollNumber(n_debt: BigDecimal, rate: BigDecimal?): BigDecimal {
+        //  REMARK：预测市场，抵押物数量和借款数量必须一致，不需要喂价。
+        if (_currAssetIsPredictionmarket) {
+            return n_debt
+        }
+        assert(rate != null)
         assert(_nCurrFeedPrice != null)
         assert(_nCurrFeedPrice!!.compareTo(BigDecimal.ZERO) != 0)
         return n_debt.multiply(rate).divide(_nCurrFeedPrice!!, _debtPair!!._quotePrecision, BigDecimal.ROUND_UP)
@@ -636,6 +829,11 @@ class ActivityIndexCollateral : BtsppActivity() {
      * (private) 刷新目标抵押率
      */
     private fun _refreshUI_target_ratio(ratio_: BigDecimal?, reset_slider: Boolean) {
+        //  预测市场不显示
+        if (_currAssetIsPredictionmarket) {
+            return
+        }
+
         val ratio = ratio_ ?: BigDecimal.ZERO
         val value = ratio.toDouble()
 
@@ -701,11 +899,11 @@ class ActivityIndexCollateral : BtsppActivity() {
      */
     private fun _asyncQueryFeedPrice(debtAsset: JSONObject?): Promise {
         val asset = debtAsset ?: _debtPair!!._baseAsset
-        assert(asset != null)
-        val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
-        return conn.async_exec_db("get_objects", jsonArrayfrom(jsonArrayfrom(asset.getString("bitasset_data_id")))).then {
-            val data_array = it as JSONArray
-            return@then data_array.getJSONObject(0)
+        val bitasset_data_id = asset.getString("bitasset_data_id")
+        assert(bitasset_data_id.isNotEmpty())
+        return ChainObjectManager.sharedChainObjectManager().queryAllGrapheneObjectsSkipCache(jsonArrayfrom(bitasset_data_id)).then {
+            val resultHash = it as JSONObject
+            return@then resultHash.getJSONObject(bitasset_data_id)
         }
     }
 
@@ -740,6 +938,7 @@ class ActivityIndexCollateral : BtsppActivity() {
         //  更新喂价 和 MCR。
         if (new_feed_price_data != null) {
             _nCurrFeedPrice = _debtPair!!.calcShowFeedInfo(jsonArrayfrom(new_feed_price_data))
+            _currAssetIsPredictionmarket = new_feed_price_data.isTrue("is_prediction_market")
             val mcr = new_feed_price_data.getJSONObject("current_feed").getString("maintenance_collateral_ratio")
             _nMaintenanceCollateralRatio = bigDecimalfromAmount(mcr, 3)
         }
@@ -748,6 +947,8 @@ class ActivityIndexCollateral : BtsppActivity() {
         _genCallOrderHash(bLogined)
 
         //  更新UI
+        findViewById<TextView>(R.id.tf_tailer_coll_asset_symbol).text = _debtPair!!._quoteAsset.getString("symbol")
+        findViewById<TextView>(R.id.tf_tailer_debt_asset_symbol).text = _debtPair!!._baseAsset.getString("symbol")
 
         //  UI - 按钮
         if (bLogined) {
@@ -759,7 +960,7 @@ class ActivityIndexCollateral : BtsppActivity() {
         //  UI - 喂价
         val base_symbol = _debtPair!!._baseAsset.getString("symbol")
         val quote_symbol = _debtPair!!._quoteAsset.getString("symbol")
-        if (_nCurrFeedPrice != null) {
+        if (!_currAssetIsPredictionmarket && _nCurrFeedPrice != null) {
             findViewById<TextView>(R.id.label_txt_curr_feed).text = "${resources.getString(R.string.kVcFeedCurrentFeedPrice)} ${_nCurrFeedPrice!!.toPlainString()}${base_symbol}/${quote_symbol}"
         } else {
             findViewById<TextView>(R.id.label_txt_curr_feed).text = "${resources.getString(R.string.kVcFeedCurrentFeedPrice)} --${base_symbol}/${quote_symbol}"
@@ -768,16 +969,23 @@ class ActivityIndexCollateral : BtsppActivity() {
         //  UI - 你的强平触发价
         onResetCLicked()
 
-        //  UI - 列表
-        _refreshUITableInfos()
-    }
+        //  UI - 提示信息
+        findViewById<TextView>(R.id.tv_ui_tips).let { tv ->
+            tv.text = if (_currAssetIsPredictionmarket) {
+                resources.getString(R.string.kDebtWarmTipsForPM)
+            } else {
+                resources.getString(R.string.kDebtWarmTips)
+            }
+        }
 
-    /**
-     * 刷新其他信息，参考iOS的TableView部分
-     */
-    private fun _refreshUITableInfos() {
-        findViewById<TextView>(R.id.txt_debt_asset_name).text = _debtPair!!._baseAsset.getString("symbol")
-        findViewById<TextView>(R.id.txt_coll_asset_name).text = _debtPair!!._quoteAsset.getString("symbol")
+        //  UI - 更新部分区域可见性
+        findViewById<LinearLayout>(R.id.layout_ratio_and_tcr).let {
+            if (_currAssetIsPredictionmarket) {
+                it.visibility = View.GONE
+            } else {
+                it.visibility = View.VISIBLE
+            }
+        }
     }
 
     /**

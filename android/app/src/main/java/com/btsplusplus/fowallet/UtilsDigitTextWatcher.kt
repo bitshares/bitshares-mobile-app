@@ -70,6 +70,10 @@ class UtilsDigitTextWatcher : TextWatcher {
         _last_callback_string = null
     }
 
+    fun endInput() {
+        _tf?.clearFocus()
+    }
+
     override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
     }
 
