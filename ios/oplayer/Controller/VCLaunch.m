@@ -263,7 +263,7 @@
         GrapheneConnectionManager* connMgr = [GrapheneConnectionManager sharedGrapheneConnectionManager];
         ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
         WalletManager* walletMgr = [WalletManager sharedWalletManager];
-        [[[connMgr Start] then:(^id(id success) {
+        [[[connMgr Start:NO] then:(^id(id success) {
             //  初始化石墨烯网络状态
             [[[chainMgr grapheneNetworkInit] then:(^id(id data) {
                 //  初始化数据

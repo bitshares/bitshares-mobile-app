@@ -845,6 +845,29 @@
 "kSettingCurrencyNameJPY" = "日元";
 "kSettingCurrencyNameKRW" = "韩元";
 "kSettingCurrencyNameBTS" = "比特股核心资产";
+"kSettingApiInternalNodeBTSPP" = "中国 - 杭州 (BTS++)";
+"kSettingApiInternalNodeAbit" = "美国（abit）";
+"kSettingApiInternalNodeGDEX" = "中国 - 上海（GDEX）";
+"kSettingApiInternalNodeBTSAI" = "中国 - 北京（bts.ai）";
+"kSettingApiRandomCell" = "自动选择节点";
+"kSettingApiCellCustomFlag" = "自定义";
+"kSettingApiOpSetAsCurrent" = "设置为当前节点";
+"kSettingApiOpRemoveNode" = "移除节点";
+"kSettingApiOpCopyURL" = "复制链接";
+"kSettingApiSwitchTips" = "正在切换节点…";
+"kSettingApiSwitchFailed" = "连接当前节点失败，请稍后再试。";
+"kSettingApiRemoveInUsing" = "使用中，请先切换到其他节点。";
+"kSettingNewApiCellLabelName" = "节点名称";
+"kSettingNewApiCellPlaceholderName" = "自定义节点名称";
+"kSettingNewApiCellLabelURL" = "节点地址";
+"kSettingNewApiCellPlaceholderURL" = "节点URL地址";
+"kSettingNewApiSubmitBtn" = "确定";
+"kSettingNewApiSubmitTipsPleaseInputNodeName" = "请输入节点名称。";
+"kSettingNewApiSubmitTipsPleaseInputNodeURL" = "请输入有效的节点地址。";
+"kSettingNewApiSubmitTipsURLAlreadyExist" = "当前节点已存在。";
+"kSettingNewApiSubmitTipsOK" = "添加成功。";
+"kSettingNewApiSubmitTipsConnectedFailed" = "连接失败，请重新检测URL有效性。";
+"kSettingNewApiSubmitTipsNotBitsharesMainnetNode" = "该节点不是比特股主网节点，请重新输入。";
 
 /* 各种VC标题栏名字 */
 "kVcTitleLogin" = "登录";
@@ -872,6 +895,7 @@
 "kVcTitleSelectProxy" = "选择代理账号";
 "kVcTitleTheme" = "主题风格";
 "kVcTitleApiNode" = "接入点";
+"kVcTitleNewApiNode" = "添加节点";
 "kVcTitleLanguage" = "语言";
 "kVcTitleOrderManagement" = "订单管理";
 "kVcTitleMyBalance" = "我的资产";

@@ -40,13 +40,25 @@ static GrapheneConnectionManager *_sharedGrapheneConnectionManager = nil;
     }
 }
 
++ (void)replaceWithNewGrapheneConnectionManager:(GrapheneConnectionManager*)newMgr
+{
+    @synchronized(self) {
+        if (_sharedGrapheneConnectionManager != newMgr) {
+            if (_sharedGrapheneConnectionManager) {
+                [_sharedGrapheneConnectionManager close_all_connections];
+            }
+            _sharedGrapheneConnectionManager = newMgr;
+        }
+    }
+}
+
 - (id)init
 {
     self = [super init];
     if (self)
     {
-        _connection_list = [NSMutableArray array];
-        _available_connlist = [NSMutableArray array];
+        _connection_list = nil;
+        _available_connlist = nil;
         _last_connection = nil;
     }
     return self;
@@ -54,7 +66,15 @@ static GrapheneConnectionManager *_sharedGrapheneConnectionManager = nil;
 
 - (void)dealloc
 {
+    [self close_all_connections];
+}
+
+- (void)close_all_connections
+{
     if (_connection_list){
+        for (id conn in _connection_list) {
+            [conn close_connection];
+        }
         [_connection_list removeAllObjects];
         _connection_list = nil;
     }
@@ -62,21 +82,18 @@ static GrapheneConnectionManager *_sharedGrapheneConnectionManager = nil;
         [_available_connlist removeAllObjects];
         _available_connlist = nil;
     }
+    _last_connection = nil;
 }
 
 /**
  *  (public) 初始化网络连接。
  */
-- (WsPromise*)Start
+- (WsPromise*)Start:(BOOL)force_use_random_node
 {
-    //  重连的时候先清理连接
-    if (_connection_list){
-        [_connection_list removeAllObjects];
-    }
-    if (_available_connlist){
-        [_available_connlist removeAllObjects];
-    }
-    _last_connection = nil;
+    //  先关闭之前的连接
+    [self close_all_connections];
+    _connection_list = [NSMutableArray array];
+    _available_connlist = [NSMutableArray array];
     
     //  初始化所有连接
     id network_infos = [[ChainObjectManager sharedChainObjectManager] getCfgNetWorkInfos];
@@ -84,50 +101,60 @@ static GrapheneConnectionManager *_sharedGrapheneConnectionManager = nil;
     NSInteger max_retry_num = [network_infos[@"max_retry_num"] integerValue];
     NSInteger connect_timeout = [network_infos[@"connect_timeout"] integerValue];
     
+    SettingManager* settingMgr = [SettingManager sharedSettingManager];
     //  1、获取服务器动态配置的api结点信息
     NSMutableDictionary* wssUrlHash = [NSMutableDictionary dictionary];
+    NSDictionary* current_api_node = [settingMgr getApiNodeCurrentSelect];
     
+    if (!force_use_random_node && current_api_node && [current_api_node objectForKey:@"url"]) {
+        //  - 用户配置
+        [wssUrlHash setObject:@YES forKey:[current_api_node objectForKey:@"url"]];
+    } else {
+        //  - 随机选择
 #if GRAPHENE_BITSHARES_MAINNET
-    id serverConfig = [SettingManager sharedSettingManager].serverConfig;
-    if (serverConfig){
-        id serverWssNodes = [serverConfig objectForKey:@"wssNodes"];
-        if (serverWssNodes){
-            id langKey = NSLocalizedString(@"serverWssLangKey", @"langKey");
-            id defaultList = [serverWssNodes objectForKey:@"default"];
-            id langList = [serverWssNodes objectForKey:langKey];
-            if (defaultList && [defaultList count] > 0){
-                for (id url in defaultList) {
-                    [wssUrlHash setObject:@YES forKey:url];
+        id serverConfig = settingMgr.serverConfig;
+        if (serverConfig){
+            id serverWssNodes = [serverConfig objectForKey:@"wssNodes"];
+            if (serverWssNodes){
+                id langKey = NSLocalizedString(@"serverWssLangKey", @"langKey");
+                id defaultList = [serverWssNodes objectForKey:@"default"];
+                id langList = [serverWssNodes objectForKey:langKey];
+                if (defaultList && [defaultList count] > 0){
+                    for (id url in defaultList) {
+                        [wssUrlHash setObject:@YES forKey:url];
+                    }
                 }
-            }
-            if (langList && [langList count] > 0){
-                for (id url in langList) {
-                    [wssUrlHash setObject:@YES forKey:url];
+                if (langList && [langList count] > 0){
+                    for (id url in langList) {
+                        [wssUrlHash setObject:@YES forKey:url];
+                    }
                 }
             }
         }
-    }
 #endif  //  GRAPHENE_BITSHARES_MAINNET
-    
-    //  2、获取app内配置的api结点信息
-    id wslist = [network_infos objectForKey:@"ws_node_list"];
-    if (wslist && [wslist count] > 0){
-        for (id node in wslist) {
-            [wssUrlHash setObject:@YES forKey:[node objectForKey:@"url"]];
+        
+        //  2、获取app内配置的api结点信息
+        id wslist = [network_infos objectForKey:@"ws_node_list"];
+        if (wslist && [wslist count] > 0){
+            for (id node in wslist) {
+                [wssUrlHash setObject:@YES forKey:[node objectForKey:@"url"]];
+            }
         }
-    }
-    
+        
 #ifdef DEBUG
 #if GRAPHENE_BITSHARES_MAINNET
-    //  REMARK：DEBUG调试阶段仅连接一个节点，否则其他节点连接不上会抛出异常。（Promise中）
-    [wssUrlHash removeAllObjects];
-    [wssUrlHash setObject:@YES forKey:@"wss://api.weaccount.cn"];
+        //  REMARK：DEBUG调试阶段仅连接一个节点，否则其他节点连接不上会抛出异常。（Promise中）
+        [wssUrlHash removeAllObjects];
+        [wssUrlHash setObject:@YES forKey:@"wss://api.weaccount.cn"];
 #endif
 #endif
+    }
     
     //  初始化所有结点
     for (id url in [wssUrlHash allKeys]) {
-        [_connection_list addObject:[[GrapheneConnection alloc] initWithNode:url max_retry_num:max_retry_num connect_timeout:connect_timeout]];
+        [_connection_list addObject:[[GrapheneConnection alloc] initWithNode:url
+                                                               max_retry_num:max_retry_num
+                                                             connect_timeout:connect_timeout]];
     }
     
     //  没有结点，直接初始化失败。
@@ -172,7 +199,7 @@ static GrapheneConnectionManager *_sharedGrapheneConnectionManager = nil;
     }
     //  全部都未连接，则返回第一个，会自动重连。
     _last_connection = [_connection_list firstObject];
-//    CLS_LOG(@"any_connection: closed: db_api: %@", @([_last_connection.api_db isInited]));
+    //    CLS_LOG(@"any_connection: closed: db_api: %@", @([_last_connection.api_db isInited]));
     return _last_connection;
 }
 
@@ -245,6 +272,24 @@ static GrapheneConnectionManager *_sharedGrapheneConnectionManager = nil;
         [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
         return nil;
     })];
+}
+
+/*
+ *  (public) 切换到自定义连接
+ */
+- (void)switchTo:(GrapheneConnection*)new_conn
+{
+    assert(new_conn);
+    
+    //  先关闭现有的连接
+    [self close_all_connections];
+    _connection_list = [NSMutableArray array];
+    _available_connlist = [NSMutableArray array];
+    
+    //  切换到新的连接
+    [_connection_list addObject:new_conn];
+    [_available_connlist addObject:new_conn];
+    _last_connection = new_conn;
 }
 
 @end

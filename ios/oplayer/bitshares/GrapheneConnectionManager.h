@@ -14,8 +14,9 @@
 @interface GrapheneConnectionManager : NSObject
 
 + (GrapheneConnectionManager*)sharedGrapheneConnectionManager;
++ (void)replaceWithNewGrapheneConnectionManager:(GrapheneConnectionManager*)newMgr;
 
-- (WsPromise*)Start;
+- (WsPromise*)Start:(BOOL)force_use_random_node;
 
 /**
  *  (public) 获取任意可用的连接。
@@ -31,5 +32,10 @@
  *  (public) 重连所有已断开的连接，后台回到前台考虑执行。
  */
 - (void)reconnect_all;
+
+/*
+ *  (public) 切换到自定义连接
+ */
+- (void)switchTo:(GrapheneConnection*)new_conn;
 
 @end

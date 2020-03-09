@@ -14,8 +14,6 @@
 
 @interface GrapheneConnection()
 {
-    NSString*           _url;               //  ws node url
-    
     NSInteger           _max_retry_num;     //  最大重连次数。
     NSInteger           _cur_retry_num;     //  当前重连次数。
     
@@ -24,8 +22,6 @@
     CFAbsoluteTime      _ts_start;          //  创建连接时间戳
     CFAbsoluteTime      _ts_logined;        //  登录后时间戳
     CFAbsoluteTime      _ts_api_inited;     //  API初始化完成时间戳
-    
-    CFAbsoluteTime      _time_cost_init;    //  初始化耗时（从连接到login请求完毕）
     
     GrapheneWebSocket*  _wsrpc;;
     
@@ -39,11 +35,75 @@
 
 @implementation GrapheneConnection
 
+/*
+ *  (public) 测试单个节点
+ *  return_connect_obj - 是否返回连接对象，如果不返回则会自动释放。
+ */
++ (WsPromise*)checkNodeStatus:(id)node
+                max_retry_num:(NSInteger)max_retry_num
+              connect_timeout:(NSInteger)connect_timeout
+           return_connect_obj:(BOOL)return_connect_obj
+{
+    return [WsPromise promise:^(WsResolveHandler resolve, WsRejectHandler reject) {
+        CFAbsoluteTime ts_start = CFAbsoluteTimeGetCurrent();
+        GrapheneConnection* conn = [[GrapheneConnection alloc] initWithNode:node[@"url"]
+                                                              max_retry_num:max_retry_num
+                                                            connect_timeout:connect_timeout];
+        [[conn run_connection] then:^id(id success) {
+            if ([success boolValue]) {
+                CFAbsoluteTime ts_connect = CFAbsoluteTimeGetCurrent();
+                //  REMARK：2.11.0 同 get_chain_properties，获取链ID等基本属性。
+                [[[conn.api_db exec:@"get_objects" params:@[@[@"2.11.0", BTS_DYNAMIC_GLOBAL_PROPERTIES_ID]]] then:^id(id data_array) {
+                    if (!return_connect_obj) {
+                        [conn close_connection];
+                    }
+                    CFAbsoluteTime ts_finish = CFAbsoluteTimeGetCurrent();
+                    id chain_properties = [data_array firstObject];
+                    id latest_obj = [data_array lastObject];
+                    //  3、连接成功，查询数据正常。
+                    resolve(@{
+                        @"connected":@YES,
+                        @"conn_obj":return_connect_obj ? conn : [NSNull null],
+                        @"chain_properties":chain_properties,
+                        @"latest_obj":latest_obj,
+                        @"statistics":@{
+                                @"ts_start":@(ts_start),
+                                @"ts_connect":@(ts_connect),
+                                @"ts_finish":@(ts_finish),
+                                @"cost_connected":@(conn.time_cost_connect),
+                        }
+                    });
+                    return nil;
+                }] catch:^id(id error) {
+                    if (!return_connect_obj) {
+                        [conn close_connection];
+                    }
+                    CFAbsoluteTime ts_finish = CFAbsoluteTimeGetCurrent();
+                    //  2、连接成功，查询数据失败。
+                    resolve(@{
+                        @"connected":@YES,
+                        @"conn_obj":return_connect_obj ? conn : [NSNull null],
+                        @"statistics":@{
+                                @"ts_start":@(ts_start),
+                                @"ts_connect":@(ts_connect),
+                                @"ts_finish":@(ts_finish),
+                                @"cost_connected":@(conn.time_cost_connect),
+                        }
+                    });
+                    return nil;
+                }];
+            } else {
+                //  1、连接失败
+                resolve(@{@"connected":@NO});
+            }
+            return nil;
+        }];
+    }];
+}
+
 @synthesize api_db = _api_db;
 @synthesize api_net = _api_net;
 @synthesize api_history = _api_history;
-
-@synthesize time_cost_init = _time_cost_init;
 
 - (id)initWithNode:(NSString*)url max_retry_num:(NSInteger)max_retry_num connect_timeout:(NSInteger)connect_timeout
 {
@@ -59,6 +119,7 @@
         _ts_logined = 0;
         _ts_api_inited = 0;
         _time_cost_init = 0;
+        _time_cost_connect = 0;
         
         _wsrpc = nil;
         
@@ -78,6 +139,7 @@
     self.api_db = nil;
     self.api_net = nil;
     self.api_history = nil;
+    _url = nil;
 }
 
 /**
@@ -148,6 +210,9 @@
     return [[_wsrpc login:rpc_username password:rpc_password] then:(^id(id data) {
         NSLog(@"[wsnode]: %@ login responsed: %@", _url, data);
         _ts_logined = CFAbsoluteTimeGetCurrent();
+        
+        //  记录
+        _time_cost_connect = _ts_logined - _ts_start;
         
         //  初始化api
         WsPromise* p1 = [_api_db api_init];

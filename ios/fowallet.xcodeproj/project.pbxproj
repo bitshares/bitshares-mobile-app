@@ -108,6 +108,12 @@
 		3F2B7A5C23D301D3006B1359 /* ModelUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2B7A5A23D301D3006B1359 /* ModelUtils.m */; };
 		3F2B7A5D23D301D3006B1359 /* ModelUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2B7A5A23D301D3006B1359 /* ModelUtils.m */; };
 		3F2B7A5E23D301D3006B1359 /* ModelUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2B7A5A23D301D3006B1359 /* ModelUtils.m */; };
+		3F2D83B12412127D00024FFA /* ViewApiNodeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2D83B02412127D00024FFA /* ViewApiNodeCell.m */; };
+		3F2D83B22412127D00024FFA /* ViewApiNodeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2D83B02412127D00024FFA /* ViewApiNodeCell.m */; };
+		3F2D83B32412127D00024FFA /* ViewApiNodeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2D83B02412127D00024FFA /* ViewApiNodeCell.m */; };
+		3F2D83B62415D7CB00024FFA /* VCAddNewApiNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2D83B42415D7CA00024FFA /* VCAddNewApiNode.m */; };
+		3F2D83B72415D7CB00024FFA /* VCAddNewApiNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2D83B42415D7CA00024FFA /* VCAddNewApiNode.m */; };
+		3F2D83B82415D7CB00024FFA /* VCAddNewApiNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2D83B42415D7CA00024FFA /* VCAddNewApiNode.m */; };
 		3F2E6E27233DF5A600BF4B78 /* VCPermissionEdit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E25233DF5A600BF4B78 /* VCPermissionEdit.m */; };
 		3F2E6E2C233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E2A233E0B3500BF4B78 /* ViewPermissionInfoCellB.m */; };
 		3F2E6E2D233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E2A233E0B3500BF4B78 /* ViewPermissionInfoCellB.m */; };
@@ -2073,6 +2079,10 @@
 		3F2B7A5623D2E819006B1359 /* ViewTextFieldAmountCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewTextFieldAmountCell.m; path = View/ViewTextFieldAmountCell.m; sourceTree = "<group>"; };
 		3F2B7A5A23D301D3006B1359 /* ModelUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelUtils.m; sourceTree = "<group>"; };
 		3F2B7A5B23D301D3006B1359 /* ModelUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelUtils.h; sourceTree = "<group>"; };
+		3F2D83AF2412127D00024FFA /* ViewApiNodeCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewApiNodeCell.h; path = View/ViewApiNodeCell.h; sourceTree = "<group>"; };
+		3F2D83B02412127D00024FFA /* ViewApiNodeCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewApiNodeCell.m; path = View/ViewApiNodeCell.m; sourceTree = "<group>"; };
+		3F2D83B42415D7CA00024FFA /* VCAddNewApiNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAddNewApiNode.m; path = Controller/VCAddNewApiNode.m; sourceTree = "<group>"; };
+		3F2D83B52415D7CA00024FFA /* VCAddNewApiNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAddNewApiNode.h; path = Controller/VCAddNewApiNode.h; sourceTree = "<group>"; };
 		3F2E6E25233DF5A600BF4B78 /* VCPermissionEdit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCPermissionEdit.m; path = Controller/VCPermissionEdit.m; sourceTree = "<group>"; };
 		3F2E6E26233DF5A600BF4B78 /* VCPermissionEdit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCPermissionEdit.h; path = Controller/VCPermissionEdit.h; sourceTree = "<group>"; };
 		3F2E6E2A233E0B3500BF4B78 /* ViewPermissionInfoCellB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewPermissionInfoCellB.m; path = View/ViewPermissionInfoCellB.m; sourceTree = "<group>"; };
@@ -3141,6 +3151,8 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3F2D83B52415D7CA00024FFA /* VCAddNewApiNode.h */,
+				3F2D83B42415D7CA00024FFA /* VCAddNewApiNode.m */,
 				3FE31D5023F67C7E009CA77E /* VCSelectApiNode.h */,
 				3FE31D5123F67C7E009CA77E /* VCSelectApiNode.m */,
 				3FADCF9823D6FA3500043305 /* VcUtils.h */,
@@ -3285,6 +3297,8 @@
 		18FF069017E00C5C0088405E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				3F2D83AF2412127D00024FFA /* ViewApiNodeCell.h */,
+				3F2D83B02412127D00024FFA /* ViewApiNodeCell.m */,
 				3FE4E8E62408C1BB002518BD /* ViewCheckBox.h */,
 				3FE4E8E72408C1BB002518BD /* ViewCheckBox.m */,
 				3FE4E8E124067CBF002518BD /* ViewFormatConditons.h */,
@@ -6008,6 +6022,7 @@
 				3F6768F3230E9EC100E98C14 /* VCImportWallet.m in Sources */,
 				3F6768F4230E9EC100E98C14 /* ViewAvailableAndFeeCell.m in Sources */,
 				3F1435F4233CC87900B97CFF /* ViewPermissionInfoCell.m in Sources */,
+				3F2D83B82415D7CB00024FFA /* VCAddNewApiNode.m in Sources */,
 				3F6768F5230E9EC100E98C14 /* OrgUtils.m in Sources */,
 				3F6768F6230E9EC100E98C14 /* Bra86.c in Sources */,
 				3F6768F7230E9EC100E98C14 /* SRURLUtilities.m in Sources */,
@@ -6019,6 +6034,7 @@
 				3F6768FC230E9EC100E98C14 /* GCDWebServerConnection.m in Sources */,
 				3F6768FD230E9EC100E98C14 /* SRConstants.m in Sources */,
 				3F6768FE230E9EC100E98C14 /* GrapheneConnectionManager.m in Sources */,
+				3F2D83B32412127D00024FFA /* ViewApiNodeCell.m in Sources */,
 				3F6768FF230E9EC100E98C14 /* SRRandom.m in Sources */,
 				3FADCF8D23D69B4600043305 /* VCAssetCreateOrEdit.m in Sources */,
 				3F6471C623A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m in Sources */,
@@ -6353,6 +6369,7 @@
 				3FB8F97621CE66C200DA88E2 /* VCImportWallet.m in Sources */,
 				3FE4E95222FBCFE60056A44F /* ViewAvailableAndFeeCell.m in Sources */,
 				3F1435F3233CC87900B97CFF /* ViewPermissionInfoCell.m in Sources */,
+				3F2D83B72415D7CB00024FFA /* VCAddNewApiNode.m in Sources */,
 				3FB8F97721CE66C200DA88E2 /* OrgUtils.m in Sources */,
 				3FB8F97821CE66C200DA88E2 /* Bra86.c in Sources */,
 				3FB8F97921CE66C200DA88E2 /* SRURLUtilities.m in Sources */,
@@ -6364,6 +6381,7 @@
 				3FB8F97E21CE66C200DA88E2 /* GCDWebServerConnection.m in Sources */,
 				3FB8F97F21CE66C200DA88E2 /* SRConstants.m in Sources */,
 				3FB8F98021CE66C200DA88E2 /* GrapheneConnectionManager.m in Sources */,
+				3F2D83B22412127D00024FFA /* ViewApiNodeCell.m in Sources */,
 				3FB8F98121CE66C200DA88E2 /* SRRandom.m in Sources */,
 				3FADCF8C23D69B4600043305 /* VCAssetCreateOrEdit.m in Sources */,
 				3F6471C523A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m in Sources */,
@@ -6698,6 +6716,7 @@
 				B72A848F20CCD27C00D92A25 /* VCImportWallet.m in Sources */,
 				3FE4E95122FBCFE60056A44F /* ViewAvailableAndFeeCell.m in Sources */,
 				3F1435F2233CC87900B97CFF /* ViewPermissionInfoCell.m in Sources */,
+				3F2D83B62415D7CB00024FFA /* VCAddNewApiNode.m in Sources */,
 				ED048D8617E047010030D16E /* OrgUtils.m in Sources */,
 				B7BDAA8920B3C77500738F12 /* Bra86.c in Sources */,
 				B714094920A31CC300003311 /* SRURLUtilities.m in Sources */,
@@ -6709,6 +6728,7 @@
 				B72A848120CCD18B00D92A25 /* GCDWebServerConnection.m in Sources */,
 				B714094120A31CC300003311 /* SRConstants.m in Sources */,
 				B7C041202109BDC400848CBC /* GrapheneConnectionManager.m in Sources */,
+				3F2D83B12412127D00024FFA /* ViewApiNodeCell.m in Sources */,
 				B714094720A31CC300003311 /* SRRandom.m in Sources */,
 				3FADCF8B23D69B4600043305 /* VCAssetCreateOrEdit.m in Sources */,
 				3F6471C423A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m in Sources */,
