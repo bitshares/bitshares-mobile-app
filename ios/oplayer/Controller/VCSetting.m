@@ -56,7 +56,7 @@ enum
                   @"setting_language",  //  语言
                   @"setting_currency",  //  计价方式
                   @"setting_theme",     //  主题风格
-//                  @"setting_apinode",   //  API节点
+                  @"setting_apinode",   //  API节点
                   nil];
     
     _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];
@@ -170,11 +170,11 @@ enum
 //            NSString* assetSymbol = [[SettingManager sharedSettingManager] getEstimateAssetSymbol];
 //            id currency = [[ChainObjectManager sharedChainObjectManager] getEstimateUnitBySymbol:assetSymbol];
 //            assert(currency);
-            //  TODO:5.0
-            cell.detailTextLabel.text = @"随机";// NSLocalizedString([currency objectForKey:@"namekey"], @"计价单位名称");
-            cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+//            //  TODO:5.0
+//            cell.detailTextLabel.text = @"随机";// NSLocalizedString([currency objectForKey:@"namekey"], @"计价单位名称");
+//            cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+//            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+//            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
         }
             break;
         default:

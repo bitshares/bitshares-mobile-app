@@ -173,6 +173,19 @@ static SettingManager *_sharedSettingManager = nil;
     return value;
 }
 
+/*
+ *  (public) 获取当前用户节点，为空则随机选择。
+ */
+- (NSDictionary*)getApiNodeCurrentSelect
+{
+    NSMutableDictionary* settings = [self loadSettingHash];
+    NSDictionary* value = [settings objectForKey:kSettingKey_ApiNode];
+    if (value) {
+        return [value objectForKey:kSettingKey_ApiNode_Current];
+    }
+    return nil;
+}
+
 - (void)setUseConfig:(NSString*)key value:(BOOL)value
 {
     NSMutableDictionary* settings = [self loadSettingHash];
@@ -187,7 +200,7 @@ static SettingManager *_sharedSettingManager = nil;
     [self saveSettingHash:settings];
 }
 
-- (NSString*)getUseConfig:(NSString*)key
+- (id)getUseConfig:(NSString*)key
 {
     NSMutableDictionary* settings = [self loadSettingHash];
     return [settings objectForKey:key];

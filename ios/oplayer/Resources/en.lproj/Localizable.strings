@@ -46,11 +46,11 @@
 "kDebtTipTitleFeedAndCallPrice" = "Feed & Call price";
 "kDebtTipTitleWhatIsRatio" = "What is the ratio?";
 "kDebtTipTitleWhatIsTargetRatio" = "What is the target ratio?";
-"kDebtTipNetworkErrorPleaseRefresh" = "网络异常，请重新刷新界面。";//TODO:
-"kDebtTipAssetHasGlobalSettled" = "该资产已经全局清算，不可调整债仓。";//TODO:
-"kDebtTipAssetNoValidFeedData" = "该资产没有有效的喂价，不可调整债仓。";//TODO:
-"kDebtTipCollRatioCannotLessThanMCR" = "抵押率不能低于 %@。";//TODO:
-"kDebtTipCannotAdjustMoreLowerRatio" = "您已经处于强制平仓状态，不能降低抵押率。";//TODO:
+"kDebtTipNetworkErrorPleaseRefresh" = "The network is abnormal. Please refresh the interface again.";
+"kDebtTipAssetHasGlobalSettled" = "The asset has been global settled and cannot update position.";
+"kDebtTipAssetNoValidFeedData" = "The asset has no feed data and and cannot update position ";
+"kDebtTipCollRatioCannotLessThanMCR" = "The ratio cannot be lower than %@.";
+"kDebtTipCannotAdjustMoreLowerRatio" = "You are already in a forced sale and you cannot reduce the ratio.";
 "kDebtTipValueAndAmountNotChange" = "The amount of borrowings and collateral did not change.";
 "kDebtTipCollNotEnough" = "The collateral balance is insufficient.";
 "kDebtTipAvailableNotEnough" = "%@ balance is insufficient, please adjust the amount of repayment.";
@@ -58,7 +58,7 @@
 "kDebtTipTxUpdatePositionFullOK" = "Update position successfully.";
 "kDebtTipTxUpdatePositionOK" = "Update position successfully, but the refresh failed. Please try again later.";
 "kDebtWarmTips" = "[Tips]\n1. When the feed price drops to the call price, the system will automatically sell your collateral assets for debt repayment. Please pay attention to adjusting the ratio control risks. \n2. When the debt field is locked, the ratio will change with the collateral. \n3. When the ratio field is locked, the debt will change with the collateral.";
-"kDebtWarmTipsForPM" = "【温馨提示】\n当前资产为预测市场资产。借款金额和抵押物数量恒定为 1:1。";//TODO:
+"kDebtWarmTipsForPM" = "[Tips] \nThe current asset is a predicted market asset. The amount of borrowing and collateral is constant at 1: 1.";
 
 /* 服务界面 */
 "kServicesCellLabelQrScan" = "Scan QR code";
@@ -845,6 +845,29 @@
 "kSettingCurrencyNameJPY" = "Japanese Yen";
 "kSettingCurrencyNameKRW" = "Korean Won";
 "kSettingCurrencyNameBTS" = "Bitshares Core Asset";
+"kSettingApiInternalNodeBTSPP" = "China - Hangzhou (BTS++)";
+"kSettingApiInternalNodeAbit" = "United States (abit)";
+"kSettingApiInternalNodeGDEX" = "China - Shanghai (GDEX)";
+"kSettingApiInternalNodeBTSAI" = "China - Beijing (bts.ai";
+"kSettingApiRandomCell" = "Automatic";
+"kSettingApiCellCustomFlag" = "custom";
+"kSettingApiOpSetAsCurrent" = "Set as current node";
+"kSettingApiOpRemoveNode" = "Remove node";
+"kSettingApiOpCopyURL" = "copy url link";
+"kSettingApiSwitchTips" = "Switching…";
+"kSettingApiSwitchFailed" = "The connection failed. Please try again later.";
+"kSettingApiRemoveInUsing" = "In use, please switch to another node first.";
+"kSettingNewApiCellLabelName" = "Node name";
+"kSettingNewApiCellPlaceholderName" = "Please enter a node name";
+"kSettingNewApiCellLabelURL" = "Node url";
+"kSettingNewApiCellPlaceholderURL" = "Please enter the node URL";
+"kSettingNewApiSubmitBtn" = "Done";
+"kSettingNewApiSubmitTipsPleaseInputNodeName" = "Please enter a node name.";
+"kSettingNewApiSubmitTipsPleaseInputNodeURL" = "Please enter the node URL.";
+"kSettingNewApiSubmitTipsURLAlreadyExist" = "The current node already exists.";
+"kSettingNewApiSubmitTipsOK" = "Added successfully.";
+"kSettingNewApiSubmitTipsConnectedFailed" = "The connection failed. Please check the URL again.";
+"kSettingNewApiSubmitTipsNotBitsharesMainnetNode" = "This node is not a BitShares main network node, please enter it again.";
 
 /* 各种VC标题栏名字 */
 "kVcTitleLogin" = "Login";
@@ -872,6 +895,7 @@
 "kVcTitleSelectProxy" = "Select proxy";
 "kVcTitleTheme" = "Theme";
 "kVcTitleApiNode" = "API server";
+"kVcTitleNewApiNode" = "Add api node";
 "kVcTitleLanguage" = "Language";
 "kVcTitleOrderManagement" = "Order management";
 "kVcTitleMyBalance" = "My balance";

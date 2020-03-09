@@ -38,9 +38,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
-
+    
     _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];
     _mainTableView.delegate = self;
     _mainTableView.dataSource = self;
@@ -100,14 +100,9 @@
 {
     id themeInfo = [self.dataArray objectAtIndex:indexPath.row];
     if (![[themeInfo objectForKey:@"themeCode"] isEqualToString:self.currThemeCode]){
-        
         self.currThemeCode = [[themeInfo objectForKey:@"themeCode"] copy];
-        NSDictionary *params =
-        [NSDictionary dictionaryWithObjectsAndKeys:self.currThemeCode, // Parameter Value
-         @"theme", // Parameter Name
-         nil];
         //  [统计]
-        [OrgUtils logEvents:@"selectTheme" params:params];
+        [OrgUtils logEvents:@"selectTheme" params:@{@"theme":self.currThemeCode}];
         [[SettingManager sharedSettingManager] setUseConfig:kSettingKey_ThemeInfo obj:themeInfo];
         [[ThemeManager sharedThemeManager] switchTheme:self.currThemeCode reload:YES];
         [tableView reloadData];

@@ -46,19 +46,19 @@
 "kDebtTipTitleFeedAndCallPrice" = "フィード価格と強制単価";
 "kDebtTipTitleWhatIsRatio" = "何がマージン率？";
 "kDebtTipTitleWhatIsTargetRatio" = "何が目标マージン率？";
-"kDebtTipNetworkErrorPleaseRefresh" = "网络异常，请重新刷新界面。";//TODO:
-"kDebtTipAssetHasGlobalSettled" = "该资产已经全局清算，不可调整债仓。";//TODO:
-"kDebtTipAssetNoValidFeedData" = "该资产没有有效的喂价，不可调整债仓。";//TODO:
-"kDebtTipCollRatioCannotLessThanMCR" = "抵押率不能低于 %@。";//TODO:
-"kDebtTipCannotAdjustMoreLowerRatio" = "您已经处于强制平仓状态，不能降低抵押率。";//TODO:
+"kDebtTipNetworkErrorPleaseRefresh" = "ネットワークに異常があります。インターフェースを再度更新してください。";
+"kDebtTipAssetHasGlobalSettled" = "資産は世界的に清算されており、位置を調整することはできません。";
+"kDebtTipAssetNoValidFeedData" = "アセットには有効なフィードデータがなく、位置を調整できません。";
+"kDebtTipCollRatioCannotLessThanMCR" = "比率は %@ より低くすることはできません。";
+"kDebtTipCannotAdjustMoreLowerRatio" = "すでに強制販売中のため、比率を下げることはできません。";
 "kDebtTipValueAndAmountNotChange" ="借金の数量はと物を抵当にして変化が発生していません。";
 "kDebtTipCollNotEnough" = "担保残高が不足しています，数量を調整してください。。";
 "kDebtTipAvailableNotEnough" = "%@残高は不足して、調整して数量を返済してください。";
 "kDebtTipRatioTooLow" = "あなたのマージン率は %@，未満であり、許可されません。";
 "kDebtTipTxUpdatePositionFullOK" = "ポジションを更新。";
 "kDebtTipTxUpdatePositionOK" = "ポジションを更新，しかしネットワークが異常で、少しの後でまた試みてください。";
-"kDebtWarmTips" = "【暖かいヒント】]\n1、フィード価格が強制単価まで下がると、負債を返済するためにシステムが自動的に資産を売却します。 リスクを管理するように注意してください。 \n2、借金がロックされると、担保によってマージン率が変化します。 \n3、マージン率がロックされると、担保によって借金が変化します。";
-"kDebtWarmTipsForPM" = "【温馨提示】\n当前资产为预测市场资产。借款金额和抵押物数量恒定为 1:1。";//TODO:
+"kDebtWarmTips" = "【暖かいヒント】\n1、フィード価格が強制単価まで下がると、負債を返済するためにシステムが自動的に資産を売却します。 リスクを管理するように注意してください。 \n2、借金がロックされると、担保によってマージン率が変化します。 \n3、マージン率がロックされると、担保によって借金が変化します。";
+"kDebtWarmTipsForPM" = "【暖かいヒント】\n現在の資産は、予測される市場資産です。 借り入れの量と担保の量は1：1で一定です。";
 
 /* 服务界面 */
 "kServicesCellLabelQrScan" = "スキャン";
@@ -845,6 +845,29 @@
 "kSettingCurrencyNameJPY" = "円";
 "kSettingCurrencyNameKRW" = "ウォン";
 "kSettingCurrencyNameBTS" = "BitSharesコア資産";
+"kSettingApiInternalNodeBTSPP" = "中国 - 杭州（BTS ++）";
+"kSettingApiInternalNodeAbit" = "米国（abit）";
+"kSettingApiInternalNodeGDEX" = "中国 - 上海（GDEX）";
+"kSettingApiInternalNodeBTSAI" = "中国 - 北京（bts.ai）";
+"kSettingApiRandomCell" = "自動";
+"kSettingApiCellCustomFlag" = "カスタム";
+"kSettingApiOpSetAsCurrent" = "現在のノードとして設定";
+"kSettingApiOpRemoveNode" = "ノードを削除";
+"kSettingApiOpCopyURL" = "リンクをコピー";
+"kSettingApiSwitchTips" = "ノードの切り替え…";
+"kSettingApiSwitchFailed" = "接続に失敗しました。しばらくしてからもう一度お試しください。";
+"kSettingApiRemoveInUsing" = "使用中は、最初に別のノードに切り替えてください。";
+"kSettingNewApiCellLabelName" = "ノード名";
+"kSettingNewApiCellPlaceholderName" = "ノード名を入力してください";
+"kSettingNewApiCellLabelURL" = "ノードURL";
+"kSettingNewApiCellPlaceholderURL" = "ノードのURLを入力してください";
+"kSettingNewApiSubmitBtn" = "OK";
+"kSettingNewApiSubmitTipsPleaseInputNodeName" = "ノード名を入力してください。";
+"kSettingNewApiSubmitTipsPleaseInputNodeURL" = "有効なノードURLを入力してください。";
+"kSettingNewApiSubmitTipsURLAlreadyExist" = "現在のノードは既に存在します。";
+"kSettingNewApiSubmitTipsOK" = "正常に追加されました。";
+"kSettingNewApiSubmitTipsConnectedFailed" = "接続に失敗しました。URLの有効性をもう一度確認してください。";
+"kSettingNewApiSubmitTipsNotBitsharesMainnetNode" = "このノードはBitSharesメインネットワークノードではありません。もう一度入力してください。";
 
 /* 各种VC标题栏名字 */
 "kVcTitleLogin" = "ログイン";
@@ -872,6 +895,7 @@
 "kVcTitleSelectProxy" = "代理アカウントを選択します";
 "kVcTitleTheme" = "テーマの風格";
 "kVcTitleApiNode" = "APIサーバー";
+"kVcTitleNewApiNode" = "ノードを追加";
 "kVcTitleLanguage" = "言語";
 "kVcTitleOrderManagement" = "注文管理";
 "kVcTitleMyBalance" = "私の資産";
