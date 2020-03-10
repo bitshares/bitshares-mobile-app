@@ -11,6 +11,7 @@
 #import "VCImportAccount.h"
 #import "VCUserOrders.h"
 
+#import "ViewTradePercentButtonCell.h"
 #import "ViewBlockLabel.h"
 #import "ViewBidAskCellVer.h"
 #import "VerticalAlignmentLabel.h"
@@ -34,7 +35,7 @@ enum
     kVcSubPriceCell,            //  买入价
     kVcSubNumberTitle,
     kVcSubNumberCell,           //  买入量
-    kVcSubSlidePercent,         //  滑动输入条
+    kVcSubPercentButtons,       //  百分比按钮
     kVcSubTotalTitle,
     kVcSubTotalPrice,           //  交易额
     kVcSubEmpty,
@@ -46,7 +47,7 @@ enum
 
 @interface VCTradeVertical ()
 {
-    __weak MyNavigationController* _ref_navi_vc;
+//    __weak MyNavigationController* _ref_navi_vc;
     TradingPair*    _tradingPair;
     BOOL            _selectBuy;
     BOOL            _haveAccountOnInit;
@@ -58,7 +59,7 @@ enum
 
 - (void)dealloc
 {
-    _ref_navi_vc = nil;
+//    _ref_navi_vc = nil;
     //  取消所有订阅
     [[ScheduleManager sharedScheduleManager] sub_market_remove_all_monitor_orders:_tradingPair];
     [[ScheduleManager sharedScheduleManager] unsub_market_notify:_tradingPair];
@@ -154,7 +155,7 @@ enum
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [_ref_navi_vc setDisablePopGesture:YES];
+//    [_ref_navi_vc setDisablePopGesture:YES];
     //  添加通知：订阅的市场数据
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onSubMarketNotifyNewData:) name:kBtsSubMarketNotifyNewData object:nil];
 }
@@ -162,7 +163,7 @@ enum
 - (void)viewDidDisappear:(BOOL)animated
 {
     //  移除通知：订阅的市场数据
-    [_ref_navi_vc setDisablePopGesture:NO];
+//    [_ref_navi_vc setDisablePopGesture:NO];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kBtsSubMarketNotifyNewData object:nil];
     [super viewDidDisappear:animated];
 }
@@ -226,7 +227,7 @@ enum
 {
     [super viewDidLoad];
     
-    _ref_navi_vc = [self myNavigationController];
+//    _ref_navi_vc = [self myNavigationController];
     
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     
@@ -439,7 +440,7 @@ enum
     MyTextField*                _tfPrice;
     MyTextField*                _tfNumber;
     MyTextField*                _tfTotal;               //  总成交金额
-    MySlider*                   _sliderAmountPercent;   //  UI - 滑动输入条
+    ViewTradePercentButtonCell* _cellPercentButtons;    //  UI - 百分比按钮
     ViewBlockLabel*             _lbBuyOrSell;           //  UI - 买卖按钮
     ViewTitleValueCell*         _cellAvailable;         //  UI - 可用余额
     ViewTitleValueCell*         _cellMarketFee;         //  UI - 市场手续费
@@ -518,7 +519,7 @@ enum
         _tfTotal.delegate = nil;
         _tfTotal = nil;
     }
-    _sliderAmountPercent = nil;
+    _cellPercentButtons = nil;
     _cellAvailable = nil;
     _cellMarketFee = nil;
     _lbBuyOrSell = nil;
@@ -983,12 +984,8 @@ enum
     [_tfNumber addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
     [_tfTotal addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
     
-    //  UI - 滑动条
-    _sliderAmountPercent = [[MySlider alloc] init];
-    _sliderAmountPercent.tintColor = _isBuy ? theme.buyColor : theme.sellColor;
-    _sliderAmountPercent.minimumValue = 0;
-    _sliderAmountPercent.maximumValue = 1;
-    [_sliderAmountPercent addTarget:self action:@selector(onSliderValueChanged:) forControlEvents:UIControlEventValueChanged];
+    //  UI - 百分比按钮
+    _cellPercentButtons = [[ViewTradePercentButtonCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil vc:self];
     
     //  UI - 可用余额 & 手续费 CELL
     _cellAvailable = [[ViewTitleValueCell alloc] init];
@@ -1140,18 +1137,17 @@ enum
 }
 
 /*
- *  (private) 事件 - 滑动条值变更
+ *  (private) 事件 - 百分比按钮点击
  */
-- (void)onSliderValueChanged:(UISlider*)sender
+- (void)onPercentButtonClicked:(UIButton*)sender
 {
     if (!_balanceData){
-        sender.value = 0;
         [self _gotoLogin];
         return;
     }
     
-    id n_percent = [NSDecimalNumber numberWithFloat:sender.value];
-    
+    id n_percent = [NSDecimalNumber numberWithFloat:(sender.tag + 1) * 0.25f];
+
     NSInteger precision;
     NSDecimalNumber* n_value;
     if (_isBuy) {
@@ -1168,9 +1164,9 @@ enum
                                                                                         raiseOnOverflow:NO
                                                                                        raiseOnUnderflow:NO
                                                                                     raiseOnDivideByZero:NO];
-    
+
     id n_value_of_percent = [n_value decimalNumberByMultiplyingBy:n_percent withBehavior:floorHandler];
-    
+
     if (_isBuy){
         //  更新总金额
         _tfTotal.text = [OrgUtils formatFloatValue:n_value_of_percent usesGroupingSeparator:NO];
@@ -1182,34 +1178,60 @@ enum
     }
 }
 
+///*
+// *  (private) 事件 - 滑动条值变更
+// */
+//- (void)onSliderValueChanged:(UISlider*)sender
+//{
+//    if (!_balanceData){
+//        sender.value = 0;
+//        [self _gotoLogin];
+//        return;
+//    }
+//
+//    id n_percent = [NSDecimalNumber numberWithFloat:sender.value];
+//
+//    NSInteger precision;
+//    NSDecimalNumber* n_value;
+//    if (_isBuy) {
+//        precision = _tradingPair.displayPrecision;
+//        n_value = [self auxBaseBalance];
+//    } else {
+//        precision = _tradingPair.numPrecision;
+//        n_value = [self auxQuoteBalance];
+//    }
+//    //  保留小数位数 向下取整
+//    NSDecimalNumberHandler* floorHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundDown
+//                                                                                                  scale:precision
+//                                                                                       raiseOnExactness:NO
+//                                                                                        raiseOnOverflow:NO
+//                                                                                       raiseOnUnderflow:NO
+//                                                                                    raiseOnDivideByZero:NO];
+//
+//    id n_value_of_percent = [n_value decimalNumberByMultiplyingBy:n_percent withBehavior:floorHandler];
+//
+//    if (_isBuy){
+//        //  更新总金额
+//        _tfTotal.text = [OrgUtils formatFloatValue:n_value_of_percent usesGroupingSeparator:NO];
+//        [self onTotalFieldChanged:YES];
+//    }else{
+//        //  更新数量
+//        _tfNumber.text = [OrgUtils formatFloatValue:n_value_of_percent usesGroupingSeparator:NO];
+//        [self onPriceOrAmountChanged:YES];
+//    }
+//}
+
 /*
  *  (private) - 更新滑动条对应位置
  *  bSliderTriggered - 是否由滑块触发的总金额变更。
  */
 - (void)updateSliderPosition:(BOOL)bSliderTriggered
 {
-    //  本身就是滑块触发的变更，则不用更新滑块位置了。
-    if (bSliderTriggered) {
-        return;
-    }
-    
-    if (_isBuy) {
-        NSDecimalNumber* n_max = [self auxBaseBalance];
-        if ([n_max compare:[NSDecimalNumber zero]] > 0) {
-            NSDecimalNumber* n_cur = [OrgUtils auxGetStringDecimalNumberValue:_tfTotal.text];
-            _sliderAmountPercent.value = MIN([[n_cur decimalNumberByDividingBy:n_max] floatValue], 1.0f);
-        } else {
-            _sliderAmountPercent.value = 0.0f;
-        }
-    } else {
-        NSDecimalNumber* n_max = [self auxQuoteBalance];
-        if ([n_max compare:[NSDecimalNumber zero]] > 0) {
-            NSDecimalNumber* n_cur = [OrgUtils auxGetStringDecimalNumberValue:_tfNumber.text];
-            _sliderAmountPercent.value = MIN([[n_cur decimalNumberByDividingBy:n_max] floatValue], 1.0f);
-        } else {
-            _sliderAmountPercent.value = 0.0f;
-        }
-    }
+    //    //  本身就是滑块触发的变更，则不用更新滑块位置了。
+    //    if (bSliderTriggered) {
+    //        return;
+    //    }
+    //  去掉滑块，体验不好。
 }
 
 /*
@@ -1347,7 +1369,7 @@ enum
         case kVcSubNumberTitle:
         case kVcSubTotalTitle:
             return 28.0f;
-        case kVcSubSlidePercent:
+        case kVcSubPercentButtons:
             return 44.0f;
         case kVcSubEmpty:
             return 16.0f;
@@ -1509,24 +1531,8 @@ enum
                         
                     }
                         break;
-                    case kVcSubSlidePercent:
-                    {
-                        if (_sliderAmountPercent.superview){
-                            [_sliderAmountPercent removeFromSuperview];
-                        }
-                        CGFloat xoffset = _mainTableView.layoutMargins.left;
-                        _sliderAmountPercent.frame = CGRectMake(xoffset, 0, _mainTableView.bounds.size.width - xoffset * 2, 44);
-                        UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-                        cell.backgroundColor = [UIColor clearColor];
-                        cell.accessoryType = UITableViewCellAccessoryNone;
-                        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                        cell.textLabel.text = @" ";
-                        [cell.contentView addSubview:_sliderAmountPercent];
-                        cell.hideTopLine = YES;
-                        cell.hideBottomLine = YES;
-                        return cell;
-                    }
-                        break;
+                    case kVcSubPercentButtons:
+                        return _cellPercentButtons;
                     default:
                         break;
                 }
@@ -1864,7 +1870,6 @@ enum
             // 刷新UI（清除输入框）
             _tfNumber.text = @"";
             _tfTotal.text = @"";
-            _sliderAmountPercent.value = 0;
             //  获取新的限价单ID号
             id new_order_id = [OrgUtils extractNewObjectID:tx_data];
             [[[[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:seller] then:(^id(id full_data) {
