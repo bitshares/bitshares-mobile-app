@@ -645,9 +645,11 @@ class FragmentTradeBuyOrSell : BtsppFragment() {
         } else {
             R.color.theme01_sellColor
         }
-        _view.findViewById<SeekBar>(R.id.id_slider_amount_percent).let { seek ->
-            seek.progressDrawable.setColorFilter(resources.getColor(seek_color), PorterDuff.Mode.SRC_ATOP)
-        }
+
+        // REMARK seekbar 已经删除了
+//        _view.findViewById<SeekBar>(R.id.id_slider_amount_percent).let { seek ->
+//            seek.progressDrawable.setColorFilter(resources.getColor(seek_color), PorterDuff.Mode.SRC_ATOP)
+//        }
 
         // 计算右侧列表ScrollView高度
         calcOrderScrollViewHeight()

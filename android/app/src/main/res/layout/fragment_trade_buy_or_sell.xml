@@ -72,19 +72,76 @@
                         android:hint="--"/>
 
                     <!-- 数量滑动条 -->
-                    <SeekBar
-                        android:thumbOffset="0dp"
-                        android:paddingLeft="0dp"
-                        android:paddingRight="0dp"
-                        android:paddingEnd="0dp"
-                        android:paddingStart="0dp"
-                        android:thumb="@drawable/icon_slider"
-                        android:layout_marginTop="5dp"
-                        android:id="@+id/id_slider_amount_percent"
+                    <!--<SeekBar-->
+                        <!--android:thumbOffset="0dp"-->
+                        <!--android:paddingLeft="0dp"-->
+                        <!--android:paddingRight="0dp"-->
+                        <!--android:paddingEnd="0dp"-->
+                        <!--android:paddingStart="0dp"-->
+                        <!--android:thumb="@drawable/icon_slider"-->
+                        <!--android:layout_marginTop="5dp"-->
+                        <!--android:id="@+id/id_slider_amount_percent"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="32dp"-->
+                        <!--android:max="400"-->
+                        <!--android:progress="0" />-->
+
+                    <!-- 百分比买/卖 按钮 -->
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_marginTop="10dp"
                         android:layout_width="match_parent"
-                        android:layout_height="32dp"
-                        android:max="400"
-                        android:progress="0" />
+                        android:layout_height="wrap_content">
+
+                        <Button
+                            android:layout_marginRight="5px"
+                            android:textColor="@color/theme01.textColorHighlight"
+                            android:gravity="center|center_vertical"
+                            android:background="@drawable/border_button"
+                            android:textSize="11dp"
+                            android:id="@+id/button_percent25"
+                            android:text="25%"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="23dp" />
+
+                        <Button
+                            android:layout_marginRight="5px"
+                            android:textColor="@color/theme01.textColorHighlight"
+                            android:gravity="center|center_vertical"
+                            android:background="@drawable/border_button"
+                            android:textSize="11dp"
+                            android:id="@+id/button_percent50"
+                            android:text="50%"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="23dp" />
+
+                        <Button
+                            android:layout_marginRight="5px"
+                            android:textColor="@color/theme01.textColorHighlight"
+                            android:gravity="center|center_vertical"
+                            android:background="@drawable/border_button"
+                            android:textSize="11dp"
+                            android:id="@+id/button_percent75"
+                            android:text="75%"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="23dp" />
+
+                        <Button
+                            android:textColor="@color/theme01.textColorHighlight"
+                            android:gravity="center|center_vertical"
+                            android:background="@drawable/border_button"
+                            android:textSize="11dp"
+                            android:id="@+id/button_percent100"
+                            android:text="100%"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="23dp" />
+
+                    </LinearLayout>
+
 
                     <!-- 交易额 -->
                     <TextView
@@ -120,7 +177,8 @@
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorNormal"
                             android:text="@string/kLableAvailable"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
                             android:layout_height="wrap_content" />
 
                         <TextView
@@ -130,7 +188,7 @@
                             android:textSize="12dp"
                             android:textColor="@color/theme01.textColorNormal"
                             android:text="--"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
 
                     </LinearLayout>
