@@ -114,6 +114,9 @@
 		3F2D83B62415D7CB00024FFA /* VCAddNewApiNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2D83B42415D7CA00024FFA /* VCAddNewApiNode.m */; };
 		3F2D83B72415D7CB00024FFA /* VCAddNewApiNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2D83B42415D7CA00024FFA /* VCAddNewApiNode.m */; };
 		3F2D83B82415D7CB00024FFA /* VCAddNewApiNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2D83B42415D7CA00024FFA /* VCAddNewApiNode.m */; };
+		3F2D83BB24177D1800024FFA /* ViewTradePercentButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2D83B924177D1800024FFA /* ViewTradePercentButtonCell.m */; };
+		3F2D83BC24177D1800024FFA /* ViewTradePercentButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2D83B924177D1800024FFA /* ViewTradePercentButtonCell.m */; };
+		3F2D83BD24177D1800024FFA /* ViewTradePercentButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2D83B924177D1800024FFA /* ViewTradePercentButtonCell.m */; };
 		3F2E6E27233DF5A600BF4B78 /* VCPermissionEdit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E25233DF5A600BF4B78 /* VCPermissionEdit.m */; };
 		3F2E6E2C233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E2A233E0B3500BF4B78 /* ViewPermissionInfoCellB.m */; };
 		3F2E6E2D233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E2A233E0B3500BF4B78 /* ViewPermissionInfoCellB.m */; };
@@ -2083,6 +2086,8 @@
 		3F2D83B02412127D00024FFA /* ViewApiNodeCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewApiNodeCell.m; path = View/ViewApiNodeCell.m; sourceTree = "<group>"; };
 		3F2D83B42415D7CA00024FFA /* VCAddNewApiNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAddNewApiNode.m; path = Controller/VCAddNewApiNode.m; sourceTree = "<group>"; };
 		3F2D83B52415D7CA00024FFA /* VCAddNewApiNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAddNewApiNode.h; path = Controller/VCAddNewApiNode.h; sourceTree = "<group>"; };
+		3F2D83B924177D1800024FFA /* ViewTradePercentButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewTradePercentButtonCell.m; path = View/ViewTradePercentButtonCell.m; sourceTree = "<group>"; };
+		3F2D83BA24177D1800024FFA /* ViewTradePercentButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewTradePercentButtonCell.h; path = View/ViewTradePercentButtonCell.h; sourceTree = "<group>"; };
 		3F2E6E25233DF5A600BF4B78 /* VCPermissionEdit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCPermissionEdit.m; path = Controller/VCPermissionEdit.m; sourceTree = "<group>"; };
 		3F2E6E26233DF5A600BF4B78 /* VCPermissionEdit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCPermissionEdit.h; path = Controller/VCPermissionEdit.h; sourceTree = "<group>"; };
 		3F2E6E2A233E0B3500BF4B78 /* ViewPermissionInfoCellB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewPermissionInfoCellB.m; path = View/ViewPermissionInfoCellB.m; sourceTree = "<group>"; };
@@ -3297,6 +3302,8 @@
 		18FF069017E00C5C0088405E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				3F2D83BA24177D1800024FFA /* ViewTradePercentButtonCell.h */,
+				3F2D83B924177D1800024FFA /* ViewTradePercentButtonCell.m */,
 				3F2D83AF2412127D00024FFA /* ViewApiNodeCell.h */,
 				3F2D83B02412127D00024FFA /* ViewApiNodeCell.m */,
 				3FE4E8E62408C1BB002518BD /* ViewCheckBox.h */,
@@ -5846,6 +5853,7 @@
 				3F676861230E9EC100E98C14 /* GrapheneWebSocket.m in Sources */,
 				3F676862230E9EC100E98C14 /* XzCrc64Opt.c in Sources */,
 				3F676863230E9EC100E98C14 /* VCWalletManager.m in Sources */,
+				3F2D83BD24177D1800024FFA /* ViewTradePercentButtonCell.m in Sources */,
 				3F676864230E9EC100E98C14 /* Lzma2DecMt.c in Sources */,
 				3F676865230E9EC100E98C14 /* MtCoder.c in Sources */,
 				3F676866230E9EC100E98C14 /* MBProgressHUD.m in Sources */,
@@ -6193,6 +6201,7 @@
 				3FB8F8F121CE66C200DA88E2 /* GrapheneWebSocket.m in Sources */,
 				3FB8F8F221CE66C200DA88E2 /* XzCrc64Opt.c in Sources */,
 				3FB8F8F421CE66C200DA88E2 /* VCWalletManager.m in Sources */,
+				3F2D83BC24177D1800024FFA /* ViewTradePercentButtonCell.m in Sources */,
 				3FB8F8F521CE66C200DA88E2 /* Lzma2DecMt.c in Sources */,
 				3FB8F8F621CE66C200DA88E2 /* MtCoder.c in Sources */,
 				3FB8F8F721CE66C200DA88E2 /* MBProgressHUD.m in Sources */,
@@ -6540,6 +6549,7 @@
 				B7BDAAA020B3C77500738F12 /* XzCrc64Opt.c in Sources */,
 				3F0AE342219319BE00E4144C /* VCWalletManager.m in Sources */,
 				B7BDAA9020B3C77500738F12 /* Lzma2DecMt.c in Sources */,
+				3F2D83BB24177D1800024FFA /* ViewTradePercentButtonCell.m in Sources */,
 				B7BDAA9720B3C77500738F12 /* MtCoder.c in Sources */,
 				ED96A092186C62AD002181D4 /* MBProgressHUD.m in Sources */,
 				B7BDAA9220B3C77500738F12 /* Lzma86Dec.c in Sources */,
