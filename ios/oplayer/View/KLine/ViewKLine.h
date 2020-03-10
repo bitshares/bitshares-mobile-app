@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "UITableViewCellBase.h"
+#import "TradingPair.h"
 
 typedef enum EKLineMainIndexType
 {
@@ -75,6 +76,8 @@ typedef enum EKlineDatePeriodType
 
 @interface ViewKLine : UITableViewCellBase
 
+@property (nonatomic, weak) TradingPair* tradingPair;
+
 @property (nonatomic, assign) EKlineDatePeriodType ekdptType;   //  K线周期类型
 @property (nonatomic, assign) CGFloat fOneCellHeight;           //  主图（K线）区域一个CELL格高度
 @property (nonatomic, assign) CGFloat fMainGraphHeight;         //  主图（K线）区域总高度     该高度不包含 fMainMAHeight
@@ -84,7 +87,7 @@ typedef enum EKlineDatePeriodType
 @property (nonatomic, assign) CGFloat fSquareHeight;            //  整个正方形区域高度
 @property (nonatomic, assign) CGFloat fTimeAxisHeight;          //  最底部（X轴、时间轴总高度）
 
-- (id)initWithWidth:(CGFloat)width baseAsset:(id)baseAsset quoteAsset:(id)quoteAsset;
+- (id)initWithWidth:(CGFloat)width tradingPair:(TradingPair*)tradingPair;
 
 - (void)refreshCandleLayer:(NSArray*)kdata;
 

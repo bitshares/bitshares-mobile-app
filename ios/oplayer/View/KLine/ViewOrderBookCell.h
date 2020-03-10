@@ -12,6 +12,7 @@
 
 @interface ViewOrderBookCell : UITableViewCellBase<UITableViewDelegate, UITableViewDataSource>
 
+@property (nonatomic, weak) TradingPair* tradingPair;
 @property (nonatomic, assign) CGFloat cellTotalHeight;
 
 - (id)initWithTradingPair:(TradingPair*)tradingPair;

@@ -845,6 +845,7 @@
 "kSettingCurrencyNameJPY" = "円";
 "kSettingCurrencyNameKRW" = "ウォン";
 "kSettingCurrencyNameBTS" = "BitSharesコア資産";
+"kSettingApiCellValueRandom" = "自動選択";
 "kSettingApiInternalNodeBTSPP" = "中国 - 杭州（BTS ++）";
 "kSettingApiInternalNodeAbit" = "米国（abit）";
 "kSettingApiInternalNodeGDEX" = "中国 - 上海（GDEX）";

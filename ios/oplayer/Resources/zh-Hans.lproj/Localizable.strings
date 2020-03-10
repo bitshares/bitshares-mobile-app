@@ -845,6 +845,7 @@
 "kSettingCurrencyNameJPY" = "日元";
 "kSettingCurrencyNameKRW" = "韩元";
 "kSettingCurrencyNameBTS" = "比特股核心资产";
+"kSettingApiCellValueRandom" = "自动选择";
 "kSettingApiInternalNodeBTSPP" = "中国 - 杭州 (BTS++)";
 "kSettingApiInternalNodeAbit" = "美国（abit）";
 "kSettingApiInternalNodeGDEX" = "中国 - 上海（GDEX）";

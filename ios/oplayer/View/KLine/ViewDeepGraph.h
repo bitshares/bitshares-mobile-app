@@ -18,6 +18,7 @@
 
 @interface ViewDeepGraph : UITableViewCellBase
 
+@property (nonatomic, weak) TradingPair* tradingPair;
 @property (nonatomic, assign) CGFloat fCellTotalHeight;
 @property (nonatomic, assign) CGFloat fMainGraphOffset;
 @property (nonatomic, assign) CGFloat fMainGraphRowH;

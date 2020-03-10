@@ -237,35 +237,42 @@ enum
  */
 - (void)onTitleSwitchButtonClicked:(UIButton*)sender
 {
-//    //      TODO:2.9 flip pairs and request again...
-//    _tradingPair = [[TradingPair alloc] initWithBaseAsset:_tradingPair.quoteAsset quoteAsset:_tradingPair.baseAsset];
-//    NSString* title = [NSString stringWithFormat:@"%@/%@", _tradingPair.quoteAsset[@"symbol"], _tradingPair.baseAsset[@"symbol"]];
-//    UIButton* btn = (UIButton*)self.navigationItem.titleView;
-//    [btn updateTitleWithoutAnimation:title];
-//    [self _queryInitData];
+    //  取消之前的订阅
+    [[ScheduleManager sharedScheduleManager] unsub_market_notify:_tradingPair];
+    //  交换交易对
+    _tradingPair = [[TradingPair alloc] initWithBaseAsset:_tradingPair.quoteAsset quoteAsset:_tradingPair.baseAsset];
+    NSString* title = [NSString stringWithFormat:@"%@/%@", _tradingPair.quoteAsset[@"symbol"], _tradingPair.baseAsset[@"symbol"]];
+    UIButton* btn = (UIButton*)self.navigationItem.titleView;
+    [btn updateTitleWithoutAnimation:title];
+    //  更新关联数据
+    _viewTickerHeader.tradingPair = _tradingPair;
+    _viewKLine.tradingPair = _tradingPair;
+    _viewDeepGraph.tradingPair = _tradingPair;
+    _viewOrderBookCell.tradingPair = _tradingPair;
+    //  重新初始化数据
+    [self _queryInitData: _viewKLine.ekdptType];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     
     self.view.backgroundColor = theme.appBackColor;
-  
-    //  TODO:3.0 临时
-//    //  导航栏中间标题
-//    NSString* title = [NSString stringWithFormat:@"%@/%@", _tradingPair.quoteAsset[@"symbol"], _tradingPair.baseAsset[@"symbol"]];
-//    UIButton* btnSwitch = [UIButton buttonWithType:UIButtonTypeSystem];
-//    btnSwitch.titleLabel.font = [UIFont boldSystemFontOfSize:17];
-//    [btnSwitch setTitle:title forState:UIControlStateNormal];
-//    [btnSwitch setTitleColor:theme.textColorMain forState:UIControlStateNormal];
-//    [btnSwitch setImage:[UIImage templateImageNamed:@"iconSwitch"] forState:UIControlStateNormal];
-//    btnSwitch.userInteractionEnabled = YES;
-//    [btnSwitch addTarget:self action:@selector(onTitleSwitchButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-//    [btnSwitch relayoutTitleImageStyle:ebils_right space:4.0f];
-//    btnSwitch.frame = CGRectMake(0, 0, self.view.bounds.size.width * 0.6f, [self heightForNavigationBar]);
-//    self.navigationItem.titleView = btnSwitch;
+    
+    //  导航栏中间标题
+    NSString* title = [NSString stringWithFormat:@"%@/%@", _tradingPair.quoteAsset[@"symbol"], _tradingPair.baseAsset[@"symbol"]];
+    UIButton* btnSwitch = [UIButton buttonWithType:UIButtonTypeSystem];
+    btnSwitch.titleLabel.font = [UIFont boldSystemFontOfSize:17];
+    [btnSwitch setTitle:title forState:UIControlStateNormal];
+    [btnSwitch setTitleColor:theme.textColorMain forState:UIControlStateNormal];
+    [btnSwitch setImage:[UIImage templateImageNamed:@"iconSwitch"] forState:UIControlStateNormal];
+    btnSwitch.userInteractionEnabled = YES;
+    [btnSwitch addTarget:self action:@selector(onTitleSwitchButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [btnSwitch relayoutTitleImageStyle:ebils_right space:4.0f];
+    btnSwitch.frame = CGRectMake(0, 0, self.view.bounds.size.width * 0.6f, [self heightForNavigationBar]);
+    self.navigationItem.titleView = btnSwitch;
     
     CGFloat safeHeight = [self heightForBottomSafeArea];
     CGFloat fBottomViewHeight = 60.0f;
@@ -290,18 +297,18 @@ enum
     //  UI - 子界面 时间周期按钮 //TODO:height
     _viewLineButtons = [[ViewKLineButtons alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 32)
                                                   button_infos:[self genLineButtonArgs_Periods]
-                                                         owner:self action:@selector(onSliderButtonClicked:)];
+                                                         owner:self
+                                                        action:@selector(onSliderButtonClicked:)];
     
     //  UI - 子界面 K线主界面
-    _viewKLine = [[ViewKLine alloc] initWithWidth:self.view.bounds.size.width
-                                        baseAsset:_tradingPair.baseAsset
-                                       quoteAsset:_tradingPair.quoteAsset];
+    _viewKLine = [[ViewKLine alloc] initWithWidth:self.view.bounds.size.width tradingPair:_tradingPair];
     
     //  UI - 子界面 深度和成交历史按钮 //TODO:fowallet height
     _viewLineButtonsDeepAndHistory = [[ViewKLineButtons alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 32)
                                                                 button_infos:@{@"button_list":@[@{@"name":NSLocalizedString(@"kLabelBtnDepth", @"深度"), @"value":@(kLineButtonShowDeep)}, @{@"name":NSLocalizedString(@"kLabelBtnMarketTrades", @"成交"), @"value":@(kLineButtonShowHistory)}],
                                                                                @"default_value":@(_currSecondPartyShowIndex)}
-                                                                       owner:self action:@selector(onSliderButtonClicked_DeepAndHistory:)];
+                                                                       owner:self
+                                                                      action:@selector(onSliderButtonClicked_DeepAndHistory:)];
     
     //  UI - 子界面 深度信息
     _viewDeepGraph = [[ViewDeepGraph alloc] initWithWidth:self.view.bounds.size.width tradingPair:_tradingPair];
@@ -350,25 +357,32 @@ enum
     UIImage* image = [UIImage templateImageNamed:@"iconFav"];
     [_btnFav setBackgroundImage:image forState:UIControlStateNormal];
     _btnFav.frame = CGRectMake(fBottomBuySellWidth + (screenRect.size.width - fBottomBuySellWidth - image.size.width) / 2,
-                              (fBottomViewHeight - image.size.height) / 2,
-                              image.size.width, image.size.height);
+                               (fBottomViewHeight - image.size.height) / 2,
+                               image.size.width, image.size.height);
     _btnFav.userInteractionEnabled = YES;
     [_btnFav addTarget:self action:@selector(onButtomFavButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     _btnFav.tag = kBottomButtonTagFav;
     [self _refreshFavButtonStatus];
     [pBottomView addSubview:_btnFav];
     
-    //  k线测试数据
+    //  获取默认查询的K线周期数据
+    id parameters = [[ChainObjectManager sharedChainObjectManager] getDefaultParameters];
+    id kline_period_ary = parameters[@"kline_period_ary"];
+    assert(kline_period_ary);
+    NSInteger kline_period_default = [parameters[@"kline_period_default"] integerValue];
+    assert(kline_period_default >= 0 && kline_period_default < [kline_period_ary count]);
+    NSInteger kline_period_default_value = [[kline_period_ary objectAtIndex:kline_period_default] integerValue];
+    EKlineDatePeriodType currEkdpt = (EKlineDatePeriodType)kline_period_default_value;
+    _viewKLine.ekdptType = currEkdpt;
     
-    //  TODO:fowallet 开始加载测试数据
-    _viewKLine.ekdptType = ekdpt_15m;   //  TODO:fowallet 900s 15m
-    
-    //  查询数据
-    [self _queryInitData];
+    //  初始化查询
+    [self _queryInitData:currEkdpt];
 }
 
-- (void)_queryInitData
+- (void)_queryInitData:(EKlineDatePeriodType)query_ekdpt
 {
+    NSInteger default_query_seconds = [self getDatePeriodSeconds:query_ekdpt];
+    
     [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
@@ -377,12 +391,7 @@ enum
     [[[_tradingPair queryBitassetMarketInfo] then:(^id(id isCoreMarket) {
         //  1、查询K线基本数据
         id parameters = [chainMgr getDefaultParameters];
-        id kline_period_ary = parameters[@"kline_period_ary"];
-        assert(kline_period_ary);
-        NSInteger kline_period_default = [parameters[@"kline_period_default"] integerValue];
-        assert(kline_period_default >= 0 && kline_period_default < [kline_period_ary count]);
-        NSInteger kline_period_default_value = [[kline_period_ary objectAtIndex:kline_period_default] integerValue];
-        NSInteger default_query_seconds = [self getDatePeriodSeconds:(EKlineDatePeriodType)kline_period_default_value];
+        
         NSInteger now = [[NSDate date] timeIntervalSince1970];
         id snow = [OrgUtils formatBitsharesTimeString:now];
         id sbgn = [OrgUtils formatBitsharesTimeString:now-default_query_seconds*kBTS_KLINE_MAX_SHOW_CANDLE_NUM];
@@ -486,7 +495,6 @@ enum
     //  更新成交历史
     id fillOrders = [userinfo objectForKey:@"kFillOrders"];
     if (fillOrders){
-        [_viewTickerHeader refreshTickerData];
         [self onQueryFillOrderHistoryResponsed:fillOrders];
     }
 }
@@ -522,6 +530,8 @@ enum
     }
     [_dataArrayHistory removeAllObjects];
     [_dataArrayHistory addObjectsFromArray:data_array];
+    //  最新Ticker价格等
+    [_viewTickerHeader refreshTickerData];
     //  刷新
     [self _reloadDeepAndHistorySection];
 }
@@ -537,18 +547,19 @@ enum
     //    id sbgn = [OrgUtils formatBitsharesTimeString:now-86400*200];
     id api_history = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_history;
     //  TODO:fowallet 这个方法一次最多返回200条数据，如果 kBTS_KLINE_MAX_SHOW_CANDLE_NUM 设置为300，那么返回的数据可能不包含近期100条。需要多次请求
-    WsPromise* initTest = [api_history exec:@"get_market_history" params:@[_tradingPair.baseId, _tradingPair.quoteId, @(seconds), sbgn, snow]];
+    WsPromise* initTest = [api_history exec:@"get_market_history"
+                                     params:@[_tradingPair.baseId, _tradingPair.quoteId, @(seconds), sbgn, snow]];
     [[initTest then:(^id(id data) {
         [self hideBlockView];
         _viewKLine.ekdptType = ekdptType;
-
-//        //  生成测试数据json
-//        NSError* err = nil;
-//        NSData* data1 = [NSJSONSerialization dataWithJSONObject:data
-//                                                       options:NSJSONReadingAllowFragments
-//                                                         error:&err];
-//        id json = [[NSString alloc] initWithData:data1 encoding:NSUTF8StringEncoding];
-                
+        
+        //        //  生成测试数据json
+        //        NSError* err = nil;
+        //        NSData* data1 = [NSJSONSerialization dataWithJSONObject:data
+        //                                                       options:NSJSONReadingAllowFragments
+        //                                                         error:&err];
+        //        id json = [[NSString alloc] initWithData:data1 encoding:NSUTF8StringEncoding];
+        
         [self onQueryKdataResponsed:data];
         return nil;
     })] catch:(^id(id error) {
