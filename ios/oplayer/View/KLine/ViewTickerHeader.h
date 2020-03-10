@@ -13,6 +13,8 @@
 
 @interface ViewTickerHeader : UITableViewCellBase
 
+@property (nonatomic, weak) TradingPair* tradingPair;
+
 - (id)initWithTradingPair:(TradingPair*)tradingPair;
 - (void)refreshFeedPrice:(NSDecimalNumber*)feedPrice;
 - (void)refreshInfos:(MKlineItemData*)model feedPrice:(NSDecimalNumber*)feedPrice;

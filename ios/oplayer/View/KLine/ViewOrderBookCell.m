@@ -14,8 +14,6 @@
 
 @interface ViewOrderBookCell()
 {
-    TradingPair*                _tradingPair;
-    
     NSInteger                   _showOrderMaxNumber;    //  盘口 显示挂单行数
     CGFloat                     _showOrderLineHeight;   //  盘口 挂单行高
     CGFloat                     _cellTotalHeight;

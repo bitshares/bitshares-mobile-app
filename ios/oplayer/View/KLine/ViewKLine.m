@@ -37,12 +37,6 @@
  */
 @interface ViewKLine()
 {
-    NSDictionary*       _baseAsset;
-    NSDictionary*       _quoteAsset;
-    NSInteger           _base_precision;
-    NSInteger           _quote_precision;
-    NSString*           _base_id;
-    
     NSMutableArray*     _kdataModelPool;
     NSUInteger          _kdataModelCurrentIndex;
     
@@ -315,7 +309,7 @@
     }
 }
 
-- (id)initWithWidth:(CGFloat)width baseAsset:(id)baseAsset quoteAsset:(id)quoteAsset
+- (id)initWithWidth:(CGFloat)width tradingPair:(TradingPair*)tradingPair
 {
     self = [super initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
     if (self) {
@@ -330,11 +324,7 @@
         self.textLabel.hidden = YES;
         
         //  外部参数
-        _baseAsset = baseAsset;
-        _quoteAsset = quoteAsset;
-        _base_precision = [[baseAsset objectForKey:@"precision"] integerValue];
-        _quote_precision = [[quoteAsset objectForKey:@"precision"] integerValue];
-        _base_id = [[baseAsset objectForKey:@"id"] copy];
+        _tradingPair = tradingPair;
         
         CGRect frame = CGRectMake(0, 0, width, width);
         
@@ -447,7 +437,7 @@
     
     //  保留小数位数 向上取整
     NSDecimalNumberHandler* ceilHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundUp
-                                                                                                 scale:_base_precision
+                                                                                                 scale:_tradingPair.basePrecision
                                                                                       raiseOnExactness:NO
                                                                                        raiseOnOverflow:NO
                                                                                       raiseOnUnderflow:NO
@@ -486,9 +476,9 @@
         //  解析Model
         model = [MKlineItemData parseData:data
                                    fillto:model
-                                  base_id:_base_id
-                           base_precision:_base_precision
-                          quote_precision:_quote_precision
+                                  base_id:_tradingPair.baseId
+                           base_precision:_tradingPair.basePrecision
+                          quote_precision:_tradingPair.quotePrecision
                               ceilHandler:ceilHandler
                            percentHandler:percentHandler];
         [_kdataArrayAll addObject:model];
@@ -833,7 +823,7 @@
         //  max_price *= 1.1;
         //  min_price *= 0.9;
         NSDecimalNumberHandler* ceilHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundUp
-                                                                                                     scale:_base_precision
+                                                                                                     scale:_tradingPair.basePrecision
                                                                                           raiseOnExactness:NO
                                                                                            raiseOnOverflow:NO
                                                                                           raiseOnUnderflow:NO
@@ -1356,7 +1346,7 @@
         //  max_price *= 1.1;
         //  min_price *= 0.9;
         NSDecimalNumberHandler* ceilHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundUp
-                                                                                                     scale:_base_precision
+                                                                                                     scale:_tradingPair.basePrecision
                                                                                           raiseOnExactness:NO
                                                                                            raiseOnOverflow:NO
                                                                                           raiseOnUnderflow:NO
@@ -1398,7 +1388,7 @@
     //  2、描绘高级指标背景右边Y轴区间
     //  保留小数位数 向上取整
     NSDecimalNumberHandler* ceilHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundUp
-                                                                                                 scale:_base_precision
+                                                                                                 scale:_tradingPair.basePrecision
                                                                                       raiseOnExactness:NO
                                                                                        raiseOnOverflow:NO
                                                                                       raiseOnUnderflow:NO
@@ -1564,7 +1554,7 @@
     CGFloat candleSpaceW = candle_width * 2 + kBTS_KLINE_SHADOW_WIDTH + kBTS_KLINE_INTERVAL;
     //  保留小数位数 向上取整
     NSDecimalNumberHandler* ceilHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundUp
-                                                                                                 scale:_base_precision
+                                                                                                 scale:_tradingPair.basePrecision
                                                                                       raiseOnExactness:NO
                                                                                        raiseOnOverflow:NO
                                                                                       raiseOnUnderflow:NO

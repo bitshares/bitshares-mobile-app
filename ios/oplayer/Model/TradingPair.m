@@ -134,34 +134,6 @@
     assert(asset);
     return [ModelUtils assetIsSmart:asset];
 }
-//
-///**
-// *  (public) 刷新智能资产交易对（市场）标记。即：quote是base的背书资产，或者base是quote的背书资产。
-// */
-//- (void)RefreshCoreMarketFlag:(NSDictionary*)sba_hash
-//{
-//    assert(sba_hash);
-//
-//    _isCoreMarket = NO;
-//    _smartAssetId = nil;
-//    _sbaAssetId = nil;
-//
-//    id base_sba = [sba_hash objectForKey:_baseId];
-//    if (base_sba && [base_sba isEqualToString:_quoteId]){
-//        _isCoreMarket = YES;
-//        _smartAssetId = _baseId;
-//        _sbaAssetId = _quoteId;
-//        return;
-//    }
-//
-//    id quote_sba = [sba_hash objectForKey:_quoteId];
-//    if (quote_sba && [quote_sba isEqualToString:_baseId]){
-//        _isCoreMarket = YES;
-//        _smartAssetId = _quoteId;
-//        _sbaAssetId = _baseId;
-//        return;
-//    }
-//}
 
 /*
  *  (public) 查询base和quote资产的智能币相关信息

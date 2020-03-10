@@ -14,8 +14,6 @@
 
 @interface ViewDeepGraph()
 {
-    TradingPair*            _tradingPair;
-    
     CGSize                  _f10NumberSize;             //  测量字体高度
     UIFont*                 _font;                      //  K线图各种数据字体
     

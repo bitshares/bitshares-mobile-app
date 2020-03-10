@@ -167,14 +167,25 @@ enum
             break;
         case kSetting_apinode:
         {
-//            NSString* assetSymbol = [[SettingManager sharedSettingManager] getEstimateAssetSymbol];
-//            id currency = [[ChainObjectManager sharedChainObjectManager] getEstimateUnitBySymbol:assetSymbol];
-//            assert(currency);
-//            //  TODO:5.0
-//            cell.detailTextLabel.text = @"随机";// NSLocalizedString([currency objectForKey:@"namekey"], @"计价单位名称");
-//            cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
-//            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-//            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+            cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+            //  获取显示文字
+            id current_node = nil;
+            id user_config = [[SettingManager sharedSettingManager] getUseConfig:kSettingKey_ApiNode];
+            if (user_config) {
+                current_node = [user_config objectForKey:kSettingKey_ApiNode_Current];
+            }
+            if (current_node) {
+                NSString* namekey = [current_node objectForKey:@"namekey"];
+                if (namekey && ![namekey isEqualToString:@""]) {
+                    cell.detailTextLabel.text = NSLocalizedString(namekey, @"node location");
+                } else {
+                    cell.detailTextLabel.text = [current_node objectForKey:@"location"] ?: [current_node objectForKey:@"name"];
+                }
+            } else {
+                cell.detailTextLabel.text = NSLocalizedString(@"kSettingApiCellValueRandom", @"自动选择");
+            }
         }
             break;
         default:
