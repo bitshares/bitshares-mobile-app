@@ -9,6 +9,7 @@
 #import "VCPermissionList.h"
 #import "ViewPermissionInfoCell.h"
 #import "VCPermissionEdit.h"
+#import "VCNewAccountPassword.h"
 
 @interface VCPermissionList ()
 {
@@ -16,6 +17,8 @@
     
     UITableViewBase*        _mainTableView;
     NSMutableArray*         _dataArray;
+    
+    ViewBlockLabel*         _lbChangePasswordButton;
 }
 
 @end
@@ -31,6 +34,7 @@
         _mainTableView.delegate = nil;
         _mainTableView = nil;
     }
+    _lbChangePasswordButton = nil;
 }
 
 - (id)initWithOwner:(VCBase*)owner
@@ -262,12 +266,17 @@
     _mainTableView.separatorStyle = UITableViewCellSeparatorStyleNone;  //  REMARK：不显示cell间的横线。
     _mainTableView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:_mainTableView];
+    
+    //  UI - 修改为密码模式
+    //  TODO:5.0 lang
+    _lbChangePasswordButton = [self createCellLableButton:@"修改密码"];
 }
 
 #pragma mark- TableView delegate method
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return [_dataArray count];
+    //  各种权限 + 【修改密码】按钮
+    return [_dataArray count] + 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -277,6 +286,11 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    //  【修改密码】按钮高度
+    if (indexPath.section >= [_dataArray count]) {
+        return tableView.rowHeight;
+    }
+    
     id item = [_dataArray objectAtIndex:indexPath.section];
     NSInteger line_number = [[item objectForKey:@"items"] count];
     BOOL bHideThreshold = [[item objectForKey:@"is_memo"] boolValue];
@@ -310,11 +324,20 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
+    //  【修改密码】按钮
+    if (section >= [_dataArray count]) {
+        return 12.0f;
+    }
     return 44.0f;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
+    //  【修改密码】按钮
+    if (section >= [_dataArray count]) {
+        return [[UIView alloc] init];
+    }
+    
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     
     //  权限类型
@@ -365,6 +388,17 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (indexPath.section >= [_dataArray count]) {
+        UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+        cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+        cell.hideBottomLine = YES;
+        cell.hideTopLine = YES;
+        cell.backgroundColor = [UIColor clearColor];
+        [self addLabelButtonToCell:_lbChangePasswordButton cell:cell leftEdge:tableView.layoutMargins.left];
+        return cell;
+    }
+    
     static NSString* identify = @"id_user_permission";
     ViewPermissionInfoCell* cell = (ViewPermissionInfoCell*)[tableView dequeueReusableCellWithIdentifier:identify];
     if (!cell)
@@ -381,6 +415,13 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
+        if (indexPath.section >= [_dataArray count]){
+            VCNewAccountPassword* vc = [[VCNewAccountPassword alloc] init];
+            //  TODO:5.0 lang
+            [_owner pushViewController:vc vctitle:@"修改密码" backtitle:kVcDefaultBackTitleName];
+        }
+    }];
 }
 
 /*

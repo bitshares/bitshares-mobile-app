@@ -147,6 +147,15 @@
 		3F6471C423A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6471C223A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m */; };
 		3F6471C523A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6471C223A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m */; };
 		3F6471C623A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6471C223A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m */; };
+		3F6541982418DC0700167794 /* VCNewAccountPassword.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6541962418DC0700167794 /* VCNewAccountPassword.m */; };
+		3F6541992418DC0700167794 /* VCNewAccountPassword.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6541962418DC0700167794 /* VCNewAccountPassword.m */; };
+		3F65419A2418DC0700167794 /* VCNewAccountPassword.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6541962418DC0700167794 /* VCNewAccountPassword.m */; };
+		3F65419D2418E2EE00167794 /* ViewNewPasswordCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F65419C2418E2EE00167794 /* ViewNewPasswordCell.m */; };
+		3F65419E2418E2EE00167794 /* ViewNewPasswordCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F65419C2418E2EE00167794 /* ViewNewPasswordCell.m */; };
+		3F65419F2418E2EE00167794 /* ViewNewPasswordCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F65419C2418E2EE00167794 /* ViewNewPasswordCell.m */; };
+		3F6541A2241918F400167794 /* VCNewAccountPasswordConfirm.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6541A0241918F400167794 /* VCNewAccountPasswordConfirm.m */; };
+		3F6541A3241918F400167794 /* VCNewAccountPasswordConfirm.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6541A0241918F400167794 /* VCNewAccountPasswordConfirm.m */; };
+		3F6541A4241918F400167794 /* VCNewAccountPasswordConfirm.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6541A0241918F400167794 /* VCNewAccountPasswordConfirm.m */; };
 		3F676800230E9EC100E98C14 /* VCAbout.m in Sources */ = {isa = PBXBuildFile; fileRef = EDE7B7D71869D55100D68D42 /* VCAbout.m */; };
 		3F676801230E9EC100E98C14 /* VCSelectTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D7DFEF1C5CEFBF007D13DA /* VCSelectTheme.m */; };
 		3F676802230E9EC100E98C14 /* ViewDeepGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A288A82119776F00339FAE /* ViewDeepGraph.m */; };
@@ -2117,6 +2126,12 @@
 		3F4F293C23727A83007674E5 /* VCOtcAddAlipay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcAddAlipay.h; path = Controller/VCOtcAddAlipay.h; sourceTree = "<group>"; };
 		3F6471C223A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcMcMerchantApply.m; path = Controller/VCOtcMcMerchantApply.m; sourceTree = "<group>"; };
 		3F6471C323A5DC8F005F8AB8 /* VCOtcMcMerchantApply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcMcMerchantApply.h; path = Controller/VCOtcMcMerchantApply.h; sourceTree = "<group>"; };
+		3F6541962418DC0700167794 /* VCNewAccountPassword.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCNewAccountPassword.m; path = Controller/VCNewAccountPassword.m; sourceTree = "<group>"; };
+		3F6541972418DC0700167794 /* VCNewAccountPassword.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCNewAccountPassword.h; path = Controller/VCNewAccountPassword.h; sourceTree = "<group>"; };
+		3F65419B2418E2EE00167794 /* ViewNewPasswordCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewNewPasswordCell.h; path = View/ViewNewPasswordCell.h; sourceTree = "<group>"; };
+		3F65419C2418E2EE00167794 /* ViewNewPasswordCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewNewPasswordCell.m; path = View/ViewNewPasswordCell.m; sourceTree = "<group>"; };
+		3F6541A0241918F400167794 /* VCNewAccountPasswordConfirm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCNewAccountPasswordConfirm.m; path = Controller/VCNewAccountPasswordConfirm.m; sourceTree = "<group>"; };
+		3F6541A1241918F400167794 /* VCNewAccountPasswordConfirm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCNewAccountPasswordConfirm.h; path = Controller/VCNewAccountPasswordConfirm.h; sourceTree = "<group>"; };
 		3F676A27230E9EC100E98C14 /* fowallet-baichenglian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "fowallet-baichenglian.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F67F8F323823DCE00B3542E /* VCOtcOrderDetails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcOrderDetails.m; path = Controller/VCOtcOrderDetails.m; sourceTree = "<group>"; };
 		3F67F8F423823DCE00B3542E /* VCOtcOrderDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcOrderDetails.h; path = Controller/VCOtcOrderDetails.h; sourceTree = "<group>"; };
@@ -3156,6 +3171,10 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3F6541A1241918F400167794 /* VCNewAccountPasswordConfirm.h */,
+				3F6541A0241918F400167794 /* VCNewAccountPasswordConfirm.m */,
+				3F6541972418DC0700167794 /* VCNewAccountPassword.h */,
+				3F6541962418DC0700167794 /* VCNewAccountPassword.m */,
 				3F2D83B52415D7CA00024FFA /* VCAddNewApiNode.h */,
 				3F2D83B42415D7CA00024FFA /* VCAddNewApiNode.m */,
 				3FE31D5023F67C7E009CA77E /* VCSelectApiNode.h */,
@@ -3302,6 +3321,8 @@
 		18FF069017E00C5C0088405E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				3F65419B2418E2EE00167794 /* ViewNewPasswordCell.h */,
+				3F65419C2418E2EE00167794 /* ViewNewPasswordCell.m */,
 				3F2D83BA24177D1800024FFA /* ViewTradePercentButtonCell.h */,
 				3F2D83B924177D1800024FFA /* ViewTradePercentButtonCell.m */,
 				3F2D83AF2412127D00024FFA /* ViewApiNodeCell.h */,
@@ -5758,6 +5779,7 @@
 				3F676813230E9EC100E98C14 /* Bcj2Enc.c in Sources */,
 				3F676814230E9EC100E98C14 /* GCDWebServerRequest.m in Sources */,
 				3F676815230E9EC100E98C14 /* WjCryptLib_Sha1.c in Sources */,
+				3F6541A4241918F400167794 /* VCNewAccountPasswordConfirm.m in Sources */,
 				3F676816230E9EC100E98C14 /* VCHtlcList.m in Sources */,
 				3FEFFD37237A83D90019799D /* ViewWebviewPayment.m in Sources */,
 				3F676817230E9EC100E98C14 /* ViewLimitOrderInfoCell.m in Sources */,
@@ -5842,6 +5864,7 @@
 				3F676857230E9EC100E98C14 /* Lzma86Enc.c in Sources */,
 				3FC36F162340413D00464422 /* VCPermissionAddOne.m in Sources */,
 				3F676858230E9EC100E98C14 /* ioapi.c in Sources */,
+				3F65419F2418E2EE00167794 /* ViewNewPasswordCell.m in Sources */,
 				3F676859230E9EC100E98C14 /* ViewKLineButtons.m in Sources */,
 				3F67685A230E9EC100E98C14 /* MySecurityFileMgr.m in Sources */,
 				3F67685B230E9EC100E98C14 /* NSObject+Reflection.m in Sources */,
@@ -5967,6 +5990,7 @@
 				3F6768BE230E9EC100E98C14 /* SRHash.m in Sources */,
 				3F6768BF230E9EC100E98C14 /* VCMarketContainer.m in Sources */,
 				3F6768C0230E9EC100E98C14 /* GCDWebUploader.m in Sources */,
+				3F65419A2418DC0700167794 /* VCNewAccountPassword.m in Sources */,
 				3F6768C1230E9EC100E98C14 /* VCMemberShip.m in Sources */,
 				3F6768C2230E9EC100E98C14 /* FXBlurView.m in Sources */,
 				3F6768C3230E9EC100E98C14 /* ScheduleManager.m in Sources */,
@@ -6106,6 +6130,7 @@
 				3FB8F8AB21CE66C200DA88E2 /* Bcj2Enc.c in Sources */,
 				3FB8F8AC21CE66C200DA88E2 /* GCDWebServerRequest.m in Sources */,
 				3FB8F8AD21CE66C200DA88E2 /* WjCryptLib_Sha1.c in Sources */,
+				3F6541A3241918F400167794 /* VCNewAccountPasswordConfirm.m in Sources */,
 				3FC4D44D226F2EEB00787082 /* VCHtlcList.m in Sources */,
 				3FEFFD36237A83D90019799D /* ViewWebviewPayment.m in Sources */,
 				3FB8F8AE21CE66C200DA88E2 /* ViewLimitOrderInfoCell.m in Sources */,
@@ -6190,6 +6215,7 @@
 				3FB8F8E921CE66C200DA88E2 /* Lzma86Enc.c in Sources */,
 				3FC36F152340413D00464422 /* VCPermissionAddOne.m in Sources */,
 				3FB8F8EA21CE66C200DA88E2 /* ioapi.c in Sources */,
+				3F65419E2418E2EE00167794 /* ViewNewPasswordCell.m in Sources */,
 				3FB8F8EB21CE66C200DA88E2 /* ViewKLineButtons.m in Sources */,
 				3FB8F8EC21CE66C200DA88E2 /* MySecurityFileMgr.m in Sources */,
 				3FB8F8ED21CE66C200DA88E2 /* NSObject+Reflection.m in Sources */,
@@ -6315,6 +6341,7 @@
 				3FB8F94621CE66C200DA88E2 /* SRHash.m in Sources */,
 				3FB8F94721CE66C200DA88E2 /* VCMarketContainer.m in Sources */,
 				3FB8F94821CE66C200DA88E2 /* GCDWebUploader.m in Sources */,
+				3F6541992418DC0700167794 /* VCNewAccountPassword.m in Sources */,
 				3F3847332222686400B55914 /* VCMemberShip.m in Sources */,
 				3FB8F94921CE66C200DA88E2 /* FXBlurView.m in Sources */,
 				3FB8F94A21CE66C200DA88E2 /* ScheduleManager.m in Sources */,
@@ -6454,6 +6481,7 @@
 				B7BDAA8720B3C77500738F12 /* Bcj2Enc.c in Sources */,
 				B72A848320CCD18B00D92A25 /* GCDWebServerRequest.m in Sources */,
 				B7BDA9A820B3A3D100738F12 /* WjCryptLib_Sha1.c in Sources */,
+				3F6541A2241918F400167794 /* VCNewAccountPasswordConfirm.m in Sources */,
 				3FC4D44C226F2EEB00787082 /* VCHtlcList.m in Sources */,
 				3FEFFD35237A83D90019799D /* ViewWebviewPayment.m in Sources */,
 				B786D52020F1FE7200427C08 /* ViewLimitOrderInfoCell.m in Sources */,
@@ -6538,6 +6566,7 @@
 				3FC36F142340413D00464422 /* VCPermissionAddOne.m in Sources */,
 				B7A13B771CA1443A0096A6A4 /* ioapi.c in Sources */,
 				B73785102100A5A2001EEA8C /* ViewKLineButtons.m in Sources */,
+				3F65419D2418E2EE00167794 /* ViewNewPasswordCell.m in Sources */,
 				B78E84D21CCA28CB0033B258 /* MySecurityFileMgr.m in Sources */,
 				B7388BD71C5A1C8D00B0AFF1 /* NSObject+Reflection.m in Sources */,
 				B714094620A31CC300003311 /* SRMutex.m in Sources */,
@@ -6663,6 +6692,7 @@
 				B74D4BC720A2B822009DD9B0 /* VCMarketContainer.m in Sources */,
 				B72A847F20CCD18B00D92A25 /* GCDWebUploader.m in Sources */,
 				3F3847322222686400B55914 /* VCMemberShip.m in Sources */,
+				3F6541982418DC0700167794 /* VCNewAccountPassword.m in Sources */,
 				F5BF57C91E30AE7700DEDE38 /* FXBlurView.m in Sources */,
 				B7C04123210C100100848CBC /* ScheduleManager.m in Sources */,
 				B714094B20A31CC300003311 /* NSURLRequest+SRWebSocket.m in Sources */,
