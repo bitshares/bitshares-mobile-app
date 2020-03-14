@@ -251,6 +251,27 @@
 "kVcPermissionAddOneDoneTipsInvalidWeight" = "有効なウェイトを入力してください。 範囲1-65535。";
 "kVcPermissionAddOneDontTipsCantAddSelf" = "自分のアカウントを追加できません。";
 
+/* 修改密码 */
+"kEditPasswordBtnEntry" = "パスワードを変更する";
+"kEditPasswordCellTitleYourNewPassword" = "新しいパスワード";
+"kEditPasswordSwitchToEnPassword" = "英語のパスワード";
+"kEditPasswordSwitchToZhPassword" = "中国語のパスワード";
+"kEditPasswordBtnNext" = "次のページ";
+"kEditPasswordUiSecTips" = "[リマインダー] \nコピー、写真の撮影、スクリーンショットの撮影はしないでください。 \nペンと紙を使用して、上記の %@ 文字で構成されるパスワードを左から右、上から下の順に記録し、安全な場所に保管してください。 一度失われると、取得できません。";
+"kEditPasswordCellTitleCurrAccountName" = "現在のアカウント";
+"kEditPasswordCellTitleVerifyPassword" = "パスワードを確認";
+"kEditPasswordCellPlaceholderVerifyPassword" = "前のステップのパスワードを入力してください";
+"kEditPasswordBtnSubmmit" = "変更する";
+"kEditPasswordCellTitleEditRange" = "範囲";
+"kEditPasswordCellValueEditRangeOwnerAndActive" = "所有者とアクティブな権限";
+"kEditPasswordCellValueEditRangeOnlyActive" = "アクティブな権限のみ";
+"kEditPasswordCellValueEditRangeOnlyOwner" = "所有者な権限のみ";
+"kEditPasswordEditRangeListOwnerAndActive" = "所有者とアクティブな権限";
+"kEditPasswordEditRangeListOnlyActive" = "アクティブな権限のみ";
+"kEditPasswordEditRangeListOnlyOwner" = "所有者な権限のみ";
+"kEditPasswordSubmitTipsConfirmFailed" = "パスワードの確認に失敗しました。再入力してください。";
+"kEditPasswordSubmitSecondTipsAsk" = "新しいパスワードを保存し、安全な場所に保存したことを再確認してください。 パスワードの変更を続けますか？";
+
 /* 登录&注册&备份 */
 "kFmtConditionContains2UpperLettersNonConsecutive" = "2つ以上の連続しない大文字を含む";
 "kFmtConditioncontainsUpperLetters" = "大文字を含む";
@@ -877,6 +898,8 @@
 "kVcTitleChangePermission" = "変更権限";
 "kVcTitlePermissionAddAuthority" = "権限を追加する";
 "kVcTitleAddOneSearchAccount" = "アカウントを検索";
+"kVcTitleEditPassword" = "パスワードを変更する";
+"kVcTitleEditPasswordConfirm" = "パスワードを確認";
 "kVcTitleQrScan" = "スキャン";
 "kVcTitleQrScanResultNormal" = "スキャン結果";
 "kVcTitleQrScanResultPriKey" = "インポートキー";
@@ -1574,6 +1597,7 @@
 
 /* 特殊用途字符串KEY */
 "serverWssLangKey" = "cn";
+"kEditPasswordDefaultPasswordLang" = "en";
 "appDepositWithdrawDefaultGateway" = "GDEX";
 "btsaiLangKey" = "en";
 "enableOtcEntry" = "0";

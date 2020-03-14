@@ -9,34 +9,38 @@
 
 #import "VCNewAccountPasswordConfirm.h"
 #import "ViewAdvTextFieldCell.h"
+#import "VCImportAccount.h"
 
 enum
 {
-    kVcFormData = 0,
+    kModifyAllPermissions = 0,  //  修改【账号权限】和【资金权限】
+    kModifyOnlyActivePermission,//  仅修改【资金权限】
+    kModifyOnlyOwnerPermission, //  仅修改【账号权限】
+};
+
+enum
+{
+    kVcAccountName = 0,
+    kVcConfirmPassword,
+    kVcModifyRange,
     kVcSubmit,
     
     kVcMax,
 };
 
-enum
-{
-    kVcSubAccountName = 0,  //  当前账号
-    kVcSubConfirmPassword,  //  确认密码
-    
-    kVcSubMax
-};
-
 @interface VCNewAccountPasswordConfirm ()
 {
-    WsPromiseObject*        _result_promise;
-//    NSDictionary*           _url_hash;
+    NSString*                       _curr_password;
+    EBitsharesAccountPasswordLang   _curr_passlang;
     
-    UITableView *           _mainTableView;
+    UITableView *                   _mainTableView;
     
-    ViewAdvTextFieldCell*   _cell_account;
-    ViewAdvTextFieldCell*   _cell_confirm_password;
+    ViewAdvTextFieldCell*           _cell_account;
+    ViewAdvTextFieldCell*           _cell_confirm_password;
     
-    ViewBlockLabel*         _lbSubmit;
+    ViewBlockLabel*                 _lbSubmit;
+    
+    NSInteger                       _curr_modify_range;
 }
 
 @end
@@ -56,15 +60,16 @@ enum
         _mainTableView = nil;
     }
     
-    _result_promise = nil;
+    _curr_password = nil;
 }
 
-- (id)initWithUrlHash:(NSDictionary*)url_hash result_promise:(WsPromiseObject*)result_promise
+- (id)initWithPassword:(NSString*)password passlang:(EBitsharesAccountPasswordLang)passlang
 {
     self = [super init];
     if (self) {
-//        _url_hash = url_hash;
-        _result_promise = result_promise;
+        _curr_password = [password copy];
+        _curr_passlang = passlang;
+        _curr_modify_range = kModifyAllPermissions;
     }
     return self;
 }
@@ -75,17 +80,23 @@ enum
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    //  TODO:5.0 lang
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
-    _cell_account = [[ViewAdvTextFieldCell alloc] initWithTitle:@"当前账号"
-                                                    placeholder:@"当前账号名"];
+    _cell_account = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kEditPasswordCellTitleCurrAccountName", @"当前账号")
+                                                    placeholder:@""];
     _cell_account.mainTextfield.text = [[[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"] objectForKey:@"name"];
+    _cell_account.mainTextfield.userInteractionEnabled = NO;
     
-    //  TODO:5.0 输入中文
-    _cell_confirm_password = [[ViewAdvTextFieldCell alloc] initWithTitle:@"验证密码"
-                                                   placeholder:@"请输入上一步生成的密码"];
-    _cell_confirm_password.mainTextfield.keyboardType = UIKeyboardTypeURL;
+    _cell_confirm_password = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kEditPasswordCellTitleVerifyPassword", @"验证密码")
+                                                             placeholder:NSLocalizedString(@"kEditPasswordCellPlaceholderVerifyPassword", @"请输入上一步生成的密码")];
+    //  测试
+#ifdef DEBUG
+    _cell_confirm_password.mainTextfield.text = _curr_password;
+#endif  //  DEBUG
+    
+    //  REMARK：英文用密码输入框，中文用明文输入框。
+    //  TODO:5.0 为英文加密码框和眼睛？
+    //    _cell_confirm_password.mainTextfield.secureTextEntry = _curr_passlang == ebap_lang_en;
     
     //  UI - 主列表
     _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];
@@ -95,7 +106,7 @@ enum
     _mainTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:_mainTableView];
     
-    _lbSubmit = [self createCellLableButton:@"修改"];
+    _lbSubmit = [self createCellLableButton:NSLocalizedString(@"kEditPasswordBtnSubmmit", @"修改")];
 }
 
 - (void)endInput
@@ -110,8 +121,6 @@ enum
     [self endInput];
 }
 
-
-
 /*
  *  (private) 确定添加
  */
@@ -119,46 +128,214 @@ enum
 {
     [self endInput];
     
-    NSString* account_name = [NSString trim:_cell_account.mainTextfield.text];
+    //  校验参数
     NSString* confirm_password = [NSString trim:_cell_confirm_password.mainTextfield.text];
+    if (!confirm_password || ![confirm_password isEqualToString:_curr_password]){
+        [OrgUtils makeToast:NSLocalizedString(@"kEditPasswordSubmitTipsConfirmFailed", @"密码验证失败，请重新输入。")];
+        return;
+    }
     
-//    if (!name || [name isEqualToString:@""]) {
-//        [OrgUtils makeToast:NSLocalizedString(@"kSettingNewApiSubmitTipsPleaseInputNodeName", @"请输入节点名称。")];
-//        return;
-//    }
-//
-//    if (!url || [url isEqualToString:@""]) {
-//        [OrgUtils makeToast:NSLocalizedString(@"kSettingNewApiSubmitTipsPleaseInputNodeURL", @"请输入有效的节点地址。")];
-//        return;
-//    }
-//
-//    if ([_url_hash objectForKey:url]) {
-//        [OrgUtils makeToast:NSLocalizedString(@"kSettingNewApiSubmitTipsURLAlreadyExist", @"当前节点已存在。")];
-//        return;
-//    }
-//
-//    id node = @{@"location":name, @"url":url, @"_is_custom":@YES};
-//    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-//    [[GrapheneConnection checkNodeStatus:node max_retry_num:0 connect_timeout:10 return_connect_obj:NO] then:^id(id node_status) {
-//        [self hideBlockView];
-//        if ([[node_status objectForKey:@"connected"] boolValue]) {
-//            //  TODO: 以后也许考虑添加非mainnet等api节点。
-//            id chain_id = [[node_status objectForKey:@"chain_properties"] objectForKey:@"chain_id"];
-//            if (chain_id && [chain_id isEqualToString:@BTS_NETWORK_CHAIN_ID]) {
-//                [OrgUtils makeToast:NSLocalizedString(@"kSettingNewApiSubmitTipsOK", @"添加成功。")];
-//                //  返回上一个界面并刷新
-//                if (_result_promise) {
-//                    [_result_promise resolve:node];
-//                }
-//                [self closeOrPopViewController];
-//            } else {
-//                [OrgUtils makeToast:NSLocalizedString(@"kSettingNewApiSubmitTipsNotBitsharesMainnetNode", @"该节点不是比特股主网节点，请重新输入。")];
-//            }
-//        } else {
-//            [OrgUtils makeToast:NSLocalizedString(@"kSettingNewApiSubmitTipsConnectedFailed", @"连接失败，请重新检测URL有效性。")];
-//        }
-//        return nil;
-//    }];
+    //  查询账号数据
+    [[[self queryNewestAccountData] then:^id(id new_account_data) {
+        //  二次确认
+        [self _gotoAskUpdateAccount:new_account_data];
+        return nil;
+    }] catch:^id(id error) {
+        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+        return nil;
+    }];
+}
+
+/*
+ *  (private) 查询最新账号数据（如果需要更新memokey则从链上查询）
+ */
+- (WsPromise*)queryNewestAccountData
+{
+    id account_data = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
+    assert(account_data);
+    
+    if (_curr_modify_range == kModifyAllPermissions || _curr_modify_range == kModifyOnlyActivePermission) {
+        //  修改所有权限 or 修改资金权限的情况下，需要修改备注权限一起。则需要查询最新的账号数据。
+        return [WsPromise promise:^(WsResolveHandler resolve, WsRejectHandler reject) {
+            [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+            [[[ChainObjectManager sharedChainObjectManager] queryAccountData:account_data[@"id"]] then:(^id(id newestAccountData) {
+                [self hideBlockView];
+                if (newestAccountData && [newestAccountData objectForKey:@"id"] && [newestAccountData objectForKey:@"name"]) {
+                    //  返回最新数据
+                    resolve(newestAccountData);
+                } else {
+                    //  查询账号失败，返回nil。
+                    reject(@NO);
+                }
+                return nil;
+            })];
+        }];
+    } else {
+        //  仅修改账号权限，则不用修改备注。不用获取最新账号数据。
+        return [WsPromise resolve:account_data];
+    }
+}
+
+/**
+ *  (private) 请求二次确认修改账号权限信息。
+ */
+- (void)_gotoAskUpdateAccount:(id)new_account_data
+{
+    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:NSLocalizedString(@"kEditPasswordSubmitSecondTipsAsk", @"请再次确认您已经保存好新的密码并且保存到了安全的地方。是否继续修改密码？")
+                                                           withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                          completion:^(NSInteger buttonIndex)
+     {
+        if (buttonIndex == 1)
+        {
+            // 解锁钱包or账号
+            [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
+                if (unlocked){
+                    [self _submitUpdateAccountCore:new_account_data];
+                }
+            }];
+        }
+    }];
+}
+
+/**
+ *  (private) 修改权限核心
+ */
+- (void)_submitUpdateAccountCore:(id)new_account_data
+{
+    assert(new_account_data);
+    id uid = new_account_data[@"id"];
+    id account_name = new_account_data[@"name"];
+    
+    BOOL using_owner_authority = NO;
+    NSMutableArray* new_private_wif_list = [NSMutableArray array];
+    
+    //  构造OPDATA
+    id op_data = [NSMutableDictionary dictionary];
+    op_data[@"fee"] = @{@"amount":@0, @"asset_id":[ChainObjectManager sharedChainObjectManager].grapheneCoreAssetID};
+    op_data[@"account"] = uid;
+    
+    //  修改资金权限 和 备注权限
+    if (_curr_modify_range == kModifyAllPermissions || _curr_modify_range == kModifyOnlyActivePermission) {
+        //  生成 active 公私钥。
+        id seed_active = [NSString stringWithFormat:@"%@active%@", account_name, _curr_password];
+        id public_key_active = [OrgUtils genBtsAddressFromPrivateKeySeed:seed_active];
+        
+        //  修改资金权限
+        id authority_active = @{
+            @"weight_threshold":@(1),
+            @"account_auths":@[],
+            @"key_auths":@[@[public_key_active, @1]],
+            @"address_auths":@[],
+        };
+        [op_data setObject:authority_active forKey:@"active"];
+        
+        //  修改备注权限
+        id account_options = [new_account_data objectForKey:@"options"];
+        id new_options = @{
+            @"memo_key":public_key_active,
+            @"voting_account":[account_options objectForKey:@"voting_account"],
+            @"num_witness":[account_options objectForKey:@"num_witness"],
+            @"num_committee":[account_options objectForKey:@"num_committee"],
+            @"votes":[account_options objectForKey:@"votes"]
+        };
+        [op_data setObject:new_options forKey:@"new_options"];
+        
+        //  保存资金权限私钥
+        [new_private_wif_list addObject:[OrgUtils genBtsWifPrivateKey:seed_active]];
+    }
+    
+    //  修改账户权限
+    if (_curr_modify_range == kModifyAllPermissions || _curr_modify_range == kModifyOnlyOwnerPermission) {
+        //  签名需要权限标记
+        using_owner_authority = YES;
+        
+        //  生成 owner 公私钥。
+        id seed_owner = [NSString stringWithFormat:@"%@owner%@", account_name, _curr_password];
+        id public_key_owner = [OrgUtils genBtsAddressFromPrivateKeySeed:seed_owner];
+        
+        //  修改账户权限
+        id authority_owner = @{
+            @"weight_threshold":@(1),
+            @"account_auths":@[],
+            @"key_auths":@[@[public_key_owner, @1]],
+            @"address_auths":@[],
+        };
+        [op_data setObject:authority_owner forKey:@"owner"];
+        
+        //  保存账户权限私钥
+        [new_private_wif_list addObject:[OrgUtils genBtsWifPrivateKey:seed_owner]];
+    }
+    
+    //  确保有权限发起普通交易，否则作为提案交易处理。
+    [self GuardProposalOrNormalTransaction:ebo_account_update
+                     using_owner_authority:using_owner_authority invoke_proposal_callback:NO
+                                    opdata:op_data
+                                 opaccount:new_account_data
+                                      body:^(BOOL isProposal, NSDictionary *proposal_create_args)
+     {
+        assert(!isProposal);
+        [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+        [[[[BitsharesClientManager sharedBitsharesClientManager] accountUpdate:op_data] then:(^id(id data) {
+            if ([[WalletManager sharedWalletManager] isPasswordMode]) {
+                //  密码模式：修改权限之后直接退出重新登录。
+                [self hideBlockView];
+                //  [统计]
+                [OrgUtils logEvents:@"txUpdateAccountPermissionFullOK" params:@{@"account":uid, @"mode":@"password"}];
+                [[UIAlertViewManager sharedUIAlertViewManager] showMessage:NSLocalizedString(@"kVcPermissionEditSubmitOkRelogin", @"权限修改成功，请重新登录。")
+                                                                 withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                                completion:^(NSInteger buttonIndex) {
+                    //  注销
+                    [[WalletManager sharedWalletManager] processLogout];
+                    //  转到重新登录界面。
+                    VCImportAccount* vc = [[VCImportAccount alloc] init];
+                    [self clearPushViewController:vc
+                                          vctitle:NSLocalizedString(@"kVcTitleLogin", @"登录")
+                                        backtitle:kVcDefaultBackTitleName];
+                }];
+            } else {
+                //  导入新密码对应私钥到当前钱包中
+                WalletManager* walletMgr = [WalletManager sharedWalletManager];
+                AppCacheManager* pAppCache = [AppCacheManager sharedAppCacheManager];
+                id full_wallet_bin = [walletMgr walletBinImportAccount:nil
+                                                     privateKeyWifList:[new_private_wif_list copy]];
+                assert(full_wallet_bin);
+                [pAppCache updateWalletBin:full_wallet_bin];
+                [pAppCache autoBackupWalletToWebdir:NO];
+                id unlockInfos = [walletMgr reUnlock];
+                assert(unlockInfos && [[unlockInfos objectForKey:@"unlockSuccess"] boolValue]);
+                
+                //  钱包模式：修改权限之后刷新账号信息即可。（可能当前账号不在拥有完整的active权限。）
+                [[[[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:uid] then:(^id(id full_data) {
+                    [self hideBlockView];
+                    //  更新账号信息
+                    [pAppCache updateWalletAccountInfo:full_data];
+                    //  [统计]
+                    [OrgUtils logEvents:@"txUpdateAccountPermissionFullOK" params:@{@"account":uid, @"mode":@"wallet"}];
+                    //  提示并退出
+                    [[UIAlertViewManager sharedUIAlertViewManager] showMessage:NSLocalizedString(@"kVcPermissionEditSubmitOK02", @"修改权限成功。")
+                                                                     withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                                    completion:^(NSInteger buttonIndex) {
+                        //  直接返回最外层
+                        [self.navigationController popToRootViewControllerAnimated:YES];
+                    }];
+                    return nil;
+                })] catch:(^id(id error) {
+                    [self hideBlockView];
+                    [OrgUtils makeToast:NSLocalizedString(@"kVcPermissionEditSubmitOKAndRelaunchApp", @"修改权限成功，但刷新账号信息失败，请退出重新启动APP。")];
+                    //  [统计]
+                    [OrgUtils logEvents:@"txUpdateAccountPermissionOK" params:@{@"account":uid, @"mode":@"wallet"}];
+                    return nil;
+                })];
+            }
+            return nil;
+        })] catch:(^id(id error) {
+            [self hideBlockView];
+            [OrgUtils showGrapheneError:error];
+            //  [统计]
+            [OrgUtils logEvents:@"txUpdateAccountPermissionFailed" params:@{@"account":uid}];
+            return nil;
+        })];
+    }];
 }
 
 #pragma mark-
@@ -166,7 +343,6 @@ enum
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    //  TODO:5.0 未完成
     [self endInput];
     return YES;
 }
@@ -180,73 +356,156 @@ enum
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == kVcFormData) {
-        switch (indexPath.row) {
-            case kVcSubAccountName:
-                return _cell_account.cellHeight;
-            case kVcSubConfirmPassword:
-                return _cell_confirm_password.cellHeight;
-            default:
-                break;
-        }
+    switch (indexPath.section) {
+        case kVcAccountName:
+            return _cell_account.cellHeight;
+        case kVcConfirmPassword:
+            return _cell_confirm_password.cellHeight;
+        default:
+            break;
     }
     return tableView.rowHeight;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (section == kVcFormData){
-        return kVcSubMax;
-    }else{
-        return 1;
-    }
+    return 1;
+}
+
+/**
+ *  调整Header和Footer高度。REMARK：header和footer VIEW 不能为空，否则高度设置无效。
+ */
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 10.0f;
+}
+- (nullable NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return @" ";
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
-    if (section == kVcSubmit){
-        return tableView.sectionFooterHeight;
-    }else{
-        return 1;
-    }
+    return 10.0f;
+}
+- (nullable NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
+{
+    return @" ";
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == kVcFormData)
-    {
-        switch (indexPath.row) {
-            case kVcSubAccountName:
-                return _cell_account;
-            case kVcSubConfirmPassword:
-                return _cell_confirm_password;
-            default:
-                assert(false);
-                break;
+    switch (indexPath.section) {
+        case kVcAccountName:
+            return _cell_account;
+            
+        case kVcConfirmPassword:
+            return _cell_confirm_password;
+            
+        case kVcModifyRange:
+        {
+            ThemeManager* theme = [ThemeManager sharedThemeManager];
+            
+            UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+            cell.backgroundColor = [UIColor clearColor];
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+            cell.showCustomBottomLine = YES;
+            
+            cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
+            cell.textLabel.textColor = theme.textColorMain;
+            cell.textLabel.text = NSLocalizedString(@"kEditPasswordCellTitleEditRange", @"修改范围");
+            
+            cell.detailTextLabel.font = [UIFont systemFontOfSize:13.0f];
+            cell.detailTextLabel.textColor = theme.textColorMain;
+            switch (_curr_modify_range) {
+                case kModifyAllPermissions:
+                    cell.detailTextLabel.text = NSLocalizedString(@"kEditPasswordCellValueEditRangeOwnerAndActive", @"账号和资金权限");
+                    break;
+                case kModifyOnlyActivePermission:
+                    cell.detailTextLabel.text = NSLocalizedString(@"kEditPasswordCellValueEditRangeOnlyActive", @"仅资金权限");
+                    break;
+                case kModifyOnlyOwnerPermission:
+                    cell.detailTextLabel.text = NSLocalizedString(@"kEditPasswordCellValueEditRangeOnlyOwner", @"仅账号权限");
+                    break;
+                default:
+                    cell.detailTextLabel.text = @"";
+                    break;
+            }
+            return cell;
         }
-    }else{
-        UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-        cell.accessoryType = UITableViewCellAccessoryNone;
-        cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-        cell.hideBottomLine = YES;
-        cell.hideTopLine = YES;
-        cell.backgroundColor = [UIColor clearColor];
-        [self addLabelButtonToCell:_lbSubmit cell:cell leftEdge:tableView.layoutMargins.left];
-        return cell;
+            break;
+        case kVcSubmit:
+        {
+            UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+            cell.accessoryType = UITableViewCellAccessoryNone;
+            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+            cell.hideBottomLine = YES;
+            cell.hideTopLine = YES;
+            cell.backgroundColor = [UIColor clearColor];
+            [self addLabelButtonToCell:_lbSubmit cell:cell leftEdge:tableView.layoutMargins.left];
+            return cell;
+        }
+            break;
+        default:
+            break;
     }
     //  not reached...
     return nil;
 }
 
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
     [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
-        if (indexPath.section == kVcSubmit){
-            [self onSubmitClicked];
+        switch (indexPath.section) {
+            case kVcModifyRange:
+                [self onModifyRangeClicked];
+                break;
+            case kVcSubmit:
+                [self onSubmitClicked];
+                break;
+            default:
+                break;
         }
     }];
+}
+
+- (void)onModifyRangeClicked
+{
+    [self endInput];
+    
+    id items = @[
+        @{@"title":NSLocalizedString(@"kEditPasswordEditRangeListOwnerAndActive", @"修改账号和资金权限"),
+          @"type":@(kModifyAllPermissions)},
+        @{@"title":NSLocalizedString(@"kEditPasswordEditRangeListOnlyActive", @"仅修改资金权限"),
+          @"type":@(kModifyOnlyActivePermission)},
+        @{@"title":NSLocalizedString(@"kEditPasswordEditRangeListOnlyOwner", @"仅修改账号权限"),
+          @"type":@(kModifyOnlyOwnerPermission)},
+    ];
+    
+    NSInteger defaultIndex = 0;
+    for (id item in items) {
+        if ([[item objectForKey:@"type"] integerValue] == _curr_modify_range) {
+            break;
+        }
+        ++defaultIndex;
+    }
+    
+    [[[MyPopviewManager sharedMyPopviewManager] showModernListView:self.navigationController
+                                                           message:nil
+                                                             items:items
+                                                           itemkey:@"title"
+                                                      defaultIndex:defaultIndex] then:(^id(id result) {
+        if (result){
+            NSInteger range = [[result objectForKey:@"type"] integerValue];
+            if (range != _curr_modify_range) {
+                _curr_modify_range = range;
+                [_mainTableView reloadData];
+            }
+        }
+        return nil;
+    })];
 }
 
 @end

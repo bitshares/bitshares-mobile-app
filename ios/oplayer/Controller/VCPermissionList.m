@@ -268,8 +268,7 @@
     [self.view addSubview:_mainTableView];
     
     //  UI - 修改为密码模式
-    //  TODO:5.0 lang
-    _lbChangePasswordButton = [self createCellLableButton:@"修改密码"];
+    _lbChangePasswordButton = [self createCellLableButton:NSLocalizedString(@"kEditPasswordBtnEntry", @"修改密码")];
 }
 
 #pragma mark- TableView delegate method
@@ -418,8 +417,7 @@
     [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
         if (indexPath.section >= [_dataArray count]){
             VCNewAccountPassword* vc = [[VCNewAccountPassword alloc] init];
-            //  TODO:5.0 lang
-            [_owner pushViewController:vc vctitle:@"修改密码" backtitle:kVcDefaultBackTitleName];
+            [_owner pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleEditPassword", @"修改密码") backtitle:kVcDefaultBackTitleName];
         }
     }];
 }

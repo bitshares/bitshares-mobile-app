@@ -18,7 +18,6 @@
     NSMutableArray*                 _labels;
     NSString*                       _new_password;
     EBitsharesAccountPasswordLang   _curr_lang;
-    NSMutableArray*                 _words;
 }
 
 @end
@@ -69,34 +68,41 @@
     return self;
 }
 
-- (void)updateWithNewContent:(NSString*)new_password lang:(EBitsharesAccountPasswordLang)lang
+- (NSString*)current_password
 {
-    assert(new_password);
+    assert(_words && [_words count] > 0);
+    return [_words componentsJoinedByString:@""];
+}
+
+- (void)updateWithNewContent:(NSArray*)new_words lang:(EBitsharesAccountPasswordLang)lang
+{
+    assert(new_words);
     [_words removeAllObjects];
     _curr_lang = lang;
     switch (lang) {
         case ebap_lang_zh:
         {
-            id words = @[@"王", @"旁", @"清", @"投", @"见", @"五", @"王", @"旁", @"清", @"投", @"见", @"五", @"见", @"五", @"哦", @"喝"];
-            assert([words count] == 16);
+            assert([new_words count] == 16);
             NSInteger idx = 0;
             for (UILabel* label in _labels) {
-                label.text = [words safeObjectAtIndex:idx] ?: @"";
+                label.text = [new_words safeObjectAtIndex:idx] ?: @"";
                 ++idx;
             }
-            [_words addObjectsFromArray:words];
+            [_words addObjectsFromArray:new_words];
         }
             break;
         case ebap_lang_en:
         {
-            id words = @[@"ab3d", @"Zdsf", @"ab3d", @"cdff", @"434a", @"Zdsf", @"cdff", @"434a"];
-            assert([words count] == 8);
+            assert([new_words count] == 32);
+            //  每4个一组，分成8组。
+            for (NSInteger i = 0; i < 32; i += 4) {
+                [_words addObject:[[new_words subarrayWithRange:NSMakeRange(i, 4)] componentsJoinedByString:@""]];
+            }
             NSInteger idx = 0;
             for (UILabel* label in _labels) {
-                label.text = [words safeObjectAtIndex:idx] ?: @"";
+                label.text = [_words safeObjectAtIndex:idx] ?: @"";
                 ++idx;
             }
-            [_words addObjectsFromArray:words];
         }
             break;
         default:

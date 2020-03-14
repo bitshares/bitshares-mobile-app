@@ -263,4 +263,14 @@ typedef enum EImportToWalletStatus
  */
 - (NSData*)auxAesDecryptFromHex:(NSData*)seed data:(NSString*)hexdata;
 
+/*
+ *  (public) 随机生成 32 个英文字符列表
+ */
++ (NSArray*)randomGenerateEnglishWord_N32;
+
+/*
+ *  (public) 随机生成 16 个中文汉字列表
+ */
++ (NSArray*)randomGenerateChineseWord_N16;
+
 @end
