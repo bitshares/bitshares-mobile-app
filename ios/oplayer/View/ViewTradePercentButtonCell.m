@@ -88,14 +88,14 @@
         return;
     }
     
-    CGFloat fButtonSpace = 4.0f;
+    CGFloat fButtonSpace = 6.0f;
     CGFloat fTotalSpace = ([_btnList count] - 1) * fButtonSpace;
     
     CGFloat fOffsetX = self.layoutMargins.left;
     
     CGFloat fCellWidth = self.bounds.size.width - fOffsetX * 2 - fTotalSpace;
     CGFloat fButtonWidth = fCellWidth / (CGFloat)[_btnList count];
-    CGFloat fButtonHeight = 24.0f;
+    CGFloat fButtonHeight = 22.0f;
     
     CGFloat fOffsetY = (self.bounds.size.height - fButtonHeight) / 2.0f;
     

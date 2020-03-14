@@ -82,6 +82,7 @@ enum
     
     _cell_apiurl = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kSettingNewApiCellLabelURL", @"节点地址")
                                                    placeholder:NSLocalizedString(@"kSettingNewApiCellPlaceholderURL", @"节点URL地址")];
+    _cell_apiurl.mainTextfield.keyboardType = UIKeyboardTypeURL;
     
     //  UI - 主列表
     _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];
