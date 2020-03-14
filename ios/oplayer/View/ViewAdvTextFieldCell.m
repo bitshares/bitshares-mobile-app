@@ -158,7 +158,7 @@ enum
 - (void)auxFastConditionsViewForWalletPassword
 {
     [self genFormatConditonsView:^(ViewFormatConditons *formatConditonsView) {
-        [formatConditonsView fastConditionContainsMoreThanTwoUppercaseLetterNonConsecutive:NSLocalizedString(@"kFmtConditionContains2UpperLettersNonConsecutive", @"必须包含2个以上且不连续的大写字母")];
+        [formatConditonsView fastConditionContainsUppercaseLetter:NSLocalizedString(@"kFmtConditioncontainsUpperLetters", @"必须包含大写字母")];
         [formatConditonsView fastConditionContainsLowercaseLetter:NSLocalizedString(@"kFmtConditionContainsLowerLetters", @"必须包含小写字母")];
         [formatConditonsView fastConditionContainsArabicNumerals:NSLocalizedString(@"kFmtConditionContainsDigits", @"必须包含数字")];
         [formatConditonsView addLengthCondition:NSLocalizedString(@"kFmtConditionLen12To40Chars", @"长度12到40个字符")

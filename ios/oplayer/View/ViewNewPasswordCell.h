@@ -12,6 +12,9 @@
 
 @interface ViewNewPasswordCell : UITableViewCellBase
 
-- (void)updateWithNewContent:(NSString*)new_password lang:(EBitsharesAccountPasswordLang)lang;
+@property (nonatomic, strong, readonly) NSMutableArray* words;
+
+- (NSString*)current_password;
+- (void)updateWithNewContent:(NSArray*)new_words lang:(EBitsharesAccountPasswordLang)lang;
 
 @end

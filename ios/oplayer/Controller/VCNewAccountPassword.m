@@ -61,9 +61,29 @@ enum
 {
     self = [super init];
     if (self) {
-        _currPasswordLang = ebap_lang_zh;//TODO:5.0 根据当前语言决定
+        //  REMARK：根据当前语言决定默认密码语言。
+        NSString* pass_lang_string = NSLocalizedString(@"kEditPasswordDefaultPasswordLang", @"default password lang string");
+        if (pass_lang_string && [pass_lang_string isEqualToString:@"zh"]) {
+            _currPasswordLang = ebap_lang_zh;
+        } else {
+            _currPasswordLang = ebap_lang_en;
+        }
     }
     return self;
+}
+
+/*
+ *  (private) 处理密码生成
+ */
+- (void)processGeneratePassword
+{
+    id new_words;
+    if (_currPasswordLang == ebap_lang_zh) {
+        new_words = [WalletManager randomGenerateChineseWord_N16];
+    } else {
+        new_words = [WalletManager randomGenerateEnglishWord_N32];
+    }
+    [_passwordContent updateWithNewContent:new_words lang:_currPasswordLang];
 }
 
 /*
@@ -81,18 +101,21 @@ enum
     UIButton* btn = (UIButton*)_cellTitle.accessoryView;
     assert(btn);
     [btn updateTitleWithoutAnimation:[self switchPasswordLangButtonString]];
-    //  TODO:5.0 随机生成密码
-//    if (_currPasswordLang == ebap_lang_zh) {
-//
-//    }
-    [_passwordContent updateWithNewContent:@"" lang:_currPasswordLang];
+    //  刷新描述信息
+    [_cellTips updateLabelText:[self getCellTipsMessage]];
+    //  生成密码
+    [self processGeneratePassword];
     [_mainTableView reloadData];
 }
 
 - (NSString*)switchPasswordLangButtonString
 {
-    //  TODO:5.0 lang
-    return _currPasswordLang == ebap_lang_zh ? @"切换英文密码" : @"切换中文密码";
+    return _currPasswordLang == ebap_lang_zh ? NSLocalizedString(@"kEditPasswordSwitchToEnPassword", @"切换英文密码") : NSLocalizedString(@"kEditPasswordSwitchToZhPassword", @"切换中文密码");
+}
+
+- (NSString*)getCellTipsMessage
+{
+    return [NSString stringWithFormat:NSLocalizedString(@"kEditPasswordUiSecTips", @"【温馨提示】\n请勿复制、拍照、截图。\n请使用纸笔按照从左到右、从上到下的顺序依次记录以上 %@ 个字符组成的密码，并妥善保存。丢失后将无法找回。"), @(_currPasswordLang == ebap_lang_zh ? 16 : 32)];
 }
 
 - (void)viewDidLoad
@@ -109,7 +132,7 @@ enum
     _cellTitle.hideBottomLine = YES;
     _cellTitle.accessoryType = UITableViewCellAccessoryNone;
     _cellTitle.selectionStyle = UITableViewCellSelectionStyleNone;
-    _cellTitle.textLabel.text = @"您的新密码";
+    _cellTitle.textLabel.text = NSLocalizedString(@"kEditPasswordCellTitleYourNewPassword", @"您的新密码");
     _cellTitle.textLabel.font = [UIFont systemFontOfSize:13.0f];
     _cellTitle.textLabel.textColor = theme.textColorMain;
     
@@ -123,21 +146,9 @@ enum
     btn.frame = CGRectMake(0, 0, 130, 31);
     _cellTitle.accessoryView = btn;
     
-//    UIButton* btnTips = [UIButton buttonWithType:UIButtonTypeCustom];
-//    UIImage* btn_image = [UIImage templateImageNamed:@"Help-50"];
-//    CGSize btn_size = btn_image.size;
-//    [btnTips setBackgroundImage:btn_image forState:UIControlStateNormal];
-//    btnTips.userInteractionEnabled = YES;
-//    [btnTips addTarget:self action:@selector(onTipButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-//    btnTips.frame = CGRectMake(0, (44 - btn_size.height) / 2, btn_size.width, btn_size.height);
-//    btnTips.tintColor = [ThemeManager sharedThemeManager].textColorHighlight;
-//    btnTips.tag = tag;
-//    return btnTips;
-    
-    
-    //  UI - 当前密码 TODO:5.0
+    //  UI - 当前密码
     _passwordContent = [[ViewNewPasswordCell alloc] init];
-    [_passwordContent updateWithNewContent:@"" lang:_currPasswordLang];
+    [self processGeneratePassword];
     
     //  UI - 主列表
     _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];
@@ -147,10 +158,10 @@ enum
     _mainTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:_mainTableView];
     
-    _lbSubmit = [self createCellLableButton:@"下一步"];
+    _lbSubmit = [self createCellLableButton:NSLocalizedString(@"kEditPasswordBtnNext", @"下一步")];
     
-    //  提示 TODO:5.0 lang 文案需要调整 16 %@
-    _cellTips = [[ViewTipsInfoCell alloc] initWithText:@"【温馨提示】\n请勿复制、拍照、截图。\n请使用纸笔按照从左到右、从上到下的顺序依次记录以上 16 个字符组成的密码，并妥善保存。丢失后将无法找回。"];
+    //  提示
+    _cellTips = [[ViewTipsInfoCell alloc] initWithText:[self getCellTipsMessage]];
     _cellTips.hideBottomLine = YES;
     _cellTips.hideTopLine = YES;
     _cellTips.backgroundColor = [UIColor clearColor];
@@ -161,52 +172,9 @@ enum
  */
 - (void)onSubmitClicked
 {
-    //  TODO:5.0 args, password
-    VCNewAccountPasswordConfirm* vc = [[VCNewAccountPasswordConfirm alloc] init];
-    [self pushViewController:vc vctitle:@"验证密码" backtitle:kVcDefaultBackTitleName];
-    
-    //    [self endInput];
-    //
-    //    NSString* name = [NSString trim:_cell_apiname.mainTextfield.text];
-    //    NSString* url = [NSString trim:_cell_apiurl.mainTextfield.text];
-    //
-    //    if (!name || [name isEqualToString:@""]) {
-    //        [OrgUtils makeToast:NSLocalizedString(@"kSettingNewApiSubmitTipsPleaseInputNodeName", @"请输入节点名称。")];
-    //        return;
-    //    }
-    //
-    //    if (!url || [url isEqualToString:@""]) {
-    //        [OrgUtils makeToast:NSLocalizedString(@"kSettingNewApiSubmitTipsPleaseInputNodeURL", @"请输入有效的节点地址。")];
-    //        return;
-    //    }
-    //
-    //    if ([_url_hash objectForKey:url]) {
-    //        [OrgUtils makeToast:NSLocalizedString(@"kSettingNewApiSubmitTipsURLAlreadyExist", @"当前节点已存在。")];
-    //        return;
-    //    }
-    //
-    //    id node = @{@"location":name, @"url":url, @"_is_custom":@YES};
-    //    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    //    [[GrapheneConnection checkNodeStatus:node max_retry_num:0 connect_timeout:10 return_connect_obj:NO] then:^id(id node_status) {
-    //        [self hideBlockView];
-    //        if ([[node_status objectForKey:@"connected"] boolValue]) {
-    //            //  TODO: 以后也许考虑添加非mainnet等api节点。
-    //            id chain_id = [[node_status objectForKey:@"chain_properties"] objectForKey:@"chain_id"];
-    //            if (chain_id && [chain_id isEqualToString:@BTS_NETWORK_CHAIN_ID]) {
-    //                [OrgUtils makeToast:NSLocalizedString(@"kSettingNewApiSubmitTipsOK", @"添加成功。")];
-    //                //  返回上一个界面并刷新
-    //                if (_result_promise) {
-    //                    [_result_promise resolve:node];
-    //                }
-    //                [self closeOrPopViewController];
-    //            } else {
-    //                [OrgUtils makeToast:NSLocalizedString(@"kSettingNewApiSubmitTipsNotBitsharesMainnetNode", @"该节点不是比特股主网节点，请重新输入。")];
-    //            }
-    //        } else {
-    //            [OrgUtils makeToast:NSLocalizedString(@"kSettingNewApiSubmitTipsConnectedFailed", @"连接失败，请重新检测URL有效性。")];
-    //        }
-    //        return nil;
-    //    }];
+    VCNewAccountPasswordConfirm* vc = [[VCNewAccountPasswordConfirm alloc] initWithPassword:_passwordContent.current_password
+                                                                                   passlang:_currPasswordLang];
+    [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleEditPasswordConfirm", @"验证密码") backtitle:kVcDefaultBackTitleName];
 }
 
 #pragma mark- TableView delegate method
