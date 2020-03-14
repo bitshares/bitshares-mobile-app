@@ -89,10 +89,10 @@ enum
     
     _cell_confirm_password = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kEditPasswordCellTitleVerifyPassword", @"验证密码")
                                                              placeholder:NSLocalizedString(@"kEditPasswordCellPlaceholderVerifyPassword", @"请输入上一步生成的密码")];
-    //  测试
-#ifdef DEBUG
-    _cell_confirm_password.mainTextfield.text = _curr_password;
-#endif  //  DEBUG
+    //    //  测试
+    //#ifdef DEBUG
+    //    _cell_confirm_password.mainTextfield.text = _curr_password;
+    //#endif  //  DEBUG
     
     //  REMARK：英文用密码输入框，中文用明文输入框。
     //  TODO:5.0 为英文加密码框和眼睛？
