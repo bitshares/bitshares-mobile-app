@@ -14,6 +14,10 @@
 #import "VCSelectTheme.h"
 #import "VCSelectEstimateUnit.h"
 #import "VCSelectApiNode.h"
+#import "VCAbout.h"
+
+#import "VCLaunch.h"
+
 #import "UIDevice+Helper.h"
 #import "OrgUtils.h"
 
@@ -23,6 +27,8 @@ enum
     kSetting_estimate_unit,     //  记账单位
     kSetting_theme,             //  主题风格
     kSetting_apinode,           //  API节点
+    kSetting_version,           //  版本
+    kSetting_about,             //  关于
     
     kSetting_Max
 };
@@ -49,7 +55,7 @@ enum
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
     _dataArray = [[NSArray alloc] initWithObjects:
@@ -57,6 +63,8 @@ enum
                   @"setting_currency",  //  计价方式
                   @"setting_theme",     //  主题风格
                   @"setting_apinode",   //  API节点
+                  @"setting_version",   //  版本
+                  @"kLblCellAboutBtspp",//  关于
                   nil];
     
     _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];
@@ -83,10 +91,10 @@ enum
 
 - (void)onSwitchAction:(UISwitch*)pSwitch
 {
-//    //  REMARK：section信息保存在 tag 的低字节里。
-//    NSInteger section = pSwitch.tag & 0xff;
-//
-//
+    //    //  REMARK：section信息保存在 tag 的低字节里。
+    //    NSInteger section = pSwitch.tag & 0xff;
+    //
+    //
 }
 
 #pragma mark- TableView delegate method
@@ -101,6 +109,19 @@ enum
     return 1;
 }
 
+/**
+ *  调整Header和Footer高度。REMARK：header和footer VIEW 不能为空，否则高度设置无效。
+ */
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 10.0f;
+}
+
+- (nullable NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return @" ";
+}
+
 - (BOOL)needShowFooter:(id)obj
 {
     return [obj isKindOfClass:[NSArray class]] && [obj count] > 2;
@@ -112,7 +133,7 @@ enum
     if ([self needShowFooter:item]){
         return [item lastObject];
     }
-    return nil;
+    return @" ";
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
@@ -121,28 +142,26 @@ enum
     if ([self needShowFooter:item]){
         return 26.0f;
     }
-    return tableView.sectionFooterHeight;
+    return 10.0f;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    cell.selectionStyle = UITableViewCellSelectionStyleBlue;
     cell.backgroundColor = [UIColor clearColor];
     id item = [_dataArray objectAtIndex:indexPath.section];
     cell.textLabel.text = NSLocalizedString([item isKindOfClass:[NSArray class]] ? [item objectAtIndex:indexPath.row] : item, @"");
     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
     cell.showCustomBottomLine = YES;
     cell.detailTextLabel.text = nil;
-
+    
     switch (indexPath.section) {
         case kSetting_language:
         {
             cell.detailTextLabel.text = [[LangManager sharedLangManager] getCurrentLanguageName];
             cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
         }
             break;
         case kSetting_estimate_unit:
@@ -152,8 +171,6 @@ enum
             assert(currency);
             cell.detailTextLabel.text = NSLocalizedString([currency objectForKey:@"namekey"], @"计价单位名称");
             cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
         }
             break;
         case kSetting_theme:
@@ -161,15 +178,11 @@ enum
             NSString* themeCode = [[[SettingManager sharedSettingManager] getThemeInfo] objectForKey:@"themeCode"];
             cell.detailTextLabel.text = [[ThemeManager sharedThemeManager] getThemeNameFromThemeCode:themeCode];
             cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
         }
             break;
         case kSetting_apinode:
         {
             cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
             //  获取显示文字
             id current_node = nil;
             id user_config = [[SettingManager sharedSettingManager] getUseConfig:kSettingKey_ApiNode];
@@ -186,6 +199,18 @@ enum
             } else {
                 cell.detailTextLabel.text = NSLocalizedString(@"kSettingApiCellValueRandom", @"自动选择");
             }
+        }
+            break;
+        case kSetting_version:
+        {
+            //  TODO:5.0 xiaoyuan dian ?
+            cell.detailTextLabel.text = [NSString stringWithFormat:@"v%@", [NativeAppDelegate appVersion]];
+            cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
+        }
+            break;
+        case kSetting_about:
+        {
+            //  ...
         }
             break;
         default:
@@ -233,9 +258,36 @@ enum
                 VCSelectApiNode* vc = [[VCSelectApiNode alloc] init];
                 [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleApiNode", @"API节点") backtitle:kVcDefaultBackTitleName];
             }
+                break;
+            case kSetting_version:
+                [self onCheckVersionClicked];
+                break;
+            case kSetting_about:
+            {
+                VCAbout* vc = [[VCAbout alloc] init];
+                [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleAbout", @"关于") backtitle:kVcDefaultBackTitleName];
+            }
+                break;
             default:
                 break;
         }
+    }];
+}
+
+/*
+ *  (private) 点击版本字段
+ */
+- (void)onCheckVersionClicked
+{
+    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    [[VCLaunch checkAppUpdate] then:^id(id pVersionConfig) {
+        [self hideBlockView];
+        if ([VcUtils processCheckAppVersionResponsed:pVersionConfig remind_later_callback:nil]) {
+            //  TODO:5.0
+        } else {
+            [OrgUtils makeToast:@"当前已经是最新版本。"];
+        }
+        return nil;
     }];
 }
 

@@ -74,4 +74,9 @@ typedef void (^UITapGestureRecognizerBlockHandler)(id weak_self, UITapGestureRec
  */
 + (void)addSpaceTapHandler:(VCBase*)vc body:(UITapGestureRecognizerBlockHandler)body;
 
+/*
+ *  (public) 处理响应 - 检测APP版本信息数据返回。有新版本返回 YES，否新版本返回 NO。
+ */
++ (BOOL)processCheckAppVersionResponsed:(NSDictionary*)pConfig remind_later_callback:(void (^)())remind_later_callback;
+
 @end

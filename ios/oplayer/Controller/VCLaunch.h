@@ -10,4 +10,9 @@
 
 @interface VCLaunch : VCBase
 
+/*
+ *  (public) 检测APP更新数据。
+ */
++ (WsPromise*)checkAppUpdate;
+
 @end

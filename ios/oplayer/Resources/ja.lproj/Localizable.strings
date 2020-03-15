@@ -1533,6 +1533,7 @@
 "kSettingEx" = "設定";
 "setting_theme" = "テーマの風格";
 "setting_apinode" = "APIサーバー";
+"setting_version" = "バージョン";
 "kThemeNameBlue" = "紺色";
 "kThemeNameWhite" = "真珠白";
 "kNormalCellBtnLogin" = "ログイン";

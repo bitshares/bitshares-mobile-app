@@ -1533,6 +1533,7 @@
 "kSettingEx" = "Setting";
 "setting_theme" = "Theme";
 "setting_apinode" = "API server";
+"setting_version" = "Version";
 "kThemeNameBlue" = "Quiet blue";
 "kThemeNameWhite" = "Pearl white";
 "kNormalCellBtnLogin" = "Login";
