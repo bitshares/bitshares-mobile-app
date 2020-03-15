@@ -198,7 +198,7 @@
             NSString* name_join_strings = [[account_data_list ruby_map:(^id(id src) {
                 return [src objectForKey:@"name"];
             })] componentsJoinedByString:@","];
-//            CLS_LOG(@"ONE KEY %@ ACCOUNTS: %@", @([account_data_list count]), name_join_strings);
+            //            CLS_LOG(@"ONE KEY %@ ACCOUNTS: %@", @([account_data_list count]), name_join_strings);
         }
 #endif
         //  默认选择第一个账号 TODO:弹框选择一个
@@ -393,6 +393,68 @@
     UITapGestureRecognizer2Block* pTap = [[UITapGestureRecognizer2Block alloc] initWithWeakSelf:vc body:body];
     pTap.cancelsTouchesInView = NO; //  IOS 5.0系列导致按钮没响应
     [vc.view addGestureRecognizer:pTap];
+}
+
+/*
+ *  (public) 处理响应 - 检测APP版本信息数据返回。有新版本返回 YES，否新版本返回 NO。
+ */
++ (BOOL)processCheckAppVersionResponsed:(NSDictionary*)pConfig remind_later_callback:(void (^)())remind_later_callback
+{
+    if (pConfig && [pConfig count] > 0) {
+        NSString* pNativeVersion = [NativeAppDelegate appShortVersion];
+        NSString* pNewestVersion = [pConfig objectForKey:@"version"];
+        if (pNewestVersion)
+        {
+            NSInteger ret = [OrgUtils compareVersion:pNewestVersion other:pNativeVersion];
+            if (ret > 0)
+            {
+                //  提示更新
+                NSString* infoKey;
+                if ([NativeAppDelegate sharedAppDelegate].isLanguageCN){
+                    infoKey = @"newVersionInfo";
+                }else{
+                    infoKey = @"newVersionInfoEn";
+                }
+                [self showAppUpdateWindow:[pConfig objectForKey:infoKey]
+                                      url:[pConfig objectForKey:@"appURL"]
+                              forceUpdate:[[pConfig objectForKey:@"force"] boolValue] remind_later_callback:remind_later_callback];
+                //  有新版本
+                return YES;
+            }
+        }
+    }
+    //  无新版本
+    return NO;
+}
+
+/*
+ *  (private) 询问 - 是否更新版本
+ */
++ (void)showAppUpdateWindow:(NSString*)message
+                        url:(NSString*)url
+                forceUpdate:(BOOL)forceUpdate
+      remind_later_callback:(void (^)())remind_later_callback
+{
+    NSArray* otherButtons = nil;
+    if (!forceUpdate){
+        otherButtons = [NSArray arrayWithObject:NSLocalizedString(@"kRemindMeLatter", @"稍后提醒")];
+    }
+    [[UIAlertViewManager sharedUIAlertViewManager] showMessageEx:message
+                                                       withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                    cancelButton:NSLocalizedString(@"kUpgradeNow", @"立即升级")
+                                                    otherButtons:otherButtons
+                                                      completion:^(NSInteger buttonIndex)
+     {
+        if (buttonIndex == 0){
+            //  立即升级
+            [OrgUtils safariOpenURL:url];
+        } else {
+            //  稍后提醒
+            if (remind_later_callback) {
+                remind_later_callback();
+            }
+        }
+    }];
 }
 
 @end

@@ -21,7 +21,6 @@
 
 #import "VCBtsaiWebView.h"
 #import "VCSetting.h"
-#import "VCAbout.h"
 
 #import "VCImportAccount.h"
 #import "ViewFaceCell.h"
@@ -38,7 +37,7 @@ enum
     kVcBanner = 0,              //  账号管理登录部分banner
     kVcAssets,                  //  资产和订单
     kVcFaq,                     //  常见问题
-    kVcSetting                  //  设置和关于
+    kVcSetting                  //  设置
 };
 
 enum
@@ -58,7 +57,6 @@ enum
 enum
 {
     kVcSubSettingsEx = 0,       //  设置
-    kVcSubAbout
 };
 
 @interface VCMyself ()
@@ -91,7 +89,7 @@ enum
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
@@ -110,16 +108,15 @@ enum
                               nil];
         [obj addObject:@{@"type":@(kVcAssets), @"rows":pSection2}];
         
-    #if kAppModuleEnableFaq
+#if kAppModuleEnableFaq
         NSArray* pSection3 = [NSArray arrayWithObjects:
                               @"faq",                           //  常见问题,
                               nil];
         [obj addObject:@{@"type":@(kVcFaq), @"rows":pSection3}];
-    #endif  //  kAppModuleEnableFaq
+#endif  //  kAppModuleEnableFaq
         
         NSArray* pSection4 = [NSArray arrayWithObjects:
                               @"kSettingEx",                    //  设置,
-                              @"kLblCellAboutBtspp",            //  关于BTS++,
                               nil];
         [obj addObject:@{@"type":@(kVcSetting), @"rows":pSection4}];
     }] copy];
@@ -286,12 +283,6 @@ enum
                     cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
                 }
                     break;
-                case kVcSubAbout:
-                {
-                    cell.imageView.image = [UIImage templateImageNamed:@"iconAbout"];
-                    cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
-                }
-                    break;
                 default:
                     break;
             }
@@ -307,7 +298,7 @@ enum
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-
+    
     [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
         UIViewController* vc = nil;
         
@@ -355,21 +346,21 @@ enum
                                                                                        withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
                                                                                       completion:^(NSInteger buttonIndex)
                                  {
-                                     if (buttonIndex == 1)
-                                     {
-                                         VCConvertToWalletMode* vc = [[VCConvertToWalletMode alloc] initWithCallback:^{
-                                             if (![[WalletManager sharedWalletManager] isPasswordMode]){
-                                                 NSLog(@"upgrade to wallet mode ok.");
-                                                 // 转到钱包&多签界面
-                                                 VCWalletManager* vc = [[VCWalletManager alloc] init];
-                                                 vc.title = NSLocalizedString(@"kVcTitleWalletAndMultiSign", @"钱包&多签");
-                                                 [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-                                             }
-                                         }];
-                                         vc.title = NSLocalizedString(@"kVcTitleConvertToWalletMode", @"升级钱包模式");
-                                         [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-                                     }
-                                 }];
+                                    if (buttonIndex == 1)
+                                    {
+                                        VCConvertToWalletMode* vc = [[VCConvertToWalletMode alloc] initWithCallback:^{
+                                            if (![[WalletManager sharedWalletManager] isPasswordMode]){
+                                                NSLog(@"upgrade to wallet mode ok.");
+                                                // 转到钱包&多签界面
+                                                VCWalletManager* vc = [[VCWalletManager alloc] init];
+                                                vc.title = NSLocalizedString(@"kVcTitleWalletAndMultiSign", @"钱包&多签");
+                                                [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+                                            }
+                                        }];
+                                        vc.title = NSLocalizedString(@"kVcTitleConvertToWalletMode", @"升级钱包模式");
+                                        [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+                                    }
+                                }];
                             }else{
                                 //  转到钱包&多签界面
                                 VCWalletManager* vc = [[VCWalletManager alloc] init];
@@ -402,25 +393,25 @@ enum
             case kVcFaq: //  常见问题、反馈、客服部分
             {
                 //  TODO:测试代码
-//                id account = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
-//                id uid = [account objectForKey:@"id"];
-//
-//                NSInteger lock_ts = (NSInteger)[[NSDate date] timeIntervalSince1970] + 3600*5;
-//                id op = @{
-//                          @"fee":@{@"amount":@0, @"asset_id":@"1.3.0"},
-//                          @"creator":uid,
-//                          @"owner":uid,
-//                          @"amount":@{@"amount":@(410000), @"asset_id":@"1.3.0"},
-//                          @"policy":@[@1, @{@"start_claim":@(lock_ts), @"vesting_seconds":@(0)}]
-//                          };
-//                [[[[BitsharesClientManager sharedBitsharesClientManager] vestingBalanceCreate:op] then:(^id(id data) {
-//                    NSLog(@"%@", data);
-//                    return nil;
-//                })] catch:(^id(id error) {
-//                    NSLog(@"%@", error);
-//                    return nil;
-//                })];
-//                return;
+                //                id account = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
+                //                id uid = [account objectForKey:@"id"];
+                //
+                //                NSInteger lock_ts = (NSInteger)[[NSDate date] timeIntervalSince1970] + 3600*5;
+                //                id op = @{
+                //                          @"fee":@{@"amount":@0, @"asset_id":@"1.3.0"},
+                //                          @"creator":uid,
+                //                          @"owner":uid,
+                //                          @"amount":@{@"amount":@(410000), @"asset_id":@"1.3.0"},
+                //                          @"policy":@[@1, @{@"start_claim":@(lock_ts), @"vesting_seconds":@(0)}]
+                //                          };
+                //                [[[[BitsharesClientManager sharedBitsharesClientManager] vestingBalanceCreate:op] then:(^id(id data) {
+                //                    NSLog(@"%@", data);
+                //                    return nil;
+                //                })] catch:(^id(id error) {
+                //                    NSLog(@"%@", error);
+                //                    return nil;
+                //                })];
+                //                return;
                 vc = [[VCBtsaiWebView alloc] initWithUrl:@"https://btspp.io/qa.html"];
                 vc.title = NSLocalizedString(@"kVcTitleFAQ", @"常见问题");
             }
@@ -432,16 +423,10 @@ enum
                     {
                         vc = [[VCSetting alloc] init];
                         vc.title = NSLocalizedString(@"kVcTitleSetting", @"设置");
-                    }
-                        break;
-                    case kVcSubAbout:
-                    {
-                        vc = [[VCAbout alloc] init];
-                        vc.title = NSLocalizedString(@"kVcTitleAbout", @"关于");
                         //  TODO:3.1 test
-//                        [[MyPopviewManager sharedMyPopviewManager] showWebviewPaymentDialog:self
-//                                                                        reserve_secure_text:@"我的账号"
-//                                                                                   paytitle:@"下注"];
+                        //                        [[MyPopviewManager sharedMyPopviewManager] showWebviewPaymentDialog:self
+                        //                                                                        reserve_secure_text:@"我的账号"
+                        //                                                                                   paytitle:@"下注"];
                     }
                         break;
                     default:

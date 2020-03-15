@@ -84,7 +84,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     
     //  启动界面背景图
     CGRect screenRect = [[UIScreen mainScreen] bounds];
@@ -102,7 +102,7 @@
  */
 - (void)startInit:(BOOL)first_init
 {
-    [[[self checkUpdate] then:(^id(id pVersionConfig) {
+    [[[[self class] checkAppUpdate] then:(^id(id pVersionConfig) {
         [SettingManager sharedSettingManager].serverConfig = [NSDictionary dictionaryWithDictionary:pVersionConfig];
         return [[self asyncInitBitshares] then:(^id(id data) {
             [self _onLoadVersionJsonFinish:pVersionConfig];
@@ -122,15 +122,16 @@
                                                     otherButtons:@[NSLocalizedString(@"kAppBtnReInit", @"重试")]
                                                       completion:^(NSInteger buttonIndex)
      {
-         [OrgUtils logEvents:@"appReInitNetwork" params:@{}];
-         [self startInit:NO];
-     }];
+        [OrgUtils logEvents:@"appReInitNetwork" params:@{}];
+        [self startInit:NO];
+    }];
 }
 
-- (WsPromise*)checkUpdate
+/*
+ *  (public) 检测APP更新数据。
+ */
++ (WsPromise*)checkAppUpdate
 {
-    
-    
 #if kAppCheckUpdate
     
     //  检测更新
@@ -148,12 +149,12 @@
                          timeout:[[NativeAppDelegate sharedAppDelegate] getRequestTimeout]
                  completionBlock:^(id pVersionJson)
          {
-             if (!pVersionJson)
-             {
-                 pVersionJson = [self loadNativeVersionJson];
-             }
-             resolve(pVersionJson);
-         }];
+            if (!pVersionJson)
+            {
+                pVersionJson = [self loadNativeVersionJson];
+            }
+            resolve(pVersionJson);
+        }];
 #endif
     })];
 #else
@@ -161,11 +162,10 @@
     //  不检测更新
     return [WsPromise resolve:@{}];
 #endif  //  kAppCheckUpdate
-
 }
 
 //  从bundle加载version.json
-- (NSDictionary*)loadBundleVersionJson
++ (NSDictionary*)loadBundleVersionJson
 {
     NSString* bundlePath = [NSBundle mainBundle].resourcePath;
     NSString* fullPathInApp = [NSString stringWithFormat:@"%@/%@/%@", bundlePath, kAppStaticDir, kAppCacheNameVersionJsonByVer];
@@ -183,7 +183,7 @@
 }
 
 //  从服务器加载version.json失败后则加载本地等version.json（app内部或cache缓存内）
-- (NSDictionary*)loadNativeVersionJson
++ (NSDictionary*)loadNativeVersionJson
 {
     NSString* pCacheVersionFilename = [OrgUtils makeFullPathByVerStorage:kAppCacheNameVersionJsonByVer];
     NSDictionary* pCacheVersionJson = [MySecurityFileMgr loadDicSecFile:pCacheVersionFilename];
@@ -195,33 +195,14 @@
 
 - (void)_onLoadVersionJsonFinish:(NSDictionary*)pConfig
 {
-    //  检测app是否可以更新
-    if (pConfig && [pConfig count] > 0) {
-        NSString* pNativeVersion = [NativeAppDelegate appShortVersion];
-        NSString* pNewestVersion = [pConfig objectForKey:@"version"];
-        if (pNewestVersion)
-        {
-            NSInteger ret = [OrgUtils compareVersion:pNewestVersion other:pNativeVersion];
-            if (ret > 0)
-            {
-                //  提示更新
-                NSString* infoKey;
-                if ([NativeAppDelegate sharedAppDelegate].isLanguageCN){
-                    infoKey = @"newVersionInfo";
-                }else{
-                    infoKey = @"newVersionInfoEn";
-                }
-                [self showAppUpdateWindow:[pConfig objectForKey:infoKey]
-                                      url:[pConfig objectForKey:@"appURL"]
-                              forceUpdate:[[pConfig objectForKey:@"force"] boolValue]];
-                
-                return;
-            }
-        }
+    BOOL bFoundNewVersion = [VcUtils processCheckAppVersionResponsed:pConfig remind_later_callback:^{
+        //  有新版本，但稍后提醒。则直接启动。
+        [self _enterToMain];
+    }];
+    if (!bFoundNewVersion) {
+        //  无新版本，直接启动。
+        [self _enterToMain];
     }
-    
-    //  没更新则直接启动
-    [self _enterToMain];
 }
 
 /**
@@ -231,27 +212,6 @@
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:kBtsAppEventInitDone object:nil userInfo:nil];
     [[NativeAppDelegate sharedAppDelegate] closeLaunchWindow];
-}
-
-/**
- *  (private) 提示app更新
- */
-- (void)showAppUpdateWindow:(NSString*)message url:(NSString*)url forceUpdate:(BOOL)forceUpdate
-{
-    NSArray* otherButtons = nil;
-    if (!forceUpdate){
-        otherButtons = [NSArray arrayWithObject:NSLocalizedString(@"kRemindMeLatter", @"稍后提醒")];
-    }
-    [[UIAlertViewManager sharedUIAlertViewManager] showMessageEx:message
-                                                       withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
-                                                    cancelButton:NSLocalizedString(@"kUpgradeNow", @"立即升级")
-                                                    otherButtons:otherButtons
-                                                      completion:^(NSInteger buttonIndex)
-     {
-         if (buttonIndex == 0){
-             [OrgUtils safariOpenURL:url];
-         }
-     }];
 }
 
 /**

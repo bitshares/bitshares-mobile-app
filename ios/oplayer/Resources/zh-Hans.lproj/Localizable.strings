@@ -1533,6 +1533,7 @@
 "kSettingEx" = "设置";
 "setting_theme" = "主题风格";
 "setting_apinode" = "接入点";
+"setting_version" = "版本";
 "kThemeNameBlue" = "静谧蓝";
 "kThemeNameWhite" = "珍珠白";
 "kNormalCellBtnLogin" = "登录";
