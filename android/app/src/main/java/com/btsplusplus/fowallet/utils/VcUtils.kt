@@ -1,14 +1,8 @@
 package com.btsplusplus.fowallet.utils
 
 import android.app.Activity
-import bitshares.Promise
-import bitshares.btsppLogCustom
-import bitshares.jsonArrayfrom
-import bitshares.xmlstring
-import com.btsplusplus.fowallet.R
-import com.btsplusplus.fowallet.ViewMask
-import com.btsplusplus.fowallet.goToWebView
-import com.btsplusplus.fowallet.showToast
+import bitshares.*
+import com.btsplusplus.fowallet.*
 import com.fowallet.walletcore.bts.ChainObjectManager
 import org.json.JSONArray
 import org.json.JSONObject
@@ -72,5 +66,50 @@ class VcUtils {
             }
         }
 
+        /**
+         *  (public) 处理响应 - 检测APP版本信息数据返回。有新版本返回 YES，否新版本返回 NO。
+         */
+        fun processCheckAppVersionResponsed(ctx: Activity, pConfig: JSONObject?, remind_later_callback:(()->Unit)?): Boolean {
+            if (pConfig != null) {
+                val pNativeVersion = Utils.appVersionName()
+                val pNewestVersion = pConfig.optString("version", "")
+                if (pNewestVersion != "") {
+                    val ret = Utils.compareVersion(pNewestVersion, pNativeVersion)
+                    if (ret > 0) {
+                        //  有更新
+                        var message = pConfig.optString(ctx.resources.getString(R.string.launchTipVersionKey), "")
+                        if (message == "") {
+                            message = String.format(ctx.resources.getString(R.string.launchTipDefaultNewVersion), pNewestVersion)
+                        }
+                        _showAppUpdateWindow(ctx, message, pConfig.getString("appURL"), pConfig.getString("force").toInt() != 0, remind_later_callback)
+                        //  有新版本
+                        return true
+                    }
+                }
+            }
+            //  无新版本
+            return false
+        }
+
+        /**
+         *  (private) 询问 - 是否更新版本
+         */
+        private fun _showAppUpdateWindow(ctx: Activity, message: String, url: String, forceUpdate: Boolean, remind_later_callback:(()->Unit)?) {
+            var btn_cancel: String? = null
+            if (!forceUpdate) {
+                btn_cancel = ctx.resources.getString(R.string.kRemindMeLatter)
+            }
+            UtilsAlert.showMessageConfirm(ctx, ctx.resources.getString(R.string.kWarmTips), message, btn_ok = ctx.resources.getString(R.string.kUpgradeNow), btn_cancel = btn_cancel).then {
+                if (it != null && it as Boolean) {
+                    //  立即升级
+                    ctx.openURL(url)
+                } else {
+                    //  稍后提醒
+                    if (remind_later_callback != null) {
+                        remind_later_callback()
+                    }
+                }
+            }
+        }
     }
 }

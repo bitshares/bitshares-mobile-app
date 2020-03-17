@@ -97,9 +97,9 @@
     <string name="kVcRankCurrentFeedPrice">当前喂价</string>
     <string name="kVcTipsNoCallOrder">还没有用户进行抵押</string>
     <string name="kVcRankRatio">抵押率 </string>
-    <string name="kVcRankCallPrice">强平触发价 </string>
-    <string name="kVcRankColl">抵押</string>
-    <string name="kVcRankDebt">借入</string>
+    <string name="kVcRankCallPrice">强平触发价</string>
+    <string name="kVcRankColl">抵押物</string>
+    <string name="kVcRankDebt">借款金额</string>
     <!-- 喂价详情界面 -->
     <string name="kVcFeedCurrentFeedPrice">当前喂价</string>
     <string name="kVcFeedWitnessName">见证人</string>
@@ -235,6 +235,26 @@
     <string name="kVcPermissionAddOneDoneTipsInvalidAuthority">请输入有效的账号或公钥。</string>
     <string name="kVcPermissionAddOneDoneTipsInvalidWeight">请输入有效的权重值，范围 1 - 65535。</string>
     <string name="kVcPermissionAddOneDontTipsCantAddSelf">不能添加自身账号。</string>
+    <!-- 修改密码 -->
+    <string name="kEditPasswordBtnEntry">修改密码</string>
+    <string name="kEditPasswordCellTitleYourNewPassword">您的新密码</string>
+    <string name="kEditPasswordSwitchToEnPassword">切换英文密码</string>
+    <string name="kEditPasswordSwitchToZhPassword">切换中文密码</string>
+    <string name="kEditPasswordBtnNext">下一步</string>
+    <string name="kEditPasswordUiSecTips">【温馨提示】\n请勿复制、拍照、截图。\n请使用纸笔按照从左到右、从上到下的顺序依次记录以上 %s 个字符组成的密码，并妥善保存。丢失后将无法找回。</string>
+    <string name="kEditPasswordCellTitleCurrAccountName">当前账号</string>
+    <string name="kEditPasswordCellTitleVerifyPassword">验证密码</string>
+    <string name="kEditPasswordCellPlaceholderVerifyPassword">请输入上一步生成的密码</string>
+    <string name="kEditPasswordBtnSubmmit">修改</string>
+    <string name="kEditPasswordCellTitleEditRange">修改范围</string>
+    <string name="kEditPasswordCellValueEditRangeOwnerAndActive">账号和资金权限</string>
+    <string name="kEditPasswordCellValueEditRangeOnlyActive">仅资金权限</string>
+    <string name="kEditPasswordCellValueEditRangeOnlyOwner">仅账号权限</string>
+    <string name="kEditPasswordEditRangeListOwnerAndActive">修改账号和资金权限</string>
+    <string name="kEditPasswordEditRangeListOnlyActive">仅修改资金权限</string>
+    <string name="kEditPasswordEditRangeListOnlyOwner">仅修改账号权限</string>
+    <string name="kEditPasswordSubmitTipsConfirmFailed">密码验证失败，请重新输入。</string>
+    <string name="kEditPasswordSubmitSecondTipsAsk">请再次确认您已经保存好新的密码并且保存到了安全的地方。是否继续修改密码？</string>
     <!-- 登录&注册&备份 -->
     <string name="kFmtConditionContains2UpperLettersNonConsecutive">必须包含2个以上且不连续的大写字母</string>
     <string name="kFmtConditioncontainsUpperLetters">必须包含大写字母</string>
@@ -802,12 +822,37 @@
     <!-- 设置界面 -->
     <string name="setting_language">语言</string>
     <string name="setting_currency">计价方式</string>
+    <string name="kSettingVersionTipsNewest">当前已经是最新版本。</string>
     <string name="kSettingCurrencyNameCNY">人民币</string>
     <string name="kSettingCurrencyNameUSD">美元</string>
     <string name="kSettingCurrencyNameEUR">欧元</string>
     <string name="kSettingCurrencyNameJPY">日元</string>
     <string name="kSettingCurrencyNameKRW">韩元</string>
     <string name="kSettingCurrencyNameBTS">比特股核心资产</string>
+    <string name="kSettingApiCellValueRandom">自动选择</string>
+    <string name="kSettingApiInternalNodeBTSPP">中国 - 杭州 (BTS++)</string>
+    <string name="kSettingApiInternalNodeAbit">美国（abit）</string>
+    <string name="kSettingApiInternalNodeGDEX">中国 - 上海（GDEX）</string>
+    <string name="kSettingApiInternalNodeBTSAI">中国 - 北京（bts.ai）</string>
+    <string name="kSettingApiRandomCell">自动选择节点</string>
+    <string name="kSettingApiCellCustomFlag">自定义</string>
+    <string name="kSettingApiOpSetAsCurrent">设置为当前节点</string>
+    <string name="kSettingApiOpRemoveNode">移除节点</string>
+    <string name="kSettingApiOpCopyURL">复制链接</string>
+    <string name="kSettingApiSwitchTips">正在切换节点…</string>
+    <string name="kSettingApiSwitchFailed">连接当前节点失败，请稍后再试。</string>
+    <string name="kSettingApiRemoveInUsing">使用中，请先切换到其他节点。</string>
+    <string name="kSettingNewApiCellLabelName">节点名称</string>
+    <string name="kSettingNewApiCellPlaceholderName">自定义节点名称</string>
+    <string name="kSettingNewApiCellLabelURL">节点地址</string>
+    <string name="kSettingNewApiCellPlaceholderURL">节点URL地址</string>
+    <string name="kSettingNewApiSubmitBtn">确定</string>
+    <string name="kSettingNewApiSubmitTipsPleaseInputNodeName">请输入节点名称。</string>
+    <string name="kSettingNewApiSubmitTipsPleaseInputNodeURL">请输入有效的节点地址。</string>
+    <string name="kSettingNewApiSubmitTipsURLAlreadyExist">当前节点已存在。</string>
+    <string name="kSettingNewApiSubmitTipsOK">添加成功。</string>
+    <string name="kSettingNewApiSubmitTipsConnectedFailed">连接失败，请重新检测URL有效性。</string>
+    <string name="kSettingNewApiSubmitTipsNotBitsharesMainnetNode">该节点不是比特股主网节点，请重新输入。</string>
     <!-- 各种VC标题栏名字 -->
     <string name="kVcTitleLogin">登录</string>
     <string name="kVcTitleImportAccount">导入账号</string>
@@ -815,6 +860,8 @@
     <string name="kVcTitleChangePermission">修改权限</string>
     <string name="kVcTitlePermissionAddAuthority">添加管理者</string>
     <string name="kVcTitleAddOneSearchAccount">搜索账号</string>
+    <string name="kVcTitleEditPassword">修改密码</string>
+    <string name="kVcTitleEditPasswordConfirm">验证密码</string>
     <string name="kVcTitleQrScan">扫一扫</string>
     <string name="kVcTitleQrScanResultNormal">扫描结果</string>
     <string name="kVcTitleQrScanResultPriKey">导入私钥</string>
@@ -834,6 +881,7 @@
     <string name="kVcTitleSelectProxy">选择代理账号</string>
     <string name="kVcTitleTheme">主题风格</string>
     <string name="kVcTitleApiNode">接入点</string>
+    <string name="kVcTitleNewApiNode">添加节点</string>
     <string name="kVcTitleLanguage">语言</string>
     <string name="kVcTitleOrderManagement">订单管理</string>
     <string name="kVcTitleMyBalance">我的资产</string>
@@ -1432,7 +1480,7 @@
     <string name="kNormalErrorInvalidArgs">无效参数。</string>
     <string name="kAppName">比特股</string>
     <string name="kAccount">账号</string>
-    <string name="kAboutMainDesc">\n比特股移动端钱包是基于石墨烯技术，从产品体验出发，采用原生技术开发的一款可媲美一流中心化交易所的去中心化交易所（DEX）产品。\n\n联系我们\n微信：bts-pp\n邮箱：contactsbtsplusplus.com\n电报：https://t.me/btsplusplus\n官网：https://btspp.io\n</string>
+    <string name="kAboutMainDesc">\n比特股移动端钱包是基于石墨烯技术，从产品体验出发，采用原生技术开发的一款可媲美一流中心化交易所的去中心化交易所（DEX）产品。\n\n联系我们\n微信：bts-pp\n邮箱：contact@btsplusplus.com\n电报：https://t.me/btsplusplus\n官网：https://btspp.io\n</string>
     <string name="kAboutChannelAppStore">(商店版 &amp; 渠道 %s)</string>
     <string name="kAboutChannelWebsite">(官网版 &amp; 渠道 %s)</string>
     <string name="kAboutDebugVersion">(调试版)</string>
@@ -1440,6 +1488,7 @@
     <string name="kSettingEx">设置</string>
     <string name="setting_theme">主题风格</string>
     <string name="setting_apinode">接入点</string>
+    <string name="setting_version">版本</string>
     <string name="kThemeNameBlue">静谧蓝</string>
     <string name="kThemeNameWhite">珍珠白</string>
     <string name="kNormalCellBtnLogin">登录</string>
@@ -1502,6 +1551,7 @@
     <string name="kGPErrorApiNodeVersionTooLow">当前API节点版本太低。</string>
     <!-- 特殊用途字符串KEY -->
     <string name="serverWssLangKey">cn</string>
+    <string name="kEditPasswordDefaultPasswordLang">zh</string>
     <string name="appDepositWithdrawDefaultGateway">GDEX</string>
     <string name="btsaiLangKey">cn</string>
     <string name="enableOtcEntry">1</string>
