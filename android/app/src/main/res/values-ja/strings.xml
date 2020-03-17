@@ -39,19 +39,19 @@
     <string name="kDebtTipTitleFeedAndCallPrice">フィード価格と強制単価</string>
     <string name="kDebtTipTitleWhatIsRatio">何がマージン率？</string>
     <string name="kDebtTipTitleWhatIsTargetRatio">何が目标マージン率？</string>
-    <string name="kDebtTipNetworkErrorPleaseRefresh">网络异常，请重新刷新界面。</string>
-    <string name="kDebtTipAssetHasGlobalSettled">该资产已经全局清算，不可调整债仓。</string>
-    <string name="kDebtTipAssetNoValidFeedData">该资产没有有效的喂价，不可调整债仓。</string>
-    <string name="kDebtTipCollRatioCannotLessThanMCR">抵押率不能低于 %s。</string>
-    <string name="kDebtTipCannotAdjustMoreLowerRatio">您已经处于强制平仓状态，不能降低抵押率。</string>
+    <string name="kDebtTipNetworkErrorPleaseRefresh">ネットワークに異常があります。インターフェースを再度更新してください。</string>
+    <string name="kDebtTipAssetHasGlobalSettled">資産は世界的に清算されており、位置を調整することはできません。</string>
+    <string name="kDebtTipAssetNoValidFeedData">アセットには有効なフィードデータがなく、位置を調整できません。</string>
+    <string name="kDebtTipCollRatioCannotLessThanMCR">比率は %s より低くすることはできません。</string>
+    <string name="kDebtTipCannotAdjustMoreLowerRatio">すでに強制販売中のため、比率を下げることはできません。</string>
     <string name="kDebtTipValueAndAmountNotChange">借金の数量はと物を抵当にして変化が発生していません。</string>
     <string name="kDebtTipCollNotEnough">担保残高が不足しています，数量を調整してください。。</string>
     <string name="kDebtTipAvailableNotEnough">%s残高は不足して、調整して数量を返済してください。</string>
     <string name="kDebtTipRatioTooLow">あなたのマージン率は %s，未満であり、許可されません。</string>
     <string name="kDebtTipTxUpdatePositionFullOK">ポジションを更新。</string>
     <string name="kDebtTipTxUpdatePositionOK">ポジションを更新，しかしネットワークが異常で、少しの後でまた試みてください。</string>
-    <string name="kDebtWarmTips">【暖かいヒント】]\n1、フィード価格が強制単価まで下がると、負債を返済するためにシステムが自動的に資産を売却します。 リスクを管理するように注意してください。 \n2、借金がロックされると、担保によってマージン率が変化します。 \n3、マージン率がロックされると、担保によって借金が変化します。</string>
-    <string name="kDebtWarmTipsForPM">【温馨提示】\n当前资产为预测市场资产。借款金额和抵押物数量恒定为 1:1。</string>
+    <string name="kDebtWarmTips">【暖かいヒント】\n1、フィード価格が強制単価まで下がると、負債を返済するためにシステムが自動的に資産を売却します。 リスクを管理するように注意してください。 \n2、借金がロックされると、担保によってマージン率が変化します。 \n3、マージン率がロックされると、担保によって借金が変化します。</string>
+    <string name="kDebtWarmTipsForPM">【暖かいヒント】\n現在の資産は、予測される市場資産です。 借り入れの量と担保の量は1：1で一定です。</string>
     <!-- 服务界面 -->
     <string name="kServicesCellLabelQrScan">スキャン</string>
     <string name="kServicesCellLabelTransfer">送金</string>
@@ -97,7 +97,7 @@
     <string name="kVcRankCurrentFeedPrice">現在のフィード価格</string>
     <string name="kVcTipsNoCallOrder">まだユーザーが担保を入れていない</string>
     <string name="kVcRankRatio">担保比率 </string>
-    <string name="kVcRankCallPrice">強制単価 </string>
+    <string name="kVcRankCallPrice">強制単価</string>
     <string name="kVcRankColl">担保</string>
     <string name="kVcRankDebt">借金</string>
     <!-- 喂价详情界面 -->
@@ -235,6 +235,26 @@
     <string name="kVcPermissionAddOneDoneTipsInvalidAuthority">有効なアカウントまたは公開キーを入力してください。</string>
     <string name="kVcPermissionAddOneDoneTipsInvalidWeight">有効なウェイトを入力してください。 範囲1-65535。</string>
     <string name="kVcPermissionAddOneDontTipsCantAddSelf">自分のアカウントを追加できません。</string>
+    <!-- 修改密码 -->
+    <string name="kEditPasswordBtnEntry">パスワードを変更する</string>
+    <string name="kEditPasswordCellTitleYourNewPassword">新しいパスワード</string>
+    <string name="kEditPasswordSwitchToEnPassword">英語のパスワード</string>
+    <string name="kEditPasswordSwitchToZhPassword">中国語のパスワード</string>
+    <string name="kEditPasswordBtnNext">次のページ</string>
+    <string name="kEditPasswordUiSecTips">[リマインダー] \nコピー、写真の撮影、スクリーンショットの撮影はしないでください。 \nペンと紙を使用して、上記の %s 文字で構成されるパスワードを左から右、上から下の順に記録し、安全な場所に保管してください。 一度失われると、取得できません。</string>
+    <string name="kEditPasswordCellTitleCurrAccountName">現在のアカウント</string>
+    <string name="kEditPasswordCellTitleVerifyPassword">パスワードを確認</string>
+    <string name="kEditPasswordCellPlaceholderVerifyPassword">前のステップのパスワードを入力してください</string>
+    <string name="kEditPasswordBtnSubmmit">変更する</string>
+    <string name="kEditPasswordCellTitleEditRange">範囲</string>
+    <string name="kEditPasswordCellValueEditRangeOwnerAndActive">所有者とアクティブな権限</string>
+    <string name="kEditPasswordCellValueEditRangeOnlyActive">アクティブな権限のみ</string>
+    <string name="kEditPasswordCellValueEditRangeOnlyOwner">所有者な権限のみ</string>
+    <string name="kEditPasswordEditRangeListOwnerAndActive">所有者とアクティブな権限</string>
+    <string name="kEditPasswordEditRangeListOnlyActive">アクティブな権限のみ</string>
+    <string name="kEditPasswordEditRangeListOnlyOwner">所有者な権限のみ</string>
+    <string name="kEditPasswordSubmitTipsConfirmFailed">パスワードの確認に失敗しました。再入力してください。</string>
+    <string name="kEditPasswordSubmitSecondTipsAsk">新しいパスワードを保存し、安全な場所に保存したことを再確認してください。 パスワードの変更を続けますか？</string>
     <!-- 登录&注册&备份 -->
     <string name="kFmtConditionContains2UpperLettersNonConsecutive">2つ以上の連続しない大文字を含む</string>
     <string name="kFmtConditioncontainsUpperLetters">大文字を含む</string>
@@ -802,12 +822,37 @@
     <!-- 设置界面 -->
     <string name="setting_language">言語</string>
     <string name="setting_currency">算定方式</string>
+    <string name="kSettingVersionTipsNewest">現在、最新バージョンです。</string>
     <string name="kSettingCurrencyNameCNY">人民元</string>
     <string name="kSettingCurrencyNameUSD">ドル</string>
     <string name="kSettingCurrencyNameEUR">ユーロ</string>
     <string name="kSettingCurrencyNameJPY">円</string>
     <string name="kSettingCurrencyNameKRW">ウォン</string>
     <string name="kSettingCurrencyNameBTS">BitSharesコア資産</string>
+    <string name="kSettingApiCellValueRandom">自動選択</string>
+    <string name="kSettingApiInternalNodeBTSPP">中国 - 杭州（BTS ++）</string>
+    <string name="kSettingApiInternalNodeAbit">米国（abit）</string>
+    <string name="kSettingApiInternalNodeGDEX">中国 - 上海（GDEX）</string>
+    <string name="kSettingApiInternalNodeBTSAI">中国 - 北京（bts.ai）</string>
+    <string name="kSettingApiRandomCell">自動</string>
+    <string name="kSettingApiCellCustomFlag">カスタム</string>
+    <string name="kSettingApiOpSetAsCurrent">現在のノードとして設定</string>
+    <string name="kSettingApiOpRemoveNode">ノードを削除</string>
+    <string name="kSettingApiOpCopyURL">リンクをコピー</string>
+    <string name="kSettingApiSwitchTips">ノードの切り替え…</string>
+    <string name="kSettingApiSwitchFailed">接続に失敗しました。しばらくしてからもう一度お試しください。</string>
+    <string name="kSettingApiRemoveInUsing">使用中は、最初に別のノードに切り替えてください。</string>
+    <string name="kSettingNewApiCellLabelName">ノード名</string>
+    <string name="kSettingNewApiCellPlaceholderName">ノード名を入力してください</string>
+    <string name="kSettingNewApiCellLabelURL">ノードURL</string>
+    <string name="kSettingNewApiCellPlaceholderURL">ノードのURLを入力してください</string>
+    <string name="kSettingNewApiSubmitBtn">OK</string>
+    <string name="kSettingNewApiSubmitTipsPleaseInputNodeName">ノード名を入力してください。</string>
+    <string name="kSettingNewApiSubmitTipsPleaseInputNodeURL">有効なノードURLを入力してください。</string>
+    <string name="kSettingNewApiSubmitTipsURLAlreadyExist">現在のノードは既に存在します。</string>
+    <string name="kSettingNewApiSubmitTipsOK">正常に追加されました。</string>
+    <string name="kSettingNewApiSubmitTipsConnectedFailed">接続に失敗しました。URLの有効性をもう一度確認してください。</string>
+    <string name="kSettingNewApiSubmitTipsNotBitsharesMainnetNode">このノードはBitSharesメインネットワークノードではありません。もう一度入力してください。</string>
     <!-- 各种VC标题栏名字 -->
     <string name="kVcTitleLogin">ログイン</string>
     <string name="kVcTitleImportAccount">アカウント導入</string>
@@ -815,6 +860,8 @@
     <string name="kVcTitleChangePermission">変更権限</string>
     <string name="kVcTitlePermissionAddAuthority">権限を追加する</string>
     <string name="kVcTitleAddOneSearchAccount">アカウントを検索</string>
+    <string name="kVcTitleEditPassword">パスワードを変更する</string>
+    <string name="kVcTitleEditPasswordConfirm">パスワードを確認</string>
     <string name="kVcTitleQrScan">スキャン</string>
     <string name="kVcTitleQrScanResultNormal">スキャン結果</string>
     <string name="kVcTitleQrScanResultPriKey">インポートキー</string>
@@ -834,6 +881,7 @@
     <string name="kVcTitleSelectProxy">代理アカウントを選択します</string>
     <string name="kVcTitleTheme">テーマの風格</string>
     <string name="kVcTitleApiNode">APIサーバー</string>
+    <string name="kVcTitleNewApiNode">ノードを追加</string>
     <string name="kVcTitleLanguage">言語</string>
     <string name="kVcTitleOrderManagement">注文管理</string>
     <string name="kVcTitleMyBalance">私の資産</string>
@@ -1432,7 +1480,7 @@
     <string name="kNormalErrorInvalidArgs">無効なパラメーター。</string>
     <string name="kAppName">BitShares</string>
     <string name="kAccount">アカウント</string>
-    <string name="kAboutMainDesc">\nBitSharesモバイルサイドのウオレットは石墨のアルケン技術に基づくので、製品から出発を体験して、採用します原生の技術開発の1モデル匹敵する一流センター化取る引く所のDEX。\n\n私達に連絡します\nWeChat：bts-pp\nE-mail：contactsbtsplusplus.com\nTelegram：https://t.me/btsplusplus\n公式サイト：https://btspp.io\n</string>
+    <string name="kAboutMainDesc">\nBitSharesモバイルサイドのウオレットは石墨のアルケン技術に基づくので、製品から出発を体験して、採用します原生の技術開発の1モデル匹敵する一流センター化取る引く所のDEX。\n\n私達に連絡します\nWeChat：bts-pp\nE-mail：contact@btsplusplus.com\nTelegram：https://t.me/btsplusplus\n公式サイト：https://btspp.io\n</string>
     <string name="kAboutChannelAppStore">(商店版 &amp; 渠道 %s)</string>
     <string name="kAboutChannelWebsite">(官网版 &amp; 渠道 %s)</string>
     <string name="kAboutDebugVersion">(调试版)</string>
@@ -1440,6 +1488,7 @@
     <string name="kSettingEx">設定</string>
     <string name="setting_theme">テーマの風格</string>
     <string name="setting_apinode">APIサーバー</string>
+    <string name="setting_version">バージョン</string>
     <string name="kThemeNameBlue">紺色</string>
     <string name="kThemeNameWhite">真珠白</string>
     <string name="kNormalCellBtnLogin">ログイン</string>
@@ -1502,6 +1551,7 @@
     <string name="kGPErrorApiNodeVersionTooLow">現在のAPIノードのバージョンが低すぎます。</string>
     <!-- 特殊用途字符串KEY -->
     <string name="serverWssLangKey">cn</string>
+    <string name="kEditPasswordDefaultPasswordLang">en</string>
     <string name="appDepositWithdrawDefaultGateway">GDEX</string>
     <string name="btsaiLangKey">en</string>
     <string name="enableOtcEntry">0</string>

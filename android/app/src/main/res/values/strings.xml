@@ -39,11 +39,11 @@
     <string name="kDebtTipTitleFeedAndCallPrice">Feed &amp; Call price</string>
     <string name="kDebtTipTitleWhatIsRatio">What is the ratio?</string>
     <string name="kDebtTipTitleWhatIsTargetRatio">What is the target ratio?</string>
-    <string name="kDebtTipNetworkErrorPleaseRefresh">网络异常，请重新刷新界面。</string>
-    <string name="kDebtTipAssetHasGlobalSettled">该资产已经全局清算，不可调整债仓。</string>
-    <string name="kDebtTipAssetNoValidFeedData">该资产没有有效的喂价，不可调整债仓。</string>
-    <string name="kDebtTipCollRatioCannotLessThanMCR">抵押率不能低于 %s。</string>
-    <string name="kDebtTipCannotAdjustMoreLowerRatio">您已经处于强制平仓状态，不能降低抵押率。</string>
+    <string name="kDebtTipNetworkErrorPleaseRefresh">The network is abnormal. Please refresh the interface again.</string>
+    <string name="kDebtTipAssetHasGlobalSettled">The asset has been global settled and cannot update position.</string>
+    <string name="kDebtTipAssetNoValidFeedData">The asset has no feed data and and cannot update position </string>
+    <string name="kDebtTipCollRatioCannotLessThanMCR">The ratio cannot be lower than %s.</string>
+    <string name="kDebtTipCannotAdjustMoreLowerRatio">You are already in a forced sale and you cannot reduce the ratio.</string>
     <string name="kDebtTipValueAndAmountNotChange">The amount of borrowings and collateral did not change.</string>
     <string name="kDebtTipCollNotEnough">The collateral balance is insufficient.</string>
     <string name="kDebtTipAvailableNotEnough">%s balance is insufficient, please adjust the amount of repayment.</string>
@@ -51,7 +51,7 @@
     <string name="kDebtTipTxUpdatePositionFullOK">Update position successfully.</string>
     <string name="kDebtTipTxUpdatePositionOK">Update position successfully, but the refresh failed. Please try again later.</string>
     <string name="kDebtWarmTips">[Tips]\n1. When the feed price drops to the call price, the system will automatically sell your collateral assets for debt repayment. Please pay attention to adjusting the ratio control risks. \n2. When the debt field is locked, the ratio will change with the collateral. \n3. When the ratio field is locked, the debt will change with the collateral.</string>
-    <string name="kDebtWarmTipsForPM">【温馨提示】\n当前资产为预测市场资产。借款金额和抵押物数量恒定为 1:1。</string>
+    <string name="kDebtWarmTipsForPM">[Tips] \nThe current asset is a predicted market asset. The amount of borrowing and collateral is constant at 1: 1.</string>
     <!-- 服务界面 -->
     <string name="kServicesCellLabelQrScan">Scan QR code</string>
     <string name="kServicesCellLabelTransfer">Transfer</string>
@@ -97,7 +97,7 @@
     <string name="kVcRankCurrentFeedPrice">Feed price</string>
     <string name="kVcTipsNoCallOrder">No data</string>
     <string name="kVcRankRatio">Ratio </string>
-    <string name="kVcRankCallPrice">Call price </string>
+    <string name="kVcRankCallPrice">Call price</string>
     <string name="kVcRankColl">Collateral</string>
     <string name="kVcRankDebt">Debt</string>
     <!-- 喂价详情界面 -->
@@ -235,6 +235,26 @@
     <string name="kVcPermissionAddOneDoneTipsInvalidAuthority">Please enter a valid account or public key.</string>
     <string name="kVcPermissionAddOneDoneTipsInvalidWeight">Please enter a valid weight value. Range 1 - 65535.</string>
     <string name="kVcPermissionAddOneDontTipsCantAddSelf">Can't add your own account.</string>
+    <!-- 修改密码 -->
+    <string name="kEditPasswordBtnEntry">Change password</string>
+    <string name="kEditPasswordCellTitleYourNewPassword">Your new password</string>
+    <string name="kEditPasswordSwitchToEnPassword">English password</string>
+    <string name="kEditPasswordSwitchToZhPassword">Chinese password</string>
+    <string name="kEditPasswordBtnNext">Next</string>
+    <string name="kEditPasswordUiSecTips">[Reminder] \nDo not copy, take photos, or take screenshots. \nPlease use a pen and paper to record the password consisting of the above %s characters in order from left to right and from top to bottom, and keep it in a safe place. Once lost, it cannot be retrieved.</string>
+    <string name="kEditPasswordCellTitleCurrAccountName">Account</string>
+    <string name="kEditPasswordCellTitleVerifyPassword">Confirm password</string>
+    <string name="kEditPasswordCellPlaceholderVerifyPassword">Enter the password from the prev step</string>
+    <string name="kEditPasswordBtnSubmmit">OK</string>
+    <string name="kEditPasswordCellTitleEditRange">Range</string>
+    <string name="kEditPasswordCellValueEditRangeOwnerAndActive">Owner and active permissions</string>
+    <string name="kEditPasswordCellValueEditRangeOnlyActive">Only active permission</string>
+    <string name="kEditPasswordCellValueEditRangeOnlyOwner">Only owner permission</string>
+    <string name="kEditPasswordEditRangeListOwnerAndActive">Owner and active permissions</string>
+    <string name="kEditPasswordEditRangeListOnlyActive">Only active permission</string>
+    <string name="kEditPasswordEditRangeListOnlyOwner">Only owner permission</string>
+    <string name="kEditPasswordSubmitTipsConfirmFailed">Password verification failed. Please re-enter.</string>
+    <string name="kEditPasswordSubmitSecondTipsAsk">Please confirm again that you have saved the new password and saved it in a safe place. Continue?</string>
     <!-- 登录&注册&备份 -->
     <string name="kFmtConditionContains2UpperLettersNonConsecutive">Contain more than 2 and non-continuous uppercase letters</string>
     <string name="kFmtConditioncontainsUpperLetters">Contain uppercase letters</string>
@@ -802,12 +822,37 @@
     <!-- 设置界面 -->
     <string name="setting_language">Language</string>
     <string name="setting_currency">Currency</string>
+    <string name="kSettingVersionTipsNewest">It is currently the latest version.</string>
     <string name="kSettingCurrencyNameCNY">Chinese Yuan</string>
     <string name="kSettingCurrencyNameUSD">US Dollar</string>
     <string name="kSettingCurrencyNameEUR">Euro</string>
     <string name="kSettingCurrencyNameJPY">Japanese Yen</string>
     <string name="kSettingCurrencyNameKRW">Korean Won</string>
     <string name="kSettingCurrencyNameBTS">Bitshares Core Asset</string>
+    <string name="kSettingApiCellValueRandom">Automatic</string>
+    <string name="kSettingApiInternalNodeBTSPP">China - Hangzhou (BTS++)</string>
+    <string name="kSettingApiInternalNodeAbit">United States (abit)</string>
+    <string name="kSettingApiInternalNodeGDEX">China - Shanghai (GDEX)</string>
+    <string name="kSettingApiInternalNodeBTSAI">China - Beijing (bts.ai</string>
+    <string name="kSettingApiRandomCell">Automatic</string>
+    <string name="kSettingApiCellCustomFlag">custom</string>
+    <string name="kSettingApiOpSetAsCurrent">Set as current node</string>
+    <string name="kSettingApiOpRemoveNode">Remove node</string>
+    <string name="kSettingApiOpCopyURL">copy url link</string>
+    <string name="kSettingApiSwitchTips">Switching…</string>
+    <string name="kSettingApiSwitchFailed">The connection failed. Please try again later.</string>
+    <string name="kSettingApiRemoveInUsing">In use, please switch to another node first.</string>
+    <string name="kSettingNewApiCellLabelName">Node name</string>
+    <string name="kSettingNewApiCellPlaceholderName">Please enter a node name</string>
+    <string name="kSettingNewApiCellLabelURL">Node url</string>
+    <string name="kSettingNewApiCellPlaceholderURL">Please enter the node URL</string>
+    <string name="kSettingNewApiSubmitBtn">Done</string>
+    <string name="kSettingNewApiSubmitTipsPleaseInputNodeName">Please enter a node name.</string>
+    <string name="kSettingNewApiSubmitTipsPleaseInputNodeURL">Please enter the node URL.</string>
+    <string name="kSettingNewApiSubmitTipsURLAlreadyExist">The current node already exists.</string>
+    <string name="kSettingNewApiSubmitTipsOK">Added successfully.</string>
+    <string name="kSettingNewApiSubmitTipsConnectedFailed">The connection failed. Please check the URL again.</string>
+    <string name="kSettingNewApiSubmitTipsNotBitsharesMainnetNode">This node is not a BitShares main network node, please enter it again.</string>
     <!-- 各种VC标题栏名字 -->
     <string name="kVcTitleLogin">Login</string>
     <string name="kVcTitleImportAccount">Import account</string>
@@ -815,6 +860,8 @@
     <string name="kVcTitleChangePermission">Update permissions</string>
     <string name="kVcTitlePermissionAddAuthority">Add authority</string>
     <string name="kVcTitleAddOneSearchAccount">Search account</string>
+    <string name="kVcTitleEditPassword">Change password</string>
+    <string name="kVcTitleEditPasswordConfirm">Confirm password</string>
     <string name="kVcTitleQrScan">Scan QR code</string>
     <string name="kVcTitleQrScanResultNormal">Scan result</string>
     <string name="kVcTitleQrScanResultPriKey">Import key</string>
@@ -834,6 +881,7 @@
     <string name="kVcTitleSelectProxy">Select proxy</string>
     <string name="kVcTitleTheme">Theme</string>
     <string name="kVcTitleApiNode">API server</string>
+    <string name="kVcTitleNewApiNode">Add api node</string>
     <string name="kVcTitleLanguage">Language</string>
     <string name="kVcTitleOrderManagement">Order management</string>
     <string name="kVcTitleMyBalance">My balance</string>
@@ -1432,7 +1480,7 @@
     <string name="kNormalErrorInvalidArgs">Invalid parameter.</string>
     <string name="kAppName">Bitshares</string>
     <string name="kAccount">Account</string>
-    <string name="kAboutMainDesc">\nBitshares Mobile App is a decentralized exchange (DEX) product based on Bitshares graphene technology, developed from the product experience and developed with native technology comparable to the first-class centralized exchange. \n\nContact us\nWeChat: bts-pp\nE-mail: contactsbtsplusplus.com\nTelegram: https://t.me/btsplusplus\nWebsite: https://btspp.io\n</string>
+    <string name="kAboutMainDesc">\nBitshares Mobile App is a decentralized exchange (DEX) product based on Bitshares graphene technology, developed from the product experience and developed with native technology comparable to the first-class centralized exchange. \n\nContact us\nWeChat: bts-pp\nE-mail: contact@btsplusplus.com\nTelegram: https://t.me/btsplusplus\nWebsite: https://btspp.io\n</string>
     <string name="kAboutChannelAppStore">(AppStore Version &amp; Channel %s)</string>
     <string name="kAboutChannelWebsite">(Website Version &amp; Channel %s)</string>
     <string name="kAboutDebugVersion">(Debug Version)</string>
@@ -1440,6 +1488,7 @@
     <string name="kSettingEx">Setting</string>
     <string name="setting_theme">Theme</string>
     <string name="setting_apinode">API server</string>
+    <string name="setting_version">Version</string>
     <string name="kThemeNameBlue">Quiet blue</string>
     <string name="kThemeNameWhite">Pearl white</string>
     <string name="kNormalCellBtnLogin">Login</string>
@@ -1502,6 +1551,7 @@
     <string name="kGPErrorApiNodeVersionTooLow">The current API node version is too low.</string>
     <!-- 特殊用途字符串KEY -->
     <string name="serverWssLangKey">en</string>
+    <string name="kEditPasswordDefaultPasswordLang">en</string>
     <string name="appDepositWithdrawDefaultGateway">RuDEX</string>
     <string name="btsaiLangKey">en</string>
     <string name="enableOtcEntry">0</string>

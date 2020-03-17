@@ -1,12 +1,11 @@
 package com.btsplusplus.fowallet
 
 import android.os.Bundle
-import bitshares.LangManager
-import bitshares.Promise
-import bitshares.SettingManager
-import bitshares.jsonObjectfromKVS
+import bitshares.*
+import com.btsplusplus.fowallet.utils.VcUtils
 import com.fowallet.walletcore.bts.ChainObjectManager
 import kotlinx.android.synthetic.main.activity_setting.*
+import org.json.JSONObject
 
 class ActivitySetting : BtsppActivity() {
 
@@ -34,8 +33,10 @@ class ActivitySetting : BtsppActivity() {
         // 设置全屏(隐藏状态栏和虚拟导航栏)
         setFullScreen()
 
+        //  事件 - 返回
         layout_back_from_setting.setOnClickListener { onBackClicked(false) }
 
+        //  事件 - 多语言
         layout_language_from_setting.setOnClickListener {
             val saveCurrLangCode = LangManager.sharedLangManager().currLangCode
             val result_promise = Promise()
@@ -48,14 +49,42 @@ class ActivitySetting : BtsppActivity() {
             }
         }
 
+        //  事件 - 计价单位
         layout_currency_from_setting.setOnClickListener { goTo(ActivitySettingCurrency::class.java, true) }
+
+        //  事件 - 版本
+        layout_version.setOnClickListener { onVersionCellClicked() }
+
+        //  事件 - 关于
+        layout_about.setOnClickListener { goTo(ActivityAbout::class.java, true) }
+    }
+
+    /**
+     *  事件 - 当前版本点击
+     */
+    private fun onVersionCellClicked() {
+        val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this).apply { show() }
+        ActivityLaunch.checkAppUpdate().then {
+            mask.dismiss()
+            val pVersionConfig = it as? JSONObject
+            if (VcUtils.processCheckAppVersionResponsed(this, pVersionConfig, null)) {
+                //  ...
+            } else {
+                showToast(resources.getString(R.string.kSettingVersionTipsNewest))
+            }
+            return@then null
+        }
     }
 
     private fun _refreshUI() {
         _refresh_language()
         _refresh_currency()
+        _refresh_version()
     }
 
+    /**
+     * 显示当前语言
+     */
     private fun _refresh_language() {
         label_txt_language.text = LangManager.sharedLangManager().getCurrentLanguageName(this)
     }
@@ -67,5 +96,12 @@ class ActivitySetting : BtsppActivity() {
         val assetSymbol = SettingManager.sharedSettingManager().getEstimateAssetSymbol()
         val currency = ChainObjectManager.sharedChainObjectManager().getEstimateUnitBySymbol(assetSymbol)
         label_txt_currency.text = resources.getString(resources.getIdentifier(currency.getString("namekey"), "string", this.packageName))
+    }
+
+    /**
+     * 显示当前版本
+     */
+    private fun _refresh_version() {
+        label_txt_version.text = String.format("v%s", Utils.appVersionName())
     }
 }

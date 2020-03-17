@@ -15,7 +15,7 @@ class ActivityAbout : BtsppActivity() {
         setFullScreen()
 
         //  draw version
-        val ver = Utils.appVersionName(this)
+        val ver = Utils.appVersionName()
         val appname = R.string.kAppName.xmlstring(this)
         label_txt_icon_version.text = "$appname v$ver"
         label_txt_version.text = "$appname v$ver"

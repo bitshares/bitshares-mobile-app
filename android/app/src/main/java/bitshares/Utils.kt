@@ -498,7 +498,7 @@ class Utils {
         /**
          * 获取APP版本号
          */
-        fun appVersionName(ctx: Context): String {
+        fun appVersionName(): String {
             return BuildConfig.VERSION_NAME
         }
 

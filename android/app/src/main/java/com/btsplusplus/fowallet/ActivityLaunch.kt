@@ -7,6 +7,7 @@ import android.util.DisplayMetrics
 import android.view.View
 import bitshares.*
 import bitshares.serializer.T_Base
+import com.btsplusplus.fowallet.utils.VcUtils
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.answers.Answers
 import com.flurry.android.FlurryAgent
@@ -18,7 +19,26 @@ import java.util.*
 
 class ActivityLaunch : BtsppActivity() {
 
-    private var _appNativeVersion: String = ""
+    companion object {
+        /**
+         *  (public) 检测APP更新数据。
+         */
+        fun checkAppUpdate(): Promise {
+            if (BuildConfig.kAppCheckUpdate) {
+                val p = Promise()
+                val version_url = "https://btspp.io/app/android/${BuildConfig.kAppChannelID}_${Utils.appVersionName()}/version.json?t=${Date().time}"
+                OrgUtils.asyncJsonGet(version_url).then {
+                    p.resolve(it as? JSONObject)
+                    return@then null
+                }.catch {
+                    p.resolve(null)
+                }
+                return p
+            } else {
+                return Promise._resolve(null)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,11 +71,10 @@ class ActivityLaunch : BtsppActivity() {
         }
 
         //  初始化配置
-        _appNativeVersion = Utils.appVersionName(this)
         initCustomConfig()
 
         //  启动日志
-        btsppLogCustom("event_app_start", jsonObjectfromKVS("ver", _appNativeVersion))
+        btsppLogCustom("event_app_start", jsonObjectfromKVS("ver", Utils.appVersionName()))
 
         //  初始化完毕后启动。
         startInit(true)
@@ -66,7 +85,7 @@ class ActivityLaunch : BtsppActivity() {
      */
     private fun startInit(first_init: Boolean) {
         val waitPromise = asyncWait()
-        checkUpdate().then {
+        ActivityLaunch.checkAppUpdate().then {
             val pVersionConfig = it as? JSONObject
             SettingManager.sharedSettingManager().serverConfig = pVersionConfig
             return@then Promise.all(waitPromise, asyncInitBitshares()).then {
@@ -88,40 +107,13 @@ class ActivityLaunch : BtsppActivity() {
      * Version加载完毕
      */
     private fun _onLoadVersionJsonFinish(pConfig: JSONObject?) {
-        if (pConfig != null) {
-            val pNewestVersion = pConfig.optString("version", "")
-            if (pNewestVersion != "") {
-                val ret = Utils.compareVersion(pNewestVersion, _appNativeVersion)
-                if (ret > 0) {
-                    //  有更新
-                    var message = pConfig.optString(resources.getString(R.string.launchTipVersionKey), "")
-                    if (message == "") {
-                        message = String.format(resources.getString(R.string.launchTipDefaultNewVersion), pNewestVersion)
-                    }
-                    _showAppUpdateWindow(message, pConfig.getString("appURL"), pConfig.getString("force").toInt() != 0)
-                    return
-                }
-            }
-        }
-        //  没更新则直接启动
-        _enterToMain()
-    }
-
-    /**
-     *  提示app更新
-     */
-    private fun _showAppUpdateWindow(message: String, url: String, forceUpdate: Boolean) {
-        var btn_cancel: String? = null
-        if (!forceUpdate) {
-            btn_cancel = resources.getString(R.string.kRemindMeLatter)
-        }
-        UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kWarmTips), message, btn_ok = resources.getString(R.string.kUpgradeNow), btn_cancel = btn_cancel).then {
-            //  进入APP
+        val bFoundNewVersion = VcUtils.processCheckAppVersionResponsed(this, pConfig) {
+            //  有新版本，但稍后提醒。则直接启动。
             _enterToMain()
-            //  立即升级：打开下载。
-            if (it != null && it as Boolean) {
-                openURL(url)
-            }
+        }
+        if (!bFoundNewVersion) {
+            //  无新版本，直接启动。
+            _enterToMain()
         }
     }
 
@@ -139,25 +131,6 @@ class ActivityLaunch : BtsppActivity() {
         val intent = Intent()
         intent.setClass(this, homeClass)
         startActivity(intent)
-    }
-
-    /**
-     * 检测更新
-     */
-    private fun checkUpdate(): Promise {
-        if (BuildConfig.kAppCheckUpdate) {
-            val p = Promise()
-            val version_url = "https://btspp.io/app/android/${BuildConfig.kAppChannelID}_$_appNativeVersion/version.json?t=${Date().time}"
-            OrgUtils.asyncJsonGet(version_url).then {
-                p.resolve(it as? JSONObject)
-                return@then null
-            }.catch {
-                p.resolve(null)
-            }
-            return p
-        } else {
-            return Promise._resolve(null)
-        }
     }
 
     /**
