@@ -417,7 +417,8 @@
                 }
                 [self showAppUpdateWindow:[pConfig objectForKey:infoKey]
                                       url:[pConfig objectForKey:@"appURL"]
-                              forceUpdate:[[pConfig objectForKey:@"force"] boolValue] remind_later_callback:remind_later_callback];
+                              forceUpdate:[[pConfig objectForKey:@"force"] boolValue]
+                    remind_later_callback:remind_later_callback];
                 //  有新版本
                 return YES;
             }

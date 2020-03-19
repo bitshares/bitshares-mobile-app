@@ -860,6 +860,7 @@
 /* 设置界面 */
 "setting_language" = "言語";
 "setting_currency" = "算定方式";
+"kSettingVersionTipsNewest" = "現在、最新バージョンです。";
 "kSettingCurrencyNameCNY" = "人民元";
 "kSettingCurrencyNameUSD" = "ドル";
 "kSettingCurrencyNameEUR" = "ユーロ";
@@ -1512,12 +1513,14 @@
 "kOtcInputSubmitTipTotalGreatMaxLimit" = "交易金额不能大于单笔最大限额。";//TODO:
 
 /* 交易部分字符串 */
-"kTxBlockDataError" = "区块数据异常。";//TODO:
+"kTxBlockDataError" = "ブロックデータが異常です。";
 "kTxBalanceNotEnough" = "您的 %@ 余额不足。";//TODO:
 "kTxMissMemoPriKey" = "缺少备注私钥。";//TODO:
 "kTxInvalidMemoPriKey" = "备注私钥无效。";//TODO:
 
 /* 通用字符串 */
+"kShareWelcomeMessage" = "分散型金融プラットフォームであるBitSharesへようこそ。";
+"kShareLinkCopied" = "リンクがコピーされました。";
 "kLangKeyZhSimple" = "简体中文 / 簡体字中国語";
 "kLangKeyEn" = "English / 英語";
 "kLangKeyJa" = "日本語";
@@ -1530,6 +1533,7 @@
 "kAboutChannelWebsite" = "(官网版 & 渠道 %@)";
 "kAboutDebugVersion" = "(调试版)";
 "kAboutTestnet" = "(测试网络)";
+"kLblCellShareLink" = "リンクを共有";
 "kSettingEx" = "設定";
 "setting_theme" = "テーマの風格";
 "setting_apinode" = "APIサーバー";
@@ -1599,6 +1603,7 @@
 /* 特殊用途字符串KEY */
 "serverWssLangKey" = "cn";
 "kEditPasswordDefaultPasswordLang" = "en";
+"kShareLinkPageDefaultLang" = "en";
 "appDepositWithdrawDefaultGateway" = "GDEX";
 "btsaiLangKey" = "en";
 "enableOtcEntry" = "0";

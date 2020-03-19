@@ -860,6 +860,7 @@
 /* 设置界面 */
 "setting_language" = "语言";
 "setting_currency" = "计价方式";
+"kSettingVersionTipsNewest" = "当前已经是最新版本。";
 "kSettingCurrencyNameCNY" = "人民币";
 "kSettingCurrencyNameUSD" = "美元";
 "kSettingCurrencyNameEUR" = "欧元";
@@ -1518,6 +1519,8 @@
 "kTxInvalidMemoPriKey" = "备注私钥无效。";
 
 /* 通用字符串 */
+"kShareWelcomeMessage" = "欢迎来到比特股去中心化交易平台。";
+"kShareLinkCopied" = "分享链接已复制。";
 "kLangKeyZhSimple" = "简体中文";
 "kLangKeyEn" = "English / 英文";
 "kLangKeyJa" = "日本語 / 日文";
@@ -1530,6 +1533,7 @@
 "kAboutChannelWebsite" = "(官网版 & 渠道 %@)";
 "kAboutDebugVersion" = "(调试版)";
 "kAboutTestnet" = "(测试网络)";
+"kLblCellShareLink" = "分享专属链接";
 "kSettingEx" = "设置";
 "setting_theme" = "主题风格";
 "setting_apinode" = "接入点";
@@ -1599,6 +1603,7 @@
 /* 特殊用途字符串KEY */
 "serverWssLangKey" = "cn";
 "kEditPasswordDefaultPasswordLang" = "zh";
+"kShareLinkPageDefaultLang" = "zh";
 "appDepositWithdrawDefaultGateway" = "GDEX";
 "btsaiLangKey" = "cn";
 "enableOtcEntry" = "1";

@@ -203,7 +203,6 @@ enum
             break;
         case kSetting_version:
         {
-            //  TODO:5.0 xiaoyuan dian ?
             cell.detailTextLabel.text = [NSString stringWithFormat:@"v%@", [NativeAppDelegate appVersion]];
             cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
         }
@@ -283,9 +282,9 @@ enum
     [[VCLaunch checkAppUpdate] then:^id(id pVersionConfig) {
         [self hideBlockView];
         if ([VcUtils processCheckAppVersionResponsed:pVersionConfig remind_later_callback:nil]) {
-            //  TODO:5.0
+            //  ...
         } else {
-            [OrgUtils makeToast:@"当前已经是最新版本。"];
+            [OrgUtils makeToast:NSLocalizedString(@"kSettingVersionTipsNewest", @"当前已经是最新版本。")];
         }
         return nil;
     }];

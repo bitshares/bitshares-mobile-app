@@ -56,7 +56,8 @@ enum
 
 enum
 {
-    kVcSubSettingsEx = 0,       //  设置
+    kVcSubShareLink = 0,        //  分享专属链接
+    kVcSubSettingsEx,           //  设置
 };
 
 @interface VCMyself ()
@@ -116,6 +117,7 @@ enum
 #endif  //  kAppModuleEnableFaq
         
         NSArray* pSection4 = [NSArray arrayWithObjects:
+                              @"kLblCellShareLink",             //  分享专属链接
                               @"kSettingEx",                    //  设置,
                               nil];
         [obj addObject:@{@"type":@(kVcSetting), @"rows":pSection4}];
@@ -283,6 +285,13 @@ enum
                     cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
                 }
                     break;
+                case kVcSubShareLink:
+                {
+                    //  TODO:5.0 icon
+                    cell.imageView.image = [UIImage templateImageNamed:@"iconSetting"];
+                    cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
+                }
+                    break;
                 default:
                     break;
             }
@@ -427,6 +436,19 @@ enum
                         //                        [[MyPopviewManager sharedMyPopviewManager] showWebviewPaymentDialog:self
                         //                                                                        reserve_secure_text:@"我的账号"
                         //                                                                                   paytitle:@"下注"];
+                    }
+                        break;
+                    case kVcSubShareLink:
+                    {
+                        WalletManager* walletMgr = [WalletManager sharedWalletManager];
+                        id value = [NSString stringWithFormat:@"%@\nhttps://faucet.btspp.io/?lang=%@",
+                                    NSLocalizedString(@"kShareWelcomeMessage", @"欢迎来到比特股去中心化交易平台"),
+                                    NSLocalizedString(@"kShareLinkPageDefaultLang", @"share link lang")];
+                        if ([walletMgr isWalletExist]) {
+                            value = [NSString stringWithFormat:@"%@&r=%@", value, [walletMgr getWalletAccountName]];
+                        }
+                        [UIPasteboard generalPasteboard].string = [value copy];
+                        [OrgUtils makeToast:NSLocalizedString(@"kShareLinkCopied", @"分享链接已复制。")];
                     }
                         break;
                     default:
