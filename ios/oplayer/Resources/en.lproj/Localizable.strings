@@ -860,6 +860,7 @@
 /* 设置界面 */
 "setting_language" = "Language";
 "setting_currency" = "Currency";
+"kSettingVersionTipsNewest" = "It is currently the latest version.";
 "kSettingCurrencyNameCNY" = "Chinese Yuan";
 "kSettingCurrencyNameUSD" = "US Dollar";
 "kSettingCurrencyNameEUR" = "Euro";
@@ -1518,6 +1519,8 @@
 "kTxInvalidMemoPriKey" = "备注私钥无效。";//TODO:
 
 /* 通用字符串 */
+"kShareWelcomeMessage" = "Welcome to BitShares, a decentralized financial platform.";
+"kShareLinkCopied" = "Share link has been copied.";
 "kLangKeyZhSimple" = "简体中文 / Simplified Chinese";
 "kLangKeyEn" = "English";
 "kLangKeyJa" = "日本語 / Japanese";
@@ -1530,6 +1533,7 @@
 "kAboutChannelWebsite" = "(Website Version & Channel %@)";
 "kAboutDebugVersion" = "(Debug Version)";
 "kAboutTestnet" = "(Test network)";
+"kLblCellShareLink" = "Share link";
 "kSettingEx" = "Setting";
 "setting_theme" = "Theme";
 "setting_apinode" = "API server";
@@ -1599,6 +1603,7 @@
 /* 特殊用途字符串KEY */
 "serverWssLangKey" = "en";
 "kEditPasswordDefaultPasswordLang" = "en";
+"kShareLinkPageDefaultLang" = "en";
 "appDepositWithdrawDefaultGateway" = "RuDEX";
 "btsaiLangKey" = "en";
 "enableOtcEntry" = "0";
