@@ -39,6 +39,7 @@ class ActivityIndexMy : BtsppActivity() {
         img_icon_proposal.setColorFilter(iconcolor)
         img_icon_asset_mgr.setColorFilter(iconcolor)
         img_icon_faq.setColorFilter(iconcolor)
+        img_icon_share_link.setColorFilter(iconcolor)
         img_icon_setting.setColorFilter(iconcolor)
 
         //  刷新UI
@@ -53,6 +54,10 @@ class ActivityIndexMy : BtsppActivity() {
             }
         }
 
+        //  事件 - 分享链接
+        layout_share_link.setOnClickListener { _onShareLinkClicked() }
+
+        //  事件 - 设置
         layout_setting_from_my.setOnClickListener {
             val saveCurrLangCode = LangManager.sharedLangManager().currLangCode
             val result_promise = Promise()
@@ -120,6 +125,18 @@ class ActivityIndexMy : BtsppActivity() {
         }
     }
 
+    private fun _onShareLinkClicked() {
+        val walletMgr = WalletManager.sharedWalletManager()
+        var value = String.format("%s\nhttps://faucet.btspp.io/?lang=%s",
+                resources.getString(R.string.kShareWelcomeMessage), resources.getString(R.string.kShareLinkPageDefaultLang))
+        if (walletMgr.isWalletExist()) {
+           value = String.format("%s&r=%s", value, walletMgr.getWalletAccountName()!!)
+        }
+        if (Utils.copyToClipboard(this, value)) {
+            showToast(resources.getString(R.string.kShareLinkCopied))
+        }
+    }
+    
     private fun _refreshFaceUI() {
         val walletMgr = WalletManager.sharedWalletManager()
         if (walletMgr.isWalletExist()) {
