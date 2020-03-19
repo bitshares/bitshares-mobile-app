@@ -1468,11 +1468,13 @@
     <string name="kOtcInputSubmitTipTotalLessMinLimit">交易金额不能低于单笔最小限额。</string>
     <string name="kOtcInputSubmitTipTotalGreatMaxLimit">交易金额不能大于单笔最大限额。</string>
     <!-- 交易部分字符串 -->
-    <string name="kTxBlockDataError">区块数据异常。</string>
+    <string name="kTxBlockDataError">ブロックデータが異常です。</string>
     <string name="kTxBalanceNotEnough">您的 %s 余额不足。</string>
     <string name="kTxMissMemoPriKey">缺少备注私钥。</string>
     <string name="kTxInvalidMemoPriKey">备注私钥无效。</string>
     <!-- 通用字符串 -->
+    <string name="kShareWelcomeMessage">分散型金融プラットフォームであるBitSharesへようこそ。</string>
+    <string name="kShareLinkCopied">リンクがコピーされました。</string>
     <string name="kLangKeyZhSimple">简体中文 / 簡体字中国語</string>
     <string name="kLangKeyEn">English / 英語</string>
     <string name="kLangKeyJa">日本語</string>
@@ -1485,6 +1487,7 @@
     <string name="kAboutChannelWebsite">(官网版 &amp; 渠道 %s)</string>
     <string name="kAboutDebugVersion">(调试版)</string>
     <string name="kAboutTestnet">(测试网络)</string>
+    <string name="kLblCellShareLink">リンクを共有</string>
     <string name="kSettingEx">設定</string>
     <string name="setting_theme">テーマの風格</string>
     <string name="setting_apinode">APIサーバー</string>
@@ -1552,6 +1555,7 @@
     <!-- 特殊用途字符串KEY -->
     <string name="serverWssLangKey">cn</string>
     <string name="kEditPasswordDefaultPasswordLang">en</string>
+    <string name="kShareLinkPageDefaultLang">en</string>
     <string name="appDepositWithdrawDefaultGateway">GDEX</string>
     <string name="btsaiLangKey">en</string>
     <string name="enableOtcEntry">0</string>

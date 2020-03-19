@@ -1473,6 +1473,8 @@
     <string name="kTxMissMemoPriKey">缺少备注私钥。</string>
     <string name="kTxInvalidMemoPriKey">备注私钥无效。</string>
     <!-- 通用字符串 -->
+    <string name="kShareWelcomeMessage">欢迎来到比特股去中心化交易平台。</string>
+    <string name="kShareLinkCopied">分享链接已复制。</string>
     <string name="kLangKeyZhSimple">简体中文</string>
     <string name="kLangKeyEn">English / 英文</string>
     <string name="kLangKeyJa">日本語 / 日文</string>
@@ -1485,6 +1487,7 @@
     <string name="kAboutChannelWebsite">(官网版 &amp; 渠道 %s)</string>
     <string name="kAboutDebugVersion">(调试版)</string>
     <string name="kAboutTestnet">(测试网络)</string>
+    <string name="kLblCellShareLink">分享专属链接</string>
     <string name="kSettingEx">设置</string>
     <string name="setting_theme">主题风格</string>
     <string name="setting_apinode">接入点</string>
@@ -1552,6 +1555,7 @@
     <!-- 特殊用途字符串KEY -->
     <string name="serverWssLangKey">cn</string>
     <string name="kEditPasswordDefaultPasswordLang">zh</string>
+    <string name="kShareLinkPageDefaultLang">zh</string>
     <string name="appDepositWithdrawDefaultGateway">GDEX</string>
     <string name="btsaiLangKey">cn</string>
     <string name="enableOtcEntry">1</string>
