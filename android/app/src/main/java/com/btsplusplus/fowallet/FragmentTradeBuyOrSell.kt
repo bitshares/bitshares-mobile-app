@@ -7,10 +7,8 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.DisplayMetrics
 import android.util.TypedValue
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import bitshares.*
 import com.btsplusplus.fowallet.kline.TradingPair
@@ -303,21 +301,21 @@ class FragmentTradeBuyOrSell : BtsppFragment() {
         return _view
 
     }
-
-    private fun bindUIEvents() {
-        // 买入或卖出 提交事件
-        _btn_submit.setOnClickListener {
-
-        }
-
-        // 买卖数量滑动条滑动事件
-
-        // 价格输入框onChange事件
-
-        // 数量输入框onChange事件
-
-        // 交易额输入框onChange事件
-    }
+//
+//    private fun bindUIEvents() {
+//        // 买入或卖出 提交事件
+//        _btn_submit.setOnClickListener {
+//
+//        }
+//
+//        // 买卖数量滑动条滑动事件
+//
+//        // 价格输入框onChange事件
+//
+//        // 数量输入框onChange事件
+//
+//        // 交易额输入框onChange事件
+//    }
 
     // 生成交易历史左右结构的 价格 数量 视图
     private fun createHistoryCell(): SimpleHistoryViews {
@@ -416,6 +414,34 @@ class FragmentTradeBuyOrSell : BtsppFragment() {
         layout_wrap.addView(layout)
 
         return OrderBookViews(tv_index, tv_price, tv_quantity, tv_dot, view_block, layout_wrap)
+    }
+
+    /**
+     *  (private) 事件 - 百分比按钮点击
+     */
+    private fun onPercentButtonClicked(n_percent: BigDecimal) {
+        if (_balanceData == null) {
+            showToast(resources.getString(R.string.kVcTradeTipPleaseLoginFirst))
+//            _gotoLogin()
+            return
+        }
+
+        //  保留小数位数 向下取整
+        val n_value_of_percent = if (_isbuy) {
+            _base_amount_n.multiply(n_percent).setScale(_tradingPair._displayPrecision, BigDecimal.ROUND_DOWN)
+        } else {
+            _quote_amount_n.multiply(n_percent).setScale(_tradingPair._numPrecision, BigDecimal.ROUND_DOWN)
+        }
+
+        if (_isbuy) {
+            //  更新总金额
+            _tf_total_watcher.set_new_text(n_value_of_percent.toString())
+            _onTfTotalChanged(_tf_total_watcher.get_tf_string())
+        } else {
+            //  更新数量
+            _tf_amount_watcher.set_new_text(n_value_of_percent.toString())
+            _onPriceOrAmountChanged()
+        }
     }
 
     /**
@@ -588,12 +614,23 @@ class FragmentTradeBuyOrSell : BtsppFragment() {
                 orderBookViews.bar.layoutParams = LinearLayout.LayoutParams(max(min(order.getDouble("quote") * half_width / maxQuoteValue, half_width.toDouble()), 1.0).roundToInt(), 26.dp).apply {
                     gravity = Gravity.RIGHT
                 }
+                //  点击事件
+                orderBookViews.layout.setOnClickListener { onOrderBookCellClicked(order) }
             } else {
                 orderBookViews.price.text = "--"
                 orderBookViews.amount.text = "--"
                 orderBookViews.bar.visibility = View.INVISIBLE
+                orderBookViews.layout.setOnClickListener(null)
             }
         }
+    }
+
+    /**
+     *  （private) 盘口CELL点击
+     */
+    private fun onOrderBookCellClicked(order: JSONObject) {
+        _tf_price_watcher.set_new_text(OrgUtils.formatFloatValue(order.getString("price").toDouble(), _tradingPair._displayPrecision, false))
+        _onPriceOrAmountChanged()
     }
 
     private fun draw_ask_bid_list(data: JSONObject) {
@@ -687,6 +724,11 @@ class FragmentTradeBuyOrSell : BtsppFragment() {
         tf_total.addTextChangedListener(_tf_total_watcher)
         _tf_total_watcher.on_value_changed(::_onTfTotalChanged)
 
+        //  REMARK：重写数量输入框的touch事件，尚未登录的清空下，不弹出键盘（直接消耗掉事件)。
+//        tf_price.setOnTouchListener { _, event -> return@setOnTouchListener _processTouchEvents(event) }
+        tf_amount.setOnTouchListener { _, event -> return@setOnTouchListener _processTouchEvents(event) }
+        tf_total.setOnTouchListener { _, event -> return@setOnTouchListener _processTouchEvents(event) }
+
         //  可用
         _draw_ui_available(null, true, _isbuy)
         _draw_market_fee(if (_isbuy) _tradingPair._quoteAsset else _tradingPair._baseAsset)
@@ -709,6 +751,12 @@ class FragmentTradeBuyOrSell : BtsppFragment() {
         }
         _confirmation_btn_of_buy.setOnClickListener { onSubmitClicked() }
 
+        //  百分比按钮
+        _view.findViewById<Button>(R.id.button_percent25).setOnClickListener { onPercentButtonClicked(BigDecimal.valueOf(0.25)) }
+        _view.findViewById<Button>(R.id.button_percent50).setOnClickListener { onPercentButtonClicked(BigDecimal.valueOf(0.5)) }
+        _view.findViewById<Button>(R.id.button_percent75).setOnClickListener { onPercentButtonClicked(BigDecimal.valueOf(0.75)) }
+        _view.findViewById<Button>(R.id.button_percent100).setOnClickListener { onPercentButtonClicked(BigDecimal.ONE) }
+
         //  初始化UI - 盘口
         init_order_book()
 
@@ -717,6 +765,33 @@ class FragmentTradeBuyOrSell : BtsppFragment() {
 
         //  REMARK：延迟滚动到最底部
         Utils.delay { _view.findViewById<ScrollView>(R.id.sv_ask_listview).fullScroll(ScrollView.FOCUS_DOWN) }
+    }
+
+    private fun _processTouchEvents(event: MotionEvent): Boolean {
+        if (event.action == MotionEvent.ACTION_DOWN) {
+            if (_balanceData == null) {
+                showToast(resources.getString(R.string.kVcTradeTipPleaseLoginFirst))
+                endInput()
+                return true
+            }
+        }
+        return false
+    }
+
+    /**
+     *  关闭键盘
+     */
+    private fun endInput() {
+        _tf_price_watcher.endInput()
+        _tf_amount_watcher.endInput()
+        _tf_total_watcher.endInput()
+        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.let {
+            it.hideSoftInputFromWindow(_view.findViewById<EditText>(R.id.tf_price).windowToken, 0)
+            it.hideSoftInputFromWindow(_view.findViewById<EditText>(R.id.tf_amount).windowToken, 0)
+            it.hideSoftInputFromWindow(_view.findViewById<EditText>(R.id.tf_total).windowToken, 0)
+            return@let
+        }
     }
 
     private fun _draw_market_fee(asset: JSONObject, account: JSONObject? = null) {
@@ -791,11 +866,18 @@ class FragmentTradeBuyOrSell : BtsppFragment() {
         }
     }
 
+    private fun _gotoLogin() {
+        if (WalletManager.sharedWalletManager().isWalletExist()) {
+            return
+        }
+        activity!!.goTo(ActivityLogin::class.java, true)
+    }
+
     private fun onSubmitClicked() {
         if (WalletManager.sharedWalletManager().isWalletExist()) {
             onBuyOrSellActionClicked()
         } else {
-            activity!!.goTo(ActivityLogin::class.java, true)
+            _gotoLogin()
         }
     }
 
