@@ -7,7 +7,6 @@
     tools:context="com.btsplusplus.fowallet.ActivitySelectApiNode"
     android:background="@color/theme01.appBackColor">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -45,7 +44,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="接入点"
+                android:text="@string/kVcTitleApiNode"
                 style="@style/kNavigationBarTextStyle" />
 
             <Button
@@ -62,7 +61,7 @@
         </FrameLayout>
 
         <ScrollView
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="15dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -71,16 +70,39 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <TextView
-                    android:textColor="@color/theme01.textColorMain"
-                    android:textSize="16dp"
-                    android:text="自动选择节点"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
+                <!-- 自动选择 -->
                 <LinearLayout
-                    android:layout_marginTop="20dp"
-                    android:id="@+id/node_list_from_select_api_node"
+                    android:id="@+id/layout_random"
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textSize="14dp"
+                        android:layout_weight="9"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:text="@string/kSettingApiRandomCell"/>
+
+                    <ImageView
+                        android:id="@+id/img_icon_arrow_random"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_gravity="center_vertical|right"
+                        android:layout_weight="0.5"
+                        android:foregroundGravity="right"
+                        android:src="@drawable/ic_btn_check" />
+
+                </LinearLayout>
+
+                <!-- API节点列表 -->
+                <LinearLayout
+                    android:layout_marginTop="12dp"
+                    android:id="@+id/layout_nodelist_container"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">

@@ -52,6 +52,9 @@ class ActivitySetting : BtsppActivity() {
         //  事件 - 计价单位
         layout_currency_from_setting.setOnClickListener { goTo(ActivitySettingCurrency::class.java, true) }
 
+        //  事件 - API节点
+        layout_apinode.setOnClickListener { goTo(ActivitySelectApiNode::class.java, true) }
+
         //  事件 - 版本
         layout_version.setOnClickListener { onVersionCellClicked() }
 
@@ -79,6 +82,7 @@ class ActivitySetting : BtsppActivity() {
     private fun _refreshUI() {
         _refresh_language()
         _refresh_currency()
+        _refresh_apinode()
         _refresh_version()
     }
 
@@ -96,6 +100,24 @@ class ActivitySetting : BtsppActivity() {
         val assetSymbol = SettingManager.sharedSettingManager().getEstimateAssetSymbol()
         val currency = ChainObjectManager.sharedChainObjectManager().getEstimateUnitBySymbol(assetSymbol)
         label_txt_currency.text = resources.getString(resources.getIdentifier(currency.getString("namekey"), "string", this.packageName))
+    }
+
+    /**
+     * 显示当前API节点
+     */
+    private fun _refresh_apinode() {
+        val user_config = SettingManager.sharedSettingManager().getUseConfig(kSettingKey_ApiNode) as? JSONObject
+        val current_node = user_config?.optJSONObject(kSettingKey_ApiNode_Current)
+        if (current_node != null) {
+            val namekey = current_node.optString("namekey", "")
+            if (namekey.isNotEmpty()) {
+                label_txt_apinode.text = resources.getString(resources.getIdentifier(namekey, "string", packageName))
+            } else {
+                label_txt_apinode.text = current_node.optString("location", null) ?: current_node.optString("name")
+            }
+        } else {
+            label_txt_apinode.text = resources.getString(R.string.kSettingApiCellValueRandom)
+        }
     }
 
     /**

@@ -307,8 +307,8 @@ class FragmentAssets : BtsppFragment() {
             tv2.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11.0f)
             tv2.setTextColor(resources.getColor(R.color.theme01_textColorMain))
             tv2.gravity = Gravity.CENTER_VERTICAL
-            tv2.setPadding(toDp(4.0f), toDp(1.5f), toDp(4.0f), toDp(1.5f))
-            tv2.setBackgroundColor(resources.getColor(R.color.theme01_color03))
+            tv2.setPadding(4.dp, 1.dp, 4.dp, 1.dp)
+            tv2.background = resources.getDrawable(R.drawable.border_text_view)
             ly1.addView(tv2)
         }
 

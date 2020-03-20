@@ -150,7 +150,7 @@ class ActivityLaunch : BtsppActivity() {
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
 
         //  初始化链接
-        connMgr.Start(resources.getString(R.string.serverWssLangKey)).then { success ->
+        connMgr.Start(resources.getString(R.string.serverWssLangKey), force_use_random_node = false).then { success ->
             //  初始化网络相关数据
             chainMgr.grapheneNetworkInit().then { data ->
                 //  初始化逻辑相关数据

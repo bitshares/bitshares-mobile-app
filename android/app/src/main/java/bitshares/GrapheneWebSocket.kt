@@ -56,7 +56,7 @@ class GrapheneWebSocket {
             if (api_id != null) {
                 return@then exec(jsonArrayfrom(api_id, method, params))
             } else {
-                return@then Promise._reject("unsupported apiname: ${api_name}")
+                return@then Promise._reject("unsupported apiname: $api_name")
             }
         }
     }
@@ -154,8 +154,18 @@ class GrapheneWebSocket {
         }
 
         //  初始化websocket连接
-        _webSocket = BtsWsClient(URI(_curr_wsnode), this, 5000)
-        _webSocket!!.connect()
+        val uri = try {
+            URI(_curr_wsnode)
+        } catch (e: Exception) {
+            null
+        }
+        if (uri != null) {
+            _webSocket = BtsWsClient(uri, this, 5000)
+            _webSocket!!.connect()
+        } else {
+            _webSocket = null
+            Utils.delay { on_connect_responsed(null, "invalid url.") }
+        }
     }
 
     /**
@@ -242,7 +252,7 @@ class GrapheneWebSocket {
         if (is_closed()) {
             reconnect()
         }
-        var p = Promise()
+        val p = Promise()
         _wait_promises_queue.add(p)
         return p
     }

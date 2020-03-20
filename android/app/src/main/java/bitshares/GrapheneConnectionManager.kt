@@ -17,54 +17,77 @@ class GrapheneConnectionManager {
         fun sharedGrapheneConnectionManager(): GrapheneConnectionManager {
             return _sharedGrapheneConnectionManager
         }
+
+        fun replaceWithNewGrapheneConnectionManager(newMgr: GrapheneConnectionManager) {
+            if (newMgr != _sharedGrapheneConnectionManager) {
+                _sharedGrapheneConnectionManager.close_all_connections()
+                _sharedGrapheneConnectionManager = newMgr
+            }
+        }
     }
 
     fun haveAnyAvailableConnection(): Boolean {
         return _available_connlist.isNotEmpty()
     }
 
-    /**
-     *  (public) 初始化网络连接。
-     */
-    fun Start(wssServerlangKey: String): Promise {
-        //  重连的时候先清理连接
+    fun close_all_connections() {
+        for (conn in _connection_list) {
+            conn.close_connection()
+        }
         _connection_list.clear()
         _available_connlist.clear()
         _last_connection = null
+    }
+
+    /**
+     *  (public) 初始化网络连接。
+     */
+    fun Start(wssServerlangKey: String, force_use_random_node: Boolean): Promise {
+        //  重连的时候先清理连接
+        close_all_connections()
 
         //  初始化所有连接
         val network_infos = ChainObjectManager.sharedChainObjectManager().getCfgNetWorkInfos()
-        assert(network_infos != null)
         val max_retry_num = network_infos.getInt("max_retry_num")
         val connect_timeout = network_infos.getInt("connect_timeout")
 
+        val settingMgr = SettingManager.sharedSettingManager()
+
         //  1、获取服务器动态配置的api结点信息
+        val current_api_node = settingMgr.getApiNodeCurrentSelect()
         val wssUrlHash = JSONObject()
-        val serverConfig = SettingManager.sharedSettingManager().serverConfig
-        if (serverConfig != null) {
-            val serverWssNodes = serverConfig.optJSONObject("wssNodes")
-            if (serverWssNodes != null) {
-                val defaultList = serverWssNodes.optJSONArray("default")
-                val langList = serverWssNodes.optJSONArray(wssServerlangKey)
-                if (defaultList != null && defaultList.length() > 0) {
-                    defaultList.forEach<String> {
-                        wssUrlHash.put(it!!, true)
+
+        if (!force_use_random_node && current_api_node != null && current_api_node.optString("url", null) != null) {
+            //  - 用户配置
+            wssUrlHash.put(current_api_node.getString("url"), true)
+        } else {
+            //  - 随机选择
+            val serverConfig = settingMgr.serverConfig
+            if (serverConfig != null) {
+                val serverWssNodes = serverConfig.optJSONObject("wssNodes")
+                if (serverWssNodes != null) {
+                    val defaultList = serverWssNodes.optJSONArray("default")
+                    val langList = serverWssNodes.optJSONArray(wssServerlangKey)
+                    if (defaultList != null && defaultList.length() > 0) {
+                        defaultList.forEach<String> {
+                            wssUrlHash.put(it!!, true)
+                        }
                     }
-                }
-                if (langList != null && langList.length() > 0) {
-                    langList.forEach<String> {
-                        wssUrlHash.put(it!!, true)
+                    if (langList != null && langList.length() > 0) {
+                        langList.forEach<String> {
+                            wssUrlHash.put(it!!, true)
+                        }
                     }
                 }
             }
-        }
 
-        //  2、获取app内配置的api结点信息
-        val wslist = network_infos.getJSONArray("ws_node_list")
-        if (wslist != null && wslist.length() > 0) {
-            for (i in 0 until wslist.length()) {
-                val node = wslist.getJSONObject(i)
-                wssUrlHash.put(node.getString("url"), true)
+            //  2、获取app内配置的api结点信息
+            val wslist = network_infos.optJSONArray("ws_node_list")
+            if (wslist != null && wslist.length() > 0) {
+                for (i in 0 until wslist.length()) {
+                    val node = wslist.getJSONObject(i)
+                    wssUrlHash.put(node.getString("url"), true)
+                }
             }
         }
 
@@ -143,4 +166,16 @@ class GrapheneConnectionManager {
         //  ...
     }
 
+    /**
+     *  (public) 切换到自定义连接
+     */
+    fun switchTo(new_conn: GrapheneConnection) {
+        //  先关闭现有的连接
+        close_all_connections()
+
+        //  切换到新的连接
+        _connection_list.add(new_conn)
+        _available_connlist.add(new_conn)
+        _last_connection = new_conn
+    }
 }
