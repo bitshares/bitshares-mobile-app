@@ -89,14 +89,27 @@ class SettingManager {
         return value
     }
 
+    /**
+     *  (public) 获取当前用户节点，为空则随机选择。
+     */
+    fun getApiNodeCurrentSelect(): JSONObject? {
+        val settings = _load_setting_hash()
+        val value = settings.optJSONObject(kSettingKey_ApiNode)
+        return value?.optJSONObject(kSettingKey_ApiNode_Current)
+    }
+
     fun setUseConfig(key: String, value: Any) {
         val settings = _load_setting_hash()
         settings.put(key, value)
         _save_setting_hash(settings)
     }
 
+    fun getUseConfig(key: String): Any? {
+        return _load_setting_hash().opt(key)
+    }
+
     private fun _load_setting_hash(): JSONObject {
-        var fullname = OrgUtils.makeFullPathByAppStorage(kAppCacheNameUserSettingByApp)
+        val fullname = OrgUtils.makeFullPathByAppStorage(kAppCacheNameUserSettingByApp)
         var settings = OrgUtils.load_file_as_json(fullname)
         if (settings == null) {
             settings = JSONObject()

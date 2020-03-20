@@ -50,7 +50,7 @@
 
         </FrameLayout>
 
-
+        <!-- 节点名称 -->
         <LinearLayout
             android:layout_marginTop="40dp"
             android:orientation="vertical"
@@ -60,23 +60,23 @@
             <TextView
                 android:textColor="@color/theme01.textColorMain"
                 android:textSize="14dp"
-                android:text="节点名称"
+                android:text="@string/kSettingNewApiCellLabelName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <EditText
-                android:id="@+id/et_node_name_from_new_api_node"
+                android:id="@+id/tf_node_name"
                 android:layout_marginTop="15dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/kTextFieldNormal"
-                android:hint="自定义节点名称"/>
+                android:hint="@string/kSettingNewApiCellPlaceholderName"/>
 
-            <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+            <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="10dp" android:layout_width="fill_parent"></View>
 
         </LinearLayout>
 
-
+        <!-- 节点地址 -->
         <LinearLayout
             android:layout_marginTop="10dp"
             android:orientation="vertical"
@@ -86,24 +86,24 @@
             <TextView
                 android:textColor="@color/theme01.textColorMain"
                 android:textSize="15dp"
-                android:text="节点地址"
+                android:text="@string/kSettingNewApiCellLabelURL"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <EditText
                 android:layout_marginTop="15dp"
-                android:id="@+id/et_node_url_from_new_api_node"
+                android:id="@+id/tf_node_url"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/kTextFieldNormal"
-                android:hint="节点URL地址"/>
+                android:hint="@string/kSettingNewApiCellPlaceholderURL"/>
 
-            <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+            <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_marginTop="10dp" android:layout_width="fill_parent"></View>
 
         </LinearLayout>
 
+        <!-- 确定按钮 -->
         <LinearLayout
-            android:id="@+id/layout_register_button"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:background="@color/colorPrimary"
@@ -111,13 +111,13 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/btn_submit_from_new_api_node"
+                android:id="@+id/btn_submit"
                 android:layout_width="wrap_content"
                 style="@style/kMainButtonStyle"
                 android:gravity="center|center_vertical"
                 android:layout_weight="1"
                 android:padding="5dp"
-                android:text="@string/kBtnOK" />
+                android:text="@string/kSettingNewApiSubmitBtn" />
         </LinearLayout>
 
     </LinearLayout>

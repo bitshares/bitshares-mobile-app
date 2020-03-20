@@ -178,6 +178,46 @@
 
         </LinearLayout>
 
+        <!-- API节点 -->
+        <LinearLayout
+            android:id="@+id/layout_apinode"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:textSize="16dp"
+                android:layout_weight="9"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="@string/setting_apinode"/>
+
+            <TextView
+                android:id="@+id/label_txt_apinode"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical|right"
+                android:textSize="16dp"
+                android:layout_weight="9"
+                android:textColor="@color/theme01.textColorNormal"
+                android:text="--"/>
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_weight="0.5"
+
+                android:foregroundGravity="right"
+                android:src="@drawable/ic_btn_right_arrow" />
+
+        </LinearLayout>
+
         <!-- 版本 -->
         <LinearLayout
             android:id="@+id/layout_version"

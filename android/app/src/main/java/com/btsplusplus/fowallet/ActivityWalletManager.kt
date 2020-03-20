@@ -57,7 +57,7 @@ class ActivityWalletManager : BtsppActivity() {
             if (unlocked) {
                 //  刷新
                 refreshUI()
-                var list = arrayOf(R.string.kWalletBtnImportMultiSignedAccount.xmlstring(this), R.string.kWalletBtnImportNormalAccount.xmlstring(this))
+                val list = arrayOf(R.string.kWalletBtnImportMultiSignedAccount.xmlstring(this), R.string.kWalletBtnImportNormalAccount.xmlstring(this))
                 ViewSelector.show(this, R.string.kWalletMenuTipsPleaseSelectImportType.xmlstring(this), list) { index: Int, result: String ->
                     when (index) {
                         0 -> onImportMultiSignAccountClicked()
@@ -342,14 +342,14 @@ class ActivityWalletManager : BtsppActivity() {
 
         //  current name flag
         val tv_tag_of_current_account_layout_params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-        tv_tag_of_current_account_layout_params.setMargins(8, 0, 0, 0)
+        tv_tag_of_current_account_layout_params.setMargins(4.dp, 0, 0, 0)
         tv_tag_of_current_account_layout_params.gravity = Gravity.CENTER_VERTICAL
         val tv_tag_of_current_account = TextView(this)
         tv_tag_of_current_account.setTextColor(resources.getColor(R.color.theme01_textColorMain))
         tv_tag_of_current_account.text = resources.getString(R.string.kWalletCellCurrentAccount)
         tv_tag_of_current_account.setTextSize(TypedValue.COMPLEX_UNIT_DIP, small_font_size)
-        tv_tag_of_current_account.setBackgroundColor(resources.getColor(R.color.theme01_textColorHighlight))
-        tv_tag_of_current_account.setPadding(2.dp, 0, 2.dp, 0)
+        tv_tag_of_current_account.setPadding(4.dp, 1.dp, 4.dp, 1.dp)
+        tv_tag_of_current_account.background = resources.getDrawable(R.drawable.border_text_view)
         tv_tag_of_current_account.layoutParams = tv_tag_of_current_account_layout_params
         if (data.getBoolean("current")) {
             tv_account_name.setTextColor(resources.getColor(R.color.theme01_textColorMain))
@@ -358,7 +358,6 @@ class ActivityWalletManager : BtsppActivity() {
             tv_account_name.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
             tv_tag_of_current_account.visibility = View.INVISIBLE
         }
-
         layout_left_line1.addView(tv_account_name)
         layout_left_line1.addView(tv_tag_of_current_account)
         layout_left.addView(layout_left_line1)

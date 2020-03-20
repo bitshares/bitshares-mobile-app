@@ -2,8 +2,43 @@ package bitshares
 
 import com.fowallet.walletcore.bts.GrapheneWebSocket
 import org.json.JSONArray
+import org.json.JSONObject
 
 class GrapheneConnection {
+
+    companion object {
+
+        /**
+         *  (public) 测试单个节点
+         *  return_connect_obj - 是否返回连接对象，如果不返回则会自动释放。
+         */
+        fun checkNodeStatus(node: JSONObject, max_retry_num: Int, connect_timeout: Int, return_connect_obj: Boolean): Promise {
+            val p = Promise()
+
+            val conn = GrapheneConnection().initWithNode(node.getString("url"), max_retry_num, connect_timeout)
+            //  REMARK：2.11.0 同 get_chain_properties，获取链ID等基本属性。
+            conn.async_exec_db("get_objects", jsonArrayfrom(jsonArrayfrom("2.11.0", BTS_DYNAMIC_GLOBAL_PROPERTIES_ID))).then {
+                val data_array = it as JSONArray
+
+                val chain_properties = data_array.getJSONObject(0)
+                val latest_obj = data_array.getJSONObject(1)
+
+                p.resolve(JSONObject().apply {
+                    put("connected", true)
+                    put("conn_obj", if (return_connect_obj) conn else null)
+                    put("chain_properties", chain_properties)
+                    put("latest_obj", latest_obj)
+                })
+                return@then null
+            }.catch {
+                p.resolve(JSONObject().apply {
+                    put("connected", false)
+                })
+            }
+
+            return p
+        }
+    }
 
     var server_node_url = ""
     private var _wsrpc: GrapheneWebSocket? = null
