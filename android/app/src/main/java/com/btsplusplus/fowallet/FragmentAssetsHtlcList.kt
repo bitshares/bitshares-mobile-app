@@ -63,11 +63,22 @@ class FragmentAssetsHtlcList : BtsppFragment() {
 
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
 
-        if (_full_account_data!!.optJSONArray("htlcs") != null) {
-            //  3.0.1 之后版本添加了获取HTLC相关API，full accounts也包含了HTLC对象信息。直接查询账号信息即可。
+        //  [兼容适配]
+        //  3.0.1 之后版本添加了获取HTLC相关API，full accounts也包含了HTLC对象信息。直接查询账号信息即可。
+        //  3.2.0 之后，htlcs 字段更改为 htlcs_from 和 htlcs_to。
+        if (_full_account_data!!.optJSONArray("htlcs") != null ||
+                _full_account_data!!.optJSONArray("htlcs_from") != null ||
+                _full_account_data!!.optJSONArray("htlcs_to") != null) {
             return chainMgr.queryFullAccountInfo(uid).then {
                 val full_data = it as JSONObject
-                return@then full_data.optJSONArray("htlcs")
+                val htlcs = full_data.optJSONArray("htlcs")
+                val htlcs_from = full_data.optJSONArray("htlcs_from")
+                val htlcs_to = full_data.optJSONArray("htlcs_to")
+                return@then JSONArray().apply {
+                    htlcs?.let { put(it) }
+                    htlcs_from?.let { put(it) }
+                    htlcs_to?.let { put(it) }
+                }
             }
         } else {
             //  3.0.1 及其之前版本，获取HTLC的接口尚未完成。full accounts也未包含HTLC对象信息。这里直接从账号明细里获取。但存在缺陷。
