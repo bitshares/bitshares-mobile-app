@@ -407,11 +407,21 @@ class Utils {
             if (time == "") {
                 return "00-00 00:00"
             }
+
             val ts = parseBitsharesTimeString(time)
             val d = Date(ts * 1000)
-            val f = SimpleDateFormat("MM-dd HH:mm")
-            val s = f.format(d)
-            return s
+
+            //  获取公历的年份
+            val now_year = GregorianCalendar.getInstance().get(Calendar.YEAR)
+            val time_year = GregorianCalendar.getInstance().apply { setTime(d) }.get(Calendar.YEAR)
+
+            return if (now_year != time_year) {
+                //  非今年
+                SimpleDateFormat("yy-MM-dd HH:mm").format(d)
+            } else {
+                //  今年
+                SimpleDateFormat("MM-dd HH:mm").format(d)
+            }
         }
 
         /**
