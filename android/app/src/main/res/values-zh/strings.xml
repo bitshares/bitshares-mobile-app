@@ -1097,6 +1097,9 @@
     <string name="kOpDetailSubPrefixCommittee">理事会</string>
     <string name="kOpDetailSubPrefixWitness">见证人</string>
     <string name="kOpDetailSubPrefixProxy">代理人</string>
+    <string name="kOpMemoTipsLocked">备注：解锁钱包查看备注信息。</string>
+    <string name="kOpMemoTipsMemoIsBlank">备注：空白。</string>
+    <string name="kOpMemoTipsMemoNoPriKey">备注：无法查看该条备注信息。</string>
     <!-- 场外交易相关 -->
     <string name="kOtcEntryUserAgreementLinkName">《点击查看OTC用户协议》</string>
     <string name="kOtcEntryUserAgreementAskMessage">亲爱的用户您好，如果您需要使用场外交易服务，需要仔细阅读并同意以下协议。</string>

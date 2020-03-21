@@ -109,11 +109,9 @@ class FragmentAssetsDetail : BtsppFragment() {
 
             //  添加到列表
             val item = JSONObject().apply {
-                put("typename", uidata.getString("name"))
-                put("desc", uidata.getString("desc"))
                 put("block_time", block_header?.getString("timestamp") ?: "")
                 put("history", history)
-                put("typecolor", uidata.getInt("color"))
+                put("uidata", uidata)
             }
             _dataArray.add(item)
         }
@@ -150,66 +148,93 @@ class FragmentAssetsDetail : BtsppFragment() {
         }
     }
 
-    private fun createCell(ly: LinearLayout, layout_params: LinearLayout.LayoutParams, ctx: Context, data: JSONObject) {
-        val ly_wrap = LinearLayout(ctx)
-        ly_wrap.orientation = LinearLayout.VERTICAL
+    private fun createCell(container: LinearLayout, layout_params: LinearLayout.LayoutParams, ctx: Context, data: JSONObject) {
+        val uidata = data.getJSONObject("uidata")
 
-        // layout1
-        val ly1 = LinearLayout(ctx)
-        ly1.orientation = LinearLayout.HORIZONTAL
-        ly1.layoutParams = layout_params
-        ly1.setPadding(0, toDp(5.0f), 0, 0)
+        val lyt_cell = LinearLayout(ctx)
+        lyt_cell.orientation = LinearLayout.VERTICAL
 
-        val tv1 = TextView(ctx)
-        tv1.text = data.getString("typename")
-        tv1.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.0f)
-        //  设置颜色
-        if (data.has("typecolor")) {
-            tv1.setTextColor(resources.getColor(data.getInt("typecolor")))
-        } else {
-            tv1.setTextColor(resources.getColor(R.color.theme01_textColorMain))
+        //  OP名字 + 区块时间
+        val ly1 = LinearLayout(ctx).apply {
+            orientation = LinearLayout.HORIZONTAL
+            layoutParams = layout_params
+            setPadding(0, toDp(5.0f), 0, 0)
+
+            val tv1 = TextView(ctx).apply {
+                text = uidata.getString("name")
+                setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.0f)
+                //  设置颜色
+                setTextColor(resources.getColor(uidata.getInt("color")))
+                gravity = Gravity.CENTER_VERTICAL
+            }
+
+            val tv2 = TextView(ctx).apply {
+                text = Utils.fmtAccountHistoryTimeShowString(data.getString("block_time"))
+                setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10.0f)
+                setTextColor(resources.getColor(R.color.theme01_textColorGray))
+                gravity = Gravity.TOP or Gravity.RIGHT
+                layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                    weight = 1.0f
+                    gravity = Gravity.RIGHT
+                }
+            }
+
+            addView(tv1)
+            addView(tv2)
         }
-        tv1.gravity = Gravity.CENTER_VERTICAL
+        lyt_cell.addView(ly1)
 
-        val tv2 = TextView(ctx)
-        tv2.text = Utils.fmtAccountHistoryTimeShowString(data.getString("block_time"))
-        tv2.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10.0f)
-        tv2.setTextColor(resources.getColor(R.color.theme01_textColorGray))
-        tv2.gravity = Gravity.TOP or Gravity.RIGHT
-        var layout_tv2 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-        layout_tv2.weight = 1.0f
-        layout_tv2.gravity = Gravity.RIGHT
-        tv2.layoutParams = layout_tv2
+        //  描述信息
+        val ly2 = LinearLayout(ctx).apply {
+            orientation = LinearLayout.HORIZONTAL
+            layoutParams = layout_params
 
-        ly1.addView(tv1)
-        ly1.addView(tv2)
+            val tv5 = TextView(ctx).apply {
+                text = uidata.getString("desc")
+                setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
+                setTextColor(resources.getColor(R.color.theme01_textColorNormal))
+                gravity = Gravity.CENTER_VERTICAL
+                layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+                setPadding(0, 0, 0, toDp(6f))
+            }
 
-        // layout2
-        val ly2 = LinearLayout(ctx)
-        ly2.orientation = LinearLayout.HORIZONTAL
-        ly2.layoutParams = layout_params
+            addView(tv5)
+        }
+        lyt_cell.addView(ly2)
 
-        val tv5 = TextView(ctx)
-        tv5.text = data.getString("desc")
-        tv5.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.0f)
-        tv5.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
-        tv5.gravity = Gravity.CENTER_VERTICAL
-        tv5.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-        tv5.setPadding(0, 0, 0, toDp(6f))
+        //  备注信息（可选）
+        val processed_memo = uidata.optJSONObject("processed_memo")
+        if (processed_memo != null) {
+            val ly3 = LinearLayout(ctx).apply {
+                orientation = LinearLayout.HORIZONTAL
+                layoutParams = layout_params
 
-        ly2.addView(tv5)
+                val tv5 = TextView(ctx).apply {
+                    text = processed_memo.getString("tips")
+                    setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11.0f)
+                    if (processed_memo.optBoolean("decryptSuccessed") && !processed_memo.optBoolean("isBlank")) {
+                        setTextColor(resources.getColor(R.color.theme01_textColorMain))
+                    } else {
+                        setTextColor(resources.getColor(R.color.theme01_textColorGray))
+                    }
+                    gravity = Gravity.CENTER_VERTICAL
+                    layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+                    setPadding(0, 0, 0, toDp(6f))
+                }
+                addView(tv5)
+            }
+            lyt_cell.addView(ly3)
+        }
 
-        // 线
-        val lv_line = View(ctx)
-        var layout_line = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, toDp(1.0f))
-        lv_line.setBackgroundColor(resources.getColor(R.color.theme01_bottomLineColor))
-        lv_line.layoutParams = layout_line
+        //  下划线
+        val lv_line = View(ctx).apply {
+            val layout_line = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, toDp(1.0f))
+            setBackgroundColor(resources.getColor(R.color.theme01_bottomLineColor))
+            layoutParams = layout_line
+        }
+        lyt_cell.addView(lv_line)
 
-        ly_wrap.addView(ly1)
-        ly_wrap.addView(ly2)
-        ly_wrap.addView(lv_line)
-
-        ly.addView(ly_wrap)
+        container.addView(lyt_cell)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
