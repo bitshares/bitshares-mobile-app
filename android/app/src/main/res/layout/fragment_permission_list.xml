@@ -17,12 +17,31 @@
             android:layout_height="match_parent">
 
             <LinearLayout
-                android:id="@+id/layout_of_fragment_permission_list"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+                <!-- 各种权限列表 -->
+                <LinearLayout
+                    android:id="@+id/layout_of_fragment_permission_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <!-- ... -->
+                </LinearLayout>
+
+                <!-- 修改密码 -->
+                <Button
+                    android:id="@+id/btn_edit_password"
+                    android:layout_marginTop="15dp"
+                    android:layout_width="match_parent"
+                    style="@style/kMainButtonStyle"
+                    android:gravity="center|center_vertical"
+                    android:textAllCaps="false"
+                    android:text="@string/kEditPasswordBtnEntry" />
+                    
             </LinearLayout>
+
         </ScrollView>
 
     </LinearLayout>

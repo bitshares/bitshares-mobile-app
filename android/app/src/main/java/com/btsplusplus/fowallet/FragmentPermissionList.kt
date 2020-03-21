@@ -11,6 +11,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -626,6 +627,8 @@ class FragmentPermissionList : BtsppFragment() {
         _view = inflater.inflate(R.layout.fragment_permission_list, container, false)
         //  初始化UI
         _refreshUI(WalletManager.sharedWalletManager().getWalletAccountInfo()!!)
+        //  绑定事件
+        _view?.findViewById<Button>(R.id.btn_edit_password)?.setOnClickListener { activity?.goTo(ActivityNewAccountPassword::class.java, true) }
         return _view
     }
 
