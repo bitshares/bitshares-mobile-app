@@ -1462,6 +1462,8 @@ class ChainObjectManager {
      * (public) 查询完整账号信息，带重试。REMARK：刚注册成功的账号可能查询失败，网络尚未同步完毕。
      */
     fun queryFullAccountInfo(account_name_or_id: String, retry_num: Int = 1): Promise {
+        //  TODO:5.0 账号余额查询，订单查询等。用该api都有限制，需要适配。!!!!TODO:5.0 !!!!
+
         val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
         return conn.async_exec_db("get_full_accounts", jsonArrayfrom(jsonArrayfrom(account_name_or_id), false)).then {
             val data_array = it as? JSONArray
