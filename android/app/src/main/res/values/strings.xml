@@ -1097,6 +1097,9 @@
     <string name="kOpDetailSubPrefixCommittee">Committee</string>
     <string name="kOpDetailSubPrefixWitness">Witness</string>
     <string name="kOpDetailSubPrefixProxy">Proxy</string>
+    <string name="kOpMemoTipsLocked">Memo: unlock wallet to view memo message.</string>
+    <string name="kOpMemoTipsMemoIsBlank">Memo: blank.</string>
+    <string name="kOpMemoTipsMemoNoPriKey">Memo: this memo message cannot be viewed.</string>
     <!-- 场外交易相关 -->
     <string name="kOtcEntryUserAgreementLinkName">《点击查看OTC用户协议》</string>
     <string name="kOtcEntryUserAgreementAskMessage">亲爱的用户您好，如果您需要使用场外交易服务，需要仔细阅读并同意以下协议。</string>

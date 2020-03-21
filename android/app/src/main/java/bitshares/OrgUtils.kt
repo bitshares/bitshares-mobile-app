@@ -8,6 +8,7 @@ import com.btsplusplus.fowallet.R
 import com.btsplusplus.fowallet.utils.BigDecimalHandler
 import com.crashlytics.android.Crashlytics
 import com.fowallet.walletcore.bts.ChainObjectManager
+import com.fowallet.walletcore.bts.WalletManager
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -1411,7 +1412,55 @@ class OrgUtils {
             if (isproposal) {
                 name = String.format(R.string.kOpType_proposal_prefix.xmlstring(ctx), name)
             }
-            return jsonObjectfromKVS("name", name, "desc", desc, "color", color)
+
+            //  REMARK：部分交易包含备注数据：转账、强制转账、资产发行、从指定账号提款
+            var processedMemoObject: JSONObject? = null
+            val memo = opdata.optJSONObject("memo")
+            if (memo?.optString("from", null) != null && memo.optString("to", null) != null &&
+                    memo.optString("nonce", null) != null &&
+                    memo.optString("message", null) != null) {
+                val walletMgr = WalletManager.sharedWalletManager()
+                if (walletMgr.isLocked()) {
+                    processedMemoObject = JSONObject().apply {
+                        put("tips", R.string.kOpMemoTipsLocked.xmlstring(ctx))
+                        put("locked", true)
+                        put("decryptSuccessed", false)
+                        put("isBlank", true)
+                    }
+                } else {
+                    val plain_memo = walletMgr.decryptMemoObject(memo)
+                    if (plain_memo != null) {
+                        if (plain_memo.isEmpty()) {
+                            processedMemoObject = JSONObject().apply {
+                                put("tips", R.string.kOpMemoTipsMemoIsBlank.xmlstring(ctx))
+                                put("locked", false)
+                                put("decryptSuccessed", true)
+                                put("isBlank", true)
+                            }
+                        } else {
+                            processedMemoObject = JSONObject().apply {
+                                put("tips", plain_memo)
+                                put("locked", false)
+                                put("decryptSuccessed", true)
+                                put("isBlank", false)
+                            }
+                        }
+                    } else {
+                        processedMemoObject = JSONObject().apply {
+                            put("tips", R.string.kOpMemoTipsMemoNoPriKey.xmlstring(ctx))
+                            put("locked", false)
+                            put("decryptSuccessed", false)
+                            put("isBlank", true)
+                        }
+                    }
+                }
+            }
+            return JSONObject().apply {
+                put("name", name)
+                put("desc", desc)
+                put("color", color)
+                processedMemoObject?.let { put("processed_memo", it) }
+            }
         }
     }
 
