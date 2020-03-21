@@ -1,6 +1,14 @@
 package bitshares
 
 /**
+ *  账号模式，密码语言枚举。
+ */
+enum class EBitsharesAccountPasswordLang(val value: Int) {
+    ebap_lang_zh(0),    //  中文密码（16个汉字）
+    ebap_lang_en(1),    //  英文密码（32个字符 A-Za-z0-9）
+}
+
+/**
  *  石墨烯网络HTLC支持的Hash类型。
  */
 enum class EBitsharesHtlcHashType(val value: Int) {
