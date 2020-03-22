@@ -122,13 +122,14 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
     unsigned char digest[32] = {0, };
     unsigned char hex_output[64+1] = {0, };
     
-    sha256((const unsigned char*)[entropy UTF8String], (const size_t)[entropy length], digest);
+    NSData* entropy_data = [entropy dataUsingEncoding:NSUTF8StringEncoding];
+    sha256((const unsigned char*)entropy_data.bytes, (const size_t)entropy_data.length, digest);
     hex_encode(digest, sizeof(digest), hex_output);
     
     NSString* d1 = [[NSString alloc] initWithBytes:hex_output length:sizeof(hex_output)-1 encoding:NSUTF8StringEncoding];
     entropy = [NSString stringWithFormat:@"ios:d1:%@|date:%@|rand:%u", d1, [NSDate date], arc4random()];
-    
-    sha256((const unsigned char*)[entropy UTF8String], (const size_t)[entropy length], digest);
+    entropy_data = [entropy dataUsingEncoding:NSUTF8StringEncoding];
+    sha256((const unsigned char*)entropy_data.bytes, (const size_t)entropy_data.length, digest);
     
     return [[NSData alloc] initWithBytes:digest length:sizeof(digest)];
 }

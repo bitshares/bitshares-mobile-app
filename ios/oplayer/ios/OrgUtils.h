@@ -341,11 +341,6 @@ typedef void (^YklUserCallback)(id data);
 +(NSString*)getDocumentDirectory;
 
 /**
- *  解压zip文件到指定目录
- */
-+(BOOL)extractZipFile:(NSString*)zipfilename dstpath:(NSString*)dstpath;
-
-/**
  *  重命名文件（目标文件存在则会覆盖）
  */
 +(BOOL)renameFile:(NSString*)srcpath dst:(NSString*)dstpath;
@@ -418,7 +413,6 @@ typedef void (^YklUserCallback)(id data);
                                       chid:(NSInteger)chid;
 
 +(NSString*)md5:(NSString*)utf8string;
-+(NSString*)calcFileMD5:(NSString*)pFilePath;
 +(NSString*)calcNSDataMD5:(NSData*)pData;
 
 +(void)showMessage:(NSString*)pMessage;
