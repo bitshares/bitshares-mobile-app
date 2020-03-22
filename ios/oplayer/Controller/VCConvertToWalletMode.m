@@ -211,14 +211,20 @@
     id active_private_wif = [OrgUtils genBtsWifPrivateKey:active_seed];
     id owner_seed = [NSString stringWithFormat:@"%@owner%@", accountName, password];
     id owner_private_wif = [OrgUtils genBtsWifPrivateKey:owner_seed];
+    id memo_seed = [NSString stringWithFormat:@"%@memo%@", accountName, password];
+    id memo_private_wif = [OrgUtils genBtsWifPrivateKey:memo_seed];
     assert(owner_private_wif);
     assert(active_private_wif);
+    assert(memo_private_wif);
     NSString* pub_key_owner = [OrgUtils genBtsAddressFromWifPrivateKey:owner_private_wif];
     NSString* pub_key_active = [OrgUtils genBtsAddressFromWifPrivateKey:active_private_wif];
+    NSString* pub_key_memo = [OrgUtils genBtsAddressFromWifPrivateKey:memo_private_wif];
     
     //  3、创建钱包
     EImportToWalletStatus status = [walletMgr createNewWallet:fullAccountData
-                                                  import_keys:@{pub_key_owner:owner_private_wif, pub_key_active:active_private_wif}
+                                                  import_keys:@{pub_key_owner:owner_private_wif,
+                                                                pub_key_active:active_private_wif,
+                                                                pub_key_memo:memo_private_wif}
                                             append_memory_key:NO
                                       extra_account_name_list:nil
                                               wallet_password:wallet_password

@@ -229,16 +229,25 @@ enum
             return nil;
         }
         
+        //  生成各种权限公私
+        id active_private_wif = [OrgUtils genBtsWifPrivateKey:active_seed];
+        id owner_seed = [NSString stringWithFormat:@"%@owner%@", pUsername, pPassword];
+        id owner_private_wif = [OrgUtils genBtsWifPrivateKey:owner_seed];
+        id memo_seed = [NSString stringWithFormat:@"%@memo%@", pUsername, pPassword];
+        id memo_private_wif = [OrgUtils genBtsWifPrivateKey:memo_seed];
+        assert(owner_private_wif);
+        assert(active_private_wif);
+        assert(memo_private_wif);
+        
         //  登录or导入成功
         if (!_checkActivePermission){
             //  导入现有钱包
-            id active_private_wif = [OrgUtils genBtsWifPrivateKey:active_seed];
-            id owner_seed = [NSString stringWithFormat:@"%@owner%@", pUsername, pPassword];
-            id owner_private_wif = [OrgUtils genBtsWifPrivateKey:owner_seed];
             
             //  导入账号到钱包BIN文件中
             id full_wallet_bin = [[WalletManager sharedWalletManager] walletBinImportAccount:pUsername
-                                                                           privateKeyWifList:@[active_private_wif, owner_private_wif]];
+                                                                           privateKeyWifList:@[active_private_wif,
+                                                                                               owner_private_wif,
+                                                                                               memo_private_wif]];
             assert(full_wallet_bin);
             [[AppCacheManager sharedAppCacheManager] updateWalletBin:full_wallet_bin];
             [[AppCacheManager sharedAppCacheManager] autoBackupWalletToWebdir:NO];
@@ -251,13 +260,8 @@ enum
             [_owner showMessageAndClose:NSLocalizedString(@"kWalletImportSuccess", @"导入完成")];
         }else{
             //  登录账号 - 简化钱包模式
-            id active_private_wif = [OrgUtils genBtsWifPrivateKey:active_seed];
-            id owner_seed = [NSString stringWithFormat:@"%@owner%@", pUsername, pPassword];
-            id owner_private_wif = [OrgUtils genBtsWifPrivateKey:owner_seed];
-            assert(owner_private_wif);
-            assert(active_private_wif);
             id full_wallet_bin = [[WalletManager sharedWalletManager] genFullWalletData:pUsername
-                                                                       private_wif_keys:@[active_private_wif, owner_private_wif]
+                                                                       private_wif_keys:@[active_private_wif, owner_private_wif, memo_private_wif]
                                                                         wallet_password:trade_password];
             
             //  保存钱包信息

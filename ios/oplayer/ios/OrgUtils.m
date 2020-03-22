@@ -2866,7 +2866,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
                     @"name":name,
                     @"owner_key":owner_key,
                     @"active_key":active_key,
-                    @"memo_key":active_key,
+                    @"memo_key":memo_key,
                     @"refcode":refcode
             }
         };
@@ -2904,7 +2904,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
             @"account_name":name,
             @"owner_key":owner_key,
             @"active_key":active_key,
-            @"memo_key":active_key,
+            @"memo_key":memo_key,
             @"chid":@(chid),
             @"referrer_code":refcode
         };

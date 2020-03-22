@@ -218,13 +218,15 @@ enum
         //  2、调用水龙头API注册
         id seed_owner = [NSString stringWithFormat:@"%@owner%@", username, password];
         id seed_active = [NSString stringWithFormat:@"%@active%@", username, password];
+        id seed_memo = [NSString stringWithFormat:@"%@memo%@", username, password];
         id owner_key = [OrgUtils genBtsAddressFromPrivateKeySeed:seed_owner];
         id active_key = [OrgUtils genBtsAddressFromPrivateKeySeed:seed_active];
+        id memo_key = [OrgUtils genBtsAddressFromPrivateKeySeed:seed_memo];
         
         [[OrgUtils asyncCreateAccountFromFaucet:username
                                           owner:owner_key
                                          active:active_key
-                                           memo:active_key
+                                           memo:memo_key
                                         refcode:refcode
                                            chid:kAppChannelID] then:(^id(id err_msg) {
             //  注册失败

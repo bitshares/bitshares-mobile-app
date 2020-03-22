@@ -319,6 +319,10 @@ enum
         id seed_active = [NSString stringWithFormat:@"%@active%@", account_name, _curr_password];
         id public_key_active = [OrgUtils genBtsAddressFromPrivateKeySeed:seed_active];
         
+        //  生成 memo 公私钥。
+        id seed_memo = [NSString stringWithFormat:@"%@memo%@", account_name, _curr_password];
+        id public_key_memo = [OrgUtils genBtsAddressFromPrivateKeySeed:seed_memo];
+        
         //  修改资金权限
         id authority_active = @{
             @"weight_threshold":@(1),
@@ -331,7 +335,7 @@ enum
         //  修改备注权限
         id account_options = [new_account_data objectForKey:@"options"];
         id new_options = @{
-            @"memo_key":public_key_active,
+            @"memo_key":public_key_memo,
             @"voting_account":[account_options objectForKey:@"voting_account"],
             @"num_witness":[account_options objectForKey:@"num_witness"],
             @"num_committee":[account_options objectForKey:@"num_committee"],
@@ -339,8 +343,9 @@ enum
         };
         [op_data setObject:new_options forKey:@"new_options"];
         
-        //  保存资金权限私钥
+        //  保存资金权限和备注私钥
         [new_private_wif_list addObject:[OrgUtils genBtsWifPrivateKey:seed_active]];
+        [new_private_wif_list addObject:[OrgUtils genBtsWifPrivateKey:seed_memo]];
     }
     
     //  修改账户权限

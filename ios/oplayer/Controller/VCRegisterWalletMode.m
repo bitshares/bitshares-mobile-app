@@ -213,16 +213,16 @@ enum
         //  2、调用水龙头API注册
         id private_owner = [WalletManager randomPrivateKeyWIF];
         id private_active = [WalletManager randomPrivateKeyWIF];
-        //        id private_memo = [WalletManager randomPrivateKeyWIF];
+        id private_memo = [WalletManager randomPrivateKeyWIF];
         
         id owner_key = [OrgUtils genBtsAddressFromWifPrivateKey:private_owner];
         id active_key = [OrgUtils genBtsAddressFromWifPrivateKey:private_active];
-        //        id memo_key = [OrgUtils genBtsAddressFromWifPrivateKey:private_memo];
+        id memo_key = [OrgUtils genBtsAddressFromWifPrivateKey:private_memo];
         
         [[OrgUtils asyncCreateAccountFromFaucet:username
                                           owner:owner_key
                                          active:active_key
-                                           memo:active_key
+                                           memo:memo_key
                                         refcode:refcode
                                            chid:kAppChannelID] then:(^id(id err_msg) {
             //  注册失败
@@ -236,7 +236,7 @@ enum
             
             //  3、注册成功
             id full_wallet_bin = [[WalletManager sharedWalletManager] genFullWalletData:username
-                                                                       private_wif_keys:@[private_active, private_owner]
+                                                                       private_wif_keys:@[private_active, private_owner, private_memo]
                                                                         wallet_password:password];
             //  查询完整帐号信息
             [[[chainMgr queryFullAccountInfo:username retry_num:3] then:(^id(id new_full_account_data) {
