@@ -181,12 +181,7 @@
  */
 - (NSString*)hex_encode
 {
-    NSMutableString* output = [NSMutableString string];
-    const unsigned char* dataptr = (const unsigned char*)[self UTF8String];
-    for (NSUInteger i = 0; i < [self length]; ++i) {
-        [output appendFormat:@"%02x", dataptr[i]];
-    }
-    return [output copy];
+    return [[self dataUsingEncoding:NSUTF8StringEncoding] hex_encode];
 }
 
 /**

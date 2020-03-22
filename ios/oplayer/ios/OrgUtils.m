@@ -32,55 +32,6 @@
 
 #import <Flurry/Flurry.h>
 
-#define CHUNK_SIZE 1024
-
-/**
- *  加密部分小数据（如密码等）
- */
-NSString* gSmallDataEncode(NSString* str, NSString* key)
-{
-    const char* iv = [key UTF8String];
-    
-    char outbuf[1024] = {0,};
-    size_t outsize = 0;
-    
-    //  加密
-    NSData* data = [str dataUsingEncoding:NSUTF8StringEncoding];
-    CCCryptorStatus ret = CCCrypt(kCCEncrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding, [key UTF8String], kCCKeySizeAES128, iv, [data bytes], [data length], outbuf, 1024, &outsize);
-    if (ret != kCCSuccess){
-        return nil;
-    }
-    
-    //  base64 编码
-    NSData* d1 = [[NSData alloc] initWithBytes:outbuf length:outsize];
-    NSString* base64str = [d1 base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
-    //    [d1 release];
-    
-    return base64str;
-}
-
-/**
- *  解密部分小数据（如密码等）
- */
-NSString* gSmallDataDecode(NSString* str, NSString* key)
-{
-    const char* iv = [key UTF8String];
-    
-    char outbuf[1024] = {0,};
-    size_t outsize = 0;
-    
-    //  base64 解码
-    NSData* data = [[NSData alloc] initWithBase64EncodedString:str options:0];
-    
-    //  解密
-    CCCryptorStatus ret = CCCrypt(kCCDecrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding, [key UTF8String], kCCKeySizeAES128, iv, [data bytes], [data length], outbuf, 1024, &outsize);
-    if (ret != kCCSuccess){
-        return nil;
-    }
-    
-    return [[NSString alloc] initWithBytes:outbuf length:outsize encoding:NSUTF8StringEncoding];
-}
-
 @implementation OrgUtils
 
 /**
@@ -2245,7 +2196,8 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
  */
 + (NSString*)genBtsWifPrivateKey:(NSString*)seed
 {
-    return [self genBtsWifPrivateKey:(const unsigned char*)[seed UTF8String] size:(size_t)[seed length]];
+    NSData* seed_data = [seed dataUsingEncoding:NSUTF8StringEncoding];
+    return [self genBtsWifPrivateKey:(const unsigned char*)seed_data.bytes size:(size_t)seed_data.length];
 }
 
 + (NSString*)genBtsWifPrivateKey:(const unsigned char*)seed size:(size_t)seed_size
@@ -2279,8 +2231,10 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
  */
 + (NSString*)genBtsAddressFromPrivateKeySeed:(NSString*)seed
 {
+    NSData* seed_data = [seed dataUsingEncoding:NSUTF8StringEncoding];
+    
     unsigned char prikey01[32] = {0, };
-    __bts_gen_private_key_from_seed((const unsigned char*)[seed UTF8String], (const size_t)[seed length], prikey01);
+    __bts_gen_private_key_from_seed((const unsigned char*)seed_data.bytes, (const size_t)seed_data.length, prikey01);
     
     unsigned char output[51+10] = {0, };
     size_t output_size = sizeof(output);
@@ -2528,83 +2482,6 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     NSArray* arr = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString* pDocRoot = [arr objectAtIndex:0];
     return pDocRoot;
-}
-
-/**
- *  解压zip文件到指定目录
- */
-+(BOOL)extractZipFile:(NSString*)zipfilename dstpath:(NSString*)dstpath
-{
-    char itemname[260] = {0, };
-    char databuf[4096] = {0, };
-    
-    //  打开zip文件
-    unzFile zip = unzOpen64([zipfilename UTF8String]);
-    if (!zip){
-        return NO;
-    }
-    
-    int ret;
-    BOOL success = YES;
-    NSMutableData* data = [NSMutableData data];
-    
-    //  循环提取文件
-    unz_file_info64 fi;
-    for (ret = unzGoToFirstFile(zip); ; ret = unzGoToNextFile(zip)) {
-        if (ret == UNZ_END_OF_LIST_OF_FILE){
-            break;
-        }
-        
-        if (ret != UNZ_OK){
-            success = NO;
-            break;
-        }
-        
-        if (unzGetCurrentFileInfo64(zip, &fi, itemname, sizeof(itemname), NULL, 0, NULL, 0) != UNZ_OK)
-        {
-            success = NO;
-            unzCloseCurrentFile(zip);
-            break;
-        }
-        
-        BOOL isdir = NO;
-        if (itemname[fi.size_filename - 1] == '/' || itemname[fi.size_filename - 1] == '\\'){
-            isdir = YES;
-        }
-        
-        //  文件的情况
-        if (!isdir){
-            //  打开文件
-            ret = unzOpenCurrentFile(zip);
-            
-            //  读取内容
-            int bytesRead = 0;
-            while ((bytesRead = unzReadCurrentFile(zip, databuf, sizeof(databuf))) > 0)
-            {
-                [data appendBytes:databuf length:bytesRead];
-            }
-            
-            //  写入文件
-            NSString* writepath = [NSString stringWithFormat:@"%@%@", dstpath, [NSString stringWithCString:itemname encoding:NSUTF8StringEncoding]];
-            if (![self writeFile:data withFullPath:writepath withDirPath:nil]){
-                //  写入失败
-                success = NO;
-                unzCloseCurrentFile(zip);
-                break;
-            }
-            
-            //  reset data buffer
-            [data setLength:0];
-        }
-        
-        //  关闭当前文件或目录
-        unzCloseCurrentFile(zip);
-    }
-    
-    //  关闭流
-    unzClose(zip);
-    
-    return success;
 }
 
 /**
@@ -3146,35 +3023,6 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
 +(NSString*)md5:(NSString*)utf8string
 {
     return [self calcNSDataMD5:[utf8string dataUsingEncoding:NSUTF8StringEncoding]];
-}
-
-+(NSString*)calcFileMD5:(NSString*)pFilePath
-{
-    NSFileHandle* handle = [NSFileHandle fileHandleForReadingAtPath:pFilePath];
-    if (handle == nil)
-        return nil;
-    
-    CC_MD5_CTX md5_ctx;
-    CC_MD5_Init(&md5_ctx);
-    
-    NSData* filedata;
-    do {
-        filedata = [handle readDataOfLength:CHUNK_SIZE];
-        CC_MD5_Update(&md5_ctx, [filedata bytes], (CC_LONG)[filedata length]);
-    }
-    while([filedata length]);
-    
-    unsigned char result[CC_MD5_DIGEST_LENGTH];
-    CC_MD5_Final(result, &md5_ctx);
-    
-    [handle closeFile];
-    
-    NSMutableString *hash = [NSMutableString string];
-    for(int i=0;i<CC_MD5_DIGEST_LENGTH;i++)
-    {
-        [hash appendFormat:@"%02x",result[i]];
-    }
-    return [hash lowercaseString];
 }
 
 +(NSString*)calcNSDataMD5:(NSData*)pData
