@@ -81,10 +81,16 @@
     _lbAssetName = nil;
 }
 
+- (id)initWithHeight:(CGFloat)fHeight asset_name:(NSString*)asset_name
+{
+    return [self initWithHeight:fHeight asset_name:asset_name button_names:nil target:nil action:nil];
+}
+
 - (id)initWithHeight:(CGFloat)fHeight asset_name:(NSString*)asset_name button_names:(NSArray*)button_names target:(id)target action:(SEL)action
 {
     self = [super initWithFrame:CGRectMake(0, 0, 0, fHeight)];
     if (self) {
+        NSInteger tagIndex = 0;
         
         ThemeManager* theme = [ThemeManager sharedThemeManager];
         
@@ -92,26 +98,27 @@
         _lbAssetName.text = asset_name;
         _lbAssetName.textColor = theme.textColorMain;
         _lbAssetName.textAlignment = NSTextAlignmentRight;
-        
-        UILabel* lbSpace = [ViewUtils auxGenLabel:[UIFont systemFontOfSize:13] superview:nil];
-        lbSpace.text = @"|";
-        lbSpace.textColor = theme.textColorGray;
-        
-        NSInteger tagIndex = 0;
-        
         [self addSubview:_lbAssetName tag:tagIndex++];
-        [self addSubview:lbSpace tag:tagIndex++];
         
-        assert(button_names && [button_names count] > 0);
-        for (id name in button_names) {
-            UIButton* btn = [UIButton buttonWithType:UIButtonTypeSystem];
-            btn.titleLabel.font = [UIFont systemFontOfSize:13];
-            [btn setTitle:name forState:UIControlStateNormal];
-            [btn setTitleColor:theme.textColorHighlight forState:UIControlStateNormal];
-            btn.userInteractionEnabled = YES;
-            [btn addTarget:target action:action forControlEvents:UIControlEventTouchUpInside];
-            btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
-            [self addSubview:btn tag:tagIndex++];
+        if (button_names && [button_names count] > 0) {
+            assert(target);
+            assert(action);
+            
+            UILabel* lbSpace = [ViewUtils auxGenLabel:[UIFont systemFontOfSize:13] superview:nil];
+            lbSpace.text = @"|";
+            lbSpace.textColor = theme.textColorGray;
+            [self addSubview:lbSpace tag:tagIndex++];
+            
+            for (id name in button_names) {
+                UIButton* btn = [UIButton buttonWithType:UIButtonTypeSystem];
+                btn.titleLabel.font = [UIFont systemFontOfSize:13];
+                [btn setTitle:name forState:UIControlStateNormal];
+                [btn setTitleColor:theme.textColorHighlight forState:UIControlStateNormal];
+                btn.userInteractionEnabled = YES;
+                [btn addTarget:target action:action forControlEvents:UIControlEventTouchUpInside];
+                btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
+                [self addSubview:btn tag:tagIndex++];
+            }
         }
         
         [self resizeFrame];

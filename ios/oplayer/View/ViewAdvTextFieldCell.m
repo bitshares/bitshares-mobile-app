@@ -7,6 +7,8 @@
 //
 
 #import "ViewAdvTextFieldCell.h"
+#import "ViewAutoresizeContailerHor.h"
+
 //#import "NativeAppDelegate.h"
 #import "ThemeManager.h"
 #import "MyTextField.h"
@@ -14,15 +16,16 @@
 #import "UIImage+Template.h"
 #import "OrgUtils.h"
 
-enum
-{
-    kTailerTagAssetName = 1,
-    kTailerTagSpace,
-    kTailerTagBtnAll
-};
+//enum
+//{
+//    kTailerTagAssetName = 1,
+//    kTailerTagSpace,
+//    kTailerTagBtnAll
+//};
 
 @interface ViewAdvTextFieldCell()
 {
+    NSInteger _iDecimalPrecision;               //  小数精度：0 - 整数键盘 >0 - 小数键盘(该参数指定小数位数) <0 - 普通键盘
 }
 
 @end
@@ -41,11 +44,14 @@ enum
     }
     
     _formatConditonsView = nil;
-    
-    //    _delegate = nil;
 }
 
 - (id)initWithTitle:(NSString*)title placeholder:(NSString*)placeholder
+{
+    return [self initWithTitle:title placeholder:placeholder decimalPrecision:-1];
+}
+
+- (id)initWithTitle:(NSString*)title placeholder:(NSString*)placeholder decimalPrecision:(NSInteger)decimalPrecision
 {
     self = [super initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
     if (self) {
@@ -58,6 +64,9 @@ enum
         
         assert(title);
         assert(placeholder);
+        
+        _iDecimalPrecision = decimalPrecision;
+        
         //        assert(tailer);
         
         //  初始化变量
@@ -78,7 +87,16 @@ enum
         _mainTextfield.autocapitalizationType = UITextAutocapitalizationTypeNone;
         _mainTextfield.autocorrectionType = UITextAutocorrectionTypeNo;
         _mainTextfield.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-        _mainTextfield.keyboardType = UIKeyboardTypeDefault;
+        if (_iDecimalPrecision == 0) {
+            //  键盘：整数
+            _mainTextfield.keyboardType = UIKeyboardTypeNumberPad;
+        } else if (_iDecimalPrecision > 0) {
+            //  键盘：小数
+            _mainTextfield.keyboardType = UIKeyboardTypeDecimalPad;
+        } else {
+            //  键盘：默认
+            _mainTextfield.keyboardType = UIKeyboardTypeDefault;
+        }
         _mainTextfield.returnKeyType = UIReturnKeyNext;
         _mainTextfield.delegate = self;//TODO:5.0
         _mainTextfield.placeholder = placeholder;
@@ -92,8 +110,6 @@ enum
         
         //  绑定输入事件（限制输入）
         [_mainTextfield addTarget:self action:@selector(onTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
-        //        _mainTextfield.rightView = [self genTailerView:tailer action:NSLocalizedString(@"kLabelSendAll", @"全部")];
-        //        _mainTextfield.rightViewMode = UITextFieldViewModeAlways;
         
         [self addSubview:_mainTextfield];
         
@@ -102,6 +118,28 @@ enum
         _helpButton = nil;
     }
     return self;
+}
+
+/*
+ *  (public) 在输入框尾部生成资产名称视图。
+ */
+- (void)genTailerAssetName:(NSString*)asset_name
+{
+    _mainTextfield.rightView = [[TailerViewAssetAndButtons alloc] initWithHeight:31 asset_name:asset_name];
+    _mainTextfield.rightViewMode = UITextFieldViewModeAlways;
+}
+
+/*
+ *  (public) 在输入框尾部生成资产名称和各种按钮集合的视图。
+ */
+- (void)genTailerAssetNameAndButtons:(NSString*)asset_name button_names:(NSArray*)button_names target:(id)target action:(SEL)action
+{
+    _mainTextfield.rightView = [[TailerViewAssetAndButtons alloc] initWithHeight:31
+                                                                      asset_name:asset_name
+                                                                    button_names:button_names
+                                                                          target:target
+                                                                          action:action];
+    _mainTextfield.rightViewMode = UITextFieldViewModeAlways;
 }
 
 /*
@@ -188,7 +226,6 @@ enum
 - (void)auxFastConditionsViewForAccountNameFormat
 {
     [self genFormatConditonsView:^(ViewFormatConditons *formatConditonsView) {
-        //  TODO:5.0 lang
         [formatConditonsView addRegularCondition:NSLocalizedString(@"kFmtConditionOnlyContainsLetterDigitAndHyphens", @"由字母、数字或短横线组成")
                                          regular:@"^[A-Za-z0-9\\-]+$"
                                         negative:NO];
@@ -199,17 +236,6 @@ enum
                                      min_length:3 max_length:32 negative:NO];
     }];
 }
-
-///*
-// *  事件 - 全部 按钮点击
-// */
-//- (void)onButtonTailerClicked:(UIButton*)sender
-//{
-//    //  代理回调
-//    if (_delegate && [_delegate respondsToSelector:@selector(textFieldAmount:onTailerClicked:)]) {
-//        [_delegate textFieldAmount:self onTailerClicked:sender];
-//    }
-//}
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
@@ -252,12 +278,6 @@ enum
  */
 - (void)onTextFieldDidChange:(UITextField*)textField
 {
-    //  更新小数点为APP默认小数点样式（可能和输入法中下小数点不同，比如APP里是`.`号，而输入法则是`,`号。
-    //    [OrgUtils correctTextFieldDecimalSeparatorDisplayStyle:textField];
-    
-    //    //  TODO:5.0 全小写？
-    //    textField.text = [textField.text lowercaseString];
-    
     if (_formatConditonsView && !_formatConditonsView.hidden) {
         [_formatConditonsView onTextDidChange:textField.text];
     }
@@ -266,6 +286,14 @@ enum
     //    if (_delegate && [_delegate respondsToSelector:@selector(textFieldAmount:onAmountChanged:)]) {
     //        [_delegate textFieldAmount:self onAmountChanged:[OrgUtils auxGetStringDecimalNumberValue:_text_field.text]];
     //    }
+    
+    //  小于0 - 不限制
+    //  等于0 - 用整数键盘限制
+    //  大于0 - 限制小数精度
+    if (_iDecimalPrecision > 0) {
+        //  更新小数点为APP默认小数点样式（可能和输入法中下小数点不同，比如APP里是`.`号，而输入法则是`,`号。
+        [OrgUtils correctTextFieldDecimalSeparatorDisplayStyle:textField];
+    }
 }
 
 //-(void)setDelegate:(id<ViewAdvTextFieldCellDelegate>)delegate
@@ -273,6 +301,22 @@ enum
 //    _delegate = delegate;
 //    _text_field.delegate = delegate;
 //}
+
+#pragma mark- for UITextFieldDelegate
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    //  小于0 - 不限制
+    //  等于0 - 用整数键盘限制
+    //  大于0 - 限制小数精度
+    if (_iDecimalPrecision > 0) {
+        return [OrgUtils isValidAmountOrPriceInput:textField.text
+                                             range:range
+                                        new_string:string
+                                         precision:_iDecimalPrecision];
+    }
+    return YES;
+}
 
 - (void)endInput
 {

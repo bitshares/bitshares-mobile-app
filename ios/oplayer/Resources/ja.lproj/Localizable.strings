@@ -471,9 +471,13 @@
 "kVcAssetMgrCellActionUpdateAsset" = "アセットを更新する";
 "kVcAssetMgrCellActionUpdateBitasset" = "スマートコインを更新する";
 "kVcAssetMgrCellActionIssueAsset" = "資産の発行";
+"kVcAssetMgrCellActionClaimFeePool" = "料金プールを撤回する";
+"kVcAssetMgrCellActionGlobalSettle" = "グローバルな決済";
 "kVcAssetMgrCellInfoCurSupply" = "供給";
 "kVcAssetMgrCellInfoMaxSupply" = "最大供給";
 "kVcAssetMgrCellInfoConSupply" = "機密供給";
+"kVcAssetMgrActionTipsAlreadyGsCannotUpdateBitasset" = "資産はグローバルに清算されており、スマートコインは更新できません。";
+"kVcAssetMgrActionTipsAlreadyGsCannotGsAgain" = "資産はグローバルに清算されており、グローバルな清算業務を繰り返すことはできません。";
 
 "kVcAssetMgrAssetCreateButton" = "作成する";
 "kVcAssetMgrAssetUpdateAssetButton" = "アセットを更新する";
@@ -564,9 +568,11 @@
 "kVcAssetOpUpdateBitassetSubmitTipsOK" = "更新智能币成功。";//TODO:
 
 "kVcAssetOpSettleTipsDisableSettle" = "该资产禁止清算。";//TODO:
+"kVcAssetOpSettleTipsMustGlobalSettleFirst" = "预测市场全局清算完成之后才可以进行清算操作。";//TODO:
 "kVcAssetOpSettleTipsNoFeedData" = "该资产没有有效的喂价，不可清算。";//TODO:
 "kVcAssetOpSettleDelayHoursN" = "%@小时";//TODO:
 "kVcAssetOpSettleUiTips" = "【温馨提示】\n1、清算操作强制把清算资产换回背书资产。此操作不可撤销，请谨慎操作。\n2、发起清算后将在%@后排队执行，并以当时的清算价格成交。\n3、清算价 = 成交时的喂价 × %@";//TODO:
+"kVcAssetOpSettleUiTipsAlreadyGs" = "【温馨提示】\n1、清算操作强制把清算资产换回背书资产。此操作不可撤销，请谨慎操作。\n2、该资产已经触发全局清算，清算操作将立即执行。\n3、清算价 = %@";//TODO:
 "kVcAssetOpSettleCellPlaceholderAmount" = "请输入清算数量";//TODO:
 "kVcAssetOpSettleBtnName" = "发起清算";//TODO:
 "kVcAssetOpSettleSubmitTipsPleaseInputAmount" = "请输入要清算的资产数量。";//TODO:
@@ -593,7 +599,24 @@
 "kVcAssetOpSubmitTipsIssueOK" = "发行成功。";//TODO:
 "kVcAssetOpSubmitAskIssue" = "您确认发行 %@ %@ 给 %@ 吗？";//TODO:
 "kVcAssetOpSubmitAskSettle" = "您确认清算 %@ %@ 吗？\n\n※ 发起清算之后将延后执行，并且不可撤销，请谨慎操作。";//TODO:
+"kVcAssetOpSubmitAskSettle2" = "您确认清算 %@ %@ 吗？\n\n※ 该资产已经触发全局清算，发起清算之后将立即执行，并且不可撤销，请谨慎操作。";//TODO:
 "kVcAssetOpSubmitAskReserve" = "您确认销毁 %@ %@ 吗？\n\n※ 此操作不可逆，请谨慎操作。";//TODO:
+
+"kVcAssetOpClaimFeePoolUiTips" = "【温馨提示】\n资产手续费池可用于抵扣网络广播手续费，如果手续费池余额不足，则不能抵扣。";//TODO:
+"kVcAssetOpClaimFeePoolCellPlaceholderAmount" = "请输入提取数量";//TODO:
+"kVcAssetOpClaimFeePoolBtnName" = "提取";//TODO:
+"kVcAssetOpClaimFeePoolSubmitTipsPleaseInputAmount" = "请输入要提取的资产数量。";//TODO:
+"kVcAssetOpClaimFeePoolSubmitTipOK" = "提取成功。";//TODO:
+
+"kVcAssetOpGsUiTips" = "【温馨提示】\n全局清算会以指定价格强制关闭所有债仓，此操作不可逆，请谨慎操作。";//TODO:
+"kVcAssetOpGsCellTitlePrice" = "价格";//TODO:
+"kVcAssetOpGsCellPlaceholderPrice" = "请输入全局清算价格";//TODO:
+"kVcAssetOpGsCellTailerBtnPmAsTrue" = "预测为真";//TODO:
+"kVcAssetOpGsCellTailerBtnPmAsFalse" = "预测为假";//TODO:
+"kVcAssetOpGsSubmitBtnName" = "全局清算";//TODO:
+"kVcAssetOpGsSubmitTipsPleaseInputPrice" = "请输入全局清算价格。";//TODO:
+"kVcAssetOpGsSubmitAskForGs" = "您确认以 %@ %@/%@ 的价格发起全局清算吗？\n\n※ 此操作不可逆，请谨慎操作。";//TODO:
+"kVcAssetOpGsSubmitTipsOK" = "全局清算成功。";//TODO:
 
 /* 订单界面 */
 "kVcOrderPageOpenOrders" = "現在の注文";
@@ -970,6 +993,8 @@
 "kVcTitleAssetOpSettle" = "发起清算";//TODO:
 "kVcTitleAssetOpReserve" = "销毁资产";//TODO:
 "kVcTitleAssetOpIssue" = "发行资产";//TODO:
+"kVcTitleAssetGlobalSettle" = "全局清算";//TODO:
+"kVcTitleAssetClaimFeePool" = "提取手续费池";//TODO:
 "kVcTitleAssetOpViewDetail" = "%@ 详情";//TODO:
 "kVcTitleAssetOpUpdateBasic" = "更新资产";//TODO:
 "kVcTitleAssetOpUpdateBitasset" = "更新智能币";//TODO:
@@ -1140,6 +1165,9 @@
 "kOpDetailSubPrefixCommittee" = "委員";
 "kOpDetailSubPrefixWitness" = "証人";
 "kOpDetailSubPrefixProxy" = "エージェント";
+"kOpMemoTipsLocked" = "注：ウォレットのロックを解除して、メモを表示します。";
+"kOpMemoTipsMemoIsBlank" = "注：空白。";
+"kOpMemoTipsMemoNoPriKey" = "注：このメモは表示できません。";
 
 /* 场外交易相关 */
 "kOtcEntryUserAgreementLinkName" = "《点击查看OTC用户协议》";//TODO:

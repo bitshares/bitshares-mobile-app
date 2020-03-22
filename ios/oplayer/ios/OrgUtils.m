@@ -1648,10 +1648,9 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
     id memo = [opdata objectForKey:@"memo"];
     if (memo && [memo objectForKey:@"from"] && [memo objectForKey:@"to"] && [memo objectForKey:@"nonce"] && [memo objectForKey:@"message"]) {
         WalletManager* walletMgr = [WalletManager sharedWalletManager];
-        //  TODO:5.0 lang
         if ([walletMgr isLocked]) {
             processedMemoObject = @{
-                @"tips":@"备注：解锁钱包查看备注信息。",
+                @"tips":NSLocalizedString(@"kOpMemoTipsLocked", @"备注：解锁钱包查看备注信息。"),
                 @"locked":@YES,
                 @"decryptSuccessed":@NO,
                 @"isBlank":@YES,
@@ -1661,7 +1660,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
             if (plain_memo) {
                 if ([plain_memo isEqualToString:@""]) {
                     processedMemoObject = @{
-                        @"tips":@"备注：空白。",
+                        @"tips":NSLocalizedString(@"kOpMemoTipsMemoIsBlank", @"备注：空白。"),
                         @"locked":@NO,
                         @"decryptSuccessed":@YES,
                         @"isBlank":@YES,
@@ -1676,7 +1675,7 @@ NSString* gSmallDataDecode(NSString* str, NSString* key)
                 }
             } else {
                 processedMemoObject = @{
-                    @"tips":@"备注：无法查看该条备注信息。",
+                    @"tips":NSLocalizedString(@"kOpMemoTipsMemoNoPriKey", @"备注：无法查看该条备注信息。"),
                     @"locked":@NO,
                     @"decryptSuccessed":@NO,
                     @"isBlank":@YES,

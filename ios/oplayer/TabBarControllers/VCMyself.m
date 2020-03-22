@@ -287,8 +287,7 @@ enum
                     break;
                 case kVcSubShareLink:
                 {
-                    //  TODO:5.0 icon
-                    cell.imageView.image = [UIImage templateImageNamed:@"iconSetting"];
+                    cell.imageView.image = [UIImage templateImageNamed:@"iconShare"];
                     cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
                 }
                     break;

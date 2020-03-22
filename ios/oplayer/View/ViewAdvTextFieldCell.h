@@ -22,9 +22,18 @@
 @interface ViewAdvTextFieldCell : UITableViewCellBase<UITextFieldDelegate>
 
 - (id)initWithTitle:(NSString*)title placeholder:(NSString*)placeholder;
-//- (id)initWithTitle:(NSString*)title placeholder:(NSString*)placeholder tailer:(NSString*)tailer;
+- (id)initWithTitle:(NSString*)title placeholder:(NSString*)placeholder decimalPrecision:(NSInteger)decimalPrecision;
 
 - (void)endInput;
+
+/*
+ *  (public) 在输入框尾部生成帮助资产名称视图。
+ */
+- (void)genTailerAssetName:(NSString*)asset_name;
+/*
+ *  (public) 在输入框尾部生成资产名称和各种按钮集合的视图。
+ */
+- (void)genTailerAssetNameAndButtons:(NSString*)asset_name button_names:(NSArray*)button_names target:(id)target action:(SEL)action;
 
 /*
  *  (public) 生成帮助问号的 tailerView。

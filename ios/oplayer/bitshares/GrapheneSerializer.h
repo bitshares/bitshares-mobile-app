@@ -154,6 +154,9 @@
 @interface T_account_upgrade : T_Base
 @end
 
+@interface T_account_transfer : T_Base
+@end
+
 /**
  *  OP - 待解冻金额相关
  */
@@ -197,6 +200,9 @@
 @end
 
 @interface T_asset_create : T_Base
+@end
+
+@interface T_asset_global_settle : T_Base
 @end
 
 @interface T_asset_settle : T_Base

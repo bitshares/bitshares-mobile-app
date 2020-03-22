@@ -4,7 +4,7 @@
 //
 //  Created by SYALON on 13-12-31.
 //
-//  水平方向自动跳转尺寸的容器
+//  水平方向自动调整尺寸的容器
 
 #import <UIKit/UIKit.h>
 
@@ -19,6 +19,7 @@
 
 @interface TailerViewAssetAndButtons : ViewAutoresizeContailerHor
 
+- (id)initWithHeight:(CGFloat)fHeight asset_name:(NSString*)asset_name;
 - (id)initWithHeight:(CGFloat)fHeight asset_name:(NSString*)asset_name button_names:(NSArray*)button_names target:(id)target action:(SEL)action;
 
 - (void)drawAssetName:(NSString*)asset_name;

@@ -20,13 +20,6 @@ enum
     kvcSecMax
 };
 
-enum
-{
-    kTailerTagAssetName = 1,
-    kTailerTagSpace,
-    kTailerTagBtnAll
-};
-
 @interface VCAssetOpCommon ()
 {
     WsPromiseObject*            _result_promise;
@@ -399,8 +392,7 @@ enum
             NSString* value;
             id bitasset_data = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:[_curr_selected_asset objectForKey:@"bitasset_data_id"]];
             if ([ModelUtils assetHasGlobalSettle:bitasset_data]) {
-                //  TODO:5.0 lang
-                value = [NSString stringWithFormat:@"您确认清算 %@ %@ 吗？\n\n※ 该资产已经触发全局清算，发起清算之后将立即执行，并且不可撤销，请谨慎操作。",
+                value = [NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpSubmitAskSettle2", @"您确认清算 %@ %@ 吗？\n\n※ 该资产已经触发全局清算，发起清算之后将立即执行，并且不可撤销，请谨慎操作。"),
                          n_amount, _curr_balance_asset[@"symbol"]];
             } else {
                 value = [NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpSubmitAskSettle", @"您确认清算 %@ %@ 吗？\n\n※ 发起清算之后将延后执行，并且不可撤销，请谨慎操作。"),

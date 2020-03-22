@@ -72,6 +72,11 @@
  *  OP - 升级帐号
  */
 - (WsPromise*)accountUpgrade:(NSDictionary*)op_data;
+/*
+ *  OP - 转移账号
+ */
+- (WsPromise*)accountTransfer:(NSDictionary*)op_data;
+
 - (WsPromise*)callOrderUpdate:(NSDictionary*)callorder_update_op;
 - (WsPromise*)createLimitOrder:(NSDictionary*)limit_order_op;
 - (WsPromise*)cancelLimitOrders:(NSArray*)cancel_limit_order_op_array;
@@ -107,6 +112,11 @@
  *  OP -创建资产。
  */
 - (WsPromise*)assetCreate:(NSDictionary*)opdata;
+
+/**
+ *  OP -全局清算资产。
+ */
+- (WsPromise*)assetGlobalSettle:(NSDictionary*)opdata;
 
 /**
  *  OP -清算资产。

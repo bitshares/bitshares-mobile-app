@@ -471,9 +471,13 @@
 "kVcAssetMgrCellActionUpdateAsset" = "更新资产";
 "kVcAssetMgrCellActionUpdateBitasset" = "更新智能币";
 "kVcAssetMgrCellActionIssueAsset" = "发行资产";
+"kVcAssetMgrCellActionClaimFeePool" = "提取手续费池";
+"kVcAssetMgrCellActionGlobalSettle" = "全局清算";
 "kVcAssetMgrCellInfoCurSupply" = "当前供应量";
 "kVcAssetMgrCellInfoMaxSupply" = "最大供应量";
 "kVcAssetMgrCellInfoConSupply" = "隐私供应量";
+"kVcAssetMgrActionTipsAlreadyGsCannotUpdateBitasset" = "该资产已经触发全局清算，不可更新智能币。";
+"kVcAssetMgrActionTipsAlreadyGsCannotGsAgain" = "该资产已经触发全局清算，不可重复执行全局清算操作。";
 
 "kVcAssetMgrAssetCreateButton" = "创建";
 "kVcAssetMgrAssetUpdateAssetButton" = "更新资产";
@@ -564,9 +568,11 @@
 "kVcAssetOpUpdateBitassetSubmitTipsOK" = "更新智能币成功。";
 
 "kVcAssetOpSettleTipsDisableSettle" = "该资产禁止清算。";
+"kVcAssetOpSettleTipsMustGlobalSettleFirst" = "预测市场全局清算完成之后才可以进行清算操作。";
 "kVcAssetOpSettleTipsNoFeedData" = "该资产没有有效的喂价，不可清算。";
 "kVcAssetOpSettleDelayHoursN" = "%@小时";
 "kVcAssetOpSettleUiTips" = "【温馨提示】\n1、清算操作强制把清算资产换回背书资产。此操作不可撤销，请谨慎操作。\n2、发起清算后将在%@后排队执行，并以当时的清算价格成交。\n3、清算价 = 成交时的喂价 × %@";
+"kVcAssetOpSettleUiTipsAlreadyGs" = "【温馨提示】\n1、清算操作强制把清算资产换回背书资产。此操作不可撤销，请谨慎操作。\n2、该资产已经触发全局清算，清算操作将立即执行。\n3、清算价 = %@";
 "kVcAssetOpSettleCellPlaceholderAmount" = "请输入清算数量";
 "kVcAssetOpSettleBtnName" = "发起清算";
 "kVcAssetOpSettleSubmitTipsPleaseInputAmount" = "请输入要清算的资产数量。";
@@ -593,7 +599,24 @@
 "kVcAssetOpSubmitTipsIssueOK" = "发行成功。";
 "kVcAssetOpSubmitAskIssue" = "您确认发行 %@ %@ 给 %@ 吗？";
 "kVcAssetOpSubmitAskSettle" = "您确认清算 %@ %@ 吗？\n\n※ 发起清算之后将延后执行，并且不可撤销，请谨慎操作。";
+"kVcAssetOpSubmitAskSettle2" = "您确认清算 %@ %@ 吗？\n\n※ 该资产已经触发全局清算，发起清算之后将立即执行，并且不可撤销，请谨慎操作。";
 "kVcAssetOpSubmitAskReserve" = "您确认销毁 %@ %@ 吗？\n\n※ 此操作不可逆，请谨慎操作。";
+
+"kVcAssetOpClaimFeePoolUiTips" = "【温馨提示】\n资产手续费池可用于抵扣网络广播手续费，如果手续费池余额不足，则不能抵扣。";
+"kVcAssetOpClaimFeePoolCellPlaceholderAmount" = "请输入提取数量";
+"kVcAssetOpClaimFeePoolBtnName" = "提取";
+"kVcAssetOpClaimFeePoolSubmitTipsPleaseInputAmount" = "请输入要提取的资产数量。";
+"kVcAssetOpClaimFeePoolSubmitTipOK" = "提取成功。";
+
+"kVcAssetOpGsUiTips" = "【温馨提示】\n全局清算会以指定价格强制关闭所有债仓，此操作不可逆，请谨慎操作。";
+"kVcAssetOpGsCellTitlePrice" = "价格";
+"kVcAssetOpGsCellPlaceholderPrice" = "请输入全局清算价格";
+"kVcAssetOpGsCellTailerBtnPmAsTrue" = "预测为真";
+"kVcAssetOpGsCellTailerBtnPmAsFalse" = "预测为假";
+"kVcAssetOpGsSubmitBtnName" = "全局清算";
+"kVcAssetOpGsSubmitTipsPleaseInputPrice" = "请输入全局清算价格。";
+"kVcAssetOpGsSubmitAskForGs" = "您确认以 %@ %@/%@ 的价格发起全局清算吗？\n\n※ 此操作不可逆，请谨慎操作。";
+"kVcAssetOpGsSubmitTipsOK" = "全局清算成功。";
 
 /* 订单界面 */
 "kVcOrderPageOpenOrders" = "当前订单";
@@ -970,6 +993,8 @@
 "kVcTitleAssetOpSettle" = "发起清算";
 "kVcTitleAssetOpReserve" = "销毁资产";
 "kVcTitleAssetOpIssue" = "发行资产";
+"kVcTitleAssetGlobalSettle" = "全局清算";
+"kVcTitleAssetClaimFeePool" = "提取手续费池";
 "kVcTitleAssetOpViewDetail" = "%@ 详情";
 "kVcTitleAssetOpUpdateBasic" = "更新资产";
 "kVcTitleAssetOpUpdateBitasset" = "更新智能币";
@@ -1140,6 +1165,9 @@
 "kOpDetailSubPrefixCommittee" = "理事会";
 "kOpDetailSubPrefixWitness" = "见证人";
 "kOpDetailSubPrefixProxy" = "代理人";
+"kOpMemoTipsLocked" = "备注：解锁钱包查看备注信息。";
+"kOpMemoTipsMemoIsBlank" = "备注：空白。";
+"kOpMemoTipsMemoNoPriKey" = "备注：无法查看该条备注信息。";
 
 /* 场外交易相关 */
 "kOtcEntryUserAgreementLinkName" = "《点击查看OTC用户协议》";

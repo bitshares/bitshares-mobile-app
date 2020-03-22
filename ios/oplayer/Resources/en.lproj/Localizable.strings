@@ -471,9 +471,13 @@
 "kVcAssetMgrCellActionUpdateAsset" = "Update assets";
 "kVcAssetMgrCellActionUpdateBitasset" = "Update bitassets";
 "kVcAssetMgrCellActionIssueAsset" = "Issuing assets";
+"kVcAssetMgrCellActionClaimFeePool" = "Claim fee pool";
+"kVcAssetMgrCellActionGlobalSettle" = "Global settle";
 "kVcAssetMgrCellInfoCurSupply" = "Current supply";
 "kVcAssetMgrCellInfoMaxSupply" = "Maximum supply";
 "kVcAssetMgrCellInfoConSupply" = "Confidential supply";
+"kVcAssetMgrActionTipsAlreadyGsCannotUpdateBitasset" = "The asset has been global settled, and bitasset cannot be updated.";
+"kVcAssetMgrActionTipsAlreadyGsCannotGsAgain" = "This asset has been global settled, cannot global settle again.";
 
 "kVcAssetMgrAssetCreateButton" = "Create";
 "kVcAssetMgrAssetUpdateAssetButton" = "Update assets";
@@ -564,9 +568,11 @@
 "kVcAssetOpUpdateBitassetSubmitTipsOK" = "Update bitasset succeeded.";
 
 "kVcAssetOpSettleTipsDisableSettle" = "The asset has been disabled settlements.";
+"kVcAssetOpSettleTipsMustGlobalSettleFirst" = "This operations can only be performed after the global settlement of the prediction market.";
 "kVcAssetOpSettleTipsNoFeedData" = "The asset has no valid feed price and cannot be settlements.";
 "kVcAssetOpSettleDelayHoursN" = "%@ hours";
 "kVcAssetOpSettleUiTips" = "[Reminder] \n1. The settlements operation forces the assets to be exchanged back to the backing assets. This operation is irreversible, please proceed with caution. \n2. after the settlements is initiated, it will be queued for execution after %@, and the transaction will be executed at the current settlement price. \n3. settlement price = feed price × %@";
+"kVcAssetOpSettleUiTipsAlreadyGs" = "[Reminder] \n1. The settlements operation forces the assets to be exchanged back to the backing assets. This operation is irreversible, please proceed with caution. \n2. The asset has been global settled, and the settlements operation will be executed immediately. \n3, settlement price = %@";
 "kVcAssetOpSettleCellPlaceholderAmount" = "Please enter the amount";
 "kVcAssetOpSettleBtnName" = "Settle asset";
 "kVcAssetOpSettleSubmitTipsPleaseInputAmount" = "Please enter the amount of assets to be settled.";
@@ -593,7 +599,24 @@
 "kVcAssetOpSubmitTipsIssueOK" = "Assets issued successfully.";
 "kVcAssetOpSubmitAskIssue" = "Are you sure to issue %@ %@ to %@?";
 "kVcAssetOpSubmitAskSettle" = "Are you sure to settle %@ %@? \n\n※ After the settlements is initiated, it will be queued for execution and irrevocable. Please proceed with caution.";
+"kVcAssetOpSubmitAskSettle2" = "Are you sure to settle %@ %@? \n\n※ The asset has been global settled, and the operation will be executed immediately and irrevocably. Please proceed with caution.";
 "kVcAssetOpSubmitAskReserve" = "Are you sure to reserve %@ %@? \n\n※ This operation is irreversible, please exercise caution.";
+
+"kVcAssetOpClaimFeePoolUiTips" = "[Reminder] \nAsset fee pool can be used to deduct network broadcasting fees. If the balance of the fee pool is insufficient, it cannot be deducted.";
+"kVcAssetOpClaimFeePoolCellPlaceholderAmount" = "Please enter the amount";
+"kVcAssetOpClaimFeePoolBtnName" = "Claim";
+"kVcAssetOpClaimFeePoolSubmitTipsPleaseInputAmount" = "Please enter the amount of assets to claim.";
+"kVcAssetOpClaimFeePoolSubmitTipOK" = "Claim successfully.";
+
+"kVcAssetOpGsUiTips" = "[Reminder] \nGlobal settlements will forcibly close all positions at the settle price. This operation is irreversible, please exercise caution.";
+"kVcAssetOpGsCellTitlePrice" = "Price";
+"kVcAssetOpGsCellPlaceholderPrice" = "Please enter the settle price";
+"kVcAssetOpGsCellTailerBtnPmAsTrue" = "TRUE";
+"kVcAssetOpGsCellTailerBtnPmAsFalse" = "FALSE";
+"kVcAssetOpGsSubmitBtnName" = "Global settle";
+"kVcAssetOpGsSubmitTipsPleaseInputPrice" = "Please enter the settle price.";
+"kVcAssetOpGsSubmitAskForGs" = "Are you sure to perform global settlements at the price of %@ %@/%@ ? \n\n※ This operation is irreversible, please exercise caution.";
+"kVcAssetOpGsSubmitTipsOK" = "Global settlements was successful.";
 
 /* 订单界面 */
 "kVcOrderPageOpenOrders" = "Open Orders";
@@ -970,6 +993,8 @@
 "kVcTitleAssetOpSettle" = "Initiate settlement";
 "kVcTitleAssetOpReserve" = "Reserve assets";
 "kVcTitleAssetOpIssue" = "Issue assets";
+"kVcTitleAssetGlobalSettle" = "Global settlemens assets";
+"kVcTitleAssetClaimFeePool" = "Claim fee pool";
 "kVcTitleAssetOpViewDetail" = "%@ details";
 "kVcTitleAssetOpUpdateBasic" = "Update assets";
 "kVcTitleAssetOpUpdateBitasset" = "Update bitassets";
@@ -1140,6 +1165,9 @@
 "kOpDetailSubPrefixCommittee" = "Committee";
 "kOpDetailSubPrefixWitness" = "Witness";
 "kOpDetailSubPrefixProxy" = "Proxy";
+"kOpMemoTipsLocked" = "Memo: unlock wallet to view memo message.";
+"kOpMemoTipsMemoIsBlank" = "Memo: blank.";
+"kOpMemoTipsMemoNoPriKey" = "Memo: this memo message cannot be viewed.";
 
 /* 场外交易相关 */
 "kOtcEntryUserAgreementLinkName" = "《点击查看OTC用户协议》";//TODO:
