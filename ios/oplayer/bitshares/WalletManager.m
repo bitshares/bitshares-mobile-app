@@ -472,20 +472,25 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
     id account = [full_data objectForKey:@"account"];
     id account_name = [account objectForKey:@"name"];
     
-    //  通过账号密码计算active和owner私钥信息。
+    //  通过账号密码计算active、owner、memo私钥信息。
     id active_seed = [NSString stringWithFormat:@"%@active%@", account_name, password];
     id active_private_wif = [OrgUtils genBtsWifPrivateKey:active_seed];
     id owner_seed = [NSString stringWithFormat:@"%@owner%@", account_name, password];
     id owner_private_wif = [OrgUtils genBtsWifPrivateKey:owner_seed];
+    id memo_seed = [NSString stringWithFormat:@"%@memo%@", account_name, password];
+    id memo_private_wif = [OrgUtils genBtsWifPrivateKey:memo_seed];
     NSString* active_pubkey = [OrgUtils genBtsAddressFromWifPrivateKey:active_private_wif];
     NSString* owner_pubkey = [OrgUtils genBtsAddressFromWifPrivateKey:owner_private_wif];
+    NSString* memo_pubkey = [OrgUtils genBtsAddressFromWifPrivateKey:memo_private_wif];
     assert(active_pubkey);
     assert(owner_pubkey);
+    assert(memo_pubkey);
     
     //  保存到内存
     [_private_keys_hash removeAllObjects];
     [_private_keys_hash setObject:active_private_wif forKey:active_pubkey];
     [_private_keys_hash setObject:owner_private_wif forKey:owner_pubkey];
+    [_private_keys_hash setObject:memo_private_wif forKey:memo_pubkey];
     
     if ([self canAuthorizeThePermission:[account objectForKey:@"active"]]){
         //  解锁成功 & 有权限OK
