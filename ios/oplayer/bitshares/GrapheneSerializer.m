@@ -84,6 +84,7 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [T_account_create performSelector:@selector(register_subfields)];
     [T_account_update performSelector:@selector(register_subfields)];
     [T_account_upgrade performSelector:@selector(register_subfields)];
+    [T_account_transfer performSelector:@selector(register_subfields)];
     
     [T_linear_vesting_policy_initializer performSelector:@selector(register_subfields)];
     [T_cdd_vesting_policy_initializer performSelector:@selector(register_subfields)];
@@ -99,6 +100,7 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [T_asset_options performSelector:@selector(register_subfields)];
     [T_bitasset_options performSelector:@selector(register_subfields)];
     [T_asset_create performSelector:@selector(register_subfields)];
+    [T_asset_global_settle performSelector:@selector(register_subfields)];
     [T_asset_settle performSelector:@selector(register_subfields)];
     [T_asset_update performSelector:@selector(register_subfields)];
     [T_asset_update_bitasset performSelector:@selector(register_subfields)];
@@ -781,6 +783,8 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
             return [T_account_update class];
         case ebo_account_upgrade:
             return [T_account_upgrade class];
+        case ebo_account_transfer:
+            return [T_account_transfer class];
         case ebo_vesting_balance_create:
             return [T_vesting_balance_create class];
         case ebo_vesting_balance_withdraw:
@@ -793,6 +797,8 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
             return [T_proposal_delete class];
         case ebo_asset_create:
             return [T_asset_create class];
+        case ebo_asset_global_settle:
+            return [T_asset_global_settle class];
         case ebo_asset_settle:
             return [T_asset_settle class];
         case ebo_asset_update:
@@ -972,6 +978,18 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 
 @end
 
+@implementation T_account_transfer
+
++ (void)register_subfields
+{
+    [self add_field:@"fee" class:[T_asset class]];
+    [self add_field:@"account_id" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"new_owner" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
+}
+
+@end
+
 @implementation T_linear_vesting_policy_initializer
 
 + (void)register_subfields
@@ -1131,6 +1149,19 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [self add_field:@"common_options" class:[T_asset_options class]];
     [self add_field:@"bitasset_opts" class:[[Tm_optional alloc] initWithType:[T_bitasset_options class]]];
     [self add_field:@"is_prediction_market" class:[T_bool class]];
+    [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
+}
+
+@end
+
+@implementation T_asset_global_settle
+
++ (void)register_subfields
+{
+    [self add_field:@"fee" class:[T_asset class]];
+    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"asset_to_settle" class:[[Tm_protocol_id_type alloc] initWithName:@"asset"]];
+    [self add_field:@"settle_price" class:[T_price class]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
 

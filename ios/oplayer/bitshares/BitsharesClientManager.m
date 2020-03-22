@@ -300,6 +300,17 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
     return [self runSingleTransaction:op_data opcode:ebo_account_upgrade fee_paying_account:[op_data objectForKey:@"account_to_upgrade"]];
 }
 
+/*
+ *  OP - 转移账号
+ */
+- (WsPromise*)accountTransfer:(NSDictionary*)op_data
+{
+    //  TODO:后续处理，链尚不支持。
+    NSAssert(NO, @"not supported");
+    //  eval: No registered evaluator for operation ${op}"
+    return [self runSingleTransaction:op_data opcode:ebo_account_transfer fee_paying_account:[op_data objectForKey:@"account_id"]];
+}
+
 /**
  *  OP - 更新保证金（抵押借贷）
  */
@@ -527,6 +538,14 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
 - (WsPromise*)assetCreate:(NSDictionary*)opdata
 {
     return [self runSingleTransaction:opdata opcode:ebo_asset_create fee_paying_account:[opdata objectForKey:@"issuer"]];
+}
+
+/**
+ *  OP -全局清算资产。
+ */
+- (WsPromise*)assetGlobalSettle:(NSDictionary*)opdata
+{
+    return [self runSingleTransaction:opdata opcode:ebo_asset_global_settle fee_paying_account:[opdata objectForKey:@"issuer"]];
 }
 
 /**

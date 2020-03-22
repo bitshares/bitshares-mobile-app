@@ -103,6 +103,11 @@
     // Do any additional setup after loading the view.
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
+    //  导航栏右边 收藏 和 区块浏览器 按钮
+//    id btn1 = [self naviButtonWithImage:@"iconFav" action:@selector(onRightOrderButtonClicked) color:theme.textColorNormal];
+//    id btn2 = [self naviButtonWithImage:@"iconFav" action:@selector(onRightUserButtonClicked) color:theme.textColorNormal];
+//    [self.navigationItem setRightBarButtonItems:@[btn2, btn1]];
+    
     id account_name = [[_fullAccountInfo objectForKey:@"account"] objectForKey:@"name"];
     
     //  他人帐号 关注/取消关注
@@ -671,8 +676,7 @@
         if ([[newBitassetData objectForKey:@"is_prediction_market"] boolValue]) {
             //  预测市场：必须全局清算之后才可以进行清算操作。
             if (!hasAlreadyGlobalSettled) {
-                //  TODO:5.0 lang
-                [OrgUtils makeToast:@"预测市场全局清算完成之后才可以进行清算操作。"];
+                [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpSettleTipsMustGlobalSettleFirst", @"预测市场全局清算完成之后才可以进行清算操作。")];
                 return;
             }
         } else {
@@ -698,8 +702,7 @@
             NSString* global_settle_price = [NSString stringWithFormat:@"%@ %@/%@",
                                              [OrgUtils formatFloatValue:n_price usesGroupingSeparator:NO],
                                              backing_asset[@"symbol"], newAsset[@"symbol"]];
-            //  TODO:5.0 lang
-            settleMsgTips = [NSString stringWithFormat:@"【温馨提示】\n1、清算操作强制把清算资产换回背书资产。此操作不可撤销，请谨慎操作。\n2、该资产已经触发全局清算，清算操作将立即执行。\n3、清算价 = %@", global_settle_price];
+            settleMsgTips = [NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpSettleUiTipsAlreadyGs", @"【温馨提示】\n1、清算操作强制把清算资产换回背书资产。此操作不可撤销，请谨慎操作。\n2、该资产已经触发全局清算，清算操作将立即执行。\n3、清算价 = %@"), global_settle_price];
         } else {
             id options = [newBitassetData objectForKey:@"options"];
             

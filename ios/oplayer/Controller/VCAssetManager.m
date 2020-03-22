@@ -13,6 +13,7 @@
 #import "VCAssetDetails.h"
 #import "VCAssetOpIssue.h"
 #import "VCAssetOpCommon.h"
+#import "VCAssetOpGlobalSettle.h"
 
 @interface VCAssetManager ()
 {
@@ -211,17 +212,20 @@
     }
     
     id list = [[[NSMutableArray array] ruby_apply:^(id ary) {
-        //[ary addObject:@{@"type":@(ebaok_view), @"title":NSLocalizedString(@"kVcAssetMgrCellActionViewDetail", @"资产详情")}];//TODO:5.0 暂时去掉
+        //[ary addObject:@{@"type":@(ebaok_view), @"title":NSLocalizedString(@"kVcAssetMgrCellActionViewDetail", @"资产详情")}];//TODO:6.0 暂时去掉
         [ary addObject:@{@"type":@(ebaok_edit), @"title":NSLocalizedString(@"kVcAssetMgrCellActionUpdateAsset", @"更新资产")}];
         if (bitasset_data) {
             [ary addObject:@{@"type":@(ebaok_update_bitasset), @"title":NSLocalizedString(@"kVcAssetMgrCellActionUpdateBitasset", @"更新智能币")}];
+            //  允许发行人强制清算
+            if ([ModelUtils assetCanGlobalSettle:asset]) {
+                [ary addObject:@{@"type":@(ebaok_global_settle), @"title":NSLocalizedString(@"kVcAssetMgrCellActionGlobalSettle", @"全局清算")}];
+            }
         } else {
             [ary addObject:@{@"type":@(ebaok_issue), @"title":NSLocalizedString(@"kVcAssetMgrCellActionIssueAsset", @"发行资产")}];
         }
         //  非核心资产，都可以提取手续费池。
         if (![[asset objectForKey:@"id"] isEqualToString:chainMgr.grapheneCoreAssetID]) {
-            //  TODO:5.0 lang
-            [ary addObject:@{@"type":@(ebaok_claim_pool), @"title":@"提取手续费池"}];
+            [ary addObject:@{@"type":@(ebaok_claim_pool), @"title":NSLocalizedString(@"kVcAssetMgrCellActionClaimFeePool", @"提取手续费池")}];
         }
     }] copy];
     
@@ -286,8 +290,7 @@
                 case ebaok_update_bitasset:
                 {
                     if ([ModelUtils assetHasGlobalSettle:bitasset_data]) {
-                        //  TODO:5.0 lang
-                        [OrgUtils makeToast:@"该资产已经触发全局清算，不可更新智能币。"];
+                        [OrgUtils makeToast:NSLocalizedString(@"kVcAssetMgrActionTipsAlreadyGsCannotUpdateBitasset", @"该资产已经触发全局清算，不可更新智能币。")];
                         return;
                     }
                     
@@ -329,30 +332,48 @@
                 case ebaok_global_settle:
                 {
                     if ([ModelUtils assetHasGlobalSettle:bitasset_data]) {
-                        //  TODO:5.0 lang
-                        [OrgUtils makeToast:@"该资产已经触发全局清算，不可重复执行全局清算操作。"];
+                        [OrgUtils makeToast:NSLocalizedString(@"kVcAssetMgrActionTipsAlreadyGsCannotGsAgain", @"该资产已经触发全局清算，不可重复执行全局清算操作。")];
                         return;
                     }
+                    
+                    //  查询背书资产名称依赖
+                    [VcUtils guardGrapheneObjectDependence:self object_ids:bitasset_data[@"options"][@"short_backing_asset"] body:^{
+                        WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
+                        VCAssetOpGlobalSettle* vc = [[VCAssetOpGlobalSettle alloc] initWithCurrAsset:asset
+                                                                                       bitasset_data:bitasset_data 
+                                                                                      result_promise:result_promise];
+                        [self pushViewController:vc
+                                         vctitle:NSLocalizedString(@"kVcTitleAssetGlobalSettle", @"全局清算")
+                                       backtitle:kVcDefaultBackTitleName];
+                        [result_promise then:^id(id dirty) {
+                            //  刷新UI
+                            if (dirty && [dirty boolValue]) {
+                                [self queryMyIssuedAssets];
+                            }
+                            return nil;
+                        }];
+                    }];
                 }
                     break;
                 case ebaok_claim_pool:
                 {
                     [VcUtils guardGrapheneObjectDependence:self object_ids:[asset objectForKey:@"dynamic_asset_data_id"] body:^{
-                        //  TODO:5.0 lang
                         id opArgs = @{
                             @"kOpType":@(ebaok_claim_pool),
-                            @"kMsgTips":@"【温馨提示】\n资产手续费池可用于抵扣网络广播手续费，如果手续费池余额不足，则不能抵扣。",
-                            @"kMsgAmountPlaceholder":@"请输入提取数量",
-                            @"kMsgBtnName":@"提取",
-                            @"kMsgSubmitInputValidAmount":@"请输入要提取的资产数量。",
-                            @"kMsgSubmitOK":@"提取成功。"
+                            @"kMsgTips":NSLocalizedString(@"kVcAssetOpClaimFeePoolUiTips", @"【温馨提示】\n资产手续费池可用于抵扣网络广播手续费，如果手续费池余额不足，则不能抵扣。"),
+                            @"kMsgAmountPlaceholder":NSLocalizedString(@"kVcAssetOpClaimFeePoolCellPlaceholderAmount", @"请输入提取数量"),
+                            @"kMsgBtnName":NSLocalizedString(@"kVcAssetOpClaimFeePoolBtnName", @"提取"),
+                            @"kMsgSubmitInputValidAmount":NSLocalizedString(@"kVcAssetOpClaimFeePoolSubmitTipsPleaseInputAmount", @"请输入要提取的资产数量。"),
+                            @"kMsgSubmitOK":NSLocalizedString(@"kVcAssetOpClaimFeePoolSubmitTipOK", @"提取成功。")
                         };
                         WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
                         VCAssetOpCommon* vc = [[VCAssetOpCommon alloc] initWithCurrAsset:asset
                                                                        full_account_data:nil
                                                                            op_extra_args:opArgs
                                                                           result_promise:result_promise];
-                        [self pushViewController:vc vctitle:@"提取手续费池" backtitle:kVcDefaultBackTitleName];
+                        [self pushViewController:vc
+                                         vctitle:NSLocalizedString(@"kVcTitleAssetClaimFeePool", @"提取手续费池")
+                                       backtitle:kVcDefaultBackTitleName];
                         [result_promise then:^id(id dirty) {
                             //  刷新UI
                             if (dirty && [dirty boolValue]) {
