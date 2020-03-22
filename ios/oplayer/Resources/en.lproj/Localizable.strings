@@ -259,6 +259,7 @@
 "kEditPasswordBtnNext" = "Next";
 "kEditPasswordUiSecTips" = "[Reminder] \nDo not copy, take photos, or take screenshots. \nPlease use a pen and paper to record the password consisting of the above %@ characters in order from left to right and from top to bottom, and keep it in a safe place. Once lost, it cannot be retrieved.";
 "kEditPasswordCellTitleCurrAccountName" = "Account";
+"kEditPasswordCellTItleYourNewAccountName" = "Your account";
 "kEditPasswordCellTitleVerifyPassword" = "Confirm password";
 "kEditPasswordCellPlaceholderVerifyPassword" = "Enter the password from the prev step";
 "kEditPasswordBtnSubmmit" = "OK";
@@ -271,6 +272,7 @@
 "kEditPasswordEditRangeListOnlyOwner" = "Only owner permission";
 "kEditPasswordSubmitTipsConfirmFailed" = "Password verification failed. Please re-enter.";
 "kEditPasswordSubmitSecondTipsAsk" = "Please confirm again that you have saved the new password and saved it in a safe place. Continue?";
+"kEditPasswordNextStepAskForReg" = "Please make sure that your password has been copied and saved to a safe place. If it is lost, it cannot be retrieved.";
 
 /* 登录&注册&备份 */
 "kFmtConditionContains2UpperLettersNonConsecutive" = "Contain more than 2 and non-continuous uppercase letters";
@@ -922,6 +924,7 @@
 "kVcTitleChangePermission" = "Update permissions";
 "kVcTitlePermissionAddAuthority" = "Add authority";
 "kVcTitleAddOneSearchAccount" = "Search account";
+"kVcTitleBackupYourPassword" = "Backup password";
 "kVcTitleEditPassword" = "Change password";
 "kVcTitleEditPasswordConfirm" = "Confirm password";
 "kVcTitleQrScan" = "Scan QR code";

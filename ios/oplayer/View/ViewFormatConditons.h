@@ -10,6 +10,7 @@
 
 @interface ViewFormatConditons : UIView
 
+@property (nonatomic, assign) BOOL isAlwaysShow;     //  是否一直显示，默认为 NO。
 @property (nonatomic, assign, readonly) BOOL isAllConditionsMatched;
 @property (nonatomic, strong) NSString* lastCheckString;
 @property (nonatomic, assign) CGFloat cellHeight;

@@ -22,7 +22,7 @@ enum
 {
     kVcAccountName = 0,
     kVcConfirmPassword,
-    kVcModifyRange,
+    kVcModifyRange,             //  修改范围（仅修改密码时存在，注册账号则不存在。）
     kVcSubmit,
     
     kVcMax,
@@ -30,6 +30,8 @@ enum
 
 @interface VCNewAccountPasswordConfirm ()
 {
+    NSString*                       _new_account_name;      //  新账号名，注册时传递，修改密码则为nil。
+    
     NSString*                       _curr_password;
     EBitsharesAccountPasswordLang   _curr_passlang;
     
@@ -40,6 +42,7 @@ enum
     
     ViewBlockLabel*                 _lbSubmit;
     
+    NSArray*                        _secTypeArray;          //  段类型数组
     NSInteger                       _curr_modify_range;
 }
 
@@ -61,19 +64,37 @@ enum
     }
     
     _curr_password = nil;
+    _new_account_name = nil;
+    _secTypeArray = nil;
 }
 
-- (id)initWithPassword:(NSString*)password passlang:(EBitsharesAccountPasswordLang)passlang
+- (id)initWithPassword:(NSString*)password passlang:(EBitsharesAccountPasswordLang)passlang new_account_name:(NSString*)new_account_name
 {
     self = [super init];
     if (self) {
         _curr_password = [password copy];
         _curr_passlang = passlang;
+        _new_account_name = [new_account_name copy];
         _curr_modify_range = kModifyAllPermissions;
     }
     return self;
 }
 
+/*
+ *  (private) 是否是注册账号
+ */
+- (BOOL)isRegisterAccount
+{
+    return _new_account_name != nil;
+}
+
+- (void)onBtnAgreementClicked
+{
+    //  TODO:2.9 url
+    [self gotoWebView:[NSString stringWithFormat:@"%@%@", @"https://btspp.io/",
+                       NSLocalizedString(@"userAgreementHtmlFileName", @"agreement html file")]
+                title:NSLocalizedString(@"kVcTitleAgreement", @"用户协议和服务条款")];
+}
 
 - (void)viewDidLoad
 {
@@ -82,17 +103,39 @@ enum
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
-    _cell_account = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kEditPasswordCellTitleCurrAccountName", @"当前账号")
-                                                    placeholder:@""];
-    _cell_account.mainTextfield.text = [[[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"] objectForKey:@"name"];
+    if ([self isRegisterAccount]) {
+        [self showRightButton:NSLocalizedString(@"kBtnAppAgreement", @"服务条款") action:@selector(onBtnAgreementClicked)];
+        
+        _secTypeArray = @[
+            @(kVcAccountName),
+            @(kVcConfirmPassword),
+            @(kVcSubmit)
+        ];
+        
+        _cell_account = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kEditPasswordCellTItleYourNewAccountName", @"您的账号")
+                                                        placeholder:@""];
+        _cell_account.mainTextfield.text = _new_account_name;
+    } else {
+        _secTypeArray = @[
+            @(kVcAccountName),
+            @(kVcConfirmPassword),
+            @(kVcModifyRange),
+            @(kVcSubmit)
+        ];
+        
+        _cell_account = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kEditPasswordCellTitleCurrAccountName", @"当前账号")
+                                                        placeholder:@""];
+        assert([[WalletManager sharedWalletManager] isWalletExist]);
+        _cell_account.mainTextfield.text = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"][@"name"];
+    }
     _cell_account.mainTextfield.userInteractionEnabled = NO;
     
     _cell_confirm_password = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kEditPasswordCellTitleVerifyPassword", @"验证密码")
                                                              placeholder:NSLocalizedString(@"kEditPasswordCellPlaceholderVerifyPassword", @"请输入上一步生成的密码")];
-    //    //  测试
-    //#ifdef DEBUG
-    //    _cell_confirm_password.mainTextfield.text = _curr_password;
-    //#endif  //  DEBUG
+        //  测试
+//    #ifdef DEBUG
+//        _cell_confirm_password.mainTextfield.text = _curr_password;
+//    #endif  //  DEBUG
     
     //  REMARK：英文用密码输入框，中文用明文输入框。
     //  TODO:5.0 为英文加密码框和眼睛？
@@ -106,7 +149,11 @@ enum
     _mainTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:_mainTableView];
     
-    _lbSubmit = [self createCellLableButton:NSLocalizedString(@"kEditPasswordBtnSubmmit", @"修改")];
+    if ([self isRegisterAccount]) {
+        _lbSubmit = [self createCellLableButton:NSLocalizedString(@"kLoginCellBtnAgreeAndReg", @"同意协议并注册")];
+    } else {
+        _lbSubmit = [self createCellLableButton:NSLocalizedString(@"kEditPasswordBtnSubmmit", @"修改")];
+    }
 }
 
 - (void)endInput
@@ -119,6 +166,53 @@ enum
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
     [self endInput];
+}
+
+/*
+ *  (private) 通过水龙头注册账号
+ */
+- (void)onRegisterAccountCore
+{
+    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    
+    //  1、生成各种权限公钥。
+    //  REMARK：这里memo单独分类出来，避免和active权限相同。
+    id seed_owner = [NSString stringWithFormat:@"%@owner%@", _new_account_name, _curr_password];
+    id seed_active = [NSString stringWithFormat:@"%@active%@", _new_account_name, _curr_password];
+    id seed_memo = [NSString stringWithFormat:@"%@memo%@", _new_account_name, _curr_password];
+    id owner_key = [OrgUtils genBtsAddressFromPrivateKeySeed:seed_owner];
+    id active_key = [OrgUtils genBtsAddressFromPrivateKeySeed:seed_active];
+    id memo_key = [OrgUtils genBtsAddressFromPrivateKeySeed:seed_memo];
+    
+    //  2、调用水龙头API注册
+    [[OrgUtils asyncCreateAccountFromFaucet:_new_account_name
+                                      owner:owner_key
+                                     active:active_key
+                                       memo:memo_key
+                                    refcode:@""
+                                       chid:kAppChannelID] then:(^id(id err_msg) {
+        [self hideBlockView];
+        
+        if (err_msg && [err_msg isKindOfClass:[NSString class]]) {
+            //  水龙头注册失败。
+            [OrgUtils logEvents:@"faucetFailed" params:@{@"err":err_msg}];
+            [OrgUtils makeToast:err_msg];
+            return nil;
+        } else {
+            //  注册成功，直接重新登录。
+            [OrgUtils logEvents:@"registerEvent" params:@{@"mode":@(kwmPasswordOnlyMode), @"desc":@"password"}];
+            [[UIAlertViewManager sharedUIAlertViewManager] showMessage:NSLocalizedString(@"kLoginTipsRegFullOK", @"注册成功。")
+                                                             withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                            completion:^(NSInteger buttonIndex) {
+                //  转到登录界面。
+                VCImportAccount* vc = [[VCImportAccount alloc] init];
+                [self clearPushViewController:vc
+                                      vctitle:NSLocalizedString(@"kVcTitleLogin", @"登录")
+                                    backtitle:kVcDefaultBackTitleName];
+            }];
+        }
+        return nil;
+    })];
 }
 
 /*
@@ -135,15 +229,20 @@ enum
         return;
     }
     
-    //  查询账号数据
-    [[[self queryNewestAccountData] then:^id(id new_account_data) {
-        //  二次确认
-        [self _gotoAskUpdateAccount:new_account_data];
-        return nil;
-    }] catch:^id(id error) {
-        [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
-        return nil;
-    }];
+    if ([self isRegisterAccount]) {
+        //  注册：新账号
+        [self onRegisterAccountCore];
+    } else {
+        //  修改密码：先查询账号数据
+        [[[self queryNewestAccountData] then:^id(id new_account_data) {
+            //  二次确认
+            [self _gotoAskUpdateAccount:new_account_data];
+            return nil;
+        }] catch:^id(id error) {
+            [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+            return nil;
+        }];
+    }
 }
 
 /*
@@ -351,12 +450,12 @@ enum
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return kVcMax;
+    return [_secTypeArray count];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    switch (indexPath.section) {
+    switch ([[_secTypeArray objectAtIndex:indexPath.section] integerValue]) {
         case kVcAccountName:
             return _cell_account.cellHeight;
         case kVcConfirmPassword:
@@ -395,7 +494,7 @@ enum
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    switch (indexPath.section) {
+    switch ([[_secTypeArray objectAtIndex:indexPath.section] integerValue]) {
         case kVcAccountName:
             return _cell_account;
             
@@ -458,7 +557,7 @@ enum
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
-        switch (indexPath.section) {
+        switch ([[_secTypeArray objectAtIndex:indexPath.section] integerValue]) {
             case kVcModifyRange:
                 [self onModifyRangeClicked];
                 break;

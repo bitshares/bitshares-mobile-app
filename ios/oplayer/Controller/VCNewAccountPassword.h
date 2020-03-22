@@ -11,4 +11,6 @@
 
 @interface VCNewAccountPassword : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UIScrollViewDelegate>
 
+- (id)initWithNewAccountName:(NSString*)new_account_name;
+
 @end

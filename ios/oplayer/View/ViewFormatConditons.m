@@ -39,6 +39,7 @@ enum
 {
     self = [super initWithFrame:rect];
     if (self) {
+        _isAlwaysShow = NO;
         _isAllConditionsMatched = NO;
         _lastCheckString = nil;
         _condition_array = [NSMutableArray array];
@@ -110,6 +111,7 @@ enum
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     ViewCheckBox* checkbox = [[ViewCheckBox alloc] initWithFrame:CGRectZero];
     checkbox.labelTitle.text = title;
+    checkbox.labelTitle.textColor = theme.textColorGray;
     checkbox.colorForChecked = theme.buyColor;
     checkbox.colorForUnchecked = theme.textColorGray;
     [self addSubview:checkbox];

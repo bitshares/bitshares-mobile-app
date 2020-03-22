@@ -96,8 +96,6 @@ enum
     [_cell_private_key genHelpButton:self action:@selector(onTipButtonClicked:) tag:kVcSubUserActivePrivateKey];
     //  TODO:5.0 private key 格式？
     //        [_cell_private_key genFormatConditonsView:^(ViewFormatConditons *formatConditonsView) {
-    //    //        //  TODO:5.0 lang
-    //            [formatConditonsView addLengthCondition:@"51个字符" min_length:51 max_length:51 negative:NO];
     //        }];
     
     if (_checkActivePermission){

@@ -259,6 +259,7 @@
 "kEditPasswordBtnNext" = "次のページ";
 "kEditPasswordUiSecTips" = "[リマインダー] \nコピー、写真の撮影、スクリーンショットの撮影はしないでください。 \nペンと紙を使用して、上記の %@ 文字で構成されるパスワードを左から右、上から下の順に記録し、安全な場所に保管してください。 一度失われると、取得できません。";
 "kEditPasswordCellTitleCurrAccountName" = "現在のアカウント";
+"kEditPasswordCellTItleYourNewAccountName" = "あなたのアカウント";
 "kEditPasswordCellTitleVerifyPassword" = "パスワードを確認";
 "kEditPasswordCellPlaceholderVerifyPassword" = "前のステップのパスワードを入力してください";
 "kEditPasswordBtnSubmmit" = "変更する";
@@ -271,6 +272,7 @@
 "kEditPasswordEditRangeListOnlyOwner" = "所有者な権限のみ";
 "kEditPasswordSubmitTipsConfirmFailed" = "パスワードの確認に失敗しました。再入力してください。";
 "kEditPasswordSubmitSecondTipsAsk" = "新しいパスワードを保存し、安全な場所に保存したことを再確認してください。 パスワードの変更を続けますか？";
+"kEditPasswordNextStepAskForReg" = "パスワードがコピーされ、安全な場所に保存されていることを確認してください。";
 
 /* 登录&注册&备份 */
 "kFmtConditionContains2UpperLettersNonConsecutive" = "2つ以上の連続しない大文字を含む";
@@ -922,6 +924,7 @@
 "kVcTitleChangePermission" = "変更権限";
 "kVcTitlePermissionAddAuthority" = "権限を追加する";
 "kVcTitleAddOneSearchAccount" = "アカウントを検索";
+"kVcTitleBackupYourPassword" = "バックアップパスワード";
 "kVcTitleEditPassword" = "パスワードを変更する";
 "kVcTitleEditPasswordConfirm" = "パスワードを確認";
 "kVcTitleQrScan" = "スキャン";

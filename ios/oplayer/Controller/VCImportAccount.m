@@ -14,7 +14,7 @@
 #import "VCTransfer.h"
 #import "VCImportWallet.h"
 #import "WalletManager.h"
-#import "VCRegisterAccount.h"
+#import "VCRegisterEntry.h"
 
 @interface VCImportAccount ()
 {
@@ -87,7 +87,7 @@
 {
     [self endInput];
     
-    VCRegisterAccount* vc = [[VCRegisterAccount alloc] init];
+    VCRegisterEntry* vc = [[VCRegisterEntry alloc] init];
     [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleRegister", @"注册") backtitle:kVcDefaultBackTitleName];
 }
 
