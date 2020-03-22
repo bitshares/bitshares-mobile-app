@@ -11,6 +11,6 @@
 
 @interface VCNewAccountPasswordConfirm : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UIScrollViewDelegate>
 
-- (id)initWithPassword:(NSString*)password passlang:(EBitsharesAccountPasswordLang)passlang;
+- (id)initWithPassword:(NSString*)password passlang:(EBitsharesAccountPasswordLang)passlang new_account_name:(NSString*)new_account_name;
 
 @end

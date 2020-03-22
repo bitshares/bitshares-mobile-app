@@ -259,6 +259,7 @@
 "kEditPasswordBtnNext" = "下一步";
 "kEditPasswordUiSecTips" = "【温馨提示】\n请勿复制、拍照、截图。\n请使用纸笔按照从左到右、从上到下的顺序依次记录以上 %@ 个字符组成的密码，并妥善保存。丢失后将无法找回。";
 "kEditPasswordCellTitleCurrAccountName" = "当前账号";
+"kEditPasswordCellTItleYourNewAccountName" = "您的账号";
 "kEditPasswordCellTitleVerifyPassword" = "验证密码";
 "kEditPasswordCellPlaceholderVerifyPassword" = "请输入上一步生成的密码";
 "kEditPasswordBtnSubmmit" = "修改";
@@ -271,6 +272,7 @@
 "kEditPasswordEditRangeListOnlyOwner" = "仅修改账号权限";
 "kEditPasswordSubmitTipsConfirmFailed" = "密码验证失败，请重新输入。";
 "kEditPasswordSubmitSecondTipsAsk" = "请再次确认您已经保存好新的密码并且保存到了安全的地方。是否继续修改密码？";
+"kEditPasswordNextStepAskForReg" = "请确认您的密码已经抄录完毕，并保存到了安全的地方，丢失将无法找回。";
 
 /* 登录&注册&备份 */
 "kFmtConditionContains2UpperLettersNonConsecutive" = "必须包含2个以上且不连续的大写字母";
@@ -922,6 +924,7 @@
 "kVcTitleChangePermission" = "修改权限";
 "kVcTitlePermissionAddAuthority" = "添加管理者";
 "kVcTitleAddOneSearchAccount" = "搜索账号";
+"kVcTitleBackupYourPassword" = "备份密码";
 "kVcTitleEditPassword" = "修改密码";
 "kVcTitleEditPasswordConfirm" = "验证密码";
 "kVcTitleQrScan" = "扫一扫";

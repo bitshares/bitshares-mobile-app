@@ -185,7 +185,8 @@
         if (config_body) {
             config_body(_formatConditonsView);
         }
-        _formatConditonsView.hidden = YES;
+        //  设置默认可见性
+        _formatConditonsView.hidden = !_formatConditonsView.isAlwaysShow;
         [self addSubview:_formatConditonsView];
     }
 }
@@ -226,6 +227,8 @@
 - (void)auxFastConditionsViewForAccountNameFormat
 {
     [self genFormatConditonsView:^(ViewFormatConditons *formatConditonsView) {
+        //  REMARK：注册时的账号名，默认显示。
+        formatConditonsView.isAlwaysShow = YES;
         [formatConditonsView addRegularCondition:NSLocalizedString(@"kFmtConditionOnlyContainsLetterDigitAndHyphens", @"由字母、数字或短横线组成")
                                          regular:@"^[A-Za-z0-9\\-]+$"
                                         negative:NO];
@@ -239,7 +242,8 @@
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
-    if (_formatConditonsView) {
+    //  未设置一直显示标记，则允许动态切换可见性。
+    if (_formatConditonsView && !_formatConditonsView.isAlwaysShow) {
         _formatConditonsView.hidden = YES;
         [UIView performWithoutAnimation:^{
             UITableView* tableView = [ViewUtils findSuperTableView:self];
@@ -260,7 +264,8 @@
     //            return NO;
     //        }
     //    }
-    if (_formatConditonsView) {
+    //  未设置一直显示标记，则允许动态切换可见性。
+    if (_formatConditonsView && !_formatConditonsView.isAlwaysShow) {
         _formatConditonsView.hidden = NO;
         [_formatConditonsView onTextDidChange:textField.text];
         [UIView performWithoutAnimation:^{

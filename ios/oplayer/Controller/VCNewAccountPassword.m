@@ -30,6 +30,8 @@ enum
 
 @interface VCNewAccountPassword ()
 {
+    NSString*                       _new_account_name;      //  新账号名，注册时传递，修改密码则为nil。
+    
     UITableView *                   _mainTableView;
     UITableViewCellBase*            _cellTitle;
     ViewNewPasswordCell*            _passwordContent;
@@ -55,12 +57,16 @@ enum
         _mainTableView.delegate = nil;
         _mainTableView = nil;
     }
+    _new_account_name = nil;
 }
 
-- (id)init
+- (id)initWithNewAccountName:(NSString*)new_account_name
 {
     self = [super init];
     if (self) {
+        //  保存新账号（可能为nil。)
+        _new_account_name = [new_account_name copy];
+        
         //  REMARK：根据当前语言决定默认密码语言。
         NSString* pass_lang_string = NSLocalizedString(@"kEditPasswordDefaultPasswordLang", @"default password lang string");
         if (pass_lang_string && [pass_lang_string isEqualToString:@"zh"]) {
@@ -172,8 +178,26 @@ enum
  */
 - (void)onSubmitClicked
 {
+    if (_new_account_name != nil) {
+        [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:NSLocalizedString(@"kEditPasswordNextStepAskForReg", @"请确认您的密码已经抄录完毕，并保存到了安全的地方，丢失将无法找回。")
+                                                               withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                              completion:^(NSInteger buttonIndex)
+         {
+            if (buttonIndex == 1)
+            {
+                [self _gotoVcNewPasswordConfirm];
+            }
+        }];
+    } else {
+        [self _gotoVcNewPasswordConfirm];
+    }
+}
+
+- (void)_gotoVcNewPasswordConfirm
+{
     VCNewAccountPasswordConfirm* vc = [[VCNewAccountPasswordConfirm alloc] initWithPassword:_passwordContent.current_password
-                                                                                   passlang:_currPasswordLang];
+                                                                                   passlang:_currPasswordLang
+                                                                           new_account_name:_new_account_name];
     [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleEditPasswordConfirm", @"验证密码") backtitle:kVcDefaultBackTitleName];
 }
 
