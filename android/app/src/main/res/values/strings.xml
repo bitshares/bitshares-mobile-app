@@ -450,9 +450,13 @@
     <string name="kVcAssetMgrCellActionUpdateAsset">Update assets</string>
     <string name="kVcAssetMgrCellActionUpdateBitasset">Update bitassets</string>
     <string name="kVcAssetMgrCellActionIssueAsset">Issuing assets</string>
+    <string name="kVcAssetMgrCellActionClaimFeePool">Claim fee pool</string>
+    <string name="kVcAssetMgrCellActionGlobalSettle">Global settle</string>
     <string name="kVcAssetMgrCellInfoCurSupply">Current supply</string>
     <string name="kVcAssetMgrCellInfoMaxSupply">Maximum supply</string>
     <string name="kVcAssetMgrCellInfoConSupply">Confidential supply</string>
+    <string name="kVcAssetMgrActionTipsAlreadyGsCannotUpdateBitasset">The asset has been global settled, and bitasset cannot be updated.</string>
+    <string name="kVcAssetMgrActionTipsAlreadyGsCannotGsAgain">This asset has been global settled, cannot global settle again.</string>
     <string name="kVcAssetMgrAssetCreateButton">Create</string>
     <string name="kVcAssetMgrAssetUpdateAssetButton">Update assets</string>
     <string name="kVcAssetMgrAssetUpdateBitassetButton">Update bitassets</string>
@@ -537,9 +541,11 @@
     <string name="kVcAssetOpUpdateAssetSubmitTipsOK">Update asset succeeded.</string>
     <string name="kVcAssetOpUpdateBitassetSubmitTipsOK">Update bitasset succeeded.</string>
     <string name="kVcAssetOpSettleTipsDisableSettle">The asset has been disabled settlements.</string>
+    <string name="kVcAssetOpSettleTipsMustGlobalSettleFirst">This operations can only be performed after the global settlement of the prediction market.</string>
     <string name="kVcAssetOpSettleTipsNoFeedData">The asset has no valid feed price and cannot be settlements.</string>
     <string name="kVcAssetOpSettleDelayHoursN">%s hours</string>
     <string name="kVcAssetOpSettleUiTips">[Reminder] \n1. The settlements operation forces the assets to be exchanged back to the backing assets. This operation is irreversible, please proceed with caution. \n2. after the settlements is initiated, it will be queued for execution after %s, and the transaction will be executed at the current settlement price. \n3. settlement price = feed price × %s</string>
+    <string name="kVcAssetOpSettleUiTipsAlreadyGs">[Reminder] \n1. The settlements operation forces the assets to be exchanged back to the backing assets. This operation is irreversible, please proceed with caution. \n2. The asset has been global settled, and the settlements operation will be executed immediately. \n3, settlement price = %s</string>
     <string name="kVcAssetOpSettleCellPlaceholderAmount">Please enter the amount</string>
     <string name="kVcAssetOpSettleBtnName">Settle asset</string>
     <string name="kVcAssetOpSettleSubmitTipsPleaseInputAmount">Please enter the amount of assets to be settled.</string>
@@ -564,7 +570,22 @@
     <string name="kVcAssetOpSubmitTipsIssueOK">Assets issued successfully.</string>
     <string name="kVcAssetOpSubmitAskIssue">Are you sure to issue %s %s to %s?</string>
     <string name="kVcAssetOpSubmitAskSettle">Are you sure to settle %s %s? \n\n※ After the settlements is initiated, it will be queued for execution and irrevocable. Please proceed with caution.</string>
+    <string name="kVcAssetOpSubmitAskSettle2">Are you sure to settle %s %s? \n\n※ The asset has been global settled, and the operation will be executed immediately and irrevocably. Please proceed with caution.</string>
     <string name="kVcAssetOpSubmitAskReserve">Are you sure to reserve %s %s? \n\n※ This operation is irreversible, please exercise caution.</string>
+    <string name="kVcAssetOpClaimFeePoolUiTips">[Reminder] \nAsset fee pool can be used to deduct network broadcasting fees. If the balance of the fee pool is insufficient, it cannot be deducted.</string>
+    <string name="kVcAssetOpClaimFeePoolCellPlaceholderAmount">Please enter the amount</string>
+    <string name="kVcAssetOpClaimFeePoolBtnName">Claim</string>
+    <string name="kVcAssetOpClaimFeePoolSubmitTipsPleaseInputAmount">Please enter the amount of assets to claim.</string>
+    <string name="kVcAssetOpClaimFeePoolSubmitTipOK">Claim successfully.</string>
+    <string name="kVcAssetOpGsUiTips">[Reminder] \nGlobal settlements will forcibly close all positions at the settle price. This operation is irreversible, please exercise caution.</string>
+    <string name="kVcAssetOpGsCellTitlePrice">Price</string>
+    <string name="kVcAssetOpGsCellPlaceholderPrice">Please enter the settle price</string>
+    <string name="kVcAssetOpGsCellTailerBtnPmAsTrue">TRUE</string>
+    <string name="kVcAssetOpGsCellTailerBtnPmAsFalse">FALSE</string>
+    <string name="kVcAssetOpGsSubmitBtnName">Global settle</string>
+    <string name="kVcAssetOpGsSubmitTipsPleaseInputPrice">Please enter the settle price.</string>
+    <string name="kVcAssetOpGsSubmitAskForGs">Are you sure to perform global settlements at the price of %s %s/%s ? \n\n※ This operation is irreversible, please exercise caution.</string>
+    <string name="kVcAssetOpGsSubmitTipsOK">Global settlements was successful.</string>
     <!-- 订单界面 -->
     <string name="kVcOrderPageOpenOrders">Open Orders</string>
     <string name="kVcOrderPageHistory">History</string>
@@ -931,6 +952,8 @@
     <string name="kVcTitleAssetOpSettle">Initiate settlement</string>
     <string name="kVcTitleAssetOpReserve">Reserve assets</string>
     <string name="kVcTitleAssetOpIssue">Issue assets</string>
+    <string name="kVcTitleAssetGlobalSettle">Global settlemens assets</string>
+    <string name="kVcTitleAssetClaimFeePool">Claim fee pool</string>
     <string name="kVcTitleAssetOpViewDetail">%s details</string>
     <string name="kVcTitleAssetOpUpdateBasic">Update assets</string>
     <string name="kVcTitleAssetOpUpdateBitasset">Update bitassets</string>
