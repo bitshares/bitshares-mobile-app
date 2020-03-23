@@ -25,7 +25,7 @@ class ActivityNewAccountPasswordConfirm : BtsppActivity() {
         _tv_select_account_permission = tv_select_account_arrow_from_new_account_permission_password_confirm
 
         // 账号名
-        tv_account_name_from_new_account_password_confirm.text = "Saya07"
+        // tv_account_name_from_new_account_password_confirm.text = "Saya07"
 
         // 选择账号
         layout_select_account_permission_from_new_account_password_confirm.setOnClickListener { onSelectAccountPermission() }
