@@ -450,9 +450,13 @@
     <string name="kVcAssetMgrCellActionUpdateAsset">更新资产</string>
     <string name="kVcAssetMgrCellActionUpdateBitasset">更新智能币</string>
     <string name="kVcAssetMgrCellActionIssueAsset">发行资产</string>
+    <string name="kVcAssetMgrCellActionClaimFeePool">提取手续费池</string>
+    <string name="kVcAssetMgrCellActionGlobalSettle">全局清算</string>
     <string name="kVcAssetMgrCellInfoCurSupply">当前供应量</string>
     <string name="kVcAssetMgrCellInfoMaxSupply">最大供应量</string>
     <string name="kVcAssetMgrCellInfoConSupply">隐私供应量</string>
+    <string name="kVcAssetMgrActionTipsAlreadyGsCannotUpdateBitasset">该资产已经触发全局清算，不可更新智能币。</string>
+    <string name="kVcAssetMgrActionTipsAlreadyGsCannotGsAgain">该资产已经触发全局清算，不可重复执行全局清算操作。</string>
     <string name="kVcAssetMgrAssetCreateButton">创建</string>
     <string name="kVcAssetMgrAssetUpdateAssetButton">更新资产</string>
     <string name="kVcAssetMgrAssetUpdateBitassetButton">更新智能币</string>
@@ -537,9 +541,11 @@
     <string name="kVcAssetOpUpdateAssetSubmitTipsOK">更新资产成功。</string>
     <string name="kVcAssetOpUpdateBitassetSubmitTipsOK">更新智能币成功。</string>
     <string name="kVcAssetOpSettleTipsDisableSettle">该资产禁止清算。</string>
+    <string name="kVcAssetOpSettleTipsMustGlobalSettleFirst">预测市场全局清算完成之后才可以进行清算操作。</string>
     <string name="kVcAssetOpSettleTipsNoFeedData">该资产没有有效的喂价，不可清算。</string>
     <string name="kVcAssetOpSettleDelayHoursN">%s小时</string>
     <string name="kVcAssetOpSettleUiTips">【温馨提示】\n1、清算操作强制把清算资产换回背书资产。此操作不可撤销，请谨慎操作。\n2、发起清算后将在%s后排队执行，并以当时的清算价格成交。\n3、清算价 = 成交时的喂价 × %s</string>
+    <string name="kVcAssetOpSettleUiTipsAlreadyGs">【温馨提示】\n1、清算操作强制把清算资产换回背书资产。此操作不可撤销，请谨慎操作。\n2、该资产已经触发全局清算，清算操作将立即执行。\n3、清算价 = %s</string>
     <string name="kVcAssetOpSettleCellPlaceholderAmount">请输入清算数量</string>
     <string name="kVcAssetOpSettleBtnName">发起清算</string>
     <string name="kVcAssetOpSettleSubmitTipsPleaseInputAmount">请输入要清算的资产数量。</string>
@@ -564,7 +570,22 @@
     <string name="kVcAssetOpSubmitTipsIssueOK">发行成功。</string>
     <string name="kVcAssetOpSubmitAskIssue">您确认发行 %s %s 给 %s 吗？</string>
     <string name="kVcAssetOpSubmitAskSettle">您确认清算 %s %s 吗？\n\n※ 发起清算之后将延后执行，并且不可撤销，请谨慎操作。</string>
+    <string name="kVcAssetOpSubmitAskSettle2">您确认清算 %s %s 吗？\n\n※ 该资产已经触发全局清算，发起清算之后将立即执行，并且不可撤销，请谨慎操作。</string>
     <string name="kVcAssetOpSubmitAskReserve">您确认销毁 %s %s 吗？\n\n※ 此操作不可逆，请谨慎操作。</string>
+    <string name="kVcAssetOpClaimFeePoolUiTips">【温馨提示】\n资产手续费池可用于抵扣网络广播手续费，如果手续费池余额不足，则不能抵扣。</string>
+    <string name="kVcAssetOpClaimFeePoolCellPlaceholderAmount">请输入提取数量</string>
+    <string name="kVcAssetOpClaimFeePoolBtnName">提取</string>
+    <string name="kVcAssetOpClaimFeePoolSubmitTipsPleaseInputAmount">请输入要提取的资产数量。</string>
+    <string name="kVcAssetOpClaimFeePoolSubmitTipOK">提取成功。</string>
+    <string name="kVcAssetOpGsUiTips">【温馨提示】\n全局清算会以指定价格强制关闭所有债仓，此操作不可逆，请谨慎操作。</string>
+    <string name="kVcAssetOpGsCellTitlePrice">价格</string>
+    <string name="kVcAssetOpGsCellPlaceholderPrice">请输入全局清算价格</string>
+    <string name="kVcAssetOpGsCellTailerBtnPmAsTrue">预测为真</string>
+    <string name="kVcAssetOpGsCellTailerBtnPmAsFalse">预测为假</string>
+    <string name="kVcAssetOpGsSubmitBtnName">全局清算</string>
+    <string name="kVcAssetOpGsSubmitTipsPleaseInputPrice">请输入全局清算价格。</string>
+    <string name="kVcAssetOpGsSubmitAskForGs">您确认以 %s %s/%s 的价格发起全局清算吗？\n\n※ 此操作不可逆，请谨慎操作。</string>
+    <string name="kVcAssetOpGsSubmitTipsOK">全局清算成功。</string>
     <!-- 订单界面 -->
     <string name="kVcOrderPageOpenOrders">当前订单</string>
     <string name="kVcOrderPageHistory">历史订单</string>
@@ -931,6 +952,8 @@
     <string name="kVcTitleAssetOpSettle">发起清算</string>
     <string name="kVcTitleAssetOpReserve">销毁资产</string>
     <string name="kVcTitleAssetOpIssue">发行资产</string>
+    <string name="kVcTitleAssetGlobalSettle">全局清算</string>
+    <string name="kVcTitleAssetClaimFeePool">提取手续费池</string>
     <string name="kVcTitleAssetOpViewDetail">%s 详情</string>
     <string name="kVcTitleAssetOpUpdateBasic">更新资产</string>
     <string name="kVcTitleAssetOpUpdateBitasset">更新智能币</string>

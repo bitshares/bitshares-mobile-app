@@ -124,6 +124,7 @@
 
             </LinearLayout>
 
+            <!-- 输入框 XXX | 全部 -->
             <LinearLayout
                 android:layout_marginTop="10dp"
                 android:orientation="horizontal"
@@ -143,8 +144,8 @@
                 <LinearLayout
                     android:orientation="horizontal"
                     android:gravity="right"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 
                     <TextView
