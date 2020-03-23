@@ -338,7 +338,6 @@
             android:name=".ActivityAssetCreateOrEdit"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".ActivitySelectApiNode"
             android:screenOrientation="portrait"
@@ -353,6 +352,14 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ActivityNewAccountPasswordConfirm"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ActivityRegisterEntry"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ActivityAssetOpGlobalSettle"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 

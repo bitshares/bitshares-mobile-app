@@ -45,15 +45,34 @@
                     style="@style/kNavigationBarTextStyle" />
             </LinearLayout>
 
-
-            <TextView
-                android:id="@+id/layout_kline_title"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:id="@+id/layout_switch_trade_pair_from_kline"
+                android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:layout_gravity="center_vertical"
+                android:layout_gravity="center"
                 android:gravity="center"
-                android:text="BTS/USD"
-                style="@style/kNavigationBarTextStyle" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/layout_kline_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center"
+                    android:text="BTS/USD"
+                    style="@style/kNavigationBarTextStyle" />
+
+                <ImageView
+                    android:id="@+id/iv_switch_trade_pair_from_kline"
+                    android:layout_marginLeft="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center"
+                    android:src="@drawable/icon_switch" />
+
+
+            </LinearLayout>
 
         </FrameLayout>
 

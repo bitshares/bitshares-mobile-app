@@ -31,6 +31,7 @@ class ActivityKLine : BtsppActivity() {
 
 
     lateinit var _tradingPair: TradingPair
+    lateinit var _layout_trade_pair: LinearLayout
 
     private var _dataArrayHistory = JSONArray()             //  成交历史
     private var _feedPriceInfo: BigDecimal? = null          //  喂价信息（有的交易对没有喂价）
@@ -86,6 +87,9 @@ class ActivityKLine : BtsppActivity() {
         //  设置标题
         findViewById<TextView>(R.id.layout_kline_title).text = "${quote.getString("symbol")}/${base.getString("symbol")}"
 
+        // 切换交易对按钮颜色
+        iv_switch_trade_pair_from_kline.setColorFilter(resources.getColor(R.color.theme01_textColorMain))
+
         //  获取屏幕宽高
         val sw = Utils.screen_width
 
@@ -106,6 +110,10 @@ class ActivityKLine : BtsppActivity() {
 
         //  事件 - 返回
         layout_back_from_kline.setOnClickListener { finish() }
+
+        //  事件 - 切换交易对
+        _layout_trade_pair = layout_switch_trade_pair_from_kline
+        _layout_trade_pair.setOnClickListener { onClickSwitchTradePair() }
 
         //  深度图
         _viewDeepGraph = ViewDeepGraph(this, sw, _tradingPair)
@@ -143,6 +151,22 @@ class ActivityKLine : BtsppActivity() {
 
         //  查询
         _queryInitData()
+    }
+
+    private fun onClickSwitchTradePair(){
+        var defaultIndex = 0
+        val list = JSONArray().apply {
+            for (i in 1 until 10) {
+                put(JSONObject().apply {
+                    put("name", "BTS/USD${i}")
+                })
+            }
+        }
+
+        ViewDialogNumberPicker(this, "选择交易对", list, "name", defaultIndex) { _index: Int, txt: String ->
+            val tv_title = _layout_trade_pair.findViewById<TextView>(R.id.layout_kline_title)
+            tv_title.text = txt
+        }.show()
     }
 
     private fun _queryInitData() {

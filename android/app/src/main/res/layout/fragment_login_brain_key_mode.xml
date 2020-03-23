@@ -26,21 +26,45 @@
                 android:textColorHint="@color/theme01.textColorGray"/>
         </LinearLayout>
 
+
         <!-- trading password -->
         <LinearLayout
+            android:layout_marginTop="5dp"
             android:id="@+id/cell_trade_password_from_brain_key_mode"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="80dp"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="@string/kLoginCellWalletPassword"
-                android:textSize="16dp"
-                android:textColor="@color/theme01.textColorMain"/>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="@string/kLoginCellWalletPassword"
+                    android:textSize="16dp"
+                    android:textColor="@color/theme01.textColorMain"/>
+
+                <LinearLayout
+                    android:gravity="right|center_vertical"
+                    android:layout_gravity="right"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/tip_link_trading_password_from_brain_key_mode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:tint="@color/theme01.textColorHighlight"
+                        android:src="@drawable/icon_tip" />
+                </LinearLayout>
+
+            </LinearLayout>
 
             <EditText
+                android:layout_marginTop="12dp"
                 android:id="@+id/tf_trade_password_from_brain_key_mode"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -48,20 +72,208 @@
                 style="@style/kTextFieldPassword"
                 android:hint="@string/kLoginTipsPlaceholderTradePassword"/>
 
+            <View android:layout_height="1dp" android:layout_marginTop="2dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
             <LinearLayout
-                android:gravity="right|center_vertical"
-                android:layout_gravity="right"
-                android:layout_width="wrap_content"
-                android:layout_weight="1"
-                android:layout_height="match_parent">
-                <ImageView
-                    android:id="@+id/tip_link_trading_password_from_brain_key_mode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:tint="@color/theme01.textColorHighlight"
-                    android:src="@drawable/icon_tip" />
+                android:layout_marginTop="5dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="24dp">
+
+                    <LinearLayout
+                        android:layout_width="24dp"
+                        android:layout_height="24dp">
+                        <ImageView
+                            android:id="@+id/iv_unchecked_include_upcase_from_brain_key_mode"
+                            android:src="@drawable/ic_btn_back"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <ImageView
+                            android:visibility="gone"
+                            android:id="@+id/iv_checked_include_upcase_from_brain_key_mode"
+                            android:src="@drawable/ic_btn_right_arrow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_include_upcase_from_brain_key_mode"
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorGray"
+                        android:text="必须包含大写字母"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="24dp">
+
+                    <LinearLayout
+                        android:layout_width="24dp"
+                        android:layout_height="24dp">
+                        <ImageView
+                            android:id="@+id/iv_unchecked_include_downcase_from_brain_key_mode"
+                            android:src="@drawable/ic_btn_back"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <ImageView
+                            android:visibility="gone"
+                            android:id="@+id/iv_checked_include_downcase_from_brain_key_mode"
+                            android:src="@drawable/ic_btn_right_arrow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_include_downcase_from_brain_key_mode"
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorGray"
+                        android:text="必须包含小写字母"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="24dp">
+
+                    <LinearLayout
+                        android:layout_width="24dp"
+                        android:layout_height="24dp">
+                        <ImageView
+                            android:id="@+id/iv_unchecked_include_digit_from_brain_key_mode"
+                            android:src="@drawable/ic_btn_back"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <ImageView
+                            android:visibility="gone"
+                            android:id="@+id/iv_checked_include_digit_from_brain_key_mode"
+                            android:src="@drawable/ic_btn_right_arrow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_include_digit_from_brain_key_mode"
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorGray"
+                        android:text="必须包含数字"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="24dp">
+
+                    <LinearLayout
+                        android:layout_width="24dp"
+                        android:layout_height="24dp">
+                        <ImageView
+                            android:id="@+id/iv_unchecked_length12to40_from_brain_key_mode"
+                            android:src="@drawable/ic_btn_back"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <ImageView
+                            android:visibility="gone"
+                            android:id="@+id/iv_checked_length12to40_from_brain_key_mode"
+                            android:src="@drawable/ic_btn_right_arrow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_length12to40_from_brain_key_mode"
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorGray"
+                        android:text="长度12-40个字符"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <!---->
+
+        <!--&lt;!&ndash; trading password &ndash;&gt;-->
+        <!--<LinearLayout-->
+            <!--android:id="@+id/cell_trade_password_from_brain_key_mode"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content">-->
+
+            <!--<TextView-->
+                <!--android:layout_width="80dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:gravity="center_vertical"-->
+                <!--android:text="@string/kLoginCellWalletPassword"-->
+                <!--android:textSize="16dp"-->
+                <!--android:textColor="@color/theme01.textColorMain"/>-->
+
+            <!--<EditText-->
+                <!--android:id="@+id/tf_trade_password_from_brain_key_mode"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:gravity="center_vertical"-->
+                <!--style="@style/kTextFieldPassword"-->
+                <!--android:hint="@string/kLoginTipsPlaceholderTradePassword"/>-->
+
+            <!--<LinearLayout-->
+                <!--android:gravity="right|center_vertical"-->
+                <!--android:layout_gravity="right"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_weight="1"-->
+                <!--android:layout_height="match_parent">-->
+                <!--<ImageView-->
+                    <!--android:id="@+id/tip_link_trading_password_from_brain_key_mode"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:tint="@color/theme01.textColorHighlight"-->
+                    <!--android:src="@drawable/icon_tip" />-->
+            <!--</LinearLayout>-->
+        <!--</LinearLayout>-->
 
 
 

@@ -7,10 +7,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
+import android.widget.*
 import bitshares.*
 import com.btsplusplus.fowallet.utils.CommonLogic
 import com.btsplusplus.fowallet.utils.VcUtils
@@ -44,6 +41,19 @@ class FragmentLoginBrainKeyMode : Fragment() {
     private var _tf_bran_key: EditText? = null
     private var _tf_trade_password: EditText? = null
 
+    lateinit var _iv_unchecked_include_upcase:ImageView
+    lateinit var _iv_checked_include_upcase:ImageView
+    lateinit var _iv_unchecked_include_downcase:ImageView
+    lateinit var _iv_checked_include_downcase:ImageView
+    lateinit var _iv_unchecked_include_digit:ImageView
+    lateinit var _iv_checked_include_digit:ImageView
+    lateinit var _iv_unchecked_length12to40:ImageView
+    lateinit var _iv_checked_length12to40:ImageView
+    lateinit var _tv_include_upcase: TextView
+    lateinit var _tv_include_downcase: TextView
+    lateinit var _tv_include_digit: TextView
+    lateinit var _tv_length12to40: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -51,6 +61,70 @@ class FragmentLoginBrainKeyMode : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
     }
+
+    private fun unCheckAllCheckbox(){
+        switchIncludeUpcase(false)
+        switchIncludeDowncase(false)
+        switchIncludeDigit(false)
+        switchLength12to40(false)
+    }
+
+    private fun switchIncludeUpcase(checked: Boolean){
+        if (checked) {
+            _iv_unchecked_include_upcase.visibility = View.GONE
+            _iv_checked_include_upcase.visibility = View.VISIBLE
+            _iv_checked_include_upcase.setColorFilter(resources.getColor(R.color.theme01_textColorMain))
+            _tv_include_upcase.setTextColor(resources.getColor(R.color.theme01_textColorMain))
+        } else {
+            _iv_unchecked_include_upcase.visibility = View.VISIBLE
+            _iv_checked_include_upcase.visibility = View.GONE
+            _iv_unchecked_include_upcase.setColorFilter(resources.getColor(R.color.theme01_textColorGray))
+            _tv_include_upcase.setTextColor(resources.getColor(R.color.theme01_textColorGray))
+        }
+    }
+
+    private fun switchIncludeDowncase(checked: Boolean){
+        if (checked) {
+            _iv_unchecked_include_downcase.visibility = View.GONE
+            _iv_checked_include_downcase.visibility = View.VISIBLE
+            _iv_checked_include_downcase.setColorFilter(resources.getColor(R.color.theme01_textColorMain))
+            _tv_include_downcase.setTextColor(resources.getColor(R.color.theme01_textColorMain))
+        } else {
+            _iv_unchecked_include_downcase.visibility = View.VISIBLE
+            _iv_checked_include_downcase.visibility = View.GONE
+            _iv_unchecked_include_downcase.setColorFilter(resources.getColor(R.color.theme01_textColorGray))
+            _tv_include_downcase.setTextColor(resources.getColor(R.color.theme01_textColorGray))
+        }
+    }
+
+    private fun switchIncludeDigit(checked: Boolean){
+        if (checked) {
+            _iv_unchecked_include_digit.visibility = View.GONE
+            _iv_checked_include_digit.visibility = View.VISIBLE
+            _iv_checked_include_digit.setColorFilter(resources.getColor(R.color.theme01_textColorMain))
+            _tv_include_digit.setTextColor(resources.getColor(R.color.theme01_textColorMain))
+        } else {
+            _iv_unchecked_include_digit.visibility = View.VISIBLE
+            _iv_checked_include_digit.visibility = View.GONE
+            _iv_unchecked_include_digit.setColorFilter(resources.getColor(R.color.theme01_textColorGray))
+            _tv_include_digit.setTextColor(resources.getColor(R.color.theme01_textColorGray))
+        }
+    }
+
+    private fun switchLength12to40(checked: Boolean){
+        if (checked) {
+            _iv_unchecked_length12to40.visibility = View.GONE
+            _iv_checked_length12to40.visibility = View.VISIBLE
+            _iv_checked_length12to40.setColorFilter(resources.getColor(R.color.theme01_textColorMain))
+            _tv_length12to40.setTextColor(resources.getColor(R.color.theme01_textColorMain))
+        } else {
+            _iv_unchecked_length12to40.visibility = View.VISIBLE
+            _iv_checked_length12to40.visibility = View.GONE
+            _iv_unchecked_length12to40.setColorFilter(resources.getColor(R.color.theme01_textColorGray))
+            _tv_length12to40.setTextColor(resources.getColor(R.color.theme01_textColorGray))
+        }
+    }
+
 
     /**
      * 初始化
@@ -66,6 +140,23 @@ class FragmentLoginBrainKeyMode : Fragment() {
 
         _ctx = inflater.context
         val v = inflater.inflate(R.layout.fragment_login_brain_key_mode, container, false)
+
+        // 各种checkbox 和 textview 初始化
+        _iv_unchecked_include_upcase = v.findViewById(R.id.iv_unchecked_include_upcase_from_brain_key_mode)
+        _iv_checked_include_upcase = v.findViewById(R.id.iv_checked_include_upcase_from_brain_key_mode)
+        _iv_unchecked_include_downcase = v.findViewById(R.id.iv_unchecked_include_downcase_from_brain_key_mode)
+        _iv_checked_include_downcase = v.findViewById(R.id.iv_checked_include_downcase_from_brain_key_mode)
+        _iv_unchecked_include_digit = v.findViewById(R.id.iv_unchecked_include_digit_from_brain_key_mode)
+        _iv_checked_include_digit = v.findViewById(R.id.iv_checked_include_digit_from_brain_key_mode)
+        _iv_unchecked_length12to40 = v.findViewById(R.id.iv_unchecked_length12to40_from_brain_key_mode)
+        _iv_checked_length12to40 = v.findViewById(R.id.iv_checked_length12to40_from_brain_key_mode)
+        _tv_include_upcase = v.findViewById(R.id.tv_include_upcase_from_brain_key_mode)
+        _tv_include_downcase = v.findViewById(R.id.tv_include_downcase_from_brain_key_mode)
+        _tv_include_digit = v.findViewById(R.id.tv_include_digit_from_brain_key_mode)
+        _tv_length12to40 = v.findViewById(R.id.tv_length12to40_from_brain_key_mode)
+
+        // 默认所有checkbox不选中
+        unCheckAllCheckbox()
 
         val _button_login: Button = v.findViewById(R.id.button_login_from_brain_key_mode)
 
