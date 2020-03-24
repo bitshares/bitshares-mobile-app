@@ -243,6 +243,7 @@
     <string name="kEditPasswordBtnNext">Next</string>
     <string name="kEditPasswordUiSecTips">[Reminder] \nDo not copy, take photos, or take screenshots. \nPlease use a pen and paper to record the password consisting of the above %s characters in order from left to right and from top to bottom, and keep it in a safe place. Once lost, it cannot be retrieved.</string>
     <string name="kEditPasswordCellTitleCurrAccountName">Account</string>
+    <string name="kEditPasswordCellTItleYourNewAccountName">Your account</string>
     <string name="kEditPasswordCellTitleVerifyPassword">Confirm password</string>
     <string name="kEditPasswordCellPlaceholderVerifyPassword">Enter the password from the prev step</string>
     <string name="kEditPasswordBtnSubmmit">OK</string>
@@ -255,6 +256,7 @@
     <string name="kEditPasswordEditRangeListOnlyOwner">Only owner permission</string>
     <string name="kEditPasswordSubmitTipsConfirmFailed">Password verification failed. Please re-enter.</string>
     <string name="kEditPasswordSubmitSecondTipsAsk">Please confirm again that you have saved the new password and saved it in a safe place. Continue?</string>
+    <string name="kEditPasswordNextStepAskForReg">Please make sure that your password has been copied and saved to a safe place. If it is lost, it cannot be retrieved.</string>
     <!-- 登录&注册&备份 -->
     <string name="kFmtConditionContains2UpperLettersNonConsecutive">Contain more than 2 and non-continuous uppercase letters</string>
     <string name="kFmtConditioncontainsUpperLetters">Contain uppercase letters</string>
@@ -881,6 +883,7 @@
     <string name="kVcTitleChangePermission">Update permissions</string>
     <string name="kVcTitlePermissionAddAuthority">Add authority</string>
     <string name="kVcTitleAddOneSearchAccount">Search account</string>
+    <string name="kVcTitleBackupYourPassword">Backup password</string>
     <string name="kVcTitleEditPassword">Change password</string>
     <string name="kVcTitleEditPasswordConfirm">Confirm password</string>
     <string name="kVcTitleQrScan">Scan QR code</string>

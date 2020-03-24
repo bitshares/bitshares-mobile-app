@@ -2,15 +2,28 @@ package com.btsplusplus.fowallet
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import bitshares.*
+import com.fowallet.walletcore.bts.BitsharesClientManager
+import com.fowallet.walletcore.bts.ChainObjectManager
+import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_new_account_password_confirm.*
 import org.json.JSONArray
+import org.json.JSONObject
+
+const val kModifyAllPermissions = 0         //  修改【账号权限】和【资金权限】
+const val kModifyOnlyActivePermission = 1   //  仅修改【资金权限】
+const val kModifyOnlyOwnerPermission = 2    //  仅修改【账号权限】
 
 class ActivityNewAccountPasswordConfirm : BtsppActivity() {
 
-    lateinit var _et_password:EditText
-    lateinit var _tv_select_account_permission:TextView
+    private var _curr_modify_range = kModifyAllPermissions
+
+    private var _curr_password = ""
+    private var _curr_pass_lang = EBitsharesAccountPasswordLang.ebap_lang_zh
+    private var _new_account_name: String? = null   //  新账号名，注册时传递，修改密码则为nil。
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,41 +34,361 @@ class ActivityNewAccountPasswordConfirm : BtsppActivity() {
         // 设置全屏(隐藏状态栏和虚拟导航栏)
         setFullScreen()
 
-        _et_password = et_password_from_new_account_password_confirm
-        _tv_select_account_permission = tv_select_account_arrow_from_new_account_permission_password_confirm
+        //  获取参数
+        val args = btspp_args_as_JSONObject()
+        _curr_password = args.getString("current_password")
+        _curr_pass_lang = args.get("pass_lang") as EBitsharesAccountPasswordLang
+        _new_account_name = args.optString("new_account_name", null)
 
-        // 账号名
-        // tv_account_name_from_new_account_password_confirm.text = "Saya07"
-
-        // 选择账号
-        layout_select_account_permission_from_new_account_password_confirm.setOnClickListener { onSelectAccountPermission() }
-
-        // 箭头颜色
-        iv_select_account_arrow_from_new_account_permission_password_confirm.setColorFilter(resources.getColor(R.color.theme01_textColorGray))
-
-        // 提交事件
-        btn_submit_from_new_account_password_confirm.setOnClickListener { onBtnSubmit() }
-
-        // 返回
-        layout_back_from_new_account_password_confirm.setOnClickListener { finish() }
-
-    }
-
-    private fun onBtnSubmit(){
-
-    }
-
-    private fun onSelectAccountPermission(){
-        val array_select = JSONArray().apply {
-            put("修改账号和资金权限")
-            put("修改资金权限")
-            put("修改账号权限")
+        //  初始化UI
+        if (isRegisterAccount()) {
+            //  注册账号
+            layout_modify_range.visibility = View.GONE
+            //  UI - 新账号名
+            tv_your_account_name_title.text = resources.getString(R.string.kEditPasswordCellTItleYourNewAccountName)
+            tv_curr_account_name_value.text = _new_account_name!!
+            //  UI - 提交按钮名字
+            btn_submit.text = resources.getString(R.string.kLoginCellBtnAgreeAndReg)
+        } else {
+            //  修改密码
+            layout_modify_range.visibility = View.VISIBLE
+            //  UI - 账号名
+            tv_your_account_name_title.text = resources.getString(R.string.kEditPasswordCellTitleCurrAccountName)
+            tv_curr_account_name_value.text = WalletManager.sharedWalletManager().getWalletAccountInfo()!!.getJSONObject("account").getString("name")
+            //  UI - 提交按钮名字
+            btn_submit.text = resources.getString(R.string.kEditPasswordBtnSubmmit)
+            //  UI - 修改范围
+            _draw_ui_modify_range()
+            //  事件 - 选择修改范围
+            layout_modify_range_cell.setOnClickListener { onModifyRangeClicked() }
+            //  UI - 箭头颜色
+            img_arrow_modify_range.setColorFilter(resources.getColor(R.color.theme01_textColorGray))
         }
-        array_select.put("")
-        var default_select = 0
-        ViewDialogNumberPicker(this, "", array_select, null, default_select) { _index: Int, text: String ->
-            _tv_select_account_permission.text = text
-        }.show()
 
+        //  事件 - 提交事件
+        btn_submit.setOnClickListener { onBtnSubmit() }
+
+        //  事件 - 返回
+        layout_back_from_new_account_password_confirm.setOnClickListener { finish() }
+    }
+
+    /**
+     *  (private) 是否是注册账号
+     */
+    private fun isRegisterAccount(): Boolean {
+        return _new_account_name != null && _new_account_name!!.isNotEmpty()
+    }
+
+    //  TODO:5.0
+//    - (void)onBtnAgreementClicked
+//    {
+//        //  TODO:2.9 url
+//        [self gotoWebView:[NSString stringWithFormat:@"%@%@", @"https://btspp.io/",
+//        NSLocalizedString(@"userAgreementHtmlFileName", @"agreement html file")]
+//        title:NSLocalizedString(@"kVcTitleAgreement", @"用户协议和服务条款")];
+//    }
+//
+    /**
+     *  (private) 描绘UI - 修改范围
+     */
+    private fun _draw_ui_modify_range() {
+        when (_curr_modify_range) {
+            kModifyAllPermissions -> tv_modify_range_value.text = resources.getString(R.string.kEditPasswordCellValueEditRangeOwnerAndActive)
+            kModifyOnlyActivePermission -> tv_modify_range_value.text = resources.getString(R.string.kEditPasswordCellValueEditRangeOnlyActive)
+            kModifyOnlyOwnerPermission -> tv_modify_range_value.text = resources.getString(R.string.kEditPasswordCellValueEditRangeOnlyOwner)
+            else -> tv_modify_range_value.text = ""
+        }
+    }
+
+    /**
+     *  (private) 通过水龙头注册账号
+     */
+    private fun onRegisterAccountCore() {
+        val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this).apply { show() }
+
+        //  1、生成各种权限公钥。
+        //  REMARK：这里memo单独分类出来，避免和active权限相同。
+        val seed_owner = "${_new_account_name}owner$_curr_password"
+        val seed_active = "${_new_account_name}active$_curr_password"
+        val seed_memo = "${_new_account_name}memo$_curr_password"
+        val owner_key = OrgUtils.genBtsAddressFromPrivateKeySeed(seed_owner)!!
+        val active_key = OrgUtils.genBtsAddressFromWifPrivateKey(seed_active)!!
+        val memo_key = OrgUtils.genBtsAddressFromWifPrivateKey(seed_memo)!!
+
+        //  2、调用水龙头API注册
+        OrgUtils.asyncCreateAccountFromFaucet(this, _new_account_name!!, owner_key, active_key, memo_key, "", BuildConfig.kAppChannelID).then {
+            mask.dismiss()
+
+            val err_msg = it as? String
+            if (err_msg != null) {
+                //  水龙头注册失败。
+                btsppLogCustom("faucetFailed", jsonObjectfromKVS("err", err_msg))
+                showToast(err_msg)
+            } else {
+                //  注册成功，直接重新登录。
+                btsppLogCustom("registerEvent", jsonObjectfromKVS("mode", AppCacheManager.EWalletMode.kwmPasswordOnlyMode.value, "desc", "password"))
+                //  TODO:5.0
+                //  转到重新登录界面。
+                goTo(ActivityLogin::class.java, true, close_self = true)
+                //  TODO:临时实现
+
+            }
+
+            return@then null
+        }
+    }
+
+    /**
+     *  (private) 查询最新账号数据（如果需要更新memokey则从链上查询）
+     */
+    private fun queryNewestAccountData(): Promise {
+        val account_data = WalletManager.sharedWalletManager().getWalletAccountInfo()!!.getJSONObject("account")
+
+        if (_curr_modify_range == kModifyAllPermissions || _curr_modify_range == kModifyOnlyActivePermission) {
+            //  修改所有权限 or 修改资金权限的情况下，需要修改备注权限一起。则需要查询最新的账号数据。
+            val p = Promise()
+
+            val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this).apply { show() }
+            ChainObjectManager.sharedChainObjectManager().queryAccountData(account_data.getString("id")).then {
+                mask.dismiss()
+                val newestAccountData = it as? JSONObject
+                if (newestAccountData != null && newestAccountData.has("id") && newestAccountData.has("name")) {
+                    //  返回最新数据
+                    p.resolve(newestAccountData)
+                } else {
+                    //  查询账号失败，返回nil。
+                    p.reject(false)
+                }
+            }
+
+            //  返回 Promise
+            return p
+        } else {
+            //  仅修改账号权限，则不用修改备注。不用获取最新账号数据。
+            return Promise._resolve(account_data)
+        }
+    }
+
+    /**
+     *  (private) 请求二次确认修改账号权限信息。
+     */
+    private fun _gotoAskUpdateAccount(new_account_data: JSONObject) {
+        val value = resources.getString(R.string.kEditPasswordSubmitSecondTipsAsk)
+        UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kWarmTips), value).then {
+            if (it != null && it as Boolean) {
+                //  解锁钱包or账号
+                guardWalletUnlocked(false) { unlocked ->
+                    if (unlocked) {
+                        _submitUpdateAccountCore(new_account_data)
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     *  (private) 修改权限核心
+     */
+    private fun _submitUpdateAccountCore(new_account_data: JSONObject) {
+        val uid = new_account_data.getString("id")
+        val account_name = new_account_data.getString("name")
+
+        var using_owner_authority = false
+        val new_private_wif_list = JSONArray()
+
+        //  构造OPDATA
+        val op_data = JSONObject().apply {
+            put("fee", JSONObject().apply {
+                put("amount", 0)
+                put("asset_id", ChainObjectManager.sharedChainObjectManager().grapheneCoreAssetID)
+            })
+            put("account", uid)
+
+            //  修改资金权限 和 备注权限
+            if (_curr_modify_range == kModifyAllPermissions || _curr_modify_range == kModifyOnlyActivePermission) {
+                //  生成 active 公私钥。
+                val seed_active = "${account_name}active$_curr_password"
+                val public_key_active = OrgUtils.genBtsAddressFromWifPrivateKey(seed_active)!!
+
+                //  生成 memo 公私钥。
+                val seed_memo = "${account_name}memo$_curr_password"
+                val public_key_memo = OrgUtils.genBtsAddressFromWifPrivateKey(seed_memo)!!
+
+                //  修改资金权限
+                put("active", JSONObject().apply {
+                    put("weight_threshold", 1)
+                    put("account_auths", JSONArray())
+                    put("key_auths", JSONArray().apply {
+                        put(jsonArrayfrom(public_key_active, 1))
+                    })
+                    put("address_auths", JSONArray())
+                })
+
+                //  修改备注权限
+                val account_options = new_account_data.getJSONObject("options")
+                put("new_options", JSONObject().apply {
+                    put("memo_key", public_key_memo)
+                    put("voting_account", account_options.getString("voting_account"))
+                    put("num_witness", account_options.getInt("num_witness"))
+                    put("num_committee", account_options.getInt("num_committee"))
+                    put("votes", account_options.getJSONArray("votes"))
+                })
+
+                //  保存资金权限和备注私钥
+                new_private_wif_list.put(OrgUtils.genBtsWifPrivateKey(seed_active.utf8String()))
+                new_private_wif_list.put(OrgUtils.genBtsWifPrivateKey(seed_memo.utf8String()))
+            }
+
+            //  修改账户权限
+            if (_curr_modify_range == kModifyAllPermissions || _curr_modify_range == kModifyOnlyOwnerPermission) {
+                //  签名需要权限标记
+                using_owner_authority = true
+
+                //  生成 owner 公私钥。
+                val seed_owner = "${account_name}owner$_curr_password"
+                val public_key_owner = OrgUtils.genBtsAddressFromWifPrivateKey(seed_owner)!!
+
+                //  修改账户权限
+                put("owner", JSONObject().apply {
+                    put("weight_threshold", 1)
+                    put("account_auths", JSONArray())
+                    put("key_auths", JSONArray().apply {
+                        put(jsonArrayfrom(public_key_owner, 1))
+                    })
+                    put("address_auths", JSONArray())
+                })
+
+                //  保存账户权限私钥
+                new_private_wif_list.put(OrgUtils.genBtsWifPrivateKey(seed_owner.utf8String()))
+            }
+        }
+
+        //  确保有权限发起普通交易，否则作为提案交易处理。
+        GuardProposalOrNormalTransaction(EBitsharesOperations.ebo_account_update, using_owner_authority, false, op_data, new_account_data) { isProposal, _ ->
+            assert(!isProposal)
+            val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this)
+            mask.show()
+            BitsharesClientManager.sharedBitsharesClientManager().accountUpdate(op_data).then {
+                if (WalletManager.sharedWalletManager().isPasswordMode()) {
+                    //  密码模式：修改权限之后直接退出重新登录。
+                    mask.dismiss()
+                    //  [统计]
+                    btsppLogCustom("txUpdateAccountPermissionFullOK", jsonObjectfromKVS("account", uid, "mode", "password"))
+                    UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kWarmTips), resources.getString(R.string.kVcPermissionEditSubmitOkRelogin), btn_cancel = null).then {
+                        //  注销
+                        WalletManager.sharedWalletManager().processLogout()
+                        //  转到重新登录界面。
+                        goTo(ActivityLogin::class.java, true, close_self = true)
+                        //  TODO:临时实现 后续重构
+                        TempManager.sharedTempManager().finishActivityAccountInfo()
+                        return@then null
+                    }
+                } else {
+                    //  导入新密码对应私钥到当前钱包中
+                    val walletMgr = WalletManager.sharedWalletManager()
+                    val full_wallet_bin = walletMgr.walletBinImportAccount(null, new_private_wif_list)!!
+                    AppCacheManager.sharedAppCacheManager().apply {
+                        updateWalletBin(full_wallet_bin)
+                        autoBackupWalletToWebdir(false)
+                    }
+                    //  重新解锁（即刷新解锁后的账号信息）。
+                    val unlockInfos = walletMgr.reUnlock(this)
+                    assert(unlockInfos.getBoolean("unlockSuccess"))
+
+                    //  钱包模式：修改权限之后刷新账号信息即可。（可能当前账号不在拥有完整的active权限。）
+                    ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(uid).then {
+                        mask.dismiss()
+                        val full_data = it as JSONObject
+                        //  更新账号信息
+                        AppCacheManager.sharedAppCacheManager().updateWalletAccountInfo(full_data)
+                        //  [统计]
+                        btsppLogCustom("txUpdateAccountPermissionFullOK", jsonObjectfromKVS("account", uid, "mode", "wallet"))
+                        //  提示并退出
+                        UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kWarmTips), resources.getString(R.string.kVcPermissionEditSubmitOK02), btn_cancel = null).then {
+                            //  返回
+                            //  TODO:5.0 finsh all
+                            return@then null
+                        }
+                        return@then null
+                    }.catch {
+                        mask.dismiss()
+                        showToast(resources.getString(R.string.kVcPermissionEditSubmitOKAndRelaunchApp))
+                        //  [统计]
+                        btsppLogCustom("txUpdateAccountPermissionOK", jsonObjectfromKVS("account", uid, "mode", "wallet"))
+                    }
+                }
+                return@then null
+            }.catch { err ->
+                mask.dismiss()
+                showGrapheneError(err)
+                //  [统计]
+                btsppLogCustom("txUpdateAccountPermissionFailed", jsonObjectfromKVS("account", uid))
+            }
+        }
+    }
+
+    /**
+     *  (private) 事件 - 提交按钮点击
+     */
+    private fun onBtnSubmit(){
+        //  校验参数
+        val confirm_password = tf_confirm_password.text.toString()
+        if (confirm_password != _curr_password) {
+            showToast(resources.getString(R.string.kEditPasswordSubmitTipsConfirmFailed))
+            return
+        }
+
+        if (isRegisterAccount()) {
+            //  注册：新账号
+            onRegisterAccountCore()
+        } else {
+            //  修改密码：先查询账号数据
+            queryNewestAccountData().then {
+                //  二次确认
+                _gotoAskUpdateAccount(it as JSONObject)
+                return@then null
+            }.catch {
+                showToast(resources.getString(R.string.tip_network_error))
+            }
+        }
+    }
+
+    /**
+     *  (private) 事件 - 修改范围CELL点击
+     */
+    private fun onModifyRangeClicked(){
+        val self = this
+        val items = JSONArray().apply {
+            put(JSONObject().apply {
+                put("title", self.resources.getString(R.string.kEditPasswordEditRangeListOwnerAndActive))
+                put("type", kModifyAllPermissions)
+            })
+            put(JSONObject().apply {
+                put("title", self.resources.getString(R.string.kEditPasswordEditRangeListOnlyActive))
+                put("type", kModifyOnlyActivePermission)
+            })
+            put(JSONObject().apply {
+                put("title", self.resources.getString(R.string.kEditPasswordEditRangeListOnlyOwner))
+                put("type", kModifyOnlyOwnerPermission)
+            })
+        }
+        var defaultIndex = 0
+        for (item in items.forin<JSONObject>()) {
+            if (item!!.getInt("type") == _curr_modify_range) {
+                break
+            }
+            ++defaultIndex
+        }
+
+        //  显示列表
+        ViewDialogNumberPicker(this, "", items, "title", defaultIndex) { _index: Int, text: String ->
+            val result = items.getJSONObject(_index)
+            val range = result.getInt("type")
+            //  刷新UI
+            if (range != _curr_modify_range) {
+                _curr_modify_range = range
+                _draw_ui_modify_range()
+            }
+        }.show()
     }
 }

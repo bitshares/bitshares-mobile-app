@@ -243,6 +243,7 @@
     <string name="kEditPasswordBtnNext">下一步</string>
     <string name="kEditPasswordUiSecTips">【温馨提示】\n请勿复制、拍照、截图。\n请使用纸笔按照从左到右、从上到下的顺序依次记录以上 %s 个字符组成的密码，并妥善保存。丢失后将无法找回。</string>
     <string name="kEditPasswordCellTitleCurrAccountName">当前账号</string>
+    <string name="kEditPasswordCellTItleYourNewAccountName">您的账号</string>
     <string name="kEditPasswordCellTitleVerifyPassword">验证密码</string>
     <string name="kEditPasswordCellPlaceholderVerifyPassword">请输入上一步生成的密码</string>
     <string name="kEditPasswordBtnSubmmit">修改</string>
@@ -255,6 +256,7 @@
     <string name="kEditPasswordEditRangeListOnlyOwner">仅修改账号权限</string>
     <string name="kEditPasswordSubmitTipsConfirmFailed">密码验证失败，请重新输入。</string>
     <string name="kEditPasswordSubmitSecondTipsAsk">请再次确认您已经保存好新的密码并且保存到了安全的地方。是否继续修改密码？</string>
+    <string name="kEditPasswordNextStepAskForReg">请确认您的密码已经抄录完毕，并保存到了安全的地方，丢失将无法找回。</string>
     <!-- 登录&注册&备份 -->
     <string name="kFmtConditionContains2UpperLettersNonConsecutive">必须包含2个以上且不连续的大写字母</string>
     <string name="kFmtConditioncontainsUpperLetters">必须包含大写字母</string>
@@ -881,6 +883,7 @@
     <string name="kVcTitleChangePermission">修改权限</string>
     <string name="kVcTitlePermissionAddAuthority">添加管理者</string>
     <string name="kVcTitleAddOneSearchAccount">搜索账号</string>
+    <string name="kVcTitleBackupYourPassword">备份密码</string>
     <string name="kVcTitleEditPassword">修改密码</string>
     <string name="kVcTitleEditPasswordConfirm">验证密码</string>
     <string name="kVcTitleQrScan">扫一扫</string>
