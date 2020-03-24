@@ -199,7 +199,7 @@ class Utils {
         /**
          * text是否匹配正则
          */
-        private fun isRegularMatch(text: String, format: String): Boolean {
+        fun isRegularMatch(text: String, format: String): Boolean {
             val pattern = java.util.regex.Pattern.compile(format)
             val m = pattern.matcher(text)
             return m.matches()

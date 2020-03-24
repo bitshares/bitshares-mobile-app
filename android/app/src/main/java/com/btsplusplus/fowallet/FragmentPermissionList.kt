@@ -623,12 +623,17 @@ class FragmentPermissionList : BtsppFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        val self = this
         _ctx = inflater.context
         _view = inflater.inflate(R.layout.fragment_permission_list, container, false)
         //  初始化UI
         _refreshUI(WalletManager.sharedWalletManager().getWalletAccountInfo()!!)
         //  绑定事件
-        _view?.findViewById<Button>(R.id.btn_edit_password)?.setOnClickListener { activity?.goTo(ActivityNewAccountPassword::class.java, true) }
+        _view?.findViewById<Button>(R.id.btn_edit_password)?.setOnClickListener {
+            activity?.goTo(ActivityNewAccountPassword::class.java, true, args = JSONObject().apply {
+                put("title", self.resources.getString(R.string.kVcTitleEditPassword))
+            })
+        }
         return _view
     }
 

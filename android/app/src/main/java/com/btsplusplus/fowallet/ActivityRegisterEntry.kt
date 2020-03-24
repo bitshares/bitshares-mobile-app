@@ -1,32 +1,13 @@
 package com.btsplusplus.fowallet
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import com.fowallet.walletcore.bts.ChainObjectManager
 import kotlinx.android.synthetic.main.activity_register_entry.*
+import org.json.JSONObject
 
 class ActivityRegisterEntry : BtsppActivity() {
 
-    lateinit var _et_account_name: EditText
-
-    lateinit var _iv_unchecked_include_letter_digit: ImageView
-    lateinit var _iv_checked_include_letter_digit: ImageView
-    lateinit var _iv_unchecked_start_with_letter: ImageView
-    lateinit var _iv_checked_start_with_letter: ImageView
-    lateinit var _iv_unchecked_end_with_letter_digit: ImageView
-    lateinit var _iv_checked_end_with_letter_digit: ImageView
-    lateinit var _iv_unchecked_include_digit: ImageView
-    lateinit var _iv_checked_include_digit: ImageView
-    lateinit var _iv_unchecked_length3to32: ImageView
-    lateinit var _iv_checked_length3to32: ImageView
-    lateinit var _tv_include_letter_digit: TextView
-    lateinit var _tv_start_with_letter: TextView
-    lateinit var _tv_end_with_letter_digit: TextView
-    lateinit var _tv_include_digit: TextView
-    lateinit var _tv_length3to32: TextView
+    private lateinit var _account_condition: ViewFormatConditons
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,116 +18,48 @@ class ActivityRegisterEntry : BtsppActivity() {
         // 设置全屏(隐藏状态栏和虚拟导航栏)
         setFullScreen()
 
-        _et_account_name = et_account_name_from_register_entry
+        //  初始化账号条件格式说明
+        tf_account_name.let { tf ->
+            _account_condition = ViewFormatConditons(this).apply {
+                auxFastConditionsViewForAccountNameFormat()
+                bindingTextField(tf)
+            }
+            layout_format_view_container.addView(_account_condition)
+        }
 
-        // 各种 checkbox 和 textview 初始化
-        _iv_unchecked_include_letter_digit = iv_unchecked_include_letter_digit_from_register_entry
-        _iv_checked_include_letter_digit = iv_checked_include_letter_digit_from_register_entry
-        _iv_unchecked_start_with_letter = iv_unchecked_start_with_letter_from_register_entry
-        _iv_checked_start_with_letter = iv_checked_start_with_letter_from_register_entry
-        _iv_unchecked_end_with_letter_digit = iv_unchecked_end_with_letter_digit_from_register_entry
-        _iv_checked_end_with_letter_digit = iv_checked_end_with_letter_digit_from_register_entry
-        _iv_unchecked_include_digit = iv_unchecked_include_digit_from_register_entry
-        _iv_checked_include_digit = iv_checked_include_digit_from_register_entry
-        _iv_unchecked_length3to32 = iv_unchecked_length3to32_from_register_entry
-        _iv_checked_length3to32 = iv_checked_length3to32_from_register_entry
-
-        _tv_include_letter_digit = tv_include_letter_digit_from_register_entry
-        _tv_start_with_letter = tv_start_with_letter_from_register_entry
-        _tv_end_with_letter_digit = tv_end_with_letter_digit_from_register_entry
-        _tv_include_digit = tv_include_digit_from_register_entry
-        _tv_length3to32 = tv_length3to32_from_register_entry
-
-        // 默认不选中
-        unCheckAllCheckbox()
-
-        // 返回按钮事件
+        //  事件 - 返回
         layout_back_from_register_entry.setOnClickListener { finish() }
 
-        // 下一步按钮事件
-        button_next_from_register_entry.setOnClickListener { onNextButtonClicked() }
-
+        //  事件 - 下一步
+        btn_next_step.setOnClickListener { onNextButtonClicked() }
     }
 
-    private fun unCheckAllCheckbox(){
-        switchIncludeLetterDigit(false)
-        switchStartWithLetter(false)
-        switchEndWithLetterDigit(false)
-        switchInclueDigit(false)
-        switchLength3to32(false)
-    }
-
-    private fun switchIncludeLetterDigit(checked: Boolean){
-        if (checked) {
-            _iv_unchecked_include_letter_digit.visibility = View.GONE
-            _iv_checked_include_letter_digit.visibility = View.VISIBLE
-            _iv_checked_include_letter_digit.setColorFilter(resources.getColor(R.color.theme01_textColorMain))
-            _tv_include_letter_digit.setTextColor(resources.getColor(R.color.theme01_textColorMain))
-        } else {
-            _iv_unchecked_include_letter_digit.visibility = View.VISIBLE
-            _iv_checked_include_letter_digit.visibility = View.GONE
-            _iv_unchecked_include_letter_digit.setColorFilter(resources.getColor(R.color.theme01_textColorGray))
-            _tv_include_letter_digit.setTextColor(resources.getColor(R.color.theme01_textColorGray))
+    /**
+     *  (private) 事件 - 下一步
+     */
+    private fun onNextButtonClicked() {
+        //  检测参数有效性
+        if (!_account_condition.isAllConditionsMatched()) {
+            showToast(resources.getString(R.string.kLoginSubmitTipsAccountFmtIncorrect))
+            return
         }
-    }
-
-    private fun switchStartWithLetter(checked: Boolean){
-        if (checked) {
-            _iv_unchecked_start_with_letter.visibility = View.GONE
-            _iv_checked_start_with_letter.visibility = View.VISIBLE
-            _iv_checked_start_with_letter.setColorFilter(resources.getColor(R.color.theme01_textColorMain))
-            _tv_start_with_letter.setTextColor(resources.getColor(R.color.theme01_textColorMain))
-        } else {
-            _iv_unchecked_start_with_letter.visibility = View.VISIBLE
-            _iv_checked_start_with_letter.visibility = View.GONE
-            _iv_unchecked_start_with_letter.setColorFilter(resources.getColor(R.color.theme01_textColorGray))
-            _tv_start_with_letter.setTextColor(resources.getColor(R.color.theme01_textColorGray))
+        val self = this
+        val new_account_name = tf_account_name.text.toString().toLowerCase()
+        val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this).apply { show() }
+        ChainObjectManager.sharedChainObjectManager().isAccountExistOnBlockChain(new_account_name).then {
+            mask.dismiss()
+            if (it != null && it as Boolean) {
+                showToast(resources.getString(R.string.kLoginSubmitTipsAccountAlreadyExist))
+            } else {
+                goTo(ActivityNewAccountPassword::class.java, true, args = JSONObject().apply {
+                    put("new_account_name", new_account_name)
+                    put("title", self.resources.getString(R.string.kVcTitleBackupYourPassword))
+                })
+            }
+            return@then null
+        }.catch {
+            mask.dismiss()
+            showToast(resources.getString(R.string.tip_network_error))
         }
-    }
-
-    private fun switchEndWithLetterDigit(checked: Boolean){
-        if (checked) {
-            _iv_unchecked_end_with_letter_digit.visibility = View.GONE
-            _iv_checked_end_with_letter_digit.visibility = View.VISIBLE
-            _iv_checked_end_with_letter_digit.setColorFilter(resources.getColor(R.color.theme01_textColorMain))
-            _tv_end_with_letter_digit.setTextColor(resources.getColor(R.color.theme01_textColorMain))
-        } else {
-            _iv_unchecked_end_with_letter_digit.visibility = View.VISIBLE
-            _iv_checked_end_with_letter_digit.visibility = View.GONE
-            _iv_unchecked_end_with_letter_digit.setColorFilter(resources.getColor(R.color.theme01_textColorGray))
-            _tv_end_with_letter_digit.setTextColor(resources.getColor(R.color.theme01_textColorGray))
-        }
-    }
-
-    private fun switchInclueDigit(checked: Boolean){
-        if (checked) {
-            _iv_unchecked_include_digit.visibility = View.GONE
-            _iv_checked_include_digit.visibility = View.VISIBLE
-            _iv_checked_include_digit.setColorFilter(resources.getColor(R.color.theme01_textColorMain))
-            _tv_include_digit.setTextColor(resources.getColor(R.color.theme01_textColorMain))
-        } else {
-            _iv_unchecked_include_digit.visibility = View.VISIBLE
-            _iv_checked_include_digit.visibility = View.GONE
-            _iv_unchecked_include_digit.setColorFilter(resources.getColor(R.color.theme01_textColorGray))
-            _tv_include_digit.setTextColor(resources.getColor(R.color.theme01_textColorGray))
-        }
-    }
-
-    private fun switchLength3to32(checked: Boolean){
-        if (checked) {
-            _iv_unchecked_length3to32.visibility = View.GONE
-            _iv_checked_length3to32.visibility = View.VISIBLE
-            _iv_checked_length3to32.setColorFilter(resources.getColor(R.color.theme01_textColorMain))
-            _tv_length3to32.setTextColor(resources.getColor(R.color.theme01_textColorMain))
-        } else {
-            _iv_unchecked_length3to32.visibility = View.VISIBLE
-            _iv_checked_length3to32.visibility = View.GONE
-            _iv_unchecked_length3to32.setColorFilter(resources.getColor(R.color.theme01_textColorGray))
-            _tv_length3to32.setTextColor(resources.getColor(R.color.theme01_textColorGray))
-        }
-    }
-
-    private fun onNextButtonClicked(){
-
     }
 }
