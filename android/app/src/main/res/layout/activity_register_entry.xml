@@ -15,6 +15,7 @@
         android:padding="10dp"
         android:orientation="vertical">
 
+        <!-- 导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -47,11 +48,10 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="注册"
+                android:text="@string/kVcTitleRegister"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
-
 
         <LinearLayout
             android:layout_marginTop="30dp"
@@ -59,6 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <!-- TF - 账号 -->
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -68,200 +69,33 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:text="@string/kLoginCellWalletPassword"
+                    android:text="@string/kLoginCellAccountName"
                     android:textSize="16dp"
                     android:textColor="@color/theme01.textColorMain"/>
 
             </LinearLayout>
 
             <EditText
+                android:id="@+id/tf_account_name"
                 android:layout_marginTop="12dp"
-                android:id="@+id/et_account_name_from_register_entry"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                style="@style/kTextFieldPassword"
-                android:hint="请输入新的账号名"/>
+                style="@style/kTextFieldNormal"
+                android:hint="@string/kRegTipsPlaceholderNewAccount"/>
 
             <View android:layout_height="1dp" android:layout_marginTop="2dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
+            <!-- 条件视图容器（动态添加条件) -->
             <LinearLayout
-                android:layout_marginTop="5dp"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
+                android:id="@+id/layout_format_view_container"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="24dp">
-
-                    <LinearLayout
-                        android:layout_width="24dp"
-                        android:layout_height="24dp">
-                        <ImageView
-                            android:id="@+id/iv_unchecked_include_letter_digit_from_register_entry"
-                            android:src="@drawable/ic_btn_back"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                        <ImageView
-                            android:visibility="gone"
-                            android:id="@+id/iv_checked_include_letter_digit_from_register_entry"
-                            android:src="@drawable/ic_btn_right_arrow"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tv_include_letter_digit_from_register_entry"
-                        android:textSize="12dp"
-                        android:textColor="@color/theme01.textColorGray"
-                        android:text="由字母、数字或短横线组成"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="24dp">
-
-                    <LinearLayout
-                        android:layout_width="24dp"
-                        android:layout_height="24dp">
-                        <ImageView
-                            android:id="@+id/iv_unchecked_start_with_letter_from_register_entry"
-                            android:src="@drawable/ic_btn_back"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                        <ImageView
-                            android:visibility="gone"
-                            android:id="@+id/iv_checked_start_with_letter_from_register_entry"
-                            android:src="@drawable/ic_btn_right_arrow"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tv_start_with_letter_from_register_entry"
-                        android:textSize="12dp"
-                        android:textColor="@color/theme01.textColorGray"
-                        android:text="必须以字母开头"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="24dp">
-
-                    <LinearLayout
-                        android:layout_width="24dp"
-                        android:layout_height="24dp">
-                        <ImageView
-                            android:id="@+id/iv_unchecked_end_with_letter_digit_from_register_entry"
-                            android:src="@drawable/ic_btn_back"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                        <ImageView
-                            android:visibility="gone"
-                            android:id="@+id/iv_checked_end_with_letter_digit_from_register_entry"
-                            android:src="@drawable/ic_btn_right_arrow"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tv_end_with_letter_digit_from_register_entry"
-                        android:textSize="12dp"
-                        android:textColor="@color/theme01.textColorGray"
-                        android:text="必须以字母或数字结尾"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="24dp">
-
-                    <LinearLayout
-                        android:layout_width="24dp"
-                        android:layout_height="24dp">
-                        <ImageView
-                            android:id="@+id/iv_unchecked_include_digit_from_register_entry"
-                            android:src="@drawable/ic_btn_back"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                        <ImageView
-                            android:visibility="gone"
-                            android:id="@+id/iv_checked_include_digit_from_register_entry"
-                            android:src="@drawable/ic_btn_right_arrow"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tv_include_digit_from_register_entry"
-                        android:textSize="12dp"
-                        android:textColor="@color/theme01.textColorGray"
-                        android:text="必须包含数字"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="24dp">
-
-                    <LinearLayout
-                        android:layout_width="24dp"
-                        android:layout_height="24dp">
-                        <ImageView
-                            android:id="@+id/iv_unchecked_length3to32_from_register_entry"
-                            android:src="@drawable/ic_btn_back"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                        <ImageView
-                            android:visibility="gone"
-                            android:id="@+id/iv_checked_length3to32_from_register_entry"
-                            android:src="@drawable/ic_btn_right_arrow"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tv_length3to32_from_register_entry"
-                        android:textSize="12dp"
-                        android:textColor="@color/theme01.textColorGray"
-                        android:text="长度3-32个字符"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-
-
             </LinearLayout>
 
         </LinearLayout>
 
-
+        <!-- 下一步 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -271,14 +105,14 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/button_next_from_register_entry"
+                android:id="@+id/btn_next_step"
                 android:layout_width="wrap_content"
                 style="@style/kMainButtonStyle"
                 android:gravity="center|center_vertical"
                 android:layout_weight="1"
                 android:padding="5dp"
                 android:textAllCaps="false"
-                android:text="下一步" />
+                android:text="@string/kEditPasswordBtnNext" />
         </LinearLayout>
 
 

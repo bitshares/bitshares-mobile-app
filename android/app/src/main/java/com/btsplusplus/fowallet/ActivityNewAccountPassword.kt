@@ -16,6 +16,7 @@ class ActivityNewAccountPassword : BtsppActivity() {
 
     private var _currPasswordLang = EBitsharesAccountPasswordLang.ebap_lang_zh
     private var _currPasswordWords = mutableListOf<String>()
+    private var _new_account_name: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +26,11 @@ class ActivityNewAccountPassword : BtsppActivity() {
 
         // 设置全屏(隐藏状态栏和虚拟导航栏)
         setFullScreen()
+
+        //  获取参数
+        val args = btspp_args_as_JSONObject()
+        _new_account_name = args.optString("new_account_name", null)
+        findViewById<TextView>(R.id.title).text = args.getString("title")
 
         //  初始化数据
         //  REMARK：根据当前语言决定默认密码语言。
@@ -145,9 +151,22 @@ class ActivityNewAccountPassword : BtsppActivity() {
      *  (private) 事件 - 点击下一步
      */
     private fun onNextButtonClick() {
-        goTo(ActivityNewAccountPasswordConfirm::class.java, true, args = JSONObject().apply {
-            put("current_password", _currPasswordWords.joinToString(""))
-            put("pass_lang", _currPasswordLang)
-        })
+        if (_new_account_name != null) {
+            val value = resources.getString(R.string.kEditPasswordNextStepAskForReg)
+            UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kWarmTips), value).then {
+                if (it != null && it as Boolean) {
+                    goTo(ActivityNewAccountPasswordConfirm::class.java, true, args = JSONObject().apply {
+                        put("current_password", _currPasswordWords.joinToString(""))
+                        put("pass_lang", _currPasswordLang)
+                        put("new_account_name", _new_account_name)
+                    })
+                }
+            }
+        } else {
+            goTo(ActivityNewAccountPasswordConfirm::class.java, true, args = JSONObject().apply {
+                put("current_password", _currPasswordWords.joinToString(""))
+                put("pass_lang", _currPasswordLang)
+            })
+        }
     }
 }

@@ -43,14 +43,18 @@ class ActivityNewAccountPasswordConfirm : BtsppActivity() {
         //  初始化UI
         if (isRegisterAccount()) {
             //  注册账号
+            btn_terms_of_service.visibility = View.VISIBLE
             layout_modify_range.visibility = View.GONE
             //  UI - 新账号名
             tv_your_account_name_title.text = resources.getString(R.string.kEditPasswordCellTItleYourNewAccountName)
             tv_curr_account_name_value.text = _new_account_name!!
             //  UI - 提交按钮名字
             btn_submit.text = resources.getString(R.string.kLoginCellBtnAgreeAndReg)
+            //  事件 - 用户协议
+            btn_terms_of_service.setOnClickListener { onTermsOfServiceClicked() }
         } else {
             //  修改密码
+            btn_terms_of_service.visibility = View.INVISIBLE
             layout_modify_range.visibility = View.VISIBLE
             //  UI - 账号名
             tv_your_account_name_title.text = resources.getString(R.string.kEditPasswordCellTitleCurrAccountName)
@@ -79,15 +83,14 @@ class ActivityNewAccountPasswordConfirm : BtsppActivity() {
         return _new_account_name != null && _new_account_name!!.isNotEmpty()
     }
 
-    //  TODO:5.0
-//    - (void)onBtnAgreementClicked
-//    {
-//        //  TODO:2.9 url
-//        [self gotoWebView:[NSString stringWithFormat:@"%@%@", @"https://btspp.io/",
-//        NSLocalizedString(@"userAgreementHtmlFileName", @"agreement html file")]
-//        title:NSLocalizedString(@"kVcTitleAgreement", @"用户协议和服务条款")];
-//    }
-//
+    /**
+     *  (private) 事件 - 查看用户协议
+     */
+    private fun onTermsOfServiceClicked() {
+        val url = "https://btspp.io/${resources.getString(R.string.userAgreementHtmlFileName)}"
+        goToWebView(resources.getString(R.string.kVcTitleAgreement), url)
+    }
+
     /**
      *  (private) 描绘UI - 修改范围
      */

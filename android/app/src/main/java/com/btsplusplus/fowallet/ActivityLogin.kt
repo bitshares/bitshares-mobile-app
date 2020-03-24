@@ -40,7 +40,7 @@ class ActivityLogin : BtsppActivity() {
         if (_checkActivePermission) {
             //  test network didnt show 'register'
             button_register.setOnClickListener {
-                goTo(ActivityRegister::class.java, true)
+                goTo(ActivityRegisterEntry::class.java, true)
             }
         } else {
             //  导入到已有钱包时：钱包模式移除，注册按钮隐藏。
