@@ -411,9 +411,9 @@ class FragmentAssets : BtsppFragment() {
 
             //  TODO:4.0 后续可扩展【更多】按钮
             val actions = jsonArrayfrom(EBitsharesAssetOpKind.ebaok_transfer, EBitsharesAssetOpKind.ebaok_trade)
-            if (isSmart) {
+            if (isSmart || isPredictionMarket) {
                 actions.put(EBitsharesAssetOpKind.ebaok_settle)
-            } else if (!isPredictionMarket) {
+            } else {
                 actions.put(EBitsharesAssetOpKind.ebaok_reserve)
             }
 
@@ -496,44 +496,68 @@ class FragmentAssets : BtsppFragment() {
         val bitasset_data_id = clicked_asset.getString("bitasset_data_id")
 
         val p1 = chainMgr.queryFullAccountInfo(_full_account_data.getJSONObject("account").getString("id"))
-        val p2 = chainMgr.queryAllGrapheneObjectsSkipCache(jsonArrayfrom(oid, bitasset_data_id))
+        val p2 = chainMgr.queryAllGrapheneObjectsSkipCache(jsonArrayfrom(oid))
+        val p3 = chainMgr.queryBackingAsset(clicked_asset)
 
         activity!!.let { ctx ->
-            VcUtils.simpleRequest(ctx, Promise.all(p1, p2)) {
+            VcUtils.simpleRequest(ctx, Promise.all(p1, p2, p3)) {
                 val data_array = it as JSONArray
                 val full_account_data = data_array.getJSONObject(0)
                 val result_hash = data_array.getJSONObject(1)
+                val backing_asset = data_array.getJSONObject(2)
                 val newAsset = result_hash.getJSONObject(oid)
-                val newBitassetData = result_hash.getJSONObject(bitasset_data_id)
+                val newBitassetData = chainMgr.getChainObjectByID(bitasset_data_id)
 
-                //  检测资产是否禁止强清
-                if (!ModelUtils.assetCanForceSettle(newAsset)) {
+                //  资产未禁止强清操作 或 全局清算了 才可进行清算操作。
+                val hasAlreadyGlobalSettled = ModelUtils.assetHasGlobalSettle(newBitassetData)
+                if (!ModelUtils.assetCanForceSettle(newAsset) && !hasAlreadyGlobalSettled) {
                     showToast(resources.getString(R.string.kVcAssetOpSettleTipsDisableSettle))
                     return@simpleRequest
                 }
 
-                if (ModelUtils.isNullPrice(newBitassetData.getJSONObject("current_feed").getJSONObject("settlement_price"))) {
-                    showToast(resources.getString(R.string.kVcAssetOpSettleTipsNoFeedData))
-                    return@simpleRequest
+               if (newBitassetData.isTrue("is_prediction_market")) {
+                   //   预测市场：必须全局清算之后才可以进行清算操作。
+                   if (!hasAlreadyGlobalSettled) {
+                       showToast(resources.getString(R.string.kVcAssetOpSettleTipsMustGlobalSettleFirst))
+                       return@simpleRequest
+                   }
+               } else {
+                   //  普通智能币
+                   //  1、需要有喂价数据才可以进行清算操作。
+                   //  2、如果已经黑天鹅了也可以进行清算操作。
+                   if (ModelUtils.isNullPrice(newBitassetData.getJSONObject("current_feed").getJSONObject("settlement_price")) &&
+                           !hasAlreadyGlobalSettled) {
+                       showToast(resources.getString(R.string.kVcAssetOpSettleTipsNoFeedData))
+                       return@simpleRequest
+                   }
+               }
+
+                val settleMsgTips = if (hasAlreadyGlobalSettled) {
+                    val n_price = OrgUtils.calcPriceFromPriceObject(newBitassetData.getJSONObject("settlement_price"),
+                            newAsset.getString("id"),
+                            newAsset.getInt("precision"), backing_asset.getInt("precision"), false, BigDecimal.ROUND_DOWN, true)
+                    val global_settle_price = String.format("%s %s/%s", OrgUtils.formatFloatValue(n_price!!.toDouble(), backing_asset.getInt("precision"), has_comma = false),
+                            backing_asset.getString("symbol"), newAsset.getString("symbol"))
+
+                    String.format(resources.getString(R.string.kVcAssetOpSettleUiTipsAlreadyGs), global_settle_price)
+                } else {
+                    val options = newBitassetData.getJSONObject("options")
+                    val force_settlement_delay_sec = options.getInt("force_settlement_delay_sec")
+                    val s_delay_hour = String.format(resources.getString(R.string.kVcAssetOpSettleDelayHoursN), (force_settlement_delay_sec / 3600).toString())
+
+                    val n_force_settlement_offset_percent = bigDecimalfromAmount(options.getString("force_settlement_offset_percent"), 4)
+                    val n_final = n_force_settlement_offset_percent.add(BigDecimal.ONE)
+
+                    String.format(resources.getString(R.string.kVcAssetOpSettleUiTips), s_delay_hour, n_final.toPriceAmountString())
                 }
-
-                //  TODO:5.0 预测市场清算操作必须在全局清算之后。
-                //  "global settlement must occur before force settling a prediction market"
-
-                val options = newBitassetData.getJSONObject("options")
-                val force_settlement_delay_sec = options.getInt("force_settlement_delay_sec")
-                val s_delay_hour = String.format(resources.getString(R.string.kVcAssetOpSettleDelayHoursN), (force_settlement_delay_sec / 3600).toString())
-
-                val n_force_settlement_offset_percent = bigDecimalfromAmount(options.getString("force_settlement_offset_percent"), 4)
-                val n_final = n_force_settlement_offset_percent.add(BigDecimal.ONE)
-
+                //  转到清算界面
                 val result_promise = Promise()
                 ctx.goTo(ActivityAssetOpCommon::class.java, true, args = JSONObject().apply {
                     put("current_asset", clicked_asset)
                     put("full_account_data", full_account_data)
                     put("op_extra_args", JSONObject().apply {
                         put("kOpType", tag)
-                        put("kMsgTips", String.format(resources.getString(R.string.kVcAssetOpSettleUiTips), s_delay_hour, n_final.toPriceAmountString()))
+                        put("kMsgTips", settleMsgTips)
                         put("kMsgAmountPlaceholder", resources.getString(R.string.kVcAssetOpSettleCellPlaceholderAmount))
                         put("kMsgBtnName", resources.getString(R.string.kVcAssetOpSettleBtnName))
                         put("kMsgSubmitInputValidAmount", resources.getString(R.string.kVcAssetOpSettleSubmitTipsPleaseInputAmount))
