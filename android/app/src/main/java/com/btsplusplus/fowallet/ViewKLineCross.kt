@@ -21,7 +21,7 @@ import kotlin.math.round
 class ViewKLineCross : ViewBase {
 
     private var _first_init_draw: Boolean = true         //  首次初始化不描绘
-    private var _tradingPair: TradingPair
+    var _tradingPair: TradingPair
     private var _currModel: MKlineItemData? = null
     var _kline: ViewKLine? = null
     private var _view_size: SizeF = SizeF(0f, 0f)
@@ -347,7 +347,7 @@ class ViewKLineCross : ViewBase {
         //  adv_index03 - DEA
 
         //  成交量柱子底部Y坐标
-        var fVolumeGraphBottomY = _view_size.height - (_kline!!.fSecondMAHeight + _kline!!.fSecondGraphHeight)
+        val fVolumeGraphBottomY = _view_size.height - (_kline!!.fSecondMAHeight + _kline!!.fSecondGraphHeight)
 
         val main_values = SettingManager.sharedSettingManager().getKLineIndexInfos()
         val macd_value = main_values.getJSONObject("macd_value")
