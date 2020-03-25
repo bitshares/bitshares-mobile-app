@@ -64,6 +64,7 @@ class ActivityKLine : BtsppActivity() {
         super.onCreate(savedInstanceState)
 
         setAutoLayoutContentView(R.layout.activity_kline)
+        setFullScreen()
 
         //  获取参数
         val params = btspp_args_as_JSONArray()
@@ -96,7 +97,7 @@ class ActivityKLine : BtsppActivity() {
         //  UI - 子界面 K线主界面
 
         //  初始化 K线视图
-        _viewKLine = ViewKLine(this, sw, _tradingPair._baseAsset, _tradingPair._quoteAsset)
+        _viewKLine = ViewKLine(this, sw, _tradingPair)
         _viewKLine.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, toDp(px2dip(sw + 16f.dp).toFloat()))
         layout_kline_area_from_kline.addView(_viewKLine)
 
@@ -113,7 +114,7 @@ class ActivityKLine : BtsppActivity() {
 
         //  事件 - 切换交易对
         _layout_trade_pair = layout_switch_trade_pair_from_kline
-        _layout_trade_pair.setOnClickListener { onClickSwitchTradePair() }
+        _layout_trade_pair.setOnClickListener { onTitleSwitchButtonClicked() }
 
         //  深度图
         _viewDeepGraph = ViewDeepGraph(this, sw, _tradingPair)
@@ -147,41 +148,49 @@ class ActivityKLine : BtsppActivity() {
         //  事件 / events
         btn_index.setOnClickListener { _onIndexButtonClicked() }
 
-        setFullScreen()
+        //  获取默认查询的K线周期数据
+        val parameters = ChainObjectManager.sharedChainObjectManager().getDefaultParameters()
+        val kline_period_ary = parameters.getJSONArray("kline_period_ary")
+        val kline_period_default = parameters.getInt("kline_period_default")
+        assert(kline_period_default >= 0 && kline_period_default < kline_period_ary.length())
+        val kline_period_default_value = kline_period_ary.getInt(kline_period_default)
+        val currEkdpt = ViewKLine.EKlineDatePeriodType.values().find { it.value == kline_period_default_value}!!
+        _viewKLine.ekdptType = currEkdpt
 
-        //  查询
-        _queryInitData()
+        //  初始化查询
+        _queryInitData(currEkdpt)
     }
 
-    private fun onClickSwitchTradePair(){
-        var defaultIndex = 0
-        val list = JSONArray().apply {
-            for (i in 1 until 10) {
-                put(JSONObject().apply {
-                    put("name", "BTS/USD${i}")
-                })
-            }
-        }
-
-        ViewDialogNumberPicker(this, "选择交易对", list, "name", defaultIndex) { _index: Int, txt: String ->
-            val tv_title = _layout_trade_pair.findViewById<TextView>(R.id.layout_kline_title)
-            tv_title.text = txt
-        }.show()
+    /**
+     *  (private) 事件 - 翻转交易对点击
+     */
+    private fun onTitleSwitchButtonClicked(){
+        //  取消之前的订阅
+        ScheduleManager.sharedScheduleManager().unsub_market_notify(_tradingPair)
+        //  交换交易对
+        _tradingPair = TradingPair().initWithBaseAsset(_tradingPair._quoteAsset, _tradingPair._baseAsset)
+        layout_kline_title.text = String.format("%s/%s", _tradingPair._quoteAsset.getString("symbol"), _tradingPair._baseAsset.getString("symbol"))
+        //  更新关联数据
+        _viewKLine._tradingPair = _tradingPair
+        _viewCrss._tradingPair = _tradingPair
+        _viewDeepGraph._tradingPair = _tradingPair
+        _viewBidAsk._tradingPair = _tradingPair
+        _viewTradeHistory._tradingPair = _tradingPair
+        //  重新初始化数据
+        _queryInitData(_viewKLine.ekdptType!!)
     }
 
-    private fun _queryInitData() {
+    private fun _queryInitData(query_ekdpt: ViewKLine.EKlineDatePeriodType) {
+        val default_query_seconds = getDatePeriodSeconds(query_ekdpt.value)
+
         //  请求数据
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
-        val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this)
-        mask.show()
+        val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this).apply { show() }
 
         _tradingPair.queryBitassetMarketInfo().then {
             //  1、查询K线基本数据
             val parameters = chainMgr.getDefaultParameters()
-            val kline_period_ary = parameters.getJSONArray("kline_period_ary")
-            val kline_period_default_index = parameters.getInt("kline_period_default")
-            assert(kline_period_default_index >= 0 && kline_period_default_index < kline_period_ary.length())
-            val default_query_seconds = getDatePeriodSeconds(kline_period_ary.getInt(kline_period_default_index))
+
             val now: Long = Utils.now_ts()
             val snow = Utils.formatBitsharesTimeString(now)
             val sbgn = Utils.formatBitsharesTimeString(now - default_query_seconds * kBTS_KLINE_MAX_SHOW_CANDLE_NUM)
@@ -373,7 +382,6 @@ class ActivityKLine : BtsppActivity() {
         //  更新成交历史
         val fillOrders = userinfo.optJSONArray("kFillOrders")
         if (fillOrders != null) {
-            _refreshCurrentTickerData()
             onQueryFillOrderHistoryResponsed(fillOrders)
         }
     }
@@ -462,6 +470,9 @@ class ActivityKLine : BtsppActivity() {
         }
         _dataArrayHistory = JSONArray()
         _dataArrayHistory.putAll(data_array)
+        //  最新Ticker价格等
+        _refreshCurrentTickerData()
+        //  刷新
         _viewTradeHistory.refreshWithData(this, data_array)
     }
 

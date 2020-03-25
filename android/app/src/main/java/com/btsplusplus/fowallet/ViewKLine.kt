@@ -13,6 +13,7 @@ import bitshares.*
 import com.btsplusplus.fowallet.kline.MKlineIndex
 import com.btsplusplus.fowallet.kline.MKlineIndexMA
 import com.btsplusplus.fowallet.kline.MKlineItemData
+import com.btsplusplus.fowallet.kline.TradingPair
 import org.json.JSONArray
 import org.json.JSONObject
 import java.math.BigDecimal
@@ -70,12 +71,7 @@ class ViewKLine : ViewBase {
     var fMainMAHeight: Float = 0f                   //  主图（K线）MA区域总高度
     var fSecondMAHeight: Float = 0f                 //  副图（量）MA区域总高度
 
-
-    var _baseAsset: JSONObject? = null
-    var _quoteAsset: JSONObject? = null
-    private var _base_precision: Int = 0
-    private var _quote_precision: Int = 0
-    private var _base_id: String? = null
+    var _tradingPair: TradingPair
 
     private var _kdataModelPool: MutableList<MKlineItemData>? = null
     private var _kdataModelCurrentIndex: Int = 0
@@ -310,7 +306,7 @@ class ViewKLine : ViewBase {
         }
 
         //  保留小数位数 向上取整
-        val ceilHandler: Array<Int> = arrayOf(_base_precision, BigDecimal.ROUND_UP)
+        val ceilHandler: Array<Int> = arrayOf(_tradingPair._basePrecision, BigDecimal.ROUND_UP)
         val percentHandler: Array<Int> = arrayOf(4, BigDecimal.ROUND_UP)
         val scale = ceilHandler[0]
         val rounding = ceilHandler[1]
@@ -330,7 +326,7 @@ class ViewKLine : ViewBase {
             var model: MKlineItemData = getOneKdataModel()
 
             //  解析Model
-            model = MKlineItemData.parseData(data!!, model, _base_id, _base_precision, _quote_precision, ceilHandler, percentHandler)
+            model = MKlineItemData.parseData(data!!, model, _tradingPair._baseId, _tradingPair._basePrecision, _tradingPair._quotePrecision, ceilHandler, percentHandler)
             _kdataArrayAll.add(model)
 
             //  fill index
@@ -635,7 +631,7 @@ class ViewKLine : ViewBase {
         if (max_price!!.compareTo(min_price) == NSOrderedSame) {
             //  max_price *= 1.1;
             //  min_price *= 0.9;
-            val ceilHanderScale = _base_precision
+            val ceilHanderScale = _tradingPair._basePrecision
             val ceilHanderScaleRounding = BigDecimal.ROUND_UP
             val n_percent_90 = BigDecimal("0.9")
             val n_percent_110 = BigDecimal("1.1")
@@ -841,7 +837,7 @@ class ViewKLine : ViewBase {
         if (max_value == min_value) {
             //  max_price *= 1.1;
             //  min_price *= 0.9;
-            val ceilHanderScale = _base_precision
+            val ceilHanderScale = _tradingPair._basePrecision
             val ceilHanderScaleRounding = BigDecimal.ROUND_UP
             val n_percent_90 = BigDecimal("0.9")
             val n_percent_110 = BigDecimal("1.1")
@@ -872,7 +868,7 @@ class ViewKLine : ViewBase {
 
         //  2、描绘高级指标背景右边Y轴区间
         //  保留小数位数 向上取整
-        val ceilHandlerScale: Int = _base_precision
+        val ceilHandlerScale: Int = _tradingPair._basePrecision
         val ceilHandlerRounding: Int = BigDecimal.ROUND_UP
 
         for (i in 0..2) {
@@ -953,7 +949,7 @@ class ViewKLine : ViewBase {
         val candleSpaceW: Float = candle_width * 2 + kBTS_KLINE_SHADOW_WIDTH + kBTS_KLINE_INTERVAL
 
         //  保留小数位数 向上取整
-        val ceilHandlerScale: Int = _base_precision
+        val ceilHandlerScale: Int = _tradingPair._basePrecision
         val ceilHandlerRounding: Int = BigDecimal.ROUND_UP
 
         //  1、描绘背景右边(Y轴)价格区间
@@ -1293,32 +1289,11 @@ class ViewKLine : ViewBase {
         //  什么也不处理
     }
 
-    constructor(context: Context) : super(context) {
-        _context = context
-        init()
-    }
-
-    constructor(context: Context, sw: Float, baseAsset: JSONObject, quoteAsset: JSONObject) : super(context) {
+    constructor(context: Context, sw: Float, tradingPair: TradingPair) : super(context) {
         _context = context
         _view_size = SizeF(sw, sw)
-
         //  外部参数
-        _baseAsset = baseAsset
-        _quoteAsset = quoteAsset
-        _base_precision = baseAsset.getInt("precision")
-        _quote_precision = quoteAsset.getInt("precision")
-        _base_id = baseAsset.getString("id").toString()
-
-        init()
-    }
-
-    constructor(context: Context, attrs: AttributeSet) : super(context) {
-        _context = context
-        init()
-    }
-
-    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context) {
-        _context = context
+        _tradingPair = tradingPair
         init()
     }
 

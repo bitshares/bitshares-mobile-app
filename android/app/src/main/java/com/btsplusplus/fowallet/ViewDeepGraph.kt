@@ -32,19 +32,15 @@ class ViewDeepGraph : ViewBase {
 
     var _limit_order_infos: JSONObject? = null
 
-    lateinit var _tradingPair: TradingPair
-    lateinit var _f10NumberSize: Size                    //  测量字体高度
-    lateinit var _fontname: Typeface                     //  K线图各种数据字体
+    var _tradingPair: TradingPair
+    var _f10NumberSize: Size                    //  测量字体高度
+    var _fontname: Typeface                     //  K线图各种数据字体
     var _fontsize: Float = 0.0f
 
     var _context: Context
     var m_canvas: Canvas = Canvas()
     var first_refresh: Boolean = true
-    lateinit var _view_size: SizeF
-
-    constructor(context: Context) : super(context) {
-        _context = context
-    }
+    var _view_size: SizeF
 
     constructor(context: Context, width: Float, tradingPair: TradingPair) : super(context) {
         _context = context
@@ -67,14 +63,6 @@ class ViewDeepGraph : ViewBase {
 
         //  REMARK：测量X轴、Y轴、MAX、MIN价格、VOL等字体高度用。
         _f10NumberSize = auxSizeWithText("0.123456789-:", _fontname, _fontsize)
-    }
-
-    constructor(context: Context, attrs: AttributeSet) : super(context) {
-        _context = context
-    }
-
-    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context) {
-        _context = context
     }
 
     override fun onDraw(canvas: Canvas) {
