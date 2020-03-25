@@ -39,6 +39,8 @@ class FragmentLoginPrivateKeyMode : Fragment() {
     private var _checkActivePermission = true
     private var _result_promise: Promise? = null
 
+    private var _unlock_password_condition: ViewFormatConditons? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -66,9 +68,9 @@ class FragmentLoginPrivateKeyMode : Fragment() {
             return
         }
 
-        //  仅正常登录是才需要验证交易密码，导入到已有钱包不用验证。
-        if (_checkActivePermission && !Utils.isValidBitsharesWalletPassword(trade_password)) {
-            showToast(_ctx!!.resources.getString(R.string.kLoginSubmitTipsTradePasswordFmtIncorrect))
+        //  正常登录才需要验证交易密码。
+        if (_checkActivePermission && !_unlock_password_condition!!.isAllConditionsMatched()) {
+            showToast(resources.getString(R.string.kLoginSubmitTipsTradePasswordFmtIncorrect))
             return
         }
 
@@ -95,6 +97,7 @@ class FragmentLoginPrivateKeyMode : Fragment() {
         // Inflate the layout for this fragment
         _ctx = inflater.context
         val v = inflater.inflate(R.layout.fragment_login_private_key_mode, container, false)
+
         val _button_login: Button = v.findViewById(R.id.button_login)
         _button_login.setOnClickListener {
             val active_privatekey = v.findViewById<EditText>(R.id.tf_active_privatekey).text.toString().trim()
@@ -110,6 +113,15 @@ class FragmentLoginPrivateKeyMode : Fragment() {
         //  导入到已有钱包：隐藏交易密码。
         if (!_checkActivePermission) {
             v.findViewById<LinearLayout>(R.id.cell_trade_password).visibility = View.GONE
+        } else {
+            //  初始化交易密码条件格式说明
+            v.findViewById<EditText>(R.id.tf_trade_password).let { tf ->
+                _unlock_password_condition = ViewFormatConditons(_ctx!!).apply {
+                    auxFastConditionsViewForWalletPassword()
+                    bindingTextField(tf)
+                }
+                v.findViewById<LinearLayout>(R.id.layout_format_view_container_unlock_password).addView(_unlock_password_condition)
+            }
         }
         return v
     }

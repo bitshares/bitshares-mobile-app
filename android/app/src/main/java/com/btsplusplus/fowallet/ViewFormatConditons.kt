@@ -31,6 +31,8 @@ class ViewFormatConditons : LinearLayout {
 
     private var _tf_watcher: UtilsDigitTextWatcher? = null  //  文本编辑监听事件
 
+    var isAlwaysShow: Boolean = false                       //  是否一直显示，如需修改请在 bindingTextField 调用之前设置。
+
     fun isAllConditionsMatched(): Boolean {
         return _isAllConditionsMatched
     }
@@ -199,6 +201,21 @@ class ViewFormatConditons : LinearLayout {
             tf.addTextChangedListener(_tf_watcher)
             _tf_watcher?.on_value_changed { str_new ->
                 onTextDidChange(str_new)
+            }
+            //  动态显示的情况下，添加监听。
+            if (!isAlwaysShow) {
+                //  初始化不可见
+                this.visibility = View.GONE
+                tf.setOnFocusChangeListener { _, hasFocus ->
+                    if (hasFocus) {
+                        this.visibility = View.VISIBLE
+                    } else {
+                        this.visibility = View.GONE
+                    }
+                }
+            } else {
+                //  初始化可见性
+                this.visibility = View.VISIBLE
             }
         }
     }

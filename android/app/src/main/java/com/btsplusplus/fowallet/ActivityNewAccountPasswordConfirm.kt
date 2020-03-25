@@ -115,8 +115,8 @@ class ActivityNewAccountPasswordConfirm : BtsppActivity() {
         val seed_active = "${_new_account_name}active$_curr_password"
         val seed_memo = "${_new_account_name}memo$_curr_password"
         val owner_key = OrgUtils.genBtsAddressFromPrivateKeySeed(seed_owner)!!
-        val active_key = OrgUtils.genBtsAddressFromWifPrivateKey(seed_active)!!
-        val memo_key = OrgUtils.genBtsAddressFromWifPrivateKey(seed_memo)!!
+        val active_key = OrgUtils.genBtsAddressFromPrivateKeySeed(seed_active)!!
+        val memo_key = OrgUtils.genBtsAddressFromPrivateKeySeed(seed_memo)!!
 
         //  2、调用水龙头API注册
         OrgUtils.asyncCreateAccountFromFaucet(this, _new_account_name!!, owner_key, active_key, memo_key, "", BuildConfig.kAppChannelID).then {
@@ -211,11 +211,11 @@ class ActivityNewAccountPasswordConfirm : BtsppActivity() {
             if (_curr_modify_range == kModifyAllPermissions || _curr_modify_range == kModifyOnlyActivePermission) {
                 //  生成 active 公私钥。
                 val seed_active = "${account_name}active$_curr_password"
-                val public_key_active = OrgUtils.genBtsAddressFromWifPrivateKey(seed_active)!!
+                val public_key_active = OrgUtils.genBtsAddressFromPrivateKeySeed(seed_active)!!
 
                 //  生成 memo 公私钥。
                 val seed_memo = "${account_name}memo$_curr_password"
-                val public_key_memo = OrgUtils.genBtsAddressFromWifPrivateKey(seed_memo)!!
+                val public_key_memo = OrgUtils.genBtsAddressFromPrivateKeySeed(seed_memo)!!
 
                 //  修改资金权限
                 put("active", JSONObject().apply {
@@ -249,7 +249,7 @@ class ActivityNewAccountPasswordConfirm : BtsppActivity() {
 
                 //  生成 owner 公私钥。
                 val seed_owner = "${account_name}owner$_curr_password"
-                val public_key_owner = OrgUtils.genBtsAddressFromWifPrivateKey(seed_owner)!!
+                val public_key_owner = OrgUtils.genBtsAddressFromPrivateKeySeed(seed_owner)!!
 
                 //  修改账户权限
                 put("owner", JSONObject().apply {
