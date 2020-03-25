@@ -119,7 +119,7 @@ class ActivityAssetOpCommon : BtsppActivity() {
     private fun drawUI_currAsset() {
         //  REMARK：这里显示选中资产名称，而不是余额资产名称。
         tv_asset_symbol.text = _curr_selected_asset.getString("symbol")
-        
+
         if (isEnableSwitchAsset()) {
             tv_asset_symbol.setTextColor(resources.getColor(R.color.theme01_textColorMain))
             iv_select_asset_right_arrow.visibility = View.VISIBLE

@@ -368,25 +368,43 @@ class OrgUtils {
 
             val s_base_amount = base.getString("amount")
             val s_quote_amount = quote.getString("amount")
-            //  REMARK：价格失效（比如喂价过期等情况）
-            if (s_base_amount.toLong() == 0L || s_quote_amount.toLong() == 0L) {
-                return null
-            }
 
             val n_base = bigDecimalfromAmount(s_base_amount, base_precision)
             val n_quote = bigDecimalfromAmount(s_quote_amount, quote_precision)
 
+            val n_zero = BigDecimal.ZERO
+
             return if (set_divide_precision) {
                 if (invert) {
-                    n_base.divide(n_quote, base_precision, roundingMode)
+                    //  REMARK：价格失效，分母不能为0，直接返回。（比如喂价过期等情况、预测清算等）
+                    if (n_quote == n_zero) {
+                        null
+                    } else {
+                        n_base.divide(n_quote, base_precision, roundingMode)
+                    }
                 } else {
-                    n_quote.divide(n_base, quote_precision, roundingMode)
+                    //  REMARK：价格失效，分母不能为0，直接返回。（比如喂价过期等情况、预测清算等）
+                    if (n_base == n_zero) {
+                        null
+                    } else {
+                        n_quote.divide(n_base, quote_precision, roundingMode)
+                    }
                 }
             } else {
                 if (invert) {
-                    n_base.divide(n_quote, kBigDecimalDefaultMaxPrecision, roundingMode)
+                    //  REMARK：价格失效，分母不能为0，直接返回。（比如喂价过期等情况、预测清算等）
+                    if (n_quote == n_zero) {
+                        null
+                    } else {
+                        n_base.divide(n_quote, kBigDecimalDefaultMaxPrecision, roundingMode)
+                    }
                 } else {
-                    n_quote.divide(n_base, kBigDecimalDefaultMaxPrecision, roundingMode)
+                    //  REMARK：价格失效，分母不能为0，直接返回。（比如喂价过期等情况、预测清算等）
+                    if (n_base == n_zero) {
+                        null
+                    } else {
+                        n_quote.divide(n_base, kBigDecimalDefaultMaxPrecision, roundingMode)
+                    }
                 }
             }
         }
