@@ -6,7 +6,6 @@ import com.btsplusplus.fowallet.BuildConfig
 import com.btsplusplus.fowallet.NativeInterface
 import com.btsplusplus.fowallet.R
 import com.btsplusplus.fowallet.utils.BigDecimalHandler
-import com.crashlytics.android.Crashlytics
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
 import org.json.JSONArray
@@ -34,7 +33,6 @@ class OrgUtils {
          */
         fun initDir(ctx: Context) {
             _file_base_dir = ctx.filesDir.path
-            Crashlytics.setString("BaseDir", _file_base_dir)
         }
 
         /**

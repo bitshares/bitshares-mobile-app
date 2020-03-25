@@ -4,12 +4,6 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
-apply plugin: 'io.fabric'
-
-repositories {
-    maven { url 'https://maven.fabric.io/public' }
-}
-
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -99,10 +93,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     //  for webserver
     implementation "com.yanzhenjie:andserver:1.1.4"
-    //  for fabric crashlytics
-    implementation('com.crashlytics.sdk.android:crashlytics:2.9.5@aar') {
-        transitive = true
-    }
     //  for wallet core
     implementation files('libs/armeabi-v7a.jar')
     implementation files('libs/x86.jar')

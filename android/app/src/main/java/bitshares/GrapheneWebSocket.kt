@@ -1,7 +1,6 @@
 package com.fowallet.walletcore.bts
 
 import bitshares.*
-import com.crashlytics.android.Crashlytics
 import org.json.JSONArray
 import org.json.JSONObject
 import java.net.URI
@@ -370,7 +369,6 @@ class GrapheneWebSocket {
                 //  [统计]
                 val detail_error_message = resp_error.optString("message")
                 //  统计Crash日志
-                Crashlytics.log(detail_error_message)
                 val error_data = resp_error.optJSONObject("data")
                 if (error_data != null) {
                     val error_message = error_data.optString("message")
