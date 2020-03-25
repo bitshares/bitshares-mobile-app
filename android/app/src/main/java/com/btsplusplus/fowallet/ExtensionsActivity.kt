@@ -257,6 +257,10 @@ fun android.app.Activity.showGrapheneError(error: Any?) {
                     showToast(resources.getString(R.string.kGPErrorRedeemInvalidPreimage))
                     return
                 }
+                if (lowermsg.indexOf("no method with") >= 0) {
+                    showToast(resources.getString(R.string.kGPErrorApiNodeVersionTooLow))
+                }
+                //  TODO:fowallet 提案等手续费不足等情况显示
             }
         } catch (e: Exception) {
         }

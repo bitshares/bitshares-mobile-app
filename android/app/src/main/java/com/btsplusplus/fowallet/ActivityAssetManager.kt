@@ -2,6 +2,7 @@ package com.btsplusplus.fowallet
 
 import android.os.Bundle
 import bitshares.*
+import com.btsplusplus.fowallet.utils.ModelUtils
 import com.btsplusplus.fowallet.utils.VcUtils
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
@@ -72,9 +73,9 @@ class ActivityAssetManager : BtsppActivity() {
                 onQueryMyIssuedAssetsResponsed(data_array)
                 return@then null
             }
-        }.catch {
+        }.catch { err ->
             mask.dismiss()
-            showToast(resources.getString(R.string.tip_network_error))
+            showGrapheneError(err)
         }
     }
 
@@ -108,7 +109,7 @@ class ActivityAssetManager : BtsppActivity() {
 
         val self = this
         val list = JSONArray().apply {
-            //  TODO:5.0 暂时去掉
+            //  TODO:6.0 暂时去掉
 //            put(JSONObject().apply {
 //                put("type", EBitsharesAssetOpKind.ebaok_view)
 //                put("title", self.resources.getString(R.string.kVcAssetMgrCellActionViewDetail))
@@ -122,10 +123,24 @@ class ActivityAssetManager : BtsppActivity() {
                     put("type", EBitsharesAssetOpKind.ebaok_update_bitasset)
                     put("title", self.resources.getString(R.string.kVcAssetMgrCellActionUpdateBitasset))
                 })
+                //  允许发行人强制清算
+                if (ModelUtils.assetCanGlobalSettle(asset)) {
+                    put(JSONObject().apply {
+                        put("type", EBitsharesAssetOpKind.ebaok_global_settle)
+                        put("title", self.resources.getString(R.string.kVcAssetMgrCellActionGlobalSettle))
+                    })
+                }
             } else {
                 put(JSONObject().apply {
                     put("type", EBitsharesAssetOpKind.ebaok_issue)
                     put("title", self.resources.getString(R.string.kVcAssetMgrCellActionIssueAsset))
+                })
+            }
+            //  非核心资产，都可以提取手续费池。
+            if (asset.getString("id") != chainMgr.grapheneCoreAssetID) {
+                put(JSONObject().apply {
+                    put("type", EBitsharesAssetOpKind.ebaok_claim_pool)
+                    put("title", self.resources.getString(R.string.kVcAssetMgrCellActionClaimFeePool))
                 })
             }
         }
@@ -168,6 +183,10 @@ class ActivityAssetManager : BtsppActivity() {
                     }
                 }
                 EBitsharesAssetOpKind.ebaok_update_bitasset -> {
+                    if (ModelUtils.assetHasGlobalSettle(bitasset_data!!)) {
+                        showToast(resources.getString(R.string.kVcAssetMgrActionTipsAlreadyGsCannotUpdateBitasset))
+                        return@show
+                    }
                     //  查询背书资产名称依赖
                     VcUtils.guardGrapheneObjectDependence(this, bitasset_data!!.getJSONObject("options").getString("short_backing_asset")) {
                         val result_promise = Promise()
@@ -197,6 +216,51 @@ class ActivityAssetManager : BtsppActivity() {
                         //  刷新UI
                         if (dirty != null && dirty as Boolean) {
                             queryMyIssuedAssets()
+                        }
+                    }
+                }
+                EBitsharesAssetOpKind.ebaok_global_settle -> {
+                    if (ModelUtils.assetHasGlobalSettle(bitasset_data!!)) {
+                        showToast(resources.getString(R.string.kVcAssetMgrActionTipsAlreadyGsCannotGsAgain))
+                        return@show
+                    }
+                    //  查询背书资产名称依赖
+                    VcUtils.guardGrapheneObjectDependence(this, bitasset_data.getJSONObject("options").getString("short_backing_asset")) {
+                        val result_promise = Promise()
+                        goTo(ActivityAssetOpGlobalSettle::class.java, true, args = JSONObject().apply {
+                            put("current_asset", asset)
+                            put("bitasset_data", bitasset_data)
+                            put("result_promise", result_promise)
+                        })
+                        result_promise.then { dirty ->
+                            //  刷新UI
+                            if (dirty != null && dirty as Boolean) {
+                                queryMyIssuedAssets()
+                            }
+                        }
+                    }
+                }
+                EBitsharesAssetOpKind.ebaok_claim_pool -> {
+                    VcUtils.guardGrapheneObjectDependence(this, asset.getString("dynamic_asset_data_id")) {
+                        val result_promise = Promise()
+                        goTo(ActivityAssetOpCommon::class.java, true, args = JSONObject().apply {
+                            put("current_asset", asset)
+                            put("full_account_data", null)
+                            put("op_extra_args", JSONObject().apply {
+                                put("kOpType", EBitsharesAssetOpKind.ebaok_claim_pool)
+                                put("kMsgTips", self.resources.getString(R.string.kVcAssetOpClaimFeePoolUiTips))
+                                put("kMsgAmountPlaceholder", self.resources.getString(R.string.kVcAssetOpClaimFeePoolCellPlaceholderAmount))
+                                put("kMsgBtnName", self.resources.getString(R.string.kVcAssetOpClaimFeePoolBtnName))
+                                put("kMsgSubmitInputValidAmount", self.resources.getString(R.string.kVcAssetOpClaimFeePoolSubmitTipsPleaseInputAmount))
+                                put("kMsgSubmitOK", self.resources.getString(R.string.kVcAssetOpClaimFeePoolSubmitTipOK))
+                            })
+                            put("result_promise", result_promise)
+                        })
+                        result_promise.then { dirty ->
+                            //  刷新UI
+                            if (dirty != null && dirty as Boolean) {
+                                queryMyIssuedAssets()
+                            }
                         }
                     }
                 }
