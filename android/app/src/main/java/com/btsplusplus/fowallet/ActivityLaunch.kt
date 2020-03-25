@@ -8,12 +8,9 @@ import android.view.View
 import bitshares.*
 import bitshares.serializer.T_Base
 import com.btsplusplus.fowallet.utils.VcUtils
-import com.crashlytics.android.Crashlytics
-import com.crashlytics.android.answers.Answers
 import com.flurry.android.FlurryAgent
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
-import io.fabric.sdk.android.Fabric
 import org.json.JSONObject
 import java.util.*
 
@@ -43,9 +40,6 @@ class ActivityLaunch : BtsppActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //  初始化 Fabric
-        Fabric.with(this, Crashlytics(), Answers())
-
         //  初始化Flurry
         FlurryAgent.Builder().withLogEnabled(true).build(this, "H45RRHMWCPMKZNNKR5SR")
 
@@ -66,7 +60,6 @@ class ActivityLaunch : BtsppActivity() {
         //  统计设备信息
         val accountName = WalletManager.sharedWalletManager().getWalletAccountName()
         if (accountName != null && accountName != "") {
-            Crashlytics.setUserName(accountName)
             FlurryAgent.setUserId(accountName)
         }
 

@@ -7,8 +7,6 @@ import android.util.TypedValue
 import android.widget.EditText
 import android.widget.LinearLayout
 import com.btsplusplus.fowallet.NativeInterface
-import com.crashlytics.android.answers.Answers
-import com.crashlytics.android.answers.CustomEvent
 import com.flurry.android.FlurryAgent
 import org.json.JSONArray
 import org.json.JSONObject
@@ -280,24 +278,6 @@ fun bigDecimalfromAmount(str: String, precision: Int): BigDecimal {
  * Fabric/Flurry统计
  */
 fun btsppLogCustom(event_name: String, args: JSONObject? = null) {
-    //  统计Fabric日志
-    try {
-        val event = CustomEvent(event_name)
-        if (args != null) {
-            args.keys().forEach { key ->
-                //  REMARK：Answer这个属性字符串长度有限制。
-                var value = args.get(key).toString()
-                if (value.length > 64) {
-                    value = value.substring(0, 63)
-                }
-                event.putCustomAttribute(key, value)
-            }
-        }
-        Answers.getInstance().logCustom(event)
-    } catch (e: Exception) {
-        //  ...
-    }
-
     //  统计Flurry日志
     try {
         if (args != null) {

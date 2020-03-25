@@ -15,7 +15,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import bitshares.*
 import com.btsplusplus.fowallet.utils.VcUtils
-import com.crashlytics.android.Crashlytics
 import com.fowallet.walletcore.bts.ChainObjectManager
 import org.json.JSONArray
 import org.json.JSONObject
@@ -374,7 +373,6 @@ class FragmentMarketInfo : BtsppFragment() {
 
         //  点击cell进入K线界面
         fl.setOnClickListener {
-            Crashlytics.log("ready to kline, base: $base, quote: $quote")
             val intent = Intent()
             intent.setClass(ctx, ActivityKLine::class.java)
             intent.putExtra(BTSPP_START_ACTIVITY_PARAM_ID, ParametersManager.sharedParametersManager().genParams(jsonArrayfrom(base, quote)))

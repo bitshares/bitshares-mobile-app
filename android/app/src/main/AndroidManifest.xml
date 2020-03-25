@@ -171,13 +171,6 @@
             android:name=".ActivityMiniGame"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
-        <!-- for fabric, dont edit it!!! -->
-        <!-- Replace '1111111111111111111111111111111111111111' for your fabric's apikey. -->
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="1111111111111111111111111111111111111111" />
-
         <activity
             android:name=".ActivityQrScan"
             android:screenOrientation="portrait"
