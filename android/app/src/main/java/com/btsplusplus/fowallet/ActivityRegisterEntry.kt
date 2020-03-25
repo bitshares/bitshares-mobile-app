@@ -21,6 +21,8 @@ class ActivityRegisterEntry : BtsppActivity() {
         //  初始化账号条件格式说明
         tf_account_name.let { tf ->
             _account_condition = ViewFormatConditons(this).apply {
+                //  一直显示
+                this.isAlwaysShow = true
                 auxFastConditionsViewForAccountNameFormat()
                 bindingTextField(tf)
             }

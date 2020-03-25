@@ -12,22 +12,43 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-
+        <!-- 资金权限私钥 -->
         <LinearLayout
             android:layout_marginTop="30dp"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="40dp">
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="80dp"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="@string/kLoginCellActivePrivateKey"
-                android:textSize="16dp"
-                android:textColor="@color/theme01.textColorMain"/>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <!-- 私钥 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="@string/kLoginCellActivePrivateKey"
+                    android:textSize="13dp"
+                    android:textColor="@color/theme01.textColorMain"/>
+
+                <LinearLayout
+                    android:gravity="right|center_vertical"
+                    android:layout_gravity="right"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/tip_link_active_privatekey"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:tint="@color/theme01.textColorHighlight"
+                        android:src="@drawable/icon_tip" />
+                </LinearLayout>
+
+            </LinearLayout>
+
             <EditText
+                android:layout_marginTop="10dp"
                 android:id="@+id/tf_active_privatekey"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -35,37 +56,48 @@
                 style="@style/kTextFieldNormal"
                 android:hint="@string/kLoginTipsPlaceholderActiveKey"/>
 
-            <LinearLayout
-                android:gravity="right|center_vertical"
-                android:layout_gravity="right"
-                android:layout_width="wrap_content"
-                android:layout_weight="1"
-                android:layout_height="match_parent">
-                <ImageView
-                    android:id="@+id/tip_link_active_privatekey"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:tint="@color/theme01.textColorHighlight"
-                    android:src="@drawable/icon_tip" />
-            </LinearLayout>
+            <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
         </LinearLayout>
 
-        <!-- trading password -->
+        <!-- 解锁密码 -->
         <LinearLayout
+            android:layout_marginTop="5dp"
             android:id="@+id/cell_trade_password"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="40dp">
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="80dp"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="@string/kLoginCellWalletPassword"
-                android:textSize="16dp"
-                android:textColor="@color/theme01.textColorMain"/>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="@string/kLoginCellSetupTradePassword"
+                    android:textSize="13dp"
+                    android:textColor="@color/theme01.textColorMain"/>
+
+                <LinearLayout
+                    android:gravity="right|center_vertical"
+                    android:layout_gravity="right"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/tip_link_trading_password"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:tint="@color/theme01.textColorHighlight"
+                        android:src="@drawable/icon_tip" />
+                </LinearLayout>
+
+            </LinearLayout>
 
             <EditText
+                android:layout_marginTop="10dp"
                 android:id="@+id/tf_trade_password"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -73,24 +105,18 @@
                 style="@style/kTextFieldPassword"
                 android:hint="@string/kLoginTipsPlaceholderTradePassword"/>
 
+            <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+            <!-- 条件视图容器（动态添加条件) -->
             <LinearLayout
-                android:gravity="right|center_vertical"
-                android:layout_gravity="right"
+                android:id="@+id/layout_format_view_container_unlock_password"
                 android:layout_width="wrap_content"
-                android:layout_weight="1"
-                android:layout_height="match_parent">
-                <ImageView
-                    android:id="@+id/tip_link_trading_password"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:tint="@color/theme01.textColorHighlight"
-                    android:src="@drawable/icon_tip" />
+                android:layout_height="wrap_content">
             </LinearLayout>
 
         </LinearLayout>
 
-
-
+        <!-- 登录按钮 -->
         <LinearLayout
             android:id="@+id/layout_login_button"
             android:layout_width="match_parent"

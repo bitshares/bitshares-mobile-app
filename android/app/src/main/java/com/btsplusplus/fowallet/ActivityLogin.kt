@@ -44,7 +44,7 @@ class ActivityLogin : BtsppActivity() {
             }
         } else {
             //  导入到已有钱包时：钱包模式移除，注册按钮隐藏。
-            findViewById<android.support.design.widget.TabLayout>(R.id.tablayout_of_login).removeTabAt(2)
+            findViewById<android.support.design.widget.TabLayout>(R.id.tablayout_of_login).removeTabAt(3)
             findViewById<Button>(R.id.button_register).visibility = View.INVISIBLE
         }
 
@@ -99,7 +99,7 @@ class ActivityLogin : BtsppActivity() {
         fragmens.add(FragmentLoginAccountMode().initWithCheckActivePermission(_checkActivePermission, _result_promise))
         fragmens.add(FragmentLoginBrainKeyMode().initWithCheckActivePermission(_checkActivePermission, _result_promise))
         fragmens.add(FragmentLoginPrivateKeyMode().initWithCheckActivePermission(_checkActivePermission, _result_promise))
-        //  正常登录模式
+        //  正常登录模式（支持钱包），导入普通账号到钱包时则不添加了。
         if (_checkActivePermission) {
             fragmens.add(FragmentLoginWalletMode().init())
         }

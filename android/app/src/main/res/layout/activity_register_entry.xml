@@ -77,14 +77,14 @@
 
             <EditText
                 android:id="@+id/tf_account_name"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 style="@style/kTextFieldNormal"
                 android:hint="@string/kRegTipsPlaceholderNewAccount"/>
 
-            <View android:layout_height="1dp" android:layout_marginTop="2dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+            <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
             <!-- 条件视图容器（动态添加条件) -->
             <LinearLayout

@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-
+        <!-- 账号 -->
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -23,11 +23,11 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="@string/kLoginCellAccountName"
-                android:textSize="16dp"
+                android:textSize="13dp"
                 android:textColor="@color/theme01.textColorMain"/>
             
             <EditText
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="10dp"
                 android:id="@+id/tf_account_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -35,9 +35,10 @@
                 style="@style/kTextFieldNormal"
                 android:hint="@string/kLoginTipsPlaceholderAccount"/>
 
-            <View android:layout_height="1dp" android:layout_marginTop="2dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+            <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
         </LinearLayout>
 
+        <!-- 账号模式登录密码 -->
         <LinearLayout
             android:layout_marginTop="5dp"
             android:orientation="vertical"
@@ -49,23 +50,23 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="@string/kLoginPassword"
-                android:textSize="16dp"
+                android:textSize="13dp"
                 android:textColor="@color/theme01.textColorMain"/>
-
+            <!-- TODO:6.0 因为有中文密码，默认不设置密码模式，允许输入中文。后期考虑是否按钮切换等？ -->
             <EditText
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="10dp"
                 android:id="@+id/tf_password"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                style="@style/kTextFieldPassword"
+                style="@style/kTextFieldNormal"
                 android:hint="@string/tip_placeholder_password"/>
 
-            <View android:layout_height="1dp" android:layout_marginTop="2dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+            <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
         </LinearLayout>
 
-        <!-- trading password -->
+        <!-- 解锁密码 -->
         <LinearLayout
             android:layout_marginTop="5dp"
             android:id="@+id/cell_trade_password"
@@ -82,8 +83,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:text="@string/kLoginCellWalletPassword"
-                    android:textSize="16dp"
+                    android:text="@string/kLoginCellSetupTradePassword"
+                    android:textSize="13dp"
                     android:textColor="@color/theme01.textColorMain"/>
 
                 <LinearLayout
@@ -102,7 +103,7 @@
             </LinearLayout>
 
             <EditText
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="10dp"
                 android:id="@+id/tf_trade_password"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -110,148 +111,18 @@
                 style="@style/kTextFieldPassword"
                 android:hint="@string/kLoginTipsPlaceholderTradePassword"/>
 
-            <View android:layout_height="1dp" android:layout_marginTop="2dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+            <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
+            <!-- 条件视图容器（动态添加条件) -->
             <LinearLayout
-                android:layout_marginTop="5dp"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
+                android:id="@+id/layout_format_view_container_unlock_password"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="24dp">
-
-                    <LinearLayout
-                        android:layout_width="24dp"
-                        android:layout_height="24dp">
-                        <ImageView
-                            android:id="@+id/iv_unchecked_include_upcase_from_login_account_mode"
-                            android:src="@drawable/ic_btn_back"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                        <ImageView
-                            android:visibility="gone"
-                            android:id="@+id/iv_checked_include_upcase_from_login_account_mode"
-                            android:src="@drawable/ic_btn_right_arrow"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tv_include_upcase_from_login_account_mode"
-                        android:textSize="12dp"
-                        android:textColor="@color/theme01.textColorGray"
-                        android:text="必须包含大写字母"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="24dp">
-
-                    <LinearLayout
-                        android:layout_width="24dp"
-                        android:layout_height="24dp">
-                        <ImageView
-                            android:id="@+id/iv_unchecked_include_downcase_from_login_account_mode"
-                            android:src="@drawable/ic_btn_back"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                        <ImageView
-                            android:visibility="gone"
-                            android:id="@+id/iv_checked_include_downcase_from_login_account_mode"
-                            android:src="@drawable/ic_btn_right_arrow"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tv_include_downcase_from_login_account_mode"
-                        android:textSize="12dp"
-                        android:textColor="@color/theme01.textColorGray"
-                        android:text="必须包含小写字母"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="24dp">
-
-                    <LinearLayout
-                        android:layout_width="24dp"
-                        android:layout_height="24dp">
-                        <ImageView
-                            android:id="@+id/iv_unchecked_include_digit_from_login_account_mode"
-                            android:src="@drawable/ic_btn_back"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                        <ImageView
-                            android:visibility="gone"
-                            android:id="@+id/iv_checked_include_digit_from_login_account_mode"
-                            android:src="@drawable/ic_btn_right_arrow"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tv_include_digit_from_login_account_mode"
-                        android:textSize="12dp"
-                        android:textColor="@color/theme01.textColorGray"
-                        android:text="必须包含数字"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="24dp">
-
-                    <LinearLayout
-                        android:layout_width="24dp"
-                        android:layout_height="24dp">
-                        <ImageView
-                            android:id="@+id/iv_unchecked_length12to40_from_login_account_mode"
-                            android:src="@drawable/ic_btn_back"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                        <ImageView
-                            android:visibility="gone"
-                            android:id="@+id/iv_checked_length12to40_from_login_account_mode"
-                            android:src="@drawable/ic_btn_right_arrow"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tv_length12to40_from_login_account_mode"
-                        android:textSize="12dp"
-                        android:textColor="@color/theme01.textColorGray"
-                        android:text="长度12-40个字符"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>
 
+        <!-- 登录按钮 -->
         <LinearLayout
             android:id="@+id/layout_login_button"
             android:layout_width="match_parent"
