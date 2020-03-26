@@ -76,10 +76,12 @@ class FragmentRegisterWalletMode : Fragment() {
             //  2、调用水龙头API注册
             val private_owner = WalletManager.randomPrivateKeyWIF()
             val private_active = WalletManager.randomPrivateKeyWIF()
+            val private_memo = WalletManager.randomPrivateKeyWIF()
             val owner_key = OrgUtils.genBtsAddressFromWifPrivateKey(private_owner)!!
             val active_key = OrgUtils.genBtsAddressFromWifPrivateKey(private_active)!!
+            val memo_key = OrgUtils.genBtsAddressFromWifPrivateKey(private_memo)!!
 
-            OrgUtils.asyncCreateAccountFromFaucet(activity!!, username, owner_key, active_key, active_key, refcode, BuildConfig.kAppChannelID).then {
+            OrgUtils.asyncCreateAccountFromFaucet(activity!!, username, owner_key, active_key, memo_key, refcode, BuildConfig.kAppChannelID).then {
                 val err_msg = it as? String
                 //  注册失败
                 if (err_msg != null) {
@@ -90,7 +92,7 @@ class FragmentRegisterWalletMode : Fragment() {
                     return@then null
                 }
                 //  3、注册成功
-                val full_wallet_bin = WalletManager.sharedWalletManager().genFullWalletData(activity!!, username, jsonArrayfrom(private_active, private_owner), password)
+                val full_wallet_bin = WalletManager.sharedWalletManager().genFullWalletData(activity!!, username, jsonArrayfrom(private_active, private_owner, private_memo), password)
                 //  查询完整帐号信息
                 chainMgr.queryFullAccountInfo(username, retry_num = 3).then {
                     mask.dismiss()

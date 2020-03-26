@@ -74,12 +74,14 @@ class FragmentRegisterAccountMode : Fragment() {
                 return@then null
             }
             //  2、调用水龙头API注册
-            val seed_owner = "${username}owner${password}"
-            val seed_active = "${username}active${password}"
+            val seed_owner = "${username}owner$password"
+            val seed_active = "${username}active$password"
+            val seed_memo = "${username}memo$password"
             val owner_key = OrgUtils.genBtsAddressFromPrivateKeySeed(seed_owner)!!
             val active_key = OrgUtils.genBtsAddressFromPrivateKeySeed(seed_active)!!
+            val memo_key = OrgUtils.genBtsAddressFromPrivateKeySeed(seed_memo)!!
 
-            OrgUtils.asyncCreateAccountFromFaucet(activity!!, username, owner_key, active_key, active_key, refcode, BuildConfig.kAppChannelID).then {
+            OrgUtils.asyncCreateAccountFromFaucet(activity!!, username, owner_key, active_key, memo_key, refcode, BuildConfig.kAppChannelID).then {
                 val err_msg = it as? String
 
                 //  注册失败

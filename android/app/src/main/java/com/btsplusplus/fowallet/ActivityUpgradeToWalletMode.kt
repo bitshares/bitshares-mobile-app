@@ -78,13 +78,17 @@ class ActivityUpgradeToWalletMode : BtsppActivity() {
         val active_private_wif = OrgUtils.genBtsWifPrivateKey(active_seed.utf8String())
         val owner_seed = "${accountName}owner$password"
         val owner_private_wif = OrgUtils.genBtsWifPrivateKey(owner_seed.utf8String())
+        val memo_seed = "${accountName}memo$password"
+        val memo_private_wif = OrgUtils.genBtsWifPrivateKey(memo_seed.utf8String())
         val pub_key_owner = OrgUtils.genBtsAddressFromWifPrivateKey(owner_private_wif)
         val pub_key_active = OrgUtils.genBtsAddressFromWifPrivateKey(active_private_wif)
+        val pub_key_memo = OrgUtils.genBtsAddressFromWifPrivateKey(memo_private_wif)
 
         //  3、创建钱包
         val status = walletMgr.createNewWallet(this, full_account_data, JSONObject().apply {
             put(pub_key_owner, owner_private_wif)
             put(pub_key_active, active_private_wif)
+            put(pub_key_memo, memo_private_wif)
         }, false, null, wallet_password,
                 AppCacheManager.EWalletMode.kwmPasswordWithWallet, "upgrade password+wallet")
         assert(status == EImportToWalletStatus.eitws_ok)

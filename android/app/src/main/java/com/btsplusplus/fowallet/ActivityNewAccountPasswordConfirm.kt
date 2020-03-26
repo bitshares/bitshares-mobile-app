@@ -118,7 +118,6 @@ class ActivityNewAccountPasswordConfirm : BtsppActivity() {
         //  2、调用水龙头API注册
         OrgUtils.asyncCreateAccountFromFaucet(this, _new_account_name!!, owner_key, active_key, memo_key, "", BuildConfig.kAppChannelID).then {
             mask.dismiss()
-
             val err_msg = it as? String
             if (err_msg != null) {
                 //  水龙头注册失败。
@@ -127,10 +126,12 @@ class ActivityNewAccountPasswordConfirm : BtsppActivity() {
             } else {
                 //  注册成功，直接重新登录。
                 btsppLogCustom("registerEvent", jsonObjectfromKVS("mode", AppCacheManager.EWalletMode.kwmPasswordOnlyMode.value, "desc", "password"))
-                //  转到重新登录界面。
-                goTo(ActivityLogin::class.java, true, clear_navigation_stack = true)
+                UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kWarmTips), resources.getString(R.string.kLoginTipsRegFullOK), btn_cancel = null).then {
+                    //  转到重新登录界面。
+                    goTo(ActivityLogin::class.java, true, clear_navigation_stack = true)
+                    return@then null
+                }
             }
-
             return@then null
         }
     }
