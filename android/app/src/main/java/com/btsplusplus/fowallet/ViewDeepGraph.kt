@@ -2,7 +2,6 @@ package com.btsplusplus.fowallet
 
 import android.content.Context
 import android.graphics.*
-import android.util.AttributeSet
 import android.util.Size
 import android.util.SizeF
 import bitshares.dp

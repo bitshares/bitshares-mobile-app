@@ -515,22 +515,22 @@ class FragmentAssets : BtsppFragment() {
                     return@simpleRequest
                 }
 
-               if (newBitassetData.isTrue("is_prediction_market")) {
-                   //   预测市场：必须全局清算之后才可以进行清算操作。
-                   if (!hasAlreadyGlobalSettled) {
-                       showToast(resources.getString(R.string.kVcAssetOpSettleTipsMustGlobalSettleFirst))
-                       return@simpleRequest
-                   }
-               } else {
-                   //  普通智能币
-                   //  1、需要有喂价数据才可以进行清算操作。
-                   //  2、如果已经黑天鹅了也可以进行清算操作。
-                   if (ModelUtils.isNullPrice(newBitassetData.getJSONObject("current_feed").getJSONObject("settlement_price")) &&
-                           !hasAlreadyGlobalSettled) {
-                       showToast(resources.getString(R.string.kVcAssetOpSettleTipsNoFeedData))
-                       return@simpleRequest
-                   }
-               }
+                if (newBitassetData.isTrue("is_prediction_market")) {
+                    //   预测市场：必须全局清算之后才可以进行清算操作。
+                    if (!hasAlreadyGlobalSettled) {
+                        showToast(resources.getString(R.string.kVcAssetOpSettleTipsMustGlobalSettleFirst))
+                        return@simpleRequest
+                    }
+                } else {
+                    //  普通智能币
+                    //  1、需要有喂价数据才可以进行清算操作。
+                    //  2、如果已经黑天鹅了也可以进行清算操作。
+                    if (ModelUtils.isNullPrice(newBitassetData.getJSONObject("current_feed").getJSONObject("settlement_price")) &&
+                            !hasAlreadyGlobalSettled) {
+                        showToast(resources.getString(R.string.kVcAssetOpSettleTipsNoFeedData))
+                        return@simpleRequest
+                    }
+                }
 
                 val settleMsgTips = if (hasAlreadyGlobalSettled) {
                     val n_price = OrgUtils.calcPriceFromPriceObject(newBitassetData.getJSONObject("settlement_price"),

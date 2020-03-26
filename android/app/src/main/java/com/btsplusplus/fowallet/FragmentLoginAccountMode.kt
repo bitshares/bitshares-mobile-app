@@ -2,20 +2,20 @@ package com.btsplusplus.fowallet
 
 import android.content.Context
 import android.net.Uri
-import android.opengl.Visibility
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
 import bitshares.*
 import com.btsplusplus.fowallet.utils.VcUtils
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
-import kotlinx.android.synthetic.main.fragment_login_account_mode.*
 import org.json.JSONObject
-import org.w3c.dom.Text
 
 
 // TODO: Rename parameter arguments, choose names that match

@@ -18,7 +18,6 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.math.BigDecimal
 import kotlin.math.max
-import kotlin.math.min
 
 class ActivityIndexCollateral : BtsppActivity() {
 
@@ -449,7 +448,7 @@ class ActivityIndexCollateral : BtsppActivity() {
      * (private) 输入框值变化 - 借款数量
      */
     private fun onDebtAmountChanged(str: String) {
-        if (!_currAssetIsPredictionmarket && _nCurrFeedPrice == null){
+        if (!_currAssetIsPredictionmarket && _nCurrFeedPrice == null) {
             return
         }
         val n_debt = Utils.auxGetStringDecimalNumberValue(str)
@@ -470,7 +469,7 @@ class ActivityIndexCollateral : BtsppActivity() {
      *  (private) 输入框值变化 - 抵押物数量 核心逻辑
      */
     private fun onCollAmountChangedCore(str: String, affect_mortgage_rate_changed: Boolean) {
-        if (!_currAssetIsPredictionmarket && _nCurrFeedPrice == null){
+        if (!_currAssetIsPredictionmarket && _nCurrFeedPrice == null) {
             return
         }
         val n_coll = Utils.auxGetStringDecimalNumberValue(str)

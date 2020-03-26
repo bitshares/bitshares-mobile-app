@@ -42,26 +42,22 @@
         <activity
             android:name=".ActivityIndexMarkets"
             android:label="title_activity_index"
-            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ActivityIndexCollateral"
             android:label="IndexActivityDiya"
-            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
             android:name=".ActivityIndexServices"
             android:label="IndexActivityServices"
-            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ActivityIndexMy"
             android:label="IndexActivityMy"
-            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -132,7 +128,6 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ActivityTransfer"
-            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

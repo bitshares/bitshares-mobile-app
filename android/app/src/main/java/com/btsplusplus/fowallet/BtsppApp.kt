@@ -51,6 +51,22 @@ class BtsppApp : Application() {
         finishActivityTo(null)
     }
 
+    /**
+     *  (public) 导航 - 关闭所有 Activity。
+     */
+    fun finishAllActivity() {
+        while (_activity_list.size > 0) {
+            _activity_list.removeAt(_activity_list.size - 1).finish()
+        }
+    }
+
+    /**
+     *  (public) 导航 - 获取顶部 Activity。
+     */
+    fun getTopActivity(): Activity? {
+        return _activity_list.lastOrNull()
+    }
+
     override fun onCreate() {
         super.onCreate()
         _app_instance = this

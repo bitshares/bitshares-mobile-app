@@ -69,7 +69,7 @@ class VcUtils {
         /**
          *  (public) 处理响应 - 检测APP版本信息数据返回。有新版本返回 YES，否新版本返回 NO。
          */
-        fun processCheckAppVersionResponsed(ctx: Activity, pConfig: JSONObject?, remind_later_callback:(()->Unit)?): Boolean {
+        fun processCheckAppVersionResponsed(ctx: Activity, pConfig: JSONObject?, remind_later_callback: (() -> Unit)?): Boolean {
             if (pConfig != null) {
                 val pNativeVersion = Utils.appVersionName()
                 val pNewestVersion = pConfig.optString("version", "")
@@ -94,7 +94,7 @@ class VcUtils {
         /**
          *  (private) 询问 - 是否更新版本
          */
-        private fun _showAppUpdateWindow(ctx: Activity, message: String, url: String, forceUpdate: Boolean, remind_later_callback:(()->Unit)?) {
+        private fun _showAppUpdateWindow(ctx: Activity, message: String, url: String, forceUpdate: Boolean, remind_later_callback: (() -> Unit)?) {
             var btn_cancel: String? = null
             if (!forceUpdate) {
                 btn_cancel = ctx.resources.getString(R.string.kRemindMeLatter)

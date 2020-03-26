@@ -9,7 +9,6 @@ import bitshares.EBitsharesAccountPasswordLang
 import bitshares.LLAYOUT_WARP
 import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_new_account_password.*
-import org.json.JSONArray
 import org.json.JSONObject
 
 class ActivityNewAccountPassword : BtsppActivity() {
