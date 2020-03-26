@@ -173,7 +173,7 @@ class FragmentOrderCurrent : BtsppFragment() {
         layout_tv3.gravity = Gravity.CENTER_VERTICAL
         tv3.layoutParams = layout_tv3
 
-        val tv_cancel = ViewUtils.createTextView(ctx, ctx.resources.getString(R.string.kVcOrderBtnCancel), 11.0f, R.color.theme01_color03, false)
+        val tv_cancel = ViewUtils.createTextView(ctx, ctx.resources.getString(R.string.kVcOrderBtnCancel), 13.0f, R.color.theme01_color03, false)
         tv_cancel.gravity = Gravity.RIGHT
         val layout_cancel = LinearLayout.LayoutParams(0.dp, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
         layout_cancel.gravity = Gravity.CENTER_VERTICAL

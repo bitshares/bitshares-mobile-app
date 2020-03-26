@@ -405,7 +405,7 @@ class FragmentTradeBuyOrSell : BtsppFragment() {
         } else {
             view_block.setBackgroundColor(_ctx.resources.getColor(R.color.theme01_sellColor))
         }
-        view_block.background.alpha = 100
+        view_block.background.alpha = 50
         view_block.visibility = View.INVISIBLE
 
         layout_view_block.addView(view_block)

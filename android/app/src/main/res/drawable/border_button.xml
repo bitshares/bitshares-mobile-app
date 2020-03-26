@@ -10,7 +10,7 @@
                 android:top="0dp" />
 
             <stroke
-                android:width="3px"
+                android:width="1px"
                 android:color="@color/theme01.textColorHighlight" />
             <corners
                 android:radius="0dp"/>
