@@ -44,7 +44,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                        android:padding="12dp"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
+                        android:paddingTop="6dp"
+                        android:paddingBottom="6dp"
                         android:layout_marginTop="5dp"
                         style="@style/kTextFieldDecimalPad"
                         android:hint="--"/>
@@ -66,7 +69,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                        android:padding="12dp"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
+                        android:paddingTop="6dp"
+                        android:paddingBottom="6dp"
                         android:layout_marginTop="5dp"
                         style="@style/kTextFieldDecimalPad"
                         android:hint="--"/>
@@ -94,7 +100,7 @@
                         android:layout_height="wrap_content">
 
                         <Button
-                            android:layout_marginRight="5px"
+                            android:layout_marginRight="6dp"
                             android:textColor="@color/theme01.textColorHighlight"
                             android:gravity="center|center_vertical"
                             android:background="@drawable/border_button"
@@ -106,7 +112,7 @@
                             android:layout_height="23dp" />
 
                         <Button
-                            android:layout_marginRight="5px"
+                            android:layout_marginRight="6dp"
                             android:textColor="@color/theme01.textColorHighlight"
                             android:gravity="center|center_vertical"
                             android:background="@drawable/border_button"
@@ -118,7 +124,7 @@
                             android:layout_height="23dp" />
 
                         <Button
-                            android:layout_marginRight="5px"
+                            android:layout_marginRight="6dp"
                             android:textColor="@color/theme01.textColorHighlight"
                             android:gravity="center|center_vertical"
                             android:background="@drawable/border_button"
@@ -160,7 +166,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                        android:padding="12dp"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
+                        android:paddingTop="6dp"
+                        android:paddingBottom="6dp"
                         android:layout_marginTop="5dp"
                         style="@style/kTextFieldDecimalPad"
                         android:hint="@string/kLableTotalPrice"/>

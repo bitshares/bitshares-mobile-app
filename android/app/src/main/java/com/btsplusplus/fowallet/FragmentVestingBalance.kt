@@ -3,6 +3,7 @@ package com.btsplusplus.fowallet
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.text.TextUtils
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -194,18 +195,27 @@ class FragmentVestingBalance : BtsppFragment() {
             val unfreeze_number = OrgUtils.formatAssetString(Utils.calcVestingBalanceAmount(vesting).toString(), precision)
             val unfreeze_cycle = vestingPeriodValue
 
-            //  line1 name & button
-            val layout_line1 = LinearLayout(_ctx)
-            val layout_line1_params = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP)
-            layout_line1_params.setMargins(0, 10.dp, 0, 0)
-            layout_line1.layoutParams = layout_line1_params
-            val tv_balance = TextViewEx(_ctx!!, "${idx + 1}. $name", dp_size = 13.0f, bold = true, color = R.color.theme01_textColorMain, gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL)
-            layout_line1.addView(tv_balance)
-            if (_isSelfAccount) {
-                val tv_pickup = TextViewEx(_ctx!!, R.string.kVestingCellBtnWithdrawal.xmlstring(_ctx!!), dp_size = 13.0f, color = R.color.theme01_textColorHighlight, gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL, width = LLAYOUT_MATCH)
-                layout_line1.addView(tv_pickup)
-                // click event
-                tv_pickup.setOnClickListener { onWithdrawButtonClicked(vesting) }
+            //  UI - 第一行 名字 + 提取按钮（可选）
+            val layout_line1 = LinearLayout(_ctx).apply {
+                //  属性
+                layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP).apply {
+                    setMargins(0, 10.dp, 0, 0)
+                }
+                //  UI - 待解冻金额名称
+                val tv_name = TextViewEx(_ctx!!, "${idx + 1}. $name", dp_size = 13.0f, bold = true, color = R.color.theme01_textColorMain, gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL, width = 0, weight = 8.0f).apply {
+                    //  单行 尾部截断
+                    setSingleLine(true)
+                    maxLines = 1
+                    ellipsize = TextUtils.TruncateAt.END
+                }
+                addView(tv_name)
+                //  UI - 提取按钮
+                if (_isSelfAccount) {
+                    val tv_pickup = TextViewEx(_ctx!!, R.string.kVestingCellBtnWithdrawal.xmlstring(_ctx!!), dp_size = 13.0f, color = R.color.theme01_textColorHighlight, gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL, width = 0, weight = 2.0f)
+                    addView(tv_pickup)
+                    // click event
+                    tv_pickup.setOnClickListener { onWithdrawButtonClicked(vesting) }
+                }
             }
 
             //  line2 title
