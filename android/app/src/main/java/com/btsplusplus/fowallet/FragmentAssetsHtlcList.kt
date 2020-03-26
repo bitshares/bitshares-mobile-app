@@ -75,9 +75,9 @@ class FragmentAssetsHtlcList : BtsppFragment() {
                 val htlcs_from = full_data.optJSONArray("htlcs_from")
                 val htlcs_to = full_data.optJSONArray("htlcs_to")
                 return@then JSONArray().apply {
-                    htlcs?.let { put(it) }
-                    htlcs_from?.let { put(it) }
-                    htlcs_to?.let { put(it) }
+                    htlcs?.let { putAll(it) }
+                    htlcs_from?.let { putAll(it) }
+                    htlcs_to?.let { putAll(it) }
                 }
             }
         } else {

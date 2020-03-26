@@ -10,12 +10,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="15dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
+        android:layout_marginTop="25dp"
         android:orientation="vertical">
 
-
+        <!-- 导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -48,50 +46,48 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="全局清算"
+                android:text="@string/kVcTitleAssetGlobalSettle"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
 
-
-
         <LinearLayout
-            android:padding="10dp"
-            android:layout_marginTop="30dp"
-            android:orientation="vertical"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-
+            <!-- 资产 -->
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="资产"
-                android:textSize="14dp"
+                android:text="@string/kOtcMcAssetTransferCellLabelAsset"
+                android:textSize="13dp"
                 android:textColor="@color/theme01.textColorMain"/>
 
             <TextView
                 android:layout_marginTop="10dp"
-                android:id="@+id/tv_asset_symbol_from_global_settle"
-                android:text="BTS2020EFB"
+                android:id="@+id/tv_curr_select_asset_symbol"
+                android:text="--"
                 android:textSize="18dp"
                 android:textColor="@color/theme01.textColorGray"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <View android:layout_height="1dp" android:layout_marginTop="5dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+            <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-
+            <!-- 价格 -->
             <TextView
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="25dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="价格"
-                android:textSize="14dp"
+                android:text="@string/kVcAssetOpGsCellTitlePrice"
+                android:textSize="13dp"
                 android:textColor="@color/theme01.textColorMain"/>
-
 
             <LinearLayout
                 android:layout_marginTop="10dp"
@@ -100,7 +96,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/et_amount_from_global_settle"
+                    android:id="@+id/tf_price"
                     android:maxLength="24"
                     android:layout_weight="1"
                     android:layout_width="0dp"
@@ -108,8 +104,7 @@
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     style="@style/kTextFieldDecimalPad"
-                    android:hint="请输入全局清算价格"/>
-
+                    android:hint="@string/kVcAssetOpGsCellPlaceholderPrice"/>
 
                 <LinearLayout
                     android:gravity="right|center_vertical"
@@ -117,16 +112,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 
+                    <!-- 价格符号 -->
                     <TextView
+                        android:id="@+id/tv_tailer_asset_symbol"
                         android:layout_marginLeft="5dp"
                         android:textStyle="bold"
-                        android:text="CNVOTE"
+                        android:text="--"
                         android:textColor="@color/theme01.textColorMain"
                         android:textSize="11dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
+                    <!-- 预测市场的快捷按钮 真 假 -->
                     <TextView
+                        android:id="@+id/tv_tailer_separator"
                         android:layout_marginLeft="8dp"
                         android:layout_marginRight="8dp"
                         android:text="|"
@@ -136,17 +135,17 @@
                         android:layout_height="wrap_content" />
 
                     <TextView
-                        android:id="@+id/tv_forecast_true_from_global_settle"
-                        android:text="预测为真"
+                        android:id="@+id/btn_pmas_true"
+                        android:text="@string/kVcAssetOpGsCellTailerBtnPmAsTrue"
                         android:textColor="@color/theme01.textColorHighlight"
                         android:textSize="11dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
                     <TextView
-                        android:id="@+id/tv_forecast_fake_from_global_settle"
+                        android:id="@+id/btn_pmas_false"
                         android:layout_marginLeft="8dp"
-                        android:text="预测为假"
+                        android:text="@string/kVcAssetOpGsCellTailerBtnPmAsFalse"
                         android:textColor="@color/theme01.textColorHighlight"
                         android:textSize="11dp"
                         android:layout_width="wrap_content"
@@ -155,10 +154,9 @@
                 </LinearLayout>
 
             </LinearLayout>
+            <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-            <View android:layout_height="1dp" android:layout_marginTop="5dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
-
-
+            <!-- 按钮：全局清算 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
@@ -175,9 +173,10 @@
                     android:layout_weight="1"
                     android:padding="5dp"
                     android:textAllCaps="false"
-                    android:text="全局清算" />
+                    android:text="@string/kVcAssetOpGsSubmitBtnName" />
             </LinearLayout>
 
+            <!-- UI提示信息 -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -187,9 +186,8 @@
                 android:textColor="@color/theme01.textColorMain"
                 android:padding="5dp"
                 android:background="@color/theme01.textColorGray"
-                android:text="【温馨提示】\n xxxxxxxxx\nxxxxxxxx" />
-
-
+                android:text="@string/kVcAssetOpGsUiTips"
+                />
 
         </LinearLayout>
 
