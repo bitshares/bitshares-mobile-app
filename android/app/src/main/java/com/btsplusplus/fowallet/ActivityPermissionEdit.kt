@@ -434,9 +434,7 @@ class ActivityPermissionEdit : BtsppActivity() {
                         //  注销
                         WalletManager.sharedWalletManager().processLogout()
                         //  转到重新登录界面。
-                        goTo(ActivityLogin::class.java, true, close_self = true)
-                        //  TODO:临时实现
-                        TempManager.sharedTempManager().finishActivityAccountInfo()
+                        goTo(ActivityLogin::class.java, true, clear_navigation_stack = true)
                         return@then null
                     }
                 } else {

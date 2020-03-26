@@ -308,7 +308,7 @@ class ActivityScanResultTransfer : BtsppActivity() {
             mask.dismiss()
             //  [统计]
             btsppLogCustom("txPayTransferFullOK", jsonObjectfromKVS("asset", transfer_asset.getString("symbol")))
-            goTo(ActivityScanResultPaySuccess::class.java, true, close_self = true, args = JSONObject().apply {
+            goTo(ActivityScanResultPaySuccess::class.java, true, clear_navigation_stack = true, args = JSONObject().apply {
                 put("result", tx_data)
                 put("to_account", _to_account)
                 put("amount_string", "${transfer_n_amount.toPlainString()} ${transfer_asset.getString("symbol")}")

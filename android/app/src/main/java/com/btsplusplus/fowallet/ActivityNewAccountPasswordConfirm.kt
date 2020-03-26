@@ -130,11 +130,8 @@ class ActivityNewAccountPasswordConfirm : BtsppActivity() {
             } else {
                 //  注册成功，直接重新登录。
                 btsppLogCustom("registerEvent", jsonObjectfromKVS("mode", AppCacheManager.EWalletMode.kwmPasswordOnlyMode.value, "desc", "password"))
-                //  TODO:5.0
                 //  转到重新登录界面。
-                goTo(ActivityLogin::class.java, true, close_self = true)
-                //  TODO:临时实现
-
+                goTo(ActivityLogin::class.java, true, clear_navigation_stack = true)
             }
 
             return@then null
@@ -281,9 +278,7 @@ class ActivityNewAccountPasswordConfirm : BtsppActivity() {
                         //  注销
                         WalletManager.sharedWalletManager().processLogout()
                         //  转到重新登录界面。
-                        goTo(ActivityLogin::class.java, true, close_self = true)
-                        //  TODO:临时实现 后续重构
-                        TempManager.sharedTempManager().finishActivityAccountInfo()
+                        goTo(ActivityLogin::class.java, true, clear_navigation_stack = true)
                         return@then null
                     }
                 } else {
@@ -308,8 +303,8 @@ class ActivityNewAccountPasswordConfirm : BtsppActivity() {
                         btsppLogCustom("txUpdateAccountPermissionFullOK", jsonObjectfromKVS("account", uid, "mode", "wallet"))
                         //  提示并退出
                         UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kWarmTips), resources.getString(R.string.kVcPermissionEditSubmitOK02), btn_cancel = null).then {
-                            //  返回
-                            //  TODO:5.0 finsh all
+                            //  直接返回最外层
+                            BtsppApp.getInstance().finishActivityToNavigationTop()
                             return@then null
                         }
                         return@then null
