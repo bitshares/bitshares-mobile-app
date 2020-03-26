@@ -98,7 +98,7 @@ class FragmentLoginAccountMode : Fragment() {
             val account_active = full_data.getJSONObject("account").getJSONObject("active")
 
             //  根据密码计算active私钥
-            val active_seed = "${username}active${password}"
+            val active_seed = "${username}active$password"
             val calc_bts_active_address = OrgUtils.genBtsAddressFromPrivateKeySeed(active_seed)!!
 
             //  权限检查
@@ -114,44 +114,34 @@ class FragmentLoginAccountMode : Fragment() {
                 return@then null
             }
 
+            //  生成各种权限公私
+            val active_private_wif = OrgUtils.genBtsWifPrivateKey(active_seed.utf8String())
+            val owner_seed = "${username}owner$password"
+            val memo_seed = "${username}memo$password"
+            val owner_private_wif = OrgUtils.genBtsWifPrivateKey(owner_seed.utf8String())
+            val memo_private_wif = OrgUtils.genBtsWifPrivateKey(memo_seed.utf8String())
+
             if (_checkActivePermission) {
-                //  【正常登录】
-                //  导入账号
-                if (trade_password != "") {
-                    //  生成钱包信息
-                    val active_private_wif = OrgUtils.genBtsWifPrivateKey(active_seed.utf8String())
-                    val owner_seed = "${username}owner${password}"
-                    val owner_private_wif = OrgUtils.genBtsWifPrivateKey(owner_seed.utf8String())
-                    val full_wallet_bin = WalletManager.sharedWalletManager().genFullWalletData(activity!!, username, jsonArrayfrom(active_private_wif, owner_private_wif), trade_password)
-                    assert(full_wallet_bin != null)
+                //  登录账号 - 简化钱包模式
+                val full_wallet_bin = WalletManager.sharedWalletManager().genFullWalletData(activity!!, username, jsonArrayfrom(active_private_wif, owner_private_wif, memo_private_wif), trade_password)
+                assert(full_wallet_bin != null)
 
-                    //  保存钱包信息
-                    AppCacheManager.sharedAppCacheManager().setWalletInfo(AppCacheManager.EWalletMode.kwmPasswordWithWallet.value, full_data, username, full_wallet_bin)
-                    AppCacheManager.sharedAppCacheManager().autoBackupWalletToWebdir(false)
+                //  保存钱包信息
+                AppCacheManager.sharedAppCacheManager().setWalletInfo(AppCacheManager.EWalletMode.kwmPasswordWithWallet.value, full_data, username, full_wallet_bin)
+                AppCacheManager.sharedAppCacheManager().autoBackupWalletToWebdir(false)
 
-                    //  导入成功 用交易密码 直接解锁。
-                    val unlockInfos = WalletManager.sharedWalletManager().unLock(trade_password, _ctx!!)
-                    assert(unlockInfos.getBoolean("unlockSuccess") && unlockInfos.optBoolean("haveActivePermission"))
-                } else {
-                    //  单纯密码模式
-                    AppCacheManager.sharedAppCacheManager().setWalletInfo(AppCacheManager.EWalletMode.kwmPasswordOnlyMode.value, full_data, username, null)
-                    //  导入成功 用帐号密码 直接解锁。
-                    val unlockInfos = WalletManager.sharedWalletManager().unLock(password, _ctx!!)
-                    assert(unlockInfos.getBoolean("unlockSuccess") && unlockInfos.optBoolean("haveActivePermission"))
-                }
+                //  导入成功 用交易密码 直接解锁。
+                val unlockInfos = WalletManager.sharedWalletManager().unLock(trade_password, _ctx!!)
+                assert(unlockInfos.getBoolean("unlockSuccess") && unlockInfos.optBoolean("haveActivePermission"))
+
                 //  [统计]
                 btsppLogCustom("loginEvent", jsonObjectfromKVS("mode", AppCacheManager.EWalletMode.kwmPasswordWithWallet.value, "desc", "password+wallet"))
                 //  返回 - 登录成功
                 showToast(_ctx!!.resources.getString(R.string.kLoginTipsLoginOK))
                 activity!!.finish()
             } else {
-                //  【导入到已有钱包】
-                val active_private_wif = OrgUtils.genBtsWifPrivateKey(active_seed.utf8String())
-                val owner_seed = "${username}owner${password}"
-                val owner_private_wif = OrgUtils.genBtsWifPrivateKey(owner_seed.utf8String())
-
-                //  导入账号到钱包BIN文件中
-                val full_wallet_bin = WalletManager.sharedWalletManager().walletBinImportAccount(username, jsonArrayfrom(active_private_wif, owner_private_wif))!!
+                //  【导入到已有钱包】 导入账号到钱包BIN文件中
+                val full_wallet_bin = WalletManager.sharedWalletManager().walletBinImportAccount(username, jsonArrayfrom(active_private_wif, owner_private_wif, memo_private_wif))!!
                 AppCacheManager.sharedAppCacheManager().apply {
                     updateWalletBin(full_wallet_bin)
                     autoBackupWalletToWebdir(false)

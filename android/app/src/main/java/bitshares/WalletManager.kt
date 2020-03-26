@@ -506,17 +506,21 @@ class WalletManager {
         val account_name = account.getString("name")
 
         //  通过账号密码计算active和owner私钥信息。
-        val active_seed = "${account_name}active${password}"
+        val active_seed = "${account_name}active$password"
         val active_private_wif = OrgUtils.genBtsWifPrivateKey(active_seed.utf8String())
-        val owner_seed = "${account_name}owner${password}"
+        val owner_seed = "${account_name}owner$password"
         val owner_private_wif = OrgUtils.genBtsWifPrivateKey(owner_seed.utf8String())
+        val memo_seed = "${account_name}memo$password"
+        val memo_private_wif = OrgUtils.genBtsWifPrivateKey(memo_seed.utf8String())
         val active_pubkey = OrgUtils.genBtsAddressFromWifPrivateKey(active_private_wif)!!
         val owner_pubkey = OrgUtils.genBtsAddressFromWifPrivateKey(owner_private_wif)!!
+        val memo_pubkey = OrgUtils.genBtsAddressFromWifPrivateKey(memo_private_wif)!!
 
         //  保存到内存
         _private_keys_hash = JSONObject()
         _private_keys_hash.put(active_pubkey, active_private_wif)
         _private_keys_hash.put(owner_pubkey, owner_private_wif)
+        _private_keys_hash.put(memo_pubkey, memo_private_wif)
 
         if (canAuthorizeThePermission(account.getJSONObject("active"))) {
             //  解锁成功 & 有权限OK
