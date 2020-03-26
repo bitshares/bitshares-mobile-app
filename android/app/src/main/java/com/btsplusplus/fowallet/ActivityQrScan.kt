@@ -145,7 +145,7 @@ class ActivityQrScan : BaseCaptureActivity() {
                 }
                 //  转到私钥导入界面。
                 mask.dismiss()
-                goTo(ActivityScanResultPrivateKey::class.java, true, close_self = true, args = JSONObject().apply {
+                goTo(ActivityScanResultPrivateKey::class.java, true, clear_navigation_stack = true, args = JSONObject().apply {
                     put("privateKey", privateKey)
                     put("publicKey", pubkey)
                     put("fullAccountData", full_data)
@@ -193,7 +193,7 @@ class ActivityQrScan : BaseCaptureActivity() {
                 }
 
                 //  可以不用登录（在支付界面再登录即可。）
-                goTo(ActivityScanResultTransfer::class.java, true, close_self = true, args = JSONObject().apply {
+                goTo(ActivityScanResultTransfer::class.java, true, clear_navigation_stack = true, args = JSONObject().apply {
                     put("to", accountData)
                     put("asset", assetData)
                     put("amount", str_amount)
@@ -235,7 +235,7 @@ class ActivityQrScan : BaseCaptureActivity() {
                 mask.dismiss()
 
                 //  可以不用登录（在支付界面再登录即可。）
-                goTo(ActivityScanResultTransfer::class.java, true, close_self = true, args = JSONObject().apply {
+                goTo(ActivityScanResultTransfer::class.java, true, clear_navigation_stack = true, args = JSONObject().apply {
                     put("to", accountData)
                     put("asset", assetData)
                     put("amount", asset_amount)
@@ -297,7 +297,7 @@ class ActivityQrScan : BaseCaptureActivity() {
             if (_isValidAccountData(accountData)) {
                 //  转到账号名界面。
                 mask.dismiss()
-                goTo(ActivityScanAccountName::class.java, true, close_self = true, args = accountData!!)
+                goTo(ActivityScanAccountName::class.java, true, clear_navigation_stack = true, args = accountData!!)
             } else {
                 //  其他：普通字符串
                 _gotoNormalResult(result, mask)
@@ -318,7 +318,7 @@ class ActivityQrScan : BaseCaptureActivity() {
 
     private fun _gotoNormalResult(result: String, mask: ViewMask? = null) {
         mask?.dismiss()
-        goTo(ActivityScanResultNormal::class.java, true, close_self = true, args = jsonObjectfromKVS("result", result))
+        goTo(ActivityScanResultNormal::class.java, true, clear_navigation_stack = true, args = jsonObjectfromKVS("result", result))
     }
 
     /**

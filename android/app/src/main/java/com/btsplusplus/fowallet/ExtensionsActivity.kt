@@ -464,7 +464,7 @@ fun android.app.Activity.openURL(url: String) {
  *  (public) 跳转界面
  *      REMARK：back参数跳转和finish不同，finish只关闭当前activity，back可能直接退回多个界面。比如从搜索结果界面，直接跳过搜索界面，回到外层界面。
  */
-fun android.app.Activity.goTo(cls: Class<*>, transition_animation: Boolean = false, back: Boolean = false, args: Any? = null, request_code: Int = -1, close_self: Boolean = false) {
+fun android.app.Activity.goTo(cls: Class<*>, transition_animation: Boolean = false, back: Boolean = false, args: Any? = null, request_code: Int = -1, clear_navigation_stack: Boolean = false) {
     val intent = Intent()
     intent.setClass(this, cls)
 
@@ -491,8 +491,9 @@ fun android.app.Activity.goTo(cls: Class<*>, transition_animation: Boolean = fal
         overridePendingTransition(0, 0)
     }
 
-    if (close_self) {
-        finish()
+    //  清空导航堆栈（REMARK：该方法执行时最新的 Activity 的 onCreate 尚未调用，所以最新的不会被释放。）
+    if (clear_navigation_stack) {
+        BtsppApp.getInstance().finishActivityToNavigationTop()
     }
 }
 

@@ -16,8 +16,6 @@ class ActivityAccountInfo : BtsppActivity() {
     private var view_pager: ViewPager? = null
 
     override fun onBackClicked(result: Any?) {
-        //  TODO:临时出栈
-        TempManager.sharedTempManager().setActivityAccountInfo(null)
         super.onBackClicked(result)
     }
 
@@ -25,9 +23,6 @@ class ActivityAccountInfo : BtsppActivity() {
         super.onCreate(savedInstanceState)
         setAutoLayoutContentView(R.layout.activity_account_info)
         setFullScreen()
-
-        //  TODO:临时入栈
-        TempManager.sharedTempManager().setActivityAccountInfo(this)
 
         // 设置 tablelayout 和 view_pager
         tablayout = tablayout_of_account_info
