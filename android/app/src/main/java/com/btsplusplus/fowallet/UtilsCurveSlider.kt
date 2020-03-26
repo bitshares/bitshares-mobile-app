@@ -1,9 +1,6 @@
 package com.btsplusplus.fowallet
 
 import android.annotation.SuppressLint
-import android.graphics.PorterDuff
-import android.graphics.drawable.LayerDrawable
-import android.support.v7.app.AppCompatActivity
 import android.widget.SeekBar
 import kotlin.math.max
 import kotlin.math.min

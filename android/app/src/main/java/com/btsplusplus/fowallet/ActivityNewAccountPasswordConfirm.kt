@@ -1,10 +1,7 @@
 package com.btsplusplus.fowallet
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.EditText
-import android.widget.TextView
 import bitshares.*
 import com.fowallet.walletcore.bts.BitsharesClientManager
 import com.fowallet.walletcore.bts.ChainObjectManager
@@ -328,7 +325,7 @@ class ActivityNewAccountPasswordConfirm : BtsppActivity() {
     /**
      *  (private) 事件 - 提交按钮点击
      */
-    private fun onBtnSubmit(){
+    private fun onBtnSubmit() {
         //  校验参数
         val confirm_password = tf_confirm_password.text.toString()
         if (confirm_password != _curr_password) {
@@ -354,7 +351,7 @@ class ActivityNewAccountPasswordConfirm : BtsppActivity() {
     /**
      *  (private) 事件 - 修改范围CELL点击
      */
-    private fun onModifyRangeClicked(){
+    private fun onModifyRangeClicked() {
         val self = this
         val items = JSONArray().apply {
             put(JSONObject().apply {

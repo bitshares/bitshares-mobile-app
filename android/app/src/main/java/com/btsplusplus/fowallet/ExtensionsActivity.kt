@@ -58,20 +58,45 @@ fun AppCompatActivity.setBottomNavigationStyle(position: Int) {
             bottom_nav_image_view_my.setColorFilter(color)
         }
     }
+    //  TODO:6.0 每次点击都重新生成一个，后面考虑用 singleTop，结合 onNewIntent重用。
     if (BuildConfig.kAppModuleEnableTabMarket) {
         bottom_nav_markets_frame.visibility = View.VISIBLE
-        bottom_nav_markets_frame.setOnClickListener { goTo(ActivityIndexMarkets::class.java) }
+        bottom_nav_markets_frame.setOnClickListener {
+            val top = BtsppApp.getInstance().getTopActivity()
+            if (top == null || top !is ActivityIndexMarkets) {
+                goTo(ActivityIndexMarkets::class.java)
+                BtsppApp.getInstance().finishAllActivity()
+            }
+        }
     } else {
         bottom_nav_markets_frame.visibility = View.GONE
     }
     if (BuildConfig.kAppModuleEnableTabDebt) {
         bottom_nav_markets_frame.visibility = View.VISIBLE
-        bottom_nav_diya_frame.setOnClickListener { goTo(ActivityIndexCollateral::class.java) }
+        bottom_nav_diya_frame.setOnClickListener {
+            val top = BtsppApp.getInstance().getTopActivity()
+            if (top == null || top !is ActivityIndexCollateral) {
+                goTo(ActivityIndexCollateral::class.java)
+                BtsppApp.getInstance().finishAllActivity()
+            }
+        }
     } else {
         bottom_nav_diya_frame.visibility = View.GONE
     }
-    bottom_nav_services_frame.setOnClickListener { goTo(ActivityIndexServices::class.java) }
-    bottom_nav_my_frame.setOnClickListener { goTo(ActivityIndexMy::class.java) }
+    bottom_nav_services_frame.setOnClickListener {
+        val top = BtsppApp.getInstance().getTopActivity()
+        if (top == null || top !is ActivityIndexServices) {
+            goTo(ActivityIndexServices::class.java)
+            BtsppApp.getInstance().finishAllActivity()
+        }
+    }
+    bottom_nav_my_frame.setOnClickListener {
+        val top = BtsppApp.getInstance().getTopActivity()
+        if (top == null || top !is ActivityIndexMy) {
+            goTo(ActivityIndexMy::class.java)
+            BtsppApp.getInstance().finishAllActivity()
+        }
+    }
 }
 
 fun AppCompatActivity.clearBottomAllColor() {
@@ -469,7 +494,7 @@ fun android.app.Activity.goTo(cls: Class<*>, transition_animation: Boolean = fal
     intent.setClass(this, cls)
 
     if (back) {
-        //  清理堆栈
+        //  清理堆栈到目标 Activity
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         //  保留目标堆栈（不重新生成），否则会生成一个新的activity。
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)

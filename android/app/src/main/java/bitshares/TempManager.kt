@@ -1,7 +1,6 @@
 package bitshares
 
 import android.support.v7.app.AppCompatActivity
-import com.btsplusplus.fowallet.ActivityAccountInfo
 import org.json.JSONObject
 
 class TempManager {

@@ -154,7 +154,7 @@ class ActivityKLine : BtsppActivity() {
         val kline_period_default = parameters.getInt("kline_period_default")
         assert(kline_period_default >= 0 && kline_period_default < kline_period_ary.length())
         val kline_period_default_value = kline_period_ary.getInt(kline_period_default)
-        val currEkdpt = ViewKLine.EKlineDatePeriodType.values().find { it.value == kline_period_default_value}!!
+        val currEkdpt = ViewKLine.EKlineDatePeriodType.values().find { it.value == kline_period_default_value }!!
         _viewKLine.ekdptType = currEkdpt
 
         //  初始化查询
@@ -164,7 +164,7 @@ class ActivityKLine : BtsppActivity() {
     /**
      *  (private) 事件 - 翻转交易对点击
      */
-    private fun onTitleSwitchButtonClicked(){
+    private fun onTitleSwitchButtonClicked() {
         //  取消之前的订阅
         ScheduleManager.sharedScheduleManager().unsub_market_notify(_tradingPair)
         //  交换交易对

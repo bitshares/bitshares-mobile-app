@@ -130,13 +130,13 @@ class ActivityIndexMy : BtsppActivity() {
         var value = String.format("%s\nhttps://faucet.btspp.io/?lang=%s",
                 resources.getString(R.string.kShareWelcomeMessage), resources.getString(R.string.kShareLinkPageDefaultLang))
         if (walletMgr.isWalletExist()) {
-           value = String.format("%s&r=%s", value, walletMgr.getWalletAccountName()!!)
+            value = String.format("%s&r=%s", value, walletMgr.getWalletAccountName()!!)
         }
         if (Utils.copyToClipboard(this, value)) {
             showToast(resources.getString(R.string.kShareLinkCopied))
         }
     }
-    
+
     private fun _refreshFaceUI() {
         val walletMgr = WalletManager.sharedWalletManager()
         if (walletMgr.isWalletExist()) {

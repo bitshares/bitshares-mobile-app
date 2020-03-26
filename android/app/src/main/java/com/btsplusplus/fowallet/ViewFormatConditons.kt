@@ -10,7 +10,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import bitshares.Utils
 import bitshares.dp
-import bitshares.xmlstring
 import org.json.JSONObject
 
 /**

@@ -5,7 +5,6 @@ import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
 import android.view.animation.OvershootInterpolator
-import bitshares.TempManager
 import kotlinx.android.synthetic.main.activity_account_info.*
 import java.lang.reflect.Field
 

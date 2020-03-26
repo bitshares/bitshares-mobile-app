@@ -230,7 +230,7 @@ class ActivitySelectApiNode : BtsppActivity() {
         }
     }
 
-    private fun _refresh_ui(data_array: JSONArray){
+    private fun _refresh_ui(data_array: JSONArray) {
         //  描绘随机选择后面的箭头
         val current_node = _user_config.optJSONObject(kSettingKey_ApiNode_Current)
         if (current_node != null) {
@@ -263,13 +263,13 @@ class ActivitySelectApiNode : BtsppActivity() {
                 //  UI - CELL容器
                 val layout_parent = LinearLayout(ctx)
                 layout_parent.layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP).apply {
-                    setMargins(0,0,0,10.dp)
+                    setMargins(0, 0, 0, 10.dp)
                 }
 
                 // 左: node 名称 和 url
                 val layout_left = LinearLayout(ctx)
                 layout_left.orientation = LinearLayout.VERTICAL
-                layout_left.layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP,9.0f).apply {
+                layout_left.layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 9.0f).apply {
                     gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
                 }
 
@@ -288,7 +288,7 @@ class ActivitySelectApiNode : BtsppActivity() {
                     if (node.optBoolean("_is_custom")) {
                         val tv_custom_label = TextView(ctx).apply {
                             layoutParams = LinearLayout.LayoutParams(LLAYOUT_WARP, LLAYOUT_WARP).apply {
-                                setMargins(4.dp,0,0,0)
+                                setMargins(4.dp, 0, 0, 0)
                             }
                             text = resources.getString(R.string.kSettingApiCellCustomFlag)
                             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11.0f)
