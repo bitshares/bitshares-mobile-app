@@ -130,7 +130,7 @@ class FragmentUserMemberInfo : BtsppFragment() {
             val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), _ctx)
             mask.show()
 
-            BitsharesClientManager.sharedBitsharesClientManager().accountUpgrde(op_data).then {
+            BitsharesClientManager.sharedBitsharesClientManager().accountUpgrade(op_data).then {
                 //  升级成功、继续请求、刷新界面。
                 ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(account_id).then {
                     mask.dismiss()

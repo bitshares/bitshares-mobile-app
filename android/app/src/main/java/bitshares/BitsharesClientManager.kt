@@ -54,6 +54,16 @@ class BitsharesClientManager {
     }
 
     /**
+     *  OP - 执行单个 operation 的交易。（可指定是否需要 owner 权限。）
+     */
+    fun runSingleTransaction(opdata: JSONObject, opcode: EBitsharesOperations, fee_paying_account: String, require_owner_permission: Boolean = false): Promise {
+        val tr = TransactionBuilder()
+        tr.add_operation(opcode, opdata)
+        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(fee_paying_account, requireOwnerPermission = require_owner_permission))
+        return process_transaction(tr)
+    }
+
+    /**
      *  创建理事会成员 REMARK：需要终身会员权限。    TODO：未完成
      */
     fun createMemberCommittee(): Promise {
@@ -201,66 +211,58 @@ class BitsharesClientManager {
     /**
      *  更新帐号信息（投票等）
      */
-    fun accountUpdate(account_update_op_data: JSONObject): Promise {
-        val tr = TransactionBuilder()
-        tr.add_operation(EBitsharesOperations.ebo_account_update, account_update_op_data)
+    fun accountUpdate(opdata: JSONObject): Promise {
         //  REMARK：修改 owner 需要 owner 权限。
         var requireOwnerPermission = false
-        if (account_update_op_data.has("owner")) {
+        if (opdata.has("owner")) {
             requireOwnerPermission = true
         }
-        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(account_update_op_data.getString("account"), requireOwnerPermission))
-        return process_transaction(tr)
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_account_update, opdata.getString("account"), require_owner_permission = requireOwnerPermission)
     }
 
     /**
      *  升级账号
      */
-    fun accountUpgrde(account_upgrade_op_data: JSONObject): Promise {
-        val tr = TransactionBuilder()
-        tr.add_operation(EBitsharesOperations.ebo_account_upgrade, account_upgrade_op_data)
-        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(account_upgrade_op_data.getString("account_to_upgrade")))
-        return process_transaction(tr)
+    fun accountUpgrade(opdata: JSONObject): Promise {
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_account_upgrade, opdata.getString("account_to_upgrade"))
+    }
+
+    /**
+     *  OP - 转移账号
+     */
+    fun accountTransfer(opdata: JSONObject): Promise {
+        //  TODO:后续处理，链尚不支持。
+        assert(false) { "not supported" }
+        //  eval: No registered evaluator for operation ${op}"
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_account_transfer, opdata.getString("account_id"))
     }
 
     /**
      *  更新保证金（抵押借贷）
      */
-    fun callOrderUpdate(op_data: JSONObject): Promise {
-        val tr = TransactionBuilder()
-        tr.add_operation(EBitsharesOperations.ebo_call_order_update, op_data)
-        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(op_data.getString("funding_account")))
-        return process_transaction(tr)
+    fun callOrderUpdate(opdata: JSONObject): Promise {
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_call_order_update, opdata.getString("funding_account"))
     }
 
     /**
      * 创建限价单
      */
-    fun createLimitOrder(limit_order_op: JSONObject): Promise {
-        val tr = TransactionBuilder()
-        tr.add_operation(EBitsharesOperations.ebo_limit_order_create, limit_order_op)
-        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(limit_order_op.getString("seller")))
-        return process_transaction(tr)
+    fun createLimitOrder(opdata: JSONObject): Promise {
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_limit_order_create, opdata.getString("seller"))
     }
 
     /**
      *  OP - 创建待解冻金额
      */
     fun vestingBalanceCreate(opdata: JSONObject): Promise {
-        val tr = TransactionBuilder()
-        tr.add_operation(EBitsharesOperations.ebo_vesting_balance_create, opdata)
-        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("creator")))
-        return process_transaction(tr)
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_vesting_balance_create, opdata.getString("creator"))
     }
 
     /**
      *  OP - 提取待解冻金额
      */
     fun vestingBalanceWithdraw(opdata: JSONObject): Promise {
-        val tr = TransactionBuilder()
-        tr.add_operation(EBitsharesOperations.ebo_vesting_balance_withdraw, opdata)
-        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("owner")))
-        return process_transaction(tr)
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_vesting_balance_withdraw, opdata.getString("owner"))
     }
 
     /**
@@ -319,10 +321,7 @@ class BitsharesClientManager {
             }
 
             //  创建交易
-            val tr = TransactionBuilder()
-            tr.add_operation(EBitsharesOperations.ebo_proposal_create, op)
-            tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(fee_paying_account_id))
-            return@then process_transaction(tr)
+            return@then runSingleTransaction(op, EBitsharesOperations.ebo_proposal_create, fee_paying_account_id)
         }
     }
 
@@ -395,20 +394,21 @@ class BitsharesClientManager {
      *  OP -创建资产。
      */
     fun assetCreate(opdata: JSONObject): Promise {
-        val tr = TransactionBuilder()
-        tr.add_operation(EBitsharesOperations.ebo_asset_create, opdata)
-        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("issuer")))
-        return process_transaction(tr)
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_asset_create, opdata.getString("issuer"))
+    }
+
+    /**
+     *  OP -全局清算资产。
+     */
+    fun assetGlobalSettle(opdata: JSONObject): Promise {
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_asset_global_settle, opdata.getString("issuer"))
     }
 
     /**
      *  OP -清算资产。
      */
     fun assetSettle(opdata: JSONObject): Promise {
-        val tr = TransactionBuilder()
-        tr.add_operation(EBitsharesOperations.ebo_asset_settle, opdata)
-        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("account")))
-        return process_transaction(tr)
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_asset_settle, opdata.getString("account"))
     }
 
     /**
@@ -417,100 +417,71 @@ class BitsharesClientManager {
     fun assetUpdate(opdata: JSONObject): Promise {
         //  REMARK：HARDFORK_CORE_199_TIME 硬分叉之后 new_issuer 不可更新，需要更新调用单独的接口更新。
         assert(!opdata.has("new_issuer"))
-        val tr = TransactionBuilder()
-        tr.add_operation(EBitsharesOperations.ebo_asset_update, opdata)
-        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("issuer")))
-        return process_transaction(tr)
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_asset_update, opdata.getString("issuer"))
     }
 
     /**
      *  OP -更新智能币相关信息。
      */
     fun assetUpdateBitasset(opdata: JSONObject): Promise {
-        val tr = TransactionBuilder()
-        tr.add_operation(EBitsharesOperations.ebo_asset_update_bitasset, opdata)
-        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("issuer")))
-        return process_transaction(tr)
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_asset_update_bitasset, opdata.getString("issuer"))
     }
 
     /**
      *  OP -更新智能币的喂价人员信息。
      */
     fun assetUpdateFeedProducers(opdata: JSONObject): Promise {
-        val tr = TransactionBuilder()
-        tr.add_operation(EBitsharesOperations.ebo_asset_update_feed_producers, opdata)
-        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("issuer")))
-        return process_transaction(tr)
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_asset_update_feed_producers, opdata.getString("issuer"))
     }
 
     /**
      *  OP -销毁资产（减少当前供应量）REMARK：不能对智能资产进行操作。
      */
     fun assetReserve(opdata: JSONObject): Promise {
-        val tr = TransactionBuilder()
-        tr.add_operation(EBitsharesOperations.ebo_asset_reserve, opdata)
-        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("payer")))
-        return process_transaction(tr)
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_asset_reserve, opdata.getString("payer"))
     }
 
     /**
      *  OP -发行资产给某人
      */
     fun assetIssue(opdata: JSONObject): Promise {
-        val tr = TransactionBuilder()
-        tr.add_operation(EBitsharesOperations.ebo_asset_issue, opdata)
-        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("issuer")))
-        return process_transaction(tr)
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_asset_issue, opdata.getString("issuer"))
     }
 
     /**
      *  OP -提取资产等手续费池资金
      */
     fun assetClaimPool(opdata: JSONObject): Promise {
-        val tr = TransactionBuilder()
-        tr.add_operation(EBitsharesOperations.ebo_asset_claim_pool, opdata)
-        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("issuer")))
-        return process_transaction(tr)
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_asset_claim_pool, opdata.getString("issuer"))
     }
 
     /**
      *  OP - 更新资产发行者
      */
     fun assetUpdateIssuer(opdata: JSONObject): Promise {
-        val tr = TransactionBuilder()
-        tr.add_operation(EBitsharesOperations.ebo_asset_update_issuer, opdata)
-        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("issuer"), requireOwnerPermission = true))
-        return process_transaction(tr)
+        //  TODO:6.0 待测试
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_asset_update_issuer, opdata.getString("issuer"), require_owner_permission = true)
     }
 
     /**
      *  OP - 创建HTLC合约
      */
     fun htlcCreate(opdata: JSONObject): Promise {
-        val tr = TransactionBuilder()
-        tr.add_operation(EBitsharesOperations.ebo_htlc_create, opdata)
-        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("from")))
-        return process_transaction(tr)
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_htlc_create, opdata.getString("from"))
     }
 
     /**
      *  OP - 提取HTLC合约
      */
     fun htlcRedeem(opdata: JSONObject): Promise {
-        val tr = TransactionBuilder()
-        tr.add_operation(EBitsharesOperations.ebo_htlc_redeem, opdata)
-        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("redeemer")))
-        return process_transaction(tr)
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_htlc_redeem, opdata.getString("redeemer"))
     }
 
     /**
      *  OP - 扩展HTLC合约有效期
      */
     fun htlcExtend(opdata: JSONObject): Promise {
-        val tr = TransactionBuilder()
-        tr.add_operation(EBitsharesOperations.ebo_htlc_extend, opdata)
-        tr.addSignKeys(WalletManager.sharedWalletManager().getSignKeysFromFeePayingAccount(opdata.getString("update_issuer")))
-        return process_transaction(tr)
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_htlc_extend, opdata.getString("update_issuer"))
     }
 
 }
