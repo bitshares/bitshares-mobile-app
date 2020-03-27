@@ -100,7 +100,7 @@
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
     //  事件 - 空白处点击
-    self.enableTapSpaceEndInput = YES;
+    //self.enableTapSpaceEndInput = YES;
     
     //  导入账号不提供注册（登录账号时候提供 ）& TODO:fowallet 测试网络暂时不提供注册。
     if (checkActivePermission && ![ChainObjectManager sharedChainObjectManager].isTestNetwork){
