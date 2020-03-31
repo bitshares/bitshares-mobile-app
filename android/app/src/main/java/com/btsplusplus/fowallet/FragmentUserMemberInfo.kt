@@ -13,6 +13,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import bitshares.*
+import com.btsplusplus.fowallet.utils.VcUtils
 import com.fowallet.walletcore.bts.BitsharesClientManager
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
@@ -42,10 +43,8 @@ class FragmentUserMemberInfo : BtsppFragment() {
     private var _view: View? = null
 
     private lateinit var tv_account_status: TextView
-    private lateinit var tv_my_referrer_code: TextView
     private lateinit var tv_member_tip: TextView
     private lateinit var btn_upgrade: Button
-    private var _myReferrerCode: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -59,11 +58,20 @@ class FragmentUserMemberInfo : BtsppFragment() {
         val full_account_data = WalletManager.sharedWalletManager().getWalletAccountInfo()!!
         val account = full_account_data.getJSONObject("account")
         tv_account_status = v.findViewById(R.id.txt_account_status)
-        tv_my_referrer_code = v.findViewById(R.id.txt_my_referrer_code)
         v.findViewById<TextView>(R.id.txt_account_id).text = account.getString("id")
         v.findViewById<TextView>(R.id.txt_account_name).text = account.getString("name")
         tv_member_tip = v.findViewById(R.id.txt_upgrade_to_member_tip)
         btn_upgrade = v.findViewById<Button>(R.id.button_upgrade_member)
+
+        //  事件 - 点击复制邀请链接
+        v.findViewById<LinearLayout>(R.id.layout_my_share_link).setOnClickListener {
+            activity?.let { act ->
+                val value = VcUtils.genShareLink(act, true)
+                if (Utils.copyToClipboard(act, value)) {
+                    showToast(resources.getString(R.string.kAccountMembershipMyRefCodeCopyOK))
+                }
+            }
+        }
 
         if (Utils.isBitsharesVIP(account.getString("membership_expiration_date"))) {
             refreshUILefttimeMember(account)
@@ -74,38 +82,24 @@ class FragmentUserMemberInfo : BtsppFragment() {
                 upgradeMemberButtonOnClick()
             }
         }
+
         return v
     }
 
-    private fun _encodeMyRefCode(account_id: String): String {
-        val uid = account_id.split(".").last()
-        return Base64.encodeToString(uid.toByteArray(), Base64.URL_SAFE or Base64.NO_WRAP)
-    }
+    //    private fun _encodeMyRefCode(account_id: String): String {
+    //        val uid = account_id.split(".").last()
+    //        return Base64.encodeToString(uid.toByteArray(), Base64.URL_SAFE or Base64.NO_WRAP)
+    //    }
 
     private fun refreshUILefttimeMember(account_data: JSONObject) {
-        _myReferrerCode = _encodeMyRefCode(account_data.getString("id"))
         tv_account_status.text = resources.getString(R.string.kLblMembershipLifetime)
-        tv_my_referrer_code.text = _myReferrerCode
-        tv_my_referrer_code.setTextColor(resources.getColor(R.color.theme01_buyColor))
         tv_member_tip.text = resources.getString(R.string.kAccountUpgradeTipsMember)
         tv_member_tip.setTextColor(resources.getColor(R.color.theme01_buyColor))
         btn_upgrade.visibility = View.INVISIBLE
-        //  copy ref code
-        _view?.let {
-            it.findViewById<LinearLayout>(R.id.id_my_referrer_code_layout).setOnClickListener {
-                if (_myReferrerCode != null) {
-                    if (Utils.copyToClipboard(activity!!, _myReferrerCode!!)) {
-                        showToast(resources.getString(R.string.kAccountMembershipMyRefCodeCopyOK))
-                    }
-                }
-            }
-        }
     }
 
     private fun refreshUINormalMember() {
         tv_account_status.text = resources.getString(R.string.kLblMembershipBasic)
-        tv_my_referrer_code.text = resources.getString(R.string.kAccountMembershipNoRefCode)
-        tv_my_referrer_code.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
         tv_member_tip.text = resources.getString(R.string.kAccountUpgradeTipsNotMember)
         tv_member_tip.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
         btn_upgrade.visibility = View.VISIBLE

@@ -3,6 +3,7 @@ package com.btsplusplus.fowallet
 import android.os.Bundle
 import android.widget.TextView
 import bitshares.*
+import com.btsplusplus.fowallet.utils.VcUtils
 import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_index_my.*
 
@@ -126,12 +127,7 @@ class ActivityIndexMy : BtsppActivity() {
     }
 
     private fun _onShareLinkClicked() {
-        val walletMgr = WalletManager.sharedWalletManager()
-        var value = String.format("%s\nhttps://faucet.btspp.io/?lang=%s",
-                resources.getString(R.string.kShareWelcomeMessage), resources.getString(R.string.kShareLinkPageDefaultLang))
-        if (walletMgr.isWalletExist()) {
-            value = String.format("%s&r=%s", value, walletMgr.getWalletAccountName()!!)
-        }
+        val value = VcUtils.genShareLink(this, true)
         if (Utils.copyToClipboard(this, value)) {
             showToast(resources.getString(R.string.kShareLinkCopied))
         }
