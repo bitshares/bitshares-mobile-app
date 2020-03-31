@@ -187,8 +187,10 @@
     <string name="kAccountPagePermissions">权限信息</string>
     <string name="kAccountBtnUpgradeToLifetimeMember">升级终身会员</string>
     <string name="kAccountMembershipStatus">状态</string>
+    <string name="kAccountMembershipShareLink">分享链接</string>
     <string name="kAccountMembershipMyRefCode">我的推荐码</string>
     <string name="kAccountMembershipNoRefCode">无</string>
+    <string name="kAccountMembershipClickCopyTips">点击可复制</string>
     <string name="kAccountMembershipMyRefCodeCopyOK">推荐码已复制</string>
     <string name="kAccountUpgradeTipsMember">尊敬的终身会员，您已享受80%的手续费返现奖励。</string>
     <string name="kAccountUpgradeTipsNotMember">现在升级终身会员，立享80%手续费返现奖励。</string>

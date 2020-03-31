@@ -110,9 +110,9 @@
         </LinearLayout>
         <View android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-        <!-- My Referrer Code -->
+        <!-- 分享链接 -->
         <LinearLayout
-            android:id="@+id/id_my_referrer_code_layout"
+            android:id="@+id/layout_my_share_link"
             android:layout_width="match_parent"
             android:layout_height="34dp"
             android:layout_marginTop="15dp"
@@ -127,10 +127,10 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="@string/kAccountMembershipMyRefCode"/>
+                android:text="@string/kAccountMembershipShareLink"/>
 
             <TextView
-                android:id="@+id/txt_my_referrer_code"
+                android:id="@+id/tv_my_share_link"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
@@ -138,7 +138,7 @@
                 android:textSize="16dp"
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorNormal"
-                android:text="placeholder"/>
+                android:text="@string/kAccountMembershipClickCopyTips"/>
 
 
         </LinearLayout>

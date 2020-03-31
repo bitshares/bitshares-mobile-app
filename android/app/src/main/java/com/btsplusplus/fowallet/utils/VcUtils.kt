@@ -4,6 +4,7 @@ import android.app.Activity
 import bitshares.*
 import com.btsplusplus.fowallet.*
 import com.fowallet.walletcore.bts.ChainObjectManager
+import com.fowallet.walletcore.bts.WalletManager
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -110,6 +111,21 @@ class VcUtils {
                     }
                 }
             }
+        }
+
+        /**
+         *  (public) 生成邀请链接
+         */
+        fun genShareLink(ctx: Activity, containWelcomeMessage: Boolean): String {
+            val walletMgr = WalletManager.sharedWalletManager()
+            var value = String.format("https://faucet.btspp.io/?lang=%s", ctx.resources.getString(R.string.kShareLinkPageDefaultLang))
+            if (walletMgr.isWalletExist()) {
+                value = String.format("%s&r=%s", value, walletMgr.getWalletAccountName()!!)
+            }
+            if (containWelcomeMessage) {
+                value = String.format("%s\n%s", ctx.resources.getString(R.string.kShareWelcomeMessage), value)
+            }
+            return value
         }
     }
 }
