@@ -75,19 +75,19 @@ class ViewOtcMerchantCell : LinearLayout {
                         setPadding(5.dp, 0, 0, 0)
                     })
                 })
-                // 右边 TODO;2.9 miss dasta
-                addView(LinearLayout(_ctx).apply {
-                    val _layout_params = LinearLayout.LayoutParams(0.dp, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-                    layoutParams = _layout_params
-                    gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
-
-                    addView(TextView(_ctx).apply {
-                        text = "" //String.format("%s 笔 | %s", _data.getInt("total"), _data.getString("rate"))
-
-                        setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
-                        setTextColor(_ctx.resources.getColor(R.color.theme01_textColorGray))
-                    })
-                })
+//                // 右边 TODO;2.9 miss dasta
+//                addView(LinearLayout(_ctx).apply {
+//                    val _layout_params = LinearLayout.LayoutParams(0.dp, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+//                    layoutParams = _layout_params
+//                    gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
+//
+//                    addView(TextView(_ctx).apply {
+//                        text = "" //String.format("%s 笔 | %s", _data.getInt("total"), _data.getString("rate"))
+//
+//                        setTextSize(TypedValue.COMPLEX_UNIT_DIP, content_fontsize)
+//                        setTextColor(_ctx.resources.getColor(R.color.theme01_textColorGray))
+//                    })
+//                })
             } else {
                 addView(LinearLayout(_ctx).apply {
                     layoutParams = LinearLayout.LayoutParams(0.dp, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
