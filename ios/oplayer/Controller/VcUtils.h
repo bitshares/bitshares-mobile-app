@@ -79,4 +79,9 @@ typedef void (^UITapGestureRecognizerBlockHandler)(id weak_self, UITapGestureRec
  */
 + (BOOL)processCheckAppVersionResponsed:(NSDictionary*)pConfig remind_later_callback:(void (^)())remind_later_callback;
 
+/*
+ *  (public) 生成邀请链接
+ */
++ (NSString*)genShareLink:(BOOL)containWelcomeMessage;
+
 @end

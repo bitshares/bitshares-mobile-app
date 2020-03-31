@@ -201,8 +201,10 @@
 "kAccountPagePermissions" = "Permissions";
 "kAccountBtnUpgradeToLifetimeMember" = "Upgrade lifetime membership";
 "kAccountMembershipStatus" = "Status";
+"kAccountMembershipShareLink" = "Share link";
 "kAccountMembershipMyRefCode" = "My referrer code";
 "kAccountMembershipNoRefCode" = "NONE";
+"kAccountMembershipClickCopyTips" = "click to copy";
 "kAccountMembershipMyRefCodeCopyOK" = "Referrer code copied";
 "kAccountUpgradeTipsMember" = "Dear Life Member, you are entitled to an 80% fee cashback.";
 "kAccountUpgradeTipsNotMember" = "Upgrade lifetime membership and enjoy an 80% fee cashback.";

@@ -439,13 +439,7 @@ enum
                         break;
                     case kVcSubShareLink:
                     {
-                        WalletManager* walletMgr = [WalletManager sharedWalletManager];
-                        id value = [NSString stringWithFormat:@"%@\nhttps://faucet.btspp.io/?lang=%@",
-                                    NSLocalizedString(@"kShareWelcomeMessage", @"欢迎来到比特股去中心化交易平台"),
-                                    NSLocalizedString(@"kShareLinkPageDefaultLang", @"share link lang")];
-                        if ([walletMgr isWalletExist]) {
-                            value = [NSString stringWithFormat:@"%@&r=%@", value, [walletMgr getWalletAccountName]];
-                        }
+                        id value = [VcUtils genShareLink:YES];
                         [UIPasteboard generalPasteboard].string = [value copy];
                         [OrgUtils makeToast:NSLocalizedString(@"kShareLinkCopied", @"分享链接已复制。")];
                     }
