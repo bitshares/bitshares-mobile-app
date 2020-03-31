@@ -234,7 +234,7 @@ class FragmentTradeBuyOrSell : BtsppFragment() {
             return
         }
 
-        if (data_array != null) {
+        if (data_array != null && data_array.length() > 0) {
             //  保存数据（Fragment重新创建时需要用到）
             _currFillOrders = data_array
 
