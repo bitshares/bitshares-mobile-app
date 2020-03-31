@@ -684,7 +684,7 @@
             //  1、需要有喂价数据才可以进行清算操作。
             //  2、如果已经黑天鹅了也可以进行清算操作。
             if ([ModelUtils isNullPrice:[[newBitassetData objectForKey:@"current_feed"] objectForKey:@"settlement_price"]] &&
-                ![ModelUtils assetHasGlobalSettle:newBitassetData]) {
+                !hasAlreadyGlobalSettled) {
                 [OrgUtils makeToast:NSLocalizedString(@"kVcAssetOpSettleTipsNoFeedData", @"该资产没有有效的喂价，不可清算。")];
                 return;
             }

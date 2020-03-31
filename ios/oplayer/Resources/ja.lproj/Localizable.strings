@@ -201,8 +201,10 @@
 "kAccountPagePermissions" = "権限情報";
 "kAccountBtnUpgradeToLifetimeMember" = "一生会員をアップグレードする";
 "kAccountMembershipStatus" = "状態";
+"kAccountMembershipShareLink" = "リンクを共有";
 "kAccountMembershipMyRefCode" = "私の推薦コード";
 "kAccountMembershipNoRefCode" = "なし";
+"kAccountMembershipClickCopyTips" = "クリックしてコピー";
 "kAccountMembershipMyRefCodeCopyOK" = "推薦コードがコピーされました";
 "kAccountUpgradeTipsMember" = "一生会員、あなたは80％の手数料償還報酬を受ける権利があります。";
 "kAccountUpgradeTipsNotMember" = "今すぐあなたの一生会員をアップグレードして、80％の返金手数料を得てください。";

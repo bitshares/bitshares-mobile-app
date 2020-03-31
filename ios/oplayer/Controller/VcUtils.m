@@ -458,4 +458,22 @@
     }];
 }
 
+/*
+ *  (public) 生成邀请链接
+ */
++ (NSString*)genShareLink:(BOOL)containWelcomeMessage
+{
+    WalletManager* walletMgr = [WalletManager sharedWalletManager];
+    id value = [NSString stringWithFormat:@"https://faucet.btspp.io/?lang=%@",
+                NSLocalizedString(@"kShareLinkPageDefaultLang", @"share link lang")];
+    if ([walletMgr isWalletExist]) {
+        value = [NSString stringWithFormat:@"%@&r=%@", value, [walletMgr getWalletAccountName]];
+    }
+    if (containWelcomeMessage) {
+        value = [NSString stringWithFormat:@"%@\n%@",
+                 NSLocalizedString(@"kShareWelcomeMessage", @"欢迎来到比特股去中心化交易平台"), value];
+    }
+    return value;
+}
+
 @end

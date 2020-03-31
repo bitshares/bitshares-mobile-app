@@ -611,7 +611,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
  */
 - (WsPromise*)assetUpdateIssuer:(NSDictionary*)opdata
 {
-    //  TODO:5.0 待测试
+    //  TODO:6.0 待测试
     return [self runSingleTransaction:opdata
                                opcode:ebo_asset_update_issuer
                    fee_paying_account:[opdata objectForKey:@"issuer"]

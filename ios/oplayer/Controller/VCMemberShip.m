@@ -26,7 +26,7 @@ enum
     kVcSubID = 0,               //  帐号ID
     kVcSubAccount,              //  帐号名字
     kVcSubMemberStatus,         //  会员状态
-    kVcSubRefCode,              //  我的推荐码
+    kVcSubShareLink,            //  分享链接
     //    kVcSubMemberDesc,           //  会员返现描述//TODO:2.5考虑完善改进会员用途展示
     
     kVcSubBasicInfoMax
@@ -41,7 +41,6 @@ enum
     ViewBlockLabel*         _lbCommit;
     
     BOOL                    _bIsLifetimeMemberShip;
-    NSString*               _myReferrerCode;
 }
 
 @end
@@ -50,7 +49,6 @@ enum
 
 - (void)dealloc
 {
-    _myReferrerCode = nil;
     _lbCommit = nil;
     if (_mainTableView){
         [[IntervalManager sharedIntervalManager] releaseLock:_mainTableView];
@@ -65,7 +63,6 @@ enum
     self = [super init];
     if (self) {
         _owner = owner;
-        _myReferrerCode = nil;
     }
     return self;
 }
@@ -110,10 +107,8 @@ enum
     assert(account_info);
     if ([OrgUtils isBitsharesVIP:[account_info objectForKey:@"membership_expiration_date"]]){
         _bIsLifetimeMemberShip = YES;
-        _myReferrerCode = [self _encodeMyRefCode:account_info[@"id"]];
     }else{
         _bIsLifetimeMemberShip = NO;
-        _myReferrerCode = nil;
     }
 }
 
@@ -227,17 +222,11 @@ enum
                     }
                 }
                     break;
-                case kVcSubRefCode:
+                case kVcSubShareLink:
                 {
-                    cell.textLabel.text = NSLocalizedString(@"kAccountMembershipMyRefCode", @"我的推荐码");
-                    if (_myReferrerCode){
-                        cell.selectionStyle = UITableViewCellSelectionStyleGray;
-                        cell.detailTextLabel.text = _myReferrerCode;
-                        cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].buyColor;
-                    }else{
-                        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                        cell.detailTextLabel.text = NSLocalizedString(@"kAccountMembershipNoRefCode", @"无");
-                    }
+                    cell.textLabel.text = NSLocalizedString(@"kAccountMembershipShareLink", @"分享链接");
+                    cell.selectionStyle = UITableViewCellSelectionStyleGray;
+                    cell.detailTextLabel.text = NSLocalizedString(@"kAccountMembershipClickCopyTips", @"点击可复制");
                 }
                     break;
 //                case kVcSubMemberDesc://TODO:2.5考虑完善改进会员用途展示
@@ -281,9 +270,10 @@ enum
                 break;
             default:
             {
-                if (indexPath.row == kVcSubRefCode && _myReferrerCode){
-                    [UIPasteboard generalPasteboard].string = [_myReferrerCode copy];
-                    [OrgUtils makeToast:NSLocalizedString(@"kAccountMembershipMyRefCodeCopyOK", @"推荐码已复制")];
+                if (indexPath.row == kVcSubShareLink){
+                    id value = [VcUtils genShareLink:YES];
+                    [UIPasteboard generalPasteboard].string = [value copy];
+                    [OrgUtils makeToast:NSLocalizedString(@"kShareLinkCopied", @"分享链接已复制。")];
                 }
             }
                 break;
