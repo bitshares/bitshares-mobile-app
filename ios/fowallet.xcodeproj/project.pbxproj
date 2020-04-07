@@ -2792,7 +2792,6 @@
 		B7E783111C50839500C94B58 /* VCSetting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCSetting.m; path = Controller/VCSetting.m; sourceTree = "<group>"; };
 		B7E90D3320A6A493004D2D8C /* libsecp256k1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsecp256k1.a; sourceTree = "<group>"; };
 		B7E90D3420A6A493004D2D8C /* secp256k1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = secp256k1.h; sourceTree = "<group>"; };
-		B7F06CBA20B007BA0031A9C9 /* secp256k1_recovery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = secp256k1_recovery.h; sourceTree = "<group>"; };
 		B7F288821DC5EDCA00B93ED7 /* VCUserCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCUserCenter.h; path = Controller/VCUserCenter.h; sourceTree = "<group>"; };
 		B7F288831DC5EDCA00B93ED7 /* VCUserCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCUserCenter.m; path = Controller/VCUserCenter.m; sourceTree = "<group>"; };
 		B7F495401C508B3300704D14 /* SettingManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SettingManager.h; path = ios/SettingManager.h; sourceTree = "<group>"; };
@@ -4433,7 +4432,6 @@
 			isa = PBXGroup;
 			children = (
 				B7E90D3320A6A493004D2D8C /* libsecp256k1.a */,
-				B7F06CBA20B007BA0031A9C9 /* secp256k1_recovery.h */,
 				B7E90D3420A6A493004D2D8C /* secp256k1.h */,
 			);
 			name = secp256k1;

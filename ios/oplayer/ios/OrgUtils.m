@@ -2233,14 +2233,14 @@
 {
     NSData* seed_data = [seed dataUsingEncoding:NSUTF8StringEncoding];
     
-    unsigned char prikey01[32] = {0, };
-    __bts_gen_private_key_from_seed((const unsigned char*)seed_data.bytes, (const size_t)seed_data.length, prikey01);
+    secp256k1_prikey prikey01 = {0, };
+    __bts_gen_private_key_from_seed((const unsigned char*)seed_data.bytes, (const size_t)seed_data.length, prikey01.data);
     
     unsigned char output[51+10] = {0, };
     size_t output_size = sizeof(output);
     
     NSString* address_prefix = [ChainObjectManager sharedChainObjectManager].grapheneAddressPrefix;
-    bool ret = __bts_gen_address_from_private_key32(prikey01, output, &output_size,
+    bool ret = __bts_gen_address_from_private_key32(&prikey01, output, &output_size,
                                                     [address_prefix UTF8String], address_prefix.length);
     if (!ret){
         return nil;
@@ -2254,9 +2254,9 @@
  */
 + (NSString*)genBtsAddressFromWifPrivateKey:(NSString*)wif_private_key
 {
-    unsigned char private_key32[32] = {0, };
+    secp256k1_prikey private_key = {0, };
     
-    bool ret = __bts_gen_private_key_from_wif_privatekey((const unsigned char*)[wif_private_key UTF8String], (const size_t)wif_private_key.length, private_key32);
+    bool ret = __bts_gen_private_key_from_wif_privatekey((const unsigned char*)[wif_private_key UTF8String], (const size_t)wif_private_key.length, private_key.data);
     
     //  无效的WIF私钥
     if (!ret){
@@ -2267,7 +2267,7 @@
     size_t output_size = sizeof(output);
     
     NSString* address_prefix = [ChainObjectManager sharedChainObjectManager].grapheneAddressPrefix;
-    ret = __bts_gen_address_from_private_key32(private_key32, output, &output_size,
+    ret = __bts_gen_address_from_private_key32(&private_key, output, &output_size,
                                                [address_prefix UTF8String], address_prefix.length);
     if (!ret){
         return nil;
@@ -2286,7 +2286,7 @@
     }
     
     NSData* data_pubkey = [str_pubkey dataUsingEncoding:NSUTF8StringEncoding];
-    secp256k1_pubkey pubkey={0,};
+    secp256k1_pubkey_compressed pubkey={0,};
     bool ret = __bts_gen_public_key_from_b58address((const unsigned char*)data_pubkey.bytes, (const size_t)data_pubkey.length,
                                                     [[ChainObjectManager sharedChainObjectManager].grapheneAddressPrefix length],
                                                     &pubkey);
@@ -2294,12 +2294,10 @@
         return nil;
     }
     
-    unsigned char compressed_pubkey[33] = {0, };
     unsigned char digest64[64] = {0, };
     unsigned char digest20[20] = {0, };
     
-    __bts_gen_public_key_compressed(&pubkey, compressed_pubkey);
-    sha512(compressed_pubkey, sizeof(compressed_pubkey), digest64);
+    sha512(pubkey.data, sizeof(pubkey.data), digest64);
     rmd160(digest64, sizeof(digest64), digest20);
     
     return [[NSData alloc] initWithBytes:digest20 length:sizeof(digest20)];
@@ -2315,7 +2313,7 @@
     }
     
     NSData* data_pubkey = [str_pubkey dataUsingEncoding:NSUTF8StringEncoding];
-    secp256k1_pubkey pubkey={0,};
+    secp256k1_pubkey_compressed pubkey={0,};
     bool ret = __bts_gen_public_key_from_b58address((const unsigned char*)data_pubkey.bytes, (const size_t)data_pubkey.length,
                                                     [[ChainObjectManager sharedChainObjectManager].grapheneAddressPrefix length],
                                                     &pubkey);

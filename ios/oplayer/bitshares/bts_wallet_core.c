@@ -10,7 +10,6 @@
 
 #include "bts_wallet_core.h"
 #include "secp256k1.h"
-#include "secp256k1_recovery.h"
 
 #include "libbase58.h"
 
@@ -22,6 +21,11 @@
 #include "WjCryptLib_AesCbc.h"
 
 #include "LzmaLib.h"
+
+/*
+ *  别名
+ */
+typedef secp256k1_context_t secp256k1_context;
 
 /**
  *  临时缓冲区（不大于该缓冲区的临时buffer都可以使用）
@@ -40,7 +44,7 @@ static void rmd160hex(const byte* message, const dword length, byte digest40[]);
 static void gen_aes_context_from_seed(struct __aes256_context* ctx, const unsigned char* seed, const size_t seed_size);
 static void gen_aes_context_from_sha512(struct __aes256_context* ctx, const unsigned char* hex_sha512);
 static void gen_aes_context(struct __aes256_context* ctx, const unsigned char* iv, const unsigned char* key);
-static bool get_shared_secret(const unsigned char private_key32[], secp256k1_pubkey* public_key, unsigned char output_shared_secret32_digest64[]);
+static bool get_shared_secret(const unsigned char private_key32[], secp256k1_pubkey_compressed* public_key, unsigned char output_shared_secret32_digest64[]);
 static bool aes256_encrypt(const struct __aes256_context* ctx, const char* data, char* output, size_t output_size);
 static bool aes256_decrypt(const struct __aes256_context* ctx, const char* data, const size_t size,  char* output, size_t* output_size);
 static secp256k1_context* get_static_context();
@@ -180,24 +184,19 @@ static void gen_aes_context(struct __aes256_context* ctx, const unsigned char* i
 /**
  *  (private) 获取 shared_secret，用于 aes 加解密。    REMARK：public_key 会发生改变，如果有必要需要提前备份。
  */
-static bool get_shared_secret(const unsigned char private_key32[], secp256k1_pubkey* public_key, unsigned char output_shared_secret32_digest64[])
+static bool get_shared_secret(const unsigned char private_key32[], secp256k1_pubkey_compressed* public_key, unsigned char output_shared_secret32_digest64[])
 {
     secp256k1_context* ctx_both = get_static_context();
     
     //  3.1、用私钥调整公钥
-    int ret = secp256k1_ec_pubkey_tweak_mul(ctx_both, public_key, private_key32);
+    int ret = secp256k1_ec_pubkey_tweak_mul(ctx_both, public_key->data, sizeof(public_key->data), private_key32);
     if (!ret){
         return false;
     }
     
-    //  3.2、调整完毕后的公钥序列化为非压缩格式，然后取X字段作为 shared_secret。
-    unsigned char pubkey_tweaked_uncompressed[66] = {0,};
-    size_t pubkey_tweaked_uncompressed_len = sizeof(pubkey_tweaked_uncompressed);
-    (void)secp256k1_ec_pubkey_serialize(ctx_both, pubkey_tweaked_uncompressed, &pubkey_tweaked_uncompressed_len, public_key, SECP256K1_EC_UNCOMPRESSED);
-    
-    //  3.3、获取shared_secret（即X字段）然后计算sha512摘要。
-    //  REMARK：pubkey_tweaked_uncompressed[1..32] 是pubkey的x值，33..65是y值
-    sha512(&pubkey_tweaked_uncompressed[1], 32, output_shared_secret32_digest64);
+    //  3.3、获取shared_secret（即X字段）然后计算sha512摘要。不论是否压缩格式，x值都在1..32位置。
+    assert(sizeof(public_key->data) == 33);
+    sha512(&public_key->data[1], sizeof(public_key->data) - 1, output_shared_secret32_digest64);
     
     return true;
 }
@@ -251,7 +250,7 @@ static void base58_encode(const unsigned char* raw_data, const size_t raw_size, 
     
     b58enc((char*)output, output_size, (const void*)raw_data, raw_size);
     
-//    bool b58enc(char *b58, size_t *b58sz, const void *data, size_t binsz)
+    //    bool b58enc(char *b58, size_t *b58sz, const void *data, size_t binsz)
 }
 
 /**
@@ -302,13 +301,16 @@ void hex_decode(const unsigned char* hex_string, const size_t hex_size, unsigned
 #pragma mark- private key
 
 /**
- *  获取上下文
+ *  获取上下文（支持佩德森承诺和范围证明）
  */
 static secp256k1_context* get_static_context()
 {
     static secp256k1_context* ctx_both = 0;
     if (!ctx_both){
-        ctx_both  = secp256k1_context_create(SECP256K1_CONTEXT_VERIFY | SECP256K1_CONTEXT_SIGN);
+        ctx_both  = secp256k1_context_create(SECP256K1_CONTEXT_VERIFY |
+                                             SECP256K1_CONTEXT_SIGN |
+                                             SECP256K1_CONTEXT_RANGEPROOF |
+                                             SECP256K1_CONTEXT_COMMIT);
     }
     return ctx_both;
 }
@@ -409,7 +411,7 @@ size_t __bts_aes256_encrypt_with_checksum_calc_outputsize(const size_t message_s
  *  (public) 主要方法，用于memo、钱包等解密。
  *  解密失败返回 0，解密成功返回指向数据缓冲区的指针。
  */
-unsigned char* __bts_aes256_decrypt_with_checksum(const unsigned char private_key32[], const secp256k1_pubkey* public_key,
+unsigned char* __bts_aes256_decrypt_with_checksum(const unsigned char private_key32[], const secp256k1_pubkey_compressed* public_key,
                                                   const char* nonce, const size_t nonce_size,
                                                   const unsigned char* message, const size_t message_size,
                                                   unsigned char* output, size_t* final_output_size)
@@ -417,7 +419,7 @@ unsigned char* __bts_aes256_decrypt_with_checksum(const unsigned char private_ke
     assert(final_output_size);
     
     //  1、生成aes上下文
-    secp256k1_pubkey pubkey = {0, };
+    secp256k1_pubkey_compressed pubkey = {0, };
     memcpy(&pubkey, public_key, sizeof(pubkey));
     
     unsigned char shared_secret_sha512[64] = {0,};
@@ -462,12 +464,12 @@ unsigned char* __bts_aes256_decrypt_with_checksum(const unsigned char private_ke
 /**
  *  (public) 主要方法，用于memo、钱包等加密。
  */
-bool __bts_aes256_encrypt_with_checksum(const unsigned char private_key32[], const secp256k1_pubkey* public_key,
-                                       const char* nonce, const size_t nonce_size,
-                                       const unsigned char* message, const size_t message_size, unsigned char* output)
+bool __bts_aes256_encrypt_with_checksum(const unsigned char private_key32[], const secp256k1_pubkey_compressed* public_key,
+                                        const char* nonce, const size_t nonce_size,
+                                        const unsigned char* message, const size_t message_size, unsigned char* output)
 {
     //  1、生成aes上下文
-    secp256k1_pubkey pubkey = {0, };
+    secp256k1_pubkey_compressed pubkey = {0, };
     memcpy(&pubkey, public_key, sizeof(pubkey));
     
     unsigned char shared_secret_sha512[64] = {0,};
@@ -520,21 +522,6 @@ void __bts_gen_private_key_from_seed(const unsigned char* seed, const size_t see
 }
 
 /**
- *  从公钥结构获取压缩公钥 和 非压缩公钥
- */
-void __bts_gen_public_key_compressed(const secp256k1_pubkey* public_key, unsigned char output33[])
-{
-    size_t output_size = 33;
-    (void)secp256k1_ec_pubkey_serialize(get_static_context(), output33, &output_size, public_key, SECP256K1_EC_COMPRESSED);
-}
-
-void __bts_gen_public_key_uncompressed(const secp256k1_pubkey* public_key, unsigned char output65[])
-{
-    size_t output_size = 65;
-    (void)secp256k1_ec_pubkey_serialize(get_static_context(), output65, &output_size, public_key, SECP256K1_EC_UNCOMPRESSED);
-}
-
-/**
  *  格式化私钥为WIF格式
  */
 void __bts_private_key_to_wif(const unsigned char private_key32[], unsigned char wif_output51[], size_t* wif_output_size)
@@ -561,8 +548,9 @@ void __bts_private_key_to_wif(const unsigned char private_key32[], unsigned char
 /**
  *  从公钥结构生成 BTS 地址字符串
  */
-void __bts_public_key_to_address(const secp256k1_pubkey* public_key, unsigned char address_output[], size_t* address_output_size,
-                                 const char* address_prefix, const size_t address_prefix_size)
+static void __bts_public_key_to_address(const secp256k1_pubkey_compressed* public_key,
+                                        unsigned char address_output[], size_t* address_output_size,
+                                        const char* address_prefix, const size_t address_prefix_size)
 {
     assert(address_prefix);
     assert(address_prefix_size > 0);
@@ -570,7 +558,7 @@ void __bts_public_key_to_address(const secp256k1_pubkey* public_key, unsigned ch
     unsigned char output[33 + 4] = {0, };
     
     //  生成压缩格式公钥
-    __bts_gen_public_key_compressed(public_key, output);
+    memcpy(output, public_key->data, sizeof(public_key->data));
     
     //  生成压缩格式公钥的摘要信息
     unsigned char digest20[20] = {0, };
@@ -593,12 +581,14 @@ void __bts_public_key_to_address(const secp256k1_pubkey* public_key, unsigned ch
 /**
  *  从 32 字节原始私钥生成 BTS 地址字符串
  */
-bool __bts_gen_address_from_private_key32(const unsigned char private_key32[],
+bool __bts_gen_address_from_private_key32(const secp256k1_prikey* prikey,
                                           unsigned char address_output[], size_t* address_output_size,
                                           const char* address_prefix, const size_t address_prefix_size)
 {
-    secp256k1_pubkey pubkey = {0, };
-    if (!secp256k1_ec_pubkey_create(get_static_context(), &pubkey, private_key32)){
+    secp256k1_pubkey_compressed pubkey = {0, };
+    
+    int pubkey_len = sizeof(pubkey.data);
+    if (!secp256k1_ec_pubkey_create(get_static_context(), pubkey.data, &pubkey_len, prikey->data, 1)) {
         return false;
     }
     
@@ -648,7 +638,7 @@ bool __bts_gen_private_key_from_wif_privatekey(const unsigned char* wif_privatek
 
 
 bool __bts_gen_public_key_from_b58address(const unsigned char* address, const size_t address_size,
-                                          const size_t address_prefix_size, secp256k1_pubkey* output_public)
+                                          const size_t address_prefix_size, secp256k1_pubkey_compressed* output_public)
 {
     assert(address_prefix_size > 0);
     if (address_size <= address_prefix_size) {
@@ -664,7 +654,7 @@ bool __bts_gen_public_key_from_b58address(const unsigned char* address, const si
     if (!pOutput || output_size <= 4){
         return false;
     }
- 
+    
     //  pOutput长度为37字节，等于（33字节压缩公钥+4字节checksum）
     unsigned char checksum[4] = {0, };
     memcpy(checksum, &pOutput[output_size - 4], 4);
@@ -680,11 +670,8 @@ bool __bts_gen_public_key_from_b58address(const unsigned char* address, const si
     }
     
     //  从33字节压缩过的公钥字符串恢复公钥对象
-    int ret = secp256k1_ec_pubkey_parse(get_static_context(), output_public, pOutput, 33);
-    if (!ret){
-        //  解析失败
-        return false;
-    }
+    assert(sizeof(output_public->data) == 33);
+    memcpy(output_public->data, pOutput, sizeof(output_public->data));
     
     return true;
 }
@@ -700,10 +687,9 @@ bool __bts_privkey_tweak_add(unsigned char seckey[], const unsigned char tweak[]
     return true;
 }
 
-bool __bts_pubkey_tweak_add(secp256k1_pubkey* pubkey, const unsigned char tweak[])
+bool __bts_pubkey_tweak_add(secp256k1_pubkey_compressed* pubkey, const unsigned char tweak[])
 {
-    int ret = secp256k1_ec_pubkey_tweak_add(get_static_context(), pubkey, tweak);
-    
+    int ret = secp256k1_ec_pubkey_tweak_add(get_static_context(), pubkey->data, sizeof(pubkey->data), tweak);
     if (!ret){
         return false;
     }
@@ -817,15 +803,16 @@ unsigned char* __bts_save_wallet(const unsigned char* wallet_jsonbin, const size
     //  2、生成密码的密钥对：私钥和公钥
     unsigned char password_private_key[32] = {0, };
     __bts_gen_private_key_from_seed(password, password_len, password_private_key);
-    secp256k1_pubkey password_pubkey = {0, };
-    if (!secp256k1_ec_pubkey_create(ctx_both, &password_pubkey, password_private_key)){
+    secp256k1_pubkey_compressed password_pubkey = {0, };
+    int password_pubkey_len = sizeof(password_pubkey.data);
+    if (!secp256k1_ec_pubkey_create(ctx_both, password_pubkey.data, &password_pubkey_len, password_private_key, 1)) {
         goto save_failed;
     }
     
     //  3、生成随机加密私钥
     unsigned char onetime_private_key[32] = {0, };
     __bts_gen_private_key_from_seed(entropy, entropy_size, onetime_private_key);
-
+    
     //  4、根据随机私钥和钱包密码公钥进行aes加密，并添加checksum。
     size_t test_output_size = __bts_aes256_encrypt_with_checksum_calc_outputsize(compressed_size);
     size_t final_output_size = 33 + test_output_size;
@@ -840,12 +827,14 @@ unsigned char* __bts_save_wallet(const unsigned char* wallet_jsonbin, const size
     dstBuffer = 0;
     
     //  5、生成 onetime publickey 附加到加密信息前面并返回。
-    secp256k1_pubkey onetime_pubkey = {0, };
-    if (!secp256k1_ec_pubkey_create(ctx_both, &onetime_pubkey, onetime_private_key)){
+    secp256k1_pubkey_compressed onetime_pubkey = {0, };
+    int onetime_pubkey_len = sizeof(onetime_pubkey.data);
+    if (!secp256k1_ec_pubkey_create(ctx_both, onetime_pubkey.data, &onetime_pubkey_len, onetime_private_key, 1)) {
         goto save_failed;
     }
+    
     //  append 33 pubkey
-    __bts_gen_public_key_compressed(&onetime_pubkey, output);
+    memcpy(output, onetime_pubkey.data, sizeof(onetime_pubkey.data));
     
     //  返回
     if (output_size){
@@ -885,19 +874,17 @@ unsigned char* __bts_load_wallet(const unsigned char* wallet_buffer, const size_
     assert(wallet_buffer_size > 0);
     assert(password);
     
-    //  获取上下文
-    secp256k1_context* ctx_both = get_static_context();
-    
     //  1、根据钱包密码创建私钥（32字节）
     unsigned char password_private_key[32] = {0, };
     __bts_gen_private_key_from_seed(password, password_len, password_private_key);
     
     //  2、从bin文件的前33字节压缩过的公钥字符串恢复公钥对象
-    secp256k1_pubkey pubkey = {0, };
-    int ret = secp256k1_ec_pubkey_parse(ctx_both, &pubkey, wallet_buffer, 33);
-    if (!ret){
+    secp256k1_pubkey_compressed pubkey = {0, };
+    assert(sizeof(pubkey.data) == 33);
+    if (wallet_buffer_size < sizeof(pubkey.data)) {
         return 0;
     }
+    memcpy(pubkey.data, wallet_buffer, sizeof(pubkey.data));
     
     //  3、根据私钥和公钥生成 shared_secret，用于 aes 算法解密。
     unsigned char shared_secret_sha512[64] = {0,};
@@ -953,8 +940,8 @@ unsigned char* __bts_load_wallet(const unsigned char* wallet_buffer, const size_
     size_t compressed_size = compressed_buffer_size - LZMA_PROPS_SIZE - sizeof(uint64_t) ;
     
     int result = LzmaUncompress(uncompressed_buffer, &uncompressed_buffer_size,
-                              &compressed_buffer_ptr[LZMA_PROPS_SIZE + sizeof(uint64_t)], &compressed_size,
-                              compressed_buffer_ptr, LZMA_PROPS_SIZE);
+                                &compressed_buffer_ptr[LZMA_PROPS_SIZE + sizeof(uint64_t)], &compressed_size,
+                                compressed_buffer_ptr, LZMA_PROPS_SIZE);
     if (result != SZ_OK){
         //  TODO:uncompress failed...，是否需要统计。
         return 0;
@@ -967,12 +954,30 @@ unsigned char* __bts_load_wallet(const unsigned char* wallet_buffer, const size_
     return uncompressed_buffer;
 }
 
+static int extended_nonce_function( unsigned char *nonce32, const unsigned char *msg32,
+                                   const unsigned char *key32, unsigned int attempt,
+                                   const void *data ) {
+    unsigned int* extra = (unsigned int*) data;
+    (*extra)++;
+    return secp256k1_nonce_function_default( nonce32, msg32, key32, *extra, 0 );
+};
+
+static bool is_canonical( const secp256k1_compact_signature* sign ) {
+    const unsigned char* c = sign->data;
+    return !(c[1] & 0x80)
+    && !(c[1] == 0 && !(c[2] & 0x80))
+    && !(c[33] & 0x80)
+    && !(c[33] == 0 && !(c[34] & 0x80));
+}
+
 /**
  *  (public) 签名
  */
 bool __bts_sign_buffer(const unsigned char* sign_buffer, const size_t sign_buffer_size,
-                       const unsigned char sign_private_key32[], unsigned char output_signature65[])
+                       const unsigned char sign_private_key32[], secp256k1_compact_signature* output_signature)
 {
+    assert(output_signature);
+    
     //  获取上下文
     secp256k1_context* ctx_both = get_static_context();
     
@@ -980,47 +985,36 @@ bool __bts_sign_buffer(const unsigned char* sign_buffer, const size_t sign_buffe
     unsigned char digest32[32] = {0, };
     sha256(sign_buffer, sign_buffer_size, digest32);
     
-    secp256k1_ecdsa_recoverable_signature sig = {0, };
-    secp256k1_ecdsa_signature normal_sig = {0,};
-    unsigned char output_der[128] = {0, };  //  REMARK：这个好像基本都只有70字节，网上有的参数是72。
-    
-    size_t output_der_len;
-    int nonce = 0;
-    int ret;
-    
+    bool require_canonical = true;
+    int recid;
+    unsigned int counter = 0;
     //  循环计算签名，直到找到合适的 canonical 签名。
-    while (1) {
-        //  执行签名核心
-        ret = secp256k1_ecdsa_sign_recoverable(ctx_both, &sig, digest32, sign_private_key32, NULL, &nonce);
-        if (!ret){
+    do
+    {
+        if (!secp256k1_ecdsa_sign_compact(ctx_both, digest32,
+                                          &output_signature->data[1],
+                                          sign_private_key32,
+                                          extended_nonce_function,
+                                          &counter, &recid)) {
             return false;
         }
-        ++nonce;
-        
-        //  转换为普通签名
-        (void)secp256k1_ecdsa_recoverable_signature_convert(ctx_both, &normal_sig, &sig);
-        
-        //  转换为der格式
-        output_der_len = sizeof(output_der);
-        ret = secp256k1_ecdsa_signature_serialize_der(ctx_both, output_der, &output_der_len, &normal_sig);
-        if (!ret){
-            return false;
-        }
-        
-        //  判断是否是 canonical 签名
-        unsigned char lenR = output_der[3];
-        unsigned char lenS = output_der[5 + lenR];
-        if (lenR == 32 && lenS == 32)
-        {
-            int recId = 0;
-            (void)secp256k1_ecdsa_recoverable_signature_serialize_compact(ctx_both, &output_signature65[1], &recId, &sig);
-            recId += 4;     //  compressed
-            recId += 27;    //  compact  //  24 or 27 :( forcing odd-y 2nd key candidate)
-            
-            //  存储在第一个字节。
-            output_signature65[0] = (unsigned char)recId;
-            break;
-        }
+    } while(require_canonical && !is_canonical(output_signature));
+    output_signature->data[0] = 27 + 4 + recid;
+    
+    return true;
+}
+
+/**
+ *  (public) 根据盲化因子和数据生成佩德森承诺。
+ */
+bool __bts_gen_pedersen_commit(commitment_type* commitment, blind_factor_type* blind_factor, const uint64_t value)
+{
+    assert(commitment);
+    assert(blind_factor);
+    assert(value > 0);
+    
+    if (!secp256k1_pedersen_commit(get_static_context(), commitment->data, blind_factor->data, value)) {
+        return false;
     }
     
     return true;

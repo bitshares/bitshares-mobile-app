@@ -16,9 +16,6 @@
 
 #import <SocketRocket/SocketRocket.h>
 
-#import "secp256k1.h"
-#import "secp256k1_recovery.h"
-
 #import "VCTest.h"
 
 #import "VCSearchNetwork.h"

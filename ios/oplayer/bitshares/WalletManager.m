@@ -849,25 +849,25 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
         return nil;
     }
     NSMutableArray* result = [NSMutableArray array];
-    unsigned char private_key32[32] = {0, };
-    unsigned char signature65[65] = {0, };
+    secp256k1_prikey private_key = {0, };
+    secp256k1_compact_signature signature = {0, };
     for (id pubKey in pubKeyList) {
         NSString* private_key_wif = [_private_keys_hash objectForKey:pubKey];
         assert(private_key_wif);
         //  生成原始私钥
         bool ret = __bts_gen_private_key_from_wif_privatekey((const unsigned char*)[private_key_wif UTF8String],
-                                                             (const size_t)private_key_wif.length, private_key32);
+                                                             (const size_t)private_key_wif.length, private_key.data);
         if (!ret){
             //  私钥无效
             return nil;
         }
         //  签名
-        ret = __bts_sign_buffer([sign_buffer bytes], [sign_buffer length], private_key32, signature65);
+        ret = __bts_sign_buffer([sign_buffer bytes], [sign_buffer length], private_key.data, &signature);
         if (!ret){
             //  签名失败
             return nil;
         }
-        [result addObject:[[NSData alloc] initWithBytes:signature65 length:sizeof(signature65)]];
+        [result addObject:[[NSData alloc] initWithBytes:signature.data length:sizeof(signature.data)]];
     }
     return [result copy];
 }
@@ -905,24 +905,24 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
     }
     
     unsigned char memo_private_key32[32] = {0, };
-    secp256k1_pubkey s_pubkey = {0, };
+    secp256k1_pubkey_compressed s_pubkey = {0, };
     const size_t addr_prefix_size = (const size_t)[[ChainObjectManager sharedChainObjectManager].grapheneAddressPrefix length];
-    
+
     //  获取私钥
     if (!__bts_gen_private_key_from_wif_privatekey((const unsigned char*)[prikey UTF8String], (const size_t)prikey.length, memo_private_key32)){
         return nil;
     }
-    
+
     //  获取公钥
     if (!__bts_gen_public_key_from_b58address((const unsigned char*)[pubkey UTF8String], (const size_t)[pubkey length], addr_prefix_size, &s_pubkey)){
         return nil;
     }
-    
+
     //  2、解密
     NSData* raw_message = [OrgUtils hexDecode:message];
     size_t output_size = (size_t)raw_message.length;
     unsigned char output[output_size];
-    
+
     NSString* nonce_str = [NSString stringWithFormat:@"%@", nonce];
     unsigned char* plain_ptr = __bts_aes256_decrypt_with_checksum(memo_private_key32, &s_pubkey,
                                                                   [nonce_str UTF8String], [nonce_str length],
@@ -972,7 +972,7 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
     }
     
     //  2、获取接收方的公钥
-    secp256k1_pubkey pubkey={0,};
+    secp256k1_pubkey_compressed pubkey={0,};
     ret = __bts_gen_public_key_from_b58address((const unsigned char*)[to_public UTF8String], (const size_t)[to_public length],
                                                [[ChainObjectManager sharedChainObjectManager].grapheneAddressPrefix length],
                                                &pubkey);
@@ -980,16 +980,16 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
         //  TODO:fowallet 统计错误
         return nil;
     }
-    
+
     //  3、生成加密用 nonce
     id nonce = [[self class] genUniqueNonceUint64];
-    
+
     NSData* message_data = [memo_string dataUsingEncoding:NSUTF8StringEncoding];
     size_t message_size = (size_t)[message_data length];
     const unsigned char* message = (const unsigned char*)[message_data bytes];
     size_t output_size = __bts_aes256_encrypt_with_checksum_calc_outputsize(message_size);
     unsigned char output[output_size];
-    
+
     //  4、加密
     ret = __bts_aes256_encrypt_with_checksum(memo_private_key32, &pubkey, [nonce UTF8String], [nonce length], message, message_size, output);
     if (!ret){
@@ -1000,7 +1000,7 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
     //  REMARK：加密后的 data 不能 json 序列化的，需要hexencode，否则会crash。
     id memo_data = [[NSData alloc] initWithBytes:output length:output_size];
     assert(memo_data);
-    
+
     //  返回
     return @{@"from":from_public, @"to":to_public, @"nonce":nonce, @"message":memo_data};
 }
