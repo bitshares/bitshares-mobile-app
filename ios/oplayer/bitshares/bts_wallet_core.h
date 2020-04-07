@@ -21,7 +21,35 @@ extern "C"
 #endif  //  __cplusplus
     
 #include <stdio.h>
+
+    /**
+     *  部分数据类型定义
+     */
+    typedef struct {
+        unsigned char data[32];
+    } secp256k1_prikey;
+
+    //  the full non-compressed version of the ECC point
+    typedef struct {
+        unsigned char data[65];
+    } secp256k1_pubkey_point;
+
+    typedef struct {
+        unsigned char data[33];
+    } secp256k1_pubkey_compressed;
+
+    typedef struct {
+        unsigned char data[65];
+    } secp256k1_compact_signature;
+
+    typedef struct {
+        unsigned char data[32];
+    } blind_factor_type;
     
+    typedef struct {
+        unsigned char data[33];
+    } commitment_type;
+
     /**
      *  计算各种 hash 摘要
      */
@@ -66,7 +94,7 @@ extern "C"
      *  (public) 主要方法，用于memo、钱包等解密。
      *  解密失败返回 0，解密成功返回指向数据缓冲区的指针。
      */
-    extern unsigned char* __bts_aes256_decrypt_with_checksum(const unsigned char private_key32[], const secp256k1_pubkey* public_key,
+    extern unsigned char* __bts_aes256_decrypt_with_checksum(const unsigned char private_key32[], const secp256k1_pubkey_compressed* public_key,
                                                              const char* nonce, const size_t nonce_size,
                                                              const unsigned char* message, const size_t message_size,
                                                              unsigned char* output, size_t* final_output_size);
@@ -74,7 +102,7 @@ extern "C"
     /**
      *  Aes核心加密（主要用于加密钱包、memo等）
      */
-    extern bool __bts_aes256_encrypt_with_checksum(const unsigned char private_key32[], const secp256k1_pubkey* public_key, const char* nonce, const size_t nonce_size, const unsigned char* message, const size_t message_size, unsigned char* output);
+    extern bool __bts_aes256_encrypt_with_checksum(const unsigned char private_key32[], const secp256k1_pubkey_compressed* public_key, const char* nonce, const size_t nonce_size, const unsigned char* message, const size_t message_size, unsigned char* output);
     
     /**
      *  从seed种子初始化32字节私钥数组
@@ -82,26 +110,14 @@ extern "C"
     extern void __bts_gen_private_key_from_seed(const unsigned char* seed, const size_t seed_size, unsigned char private_key32[]);
     
     /**
-     *  从公钥结构获取压缩公钥 和 非压缩公钥
-     */
-    extern void __bts_gen_public_key_compressed(const secp256k1_pubkey* public_key, unsigned char output33[]);
-    extern void __bts_gen_public_key_uncompressed(const secp256k1_pubkey* public_key, unsigned char output65[]);
-    
-    /**
      *  格式化私钥为WIF格式
      */
     extern void __bts_private_key_to_wif(const unsigned char private_key32[], unsigned char wif_output51[], size_t* wif_output_size);
     
     /**
-     *  从公钥结构生成 BTS 地址字符串
-     */
-    extern void __bts_public_key_to_address(const secp256k1_pubkey* public_key, unsigned char address_output[], size_t* address_output_size,
-                                            const char* address_prefix, const size_t address_prefix_size);
-    
-    /**
      *  从 32 字节原始私钥生成 BTS 地址字符串
      */
-    extern bool __bts_gen_address_from_private_key32(const unsigned char private_key32[],
+    extern bool __bts_gen_address_from_private_key32(const secp256k1_prikey* prikey,
                                                      unsigned char address_output[], size_t* address_output_size,
                                                      const char* address_prefix, const size_t address_prefix_size);
     
@@ -114,14 +130,14 @@ extern "C"
      *  从BTS地址初始化公钥结构体
      */
     extern bool __bts_gen_public_key_from_b58address(const unsigned char* address, const size_t address_size,
-                                                     const size_t address_prefix_size, secp256k1_pubkey* output_public);
+                                                     const size_t address_prefix_size, secp256k1_pubkey_compressed* output_public);
     
     
     /**
      *  加法调整公私钥
      */
     extern bool __bts_privkey_tweak_add(unsigned char seckey[], const unsigned char tweak[]);
-    extern bool __bts_pubkey_tweak_add(secp256k1_pubkey* pubkey, const unsigned char tweak[]);
+    extern bool __bts_pubkey_tweak_add(secp256k1_pubkey_compressed* pubkey, const unsigned char tweak[]);
     
     /**
      *  解码商人协议发票数据。
@@ -163,8 +179,13 @@ extern "C"
      *  (public) 签名
      */
     extern bool __bts_sign_buffer(const unsigned char* sign_buffer, const size_t sign_buffer_size,
-                                  const unsigned char sign_private_key32[], unsigned char output_signature65[]);
-    
+                                  const unsigned char sign_private_key32[], secp256k1_compact_signature* output_signature);
+
+    /**
+     *  (public) 根据盲化因子和数据生成佩德森承诺。
+     */
+    extern bool __bts_gen_pedersen_commit(commitment_type* commitment, blind_factor_type* blind_factor, const uint64_t value);
+
 #ifdef __cplusplus
 }
 #endif  //  __cplusplus

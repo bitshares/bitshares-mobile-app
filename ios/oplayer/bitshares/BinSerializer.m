@@ -152,7 +152,7 @@ static char _varint_tmpbuf[10];
  */
 - (BinSerializer*)write_public_key:(NSString*)public_key_address
 {
-    secp256k1_pubkey pubkey = {0, };
+    secp256k1_pubkey_compressed pubkey = {0, };
     bool ret = __bts_gen_public_key_from_b58address((const unsigned char*)[public_key_address UTF8String], (const size_t)[public_key_address length],
                                                     [[ChainObjectManager sharedChainObjectManager].grapheneAddressPrefix length], &pubkey);
     if (!ret){
@@ -161,9 +161,7 @@ static char _varint_tmpbuf[10];
     }
     
     //  写入33字节压缩公钥
-    unsigned char output[33] = {0, };
-    __bts_gen_public_key_compressed(&pubkey, output);
-    [_data appendBytes:output length:sizeof(output)];
+    [_data appendBytes:pubkey.data length:sizeof(pubkey.data)];
     
     return self;
 }
