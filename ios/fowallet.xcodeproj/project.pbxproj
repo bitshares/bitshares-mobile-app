@@ -156,6 +156,12 @@
 		3F6471C423A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6471C223A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m */; };
 		3F6471C523A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6471C223A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m */; };
 		3F6471C623A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6471C223A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m */; };
+		3F6532522442A6CE001A0260 /* GraphenePrivateKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F65324F2442A6CE001A0260 /* GraphenePrivateKey.m */; };
+		3F6532532442A6CE001A0260 /* GraphenePrivateKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F65324F2442A6CE001A0260 /* GraphenePrivateKey.m */; };
+		3F6532542442A6CE001A0260 /* GraphenePrivateKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F65324F2442A6CE001A0260 /* GraphenePrivateKey.m */; };
+		3F6532552442A6CE001A0260 /* GraphenePublicKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6532502442A6CE001A0260 /* GraphenePublicKey.m */; };
+		3F6532562442A6CE001A0260 /* GraphenePublicKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6532502442A6CE001A0260 /* GraphenePublicKey.m */; };
+		3F6532572442A6CE001A0260 /* GraphenePublicKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6532502442A6CE001A0260 /* GraphenePublicKey.m */; };
 		3F6541982418DC0700167794 /* VCNewAccountPassword.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6541962418DC0700167794 /* VCNewAccountPassword.m */; };
 		3F6541992418DC0700167794 /* VCNewAccountPassword.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6541962418DC0700167794 /* VCNewAccountPassword.m */; };
 		3F65419A2418DC0700167794 /* VCNewAccountPassword.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6541962418DC0700167794 /* VCNewAccountPassword.m */; };
@@ -743,6 +749,15 @@
 		3F7ED8F42277F24700082680 /* ViewPermissionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F7ED8F22277F24700082680 /* ViewPermissionCell.m */; };
 		3F7ED8F72278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F7ED8F62278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.m */; };
 		3F7ED8F82278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F7ED8F62278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.m */; };
+		3F83349224453C9B0069D366 /* VCTransferToBlind.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F83349024453C9B0069D366 /* VCTransferToBlind.m */; };
+		3F83349324453C9B0069D366 /* VCTransferToBlind.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F83349024453C9B0069D366 /* VCTransferToBlind.m */; };
+		3F83349424453C9B0069D366 /* VCTransferToBlind.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F83349024453C9B0069D366 /* VCTransferToBlind.m */; };
+		3F833497244548D80069D366 /* ViewBlindOutputInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F833496244548D80069D366 /* ViewBlindOutputInfoCell.m */; };
+		3F833498244548D80069D366 /* ViewBlindOutputInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F833496244548D80069D366 /* ViewBlindOutputInfoCell.m */; };
+		3F833499244548D80069D366 /* ViewBlindOutputInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F833496244548D80069D366 /* ViewBlindOutputInfoCell.m */; };
+		3F83349C24454CE60069D366 /* VCBlindOutputAddOne.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F83349B24454CE60069D366 /* VCBlindOutputAddOne.m */; };
+		3F83349D24454CE60069D366 /* VCBlindOutputAddOne.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F83349B24454CE60069D366 /* VCBlindOutputAddOne.m */; };
+		3F83349E24454CE60069D366 /* VCBlindOutputAddOne.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F83349B24454CE60069D366 /* VCBlindOutputAddOne.m */; };
 		3F86510322EEA228000D496A /* VCLoginBrainKeyMode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F86510222EEA228000D496A /* VCLoginBrainKeyMode.m */; };
 		3F86510422EEA228000D496A /* VCLoginBrainKeyMode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F86510222EEA228000D496A /* VCLoginBrainKeyMode.m */; };
 		3F87B76B242701B000A0DF3A /* VCAssetOpGlobalSettle.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F87B76A242701B000A0DF3A /* VCAssetOpGlobalSettle.m */; };
@@ -2124,6 +2139,10 @@
 		3F4F293C23727A83007674E5 /* VCOtcAddAlipay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcAddAlipay.h; path = Controller/VCOtcAddAlipay.h; sourceTree = "<group>"; };
 		3F6471C223A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcMcMerchantApply.m; path = Controller/VCOtcMcMerchantApply.m; sourceTree = "<group>"; };
 		3F6471C323A5DC8F005F8AB8 /* VCOtcMcMerchantApply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcMcMerchantApply.h; path = Controller/VCOtcMcMerchantApply.h; sourceTree = "<group>"; };
+		3F65324E2442A6CE001A0260 /* GraphenePrivateKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GraphenePrivateKey.h; path = bitshares/GraphenePrivateKey.h; sourceTree = "<group>"; };
+		3F65324F2442A6CE001A0260 /* GraphenePrivateKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GraphenePrivateKey.m; path = bitshares/GraphenePrivateKey.m; sourceTree = "<group>"; };
+		3F6532502442A6CE001A0260 /* GraphenePublicKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GraphenePublicKey.m; path = bitshares/GraphenePublicKey.m; sourceTree = "<group>"; };
+		3F6532512442A6CE001A0260 /* GraphenePublicKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GraphenePublicKey.h; path = bitshares/GraphenePublicKey.h; sourceTree = "<group>"; };
 		3F6541962418DC0700167794 /* VCNewAccountPassword.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCNewAccountPassword.m; path = Controller/VCNewAccountPassword.m; sourceTree = "<group>"; };
 		3F6541972418DC0700167794 /* VCNewAccountPassword.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCNewAccountPassword.h; path = Controller/VCNewAccountPassword.h; sourceTree = "<group>"; };
 		3F65419B2418E2EE00167794 /* ViewNewPasswordCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewNewPasswordCell.h; path = View/ViewNewPasswordCell.h; sourceTree = "<group>"; };
@@ -2161,6 +2180,12 @@
 		3F7ED8F22277F24700082680 /* ViewPermissionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewPermissionCell.m; sourceTree = "<group>"; };
 		3F7ED8F52278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewProposalOpInfoCell_AccountUpdate.h; path = View/ViewProposalOpInfoCell_AccountUpdate.h; sourceTree = "<group>"; };
 		3F7ED8F62278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewProposalOpInfoCell_AccountUpdate.m; path = View/ViewProposalOpInfoCell_AccountUpdate.m; sourceTree = "<group>"; };
+		3F83349024453C9B0069D366 /* VCTransferToBlind.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCTransferToBlind.m; path = Controller/VCTransferToBlind.m; sourceTree = "<group>"; };
+		3F83349124453C9B0069D366 /* VCTransferToBlind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCTransferToBlind.h; path = Controller/VCTransferToBlind.h; sourceTree = "<group>"; };
+		3F833495244548D80069D366 /* ViewBlindOutputInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewBlindOutputInfoCell.h; path = View/ViewBlindOutputInfoCell.h; sourceTree = "<group>"; };
+		3F833496244548D80069D366 /* ViewBlindOutputInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewBlindOutputInfoCell.m; path = View/ViewBlindOutputInfoCell.m; sourceTree = "<group>"; };
+		3F83349A24454CE60069D366 /* VCBlindOutputAddOne.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCBlindOutputAddOne.h; path = Controller/VCBlindOutputAddOne.h; sourceTree = "<group>"; };
+		3F83349B24454CE60069D366 /* VCBlindOutputAddOne.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCBlindOutputAddOne.m; path = Controller/VCBlindOutputAddOne.m; sourceTree = "<group>"; };
 		3F86510122EEA228000D496A /* VCLoginBrainKeyMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCLoginBrainKeyMode.h; path = Controller/VCLoginBrainKeyMode.h; sourceTree = "<group>"; };
 		3F86510222EEA228000D496A /* VCLoginBrainKeyMode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCLoginBrainKeyMode.m; path = Controller/VCLoginBrainKeyMode.m; sourceTree = "<group>"; };
 		3F87B769242701AF00A0DF3A /* VCAssetOpGlobalSettle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAssetOpGlobalSettle.h; path = Controller/VCAssetOpGlobalSettle.h; sourceTree = "<group>"; };
@@ -3164,6 +3189,10 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3F83349A24454CE60069D366 /* VCBlindOutputAddOne.h */,
+				3F83349B24454CE60069D366 /* VCBlindOutputAddOne.m */,
+				3F83349124453C9B0069D366 /* VCTransferToBlind.h */,
+				3F83349024453C9B0069D366 /* VCTransferToBlind.m */,
 				3F40810624275EB100D79A21 /* VCRegisterEntry.h */,
 				3F40810724275EB100D79A21 /* VCRegisterEntry.m */,
 				3F6541A1241918F400167794 /* VCNewAccountPasswordConfirm.h */,
@@ -3318,6 +3347,8 @@
 		18FF069017E00C5C0088405E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				3F833495244548D80069D366 /* ViewBlindOutputInfoCell.h */,
+				3F833496244548D80069D366 /* ViewBlindOutputInfoCell.m */,
 				3F65419B2418E2EE00167794 /* ViewNewPasswordCell.h */,
 				3F65419C2418E2EE00167794 /* ViewNewPasswordCell.m */,
 				3F2D83BA24177D1800024FFA /* ViewTradePercentButtonCell.h */,
@@ -4264,6 +4295,10 @@
 		B7BDA95320B114CD00738F12 /* Bitshares */ = {
 			isa = PBXGroup;
 			children = (
+				3F65324E2442A6CE001A0260 /* GraphenePrivateKey.h */,
+				3F65324F2442A6CE001A0260 /* GraphenePrivateKey.m */,
+				3F6532512442A6CE001A0260 /* GraphenePublicKey.h */,
+				3F6532502442A6CE001A0260 /* GraphenePublicKey.m */,
 				B77EBBF0213D1868009AC776 /* GrapheneSerializer.h */,
 				B77EBBF1213D1869009AC776 /* GrapheneSerializer.m */,
 				B7B8811620C51C7400DBCD45 /* BinSerializer.h */,
@@ -5754,6 +5789,7 @@
 				3F67680F230E9EC100E98C14 /* 7zBuf2.c in Sources */,
 				3F676810230E9EC100E98C14 /* VCTradeHor.m in Sources */,
 				3F676811230E9EC100E98C14 /* WjCryptLib_Sha512.c in Sources */,
+				3F83349424453C9B0069D366 /* VCTransferToBlind.m in Sources */,
 				3F676812230E9EC100E98C14 /* WjCryptLib_AesCbc.c in Sources */,
 				3FADCF9C23D6FA3500043305 /* VcUtils.m in Sources */,
 				3F676813230E9EC100E98C14 /* Bcj2Enc.c in Sources */,
@@ -5942,6 +5978,7 @@
 				3FB83CE123C19A2200CD3EF1 /* VCAssetManager.m in Sources */,
 				3F6768A8230E9EC100E98C14 /* AesOpt.c in Sources */,
 				3F6768A9230E9EC100E98C14 /* LangManager.m in Sources */,
+				3F6532542442A6CE001A0260 /* GraphenePrivateKey.m in Sources */,
 				3F6768AA230E9EC100E98C14 /* zip.c in Sources */,
 				3F6768AB230E9EC100E98C14 /* ViewSimulateActionSheet.m in Sources */,
 				3F6768AC230E9EC100E98C14 /* VCDebt.m in Sources */,
@@ -5997,6 +6034,7 @@
 				3F6768D4230E9EC100E98C14 /* Xz.c in Sources */,
 				3F6768D5230E9EC100E98C14 /* GCDWebServer.m in Sources */,
 				3F6768D6230E9EC100E98C14 /* SCLTextView.m in Sources */,
+				3F833499244548D80069D366 /* ViewBlindOutputInfoCell.m in Sources */,
 				3F009A1F23A212DF00A77E4A /* ViewUtils.m in Sources */,
 				3F6768D7230E9EC100E98C14 /* SRLog.m in Sources */,
 				3F6768D8230E9EC100E98C14 /* MyTextView.m in Sources */,
@@ -6069,6 +6107,7 @@
 				3F67690C230E9EC100E98C14 /* ViewTextFieldOwner.m in Sources */,
 				3F67690D230E9EC100E98C14 /* Sha256.c in Sources */,
 				3F67690E230E9EC100E98C14 /* AFSecurityPolicy.m in Sources */,
+				3F6532572442A6CE001A0260 /* GraphenePublicKey.m in Sources */,
 				3F67690F230E9EC100E98C14 /* MKlineIndexMA.m in Sources */,
 				3F676910230E9EC100E98C14 /* SRRunLoopThread.m in Sources */,
 				3F676911230E9EC100E98C14 /* ViewMovableTextView.m in Sources */,
@@ -6076,6 +6115,7 @@
 				3F676913230E9EC100E98C14 /* LzmaEnc.c in Sources */,
 				3F676914230E9EC100E98C14 /* 7zCrcOpt.c in Sources */,
 				3F676915230E9EC100E98C14 /* UITableViewCellBase.m in Sources */,
+				3F83349E24454CE60069D366 /* VCBlindOutputAddOne.m in Sources */,
 				3F676916230E9EC100E98C14 /* IntervalManager.m in Sources */,
 				3F676917230E9EC100E98C14 /* AppCacheManager.m in Sources */,
 				3F676918230E9EC100E98C14 /* ThemeManager.m in Sources */,
@@ -6107,6 +6147,7 @@
 				3FB8F8A721CE66C200DA88E2 /* 7zBuf2.c in Sources */,
 				3FB8F8A821CE66C200DA88E2 /* VCTradeHor.m in Sources */,
 				3FB8F8A921CE66C200DA88E2 /* WjCryptLib_Sha512.c in Sources */,
+				3F83349324453C9B0069D366 /* VCTransferToBlind.m in Sources */,
 				3FB8F8AA21CE66C200DA88E2 /* WjCryptLib_AesCbc.c in Sources */,
 				3FADCF9B23D6FA3500043305 /* VcUtils.m in Sources */,
 				3FB8F8AB21CE66C200DA88E2 /* Bcj2Enc.c in Sources */,
@@ -6295,6 +6336,7 @@
 				3FB83CE023C19A2200CD3EF1 /* VCAssetManager.m in Sources */,
 				3FB8F93421CE66C200DA88E2 /* AesOpt.c in Sources */,
 				3FF3550721FECDF4008EF213 /* LangManager.m in Sources */,
+				3F6532532442A6CE001A0260 /* GraphenePrivateKey.m in Sources */,
 				3FB8F93521CE66C200DA88E2 /* zip.c in Sources */,
 				3FB8F93621CE66C200DA88E2 /* ViewSimulateActionSheet.m in Sources */,
 				3FB8F93721CE66C200DA88E2 /* VCDebt.m in Sources */,
@@ -6350,6 +6392,7 @@
 				3FB8F95921CE66C200DA88E2 /* Xz.c in Sources */,
 				3FB8F95A21CE66C200DA88E2 /* GCDWebServer.m in Sources */,
 				3FB8F95B21CE66C200DA88E2 /* SCLTextView.m in Sources */,
+				3F833498244548D80069D366 /* ViewBlindOutputInfoCell.m in Sources */,
 				3F009A1E23A212DF00A77E4A /* ViewUtils.m in Sources */,
 				3FB8F95C21CE66C200DA88E2 /* SRLog.m in Sources */,
 				3FE4E94A22F698DC0056A44F /* MyTextView.m in Sources */,
@@ -6422,6 +6465,7 @@
 				3FB8F98921CE66C200DA88E2 /* ViewTextFieldOwner.m in Sources */,
 				3FB8F98A21CE66C200DA88E2 /* Sha256.c in Sources */,
 				3FB8F98B21CE66C200DA88E2 /* AFSecurityPolicy.m in Sources */,
+				3F6532562442A6CE001A0260 /* GraphenePublicKey.m in Sources */,
 				3FB8F98C21CE66C200DA88E2 /* MKlineIndexMA.m in Sources */,
 				3FB8F98D21CE66C200DA88E2 /* SRRunLoopThread.m in Sources */,
 				3FB8F98E21CE66C200DA88E2 /* ViewMovableTextView.m in Sources */,
@@ -6429,6 +6473,7 @@
 				3FB8F99021CE66C200DA88E2 /* LzmaEnc.c in Sources */,
 				3FB8F99121CE66C200DA88E2 /* 7zCrcOpt.c in Sources */,
 				3FB8F99221CE66C200DA88E2 /* UITableViewCellBase.m in Sources */,
+				3F83349D24454CE60069D366 /* VCBlindOutputAddOne.m in Sources */,
 				3FB8F99321CE66C200DA88E2 /* IntervalManager.m in Sources */,
 				3FB8F99421CE66C200DA88E2 /* AppCacheManager.m in Sources */,
 				3FB8F99521CE66C200DA88E2 /* ThemeManager.m in Sources */,
@@ -6460,6 +6505,7 @@
 				B7BDAA7D20B3C77400738F12 /* 7zBuf2.c in Sources */,
 				B72A84AA20D4D4CE00D92A25 /* VCTradeHor.m in Sources */,
 				B7BDA9AA20B3A3D100738F12 /* WjCryptLib_Sha512.c in Sources */,
+				3F83349224453C9B0069D366 /* VCTransferToBlind.m in Sources */,
 				B7BDA9A320B3A3D100738F12 /* WjCryptLib_AesCbc.c in Sources */,
 				3FADCF9A23D6FA3500043305 /* VcUtils.m in Sources */,
 				B7BDAA8720B3C77500738F12 /* Bcj2Enc.c in Sources */,
@@ -6648,6 +6694,7 @@
 				3FB83CDF23C19A2200CD3EF1 /* VCAssetManager.m in Sources */,
 				3FF3550621FECDF4008EF213 /* LangManager.m in Sources */,
 				B7A13B7A1CA1443A0096A6A4 /* zip.c in Sources */,
+				3F6532522442A6CE001A0260 /* GraphenePrivateKey.m in Sources */,
 				B7E690EF1C16BD3600EF32EF /* ViewSimulateActionSheet.m in Sources */,
 				B741A75D20DB807D000FBC00 /* VCDebt.m in Sources */,
 				3F38473A2227752300B55914 /* MKlineIndexBoll.m in Sources */,
@@ -6703,6 +6750,7 @@
 				B72A848020CCD18B00D92A25 /* GCDWebServer.m in Sources */,
 				B782F0C51D6E94C600F61571 /* SCLTextView.m in Sources */,
 				B714094520A31CC300003311 /* SRLog.m in Sources */,
+				3F833497244548D80069D366 /* ViewBlindOutputInfoCell.m in Sources */,
 				3F009A1D23A212DF00A77E4A /* ViewUtils.m in Sources */,
 				3FE4E94922F698DC0056A44F /* MyTextView.m in Sources */,
 				B72A848720CCD18B00D92A25 /* GCDWebServerMultiPartFormRequest.m in Sources */,
@@ -6775,6 +6823,7 @@
 				B78639E61C1878A600B55506 /* ViewTextFieldOwner.m in Sources */,
 				B7BDAA9B20B3C77500738F12 /* Sha256.c in Sources */,
 				F531ECBC1D670895009328A4 /* AFSecurityPolicy.m in Sources */,
+				3F6532552442A6CE001A0260 /* GraphenePublicKey.m in Sources */,
 				B73785162104812C001EEA8C /* MKlineIndexMA.m in Sources */,
 				B714093F20A31CC300003311 /* SRRunLoopThread.m in Sources */,
 				B73BA8BE1E2FACEE00145F49 /* ViewMovableTextView.m in Sources */,
@@ -6782,6 +6831,7 @@
 				B7BDAA9520B3C77500738F12 /* LzmaEnc.c in Sources */,
 				B7BDAA7F20B3C77400738F12 /* 7zCrcOpt.c in Sources */,
 				B75B39461C5B5E70004C37E1 /* UITableViewCellBase.m in Sources */,
+				3F83349C24454CE60069D366 /* VCBlindOutputAddOne.m in Sources */,
 				B75EF4D31D599179003DE28A /* IntervalManager.m in Sources */,
 				ED1AB88C18781B3B007DC42C /* AppCacheManager.m in Sources */,
 				B7E7564C1C5CDAAE00DCCB6F /* ThemeManager.m in Sources */,
