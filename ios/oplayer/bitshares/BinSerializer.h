@@ -7,16 +7,23 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "bts_chain_config.h"
 
 @interface BinSerializer : NSObject
 
-- (id)init;
+- (id)initForReader:(NSData*)data;
+- (id)initForWriter;
 
 - (uint8_t)read_u8;
 - (uint16_t)read_u16;
 - (uint32_t)read_u32;
 - (uint64_t)read_u64;
+- (int64_t)read_s64;
 - (uint32_t)read_varint32;
+- (NSString*)read_object_id:(EBitsharesObjectType)object_type;
+- (NSData*)read_bytes:(uint32_t)size;
+- (NSString*)read_string;
+- (NSString*)read_public_key;
 
 - (BinSerializer*)write_u8:(uint8_t)value;
 - (BinSerializer*)write_u16:(uint16_t)value;
@@ -27,7 +34,7 @@
 /**
  *  写入对象ID类型（格式：x.x.x）
  */
-- (BinSerializer*)write_object_id:(NSString*)x_x_x;
+- (BinSerializer*)write_object_id:(NSString*)x_x_x object_type:(EBitsharesObjectType)object_type;
 /**
  *  写入公钥对象。REMARK：BTS开头的地址。
  */
@@ -44,7 +51,6 @@
  *  写入2进制流
  */
 - (BinSerializer*)write_bytes:(NSData*)data with_size:(BOOL)with_size;
-- (BinSerializer*)write_bytes:(unsigned char*)bytes size:(size_t)size with_size:(BOOL)with_size;
 
 - (NSData*)getData;
 

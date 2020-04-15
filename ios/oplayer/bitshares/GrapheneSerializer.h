@@ -10,8 +10,20 @@
 
 @interface T_Base : NSObject
 
+/*
+ *  (public) 序列化为二进制流。
+ */
 + (NSData*)encode_to_bytes:(id)opdata;
+
+/*
+ *  (public) 序列化为 json 对象。这里新返回的 json 对象和原参数的 opdata 差别不大，主要是一些 NSData 等二进制流会转换为 16 进制编码。
+ */
 + (id)encode_to_object:(id)opdata;
+
+/*
+ *  (public) 反序列化，解析二进制流为 opdata 对象。
+ */
++ (id)parse:(NSData*)data;
 
 /**
  *  (public) 注册可序列化的类型。REMARK：所有复合类型都必须注册，基本类型不用注册。
@@ -227,6 +239,30 @@
 @end
 
 @interface T_asset_update_issuer : T_Base
+@end
+
+/**
+ *  OP -隐私转账相关
+ */
+@interface T_stealth_confirmation_memo_data : T_Base
+@end
+
+@interface T_stealth_confirmation : T_Base
+@end
+
+@interface T_blind_input : T_Base
+@end
+
+@interface T_blind_output : T_Base
+@end
+
+@interface T_transfer_to_blind : T_Base
+@end
+
+@interface T_transfer_from_blind : T_Base
+@end
+
+@interface T_blind_transfer : T_Base
 @end
 
 /**

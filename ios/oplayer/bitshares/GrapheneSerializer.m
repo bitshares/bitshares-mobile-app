@@ -26,16 +26,36 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 
 @implementation T_Base
 
+/*
+ *  (public) 序列化为二进制流。
+ */
 + (NSData*)encode_to_bytes:(id)opdata
 {
-    BinSerializer* io = [[BinSerializer alloc] init];
+    BinSerializer* io = [[BinSerializer alloc] initForWriter];
     [self encode_to_bytes_with_type:self opdata:opdata io:io];
     return [io getData];
 }
 
+/*
+ *  (public) 序列化为 json 对象。这里新返回的 json 对象和原参数的 opdata 差别不大，主要是一些 NSData 等二进制流会转换为 16 进制编码。
+ */
 + (id)encode_to_object:(id)opdata
 {
     return [self encode_to_object_with_type:self opdata:opdata];
+}
+
+/*
+ *  (public) 反序列化，解析二进制流为 opdata 对象。
+ */
++ (id)parse:(NSData*)data
+{
+    assert(data);
+    return [self decode_to_opdata_with_type:self io:[[BinSerializer alloc] initForReader:data]];
+}
+
++ (id)decode_to_opdata_with_type:(id)optype io:(BinSerializer*)io
+{
+    return [optype performSelector:@selector(from_byte_buffer:) withObject:io];
 }
 
 + (void)encode_to_bytes_with_type:(id)optype opdata:(id)opdata io:(BinSerializer*)io
@@ -110,6 +130,14 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [T_asset_claim_pool performSelector:@selector(register_subfields)];
     [T_asset_update_issuer performSelector:@selector(register_subfields)];
     
+    [T_stealth_confirmation_memo_data performSelector:@selector(register_subfields)];
+    [T_stealth_confirmation performSelector:@selector(register_subfields)];
+    [T_blind_input performSelector:@selector(register_subfields)];
+    [T_blind_output performSelector:@selector(register_subfields)];
+    [T_transfer_to_blind performSelector:@selector(register_subfields)];
+    [T_transfer_from_blind performSelector:@selector(register_subfields)];
+    [T_blind_transfer performSelector:@selector(register_subfields)];
+    
     [T_htlc_create performSelector:@selector(register_subfields)];
     [T_htlc_redeem performSelector:@selector(register_subfields)];
     [T_htlc_extend performSelector:@selector(register_subfields)];
@@ -133,6 +161,19 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
         id value = [opdata objectForKey:field_name];
         [self encode_to_bytes_with_type:field_type opdata:value io:io];
     }
+}
+
++ (id)from_byte_buffer:(BinSerializer*)io
+{
+    id fields = [self get_fields:NO];
+    assert(fields && [fields count] > 0);
+    NSMutableDictionary* result = [NSMutableDictionary dictionary];
+    for (id field in fields) {
+        id field_name = [field firstObject];
+        id field_type = [field lastObject];
+        [result setObject:[self decode_to_opdata_with_type:field_type io:io] forKey:field_name];
+    }
+    return result;
 }
 
 + (id)to_object:(id)opdata
@@ -218,6 +259,11 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [io write_u8:(uint8_t)[opdata unsignedIntValue]];
 }
 
++ (id)from_byte_buffer:(BinSerializer*)io
+{
+    return @([io read_u8]);
+}
+
 @end
 
 @implementation T_uint16
@@ -225,6 +271,11 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)to_byte_buffer:(BinSerializer*)io opdata:(id)opdata
 {
     [io write_u16:(uint16_t)[opdata intValue]];
+}
+
++ (id)from_byte_buffer:(BinSerializer*)io
+{
+    return @([io read_u16]);
 }
 
 @end
@@ -236,6 +287,11 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [io write_u32:(uint32_t)[opdata unsignedLongValue]];
 }
 
++ (id)from_byte_buffer:(BinSerializer*)io
+{
+    return @([io read_u32]);
+}
+
 @end
 
 @implementation T_uint64
@@ -243,6 +299,11 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)to_byte_buffer:(BinSerializer*)io opdata:(id)opdata
 {
     [io write_u64:(uint64_t)[opdata unsignedLongLongValue]];
+}
+
++ (id)from_byte_buffer:(BinSerializer*)io
+{
+    return @([io read_u64]);
 }
 
 @end
@@ -254,6 +315,11 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [io write_s64:(int64_t)[opdata longLongValue]];
 }
 
++ (id)from_byte_buffer:(BinSerializer*)io
+{
+    return @([io read_s64]);
+}
+
 @end
 
 @implementation T_varint32
@@ -261,6 +327,11 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)to_byte_buffer:(BinSerializer*)io opdata:(id)opdata
 {
     [io write_varint32:(uint64_t)[opdata unsignedLongLongValue]];
+}
+
++ (id)from_byte_buffer:(BinSerializer*)io
+{
+    return @([io read_varint32]);
 }
 
 @end
@@ -271,6 +342,11 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 {
     assert([opdata isKindOfClass:[NSString class]]);
     [io write_string:opdata];
+}
+
++ (id)from_byte_buffer:(BinSerializer*)io
+{
+    return [io read_string];
 }
 
 @end
@@ -286,6 +362,11 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     }
 }
 
++ (id)from_byte_buffer:(BinSerializer*)io
+{
+    return @([io read_u8] != 0);
+}
+
 @end
 
 @implementation T_void
@@ -293,6 +374,12 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)to_byte_buffer:(BinSerializer*)io opdata:(id)opdata
 {
     NSAssert(false, @"(void) undefined type");
+}
+
++ (id)from_byte_buffer:(BinSerializer*)io
+{
+    NSAssert(false, @"(void) undefined type");
+    return nil;
 }
 
 @end
@@ -306,6 +393,13 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 {
     //  TODO:fowallet not supported
     NSAssert(false, @"not supported");
+}
+
++ (id)from_byte_buffer:(BinSerializer*)io
+{
+    //  TODO:fowallet not supported
+    NSAssert(false, @"not supported");
+    return nil;
 }
 
 @end
@@ -326,6 +420,14 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [io write_u32:(uint32_t)((vote_idnum << 8) | vote_type)];
 }
 
++ (id)from_byte_buffer:(BinSerializer*)io
+{
+    uint32_t value = [io read_u32];
+    uint32_t vote_type = value & 0xff;
+    uint32_t vote_idnum = value >> 8;
+    return [NSString stringWithFormat:@"%@:%@", @(vote_type), @(vote_idnum)];
+}
+
 + (NSInteger)sort_by:(id)a b:(id)b
 {
     id ary1 = [a componentsSeparatedByString:@":"];
@@ -341,6 +443,11 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 {
     assert([opdata isKindOfClass:[NSString class]]);
     [io write_public_key:opdata];
+}
+
++ (id)from_byte_buffer:(BinSerializer*)io
+{
+    return [io read_public_key];
 }
 
 + (NSInteger)sort_by:(id)a b:(id)b
@@ -362,6 +469,13 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     NSAssert(false, @"not supported");
 }
 
++ (id)from_byte_buffer:(BinSerializer*)io
+{
+    //  TODO:fowallet not supported
+    NSAssert(false, @"not supported");
+    return nil;
+}
+
 @end
 
 @implementation T_time_point_sec
@@ -369,6 +483,11 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)to_byte_buffer:(BinSerializer*)io opdata:(id)opdata
 {
     [super to_byte_buffer:io opdata:opdata];
+}
+
++ (id)from_byte_buffer:(BinSerializer*)io
+{
+    return [super from_byte_buffer:io];
 }
 
 + (id)to_object:(id)opdata
@@ -381,22 +500,33 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 
 #pragma mark- 以下为动态扩展类型。
 
+@interface Tm_protocol_id_type()
+{
+    EBitsharesObjectType _object_type;
+}
+@end
+
 @implementation Tm_protocol_id_type
 
-- (id)initWithName:(NSString*)name
+- (id)initWithObjectType:(EBitsharesObjectType)object_type
 {
     self = [super init];
     if (self)
     {
-        //  TODO:save name
+        assert(object_type >= ebot_null && object_type < ebot_max);
+        _object_type = object_type;
     }
     return self;
 }
 
 - (void)to_byte_buffer:(BinSerializer*)io opdata:(id)opdata
 {
-    //  TODO:check name 和 object_id 类型是否匹配 待处理
-    [io write_object_id:opdata];
+    [io write_object_id:opdata object_type:_object_type];
+}
+
+- (id)from_byte_buffer:(BinSerializer*)io
+{
+    return [io read_object_id:_object_type];
 }
 
 - (id)to_object:(id)opdata
@@ -461,6 +591,25 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     }
 }
 
+- (id)from_byte_buffer:(BinSerializer*)io
+{
+    uint32_t len = [io read_varint32];
+    NSAssert(len <= [_fields_def count], @"Too many fields");
+    if (len == 0) {
+        return @{};
+    } else {
+        NSMutableDictionary* result = [NSMutableDictionary dictionary];
+        for (uint32_t i = 0; i < len; ++i) {
+            uint32_t idx = [io read_varint32];
+            NSAssert(idx < [_fields_def count], @"Index out of range");
+            id fields = [_fields_def objectAtIndex:idx];
+            [result setObject:[[self class] decode_to_opdata_with_type:[fields objectForKey:@"type"] io:io]
+                       forKey:[fields objectForKey:@"name"]];
+        }
+        return result;
+    }
+}
+
 - (id)to_object:(id)opdata
 {
     NSMutableDictionary* result = [NSMutableDictionary dictionary];
@@ -506,6 +655,20 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     }
 }
 
+- (id)from_byte_buffer:(BinSerializer*)io
+{
+    uint32_t len = [io read_varint32];
+    if (len == 0) {
+        return @[];
+    } else {
+        NSMutableArray* result = [NSMutableArray array];
+        for (uint32_t i = 0; i < len; ++i) {
+            [result addObject:[[self class] decode_to_opdata_with_type:_optype io:io]];
+        }
+        return result;
+    }
+}
+
 - (id)to_object:(id)opdata
 {
     assert([opdata isKindOfClass:[NSArray class]]);
@@ -547,6 +710,22 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
         assert([pair count] == 2);
         [[self class] encode_to_bytes_with_type:_key_type opdata:[pair firstObject] io:io];
         [[self class] encode_to_bytes_with_type:_value_type opdata:[pair lastObject] io:io];
+    }
+}
+
+- (id)from_byte_buffer:(BinSerializer*)io
+{
+    uint32_t len = [io read_varint32];
+    if (len == 0) {
+        return @[];
+    } else {
+        NSMutableArray* result = [NSMutableArray array];
+        for (uint32_t i = 0; i < len; ++i) {
+            id key = [[self class] decode_to_opdata_with_type:_key_type io:io];
+            id value = [[self class] decode_to_opdata_with_type:_value_type io:io];
+            [result addObject:@[key, value]];
+        }
+        return result;
     }
 }
 
@@ -596,6 +775,20 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     }
 }
 
+- (id)from_byte_buffer:(BinSerializer*)io
+{
+    uint32_t len = [io read_varint32];
+    if (len == 0) {
+        return @[];
+    } else {
+        NSMutableArray* result = [NSMutableArray array];
+        for (uint32_t i = 0; i < len; ++i) {
+            [result addObject:[[self class] decode_to_opdata_with_type:_optype io:io]];
+        }
+        return result;
+    }
+}
+
 - (id)to_object:(id)opdata
 {
     assert(!opdata || [opdata isKindOfClass:[NSArray class]]);
@@ -639,6 +832,17 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     }
 }
 
+- (id)from_byte_buffer:(BinSerializer*)io
+{
+    uint32_t size;
+    if (_size) {
+        size = [_size unsignedIntValue];
+    } else {
+        size = [io read_varint32];
+    }
+    return [io read_bytes:size];
+}
+
 - (id)to_object:(id)opdata
 {
     assert(!_size || [opdata length] == [_size unsignedIntegerValue]);
@@ -672,6 +876,16 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     }else{
         [io write_u8:1];
         [[self class] encode_to_bytes_with_type:_optype opdata:opdata io:io];
+    }
+}
+
+- (id)from_byte_buffer:(BinSerializer*)io
+{
+    uint8_t flag = [io read_u8];
+    if (flag == 0) {
+        return [NSNull null];
+    } else {
+        return [[self class] decode_to_opdata_with_type:_optype io:io];
     }
 }
 
@@ -722,6 +936,14 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [[self class] encode_to_bytes_with_type:optype opdata:[opdata lastObject] io:io];
 }
 
+- (id)from_byte_buffer:(BinSerializer*)io
+{
+    uint32_t type_id = [io read_varint32];
+    NSAssert(type_id < [_optypearray count], @"Invalid type id");
+    id optype = [_optypearray objectAtIndex:type_id];
+    return @[@(type_id), [[self class] decode_to_opdata_with_type:optype io:io]];
+}
+
 - (id)to_object:(id)opdata
 {
     assert(opdata && [opdata isKindOfClass:[NSArray class]]);
@@ -746,6 +968,13 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     //  1、write opcode    2、write opdata
     [io write_varint32:(uint64_t)[opcode unsignedIntegerValue]];
     [[self class] encode_to_bytes_with_type:optype opdata:[opdata lastObject] io:io];
+}
+
++ (id)from_byte_buffer:(BinSerializer*)io
+{
+    uint32_t op_code = [io read_varint32];
+    id optype = [self _get_optype_from_opcode:op_code];
+    return @[@(op_code), [[self class] decode_to_opdata_with_type:optype io:io]];
 }
 
 + (id)to_object:(id)opdata
@@ -815,6 +1044,12 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
             return [T_asset_claim_pool class];
         case ebo_asset_update_issuer:
             return [T_asset_update_issuer class];
+        case ebo_transfer_to_blind:
+            return [T_transfer_to_blind class];
+        case ebo_transfer_from_blind:
+            return [T_transfer_from_blind class];
+        case ebo_blind_transfer:
+            return [T_blind_transfer class];
         case ebo_htlc_create:
             return [T_htlc_create class];
         case ebo_htlc_redeem:
@@ -837,7 +1072,7 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"amount" class:[T_int64 class]];
-    [self add_field:@"asset_id" class:[[Tm_protocol_id_type alloc] initWithName:@"asset"]];
+    [self add_field:@"asset_id" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_asset]];
 }
 
 @end
@@ -859,8 +1094,8 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"from" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
-    [self add_field:@"to" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"from" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"to" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"amount" class:[T_asset class]];
     [self add_field:@"memo" class:[[Tm_optional alloc] initWithType:[T_memo_data class]]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
@@ -873,7 +1108,7 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"seller" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"seller" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"amount_to_sell" class:[T_asset class]];
     [self add_field:@"min_to_receive" class:[T_asset class]];
     [self add_field:@"expiration" class:[T_time_point_sec class]];
@@ -888,8 +1123,8 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"fee_paying_account" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
-    [self add_field:@"order" class:[[Tm_protocol_id_type alloc] initWithName:@"limit_order"]];
+    [self add_field:@"fee_paying_account" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"order" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_limit_order]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
 
@@ -900,7 +1135,7 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"funding_account" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"funding_account" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"delta_collateral" class:[T_asset class]];
     [self add_field:@"delta_debt" class:[T_asset class]];
     [self add_field:@"extensions" class:[[Tm_extension alloc] initWithFieldsDef:@[@{@"name":@"target_collateral_ratio", @"type":[T_uint16 class]}]]];
@@ -913,7 +1148,7 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"weight_threshold" class:[T_uint32 class]];
-    [self add_field:@"account_auths" class:[[Tm_map alloc] initWithKeyType:[[Tm_protocol_id_type alloc] initWithName:@"account"]
+    [self add_field:@"account_auths" class:[[Tm_map alloc] initWithKeyType:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]
                                                                 value_type:[T_uint16 class]]];
     [self add_field:@"key_auths" class:[[Tm_map alloc] initWithKeyType:[T_public_key class] value_type:[T_uint16 class]]];
     [self add_field:@"address_auths" class:[[Tm_map alloc] initWithKeyType:[T_address class] value_type:[T_uint16 class]]];
@@ -926,7 +1161,7 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"memo_key" class:[T_public_key class]];
-    [self add_field:@"voting_account" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"voting_account" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"num_witness" class:[T_uint16 class]];
     [self add_field:@"num_committee" class:[T_uint16 class]];
     [self add_field:@"votes" class:[[Tm_set alloc] initWithType:[T_vote_id class]]];
@@ -940,8 +1175,8 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"registrar" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
-    [self add_field:@"referrer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"registrar" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"referrer" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"referrer_percent" class:[T_uint16 class]];
     [self add_field:@"name" class:[T_string class]];
     [self add_field:@"owner" class:[T_authority class]];
@@ -957,7 +1192,7 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"account" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"account" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"owner" class:[[Tm_optional alloc] initWithType:[T_authority class]]];
     [self add_field:@"active" class:[[Tm_optional alloc] initWithType:[T_authority class]]];
     [self add_field:@"new_options" class:[[Tm_optional alloc] initWithType:[T_account_options class]]];
@@ -971,7 +1206,7 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"account_to_upgrade" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"account_to_upgrade" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"upgrade_to_lifetime_member" class:[T_bool class]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
@@ -983,8 +1218,8 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"account_id" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
-    [self add_field:@"new_owner" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"account_id" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"new_owner" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
 
@@ -1016,8 +1251,8 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"creator" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
-    [self add_field:@"owner" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"creator" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"owner" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"amount" class:[T_asset class]];
     [self add_field:@"policy" class:[[Tm_static_variant alloc] initWithTypeArray:@[[T_linear_vesting_policy_initializer class],
                                                                                    [T_cdd_vesting_policy_initializer class]]]];
@@ -1030,8 +1265,8 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"vesting_balance" class:[[Tm_protocol_id_type alloc] initWithName:@"vesting_balance"]];
-    [self add_field:@"owner" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"vesting_balance" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_vesting_balance]];
+    [self add_field:@"owner" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"amount" class:[T_asset class]];
 }
 
@@ -1051,7 +1286,7 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"fee_paying_account" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"fee_paying_account" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"expiration_time" class:[T_time_point_sec class]];
     [self add_field:@"proposed_ops" class:[[Tm_array alloc] initWithType:[T_op_wrapper class]]];
     [self add_field:@"review_period_seconds" class:[[Tm_optional alloc] initWithType:[T_uint32 class]]];
@@ -1065,12 +1300,12 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"fee_paying_account" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
-    [self add_field:@"proposal" class:[[Tm_protocol_id_type alloc] initWithName:@"proposal"]];
-    [self add_field:@"active_approvals_to_add" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithName:@"account"]]];
-    [self add_field:@"active_approvals_to_remove" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithName:@"account"]]];
-    [self add_field:@"owner_approvals_to_add" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithName:@"account"]]];
-    [self add_field:@"owner_approvals_to_remove" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithName:@"account"]]];
+    [self add_field:@"fee_paying_account" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"proposal" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_proposal]];
+    [self add_field:@"active_approvals_to_add" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]]];
+    [self add_field:@"active_approvals_to_remove" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]]];
+    [self add_field:@"owner_approvals_to_add" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]]];
+    [self add_field:@"owner_approvals_to_remove" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]]];
     [self add_field:@"key_approvals_to_add" class:[[Tm_set alloc] initWithType:[T_public_key class]]];
     [self add_field:@"key_approvals_to_remove" class:[[Tm_set alloc] initWithType:[T_public_key class]]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
@@ -1083,9 +1318,9 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"fee_paying_account" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"fee_paying_account" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"using_owner_authority" class:[T_bool class]];
-    [self add_field:@"proposal" class:[[Tm_protocol_id_type alloc] initWithName:@"proposal"]];
+    [self add_field:@"proposal" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_proposal]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
 
@@ -1111,14 +1346,14 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [self add_field:@"issuer_permissions" class:[T_uint16 class]];
     [self add_field:@"flags" class:[T_uint16 class]];
     [self add_field:@"core_exchange_rate" class:[T_price class]];
-    [self add_field:@"whitelist_authorities" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithName:@"account"]]];
-    [self add_field:@"blacklist_authorities" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithName:@"account"]]];
-    [self add_field:@"whitelist_markets" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithName:@"asset"]]];
-    [self add_field:@"blacklist_markets" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithName:@"asset"]]];
+    [self add_field:@"whitelist_authorities" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]]];
+    [self add_field:@"blacklist_authorities" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]]];
+    [self add_field:@"whitelist_markets" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_asset]]];
+    [self add_field:@"blacklist_markets" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_asset]]];
     [self add_field:@"description" class:[T_string class]];
     [self add_field:@"extensions"
               class:[[Tm_extension alloc] initWithFieldsDef:@[@{@"name":@"reward_percent", @"type":[T_uint16 class]},
-                                                              @{@"name":@"whitelist_market_fee_sharing", @"type":[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithName:@"account"]]}]]];
+                                                              @{@"name":@"whitelist_market_fee_sharing", @"type":[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]]}]]];
 }
 
 @end
@@ -1132,7 +1367,7 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [self add_field:@"force_settlement_delay_sec" class:[T_uint32 class]];
     [self add_field:@"force_settlement_offset_percent" class:[T_uint16 class]];
     [self add_field:@"maximum_force_settlement_volume" class:[T_uint16 class]];
-    [self add_field:@"short_backing_asset" class:[[Tm_protocol_id_type alloc] initWithName:@"asset"]];
+    [self add_field:@"short_backing_asset" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_asset]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
 
@@ -1143,7 +1378,7 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"symbol" class:[T_string class]];
     [self add_field:@"precision" class:[T_uint8 class]];
     [self add_field:@"common_options" class:[T_asset_options class]];
@@ -1159,8 +1394,8 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
-    [self add_field:@"asset_to_settle" class:[[Tm_protocol_id_type alloc] initWithName:@"asset"]];
+    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"asset_to_settle" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_asset]];
     [self add_field:@"settle_price" class:[T_price class]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
@@ -1172,7 +1407,7 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"account" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"account" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"amount" class:[T_asset class]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
@@ -1184,9 +1419,9 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
-    [self add_field:@"asset_to_update" class:[[Tm_protocol_id_type alloc] initWithName:@"asset"]];
-    [self add_field:@"new_issuer" class:[[Tm_optional alloc] initWithType:[[Tm_protocol_id_type alloc] initWithName:@"account"]]];
+    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"asset_to_update" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_asset]];
+    [self add_field:@"new_issuer" class:[[Tm_optional alloc] initWithType:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]]];
     [self add_field:@"new_options" class:[T_asset_options class]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
@@ -1198,8 +1433,8 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
-    [self add_field:@"asset_to_update" class:[[Tm_protocol_id_type alloc] initWithName:@"asset"]];
+    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"asset_to_update" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_asset]];
     [self add_field:@"new_options" class:[T_bitasset_options class]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
@@ -1211,9 +1446,9 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
-    [self add_field:@"asset_to_update" class:[[Tm_protocol_id_type alloc] initWithName:@"asset"]];
-    [self add_field:@"new_feed_producers" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithName:@"account"]]];
+    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"asset_to_update" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_asset]];
+    [self add_field:@"new_feed_producers" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
 
@@ -1224,7 +1459,7 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"payer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"payer" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"amount_to_reserve" class:[T_asset class]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
@@ -1236,9 +1471,9 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"asset_to_issue" class:[T_asset class]];
-    [self add_field:@"issue_to_account" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"issue_to_account" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"memo" class:[[Tm_optional alloc] initWithType:[T_memo_data class]]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
@@ -1250,9 +1485,9 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
-    [self add_field:@"asset_id" class:[[Tm_protocol_id_type alloc] initWithName:@"asset"]]; //  fee.asset_id must != asset_id
-    [self add_field:@"amount_to_claim" class:[T_asset class]];                              //  only core asset
+    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"asset_id" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_asset]]; //  fee.asset_id must != asset_id
+    [self add_field:@"amount_to_claim" class:[T_asset class]];                                      //  only core asset
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
 
@@ -1263,10 +1498,93 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
-    [self add_field:@"asset_to_update" class:[[Tm_protocol_id_type alloc] initWithName:@"asset"]];
-    [self add_field:@"new_issuer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"asset_to_update" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_asset]];
+    [self add_field:@"new_issuer" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
+}
+
+@end
+
+@implementation T_stealth_confirmation_memo_data
+
++ (void)register_subfields
+{
+    [self add_field:@"from" class:[[Tm_optional alloc] initWithType:[T_public_key class]]];
+    [self add_field:@"amount" class:[T_asset class]];
+    [self add_field:@"blinding_factor" class:[[Tm_bytes alloc] initWithSize:@(32)]];        //  blind_factor_type -> SHA256
+    [self add_field:@"commitment" class:[[Tm_bytes alloc] initWithSize:@(33)]];
+    [self add_field:@"check" class:[T_uint32 class]];
+}
+
+@end
+
+@implementation T_stealth_confirmation
+
++ (void)register_subfields
+{
+    [self add_field:@"one_time_key" class:[T_public_key class]];
+    [self add_field:@"to" class:[[Tm_optional alloc] initWithType:[T_public_key class]]];
+    [self add_field:@"encrypted_memo" class:[[Tm_bytes alloc] initWithSize:nil]];
+}
+
+@end
+
+@implementation T_blind_input
+
++ (void)register_subfields
+{
+    [self add_field:@"commitment" class:[[Tm_bytes alloc] initWithSize:@(33)]];
+    [self add_field:@"owner" class:[T_authority class]];
+}
+
+@end
+
+@implementation T_blind_output
+
++ (void)register_subfields
+{
+    [self add_field:@"commitment" class:[[Tm_bytes alloc] initWithSize:@(33)]];
+    [self add_field:@"range_proof" class:[[Tm_bytes alloc] initWithSize:nil]];      //  only required if there is more than one blind output
+    [self add_field:@"owner" class:[T_authority class]];
+    [self add_field:@"stealth_memo" class:[[Tm_optional alloc] initWithType:[T_stealth_confirmation class]]];
+}
+
+@end
+
+@implementation T_transfer_to_blind
+
++ (void)register_subfields
+{
+    [self add_field:@"fee" class:[T_asset class]];
+    [self add_field:@"amount" class:[T_asset class]];
+    [self add_field:@"from" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"blinding_factor" class:[[Tm_bytes alloc] initWithSize:@(32)]];        //  blind_factor_type -> SHA256
+    [self add_field:@"outputs" class:[[Tm_array alloc] initWithType:[T_blind_output class]]];
+}
+
+@end
+
+@implementation T_transfer_from_blind
+
++ (void)register_subfields
+{
+    [self add_field:@"fee" class:[T_asset class]];
+    [self add_field:@"amount" class:[T_asset class]];
+    [self add_field:@"to" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"blinding_factor" class:[[Tm_bytes alloc] initWithSize:@(32)]];        //  blind_factor_type -> SHA256
+    [self add_field:@"inputs" class:[[Tm_array alloc] initWithType:[T_blind_input class]]];
+}
+
+@end
+
+@implementation T_blind_transfer
+
++ (void)register_subfields
+{
+    [self add_field:@"fee" class:[T_asset class]];
+    [self add_field:@"inputs" class:[[Tm_array alloc] initWithType:[T_blind_input class]]];
+    [self add_field:@"outputs" class:[[Tm_array alloc] initWithType:[T_blind_output class]]];
 }
 
 @end
@@ -1276,8 +1594,8 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"from" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
-    [self add_field:@"to" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"from" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"to" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"amount" class:[T_asset class]];
     [self add_field:@"preimage_hash" class:[[Tm_static_variant alloc] initWithTypeArray:@[
         [[Tm_bytes alloc] initWithSize:@(20)],    //  RMD160
@@ -1296,8 +1614,8 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"htlc_id" class:[[Tm_protocol_id_type alloc] initWithName:@"htlc"]];
-    [self add_field:@"redeemer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"htlc_id" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_htlc]];
+    [self add_field:@"redeemer" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"preimage" class:[[Tm_bytes alloc] initWithSize:nil]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
@@ -1309,8 +1627,8 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
 + (void)register_subfields
 {
     [self add_field:@"fee" class:[T_asset class]];
-    [self add_field:@"htlc_id" class:[[Tm_protocol_id_type alloc] initWithName:@"htlc"]];
-    [self add_field:@"update_issuer" class:[[Tm_protocol_id_type alloc] initWithName:@"account"]];
+    [self add_field:@"htlc_id" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_htlc]];
+    [self add_field:@"update_issuer" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"seconds_to_add" class:[T_uint32 class]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
