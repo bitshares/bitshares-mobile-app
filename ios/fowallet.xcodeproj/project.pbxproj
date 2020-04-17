@@ -758,6 +758,12 @@
 		3F83349C24454CE60069D366 /* VCBlindOutputAddOne.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F83349B24454CE60069D366 /* VCBlindOutputAddOne.m */; };
 		3F83349D24454CE60069D366 /* VCBlindOutputAddOne.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F83349B24454CE60069D366 /* VCBlindOutputAddOne.m */; };
 		3F83349E24454CE60069D366 /* VCBlindOutputAddOne.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F83349B24454CE60069D366 /* VCBlindOutputAddOne.m */; };
+		3F8334A12446B2C00069D366 /* VCBlindBalance.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F83349F2446B2BF0069D366 /* VCBlindBalance.m */; };
+		3F8334A22446B2C00069D366 /* VCBlindBalance.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F83349F2446B2BF0069D366 /* VCBlindBalance.m */; };
+		3F8334A32446B2C00069D366 /* VCBlindBalance.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F83349F2446B2BF0069D366 /* VCBlindBalance.m */; };
+		3F8334A62446B5FC0069D366 /* ViewBlindBalanceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8334A42446B5FB0069D366 /* ViewBlindBalanceCell.m */; };
+		3F8334A72446B5FC0069D366 /* ViewBlindBalanceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8334A42446B5FB0069D366 /* ViewBlindBalanceCell.m */; };
+		3F8334A82446B5FC0069D366 /* ViewBlindBalanceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8334A42446B5FB0069D366 /* ViewBlindBalanceCell.m */; };
 		3F86510322EEA228000D496A /* VCLoginBrainKeyMode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F86510222EEA228000D496A /* VCLoginBrainKeyMode.m */; };
 		3F86510422EEA228000D496A /* VCLoginBrainKeyMode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F86510222EEA228000D496A /* VCLoginBrainKeyMode.m */; };
 		3F87B76B242701B000A0DF3A /* VCAssetOpGlobalSettle.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F87B76A242701B000A0DF3A /* VCAssetOpGlobalSettle.m */; };
@@ -796,6 +802,24 @@
 		3FADCF9A23D6FA3500043305 /* VcUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FADCF9923D6FA3500043305 /* VcUtils.m */; };
 		3FADCF9B23D6FA3500043305 /* VcUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FADCF9923D6FA3500043305 /* VcUtils.m */; };
 		3FADCF9C23D6FA3500043305 /* VcUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FADCF9923D6FA3500043305 /* VcUtils.m */; };
+		3FAFCCBA244823FA004B7ECC /* VCBlindTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FAFCCB7244823F9004B7ECC /* VCBlindTransfer.m */; };
+		3FAFCCBB244823FA004B7ECC /* VCBlindTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FAFCCB7244823F9004B7ECC /* VCBlindTransfer.m */; };
+		3FAFCCBC244823FA004B7ECC /* VCBlindTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FAFCCB7244823F9004B7ECC /* VCBlindTransfer.m */; };
+		3FAFCCBD244823FA004B7ECC /* VCTransferFromBlind.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FAFCCB9244823FA004B7ECC /* VCTransferFromBlind.m */; };
+		3FAFCCBE244823FA004B7ECC /* VCTransferFromBlind.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FAFCCB9244823FA004B7ECC /* VCTransferFromBlind.m */; };
+		3FAFCCBF244823FA004B7ECC /* VCTransferFromBlind.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FAFCCB9244823FA004B7ECC /* VCTransferFromBlind.m */; };
+		3FAFCCC2244824EA004B7ECC /* VCBlindBalanceImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FAFCCC0244824EA004B7ECC /* VCBlindBalanceImport.m */; };
+		3FAFCCC3244824EA004B7ECC /* VCBlindBalanceImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FAFCCC0244824EA004B7ECC /* VCBlindBalanceImport.m */; };
+		3FAFCCC4244824EA004B7ECC /* VCBlindBalanceImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FAFCCC0244824EA004B7ECC /* VCBlindBalanceImport.m */; };
+		3FAFCCC724494CE8004B7ECC /* VCSelectBlindBalance.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FAFCCC624494CE8004B7ECC /* VCSelectBlindBalance.m */; };
+		3FAFCCC824494CE8004B7ECC /* VCSelectBlindBalance.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FAFCCC624494CE8004B7ECC /* VCSelectBlindBalance.m */; };
+		3FAFCCC924494CE8004B7ECC /* VCSelectBlindBalance.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FAFCCC624494CE8004B7ECC /* VCSelectBlindBalance.m */; };
+		3FAFCCCC24496B98004B7ECC /* iconAdd@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FAFCCCA24496B98004B7ECC /* iconAdd@3x.png */; };
+		3FAFCCCD24496B98004B7ECC /* iconAdd@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FAFCCCA24496B98004B7ECC /* iconAdd@3x.png */; };
+		3FAFCCCE24496B98004B7ECC /* iconAdd@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FAFCCCA24496B98004B7ECC /* iconAdd@3x.png */; };
+		3FAFCCCF24496B98004B7ECC /* iconAdd@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FAFCCCB24496B98004B7ECC /* iconAdd@2x.png */; };
+		3FAFCCD024496B98004B7ECC /* iconAdd@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FAFCCCB24496B98004B7ECC /* iconAdd@2x.png */; };
+		3FAFCCD124496B98004B7ECC /* iconAdd@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FAFCCCB24496B98004B7ECC /* iconAdd@2x.png */; };
 		3FB038002398A73F00FC859C /* iconOtc@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB037FE2398A73E00FC859C /* iconOtc@2x.png */; };
 		3FB038012398A73F00FC859C /* iconOtc@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB037FE2398A73E00FC859C /* iconOtc@2x.png */; };
 		3FB038022398A73F00FC859C /* iconOtc@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB037FE2398A73E00FC859C /* iconOtc@2x.png */; };
@@ -2186,6 +2210,10 @@
 		3F833496244548D80069D366 /* ViewBlindOutputInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewBlindOutputInfoCell.m; path = View/ViewBlindOutputInfoCell.m; sourceTree = "<group>"; };
 		3F83349A24454CE60069D366 /* VCBlindOutputAddOne.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCBlindOutputAddOne.h; path = Controller/VCBlindOutputAddOne.h; sourceTree = "<group>"; };
 		3F83349B24454CE60069D366 /* VCBlindOutputAddOne.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCBlindOutputAddOne.m; path = Controller/VCBlindOutputAddOne.m; sourceTree = "<group>"; };
+		3F83349F2446B2BF0069D366 /* VCBlindBalance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCBlindBalance.m; path = Controller/VCBlindBalance.m; sourceTree = "<group>"; };
+		3F8334A02446B2C00069D366 /* VCBlindBalance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCBlindBalance.h; path = Controller/VCBlindBalance.h; sourceTree = "<group>"; };
+		3F8334A42446B5FB0069D366 /* ViewBlindBalanceCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewBlindBalanceCell.m; path = View/ViewBlindBalanceCell.m; sourceTree = "<group>"; };
+		3F8334A52446B5FC0069D366 /* ViewBlindBalanceCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewBlindBalanceCell.h; path = View/ViewBlindBalanceCell.h; sourceTree = "<group>"; };
 		3F86510122EEA228000D496A /* VCLoginBrainKeyMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCLoginBrainKeyMode.h; path = Controller/VCLoginBrainKeyMode.h; sourceTree = "<group>"; };
 		3F86510222EEA228000D496A /* VCLoginBrainKeyMode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCLoginBrainKeyMode.m; path = Controller/VCLoginBrainKeyMode.m; sourceTree = "<group>"; };
 		3F87B769242701AF00A0DF3A /* VCAssetOpGlobalSettle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAssetOpGlobalSettle.h; path = Controller/VCAssetOpGlobalSettle.h; sourceTree = "<group>"; };
@@ -2214,6 +2242,16 @@
 		3FADCF9423D6EF1F00043305 /* VCSettlementOrders.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCSettlementOrders.m; path = Controller/VCSettlementOrders.m; sourceTree = "<group>"; };
 		3FADCF9823D6FA3500043305 /* VcUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VcUtils.h; path = Controller/VcUtils.h; sourceTree = "<group>"; };
 		3FADCF9923D6FA3500043305 /* VcUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VcUtils.m; path = Controller/VcUtils.m; sourceTree = "<group>"; };
+		3FAFCCB6244823F9004B7ECC /* VCTransferFromBlind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCTransferFromBlind.h; path = Controller/VCTransferFromBlind.h; sourceTree = "<group>"; };
+		3FAFCCB7244823F9004B7ECC /* VCBlindTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCBlindTransfer.m; path = Controller/VCBlindTransfer.m; sourceTree = "<group>"; };
+		3FAFCCB8244823F9004B7ECC /* VCBlindTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCBlindTransfer.h; path = Controller/VCBlindTransfer.h; sourceTree = "<group>"; };
+		3FAFCCB9244823FA004B7ECC /* VCTransferFromBlind.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCTransferFromBlind.m; path = Controller/VCTransferFromBlind.m; sourceTree = "<group>"; };
+		3FAFCCC0244824EA004B7ECC /* VCBlindBalanceImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCBlindBalanceImport.m; path = Controller/VCBlindBalanceImport.m; sourceTree = "<group>"; };
+		3FAFCCC1244824EA004B7ECC /* VCBlindBalanceImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCBlindBalanceImport.h; path = Controller/VCBlindBalanceImport.h; sourceTree = "<group>"; };
+		3FAFCCC524494CE7004B7ECC /* VCSelectBlindBalance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCSelectBlindBalance.h; path = Controller/VCSelectBlindBalance.h; sourceTree = "<group>"; };
+		3FAFCCC624494CE8004B7ECC /* VCSelectBlindBalance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCSelectBlindBalance.m; path = Controller/VCSelectBlindBalance.m; sourceTree = "<group>"; };
+		3FAFCCCA24496B98004B7ECC /* iconAdd@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconAdd@3x.png"; path = "Images/iconAdd@3x.png"; sourceTree = "<group>"; };
+		3FAFCCCB24496B98004B7ECC /* iconAdd@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconAdd@2x.png"; path = "Images/iconAdd@2x.png"; sourceTree = "<group>"; };
 		3FB037FE2398A73E00FC859C /* iconOtc@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtc@2x.png"; path = "Images/iconOtc@2x.png"; sourceTree = "<group>"; };
 		3FB037FF2398A73F00FC859C /* iconOtc@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtc@3x.png"; path = "Images/iconOtc@3x.png"; sourceTree = "<group>"; };
 		3FB038062398A8AD00FC859C /* iconOtcUser@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtcUser@3x.png"; path = "Images/iconOtcUser@3x.png"; sourceTree = "<group>"; };
@@ -3189,10 +3227,20 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3FAFCCC524494CE7004B7ECC /* VCSelectBlindBalance.h */,
+				3FAFCCC624494CE8004B7ECC /* VCSelectBlindBalance.m */,
+				3F8334A02446B2C00069D366 /* VCBlindBalance.h */,
+				3F83349F2446B2BF0069D366 /* VCBlindBalance.m */,
+				3FAFCCC1244824EA004B7ECC /* VCBlindBalanceImport.h */,
+				3FAFCCC0244824EA004B7ECC /* VCBlindBalanceImport.m */,
 				3F83349A24454CE60069D366 /* VCBlindOutputAddOne.h */,
 				3F83349B24454CE60069D366 /* VCBlindOutputAddOne.m */,
 				3F83349124453C9B0069D366 /* VCTransferToBlind.h */,
 				3F83349024453C9B0069D366 /* VCTransferToBlind.m */,
+				3FAFCCB8244823F9004B7ECC /* VCBlindTransfer.h */,
+				3FAFCCB7244823F9004B7ECC /* VCBlindTransfer.m */,
+				3FAFCCB6244823F9004B7ECC /* VCTransferFromBlind.h */,
+				3FAFCCB9244823FA004B7ECC /* VCTransferFromBlind.m */,
 				3F40810624275EB100D79A21 /* VCRegisterEntry.h */,
 				3F40810724275EB100D79A21 /* VCRegisterEntry.m */,
 				3F6541A1241918F400167794 /* VCNewAccountPasswordConfirm.h */,
@@ -3347,6 +3395,8 @@
 		18FF069017E00C5C0088405E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				3F8334A52446B5FC0069D366 /* ViewBlindBalanceCell.h */,
+				3F8334A42446B5FB0069D366 /* ViewBlindBalanceCell.m */,
 				3F833495244548D80069D366 /* ViewBlindOutputInfoCell.h */,
 				3F833496244548D80069D366 /* ViewBlindOutputInfoCell.m */,
 				3F65419B2418E2EE00167794 /* ViewNewPasswordCell.h */,
@@ -3491,6 +3541,8 @@
 		18FF069417E00D870088405E /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				3FAFCCCB24496B98004B7ECC /* iconAdd@2x.png */,
+				3FAFCCCA24496B98004B7ECC /* iconAdd@3x.png */,
 				3F37C80B24231CED0028845A /* iconShare@2x.png */,
 				3F37C80A24231CED0028845A /* iconShare@3x.png */,
 				3FE4E8EC2408C298002518BD /* iconChecked@2x.png */,
@@ -4863,6 +4915,7 @@
 				3F37C80E24231CED0028845A /* iconShare@3x.png in Resources */,
 				3F67696E230E9EC100E98C14 /* tabMarket@2x.png in Resources */,
 				3F67696F230E9EC100E98C14 /* Date From@2x.png in Resources */,
+				3FAFCCCE24496B98004B7ECC /* iconAdd@3x.png in Resources */,
 				3F676970230E9EC100E98C14 /* Refund-50@2x.png in Resources */,
 				3F676971230E9EC100E98C14 /* tabMyself_b@2x.png in Resources */,
 				3FF31CEE23A8D80700CD758D /* iconOtcPayment@3x.png in Resources */,
@@ -5018,6 +5071,7 @@
 				3F6769EC230E9EC100E98C14 /* begin@2x.png in Resources */,
 				3F6769ED230E9EC100E98C14 /* flight order@2x.png in Resources */,
 				3F6769EE230E9EC100E98C14 /* iconDebtRank@2x.png in Resources */,
+				3FAFCCD124496B98004B7ECC /* iconAdd@2x.png in Resources */,
 				3F6769EF230E9EC100E98C14 /* Static in Resources */,
 				3F6769F0230E9EC100E98C14 /* iconFaq@2x.png in Resources */,
 				3F6769F1230E9EC100E98C14 /* Great Wall@2x.png in Resources */,
@@ -5144,6 +5198,7 @@
 				3F37C80D24231CED0028845A /* iconShare@3x.png in Resources */,
 				3FB8F9E721CE66C200DA88E2 /* tabMarket@2x.png in Resources */,
 				3FB8F9E821CE66C200DA88E2 /* Date From@2x.png in Resources */,
+				3FAFCCCD24496B98004B7ECC /* iconAdd@3x.png in Resources */,
 				3FB8F9E921CE66C200DA88E2 /* Refund-50@2x.png in Resources */,
 				3FB8F9EA21CE66C200DA88E2 /* tabMyself_b@2x.png in Resources */,
 				3FF31CED23A8D80700CD758D /* iconOtcPayment@3x.png in Resources */,
@@ -5299,6 +5354,7 @@
 				3FB8FA6021CE66C200DA88E2 /* begin@2x.png in Resources */,
 				3FB8FA6121CE66C200DA88E2 /* flight order@2x.png in Resources */,
 				3FB8FA6221CE66C200DA88E2 /* iconDebtRank@2x.png in Resources */,
+				3FAFCCD024496B98004B7ECC /* iconAdd@2x.png in Resources */,
 				3FB8FA6321CE66C200DA88E2 /* Static in Resources */,
 				3FB8FA6421CE66C200DA88E2 /* iconFaq@2x.png in Resources */,
 				3FB8FA6521CE66C200DA88E2 /* Great Wall@2x.png in Resources */,
@@ -5390,6 +5446,7 @@
 				3F7ED8E22276937D00082680 /* iconHtlcPreimage@3x.png in Resources */,
 				F50C49681C131CBA0001D9EA /* Refresh-64@2x.png in Resources */,
 				B7A837A81C0CB35D00CBA6D0 /* Localizable.strings in Resources */,
+				3FAFCCCC24496B98004B7ECC /* iconAdd@3x.png in Resources */,
 				B7973C3620E205560052A5F5 /* tabDebt@2x.png in Resources */,
 				3FEA20E22398DF890097F1FF /* iconOtcQrcode@2x.png in Resources */,
 				3FB038002398A73F00FC859C /* iconOtc@2x.png in Resources */,
@@ -5462,6 +5519,7 @@
 				3FF31CE623A8D80700CD758D /* iconOtcMerchant@3x.png in Resources */,
 				3FB0380D2398A8AD00FC859C /* iconOtcOrder@3x.png in Resources */,
 				3F3E5849218310E900F1DC24 /* iconFeedDetail@2x.png in Resources */,
+				3FAFCCCF24496B98004B7ECC /* iconAdd@2x.png in Resources */,
 				3FE19EA1235858A4000D1C54 /* iconExplorer@3x.png in Resources */,
 				3FEA20EA23993B520097F1FF /* iconSwitch@3x.png in Resources */,
 				F55325B21C075D3200EC3F95 /* Help@2x.png in Resources */,
@@ -5786,6 +5844,7 @@
 				3F67680D230E9EC100E98C14 /* main.m in Sources */,
 				3F009A00239FAA9A00A77E4A /* VCOtcMcHome.m in Sources */,
 				3F67680E230E9EC100E98C14 /* VCGatewayWithdraw.m in Sources */,
+				3FAFCCBC244823FA004B7ECC /* VCBlindTransfer.m in Sources */,
 				3F67680F230E9EC100E98C14 /* 7zBuf2.c in Sources */,
 				3F676810230E9EC100E98C14 /* VCTradeHor.m in Sources */,
 				3F676811230E9EC100E98C14 /* WjCryptLib_Sha512.c in Sources */,
@@ -5850,6 +5909,7 @@
 				3F67683E230E9EC100E98C14 /* VCSelectEstimateUnit.m in Sources */,
 				3F1A5132235577F100632A6F /* VCPermissionEdit.m in Sources */,
 				3F67683F230E9EC100E98C14 /* ViewActionsCell.m in Sources */,
+				3FAFCCBF244823FA004B7ECC /* VCTransferFromBlind.m in Sources */,
 				3F0099FD239FAA9A00A77E4A /* VCOtcMcAssetList.m in Sources */,
 				3F0099F2239FA96D00A77E4A /* VCOtcReceiveMethods.m in Sources */,
 				3F676840230E9EC100E98C14 /* GCDWebServerFileResponse.m in Sources */,
@@ -5903,6 +5963,7 @@
 				3F67686A230E9EC100E98C14 /* VCUserActivity.m in Sources */,
 				3F67686B230E9EC100E98C14 /* SCLAlertViewResponder.m in Sources */,
 				3F67686C230E9EC100E98C14 /* SGQRCodeObtainConfigure.m in Sources */,
+				3FAFCCC4244824EA004B7ECC /* VCBlindBalanceImport.m in Sources */,
 				3F67686D230E9EC100E98C14 /* GCDWebServerStreamedResponse.m in Sources */,
 				3F67686E230E9EC100E98C14 /* CWStatusBarNotification.m in Sources */,
 				3F67686F230E9EC100E98C14 /* VCMarketInfo.m in Sources */,
@@ -5926,6 +5987,7 @@
 				3F67687C230E9EC100E98C14 /* AFURLSessionManager.m in Sources */,
 				3F67687D230E9EC100E98C14 /* GrapheneConnection.m in Sources */,
 				3F67687E230E9EC100E98C14 /* SRIOConsumer.m in Sources */,
+				3FAFCCC924494CE8004B7ECC /* VCSelectBlindBalance.m in Sources */,
 				3F67687F230E9EC100E98C14 /* Alloc.c in Sources */,
 				3FA70FA623FCFAC7007ABD15 /* ViewBidAskCellVer.m in Sources */,
 				3F676880230E9EC100E98C14 /* ViewMemoKeyCell.m in Sources */,
@@ -6092,6 +6154,7 @@
 				3F6471C623A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m in Sources */,
 				3F676900230E9EC100E98C14 /* UIImage+Template.m in Sources */,
 				3F676901230E9EC100E98C14 /* ViewTradeHistoryCell.m in Sources */,
+				3F8334A82446B5FC0069D366 /* ViewBlindBalanceCell.m in Sources */,
 				3F676902230E9EC100E98C14 /* HDWallet.m in Sources */,
 				3F676903230E9EC100E98C14 /* OpenLedger.m in Sources */,
 				3F676904230E9EC100E98C14 /* SRIOConsumerPool.m in Sources */,
@@ -6108,6 +6171,7 @@
 				3F67690D230E9EC100E98C14 /* Sha256.c in Sources */,
 				3F67690E230E9EC100E98C14 /* AFSecurityPolicy.m in Sources */,
 				3F6532572442A6CE001A0260 /* GraphenePublicKey.m in Sources */,
+				3F8334A32446B2C00069D366 /* VCBlindBalance.m in Sources */,
 				3F67690F230E9EC100E98C14 /* MKlineIndexMA.m in Sources */,
 				3F676910230E9EC100E98C14 /* SRRunLoopThread.m in Sources */,
 				3F676911230E9EC100E98C14 /* ViewMovableTextView.m in Sources */,
@@ -6144,6 +6208,7 @@
 				3FB8F8A621CE66C200DA88E2 /* main.m in Sources */,
 				3F0099FF239FAA9A00A77E4A /* VCOtcMcHome.m in Sources */,
 				3F9A731121E729A900DAF7A2 /* VCGatewayWithdraw.m in Sources */,
+				3FAFCCBB244823FA004B7ECC /* VCBlindTransfer.m in Sources */,
 				3FB8F8A721CE66C200DA88E2 /* 7zBuf2.c in Sources */,
 				3FB8F8A821CE66C200DA88E2 /* VCTradeHor.m in Sources */,
 				3FB8F8A921CE66C200DA88E2 /* WjCryptLib_Sha512.c in Sources */,
@@ -6208,6 +6273,7 @@
 				3FB8F8D421CE66C200DA88E2 /* VCSelectEstimateUnit.m in Sources */,
 				3F1A5133235577F200632A6F /* VCPermissionEdit.m in Sources */,
 				3F216572226FEF5500AB5A3D /* ViewActionsCell.m in Sources */,
+				3FAFCCBE244823FA004B7ECC /* VCTransferFromBlind.m in Sources */,
 				3F0099FC239FAA9A00A77E4A /* VCOtcMcAssetList.m in Sources */,
 				3F0099F1239FA96D00A77E4A /* VCOtcReceiveMethods.m in Sources */,
 				3FB8F8D521CE66C200DA88E2 /* GCDWebServerFileResponse.m in Sources */,
@@ -6261,6 +6327,7 @@
 				3FB8F8FC21CE66C200DA88E2 /* VCUserActivity.m in Sources */,
 				3FB8F8FD21CE66C200DA88E2 /* SCLAlertViewResponder.m in Sources */,
 				3FB8F8FE21CE66C200DA88E2 /* SGQRCodeObtainConfigure.m in Sources */,
+				3FAFCCC3244824EA004B7ECC /* VCBlindBalanceImport.m in Sources */,
 				3FB8F8FF21CE66C200DA88E2 /* GCDWebServerStreamedResponse.m in Sources */,
 				3FB8F90121CE66C200DA88E2 /* CWStatusBarNotification.m in Sources */,
 				3FB8F90221CE66C200DA88E2 /* VCMarketInfo.m in Sources */,
@@ -6284,6 +6351,7 @@
 				3FB8F90E21CE66C200DA88E2 /* AFURLSessionManager.m in Sources */,
 				3FB8F90F21CE66C200DA88E2 /* GrapheneConnection.m in Sources */,
 				3FB8F91021CE66C200DA88E2 /* SRIOConsumer.m in Sources */,
+				3FAFCCC824494CE8004B7ECC /* VCSelectBlindBalance.m in Sources */,
 				3FB8F91121CE66C200DA88E2 /* Alloc.c in Sources */,
 				3FA70FA523FCFAC7007ABD15 /* ViewBidAskCellVer.m in Sources */,
 				3F6E4F2A227AC15E00FE3C72 /* ViewMemoKeyCell.m in Sources */,
@@ -6450,6 +6518,7 @@
 				3F6471C523A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m in Sources */,
 				3FB8F98221CE66C200DA88E2 /* UIImage+Template.m in Sources */,
 				3FB8F98321CE66C200DA88E2 /* ViewTradeHistoryCell.m in Sources */,
+				3F8334A72446B5FC0069D366 /* ViewBlindBalanceCell.m in Sources */,
 				3FE4E94E22F7C0490056A44F /* HDWallet.m in Sources */,
 				3F89DE4122B20CF800B052CB /* OpenLedger.m in Sources */,
 				3FB8F98421CE66C200DA88E2 /* SRIOConsumerPool.m in Sources */,
@@ -6466,6 +6535,7 @@
 				3FB8F98A21CE66C200DA88E2 /* Sha256.c in Sources */,
 				3FB8F98B21CE66C200DA88E2 /* AFSecurityPolicy.m in Sources */,
 				3F6532562442A6CE001A0260 /* GraphenePublicKey.m in Sources */,
+				3F8334A22446B2C00069D366 /* VCBlindBalance.m in Sources */,
 				3FB8F98C21CE66C200DA88E2 /* MKlineIndexMA.m in Sources */,
 				3FB8F98D21CE66C200DA88E2 /* SRRunLoopThread.m in Sources */,
 				3FB8F98E21CE66C200DA88E2 /* ViewMovableTextView.m in Sources */,
@@ -6502,6 +6572,7 @@
 				ED3778E81654A8FA0016EC64 /* main.m in Sources */,
 				3F0099FE239FAA9A00A77E4A /* VCOtcMcHome.m in Sources */,
 				3F9A731021E729A900DAF7A2 /* VCGatewayWithdraw.m in Sources */,
+				3FAFCCBA244823FA004B7ECC /* VCBlindTransfer.m in Sources */,
 				B7BDAA7D20B3C77400738F12 /* 7zBuf2.c in Sources */,
 				B72A84AA20D4D4CE00D92A25 /* VCTradeHor.m in Sources */,
 				B7BDA9AA20B3A3D100738F12 /* WjCryptLib_Sha512.c in Sources */,
@@ -6566,6 +6637,7 @@
 				B786D51D20EF9E1800427C08 /* VCSelectEstimateUnit.m in Sources */,
 				3F216571226FEF5500AB5A3D /* ViewActionsCell.m in Sources */,
 				B72A848B20CCD18B00D92A25 /* GCDWebServerFileResponse.m in Sources */,
+				3FAFCCBD244823FA004B7ECC /* VCTransferFromBlind.m in Sources */,
 				3F0099FB239FAA9A00A77E4A /* VCOtcMcAssetList.m in Sources */,
 				3F0099F0239FA96D00A77E4A /* VCOtcReceiveMethods.m in Sources */,
 				B741F0291C27A6A000F3803A /* TempManager.m in Sources */,
@@ -6619,6 +6691,7 @@
 				B782F0C11D6E94C600F61571 /* SCLAlertViewResponder.m in Sources */,
 				3F0DA36521884011006E1004 /* SGQRCodeObtainConfigure.m in Sources */,
 				B72A848C20CCD18B00D92A25 /* GCDWebServerStreamedResponse.m in Sources */,
+				3FAFCCC2244824EA004B7ECC /* VCBlindBalanceImport.m in Sources */,
 				F5A4265A1DC323B300B56635 /* CWStatusBarNotification.m in Sources */,
 				B74D4BCA20A2B835009DD9B0 /* VCMarketInfo.m in Sources */,
 				B741A75A20DB4C30000FBC00 /* VCUnlockAccount.m in Sources */,
@@ -6642,6 +6715,7 @@
 				B7C0411F2109BDC400848CBC /* GrapheneConnection.m in Sources */,
 				B714093C20A31CC300003311 /* SRIOConsumer.m in Sources */,
 				B7BDAA8520B3C77500738F12 /* Alloc.c in Sources */,
+				3FAFCCC724494CE8004B7ECC /* VCSelectBlindBalance.m in Sources */,
 				3F6E4F29227AC15E00FE3C72 /* ViewMemoKeyCell.m in Sources */,
 				3FA70FA423FCFAC7007ABD15 /* ViewBidAskCellVer.m in Sources */,
 				B782F0C01D6E94C600F61571 /* SCLAlertView.m in Sources */,
@@ -6808,6 +6882,7 @@
 				3F6471C423A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m in Sources */,
 				B707E5971C5D09BE003B652F /* UIImage+Template.m in Sources */,
 				B741A75420D9FFE0000FBC00 /* ViewTradeHistoryCell.m in Sources */,
+				3F8334A62446B5FC0069D366 /* ViewBlindBalanceCell.m in Sources */,
 				3FE4E94D22F7C0480056A44F /* HDWallet.m in Sources */,
 				3F89DE4022B20CF800B052CB /* OpenLedger.m in Sources */,
 				B714093D20A31CC300003311 /* SRIOConsumerPool.m in Sources */,
@@ -6824,6 +6899,7 @@
 				B7BDAA9B20B3C77500738F12 /* Sha256.c in Sources */,
 				F531ECBC1D670895009328A4 /* AFSecurityPolicy.m in Sources */,
 				3F6532552442A6CE001A0260 /* GraphenePublicKey.m in Sources */,
+				3F8334A12446B2C00069D366 /* VCBlindBalance.m in Sources */,
 				B73785162104812C001EEA8C /* MKlineIndexMA.m in Sources */,
 				B714093F20A31CC300003311 /* SRRunLoopThread.m in Sources */,
 				B73BA8BE1E2FACEE00145F49 /* ViewMovableTextView.m in Sources */,
