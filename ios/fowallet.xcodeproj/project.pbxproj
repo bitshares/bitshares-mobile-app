@@ -820,6 +820,9 @@
 		3FAFCCCF24496B98004B7ECC /* iconAdd@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FAFCCCB24496B98004B7ECC /* iconAdd@2x.png */; };
 		3FAFCCD024496B98004B7ECC /* iconAdd@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FAFCCCB24496B98004B7ECC /* iconAdd@2x.png */; };
 		3FAFCCD124496B98004B7ECC /* iconAdd@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FAFCCCB24496B98004B7ECC /* iconAdd@2x.png */; };
+		3FAFCCD4244D76A4004B7ECC /* VCStealthTransferHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FAFCCD2244D76A4004B7ECC /* VCStealthTransferHelper.m */; };
+		3FAFCCD5244D76A4004B7ECC /* VCStealthTransferHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FAFCCD2244D76A4004B7ECC /* VCStealthTransferHelper.m */; };
+		3FAFCCD6244D76A4004B7ECC /* VCStealthTransferHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FAFCCD2244D76A4004B7ECC /* VCStealthTransferHelper.m */; };
 		3FB038002398A73F00FC859C /* iconOtc@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB037FE2398A73E00FC859C /* iconOtc@2x.png */; };
 		3FB038012398A73F00FC859C /* iconOtc@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB037FE2398A73E00FC859C /* iconOtc@2x.png */; };
 		3FB038022398A73F00FC859C /* iconOtc@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB037FE2398A73E00FC859C /* iconOtc@2x.png */; };
@@ -2252,6 +2255,8 @@
 		3FAFCCC624494CE8004B7ECC /* VCSelectBlindBalance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCSelectBlindBalance.m; path = Controller/VCSelectBlindBalance.m; sourceTree = "<group>"; };
 		3FAFCCCA24496B98004B7ECC /* iconAdd@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconAdd@3x.png"; path = "Images/iconAdd@3x.png"; sourceTree = "<group>"; };
 		3FAFCCCB24496B98004B7ECC /* iconAdd@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconAdd@2x.png"; path = "Images/iconAdd@2x.png"; sourceTree = "<group>"; };
+		3FAFCCD2244D76A4004B7ECC /* VCStealthTransferHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCStealthTransferHelper.m; path = Controller/VCStealthTransferHelper.m; sourceTree = "<group>"; };
+		3FAFCCD3244D76A4004B7ECC /* VCStealthTransferHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCStealthTransferHelper.h; path = Controller/VCStealthTransferHelper.h; sourceTree = "<group>"; };
 		3FB037FE2398A73E00FC859C /* iconOtc@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtc@2x.png"; path = "Images/iconOtc@2x.png"; sourceTree = "<group>"; };
 		3FB037FF2398A73F00FC859C /* iconOtc@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtc@3x.png"; path = "Images/iconOtc@3x.png"; sourceTree = "<group>"; };
 		3FB038062398A8AD00FC859C /* iconOtcUser@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconOtcUser@3x.png"; path = "Images/iconOtcUser@3x.png"; sourceTree = "<group>"; };
@@ -3227,6 +3232,8 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3FAFCCD3244D76A4004B7ECC /* VCStealthTransferHelper.h */,
+				3FAFCCD2244D76A4004B7ECC /* VCStealthTransferHelper.m */,
 				3FAFCCC524494CE7004B7ECC /* VCSelectBlindBalance.h */,
 				3FAFCCC624494CE8004B7ECC /* VCSelectBlindBalance.m */,
 				3F8334A02446B2C00069D366 /* VCBlindBalance.h */,
@@ -6164,6 +6171,7 @@
 				3F676907230E9EC100E98C14 /* ViewProposalActionsCell.m in Sources */,
 				3F676908230E9EC100E98C14 /* MyNavigationController.mm in Sources */,
 				3F676909230E9EC100E98C14 /* ViewProposalAuthorizedStatusCell.m in Sources */,
+				3FAFCCD6244D76A4004B7ECC /* VCStealthTransferHelper.m in Sources */,
 				3F67690A230E9EC100E98C14 /* VCHtlcTransfer.m in Sources */,
 				3FE4E8E0240665AE002518BD /* ViewAdvTextFieldCell.m in Sources */,
 				3F67690B230E9EC100E98C14 /* ViewOrderBookCell.m in Sources */,
@@ -6528,6 +6536,7 @@
 				3FDD800521D763C100DA61FC /* ViewProposalActionsCell.m in Sources */,
 				3FB8F98721CE66C200DA88E2 /* MyNavigationController.mm in Sources */,
 				3FDD800B21D77A0700DA61FC /* ViewProposalAuthorizedStatusCell.m in Sources */,
+				3FAFCCD5244D76A4004B7ECC /* VCStealthTransferHelper.m in Sources */,
 				3F78E07722630585007D41A3 /* VCHtlcTransfer.m in Sources */,
 				3FE4E8DF240665AE002518BD /* ViewAdvTextFieldCell.m in Sources */,
 				3FB8F98821CE66C200DA88E2 /* ViewOrderBookCell.m in Sources */,
@@ -6892,6 +6901,7 @@
 				3FDD800421D763C100DA61FC /* ViewProposalActionsCell.m in Sources */,
 				ED75E62A186C63C9009BEF5E /* MyNavigationController.mm in Sources */,
 				3FDD800A21D77A0700DA61FC /* ViewProposalAuthorizedStatusCell.m in Sources */,
+				3FAFCCD4244D76A4004B7ECC /* VCStealthTransferHelper.m in Sources */,
 				3F78E07622630585007D41A3 /* VCHtlcTransfer.m in Sources */,
 				3FE4E8DE240665AE002518BD /* ViewAdvTextFieldCell.m in Sources */,
 				B7A288A72119401700339FAE /* ViewOrderBookCell.m in Sources */,
