@@ -100,7 +100,7 @@
 {
     //  TODO:6.0 测试数据（cli收据格式）
     id test_cli_receipt = @"2MVtjNuKHsh3o4FTe1RU6rcaf4JdimCtFjjKYjpyJdjfJvnMVz6xmamMxUXJneE9G8mfnAVKnYrA1fJUWuk8YCCyNigV5gt3RdtVBAYRftPqdTn4tdZAcJpPhTmAAmRA8qfwBNTCFF7arnDhC8CN7JoTxbW7p5ErhKk5FTAfNDbsfSdpRcWibWfpY4ZaWt9QMxoVhdP1z7";
-    
+
     WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
     VCBlindBalanceImport* vc = [[VCBlindBalanceImport alloc] initWithReceipt:test_cli_receipt result_promise:result_promise];
     [self pushViewController:vc vctitle:@"导入收据" backtitle:kVcDefaultBackTitleName];
@@ -109,110 +109,110 @@
         [_mainTableView reloadData];
         return nil;
     }];
-    return;
-    
-    //    [self importCliWalletReceipt];
-    
-    //  TODO:6.0 测试数据
-    id test_receipt = @{
-        @"commitment": @"03236ea4cbddeadac512fc0480033bfd9b335214c82bd9853fa423d3f2dba73400",
-        @"one_time_key": @"TEST84BqEgYGoXvCeg3SiQ9U3KebJxJ9D6J7CHDv8c5gFuruXSwPWx",
-        @"to": @"TEST79qgrss7qbgWxtbjtZMSVzUt1eEfUVzFLbWmZb5Dv2GwNvpg1r",
-        @"encrypted_memo": @"c76597484bdf91e8dd672a6ff7204ee074856ac0b3bc463462f5839d1d7842f54dc516c49e7a277a58fb13c94abe9857cedefcd89d8b15d6cad3ef54bea5deba32dcf975c5f142c4e529b8469c547eff"
-    };
-    
-    [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
-        if (unlocked) {
-            id op_account = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
-            id active = [op_account objectForKey:@"active"];
-            id my_to_pub = [[[active objectForKey:@"key_auths"] firstObject] objectAtIndex:0];
-            
-            id my_pubkey = [GraphenePublicKey fromWifPublicKey:my_to_pub];
-            id d_commitment = [[test_receipt objectForKey:@"commitment"] hex_decode];
-            id toto_pub = [my_pubkey genToToTo:d_commitment];
-            id toto_wif_pub = [toto_pub toWifString];
-            assert([toto_wif_pub isEqualToString:[test_receipt objectForKey:@"to"]]);
-            
-            
-            
-            GraphenePrivateKey* my_pri = [[WalletManager sharedWalletManager] getGraphenePrivateKeyByPublicKey:my_to_pub];
-            assert(my_pri);
-            id memo = [self decryptStealthConfirmationMemo:test_receipt private_key:my_pri];
-            [self testTransferFromBlind:memo private_key:my_pri stealth_memo:test_receipt];
-        }
-    }];
-    
-    
-    return;
-    //  TODO:6.0
-    //    [OrgUtils makeToast:@"导入隐私转账收据。"];
+//    return;
+//
+//    //    [self importCliWalletReceipt];
+//
+//    //  TODO:6.0 测试数据
+//    id test_receipt = @{
+//        @"commitment": @"03236ea4cbddeadac512fc0480033bfd9b335214c82bd9853fa423d3f2dba73400",
+//        @"one_time_key": @"TEST84BqEgYGoXvCeg3SiQ9U3KebJxJ9D6J7CHDv8c5gFuruXSwPWx",
+//        @"to": @"TEST79qgrss7qbgWxtbjtZMSVzUt1eEfUVzFLbWmZb5Dv2GwNvpg1r",
+//        @"encrypted_memo": @"c76597484bdf91e8dd672a6ff7204ee074856ac0b3bc463462f5839d1d7842f54dc516c49e7a277a58fb13c94abe9857cedefcd89d8b15d6cad3ef54bea5deba32dcf975c5f142c4e529b8469c547eff"
+//    };
+//
+//    [self GuardWalletUnlocked:YES body:^(BOOL unlocked) {
+//        if (unlocked) {
+//            id op_account = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
+//            id active = [op_account objectForKey:@"active"];
+//            id my_to_pub = [[[active objectForKey:@"key_auths"] firstObject] objectAtIndex:0];
+//
+//            id my_pubkey = [GraphenePublicKey fromWifPublicKey:my_to_pub];
+//            id d_commitment = [[test_receipt objectForKey:@"commitment"] hex_decode];
+//            id toto_pub = [my_pubkey genToToTo:d_commitment];
+//            id toto_wif_pub = [toto_pub toWifString];
+//            assert([toto_wif_pub isEqualToString:[test_receipt objectForKey:@"to"]]);
+//
+//
+//
+//            GraphenePrivateKey* my_pri = [[WalletManager sharedWalletManager] getGraphenePrivateKeyByPublicKey:my_to_pub];
+//            assert(my_pri);
+//            id memo = [self decryptStealthConfirmationMemo:test_receipt private_key:my_pri];
+//            [self testTransferFromBlind:memo private_key:my_pri stealth_memo:test_receipt];
+//        }
+//    }];
+//
+//
+//    return;
+//    //  TODO:6.0
+//    //    [OrgUtils makeToast:@"导入隐私转账收据。"];
 }
-
-- (void)testTransferFromBlind:(id)memo private_key:(GraphenePrivateKey*)private_key stealth_memo:(id)stealth_memo
-{
-    id amount = [memo objectForKey:@"amount"];
-    id asset_id = [amount objectForKey:@"asset_id"];
-    id amount_value = [amount objectForKey:@"amount"];
-    
-    id core_asset = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:asset_id];
-    NSInteger precision = [[core_asset objectForKey:@"precision"] integerValue];
-    
-    id n_fee = [[ChainObjectManager sharedChainObjectManager] getNetworkCurrentFee:ebo_transfer_from_blind kbyte:nil day:nil output:nil];
-    
-    uint64_t i_total_amount = [amount_value unsignedLongLongValue];
-    id fee_amount = [NSString stringWithFormat:@"%@", [n_fee decimalNumberByMultiplyingByPowerOf10:precision]];
-    uint64_t i_fee_amount = [fee_amount unsignedLongLongValue];
-    
-    
-    GraphenePublicKey* one_time_key = [GraphenePublicKey fromWifPublicKey:[stealth_memo objectForKey:@"one_time_key"]];
-    assert(one_time_key);
-    digest_sha512 secret = {0, };
-    if (![private_key getSharedSecret:one_time_key output:&secret]) {
-        NSAssert(NO, @"");
-    }
-    digest_sha256 child = {0, };
-    sha256(secret.data, sizeof(secret.data), child.data);
-    //    GraphenePublicKey* child_pubkey = [[private_key getPublicKey] child:&child];
-    GraphenePrivateKey* child_prikey = [private_key child:&child];
-    
-    //    id pk1 = [child_pubkey toWifString];
-    id pk2 = [[child_prikey getPublicKey] toWifString];
-    
-    //  TODO:6.0 这里 asset_id 必须是 core 资产，其他资产等手续费需要换算汇率，而且fee和amount必须相同的资产ID。
-    //  其他资产尚不支持
-    id op = @{
-        @"fee":@{@"asset_id":asset_id,@"amount":@(i_fee_amount)},
-        @"amount":@{@"asset_id":asset_id,@"amount":@(i_total_amount-i_fee_amount)},
-        @"to":@"1.2.64",//susu01 op_account[@"id"],
-        @"blinding_factor":[memo objectForKey:@"blinding_factor"],
-        @"inputs":@[@{
-                        @"commitment":[memo objectForKey:@"commitment"],
-                        @"owner":@{
-                                @"weight_threshold":@1,
-                                @"account_auths":@[],
-                                @"key_auths":@[@[pk2, @1]],
-                                @"address_auths":@[]
-                        },
-        }]
-    };
-    NSLog(@"%@", op);
-    
-    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    id sign_key = @{
-        [child_prikey toWifString]: pk2
-    };
-    
-    [[[[BitsharesClientManager sharedBitsharesClientManager] transferFromBlind:op signPriKeyHash:sign_key] then:^id(id data) {
-        NSLog(@"%@", data);
-        [self hideBlockView];
-        [OrgUtils makeToast:@"转出成功。"];
-        return nil;
-    }] catch:^id(id error) {
-        [self hideBlockView];
-        [OrgUtils showGrapheneError:error];
-        return nil;
-    }];
-}
+//
+//- (void)testTransferFromBlind:(id)memo private_key:(GraphenePrivateKey*)private_key stealth_memo:(id)stealth_memo
+//{
+//    id amount = [memo objectForKey:@"amount"];
+//    id asset_id = [amount objectForKey:@"asset_id"];
+//    id amount_value = [amount objectForKey:@"amount"];
+//
+//    id core_asset = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:asset_id];
+//    NSInteger precision = [[core_asset objectForKey:@"precision"] integerValue];
+//
+//    id n_fee = [[ChainObjectManager sharedChainObjectManager] getNetworkCurrentFee:ebo_transfer_from_blind kbyte:nil day:nil output:nil];
+//
+//    uint64_t i_total_amount = [amount_value unsignedLongLongValue];
+//    id fee_amount = [NSString stringWithFormat:@"%@", [n_fee decimalNumberByMultiplyingByPowerOf10:precision]];
+//    uint64_t i_fee_amount = [fee_amount unsignedLongLongValue];
+//
+//
+//    GraphenePublicKey* one_time_key = [GraphenePublicKey fromWifPublicKey:[stealth_memo objectForKey:@"one_time_key"]];
+//    assert(one_time_key);
+//    digest_sha512 secret = {0, };
+//    if (![private_key getSharedSecret:one_time_key output:&secret]) {
+//        NSAssert(NO, @"");
+//    }
+//    digest_sha256 child = {0, };
+//    sha256(secret.data, sizeof(secret.data), child.data);
+//    //    GraphenePublicKey* child_pubkey = [[private_key getPublicKey] child:&child];
+//    GraphenePrivateKey* child_prikey = [private_key child:&child];
+//
+//    //    id pk1 = [child_pubkey toWifString];
+//    id pk2 = [[child_prikey getPublicKey] toWifString];
+//
+//    //  TODO:6.0 这里 asset_id 必须是 core 资产，其他资产等手续费需要换算汇率，而且fee和amount必须相同的资产ID。
+//    //  其他资产尚不支持
+//    id op = @{
+//        @"fee":@{@"asset_id":asset_id,@"amount":@(i_fee_amount)},
+//        @"amount":@{@"asset_id":asset_id,@"amount":@(i_total_amount-i_fee_amount)},
+//        @"to":@"1.2.64",//susu01 op_account[@"id"],
+//        @"blinding_factor":[memo objectForKey:@"blinding_factor"],
+//        @"inputs":@[@{
+//                        @"commitment":[memo objectForKey:@"commitment"],
+//                        @"owner":@{
+//                                @"weight_threshold":@1,
+//                                @"account_auths":@[],
+//                                @"key_auths":@[@[pk2, @1]],
+//                                @"address_auths":@[]
+//                        },
+//        }]
+//    };
+//    NSLog(@"%@", op);
+//
+//    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+//    id sign_key = @{
+//        [child_prikey toWifString]: pk2
+//    };
+//
+//    [[[[BitsharesClientManager sharedBitsharesClientManager] transferFromBlind:op signPriKeyHash:sign_key] then:^id(id data) {
+//        NSLog(@"%@", data);
+//        [self hideBlockView];
+//        [OrgUtils makeToast:@"转出成功。"];
+//        return nil;
+//    }] catch:^id(id error) {
+//        [self hideBlockView];
+//        [OrgUtils showGrapheneError:error];
+//        return nil;
+//    }];
+//}
 
 - (void)viewDidLoad
 {
@@ -234,39 +234,6 @@
     [_dataArray addObjectsFromArray:[[[AppCacheManager sharedAppCacheManager] getAllBlindBalance] allValues]];
     //
     //    //  TODO:6.0 测试初始化数据
-    //    [_dataArray addObject:@{
-    //        @"real_to_key": @"TEST71jaNWV7ZfsBRUSJk6JfxSzEB7gvcS7nSftbnFVDeyk6m3xj53",  //  仅显示用
-    //        @"one_time_key": @"TEST71jaNWV7ZfsBRUSJk6JfxSzEB7gvcS7nSftbnFVDeyk6m3xj53", //  转账用
-    //        @"to": @"TEST71jaNWV7ZfsBRUSJk6JfxSzEB7gvcS7nSftbnFVDeyk6m3xj53",           //  没用到
-    //        @"decrypted_memo": @{
-    //            @"amount": @{@"asset_id": @"1.3.0", @"amount": @12300000},              //  转账用，显示用。
-    //            @"blinding_factor": @"",                                                //  转账用
-    //            @"commitment": @"",                                                     //  转账用
-    //            @"check": @331,                                                         //  导入check用，显示用。
-    //        }
-    //    }];
-    //    [_dataArray addObject:@{
-    //        @"real_to_key": @"TEST71jaNWV7ZfsBRUSJk6JfxSzEB7gvcS7nSftbnFVDeyk6m3xj53",  //  仅显示用
-    //        @"one_time_key": @"TEST71jaNWV7ZfsBRUSJk6JfxSzEB7gvcS7nSftbnFVDeyk6m3xj53", //  转账用
-    //        @"to": @"TEST71jaNWV7ZfsBRUSJk6JfxSzEB7gvcS7nSftbnFVDeyk6m3xj53",           //  没用到
-    //        @"decrypted_memo": @{
-    //            @"amount": @{@"asset_id": @"1.3.0", @"amount": @32300000},              //  转账用，显示用。
-    //            @"blinding_factor": @"",                                                //  转账用
-    //            @"commitment": @"",                                                     //  转账用
-    //            @"check": @132,                                                         //  导入check用，显示用。
-    //        }
-    //    }];
-    //    [_dataArray addObject:@{
-    //        @"real_to_key": @"TEST71jaNWV7ZfsBRUSJk6JfxSzEB7gvcS7nSftbnFVDeyk6m3xj53",  //  仅显示用
-    //        @"one_time_key": @"TEST71jaNWV7ZfsBRUSJk6JfxSzEB7gvcS7nSftbnFVDeyk6m3xj53", //  转账用
-    //        @"to": @"TEST71jaNWV7ZfsBRUSJk6JfxSzEB7gvcS7nSftbnFVDeyk6m3xj53",           //  没用到
-    //        @"decrypted_memo": @{
-    //            @"amount": @{@"asset_id": @"1.3.0", @"amount": @72300000},              //  转账用，显示用。
-    //            @"blinding_factor": @"",                                                //  转账用
-    //            @"commitment": @"",                                                     //  转账用
-    //            @"check": @332,                                                         //  导入check用，显示用。
-    //        }
-    //    }];
     
     //  右上角按钮
     UIBarButtonItem* addBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
@@ -317,7 +284,7 @@
     if (!cell)
     {
         cell = [[ViewBlindBalanceCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:identify];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.selectionStyle = UITableViewCellSelectionStyleBlue;
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
     cell.showCustomBottomLine = YES;
@@ -349,8 +316,8 @@
                 } else {
                     //  TODO:6.0 test trasfer from blind
                     id blind_balance = [_dataArray objectAtIndex:indexPath.row];
-                    VCTransferFromBlind* vc = [[VCTransferFromBlind alloc] initWithBlindBalance:blind_balance result_promise:nil];
-                    [self pushViewController:vc vctitle:@"从隐私账户转出" backtitle:kVcDefaultBackTitleName];
+                    VCBlindTransfer* vc = [[VCBlindTransfer alloc] initWithBlindBalance:blind_balance result_promise:nil];
+                    [self pushViewController:vc vctitle:@"隐私转账" backtitle:kVcDefaultBackTitleName];
                 }
             }
         }];

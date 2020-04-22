@@ -752,9 +752,6 @@
 		3F83349224453C9B0069D366 /* VCTransferToBlind.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F83349024453C9B0069D366 /* VCTransferToBlind.m */; };
 		3F83349324453C9B0069D366 /* VCTransferToBlind.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F83349024453C9B0069D366 /* VCTransferToBlind.m */; };
 		3F83349424453C9B0069D366 /* VCTransferToBlind.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F83349024453C9B0069D366 /* VCTransferToBlind.m */; };
-		3F833497244548D80069D366 /* ViewBlindOutputInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F833496244548D80069D366 /* ViewBlindOutputInfoCell.m */; };
-		3F833498244548D80069D366 /* ViewBlindOutputInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F833496244548D80069D366 /* ViewBlindOutputInfoCell.m */; };
-		3F833499244548D80069D366 /* ViewBlindOutputInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F833496244548D80069D366 /* ViewBlindOutputInfoCell.m */; };
 		3F83349C24454CE60069D366 /* VCBlindOutputAddOne.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F83349B24454CE60069D366 /* VCBlindOutputAddOne.m */; };
 		3F83349D24454CE60069D366 /* VCBlindOutputAddOne.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F83349B24454CE60069D366 /* VCBlindOutputAddOne.m */; };
 		3F83349E24454CE60069D366 /* VCBlindOutputAddOne.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F83349B24454CE60069D366 /* VCBlindOutputAddOne.m */; };
@@ -771,6 +768,9 @@
 		3F87B76D242701B000A0DF3A /* VCAssetOpGlobalSettle.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F87B76A242701B000A0DF3A /* VCAssetOpGlobalSettle.m */; };
 		3F89DE4022B20CF800B052CB /* OpenLedger.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F89DE3F22B20CF800B052CB /* OpenLedger.m */; };
 		3F89DE4122B20CF800B052CB /* OpenLedger.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F89DE3F22B20CF800B052CB /* OpenLedger.m */; };
+		3F8C63DD244FDE48000316D1 /* ViewBlindInputOutputItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8C63DB244FDE48000316D1 /* ViewBlindInputOutputItemCell.m */; };
+		3F8C63DE244FDE48000316D1 /* ViewBlindInputOutputItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8C63DB244FDE48000316D1 /* ViewBlindInputOutputItemCell.m */; };
+		3F8C63DF244FDE48000316D1 /* ViewBlindInputOutputItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8C63DB244FDE48000316D1 /* ViewBlindInputOutputItemCell.m */; };
 		3F916037238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F916036238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m */; };
 		3F916038238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F916036238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m */; };
 		3F916039238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F916036238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m */; };
@@ -2209,8 +2209,6 @@
 		3F7ED8F62278512B00082680 /* ViewProposalOpInfoCell_AccountUpdate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewProposalOpInfoCell_AccountUpdate.m; path = View/ViewProposalOpInfoCell_AccountUpdate.m; sourceTree = "<group>"; };
 		3F83349024453C9B0069D366 /* VCTransferToBlind.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCTransferToBlind.m; path = Controller/VCTransferToBlind.m; sourceTree = "<group>"; };
 		3F83349124453C9B0069D366 /* VCTransferToBlind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCTransferToBlind.h; path = Controller/VCTransferToBlind.h; sourceTree = "<group>"; };
-		3F833495244548D80069D366 /* ViewBlindOutputInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewBlindOutputInfoCell.h; path = View/ViewBlindOutputInfoCell.h; sourceTree = "<group>"; };
-		3F833496244548D80069D366 /* ViewBlindOutputInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewBlindOutputInfoCell.m; path = View/ViewBlindOutputInfoCell.m; sourceTree = "<group>"; };
 		3F83349A24454CE60069D366 /* VCBlindOutputAddOne.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCBlindOutputAddOne.h; path = Controller/VCBlindOutputAddOne.h; sourceTree = "<group>"; };
 		3F83349B24454CE60069D366 /* VCBlindOutputAddOne.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCBlindOutputAddOne.m; path = Controller/VCBlindOutputAddOne.m; sourceTree = "<group>"; };
 		3F83349F2446B2BF0069D366 /* VCBlindBalance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCBlindBalance.m; path = Controller/VCBlindBalance.m; sourceTree = "<group>"; };
@@ -2223,6 +2221,8 @@
 		3F87B76A242701B000A0DF3A /* VCAssetOpGlobalSettle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAssetOpGlobalSettle.m; path = Controller/VCAssetOpGlobalSettle.m; sourceTree = "<group>"; };
 		3F89DE3E22B20CF700B052CB /* OpenLedger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenLedger.h; path = Controller/Gateway/OpenLedger.h; sourceTree = "<group>"; };
 		3F89DE3F22B20CF800B052CB /* OpenLedger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OpenLedger.m; path = Controller/Gateway/OpenLedger.m; sourceTree = "<group>"; };
+		3F8C63DB244FDE48000316D1 /* ViewBlindInputOutputItemCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewBlindInputOutputItemCell.m; path = View/ViewBlindInputOutputItemCell.m; sourceTree = "<group>"; };
+		3F8C63DC244FDE48000316D1 /* ViewBlindInputOutputItemCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewBlindInputOutputItemCell.h; path = View/ViewBlindInputOutputItemCell.h; sourceTree = "<group>"; };
 		3F916035238FF7FC000C3291 /* ViewOtcPaymentIconAndTextCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewOtcPaymentIconAndTextCell.h; path = View/ViewOtcPaymentIconAndTextCell.h; sourceTree = "<group>"; };
 		3F916036238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewOtcPaymentIconAndTextCell.m; path = View/ViewOtcPaymentIconAndTextCell.m; sourceTree = "<group>"; };
 		3F9A730621E59FF300DAF7A2 /* VCDepositWithdrawList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCDepositWithdrawList.h; path = Controller/VCDepositWithdrawList.h; sourceTree = "<group>"; };
@@ -3402,10 +3402,10 @@
 		18FF069017E00C5C0088405E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				3F8C63DC244FDE48000316D1 /* ViewBlindInputOutputItemCell.h */,
+				3F8C63DB244FDE48000316D1 /* ViewBlindInputOutputItemCell.m */,
 				3F8334A52446B5FC0069D366 /* ViewBlindBalanceCell.h */,
 				3F8334A42446B5FB0069D366 /* ViewBlindBalanceCell.m */,
-				3F833495244548D80069D366 /* ViewBlindOutputInfoCell.h */,
-				3F833496244548D80069D366 /* ViewBlindOutputInfoCell.m */,
 				3F65419B2418E2EE00167794 /* ViewNewPasswordCell.h */,
 				3F65419C2418E2EE00167794 /* ViewNewPasswordCell.m */,
 				3F2D83BA24177D1800024FFA /* ViewTradePercentButtonCell.h */,
@@ -6103,7 +6103,6 @@
 				3F6768D4230E9EC100E98C14 /* Xz.c in Sources */,
 				3F6768D5230E9EC100E98C14 /* GCDWebServer.m in Sources */,
 				3F6768D6230E9EC100E98C14 /* SCLTextView.m in Sources */,
-				3F833499244548D80069D366 /* ViewBlindOutputInfoCell.m in Sources */,
 				3F009A1F23A212DF00A77E4A /* ViewUtils.m in Sources */,
 				3F6768D7230E9EC100E98C14 /* SRLog.m in Sources */,
 				3F6768D8230E9EC100E98C14 /* MyTextView.m in Sources */,
@@ -6115,6 +6114,7 @@
 				3F6768DE230E9EC100E98C14 /* Reachability.m in Sources */,
 				3F21FB77235749B600CF9F20 /* ViewSecTipsLineCell.m in Sources */,
 				3F23B788231CCCCA00EEEE78 /* VCPaySuccess.m in Sources */,
+				3F8C63DF244FDE48000316D1 /* ViewBlindInputOutputItemCell.m in Sources */,
 				3FADCF9723D6EF1F00043305 /* VCSettlementOrders.m in Sources */,
 				3FD0AD5723C1FA9D0035018E /* VCAssetDetails.m in Sources */,
 				3F6768DF230E9EC100E98C14 /* VCBtsaiWebView.m in Sources */,
@@ -6468,7 +6468,6 @@
 				3FB8F95921CE66C200DA88E2 /* Xz.c in Sources */,
 				3FB8F95A21CE66C200DA88E2 /* GCDWebServer.m in Sources */,
 				3FB8F95B21CE66C200DA88E2 /* SCLTextView.m in Sources */,
-				3F833498244548D80069D366 /* ViewBlindOutputInfoCell.m in Sources */,
 				3F009A1E23A212DF00A77E4A /* ViewUtils.m in Sources */,
 				3FB8F95C21CE66C200DA88E2 /* SRLog.m in Sources */,
 				3FE4E94A22F698DC0056A44F /* MyTextView.m in Sources */,
@@ -6480,6 +6479,7 @@
 				3FB8F96221CE66C200DA88E2 /* Reachability.m in Sources */,
 				3F21FB76235749B600CF9F20 /* ViewSecTipsLineCell.m in Sources */,
 				3F23B787231CCCCA00EEEE78 /* VCPaySuccess.m in Sources */,
+				3F8C63DE244FDE48000316D1 /* ViewBlindInputOutputItemCell.m in Sources */,
 				3FADCF9623D6EF1F00043305 /* VCSettlementOrders.m in Sources */,
 				3FD0AD5623C1FA9D0035018E /* VCAssetDetails.m in Sources */,
 				3FB8F96321CE66C200DA88E2 /* VCBtsaiWebView.m in Sources */,
@@ -6833,7 +6833,6 @@
 				B72A848020CCD18B00D92A25 /* GCDWebServer.m in Sources */,
 				B782F0C51D6E94C600F61571 /* SCLTextView.m in Sources */,
 				B714094520A31CC300003311 /* SRLog.m in Sources */,
-				3F833497244548D80069D366 /* ViewBlindOutputInfoCell.m in Sources */,
 				3F009A1D23A212DF00A77E4A /* ViewUtils.m in Sources */,
 				3FE4E94922F698DC0056A44F /* MyTextView.m in Sources */,
 				B72A848720CCD18B00D92A25 /* GCDWebServerMultiPartFormRequest.m in Sources */,
@@ -6845,6 +6844,7 @@
 				3F23B786231CCCCA00EEEE78 /* VCPaySuccess.m in Sources */,
 				3F21FB75235749B600CF9F20 /* ViewSecTipsLineCell.m in Sources */,
 				B72A844820CA628800D92A25 /* VCBtsaiWebView.m in Sources */,
+				3F8C63DD244FDE48000316D1 /* ViewBlindInputOutputItemCell.m in Sources */,
 				3FADCF9523D6EF1F00043305 /* VCSettlementOrders.m in Sources */,
 				3FD0AD5523C1FA9D0035018E /* VCAssetDetails.m in Sources */,
 				B79FC2D41A45E8A0000D49D5 /* VCNotice.m in Sources */,

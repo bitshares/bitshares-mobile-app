@@ -4,7 +4,7 @@
 //
 //  Created by SYALON on 13-10-23.
 //
-//  隐私转账
+//  转入隐私账户
 
 #import "VCBase.h"
 
@@ -12,7 +12,6 @@
 
 - (id)initWithCurrAsset:(id)curr_asset
       full_account_data:(id)full_account_data
-          op_extra_args:(id)op_extra_args
          result_promise:(WsPromiseObject*)result_promise;
 
 @end
