@@ -43,13 +43,13 @@ enum
     _result_promise = nil;
 }
 
-- (id)init
+- (id)initWithResultPromise:(WsPromiseObject*)result_promise
 {
     self = [super init];
     if (self){
         _dataArray = [NSMutableArray array];
-        _result_promise = nil;//TODO:6.0 args
-//        result_promise:(WsPromiseObject*)result_promise
+        _result_promise = result_promise;
+//        id commitment = [[blind_balance objectForKey:@"decrypted_memo"] objectForKey:@"commitment"];
     }
     return self;
 }
@@ -168,6 +168,7 @@ enum
         if (!cell)
         {
             cell = [[ViewBlindBalanceCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:identify];
+            //  REMARK：多选情况下该参数不能设置为 UITableViewCellSelectionStyleNone。
             cell.selectionStyle = UITableViewCellSelectionStyleBlue;
             cell.accessoryType = UITableViewCellAccessoryNone;
             cell.backgroundColor = [UIColor clearColor];
@@ -181,6 +182,12 @@ enum
         cell.row = indexPath.row;
         [cell setTagData:indexPath.row];
         [cell setItem:[_dataArray objectAtIndex:indexPath.row]];
+        
+        //  TODO:6.0
+//        //  默认选中
+//        if ([[row_data objectForKey:@"_kSelected"] boolValue]){
+//            [tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+//        }
         return cell;
     } else {
         UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
@@ -197,24 +204,11 @@ enum
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == kVcBlindBalance) {
-        //    id row_data = [_sectionDataArray[indexPath.section][@"kDataArray"] objectAtIndex:indexPath.row];
-        //    assert(row_data);
-        //    //  更新选中状态
-        //    row_data[@"_kSelected"] = @(YES);
-        //    //  更新脏标记
-        //    _bDirty = [self _isUserModifyed];
-            //  TODO:fowallet 新增、删除标记待处理。
-            //    //  有代理人的情况（需要重新刷新table、所有代投票标签都要移除or添加）
-            //    if (_have_proxy){
-            //        //  TODO:fowallet 3个界面都需要更新
-            //        [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
-            //            [tableView reloadData];
-            //        }];
-            //    }
+        //  选择，可处理事件。
     } else {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
         [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
-            [self onSubmitClicked];
+            [self onSubmitClicked:tableView];
         }];
     }
 }
@@ -222,30 +216,25 @@ enum
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(3_0)
 {
     if (indexPath.section == kVcBlindBalance) {
-        //    id row_data = [_sectionDataArray[indexPath.section][@"kDataArray"] objectAtIndex:indexPath.row];
-        //    assert(row_data);
-        //    //  更新选中状态
-        //    row_data[@"_kSelected"] = @(NO);
-        //    //  更新脏标记
-        //    _bDirty = [self _isUserModifyed];
-            //  TODO:fowallet 新增、删除标记待处理。
-            //    //  有代理人的情况（需要重新刷新table、所有代投票标签都要移除or添加）
-            //    if (_have_proxy){
-            //        //  TODO:fowallet 3个界面都需要更新
-            //        [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
-            //            [tableView reloadData];
-            //        }];
-            //    }
+        //  取消选择，可处理事件。
     } else {
         //  ...
     }
 }
 
-- (void)onSubmitClicked
+- (void)onSubmitClicked:(UITableView*)tableView
 {
+    NSMutableArray* result = [NSMutableArray array];
+    for (NSUInteger row = 0; row < [_dataArray count]; ++row) {
+        NSIndexPath* path = [NSIndexPath indexPathForRow:row inSection:kVcBlindBalance];
+        UITableViewCell* cell = (UITableViewCell*)[tableView cellForRowAtIndexPath:path];
+        assert(cell);
+        if (cell.selected) {
+            [result addObject:[_dataArray objectAtIndex:row]];
+        }
+    }
     if (_result_promise) {
-        //  TODO:6.0 get result selected
-//        [_result_promise resolve:blind_balance];
+        [_result_promise resolve:[result copy]];
     }
     [self closeOrPopViewController];
 }

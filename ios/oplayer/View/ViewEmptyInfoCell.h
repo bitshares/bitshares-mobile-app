@@ -13,4 +13,7 @@
 
 - (id)initWithText:(NSString*)pText iconName:(NSString*)iconName;
 
+@property (nonatomic, strong) UIImageView* imgIcon;
+@property (nonatomic, strong) UILabel* lbText;
+
 @end

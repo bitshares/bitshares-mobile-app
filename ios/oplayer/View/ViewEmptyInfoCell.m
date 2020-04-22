@@ -12,8 +12,6 @@
 
 @interface ViewEmptyInfoCell ()
 {
-    UIImageView*        _imgIcon;
-    UILabel*            _lbText;
 }
 
 @end
