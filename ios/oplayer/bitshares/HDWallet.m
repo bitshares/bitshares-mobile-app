@@ -87,6 +87,7 @@
 
 - (HDWallet*)deriveBitshares:(EHDBitsharesPermissionType)type
 {
+    //  REMARK：m / purpose' / network' / role' / account-index' / key-index'
     switch (type) {
         case EHDBPT_OWNER:
             return [self derive:@"m/48'/1'/0'/0'/0'"];
@@ -94,12 +95,25 @@
             return [self derive:@"m/48'/1'/1'/0'/0'"];
         case EHDBPT_MEMO:
             return [self derive:@"m/48'/1'/3'/0'/0'"];
-            break;
+        case EHDBPT_STEALTH_MAINKEY:
+            //  REMARK：隐私交易 role 类型值定义为：7。
+            return [self derive:@"m/48'/1'/7'/0'/0'"];
+        case EHDBPT_STEALTH_CHILDKEY:
+            return [self deriveBitsharesStealthChildKey:0];
         default:
             break;
     }
     assert(NO);
     return nil;
+}
+
+/*
+ *  (public) 派生隐私地址的子地址。根据主地址私钥作为seed。
+ */
+- (HDWallet*)deriveBitsharesStealthChildKey:(NSUInteger)child_key_index
+{
+    //  REMARK：隐私地址子地址 role 类型值定义为：8。
+    return [self derive:[NSString stringWithFormat:@"m/48'/1'/8'/0'/%@'", @(child_key_index)]];
 }
 
 - (HDWallet*)derive:(NSString*)path
