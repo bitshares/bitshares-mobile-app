@@ -21,6 +21,19 @@
 {
 }
 
++ (id)fromWifPrivateKey:(NSString*)wif_private_key
+{
+    if (!wif_private_key || [wif_private_key isEqualToString:@""]) {
+        return nil;
+    }
+    secp256k1_prikey key = {0, };
+    if (__bts_gen_private_key_from_wif_privatekey((const unsigned char*)[wif_private_key UTF8String],
+                                                  (const size_t)wif_private_key.length, key.data)){
+        return [[self alloc] initWithSecp256k1PrivateKey:&key];
+    }
+    return nil;
+}
+
 - (id)initWithSecp256k1PrivateKey:(const secp256k1_prikey*)private_key
 {
     self = [super init];

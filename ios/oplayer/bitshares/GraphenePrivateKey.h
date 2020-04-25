@@ -12,6 +12,8 @@
 @class GraphenePublicKey;
 @interface GraphenePrivateKey : NSObject
 
++ (id)fromWifPrivateKey:(NSString*)wif_private_key;
+
 - (id)initWithSecp256k1PrivateKey:(const secp256k1_prikey*)private_key;
 - (id)initRandom;
 

@@ -31,6 +31,9 @@
 
 + (id)fromWifPublicKey:(NSString*)wif_public_key
 {
+    if (!wif_public_key || [wif_public_key isEqualToString:@""]) {
+        return nil;
+    }
     secp256k1_pubkey_compressed key;
     if (__bts_gen_public_key_from_b58address((const unsigned char*)[wif_public_key UTF8String], (const size_t)[wif_public_key length],
                                              [[ChainObjectManager sharedChainObjectManager].grapheneAddressPrefix length], &key)) {
@@ -94,6 +97,24 @@
     GraphenePublicKey* child_public_key = [[GraphenePublicKey alloc] initWithSecp256k1PublicKey:[self getKeyData]];
     __bts_pubkey_tweak_add([child_public_key getKeyData], offset.data);
     return child_public_key;
+}
+
+/*
+ *  (public) 生成变形的 to_public_key，仅用做验证。没发计算出原 to_public_key。
+ */
+- (GraphenePublicKey*)genToToTo:(NSData*)commitment
+{
+    assert(commitment);
+    assert(commitment.length == 33);
+    
+    unsigned char buf[sizeof(_key.data) + 33];
+    memcpy(buf, _key.data, sizeof(_key.data));
+    memcpy(&buf[sizeof(_key.data)], commitment.bytes, 33);
+    
+    secp256k1_prikey to_digest;
+    sha256(buf, sizeof(buf), to_digest.data);
+    
+    return [[[GraphenePrivateKey alloc] initWithSecp256k1PrivateKey:&to_digest] getPublicKey];
 }
 
 @end

@@ -23,4 +23,9 @@
 
 - (GraphenePublicKey*)child:(const digest_sha256*)child;
 
+/*
+ *  (public) 生成变形的 to_public_key，仅用做验证。没发计算出原 to_public_key。
+ */
+- (GraphenePublicKey*)genToToTo:(NSData*)commitment;
+
 @end
