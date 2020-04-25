@@ -124,7 +124,7 @@
     //  第一行 ID
     _lbObjectID.text = [NSString stringWithFormat:@"%@. 收据 #%@", @(self.row + 1),
                         [[[NSData dataWithBytes:&check length:sizeof(check)] hex_encode] uppercaseString]];
-    _lbObjectID.textColor = theme.textColorMain;
+    _lbObjectID.textColor = self.editing && !self.selected ? theme.textColorNormal : theme.textColorMain;
     _lbObjectID.frame = CGRectMake(xOffset, yOffset, fWidth, 28.0f);
     
     yOffset += 28.0f;

@@ -7,6 +7,8 @@
 //
 
 #import "VCBlindOutputAddOne.h"
+
+#import "VCBlindAccounts.h"
 #import "VCSearchNetwork.h"
 #import "ViewAdvTextFieldCell.h"
 
@@ -65,16 +67,19 @@ enum
     return self;
 }
 
-- (void)onSearchAccountClicked:(UIButton*)sender
+- (void)onMyBlindAccountClicked:(UIButton*)sender
 {
-    VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:enstAccount callback:^(id account_info) {
-        if (account_info){
-            _tf_authority.text = [account_info objectForKey:@"name"];
+    //  TODO:6.0 lang
+    WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
+    VCBlindAccounts* vc = [[VCBlindAccounts alloc] initWithResultPromise:result_promise];
+    [self pushViewController:vc vctitle:@"选择隐私账户" backtitle:kVcDefaultBackTitleName];
+    [result_promise then:^id(id blind_account) {
+        if (blind_account) {
+            _tf_authority.text = [blind_account objectForKey:@"public_key"] ?: @"";
         }
+        //  TODO:6.0
+        return nil;
     }];
-    [self pushViewController:vc
-                     vctitle:NSLocalizedString(@"kVcTitleAddOneSearchAccount", @"搜索账号")
-                   backtitle:kVcDefaultBackTitleName];
 }
 
 - (void)viewDidLoad
@@ -89,30 +94,31 @@ enum
     CGRect rect = [self makeTextFieldRect];
     
     //  TODO:6.0 lang
-    NSString* placeHolderAuthority = @"请输入地址公钥";
+    NSString* placeHolderAuthority = @"请输入您或他人的隐私账户";
     
     _tf_authority = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolderAuthority];
     _tf_authority.updateClearButtonTintColor = YES;
     _tf_authority.showBottomLine = YES;
     _tf_authority.textColor = theme.textColorMain;
     _tf_authority.attributedPlaceholder = [ViewUtils placeholderAttrString:placeHolderAuthority];
-  
+    
     //  UI - 管理者输入框末尾按钮
+    //  TODO:6.0 扫一扫？
     UIButton* btnSearch = [UIButton buttonWithType:UIButtonTypeSystem];
     btnSearch.titleLabel.font = [UIFont systemFontOfSize:13];
-    [btnSearch setTitle:@"扫描" forState:UIControlStateNormal];
+    [btnSearch setTitle:@"我的账户" forState:UIControlStateNormal];
     [btnSearch setTitleColor:theme.textColorHighlight forState:UIControlStateNormal];
     btnSearch.userInteractionEnabled = YES;
     btnSearch.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
-    [btnSearch addTarget:self action:@selector(onSearchAccountClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [btnSearch addTarget:self action:@selector(onMyBlindAccountClicked:) forControlEvents:UIControlEventTouchUpInside];
     btnSearch.frame = CGRectMake(0, 2, 96, 27);
     _tf_authority.rightView = btnSearch;
     _tf_authority.rightViewMode = UITextFieldViewModeAlways;
     
     //  UI - 数量输入框
     _cell_amount = [[ViewAdvTextFieldCell alloc] initWithTitle:@"数量"
-                                                  placeholder:@"请输入转账数量"
-                                             decimalPrecision:[[_asset objectForKey:@"precision"] integerValue]];
+                                                   placeholder:@"请输入输出数量"
+                                              decimalPrecision:[[_asset objectForKey:@"precision"] integerValue]];
     [_cell_amount genTailerAssetName:_asset[@"symbol"]];
     
     //  UI - 列表
@@ -151,14 +157,14 @@ enum
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-//    if (textField == _tf_authority)
-//    {
-////        [_tf_threshold becomeFirstResponder];
-//    }
-//    else
-//    {
-        [self endInput];
-//    }
+    //    if (textField == _tf_authority)
+    //    {
+    ////        [_tf_threshold becomeFirstResponder];
+    //    }
+    //    else
+    //    {
+    [self endInput];
+    //    }
     return YES;
 }
 
@@ -222,7 +228,7 @@ enum
                     cell.hideBottomLine = YES;
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                    cell.textLabel.text = @"隐私地址";//TODO:6.0
+                    cell.textLabel.text = @"隐私账户";//TODO:6.0
                     cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                     return cell;

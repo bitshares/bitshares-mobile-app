@@ -771,6 +771,18 @@
 		3F8C63DD244FDE48000316D1 /* ViewBlindInputOutputItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8C63DB244FDE48000316D1 /* ViewBlindInputOutputItemCell.m */; };
 		3F8C63DE244FDE48000316D1 /* ViewBlindInputOutputItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8C63DB244FDE48000316D1 /* ViewBlindInputOutputItemCell.m */; };
 		3F8C63DF244FDE48000316D1 /* ViewBlindInputOutputItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8C63DB244FDE48000316D1 /* ViewBlindInputOutputItemCell.m */; };
+		3F8C63E224504B1F000316D1 /* VCBlindAccounts.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8C63E024504B1F000316D1 /* VCBlindAccounts.m */; };
+		3F8C63E324504B1F000316D1 /* VCBlindAccounts.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8C63E024504B1F000316D1 /* VCBlindAccounts.m */; };
+		3F8C63E424504B1F000316D1 /* VCBlindAccounts.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8C63E024504B1F000316D1 /* VCBlindAccounts.m */; };
+		3F8C63E724504D48000316D1 /* ViewBlindAccountCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8C63E524504D47000316D1 /* ViewBlindAccountCell.m */; };
+		3F8C63E824504D48000316D1 /* ViewBlindAccountCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8C63E524504D47000316D1 /* ViewBlindAccountCell.m */; };
+		3F8C63E924504D48000316D1 /* ViewBlindAccountCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8C63E524504D47000316D1 /* ViewBlindAccountCell.m */; };
+		3F8C63EC24528063000316D1 /* VCBlindAccountImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8C63EA24528063000316D1 /* VCBlindAccountImport.m */; };
+		3F8C63ED24528063000316D1 /* VCBlindAccountImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8C63EA24528063000316D1 /* VCBlindAccountImport.m */; };
+		3F8C63EE24528063000316D1 /* VCBlindAccountImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8C63EA24528063000316D1 /* VCBlindAccountImport.m */; };
+		3F8C63F12453D18E000316D1 /* VCStealthTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8C63EF2453D18E000316D1 /* VCStealthTransfer.m */; };
+		3F8C63F22453D18E000316D1 /* VCStealthTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8C63EF2453D18E000316D1 /* VCStealthTransfer.m */; };
+		3F8C63F32453D18E000316D1 /* VCStealthTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8C63EF2453D18E000316D1 /* VCStealthTransfer.m */; };
 		3F916037238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F916036238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m */; };
 		3F916038238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F916036238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m */; };
 		3F916039238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F916036238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m */; };
@@ -2223,6 +2235,14 @@
 		3F89DE3F22B20CF800B052CB /* OpenLedger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OpenLedger.m; path = Controller/Gateway/OpenLedger.m; sourceTree = "<group>"; };
 		3F8C63DB244FDE48000316D1 /* ViewBlindInputOutputItemCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewBlindInputOutputItemCell.m; path = View/ViewBlindInputOutputItemCell.m; sourceTree = "<group>"; };
 		3F8C63DC244FDE48000316D1 /* ViewBlindInputOutputItemCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewBlindInputOutputItemCell.h; path = View/ViewBlindInputOutputItemCell.h; sourceTree = "<group>"; };
+		3F8C63E024504B1F000316D1 /* VCBlindAccounts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCBlindAccounts.m; path = Controller/VCBlindAccounts.m; sourceTree = "<group>"; };
+		3F8C63E124504B1F000316D1 /* VCBlindAccounts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCBlindAccounts.h; path = Controller/VCBlindAccounts.h; sourceTree = "<group>"; };
+		3F8C63E524504D47000316D1 /* ViewBlindAccountCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewBlindAccountCell.m; path = View/ViewBlindAccountCell.m; sourceTree = "<group>"; };
+		3F8C63E624504D47000316D1 /* ViewBlindAccountCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewBlindAccountCell.h; path = View/ViewBlindAccountCell.h; sourceTree = "<group>"; };
+		3F8C63EA24528063000316D1 /* VCBlindAccountImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCBlindAccountImport.m; path = Controller/VCBlindAccountImport.m; sourceTree = "<group>"; };
+		3F8C63EB24528063000316D1 /* VCBlindAccountImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCBlindAccountImport.h; path = Controller/VCBlindAccountImport.h; sourceTree = "<group>"; };
+		3F8C63EF2453D18E000316D1 /* VCStealthTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCStealthTransfer.m; path = Controller/VCStealthTransfer.m; sourceTree = "<group>"; };
+		3F8C63F02453D18E000316D1 /* VCStealthTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCStealthTransfer.h; path = Controller/VCStealthTransfer.h; sourceTree = "<group>"; };
 		3F916035238FF7FC000C3291 /* ViewOtcPaymentIconAndTextCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewOtcPaymentIconAndTextCell.h; path = View/ViewOtcPaymentIconAndTextCell.h; sourceTree = "<group>"; };
 		3F916036238FF7FD000C3291 /* ViewOtcPaymentIconAndTextCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewOtcPaymentIconAndTextCell.m; path = View/ViewOtcPaymentIconAndTextCell.m; sourceTree = "<group>"; };
 		3F9A730621E59FF300DAF7A2 /* VCDepositWithdrawList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCDepositWithdrawList.h; path = Controller/VCDepositWithdrawList.h; sourceTree = "<group>"; };
@@ -3232,6 +3252,12 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3F8C63F02453D18E000316D1 /* VCStealthTransfer.h */,
+				3F8C63EF2453D18E000316D1 /* VCStealthTransfer.m */,
+				3F8C63EB24528063000316D1 /* VCBlindAccountImport.h */,
+				3F8C63EA24528063000316D1 /* VCBlindAccountImport.m */,
+				3F8C63E124504B1F000316D1 /* VCBlindAccounts.h */,
+				3F8C63E024504B1F000316D1 /* VCBlindAccounts.m */,
 				3FAFCCD3244D76A4004B7ECC /* VCStealthTransferHelper.h */,
 				3FAFCCD2244D76A4004B7ECC /* VCStealthTransferHelper.m */,
 				3FAFCCC524494CE7004B7ECC /* VCSelectBlindBalance.h */,
@@ -3402,6 +3428,8 @@
 		18FF069017E00C5C0088405E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				3F8C63E624504D47000316D1 /* ViewBlindAccountCell.h */,
+				3F8C63E524504D47000316D1 /* ViewBlindAccountCell.m */,
 				3F8C63DC244FDE48000316D1 /* ViewBlindInputOutputItemCell.h */,
 				3F8C63DB244FDE48000316D1 /* ViewBlindInputOutputItemCell.m */,
 				3F8334A52446B5FC0069D366 /* ViewBlindBalanceCell.h */,
@@ -5927,6 +5955,7 @@
 				3F676844230E9EC100E98C14 /* Threads.c in Sources */,
 				3F676845230E9EC100E98C14 /* varint.c in Sources */,
 				3F676846230E9EC100E98C14 /* AFURLRequestSerialization.m in Sources */,
+				3F8C63F32453D18E000316D1 /* VCStealthTransfer.m in Sources */,
 				3F676847230E9EC100E98C14 /* MBProgressHUDSingleton.m in Sources */,
 				3F676848230E9EC100E98C14 /* SRSIMDHelpers.m in Sources */,
 				3F676849230E9EC100E98C14 /* VCLoginBrainKeyMode.m in Sources */,
@@ -6055,6 +6084,7 @@
 				3F6768AD230E9EC100E98C14 /* MKlineIndexBoll.m in Sources */,
 				3F6768AE230E9EC100E98C14 /* VCScanPrivateKey.m in Sources */,
 				3F6768AF230E9EC100E98C14 /* SGQRCodeObtain.m in Sources */,
+				3F8C63EE24528063000316D1 /* VCBlindAccountImport.m in Sources */,
 				3F6768B0230E9EC100E98C14 /* MyAjaxProtocol.m in Sources */,
 				3FFFA118238632EE00E25CFA /* VCOtcUserAuthInfos.m in Sources */,
 				3F6768B1230E9EC100E98C14 /* SettingManager.m in Sources */,
@@ -6074,6 +6104,7 @@
 				3FD3DD302316A579009760A0 /* VCScanAccountName.m in Sources */,
 				3F6768BC230E9EC100E98C14 /* GatewayBase.m in Sources */,
 				3F6768BD230E9EC100E98C14 /* Lzma2Dec.c in Sources */,
+				3F8C63E424504B1F000316D1 /* VCBlindAccounts.m in Sources */,
 				3F6768BE230E9EC100E98C14 /* SRHash.m in Sources */,
 				3F6768BF230E9EC100E98C14 /* VCMarketContainer.m in Sources */,
 				3F6768C0230E9EC100E98C14 /* GCDWebUploader.m in Sources */,
@@ -6123,6 +6154,7 @@
 				3F009A03239FAA9A00A77E4A /* VCOtcMcAdList.m in Sources */,
 				3F2E6E2E233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */,
 				3F6768E2230E9EC100E98C14 /* StyledPageControl.m in Sources */,
+				3F8C63E924504D48000316D1 /* ViewBlindAccountCell.m in Sources */,
 				3F6768E3230E9EC100E98C14 /* VCTest.m in Sources */,
 				3F6768E4230E9EC100E98C14 /* Ppmd7Enc.c in Sources */,
 				3FD0AD5223C1A3F20035018E /* ViewAssetBasicInfoCell.m in Sources */,
@@ -6292,6 +6324,7 @@
 				3FB8F8D921CE66C200DA88E2 /* Threads.c in Sources */,
 				3FB8F8DA21CE66C200DA88E2 /* varint.c in Sources */,
 				3FB8F8DB21CE66C200DA88E2 /* AFURLRequestSerialization.m in Sources */,
+				3F8C63F22453D18E000316D1 /* VCStealthTransfer.m in Sources */,
 				3FB8F8DC21CE66C200DA88E2 /* MBProgressHUDSingleton.m in Sources */,
 				3FB8F8DD21CE66C200DA88E2 /* SRSIMDHelpers.m in Sources */,
 				3F86510422EEA228000D496A /* VCLoginBrainKeyMode.m in Sources */,
@@ -6420,6 +6453,7 @@
 				3F38473B2227752300B55914 /* MKlineIndexBoll.m in Sources */,
 				3FB8F93821CE66C200DA88E2 /* VCScanPrivateKey.m in Sources */,
 				3FB8F93921CE66C200DA88E2 /* SGQRCodeObtain.m in Sources */,
+				3F8C63ED24528063000316D1 /* VCBlindAccountImport.m in Sources */,
 				3FB8F93A21CE66C200DA88E2 /* MyAjaxProtocol.m in Sources */,
 				3FFFA117238632EE00E25CFA /* VCOtcUserAuthInfos.m in Sources */,
 				3FB8F93B21CE66C200DA88E2 /* SettingManager.m in Sources */,
@@ -6439,6 +6473,7 @@
 				3FD3DD2F2316A579009760A0 /* VCScanAccountName.m in Sources */,
 				3F6C35AE21EC83AB008E2903 /* GatewayBase.m in Sources */,
 				3FB8F94521CE66C200DA88E2 /* Lzma2Dec.c in Sources */,
+				3F8C63E324504B1F000316D1 /* VCBlindAccounts.m in Sources */,
 				3FB8F94621CE66C200DA88E2 /* SRHash.m in Sources */,
 				3FB8F94721CE66C200DA88E2 /* VCMarketContainer.m in Sources */,
 				3FB8F94821CE66C200DA88E2 /* GCDWebUploader.m in Sources */,
@@ -6488,6 +6523,7 @@
 				3F009A02239FAA9A00A77E4A /* VCOtcMcAdList.m in Sources */,
 				3F2E6E2D233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */,
 				3FB8F96621CE66C200DA88E2 /* StyledPageControl.m in Sources */,
+				3F8C63E824504D48000316D1 /* ViewBlindAccountCell.m in Sources */,
 				3FB8F96721CE66C200DA88E2 /* VCTest.m in Sources */,
 				3FB8F96821CE66C200DA88E2 /* Ppmd7Enc.c in Sources */,
 				3FD0AD5123C1A3F20035018E /* ViewAssetBasicInfoCell.m in Sources */,
@@ -6657,6 +6693,7 @@
 				B7B8811420C51BB200DBCD45 /* varint.c in Sources */,
 				F531ECBD1D670895009328A4 /* AFURLRequestSerialization.m in Sources */,
 				B75A1D6E1C06F5A70012D1D5 /* MBProgressHUDSingleton.m in Sources */,
+				3F8C63F12453D18E000316D1 /* VCStealthTransfer.m in Sources */,
 				B714094820A31CC300003311 /* SRSIMDHelpers.m in Sources */,
 				3F86510322EEA228000D496A /* VCLoginBrainKeyMode.m in Sources */,
 				3F9A730C21E5C20500DAF7A2 /* ViewGatewayCoinInfoCell.m in Sources */,
@@ -6785,6 +6822,7 @@
 				3F475CE221946712009DD5C1 /* VCScanPrivateKey.m in Sources */,
 				3F0DA36421884011006E1004 /* SGQRCodeObtain.m in Sources */,
 				ED0571CE1878399600DEB570 /* MyAjaxProtocol.m in Sources */,
+				3F8C63EC24528063000316D1 /* VCBlindAccountImport.m in Sources */,
 				B7F495421C508B3300704D14 /* SettingManager.m in Sources */,
 				3FFFA116238632EE00E25CFA /* VCOtcUserAuthInfos.m in Sources */,
 				B714093B20A31CC300003311 /* SRDelegateController.m in Sources */,
@@ -6804,6 +6842,7 @@
 				3F6C35AD21EC83AB008E2903 /* GatewayBase.m in Sources */,
 				B7BDAA8F20B3C77500738F12 /* Lzma2Dec.c in Sources */,
 				B714094320A31CC300003311 /* SRHash.m in Sources */,
+				3F8C63E224504B1F000316D1 /* VCBlindAccounts.m in Sources */,
 				B74D4BC720A2B822009DD9B0 /* VCMarketContainer.m in Sources */,
 				B72A847F20CCD18B00D92A25 /* GCDWebUploader.m in Sources */,
 				3F3847322222686400B55914 /* VCMemberShip.m in Sources */,
@@ -6853,6 +6892,7 @@
 				3F009A01239FAA9A00A77E4A /* VCOtcMcAdList.m in Sources */,
 				ED96A096186C62AD002181D4 /* StyledPageControl.m in Sources */,
 				EDC7D39C1869D430009F40F1 /* VCTest.m in Sources */,
+				3F8C63E724504D48000316D1 /* ViewBlindAccountCell.m in Sources */,
 				B7BDAA9A20B3C77500738F12 /* Ppmd7Enc.c in Sources */,
 				B764AEA320B5160000BDFC1B /* VCServices.m in Sources */,
 				3FD0AD5023C1A3F20035018E /* ViewAssetBasicInfoCell.m in Sources */,

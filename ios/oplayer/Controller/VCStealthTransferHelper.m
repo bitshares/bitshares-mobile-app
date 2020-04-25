@@ -187,8 +187,7 @@
     
     NSMutableArray* inputs = [NSMutableArray array];
     
-    for (id item in data_array_input) {
-        id blind_balance = [item objectForKey:@"blind_balance"];
+    for (id blind_balance in data_array_input) {
         id to_pub = [blind_balance objectForKey:@"real_to_key"];
         GraphenePrivateKey* to_pri = [[WalletManager sharedWalletManager] getGraphenePrivateKeyByPublicKey:to_pub];
         if (!to_pri) {

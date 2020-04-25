@@ -608,7 +608,7 @@ enum
         for (id blind_balance in _data_array_blind_input) {
             [pAppCahce removeBlindBalance:blind_balance];
         }
-        [pAppCahce saveStealthReceiptToFile];
+        [pAppCahce saveWalletInfoToFile];
         return nil;
     }] catch:^id(id error) {
         [self hideBlockView];

@@ -92,7 +92,7 @@ enum
     [self.view addSubview:_mainTableView];
     
     //  UI - 空
-    _lbEmpty = [self genCenterEmptyLabel:rect txt:@"没有任何隐私资产，可点击右上角导入转账收据。"];
+    _lbEmpty = [self genCenterEmptyLabel:rect txt:@"没有任何隐私收据。"];
     _lbEmpty.hidden = YES;
     [self.view addSubview:_lbEmpty];
     

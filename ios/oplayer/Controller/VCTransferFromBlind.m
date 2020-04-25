@@ -109,22 +109,12 @@ enum
     return @"【温馨提示】\n隐私转账可同时转出多个隐私余额到指定公共账号。";
 }
 
-//- (void)onRightButtonClicked
-//{
-//    VCBlindBalance* vc = [[VCBlindBalance alloc] init];
-//    //  TODO:6.0 lang
-//    [self pushViewController:vc vctitle:@"隐私资产" backtitle:kVcDefaultBackTitleName];
-//}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     self.view.backgroundColor = theme.appBackColor;
-    
-    //  TODO:6.0 icon
-    //    [self showRightImageButton:@"iconProposal" action:@selector(onRightButtonClicked) color:theme.textColorNormal];
     
     //  UI - 列表
     CGRect rect = [self rectWithoutNavi];
@@ -545,7 +535,7 @@ enum
         for (id blind_balance in blind_balance_array) {
             [pAppCahce removeBlindBalance:blind_balance];
         }
-        [pAppCahce saveStealthReceiptToFile];
+        [pAppCahce saveWalletInfoToFile];
         return nil;
     }] catch:^id(id error) {
         [self hideBlockView];
