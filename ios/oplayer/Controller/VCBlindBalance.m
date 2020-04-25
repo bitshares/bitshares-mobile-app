@@ -54,47 +54,47 @@
     _mainTableView.hidden = [_dataArray count] == 0;
     _lbEmpty.hidden = !_mainTableView.hidden;
 }
-
-/*
- *  (private) 解密 stealth_confirmation 结构中的 encrypted_memo 数据。
- */
-- (id)decryptStealthConfirmationMemo:(NSDictionary*)stealth_memo private_key:(GraphenePrivateKey*)private_key
-{
-    assert(stealth_memo);
-    assert(private_key);
-    GraphenePublicKey* one_time_key = [GraphenePublicKey fromWifPublicKey:[stealth_memo objectForKey:@"one_time_key"]];
-    assert(one_time_key);
-    
-    digest_sha512 secret = {0, };
-    if (![private_key getSharedSecret:one_time_key output:&secret]) {
-        return nil;
-    }
-    
-    id d_encrypted_memo = [stealth_memo objectForKey:@"encrypted_memo"];
-    if ([d_encrypted_memo isKindOfClass:[NSString class]]) {
-        d_encrypted_memo = [d_encrypted_memo hex_decode];
-    }
-    id decrypted_memo = [d_encrypted_memo aes256cbc_decrypt:&secret];
-    if (!decrypted_memo) {
-        return nil;
-    }
-    
-    //  这里可能存在异常数据，需要捕获。
-    id obj_decrypted_memo = nil;
-    @try {
-        obj_decrypted_memo = [T_stealth_confirmation_memo_data parse:decrypted_memo];
-    } @catch (NSException *exception) {
-        NSLog(@"Invalid receipt data.");
-        return nil;
-    }
-    
-    uint32_t check = *(uint32_t*)&secret.data[0];
-    if ([[obj_decrypted_memo objectForKey:@"check"] unsignedIntValue] != check) {
-        return nil;
-    }
-    
-    return obj_decrypted_memo;
-}
+//
+///*
+// *  (private) 解密 stealth_confirmation 结构中的 encrypted_memo 数据。
+// */
+//- (id)decryptStealthConfirmationMemo:(NSDictionary*)stealth_memo private_key:(GraphenePrivateKey*)private_key
+//{
+//    assert(stealth_memo);
+//    assert(private_key);
+//    GraphenePublicKey* one_time_key = [GraphenePublicKey fromWifPublicKey:[stealth_memo objectForKey:@"one_time_key"]];
+//    assert(one_time_key);
+//    
+//    digest_sha512 secret = {0, };
+//    if (![private_key getSharedSecret:one_time_key output:&secret]) {
+//        return nil;
+//    }
+//    
+//    id d_encrypted_memo = [stealth_memo objectForKey:@"encrypted_memo"];
+//    if ([d_encrypted_memo isKindOfClass:[NSString class]]) {
+//        d_encrypted_memo = [d_encrypted_memo hex_decode];
+//    }
+//    id decrypted_memo = [d_encrypted_memo aes256cbc_decrypt:&secret];
+//    if (!decrypted_memo) {
+//        return nil;
+//    }
+//    
+//    //  这里可能存在异常数据，需要捕获。
+//    id obj_decrypted_memo = nil;
+//    @try {
+//        obj_decrypted_memo = [T_stealth_confirmation_memo_data parse:decrypted_memo];
+//    } @catch (NSException *exception) {
+//        NSLog(@"Invalid receipt data.");
+//        return nil;
+//    }
+//    
+//    uint32_t check = *(uint32_t*)&secret.data[0];
+//    if ([[obj_decrypted_memo objectForKey:@"check"] unsignedIntValue] != check) {
+//        return nil;
+//    }
+//    
+//    return obj_decrypted_memo;
+//}
 
 - (void)onImportBlindOutputReceipt
 {
@@ -252,7 +252,7 @@
     [self.view addSubview:_mainTableView];
     
     //  UI - 空
-    _lbEmpty = [self genCenterEmptyLabel:rect txt:@"没有任何隐私资产，可点击右上角导入转账收据。"];
+    _lbEmpty = [self genCenterEmptyLabel:rect txt:@"没有任何隐私收据，可点击右上角导入收据。"];
     _lbEmpty.hidden = YES;
     [self.view addSubview:_lbEmpty];
     

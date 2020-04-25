@@ -125,7 +125,7 @@
                 _lbAuthority.text = [NSString stringWithFormat:@"隐私收据(%@)", _item[@"num"]];
                 break;
             case kBlindItemTypeOutput:
-                _lbAuthority.text = [NSString stringWithFormat:@"隐私地址(%@)", _item[@"num"]];
+                _lbAuthority.text = [NSString stringWithFormat:@"隐私账户(%@)", _item[@"num"]];
                 break;
             default:
                 assert(false);

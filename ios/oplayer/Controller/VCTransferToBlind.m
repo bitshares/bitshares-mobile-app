@@ -10,7 +10,6 @@
 #import "VCStealthTransferHelper.h"
 #import "ViewBlindInputOutputItemCell.h"
 
-#import "VCBlindBalance.h"
 #import "VCSearchNetwork.h"
 #import "VCBlindOutputAddOne.h"
 #import "ViewTipsInfoCell.h"
@@ -19,6 +18,8 @@
 #import "GrapheneSerializer.h"
 #import "GraphenePublicKey.h"
 #import "GraphenePrivateKey.h"
+
+//#import "HDWallet.h"
 
 enum
 {
@@ -133,22 +134,12 @@ enum
     return @"【温馨提示】\n隐私转账可同时指定多个隐私地址。";
 }
 
-- (void)onRightButtonClicked
-{
-    VCBlindBalance* vc = [[VCBlindBalance alloc] init];
-    //  TODO:6.0 lang
-    [self pushViewController:vc vctitle:@"隐私资产" backtitle:kVcDefaultBackTitleName];
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     self.view.backgroundColor = theme.appBackColor;
-    
-    //  TODO:6.0 icon
-    [self showRightImageButton:@"iconProposal" action:@selector(onRightButtonClicked) color:theme.textColorNormal];
     
     //  UI - 列表
     CGRect rect = [self rectWithoutNavi];
@@ -494,6 +485,18 @@ enum
 
 - (void)onSubmitClicked
 {
+//    HDWallet* hdk = [HDWallet fromMnemonic:@"A"];
+//    HDWallet* new_key = [hdk deriveBitsharesStealthChildKey:1];
+//    id new_pri = [new_key toWifPrivateKey];
+//    id new_pri_p = [OrgUtils genBtsAddressFromWifPrivateKey:new_pri];
+//
+//    HDWallet* new_key2 = [hdk deriveBitsharesStealthChildKey:0];
+//    id new_pri2 = [new_key2 toWifPrivateKey];
+//    id new_pri_p2 = [OrgUtils genBtsAddressFromWifPrivateKey:new_pri2];
+//
+//    NSLog(@"");
+//    return;
+    
     //  TODO:6.0 DEBUG 临时清空
 //    AppCacheManager* pAppCahce = [AppCacheManager sharedAppCacheManager];
 //    for (id vi in [[pAppCahce getAllBlindBalance] allValues]) {
@@ -557,7 +560,7 @@ enum
                 for (id item in receipt_array) {
                     [pAppCahce appendBlindBalance:[item objectForKey:@"blind_balance"]];
                 }
-                [pAppCahce saveStealthReceiptToFile];
+                [pAppCahce saveWalletInfoToFile];
                 return nil;
             }] catch:^id(id error) {
                 [self hideBlockView];

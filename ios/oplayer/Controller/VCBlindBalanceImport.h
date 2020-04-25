@@ -4,7 +4,7 @@
 //
 //  Created by SYALON on 13-10-23.
 //
-//  导入隐私转账收据到隐私资产
+//  导入隐私转账收据
 
 #import <UIKit/UIKit.h>
 #import "VCBase.h"
