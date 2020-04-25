@@ -32,6 +32,20 @@ inline fun <reified T> JSONArray.forEach(action: (T?) -> Unit) {
 }
 
 /**
+ * 扩展JSONArray，提供 deleteIf 方法。
+ */
+inline fun <reified T> JSONArray.deleteIf(action: (T?) -> Boolean) : JSONArray {
+    val new_json = JSONArray()
+    (0 until length()).forEach {
+        val result: Boolean = action.invoke(get(it) as? T)
+        if (result == false){
+            new_json.put(get(it))
+        }
+    }
+    return new_json
+}
+
+/**
  * 16进制编码、解码
  */
 fun ByteArray.hexEncode() = this.map { String.format("%02x", (it.toInt() and 0xFF)) }.joinToString(separator = "")

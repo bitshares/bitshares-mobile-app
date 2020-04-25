@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/theme01.appBackColor"
+    tools:context="com.btsplusplus.fowallet.ActivityTransferToBlind">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp"
+        android:padding="10dp"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/layout_back_from_transfer_to_blind"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_btn_back"/>
+                <TextView
+                    style="@style/kNavigationBarTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/kBtnBack"
+                    android:gravity="center_vertical"
+                    />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:text="向隐私账户转账"
+                style="@style/kNavigationBarTextStyle" />
+
+            <ImageView
+                android:layout_marginLeft="10dp"
+                android:id="@+id/button_lists_from_transfer_to_blind"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:src="@drawable/icon_otc_order"/>
+
+        </FrameLayout>
+
+
+        <ScrollView
+            android:fillViewport="true"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <!-- 资产(字段) -->
+                <TextView
+                    android:textColor="@color/theme01.textColorMain"
+                    android:textSize="12dp"
+                    android:text="资产"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <!-- 选择资产 -->
+                <LinearLayout
+                    android:id="@+id/layout_select_asset_from_transfer_to_blind"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:gravity="center_vertical"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:textSize="16dp"
+                        android:text="TEST"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <LinearLayout
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical|right"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/iv_select_asset_from_transfer_to_blind"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:foregroundGravity="right"
+                            android:src="@drawable/ic_btn_right_arrow" />
+                    </LinearLayout>
+
+                </LinearLayout>
+                <View android:layout_height="1dp" android:layout_marginTop="10dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+
+                <!-- 隐私地址列表 -->
+                <LinearLayout
+                    android:layout_marginTop="20dp"
+                    android:id="@+id/layout_blind_account_list_from_transfer_to_blind"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </LinearLayout>
+                <View android:layout_height="1dp" android:layout_marginTop="10dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+                <!-- 可用余额 -->
+                <LinearLayout
+                    android:layout_marginTop="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorGray"
+                        android:text="可用余额"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/tv_available_from_transfer_to_blind"
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="222312312 TEST"
+                        android:gravity="right"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <!-- 输出总金额 -->
+                <LinearLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorGray"
+                        android:text="输出总金额"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/tv_total_amount_from_transfer_to_blind"
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="222312312 TEST"
+                        android:gravity="right"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <!-- 广播手续费 -->
+                <LinearLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorGray"
+                        android:text="广播手续费"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/tv_broadcast_fee_from_transfer_to_blind"
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="222312312 TEST"
+                        android:gravity="right"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <!-- 隐私转入按钮 -->
+                <LinearLayout
+                    android:id="@+id/layout_submit_button_from_transfer_to_blind"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@color/colorPrimary"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_register"
+                        android:layout_width="wrap_content"
+                        style="@style/kMainButtonStyle"
+                        android:gravity="center|center_vertical"
+                        android:layout_weight="1"
+                        android:padding="5dp"
+                        android:text="隐私转入" />
+                </LinearLayout>
+
+                <!-- 提示 -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:singleLine="false"
+                    android:textSize="12dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:padding="5dp"
+                    android:background="@color/theme01.textColorGray"
+                    android:text="【温馨提示】\n\n隐私转账可同时指定多个隐私地址" />
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
