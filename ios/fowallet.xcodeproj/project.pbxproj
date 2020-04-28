@@ -794,6 +794,9 @@
 		3F9A731121E729A900DAF7A2 /* VCGatewayWithdraw.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9A730E21E729A900DAF7A2 /* VCGatewayWithdraw.m */; };
 		3F9A731421E729FE00DAF7A2 /* VCGatewayDeposit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9A731221E729FD00DAF7A2 /* VCGatewayDeposit.m */; };
 		3F9A731521E729FE00DAF7A2 /* VCGatewayDeposit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9A731221E729FD00DAF7A2 /* VCGatewayDeposit.m */; };
+		3F9C43E424567CF1000B2683 /* VCBlindBackupReceipt.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9C43E224567CF0000B2683 /* VCBlindBackupReceipt.m */; };
+		3F9C43E524567CF1000B2683 /* VCBlindBackupReceipt.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9C43E224567CF0000B2683 /* VCBlindBackupReceipt.m */; };
+		3F9C43E624567CF1000B2683 /* VCBlindBackupReceipt.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9C43E224567CF0000B2683 /* VCBlindBackupReceipt.m */; };
 		3F9F2C3E2229051700D49165 /* MKlineIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9F2C3D2229051600D49165 /* MKlineIndex.m */; };
 		3F9F2C3F2229051700D49165 /* MKlineIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9F2C3D2229051600D49165 /* MKlineIndex.m */; };
 		3FA70FA423FCFAC7007ABD15 /* ViewBidAskCellVer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FA70FA323FCFAC7007ABD15 /* ViewBidAskCellVer.m */; };
@@ -2253,6 +2256,8 @@
 		3F9A730F21E729A900DAF7A2 /* VCGatewayWithdraw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCGatewayWithdraw.h; path = Controller/VCGatewayWithdraw.h; sourceTree = "<group>"; };
 		3F9A731221E729FD00DAF7A2 /* VCGatewayDeposit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCGatewayDeposit.m; path = Controller/VCGatewayDeposit.m; sourceTree = "<group>"; };
 		3F9A731321E729FE00DAF7A2 /* VCGatewayDeposit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCGatewayDeposit.h; path = Controller/VCGatewayDeposit.h; sourceTree = "<group>"; };
+		3F9C43E224567CF0000B2683 /* VCBlindBackupReceipt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCBlindBackupReceipt.m; path = Controller/VCBlindBackupReceipt.m; sourceTree = "<group>"; };
+		3F9C43E324567CF1000B2683 /* VCBlindBackupReceipt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCBlindBackupReceipt.h; path = Controller/VCBlindBackupReceipt.h; sourceTree = "<group>"; };
 		3F9F2C3C2229051600D49165 /* MKlineIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKlineIndex.h; sourceTree = "<group>"; };
 		3F9F2C3D2229051600D49165 /* MKlineIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKlineIndex.m; sourceTree = "<group>"; };
 		3FA70FA223FCFAC7007ABD15 /* ViewBidAskCellVer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewBidAskCellVer.h; path = View/ViewBidAskCellVer.h; sourceTree = "<group>"; };
@@ -3272,6 +3277,8 @@
 				3F83349024453C9B0069D366 /* VCTransferToBlind.m */,
 				3FAFCCB8244823F9004B7ECC /* VCBlindTransfer.h */,
 				3FAFCCB7244823F9004B7ECC /* VCBlindTransfer.m */,
+				3F9C43E324567CF1000B2683 /* VCBlindBackupReceipt.h */,
+				3F9C43E224567CF0000B2683 /* VCBlindBackupReceipt.m */,
 				3FAFCCB6244823F9004B7ECC /* VCTransferFromBlind.h */,
 				3FAFCCB9244823FA004B7ECC /* VCTransferFromBlind.m */,
 				3F40810624275EB100D79A21 /* VCRegisterEntry.h */,
@@ -6076,6 +6083,7 @@
 				3FB83CE123C19A2200CD3EF1 /* VCAssetManager.m in Sources */,
 				3F6768A8230E9EC100E98C14 /* AesOpt.c in Sources */,
 				3F6768A9230E9EC100E98C14 /* LangManager.m in Sources */,
+				3F9C43E624567CF1000B2683 /* VCBlindBackupReceipt.m in Sources */,
 				3F6532542442A6CE001A0260 /* GraphenePrivateKey.m in Sources */,
 				3F6768AA230E9EC100E98C14 /* zip.c in Sources */,
 				3F6768AB230E9EC100E98C14 /* ViewSimulateActionSheet.m in Sources */,
@@ -6445,6 +6453,7 @@
 				3FB83CE023C19A2200CD3EF1 /* VCAssetManager.m in Sources */,
 				3FB8F93421CE66C200DA88E2 /* AesOpt.c in Sources */,
 				3FF3550721FECDF4008EF213 /* LangManager.m in Sources */,
+				3F9C43E524567CF1000B2683 /* VCBlindBackupReceipt.m in Sources */,
 				3F6532532442A6CE001A0260 /* GraphenePrivateKey.m in Sources */,
 				3FB8F93521CE66C200DA88E2 /* zip.c in Sources */,
 				3FB8F93621CE66C200DA88E2 /* ViewSimulateActionSheet.m in Sources */,
@@ -6814,6 +6823,7 @@
 				3FB83CDF23C19A2200CD3EF1 /* VCAssetManager.m in Sources */,
 				3FF3550621FECDF4008EF213 /* LangManager.m in Sources */,
 				B7A13B7A1CA1443A0096A6A4 /* zip.c in Sources */,
+				3F9C43E424567CF1000B2683 /* VCBlindBackupReceipt.m in Sources */,
 				3F6532522442A6CE001A0260 /* GraphenePrivateKey.m in Sources */,
 				B7E690EF1C16BD3600EF32EF /* ViewSimulateActionSheet.m in Sources */,
 				B741A75D20DB807D000FBC00 /* VCDebt.m in Sources */,
