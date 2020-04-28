@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.btsplusplus.fowallet.ActivityBlindBackupReceipt"
+    android:background="@color/theme01.appBackColor">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp"
+        android:padding="10dp"
+        android:orientation="vertical">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/layout_finish_from_blind_backup_receipt"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:textSize="14dp"
+                    style="@style/kNavigationBarTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="完成"
+                    android:gravity="center_vertical" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:text="备份收据"
+                style="@style/kNavigationBarTextStyle" />
+
+        </FrameLayout>
+
+
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:textSize="14dp"
+                android:textColor="@color/theme01.textColorHighlight"
+                android:text="隐私转账成功，请妥善保管以下收据信息！"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_marginTop="10dp"
+                android:id="@+id/layout_qrcode_from_blind_backup_receipt"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/iv_qrcode_from_blind_backup_receipt"
+                    android:layout_gravity="center"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp" />
+
+            </LinearLayout>
+
+            <!-- receipt & copy -->
+            <TextView
+                android:id="@+id/tv_receipt_address_from_blind_backup_receipt"
+                android:layout_marginTop="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/theme01.textColorMain"
+                android:textSize="13dp"
+                android:layout_gravity="center"
+                android:text="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/btn_copy_from_blind_backup_receipt"
+                android:layout_marginTop="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="复制收据"
+                android:textColor="@color/theme01.textColorHighlight"
+                android:textSize="16dp"
+                android:layout_gravity="center"
+                android:gravity="center"/>
+
+            <LinearLayout
+                android:id="@+id/layout_register_button"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@color/colorPrimary"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_register"
+                    android:layout_width="wrap_content"
+                    style="@style/kMainButtonStyle"
+                    android:gravity="center|center_vertical"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    android:text="完成" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tip_from_recharge_page"
+                android:layout_marginTop="25dp"
+                android:padding="5dp"
+                android:lineHeight="10dp"
+                android:maxLines="10"
+                android:singleLine="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/theme01.textColorMain"
+                android:background="@color/theme01.textColorGray"
+                android:textSize="13dp"
+                android:text="【温馨提示】\n xxxxxxxxxxxxxxxxx\nxxxxxxxxx"
+                android:gravity="left"/>
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
