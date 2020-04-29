@@ -22,6 +22,11 @@
 
 - (void)addSignKey:(NSString*)pubKey;
 - (void)addSignKeys:(NSArray*)pubKeyList;
+/*
+ *  (public) 添加签名用私钥，部分交易可能需要非钱包中的额外的私钥进行签名。
+ */
+- (void)addSignPrivateKey:(NSString*)wifPrivateKey;
+
 - (void)add_operation:(EBitsharesOperations)opcode opdata:(id)opdata;
 
 - (WsPromise*)set_required_fees:(NSString*)asset_id removeDuplicates:(BOOL)removeDuplicates;

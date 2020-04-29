@@ -348,33 +348,12 @@ enum
                         break;
                     case kVcSubWalletMgr:
                     {
-                        [self GuardWalletExist:^{
-                            if ([[WalletManager sharedWalletManager] isPasswordMode]){
-                                [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:NSLocalizedString(@"kLblTipsPasswordModeNotSupportMultiSign", "多签等功能仅支持钱包模式，是否为当前的账号创建本地钱包文件？")
-                                                                                       withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
-                                                                                      completion:^(NSInteger buttonIndex)
-                                 {
-                                    if (buttonIndex == 1)
-                                    {
-                                        VCConvertToWalletMode* vc = [[VCConvertToWalletMode alloc] initWithCallback:^{
-                                            if (![[WalletManager sharedWalletManager] isPasswordMode]){
-                                                NSLog(@"upgrade to wallet mode ok.");
-                                                // 转到钱包&多签界面
-                                                VCWalletManager* vc = [[VCWalletManager alloc] init];
-                                                vc.title = NSLocalizedString(@"kVcTitleWalletAndMultiSign", @"钱包&多签");
-                                                [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-                                            }
-                                        }];
-                                        vc.title = NSLocalizedString(@"kVcTitleConvertToWalletMode", @"升级钱包模式");
-                                        [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-                                    }
-                                }];
-                            }else{
-                                //  转到钱包&多签界面
-                                VCWalletManager* vc = [[VCWalletManager alloc] init];
-                                vc.title = NSLocalizedString(@"kVcTitleWalletAndMultiSign", @"钱包&多签");
-                                [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
-                            }
+                        [self GuardWalletExistWithWalletMode:NSLocalizedString(@"kLblTipsPasswordModeNotSupportMultiSign", "多签等功能仅支持钱包模式，是否为当前的账号创建本地钱包文件？")
+                                                        body:^{
+                            //  转到钱包&多签界面
+                            VCWalletManager* vc = [[VCWalletManager alloc] init];
+                            vc.title = NSLocalizedString(@"kVcTitleWalletAndMultiSign", @"钱包&多签");
+                            [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
                         }];
                     }
                         break;

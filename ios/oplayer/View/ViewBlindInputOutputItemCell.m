@@ -151,7 +151,7 @@
 
                 _lbAuthority.text = [NSString stringWithFormat:@"收据 #%@",
                                      [[[NSData dataWithBytes:&check length:sizeof(check)] hex_encode] uppercaseString]];
-                
+                _lbAuthority.lineBreakMode = NSLineBreakByTruncatingTail;
                 id asset = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:[amount objectForKey:@"asset_id"]];
                 assert(asset);
                 id n_amount = [NSDecimalNumber decimalNumberWithMantissa:[[amount objectForKey:@"amount"] unsignedLongLongValue]
@@ -164,6 +164,7 @@
             case kBlindItemTypeOutput:
             {
                 _lbAuthority.text = [_item objectForKey:@"public_key"];
+                _lbAuthority.lineBreakMode = NSLineBreakByTruncatingMiddle;
                 _lbAmount.text = [OrgUtils formatFloatValue:[_item objectForKey:@"n_amount"] usesGroupingSeparator:NO];
             }
                 break;

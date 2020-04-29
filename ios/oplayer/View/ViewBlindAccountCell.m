@@ -50,6 +50,7 @@
         
         _to_value = [ViewUtils auxGenLabel:[UIFont systemFontOfSize:13] superview:self];
         _to_value.textAlignment = NSTextAlignmentLeft;
+        _to_value.lineBreakMode = NSLineBreakByTruncatingMiddle;
     }
     return self;
 }

@@ -61,6 +61,7 @@
         _to_value = [ViewUtils auxGenLabel:[UIFont systemFontOfSize:13] superview:self];
         _to_title.textAlignment = NSTextAlignmentLeft;
         _to_value.textAlignment = NSTextAlignmentLeft;
+        _to_value.lineBreakMode = NSLineBreakByTruncatingMiddle;
         
         _amount_title = [ViewUtils auxGenLabel:[UIFont systemFontOfSize:13] superview:self];
         _amount_value = [ViewUtils auxGenLabel:[UIFont systemFontOfSize:13] superview:self];
@@ -145,59 +146,6 @@
     _amount_title.textColor = theme.textColorGray;
     _amount_value.textColor = theme.textColorNormal;
     
-    //    yOffset += 28;
-    //
-    //    //  第二行
-    //    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
-    //    id balance = [_item objectForKey:@"balance"];
-    //    id balance_asset = [chainMgr getChainObjectByID:balance[@"asset_id"]];
-    //    _lbTotalTitle.text = [NSString stringWithFormat:@"%@(%@)", NSLocalizedString(@"kVestingCellTotal", @"总数量"), balance_asset[@"symbol"]];
-    //    _lbAmountTitle.text = [NSString stringWithFormat:@"%@(%@)", NSLocalizedString(@"kVestingCellVesting", @"已解冻数量"), balance_asset[@"symbol"]];
-    //    _lbVestingPeriodTitle.text = NSLocalizedString(@"kVestingCellPeriod", @"解冻周期");
-    //    _lbTotalTitle.textColor = theme.textColorGray;
-    //    _lbAmountTitle.textColor = theme.textColorGray;
-    //    _lbVestingPeriodTitle.textColor = theme.textColorGray;
-    //
-    //    _lbTotalTitle.frame = CGRectMake(xOffset, yOffset, fWidth, 24);
-    //    _lbAmountTitle.frame = CGRectMake(xOffset, yOffset, fWidth, 24);
-    //    _lbVestingPeriodTitle.frame = CGRectMake(xOffset, yOffset, fWidth, 24);
-    //
-    //    yOffset += 24;
-    //
-    //    //  第三行 数量和价格
-    //    unsigned long long withdraw_available = [VCVestingBalance calcVestingBalanceAmount:_item];
-    //
-    //    NSString* vestingPeriodValue = @"--";
-    //    switch ([[[_item objectForKey:@"policy"] objectAtIndex:0] integerValue]) {
-    //        case ebvp_cdd_vesting_policy:
-    //        {
-    //            //  REMARK：解冻周期最低1秒
-    //            id policy_data = [[_item objectForKey:@"policy"] objectAtIndex:1];
-    //            assert(policy_data);
-    //            NSUInteger vesting_seconds = MAX([[policy_data objectForKey:@"vesting_seconds"] unsignedIntegerValue], 1L);
-    //            vestingPeriodValue = [OrgUtils fmtVestingPeriodDateString:vesting_seconds];
-    //        }
-    //            break;
-    //        case ebvp_instant_vesting_policy:
-    //        {
-    //            vestingPeriodValue = NSLocalizedString(@"kVestingCellPeriodInstant", @"立即解冻");
-    //        }
-    //            break;
-    //        default:
-    //            //  TODO:ebvp_linear_vesting_policy
-    //            assert(false);
-    //            break;
-    //    }
-    //
-    //    _lbTotalValue.text = [NSString stringWithFormat:@"%@", [OrgUtils formatAssetString:balance[@"amount"] asset:balance_asset]];
-    //    _lbTotalValue.textColor = theme.textColorNormal;
-    //
-    //    _lbAmountValue.text = [NSString stringWithFormat:@"%@", [OrgUtils formatAssetString:@(withdraw_available) asset:balance_asset]];
-    //    _lbAmountValue.textColor = theme.textColorNormal;
-    //
-    //    _lbVestingPeriodValue.text = vestingPeriodValue;
-    //    _lbVestingPeriodValue.textColor = theme.textColorNormal;
-    //
     _to_title.frame = CGRectMake(xOffset, yOffset, fWidth, 24);
     _amount_title.frame = CGRectMake(xOffset, yOffset, fWidth, 24);
     
@@ -205,8 +153,6 @@
     
     _to_value.frame = CGRectMake(xOffset, yOffset, fWidth * 0.6, 24);
     _amount_value.frame = CGRectMake(xOffset, yOffset, fWidth, 24);
-    //    _lbAmountValue.frame = CGRectMake(xOffset, yOffset, fWidth, 24);
-    //    _lbVestingPeriodValue.frame = CGRectMake(xOffset, yOffset, fWidth, 24);
 }
 
 @end

@@ -10,16 +10,11 @@
 #import "VCStealthTransferHelper.h"
 #import "ViewBlindInputOutputItemCell.h"
 
+#import "VCBlindBackupReceipt.h"
 #import "VCSearchNetwork.h"
 #import "VCBlindOutputAddOne.h"
 #import "ViewTipsInfoCell.h"
 #import "ViewEmptyInfoCell.h"
-
-#import "GrapheneSerializer.h"
-#import "GraphenePublicKey.h"
-#import "GraphenePrivateKey.h"
-
-//#import "HDWallet.h"
 
 enum
 {
@@ -36,20 +31,18 @@ enum
 enum
 {
     kVcSubAvailbleBalance = 0,
-    kVcSubOutputTotalAmount,
     kVcSubNetworkFee,
+    kVcSubOutputTotalAmount,
     
     kVcSubMax
 };
 
 @interface VCTransferToBlind ()
 {
-    WsPromiseObject*            _result_promise;
-    
-    NSDictionary*               _curr_selected_asset;   //  当前选中资产
-    NSDictionary*               _curr_balance_asset;    //  当前余额资产（输入数量对应的资产）REMARK：和选中资产可能不相同。
+    NSDictionary*               _curr_asset;            //  当前资产
     NSDictionary*               _full_account_data;
     NSDecimalNumber*            _nCurrBalance;
+    NSDecimalNumber*            _nFee;
     
     UITableViewBase*            _mainTableView;
     
@@ -66,7 +59,6 @@ enum
 
 -(void)dealloc
 {
-    _result_promise = nil;
     _nCurrBalance = nil;
     if (_mainTableView){
         [[IntervalManager sharedIntervalManager] releaseLock:_mainTableView];
@@ -80,17 +72,29 @@ enum
 
 - (id)initWithCurrAsset:(id)curr_asset
       full_account_data:(id)full_account_data
-         result_promise:(WsPromiseObject*)result_promise
 {
     self = [super init];
     if (self) {
-        _result_promise = result_promise;
-        _curr_selected_asset = curr_asset;
+        assert(curr_asset);
+        assert([ModelUtils assetAllowConfidential:curr_asset]);
+        assert(![ModelUtils assetIsTransferRestricted:curr_asset]);
+        assert(![ModelUtils assetNeedWhiteList:curr_asset]);
+        assert(full_account_data);
+        _curr_asset = curr_asset;
         _full_account_data = full_account_data;
         _data_array_blind_output = [NSMutableArray array];
-        [self _auxGenCurrBalanceAndBalanceAsset];
+        _nFee = [self calcNetworkFee];
+        _nCurrBalance = [ModelUtils findAssetBalance:_full_account_data asset:_curr_asset];
     }
     return self;
+}
+
+- (NSDecimalNumber*)calcNetworkFee
+{
+    return [[ChainObjectManager sharedChainObjectManager] getNetworkCurrentFee:ebo_transfer_to_blind
+                                                                         kbyte:nil
+                                                                           day:nil
+                                                                        output:(NSDecimalNumber*)[NSDecimalNumber numberWithUnsignedInteger:[_data_array_blind_output count]]];
 }
 
 - (void)refreshView
@@ -98,39 +102,9 @@ enum
     [_mainTableView reloadData];
 }
 
-/*
- *  (private) 生成当前余额 以及 余额对应的资产。
- */
-- (void)_auxGenCurrBalanceAndBalanceAsset
-{
-    assert(_full_account_data);
-    _curr_balance_asset = _curr_selected_asset;
-    _nCurrBalance = [ModelUtils findAssetBalance:_full_account_data asset:_curr_selected_asset];
-}
-
-//- (void)_drawUI_Balance:(BOOL)not_enough
-//{
-//    ThemeManager* theme = [ThemeManager sharedThemeManager];
-//    NSString* symbol = [_curr_balance_asset objectForKey:@"symbol"];
-//    if (not_enough) {
-//        NSString* value = [NSString stringWithFormat:@"%@ %@ %@(%@)",
-//                           NSLocalizedString(@"kOtcMcAssetCellAvailable", @"可用"),
-//                           _nCurrBalance,
-//                           symbol,
-//                           NSLocalizedString(@"kOtcMcAssetTransferBalanceNotEnough", @"余额不足")];
-////        [_tf_amount drawUI_titleValue:value color:theme.tintColor];
-//    } else {
-//        NSString* value = [NSString stringWithFormat:@"%@ %@ %@",
-//                           NSLocalizedString(@"kOtcMcAssetCellAvailable", @"可用"),
-//                           _nCurrBalance,
-//                           symbol];
-////        [_tf_amount drawUI_titleValue:value color:theme.textColorMain];
-//    }
-//}
-
 - (NSString*)genTransferTipsMessage
 {
-    //    return [_opExtraArgs objectForKey:@"kMsgTips"] ?: @"";
+    //  TODO:6.0 lang
     return @"【温馨提示】\n隐私转账可同时指定多个隐私地址。";
 }
 
@@ -262,12 +236,9 @@ enum
                 cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
                 cell.textLabel.text = NSLocalizedString(@"kOtcMcAssetTransferCellLabelAsset", @"资产");
                 cell.hideBottomLine = YES;
-                
-                //                cell.detailTextLabel.font = [UIFont systemFontOfSize:13.0f];
-                //                cell.detailTextLabel.text = @"可用 332323.3323 TEST";//   TODO:6.0
             } else {
                 cell.showCustomBottomLine = YES;
-                cell.textLabel.text = [_curr_selected_asset objectForKey:@"symbol"];
+                cell.textLabel.text = [_curr_asset objectForKey:@"symbol"];
                 cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                 cell.selectionStyle = UITableViewCellSelectionStyleBlue;
                 cell.textLabel.textColor = theme.textColorMain;
@@ -312,23 +283,37 @@ enum
             cell.hideTopLine = YES;
             cell.hideBottomLine = YES;
             
-            id symbol = _curr_selected_asset[@"symbol"];
+            id symbol = _curr_asset[@"symbol"];
             
             switch (indexPath.row) {
                 case kVcSubAvailbleBalance:
+                {
+                    NSDecimalNumber* n_total = [self calcBlindOutputTotalAmount];
                     cell.textLabel.text = @"可用余额";
-                    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@", [OrgUtils formatFloatValue:_nCurrBalance usesGroupingSeparator:NO], symbol];
+                    id base_str = [NSString stringWithFormat:@"%@ %@",
+                                   [OrgUtils formatFloatValue:_nCurrBalance usesGroupingSeparator:NO],
+                                   symbol];
+                    if ([_nCurrBalance compare:n_total] < 0) {
+                        cell.detailTextLabel.textColor = theme.tintColor;
+                        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@(%@)",
+                                                     base_str,
+                                                     NSLocalizedString(@"kVcTradeTipAmountNotEnough", @"数量不足")];//TODO:6.0 lang
+                    } else {
+                        cell.detailTextLabel.textColor = theme.textColorNormal;
+                        cell.detailTextLabel.text = base_str;
+                    }
+                }
                     break;
                 case kVcSubOutputTotalAmount:
                     cell.textLabel.text = @"输出总金额";
+                    cell.detailTextLabel.textColor = theme.buyColor;
                     cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@", [OrgUtils formatFloatValue:[self calcBlindOutputTotalAmount] usesGroupingSeparator:NO], symbol];
                     break;
                 case kVcSubNetworkFee:
                 {
                     cell.textLabel.text = @"广播手续费";
-                    id n_fee = [[ChainObjectManager sharedChainObjectManager] getNetworkCurrentFee:ebo_transfer_to_blind kbyte:nil day:nil output:(NSDecimalNumber*)[NSDecimalNumber numberWithUnsignedInteger:[_data_array_blind_output count]]];
-                    if (n_fee) {
-                        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@", [OrgUtils formatFloatValue:n_fee usesGroupingSeparator:NO], symbol];
+                    if (_nFee) {
+                        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@", [OrgUtils formatFloatValue:_nFee usesGroupingSeparator:NO], [ChainObjectManager sharedChainObjectManager].grapheneCoreAssetSymbol];
                     } else {
                         cell.detailTextLabel.text = @"未知";
                     }
@@ -386,35 +371,28 @@ enum
 
 - (void)onSelectAssetClicked
 {
-    ENetworkSearchType kSearchType = enstAssetAll;
-    //    switch ([[_opExtraArgs objectForKey:@"kOpType"] integerValue]) {
-    //        case ebaok_settle:
-    //            //            kSearchType = enstAssetSmart;
-    //            return;                 //  REMARK：清算不可切换资产。需要动态查询是否黑天鹅等。后续考虑支持。TODO:5.0
-    //            break;
-    //        case ebaok_reserve:
-    //            kSearchType = enstAssetUIA;
-    //            break;
-    //        case ebaok_claim_pool:      //  REMARK：提取手续费池不可切换资产。
-    //            return;
-    //        default:
-    //            assert(false);
-    //            break;
-    //    }
-    
-    //  TODO:4.0 考虑默认备选列表？
-    VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:kSearchType callback:^(id asset_info) {
+    VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:enstAssetAll callback:^(id asset_info) {
         if (asset_info){
-            NSString* new_id = [asset_info objectForKey:@"id"];
-            NSString* old_id = [_curr_selected_asset objectForKey:@"id"];
-            if (![new_id isEqualToString:old_id]) {
-                _curr_selected_asset = asset_info;
-                //  切换资产后重新输入
-                [self _auxGenCurrBalanceAndBalanceAsset];
-                //                [_tf_amount clearInputTextValue];
-                //                [_tf_amount drawUI_newTailer:[_curr_balance_asset objectForKey:@"symbol"]];
-                //                [self _drawUI_Balance:NO];
-                [_mainTableView reloadData];
+            if (![ModelUtils assetAllowConfidential:asset_info]) {
+                //  TODO:6.0 lang
+                [OrgUtils makeToast:[NSString stringWithFormat:@"资产 %@ 已禁止隐私转账。", asset_info[@"symbol"]]];
+            } else if ([ModelUtils assetIsTransferRestricted:asset_info]) {
+                //  TODO:6.0 lang
+                [OrgUtils makeToast:[NSString stringWithFormat:@"资产 %@ 禁止转账。", asset_info[@"symbol"]]];
+            } else if ([ModelUtils assetNeedWhiteList:asset_info]) {
+                //  TODO:6.0 lang
+                [OrgUtils makeToast:[NSString stringWithFormat:@"资产 %@ 已开启白名单，禁止隐私转账。", asset_info[@"symbol"]]];
+            } else {
+                NSString* new_id = [asset_info objectForKey:@"id"];
+                NSString* old_id = [_curr_asset objectForKey:@"id"];
+                if (![new_id isEqualToString:old_id]) {
+                    _curr_asset = asset_info;
+                    //  切换资产：更新余额、清空当前收款人、更新手续费
+                    _nCurrBalance = [ModelUtils findAssetBalance:_full_account_data asset:_curr_asset];
+                    [_data_array_blind_output removeAllObjects];
+                    [self onBlindOutputChanged];
+                    [_mainTableView reloadData];
+                }
             }
         }
     }];
@@ -430,13 +408,21 @@ enum
 - (void)onButtonClicked_OutputRemove:(UIButton*)button
 {
     [_data_array_blind_output removeObjectAtIndex:button.tag - 1];
+    [self onBlindOutputChanged];
+    //  刷新UI
     [_mainTableView reloadData];
+}
+
+- (void)onBlindOutputChanged
+{
+    //  输出数量变更重新计算手续费
+    _nFee = [self calcNetworkFee];
 }
 
 - (void)onAddOneClicked
 {
-    //  限制最大隐私输出数量
-    int allow_maximum_blind_output = 10;
+    //  可配置：限制最大隐私输出数量
+    int allow_maximum_blind_output = 5;
     if ([_data_array_blind_output count] >= allow_maximum_blind_output) {
         //  TODO:6.0 lang
         [OrgUtils makeToast:[NSString stringWithFormat:@"最多只能添加 %@ 个隐私输出。", @(allow_maximum_blind_output)]];
@@ -447,26 +433,15 @@ enum
     [self delay:^{
         //  转到添加权限界面
         WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
-        VCBlindOutputAddOne* vc = [[VCBlindOutputAddOne alloc] initWithResultPromise:result_promise asset:_curr_selected_asset];
+        VCBlindOutputAddOne* vc = [[VCBlindOutputAddOne alloc] initWithResultPromise:result_promise asset:_curr_asset];
         [self pushViewController:vc
-                         vctitle:@"新增隐私输出"
+                         vctitle:@"新增隐私输出"//TODO:6.0 lang
                        backtitle:kVcDefaultBackTitleName];
         [result_promise then:(^id(id json_data) {
-            //  {@"public_key":public_key, @"n_amount":n_amount}
             assert(json_data);
-            //            id public_key = [json_data objectForKey:@"public_key"];
-            //            assert(public_key);
-            //            //  移除（重复的）
-            //            for (id item in _data_array_blind_output) {
-            //                if ([[item objectForKey:@"public_key"] isEqualToString:public_key]) {
-            //                    [_data_array_blind_output removeObject:item];
-            //                    break;
-            //                }
-            //            }
             //  添加
             [_data_array_blind_output addObject:json_data];
-            //  根据权重降序排列
-            //            [self _sort_permission_list];
+            [self onBlindOutputChanged];
             //  刷新
             [_mainTableView reloadData];
             return nil;
@@ -485,33 +460,39 @@ enum
 
 - (void)onSubmitClicked
 {
-//    HDWallet* hdk = [HDWallet fromMnemonic:@"A"];
-//    HDWallet* new_key = [hdk deriveBitsharesStealthChildKey:1];
-//    id new_pri = [new_key toWifPrivateKey];
-//    id new_pri_p = [OrgUtils genBtsAddressFromWifPrivateKey:new_pri];
-//
-//    HDWallet* new_key2 = [hdk deriveBitsharesStealthChildKey:0];
-//    id new_pri2 = [new_key2 toWifPrivateKey];
-//    id new_pri_p2 = [OrgUtils genBtsAddressFromWifPrivateKey:new_pri2];
-//
-//    NSLog(@"");
-//    return;
+    //    //  TODO:6.0 test ui
+    //    VCBlindBackupReceipt* vc = [[VCBlindBackupReceipt alloc] initWithTrxResult:@[@{@"block_num":@3, @"id":@"abcd"}]];
+    //    [self clearPushViewController:vc vctitle:@"备份收据" backtitle:kVcDefaultBackTitleName];
+    //    return;
+    
+    //    HDWallet* hdk = [HDWallet fromMnemonic:@"A"];
+    //    HDWallet* new_key = [hdk deriveBitsharesStealthChildKey:1];
+    //    id new_pri = [new_key toWifPrivateKey];
+    //    id new_pri_p = [OrgUtils genBtsAddressFromWifPrivateKey:new_pri];
+    //
+    //    HDWallet* new_key2 = [hdk deriveBitsharesStealthChildKey:0];
+    //    id new_pri2 = [new_key2 toWifPrivateKey];
+    //    id new_pri_p2 = [OrgUtils genBtsAddressFromWifPrivateKey:new_pri2];
+    //
+    //    NSLog(@"");
+    //    return;
     
     //  TODO:6.0 DEBUG 临时清空
-//    AppCacheManager* pAppCahce = [AppCacheManager sharedAppCacheManager];
-//    for (id vi in [[pAppCahce getAllBlindBalance] allValues]) {
-//        [pAppCahce removeBlindBalance:vi];
-//    }
-//    [pAppCahce saveStealthReceiptToFile];
-//    return;
+    //    AppCacheManager* pAppCahce = [AppCacheManager sharedAppCacheManager];
+    //    for (id vi in [[pAppCahce getAllBlindBalance] allValues]) {
+    //        [pAppCahce removeBlindBalance:vi];
+    //    }
+    //    [pAppCahce saveStealthReceiptToFile];
+    //    return;
     
-    if ([_data_array_blind_output count] <= 0) {
+    NSInteger i_output_count = [_data_array_blind_output count];
+    if (i_output_count <= 0) {
         [OrgUtils makeToast:@"请添加隐私输出地址和数量。"];
         return;
     }
     
     //  TODO:6.0 asset
-    id core_asset = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:@"1.3.0"];
+    //    id asset = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:@"1.3.0"];
     
     NSDecimalNumber* n_total = [self calcBlindOutputTotalAmount];
     if ([n_total compare:[NSDecimalNumber zero]] <= 0) {
@@ -527,7 +508,7 @@ enum
     
     //  生成隐私输出
     id blind_output_args = [VCStealthTransferHelper genBlindOutputs:_data_array_blind_output
-                                                              asset:core_asset
+                                                              asset:_curr_asset
                                              input_blinding_factors:nil];
     //  生成所有隐私输出承诺盲因子之和。
     id receipt_array = [blind_output_args objectForKey:@"receipt_array"];
@@ -536,59 +517,70 @@ enum
     }]];
     
     //  构造OP
-    id s_total = [NSString stringWithFormat:@"%@", [n_total decimalNumberByMultiplyingByPowerOf10:[core_asset[@"precision"] integerValue]]];
+    id s_total = [NSString stringWithFormat:@"%@", [n_total decimalNumberByMultiplyingByPowerOf10:[_curr_asset[@"precision"] integerValue]]];
     id op_account = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
     id op = @{
-        @"fee":@{@"asset_id":@"1.3.0",@"amount":@0},
-        @"amount":@{@"asset_id":@"1.3.0",@"amount":@([s_total unsignedLongLongValue])},
+        @"fee":@{@"asset_id":[ChainObjectManager sharedChainObjectManager].grapheneCoreAssetID, @"amount":@0},
+        @"amount":@{@"asset_id":_curr_asset[@"id"], @"amount":@([s_total unsignedLongLongValue])},
         @"from":op_account[@"id"],
         @"blinding_factor":blinding_factor,
         @"outputs":blind_output_args[@"blind_outputs"]
     };
     
-    [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
-        if (unlocked) {
-            [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-            [[[[BitsharesClientManager sharedBitsharesClientManager] transferToBlind:op] then:^id(id data) {
-                [self hideBlockView];
-                NSLog(@"%@", data);
-                [OrgUtils makeToast:@"转账成功。"];
-                //  保存
-                //  TODO:6.0 仅转给自己地址的收据自动导入，转给他人的不自动转入。
-                //  TODO:6.0 是否提示备份？数据丢失后如何处理。
-                AppCacheManager* pAppCahce = [AppCacheManager sharedAppCacheManager];
-                for (id item in receipt_array) {
-                    [pAppCahce appendBlindBalance:[item objectForKey:@"blind_balance"]];
+    NSString* value;
+    if (i_output_count > 1) {
+        value = [NSString stringWithFormat:@"您确定往 %@ 个隐私账户合计转入 %@ %@ 吗？",
+                 @(i_output_count),
+                 n_total,
+                 _curr_asset[@"symbol"]];
+    } else {
+        value = [NSString stringWithFormat:@"您确定往隐私账户转入 %@ %@ 吗？",
+                 n_total,
+                 _curr_asset[@"symbol"]];
+    }
+    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:value
+                                                           withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                          completion:^(NSInteger buttonIndex)
+     {
+        if (buttonIndex == 1)
+        {
+            [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
+                if (unlocked) {
+                    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+                    [[[[BitsharesClientManager sharedBitsharesClientManager] transferToBlind:op] then:^id(id tx_data) {
+                        [self hideBlockView];
+                        
+                        //  自动导入【我的】收据
+                        WalletManager* walletMgr = [WalletManager sharedWalletManager];
+                        AppCacheManager* pAppCahce = [AppCacheManager sharedAppCacheManager];
+                        for (id item in receipt_array) {
+                            id blind_balance = [item objectForKey:@"blind_balance"];
+                            assert(blind_balance);
+                            //  REMARK：有隐私账号私钥的收据即为我自己的收据。
+                            id real_to_key = [blind_balance objectForKey:@"real_to_key"];
+                            if (real_to_key && [walletMgr havePrivateKey:real_to_key]) {
+                                [pAppCahce appendBlindBalance:blind_balance];
+                            }
+                        }
+                        [pAppCahce saveWalletInfoToFile];
+                        
+                        //  统计
+                        [OrgUtils logEvents:@"txTransferToBlindFullOK" params:@{@"asset":_curr_asset[@"symbol"]}];
+                        
+                        //  转到备份收据界面 TODO:6.0 lang
+                        VCBlindBackupReceipt* vc = [[VCBlindBackupReceipt alloc] initWithTrxResult:tx_data];
+                        [self clearPushViewController:vc vctitle:@"备份收据" backtitle:kVcDefaultBackTitleName];
+                        return nil;
+                    }] catch:^id(id error) {
+                        [self hideBlockView];
+                        NSLog(@"%@", error);
+                        [OrgUtils showGrapheneError:error];
+                        return nil;
+                    }];
                 }
-                [pAppCahce saveWalletInfoToFile];
-                return nil;
-            }] catch:^id(id error) {
-                [self hideBlockView];
-                NSLog(@"%@", error);
-                [OrgUtils showGrapheneError:error];
-                return nil;
             }];
         }
     }];
-    return;
-    
-    //            id value = [NSString stringWithFormat:NSLocalizedString(@"kVcAssetOpSubmitAskReserve", @"您确认销毁 %@ %@ 吗？\n\n※ 此操作不可逆，请谨慎操作。"), n_amount, _curr_balance_asset[@"symbol"]];
-    //            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:value
-    //                                                                   withTitle:NSLocalizedString(@"kVcHtlcMessageTipsTitle", @"风险提示")
-    //                                                                  completion:^(NSInteger buttonIndex)
-    //             {
-    //                if (buttonIndex == 1)
-    //                {
-    //                    [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
-    //                        if (unlocked) {
-    //                            [self _execAssetReserveCore:n_amount];
-    //                        }
-    //                    }];
-    //                }
-    //            }];
-    //        }
-    //            break;
-    
 }
 
 @end
