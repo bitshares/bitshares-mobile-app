@@ -619,6 +619,87 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
 }
 
 /**
+ *  OP - 断言
+ */
+- (WsPromise*)assert:(NSDictionary*)opdata
+{
+    return [self runSingleTransaction:opdata opcode:ebo_assert fee_paying_account:[opdata objectForKey:@"fee_paying_account"]];
+}
+
+/**
+ *  OP - 转入隐私账号
+ */
+- (WsPromise*)transferToBlind:(NSDictionary*)opdata
+{
+    return [self runSingleTransaction:opdata opcode:ebo_transfer_to_blind fee_paying_account:[opdata objectForKey:@"from"]];
+}
+
+/*
+ *  (private) 从隐私收据转出到公开账号or其他隐私账户。
+ */
+- (WsPromise*)_transferFromBlindInput2PublicOrBlind:(NSDictionary*)opdata
+                                     signPriKeyHash:(NSDictionary*)signPriKeyHash
+                                             opcode:(EBitsharesOperations)opcode
+{
+    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
+    [tr add_operation:opcode opdata:opdata];
+    
+    assert([opdata objectForKey:@"inputs"]);
+    for (id blind_input in [opdata objectForKey:@"inputs"]) {
+        for (id item in [[blind_input objectForKey:@"owner"] objectForKey:@"key_auths"]) {
+            [tr addSignKey:[item firstObject]];
+        }
+    }
+    
+    for (id priKey in signPriKeyHash) {
+        [tr addSignPrivateKey:priKey];
+    }
+    
+    return [self process_transaction:tr];
+}
+
+/**
+ *  OP - 从隐私账号转出
+ */
+- (WsPromise*)transferFromBlind:(NSDictionary*)opdata signPriKeyHash:(NSDictionary*)signPriKeyHash
+{
+    return [self _transferFromBlindInput2PublicOrBlind:opdata signPriKeyHash:signPriKeyHash opcode:ebo_transfer_from_blind];
+}
+
+/**
+ *  OP - 隐私转账
+ */
+- (WsPromise*)blindTransfer:(NSDictionary*)opdata signPriKeyHash:(NSDictionary*)signPriKeyHash
+{
+    return [self _transferFromBlindInput2PublicOrBlind:opdata signPriKeyHash:signPriKeyHash opcode:ebo_blind_transfer];
+}
+
+/**
+ *  OP - 验证隐私收据有效性。REMARK：构造一个 transfer_from_blind 请求 + 一个必定失败的断言 请求。获取错误信息。
+ */
+- (WsPromise*)verifyBlindReceipt:(NSDictionary*)opdata signPriKeyHash:(NSDictionary*)signPriKeyHash
+{
+    NSAssert(NO, @"TODO");
+    
+    id assert_failed_op = @{
+        @"fee":@{@"amount":@0, @"asset_id":@"1.3.0"},
+        @"fee_paying_account":[[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"][@"id"],
+        @"predicates": @[
+                @[@0, @{@"account_id":@"1.2.0", @"name":@""}]
+        ],
+        @"required_auths": @[]
+    };
+    //  format = "p.account_id(db).name == p.name: ";
+    
+//    TransactionBuilder* tr = [[TransactionBuilder alloc] init];
+//    [tr add_operation:ebo_assert opdata:assert_failed_op];
+//    return [self process_transaction:tr];
+    
+    //  TODO:6.0 test
+    return [self assert:assert_failed_op];
+}
+
+/**
  *  OP - 创建HTLC合约
  */
 - (WsPromise*)htlcCreate:(NSDictionary*)opdata

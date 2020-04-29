@@ -11,7 +11,6 @@
 @interface VCTransferToBlind : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
 - (id)initWithCurrAsset:(id)curr_asset
-      full_account_data:(id)full_account_data
-         result_promise:(WsPromiseObject*)result_promise;
+      full_account_data:(id)full_account_data;
 
 @end

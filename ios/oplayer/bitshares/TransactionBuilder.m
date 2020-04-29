@@ -26,6 +26,7 @@
     NSMutableArray*         _signatures;            //  [序列化]   签名
     
     NSMutableDictionary*    _signPubKeys;           //  该交易需要参与签名的公钥列表。REMARK：大部分都是手续费支付账号的资金公钥。
+    NSMutableDictionary*    _pubPriKeysHash;        //  特殊私钥列表，部分交易需要（隐私转账等）。KEY -> public key  VALUE -> WIF private key
     
     BOOL                    _signed;                //  是否签名过了
     NSData*                 _tr_buffer;
@@ -48,6 +49,7 @@
         _signatures = [NSMutableArray array];
         
         _signPubKeys = [NSMutableDictionary dictionary];
+        _pubPriKeysHash = [NSMutableDictionary dictionary];
         
         _signed = NO;
         _tr_buffer = nil;
@@ -81,6 +83,18 @@
     assert(pubKeyList);
     for (id pubKey in pubKeyList) {
         [_signPubKeys setObject:@YES forKey:pubKey];
+    }
+}
+
+/*
+ *  (public) 添加签名用私钥，部分交易可能需要非钱包中的额外的私钥进行签名。
+ */
+- (void)addSignPrivateKey:(NSString*)wifPrivateKey
+{
+    assert(wifPrivateKey);
+    id pubKey = [OrgUtils genBtsAddressFromWifPrivateKey:wifPrivateKey];
+    if (pubKey) {
+        [_pubPriKeysHash setObject:wifPrivateKey forKey:pubKey];
     }
 }
 
@@ -155,8 +169,6 @@
     //  TODO:动态判断该交易需要哪些签名。
     
     WalletManager* walletMgr = [WalletManager sharedWalletManager];
-    //  TODO:fowallet 在提交请求的瞬间 钱包锁定了？？请求中，禁止锁定钱包功能添加。
-    assert(![walletMgr isLocked]);
     
     unsigned char output[32];
     
@@ -166,8 +178,11 @@
     [sign_buffer appendBytes:output length:sizeof(output)];
     [sign_buffer appendData:_tr_buffer];
     
-    id sig_array = [walletMgr signTransaction:sign_buffer signKeys:[_signPubKeys allKeys]];
+    id sig_array = [walletMgr signTransaction:sign_buffer signKeys:[_signPubKeys allKeys] extra_keys:_pubPriKeysHash];
     if (!sig_array){
+        //  TODO:fowallet 在提交请求的瞬间 钱包锁定了？？请求中，禁止锁定钱包功能添加。
+        assert(![walletMgr isLocked]);
+        
         [WsPromiseException throwException:@"sign failed"];
     }
     [_signatures addObjectsFromArray:sig_array];

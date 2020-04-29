@@ -80,19 +80,14 @@ enum
     return self;
 }
 
-- (void)onLeftClicked
-{
-    //  TODO:6.0 todo
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
-    [self showLeftButton:NSLocalizedString(@"kVcScanResultPaySuccessBtnDone", @"完成") action:@selector(onLeftClicked)];
+    [self showLeftButton:NSLocalizedString(@"kVcScanResultPaySuccessBtnDone", @"完成") action:@selector(_onButtonDoneClicked)];
     
     //  初始化数据源
     [_dataArray addObject:@{@"type": @(kVcSubSuccessTips)}];
@@ -281,8 +276,16 @@ enum
 
 -(void)_onButtonDoneClicked
 {
-    //  TODO:6.0 二次确认？
-    [self closeOrPopViewController];
+    //  TODO:6.0 lang
+    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"提取隐私资产需要收据信息，请确认您已备份好以上收据，可截图保存。"
+                                                           withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                          completion:^(NSInteger buttonIndex)
+     {
+        if (buttonIndex == 1)
+        {
+            [self closeOrPopViewController];
+        }
+    }];
 }
 
 @end

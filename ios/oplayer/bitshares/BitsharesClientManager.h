@@ -159,6 +159,31 @@
 - (WsPromise*)assetUpdateIssuer:(NSDictionary*)opdata;
 
 /**
+ *  OP - 断言
+ */
+- (WsPromise*)assert:(NSDictionary*)opdata;
+
+/**
+ *  OP - 转入隐私账号
+ */
+- (WsPromise*)transferToBlind:(NSDictionary*)opdata;
+
+/**
+ *  OP - 从隐私账号转出
+ */
+- (WsPromise*)transferFromBlind:(NSDictionary*)opdata signPriKeyHash:(NSDictionary*)signPriKeyHash;
+
+/**
+ *  OP - 隐私转账
+ */
+- (WsPromise*)blindTransfer:(NSDictionary*)opdata signPriKeyHash:(NSDictionary*)signPriKeyHash;
+
+/**
+ *  OP - 验证隐私收据有效性。REMARK：构造一个 transfer_from_blind 请求 + 一个必定失败的断言 请求。获取错误信息。
+ */
+- (WsPromise*)verifyBlindReceipt:(NSDictionary*)opdata signPriKeyHash:(NSDictionary*)signPriKeyHash;
+
+/**
  *  OP - 创建HTLC合约
  */
 - (WsPromise*)htlcCreate:(NSDictionary*)opdata;

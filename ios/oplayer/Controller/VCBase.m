@@ -11,6 +11,7 @@
 #import "WalletManager.h"
 #import "VCProposalConfirm.h"
 #import "VCImportAccount.h"
+#import "VCConvertToWalletMode.h"
 #import "MBProgressHUDSingleton.h"
 #import "NativeAppDelegate.h"
 #import "MyNavigationController.h"
@@ -968,6 +969,38 @@ static NSInteger gen_notify_unique_id()
         }];
         [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleLogin", @"登录") backtitle:kVcDefaultBackTitleName];
     }
+}
+
+/*
+ *  (public) 确保钱包存在，并且为钱包模式。（REMARK：新版本已经不存在密码模式登录。）
+ */
+- (void)GuardWalletExistWithWalletMode:(NSString*)message body:(void (^)())body
+{
+    assert(message);
+    assert(body);
+    
+    [self GuardWalletExist:^{
+        if ([[WalletManager sharedWalletManager] isPasswordMode]){
+            [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:message
+                                                                   withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                                  completion:^(NSInteger buttonIndex)
+             {
+                if (buttonIndex == 1)
+                {
+                    VCConvertToWalletMode* vc = [[VCConvertToWalletMode alloc] initWithCallback:^{
+                        if (![[WalletManager sharedWalletManager] isPasswordMode]){
+                            NSLog(@"upgrade to wallet mode ok.");
+                            body();
+                        }
+                    }];
+                    vc.title = NSLocalizedString(@"kVcTitleConvertToWalletMode", @"升级钱包模式");
+                    [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+                }
+            }];
+        }else{
+            body();
+        }
+    }];
 }
 
 /**

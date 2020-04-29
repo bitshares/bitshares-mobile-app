@@ -42,6 +42,7 @@
         _lbValueText.font = [UIFont systemFontOfSize:16];
         _lbValueText.text = valueText;
         _lbValueText.textAlignment = NSTextAlignmentCenter;
+        _lbValueText.lineBreakMode = NSLineBreakByTruncatingMiddle;
         [self addSubview:_lbValueText];
         
         _lbTitleText = [[UILabel alloc] initWithFrame:CGRectZero];
@@ -65,13 +66,14 @@
 {
     [super layoutSubviews];
     
-    CGFloat fCellWidth = self.bounds.size.width;
+    CGFloat fOffsetX = self.layoutMargins.left;
+    CGFloat fCellWidth = self.bounds.size.width - fOffsetX * 2;
     
     CGFloat fTopOffset = 10.0f;
     CGFloat fLineHeight = 24.0f;
     
-    _lbValueText.frame = CGRectMake(0, fTopOffset, fCellWidth, fLineHeight);
-    _lbTitleText.frame = CGRectMake(0, fTopOffset + fLineHeight, fCellWidth, fLineHeight);
+    _lbValueText.frame = CGRectMake(fOffsetX, fTopOffset, fCellWidth, fLineHeight);
+    _lbTitleText.frame = CGRectMake(fOffsetX, fTopOffset + fLineHeight, fCellWidth, fLineHeight);
 }
 
 @end

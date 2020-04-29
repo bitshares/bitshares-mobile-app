@@ -9,20 +9,23 @@
 #import "VCAdvancedFeatures.h"
 #import "VCHtlcTransfer.h"
 
+#import "VCStealthTransfer.h"
+
 #import "WalletManager.h"
 #import "OrgUtils.h"
 
 enum
 {
-    kVcHTLC = 0,            //  HTLC相关
+    kVcHTLC = 0,                //  HTLC相关
+    kVcStealthTransfer,         //  隐私转账
     
     kVcMax
 };
 
 enum
 {
-    kVcSubHtlcPreimage = 0, //  通过原像创建
-    kVcSubHtlcHashcode,     //  通过部署码部署
+    kVcSubHtlcPreimage = 0,     //  通过原像创建
+    kVcSubHtlcHashcode,         //  通过部署码部署
 };
 
 @interface VCAdvancedFeatures ()
@@ -47,16 +50,20 @@ enum
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
-
-    NSArray* pSection1 = @[
-                           NSLocalizedString(@"kVcHtlcEntryFromPreimage", @"HTLC合约（原像创建）"),
-                           NSLocalizedString(@"kVcHtlcEntryFromHashcode", @"HTLC合约（哈希创建）")
-                           ];
     
-    _dataArray = @[pSection1];
+    NSArray* pSection1 = @[
+        NSLocalizedString(@"kVcHtlcEntryFromPreimage", @"HTLC合约（原像创建）"),
+        NSLocalizedString(@"kVcHtlcEntryFromHashcode", @"HTLC合约（哈希创建）")
+    ];
+    
+    NSArray* pSection2 = @[
+        NSLocalizedString(@"kVcStealthTransferEntryTitle", @"隐私交易")
+    ];
+    
+    _dataArray = @[pSection1, pSection2];
     
     _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];
     _mainTableView.delegate = self;
@@ -69,14 +76,14 @@ enum
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-//    [self.navigationController setNavigationBarHidden:YES animated:animated];
+    //    [self.navigationController setNavigationBarHidden:YES animated:animated];
     //  登录后返回需要重新刷新列表
     [_mainTableView reloadData];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-//    [self.navigationController setNavigationBarHidden:NO animated:animated];
+    //    [self.navigationController setNavigationBarHidden:NO animated:animated];
     [super viewWillDisappear:animated];
 }
 
@@ -115,35 +122,36 @@ enum
     UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-
+    
     id ary = [_dataArray objectAtIndex:indexPath.section];
     
     cell.backgroundColor = [UIColor clearColor];
     
     cell.showCustomBottomLine = YES;
     
-    cell.textLabel.text = NSLocalizedString([ary objectAtIndex:indexPath.row], @"");
+    cell.textLabel.text = [ary objectAtIndex:indexPath.row];
     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+    cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
     
     switch (indexPath.section) {
         case kVcHTLC:
         {
             switch (indexPath.row) {
                 case kVcSubHtlcPreimage:
-                {
                     cell.imageView.image = [UIImage templateImageNamed:@"iconHtlcPreimage"];
-                    cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
-                }
                     break;
                 case kVcSubHtlcHashcode:
-                {
                     cell.imageView.image = [UIImage templateImageNamed:@"iconHtlcHashcode"];
-                    cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
-                }
                     break;
                 default:
                     break;
             }
+        }
+            break;
+        case kVcStealthTransfer:
+        {
+            //  TODO:6.0 icon
+            cell.imageView.image = [UIImage templateImageNamed:@"iconHtlcHashcode"];
         }
             break;
         default:
@@ -180,22 +188,32 @@ enum
                                                                                  items:@[NSLocalizedString(@"kVcHtlcMenuPassiveCreate", @"被动部署合约"), NSLocalizedString(@"kVcHtlcMenuProactivelyCreate", @"主动创建合约")]
                                                                               callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
                              {
-                                 if (buttonIndex != cancelIndex){
-                                     if (buttonIndex == 0){
-                                         [self _gotoCreateHtlcVC:EDM_HASHCODE havePreimage:NO];
-                                     }else if (buttonIndex ==1){
-                                         [self _gotoCreateHtlcVC:EDM_HASHCODE havePreimage:YES];
-                                     }else{
-                                         assert(false);
-                                     }
-                                 }
-                             }];
+                                if (buttonIndex != cancelIndex){
+                                    if (buttonIndex == 0){
+                                        [self _gotoCreateHtlcVC:EDM_HASHCODE havePreimage:NO];
+                                    }else if (buttonIndex ==1){
+                                        [self _gotoCreateHtlcVC:EDM_HASHCODE havePreimage:YES];
+                                    }else{
+                                        assert(false);
+                                    }
+                                }
+                            }];
                         }];
                     }
                         break;
                     default:
                         break;
                 }
+            }
+                break;
+            case kVcStealthTransfer:
+            {
+                [self GuardWalletExistWithWalletMode:NSLocalizedString(@"kVcStealthTransferGuardWalletModeTips", @"隐私交易仅支持钱包模式，是否为当前的账号创建本地钱包文件？")
+                                                body:^{
+                    [self pushViewController:[[VCStealthTransfer alloc] init]
+                                     vctitle:NSLocalizedString(@"kVcTitleStealthTransferEntry", @"隐私交易")
+                                   backtitle:kVcDefaultBackTitleName];
+                }];
             }
                 break;
             default:

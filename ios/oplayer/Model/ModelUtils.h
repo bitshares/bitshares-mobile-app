@@ -23,6 +23,26 @@
 + (BOOL)assetCanGlobalSettle:(id)asset_object;
 
 /*
+ *  (public) 资产 - 判断资产是否允许隐私转账
+ */
++ (BOOL)assetAllowConfidential:(id)asset_object;
+
+/*
+ *  (public) 资产 - 资产是否允许覆盖转账（强制转账）
+ */
++ (BOOL)assetCanOverride:(id)asset_object;
+
+/*
+ *  (public) 资产 - 是否所有转账都需要发行人审核
+ */
++ (BOOL)assetIsTransferRestricted:(id)asset_object;
+
+/*
+ *  (public) 资产 - 资产是否需要持有人属于白名单判断。
+ */
++ (BOOL)assetNeedWhiteList:(id)asset_object;
+
+/*
  *  (public) 资产 - 是否已经全局清算判断
  */
 + (BOOL)assetHasGlobalSettle:(id)bitasset_object;

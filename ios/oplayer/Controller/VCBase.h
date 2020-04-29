@@ -173,7 +173,10 @@
  *  确保钱包已经存在
  */
 - (void)GuardWalletExist:(void (^)())body;
-
+/*
+ *  (public) 确保钱包存在，并且为钱包模式。（REMARK：新版本已经不存在密码模式登录。）
+ */
+- (void)GuardWalletExistWithWalletMode:(NSString*)message body:(void (^)())body;
 /**
  *  显示信息并返回。
  */
