@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "bts_wallet_core.h"
 
 /*
  *  文字+图片 按钮的布局方式。
@@ -53,6 +54,22 @@ typedef BOOL (^ViewCallback)(UIView* view);
  */
 - (NSString*)hex_encode;
 
+/*
+ *  (public) 解码 base58 字符串
+ */
+- (NSString*)base58_encode;
+
+/*
+ *  (public) 解码 base58 字符串
+ */
+- (NSData*)base58_decode;
+
+/*
+ *  (public) AES256-CBC 加密/解密
+ */
+- (NSData*)aes256cbc_encrypt:(const digest_sha512*)secret;
+- (NSData*)aes256cbc_decrypt:(const digest_sha512*)secret;
+
 @end
 
 @interface NSDate (WQCalendarLogic)
@@ -65,6 +82,17 @@ typedef BOOL (^ViewCallback)(UIView* view);
 @end
 
 @interface NSString (BtsppExt)
+
+/*
+ *  (public) 16进制编码/解码
+ */
+- (NSString*)hex_encode;
+- (NSData*)hex_decode;
+
+/*
+ *  (public) 解码 base58 字符串
+ */
+- (NSData*)base58_decode;
 
 /**
  *  URL 编码/解码

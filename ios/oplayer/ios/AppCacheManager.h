@@ -33,6 +33,20 @@ typedef enum EWalletMode
 -(void)saveFavMarketsToFile;
 -(void)saveCustomMarketsToFile;
 
+#pragma mark- for stealth receipt & account
+/*
+ *  (public) 管理所有隐私账号：获取、添加、删除
+ */
+- (NSMutableDictionary*)getAllBlindAccounts;
+- (AppCacheManager*)appendBlindAccount:(id)blind_account autosave:(BOOL)autosave;
+- (AppCacheManager*)removeBlindAccount:(id)blind_account autosave:(BOOL)autosave;
+/*
+ *  (public) 管理所有隐私收据：获取、添加、删除。
+ */
+-(id)getAllBlindBalance;
+-(AppCacheManager*)appendBlindBalance:(id)blind_balance;
+-(AppCacheManager*)removeBlindBalance:(id)blind_balance;
+
 #pragma mark- garphene object cache
 - (AppCacheManager*)update_object_cache:(NSString*)object_id object:(NSDictionary*)object;
 - (NSDictionary*)get_object_cache:(NSString*)object_id now_ts:(NSTimeInterval)now_ts;

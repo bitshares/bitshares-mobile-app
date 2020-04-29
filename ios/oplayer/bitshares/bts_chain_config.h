@@ -174,6 +174,8 @@ typedef enum EBitsharesObjectType
     ebot_worker,
     ebot_balance,
     ebot_htlc,                      //  16
+    
+    ebot_max                        //  max_value
 } EBitsharesObjectType;
 
 /**
