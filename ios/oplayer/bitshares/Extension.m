@@ -137,6 +137,61 @@
     return [output copy];
 }
 
+/*
+ *  (public) 解码 base58 字符串
+ */
+- (NSString*)base58_encode
+{
+    unsigned char output[self.length * 2];
+    size_t output_size = sizeof(output);
+    __bts_base58_encode(self.bytes, self.length, output, &output_size);
+    //  REMARK: 这个 output_size 的长度包含了 '\0'，需要移除。
+    return [[NSString alloc] initWithBytes:output length:output_size - 1 encoding:NSUTF8StringEncoding];
+}
+
+/*
+ *  (public) 解码 base58 字符串
+ */
+- (NSData*)base58_decode
+{
+    unsigned char output[self.length + 1];
+    size_t output_size = sizeof(output);
+    unsigned char* ptr = __bts_base58_decode(self.bytes, self.length, output, &output_size);
+    if (!ptr) {
+        return nil;
+    }
+    return [[NSData alloc] initWithBytes:ptr length:output_size];
+}
+
+/*
+ *  (public) AES256-CBC 加密/解密
+ */
+- (NSData*)aes256cbc_encrypt:(const digest_sha512*)secret
+{
+    size_t srcsize = self.length;
+    size_t output_size = __bts_aes256_calc_output_size(srcsize);
+    unsigned char output[output_size];
+    
+    if (__bts_aes256cbc_encrypt(secret, self.bytes, srcsize, output)) {
+        return [[NSData alloc] initWithBytes:output length:output_size];
+    }
+    
+    return nil;
+}
+
+- (NSData*)aes256cbc_decrypt:(const digest_sha512*)secret
+{
+    size_t srcsize = self.length;
+    size_t output_size = srcsize;
+    unsigned char output[output_size];
+    
+    if (__bts_aes256cbc_decrypt(secret, self.bytes, srcsize, output, &output_size)) {
+        return [[NSData alloc] initWithBytes:output length:output_size];
+    }
+    
+    return nil;
+}
+
 @end
 
 @implementation NSDate (WQCalendarLogic)
@@ -176,12 +231,32 @@
     return [[[[NSNumberFormatter alloc] init] numberFromString:self] unsignedIntegerValue];
 }
 
-/**
- *  16进制编码
+/*
+ *  (public) 16进制编码/解码
  */
 - (NSString*)hex_encode
 {
     return [[self dataUsingEncoding:NSUTF8StringEncoding] hex_encode];
+}
+
+- (NSData*)hex_decode
+{
+    size_t len = self.length;
+    assert(len % 2 == 0);
+    if (len == 0) {
+        return [NSData data];
+    }
+    unsigned char buf[len / 2];
+    hex_decode((const unsigned char*)[self UTF8String], len, buf);
+    return [[NSData alloc] initWithBytes:buf length:sizeof(buf)];
+}
+
+/*
+ *  (public) 解码 base58 字符串
+ */
+- (NSData*)base58_decode
+{
+    return [[self dataUsingEncoding:NSUTF8StringEncoding] base58_decode];
 }
 
 /**

@@ -242,6 +242,21 @@
 @end
 
 /**
+ *  OP -部分特殊操作（断言、自定义等）
+ */
+@interface T_assert_predicate_account_name_eq_lit : T_Base
+@end
+
+@interface T_assert_predicate_asset_symbol_eq_lit : T_Base
+@end
+
+@interface T_assert_predicate_block_id : T_Base
+@end
+
+@interface T_assert : T_Base
+@end
+
+/**
  *  OP -隐私转账相关
  */
 @interface T_stealth_confirmation_memo_data : T_Base

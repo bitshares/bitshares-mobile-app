@@ -130,6 +130,11 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [T_asset_claim_pool performSelector:@selector(register_subfields)];
     [T_asset_update_issuer performSelector:@selector(register_subfields)];
     
+    [T_assert_predicate_account_name_eq_lit performSelector:@selector(register_subfields)];
+    [T_assert_predicate_asset_symbol_eq_lit performSelector:@selector(register_subfields)];
+    [T_assert_predicate_block_id performSelector:@selector(register_subfields)];
+    [T_assert performSelector:@selector(register_subfields)];
+    
     [T_stealth_confirmation_memo_data performSelector:@selector(register_subfields)];
     [T_stealth_confirmation performSelector:@selector(register_subfields)];
     [T_blind_input performSelector:@selector(register_subfields)];
@@ -1044,6 +1049,8 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
             return [T_asset_claim_pool class];
         case ebo_asset_update_issuer:
             return [T_asset_update_issuer class];
+        case ebo_assert:
+            return [T_assert class];
         case ebo_transfer_to_blind:
             return [T_transfer_to_blind class];
         case ebo_transfer_from_blind:
@@ -1501,6 +1508,52 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"asset_to_update" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_asset]];
     [self add_field:@"new_issuer" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
+}
+
+@end
+
+@implementation T_assert_predicate_account_name_eq_lit
+
++ (void)register_subfields
+{
+    [self add_field:@"account_id" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"name" class:[T_string class]];
+}
+
+@end
+
+@implementation T_assert_predicate_asset_symbol_eq_lit
+
++ (void)register_subfields
+{
+    [self add_field:@"asset_id" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_asset]];
+    [self add_field:@"symbol" class:[T_string class]];
+}
+
+@end
+
+@implementation T_assert_predicate_block_id
+
++ (void)register_subfields
+{
+    [self add_field:@"id" class:[[Tm_bytes alloc] initWithSize:@(20)]];     //  RMD160
+}
+
+@end
+
+@implementation T_assert
+
++ (void)register_subfields
+{
+    [self add_field:@"fee" class:[T_asset class]];
+    [self add_field:@"fee_paying_account" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"predicates" class:[[Tm_array alloc] initWithType:[[Tm_static_variant alloc] initWithTypeArray:@[
+        [T_assert_predicate_account_name_eq_lit class],
+        [T_assert_predicate_asset_symbol_eq_lit class],
+        [T_assert_predicate_block_id class]
+    ]]]];
+    [self add_field:@"required_auths" class:[[Tm_set alloc] initWithType:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
 

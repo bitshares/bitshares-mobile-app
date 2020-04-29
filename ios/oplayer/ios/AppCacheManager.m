@@ -158,6 +158,93 @@ static AppCacheManager* _spInstanceAppCacheMgr = nil;
     [MySecurityFileMgr saveSecFile:_custom_markets path:pFilename];
 }
 
+- (NSMutableDictionary*)_getOrCreateSubFieldForWalletInfo:(NSString*)field_name
+{
+    assert(field_name);
+    assert(_wallet_info);
+    id field_hash = [_wallet_info objectForKey:field_name];
+    if (!field_hash) {
+        field_hash = [NSMutableDictionary dictionary];
+        [_wallet_info setObject:field_hash forKey:field_name];
+    }
+    return field_hash;
+}
+
+/*
+ *  (public) 管理所有隐私账号：获取、添加、删除
+ */
+- (NSMutableDictionary*)getAllBlindAccounts
+{
+    return [self _getOrCreateSubFieldForWalletInfo:@"kBlindAccountHash"];
+}
+
+- (AppCacheManager*)appendBlindAccount:(id)blind_account autosave:(BOOL)autosave
+{
+    //    id blind_account = @{
+    //        @"public_key": @"",
+    //        @"alias_name": @"",
+    //        @"parent_key": @"",
+    //        @"child_key_index": @0
+    //    };
+    assert(blind_account);
+    assert([blind_account objectForKey:@"public_key"]);
+    //  添加
+    [[self getAllBlindAccounts] setObject:blind_account forKey:blind_account[@"public_key"]];
+    //  保存
+    if (autosave) {
+        [self saveWalletInfoToFile];
+    }
+    return self;
+}
+
+- (AppCacheManager*)removeBlindAccount:(id)blind_account autosave:(BOOL)autosave
+{
+    assert(blind_account);
+    assert([blind_account objectForKey:@"public_key"]);
+    //  删除
+    [[self getAllBlindAccounts] removeObjectForKey:blind_account[@"public_key"]];
+    //  保存
+    if (autosave) {
+        [self saveWalletInfoToFile];
+    }
+    return self;
+}
+
+/*
+ *  (public) 管理所有隐私收据：获取、添加、删除。
+ */
+-(id)getAllBlindBalance
+{
+    return [self _getOrCreateSubFieldForWalletInfo:@"kBlindBalanceHash"];
+}
+
+-(AppCacheManager*)appendBlindBalance:(id)blind_balance
+{
+    assert(blind_balance);
+    //    @"real_to_key": @"TEST71jaNWV7ZfsBRUSJk6JfxSzEB7gvcS7nSftbnFVDeyk6m3xj53",  //  仅显示用
+    //    @"one_time_key": @"TEST71jaNWV7ZfsBRUSJk6JfxSzEB7gvcS7nSftbnFVDeyk6m3xj53", //  转账用
+    //    @"to": @"TEST71jaNWV7ZfsBRUSJk6JfxSzEB7gvcS7nSftbnFVDeyk6m3xj53",           //  没用到
+    //    @"decrypted_memo": @{
+    //        @"amount": @{@"asset_id": @"1.3.0", @"amount": @12300000},              //  转账用，显示用。
+    //        @"blinding_factor": @"",                                                //  转账用
+    //        @"commitment": @"",                                                     //  转账用
+    //        @"check": @331,                                                         //  导入check用，显示用。
+    //    }
+    id commitment = [[blind_balance objectForKey:@"decrypted_memo"] objectForKey:@"commitment"];
+    assert([commitment isKindOfClass:[NSString class]]);
+    [[self getAllBlindBalance] setObject:blind_balance forKey:commitment];
+    return self;
+}
+
+-(AppCacheManager*)removeBlindBalance:(id)blind_balance
+{
+    assert(blind_balance);
+    id commitment = [[blind_balance objectForKey:@"decrypted_memo"] objectForKey:@"commitment"];
+    assert([commitment isKindOfClass:[NSString class]]);
+    [[self getAllBlindBalance] removeObjectForKey:commitment];
+    return self;
+}
+
 #pragma mark- garphene object cache
 - (AppCacheManager*)update_object_cache:(NSString*)object_id object:(NSDictionary*)object
 {
@@ -332,19 +419,6 @@ static AppCacheManager* _spInstanceAppCacheMgr = nil;
     [_native_caches removeObjectForKey:key];
     return self;
 }
-//-(id)nativeCacheHash
-//{
-//    return _native_caches;
-//}
-//-(id)getNativeCacheForKey:(NSString*)pKey
-//{
-//    return [_native_caches objectForKey:pKey];
-//}
-//-(AppCacheManager*)setNativeCacheObject:(id)object forKey:(NSString*)pKey
-//{
-//    [_native_caches setObject:object forKey:pKey];
-//    return self;
-//}
 
 #pragma mark- for wallet info
 - (NSDictionary*)getWalletInfo
@@ -489,12 +563,12 @@ static AppCacheManager* _spInstanceAppCacheMgr = nil;
         filename = [NSString stringWithFormat:@"%@_%@.bin", prefix, final_wallet_name];
         //  [统计]
         [OrgUtils logEvents:@"action_backupwallet"
-                       params:@{@"prefix":prefix, @"account":final_wallet_name}];
+                     params:@{@"prefix":prefix, @"account":final_wallet_name}];
     }else{
         filename = [NSString stringWithFormat:@"%@.bin", final_wallet_name];
         //  [统计]
         [OrgUtils logEvents:@"action_backupwallet"
-                       params:@{@"account":final_wallet_name}];
+                     params:@{@"account":final_wallet_name}];
     }
     id fullpath = [dir stringByAppendingPathComponent:filename];
     return [OrgUtils writeFileAny:wallet_bin withFullPath:fullpath withDirPath:nil];
