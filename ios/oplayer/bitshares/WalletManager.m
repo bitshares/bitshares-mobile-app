@@ -644,6 +644,19 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
     }
 }
 
+/*
+ *  (public) 获取石墨烯私钥对象。
+ */
+- (GraphenePrivateKey*)getGraphenePrivateKeyByPublicKey:(NSString*)wif_public_key
+{
+    assert(wif_public_key);
+    assert(![self isLocked]);
+    id wif_private = [_private_keys_hash objectForKey:wif_public_key];
+    if (!wif_public_key) {
+        return nil;
+    }
+    return [GraphenePrivateKey fromWifPrivateKey:wif_private];
+}
 
 /**
  *  是否存在指定公钥的私钥对象。
@@ -842,18 +855,27 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
  */
 - (NSArray*)signTransaction:(NSData*)sign_buffer signKeys:(NSArray*)pubKeyList
 {
+    return [self signTransaction:sign_buffer signKeys:pubKeyList extra_keys:nil];
+}
+
+- (NSArray*)signTransaction:(NSData*)sign_buffer signKeys:(NSArray*)pubKeyList extra_keys:(NSDictionary*)extra_keys_hash
+{
     assert(sign_buffer);
     assert(pubKeyList && [pubKeyList count] > 0);
-    //  未解锁 返回失败
-    if ([self isLocked]){
-        return nil;
-    }
+    
     NSMutableArray* result = [NSMutableArray array];
     secp256k1_prikey private_key = {0, };
     secp256k1_compact_signature signature = {0, };
     for (id pubKey in pubKeyList) {
         NSString* private_key_wif = [_private_keys_hash objectForKey:pubKey];
-        assert(private_key_wif);
+        if (!private_key_wif && extra_keys_hash) {
+            private_key_wif = [extra_keys_hash objectForKey:pubKey];
+        }
+        //  未解锁或者私钥不存在 返回失败
+        if (!private_key_wif) {
+            return nil;
+        }
+        
         //  生成原始私钥
         bool ret = __bts_gen_private_key_from_wif_privatekey((const unsigned char*)[private_key_wif UTF8String],
                                                              (const size_t)private_key_wif.length, private_key.data);
@@ -1232,6 +1254,95 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
     //  5、创建二进制钱包并返回
     return [self _genFullWalletData:final_object walletPassword:_wallet_password];
 }
+//
+///*
+// *  (public) 在当前“已解锁”的钱包中导入【隐私地址】主私钥。
+// */
+//- (NSData*)walletBinImportMainStealthKey:(NSString*)wif_private_key
+//{
+//    assert(![self isPasswordMode]);
+//    assert(![self isLocked]);
+//    assert(_wallet_object_json);
+//    assert(wif_private_key);
+//    assert(_wallet_password);
+//    
+//    id wif_public_key = [OrgUtils genBtsAddressFromWifPrivateKey:wif_private_key];
+//    assert(wif_public_key);
+//    
+//    //  1、获取当前 linked_accounts 信息。
+//    id old_linked_accounts = [_wallet_object_json objectForKey:@"linked_accounts"];
+//    assert(old_linked_accounts);
+//    
+//    //  2、获取当前 wallet 信息
+//    id old_wallet = [[_wallet_object_json objectForKey:@"wallet"] firstObject];
+//    assert(old_wallet);
+//    
+//    //  3、获取当前 private_keys 信息
+//    id old_private_keys = [_wallet_object_json objectForKey:@"private_keys"];
+//    assert(old_private_keys);
+//    
+//    //  A、获取当前已经存在的key信息。
+//    BOOL already_exist_key = NO;
+//    NSMutableArray* new_private_keys = [NSMutableArray array];
+//    for (id item in old_private_keys) {
+//        id pubkey = [item objectForKey:@"pubkey"];
+//        assert(pubkey);
+//        if ([wif_public_key isEqualToString:pubkey]) {
+//            //  存在相同的私钥，则直接设置隐私主KEY标记。
+//            id new_key_item = [item mutableCopy];
+//            [new_key_item setObject:@YES forKey:@"is_main_stealthkey"];
+//            [new_private_keys addObject:[new_key_item copy]];
+//            already_exist_key = YES;
+//        } else {
+//            [new_private_keys addObject:item];
+//        }
+//    }
+//    
+//    //  B、不存在的情况下，生成新的 key item 对象。
+//    if (!already_exist_key){
+//        id data_encryption_buffer = [self auxAesDecryptFromHex:[_wallet_password dataUsingEncoding:NSUTF8StringEncoding]
+//                                                          data:[old_wallet objectForKey:@"encryption_key"]];
+//        assert(data_encryption_buffer);
+//        
+//        secp256k1_prikey private_key32 = {0, };
+//        if (!__bts_gen_private_key_from_wif_privatekey((const unsigned char*)[wif_private_key UTF8String],
+//                                                       (const size_t)wif_private_key.length, private_key32.data)) {
+//            assert(false);
+//            return nil;
+//        }
+//        id encrypted_key = [self auxAesEncryptToHex:data_encryption_buffer
+//                                               data:[[NSData alloc] initWithBytes:private_key32.data length:sizeof(private_key32.data)]];
+//        if (!encrypted_key) {
+//            assert(false);
+//            return nil;
+//        }
+//        [new_private_keys addObject:@{@"id":@([new_private_keys count] + 1),
+//                                      @"encrypted_key":encrypted_key,
+//                                      @"pubkey":wif_public_key,
+//                                      @"is_main_stealthkey":@YES}];
+//    }
+//    
+//    //  4、构造 wallet
+//    NSString* last_modified = [self genWalletTimeString:ceil([[NSDate date] timeIntervalSince1970])];
+//    id new_wallet = [old_wallet mutableCopy];
+//    [new_wallet setObject:last_modified forKey:@"last_modified"];
+//    //  REMARK：stealth key相关信息存储在 wallet 对象中。
+//    NSString* old_stealth_pubkey = [new_wallet objectForKey:@"stealth_pubkey"];
+//    if (!old_stealth_pubkey || ![old_stealth_pubkey isEqualToString:wif_public_key]) {
+//        [new_wallet setObject:wif_public_key forKey:@"stealth_pubkey"];
+//        [new_wallet setObject:@0 forKey:@"stealth_childkey_num"];
+//    }
+//    
+//    //  5、final object
+//    id final_object = @{
+//        @"linked_accounts":old_linked_accounts,
+//        @"private_keys":[new_private_keys copy],
+//        @"wallet":@[[new_wallet copy]],
+//    };
+//    
+//    //  6、创建二进制钱包并返回
+//    return [self _genFullWalletData:final_object walletPassword:_wallet_password];
+//}
 
 /**
  *  (private) 通过钱包文件JSON对象创建完整钱包对象。直接返回二进制bin。

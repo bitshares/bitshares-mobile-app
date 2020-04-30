@@ -772,6 +772,17 @@
 "kVcTransferTipSelectToAccount" = "受取口座を選びください。";
 "kVcTransferTipSelectAsset" = "選んで帳簿の資産を回転してください";
 
+/* 隐私交易相关 */
+"kVcStealthTransferEntryTitle" = "隐私交易";//TODO:
+"kVcStealthTransferGuardWalletModeTips" = "隐私交易仅支持钱包模式，是否为当前的账号创建本地钱包文件？"; //TODO:
+"kVcStEntryBlindAccounts" = "账户管理";//TODO:
+"kVcStEntryBlindBalances" = "我的收据";//TODO:
+"kVcStEntryTransferToBlind" = "向隐私账户转账";//TODO:
+"kVcStEntryTransferFromBlind" = "从隐私账户转出";//TODO:
+"kVcStEntryBlindTransfer" = "隐私转账";//TODO:
+"kVcStBtnSelectReceipt" = "选择收据";//TODO:
+"kVcStBtnTransferFromBlind" = "隐私转出";//TODO:
+
 /* HTLC合约 */
 "kVcHtlcEntryFromPreimage" = "HTLC合约（原像创建）";//TODO:
 "kVcHtlcEntryFromHashcode" = "HTLC合约（哈希创建）";//TODO:
@@ -978,6 +989,10 @@
 "kVcTitleKlineIndexSetting" = "Kライン表示設定";
 "kVcTitleCreateHTLC" = "HTLCを作成する";
 "kVcTitleCreateSubHTLC" = "コピー契約を作成する";
+"kVcTitleStealthTransferEntry" = "ステルス転送";
+"kVcTitleTransferToBlind" = "ブラインドアカウントに送金する";
+"kVcTitleTransferFromBlind" = "ブラインドアカウントからの送金";
+"kVcTitleBlindTransfer" = "ブラインド転送";
 "kVcTitleOtcOrderList" = "注文記録";
 "kVcTitleOtcAuthInfos" = "ユーザー情報";
 "kVcTitleOtcUserAuth" = "KYC認証";
@@ -1137,9 +1152,9 @@
 "kOpDesc_assert" = "断言。";
 "kOpDesc_balance_claim" = "残高を抽出する。";
 "kOpDesc_override_transfer" = "資産を回収する。";
-"kOpDesc_transfer_to_blind" = "プライベートアカウントへ振り込みます。";
+"kOpDesc_transfer_to_blind" = "%@ 送金 %@ とプライベートアカウント。";
 "kOpDesc_blind_transfer" = "プライバシー振込。";
-"kOpDesc_transfer_from_blind" = "プライバシーアカウントから移動する。";
+"kOpDesc_transfer_from_blind" = "%@ はプライバシーアカウントから %@ を転送します。";
 "kOpDesc_asset_settle_cancel" = "キャンセルして清算します。";
 "kOpDesc_asset_claim_fees" = "%@ は %@ の資産手数料を取り出します。";
 "kOpDesc_fba_distribute" = "FBA分发。";//TODO:
@@ -1632,6 +1647,8 @@
 "kGPErrorInsufficientBalance" = "手数料は不足します。";
 "kGPErrorRedeemInvalidPreimage" = "元の画像が正しくありません。";
 "kGPErrorApiNodeVersionTooLow" = "現在のAPIノードのバージョンが低すぎます。";
+"kGPErrorBlindReceiptIsNotExisted" = "ブラインド領収書は存在しません。";
+"kGPErrorBlindVerifySumFailed" = "ブラインド入力と出力の量は等しくありません。";
 
 /* 特殊用途字符串KEY */
 "serverWssLangKey" = "cn";

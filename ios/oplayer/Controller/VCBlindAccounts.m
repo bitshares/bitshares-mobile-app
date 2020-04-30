@@ -327,6 +327,8 @@
 
 - (void)onActionClickedGenChildKey:(id)blind_account section:(NSInteger)section
 {
+    //  TODO:6.0 限制子账号数量，比如3个或5个。（扫描恢复收据验证to等时候容易一些。）
+    
     assert(blind_account);
     //  TODO:6.0
     NSString* main_public_key = [blind_account objectForKey:@"public_key"];

@@ -130,7 +130,7 @@ enum
     _cell_tips.hideTopLine = YES;
     _cell_tips.backgroundColor = [UIColor clearColor];
     
-    //  TODO:6.0
+    //  TODO:6.0 lang
     _cell_add_one = [[ViewEmptyInfoCell alloc] initWithText:@"添加输出" iconName:@"iconAdd"];
     _cell_add_one.showCustomBottomLine = YES;
     _cell_add_one.accessoryType = UITableViewCellAccessoryNone;

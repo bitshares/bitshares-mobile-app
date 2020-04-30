@@ -548,34 +548,53 @@ enum
         @"inputs":inputs
     };
     
-    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+    id amount_string = [NSString stringWithFormat:@"%@ %@", n_transfer_amount, asset[@"symbol"]];
     
-    //  REMARK：该操作不涉及账号，不需要处理提案的情况。仅n个私钥签名即可。
-    [[[[BitsharesClientManager sharedBitsharesClientManager] transferFromBlind:op signPriKeyHash:sign_keys] then:^id(id tx_data) {
-        [self hideBlockView];
-        //  删除已提取的收据。
-        AppCacheManager* pAppCahce = [AppCacheManager sharedAppCacheManager];
-        for (id blind_balance in blind_balance_array) {
-            [pAppCahce removeBlindBalance:blind_balance];
+    id value = [NSString stringWithFormat:@"您确定从隐私账户转出 %@ 到 %@ 账号吗？",
+                amount_string,
+                _to_account[@"name"]];
+    
+    //  二次确认
+    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:value
+                                                           withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                          completion:^(NSInteger buttonIndex)
+     {
+        if (buttonIndex == 1)
+        {
+            [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
+                if (unlocked) {
+                    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+                    
+                    //  REMARK：该操作不涉及账号，不需要处理提案的情况。仅n个私钥签名即可。
+                    [[[[BitsharesClientManager sharedBitsharesClientManager] transferFromBlind:op
+                                                                                signPriKeyHash:sign_keys] then:^id(id tx_data) {
+                        [self hideBlockView];
+                        //  删除已提取的收据。
+                        AppCacheManager* pAppCahce = [AppCacheManager sharedAppCacheManager];
+                        for (id blind_balance in blind_balance_array) {
+                            [pAppCahce removeBlindBalance:blind_balance];
+                        }
+                        [pAppCahce saveWalletInfoToFile];
+                        
+                        //  转到结果界面。
+                        VCPaySuccess* vc = [[VCPaySuccess alloc] initWithResult:tx_data
+                                                                     to_account:_to_account
+                                                                  amount_string:amount_string
+                                                             success_tip_string:@"转出成功"];//TODO:6.0 lang
+                        [self clearPushViewController:vc vctitle:@"" backtitle:kVcDefaultBackTitleName];
+                        //        //  清空UI
+                        //        [self onSelectBlindBalanceDone:nil];
+                        //        _to_account = nil;
+                        //        [_mainTableView reloadData];
+                        return nil;
+                    }] catch:^id(id error) {
+                        [self hideBlockView];
+                        [OrgUtils showGrapheneError:error];
+                        return nil;
+                    }];
+                }
+            }];
         }
-        [pAppCahce saveWalletInfoToFile];
-        
-        //  转到结果界面。
-        id amount_string = [NSString stringWithFormat:@"%@ %@", n_transfer_amount, asset[@"symbol"]];
-        VCPaySuccess* vc = [[VCPaySuccess alloc] initWithResult:tx_data
-                                                     to_account:_to_account
-                                                  amount_string:amount_string
-                                             success_tip_string:@"转出成功"];//TODO:6.0 lang
-        [self clearPushViewController:vc vctitle:@"" backtitle:kVcDefaultBackTitleName];
-        //        //  清空UI
-        //        [self onSelectBlindBalanceDone:nil];
-        //        _to_account = nil;
-        //        [_mainTableView reloadData];
-        return nil;
-    }] catch:^id(id error) {
-        [self hideBlockView];
-        [OrgUtils showGrapheneError:error];
-        return nil;
     }];
 }
 

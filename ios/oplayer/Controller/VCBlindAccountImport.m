@@ -217,7 +217,7 @@ enum
             //  隐私交易主地址导入钱包
             AppCacheManager* pAppCache = [AppCacheManager sharedAppCacheManager];
             
-            id full_wallet_bin = [walletMgr walletBinImportMainStealthKey:wif_main_pri_key];
+            id full_wallet_bin = [walletMgr walletBinImportAccount:nil privateKeyWifList:@[wif_main_pri_key]];
             assert(full_wallet_bin);
             [pAppCache appendBlindAccount:blind_account autosave:NO];
             [pAppCache updateWalletBin:full_wallet_bin];

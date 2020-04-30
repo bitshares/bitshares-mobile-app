@@ -593,6 +593,74 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
 }
 
 #pragma mark- aux method
+
+/*
+ *  (public) 计算以核心资产为单位的网络手续费数量。
+ */
+- (NSDecimalNumber*)getNetworkCurrentFee:(EBitsharesOperations)op_code
+                                   kbyte:(NSDecimalNumber*)n_kbyte
+                                     day:(NSDecimalNumber*)n_day
+                                  output:(NSDecimalNumber*)n_output
+{
+    //  获取指定操作的默认手续费信息
+    id gp = [self getObjectGlobalProperties];
+    //  网络初始化失败了。
+    if (!gp){
+        return nil;
+    }
+    id current_fees = gp[@"parameters"][@"current_fees"];
+    id fee_item = [current_fees[@"parameters"] ruby_find:(^BOOL(id op_array) {
+        return [[op_array objectAtIndex:0] integerValue] == op_code; //  op_array: [0, {"fee"=>10420, "price_per_kbyte"=>5789}]
+    })];
+    //  未知操作
+    if (!fee_item) {
+        return nil;
+    }
+    id n_scale = [NSDecimalNumber numberWithLongLong:[current_fees[@"scale"] unsignedLongLongValue]];
+    id n_100_percent = [NSDecimalNumber numberWithLongLong:GRAPHENE_100_PERCENT];
+    
+    id fee_args = [fee_item objectAtIndex:1];
+    
+    NSInteger precision = [[[self getChainObjectByID:self.grapheneCoreAssetID] objectForKey:@"precision"] integerValue];
+    
+    id n_fee = [NSDecimalNumber decimalNumberWithMantissa:[[fee_args objectForKey:@"fee"] unsignedLongLongValue]
+                                                  exponent:-precision isNegative:NO];
+    
+    if (n_kbyte) {
+        id price_per_kbyte = [fee_args objectForKey:@"price_per_kbyte"];
+        if (!price_per_kbyte) {
+            price_per_kbyte = [fee_args objectForKey:@"fee_per_kb"];
+        }
+        if (price_per_kbyte){
+            id n_per = [NSDecimalNumber decimalNumberWithMantissa:[price_per_kbyte unsignedLongLongValue] exponent:-precision isNegative:NO];
+            n_fee = [n_fee decimalNumberByAdding:[n_per decimalNumberByMultiplyingBy:n_kbyte]];
+        }
+    }
+    
+    if (n_day) {
+        id fee_per_day = [fee_args objectForKey:@"fee_per_day"];
+        if (fee_per_day) {
+            id n_per = [NSDecimalNumber decimalNumberWithMantissa:[fee_per_day unsignedLongLongValue] exponent:-precision isNegative:NO];
+            n_fee = [n_fee decimalNumberByAdding:[n_per decimalNumberByMultiplyingBy:n_day]];
+        }
+    }
+    
+    if (n_output) {
+        id price_per_output = [fee_args objectForKey:@"price_per_output"];
+        if (price_per_output) {
+            id n_per = [NSDecimalNumber decimalNumberWithMantissa:[price_per_output unsignedLongLongValue] exponent:-precision isNegative:NO];
+            n_fee = [n_fee decimalNumberByAdding:[n_per decimalNumberByMultiplyingBy:n_output]];
+        }
+    }
+    
+    //  缩放
+    if ([n_scale compare:n_100_percent] != 0) {
+        n_fee = [[n_fee decimalNumberByMultiplyingBy:n_scale] decimalNumberByDividingBy:n_100_percent];
+    }
+    
+    return n_fee;
+}
+
 /**
  *  (public) 获取手续费对象
  *  extra_balance   - key: asset_type   value: balance amount
@@ -1200,6 +1268,15 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
         //  返回结果
         return resultHash;
     })];
+}
+
+/*
+ *  (public) 查询链上区块数据。
+ */
+- (WsPromise*)queryBlock:(NSUInteger)block_num
+{
+    GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
+    return [api exec:@"get_block" params:@[@(block_num)]];
 }
 
 /*
