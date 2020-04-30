@@ -772,6 +772,17 @@
 "kVcTransferTipSelectToAccount" = "Please select target account";
 "kVcTransferTipSelectAsset" = "Please select the asset to transfer";
 
+/* 隐私交易相关 */
+"kVcStealthTransferEntryTitle" = "隐私交易";//TODO:
+"kVcStealthTransferGuardWalletModeTips" = "隐私交易仅支持钱包模式，是否为当前的账号创建本地钱包文件？"; //TODO:
+"kVcStEntryBlindAccounts" = "账户管理";//TODO:
+"kVcStEntryBlindBalances" = "我的收据";//TODO:
+"kVcStEntryTransferToBlind" = "向隐私账户转账";//TODO:
+"kVcStEntryTransferFromBlind" = "从隐私账户转出";//TODO:
+"kVcStEntryBlindTransfer" = "隐私转账";//TODO:
+"kVcStBtnSelectReceipt" = "选择收据";//TODO:
+"kVcStBtnTransferFromBlind" = "隐私转出";//TODO:
+
 /* HTLC合约 */
 "kVcHtlcEntryFromPreimage" = "Create HTLC (by preimage)";
 "kVcHtlcEntryFromHashcode" = "Create HTLC (by hashcode)";
@@ -978,6 +989,10 @@
 "kVcTitleKlineIndexSetting" = "K-Line Index Setting";
 "kVcTitleCreateHTLC" = "Create HTLC";
 "kVcTitleCreateSubHTLC" = "Deploy sub-contracts";
+"kVcTitleStealthTransferEntry" = "Stealth Transfer";
+"kVcTitleTransferToBlind" = "Transfer to blind";
+"kVcTitleTransferFromBlind" = "Transfer from blind";
+"kVcTitleBlindTransfer" = "Blind Transfer";
 "kVcTitleOtcOrderList" = "Orders";
 "kVcTitleOtcAuthInfos" = "User Info";
 "kVcTitleOtcUserAuth" = "KYC";
@@ -1137,9 +1152,9 @@
 "kOpDesc_assert" = "assertion operation.";
 "kOpDesc_balance_claim" = "claim balance.";
 "kOpDesc_override_transfer" = "override transfer.";
-"kOpDesc_transfer_to_blind" = "transfer asset to blind account.";
+"kOpDesc_transfer_to_blind" = "%@ transfer %@ to blind account.";
 "kOpDesc_blind_transfer" = "blind transfer.";
-"kOpDesc_transfer_from_blind" = "transfer asset from a blind account.";
+"kOpDesc_transfer_from_blind" = "%@ transfer %@ from the blind account.";
 "kOpDesc_asset_settle_cancel" = "cancel the settlement.";
 "kOpDesc_asset_claim_fees" = "%@ claims %@ asset fees.";
 "kOpDesc_fba_distribute" = "FBA distribute.";
@@ -1632,6 +1647,8 @@
 "kGPErrorInsufficientBalance" = "Insufficient balance.";
 "kGPErrorRedeemInvalidPreimage" = "The preimage is incorrect.";
 "kGPErrorApiNodeVersionTooLow" = "The current API node version is too low.";
+"kGPErrorBlindReceiptIsNotExisted" = "The blind receipt does not exist.";
+"kGPErrorBlindVerifySumFailed" = "The amount of blind input and output is not equal.";
 
 /* 特殊用途字符串KEY */
 "serverWssLangKey" = "en";

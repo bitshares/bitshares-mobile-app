@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "AppCacheManager.h"
+#import "GraphenePrivateKey.h"
 
 /**
  *  钱包中存在的私钥对指定权限状态枚举。
@@ -133,6 +134,11 @@ typedef enum EImportToWalletStatus
  */
 - (NSArray*)getFeePayingAccountList:(BOOL)requireActivePermission;
 
+/*
+ *  (public) 获取石墨烯私钥对象。
+ */
+- (GraphenePrivateKey*)getGraphenePrivateKeyByPublicKey:(NSString*)wif_public_key;
+
 /**
  *  是否存在指定公钥的私钥对象。
  */
@@ -180,6 +186,7 @@ typedef enum EImportToWalletStatus
  *  (public) 用一组私钥签名交易。成功返回签名数据的数组，失败返回 nil。
  */
 - (NSArray*)signTransaction:(NSData*)sign_buffer signKeys:(NSArray*)pubKeyList;
+- (NSArray*)signTransaction:(NSData*)sign_buffer signKeys:(NSArray*)pubKeyList extra_keys:(NSDictionary*)extra_keys_hash;
 
 /*
  *  (public) 解密memo数据，失败返回nil。

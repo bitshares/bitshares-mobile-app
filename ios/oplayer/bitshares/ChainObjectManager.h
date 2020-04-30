@@ -158,6 +158,14 @@
 - (void)updateGrapheneObjectCache:(NSArray*)data_array;
 
 #pragma mark- aux method
+/*
+ *  (public) 计算以核心资产为单位的网络手续费数量。
+ */
+- (NSDecimalNumber*)getNetworkCurrentFee:(EBitsharesOperations)op_code
+                                   kbyte:(NSDecimalNumber*)n_kbyte
+                                     day:(NSDecimalNumber*)n_day
+                                  output:(NSDecimalNumber*)n_output;
+
 /**
  *  (public) 获取手续费对象
  */
@@ -232,6 +240,11 @@
  *  REMARK：不处理异常，在外层 VC 逻辑中处理。外部需要 catch 该 promise。
  */
 - (WsPromise*)queryAllBlockHeaderInfos:(NSArray*)block_num_array skipQueryCache:(BOOL)skipQueryCache;
+
+/*
+ *  (public) 查询链上区块数据。
+ */
+- (WsPromise*)queryBlock:(NSUInteger)block_num;
 
 /*
  *  (public) 查询指定账号指定类型的账号明细列表。

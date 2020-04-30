@@ -77,6 +77,35 @@
                         [self makeToast:NSLocalizedString(@"kGPErrorApiNodeVersionTooLow", @"当前API节点版本太低。")];
                         return;
                     }
+                    //  REMARK：隐私转账链端没返回任何错误信息，只能采用该信息判断。
+                    if ([lowermsg rangeOfString:@"itr != cidx.end()"].location != NSNotFound) {
+                        //    context = {
+                        //        file = "confidential_evaluator.cpp";
+                        //        hostname = "";
+                        //        level = error;
+                        //        line = 89;
+                        //        method = "do_evaluate";
+                        //        "thread_name" = "th_a";
+                        //        timestamp = "2020-04-16T01:22:30";
+                        //    };
+                        //    data = {
+                        //    };
+                        //    format = "itr != cidx.end(): ";
+                        
+                        //  REMARK：上面的 message 判断不够精确，结合 context 附加判断。
+                        if (stack && [stack count] > 0) {
+                            id file = [[[stack firstObject] objectForKey:@"context"] objectForKey:@"file"];
+                            if (file && [file rangeOfString:@"confidential"].location != NSNotFound) {
+                                [self makeToast:NSLocalizedString(@"kGPErrorBlindReceiptIsNotExisted", @"隐私收据不存在。")];
+                                return;
+                            }
+                        }
+                    }
+                    if ([lowermsg rangeOfString:@"fc::ecc::verify_sum"].location != NSNotFound) {
+                        [self makeToast:NSLocalizedString(@"kGPErrorBlindVerifySumFailed", @"隐私输入和输出金额不相等。")];
+                        return;
+                    }
+                    //  Transaction exceeds maximum transaction size. TODO:6.0 超过交易最大大小限制
                     //  TODO:fowallet 提案等手续费不足等情况显示
                 }
             }
@@ -984,7 +1013,8 @@
             break;
         case ebo_transfer_to_blind:
         {
-            //  TODO:
+            [container setObject:@YES forKey:[opdata objectForKey:@"from"]];
+            [container setObject:@YES forKey:[[opdata objectForKey:@"amount"] objectForKey:@"asset_id"]];
         }
             break;
         case ebo_blind_transfer:
@@ -994,7 +1024,8 @@
             break;
         case ebo_transfer_from_blind:
         {
-            //  TODO:
+            [container setObject:@YES forKey:[opdata objectForKey:@"to"]];
+            [container setObject:@YES forKey:[[opdata objectForKey:@"amount"] objectForKey:@"asset_id"]];
         }
             break;
         case ebo_asset_settle_cancel:
@@ -1450,8 +1481,9 @@
         case ebo_transfer_to_blind:
         {
             name = NSLocalizedString(@"kOpType_transfer_to_blind", @"转到隐私账户");
-            desc = NSLocalizedString(@"kOpDesc_transfer_to_blind", @"向隐私账号转账。");
-            //  TODO:待细化
+            id from = GRAPHENE_NAME(@"from");
+            id str_amount = GRAPHENE_ASSET_N(@"amount");
+            desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_transfer_to_blind", @"%@ 转账 %@ 到隐私账户。"), from, str_amount];
         }
             break;
         case ebo_blind_transfer:
@@ -1464,8 +1496,9 @@
         case ebo_transfer_from_blind:
         {
             name = NSLocalizedString(@"kOpType_transfer_from_blind", @"从隐私账户转出");
-            desc = NSLocalizedString(@"kOpDesc_transfer_from_blind", @"从隐私账户转出 。");
-            //  TODO:待细化
+            id to = GRAPHENE_NAME(@"to");
+            id str_amount = GRAPHENE_ASSET_N(@"amount");
+            desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_transfer_from_blind", @"%@ 从隐私账户转出 %@。"), to, str_amount];
         }
             break;
         case ebo_asset_settle_cancel:
