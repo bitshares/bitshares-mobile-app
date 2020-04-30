@@ -10,6 +10,6 @@
 
 @interface VCTransferFromBlind : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
-- (id)initWithBlindBalance:(id)blind_balance result_promise:(WsPromiseObject*)result_promise;
+- (id)initWithBlindBalance:(id)blind_balance;
 
 @end

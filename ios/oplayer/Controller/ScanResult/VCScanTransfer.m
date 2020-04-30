@@ -495,7 +495,10 @@ enum
         [self hideBlockView];
         [OrgUtils logEvents:@"txPayTransferFullOK" params:@{@"asset":asset[@"symbol"]}];
         id amount_string = [NSString stringWithFormat:@"%@ %@", [transfer_args objectForKey:@"kAmount"], asset[@"symbol"]];
-        VCPaySuccess* vc = [[VCPaySuccess alloc] initWithResult:tx_data to_account:_to_account amount_string:amount_string];
+        VCPaySuccess* vc = [[VCPaySuccess alloc] initWithResult:tx_data
+                                                     to_account:_to_account
+                                                  amount_string:amount_string
+                                             success_tip_string:nil];
         [self clearPushViewController:vc vctitle:@"" backtitle:kVcDefaultBackTitleName];
         return nil;
     })] catch:(^id(id error) {

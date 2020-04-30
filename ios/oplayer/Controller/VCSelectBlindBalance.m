@@ -49,15 +49,38 @@ enum
     if (self){
         _dataArray = [NSMutableArray array];
         _result_promise = result_promise;
-//        id commitment = [[blind_balance objectForKey:@"decrypted_memo"] objectForKey:@"commitment"];
+        //        id commitment = [[blind_balance objectForKey:@"decrypted_memo"] objectForKey:@"commitment"];
     }
     return self;
 }
 
-- (void)refreshUI
+- (void)onQueryBlindBalanceAndDependenceResponsed:(id)data_array
 {
+    [_dataArray removeAllObjects];
+    [_dataArray addObjectsFromArray:data_array];
+    
+    //  更新UI可见性
     _mainTableView.hidden = [_dataArray count] == 0;
     _lbEmpty.hidden = !_mainTableView.hidden;
+    _lbSubmit.hidden = NO;
+}
+
+- (void)queryBlindBalanceAndDependence
+{
+    id data_array = [[[AppCacheManager sharedAppCacheManager] getAllBlindBalance] allValues];
+    NSMutableDictionary* ids = [NSMutableDictionary dictionary];
+    for (id blind_balance in data_array) {
+        [ids setObject:@YES forKey:[[[blind_balance objectForKey:@"decrypted_memo"] objectForKey:@"amount"] objectForKey:@"asset_id"]];
+    }
+    if ([ids count] > 0) {
+        [VcUtils simpleRequest:self
+                       request:[[ChainObjectManager sharedChainObjectManager] queryAllGrapheneObjects:[ids allKeys]]
+                      callback:^(id data) {
+            [self onQueryBlindBalanceAndDependenceResponsed:data_array];
+        }];
+    } else {
+        [self onQueryBlindBalanceAndDependenceResponsed:data_array];
+    }
 }
 
 - (void)viewDidLoad
@@ -77,7 +100,7 @@ enum
     //        @"commitment": @"",                                                     //  转账用
     //        @"check": @331,                                                         //  导入check用，显示用。
     //    }
-    [_dataArray addObjectsFromArray:[[[AppCacheManager sharedAppCacheManager] getAllBlindBalance] allValues]];
+    //    [_dataArray addObjectsFromArray:[[[AppCacheManager sharedAppCacheManager] getAllBlindBalance] allValues]];
     
     //  UI - 列表
     CGRect rect = [self rectWithoutNaviAndPageBar];
@@ -96,10 +119,12 @@ enum
     _lbEmpty.hidden = YES;
     [self.view addSubview:_lbEmpty];
     
-    [self refreshUI];
-    
     //  确定按钮
     _lbSubmit = [self createCellLableButton:@"确定"];
+    _lbSubmit.hidden = YES;
+    
+    //  查询依赖
+    [self queryBlindBalanceAndDependence];
 }
 
 #pragma mark- TableView delegate method
@@ -184,10 +209,10 @@ enum
         [cell setItem:[_dataArray objectAtIndex:indexPath.row]];
         
         //  TODO:6.0
-//        //  默认选中
-//        if ([[row_data objectForKey:@"_kSelected"] boolValue]){
-//            [tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
-//        }
+        //        //  默认选中
+        //        if ([[row_data objectForKey:@"_kSelected"] boolValue]){
+        //            [tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+        //        }
         return cell;
     } else {
         UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];

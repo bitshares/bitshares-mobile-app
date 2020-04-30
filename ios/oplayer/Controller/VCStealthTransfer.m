@@ -58,15 +58,14 @@ enum
     assert(![[WalletManager sharedWalletManager] isPasswordMode]);
     
     NSArray* pSection1 = @[
-        @[@(kVcSubBlindAccounts), @"账户管理"],
-        @[@(kVcSubBlindBalances), @"我的收据"]
+        @[@(kVcSubBlindAccounts), NSLocalizedString(@"kVcStEntryBlindAccounts", @"账户管理")],
+        @[@(kVcSubBlindBalances), NSLocalizedString(@"kVcStEntryBlindBalances", @"我的收据")]
     ];
     
-    //  TODO:6.0 lang
     NSArray* pSection2 = @[
-        @[@(kVcSubTransferToBlind), @"向隐私账户转账"],
-        @[@(kVcSubTransferFromBlind), @"从隐私账户转出"],
-        @[@(kVcSubBlindTransfer), @"隐私转账"]
+        @[@(kVcSubTransferToBlind), NSLocalizedString(@"kVcStEntryTransferToBlind", @"向隐私账户转账")],
+        @[@(kVcSubTransferFromBlind), NSLocalizedString(@"kVcStEntryTransferFromBlind", @"从隐私账户转出")],
+        @[@(kVcSubBlindTransfer), NSLocalizedString(@"kVcStEntryBlindTransfer", @"隐私转账")]
     ];
     
     _dataArray = @[pSection1, pSection2];
@@ -178,26 +177,36 @@ enum
                 break;
             case kVcSubTransferToBlind:
             {
-                id core = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:@"1.3.0"];
-                id opaccount = [[WalletManager sharedWalletManager] getWalletAccountInfo];
-                VCTransferToBlind* vc = [[VCTransferToBlind alloc] initWithCurrAsset:core
-                                                                   full_account_data:opaccount
-                                                                      result_promise:nil];
-                //  TODO:6.0 lang
-                [self pushViewController:vc vctitle:@"向隐私账户转账" backtitle:kVcDefaultBackTitleName];
+                //  REMARK：默认隐私转账资产为 CORE 资产。
+                ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+                id core_asset_id = chainMgr.grapheneCoreAssetID;
+                [VcUtils guardGrapheneObjectDependence:self
+                                            object_ids:core_asset_id
+                                                  body:^{
+                    id core = [chainMgr getChainObjectByID:core_asset_id];
+                    id opaccount = [[WalletManager sharedWalletManager] getWalletAccountInfo];
+                    VCTransferToBlind* vc = [[VCTransferToBlind alloc] initWithCurrAsset:core
+                                                                       full_account_data:opaccount];
+                    [self pushViewController:vc
+                                     vctitle:NSLocalizedString(@"kVcTitleTransferToBlind", @"向隐私账户转账")
+                                   backtitle:kVcDefaultBackTitleName];
+                }];
             }
                 break;
             case kVcSubTransferFromBlind:
             {
-                VCTransferFromBlind* vc = [[VCTransferFromBlind alloc] initWithBlindBalance:nil result_promise:nil];
-                [self pushViewController:vc vctitle:@"从隐私账户转出" backtitle:kVcDefaultBackTitleName];
+                VCTransferFromBlind* vc = [[VCTransferFromBlind alloc] initWithBlindBalance:nil];
+                [self pushViewController:vc
+                                 vctitle:NSLocalizedString(@"kVcTitleTransferFromBlind", @"从隐私账户转出")
+                               backtitle:kVcDefaultBackTitleName];
             }
                 break;
             case kVcSubBlindTransfer:
             {
                 VCBlindTransfer* vc = [[VCBlindTransfer alloc] initWithBlindBalance:nil result_promise:nil];
-                //  TODO:6.0 lang
-                [self pushViewController:vc vctitle:@"隐私转账" backtitle:kVcDefaultBackTitleName];
+                [self pushViewController:vc
+                                 vctitle:NSLocalizedString(@"kVcTitleBlindTransfer", @"隐私转账")
+                               backtitle:kVcDefaultBackTitleName];
             }
                 break;
             default:

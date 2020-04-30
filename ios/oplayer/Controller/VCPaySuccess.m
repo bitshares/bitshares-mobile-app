@@ -15,6 +15,7 @@
     NSArray*                _trx_result;
     NSDictionary*           _to_account;
     NSString*               _amount_string;
+    NSString*               _success_tip_string;
     
     UITableViewBase*        _mainTableView;
     ViewBlockLabel*         _btnCommit;
@@ -24,7 +25,10 @@
 
 @implementation VCPaySuccess
 
-- (id)initWithResult:(NSArray*)trx_result to_account:(NSDictionary*)to_account amount_string:(NSString*)amount_string
+- (id)initWithResult:(NSArray*)trx_result
+          to_account:(NSDictionary*)to_account
+       amount_string:(NSString*)amount_string
+  success_tip_string:(NSString*)success_tip_string;
 {
     self = [super init];
     if (self) {
@@ -33,6 +37,7 @@
         _trx_result = trx_result;
         _to_account = to_account;
         _amount_string = amount_string;
+        _success_tip_string = success_tip_string;
     }
     return self;
 }
@@ -48,6 +53,7 @@
     _trx_result = nil;
     _to_account = nil;
     _amount_string = nil;
+    _success_tip_string = nil;
 }
 
 - (void)viewDidLoad
@@ -73,7 +79,7 @@
     paylabel.textColor = [ThemeManager sharedThemeManager].textColorHighlight;
     paylabel.textAlignment = NSTextAlignmentCenter;
     paylabel.font = [UIFont systemFontOfSize:18];
-    paylabel.text = NSLocalizedString(@"kVcScanResultTipsPaySuccess", @"支付成功");
+    paylabel.text = _success_tip_string ?: NSLocalizedString(@"kVcScanResultTipsPaySuccess", @"支付成功");
     [self.view addSubview:paylabel];
     
     fOffset += 80.0f;
