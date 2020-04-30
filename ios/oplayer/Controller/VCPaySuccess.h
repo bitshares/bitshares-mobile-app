@@ -10,6 +10,9 @@
 
 @interface VCPaySuccess : VCBase<UITableViewDelegate, UITableViewDataSource>
 
-- (id)initWithResult:(NSArray*)trx_result to_account:(NSDictionary*)to_account amount_string:(NSString*)amount_string;
+- (id)initWithResult:(NSArray*)trx_result
+          to_account:(NSDictionary*)to_account
+       amount_string:(NSString*)amount_string
+  success_tip_string:(NSString*)success_tip_string;
 
 @end

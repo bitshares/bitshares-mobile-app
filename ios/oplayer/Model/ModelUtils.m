@@ -113,6 +113,75 @@
 }
 
 /*
+ *  (public) 根据汇率换算手续费。
+ */
++ (NSDecimalNumber*)multiplyAndRoundupNetworkFee:(id)core_asset
+                                           asset:(id)asset
+                                      n_core_fee:(NSDecimalNumber*)n_core_fee
+                              core_exchange_rate:(id)core_exchange_rate
+{
+    assert(core_asset);
+    assert(asset);
+    assert(n_core_fee);
+    assert(core_exchange_rate);
+    
+    NSString* core_asset_id = [core_asset objectForKey:@"id"];
+    NSInteger core_precision = [[core_asset objectForKey:@"precision"] integerValue];
+    
+    NSString* asset_id = [asset objectForKey:@"id"];
+    NSInteger precision = [[asset objectForKey:@"precision"] integerValue];
+    
+    NSDecimalNumber* n_zero = [NSDecimalNumber zero];
+    NSDecimalNumberHandler* handler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundUp
+                                                                                             scale:precision
+                                                                                  raiseOnExactness:NO
+                                                                                   raiseOnOverflow:NO
+                                                                                  raiseOnUnderflow:NO
+                                                                               raiseOnDivideByZero:NO];
+    
+    id base = [core_exchange_rate objectForKey:@"base"];
+    id quote = [core_exchange_rate objectForKey:@"quote"];
+    if ([core_asset_id isEqualToString:base[@"asset_id"]]) {
+        if (![asset_id isEqualToString:quote[@"asset_id"]]) {
+            //  null price
+            return nil;
+        }
+        //  quote / base * n_core_fee
+        id n_base = [NSDecimalNumber decimalNumberWithMantissa:[[base objectForKey:@"amount"] unsignedLongLongValue]
+                                                      exponent:-core_precision
+                                                    isNegative:NO];
+        if ([n_base compare:n_zero] <= 0) {
+            //  error price
+            return nil;
+        }
+        id n_quote = [NSDecimalNumber decimalNumberWithMantissa:[[quote objectForKey:@"amount"] unsignedLongLongValue]
+                                                       exponent:-precision
+                                                     isNegative:NO];
+        return [[n_core_fee decimalNumberByMultiplyingBy:n_quote] decimalNumberByDividingBy:n_base withBehavior:handler];
+    } else if ([core_asset_id isEqualToString:quote[@"asset_id"]]) {
+        if (![asset_id isEqualToString:base[@"asset_id"]]) {
+            //  null price
+            return nil;
+        }
+        //  base / quote * n_core_fee
+        id n_quote = [NSDecimalNumber decimalNumberWithMantissa:[[quote objectForKey:@"amount"] unsignedLongLongValue]
+                                                       exponent:-core_precision
+                                                     isNegative:NO];
+        if ([n_quote compare:n_zero] <= 0) {
+            //  error price
+            return nil;
+        }
+        id n_base = [NSDecimalNumber decimalNumberWithMantissa:[[base objectForKey:@"amount"] unsignedLongLongValue]
+                                                      exponent:-precision
+                                                    isNegative:NO];
+        return [[n_core_fee decimalNumberByMultiplyingBy:n_base] decimalNumberByDividingBy:n_quote withBehavior:handler];
+    } else {
+        NSAssert(NO, @"invalid core_exchange_rate");
+    }
+    return nil;
+}
+
+/*
  *  (public) 辅助方法 - 从full account data获取指定资产等余额信息，返回 NSDecimalNumber 对象，没有找到对应资产则返回 ZERO 对象。
  */
 + (NSDecimalNumber*)findAssetBalance:(NSDictionary*)full_account_data asset_id:(NSString*)asset_id asset_precision:(NSInteger)asset_precision
