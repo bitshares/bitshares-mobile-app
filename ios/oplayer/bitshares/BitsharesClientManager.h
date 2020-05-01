@@ -179,9 +179,9 @@
 - (WsPromise*)blindTransfer:(NSDictionary*)opdata signPriKeyHash:(NSDictionary*)signPriKeyHash;
 
 /**
- *  OP - 验证隐私收据有效性。REMARK：构造一个 transfer_from_blind 请求 + 一个必定失败的断言 请求。获取错误信息。
+ *  OP - 验证隐私收据有效性。有效则promise返回YES，无效返回NO。REMARK：构造一个特殊的 blind_transfer 请求，获取错误信息。
  */
-- (WsPromise*)verifyBlindReceipt:(NSDictionary*)opdata signPriKeyHash:(NSDictionary*)signPriKeyHash;
+- (WsPromise*)verifyBlindReceipt:(id)check_blind_balance;
 
 /**
  *  OP - 创建HTLC合约
