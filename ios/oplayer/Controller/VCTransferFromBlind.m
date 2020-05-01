@@ -352,6 +352,10 @@ enum
                     if (_nFee) {
                         NSDecimalNumber* n_total = [self calcBlindInputTotalAmount];
                         id n_final = [n_total decimalNumberBySubtracting:_nFee];
+                        id n_zero = [NSDecimalNumber zero];
+                        if ([n_final compare:n_zero] < 0) {
+                            n_final = n_zero;
+                        }
                         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@",
                                                      [OrgUtils formatFloatValue:n_final usesGroupingSeparator:NO],
                                                      _curr_blind_asset[@"symbol"]];
@@ -529,7 +533,8 @@ enum
     id input_blinding_factors = [NSMutableArray array];
     id inputs = [VCStealthTransferHelper genBlindInputs:blind_balance_array
                                 output_blinding_factors:input_blinding_factors
-                                              sign_keys:sign_keys];
+                                              sign_keys:sign_keys
+                                     extra_pub_pri_hash:nil];
     
     //  所有盲因子求和
     id blinding_factor = [VCStealthTransferHelper blindSum:input_blinding_factors];

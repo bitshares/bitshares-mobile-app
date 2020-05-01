@@ -679,167 +679,210 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
     return [self _transferFromBlindInput2PublicOrBlind:opdata signPriKeyHash:signPriKeyHash opcode:ebo_blind_transfer];
 }
 
-/**
- *  OP - 验证隐私收据有效性。有效则promise返回YES，无效返回NO。REMARK：构造一个特殊的 blind_transfer 请求，获取错误信息。
- */
-- (WsPromise*)verifyBlindReceipt:(id)check_blind_balance
+- (void)_verifyBlindReceiptCore:(WsResolveHandler)resolve check_blind_balance:(id)check_blind_balance
 {
+    assert(resolve);
     assert(check_blind_balance);
-    return [WsPromise promise:^(WsResolveHandler resolve, WsRejectHandler reject) {
-        
-        //  输入1：待验证的隐私收据。
-        id check_amount = [[check_blind_balance objectForKey:@"decrypted_memo"] objectForKey:@"amount"];
-        id check_commitment = [[check_blind_balance objectForKey:@"decrypted_memo"] objectForKey:@"commitment"];
-        id check_asset = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:[check_amount objectForKey:@"asset_id"]];
-        NSInteger check_precision = [[check_asset objectForKey:@"precision"] integerValue];
-        NSDecimalNumber* n_check_amount = [NSDecimalNumber decimalNumberWithMantissa:[[check_amount objectForKey:@"amount"] unsignedLongLongValue]
-                                                                            exponent:-check_precision
-                                                                          isNegative:NO];
-        
-        //  输入2：伪造的隐私收据 TODO:7.0 伪造金额如何选择？可考虑core资产最大值
-        GraphenePrivateKey* fake_random_prikey = [[GraphenePrivateKey alloc] initRandom];
-        GraphenePublicKey* fake_random_pubkey = [fake_random_prikey getPublicKey];
-        id fake_extra_pub_pri_hash = @{[fake_random_pubkey toWifString]:fake_random_prikey};
-        NSDecimalNumber* fake_receipt_amount = [NSDecimalNumber decimalNumberWithMantissa:99999999 exponent:0 isNegative:NO];
-                
-        //  REMARK：循环生成有效的伪造承诺。必须确保伪造的承诺大于带校验的承诺，那样inputs升序排列之后才可以保证先检测待校验收据。
-        NSDictionary* fake_blind_balance = nil;
-        NSString* fake_commitment = nil;
-        NSInteger fake_count = 0;
-        while (true) {
-            id fake_output_args = [VCStealthTransferHelper genOneBlindOutput:fake_random_pubkey
-                                                                    n_amount:fake_receipt_amount
-                                                                       asset:check_asset
-                                                               num_of_output:1
-                                                           used_blind_factor:nil];
-            fake_blind_balance = [fake_output_args objectForKey:@"blind_balance"];
-            fake_commitment = [[fake_blind_balance objectForKey:@"decrypted_memo"] objectForKey:@"commitment"];
-            if ([check_commitment compare:fake_commitment] < 0) {
-                break;
-            } else {
-                NSLog(@"invalid fake commitment, next...");
-                ++fake_count;
-                //  TODO:7.0 循环次数过多考虑直接验证失败？
+    
+    //  本地检测（已经成功导入的则不用继续链上验证。）
+    if ([[AppCacheManager sharedAppCacheManager] isHaveBlindBalance:check_blind_balance]) {
+        resolve(@(kBlindReceiptVerifyResultOK));
+        return;
+    }
+    
+    /*
+     *  链上验证原理：
+     *  1、直接构造隐私交易进行转账，如果待check的收据异常则链上验证直接通过。
+     *  2、构造一条伪造收据作为第二个inputs一起提交。目的如下：
+     *      a. 伪造的收据链上不存在，必定转账失败，可终于终止交易。
+     *      b. 伪造交易的金额可以随意设置，但保证大于手续费即可。否则手续费不足则会提前触发异常。承诺是否存在必须在 do_evaluate 中才能判断，提前则无法确定。
+     *      c. 伪造的交易承诺必须大于待check承诺，保证inputs升序，且位于第二个位置，否则在第一个位置时待check的收据尚未check就已经报错了。
+     *  3、解析链端返回的错误信息，确认结果。
+     */
+    
+    //  输入1：待验证的隐私收据。
+    id check_amount = [[check_blind_balance objectForKey:@"decrypted_memo"] objectForKey:@"amount"];
+    id check_commitment = [[check_blind_balance objectForKey:@"decrypted_memo"] objectForKey:@"commitment"];
+    id check_asset = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:[check_amount objectForKey:@"asset_id"]];
+    NSInteger check_precision = [[check_asset objectForKey:@"precision"] integerValue];
+    NSDecimalNumber* n_check_amount = [NSDecimalNumber decimalNumberWithMantissa:[[check_amount objectForKey:@"amount"] unsignedLongLongValue]
+                                                                        exponent:-check_precision
+                                                                      isNegative:NO];
+    
+    //  输入2：伪造的隐私收据 TODO:7.0 伪造金额如何选择？可考虑core资产最大值
+    GraphenePrivateKey* fake_random_prikey = [[GraphenePrivateKey alloc] initRandom];
+    GraphenePublicKey* fake_random_pubkey = [fake_random_prikey getPublicKey];
+    id fake_extra_pub_pri_hash = @{[fake_random_pubkey toWifString]:fake_random_prikey};
+    NSDecimalNumber* fake_receipt_amount = [NSDecimalNumber decimalNumberWithMantissa:99999999 exponent:0 isNegative:NO];
+    
+    //  REMARK：循环生成有效的伪造承诺。必须确保伪造的承诺大于带校验的承诺，那样inputs升序排列之后才可以保证先检测待校验收据。
+    NSDictionary* fake_blind_balance = nil;
+    NSString* fake_commitment = nil;
+    NSInteger fake_count = 0;
+    while (true) {
+        id fake_output_args = [VCStealthTransferHelper genOneBlindOutput:fake_random_pubkey
+                                                                n_amount:fake_receipt_amount
+                                                                   asset:check_asset
+                                                           num_of_output:1
+                                                       used_blind_factor:nil];
+        fake_blind_balance = [fake_output_args objectForKey:@"blind_balance"];
+        fake_commitment = [[fake_blind_balance objectForKey:@"decrypted_memo"] objectForKey:@"commitment"];
+        if ([check_commitment compare:fake_commitment] < 0) {
+            break;
+        } else {
+            NSLog(@"invalid fake commitment, next...");
+            //  配置：最大循环次数
+            if (++fake_count >= 10000) {
+                resolve(@(kBlindReceiptVerifyResultLoopLimitError));
+                return;
             }
         }
+    }
+    
+    //  计算手续费金额和输出金额
+    //  总的输入金额 = 总的输出金额 + 手续费金额
+    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+    id n_fee = [chainMgr getNetworkCurrentFee:ebo_blind_transfer kbyte:nil day:nil output:[NSDecimalNumber one]];
+    if (![check_asset[@"id"] isEqualToString:chainMgr.grapheneCoreAssetID]) {
+        id core_exchange_rate = [[check_asset objectForKey:@"options"] objectForKey:@"core_exchange_rate"];
+        n_fee = [ModelUtils multiplyAndRoundupNetworkFee:[chainMgr getChainObjectByID:chainMgr.grapheneCoreAssetID]
+                                                   asset:check_asset
+                                              n_core_fee:n_fee
+                                      core_exchange_rate:core_exchange_rate];
+        if (!n_fee) {
+            //  汇率数据异常
+            resolve(@(kBlindReceiptVerifyResultCerError));
+            return;
+        }
+    }
+    id s_fee = [NSString stringWithFormat:@"%@", [n_fee decimalNumberByMultiplyingByPowerOf10:check_precision]];
+    
+    //  输出1：临时构造一个输出，输出金额只需要大于0即可。（不会实际提取）
+    id n_tmp_output_amount = [[fake_receipt_amount decimalNumberByAdding:n_check_amount] decimalNumberBySubtracting:n_fee];
+    assert([n_tmp_output_amount compare:[NSDecimalNumber zero]] > 0);
+    id tmp_blind_output = @{
+        @"public_key": [[[[GraphenePrivateKey alloc] initRandom] getPublicKey] toWifString],
+        @"n_amount": n_tmp_output_amount
+    };
+    
+    //  生成 OP 的 inputs 和 outputs 数据。
+    id trx_sign_keys = [NSMutableDictionary dictionary];
+    id input_blinding_factors = [NSMutableArray array];
+    id inputs = [VCStealthTransferHelper genBlindInputs:@[check_blind_balance, fake_blind_balance]
+                                output_blinding_factors:input_blinding_factors
+                                              sign_keys:trx_sign_keys
+                                     extra_pub_pri_hash:fake_extra_pub_pri_hash];
+    
+    id blind_output_args = [VCStealthTransferHelper genBlindOutputs:@[tmp_blind_output]
+                                                              asset:check_asset
+                                             input_blinding_factors:[input_blinding_factors copy]];
+    
+    //  构造交易OP
+    id op = @{
+        @"fee":@{@"asset_id":check_asset[@"id"], @"amount":@([s_fee unsignedLongLongValue])},
+        @"inputs":[inputs copy],
+        @"outputs": blind_output_args[@"blind_outputs"]
+    };
+    
+    //  尝试交易
+    [[[self blindTransfer:op signPriKeyHash:trx_sign_keys] then:^id(id data) {
+        //  REMARK：不会到达，第二个伪造的承诺必定触发异常。
+        resolve(@NO);
+        return nil;
+    }] catch:^id(id error) {
+        //  交易处理流程：
+        //  push_transaction
+        //  _apply_transaction
+        //  trx validate
+        //      operation_validate  //  for all
+        //  verify_authority
+        //  apply_operation         //  for all
+        //      evaluate(arg 3)
+        //      start_evaluate
+        //      evaluate(arg 1)
+        //      prepare_fee         //  Insufficient Fee Paid
+        //      do_evaluate
+        //      apply
+        //      convert_fee
+        //      pay_fee
+        //      do_apply
         
-        //  输出1：临时构造一个输出，输出金额只需要大于0即可。（不会实际提取）
-        unsigned long long i_tmp_output_amount = 1;
-        NSDecimalNumber* n_tmp_output_amount = [NSDecimalNumber decimalNumberWithMantissa:i_tmp_output_amount
-                                                                                 exponent:-check_precision
-                                                                               isNegative:NO];
-        id tmp_blind_output = @{
-            @"public_key": [[[[GraphenePrivateKey alloc] initRandom] getPublicKey] toWifString],
-            @"n_amount": n_tmp_output_amount
-        };
+        //  解析错误信息：
+        //  1、构造正确的签名
+        //  2、构造伪造收据（满足手续费）
+        //  3、确保在 do_evaluate 中触发异常。
         
-        //  计算手续费，必须满足条件：
-        //  总的输入金额 = 总的输出金额 + 手续费金额
-        NSDecimalNumber* n_fee = [[fake_receipt_amount decimalNumberByAdding:n_check_amount] decimalNumberBySubtracting:n_tmp_output_amount];
-        id s_fee = [NSString stringWithFormat:@"%@", [n_fee decimalNumberByMultiplyingByPowerOf10:check_precision]];
+        //code = 3054001;
+        //data =     {
+        //    code = 3054001;
+        //    message = "Attempting to claim an unknown prior commitment";
+        //    name = "blind_transfer_unknown_commitment";
+        //    stack =         (
+        //                     {
+        //        context =                 {
+        //            file = "confidential_evaluator.cpp";
+        //            hostname = "";
+        //            level = error;
+        //            line = 138;
+        //            method = "do_evaluate";
+        //            "thread_name" = "th_a";
+        //            timestamp = "2020-05-01T04:53:52";
+        //        };
+        //        data =                 {
+        //            commitment = 03cb719e894ac71ddf347e1c51e0872da34c3179ded7292ce5fe72f1d2c8cf2371;
+        //        };
+        //        format = "";
+        //    }
         
-        //  生成 OP 的 inputs 和 outputs 数据。
-        id trx_sign_keys = [NSMutableDictionary dictionary];
-        id input_blinding_factors = [NSMutableArray array];
-        id inputs = [VCStealthTransferHelper genBlindInputs:@[check_blind_balance, fake_blind_balance]
-                                    output_blinding_factors:input_blinding_factors
-                                                  sign_keys:trx_sign_keys
-                                         extra_pub_pri_hash:fake_extra_pub_pri_hash];
+        NSInteger verify_result = kBlindReceiptVerifyResultUnknownCommitment;
         
-        id blind_output_args = [VCStealthTransferHelper genBlindOutputs:@[tmp_blind_output]
-                                                                  asset:check_asset
-                                                 input_blinding_factors:[input_blinding_factors copy]];
-        
-        //  构造交易OP
-        id op = @{
-            @"fee":@{@"asset_id":check_asset[@"id"], @"amount":@([s_fee unsignedLongLongValue])},
-            @"inputs":[inputs copy],
-            @"outputs": blind_output_args[@"blind_outputs"]
-        };
-        
-        //  尝试交易
-        [[[self blindTransfer:op signPriKeyHash:trx_sign_keys] then:^id(id data) {
-            //  REMARK：不会到达，第二个伪造的承诺必定触发异常。
-            resolve(@NO);
-            return nil;
-        }] catch:^id(id error) {
-            //  交易处理流程：
-            //  push_transaction
-            //  _apply_transaction
-            //  trx validate
-            //      operation_validate  //  for all
-            //  verify_authority
-            //  apply_operation         //  for all
-            //      evaluate(arg 3)
-            //      start_evaluate
-            //      evaluate(arg 1)
-            //      prepare_fee         //  Insufficient Fee Paid
-            //      do_evaluate
-            //      apply
-            //      convert_fee
-            //      pay_fee
-            //      do_apply
-            
-            //  解析错误信息：
-            //  1、构造正确的签名
-            //  2、构造伪造收据（满足手续费）
-            //  3、确保在 do_evaluate 中触发异常。
-            
-            //code = 3054001;
-            //data =     {
-            //    code = 3054001;
-            //    message = "Attempting to claim an unknown prior commitment";
-            //    name = "blind_transfer_unknown_commitment";
-            //    stack =         (
-            //                     {
-            //        context =                 {
-            //            file = "confidential_evaluator.cpp";
-            //            hostname = "";
-            //            level = error;
-            //            line = 138;
-            //            method = "do_evaluate";
-            //            "thread_name" = "th_a";
-            //            timestamp = "2020-05-01T04:53:52";
-            //        };
-            //        data =                 {
-            //            commitment = 03cb719e894ac71ddf347e1c51e0872da34c3179ded7292ce5fe72f1d2c8cf2371;
-            //        };
-            //        format = "";
-            //    }
-            NSString* unknown_commitment = nil;
-            if (error && [error isKindOfClass:[WsPromiseException class]]){
-                WsPromiseException* excp = (WsPromiseException*)error;
-                if (excp.userInfo){
-                    id data = [excp.userInfo objectForKey:@"data"];
-                    NSString* name = [data objectForKey:@"name"] ?: [data objectForKey:@"message"];
-                    if (name && name.length > 0) {
+        NSString* unknown_commitment = nil;
+        if (error && [error isKindOfClass:[WsPromiseException class]]){
+            WsPromiseException* excp = (WsPromiseException*)error;
+            if (excp.userInfo){
+                id data = [excp.userInfo objectForKey:@"data"];
+                NSString* name = [data objectForKey:@"name"] ?: [data objectForKey:@"message"];
+                if (name && name.length > 0) {
+                    id stack = [data objectForKey:@"stack"];
+                    if (stack && [stack count] > 0) {
+                        //  a. 承诺不存在错误
                         if ([name rangeOfString:@"unknown_commitment"].location != NSNotFound ||
                             [name rangeOfString:@"unknown prior commitment"].location != NSNotFound) {
-                            id stack = [data objectForKey:@"stack"];
-                            if (stack && [stack count] > 0) {
-                                id first_stack_data = [[stack firstObject] objectForKey:@"data"];
-                                unknown_commitment = [first_stack_data objectForKey:@"commitment"];
+                            unknown_commitment = [[[stack firstObject] objectForKey:@"data"] objectForKey:@"commitment"];
+                            //  链上验证通过（收据存在、金额正确）
+                            if (unknown_commitment && [unknown_commitment isEqualToString:fake_commitment]) {
+                                verify_result = kBlindReceiptVerifyResultOK;
+                            }
+                        }
+                        //  b. 手续费池余额不足错误（仅针对非core资产）
+                        if (!unknown_commitment) {
+                            NSString* first_stack_format = [[[stack firstObject] objectForKey:@"format"] lowercaseString];
+                            //  "core_fee_paid <= fee_asset_dyn_data->fee_pool: Fee pool balance of '${b}' is less than the ${r} required to convert ${c}"
+                            if (first_stack_format &&
+                                first_stack_format.length > 0 &&
+                                [first_stack_format rangeOfString:@"fee pool balance"].location != NSNotFound) {
+                                //  验证结果：手续费池不足
+                                verify_result = kBlindReceiptVerifyResultFeePoolBalanceNotEnouth;
                             }
                         }
                     }
                 }
             }
-            if (unknown_commitment && [unknown_commitment isEqualToString:fake_commitment]) {
-                resolve(@YES);
-            } else {
-                resolve(@NO);
-            }
-            
-            //  TODO:6.0 fee pool?
-//                          data =                 {
-//                    b = "2499.98900 TEST";
-//                    c = "99999999 MYFEE";
-//                    r = "6666666.60000 TEST";
-//                };
-//                format = "core_fee_paid <= fee_asset_dyn_data->fee_pool: Fee pool balance of '${b}' is less than the ${r} required to convert ${c}";
-//
-            return nil;
-        }];
+        }
+        
+        //  返回
+        resolve(@(verify_result));
+        return nil;
+    }];
+}
+
+/**
+ *  OP - 验证隐私收据有效性。返回 kBlindReceiptVerify 枚举结果。REMARK：构造一个特殊的 blind_transfer 请求，获取错误信息。
+ */
+- (WsPromise*)verifyBlindReceipt:(id)check_blind_balance
+{
+    return [WsPromise promise:^(WsResolveHandler resolve, WsRejectHandler reject) {
+        [self _verifyBlindReceiptCore:resolve check_blind_balance:check_blind_balance];
     }];
 }
 

@@ -13,6 +13,18 @@
 
 #include "bts_wallet_core.h"
 
+/*
+ *  (public) 隐私收据验证结果枚举。
+ */
+enum
+{
+    kBlindReceiptVerifyResultOK = 0,                    //  验证通过（收据有效）
+    kBlindReceiptVerifyResultUnknownCommitment,         //  验证失败（未知收据）
+    kBlindReceiptVerifyResultLoopLimitError,            //  伪造承诺生成达到最大上限
+    kBlindReceiptVerifyResultCerError,                  //  非core资产汇率无效
+    kBlindReceiptVerifyResultFeePoolBalanceNotEnouth,   //  非core资产手续费池不足
+};
+
 @interface BitsharesClientManager : NSObject
 
 + (BitsharesClientManager*)sharedBitsharesClientManager;
@@ -179,7 +191,7 @@
 - (WsPromise*)blindTransfer:(NSDictionary*)opdata signPriKeyHash:(NSDictionary*)signPriKeyHash;
 
 /**
- *  OP - 验证隐私收据有效性。有效则promise返回YES，无效返回NO。REMARK：构造一个特殊的 blind_transfer 请求，获取错误信息。
+ *  OP - 验证隐私收据有效性。返回 kBlindReceiptVerify 枚举结果。REMARK：构造一个特殊的 blind_transfer 请求，获取错误信息。
  */
 - (WsPromise*)verifyBlindReceipt:(id)check_blind_balance;
 

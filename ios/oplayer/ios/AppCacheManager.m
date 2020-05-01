@@ -218,6 +218,17 @@ static AppCacheManager* _spInstanceAppCacheMgr = nil;
     return [self _getOrCreateSubFieldForWalletInfo:@"kBlindBalanceHash"];
 }
 
+-(BOOL)isHaveBlindBalance:(id)blind_balance
+{
+    assert(blind_balance);
+    id commitment = [[blind_balance objectForKey:@"decrypted_memo"] objectForKey:@"commitment"];
+    assert([commitment isKindOfClass:[NSString class]]);
+    if ([[self getAllBlindBalance] objectForKey:commitment]) {
+        return YES;
+    }
+    return NO;
+}
+
 -(AppCacheManager*)appendBlindBalance:(id)blind_balance
 {
     assert(blind_balance);
