@@ -107,11 +107,19 @@
 {
     NSMutableArray* feeAssets = [NSMutableArray array];
     for (NSArray* op_pair in _operations) {
-        id op = [op_pair objectAtIndex:1];
-        id fee_asset_id = [[op objectForKey:@"fee"] objectForKey:@"asset_id"];
+        id fee = [[op_pair objectAtIndex:1] objectForKey:@"fee"];
+        //  REMARK：手动设置了fee则跳过了 不用查询了。
+        if ([[fee objectForKey:@"amount"] unsignedLongLongValue] != 0) {
+            continue;
+        }
+        id fee_asset_id = [fee objectForKey:@"asset_id"];
         if (![feeAssets containsObject:fee_asset_id]){
             [feeAssets addObject:fee_asset_id];
         }
+    }
+    if ([feeAssets count] <= 0) {
+        //  直接跳过
+        return [WsPromise resolve:nil];
     }
     
     GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] last_connection].api_db;
@@ -126,11 +134,11 @@
     
     return [[WsPromise all:promises] then:(^id(id data) {
         NSLog(@"%@", data);
-        id allfees = [data objectAtIndex:0];
+        id first_asset_id_fees = [data objectAtIndex:0];
         
         //  TODO：更新所有op的手续费，待优化。
-        id op_fees = [allfees firstObject];
-        id op_fee = [op_fees firstObject];
+        id first_operation_fees = [first_asset_id_fees firstObject];
+        id op_fee = [first_operation_fees firstObject];
         
         //  REMARK：如果OP为提案类型，这里会把提案的手续费以及提案中对应的所有实际OP的手续费全部返回。（因此需要判断。）
         if ([op_fee isKindOfClass:[NSArray class]]){
