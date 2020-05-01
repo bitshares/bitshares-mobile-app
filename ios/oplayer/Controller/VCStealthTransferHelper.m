@@ -18,7 +18,41 @@
 @implementation VCStealthTransferHelper
 
 /*
- *  (private) 根据 to_public_key 和 数量生成一个【隐私输出】。
+ *  (public) 尝试解析隐私收据字符串为 json 格式。不是有效的收据则返回nil，成功返回 json 对象。
+ *  支持两种收据字符串：
+ *  1、APP收据字符串。
+ *  2、cli命令行钱包收据字符串。
+ */
++ (id)guessBlindReceiptString:(NSString*)base58_string
+{
+    if (!base58_string || base58_string.length <= 0) {
+        return nil;
+    }
+    
+    NSData* raw_data = [base58_string base58_decode];
+    if (!raw_data || raw_data.length <= 0) {
+        //  TODO:5.0 异常？？？
+        return nil;
+    }
+    
+    //  1、尝试解析APP收据     收据格式 = base58(json(@{@"app_blind_receipt_block_num":@"xxx", @"txid":@"xxx"}))
+    id app_receipt_json = [OrgUtils parse_json:raw_data];
+    if (app_receipt_json && [app_receipt_json objectForKey:@"app_blind_receipt_block_num"]) {
+        return app_receipt_json;
+    }
+    
+    //  2、尝试解析cli命令行收据格式    收据格式 = base58(序列化(stealth_confirmation))
+    @try {
+        return [T_stealth_confirmation parse:raw_data];
+    } @catch (NSException *exception) {
+        NSLog(@"not stealth_memo data. guess failed.");
+        return nil;
+    }
+    return nil;
+}
+
+/*
+ *  (public) 根据 to_public_key 和 数量生成一个【隐私输出】。
  */
 + (NSDictionary*)genOneBlindOutput:(GraphenePublicKey*)to_public_key
                           n_amount:(NSDecimalNumber*)n_amount
@@ -177,10 +211,12 @@
 
 /*
  *  (public) 生成隐私输入参数。成功返回数组，失败返回 nil。
+ *  extra_pub_pri_hash - 附近私钥Hash KEY：WIF_PUB_KEY   VALUE：GraphenePrivateKey*
  */
 + (NSArray*)genBlindInputs:(NSArray*)data_array_input
    output_blinding_factors:(NSMutableArray*)output_blinding_factors
                  sign_keys:(NSMutableDictionary*)sign_keys
+        extra_pub_pri_hash:(NSDictionary*)extra_pub_pri_hash
 {
     assert(data_array_input);
     assert(sign_keys);
@@ -190,6 +226,9 @@
     for (id blind_balance in data_array_input) {
         id to_pub = [blind_balance objectForKey:@"real_to_key"];
         GraphenePrivateKey* to_pri = [[WalletManager sharedWalletManager] getGraphenePrivateKeyByPublicKey:to_pub];
+        if (!to_pri && extra_pub_pri_hash) {
+            to_pri = [extra_pub_pri_hash objectForKey:to_pub];
+        }
         if (!to_pri) {
             [OrgUtils makeToast:@"缺少收据私钥。"];//TODO:6.0 recp id
             return nil;

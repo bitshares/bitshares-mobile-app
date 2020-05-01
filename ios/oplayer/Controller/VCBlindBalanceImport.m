@@ -7,6 +7,9 @@
 //
 #import "VCBlindBalanceImport.h"
 #import "MyTextView.h"
+#import "ViewTipsInfoCell.h"
+
+#import "VCStealthTransferHelper.h"
 
 #import "GrapheneSerializer.h"
 #import "GraphenePublicKey.h"
@@ -15,6 +18,7 @@ enum
 {
     kVcUser = 0,
     kVcSubmitButton,
+    kVcTips,
     
     kVcMax,
 };
@@ -35,6 +39,7 @@ enum
     UITableViewBase*        _mainTableView;
     MyTextView*             _tv_receipt;
     ViewBlockLabel*         _lbImport;
+    ViewTipsInfoCell*       _cell_tips;
 }
 
 @end
@@ -57,6 +62,7 @@ enum
     _lbImport = nil;
     _receipt = nil;
     _result_promise = nil;
+    _cell_tips = nil;
 }
 
 - (id)initWithReceipt:(NSString*)receipt result_promise:(WsPromiseObject*)result_promise
@@ -102,6 +108,12 @@ enum
     
     //  登录按钮
     _lbImport = [self createCellLableButton:@"立即导入"];
+    
+    //  UI - 提示信息
+    _cell_tips = [[ViewTipsInfoCell alloc] initWithText:@"【温馨提示】\n导入收据同时支持APP生成的收据和CLI命令行钱包收据格式。\n如果隐私收据丢失，可尝试直接输入转账对应区块编号进行导入。"];
+    _cell_tips.hideBottomLine = YES;
+    _cell_tips.hideTopLine = YES;
+    _cell_tips.backgroundColor = [UIColor clearColor];
 }
 
 - (void)endInput
@@ -110,78 +122,289 @@ enum
     [_tv_receipt safeResignFirstResponder];
 }
 
+/*
+ *  (private) 是否是已知收据判断。即收据的 to 字段是否是隐私账户中的地址或者隐私账户的变形格式地址。
+ */
+- (NSString*)guessRealToPublicKey:(id)stealth_memo d_commitment:(id)d_commitment blind_accounts:(NSArray*)blind_accounts
+{
+    assert(stealth_memo);
+    assert(blind_accounts && [blind_accounts count] > 0);
+    
+    //  没有 to 属性作为未知收据处理。
+    NSString* to = [stealth_memo objectForKey:@"to"];
+    if (!to) {
+        return nil;
+    }
+    
+    //  是否是隐私账户中的地址判断
+    for (NSString* blind_account_public_key in blind_accounts) {
+        if ([blind_account_public_key isEqualToString:to]) {
+            return blind_account_public_key;
+        }
+    }
+    
+    //  是否是隐私账户地址的变形地址判断
+    for (NSString* blind_account_public_key in blind_accounts) {
+        GraphenePublicKey* public_key = [GraphenePublicKey fromWifPublicKey:blind_account_public_key];
+        if (!public_key) {
+            continue;
+        }
+        if ([to isEqualToString:[[public_key genToToTo:d_commitment] toWifString]]) {
+            return blind_account_public_key;
+        }
+    }
+    
+    //  未知收据
+    return nil;
+}
+
+- (NSArray*)scanBlindReceiptFromBlockData:(NSDictionary*)block_data blind_accounts:(NSArray*)blind_accounts
+{
+    NSMutableArray* data_array = [NSMutableArray array];
+    
+    if (!block_data || ![block_data isKindOfClass:[NSDictionary class]]) {
+        return data_array;
+    }
+    if (!blind_accounts || [blind_accounts count] <= 0) {
+        return data_array;
+    }
+    
+    id transactions = [block_data objectForKey:@"transactions"];
+    if (!transactions || [transactions count] <= 0) {
+        return data_array;
+    }
+    
+    for (id trx in transactions) {
+        id operations = [trx objectForKey:@"operations"];
+        if (!operations || [operations count] <= 0) {
+            continue;
+        }
+        for (id op in operations) {
+            assert([op count] == 2);
+            NSInteger optype = [[op objectAtIndex:0] integerValue];
+            //  转入隐私账户 以及 隐私账户之间转账都存在新的收据生成。
+            if (optype != ebo_transfer_to_blind && optype != ebo_blind_transfer) {
+                continue;
+            }
+            id opdata = [op objectAtIndex:1];
+            id outputs = [opdata objectForKey:@"outputs"];
+            assert(outputs && [outputs count] > 0);
+            if (!outputs || [outputs count] <= 0) {
+                continue;
+            }
+            for (id blind_output in outputs) {
+                id stealth_memo = [blind_output objectForKey:@"stealth_memo"];
+                //  该字段可选，跳过不存在该字段的收据。REMARK：官方命令行客户端等该字段不存在，目前已知BTS++支持该字段。
+                if (!stealth_memo) {
+                    continue;
+                }
+                id d_commitment = [[blind_output objectForKey:@"commitment"] hex_decode];
+                id real_to_key = [self guessRealToPublicKey:stealth_memo d_commitment:d_commitment blind_accounts:blind_accounts];
+                if (real_to_key) {
+                    [data_array addObject:@{@"real_to_key": real_to_key, @"stealth_memo": stealth_memo}];
+                }
+            }
+        }
+    }
+    
+    return data_array;
+}
+
+/*
+ *  (private) 是否是区块号判断。
+ */
+- (BOOL)isValidBlockNum:(NSString*)str
+{
+    if (![OrgUtils isFullDigital:str]) {
+        return NO;
+    }
+    NSDecimalNumber* n_block_num = [OrgUtils auxGetStringDecimalNumberValue:str];
+    if (!n_block_num) {
+        return NO;
+    }
+    NSDecimalNumber* n_min = [NSDecimalNumber zero];
+    //  REMARK：最大区块号暂定10亿。
+    NSDecimalNumber* n_max = [NSDecimalNumber decimalNumberWithMantissa:1000000000 exponent:0 isNegative:NO];
+    if ([n_block_num compare:n_min] <= 0) {
+        return NO;
+    }
+    if ([n_block_num compare:n_max] >= 0) {
+        return NO;
+    }
+    return YES;
+}
+
 /**
  *  (private) 事件 - 点击导入。
  */
 - (void)onSubmitClicked
 {
-    //  TODO:6.0 暂时只支持了 cliwallet 钱包格式收据
-    
     id str_receipt = [NSString trim:_tv_receipt.text];
-    if (!str_receipt || [str_receipt isEqualToString:@""]) {
-        [OrgUtils makeToast:@"请输入收据信息。"];
-        return;
+    id json = [VCStealthTransferHelper guessBlindReceiptString:str_receipt];
+    if (!json && [self isValidBlockNum:str_receipt]) {
+        //  尝试从区块编号恢复
+        json = @{@"app_blind_receipt_block_num":str_receipt};
     }
-    id data_receipt = [str_receipt base58_decode];
-    assert(data_receipt);
-    
-    id stealth_conf = [T_stealth_confirmation parse:data_receipt];
-    assert(stealth_conf);
-    id to = [stealth_conf objectForKey:@"to"];
-    id to_pub = [GraphenePublicKey fromWifPublicKey:to];
-    if (!to_pub) {
-        [OrgUtils makeToast:@"无效收据信息，收款地址未知。"];
+    if (!json) {
+        [OrgUtils makeToast:@"请输入有效收据信息。"];
         return;
     }
     
-    //  TODO:6.0
+    //  解锁钱包
     [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
         if (unlocked) {
-            [self importStealthBalanceCore:stealth_conf to:to];
+            [self onImportReceiptCore:json];
         }
     }];
 }
 
-- (void)importStealthBalanceCore:(NSDictionary*)stealth_conf to:(NSString*)wif_to_public
+- (void)onImportReceiptCore:(id)receipt_json
 {
-    GraphenePrivateKey* to_pri = [[WalletManager sharedWalletManager] getGraphenePrivateKeyByPublicKey:wif_to_public];
-    if (!to_pri) {
-        [OrgUtils makeToast:@"无效收据信息，收款地址私钥不存在。"];
-        return;
-    }
-    id memo = [self decryptStealthConfirmationMemo:stealth_conf private_key:to_pri];
-    if (!memo) {
-        [OrgUtils makeToast:@"无效收据信息，解密失败。"];
-        return;
-    }
-    //  TODO:6.0 data
-    //@"real_to_key": @"TEST71jaNWV7ZfsBRUSJk6JfxSzEB7gvcS7nSftbnFVDeyk6m3xj53",  //  仅显示用
-    //@"one_time_key": @"TEST71jaNWV7ZfsBRUSJk6JfxSzEB7gvcS7nSftbnFVDeyk6m3xj53", //  转账用
-    //@"to": @"TEST71jaNWV7ZfsBRUSJk6JfxSzEB7gvcS7nSftbnFVDeyk6m3xj53",           //  没用到
-    //@"decrypted_memo": @{
-    //    @"amount": @{@"asset_id": @"1.3.0", @"amount": @12300000},              //  转账用，显示用。
-    //    @"blinding_factor": @"",                                                //  转账用
-    //    @"commitment": @"",                                                     //  转账用
-    //    @"check": @331,                                                         //  导入check用，显示用。
-    //}
-    id blind_balance = @{
-        @"real_to_key": wif_to_public,
-        @"one_time_key": [stealth_conf objectForKey:@"one_time_key"],
-        @"to": wif_to_public,
-        @"decrypted_memo": @{
-                //  TODO:6.0
+    assert(receipt_json);
+    id app_blind_receipt_block_num = [receipt_json objectForKey:@"app_blind_receipt_block_num"];
+    if (app_blind_receipt_block_num) {
+        [VcUtils simpleRequest:self
+                       request:[[ChainObjectManager sharedChainObjectManager] queryBlock:[app_blind_receipt_block_num unsignedIntegerValue]]
+                      callback:^(id block_data) {
+            id data_array = [self scanBlindReceiptFromBlockData:block_data
+                                                 blind_accounts:[[[AppCacheManager sharedAppCacheManager] getAllBlindAccounts] allKeys]];
+            [self importStealthBalanceCore:data_array];
+        }];
+    } else {
+        id to = [receipt_json objectForKey:@"to"];
+        id to_pub = [GraphenePublicKey fromWifPublicKey:to];
+        if (!to_pub) {
+            [OrgUtils makeToast:@"收据信息无效，收款地址未知。"];
+            return;
         }
-    };
-    [self onImportSuccessful:blind_balance];
+        [self importStealthBalanceCore:@[@{@"real_to_key": to, @"stealth_memo": receipt_json}]];
+    }
+}
+
+- (void)importStealthBalanceCore:(NSArray*)data_array
+{
+    assert(data_array);
+    if ([data_array count] <= 0) {
+        [OrgUtils makeToast:@"收据数据为空。"];
+        return;
+    }
+    
+    NSMutableArray* miss_key_array = [NSMutableArray array];
+    NSMutableArray* decrypt_failed_array = [NSMutableArray array];
+    NSMutableArray* blind_balance_array = [NSMutableArray array];
+    NSMutableDictionary* asset_ids = [NSMutableDictionary dictionary];
+    
+    for (id item in data_array) {
+        id stealth_memo = [item objectForKey:@"stealth_memo"];
+        id real_to_key = [item objectForKey:@"real_to_key"];
+        
+        //  错误1：缺少私钥
+        GraphenePrivateKey* to_pri = [[WalletManager sharedWalletManager] getGraphenePrivateKeyByPublicKey:real_to_key];
+        if (!to_pri) {
+            [miss_key_array addObject:item];
+            continue;
+        }
+        
+        //  错误2：无效收据（解密失败or校验失败）
+        id decrypted_memo = [self decryptStealthConfirmationMemo:stealth_memo private_key:to_pri];
+        if (!decrypted_memo) {
+            [decrypt_failed_array addObject:item];
+            continue;
+        }
+        
+        //  构造明文的隐私收据格式
+        id blind_balance = @{
+            @"real_to_key": real_to_key,
+            @"one_time_key": [stealth_memo objectForKey:@"one_time_key"],
+            @"to": [stealth_memo objectForKey:@"to"],
+            @"decrypted_memo": @{
+                    @"amount": [decrypted_memo objectForKey:@"amount"],
+                    @"blinding_factor": [[decrypted_memo objectForKey:@"blinding_factor"] hex_encode],
+                    @"commitment": [[decrypted_memo objectForKey:@"commitment"] hex_encode],
+                    @"check": [decrypted_memo objectForKey:@"check"]
+            }
+        };
+        [blind_balance_array addObject:blind_balance];
+        [asset_ids setObject:@YES forKey:[[decrypted_memo objectForKey:@"amount"] objectForKey:@"asset_id"]];
+    }
+    
+    //  链上验证所有是否有效
+    NSUInteger total_blind_balance_count = [blind_balance_array count];
+    if (total_blind_balance_count > 0) {
+        [VcUtils simpleRequest:self
+                       request:[[ChainObjectManager sharedChainObjectManager] queryAllGrapheneObjects:[asset_ids allKeys]]
+                      callback:^(id data) {
+            //  循环验证所有收据
+            NSMutableArray* verify_success = [NSMutableArray array];
+            NSMutableArray* verify_failed = [NSMutableArray array];
+            [[self verifyAllBlindReceiptOnchain:blind_balance_array
+                                 verify_success:verify_success
+                                  verify_failed:verify_failed] then:^id(id data) {
+                NSUInteger success_count = [verify_success count];
+                if (success_count == total_blind_balance_count) {
+                    //  全部校验成功
+                    [OrgUtils makeToast:[NSString stringWithFormat:@"成功导入 %@ 条隐私收据。", @(success_count)]];
+                    [self onImportSuccessful:blind_balance_array];
+                    return nil;
+                }
+                if (success_count > 0) {
+                    //  部分校验成功，部分校验失败。
+                    [OrgUtils makeToast:[NSString stringWithFormat:@"成功导入 %@ 条收据，%@ 条校验失败。",
+                                         @(success_count),
+                                         @([verify_failed count])]];
+                    [self onImportSuccessful:verify_success];
+                } else {
+                    //  全部验证失败。
+                    [OrgUtils makeToast:@"收据信息无效，校验失败。"];
+                }
+                return nil;
+            }];
+        }];
+    } else {
+        if ([miss_key_array count] > 0) {
+            [OrgUtils makeToast:@"收据信息无效，收款地址私钥不存在。"];
+        } else {
+            // num of decrypt_failed_array > 0
+            [OrgUtils makeToast:@"收据信息无效，校验失败。"];
+        }
+    }
+}
+
+- (WsPromise*)verifyAllBlindReceiptOnchain:(NSMutableArray*)blind_balance_array
+                            verify_success:(NSMutableArray*)verify_success
+                             verify_failed:(NSMutableArray*)verify_failed
+{
+    assert(blind_balance_array);
+    assert(verify_success);
+    assert(verify_failed);
+    
+    if ([blind_balance_array count] <= 0) {
+        return [WsPromise resolve:@YES];
+    } else {
+        id blind_balance = [blind_balance_array firstObject];
+        [blind_balance_array removeObjectAtIndex:0];
+        return [[[BitsharesClientManager sharedBitsharesClientManager] verifyBlindReceipt:blind_balance] then:^id(id result) {
+            //  TODO:7.0 其他错误考虑提示？
+            switch ([result integerValue]) {
+                case kBlindReceiptVerifyResultOK:
+                    [verify_success addObject:blind_balance];
+                    break;
+                default:
+                    [verify_failed addObject:blind_balance];
+                    break;
+            }
+            return [self verifyAllBlindReceiptOnchain:blind_balance_array verify_success:verify_success verify_failed:verify_failed];
+        }];
+    }
 }
 
 /*
  *  (private) 导入成功
  */
-- (void)onImportSuccessful:(id)blind_balance
+- (void)onImportSuccessful:(id)blind_balance_array
 {
     if (_result_promise) {
-        [_result_promise resolve:blind_balance];
+        [_result_promise resolve:blind_balance_array];
     }
     [self closeOrPopViewController];
 }
@@ -244,13 +467,21 @@ enum
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == kVcUser) {
-        switch (indexPath.row) {
-            case kVcSubUserReceipt:
-                return _tv_receipt.bounds.size.height;
-            default:
-                break;
+    switch (indexPath.section) {
+        case kVcUser:
+        {
+            switch (indexPath.row) {
+                case kVcSubUserReceipt:
+                    return _tv_receipt.bounds.size.height;
+                default:
+                    break;
+            }
         }
+            break;
+        case kVcTips:
+            return [_cell_tips calcCellDynamicHeight:tableView.layoutMargins.left];
+        default:
+            break;
     }
     return tableView.rowHeight;
 }
@@ -287,51 +518,60 @@ enum
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == kVcUser)
-    {
-        switch (indexPath.row) {
-            case kVcSubUserTitle:
-            {
-                //  TODO:6.0 lang
-                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-                cell.backgroundColor = [UIColor clearColor];
-                cell.accessoryType = UITableViewCellAccessoryNone;
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.textLabel.text = @"收据";
-                cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
-                cell.hideBottomLine = YES;
-                cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                return cell;
+    switch (indexPath.section) {
+        case kVcUser:
+        {
+            switch (indexPath.row) {
+                case kVcSubUserTitle:
+                {
+                    //  TODO:6.0 lang
+                    UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+                    cell.backgroundColor = [UIColor clearColor];
+                    cell.accessoryType = UITableViewCellAccessoryNone;
+                    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                    cell.textLabel.text = @"收据";
+                    cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
+                    cell.hideBottomLine = YES;
+                    cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+                    return cell;
+                }
+                    break;
+                case kVcSubUserReceipt:
+                {
+                    UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+                    cell.backgroundColor = [UIColor clearColor];
+                    cell.showCustomBottomLine = YES;
+                    cell.accessoryType = UITableViewCellAccessoryNone;
+                    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                    cell.accessoryView = _tv_receipt;
+                    return cell;
+                }
+                    break;
+                default:
+                    break;
             }
-                break;
-            case kVcSubUserReceipt:
-            {
-                UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-                cell.backgroundColor = [UIColor clearColor];
-                cell.showCustomBottomLine = YES;
-                cell.accessoryType = UITableViewCellAccessoryNone;
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.accessoryView = _tv_receipt;
-                return cell;
-            }
-                break;
-            default:
-                break;
         }
-        return nil;
-        
-    }else
-    {
-        //  提交事件
-        UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-        cell.accessoryType = UITableViewCellAccessoryNone;
-        cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-        cell.hideBottomLine = YES;
-        cell.hideTopLine = YES;
-        cell.backgroundColor = [UIColor clearColor];
-        [self addLabelButtonToCell:_lbImport cell:cell leftEdge:tableView.layoutMargins.left];
-        return cell;
+            break;
+        case kVcSubmitButton:
+        {
+            //  提交事件
+            UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+            cell.accessoryType = UITableViewCellAccessoryNone;
+            cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+            cell.hideBottomLine = YES;
+            cell.hideTopLine = YES;
+            cell.backgroundColor = [UIColor clearColor];
+            [self addLabelButtonToCell:_lbImport cell:cell leftEdge:tableView.layoutMargins.left];
+            return cell;
+        }
+            break;
+        case kVcTips:
+            return _cell_tips;
+        default:
+            break;
     }
+    assert(false);
+    return nil;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

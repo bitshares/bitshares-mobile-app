@@ -2242,6 +2242,9 @@
     unsigned char prikey01[32] = {0, };
     __bts_gen_private_key_from_seed(seed, seed_size, prikey01);
     
+    //  有效的私钥取值范围，32字节作为大整数时的范围。
+    //  HEX: from 1 to 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141.
+    
     return [self genBtsWifPrivateKeyByPrivateKey32:[[NSData alloc] initWithBytes:prikey01 length:sizeof(prikey01)]];
 }
 

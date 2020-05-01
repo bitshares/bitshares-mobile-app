@@ -44,6 +44,7 @@ typedef enum EWalletMode
  *  (public) 管理所有隐私收据：获取、添加、删除。
  */
 -(id)getAllBlindBalance;
+-(BOOL)isHaveBlindBalance:(id)blind_balance;
 -(AppCacheManager*)appendBlindBalance:(id)blind_balance;
 -(AppCacheManager*)removeBlindBalance:(id)blind_balance;
 

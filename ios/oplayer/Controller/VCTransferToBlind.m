@@ -546,6 +546,9 @@ enum
         {
             [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
                 if (unlocked) {
+                    
+                    //  TODO:6.0 支持提案...
+                    
                     [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
                     [[[[BitsharesClientManager sharedBitsharesClientManager] transferToBlind:op] then:^id(id tx_data) {
                         [self hideBlockView];

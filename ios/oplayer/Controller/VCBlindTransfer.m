@@ -11,6 +11,7 @@
 #import "ViewBlindInputOutputItemCell.h"
 #import "ViewEmptyInfoCell.h"
 
+#import "VCBlindBackupReceipt.h"
 #import "VCSelectBlindBalance.h"
 #import "VCSearchNetwork.h"
 #import "VCBlindOutputAddOne.h"
@@ -36,8 +37,8 @@ enum
 enum
 {
     kVcSubInputTotalAmount = 0,
-    kVcSubOutputTotalAmount,
     kVcSubNetworkFee,
+    kVcSubOutputTotalAmount,
     
     kVcSubMax
 };
@@ -101,7 +102,7 @@ enum
 
 - (NSString*)genTransferTipsMessage
 {
-    //  TODO:6.0
+    //  TODO:6.0 lang
     return @"【温馨提示】\n隐私转账可同时指定多个隐私地址。";
 }
 
@@ -111,9 +112,6 @@ enum
     // Do any additional setup after loading the view.
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     self.view.backgroundColor = theme.appBackColor;
-    
-    //  TODO:6.0 icon
-    //    [self showRightImageButton:@"iconProposal" action:@selector(onRightButtonClicked) color:theme.textColorNormal];
     
     //  UI - 列表
     CGRect rect = [self rectWithoutNavi];
@@ -131,7 +129,7 @@ enum
     _cell_tips.backgroundColor = [UIColor clearColor];
     
     //  TODO:6.0
-    _cell_add_input = [[ViewEmptyInfoCell alloc] initWithText:@"选择收据" iconName:@"iconAdd"];
+    _cell_add_input = [[ViewEmptyInfoCell alloc] initWithText:NSLocalizedString(@"kVcStBtnSelectReceipt", @"选择收据") iconName:@"iconAdd"];
     _cell_add_input.showCustomBottomLine = YES;
     _cell_add_input.accessoryType = UITableViewCellAccessoryNone;
     _cell_add_input.selectionStyle = UITableViewCellSelectionStyleBlue;
@@ -295,7 +293,7 @@ enum
             switch (indexPath.row) {
                 case kVcSubInputTotalAmount:
                 {
-                    cell.textLabel.text = @"收据总金额";//TODO:6.0
+                    cell.textLabel.text = @"收据总金额";//TODO:6.0 lang
                     if (_curr_blind_asset) {
                         id str_amount = [OrgUtils formatFloatValue:[self calcBlindInputTotalAmount] usesGroupingSeparator:NO];
                         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@", str_amount, _curr_blind_asset[@"symbol"]];
@@ -307,6 +305,7 @@ enum
                 case kVcSubOutputTotalAmount:
                 {
                     cell.textLabel.text = @"输出总金额";
+                    cell.detailTextLabel.textColor = theme.buyColor;
                     if (_curr_blind_asset) {
                         id str_amount = [OrgUtils formatFloatValue:[self calcBlindOutputTotalAmount] usesGroupingSeparator:NO];
                         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@", str_amount, _curr_blind_asset[@"symbol"]];
@@ -392,6 +391,9 @@ enum
 - (void)onButtonClicked_InputRemove:(UIButton*)button
 {
     [_data_array_blind_input removeObjectAtIndex:button.tag - 1];
+    if ([_data_array_blind_input count] <= 0) {
+        [self onSelectBlindBalanceDone:nil];
+    }
     [_mainTableView reloadData];
 }
 
@@ -402,6 +404,14 @@ enum
 {
     [_data_array_blind_output removeObjectAtIndex:button.tag - 1];
     [_mainTableView reloadData];
+}
+
+/*
+ *  (private) 计算自动找零。
+ */
+- (void)onCalcAutoChange
+{
+    //  TODO:6.0
 }
 
 - (void)onAddOneOutputClicked
@@ -431,15 +441,6 @@ enum
         [result_promise then:(^id(id json_data) {
             //  {@"public_key":public_key, @"n_amount":n_amount}
             assert(json_data);
-            //            id public_key = [json_data objectForKey:@"public_key"];
-            //            assert(public_key);
-            //            //  移除（重复的）
-            //            for (id item in _data_array_blind_output) {
-            //                if ([[item objectForKey:@"public_key"] isEqualToString:public_key]) {
-            //                    [_data_array_blind_output removeObject:item];
-            //                    break;
-            //                }
-            //            }
             //  添加
             [_data_array_blind_output addObject:json_data];
             //  刷新
@@ -451,32 +452,24 @@ enum
 
 - (void)onSelectBlindBalanceDone:(id)new_blind_balance_array
 {
-    assert(new_blind_balance_array);
     [_data_array_blind_input removeAllObjects];
-    [_data_array_blind_input addObjectsFromArray:new_blind_balance_array];
+    if (new_blind_balance_array && [new_blind_balance_array count] > 0) {
+        [_data_array_blind_input addObjectsFromArray:new_blind_balance_array];
+    }
     //  TODO:6.0 更新asset
-    
     if ([_data_array_blind_input count] > 0) {
         id amount = [[[_data_array_blind_input firstObject] objectForKey:@"decrypted_memo"] objectForKey:@"amount"];
         _curr_blind_asset = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:[amount objectForKey:@"asset_id"]];
     } else {
         _curr_blind_asset = nil;
     }
+    if (!_curr_blind_asset) {
+        [_data_array_blind_output removeAllObjects];
+    }
 }
 
 - (void)onAddOneInputClicked
 {
-    //  TODO:6.0 添加 收据
-    
-    //    //  限制最大隐私输出数量
-    //    int allow_maximum_blind_output = 10;
-    //    if ([_data_array_blind_output count] >= allow_maximum_blind_output) {
-    //        //  TODO:6.0 lang
-    //        [OrgUtils makeToast:[NSString stringWithFormat:@"最多只能添加 %@ 个隐私输出。", @(allow_maximum_blind_output)]];
-    //        return;
-    //    }
-    //
-    
     [VCStealthTransferHelper processSelectReceipts:self callback:^(id new_blind_balance_array) {
         //  添加
         [self onSelectBlindBalanceDone:new_blind_balance_array];
@@ -544,6 +537,9 @@ enum
         return;
     }
     
+    //  TODO:6.0 自动找零...
+    
+    
     //  TODO:6.0 asset
     //    id core_asset = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:@"1.3.0"];
     
@@ -579,7 +575,8 @@ enum
     id input_blinding_factors = [NSMutableArray array];
     id inputs = [VCStealthTransferHelper genBlindInputs:_data_array_blind_input
                                 output_blinding_factors:input_blinding_factors
-                                              sign_keys:sign_keys];
+                                              sign_keys:sign_keys
+                                     extra_pub_pri_hash:nil];
     
     //  生成隐私输出，和前面的输入盲因子相关联。
     id blind_output_args = [VCStealthTransferHelper genBlindOutputs:_data_array_blind_output
@@ -599,16 +596,34 @@ enum
     [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     
     //  REMARK：该操作不涉及账号，不需要处理提案的情况。仅n个私钥签名即可。
-    [[[[BitsharesClientManager sharedBitsharesClientManager] blindTransfer:op signPriKeyHash:sign_keys] then:^id(id data) {
-        NSLog(@"%@", data);
+    [[[[BitsharesClientManager sharedBitsharesClientManager] blindTransfer:op signPriKeyHash:sign_keys] then:^id(id tx_data) {
         [self hideBlockView];
-        [OrgUtils makeToast:@"隐私转账成功。"];
-        //  删除已提取的收据。
+        
+        //  更新收据信息
+        WalletManager* walletMgr = [WalletManager sharedWalletManager];
         AppCacheManager* pAppCahce = [AppCacheManager sharedAppCacheManager];
+        //  a、删除已经提取的收据。
         for (id blind_balance in _data_array_blind_input) {
             [pAppCahce removeBlindBalance:blind_balance];
         }
+        //  b、自动导入【我的】收据
+        for (id item in [blind_output_args objectForKey:@"receipt_array"]) {
+            id blind_balance = [item objectForKey:@"blind_balance"];
+            assert(blind_balance);
+            //  REMARK：有隐私账号私钥的收据即为我自己的收据。
+            id real_to_key = [blind_balance objectForKey:@"real_to_key"];
+            if (real_to_key && [walletMgr havePrivateKey:real_to_key]) {
+                [pAppCahce appendBlindBalance:blind_balance];
+            }
+        }
         [pAppCahce saveWalletInfoToFile];
+        
+        //  统计
+        [OrgUtils logEvents:@"txBlindTransferFullOK" params:@{@"asset":asset[@"symbol"]}];
+        
+        //  转到备份收据界面 TODO:6.0 lang
+        VCBlindBackupReceipt* vc = [[VCBlindBackupReceipt alloc] initWithTrxResult:tx_data];
+        [self clearPushViewController:vc vctitle:@"备份收据" backtitle:kVcDefaultBackTitleName];
         return nil;
     }] catch:^id(id error) {
         [self hideBlockView];
