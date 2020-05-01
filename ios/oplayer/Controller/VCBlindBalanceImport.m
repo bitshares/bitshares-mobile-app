@@ -344,7 +344,7 @@ enum
                 if (success_count == total_blind_balance_count) {
                     //  全部校验成功
                     [OrgUtils makeToast:[NSString stringWithFormat:@"成功导入 %@ 条隐私收据。", @(success_count)]];
-                    [self onImportSuccessful:blind_balance_array];
+                    [self onImportSuccessful:verify_success];
                     return nil;
                 }
                 if (success_count > 0) {
