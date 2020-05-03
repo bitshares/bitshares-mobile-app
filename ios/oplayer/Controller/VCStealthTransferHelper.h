@@ -8,6 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
+/*
+ *  APP隐私收据区块编号key字段名定义。
+ */
+#define kAppBlindReceiptBlockNum    @"abrbn"
+
 @class GraphenePublicKey;
 @class VCBase;
 @interface VCStealthTransferHelper : NSObject

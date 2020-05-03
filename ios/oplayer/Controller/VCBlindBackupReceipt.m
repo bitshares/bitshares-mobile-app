@@ -12,6 +12,8 @@
 #import "OrgUtils.h"
 #import "SGQRCodeObtain.h"
 
+#import "VCStealthTransferHelper.h"
+
 enum
 {
     kVcSecReceipt = 0,
@@ -72,10 +74,7 @@ enum
         _transaction_confirmation = [transaction_confirmation_list objectAtIndex:0];
         assert(_transaction_confirmation);
         //  生成隐私转账收据信息
-        _blind_receipt_string = [[@{
-            @"app_blind_receipt_block_num": _transaction_confirmation[@"block_num"],
-            @"txid": _transaction_confirmation[@"id"]
-        } to_json:YES] base58_encode];
+        _blind_receipt_string = [[@{kAppBlindReceiptBlockNum: _transaction_confirmation[@"block_num"]} to_json:YES] base58_encode];
     }
     return self;
 }
@@ -105,7 +104,7 @@ enum
     
     //  UI - 二维码
     CGFloat fWidth = self.view.bounds.size.width;
-    _fQrSize = (int)(fWidth * 2.0 / 5.0f);
+    _fQrSize = (int)(fWidth * 0.5f);
     UIImage* qrImage = [SGQRCodeObtain generateQRCodeWithData:_blind_receipt_string
                                                          size:_fQrSize];
     _qrImageView = [[UIImageView alloc] initWithImage:qrImage];
