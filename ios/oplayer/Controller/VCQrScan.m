@@ -10,6 +10,8 @@
 #import "SGQRCode.h"
 #import "OrgUtils.h"
 
+#import "VCBlindBalanceImport.h"
+#import "VCStealthTransferHelper.h"
 #import "VCScanNormalString.h"
 #import "VCScanAccountName.h"
 #import "VCScanPrivateKey.h"
@@ -253,14 +255,24 @@
             return;
         }
         
-        //  3、是不是鼓鼓收款码  bts://r/1/#{account_id}/#{asset_name}/#{asset_amount}/#{memo}
+        //  3、是不是隐私收据判断。
+        id blind_receipt_json = [VCStealthTransferHelper guessBlindReceiptString:result];
+        if (blind_receipt_json) {
+            [self hideBlockView];
+            [self clearPushViewController:[[VCBlindBalanceImport alloc] initWithReceipt:result result_promise:nil]
+                                  vctitle:@"导入收据"//TODO:6.0 lang
+                                backtitle:kVcDefaultBackTitleName];
+            return;
+        }
+        
+        //  4、是不是鼓鼓收款码  bts://r/1/#{account_id}/#{asset_name}/#{asset_amount}/#{memo}
         NSRange prefix_range = [result rangeOfString:@"bts://r/1/" options:NSCaseInsensitiveSearch];
         if (prefix_range.location == 0) {
             [self _processScanResultAsMagicWalletReceive:result pay_string:[result substringFromIndex:prefix_range.length]];
             return;
         }
         
-        //  4、查询是不是比特股账号名or账号ID
+        //  5、查询是不是比特股账号名or账号ID
         [[[ChainObjectManager sharedChainObjectManager] queryAccountData:result] then:(^id(id accountData) {
             if ([self _isValidAccountData:accountData]) {
                 //  转到账号名界面。

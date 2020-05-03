@@ -239,22 +239,25 @@ enum
  */
 - (void)onSubmitClicked
 {
-    id str_receipt = [NSString trim:_tv_receipt.text];
-    id json = [VCStealthTransferHelper guessBlindReceiptString:str_receipt];
-    if (!json && [self isValidBlockNum:str_receipt]) {
-        //  尝试从区块编号恢复
-        json = @{@"app_blind_receipt_block_num":str_receipt};
-    }
-    if (!json) {
-        [OrgUtils makeToast:@"请输入有效收据信息。"];
-        return;
-    }
-    
-    //  解锁钱包
-    [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
-        if (unlocked) {
-            [self onImportReceiptCore:json];
+    [self GuardWalletExistWithWalletMode:NSLocalizedString(@"kVcStealthTransferGuardWalletModeTips", @"隐私交易仅支持钱包模式，是否为当前的账号创建本地钱包文件？")
+                                    body:^{
+        id str_receipt = [NSString trim:_tv_receipt.text];
+        id json = [VCStealthTransferHelper guessBlindReceiptString:str_receipt];
+        if (!json && [self isValidBlockNum:str_receipt]) {
+            //  尝试从区块编号恢复
+            json = @{@"app_blind_receipt_block_num":str_receipt};
         }
+        if (!json) {
+            [OrgUtils makeToast:@"请输入有效收据信息。"];
+            return;
+        }
+        
+        //  解锁钱包
+        [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
+            if (unlocked) {
+                [self onImportReceiptCore:json];
+            }
+        }];
     }];
 }
 
@@ -263,11 +266,16 @@ enum
     assert(receipt_json);
     id app_blind_receipt_block_num = [receipt_json objectForKey:@"app_blind_receipt_block_num"];
     if (app_blind_receipt_block_num) {
+        id blind_accounts = [[[AppCacheManager sharedAppCacheManager] getAllBlindAccounts] allKeys];
+        if (!blind_accounts || [blind_accounts count] <= 0) {
+            [OrgUtils makeToast:@"您的隐私账户列表为空，请先前往账户管理界面导入隐私账号。"];
+            return;
+        }
         [VcUtils simpleRequest:self
                        request:[[ChainObjectManager sharedChainObjectManager] queryBlock:[app_blind_receipt_block_num unsignedIntegerValue]]
                       callback:^(id block_data) {
             id data_array = [self scanBlindReceiptFromBlockData:block_data
-                                                 blind_accounts:[[[AppCacheManager sharedAppCacheManager] getAllBlindAccounts] allKeys]];
+                                                 blind_accounts:blind_accounts];
             [self importStealthBalanceCore:data_array];
         }];
     } else {
@@ -403,8 +411,17 @@ enum
  */
 - (void)onImportSuccessful:(id)blind_balance_array
 {
+    //  持久化存储
+    if (blind_balance_array && [blind_balance_array count] > 0) {
+        AppCacheManager* pAppCahce = [AppCacheManager sharedAppCacheManager];
+        for (id blind_balance in blind_balance_array) {
+            [pAppCahce appendBlindBalance:blind_balance];
+        }
+        [pAppCahce saveWalletInfoToFile];
+    }
+    //  返回
     if (_result_promise) {
-        [_result_promise resolve:blind_balance_array];
+        [_result_promise resolve:@YES];
     }
     [self closeOrPopViewController];
 }
