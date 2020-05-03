@@ -104,7 +104,7 @@ enum
     
     //  UI - 地址二维码
     CGFloat fWidth = self.view.bounds.size.width;
-    _fQrSize = (int)(fWidth * 2.0 / 5.0f);
+    _fQrSize = (int)(fWidth * 0.5f);
     UIImage* qrImage = [SGQRCodeObtain generateQRCodeWithData:[_depositAddrItem objectForKey:@"inputAddress"]
                                                          size:_fQrSize];
     _qrImageView = [[UIImageView alloc] initWithImage:qrImage];

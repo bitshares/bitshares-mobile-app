@@ -239,13 +239,15 @@ enum
  */
 - (void)onSubmitClicked
 {
+    [self endInput];
+    
     [self GuardWalletExistWithWalletMode:NSLocalizedString(@"kVcStealthTransferGuardWalletModeTips", @"隐私交易仅支持钱包模式，是否为当前的账号创建本地钱包文件？")
                                     body:^{
         id str_receipt = [NSString trim:_tv_receipt.text];
         id json = [VCStealthTransferHelper guessBlindReceiptString:str_receipt];
         if (!json && [self isValidBlockNum:str_receipt]) {
             //  尝试从区块编号恢复
-            json = @{@"app_blind_receipt_block_num":str_receipt};
+            json = @{kAppBlindReceiptBlockNum:str_receipt};
         }
         if (!json) {
             [OrgUtils makeToast:@"请输入有效收据信息。"];
@@ -264,7 +266,7 @@ enum
 - (void)onImportReceiptCore:(id)receipt_json
 {
     assert(receipt_json);
-    id app_blind_receipt_block_num = [receipt_json objectForKey:@"app_blind_receipt_block_num"];
+    id app_blind_receipt_block_num = [receipt_json objectForKey:kAppBlindReceiptBlockNum];
     if (app_blind_receipt_block_num) {
         id blind_accounts = [[[AppCacheManager sharedAppCacheManager] getAllBlindAccounts] allKeys];
         if (!blind_accounts || [blind_accounts count] <= 0) {

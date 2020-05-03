@@ -35,9 +35,9 @@
         return nil;
     }
     
-    //  1、尝试解析APP收据     收据格式 = base58(json(@{@"app_blind_receipt_block_num":@"xxx", @"txid":@"xxx"}))
+    //  1、尝试解析APP收据     收据格式 = base58(json(@{kAppBlindReceiptBlockNum:@"xxx"}))
     id app_receipt_json = [OrgUtils parse_json:raw_data];
-    if (app_receipt_json && [app_receipt_json objectForKey:@"app_blind_receipt_block_num"]) {
+    if (app_receipt_json && [app_receipt_json objectForKey:kAppBlindReceiptBlockNum]) {
         return app_receipt_json;
     }
     
