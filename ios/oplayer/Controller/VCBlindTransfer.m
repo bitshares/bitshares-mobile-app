@@ -57,6 +57,7 @@ enum
     
     NSMutableArray*             _data_array_blind_input;
     NSMutableArray*             _data_array_blind_output;
+    NSDictionary*               _auto_change_blind_output;
 }
 
 @end
@@ -78,6 +79,7 @@ enum
     _lbCommit = nil;
     _data_array_blind_output = nil;
     _data_array_blind_input = nil;
+    _auto_change_blind_output = nil;
 }
 
 - (id)initWithBlindBalance:(id)blind_balance result_promise:(WsPromiseObject*)result_promise
@@ -88,11 +90,38 @@ enum
         _curr_blind_asset = nil;
         _data_array_blind_output = [NSMutableArray array];
         _data_array_blind_input = [NSMutableArray array];
+        _auto_change_blind_output = nil;
         if (blind_balance) {
             [self onSelectBlindBalanceDone:@[blind_balance]];
         }
     }
     return self;
+}
+
+- (NSDecimalNumber*)calcNetworkFee:(NSDecimalNumber*)n_output_num
+{
+    if (!_curr_blind_asset) {
+        //  尚未选择收据
+        return nil;
+    }
+    if (!n_output_num) {
+        n_output_num = [NSDecimalNumber decimalNumberWithMantissa:[_data_array_blind_output count] exponent:0 isNegative:NO];
+    }
+    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+    id n_fee = [chainMgr getNetworkCurrentFee:ebo_blind_transfer kbyte:nil day:nil output:n_output_num];
+    id asset_id = [_curr_blind_asset objectForKey:@"id"];
+    if (![asset_id isEqualToString:chainMgr.grapheneCoreAssetID]) {
+        id core_exchange_rate = [[_curr_blind_asset objectForKey:@"options"] objectForKey:@"core_exchange_rate"];
+        n_fee = [ModelUtils multiplyAndRoundupNetworkFee:[chainMgr getChainObjectByID:chainMgr.grapheneCoreAssetID]
+                                                   asset:_curr_blind_asset
+                                              n_core_fee:n_fee
+                                      core_exchange_rate:core_exchange_rate];
+        if (!n_fee) {
+            //  汇率数据异常
+            return nil;
+        }
+    }
+    return n_fee;
 }
 
 - (void)refreshView
@@ -103,7 +132,7 @@ enum
 - (NSString*)genTransferTipsMessage
 {
     //  TODO:6.0 lang
-    return @"【温馨提示】\n隐私转账可同时指定多个隐私地址。";
+    return @"【温馨提示】\n隐私转账：即在多个隐私账户之间进行转账操作。\n\n找零和赠与：收据总金额减去输出总金额的剩余金额，如果满足找零所需手续费，则会自动找零到我的隐私账户，否则会自动赠与给第一个隐私账户。";
 }
 
 - (void)viewDidLoad
@@ -128,8 +157,8 @@ enum
     _cell_tips.hideTopLine = YES;
     _cell_tips.backgroundColor = [UIColor clearColor];
     
-    //  TODO:6.0
-    _cell_add_input = [[ViewEmptyInfoCell alloc] initWithText:NSLocalizedString(@"kVcStBtnSelectReceipt", @"选择收据") iconName:@"iconAdd"];
+    //  UI - 选择收据按钮
+    _cell_add_input = [[ViewEmptyInfoCell alloc] initWithText:NSLocalizedString(@"kVcStBtnSelectReceipt", @"选择隐私收据") iconName:@"iconAdd"];
     _cell_add_input.showCustomBottomLine = YES;
     _cell_add_input.accessoryType = UITableViewCellAccessoryNone;
     _cell_add_input.selectionStyle = UITableViewCellSelectionStyleBlue;
@@ -137,7 +166,8 @@ enum
     _cell_add_input.imgIcon.tintColor = theme.textColorHighlight;
     _cell_add_input.lbText.textColor = theme.textColorHighlight;
     
-    _cell_add_output = [[ViewEmptyInfoCell alloc] initWithText:@"添加输出" iconName:@"iconAdd"];
+    //  UI - 添加隐私收款信息按钮
+    _cell_add_output = [[ViewEmptyInfoCell alloc] initWithText:NSLocalizedString(@"kVcStBtnAddBlindOutput", @"添加收款信息") iconName:@"iconAdd"];
     _cell_add_output.showCustomBottomLine = YES;
     _cell_add_output.accessoryType = UITableViewCellAccessoryNone;
     _cell_add_output.selectionStyle = UITableViewCellSelectionStyleBlue;
@@ -145,7 +175,8 @@ enum
     _cell_add_output.imgIcon.tintColor = theme.textColorHighlight;
     _cell_add_output.lbText.textColor = theme.textColorHighlight;
     
-    _lbCommit = [self createCellLableButton:@"隐私转账"];
+    //  UI - 提交按钮
+    _lbCommit = [self createCellLableButton:NSLocalizedString(@"kVcStBtnBlindTransfer", @"隐私转账")];
 }
 
 #pragma mark- TableView delegate method
@@ -161,8 +192,8 @@ enum
             //  title + all blind input
             return 1 + [_data_array_blind_input count];
         case kVcSecBlindOutput:
-            //  title + all blind output
-            return 1 + [_data_array_blind_output count];
+            //  title + all blind output + [auto change]
+            return 1 + [_data_array_blind_output count] + (_auto_change_blind_output ? 1 : 0);
         case kVcSecBalance:
             return kVcSubMax;
         default:
@@ -185,7 +216,7 @@ enum
         }
             break;
         case kVcSecBalance:
-            return 28.0f;       //  TODO:6.0
+            return 28.0f;
         case kVcSecTips:
             return [_cell_tips calcCellDynamicHeight:tableView.layoutMargins.left];
         default:
@@ -272,7 +303,7 @@ enum
             if (indexPath.row == 0) {
                 [cell setItem:@{@"title":@YES, @"num":@([_data_array_blind_output count])}];
             } else {
-                [cell setItem:[_data_array_blind_output objectAtIndex:indexPath.row - 1]];
+                [cell setItem:[_data_array_blind_output safeObjectAtIndex:indexPath.row - 1] ?: _auto_change_blind_output];
             }
             return cell;
         }
@@ -295,8 +326,24 @@ enum
                 {
                     cell.textLabel.text = @"收据总金额";//TODO:6.0 lang
                     if (_curr_blind_asset) {
-                        id str_amount = [OrgUtils formatFloatValue:[self calcBlindInputTotalAmount] usesGroupingSeparator:NO];
-                        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@", str_amount, _curr_blind_asset[@"symbol"]];
+                        id n_total_input = [self calcBlindInputTotalAmount];
+                        id n_total_output = [self calcBlindOutputTotalAmount];
+                        id n_fee = [self calcNetworkFee:nil];
+                        
+                        id base_str = [NSString stringWithFormat:@"%@ %@",
+                                       [OrgUtils formatFloatValue:n_total_input usesGroupingSeparator:NO],
+                                       _curr_blind_asset[@"symbol"]];
+                        
+                        if (n_fee && [n_total_input compare:[n_total_output decimalNumberByAdding:n_fee]] < 0) {
+                            cell.detailTextLabel.textColor = theme.tintColor;
+                            cell.detailTextLabel.text = [NSString stringWithFormat:@"%@(%@)",
+                                                         base_str,
+                                                         NSLocalizedString(@"kVcTradeTipAmountNotEnough", @"数量不足")];//TODO:6.0 lang
+                        } else {
+                            cell.detailTextLabel.textColor = theme.textColorNormal;
+                            cell.detailTextLabel.text = base_str;
+                        }
+                        
                     } else {
                         cell.detailTextLabel.text = @"--";
                     }
@@ -317,19 +364,12 @@ enum
                 case kVcSubNetworkFee:
                 {
                     cell.textLabel.text = @"广播手续费";
-                    id n_fee = [[ChainObjectManager sharedChainObjectManager] getNetworkCurrentFee:ebo_blind_transfer kbyte:nil day:nil output:(NSDecimalNumber*)[NSDecimalNumber numberWithUnsignedInteger:[_data_array_blind_output count]]];
+                    id n_fee = [self calcNetworkFee:nil];
                     if (n_fee) {
                         id str_amount = [OrgUtils formatFloatValue:n_fee usesGroupingSeparator:NO];
-                        if (_curr_blind_asset) {
-                            //  TODO:6.0 非 BTS 需要汇率换算 待处理
-                            cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@", str_amount, _curr_blind_asset[@"symbol"]];
-                        } else {
-                            cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@",
-                                                         str_amount,
-                                                         [ChainObjectManager sharedChainObjectManager].grapheneCoreAssetSymbol];
-                        }
+                        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@", str_amount, _curr_blind_asset[@"symbol"]];
                     } else {
-                        cell.detailTextLabel.text = @"未知";
+                        cell.detailTextLabel.text = @"--";
                     }
                 }
                     break;
@@ -394,6 +434,7 @@ enum
     if ([_data_array_blind_input count] <= 0) {
         [self onSelectBlindBalanceDone:nil];
     }
+    [self onCalcAutoChange];
     [_mainTableView reloadData];
 }
 
@@ -403,6 +444,7 @@ enum
 - (void)onButtonClicked_OutputRemove:(UIButton*)button
 {
     [_data_array_blind_output removeObjectAtIndex:button.tag - 1];
+    [self onCalcAutoChange];
     [_mainTableView reloadData];
 }
 
@@ -411,7 +453,51 @@ enum
  */
 - (void)onCalcAutoChange
 {
-    //  TODO:6.0
+    _auto_change_blind_output = nil;
+    
+    //  没有任何输出：不找零。
+    if ([_data_array_blind_output count] <= 0) {
+        return;
+    }
+    
+    //  预估手续费失败：不找零。
+    id n_output_num = [NSDecimalNumber decimalNumberWithMantissa:[_data_array_blind_output count] + 1 exponent:0 isNegative:NO];
+    id n_fee = [self calcNetworkFee:n_output_num];
+    if (!n_fee) {
+        return;
+    }
+    
+    //  找零余额小于等于零，直接返回。
+    id n_left_balance = [[[self calcBlindInputTotalAmount] decimalNumberBySubtracting:[self calcBlindOutputTotalAmount]] decimalNumberBySubtracting:n_fee];
+    if ([n_left_balance compare:[NSDecimalNumber zero]] <= 0) {
+        return;
+    }
+    
+    //  计算自动找零地址。REMARK：从当前所有输入的收据获取收款地址。如果能转出收据，说明持有收据对应的私钥。
+    //  优先寻找主地址、其次寻找子地址。
+    NSString* change_public_key = nil;
+    id accounts_hash = [[AppCacheManager sharedAppCacheManager] getAllBlindAccounts];
+    assert(accounts_hash);
+    for (id blind_balance in _data_array_blind_input) {
+        NSString* public_key = [blind_balance objectForKey:@"real_to_key"];
+        assert(public_key);
+        id blind_account = [accounts_hash objectForKey:public_key];
+        if (blind_account) {
+            NSString* parent_key = [blind_account objectForKey:@"parent_key"];
+            if (parent_key && ![parent_key isEqualToString:@""]) {
+                //  子账号（继续循环）
+                change_public_key = public_key;
+            } else {
+                //  主账号（中断循环）
+                change_public_key = public_key;
+                break;
+            }
+        }
+    }
+    //  生成找零输出对象。
+    if (change_public_key) {
+        _auto_change_blind_output = @{@"public_key":change_public_key, @"n_amount":n_left_balance, @"bAutoChange":@YES};
+    }
 }
 
 - (void)onAddOneOutputClicked
@@ -421,8 +507,8 @@ enum
         return;
     }
     
-    //  限制最大隐私输出数量
-    int allow_maximum_blind_output = 10;
+    //  可配置：限制最大隐私输出数量
+    int allow_maximum_blind_output = 5;
     if ([_data_array_blind_output count] >= allow_maximum_blind_output) {
         //  TODO:6.0 lang
         [OrgUtils makeToast:[NSString stringWithFormat:@"最多只能添加 %@ 个隐私输出。", @(allow_maximum_blind_output)]];
@@ -432,9 +518,24 @@ enum
     //  REMARK：在主线程调用，否则VC弹出可能存在卡顿缓慢的情况。
     [self delay:^{
         assert(_curr_blind_asset);
+        //  计算添加输出的时候，点击【全部】按钮的最大余额值，如果计算失败则会取消按钮显示。
+        NSDecimalNumber* n_max_balance = nil;
+        id n_output_num = [NSDecimalNumber decimalNumberWithMantissa:[_data_array_blind_output count] + 1 exponent:0 isNegative:NO];
+        id n_fee = [self calcNetworkFee:n_output_num];
+        if (n_fee) {
+            NSDecimalNumber* n_inputs = [self calcBlindInputTotalAmount];
+            NSDecimalNumber* n_outputs = [self calcBlindOutputTotalAmount];
+            n_max_balance = [[n_inputs decimalNumberBySubtracting:n_outputs] decimalNumberBySubtracting:n_fee];
+            if ([n_max_balance compare:[NSDecimalNumber zero]] < 0) {
+                n_max_balance = [NSDecimalNumber zero];
+            }
+        }
+        
         //  转到添加权限界面
         WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
-        VCBlindOutputAddOne* vc = [[VCBlindOutputAddOne alloc] initWithResultPromise:result_promise asset:_curr_blind_asset];
+        VCBlindOutputAddOne* vc = [[VCBlindOutputAddOne alloc] initWithResultPromise:result_promise
+                                                                               asset:_curr_blind_asset
+                                                                       n_max_balance:n_max_balance];
         [self pushViewController:vc
                          vctitle:@"新增隐私输出"
                        backtitle:kVcDefaultBackTitleName];
@@ -443,6 +544,7 @@ enum
             assert(json_data);
             //  添加
             [_data_array_blind_output addObject:json_data];
+            [self onCalcAutoChange];
             //  刷新
             [_mainTableView reloadData];
             return nil;
@@ -473,6 +575,7 @@ enum
     [VCStealthTransferHelper processSelectReceipts:self callback:^(id new_blind_balance_array) {
         //  添加
         [self onSelectBlindBalanceDone:new_blind_balance_array];
+        [self onCalcAutoChange];
         //  刷新
         [_mainTableView reloadData];
     }];
@@ -512,23 +615,10 @@ enum
         return;
     }
     
+    NSDecimalNumber* n_zero = [NSDecimalNumber zero];
     NSDecimalNumber* n_total_input = [self calcBlindInputTotalAmount];
-    if ([n_total_input compare:[NSDecimalNumber zero]] <= 0) {
+    if ([n_total_input compare:n_zero] <= 0) {
         [OrgUtils makeToast:@"无效收据，余额信息为空。"];
-        return;
-    }
-    
-    id decrypted_memo = [[_data_array_blind_input firstObject] objectForKey:@"decrypted_memo"];
-    assert(decrypted_memo);
-    id asset_id = [[decrypted_memo objectForKey:@"amount"] objectForKey:@"asset_id"];
-    id asset = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:asset_id];
-    
-    id n_output_num = [NSDecimalNumber numberWithUnsignedInteger:[_data_array_blind_output count]];
-    id n_fee = [[ChainObjectManager sharedChainObjectManager] getNetworkCurrentFee:ebo_blind_transfer kbyte:nil day:nil
-                                                                            output:n_output_num];
-    
-    if ([n_total_input compare:n_fee] <= 0) {
-        [OrgUtils makeToast:@"收据金额太低，不足以支付手续费。"];
         return;
     }
     
@@ -536,50 +626,121 @@ enum
         [OrgUtils makeToast:@"请添加隐私输出地址和数量。"];
         return;
     }
-    
-    //  TODO:6.0 自动找零...
-    
-    
-    //  TODO:6.0 asset
-    //    id core_asset = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:@"1.3.0"];
-    
     NSDecimalNumber* n_total_output = [self calcBlindOutputTotalAmount];
-    //  TODO:6.0 余额判断 >0 < max_balance
-    //    if ([_nCurrBalance compare:n_total_output] < 0) {
-    //        return;
-    //    }
+    assert([n_total_output compare:n_zero] > 0);
     
-    //  TODO:6.0 输入大于输出的时候，自动找零。
-    
-    //  检测输出参数有效性
-    if ([[n_fee decimalNumberByAdding:n_total_output] compare:n_total_input] != 0) {
-        [OrgUtils makeToast:@"输入和输出金额不相等。"];
-        return;
+    assert(_curr_blind_asset);
+    NSDecimalNumber* n_gift = nil;
+    NSDecimalNumber* n_fee = nil;
+    NSMutableArray* final_blind_output_array = nil;
+    if (_auto_change_blind_output) {
+        id n_output_num = [NSDecimalNumber decimalNumberWithMantissa:[_data_array_blind_output count] + 1 exponent:0 isNegative:NO];
+        n_fee = [self calcNetworkFee:n_output_num];
+        //  REMARK：如果已经有找零信息了，则手续费计算肯定是成功的。
+        assert(n_fee);
+        //  找零 = 总输入 - 总输出 - 手续费
+        assert([[_auto_change_blind_output objectForKey:@"n_amount"] compare:[[n_total_input decimalNumberBySubtracting:n_total_output] decimalNumberBySubtracting:n_fee]] == 0);
+        //  合并找零输出到总输出列表中。
+        final_blind_output_array = [_data_array_blind_output mutableCopy];
+        [final_blind_output_array addObject:_auto_change_blind_output];
+    } else {
+        n_fee = [self calcNetworkFee:nil];
+        if (!n_fee) {
+            [OrgUtils makeToast:[NSString stringWithFormat:@"资产 %@ 手续费汇率未正确设置，不可转账。", _curr_blind_asset[@"symbol"]]];
+            return;
+        }
+        //  自动赠与（找零金额不足支持1个output的手续费时，考虑自动赠与给第一个output。）
+        n_gift = [[n_total_input decimalNumberBySubtracting:n_total_output] decimalNumberBySubtracting:n_fee];
+        if ([n_gift compare:n_zero] < 0) {
+            [OrgUtils makeToast:@"收据总金额不足。"];
+            return;
+        }
+        //  REMARK：gift 应该小于一个 output 的手续费，当然这里也应该小于总的手续费。
+        assert([n_gift compare:n_fee] <= 0);
+        //  余额刚好为0，不用赠与。
+        if ([n_gift compare:n_zero] == 0) {
+            n_gift = nil;
+        }
+        //  计算最终输出列表
+        if (n_gift) {
+            //  赠与给第一个输出。
+            id mut_first_output = [[_data_array_blind_output firstObject] mutableCopy];
+            [mut_first_output setObject:[[mut_first_output objectForKey:@"n_amount"] decimalNumberByAdding:n_gift] forKey:@"n_amount"];
+            final_blind_output_array = [NSMutableArray array];
+            [final_blind_output_array addObject:[mut_first_output copy]];
+            //  添加其他输出
+            if ([_data_array_blind_output count] > 1) {
+                for (NSInteger i = 1; i < [_data_array_blind_output count]; ++i) {
+                    [final_blind_output_array addObject:[_data_array_blind_output objectAtIndex:i]];
+                }
+            }
+        } else {
+            //  无赠与、无找零，直接默认输出。
+            final_blind_output_array = _data_array_blind_output;
+        }
     }
     
-    //  解锁钱包
-    [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
-        if (unlocked) {
-            [self blindTransferCore:asset n_total_input:n_total_input n_total_output:n_total_output n_fee:n_fee];
+    //  二次确认 TODO:6.0 lang
+    NSString* value;
+    NSString* symbol = [_curr_blind_asset objectForKey:@"symbol"];
+    if (_auto_change_blind_output) {
+        value = [NSString stringWithFormat:@"您确定往 %@ 个隐私账户转账 %@ %@ 吗?\n\n自动找零 %@ %@\n\n广播手续费：%@ %@",
+                 @([_data_array_blind_output count]),
+                 n_total_output, symbol,
+                 [_auto_change_blind_output objectForKey:@"n_amount"], symbol,
+                 n_fee, symbol];
+    } else if (n_gift) {
+        value = [NSString stringWithFormat:@"您确定往 %@ 个隐私账户转账 %@ %@ 吗?\n\n自动赠与 %@ %@\n\n广播手续费：%@ %@",
+                 @([_data_array_blind_output count]),
+                 n_total_output, symbol,
+                 n_gift, symbol,
+                 n_fee, symbol];
+    } else {
+        value = [NSString stringWithFormat:@"您确定往 %@ 个隐私账户转账 %@ %@ 吗?\n\n广播手续费：%@ %@",
+                 @([_data_array_blind_output count]),
+                 n_total_output, symbol,
+                 n_fee, symbol];
+    }
+    
+    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:value
+                                                           withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
+                                                          completion:^(NSInteger buttonIndex)
+     {
+        if (buttonIndex == 1)
+        {
+            //  解锁钱包
+            [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
+                if (unlocked) {
+                    [self blindTransferCore:_curr_blind_asset
+                                     inputs:[_data_array_blind_input copy]
+                                    outputs:[final_blind_output_array copy]
+                                      n_fee:n_fee];
+                }
+            }];
         }
     }];
 }
 
 - (void)blindTransferCore:(id)asset
-            n_total_input:(NSDecimalNumber*)n_total_input
-           n_total_output:(NSDecimalNumber*)n_total_output
+                   inputs:(NSArray*)blind_balance_array
+                  outputs:(NSArray*)blind_output_array
                     n_fee:(NSDecimalNumber*)n_fee
 {
+    assert(asset);
+    assert(blind_balance_array && [blind_balance_array count] > 0);
+    assert(blind_output_array && [blind_output_array count] > 0);
+    assert(n_fee);
+    
     //  根据隐私收据生成 blind_input 参数。同时返回所有相关盲因子以及签名KEY。
     id sign_keys = [NSMutableDictionary dictionary];
     id input_blinding_factors = [NSMutableArray array];
-    id inputs = [VCStealthTransferHelper genBlindInputs:_data_array_blind_input
+    id inputs = [VCStealthTransferHelper genBlindInputs:blind_balance_array
                                 output_blinding_factors:input_blinding_factors
                                               sign_keys:sign_keys
                                      extra_pub_pri_hash:nil];
     
     //  生成隐私输出，和前面的输入盲因子相关联。
-    id blind_output_args = [VCStealthTransferHelper genBlindOutputs:_data_array_blind_output
+    id blind_output_args = [VCStealthTransferHelper genBlindOutputs:blind_output_array
                                                               asset:asset
                                              input_blinding_factors:[input_blinding_factors copy]];
     
@@ -603,7 +764,7 @@ enum
         WalletManager* walletMgr = [WalletManager sharedWalletManager];
         AppCacheManager* pAppCahce = [AppCacheManager sharedAppCacheManager];
         //  a、删除已经提取的收据。
-        for (id blind_balance in _data_array_blind_input) {
+        for (id blind_balance in blind_balance_array) {
             [pAppCahce removeBlindBalance:blind_balance];
         }
         //  b、自动导入【我的】收据

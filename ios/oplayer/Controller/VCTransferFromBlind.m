@@ -130,7 +130,7 @@ enum
 - (NSString*)genTransferTipsMessage
 {
     //  TODO:6.0 lang
-    return @"【温馨提示】\n隐私转账可同时转出多个隐私余额到指定公共账号。";
+    return @"【温馨提示】\n隐私转出：即从隐私账户向比特股公开账号转账。";
 }
 
 - (void)viewDidLoad
@@ -155,7 +155,8 @@ enum
     _cell_tips.hideTopLine = YES;
     _cell_tips.backgroundColor = [UIColor clearColor];
     
-    _cell_add_one = [[ViewEmptyInfoCell alloc] initWithText:NSLocalizedString(@"kVcStBtnSelectReceipt", @"选择收据") iconName:@"iconAdd"];
+    //  UI - 选择隐私收据按钮
+    _cell_add_one = [[ViewEmptyInfoCell alloc] initWithText:NSLocalizedString(@"kVcStBtnSelectReceipt", @"选择隐私收据") iconName:@"iconAdd"];
     _cell_add_one.showCustomBottomLine = YES;
     _cell_add_one.accessoryType = UITableViewCellAccessoryNone;
     _cell_add_one.selectionStyle = UITableViewCellSelectionStyleBlue;
@@ -163,6 +164,7 @@ enum
     _cell_add_one.imgIcon.tintColor = theme.textColorHighlight;
     _cell_add_one.lbText.textColor = theme.textColorHighlight;
     
+    //  UI - 提交按钮
     _lbCommit = [self createCellLableButton:NSLocalizedString(@"kVcStBtnTransferFromBlind", @"隐私转出")];
 }
 
@@ -503,11 +505,8 @@ enum
     }
     
     assert(_curr_blind_asset);
-    id decrypted_memo = [[_data_array_blind_input firstObject] objectForKey:@"decrypted_memo"];
-    assert(decrypted_memo);
-    
     if (!_nFee) {
-        [OrgUtils makeToast:[NSString stringWithFormat:@"资产 %@ 手续费汇率未正确设置，不可提取。", _curr_blind_asset[@"symbol"]]];
+        [OrgUtils makeToast:[NSString stringWithFormat:@"资产 %@ 手续费汇率未正确设置，不可转账。", _curr_blind_asset[@"symbol"]]];
         return;
     }
     
@@ -555,9 +554,10 @@ enum
     
     id amount_string = [NSString stringWithFormat:@"%@ %@", n_transfer_amount, asset[@"symbol"]];
     
-    id value = [NSString stringWithFormat:@"您确定从隐私账户转出 %@ 到 %@ 账号吗？",
+    id value = [NSString stringWithFormat:@"您确定从隐私账户转出 %@ 到 %@ 账号吗？\n\n广播手续费：%@ %@",
                 amount_string,
-                _to_account[@"name"]];
+                _to_account[@"name"],
+                n_fee, asset[@"symbol"]];
     
     //  二次确认
     [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:value
@@ -587,10 +587,6 @@ enum
                                                                   amount_string:amount_string
                                                              success_tip_string:@"转出成功"];//TODO:6.0 lang
                         [self clearPushViewController:vc vctitle:@"" backtitle:kVcDefaultBackTitleName];
-                        //        //  清空UI
-                        //        [self onSelectBlindBalanceDone:nil];
-                        //        _to_account = nil;
-                        //        [_mainTableView reloadData];
                         return nil;
                     }] catch:^id(id error) {
                         [self hideBlockView];

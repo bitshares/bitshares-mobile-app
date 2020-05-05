@@ -77,6 +77,11 @@
                         [self makeToast:NSLocalizedString(@"kGPErrorApiNodeVersionTooLow", @"当前API节点版本太低。")];
                         return;
                     }
+                    if ([lowermsg rangeOfString:@"fee pool balance"].location != NSNotFound) {
+                        //  format = "core_fee_paid <= fee_asset_dyn_data->fee_pool: Fee pool balance of '${b}' is less than the ${r} required to convert ${c}";
+                        [self makeToast:@"手续费资产对应的手续费池余额不足。"];//TODO:6.0 lang
+                        return;
+                    }
                     //  REMARK：隐私转账链端没返回任何错误信息，只能采用该信息判断。
                     if ([lowermsg rangeOfString:@"itr != cidx.end()"].location != NSNotFound) {
                         //    context = {

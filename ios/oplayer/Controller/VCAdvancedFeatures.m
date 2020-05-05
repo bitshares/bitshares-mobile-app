@@ -150,8 +150,7 @@ enum
             break;
         case kVcStealthTransfer:
         {
-            //  TODO:6.0 icon
-            cell.imageView.image = [UIImage templateImageNamed:@"iconHtlcHashcode"];
+            cell.imageView.image = [UIImage templateImageNamed:@"iconBlindTransfer"];
         }
             break;
         default:

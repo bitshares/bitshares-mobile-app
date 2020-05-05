@@ -125,22 +125,20 @@ enum
     cell.imageView.tintColor = [ThemeManager sharedThemeManager].textColorNormal;
     
     switch ([[item firstObject] integerValue]) {
-            //  TODO:6.0 icon
         case kVcSubBlindAccounts:
             cell.imageView.image = [UIImage templateImageNamed:@"iconOtcUser"];
             break;
         case kVcSubBlindBalances:
             cell.imageView.image = [UIImage templateImageNamed:@"iconProposal"];
             break;
-            
         case kVcSubTransferToBlind:
-            cell.imageView.image = [UIImage templateImageNamed:@"iconHtlcHashcode"];
+            cell.imageView.image = [UIImage templateImageNamed:@"iconBlindTo"];
             break;
         case kVcSubTransferFromBlind:
-            cell.imageView.image = [UIImage templateImageNamed:@"iconHtlcHashcode"];
+            cell.imageView.image = [UIImage templateImageNamed:@"iconBlindFrom"];
             break;
         case kVcSubBlindTransfer:
-            cell.imageView.image = [UIImage templateImageNamed:@"iconHtlcHashcode"];
+            cell.imageView.image = [UIImage templateImageNamed:@"iconBlindTransfer"];
             break;
         default:
             break;
@@ -180,13 +178,14 @@ enum
                 //  REMARK：默认隐私转账资产为 CORE 资产。
                 ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
                 id core_asset_id = chainMgr.grapheneCoreAssetID;
-                [VcUtils guardGrapheneObjectDependence:self
-                                            object_ids:core_asset_id
-                                                  body:^{
+                id p1 = [self get_full_account_data_and_asset_hash:[[WalletManager sharedWalletManager] getWalletAccountName]];
+                id p2 = [chainMgr queryAllGrapheneObjects:@[core_asset_id]];
+                [VcUtils simpleRequest:self
+                               request:[WsPromise all:@[p1, p2]]
+                              callback:^(id data_array) {
+                    id full_userdata = [data_array objectAtIndex:0];
                     id core = [chainMgr getChainObjectByID:core_asset_id];
-                    id opaccount = [[WalletManager sharedWalletManager] getWalletAccountInfo];
-                    VCTransferToBlind* vc = [[VCTransferToBlind alloc] initWithCurrAsset:core
-                                                                       full_account_data:opaccount];
+                    VCTransferToBlind* vc = [[VCTransferToBlind alloc] initWithCurrAsset:core full_account_data:full_userdata];
                     [self pushViewController:vc
                                      vctitle:NSLocalizedString(@"kVcTitleTransferToBlind", @"向隐私账户转账")
                                    backtitle:kVcDefaultBackTitleName];

@@ -132,10 +132,10 @@
                 break;
         }
         _lbAmount.text = @"数量";
-        [_btnRemove setTitle:@"操作" forState:UIControlStateNormal];
-        
         _lbAuthority.textColor = theme.textColorGray;
         _lbAmount.textColor = theme.textColorGray;
+        
+        [_btnRemove setTitle:@"操作" forState:UIControlStateNormal];
         [_btnRemove setTitleColor:theme.textColorGray forState:UIControlStateNormal];
         _btnRemove.userInteractionEnabled = NO;
     } else {
@@ -173,14 +173,21 @@
                 break;
         }
         
-        
-        
-        [_btnRemove setTitle:@"移除" forState:UIControlStateNormal];
-        
-        _lbAuthority.textColor = theme.textColorMain;
-        _lbAmount.textColor = theme.textColorMain;
-        [_btnRemove setTitleColor:theme.textColorHighlight forState:UIControlStateNormal];
-        _btnRemove.userInteractionEnabled = YES;
+        if ([[_item objectForKey:@"bAutoChange"] boolValue]) {
+            [_btnRemove setTitle:@"自动找零" forState:UIControlStateNormal];
+            [_btnRemove setTitleColor:theme.textColorGray forState:UIControlStateNormal];
+            _btnRemove.userInteractionEnabled = NO;
+            
+            _lbAuthority.textColor = theme.textColorGray;
+            _lbAmount.textColor = theme.textColorGray;
+        } else {
+            [_btnRemove setTitle:@"移除" forState:UIControlStateNormal];
+            [_btnRemove setTitleColor:theme.textColorHighlight forState:UIControlStateNormal];
+            _btnRemove.userInteractionEnabled = YES;
+            
+            _lbAuthority.textColor = theme.textColorMain;
+            _lbAmount.textColor = theme.textColorMain;
+        }
     }
     
     _lbAuthority.frame = CGRectMake(xOffset, yOffset, fWidth * 0.6, fCellHeight);
