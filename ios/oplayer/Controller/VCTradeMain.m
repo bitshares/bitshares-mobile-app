@@ -268,7 +268,7 @@ enum
                 
                 //  保留小数位数 向下取整
                 NSDecimalNumberHandler* floorHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundDown
-                                                                                                              scale:_tradingPair.numPrecision
+                                                                                                              scale:_tradingPair.quotePrecision
                                                                                                    raiseOnExactness:NO
                                                                                                     raiseOnOverflow:NO
                                                                                                    raiseOnUnderflow:NO
@@ -288,7 +288,7 @@ enum
         
         //  保留小数位数 向下取整
         NSDecimalNumberHandler* floorHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundDown
-                                                                                                      scale:_tradingPair.numPrecision
+                                                                                                      scale:_tradingPair.quotePrecision
                                                                                            raiseOnExactness:NO
                                                                                             raiseOnOverflow:NO
                                                                                            raiseOnUnderflow:NO
@@ -769,10 +769,20 @@ enum
     }
     
     //  根据输入框不同，限制不同小数点位数。
+    NSInteger precision = 0;
+    if (textField == _tfPrice) {
+        precision = _tradingPair.displayPrecision;
+    } else if (textField == _tfNumber) {
+        precision = _tradingPair.quotePrecision;
+    } else if (textField == _tfTotal) {
+        precision = _tradingPair.basePrecision;
+    } else {
+        assert(false);
+    }
     return [OrgUtils isValidAmountOrPriceInput:textField.text
                                          range:range
                                     new_string:string
-                                     precision:textField == _tfNumber ? _tradingPair.numPrecision : _tradingPair.displayPrecision];
+                                     precision:precision];
 }
 
 - (void)onTextFieldDidChange:(UITextField*)textField

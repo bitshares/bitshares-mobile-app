@@ -1113,10 +1113,20 @@ enum
     }
     
     //  根据输入框不同，限制不同小数点位数。
+    NSInteger precision = 0;
+    if (textField == _tfPrice) {
+        precision = _tradingPair.displayPrecision;
+    } else if (textField == _tfNumber) {
+        precision = _tradingPair.quotePrecision;
+    } else if (textField == _tfTotal) {
+        precision = _tradingPair.basePrecision;
+    } else {
+        assert(false);
+    }
     return [OrgUtils isValidAmountOrPriceInput:textField.text
                                          range:range
                                     new_string:string
-                                     precision:textField == _tfNumber ? _tradingPair.numPrecision : _tradingPair.displayPrecision];
+                                     precision:precision];
 }
 
 - (void)onTextFieldDidChange:(UITextField*)textField
@@ -1151,10 +1161,10 @@ enum
     NSInteger precision;
     NSDecimalNumber* n_value;
     if (_isBuy) {
-        precision = _tradingPair.displayPrecision;
+        precision = _tradingPair.basePrecision;
         n_value = [self auxBaseBalance];
     } else {
-        precision = _tradingPair.numPrecision;
+        precision = _tradingPair.quotePrecision;
         n_value = [self auxQuoteBalance];
     }
     //  保留小数位数 向下取整
@@ -1177,49 +1187,6 @@ enum
         [self onPriceOrAmountChanged:YES];
     }
 }
-
-///*
-// *  (private) 事件 - 滑动条值变更
-// */
-//- (void)onSliderValueChanged:(UISlider*)sender
-//{
-//    if (!_balanceData){
-//        sender.value = 0;
-//        [self _gotoLogin];
-//        return;
-//    }
-//
-//    id n_percent = [NSDecimalNumber numberWithFloat:sender.value];
-//
-//    NSInteger precision;
-//    NSDecimalNumber* n_value;
-//    if (_isBuy) {
-//        precision = _tradingPair.displayPrecision;
-//        n_value = [self auxBaseBalance];
-//    } else {
-//        precision = _tradingPair.numPrecision;
-//        n_value = [self auxQuoteBalance];
-//    }
-//    //  保留小数位数 向下取整
-//    NSDecimalNumberHandler* floorHandler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundDown
-//                                                                                                  scale:precision
-//                                                                                       raiseOnExactness:NO
-//                                                                                        raiseOnOverflow:NO
-//                                                                                       raiseOnUnderflow:NO
-//                                                                                    raiseOnDivideByZero:NO];
-//
-//    id n_value_of_percent = [n_value decimalNumberByMultiplyingBy:n_percent withBehavior:floorHandler];
-//
-//    if (_isBuy){
-//        //  更新总金额
-//        _tfTotal.text = [OrgUtils formatFloatValue:n_value_of_percent usesGroupingSeparator:NO];
-//        [self onTotalFieldChanged:YES];
-//    }else{
-//        //  更新数量
-//        _tfNumber.text = [OrgUtils formatFloatValue:n_value_of_percent usesGroupingSeparator:NO];
-//        [self onPriceOrAmountChanged:YES];
-//    }
-//}
 
 /*
  *  (private) - 更新滑动条对应位置
