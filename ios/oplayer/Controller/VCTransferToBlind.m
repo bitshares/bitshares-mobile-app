@@ -42,7 +42,6 @@ enum
     NSDictionary*               _curr_asset;            //  当前资产
     NSDictionary*               _full_account_data;
     NSDecimalNumber*            _nCurrBalance;
-    NSDecimalNumber*            _nFee;
     
     UITableViewBase*            _mainTableView;
     
@@ -83,18 +82,22 @@ enum
         _curr_asset = curr_asset;
         _full_account_data = full_account_data;
         _data_array_blind_output = [NSMutableArray array];
-        _nFee = [self calcNetworkFee];
         _nCurrBalance = [ModelUtils findAssetBalance:_full_account_data asset:_curr_asset];
     }
     return self;
 }
 
-- (NSDecimalNumber*)calcNetworkFee
+- (NSDecimalNumber*)calcNetworkFee:(NSDecimalNumber*)n_output_num
 {
-    return [[ChainObjectManager sharedChainObjectManager] getNetworkCurrentFee:ebo_transfer_to_blind
-                                                                         kbyte:nil
-                                                                           day:nil
-                                                                        output:(NSDecimalNumber*)[NSDecimalNumber numberWithUnsignedInteger:[_data_array_blind_output count]]];
+    if (!n_output_num) {
+        n_output_num = [NSDecimalNumber decimalNumberWithMantissa:[_data_array_blind_output count] exponent:0 isNegative:NO];
+    }
+    id n_fee = [[ChainObjectManager sharedChainObjectManager] getNetworkCurrentFee:ebo_transfer_to_blind
+                                                                             kbyte:nil
+                                                                               day:nil
+                                                                            output:n_output_num];
+    assert(n_fee);
+    return n_fee;
 }
 
 - (void)refreshView
@@ -105,7 +108,7 @@ enum
 - (NSString*)genTransferTipsMessage
 {
     //  TODO:6.0 lang
-    return @"【温馨提示】\n隐私转账可同时指定多个隐私地址。";
+    return @"【温馨提示】\n隐私转入：即从比特股公开账号向隐私账户转账。并且可同时向多个隐私账户转账。";
 }
 
 - (void)viewDidLoad
@@ -130,8 +133,8 @@ enum
     _cell_tips.hideTopLine = YES;
     _cell_tips.backgroundColor = [UIColor clearColor];
     
-    //  TODO:6.0 lang
-    _cell_add_one = [[ViewEmptyInfoCell alloc] initWithText:@"添加输出" iconName:@"iconAdd"];
+    //  UI - 添加隐私收款信息按钮
+    _cell_add_one = [[ViewEmptyInfoCell alloc] initWithText:NSLocalizedString(@"kVcStBtnAddBlindOutput", @"添加收款信息") iconName:@"iconAdd"];
     _cell_add_one.showCustomBottomLine = YES;
     _cell_add_one.accessoryType = UITableViewCellAccessoryNone;
     _cell_add_one.selectionStyle = UITableViewCellSelectionStyleBlue;
@@ -139,7 +142,8 @@ enum
     _cell_add_one.imgIcon.tintColor = theme.textColorHighlight;
     _cell_add_one.lbText.textColor = theme.textColorHighlight;
     
-    _lbCommit = [self createCellLableButton:@"隐私转入"];
+    //  UI - 提交按钮
+    _lbCommit = [self createCellLableButton:NSLocalizedString(@"kVcStBtnTransferToBlind", @"隐私转入")];
 }
 
 #pragma mark- TableView delegate method
@@ -293,7 +297,15 @@ enum
                     id base_str = [NSString stringWithFormat:@"%@ %@",
                                    [OrgUtils formatFloatValue:_nCurrBalance usesGroupingSeparator:NO],
                                    symbol];
-                    if ([_nCurrBalance compare:n_total] < 0) {
+                    
+                    NSDecimalNumber* n_max_balance = _nCurrBalance;
+                    if ([[ChainObjectManager sharedChainObjectManager].grapheneCoreAssetID isEqualToString:[_curr_asset objectForKey:@"id"]]) {
+                        //  转账资产和手续费资产相同，则扣除对应手续费。
+                        id n_core_fee = [self calcNetworkFee:nil];
+                        n_max_balance = [n_max_balance decimalNumberBySubtracting:n_core_fee];
+                    }
+                    
+                    if ([n_max_balance compare:n_total] < 0) {
                         cell.detailTextLabel.textColor = theme.tintColor;
                         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@(%@)",
                                                      base_str,
@@ -312,11 +324,9 @@ enum
                 case kVcSubNetworkFee:
                 {
                     cell.textLabel.text = @"广播手续费";
-                    if (_nFee) {
-                        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@", [OrgUtils formatFloatValue:_nFee usesGroupingSeparator:NO], [ChainObjectManager sharedChainObjectManager].grapheneCoreAssetSymbol];
-                    } else {
-                        cell.detailTextLabel.text = @"未知";
-                    }
+                    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@", [OrgUtils formatFloatValue:[self calcNetworkFee:nil]
+                                                                                          usesGroupingSeparator:NO],
+                                                 [ChainObjectManager sharedChainObjectManager].grapheneCoreAssetSymbol];
                 }
                     break;
                 default:
@@ -390,7 +400,6 @@ enum
                     //  切换资产：更新余额、清空当前收款人、更新手续费
                     _nCurrBalance = [ModelUtils findAssetBalance:_full_account_data asset:_curr_asset];
                     [_data_array_blind_output removeAllObjects];
-                    [self onBlindOutputChanged];
                     [_mainTableView reloadData];
                 }
             }
@@ -408,15 +417,8 @@ enum
 - (void)onButtonClicked_OutputRemove:(UIButton*)button
 {
     [_data_array_blind_output removeObjectAtIndex:button.tag - 1];
-    [self onBlindOutputChanged];
     //  刷新UI
     [_mainTableView reloadData];
-}
-
-- (void)onBlindOutputChanged
-{
-    //  输出数量变更重新计算手续费
-    _nFee = [self calcNetworkFee];
 }
 
 - (void)onAddOneClicked
@@ -431,9 +433,24 @@ enum
     
     //  REMARK：在主线程调用，否则VC弹出可能存在卡顿缓慢的情况。
     [self delay:^{
+        //  计算添加输出的时候，点击【全部】按钮的最大余额值，如果计算失败则会取消按钮显示。
+        NSDecimalNumber* n_max_balance = [_nCurrBalance decimalNumberBySubtracting:[self calcBlindOutputTotalAmount]];
+        ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+        if ([chainMgr.grapheneCoreAssetID isEqualToString:[_curr_asset objectForKey:@"id"]]) {
+            //  REMARK：转账资产是core资产时候，需要扣除手续费。
+            id n_output_num = [NSDecimalNumber decimalNumberWithMantissa:[_data_array_blind_output count] + 1 exponent:0 isNegative:NO];
+            id n_fee = [self calcNetworkFee:n_output_num];
+            n_max_balance = [n_max_balance decimalNumberBySubtracting:n_fee];
+        }
+        if ([n_max_balance compare:[NSDecimalNumber zero]] < 0) {
+            n_max_balance = [NSDecimalNumber zero];
+        }
+        
         //  转到添加权限界面
         WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
-        VCBlindOutputAddOne* vc = [[VCBlindOutputAddOne alloc] initWithResultPromise:result_promise asset:_curr_asset];
+        VCBlindOutputAddOne* vc = [[VCBlindOutputAddOne alloc] initWithResultPromise:result_promise
+                                                                               asset:_curr_asset
+                                                                       n_max_balance:n_max_balance];
         [self pushViewController:vc
                          vctitle:@"新增隐私输出"//TODO:6.0 lang
                        backtitle:kVcDefaultBackTitleName];
@@ -441,7 +458,6 @@ enum
             assert(json_data);
             //  添加
             [_data_array_blind_output addObject:json_data];
-            [self onBlindOutputChanged];
             //  刷新
             [_mainTableView reloadData];
             return nil;
@@ -460,23 +476,6 @@ enum
 
 - (void)onSubmitClicked
 {
-    //    //  TODO:6.0 test ui
-    //    VCBlindBackupReceipt* vc = [[VCBlindBackupReceipt alloc] initWithTrxResult:@[@{@"block_num":@3, @"id":@"abcd"}]];
-    //    [self clearPushViewController:vc vctitle:@"备份收据" backtitle:kVcDefaultBackTitleName];
-    //    return;
-    
-    //    HDWallet* hdk = [HDWallet fromMnemonic:@"A"];
-    //    HDWallet* new_key = [hdk deriveBitsharesStealthChildKey:1];
-    //    id new_pri = [new_key toWifPrivateKey];
-    //    id new_pri_p = [OrgUtils genBtsAddressFromWifPrivateKey:new_pri];
-    //
-    //    HDWallet* new_key2 = [hdk deriveBitsharesStealthChildKey:0];
-    //    id new_pri2 = [new_key2 toWifPrivateKey];
-    //    id new_pri_p2 = [OrgUtils genBtsAddressFromWifPrivateKey:new_pri2];
-    //
-    //    NSLog(@"");
-    //    return;
-    
     //  TODO:6.0 DEBUG 临时清空
     //    AppCacheManager* pAppCahce = [AppCacheManager sharedAppCacheManager];
     //    for (id vi in [[pAppCahce getAllBlindBalance] allValues]) {
@@ -487,21 +486,20 @@ enum
     
     NSInteger i_output_count = [_data_array_blind_output count];
     if (i_output_count <= 0) {
-        [OrgUtils makeToast:@"请添加隐私输出地址和数量。"];
+        [OrgUtils makeToast:@"请添加隐私输出。"];
         return;
     }
-    
-    //  TODO:6.0 asset
-    //    id asset = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:@"1.3.0"];
     
     NSDecimalNumber* n_total = [self calcBlindOutputTotalAmount];
-    if ([n_total compare:[NSDecimalNumber zero]] <= 0) {
-        [OrgUtils makeToast:@"输出金额不能为空。"];
-        return;
-    }
+    assert([n_total compare:[NSDecimalNumber zero]] > 0);
     
-    //  TODO:6.0 余额判断 >0 < max_balance
-    if ([_nCurrBalance compare:n_total] < 0) {
+    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+    NSDecimalNumber* n_max_balance = _nCurrBalance;
+    id n_core_fee = [self calcNetworkFee:nil];
+    if ([chainMgr.grapheneCoreAssetID isEqualToString:[_curr_asset objectForKey:@"id"]]) {
+        n_max_balance = [n_max_balance decimalNumberBySubtracting:n_core_fee];
+    }
+    if ([n_max_balance compare:n_total] < 0) {
         [OrgUtils makeToast:@"余额不足。"];
         return;
     }
@@ -519,8 +517,13 @@ enum
     //  构造OP
     id s_total = [NSString stringWithFormat:@"%@", [n_total decimalNumberByMultiplyingByPowerOf10:[_curr_asset[@"precision"] integerValue]]];
     id op_account = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
+    
+    id core_asset = [chainMgr getChainObjectByID:chainMgr.grapheneCoreAssetID];
+    assert(core_asset);
+    id s_fee = [NSString stringWithFormat:@"%@", [n_core_fee decimalNumberByMultiplyingByPowerOf10:[core_asset[@"precision"] integerValue]]];
+    
     id op = @{
-        @"fee":@{@"asset_id":[ChainObjectManager sharedChainObjectManager].grapheneCoreAssetID, @"amount":@0},
+        @"fee":@{@"asset_id":core_asset[@"id"], @"amount":@([s_fee unsignedLongLongValue])},
         @"amount":@{@"asset_id":_curr_asset[@"id"], @"amount":@([s_total unsignedLongLongValue])},
         @"from":op_account[@"id"],
         @"blinding_factor":blinding_factor,

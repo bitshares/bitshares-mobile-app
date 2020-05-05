@@ -249,14 +249,23 @@ enum
 
 - (void)onSubmitClicked:(UITableView*)tableView
 {
+    NSMutableDictionary* ids = [NSMutableDictionary dictionary];
     NSMutableArray* result = [NSMutableArray array];
     for (NSUInteger row = 0; row < [_dataArray count]; ++row) {
         NSIndexPath* path = [NSIndexPath indexPathForRow:row inSection:kVcBlindBalance];
         UITableViewCell* cell = (UITableViewCell*)[tableView cellForRowAtIndexPath:path];
+        //  TODO:6.0 !!!! 滚动的时候崩溃
         assert(cell);
         if (cell.selected) {
-            [result addObject:[_dataArray objectAtIndex:row]];
+            id blind_balance = [_dataArray objectAtIndex:row];
+            [result addObject:blind_balance];
+            ids[[[[blind_balance objectForKey:@"decrypted_memo"] objectForKey:@"amount"] objectForKey:@"asset_id"]] = @YES;
         }
+    }
+    if ([ids count] > 1) {
+        //  TODO:6.0 lang
+        [OrgUtils makeToast:@"请选择资产名称相同的收据。"];
+        return;
     }
     if (_result_promise) {
         [_result_promise resolve:[result copy]];

@@ -24,6 +24,7 @@ enum
 @interface VCBlindOutputAddOne ()
 {
     NSDictionary*           _asset;
+    NSDecimalNumber*        _n_max_balance;
     
     UITableViewBase*        _mainTableView;
     
@@ -54,15 +55,17 @@ enum
     _lbCommit = nil;
     _result_promise = nil;
     _asset = nil;
+    _n_max_balance = nil;
 }
 
-- (id)initWithResultPromise:(WsPromiseObject*)result_promise asset:(NSDictionary*)asset;
+- (id)initWithResultPromise:(WsPromiseObject*)result_promise asset:(NSDictionary*)asset n_max_balance:(NSDecimalNumber*)n_max_balance;
 {
     self = [super init];
     if (self) {
         assert(asset);
         _result_promise = result_promise;
         _asset = asset;
+        _n_max_balance = n_max_balance;
     }
     return self;
 }
@@ -80,6 +83,12 @@ enum
         //  TODO:6.0
         return nil;
     }];
+}
+
+- (void)onAmountTailerClicked:(UIButton*)sender
+{
+    assert(_n_max_balance);
+    _cell_amount.mainTextfield.text = [OrgUtils formatFloatValue:_n_max_balance usesGroupingSeparator:NO];
 }
 
 - (void)viewDidLoad
@@ -119,7 +128,19 @@ enum
     _cell_amount = [[ViewAdvTextFieldCell alloc] initWithTitle:@"数量"
                                                    placeholder:@"请输入输出数量"
                                               decimalPrecision:[[_asset objectForKey:@"precision"] integerValue]];
-    [_cell_amount genTailerAssetName:_asset[@"symbol"]];
+    if (_n_max_balance) {
+        NSString* value = [NSString stringWithFormat:@"%@ %@ %@",
+                           NSLocalizedString(@"kOtcMcAssetCellAvailable", @"可用"),
+                           _n_max_balance,
+                           _asset[@"symbol"]];
+        _cell_amount.labelValue.text = value;
+        [_cell_amount genTailerAssetNameAndButtons:_asset[@"symbol"]
+                                      button_names:@[NSLocalizedString(@"kLabelSendAll", @"全部")]
+                                            target:self
+                                            action:@selector(onAmountTailerClicked:)];
+    } else {
+        [_cell_amount genTailerAssetName:_asset[@"symbol"]];
+    }
     
     //  UI - 列表
     _mainTableView = [[UITableViewBase alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];
@@ -142,29 +163,12 @@ enum
     [self endInput];
 }
 
-#pragma mark- for UITextFieldDelegate
-//
-//- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
-//{
-////    if (textField != _tf_threshold){
-////        return YES;
-////    }
-//    return [OrgUtils isValidAuthorityThreshold:string];
-//}
-
 #pragma mark-
 #pragma UITextFieldDelegate delegate method
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    //    if (textField == _tf_authority)
-    //    {
-    ////        [_tf_threshold becomeFirstResponder];
-    //    }
-    //    else
-    //    {
     [self endInput];
-    //    }
     return YES;
 }
 

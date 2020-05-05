@@ -10,6 +10,6 @@
 
 @interface VCBlindOutputAddOne : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
-- (id)initWithResultPromise:(WsPromiseObject*)result_promise asset:(NSDictionary*)asset;
+- (id)initWithResultPromise:(WsPromiseObject*)result_promise asset:(NSDictionary*)asset n_max_balance:(NSDecimalNumber*)n_max_balance;
 
 @end

@@ -780,8 +780,11 @@
 "kVcStEntryTransferToBlind" = "向隐私账户转账";
 "kVcStEntryTransferFromBlind" = "从隐私账户转出";
 "kVcStEntryBlindTransfer" = "隐私转账";
-"kVcStBtnSelectReceipt" = "选择收据";
+"kVcStBtnSelectReceipt" = "选择隐私收据";
+"kVcStBtnAddBlindOutput" = "添加收款信息";
+"kVcStBtnTransferToBlind" = "隐私转入";
 "kVcStBtnTransferFromBlind" = "隐私转出";
+"kVcStBtnBlindTransfer" = "隐私转账";
 
 /* HTLC合约 */
 "kVcHtlcEntryFromPreimage" = "HTLC合约（原像创建）";
