@@ -208,6 +208,8 @@ class FragmentTradeMainPage : BtsppFragment() {
         _currLimitOrders = limit_orders
         //  更新显示精度
         _tradingPair.dynamicUpdateDisplayPrecision(limit_orders)
+        //  更新输入框精度
+        _tf_price_watcher.set_precision(_tradingPair._displayPrecision)
         //  刷新盘口买卖信息
         _viewBidAsk.refreshWithData(limit_orders)
         //  价格输入框没有值的情况设置默认值 买界面-默认卖1价格 卖界面-默认买1价（参考huobi）
@@ -258,7 +260,7 @@ class FragmentTradeMainPage : BtsppFragment() {
         if (str_price == "" || str_amount == "") {
             _tf_total_watcher.clear()
         } else {
-            _tf_total_watcher.set_new_text(OrgUtils.formatFloatValue(n_total.toDouble(), _tradingPair._displayPrecision, false))
+            _tf_total_watcher.set_new_text(OrgUtils.formatFloatValue(n_total.toDouble(), _tradingPair._basePrecision, false))
         }
     }
 
@@ -459,10 +461,10 @@ class FragmentTradeMainPage : BtsppFragment() {
                 val n_price = Utils.auxGetStringDecimalNumberValue(str_price)
                 if (n_price.compareTo(BigDecimal.ZERO) > 0) {
                     //  保留小数位数 向下取整
-                    var buy_amount = _base_amount_n.divide(n_price, _tradingPair._numPrecision, BigDecimal.ROUND_DOWN)
-                    buy_amount = buy_amount.multiply(percent).setScale(_tradingPair._numPrecision, BigDecimal.ROUND_DOWN)
+                    var buy_amount = _base_amount_n.divide(n_price, _tradingPair._quotePrecision, BigDecimal.ROUND_DOWN)
+                    buy_amount = buy_amount.multiply(percent).setScale(_tradingPair._quotePrecision, BigDecimal.ROUND_DOWN)
                     //  设置
-                    _tf_amount_watcher.set_new_text(OrgUtils.formatFloatValue(buy_amount.toDouble(), _tradingPair._numPrecision, false))
+                    _tf_amount_watcher.set_new_text(OrgUtils.formatFloatValue(buy_amount.toDouble(), _tradingPair._quotePrecision, false))
                     _onPriceOrAmountChanged()
                 }
             }
@@ -470,7 +472,7 @@ class FragmentTradeMainPage : BtsppFragment() {
             //  卖出：数量 = quote 的数量。
 
             //  保留小数位数 向下取整
-            val sell_amount = _quote_amount_n.multiply(percent).setScale(_tradingPair._numPrecision, BigDecimal.ROUND_DOWN)
+            val sell_amount = _quote_amount_n.multiply(percent).setScale(_tradingPair._quotePrecision, BigDecimal.ROUND_DOWN)
 
             //  设置
             _tf_amount_watcher.set_new_text(sell_amount.toString())
@@ -738,11 +740,11 @@ class FragmentTradeMainPage : BtsppFragment() {
         tf_price.addTextChangedListener(_tf_price_watcher)
         _tf_price_watcher.on_value_changed(::_onTfPriceChanged)
 
-        _tf_amount_watcher = UtilsDigitTextWatcher().set_tf(tf_amount).set_precision(_tradingPair._numPrecision)
+        _tf_amount_watcher = UtilsDigitTextWatcher().set_tf(tf_amount).set_precision(_tradingPair._quotePrecision)
         tf_amount.addTextChangedListener(_tf_amount_watcher)
         _tf_amount_watcher.on_value_changed(::_onTfAmountChanged)
 
-        _tf_total_watcher = UtilsDigitTextWatcher().set_tf(tf_total).set_precision(_tradingPair._displayPrecision)
+        _tf_total_watcher = UtilsDigitTextWatcher().set_tf(tf_total).set_precision(_tradingPair._basePrecision)
         tf_total.addTextChangedListener(_tf_total_watcher)
         _tf_total_watcher.on_value_changed(::_onTfTotalChanged)
 
