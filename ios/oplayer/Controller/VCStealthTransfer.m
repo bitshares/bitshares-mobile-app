@@ -157,19 +157,17 @@ enum
         id item = [[_dataArray objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
         
         switch ([[item firstObject] integerValue]) {
-                //  TODO:6.0 lang
             case kVcSubBlindAccounts:
             {
                 [self pushViewController:[[VCBlindAccounts alloc] initWithResultPromise:nil]
-                                 vctitle:@"账户管理"
+                                 vctitle:NSLocalizedString(@"kVcTitleBlindAccountsMgr", @"账户管理")
                                backtitle:kVcDefaultBackTitleName];
             }
                 break;
             case kVcSubBlindBalances:
             {
-                //  TODO:6.0 lang
                 [self pushViewController:[[VCBlindBalance alloc] init]
-                                 vctitle:@"我的收据"
+                                 vctitle:NSLocalizedString(@"kVcTitleBlindBalancesMgr", @"我的收据")
                                backtitle:kVcDefaultBackTitleName];
             }
                 break;

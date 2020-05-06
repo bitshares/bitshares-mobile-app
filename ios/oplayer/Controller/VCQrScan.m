@@ -260,7 +260,7 @@
         if (blind_receipt_json) {
             [self hideBlockView];
             [self clearPushViewController:[[VCBlindBalanceImport alloc] initWithReceipt:result result_promise:nil]
-                                  vctitle:@"导入收据"//TODO:6.0 lang
+                                  vctitle:NSLocalizedString(@"kVcTitleImportBlindReceipt", @"导入收据")
                                 backtitle:kVcDefaultBackTitleName];
             return;
         }

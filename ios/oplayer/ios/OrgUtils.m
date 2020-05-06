@@ -79,7 +79,7 @@
                     }
                     if ([lowermsg rangeOfString:@"fee pool balance"].location != NSNotFound) {
                         //  format = "core_fee_paid <= fee_asset_dyn_data->fee_pool: Fee pool balance of '${b}' is less than the ${r} required to convert ${c}";
-                        [self makeToast:@"手续费资产对应的手续费池余额不足。"];//TODO:6.0 lang
+                        [self makeToast:NSLocalizedString(@"kGPErrorFeePoolInsufficient", @"手续费资产对应的手续费池余额不足。")];
                         return;
                     }
                     //  REMARK：隐私转账链端没返回任何错误信息，只能采用该信息判断。
@@ -110,7 +110,7 @@
                         [self makeToast:NSLocalizedString(@"kGPErrorBlindVerifySumFailed", @"隐私输入和输出金额不相等。")];
                         return;
                     }
-                    //  Transaction exceeds maximum transaction size. TODO:6.0 超过交易最大大小限制
+                    //  Transaction exceeds maximum transaction size. TODO:8.0 超过交易最大大小限制
                     //  TODO:fowallet 提案等手续费不足等情况显示
                 }
             }

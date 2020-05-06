@@ -31,7 +31,6 @@
     
     NSData* raw_data = [base58_string base58_decode];
     if (!raw_data || raw_data.length <= 0) {
-        //  TODO:5.0 异常？？？
         return nil;
     }
     
@@ -230,7 +229,7 @@
             to_pri = [extra_pub_pri_hash objectForKey:to_pub];
         }
         if (!to_pri) {
-            [OrgUtils makeToast:@"缺少收据私钥。"];//TODO:6.0 recp id
+            [OrgUtils makeToast:NSLocalizedString(@"kVcStTipErrMissingReceiptPriKey", @"缺少收据私钥。")];
             return nil;
         }
         
@@ -239,7 +238,7 @@
         
         digest_sha512 secret = {0, };
         if (![to_pri getSharedSecret:one_time_key output:&secret]) {
-            [OrgUtils makeToast:@"无效收据。"];//TODO:6.0 recp id
+            [OrgUtils makeToast:NSLocalizedString(@"kVcStTipErrInvalidBlindBalance", @"收据信息无效。")];
             return nil;
         }
         digest_sha256 child = {0, };
@@ -309,9 +308,8 @@
     [this delay:^{
         WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
         VCSelectBlindBalance* vc = [[VCSelectBlindBalance alloc] initWithResultPromise:result_promise];
-        //  TODO:6.0 lang
         [this pushViewController:vc
-                         vctitle:@"选择隐私收据"
+                         vctitle:NSLocalizedString(@"kVcTitleSelectBlindBalance", @"选择隐私收据")
                        backtitle:kVcDefaultBackTitleName];
         [result_promise then:(^id(id new_blind_balance_array) {
             assert(new_blind_balance_array);

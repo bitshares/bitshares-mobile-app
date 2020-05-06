@@ -785,6 +785,19 @@
 "kVcStBtnTransferToBlind" = "隐私转入";//TODO:
 "kVcStBtnTransferFromBlind" = "隐私转出";//TODO:
 "kVcStBtnBlindTransfer" = "隐私转账";//TODO:
+"kVcStTipErrMissingReceiptPriKey" = "缺少隐私收据私钥。";//TODO:
+"kVcStTipErrInvalidBlindBalance" = "收据信息无效。";//TODO:
+"kVcStTipErrPleaseSelectSameAssetReceipts" = "请选择资产名称相同的收据。";//TODO:
+"kVcStPlaceholderInputReceipt" = "请输入隐私转账收据。";//TODO:
+"kVcStBtnImportNow" = "立即导入";//TODO:
+"kVcStCellTitleReceipt" = "收据";//TODO:
+"kVcStCellTitleAvailableBalance" = "可用余额";//TODO:
+"kVcStCellTitleTotalInputReceiptAmount" = "收据总金额";//TODO:
+"kVcStCellTitleTotalOutputAmount" = "输出总金额";//TODO:
+"kVcStCellTitleNetworkFee" = "广播手续费";//TODO:
+"kVcStCellTitleActualAmount" = "实际到账";//TODO:
+"kVcStTipUiImportReceipt" = "【温馨提示】\n导入收据同时支持APP生成的收据和CLI命令行钱包收据格式。\n如果隐私收据丢失，可尝试直接输入转账对应区块编号进行导入。";//TODO:
+"kVcStTipLabelTransferFromBlindSuccess" = "从隐私转出成功";//TODO:
 
 /* HTLC合约 */
 "kVcHtlcEntryFromPreimage" = "HTLC合约（原像创建）";//TODO:
@@ -996,6 +1009,12 @@
 "kVcTitleTransferToBlind" = "ブラインドアカウントに送金する";
 "kVcTitleTransferFromBlind" = "ブラインドアカウントからの送金";
 "kVcTitleBlindTransfer" = "ブラインド転送";
+"kVcTitleBlindAccountsMgr" = "アカウント管理";
+"kVcTitleBlindBalancesMgr" = "私の領収書";
+"kVcTitleImportBlindReceipt" = "領収書をインポート";
+"kVcTitleSelectBlindAccount" = "プライバシーアカウントを選択";
+"kVcTitleSelectBlindBalance" = "領収書を選択してください";
+"kVcTitleAddBlindOutput" = "プライバシー出力を追加する";
 "kVcTitleOtcOrderList" = "注文記録";
 "kVcTitleOtcAuthInfos" = "ユーザー情報";
 "kVcTitleOtcUserAuth" = "KYC認証";
@@ -1652,6 +1671,7 @@
 "kGPErrorApiNodeVersionTooLow" = "現在のAPIノードのバージョンが低すぎます。";
 "kGPErrorBlindReceiptIsNotExisted" = "ブラインド領収書は存在しません。";
 "kGPErrorBlindVerifySumFailed" = "ブラインド入力と出力の量は等しくありません。";
+"kGPErrorFeePoolInsufficient" = "手数料資産に対応する手数料プールの残高が不足しています。";
 
 /* 特殊用途字符串KEY */
 "serverWssLangKey" = "cn";

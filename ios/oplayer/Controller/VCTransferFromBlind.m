@@ -323,11 +323,10 @@ enum
             cell.hideTopLine = YES;
             cell.hideBottomLine = YES;
             
-            //  TODO:6.0 lang
             switch (indexPath.row) {
                 case kVcSubInputTotalAmount:
                 {
-                    cell.textLabel.text = @"收据总金额";
+                    cell.textLabel.text = NSLocalizedString(@"kVcStCellTitleTotalInputReceiptAmount", @"收据总金额");
                     if (_curr_blind_asset) {
                         id str_amount = [OrgUtils formatFloatValue:[self calcBlindInputTotalAmount] usesGroupingSeparator:NO];
                         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@", str_amount, _curr_blind_asset[@"symbol"]];
@@ -338,7 +337,7 @@ enum
                     break;
                 case kVcSubNetworkFee:
                 {
-                    cell.textLabel.text = @"广播手续费";
+                    cell.textLabel.text = NSLocalizedString(@"kVcStCellTitleNetworkFee", @"广播手续费");
                     if (_nFee) {
                         id str_amount = [OrgUtils formatFloatValue:_nFee usesGroupingSeparator:NO];
                         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@", str_amount, _curr_blind_asset[@"symbol"]];
@@ -349,7 +348,7 @@ enum
                     break;
                 case kVcSubActualAmount:
                 {
-                    cell.textLabel.text = @"实际到账";
+                    cell.textLabel.text = NSLocalizedString(@"kVcStCellTitleActualAmount", @"实际到账");
                     cell.detailTextLabel.textColor = theme.buyColor;
                     if (_nFee) {
                         NSDecimalNumber* n_total = [self calcBlindInputTotalAmount];
@@ -534,6 +533,9 @@ enum
                                 output_blinding_factors:input_blinding_factors
                                               sign_keys:sign_keys
                                      extra_pub_pri_hash:nil];
+    if (!inputs) {
+        return;
+    }
     
     //  所有盲因子求和
     id blinding_factor = [VCStealthTransferHelper blindSum:input_blinding_factors];
@@ -554,6 +556,7 @@ enum
     
     id amount_string = [NSString stringWithFormat:@"%@ %@", n_transfer_amount, asset[@"symbol"]];
     
+    //  TODO:6.0 lang
     id value = [NSString stringWithFormat:@"您确定从隐私账户转出 %@ 到 %@ 账号吗？\n\n广播手续费：%@ %@",
                 amount_string,
                 _to_account[@"name"],
@@ -585,7 +588,7 @@ enum
                         VCPaySuccess* vc = [[VCPaySuccess alloc] initWithResult:tx_data
                                                                      to_account:_to_account
                                                                   amount_string:amount_string
-                                                             success_tip_string:@"转出成功"];//TODO:6.0 lang
+                                                             success_tip_string:NSLocalizedString(@"kVcStTipLabelTransferFromBlindSuccess", @"从隐私转出成功")];
                         [self clearPushViewController:vc vctitle:@"" backtitle:kVcDefaultBackTitleName];
                         return nil;
                     }] catch:^id(id error) {

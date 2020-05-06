@@ -266,7 +266,7 @@
     NSString* latest;
     NSString* percent;
     
-    //  TODO:6.0 TICKER 改成 直接获取 market_ticker_object(MTO) 对象，就可以批量查询所有交易对了。
+    //  TODO:7.0 TICKER 改成 直接获取 market_ticker_object(MTO) 对象，就可以批量查询所有交易对了。
     NSDictionary* ticker_data = [[ChainObjectManager sharedChainObjectManager] getTickerData:[_tradingPair.baseAsset objectForKey:@"symbol"]
                                                                                        quote:[_tradingPair.quoteAsset objectForKey:@"symbol"]];
     if (ticker_data){
