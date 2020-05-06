@@ -785,6 +785,19 @@
 "kVcStBtnTransferToBlind" = "隐私转入";
 "kVcStBtnTransferFromBlind" = "隐私转出";
 "kVcStBtnBlindTransfer" = "隐私转账";
+"kVcStTipErrMissingReceiptPriKey" = "缺少隐私收据私钥。";
+"kVcStTipErrInvalidBlindBalance" = "收据信息无效。";
+"kVcStTipErrPleaseSelectSameAssetReceipts" = "请选择资产名称相同的收据。";
+"kVcStPlaceholderInputReceipt" = "请输入隐私转账收据。";
+"kVcStBtnImportNow" = "立即导入";
+"kVcStCellTitleReceipt" = "收据";
+"kVcStCellTitleAvailableBalance" = "可用余额";
+"kVcStCellTitleTotalInputReceiptAmount" = "收据总金额";
+"kVcStCellTitleTotalOutputAmount" = "输出总金额";
+"kVcStCellTitleNetworkFee" = "广播手续费";
+"kVcStCellTitleActualAmount" = "实际到账";
+"kVcStTipUiImportReceipt" = "【温馨提示】\n导入收据同时支持APP生成的收据和CLI命令行钱包收据格式。\n如果隐私收据丢失，可尝试直接输入转账对应区块编号进行导入。";
+"kVcStTipLabelTransferFromBlindSuccess" = "从隐私转出成功";
 
 /* HTLC合约 */
 "kVcHtlcEntryFromPreimage" = "HTLC合约（原像创建）";
@@ -996,6 +1009,12 @@
 "kVcTitleTransferToBlind" = "向隐私账户转账";
 "kVcTitleTransferFromBlind" = "从隐私账户转出";
 "kVcTitleBlindTransfer" = "隐私转账";
+"kVcTitleBlindAccountsMgr" = "账户管理";
+"kVcTitleBlindBalancesMgr" = "我的收据";
+"kVcTitleImportBlindReceipt" = "导入收据";
+"kVcTitleSelectBlindAccount" = "选择隐私账户";
+"kVcTitleSelectBlindBalance" = "选择隐私收据";
+"kVcTitleAddBlindOutput" = "添加收款信息";
 "kVcTitleOtcOrderList" = "订单记录";
 "kVcTitleOtcAuthInfos" = "认证信息";
 "kVcTitleOtcUserAuth" = "身份认证";
@@ -1652,6 +1671,7 @@
 "kGPErrorApiNodeVersionTooLow" = "当前API节点版本太低。";
 "kGPErrorBlindReceiptIsNotExisted" = "隐私收据不存在。";
 "kGPErrorBlindVerifySumFailed" = "隐私输入和输出金额不相等。";
+"kGPErrorFeePoolInsufficient" = "手续费资产对应的手续费池余额不足。";
 
 /* 特殊用途字符串KEY */
 "serverWssLangKey" = "cn";

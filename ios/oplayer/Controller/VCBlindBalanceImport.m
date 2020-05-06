@@ -84,12 +84,12 @@ enum
     
     self.view.backgroundColor = theme.appBackColor;
     
-    //  TODO:6.0 lang
+    //  UI - 隐私收据输入框
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     _tv_receipt = [[MyTextView alloc] initWithFrame:CGRectMake(0, 0, screenRect.size.width  - 32, 28 * 5)];
     _tv_receipt.dataDetectorTypes = UIDataDetectorTypeAll;
     [_tv_receipt setFont:[UIFont systemFontOfSize:16]];
-    _tv_receipt.placeholder = @"请输入隐私转账收据。";
+    _tv_receipt.placeholder = NSLocalizedString(@"kVcStPlaceholderInputReceipt", @"请输入隐私转账收据。");
     _tv_receipt.backgroundColor = [UIColor clearColor];
     _tv_receipt.dataDetectorTypes = UIDataDetectorTypeNone;
     _tv_receipt.textColor = theme.textColorMain;
@@ -107,10 +107,10 @@ enum
     [self.view addSubview:_mainTableView];
     
     //  登录按钮
-    _lbImport = [self createCellLableButton:@"立即导入"];
+    _lbImport = [self createCellLableButton:NSLocalizedString(@"kVcStBtnImportNow", @"立即导入")];
     
     //  UI - 提示信息
-    _cell_tips = [[ViewTipsInfoCell alloc] initWithText:@"【温馨提示】\n导入收据同时支持APP生成的收据和CLI命令行钱包收据格式。\n如果隐私收据丢失，可尝试直接输入转账对应区块编号进行导入。"];
+    _cell_tips = [[ViewTipsInfoCell alloc] initWithText:NSLocalizedString(@"kVcStTipUiImportReceipt", @"【温馨提示】\n导入收据同时支持APP生成的收据和CLI命令行钱包收据格式。\n如果隐私收据丢失，可尝试直接输入转账对应区块编号进行导入。")];
     _cell_tips.hideBottomLine = YES;
     _cell_tips.hideTopLine = YES;
     _cell_tips.backgroundColor = [UIColor clearColor];
@@ -241,6 +241,7 @@ enum
 {
     [self endInput];
     
+    //  TODO:6.0 lang
     [self GuardWalletExistWithWalletMode:NSLocalizedString(@"kVcStealthTransferGuardWalletModeTips", @"隐私交易仅支持钱包模式，是否为当前的账号创建本地钱包文件？")
                                     body:^{
         id str_receipt = [NSString trim:_tv_receipt.text];
@@ -266,6 +267,7 @@ enum
 - (void)onImportReceiptCore:(id)receipt_json
 {
     assert(receipt_json);
+    //  TODO:6.0 lang
     id app_blind_receipt_block_num = [receipt_json objectForKey:kAppBlindReceiptBlockNum];
     if (app_blind_receipt_block_num) {
         id blind_accounts = [[[AppCacheManager sharedAppCacheManager] getAllBlindAccounts] allKeys];
@@ -293,6 +295,7 @@ enum
 
 - (void)importStealthBalanceCore:(NSArray*)data_array
 {
+    //  TODO:6.0 lang
     assert(data_array);
     if ([data_array count] <= 0) {
         [OrgUtils makeToast:@"收据数据为空。"];
@@ -543,12 +546,11 @@ enum
             switch (indexPath.row) {
                 case kVcSubUserTitle:
                 {
-                    //  TODO:6.0 lang
                     UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
                     cell.backgroundColor = [UIColor clearColor];
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                    cell.textLabel.text = @"收据";
+                    cell.textLabel.text = NSLocalizedString(@"kVcStCellTitleReceipt", @"收据");
                     cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
                     cell.hideBottomLine = YES;
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;

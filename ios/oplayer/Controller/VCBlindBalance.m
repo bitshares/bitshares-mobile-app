@@ -102,15 +102,9 @@
 
 - (void)onImportBlindOutputReceipt
 {
-//    //  TODO:6.0 测试数据（cli收据格式）
-//    id test_cli_receipt = @"2MVtjNuKHsh3o4FTe1RU6rcaf4JdimCtFjjKYjpyJdjfJvnMVz6xmamMxUXJneE9G8mfnAVKnYrA1fJUWuk8YCCyNigV5gt3RdtVBAYRftPqdTn4tdZAcJpPhTmAAmRA8qfwBNTCFF7arnDhC8CN7JoTxbW7p5ErhKk5FTAfNDbsfSdpRcWibWfpY4ZaWt9QMxoVhdP1z7";
-//    
-//    id test_app_receipt = @"LJJjYcMJ7z2jCK8FSyTXt2PsBuYzJ2zQkJBqeW4d3viY8Qajj75Pd5oEpUB9pxuzmxsDoto3NC6rfJfW3Varcm6CfDDr9pEqbzVQ1y5aDESX4Ypzs4sLWLh1krx";
-//    
-//    id test_block_num_receipt = @"36265048";
     WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
     VCBlindBalanceImport* vc = [[VCBlindBalanceImport alloc] initWithReceipt:nil result_promise:result_promise];
-    [self pushViewController:vc vctitle:@"导入收据" backtitle:kVcDefaultBackTitleName];
+    [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleImportBlindReceipt", @"导入收据") backtitle:kVcDefaultBackTitleName];
     [result_promise then:^id(id dirty) {
         //  刷新UI
         if (dirty && [dirty boolValue]) {

@@ -186,7 +186,7 @@ enum
         }
             break;
         case kVcSecBalance:
-            return 28.0f;       //  TODO:6.0
+            return 28.0f;
         case kVcSecTips:
             return [_cell_tips calcCellDynamicHeight:tableView.layoutMargins.left];
         default:
@@ -293,7 +293,7 @@ enum
                 case kVcSubAvailbleBalance:
                 {
                     NSDecimalNumber* n_total = [self calcBlindOutputTotalAmount];
-                    cell.textLabel.text = @"可用余额";
+                    cell.textLabel.text = NSLocalizedString(@"kVcStCellTitleAvailableBalance", @"可用余额");
                     id base_str = [NSString stringWithFormat:@"%@ %@",
                                    [OrgUtils formatFloatValue:_nCurrBalance usesGroupingSeparator:NO],
                                    symbol];
@@ -309,7 +309,7 @@ enum
                         cell.detailTextLabel.textColor = theme.tintColor;
                         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@(%@)",
                                                      base_str,
-                                                     NSLocalizedString(@"kVcTradeTipAmountNotEnough", @"数量不足")];//TODO:6.0 lang
+                                                     NSLocalizedString(@"kVcTradeTipAmountNotEnough", @"数量不足")];
                     } else {
                         cell.detailTextLabel.textColor = theme.textColorNormal;
                         cell.detailTextLabel.text = base_str;
@@ -317,13 +317,13 @@ enum
                 }
                     break;
                 case kVcSubOutputTotalAmount:
-                    cell.textLabel.text = @"输出总金额";
+                    cell.textLabel.text = NSLocalizedString(@"kVcStCellTitleTotalOutputAmount", @"输出总金额");
                     cell.detailTextLabel.textColor = theme.buyColor;
                     cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@", [OrgUtils formatFloatValue:[self calcBlindOutputTotalAmount] usesGroupingSeparator:NO], symbol];
                     break;
                 case kVcSubNetworkFee:
                 {
-                    cell.textLabel.text = @"广播手续费";
+                    cell.textLabel.text = NSLocalizedString(@"kVcStCellTitleNetworkFee", @"广播手续费");
                     cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@", [OrgUtils formatFloatValue:[self calcNetworkFee:nil]
                                                                                           usesGroupingSeparator:NO],
                                                  [ChainObjectManager sharedChainObjectManager].grapheneCoreAssetSymbol];
@@ -452,7 +452,7 @@ enum
                                                                                asset:_curr_asset
                                                                        n_max_balance:n_max_balance];
         [self pushViewController:vc
-                         vctitle:@"新增隐私输出"//TODO:6.0 lang
+                         vctitle:NSLocalizedString(@"kVcTitleAddBlindOutput", @"添加收款信息")
                        backtitle:kVcDefaultBackTitleName];
         [result_promise then:(^id(id json_data) {
             assert(json_data);
@@ -550,7 +550,7 @@ enum
             [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
                 if (unlocked) {
                     
-                    //  TODO:6.0 支持提案...
+                    //  TODO:6.0 支持提案...!!! TODO:VIP
                     
                     [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
                     [[[[BitsharesClientManager sharedBitsharesClientManager] transferToBlind:op] then:^id(id tx_data) {

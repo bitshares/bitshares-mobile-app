@@ -263,8 +263,7 @@ enum
         }
     }
     if ([ids count] > 1) {
-        //  TODO:6.0 lang
-        [OrgUtils makeToast:@"请选择资产名称相同的收据。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcStTipErrPleaseSelectSameAssetReceipts", @"请选择资产名称相同的收据。")];
         return;
     }
     if (_result_promise) {

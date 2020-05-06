@@ -772,6 +772,7 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
                                 output_blinding_factors:input_blinding_factors
                                               sign_keys:trx_sign_keys
                                      extra_pub_pri_hash:fake_extra_pub_pri_hash];
+    assert(inputs);
     
     id blind_output_args = [VCStealthTransferHelper genBlindOutputs:@[tmp_blind_output]
                                                               asset:check_asset

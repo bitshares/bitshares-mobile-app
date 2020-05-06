@@ -212,7 +212,7 @@
     }
     
     id list = [[[NSMutableArray array] ruby_apply:^(id ary) {
-        //[ary addObject:@{@"type":@(ebaok_view), @"title":NSLocalizedString(@"kVcAssetMgrCellActionViewDetail", @"资产详情")}];//TODO:6.0 暂时去掉
+        //[ary addObject:@{@"type":@(ebaok_view), @"title":NSLocalizedString(@"kVcAssetMgrCellActionViewDetail", @"资产详情")}];//TODO:7.0 暂时去掉
         [ary addObject:@{@"type":@(ebaok_edit), @"title":NSLocalizedString(@"kVcAssetMgrCellActionUpdateAsset", @"更新资产")}];
         if (bitasset_data) {
             [ary addObject:@{@"type":@(ebaok_update_bitasset), @"title":NSLocalizedString(@"kVcAssetMgrCellActionUpdateBitasset", @"更新智能币")}];

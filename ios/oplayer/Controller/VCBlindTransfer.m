@@ -324,7 +324,7 @@ enum
             switch (indexPath.row) {
                 case kVcSubInputTotalAmount:
                 {
-                    cell.textLabel.text = @"收据总金额";//TODO:6.0 lang
+                    cell.textLabel.text = NSLocalizedString(@"kVcStCellTitleTotalInputReceiptAmount", @"收据总金额");
                     if (_curr_blind_asset) {
                         id n_total_input = [self calcBlindInputTotalAmount];
                         id n_total_output = [self calcBlindOutputTotalAmount];
@@ -338,7 +338,7 @@ enum
                             cell.detailTextLabel.textColor = theme.tintColor;
                             cell.detailTextLabel.text = [NSString stringWithFormat:@"%@(%@)",
                                                          base_str,
-                                                         NSLocalizedString(@"kVcTradeTipAmountNotEnough", @"数量不足")];//TODO:6.0 lang
+                                                         NSLocalizedString(@"kVcTradeTipAmountNotEnough", @"数量不足")];
                         } else {
                             cell.detailTextLabel.textColor = theme.textColorNormal;
                             cell.detailTextLabel.text = base_str;
@@ -351,7 +351,7 @@ enum
                     break;
                 case kVcSubOutputTotalAmount:
                 {
-                    cell.textLabel.text = @"输出总金额";
+                    cell.textLabel.text = NSLocalizedString(@"kVcStCellTitleTotalOutputAmount", @"输出总金额");
                     cell.detailTextLabel.textColor = theme.buyColor;
                     if (_curr_blind_asset) {
                         id str_amount = [OrgUtils formatFloatValue:[self calcBlindOutputTotalAmount] usesGroupingSeparator:NO];
@@ -363,7 +363,7 @@ enum
                     break;
                 case kVcSubNetworkFee:
                 {
-                    cell.textLabel.text = @"广播手续费";
+                    cell.textLabel.text = NSLocalizedString(@"kVcStCellTitleNetworkFee", @"广播手续费");
                     id n_fee = [self calcNetworkFee:nil];
                     if (n_fee) {
                         id str_amount = [OrgUtils formatFloatValue:n_fee usesGroupingSeparator:NO];
@@ -537,7 +537,7 @@ enum
                                                                                asset:_curr_blind_asset
                                                                        n_max_balance:n_max_balance];
         [self pushViewController:vc
-                         vctitle:@"新增隐私输出"
+                         vctitle:NSLocalizedString(@"kVcTitleAddBlindOutput", @"添加收款信息")
                        backtitle:kVcDefaultBackTitleName];
         [result_promise then:(^id(id json_data) {
             //  {@"public_key":public_key, @"n_amount":n_amount}
@@ -738,6 +738,9 @@ enum
                                 output_blinding_factors:input_blinding_factors
                                               sign_keys:sign_keys
                                      extra_pub_pri_hash:nil];
+    if (!inputs) {
+        return;
+    }
     
     //  生成隐私输出，和前面的输入盲因子相关联。
     id blind_output_args = [VCStealthTransferHelper genBlindOutputs:blind_output_array

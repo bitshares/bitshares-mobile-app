@@ -99,7 +99,7 @@ enum
     
     _cell_password = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kLoginPassword", @"密码 ")
                                                      placeholder:NSLocalizedString(@"tip_placeholder_password", @"请输入密码")];
-    //  TODO:6.0 因为有中文密码，默认不设置密码模式，允许输入中文。后期考虑是否按钮切换等？
+    //  TODO:7.0 因为有中文密码，默认不设置密码模式，允许输入中文。后期考虑是否按钮切换等？
     //    _cell_password.mainTextfield.secureTextEntry = YES;
     
     //  导入钱包则不需要交易密码了

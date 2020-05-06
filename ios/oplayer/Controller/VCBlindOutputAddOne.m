@@ -72,15 +72,13 @@ enum
 
 - (void)onMyBlindAccountClicked:(UIButton*)sender
 {
-    //  TODO:6.0 lang
     WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
     VCBlindAccounts* vc = [[VCBlindAccounts alloc] initWithResultPromise:result_promise];
-    [self pushViewController:vc vctitle:@"选择隐私账户" backtitle:kVcDefaultBackTitleName];
+    [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleSelectBlindAccount", @"选择隐私账户") backtitle:kVcDefaultBackTitleName];
     [result_promise then:^id(id blind_account) {
         if (blind_account) {
             _tf_authority.text = [blind_account objectForKey:@"public_key"] ?: @"";
         }
-        //  TODO:6.0
         return nil;
     }];
 }
