@@ -12,6 +12,9 @@
 #import "WalletManager.h"
 #import "OrgUtils.h"
 
+#import "VCStealthTransferHelper.h"
+#import "HDWallet.h"
+
 @interface UITapGestureRecognizer2Block()
 {
     __weak id _self;
@@ -474,6 +477,66 @@
                  NSLocalizedString(@"kShareWelcomeMessage", @"欢迎来到比特股去中心化交易平台"), value];
     }
     return value;
+}
+
+/*
+ *  (public) 处理导入隐私账户。
+ */
++ (void)processImportBlindAccount:(VCBase*)vc
+                       alias_name:(NSString*)str_alias_name
+                         password:(NSString*)str_password
+                 success_callback:(void (^)(id blind_account))success_callback
+{
+    assert(vc);
+    
+    if (!str_alias_name || [str_alias_name isEqualToString:@""]){
+        [OrgUtils makeToast:NSLocalizedString(@"kVcStTipErrPleaseInputAliasName", @"请输入隐私账户别名。")];
+        return;
+    }
+    
+    if (!str_password ||
+        [str_password  isEqualToString:@""] ||
+        ![WalletManager isValidStealthTransferBrainKey:str_password check_sum_prefix:kAppBlindAccountBrainKeyCheckSumPrefix]) {
+        [OrgUtils makeToast:NSLocalizedString(@"kVcStTipErrPleaseInputBlindAccountBrainKey", @"请输入有效的隐私账户密码。")];
+        return;
+    }
+    
+    //  开始导入
+    HDWallet* hdk = [HDWallet fromMnemonic:str_password];
+    HDWallet* main_key = [hdk deriveBitshares:EHDBPT_STEALTH_MAINKEY];
+    id wif_main_pri_key = [main_key toWifPrivateKey];
+    id wif_main_pub_key = [OrgUtils genBtsAddressFromWifPrivateKey:wif_main_pri_key];
+    
+    id blind_account = @{
+        @"public_key": wif_main_pub_key,
+        @"alias_name": str_alias_name,
+        @"parent_key": @""
+    };
+    
+    WalletManager* walletMgr = [WalletManager sharedWalletManager];
+    assert([walletMgr isWalletExist] && ![walletMgr isPasswordMode]);
+    //  解锁钱包
+    [vc GuardWalletUnlocked:NO body:^(BOOL unlocked) {
+        if (unlocked) {
+            //  隐私交易主地址导入钱包
+            AppCacheManager* pAppCache = [AppCacheManager sharedAppCacheManager];
+            
+            id full_wallet_bin = [walletMgr walletBinImportAccount:nil privateKeyWifList:@[wif_main_pri_key]];
+            assert(full_wallet_bin);
+            [pAppCache appendBlindAccount:blind_account autosave:NO];
+            [pAppCache updateWalletBin:full_wallet_bin];
+            [pAppCache autoBackupWalletToWebdir:NO];
+            
+            //  重新解锁（即刷新解锁后的账号信息）。
+            id unlockInfos = [walletMgr reUnlock];
+            assert(unlockInfos && [[unlockInfos objectForKey:@"unlockSuccess"] boolValue]);
+            
+            //  导入成功
+            if (success_callback) {
+                success_callback(blind_account);
+            }
+        }
+    }];
 }
 
 @end

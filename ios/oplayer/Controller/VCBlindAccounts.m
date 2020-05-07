@@ -10,6 +10,7 @@
 #import "VCBlindAccountImport.h"
 #import "ViewBlindAccountCell.h"
 
+#import "VCNewAccountPassword.h"
 #import "HDWallet.h"
 
 @interface VCBlindAccounts ()
@@ -122,20 +123,20 @@
 
 - (void)onImportBlindOutputReceipt
 {
-    //  TODO:6.0 lang
     [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
                                                        message:nil
                                                         cancel:NSLocalizedString(@"kBtnCancel", @"取消")
-                                                         items:@[@"导入隐私账户",
-                                                                 @"创建隐私账户"]
+                                                         items:@[NSLocalizedString(@"kVcStActionImportBlindAccount", @"导入隐私账户"),
+                                                                 NSLocalizedString(@"kVcStActionCreateBlindAccount", @"创建隐私账户")]
                                                       callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
      {
         if (buttonIndex != cancelIndex){
             if (buttonIndex == 0) {
-                //  TODO:6.0
                 WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
                 VCBlindAccountImport* vc = [[VCBlindAccountImport alloc] initWithResultPromise:result_promise];
-                [self pushViewController:vc vctitle:@"导入隐私账户" backtitle:kVcDefaultBackTitleName];
+                [self pushViewController:vc
+                                 vctitle:NSLocalizedString(@"kVcTitleImportBlindAccount", @"导入隐私账户")
+                               backtitle:kVcDefaultBackTitleName];
                 [result_promise then:^id(id blind_account) {
                     if (blind_account) {
                         //  刷新
@@ -144,8 +145,10 @@
                     return nil;
                 }];
             } else {
-                //  TODO:6.0
-                [OrgUtils makeToast:@"创建 TODO:"];
+                VCNewAccountPassword* vc = [[VCNewAccountPassword alloc] initWithScene:kNewPasswordSceneGenBlindAccountBrainKey args:nil];
+                [self pushViewController:vc
+                                 vctitle:NSLocalizedString(@"kVcTitleBackupYourPassword", @"备份密码")
+                               backtitle:kVcDefaultBackTitleName];
             }
         }
     }];
@@ -177,7 +180,7 @@
     [self.view addSubview:_mainTableView];
     
     //  UI - 空
-    _lbEmpty = [self genCenterEmptyLabel:rect txt:@"没有隐私账户，可点击右上角创建或恢复隐私账户。"];
+    _lbEmpty = [self genCenterEmptyLabel:rect txt:NSLocalizedString(@"kVcStTipEmptyNoBlindAccount", @"没有隐私账户，可点击右上角创建或恢复隐私账户。")];
     _lbEmpty.hidden = YES;
     [self.view addSubview:_lbEmpty];
     
@@ -289,13 +292,12 @@
     
     NSMutableArray* actions = [NSMutableArray array];
     
-    //  TODO:6.0 lang
     NSString* parent_key = [blind_account objectForKey:@"parent_key"];
     if (!parent_key || [parent_key isEqualToString:@""]) {
         //  主账号
-        [actions addObject:@{@"type":@(kActionTypeGenChildKey), @"name":@"创建子账户"}];
+        [actions addObject:@{@"type":@(kActionTypeGenChildKey), @"name":NSLocalizedString(@"kVcStActionCreateSubBlindAccount", @"创建子账户")}];
     }
-    [actions addObject:@{@"type":@(kActionTypeCopyKey), @"name":@"复制地址"}];
+    [actions addObject:@{@"type":@(kActionTypeCopyKey), @"name":NSLocalizedString(@"kVcStActionCopyBlindAccountAddress", @"复制地址")}];
     
     [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self message:nil
                                                         cancel:NSLocalizedString(@"kBtnCancel", @"取消")
@@ -307,11 +309,19 @@
             switch ([[action objectForKey:@"type"] integerValue]) {
                 case kActionTypeGenChildKey:
                 {
-                    [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
-                        if (unlocked) {
-                            [self onActionClickedGenChildKey:blind_account section:section];
-                        }
-                    }];
+                    id data_child_array = [[_dataArray objectAtIndex:section] objectForKey:@"child"];
+                    //  可配置：限制子账号数量。扫描恢复收据验证to等时候容易一些。
+                    int allow_maximum_child_account = 5;
+                    if ([data_child_array count] >= allow_maximum_child_account) {
+                        [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcStTipAllowMaximumChildAccount", @"最多只能创建 %@ 个子账户。"), @(allow_maximum_child_account)]];
+                    } else {
+                        //  正常创建子账户
+                        [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
+                            if (unlocked) {
+                                [self onActionClickedGenChildKey:blind_account section:section];
+                            }
+                        }];
+                    }
                 }
                     break;
                 case kActionTypeCopyKey:
@@ -327,17 +337,15 @@
 
 - (void)onActionClickedGenChildKey:(id)blind_account section:(NSInteger)section
 {
-    //  TODO:6.0 限制子账号数量，比如3个或5个。（扫描恢复收据验证to等时候容易一些。）
-    
     assert(blind_account);
-    //  TODO:6.0
+    
     NSString* main_public_key = [blind_account objectForKey:@"public_key"];
     assert(main_public_key);
     
     WalletManager* walletMgr = [WalletManager sharedWalletManager];
     GraphenePrivateKey* main_pri_key = [walletMgr getGraphenePrivateKeyByPublicKey:main_public_key];
     if (!main_pri_key) {
-        [OrgUtils makeToast:@"主账号私钥不存在，请重新导入。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcStTipErrMissMainAccountPrivateKey", @"主账号私钥不存在，请重新导入。")];
         return;
     }
     
@@ -380,7 +388,7 @@
     
     //  导入成功
     [self refreshUI:YES];
-    [OrgUtils makeToast:@"创建子账户成功。"];
+    [OrgUtils makeToast:NSLocalizedString(@"kVcStTipCreateChildBlindAccountSuccess", @"创建子账户成功。")];
 }
 
 - (void)onActionClickedCopyKey:(id)blind_account

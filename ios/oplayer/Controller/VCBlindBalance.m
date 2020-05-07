@@ -138,7 +138,7 @@
     [self.view addSubview:_mainTableView];
     
     //  UI - 空
-    _lbEmpty = [self genCenterEmptyLabel:rect txt:@"没有任何隐私收据，可点击右上角导入收据。"];
+    _lbEmpty = [self genCenterEmptyLabel:rect txt:NSLocalizedString(@"kVcStTipEmptyNoBlindCanImport", @"没有任何隐私收据，可点击右上角导入收据。")];
     _lbEmpty.hidden = YES;
     [self.view addSubview:_lbEmpty];
     
@@ -186,15 +186,15 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
-        //  TODO:6.0 lang
         [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
                                                            message:nil
                                                             cancel:NSLocalizedString(@"kBtnCancel", @"取消")
-                                                             items:@[@"从隐私账户转出",
-                                                                     @"隐私转账"]
+                                                             items:@[NSLocalizedString(@"kVcStBlindBalanceActionTransferFromBlind", @"从隐私账户转出"),
+                                                                     NSLocalizedString(@"kVcStBlindBalanceActionBlindTransfer", @"隐私转账")]
                                                           callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
          {
             if (buttonIndex != cancelIndex){
+                //  REMARK：这里转出or继续隐私转账成功都会clear push到新界面，所以不用刷新该界面自身。
                 if (buttonIndex == 0){
                     id blind_balance = [_dataArray objectAtIndex:indexPath.row];
                     VCTransferFromBlind* vc = [[VCTransferFromBlind alloc] initWithBlindBalance:blind_balance];
@@ -202,7 +202,6 @@
                                      vctitle:NSLocalizedString(@"kVcTitleTransferFromBlind", @"从隐私账户转出")
                                    backtitle:kVcDefaultBackTitleName];
                 } else {
-                    //  TODO:6.0 test trasfer from blind
                     id blind_balance = [_dataArray objectAtIndex:indexPath.row];
                     VCBlindTransfer* vc = [[VCBlindTransfer alloc] initWithBlindBalance:blind_balance result_promise:nil];
                     [self pushViewController:vc

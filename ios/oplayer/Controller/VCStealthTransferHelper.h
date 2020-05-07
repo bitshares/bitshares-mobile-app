@@ -11,7 +11,12 @@
 /*
  *  APP隐私收据区块编号key字段名定义。
  */
-#define kAppBlindReceiptBlockNum    @"abrbn"
+#define kAppBlindReceiptBlockNum                @"abrbn"
+
+/*
+ *  隐私账户助记词校验码前缀。
+ */
+#define kAppBlindAccountBrainKeyCheckSumPrefix  @"StealthTransfer"
 
 @class GraphenePublicKey;
 @class VCBase;

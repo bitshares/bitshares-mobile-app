@@ -10,6 +10,7 @@
 #import "ViewTipsInfoCell.h"
 #import "ViewNewPasswordCell.h"
 #import "VCNewAccountPasswordConfirm.h"
+#import "VCStealthTransferHelper.h"
 
 enum
 {
@@ -30,6 +31,7 @@ enum
 
 @interface VCNewAccountPassword ()
 {
+    NSInteger                       _scene;                 //  使用场景
     NSString*                       _new_account_name;      //  新账号名，注册时传递，修改密码则为nil。
     
     UITableView *                   _mainTableView;
@@ -60,10 +62,11 @@ enum
     _new_account_name = nil;
 }
 
-- (id)initWithNewAccountName:(NSString*)new_account_name
+- (id)initWithScene:(NSInteger)scene args:(NSString*)new_account_name
 {
     self = [super init];
     if (self) {
+        _scene = scene;
         //  保存新账号（可能为nil。)
         _new_account_name = [new_account_name copy];
         
@@ -83,11 +86,16 @@ enum
  */
 - (void)processGeneratePassword
 {
+    id check_sum_prefix = nil;
+    //  REMARK：设置隐私交易中隐私账户助记词校验码前缀。
+    if (_scene == kNewPasswordSceneGenBlindAccountBrainKey) {
+        check_sum_prefix = kAppBlindAccountBrainKeyCheckSumPrefix;
+    }
     id new_words;
     if (_currPasswordLang == ebap_lang_zh) {
-        new_words = [WalletManager randomGenerateChineseWord_N16];
+        new_words = [WalletManager randomGenerateChineseWord_N16:check_sum_prefix];
     } else {
-        new_words = [WalletManager randomGenerateEnglishWord_N32];
+        new_words = [WalletManager randomGenerateEnglishWord_N32:check_sum_prefix];
     }
     [_passwordContent updateWithNewContent:new_words lang:_currPasswordLang];
 }
@@ -178,7 +186,7 @@ enum
  */
 - (void)onSubmitClicked
 {
-    if (_new_account_name != nil) {
+    if (_scene == kNewPasswordSceneRegAccount || _scene == kNewPasswordSceneGenBlindAccountBrainKey) {
         [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:NSLocalizedString(@"kEditPasswordNextStepAskForReg", @"请确认您的密码已经抄录完毕，并保存到了安全的地方，丢失将无法找回。")
                                                                withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
                                                               completion:^(NSInteger buttonIndex)
@@ -197,7 +205,8 @@ enum
 {
     VCNewAccountPasswordConfirm* vc = [[VCNewAccountPasswordConfirm alloc] initWithPassword:_passwordContent.current_password
                                                                                    passlang:_currPasswordLang
-                                                                           new_account_name:_new_account_name];
+                                                                                      scene:_scene
+                                                                                       args:_new_account_name];
     [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleEditPasswordConfirm", @"验证密码") backtitle:kVcDefaultBackTitleName];
 }
 
