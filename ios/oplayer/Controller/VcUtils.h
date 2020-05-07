@@ -84,4 +84,12 @@ typedef void (^UITapGestureRecognizerBlockHandler)(id weak_self, UITapGestureRec
  */
 + (NSString*)genShareLink:(BOOL)containWelcomeMessage;
 
+/*
+ *  (public) 处理导入隐私账户。
+ */
++ (void)processImportBlindAccount:(VCBase*)vc
+                       alias_name:(NSString*)str_alias_name
+                         password:(NSString*)str_password
+                 success_callback:(void (^)(id blind_account))success_callback;
+
 @end

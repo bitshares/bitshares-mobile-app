@@ -8,7 +8,6 @@
 
 #import "VCBlindAccountImport.h"
 
-#import "HDWallet.h"
 #import "ViewAdvTextFieldCell.h"
 
 enum
@@ -68,11 +67,12 @@ enum
     self.view.backgroundColor = theme.appBackColor;
     
     //  UI - 别名输入
-    _cell_alias_name = [[ViewAdvTextFieldCell alloc] initWithTitle:@"别名" placeholder:@"为隐私账户设置一个别名"];
+    _cell_alias_name = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kVcStCellTitleAliasName", @"别名")
+                                                       placeholder:NSLocalizedString(@"kVcStPlaceholderInputAliasName", @"为隐私账户设置一个别名")];
     
     //  UI - 密码输入
-    _cell_password = [[ViewAdvTextFieldCell alloc] initWithTitle:@"密码"
-                                                     placeholder:@"请输入隐私账户密码"];
+    _cell_password = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kVcStCellTitleBlindAccountBrainKey", @"密码")
+                                                     placeholder:NSLocalizedString(@"kVcStPlaceholderBlindAccountBrainKey", @"请输入隐私账户密码")];
     
     //  UI - 列表
     _mainTableView = [[UITableViewBase alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];
@@ -87,7 +87,7 @@ enum
     pTap.cancelsTouchesInView = NO; //  IOS 5.0系列导致按钮没响应
     [self.view addGestureRecognizer:pTap];
     
-    _lbCommit = [self createCellLableButton:@"导入"];
+    _lbCommit = [self createCellLableButton:NSLocalizedString(@"kVcStBtnImportNow", @"导入")];
 }
 
 -(void)onTap:(UITapGestureRecognizer*)pTap
@@ -184,55 +184,16 @@ enum
 {
     [self endInput];
     
-    //  TODO:6.0 lang
     id str_alias_name = [NSString trim:_cell_alias_name.mainTextfield.text];
-    if (!str_alias_name || [str_alias_name isEqualToString:@""]){
-        [OrgUtils makeToast:@"请输入隐私账户别名。"];
-        return;
-    }
-    
     id str_password = [NSString trim:_cell_password.mainTextfield.text];
-    if (!str_password || [str_password  isEqualToString:@""]) {
-        [OrgUtils makeToast:@"请输入隐私账户密码。"];
-        return;
-    }
     
-    //  开始导入
-    HDWallet* hdk = [HDWallet fromMnemonic:str_password];
-    HDWallet* main_key = [hdk deriveBitshares:EHDBPT_STEALTH_MAINKEY];
-    id wif_main_pri_key = [main_key toWifPrivateKey];
-    id wif_main_pub_key = [OrgUtils genBtsAddressFromWifPrivateKey:wif_main_pri_key];
-    
-    id blind_account = @{
-        @"public_key": wif_main_pub_key,
-        @"alias_name": str_alias_name,
-        @"parent_key": @""
-    };
-    
-    WalletManager* walletMgr = [WalletManager sharedWalletManager];
-    assert([walletMgr isWalletExist] && ![walletMgr isPasswordMode]);
-    //  解锁钱包
-    [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
-        if (unlocked) {
-            //  隐私交易主地址导入钱包
-            AppCacheManager* pAppCache = [AppCacheManager sharedAppCacheManager];
-            
-            id full_wallet_bin = [walletMgr walletBinImportAccount:nil privateKeyWifList:@[wif_main_pri_key]];
-            assert(full_wallet_bin);
-            [pAppCache appendBlindAccount:blind_account autosave:NO];
-            [pAppCache updateWalletBin:full_wallet_bin];
-            [pAppCache autoBackupWalletToWebdir:NO];
-            
-            //  重新解锁（即刷新解锁后的账号信息）。
-            id unlockInfos = [walletMgr reUnlock];
-            assert(unlockInfos && [[unlockInfos objectForKey:@"unlockSuccess"] boolValue]);
-            
-            //  导入成功
-            if (_result_promise) {
-                [_result_promise resolve:blind_account];
-            }
-            [self closeOrPopViewController];
+    [VcUtils processImportBlindAccount:self alias_name:str_alias_name password:str_password success_callback:^(id blind_account) {
+        assert(blind_account);
+        //  导入成功
+        if (_result_promise) {
+            [_result_promise resolve:blind_account];
         }
+        [self closeOrPopViewController];
     }];
 }
 

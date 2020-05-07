@@ -9,8 +9,15 @@
 #import <UIKit/UIKit.h>
 #import "VCBase.h"
 
+enum
+{
+    kNewPasswordSceneRegAccount = 0,            //  注册新账号（额外参数：账号名）
+    kNewPasswordSceneChangePassowrd,            //  修改密码
+    kNewPasswordSceneGenBlindAccountBrainKey    //  生成隐私账号助记词
+};
+
 @interface VCNewAccountPassword : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UIScrollViewDelegate>
 
-- (id)initWithNewAccountName:(NSString*)new_account_name;
+- (id)initWithScene:(NSInteger)scene args:(NSString*)new_account_name;
 
 @end

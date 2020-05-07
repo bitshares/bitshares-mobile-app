@@ -416,7 +416,7 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
         if (indexPath.section >= [_dataArray count]){
-            VCNewAccountPassword* vc = [[VCNewAccountPassword alloc] initWithNewAccountName:nil];
+            VCNewAccountPassword* vc = [[VCNewAccountPassword alloc] initWithScene:kNewPasswordSceneChangePassowrd args:nil];
             [_owner pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleEditPassword", @"修改密码") backtitle:kVcDefaultBackTitleName];
         }
     }];

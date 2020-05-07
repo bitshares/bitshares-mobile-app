@@ -272,12 +272,19 @@ typedef enum EImportToWalletStatus
 
 /*
  *  (public) 随机生成 32 个英文字符列表
+ *  check_sum_prefix - 可在助记词中添加4个字符的校验码（check_sum_prefix会参与校验码计算。用于区分不同用途的助记词，比如密码用，隐私账户用。）
  */
-+ (NSArray*)randomGenerateEnglishWord_N32;
++ (NSArray*)randomGenerateEnglishWord_N32:(NSString*)check_sum_prefix;
 
 /*
  *  (public) 随机生成 16 个中文汉字列表
+ *  check_sum_prefix - 可在助记词中添加2个汉字的校验码（check_sum_prefix会参与校验码计算。用于区分不同用途的助记词，比如密码用，隐私账户用。）
  */
-+ (NSArray*)randomGenerateChineseWord_N16;
++ (NSArray*)randomGenerateChineseWord_N16:(NSString*)check_sum_prefix;
+
+/*
+ *  (public) 是否是有效的隐私交易（隐私账户）助记词。
+ */
++ (BOOL)isValidStealthTransferBrainKey:(NSString*)brain_key check_sum_prefix:(NSString*)check_sum_prefix;
 
 @end

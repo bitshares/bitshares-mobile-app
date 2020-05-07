@@ -8,8 +8,10 @@
 //#import <QuartzCore/QuartzCore.h>
 
 #import "VCNewAccountPasswordConfirm.h"
+#import "VCNewAccountPassword.h"
 #import "ViewAdvTextFieldCell.h"
 #import "VCImportAccount.h"
+#import "VCBlindAccounts.h"
 
 enum
 {
@@ -30,6 +32,7 @@ enum
 
 @interface VCNewAccountPasswordConfirm ()
 {
+    NSInteger                       _scene;
     NSString*                       _new_account_name;      //  新账号名，注册时传递，修改密码则为nil。
     
     NSString*                       _curr_password;
@@ -68,24 +71,20 @@ enum
     _secTypeArray = nil;
 }
 
-- (id)initWithPassword:(NSString*)password passlang:(EBitsharesAccountPasswordLang)passlang new_account_name:(NSString*)new_account_name
+- (id)initWithPassword:(NSString*)password
+              passlang:(EBitsharesAccountPasswordLang)passlang
+                 scene:(NSInteger)scene
+                  args:(NSString*)new_account_name
 {
     self = [super init];
     if (self) {
         _curr_password = [password copy];
         _curr_passlang = passlang;
+        _scene = scene;
         _new_account_name = [new_account_name copy];
         _curr_modify_range = kModifyAllPermissions;
     }
     return self;
-}
-
-/*
- *  (private) 是否是注册账号
- */
-- (BOOL)isRegisterAccount
-{
-    return _new_account_name != nil;
 }
 
 - (void)onBtnAgreementClicked
@@ -103,32 +102,54 @@ enum
     
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
-    if ([self isRegisterAccount]) {
-        [self showRightButton:NSLocalizedString(@"kBtnAppAgreement", @"服务条款") action:@selector(onBtnAgreementClicked)];
-        
-        _secTypeArray = @[
-            @(kVcAccountName),
-            @(kVcConfirmPassword),
-            @(kVcSubmit)
-        ];
-        
-        _cell_account = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kEditPasswordCellTItleYourNewAccountName", @"您的账号")
-                                                        placeholder:@""];
-        _cell_account.mainTextfield.text = _new_account_name;
-    } else {
-        _secTypeArray = @[
-            @(kVcAccountName),
-            @(kVcConfirmPassword),
-            @(kVcModifyRange),
-            @(kVcSubmit)
-        ];
-        
-        _cell_account = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kEditPasswordCellTitleCurrAccountName", @"当前账号")
-                                                        placeholder:@""];
-        assert([[WalletManager sharedWalletManager] isWalletExist]);
-        _cell_account.mainTextfield.text = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"][@"name"];
+    switch (_scene) {
+        case kNewPasswordSceneRegAccount:
+        {
+            [self showRightButton:NSLocalizedString(@"kBtnAppAgreement", @"服务条款") action:@selector(onBtnAgreementClicked)];
+            
+            _secTypeArray = @[
+                @(kVcAccountName),
+                @(kVcConfirmPassword),
+                @(kVcSubmit)
+            ];
+            
+            _cell_account = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kEditPasswordCellTItleYourNewAccountName", @"您的账号")
+                                                            placeholder:@""];
+            _cell_account.mainTextfield.text = _new_account_name;
+            _cell_account.mainTextfield.userInteractionEnabled = NO;
+        }
+            break;
+        case kNewPasswordSceneChangePassowrd:
+        {
+            _secTypeArray = @[
+                @(kVcAccountName),
+                @(kVcConfirmPassword),
+                @(kVcModifyRange),
+                @(kVcSubmit)
+            ];
+            
+            _cell_account = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kEditPasswordCellTitleCurrAccountName", @"当前账号")
+                                                            placeholder:@""];
+            assert([[WalletManager sharedWalletManager] isWalletExist]);
+            _cell_account.mainTextfield.text = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"][@"name"];
+            _cell_account.mainTextfield.userInteractionEnabled = NO;
+        }
+            break;
+        case kNewPasswordSceneGenBlindAccountBrainKey:
+        {
+            _secTypeArray = @[
+                @(kVcAccountName),
+                @(kVcConfirmPassword),
+                @(kVcSubmit)
+            ];
+            _cell_account = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kVcStCellTitleAliasName", @"别名")
+                                                            placeholder:NSLocalizedString(@"kVcStPlaceholderInputAliasName", @"为隐私账户设置一个别名")];
+        }
+            break;
+        default:
+            assert(false);
+            break;
     }
-    _cell_account.mainTextfield.userInteractionEnabled = NO;
     
     _cell_confirm_password = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kEditPasswordCellTitleVerifyPassword", @"验证密码")
                                                              placeholder:NSLocalizedString(@"kEditPasswordCellPlaceholderVerifyPassword", @"请输入上一步生成的密码")];
@@ -149,10 +170,19 @@ enum
     _mainTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:_mainTableView];
     
-    if ([self isRegisterAccount]) {
-        _lbSubmit = [self createCellLableButton:NSLocalizedString(@"kLoginCellBtnAgreeAndReg", @"同意协议并注册")];
-    } else {
-        _lbSubmit = [self createCellLableButton:NSLocalizedString(@"kEditPasswordBtnSubmmit", @"修改")];
+    switch (_scene) {
+        case kNewPasswordSceneRegAccount:
+            _lbSubmit = [self createCellLableButton:NSLocalizedString(@"kLoginCellBtnAgreeAndReg", @"同意协议并注册")];
+            break;
+        case kNewPasswordSceneChangePassowrd:
+            _lbSubmit = [self createCellLableButton:NSLocalizedString(@"kEditPasswordBtnSubmmit", @"修改")];
+            break;
+        case kNewPasswordSceneGenBlindAccountBrainKey:
+            _lbSubmit = [self createCellLableButton:NSLocalizedString(@"kEditPasswordBtnCreateBlindAccount", @"创建隐私账户")];
+            break;
+        default:
+            assert(false);
+            break;
     }
 }
 
@@ -229,19 +259,42 @@ enum
         return;
     }
     
-    if ([self isRegisterAccount]) {
-        //  注册：新账号
-        [self onRegisterAccountCore];
-    } else {
-        //  修改密码：先查询账号数据
-        [[[self queryNewestAccountData] then:^id(id new_account_data) {
-            //  二次确认
-            [self _gotoAskUpdateAccount:new_account_data];
-            return nil;
-        }] catch:^id(id error) {
-            [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
-            return nil;
-        }];
+    switch (_scene) {
+        case kNewPasswordSceneRegAccount:
+        {
+            //  注册：新账号
+            [self onRegisterAccountCore];
+        }
+            break;
+        case kNewPasswordSceneChangePassowrd:
+        {
+            //  修改密码：先查询账号数据
+            [[[self queryNewestAccountData] then:^id(id new_account_data) {
+                //  二次确认
+                [self _gotoAskUpdateAccount:new_account_data];
+                return nil;
+            }] catch:^id(id error) {
+                [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
+                return nil;
+            }];
+        }
+            break;
+        case kNewPasswordSceneGenBlindAccountBrainKey:
+        {
+            id str_alias_name = [NSString trim:_cell_account.mainTextfield.text];
+            [VcUtils processImportBlindAccount:self alias_name:str_alias_name password:_curr_password success_callback:^(id blind_account) {
+                assert(blind_account);
+                //  转到账号管理界面
+                VCBlindAccounts* vc = [[VCBlindAccounts alloc] initWithResultPromise:nil];
+                [self clearPushViewController:vc
+                                      vctitle:NSLocalizedString(@"kVcTitleBlindAccountsMgr", @"账户管理")
+                                    backtitle:kVcDefaultBackTitleName];
+            }];
+        }
+            break;
+        default:
+            assert(false);
+            break;
     }
 }
 

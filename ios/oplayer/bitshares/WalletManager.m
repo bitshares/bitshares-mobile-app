@@ -1597,8 +1597,9 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
 
 /*
  *  (public) 随机生成 32 个英文字符列表
+ *  check_sum_prefix - 可在助记词中添加4个字符的校验码（check_sum_prefix会参与校验码计算。用于区分不同用途的助记词，比如密码用，隐私账户用。）
  */
-+ (NSArray*)randomGenerateEnglishWord_N32
++ (NSArray*)randomGenerateEnglishWord_N32:(NSString*)check_sum_prefix
 {
     id word_list = [self englishPasswordCharacter];
     NSInteger n_word_list = [word_list count];
@@ -1610,24 +1611,36 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
     
     double base = 256.0;   // base = pow(2, 8)
     for (int i = 0; i < 32; ++i) {
-        int num = bytes[i];
-        //  0...1
-        double rndMultiplier = (double)num / base;
-        assert(rndMultiplier < 1);
-        int wordIndex = (int)(n_word_list * rndMultiplier);
-        assert(wordIndex < n_word_list);
-        [brainkey addObject:[word_list objectAtIndex:wordIndex]];
+        [brainkey addObject:[self _fetchBrainKeyWord:word_list n_word_count:n_word_list value:bytes[i] base:base]];
     }
+    
+    //  REMARK：助记词中添加4字节校验码。（4个字符）
+    if (check_sum_prefix && ![check_sum_prefix isEqualToString:@""]) {
+        id new_brainkey = [[brainkey subarrayWithRange:NSMakeRange(0, [brainkey count] - 4)] mutableCopy];
+        id real_brainkey = [new_brainkey componentsJoinedByString:@""];
+        //  check_sum_prefix + real_brainkey
+        id check_sum_full_string = [NSString stringWithFormat:@"%@%@", check_sum_prefix, real_brainkey];
+        digest_sha256 checksum = {0, };
+        NSData* data_check_sum_full_string = [check_sum_full_string dataUsingEncoding:NSUTF8StringEncoding];
+        sha256(data_check_sum_full_string.bytes, data_check_sum_full_string.length, checksum.data);
+        //  4字节checksum转换为助记词字符。
+        for (int i = 0; i < 4; ++i) {
+            [new_brainkey addObject:[self _fetchBrainKeyWord:word_list n_word_count:n_word_list value:checksum.data[i] base:base]];
+        }
+        return [new_brainkey copy];
+    }
+    
     return [brainkey copy];
 }
 
 /*
  *  (public) 随机生成 16 个中文汉字列表
+ *  check_sum_prefix - 可在助记词中添加2个汉字的校验码（check_sum_prefix会参与校验码计算。用于区分不同用途的助记词，比如密码用，隐私账户用。）
  */
-+ (NSArray*)randomGenerateChineseWord_N16
++ (NSArray*)randomGenerateChineseWord_N16:(NSString*)check_sum_prefix
 {
     id word_list = [self chineseWordList];
-    NSInteger n_word_list = [word_list count];
+    NSUInteger n_word_list = [word_list count];
     
     id randomBuffer = [self secureRandomByte32];
     const unsigned char* bytes = [randomBuffer bytes];
@@ -1639,14 +1652,106 @@ static int _unique_nonce_entropy = -1;              //  辅助生成 unique64 �
     double base = 65536.0;   // base = pow(2, 16)
     for (int i = 0; i < end; i += 2) {
         int num = (bytes[i] << 8) + bytes[i + 1];
-        //  0...1
-        double rndMultiplier = (double)num / base;
-        assert(rndMultiplier < 1);
-        int wordIndex = (int)(n_word_list * rndMultiplier);
-        assert(wordIndex < n_word_list);
-        [brainkey addObject:[word_list objectAtIndex:wordIndex]];
+        [brainkey addObject:[self _fetchBrainKeyWord:word_list n_word_count:n_word_list value:num base:base]];
     }
+    
+    //  REMARK：助记词中添加4字节校验码。（2个汉字）
+    if (check_sum_prefix && ![check_sum_prefix isEqualToString:@""]) {
+        id new_brainkey = [[brainkey subarrayWithRange:NSMakeRange(0, [brainkey count] - 2)] mutableCopy];
+        id real_brainkey = [new_brainkey componentsJoinedByString:@""];
+        //  check_sum_prefix + real_brainkey
+        id check_sum_full_string = [NSString stringWithFormat:@"%@%@", check_sum_prefix, real_brainkey];
+        digest_sha256 checksum = {0, };
+        NSData* data_check_sum_full_string = [check_sum_full_string dataUsingEncoding:NSUTF8StringEncoding];
+        sha256(data_check_sum_full_string.bytes, data_check_sum_full_string.length, checksum.data);
+        //  4字节checksum转换为助记词字符。
+        for (int i = 0; i < 4; i += 2) {
+            int num = (checksum.data[i] << 8) + checksum.data[i + 1];
+            [new_brainkey addObject:[self _fetchBrainKeyWord:word_list n_word_count:n_word_list value:num base:base]];
+        }
+        return [new_brainkey copy];
+    }
+    
     return [brainkey copy];
+}
+
+/*
+ *  (public) 是否是有效的隐私交易（隐私账户）助记词。
+ */
++ (BOOL)isValidStealthTransferBrainKey:(NSString*)brain_key check_sum_prefix:(NSString*)check_sum_prefix
+{
+    if (!brain_key) {
+        return NO;
+    }
+    NSData* d_brain_key = [brain_key dataUsingEncoding:NSUTF8StringEncoding];
+    if (!d_brain_key) {
+        return NO;
+    }
+    if (d_brain_key.length == 32 && brain_key.length == 32) {
+        return [self _verifyBrainKeyCheckSum:brain_key
+                     brain_key_char_per_byte:1
+                                   word_list:[self englishPasswordCharacter]
+                            check_sum_prefix:check_sum_prefix];
+    } else if (d_brain_key.length == 48 && brain_key.length == 16) {
+        return [self _verifyBrainKeyCheckSum:brain_key
+                     brain_key_char_per_byte:2
+                                   word_list:[self chineseWordList]
+                            check_sum_prefix:check_sum_prefix];
+    } else {
+        return NO;
+    }
+}
+
+/*
+ *  (private) 验证助记词的checksum。
+ *  REMARK：助记词生成时的字符表不能修改，否则会验证失败。
+ */
++ (BOOL)_verifyBrainKeyCheckSum:(NSString*)brain_key
+        brain_key_char_per_byte:(NSInteger)char_per_byte
+                      word_list:(NSArray*)word_list
+               check_sum_prefix:(NSString*)check_sum_prefix
+{
+    assert(char_per_byte == 1 || char_per_byte == 2);
+    
+    //  验证码字节数 和 验证码字符数
+    NSInteger check_sum_bytes = 4;
+    NSInteger check_sum_char_num = check_sum_bytes / char_per_byte;
+    assert(check_sum_char_num * char_per_byte == check_sum_bytes);
+    
+    //  计算checksum：check_sum_prefix + real_brainkey
+    NSInteger check_sum_index = brain_key.length - check_sum_char_num;
+    id real_brainkey = [brain_key substringToIndex:check_sum_index];
+    id check_sum_full_string = [NSString stringWithFormat:@"%@%@", check_sum_prefix, real_brainkey];
+    digest_sha256 checksum = {0, };
+    NSData* data_check_sum_full_string = [check_sum_full_string dataUsingEncoding:NSUTF8StringEncoding];
+    sha256(data_check_sum_full_string.bytes, data_check_sum_full_string.length, checksum.data);
+    
+    //  checksum的前 4 字节转为助记词字符。
+    double base = pow(2.0, char_per_byte * 8);
+    NSMutableArray* check_sum_array = [NSMutableArray array];
+    NSUInteger n_word_list = [word_list count];
+    for (NSInteger i = 0; i < check_sum_bytes; i += char_per_byte) {
+        int num = char_per_byte == 1 ? checksum.data[i] : (checksum.data[i] << 8) + checksum.data[i + 1];
+        [check_sum_array addObject:[self _fetchBrainKeyWord:word_list n_word_count:n_word_list value:num base:base]];
+    }
+    
+    //  验证助记词中的结尾校验码字符是否和计算的校验码字符相同。
+    NSString* check_sum = [brain_key substringFromIndex:check_sum_index];
+    return [[check_sum_array componentsJoinedByString:@""] isEqualToString:check_sum];
+}
+
+/*
+ *  (private) 获取助记词单个字符。
+ */
++ (NSString*)_fetchBrainKeyWord:(NSArray*)word_list n_word_count:(NSUInteger)n_word_list value:(int)value base:(double)base
+{
+    //  0...1
+    double rndMultiplier = (double)value / base;
+    assert(rndMultiplier < 1);
+    //  0...n_word_list
+    int wordIndex = (int)(n_word_list * rndMultiplier);
+    assert(wordIndex < n_word_list);
+    return [word_list objectAtIndex:wordIndex];
 }
 
 + (NSArray*)englishPasswordCharacter {

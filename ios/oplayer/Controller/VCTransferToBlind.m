@@ -573,9 +573,11 @@ enum
                         //  统计
                         [OrgUtils logEvents:@"txTransferToBlindFullOK" params:@{@"asset":_curr_asset[@"symbol"]}];
                         
-                        //  转到备份收据界面 TODO:6.0 lang
+                        //  转到备份收据界面
                         VCBlindBackupReceipt* vc = [[VCBlindBackupReceipt alloc] initWithTrxResult:tx_data];
-                        [self clearPushViewController:vc vctitle:@"备份收据" backtitle:kVcDefaultBackTitleName];
+                        [self clearPushViewController:vc
+                                              vctitle:NSLocalizedString(@"kVcTitleBackupBlindReceipt", @"备份收据")
+                                            backtitle:kVcDefaultBackTitleName];
                         return nil;
                     }] catch:^id(id error) {
                         [self hideBlockView];

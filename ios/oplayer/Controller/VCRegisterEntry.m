@@ -142,7 +142,7 @@ enum
         if ([bExist boolValue]) {
             [OrgUtils makeToast:NSLocalizedString(@"kLoginSubmitTipsAccountAlreadyExist", @"帐号名已存在，请重新输入。")];
         } else {
-            VCNewAccountPassword* vc = [[VCNewAccountPassword alloc] initWithNewAccountName:new_account_name];
+            VCNewAccountPassword* vc = [[VCNewAccountPassword alloc] initWithScene:kNewPasswordSceneRegAccount args:new_account_name];
             [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleBackupYourPassword", @"备份密码") backtitle:kVcDefaultBackTitleName];
         }
         return nil;
