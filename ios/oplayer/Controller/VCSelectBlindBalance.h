@@ -10,6 +10,6 @@
 
 @interface VCSelectBlindBalance : VCBase<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
-- (id)initWithResultPromise:(WsPromiseObject*)result_promise;
+- (id)initWithResultPromise:(WsPromiseObject*)result_promise default_selected:(NSDictionary*)default_selected;
 
 @end

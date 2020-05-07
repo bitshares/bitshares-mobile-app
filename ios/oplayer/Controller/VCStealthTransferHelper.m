@@ -302,12 +302,22 @@
 /*
  *  (public) 选择收据（隐私交易的的 input 部分）
  */
-+ (void)processSelectReceipts:(VCBase*)this callback:(void (^)(id new_blind_balance_array))callback
++ (void)processSelectReceipts:(VCBase*)this
+     curr_blind_balance_arary:(NSArray*)curr_blind_balance_arary
+                     callback:(void (^)(id new_blind_balance_array))callback
 {
     assert(callback);
     [this delay:^{
+        NSMutableDictionary* default_selected = [NSMutableDictionary dictionary];
+        if (curr_blind_balance_arary && [curr_blind_balance_arary count] > 0) {
+            for (id blind_balance in curr_blind_balance_arary) {
+                id commitment = [[blind_balance objectForKey:@"decrypted_memo"] objectForKey:@"commitment"];
+                assert([commitment isKindOfClass:[NSString class]]);
+                [default_selected setObject:@YES forKey:commitment];
+            }
+        }
         WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
-        VCSelectBlindBalance* vc = [[VCSelectBlindBalance alloc] initWithResultPromise:result_promise];
+        VCSelectBlindBalance* vc = [[VCSelectBlindBalance alloc] initWithResultPromise:result_promise default_selected:[default_selected copy]];
         [this pushViewController:vc
                          vctitle:NSLocalizedString(@"kVcTitleSelectBlindBalance", @"选择隐私收据")
                        backtitle:kVcDefaultBackTitleName];

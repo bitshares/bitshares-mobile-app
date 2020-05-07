@@ -18,6 +18,7 @@ enum
 
 @interface VCSelectBlindBalance ()
 {
+    NSDictionary*           _default_selected;
     WsPromiseObject*        _result_promise;
     UITableViewBase*        _mainTableView;
     NSMutableArray*         _dataArray;
@@ -43,13 +44,14 @@ enum
     _result_promise = nil;
 }
 
-- (id)initWithResultPromise:(WsPromiseObject*)result_promise
+- (id)initWithResultPromise:(WsPromiseObject*)result_promise default_selected:(NSDictionary*)default_selected
 {
     self = [super init];
     if (self){
+        assert(default_selected);
         _dataArray = [NSMutableArray array];
         _result_promise = result_promise;
-        //        id commitment = [[blind_balance objectForKey:@"decrypted_memo"] objectForKey:@"commitment"];
+        _default_selected = default_selected;
     }
     return self;
 }
@@ -57,7 +59,18 @@ enum
 - (void)onQueryBlindBalanceAndDependenceResponsed:(id)data_array
 {
     [_dataArray removeAllObjects];
-    [_dataArray addObjectsFromArray:data_array];
+    if (data_array && [data_array count] > 0) {
+        for (id blind_balance in data_array) {
+            //  添加收据并初始化默认选中状态
+            id commitment = [[blind_balance objectForKey:@"decrypted_memo"] objectForKey:@"commitment"];
+            assert([commitment isKindOfClass:[NSString class]]);
+            BOOL selected = [[_default_selected objectForKey:commitment] boolValue];
+            [_dataArray addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                   blind_balance, @"_kBlindBalance",
+                                   @(selected), @"_kSelected",
+                                   nil]];
+        }
+    }
     
     //  更新UI可见性
     _mainTableView.hidden = [_dataArray count] == 0;
@@ -115,12 +128,12 @@ enum
     [self.view addSubview:_mainTableView];
     
     //  UI - 空
-    _lbEmpty = [self genCenterEmptyLabel:rect txt:@"没有任何隐私收据。"];
+    _lbEmpty = [self genCenterEmptyLabel:rect txt:NSLocalizedString(@"kVcStTipEmptyNoBlindBalance", @"没有任何隐私收据。")];
     _lbEmpty.hidden = YES;
     [self.view addSubview:_lbEmpty];
     
     //  确定按钮
-    _lbSubmit = [self createCellLableButton:@"确定"];
+    _lbSubmit = [self createCellLableButton:NSLocalizedString(@"kVcStBtnSelectDone", @"确定")];
     _lbSubmit.hidden = YES;
     
     //  查询依赖
@@ -203,16 +216,16 @@ enum
         cell.multipleSelectionBackgroundView.hidden = YES;
         cell.tintColor = [ThemeManager sharedThemeManager].textColorHighlight;
         
+        id row_data = [_dataArray objectAtIndex:indexPath.row];
+        
         cell.showCustomBottomLine = YES;
         cell.row = indexPath.row;
         [cell setTagData:indexPath.row];
-        [cell setItem:[_dataArray objectAtIndex:indexPath.row]];
-        
-        //  TODO:6.0
-        //        //  默认选中
-        //        if ([[row_data objectForKey:@"_kSelected"] boolValue]){
-        //            [tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
-        //        }
+        [cell setItem:[row_data objectForKey:@"_kBlindBalance"]];
+        //  默认选中
+        if ([[row_data objectForKey:@"_kSelected"] boolValue]){
+            [tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+        }
         return cell;
     } else {
         UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
@@ -230,6 +243,10 @@ enum
 {
     if (indexPath.section == kVcBlindBalance) {
         //  选择，可处理事件。
+        id row_data = [_dataArray objectAtIndex:indexPath.row];
+        assert(row_data);
+        //  更新选中状态
+        row_data[@"_kSelected"] = @(YES);
     } else {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
         [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
@@ -242,6 +259,10 @@ enum
 {
     if (indexPath.section == kVcBlindBalance) {
         //  取消选择，可处理事件。
+        id row_data = [_dataArray objectAtIndex:indexPath.row];
+        assert(row_data);
+        //  更新选中状态
+        row_data[@"_kSelected"] = @(NO);
     } else {
         //  ...
     }
@@ -251,21 +272,21 @@ enum
 {
     NSMutableDictionary* ids = [NSMutableDictionary dictionary];
     NSMutableArray* result = [NSMutableArray array];
-    for (NSUInteger row = 0; row < [_dataArray count]; ++row) {
-        NSIndexPath* path = [NSIndexPath indexPathForRow:row inSection:kVcBlindBalance];
-        UITableViewCell* cell = (UITableViewCell*)[tableView cellForRowAtIndexPath:path];
-        //  TODO:6.0 !!!! 滚动的时候崩溃
-        assert(cell);
-        if (cell.selected) {
-            id blind_balance = [_dataArray objectAtIndex:row];
+    
+    //  获取所有选中的隐私收据
+    for (id row_data in _dataArray) {
+        if ([[row_data objectForKey:@"_kSelected"] boolValue]){
+            id blind_balance = [row_data objectForKey:@"_kBlindBalance"];
             [result addObject:blind_balance];
             ids[[[[blind_balance objectForKey:@"decrypted_memo"] objectForKey:@"amount"] objectForKey:@"asset_id"]] = @YES;
         }
     }
+    
     if ([ids count] > 1) {
         [OrgUtils makeToast:NSLocalizedString(@"kVcStTipErrPleaseSelectSameAssetReceipts", @"请选择资产名称相同的收据。")];
         return;
     }
+    
     if (_result_promise) {
         [_result_promise resolve:[result copy]];
     }

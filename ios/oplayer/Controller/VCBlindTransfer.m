@@ -511,7 +511,7 @@ enum
     int allow_maximum_blind_output = 5;
     if ([_data_array_blind_output count] >= allow_maximum_blind_output) {
         //  TODO:6.0 lang
-        [OrgUtils makeToast:[NSString stringWithFormat:@"最多只能添加 %@ 个隐私输出。", @(allow_maximum_blind_output)]];
+        [OrgUtils makeToast:[NSString stringWithFormat:@"最多只能添加 %@ 个收款信息。", @(allow_maximum_blind_output)]];
         return;
     }
     
@@ -572,7 +572,9 @@ enum
 
 - (void)onAddOneInputClicked
 {
-    [VCStealthTransferHelper processSelectReceipts:self callback:^(id new_blind_balance_array) {
+    [VCStealthTransferHelper processSelectReceipts:self
+                          curr_blind_balance_arary:_data_array_blind_input
+                                          callback:^(id new_blind_balance_array) {
         //  添加
         [self onSelectBlindBalanceDone:new_blind_balance_array];
         [self onCalcAutoChange];
