@@ -798,6 +798,8 @@
 "kVcStCellTitleActualAmount" = "实际到账";//TODO:
 "kVcStTipUiImportReceipt" = "【温馨提示】\n导入收据同时支持APP生成的收据和CLI命令行钱包收据格式。\n如果隐私收据丢失，可尝试直接输入转账对应区块编号进行导入。";//TODO:
 "kVcStTipLabelTransferFromBlindSuccess" = "从隐私转出成功";//TODO:
+"kVcStTipEmptyNoBlindBalance" = "没有任何隐私收据。";//TODO:
+"kVcStBtnSelectDone" = "确定";//TODO:
 
 /* HTLC合约 */
 "kVcHtlcEntryFromPreimage" = "Create HTLC (by preimage)";

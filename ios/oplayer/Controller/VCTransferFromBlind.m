@@ -458,7 +458,9 @@ enum
 
 - (void)onAddOneClicked
 {
-    [VCStealthTransferHelper processSelectReceipts:self callback:^(id new_blind_balance_array) {
+    [VCStealthTransferHelper processSelectReceipts:self
+                          curr_blind_balance_arary:_data_array_blind_input
+                                          callback:^(id new_blind_balance_array) {
         assert(new_blind_balance_array);
         //  添加
         [self onSelectBlindBalanceDone:new_blind_balance_array];

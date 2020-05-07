@@ -56,6 +56,8 @@
 /*
  *  (public) 选择收据（隐私交易的的 input 部分）
  */
-+ (void)processSelectReceipts:(VCBase*)this_ callback:(void (^)(id new_blind_balance_array))callback;
++ (void)processSelectReceipts:(VCBase*)this_
+     curr_blind_balance_arary:(NSArray*)curr_blind_balance_arary
+                     callback:(void (^)(id new_blind_balance_array))callback;
 
 @end
