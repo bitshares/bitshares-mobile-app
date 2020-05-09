@@ -107,8 +107,7 @@ enum
 
 - (NSString*)genTransferTipsMessage
 {
-    //  TODO:6.0 lang
-    return @"【温馨提示】\n隐私转入：即从比特股公开账号向隐私账户转账。并且可同时向多个隐私账户转账。";
+    return NSLocalizedString(@"kVcStTipUiTransferToBlind", @"【温馨提示】\n隐私转入：即从比特股公开账号向隐私账户转账。并且可同时向多个隐私账户转账。");
 }
 
 - (void)viewDidLoad
@@ -384,14 +383,14 @@ enum
     VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:enstAssetAll callback:^(id asset_info) {
         if (asset_info){
             if (![ModelUtils assetAllowConfidential:asset_info]) {
-                //  TODO:6.0 lang
-                [OrgUtils makeToast:[NSString stringWithFormat:@"资产 %@ 已禁止隐私转账。", asset_info[@"symbol"]]];
+                [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcStTipErrForbidBlindTransfer", @"资产 %@ 已禁止隐私转账。"),
+                                     asset_info[@"symbol"]]];
             } else if ([ModelUtils assetIsTransferRestricted:asset_info]) {
-                //  TODO:6.0 lang
-                [OrgUtils makeToast:[NSString stringWithFormat:@"资产 %@ 禁止转账。", asset_info[@"symbol"]]];
+                [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcStTipErrForbidNormalTransfer", @"资产 %@ 禁止转账。"),
+                                     asset_info[@"symbol"]]];
             } else if ([ModelUtils assetNeedWhiteList:asset_info]) {
-                //  TODO:6.0 lang
-                [OrgUtils makeToast:[NSString stringWithFormat:@"资产 %@ 已开启白名单，禁止隐私转账。", asset_info[@"symbol"]]];
+                [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcStTipErrNeedWhiteList", @"资产 %@ 已开启白名单，禁止隐私转账。"),
+                                     asset_info[@"symbol"]]];
             } else {
                 NSString* new_id = [asset_info objectForKey:@"id"];
                 NSString* old_id = [_curr_asset objectForKey:@"id"];
@@ -426,8 +425,8 @@ enum
     //  可配置：限制最大隐私输出数量
     int allow_maximum_blind_output = 5;
     if ([_data_array_blind_output count] >= allow_maximum_blind_output) {
-        //  TODO:6.0 lang
-        [OrgUtils makeToast:[NSString stringWithFormat:@"最多只能添加 %@ 个收款信息。", @(allow_maximum_blind_output)]];
+        [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcStTipErrReachedMaxBlindOutputNum", @"最多只能添加 %@ 个收款信息。"),
+                             @(allow_maximum_blind_output)]];
         return;
     }
     
@@ -476,17 +475,9 @@ enum
 
 - (void)onSubmitClicked
 {
-    //  TODO:6.0 DEBUG 临时清空
-    //    AppCacheManager* pAppCahce = [AppCacheManager sharedAppCacheManager];
-    //    for (id vi in [[pAppCahce getAllBlindBalance] allValues]) {
-    //        [pAppCahce removeBlindBalance:vi];
-    //    }
-    //    [pAppCahce saveStealthReceiptToFile];
-    //    return;
-    
     NSInteger i_output_count = [_data_array_blind_output count];
     if (i_output_count <= 0) {
-        [OrgUtils makeToast:@"请添加隐私输出。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcStTipSubmitPleaseAddBlindOutput", @"请添加收款信息。")];
         return;
     }
     
@@ -500,7 +491,7 @@ enum
         n_max_balance = [n_max_balance decimalNumberBySubtracting:n_core_fee];
     }
     if ([n_max_balance compare:n_total] < 0) {
-        [OrgUtils makeToast:@"余额不足。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcStTipSubmitBalanceNotEnough", @"余额不足。")];
         return;
     }
     
@@ -532,14 +523,16 @@ enum
     
     NSString* value;
     if (i_output_count > 1) {
-        value = [NSString stringWithFormat:@"您确定往 %@ 个隐私账户合计转入 %@ %@ 吗？",
+        value = [NSString stringWithFormat:NSLocalizedString(@"kVcStTipAskConfrimTransferToBlindN", @"您确定往 %@ 个隐私账户合计转入 %@ %@ 吗？\n\n广播手续费：%@ %@"),
                  @(i_output_count),
                  n_total,
-                 _curr_asset[@"symbol"]];
+                 _curr_asset[@"symbol"],
+                 n_core_fee, core_asset[@"symbol"]];
     } else {
-        value = [NSString stringWithFormat:@"您确定往隐私账户转入 %@ %@ 吗？",
+        value = [NSString stringWithFormat:NSLocalizedString(@"kVcStTipAskConfrimTransferToBlind1", @"您确定往隐私账户转入 %@ %@ 吗？\n\n广播手续费：%@ %@"),
                  n_total,
-                 _curr_asset[@"symbol"]];
+                 _curr_asset[@"symbol"],
+                 n_core_fee, core_asset[@"symbol"]];
     }
     [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:value
                                                            withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")

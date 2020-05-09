@@ -12,6 +12,7 @@
 #import "VerticalAlignmentLabel.h"
 
 #import "ThemeManager.h"
+#import "AppCacheManager.h"
 
 @implementation ViewUtils
 
@@ -163,5 +164,49 @@
                                                         NSFontAttributeName:font}];
 }
 
+/*
+ *  (public) 根据隐私账户地址获取隐私账户显示名称。
+ */
++ (NSString*)genBlindAccountDisplayName:(NSString*)blind_account_public_key
+{
+    AppCacheManager* pAppCache = [AppCacheManager sharedAppCacheManager];
+    id blind_account = [pAppCache queryBlindAccount:blind_account_public_key];
+    if (!blind_account) {
+        //  获取账号失败
+        return nil;
+    }
+    
+    NSString* alias_name = @"";
+    id parent_key = [blind_account objectForKey:@"parent_key"];
+    if (parent_key && ![parent_key isEqualToString:@""]) {
+        //  子账号（获取父账号）
+        id parent_blind_account = [pAppCache queryBlindAccount:parent_key];
+        assert(parent_blind_account);
+        alias_name = [parent_blind_account objectForKey:@"alias_name"];
+        NSInteger child_idx = [[blind_account objectForKey:@"child_key_index"] integerValue] + 1;
+        switch (child_idx) {
+            case 1:
+                alias_name = [NSString stringWithFormat:NSLocalizedString(@"kVcStCellSubAccount1st", @"%@的第 1 个子账号"),
+                              alias_name];
+                break;
+            case 2:
+                alias_name = [NSString stringWithFormat:NSLocalizedString(@"kVcStCellSubAccount2nd", @"%@的第 %@ 个子账号"),
+                              alias_name, @(child_idx)];
+                break;
+            case 3:
+                alias_name = [NSString stringWithFormat:NSLocalizedString(@"kVcStCellSubAccount3rd", @"%@的第 %@ 个子账号"),
+                              alias_name, @(child_idx)];
+                break;
+            default:
+                alias_name = [NSString stringWithFormat:NSLocalizedString(@"kVcStCellSubAccountnth", @"%@的第 %@ 个子账号"),
+                              alias_name, @(child_idx)];
+                break;
+        }
+        return alias_name;
+    } else {
+        //  主账号
+        return [blind_account objectForKey:@"alias_name"];
+    }
+}
 
 @end

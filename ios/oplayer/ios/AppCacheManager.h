@@ -40,6 +40,8 @@ typedef enum EWalletMode
 - (NSMutableDictionary*)getAllBlindAccounts;
 - (AppCacheManager*)appendBlindAccount:(id)blind_account autosave:(BOOL)autosave;
 - (AppCacheManager*)removeBlindAccount:(id)blind_account autosave:(BOOL)autosave;
+- (id)queryBlindAccount:(NSString*)public_key;
+
 /*
  *  (public) 管理所有隐私收据：获取、添加、删除。
  */

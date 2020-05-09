@@ -176,7 +176,6 @@
     }
     cell.showCustomBottomLine = YES;
     cell.row = indexPath.row;
-    [cell setTagData:indexPath.row];
     [cell setItem:[_dataArray objectAtIndex:indexPath.row]];
     return cell;
 }

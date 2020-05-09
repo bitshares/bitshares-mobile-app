@@ -131,8 +131,7 @@ enum
 
 - (NSString*)genTransferTipsMessage
 {
-    //  TODO:6.0 lang
-    return @"【温馨提示】\n隐私转账：即在多个隐私账户之间进行转账操作。\n\n找零和赠与：收据总金额减去输出总金额的剩余金额，如果满足找零所需手续费，则会自动找零到我的隐私账户，否则会自动赠与给第一个隐私账户。";
+    return NSLocalizedString(@"kVcStTipUiBlindTransfer", @"【温馨提示】\n隐私转账：即在多个隐私账户之间进行转账操作。\n\n找零和赠与：收据总金额减去输出总金额的剩余金额，如果满足找零所需手续费，则会自动找零到我的隐私账户，否则会自动赠与给第一个隐私账户。");
 }
 
 - (void)viewDidLoad
@@ -503,15 +502,15 @@ enum
 - (void)onAddOneOutputClicked
 {
     if ([_data_array_blind_input count] <= 0) {
-        [OrgUtils makeToast:@"请先选择隐私收据。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcStTipErrPleaseSelectReceiptFirst", @"请先选择隐私收据。")];
         return;
     }
     
     //  可配置：限制最大隐私输出数量
     int allow_maximum_blind_output = 5;
     if ([_data_array_blind_output count] >= allow_maximum_blind_output) {
-        //  TODO:6.0 lang
-        [OrgUtils makeToast:[NSString stringWithFormat:@"最多只能添加 %@ 个收款信息。", @(allow_maximum_blind_output)]];
+        [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcStTipErrReachedMaxBlindOutputNum", @"最多只能添加 %@ 个收款信息。"),
+                             @(allow_maximum_blind_output)]];
         return;
     }
     
@@ -558,7 +557,6 @@ enum
     if (new_blind_balance_array && [new_blind_balance_array count] > 0) {
         [_data_array_blind_input addObjectsFromArray:new_blind_balance_array];
     }
-    //  TODO:6.0 更新asset
     if ([_data_array_blind_input count] > 0) {
         id amount = [[[_data_array_blind_input firstObject] objectForKey:@"decrypted_memo"] objectForKey:@"amount"];
         _curr_blind_asset = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:[amount objectForKey:@"asset_id"]];
@@ -613,19 +611,16 @@ enum
 {
     //  检测输入参数有效性
     if ([_data_array_blind_input count] <= 0) {
-        [OrgUtils makeToast:@"请添加要转出的隐私收据信息。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcStTipSubmitPleaseSelectReceipt", @"请添加要转出的隐私收据信息。")];
         return;
     }
     
     NSDecimalNumber* n_zero = [NSDecimalNumber zero];
     NSDecimalNumber* n_total_input = [self calcBlindInputTotalAmount];
-    if ([n_total_input compare:n_zero] <= 0) {
-        [OrgUtils makeToast:@"无效收据，余额信息为空。"];
-        return;
-    }
+    assert([n_total_input compare:n_zero] > 0);
     
     if ([_data_array_blind_output count] <= 0) {
-        [OrgUtils makeToast:@"请添加隐私输出地址和数量。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcStTipSubmitPleaseAddBlindOutput", @"请添加收款信息。")];
         return;
     }
     NSDecimalNumber* n_total_output = [self calcBlindOutputTotalAmount];
@@ -648,13 +643,14 @@ enum
     } else {
         n_fee = [self calcNetworkFee:nil];
         if (!n_fee) {
-            [OrgUtils makeToast:[NSString stringWithFormat:@"资产 %@ 手续费汇率未正确设置，不可转账。", _curr_blind_asset[@"symbol"]]];
+            [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcStTipErrCannotBlindTransferInvalidCER", @"资产 %@ 手续费汇率未正确设置，不可转账。"),
+                                 _curr_blind_asset[@"symbol"]]];
             return;
         }
         //  自动赠与（找零金额不足支持1个output的手续费时，考虑自动赠与给第一个output。）
         n_gift = [[n_total_input decimalNumberBySubtracting:n_total_output] decimalNumberBySubtracting:n_fee];
         if ([n_gift compare:n_zero] < 0) {
-            [OrgUtils makeToast:@"收据总金额不足。"];
+            [OrgUtils makeToast:NSLocalizedString(@"kVcStTipErrTotalInputReceiptNotEnough", @"收据总金额不足。")];
             return;
         }
         //  REMARK：gift 应该小于一个 output 的手续费，当然这里也应该小于总的手续费。
@@ -682,23 +678,23 @@ enum
         }
     }
     
-    //  二次确认 TODO:6.0 lang
+    //  二次确认
     NSString* value;
     NSString* symbol = [_curr_blind_asset objectForKey:@"symbol"];
     if (_auto_change_blind_output) {
-        value = [NSString stringWithFormat:@"您确定往 %@ 个隐私账户转账 %@ %@ 吗?\n\n自动找零 %@ %@\n\n广播手续费：%@ %@",
+        value = [NSString stringWithFormat:NSLocalizedString(@"kVcStTipAskConfrimBlindTransferWithAutoChange", @"您确定往 %@ 个隐私账户转账 %@ %@ 吗?\n\n自动找零 %@ %@\n\n广播手续费：%@ %@"),
                  @([_data_array_blind_output count]),
                  n_total_output, symbol,
                  [_auto_change_blind_output objectForKey:@"n_amount"], symbol,
                  n_fee, symbol];
     } else if (n_gift) {
-        value = [NSString stringWithFormat:@"您确定往 %@ 个隐私账户转账 %@ %@ 吗?\n\n自动赠与 %@ %@\n\n广播手续费：%@ %@",
+        value = [NSString stringWithFormat:NSLocalizedString(@"kVcStTipAskConfrimBlindTransferWithAutoGift", @"您确定往 %@ 个隐私账户转账 %@ %@ 吗?\n\n自动赠与 %@ %@\n\n广播手续费：%@ %@"),
                  @([_data_array_blind_output count]),
                  n_total_output, symbol,
                  n_gift, symbol,
                  n_fee, symbol];
     } else {
-        value = [NSString stringWithFormat:@"您确定往 %@ 个隐私账户转账 %@ %@ 吗?\n\n广播手续费：%@ %@",
+        value = [NSString stringWithFormat:NSLocalizedString(@"kVcStTipAskConfrimBlindTransfer", @"您确定往 %@ 个隐私账户转账 %@ %@ 吗?\n\n广播手续费：%@ %@"),
                  @([_data_array_blind_output count]),
                  n_total_output, symbol,
                  n_fee, symbol];

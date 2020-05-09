@@ -100,9 +100,7 @@ enum
     
     CGRect rect = [self makeTextFieldRect];
     
-    //  TODO:6.0 lang
-    NSString* placeHolderAuthority = @"请输入您或他人的隐私账户";
-    
+    NSString* placeHolderAuthority = NSLocalizedString(@"kVcStCellPlaceholderOutputAccountAddr", @"请输入您或他人的隐私账户");
     _tf_authority = [self createTfWithRect:rect keyboard:UIKeyboardTypeDefault placeholder:placeHolderAuthority];
     _tf_authority.updateClearButtonTintColor = YES;
     _tf_authority.showBottomLine = YES;
@@ -113,7 +111,7 @@ enum
     //  TODO:6.0 扫一扫？
     UIButton* btnSearch = [UIButton buttonWithType:UIButtonTypeSystem];
     btnSearch.titleLabel.font = [UIFont systemFontOfSize:13];
-    [btnSearch setTitle:@"我的账户" forState:UIControlStateNormal];
+    [btnSearch setTitle:NSLocalizedString(@"kVcStCellTailerButtonMyAccounts", @"联系人") forState:UIControlStateNormal];
     [btnSearch setTitleColor:theme.textColorHighlight forState:UIControlStateNormal];
     btnSearch.userInteractionEnabled = YES;
     btnSearch.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
@@ -123,8 +121,8 @@ enum
     _tf_authority.rightViewMode = UITextFieldViewModeAlways;
     
     //  UI - 数量输入框
-    _cell_amount = [[ViewAdvTextFieldCell alloc] initWithTitle:@"数量"
-                                                   placeholder:@"请输入输出数量"
+    _cell_amount = [[ViewAdvTextFieldCell alloc] initWithTitle:NSLocalizedString(@"kVcStCellTitleOutputAmount", @"数量")
+                                                   placeholder:NSLocalizedString(@"kVcStCellPlaceholderOutputAmount", @"请输入输出数量")
                                               decimalPrecision:[[_asset objectForKey:@"precision"] integerValue]];
     if (_n_max_balance) {
         NSString* value = [NSString stringWithFormat:@"%@ %@ %@",
@@ -230,7 +228,7 @@ enum
                     cell.hideBottomLine = YES;
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                    cell.textLabel.text = @"隐私账户";//TODO:6.0
+                    cell.textLabel.text = NSLocalizedString(@"kVcStCellTitleBlindAccount", @"隐私账户");
                     cell.textLabel.font = [UIFont systemFontOfSize:13.0f];
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
                     return cell;
@@ -287,16 +285,15 @@ enum
 {
     [self endInput];
     
-    //  TODO:6.0 lang
     id str_authority = [NSString trim:_tf_authority.text];
     if (!str_authority || [str_authority isEqualToString:@""] || ![OrgUtils isValidBitsharesPublicKey:str_authority]){
-        [OrgUtils makeToast:@"请输入有效的公钥地址。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcStTipPleaseInputValidBlindAccountAddr", @"请输入有效的公钥地址。")];
         return;
     }
     
     id n_amount = [OrgUtils auxGetStringDecimalNumberValue:_cell_amount.mainTextfield.text];
     if ([n_amount compare:[NSDecimalNumber zero]] <= 0) {
-        [OrgUtils makeToast:@"请输入输出数量。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcStTipPleaseInputOutputAmountValue", @"请输入输出数量。")];
         return;
     }
     

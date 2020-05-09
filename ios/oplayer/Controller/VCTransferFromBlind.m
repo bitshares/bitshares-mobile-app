@@ -129,8 +129,7 @@ enum
 
 - (NSString*)genTransferTipsMessage
 {
-    //  TODO:6.0 lang
-    return @"【温馨提示】\n隐私转出：即从隐私账户向比特股公开账号转账。";
+    return NSLocalizedString(@"kVcStTipUiTransferFromBlind", @"【温馨提示】\n隐私转出：即从隐私账户向比特股公开账号转账。");
 }
 
 - (void)viewDidLoad
@@ -490,29 +489,27 @@ enum
 - (void)onSubmitClicked
 {
     if ([_data_array_blind_input count] <= 0) {
-        [OrgUtils makeToast:@"请添加要转出的隐私收据信息。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcStTipSubmitPleaseSelectReceipt", @"请添加要转出的隐私收据信息。")];
         return;
     }
     
     if (!_to_account) {
-        [OrgUtils makeToast:@"请选择要转出的目标账号。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcStTipErrPleaseSelectToPublicAccount", @"请选择要转出的目标账号。")];
         return;
     }
     
     NSDecimalNumber* n_total = [self calcBlindInputTotalAmount];
-    if ([n_total compare:[NSDecimalNumber zero]] <= 0) {
-        [OrgUtils makeToast:@"无效收据，余额信息为空。"];
-        return;
-    }
+    assert([n_total compare:[NSDecimalNumber zero]] > 0);
     
     assert(_curr_blind_asset);
     if (!_nFee) {
-        [OrgUtils makeToast:[NSString stringWithFormat:@"资产 %@ 手续费汇率未正确设置，不可转账。", _curr_blind_asset[@"symbol"]]];
+        [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcStTipErrCannotBlindTransferInvalidCER", @"资产 %@ 手续费汇率未正确设置，不可转账。"),
+                             _curr_blind_asset[@"symbol"]]];
         return;
     }
     
     if ([n_total compare:_nFee] <= 0) {
-        [OrgUtils makeToast:@"收据金额太低，不足以支付手续费。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcStTipErrTotalInputReceiptLowThanNetworkFee", @"收据金额太低，不足以支付手续费。")];
         return;
     }
     
@@ -558,8 +555,7 @@ enum
     
     id amount_string = [NSString stringWithFormat:@"%@ %@", n_transfer_amount, asset[@"symbol"]];
     
-    //  TODO:6.0 lang
-    id value = [NSString stringWithFormat:@"您确定从隐私账户转出 %@ 到 %@ 账号吗？\n\n广播手续费：%@ %@",
+    id value = [NSString stringWithFormat:NSLocalizedString(@"kVcStTipAskConfrimTransferFromBlind", @"您确定从隐私账户转出 %@ 到 %@ 账号吗？\n\n广播手续费：%@ %@"),
                 amount_string,
                 _to_account[@"name"],
                 n_fee, asset[@"symbol"]];
