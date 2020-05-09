@@ -96,12 +96,14 @@
     
     //  第一行 ID
     if (bChildAccount) {
-        _lbObjectID.text = [NSString stringWithFormat:@"子账户 %@", @([[_item objectForKey:@"child_key_index"] integerValue] + 1)];
-        _lbObjectID.font = [UIFont systemFontOfSize:16];
+        //  子账号
+        NSString* alias_name = [ViewUtils genBlindAccountDisplayName:[_item objectForKey:@"public_key"]];
+        _lbObjectID.text = alias_name ?: @"";
+        _lbObjectID.font = [UIFont systemFontOfSize:13];
         _lbObjectID.textColor = theme.textColorNormal;
     } else {
-        //_lbObjectID.text = [NSString stringWithFormat:@"%@. 主账号 %@", @(self.row + 1), _item[@"alias_name"]];
-        _lbObjectID.text = [NSString stringWithFormat:@"主账户 %@", _item[@"alias_name"]];
+        //  主账号
+        _lbObjectID.text = _item[@"alias_name"] ?: @"";
         _lbObjectID.font = [UIFont boldSystemFontOfSize:16];
         _lbObjectID.textColor = theme.textColorMain;
     }

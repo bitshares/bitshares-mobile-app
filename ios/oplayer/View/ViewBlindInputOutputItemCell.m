@@ -119,23 +119,24 @@
     CGFloat fLineHeight = 28.0f;
     
     if ([[_item objectForKey:@"title"] boolValue]) {
-        //  TODO:6.0 lang
         switch (_itemType) {
             case kBlindItemTypeInput:
-                _lbAuthority.text = [NSString stringWithFormat:@"隐私收据(%@)", _item[@"num"]];
+                _lbAuthority.text = [NSString stringWithFormat:NSLocalizedString(@"kVcStCellTitleBlindReceiptWithN", @"隐私收据(%@)"),
+                                     _item[@"num"]];
                 break;
             case kBlindItemTypeOutput:
-                _lbAuthority.text = [NSString stringWithFormat:@"隐私账户(%@)", _item[@"num"]];
+                _lbAuthority.text = [NSString stringWithFormat:NSLocalizedString(@"kVcStCellTitleBlindAccountWithN", @"隐私账户(%@)"),
+                                     _item[@"num"]];
                 break;
             default:
                 assert(false);
                 break;
         }
-        _lbAmount.text = @"数量";
+        _lbAmount.text = NSLocalizedString(@"kVcStCellTitleOutputAmount", @"数量");
         _lbAuthority.textColor = theme.textColorGray;
         _lbAmount.textColor = theme.textColorGray;
         
-        [_btnRemove setTitle:@"操作" forState:UIControlStateNormal];
+        [_btnRemove setTitle:NSLocalizedString(@"kVcStCellTitleOperation", @"操作") forState:UIControlStateNormal];
         [_btnRemove setTitleColor:theme.textColorGray forState:UIControlStateNormal];
         _btnRemove.userInteractionEnabled = NO;
     } else {
@@ -148,8 +149,8 @@
                 assert(decrypted_memo);
                 id amount = [decrypted_memo objectForKey:@"amount"];
                 uint32_t check = [[decrypted_memo objectForKey:@"check"] unsignedIntValue];
-
-                _lbAuthority.text = [NSString stringWithFormat:@"收据 #%@",
+                
+                _lbAuthority.text = [NSString stringWithFormat:NSLocalizedString(@"kVcStCellValueReceiptValue", @"收据 #%@"),
                                      [[[NSData dataWithBytes:&check length:sizeof(check)] hex_encode] uppercaseString]];
                 _lbAuthority.lineBreakMode = NSLineBreakByTruncatingTail;
                 id asset = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:[amount objectForKey:@"asset_id"]];
@@ -174,14 +175,14 @@
         }
         
         if ([[_item objectForKey:@"bAutoChange"] boolValue]) {
-            [_btnRemove setTitle:@"自动找零" forState:UIControlStateNormal];
+            [_btnRemove setTitle:NSLocalizedString(@"kVcStCellOperationKindAutoChange", @"自动找零") forState:UIControlStateNormal];
             [_btnRemove setTitleColor:theme.textColorGray forState:UIControlStateNormal];
             _btnRemove.userInteractionEnabled = NO;
             
             _lbAuthority.textColor = theme.textColorGray;
             _lbAmount.textColor = theme.textColorGray;
         } else {
-            [_btnRemove setTitle:@"移除" forState:UIControlStateNormal];
+            [_btnRemove setTitle:NSLocalizedString(@"kVcStCellOperationKindRemove", @"移除") forState:UIControlStateNormal];
             [_btnRemove setTitleColor:theme.textColorHighlight forState:UIControlStateNormal];
             _btnRemove.userInteractionEnabled = YES;
             
@@ -194,7 +195,7 @@
     _lbAmount.frame = CGRectMake(xOffset + fWidth * 0.6 + 12, yOffset, fWidth, fCellHeight);
     CGFloat fButtonWidth = 72.0f;
     _btnRemove.frame = CGRectMake(self.bounds.size.width - xOffset - fButtonWidth,
-                                (fCellHeight - fLineHeight) / 2.0f, fButtonWidth, fLineHeight);
+                                  (fCellHeight - fLineHeight) / 2.0f, fButtonWidth, fLineHeight);
 }
 
 @end

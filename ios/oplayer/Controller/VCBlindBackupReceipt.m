@@ -110,7 +110,7 @@ enum
     _qrImageView = [[UIImageView alloc] initWithImage:qrImage];
     _qrImageView.frame = CGRectMake((fWidth - _fQrSize) / 2, 0, _fQrSize, _fQrSize);
     
-    _cellTips = [[ViewTipsInfoCell alloc] initWithText:@"【温馨提示】\n隐私收据是隐私转账收款凭证，请妥善备份好。\n如果是转入您自身的隐私账户，收据会自动导入我的收据界面。如果是转给他人隐私账户，您需要分享收据给目标用户，用户导入收据后方可提取。"];
+    _cellTips = [[ViewTipsInfoCell alloc] initWithText:NSLocalizedString(@"kVcStTipUiBackupYourReceipt", @"【温馨提示】\n隐私收据是隐私转账收款凭证，请妥善备份好。\n如果是转入您自身的隐私账户，收据会自动导入我的收据界面。如果是转给他人隐私账户，您需要分享收据给目标用户，用户导入收据后方可提取。")];
     _cellTips.hideBottomLine = YES;
     _cellTips.hideTopLine = YES;
     _cellTips.backgroundColor = [UIColor clearColor];
@@ -183,7 +183,7 @@ enum
                     UITableViewCellBase* cell = [[UITableViewCellBase alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                    cell.textLabel.text = @"隐私转账成功，请妥善保管以下收据信息！";
+                    cell.textLabel.text = NSLocalizedString(@"kVcStLabelPleaseBackupYourReceiptText", @"隐私转账成功，请妥善保管以下收据信息！");
                     cell.textLabel.textAlignment = NSTextAlignmentCenter;
                     cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorHighlight;
                     cell.backgroundColor = [UIColor clearColor];
@@ -209,8 +209,7 @@ enum
                     break;
                 case kVcSubReceipt:
                 {
-                    //  TODO:6.0 lang
-                    ViewAddrMemoInfoCell* cell = [[ViewAddrMemoInfoCell alloc] initWithTitleText:@"复制收据"
+                    ViewAddrMemoInfoCell* cell = [[ViewAddrMemoInfoCell alloc] initWithTitleText:NSLocalizedString(@"kVcStCellButtonNameCopyReceipt", @"复制收据")
                                                                                        valueText:_blind_receipt_string];
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleBlue;
@@ -257,7 +256,7 @@ enum
                 case kVcSubReceipt:
                 {
                     [UIPasteboard generalPasteboard].string = [_blind_receipt_string copy];
-                    [OrgUtils makeToast:@"收据已复制。"];//TODO:6.0 lang
+                    [OrgUtils makeToast:NSLocalizedString(@"kVcStTipReceiptBackupCopied", @"收据已复制。")];
                 }
                     break;
                 default:
@@ -275,8 +274,7 @@ enum
 
 -(void)_onButtonDoneClicked
 {
-    //  TODO:6.0 lang
-    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:@"提取隐私资产需要收据信息，请确认您已备份好以上收据，可截图保存。"
+    [[UIAlertViewManager sharedUIAlertViewManager] showCancelConfirm:NSLocalizedString(@"kVcStTipAskConfrimForCloseBackupReceiptUI", @"提取隐私资产需要收据信息，请确认您已备份好以上收据，可截图保存。")
                                                            withTitle:NSLocalizedString(@"kWarmTips", @"温馨提示")
                                                           completion:^(NSInteger buttonIndex)
      {

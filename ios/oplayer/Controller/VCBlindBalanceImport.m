@@ -241,7 +241,6 @@ enum
 {
     [self endInput];
     
-    //  TODO:6.0 lang
     [self GuardWalletExistWithWalletMode:NSLocalizedString(@"kVcStealthTransferGuardWalletModeTips", @"隐私交易仅支持钱包模式，是否为当前的账号创建本地钱包文件？")
                                     body:^{
         id str_receipt = [NSString trim:_tv_receipt.text];
@@ -251,7 +250,7 @@ enum
             json = @{kAppBlindReceiptBlockNum:str_receipt};
         }
         if (!json) {
-            [OrgUtils makeToast:@"请输入有效收据信息。"];
+            [OrgUtils makeToast:NSLocalizedString(@"kVcStImportTipInputValidReceiptText", @"请输入有效收据信息。")];
             return;
         }
         
@@ -267,12 +266,11 @@ enum
 - (void)onImportReceiptCore:(id)receipt_json
 {
     assert(receipt_json);
-    //  TODO:6.0 lang
     id app_blind_receipt_block_num = [receipt_json objectForKey:kAppBlindReceiptBlockNum];
     if (app_blind_receipt_block_num) {
         id blind_accounts = [[[AppCacheManager sharedAppCacheManager] getAllBlindAccounts] allKeys];
         if (!blind_accounts || [blind_accounts count] <= 0) {
-            [OrgUtils makeToast:@"您的隐私账户列表为空，请先前往账户管理界面导入隐私账号。"];
+            [OrgUtils makeToast:NSLocalizedString(@"kVcStImportTipPleaseImportYourBlindAccountFirst", @"您的隐私账户列表为空，请先前往账户管理界面导入隐私账号。")];
             return;
         }
         [VcUtils simpleRequest:self
@@ -286,7 +284,7 @@ enum
         id to = [receipt_json objectForKey:@"to"];
         id to_pub = [GraphenePublicKey fromWifPublicKey:to];
         if (!to_pub) {
-            [OrgUtils makeToast:@"收据信息无效，收款地址未知。"];
+            [OrgUtils makeToast:NSLocalizedString(@"kVcStImportTipInvalidReceiptNoToPublic", @"收据信息无效，收款地址未知。")];
             return;
         }
         [self importStealthBalanceCore:@[@{@"real_to_key": to, @"stealth_memo": receipt_json}]];
@@ -295,10 +293,9 @@ enum
 
 - (void)importStealthBalanceCore:(NSArray*)data_array
 {
-    //  TODO:6.0 lang
     assert(data_array);
     if ([data_array count] <= 0) {
-        [OrgUtils makeToast:@"收据数据为空。"];
+        [OrgUtils makeToast:NSLocalizedString(@"kVcStImportTipReceiptIsEmpty", @"收据数据为空。")];
         return;
     }
     
@@ -356,29 +353,30 @@ enum
                 NSUInteger success_count = [verify_success count];
                 if (success_count == total_blind_balance_count) {
                     //  全部校验成功
-                    [OrgUtils makeToast:[NSString stringWithFormat:@"成功导入 %@ 条隐私收据。", @(success_count)]];
+                    [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcStImportTipSuccessN", @"成功导入 %@ 条隐私收据。"),
+                                         @(success_count)]];
                     [self onImportSuccessful:verify_success];
                     return nil;
                 }
                 if (success_count > 0) {
                     //  部分校验成功，部分校验失败。
-                    [OrgUtils makeToast:[NSString stringWithFormat:@"成功导入 %@ 条收据，%@ 条校验失败。",
+                    [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kVcStImportTipSuccessNandVerifyFailedN", @"成功导入 %@ 条收据，%@ 条校验失败。"),
                                          @(success_count),
                                          @([verify_failed count])]];
                     [self onImportSuccessful:verify_success];
                 } else {
                     //  全部验证失败。
-                    [OrgUtils makeToast:@"收据信息无效，校验失败。"];
+                    [OrgUtils makeToast:NSLocalizedString(@"kVcStImportTipInvalidReceiptOnchainVerifyFailed", @"收据信息无效，链上校验失败。")];
                 }
                 return nil;
             }];
         }];
     } else {
         if ([miss_key_array count] > 0) {
-            [OrgUtils makeToast:@"收据信息无效，收款地址私钥不存在。"];
+            [OrgUtils makeToast:NSLocalizedString(@"kVcStImportTipInvalidReceiptMissPriKey", @"收据信息无效，收款地址私钥不存在。")];
         } else {
             // num of decrypt_failed_array > 0
-            [OrgUtils makeToast:@"收据信息无效，校验失败。"];
+            [OrgUtils makeToast:NSLocalizedString(@"kVcStImportTipInvalidReceiptSelfCheckingFailed", @"收据信息无效，自校验失败。")];
         }
     }
 }
@@ -610,6 +608,5 @@ enum
 {
     [self endInput];
 }
-
 
 @end

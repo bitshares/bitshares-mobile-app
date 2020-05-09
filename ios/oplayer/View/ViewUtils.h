@@ -53,4 +53,9 @@
 + (NSAttributedString*)placeholderAttrString:(NSString*)placeholder;
 + (NSAttributedString*)placeholderAttrString:(NSString*)placeholder font:(UIFont*)font color:(UIColor*)color;
 
+/*
+ *  (public) 根据隐私账户地址获取隐私账户显示名称。
+ */
++ (NSString*)genBlindAccountDisplayName:(NSString*)blind_account_public_key;
+
 @end

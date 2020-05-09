@@ -78,13 +78,6 @@
     // Configure the view for the selected state
 }
 
-- (void)setTagData:(NSInteger)tag
-{
-    //    if (_btnWithdraw){
-    //        _btnWithdraw.tag = tag;
-    //    }
-}
-
 -(void)setItem:(NSDictionary*)item
 {
     if (_item != item)
@@ -115,7 +108,7 @@
     }
     CGFloat yOffset = 4.0f;
     CGFloat fWidth = self.bounds.size.width - self.layoutMargins.left - xOffset;
-
+    
     //  获取显示数据
     id decrypted_memo = [_item objectForKey:@"decrypted_memo"];
     assert(decrypted_memo);
@@ -123,7 +116,7 @@
     uint32_t check = [[decrypted_memo objectForKey:@"check"] unsignedIntValue];
     
     //  第一行 ID
-    _lbObjectID.text = [NSString stringWithFormat:@"%@. 收据 #%@", @(self.row + 1),
+    _lbObjectID.text = [NSString stringWithFormat:NSLocalizedString(@"kVcStCellTitleReceiptName", @"%@. 收据 #%@"), @(self.row + 1),
                         [[[NSData dataWithBytes:&check length:sizeof(check)] hex_encode] uppercaseString]];
     _lbObjectID.textColor = self.editing && !self.selected ? theme.textColorNormal : theme.textColorMain;
     _lbObjectID.frame = CGRectMake(xOffset, yOffset, fWidth, 28.0f);
@@ -136,9 +129,16 @@
                                                     exponent:-[[asset objectForKey:@"precision"] integerValue]
                                                   isNegative:NO];
     
-    _to_title.text = @"地址";
-    _to_value.text = [_item objectForKey:@"real_to_key"];
-    _amount_title.text = @"金额";
+    NSString* real_to_key = [_item objectForKey:@"real_to_key"];
+    NSString* alias_name = [ViewUtils genBlindAccountDisplayName:real_to_key];
+    if (alias_name && ![alias_name isEqualToString:@""]) {
+        _to_title.text = [NSString stringWithFormat:NSLocalizedString(@"kVcStCellTitleReceiptAddrWithAliasName", @"地址(%@)"), alias_name];
+    } else {
+        _to_title.text = NSLocalizedString(@"kVcStCellTitleReceiptAddr", @"地址");
+    }
+    _to_value.text = real_to_key;
+    
+    _amount_title.text = NSLocalizedString(@"kVcStCellTitleReceiptAmountValue", @"金额");
     _amount_value.text = [NSString stringWithFormat:@"%@ %@", [OrgUtils formatFloatValue:n_amount usesGroupingSeparator:NO], asset[@"symbol"]];
     
     _to_title.textColor = theme.textColorGray;

@@ -220,7 +220,6 @@ enum
         
         cell.showCustomBottomLine = YES;
         cell.row = indexPath.row;
-        [cell setTagData:indexPath.row];
         [cell setItem:[row_data objectForKey:@"_kBlindBalance"]];
         //  默认选中
         if ([[row_data objectForKey:@"_kSelected"] boolValue]){
