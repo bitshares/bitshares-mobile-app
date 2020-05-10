@@ -68,9 +68,8 @@ class BinSerializer {
             //  无效公钥地址，不写入。
             return this
         }
-        val output33 = NativeInterface.sharedNativeInterface().bts_gen_public_key_compressed(public_key)
         //  写入33字节压缩公钥
-        _io.write(output33)
+        _io.write(public_key)
         return this
     }
 
