@@ -336,7 +336,7 @@ class ActivityOtcMcAdUpdate : BtsppActivity() {
             val value = it as? String
             if (value != null) {
                 val n_value = Utils.auxGetStringDecimalNumberValue(value)
-                if (n_value == BigDecimal.ZERO) {
+                if (n_value.compareTo(BigDecimal.ZERO) == 0) {
                     _ad_infos.remove("price")
                 } else {
                     _ad_infos.put("price", n_value.toPlainString())
@@ -380,7 +380,7 @@ class ActivityOtcMcAdUpdate : BtsppActivity() {
             val value = it as? String
             if (value != null) {
                 val n_value = Utils.auxGetStringDecimalNumberValue(value)
-                if (n_value == BigDecimal.ZERO) {
+                if (n_value.compareTo(BigDecimal.ZERO) == 0) {
                     _ad_infos.remove("quantity")
                 } else {
                     _ad_infos.put("quantity", n_value.toPlainString())
@@ -398,7 +398,7 @@ class ActivityOtcMcAdUpdate : BtsppActivity() {
             val value = it as? String
             if (value != null) {
                 val n_value = Utils.auxGetStringDecimalNumberValue(value)
-                if (n_value == BigDecimal.ZERO) {
+                if (n_value.compareTo(BigDecimal.ZERO) == 0) {
                     _ad_infos.remove("lowestLimit")
                 } else {
                     _ad_infos.put("lowestLimit", n_value.toPlainString())
@@ -416,7 +416,7 @@ class ActivityOtcMcAdUpdate : BtsppActivity() {
             val value = it as? String
             if (value != null) {
                 val n_value = Utils.auxGetStringDecimalNumberValue(value)
-                if (n_value == BigDecimal.ZERO) {
+                if (n_value.compareTo(BigDecimal.ZERO) == 0) {
                     _ad_infos.remove("maxLimit")
                 } else {
                     _ad_infos.put("maxLimit", n_value.toPlainString())

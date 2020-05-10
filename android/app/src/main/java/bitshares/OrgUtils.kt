@@ -375,14 +375,14 @@ class OrgUtils {
             return if (set_divide_precision) {
                 if (invert) {
                     //  REMARK：价格失效，分母不能为0，直接返回。（比如喂价过期等情况、预测清算等）
-                    if (n_quote == n_zero) {
+                    if (n_quote.compareTo(n_zero) == 0) {
                         null
                     } else {
                         n_base.divide(n_quote, base_precision, roundingMode)
                     }
                 } else {
                     //  REMARK：价格失效，分母不能为0，直接返回。（比如喂价过期等情况、预测清算等）
-                    if (n_base == n_zero) {
+                    if (n_base.compareTo(n_zero) == 0) {
                         null
                     } else {
                         n_quote.divide(n_base, quote_precision, roundingMode)
@@ -391,14 +391,14 @@ class OrgUtils {
             } else {
                 if (invert) {
                     //  REMARK：价格失效，分母不能为0，直接返回。（比如喂价过期等情况、预测清算等）
-                    if (n_quote == n_zero) {
+                    if (n_quote.compareTo(n_zero) == 0) {
                         null
                     } else {
                         n_base.divide(n_quote, kBigDecimalDefaultMaxPrecision, roundingMode)
                     }
                 } else {
                     //  REMARK：价格失效，分母不能为0，直接返回。（比如喂价过期等情况、预测清算等）
-                    if (n_base == n_zero) {
+                    if (n_base.compareTo(n_zero) == 0) {
                         null
                     } else {
                         n_quote.divide(n_base, kBigDecimalDefaultMaxPrecision, roundingMode)
@@ -709,9 +709,7 @@ class OrgUtils {
             if (public_key == null) {
                 return null
             }
-            val output33 = native_ptr.bts_gen_public_key_compressed(public_key)
-            val digest64 = sha512(output33)
-            return rmd160(digest64)
+            return rmd160(sha512(public_key))
         }
 
         /**

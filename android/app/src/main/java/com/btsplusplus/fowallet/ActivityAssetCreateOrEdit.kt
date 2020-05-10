@@ -667,7 +667,7 @@ class ActivityAssetCreateOrEdit : BtsppActivity() {
     private fun onAssetMaxSupplyClicked() {
         onInputDecimalClicked(resources.getString(R.string.kVcAssetMgrCellTitleMaxSupply),
                 resources.getString(R.string.kVcAssetMgrCellPlaceholderMaxSupply), _precision, _max_supply_editable, null) { n_value ->
-            if (n_value == BigDecimal.ZERO) {
+            if (n_value.compareTo(BigDecimal.ZERO) == 0) {
                 _max_supply = null
             } else {
                 _max_supply = n_value
@@ -790,7 +790,7 @@ class ActivityAssetCreateOrEdit : BtsppActivity() {
      */
     private fun onSmartArgsClicked(args_title: String, args_placeholder: String, args_key: String, n_max_value: BigDecimal?, n_scale: BigDecimal?, clear_when_zero: Boolean, precision: Int) {
         onInputDecimalClicked(args_title, args_placeholder, precision, n_max_value, n_scale) { n_value ->
-            if (clear_when_zero && n_value == BigDecimal.ZERO) {
+            if (clear_when_zero && n_value.compareTo(BigDecimal.ZERO) == 0) {
                 _bitasset_options_args!!.remove(args_key)
             } else {
                 _bitasset_options_args!!.put(args_key, n_value.toInt())
