@@ -5,11 +5,70 @@ import com.btsplusplus.fowallet.NativeInterface
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.macfaq.io.LittleEndianOutputStream
 import java.io.ByteArrayOutputStream
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
 class BinSerializer {
 
     var _data: ByteArrayOutputStream = ByteArrayOutputStream()
     var _io: LittleEndianOutputStream = LittleEndianOutputStream(_data)
+
+    var _reader: ByteBuffer? = null
+
+    fun initForReader(data: ByteArray): BinSerializer {
+        _reader = ByteBuffer.wrap(data)
+        _reader!!.order(ByteOrder.LITTLE_ENDIAN)
+        return this
+    }
+
+    fun read_u8(): Int {
+        return _reader!!.get().toInt()
+    }
+
+    fun read_u16(): Int {
+        return _reader!!.short.toInt()
+    }
+
+    fun read_u32(): Long {
+        return _reader!!.int.toLong()
+    }
+
+    fun read_u64(): Long {
+        //  TODO:Long < u64
+        return _reader!!.long
+    }
+
+    fun read_s64(): Long {
+        return _reader!!.long
+    }
+
+    fun read_varint32(): Int {
+        return VarInt.getVarInt(_reader!!)
+    }
+
+    fun read_object_id(object_type: EBitsharesObjectType): String {
+        val value = read_varint32()
+        return "1.${object_type.value}.$value"
+    }
+
+    fun read_bytes(size: Int): ByteArray {
+        val len = if (size == 0) read_varint32() else size
+        if (len > 0) {
+            val dst = ByteArray(len)
+            _reader!!.get(dst, 0, len)
+            return dst
+        } else {
+            return ByteArray(0)
+        }
+    }
+
+    fun read_string(): String {
+        return read_bytes(0).utf8String()
+    }
+
+    fun read_public_key(): String {
+        return GraphenePublicKey().initWithSecp256k1PublicKey(read_bytes(33)).toWifString()
+    }
 
     fun get_data(): ByteArray {
         return _data.toByteArray()

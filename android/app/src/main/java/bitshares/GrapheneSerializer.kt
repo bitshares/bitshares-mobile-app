@@ -28,8 +28,11 @@ open class T_Base_companion {
      *  (public) 反序列化，解析二进制流为 opdata 对象。
      */
     fun parse(data: ByteArray): Any {
-//        TODO:6.0
-        return JSONObject()
+        return decode_to_opdata_with_type(this, BinSerializer().initForReader(data))!!
+    }
+
+    protected fun decode_to_opdata_with_type(optype: T_Base_companion, io: BinSerializer): Any? {
+        return optype.from_byte_buffer(io)
     }
 
     protected fun encode_to_bytes_with_type(optype: T_Base_companion, opdata: Any?, io: BinSerializer) {
@@ -118,6 +121,17 @@ open class T_Base_companion {
             val value = json.opt(field_name)
             encode_to_bytes_with_type(field_type, value, io)
         }
+    }
+
+    open fun from_byte_buffer(io: BinSerializer): Any? {
+        assert(_fields.length() > 0)
+        val result = JSONObject()
+        _fields.forEach<JSONArray> {
+            val field_name = it!!.getString(0)
+            val field_type = it.get(1) as T_Base_companion
+            result.put(field_name, decode_to_opdata_with_type(field_type, io))
+        }
+        return result
     }
 
     open fun to_object(opdata: Any?): Any? {
@@ -212,6 +226,10 @@ class T_uint8 : T_Base() {
                 else -> assert(false)
             }
         }
+
+        override fun from_byte_buffer(io: BinSerializer): Any? {
+            return io.read_u8()
+        }
     }
 }
 
@@ -223,6 +241,9 @@ class T_uint16 : T_Base() {
                 is String -> io.write_u16(opdata.toInt())
                 else -> assert(false)
             }
+        }
+        override fun from_byte_buffer(io: BinSerializer): Any? {
+            return io.read_u16()
         }
 //        override fun to_object(opdata: Any?): Any? {
 //            return when (opdata) {
@@ -243,6 +264,9 @@ class T_uint32 : T_Base() {
                 else -> assert(false)
             }
         }
+        override fun from_byte_buffer(io: BinSerializer): Any? {
+            return io.read_u32()
+        }
     }
 }
 
@@ -256,6 +280,9 @@ class T_uint64 : T_Base() {
                 else -> assert(false)
             }
         }
+        override fun from_byte_buffer(io: BinSerializer): Any? {
+            return io.read_u64()
+        }
     }
 }
 
@@ -267,6 +294,9 @@ class T_int64 : T_Base() {
                 is String -> io.write_s64(opdata.toLong())
                 else -> assert(false)
             }
+        }
+        override fun from_byte_buffer(io: BinSerializer): Any? {
+            return io.read_s64()
         }
     }
 }
@@ -280,6 +310,9 @@ class T_varint32 : T_Base() {
                 else -> assert(false)
             }
         }
+        override fun from_byte_buffer(io: BinSerializer): Any? {
+            return io.read_varint32()
+        }
     }
 }
 
@@ -288,6 +321,9 @@ class T_string : T_Base() {
         override fun to_byte_buffer(io: BinSerializer, opdata: Any?) {
             assert(opdata is String)
             io.write_string(opdata as String)
+        }
+        override fun from_byte_buffer(io: BinSerializer): Any? {
+            return io.read_string()
         }
     }
 }
@@ -302,6 +338,9 @@ class T_bool : T_Base() {
                 io.write_u8(0)
             }
         }
+        override fun from_byte_buffer(io: BinSerializer): Any? {
+            return io.read_u8() != 0
+        }
     }
 }
 
@@ -309,6 +348,10 @@ class T_void : T_Base() {
     companion object : T_Base_companion() {
         override fun to_byte_buffer(io: BinSerializer, opdata: Any?) {
             assert(false) { "(void) undefined type" }
+        }
+        override fun from_byte_buffer(io: BinSerializer): Any? {
+            assert(false) { "(void) undefined type" }
+            return super.from_byte_buffer(io)
         }
     }
 }
@@ -318,6 +361,10 @@ class T_future_extensions : T_Base() {
         override fun to_byte_buffer(io: BinSerializer, opdata: Any?) {
             assert(false) { "not supported" }
         }
+        override fun from_byte_buffer(io: BinSerializer): Any? {
+            assert(false) { "not supported" }
+            return super.from_byte_buffer(io)
+        }
     }
 }
 
@@ -325,6 +372,10 @@ class T_object_id_type : T_Base() {
     companion object : T_Base_companion() {
         override fun to_byte_buffer(io: BinSerializer, opdata: Any?) {
             assert(false) { "not supported" }
+        }
+        override fun from_byte_buffer(io: BinSerializer): Any? {
+            assert(false) { "not supported" }
+            return super.from_byte_buffer(io)
         }
     }
 }
@@ -343,6 +394,13 @@ class T_vote_id : T_Base() {
             io.write_u32(vote_idnum.shl(8).or(vote_type))
         }
 
+        override fun from_byte_buffer(io: BinSerializer): Any? {
+            val value = io.read_u32()
+            val vote_type = value.and(0xff)
+            val vote_idnum = value.shr(8)
+            return "$vote_type:$vote_idnum"
+        }
+
         override fun custom_sort_func(array: JSONArray): JSONArray {
             return sort_by(array) { obj1, obj2 ->
                 return@sort_by (obj1 as String).split(":").last().toInt() - (obj2 as String).split(":").last().toInt()
@@ -356,6 +414,10 @@ class T_public_key : T_Base() {
         override fun to_byte_buffer(io: BinSerializer, opdata: Any?) {
             assert(opdata is String)
             io.write_public_key(opdata as String)
+        }
+
+        override fun from_byte_buffer(io: BinSerializer): Any? {
+            return io.read_public_key()
         }
 
         override fun custom_sort_func(array: JSONArray): JSONArray {
@@ -375,6 +437,10 @@ class T_address : T_Base() {
         override fun to_byte_buffer(io: BinSerializer, opdata: Any?) {
             assert(false) { "not supported" }
         }
+        override fun from_byte_buffer(io: BinSerializer): Any? {
+            assert(false) { "not supported" }
+            return super.from_byte_buffer(io)
+        }
     }
 }
 
@@ -383,6 +449,10 @@ class T_time_point_sec : T_Base() {
         override fun to_byte_buffer(io: BinSerializer, opdata: Any?) {
             assert(opdata is Number)
             io.write_u32((opdata as Number).toLong())
+        }
+
+        override fun from_byte_buffer(io: BinSerializer): Any? {
+            return io.read_u32()
         }
 
         override fun to_object(opdata: Any?): Any? {
@@ -402,6 +472,10 @@ class Tm_protocol_id_type(object_type: EBitsharesObjectType) : T_Base_companion(
     override fun to_byte_buffer(io: BinSerializer, opdata: Any?) {
         //  TODO:check name 和 object_id 类型是否匹配 待处理
         io.write_object_id(opdata as String, _object_type)
+    }
+
+    override fun from_byte_buffer(io: BinSerializer): Any? {
+        return io.read_object_id(_object_type)
     }
 
     override fun to_object(opdata: Any?): Any? {
@@ -449,6 +523,21 @@ class Tm_extension(fields_def: JSONArray) : T_Base_companion() {
         }
     }
 
+    override fun from_byte_buffer(io: BinSerializer): Any? {
+        val len = io.read_varint32()
+        assert(len <= _fields_def.length()) { "Too many fields" }
+        val result = JSONObject()
+        if (len > 0) {
+            for (i in 0 until len) {
+                val idx = io.read_varint32()
+                assert(idx < _fields_def.length()) { "Index out of range" }
+                val fields = _fields_def.getJSONObject(idx)
+                result.put(fields.getString("name"), decode_to_opdata_with_type(fields.get("type") as T_Base_companion, io))
+            }
+        }
+        return result
+    }
+
     override fun to_object(opdata: Any?): Any? {
         val result = JSONObject()
         if (opdata != null) {
@@ -480,6 +569,18 @@ class Tm_array(optype: T_Base_companion) : T_Base_companion() {
         }
     }
 
+    override fun from_byte_buffer(io: BinSerializer): Any? {
+        val len = io.read_varint32()
+        val result = JSONArray()
+        if (len > 0) {
+            for (i in 0 until len) {
+                //  REMARK：数组不应该返回 null
+                result.put(decode_to_opdata_with_type(_optype, io)!!)
+            }
+        }
+        return result
+    }
+
     override fun to_object(opdata: Any?): Any? {
         assert(opdata is JSONArray)
         val ary = opdata as JSONArray
@@ -507,6 +608,20 @@ class Tm_map(key_optype: T_Base_companion, value_optype: T_Base_companion) : T_B
             encode_to_bytes_with_type(_key_optype, pair.get(0), io)
             encode_to_bytes_with_type(_value_optype, pair.get(1), io)
         }
+    }
+
+    override fun from_byte_buffer(io: BinSerializer): Any? {
+        val len = io.read_varint32()
+        val result = JSONArray()
+        if (len > 0) {
+            for (i in 0 until len) {
+                //  REMARK：数组不应该返回 null
+                val key = decode_to_opdata_with_type(_key_optype, io)!!
+                val value = decode_to_opdata_with_type(_value_optype, io)!!
+                result.put(jsonArrayfrom(key, value))
+            }
+        }
+        return result
     }
 
     override fun to_object(opdata: Any?): Any? {
@@ -537,6 +652,18 @@ class Tm_set(optype: T_Base_companion) : T_Base_companion() {
         }
     }
 
+    override fun from_byte_buffer(io: BinSerializer): Any? {
+        val len = io.read_varint32()
+        val result = JSONArray()
+        if (len > 0) {
+            for (i in 0 until len) {
+                //  REMARK：数组不应该返回 null
+                result.put(decode_to_opdata_with_type(_optype, io)!!)
+            }
+        }
+        return result
+    }
+
     override fun to_object(opdata: Any?): Any? {
         assert(opdata == null || (opdata is JSONArray))
         val result = JSONArray()
@@ -565,6 +692,15 @@ class Tm_bytes(size: Int? = null) : T_Base_companion() {
         }
     }
 
+    override fun from_byte_buffer(io: BinSerializer): Any? {
+        val size = if (_size != null) {
+            _size!!
+        } else {
+            io.read_varint32()
+        }
+        return io.read_bytes(size)
+    }
+
     override fun to_object(opdata: Any?): Any? {
         assert(opdata is ByteArray)
         val bytes = opdata as ByteArray
@@ -582,6 +718,15 @@ class Tm_optional(optype: T_Base_companion) : T_Base_companion() {
         } else {
             io.write_u8(1)
             encode_to_bytes_with_type(_optype, opdata, io)
+        }
+    }
+
+    override fun from_byte_buffer(io: BinSerializer): Any? {
+        val flag = io.read_u8()
+        if (flag == 0) {
+            return null
+        } else {
+            return decode_to_opdata_with_type(_optype, io)
         }
     }
 
@@ -608,6 +753,14 @@ class Tm_static_variant(optypearray: JSONArray) : T_Base_companion() {
         //  1、write typeid  2、write opdata
         io.write_varint32(type_id)
         encode_to_bytes_with_type(optype, opdata.last(), io)
+    }
+
+    override fun from_byte_buffer(io: BinSerializer): Any? {
+        val type_id = io.read_varint32()
+        assert(type_id < _optypearray.length()) { "Invalid type id" }
+        val optype = _optypearray.get(type_id) as T_Base_companion
+        //  REMARK：数组不应该返回 null
+        return jsonArrayfrom(type_id, decode_to_opdata_with_type(optype, io)!!)
     }
 
     override fun to_object(opdata: Any?): Any? {
@@ -1194,6 +1347,13 @@ class T_operation : T_Base() {
             //  1、write opcode    2、write opdata
             io.write_varint32(opcode)
             encode_to_bytes_with_type(optype, ary.get(1), io)
+        }
+
+        override fun from_byte_buffer(io: BinSerializer): Any? {
+            val opcode = io.read_varint32()
+            val optype = _get_optype_from_opcode(opcode)
+            //  REMARK：数组不应该返回 null
+            return jsonArrayfrom(opcode, decode_to_opdata_with_type(optype, io)!!)
         }
 
         override fun to_object(opdata: Any?): Any? {
