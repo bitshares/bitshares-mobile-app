@@ -18,10 +18,18 @@ open class T_Base_companion {
     }
 
     /**
-     * (public) 编码为 object 对象。
+     *  (public) 序列化为 json 对象。这里新返回的 json 对象和原参数的 opdata 差别不大，主要是一些 NSData 等二进制流会转换为 16 进制编码。
      */
     fun encode_to_object(opdata: Any): Any {
         return encode_to_object_with_type(this, opdata)!!
+    }
+
+    /**
+     *  (public) 反序列化，解析二进制流为 opdata 对象。
+     */
+    fun parse(data: ByteArray): Any {
+//        TODO:6.0
+        return JSONObject()
     }
 
     protected fun encode_to_bytes_with_type(optype: T_Base_companion, opdata: Any?, io: BinSerializer) {
@@ -75,6 +83,19 @@ open class T_Base_companion {
         T_asset_issue.register_subfields()
         T_asset_claim_pool.register_subfields()
         T_asset_update_issuer.register_subfields()
+
+        T_assert_predicate_account_name_eq_lit.register_subfields()
+        T_assert_predicate_asset_symbol_eq_lit.register_subfields()
+        T_assert_predicate_block_id.register_subfields()
+        T_assert.register_subfields()
+
+        T_stealth_confirmation_memo_data.register_subfields()
+        T_stealth_confirmation.register_subfields()
+        T_blind_input.register_subfields()
+        T_blind_output.register_subfields()
+        T_transfer_to_blind.register_subfields()
+        T_transfer_from_blind.register_subfields()
+        T_blind_transfer.register_subfields()
 
         T_transaction.register_subfields()
         T_signed_transaction.register_subfields()
@@ -375,12 +396,12 @@ class T_time_point_sec : T_Base() {
 /***
  * 以下为动态扩展类型
  */
-class Tm_protocol_id_type(name: String) : T_Base_companion() {
-    private var _name: String = name
+class Tm_protocol_id_type(object_type: EBitsharesObjectType) : T_Base_companion() {
+    private var _object_type = object_type
 
     override fun to_byte_buffer(io: BinSerializer, opdata: Any?) {
         //  TODO:check name 和 object_id 类型是否匹配 待处理
-        io.write_object_id(opdata as String)
+        io.write_object_id(opdata as String, _object_type)
     }
 
     override fun to_object(opdata: Any?): Any? {
@@ -618,7 +639,7 @@ class T_asset : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("amount", T_int64)
-            add_field("asset_id", Tm_protocol_id_type("asset"))
+            add_field("asset_id", Tm_protocol_id_type(EBitsharesObjectType.ebot_asset))
         }
     }
 }
@@ -638,8 +659,8 @@ class T_transfer : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("from", Tm_protocol_id_type("account"))
-            add_field("to", Tm_protocol_id_type("account"))
+            add_field("from", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
+            add_field("to", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
             add_field("amount", T_asset)
             add_field("memo", Tm_optional(T_memo_data))
             add_field("extensions", Tm_set(T_future_extensions))
@@ -651,7 +672,7 @@ class T_limit_order_create : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("seller", Tm_protocol_id_type("account"))
+            add_field("seller", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
             add_field("amount_to_sell", T_asset)
             add_field("min_to_receive", T_asset)
             add_field("expiration", T_time_point_sec)
@@ -665,8 +686,8 @@ class T_limit_order_cancel : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("fee_paying_account", Tm_protocol_id_type("account"))
-            add_field("order", Tm_protocol_id_type("limit_order"))
+            add_field("fee_paying_account", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
+            add_field("order", Tm_protocol_id_type(EBitsharesObjectType.ebot_limit_order))
             add_field("extensions", Tm_set(T_future_extensions))
         }
     }
@@ -676,7 +697,7 @@ class T_call_order_update : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("funding_account", Tm_protocol_id_type("account"))
+            add_field("funding_account", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
             add_field("delta_collateral", T_asset)
             add_field("delta_debt", T_asset)
             add_field("extensions", Tm_extension(JSONArray().apply {
@@ -693,7 +714,7 @@ class T_authority : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("weight_threshold", T_uint32)
-            add_field("account_auths", Tm_map(Tm_protocol_id_type("account"), T_uint16))
+            add_field("account_auths", Tm_map(Tm_protocol_id_type(EBitsharesObjectType.ebot_account), T_uint16))
             add_field("key_auths", Tm_map(T_public_key, T_uint16))
             add_field("address_auths", Tm_map(T_address, T_uint16))
         }
@@ -704,7 +725,7 @@ class T_account_options : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("memo_key", T_public_key)
-            add_field("voting_account", Tm_protocol_id_type("account"))
+            add_field("voting_account", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
             add_field("num_witness", T_uint16)
             add_field("num_committee", T_uint16)
             add_field("votes", Tm_set(T_vote_id))
@@ -717,8 +738,8 @@ class T_account_create : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("registrar", Tm_protocol_id_type("account"))
-            add_field("referrer", Tm_protocol_id_type("account"))
+            add_field("registrar", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
+            add_field("referrer", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
             add_field("referrer_percent", T_uint16)
             add_field("name", T_string)
             add_field("owner", T_authority)
@@ -733,7 +754,7 @@ class T_account_update : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("account", Tm_protocol_id_type("account"))
+            add_field("account", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
             add_field("owner", Tm_optional(T_authority))
             add_field("active", Tm_optional(T_authority))
             add_field("new_options", Tm_optional(T_account_options))
@@ -746,7 +767,7 @@ class T_account_upgrade : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("account_to_upgrade", Tm_protocol_id_type("account"))
+            add_field("account_to_upgrade", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
             add_field("upgrade_to_lifetime_member", T_bool)
             add_field("extensions", Tm_set(T_future_extensions))
         }
@@ -757,8 +778,8 @@ class T_account_transfer : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("account_id", Tm_protocol_id_type("account"))
-            add_field("new_owner", Tm_protocol_id_type("account"))
+            add_field("account_id", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
+            add_field("new_owner", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
             add_field("extensions", Tm_set(T_future_extensions))
         }
     }
@@ -768,8 +789,8 @@ class T_vesting_balance_withdraw : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("vesting_balance", Tm_protocol_id_type("vesting_balance"))
-            add_field("owner", Tm_protocol_id_type("account"))
+            add_field("vesting_balance", Tm_protocol_id_type(EBitsharesObjectType.ebot_vesting_balance))
+            add_field("owner", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
             add_field("amount", T_asset)
         }
     }
@@ -787,7 +808,7 @@ class T_proposal_create : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("fee_paying_account", Tm_protocol_id_type("account"))
+            add_field("fee_paying_account", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
             add_field("expiration_time", T_time_point_sec)
             add_field("proposed_ops", Tm_array(T_op_wrapper))
             add_field("review_period_seconds", Tm_optional(T_uint32))
@@ -800,12 +821,12 @@ class T_proposal_update : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("fee_paying_account", Tm_protocol_id_type("account"))
-            add_field("proposal", Tm_protocol_id_type("proposal"))
-            add_field("active_approvals_to_add", Tm_set(Tm_protocol_id_type("account")))
-            add_field("active_approvals_to_remove", Tm_set(Tm_protocol_id_type("account")))
-            add_field("owner_approvals_to_add", Tm_set(Tm_protocol_id_type("account")))
-            add_field("owner_approvals_to_remove", Tm_set(Tm_protocol_id_type("account")))
+            add_field("fee_paying_account", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
+            add_field("proposal", Tm_protocol_id_type(EBitsharesObjectType.ebot_proposal))
+            add_field("active_approvals_to_add", Tm_set(Tm_protocol_id_type(EBitsharesObjectType.ebot_account)))
+            add_field("active_approvals_to_remove", Tm_set(Tm_protocol_id_type(EBitsharesObjectType.ebot_account)))
+            add_field("owner_approvals_to_add", Tm_set(Tm_protocol_id_type(EBitsharesObjectType.ebot_account)))
+            add_field("owner_approvals_to_remove", Tm_set(Tm_protocol_id_type(EBitsharesObjectType.ebot_account)))
             add_field("key_approvals_to_add", Tm_set(T_public_key))
             add_field("key_approvals_to_remove", Tm_set(T_public_key))
             add_field("extensions", Tm_set(T_future_extensions))
@@ -817,9 +838,9 @@ class T_proposal_delete : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("fee_paying_account", Tm_protocol_id_type("account"))
+            add_field("fee_paying_account", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
             add_field("using_owner_authority", T_bool)
-            add_field("proposal", Tm_protocol_id_type("proposal"))
+            add_field("proposal", Tm_protocol_id_type(EBitsharesObjectType.ebot_proposal))
             add_field("extensions", Tm_set(T_future_extensions))
         }
     }
@@ -843,10 +864,10 @@ class T_asset_options : T_Base() {
             add_field("issuer_permissions", T_uint16)
             add_field("flags", T_uint16)
             add_field("core_exchange_rate", T_price)
-            add_field("whitelist_authorities", Tm_set(Tm_protocol_id_type("account")))
-            add_field("blacklist_authorities", Tm_set(Tm_protocol_id_type("account")))
-            add_field("whitelist_markets", Tm_set(Tm_protocol_id_type("asset")))
-            add_field("blacklist_markets", Tm_set(Tm_protocol_id_type("asset")))
+            add_field("whitelist_authorities", Tm_set(Tm_protocol_id_type(EBitsharesObjectType.ebot_account)))
+            add_field("blacklist_authorities", Tm_set(Tm_protocol_id_type(EBitsharesObjectType.ebot_account)))
+            add_field("whitelist_markets", Tm_set(Tm_protocol_id_type(EBitsharesObjectType.ebot_asset)))
+            add_field("blacklist_markets", Tm_set(Tm_protocol_id_type(EBitsharesObjectType.ebot_asset)))
             add_field("description", T_string)
             add_field("extensions", Tm_extension(JSONArray().apply {
                 put(JSONObject().apply {
@@ -855,7 +876,7 @@ class T_asset_options : T_Base() {
                 })
                 put(JSONObject().apply {
                     put("name", "whitelist_market_fee_sharing")
-                    put("type", Tm_set(Tm_protocol_id_type("account")))
+                    put("type", Tm_set(Tm_protocol_id_type(EBitsharesObjectType.ebot_account)))
                 })
             }))
         }
@@ -870,7 +891,7 @@ class T_bitasset_options : T_Base() {
             add_field("force_settlement_delay_sec", T_uint32)
             add_field("force_settlement_offset_percent", T_uint16)
             add_field("maximum_force_settlement_volume", T_uint16)
-            add_field("short_backing_asset", Tm_protocol_id_type("asset"))
+            add_field("short_backing_asset", Tm_protocol_id_type(EBitsharesObjectType.ebot_asset))
             add_field("extensions", Tm_set(T_future_extensions))
         }
     }
@@ -880,7 +901,7 @@ class T_asset_create : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("issuer", Tm_protocol_id_type("account"))
+            add_field("issuer", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
             add_field("symbol", T_string)
             add_field("precision", T_uint8)
             add_field("common_options", T_asset_options)
@@ -895,8 +916,8 @@ class T_asset_global_settle : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("issuer", Tm_protocol_id_type("account"))
-            add_field("asset_to_settle", Tm_protocol_id_type("asset"))
+            add_field("issuer", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
+            add_field("asset_to_settle", Tm_protocol_id_type(EBitsharesObjectType.ebot_asset))
             add_field("settle_price", T_price)
             add_field("extensions", Tm_set(T_future_extensions))
         }
@@ -907,7 +928,7 @@ class T_asset_settle : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("account", Tm_protocol_id_type("account"))
+            add_field("account", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
             add_field("amount", T_asset)
             add_field("extensions", Tm_set(T_future_extensions))
         }
@@ -918,9 +939,9 @@ class T_asset_update : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("issuer", Tm_protocol_id_type("account"))
-            add_field("asset_to_update", Tm_protocol_id_type("asset"))
-            add_field("new_issuer", Tm_optional(Tm_protocol_id_type("account")))
+            add_field("issuer", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
+            add_field("asset_to_update", Tm_protocol_id_type(EBitsharesObjectType.ebot_asset))
+            add_field("new_issuer", Tm_optional(Tm_protocol_id_type(EBitsharesObjectType.ebot_account)))
             add_field("new_options", T_asset_options)
             add_field("extensions", Tm_set(T_future_extensions))
         }
@@ -931,8 +952,8 @@ class T_asset_update_bitasset : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("issuer", Tm_protocol_id_type("account"))
-            add_field("asset_to_update", Tm_protocol_id_type("asset"))
+            add_field("issuer", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
+            add_field("asset_to_update", Tm_protocol_id_type(EBitsharesObjectType.ebot_asset))
             add_field("new_options", T_bitasset_options)
             add_field("extensions", Tm_set(T_future_extensions))
         }
@@ -943,9 +964,9 @@ class T_asset_update_feed_producers : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("issuer", Tm_protocol_id_type("account"))
-            add_field("asset_to_update", Tm_protocol_id_type("asset"))
-            add_field("new_feed_producers", Tm_set(Tm_protocol_id_type("account")))
+            add_field("issuer", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
+            add_field("asset_to_update", Tm_protocol_id_type(EBitsharesObjectType.ebot_asset))
+            add_field("new_feed_producers", Tm_set(Tm_protocol_id_type(EBitsharesObjectType.ebot_account)))
             add_field("extensions", Tm_set(T_future_extensions))
         }
     }
@@ -955,7 +976,7 @@ class T_asset_reserve : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("payer", Tm_protocol_id_type("account"))
+            add_field("payer", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
             add_field("amount_to_reserve", T_asset)
             add_field("extensions", Tm_set(T_future_extensions))
         }
@@ -966,9 +987,9 @@ class T_asset_issue : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("issuer", Tm_protocol_id_type("account"))
+            add_field("issuer", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
             add_field("asset_to_issue", T_asset)
-            add_field("issue_to_account", Tm_protocol_id_type("account"))
+            add_field("issue_to_account", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
             add_field("memo", Tm_optional(T_memo_data))
             add_field("extensions", Tm_set(T_future_extensions))
         }
@@ -979,8 +1000,8 @@ class T_asset_claim_pool : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("issuer", Tm_protocol_id_type("account"))
-            add_field("asset_id", Tm_protocol_id_type("asset"))     //  fee.asset_id must != asset_id
+            add_field("issuer", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
+            add_field("asset_id", Tm_protocol_id_type(EBitsharesObjectType.ebot_asset))     //  fee.asset_id must != asset_id
             add_field("amount_to_claim", T_asset)                           //  only core asset
             add_field("extensions", Tm_set(T_future_extensions))
         }
@@ -991,10 +1012,128 @@ class T_asset_update_issuer : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("issuer", Tm_protocol_id_type("account"))
-            add_field("asset_to_update", Tm_protocol_id_type("asset"))
-            add_field("new_issuer", Tm_protocol_id_type("account"))
+            add_field("issuer", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
+            add_field("asset_to_update", Tm_protocol_id_type(EBitsharesObjectType.ebot_asset))
+            add_field("new_issuer", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
             add_field("extensions", Tm_set(T_future_extensions))
+        }
+    }
+}
+
+class T_assert_predicate_account_name_eq_lit : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("account_id", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
+            add_field("name", T_string)
+        }
+    }
+}
+
+class T_assert_predicate_asset_symbol_eq_lit : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("asset_id", Tm_protocol_id_type(EBitsharesObjectType.ebot_asset))
+            add_field("symbol", T_string)
+        }
+    }
+}
+
+class T_assert_predicate_block_id : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("id", Tm_bytes(20))   //  RMD160
+        }
+    }
+}
+
+class T_assert : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("fee", T_asset)
+            add_field("fee_paying_account", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
+            add_field("predicates", Tm_static_variant(JSONArray().apply {
+                put(T_assert_predicate_account_name_eq_lit)
+                put(T_assert_predicate_asset_symbol_eq_lit)
+                put(T_assert_predicate_block_id)
+            }))
+            add_field("required_auths", Tm_set(Tm_protocol_id_type(EBitsharesObjectType.ebot_account)))
+            add_field("extensions", Tm_set(T_future_extensions))
+        }
+    }
+}
+
+class T_stealth_confirmation_memo_data : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("from", Tm_optional(T_public_key))
+            add_field("amount", T_asset)
+            add_field("blinding_factor", Tm_bytes(32))  //  blind_factor_type -> SHA256
+            add_field("commitment", Tm_bytes(33))
+            add_field("check", T_uint32)
+        }
+    }
+}
+
+class T_stealth_confirmation : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("one_time_key", T_public_key)
+            add_field("to", Tm_optional(T_public_key))
+            add_field("encrypted_memo", Tm_bytes())
+        }
+    }
+}
+
+class T_blind_input : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("commitment", Tm_bytes(33))
+            add_field("owner", T_authority)
+        }
+    }
+}
+
+class T_blind_output : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("commitment", Tm_bytes(33))
+            add_field("range_proof", Tm_bytes())            //  only required if there is more than one blind output
+            add_field("owner", T_authority)
+            add_field("stealth_memo", Tm_optional(T_stealth_confirmation))
+        }
+    }
+}
+
+class T_transfer_to_blind : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("fee", T_asset)
+            add_field("amount", T_asset)
+            add_field("from", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
+            add_field("blinding_factor", Tm_bytes(32))  //  blind_factor_type -> SHA256
+            add_field("outputs", Tm_array(T_blind_output))
+        }
+    }
+}
+
+class T_transfer_from_blind : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("fee", T_asset)
+            add_field("amount", T_asset)
+            add_field("to", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
+            add_field("blinding_factor", Tm_bytes(32))  //  blind_factor_type -> SHA256
+            add_field("inputs", Tm_array(T_blind_input))
+        }
+    }
+}
+
+class T_blind_transfer : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("fee", T_asset)
+            add_field("inputs", Tm_array(T_blind_input))
+            add_field("outputs", Tm_array(T_blind_output))
         }
     }
 }
@@ -1003,8 +1142,8 @@ class T_htlc_create : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("from", Tm_protocol_id_type("account"))
-            add_field("to", Tm_protocol_id_type("account"))
+            add_field("from", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
+            add_field("to", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
             add_field("amount", T_asset)
             add_field("preimage_hash", Tm_static_variant(JSONArray().apply {
                 put(Tm_bytes(20))
@@ -1022,8 +1161,8 @@ class T_htlc_redeem : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("htlc_id", Tm_protocol_id_type("htlc"))
-            add_field("redeemer", Tm_protocol_id_type("account"))
+            add_field("htlc_id", Tm_protocol_id_type(EBitsharesObjectType.ebot_htlc))
+            add_field("redeemer", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
             add_field("preimage", Tm_bytes())
             add_field("extensions", Tm_set(T_future_extensions))
         }
@@ -1034,8 +1173,8 @@ class T_htlc_extend : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
             add_field("fee", T_asset)
-            add_field("htlc_id", Tm_protocol_id_type("htlc"))
-            add_field("update_issuer", Tm_protocol_id_type("account"))
+            add_field("htlc_id", Tm_protocol_id_type(EBitsharesObjectType.ebot_htlc))
+            add_field("update_issuer", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
             add_field("seconds_to_add", T_uint32)
             add_field("extensions", Tm_set(T_future_extensions))
         }
@@ -1095,6 +1234,10 @@ class T_operation : T_Base() {
                 EBitsharesOperations.ebo_asset_issue.value -> T_asset_issue
                 EBitsharesOperations.ebo_asset_claim_pool.value -> T_asset_claim_pool
                 EBitsharesOperations.ebo_asset_update_issuer.value -> T_asset_update_issuer
+                EBitsharesOperations.ebo_assert.value -> T_assert
+                EBitsharesOperations.ebo_transfer_to_blind.value -> T_transfer_to_blind
+                EBitsharesOperations.ebo_transfer_from_blind.value ->T_transfer_from_blind
+                EBitsharesOperations.ebo_blind_transfer.value -> T_blind_transfer
                 EBitsharesOperations.ebo_htlc_create.value -> T_htlc_create
                 EBitsharesOperations.ebo_htlc_redeem.value -> T_htlc_redeem
                 EBitsharesOperations.ebo_htlc_extend.value -> T_htlc_extend
