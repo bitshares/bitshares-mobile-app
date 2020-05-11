@@ -3,11 +3,22 @@ package com.btsplusplus.fowallet
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.EditText
+import bitshares.*
+import bitshares.serializer.T_blind_input
+import bitshares.serializer.T_stealth_confirmation_memo_data
+import com.btsplusplus.fowallet.utils.StealthTransferUtils
+import com.btsplusplus.fowallet.utils.VcUtils
+import com.btsplusplus.fowallet.utils.kAppBlindReceiptBlockNum
+import com.fowallet.walletcore.bts.ChainObjectManager
+import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_blind_balance_import.*
+import org.json.JSONArray
+import org.json.JSONObject
+import java.math.BigDecimal
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
 class ActivityBlindBalanceImport : BtsppActivity() {
-
-    lateinit var _et_blind_receipt: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,19 +29,348 @@ class ActivityBlindBalanceImport : BtsppActivity() {
         // 设置全屏(隐藏状态栏和虚拟导航栏)
         setFullScreen()
 
-        // 初始化
-        _et_blind_receipt = et_blind_receipt_from_blind_balance_import
+        //  获取参数
+        val args = btspp_args_as_JSONObject()
+        val receipt = args.optString("receipt", null)
+        val result_promise = args.opt("result_promise") as? Promise
 
-        // 提交事件
-        layout_submit_from_blind_balance_import.setOnClickListener {
-            onSubmit()
+        //  初始化UI - 输入框
+        val tf = tf_blind_receipt_text_raw
+        if (receipt != null) {
+            tf.setText(receipt)
         }
 
-        // 返回事件
+        //  提交事件
+        btn_import_submit.setOnClickListener { onSubmit(result_promise, tf.text.toString().trim()) }
+
+        //  返回事件
         layout_back_from_blind_balance_import.setOnClickListener { finish() }
     }
 
-    private fun onSubmit(){
-        val blind_receipt = _et_blind_receipt.text.toString()
+    /**
+     *  (private) 是否是已知收据判断。即收据的 to 字段是否是隐私账户中的地址或者隐私账户的变形格式地址。
+     */
+    private fun guessRealToPublicKey(stealth_memo: JSONObject, d_commitment: ByteArray, blind_accounts: JSONArray): String? {
+        assert(blind_accounts.length() > 0)
+        //  没有 to 属性作为未知收据处理。
+        val to = stealth_memo.optString("to")
+        if (to.isEmpty()) {
+            return null
+        }
+        //  是否是隐私账户中的地址判断
+        for (blind_account_public_key in blind_accounts.forin<String>()) {
+            if (blind_account_public_key!! == to) {
+                return blind_account_public_key
+            }
+        }
+        //  是否是隐私账户地址的变形地址判断
+        for (blind_account_public_key in blind_accounts.forin<String>()) {
+            val public_key = GraphenePublicKey.fromWifPublicKey(blind_account_public_key)
+            if (public_key == null) {
+                continue
+            }
+            if (to == public_key.genToToTo(d_commitment).toWifString()) {
+                return blind_account_public_key
+            }
+        }
+        //  未知收据
+        return null
+    }
+
+    private fun scanBlindReceiptFromBlockData(block_data: JSONObject?, blind_accounts: JSONArray): JSONArray {
+        val data_array = JSONArray()
+        if (block_data == null) {
+            return data_array
+        }
+
+        if (blind_accounts.length() <= 0) {
+            return data_array
+        }
+
+        val transactions = block_data.optJSONArray("transactions")
+        if (transactions == null || transactions.length() <= 0) {
+            return data_array
+        }
+
+        for (trx in transactions.forin<JSONObject>()) {
+            val operations = trx!!.optJSONArray("operations")
+            if (operations == null || operations.length() <= 0) {
+                continue
+            }
+
+            for (op in operations.forin<JSONArray>()) {
+                assert(op!!.length() == 2)
+                val optype = op.getInt(0)
+                //  转入隐私账户 以及 隐私账户之间转账都存在新的收据生成。
+                if (optype != EBitsharesOperations.ebo_transfer_to_blind.value &&
+                        optype != EBitsharesOperations.ebo_blind_transfer.value) {
+                    continue
+                }
+                val opdata = op.getJSONObject(1)
+                val outputs = opdata.getJSONArray("outputs")
+                assert(outputs.length() > 0)
+                if (outputs.length() <= 0) {
+                    continue
+                }
+                for (blind_output in outputs.forin<JSONObject>()) {
+                    val stealth_memo = blind_output!!.optJSONObject("stealth_memo")
+                    //  该字段可选，跳过不存在该字段的收据。REMARK：官方命令行客户端等该字段不存在，目前已知BTS++支持该字段。
+                    if (stealth_memo == null) {
+                        continue
+                    }
+                    val d_commitment = blind_output.getString("commitment").hexDecode()
+                    val real_to_key = guessRealToPublicKey(stealth_memo, d_commitment, blind_accounts)
+                    if (real_to_key != null && real_to_key.isNotEmpty()) {
+                        data_array.put(JSONObject().apply {
+                            put("real_to_key", real_to_key)
+                            put("stealth_memo", stealth_memo)
+                        })
+                    }
+                }
+            }
+        }
+
+        return data_array
+    }
+
+    private fun isValidBlockNum(str: String): Boolean {
+        if (!Utils.isFullDigital(str)) {
+            return false
+        }
+        val n_block_num = BigDecimal(str)
+        val n_min = BigDecimal.ZERO
+        //  REMARK：最大区块号暂定10亿。
+        val n_max = BigDecimal("1000000000")
+        if (n_block_num <= n_min) {
+            return false
+        }
+        if (n_block_num >= n_max) {
+            return false
+        }
+        return true
+    }
+
+    private fun onSubmit(result_promise: Promise?, receipt: String){
+        guardWalletExistWithWalletMode(resources.getString(R.string.kVcStealthTransferGuardWalletModeTips)) {
+            var json = StealthTransferUtils.guessBlindReceiptString(receipt)
+            if (json == null && isValidBlockNum(receipt)) {
+                //  尝试从区块编号恢复
+                json = JSONObject().apply {
+                    put(kAppBlindReceiptBlockNum, receipt)
+                }
+            }
+            if (json == null) {
+                showToast(resources.getString(R.string.kVcStImportTipInputValidReceiptText))
+                return@guardWalletExistWithWalletMode
+            }
+
+            //  解锁钱包
+            guardWalletUnlocked(false) { unlocked ->
+                if (unlocked) {
+                    onImportReceiptCore(json, result_promise)
+                }
+            }
+        }
+    }
+
+    private fun onImportReceiptCore(receipt_json: JSONObject, result_promise: Promise?) {
+        if (receipt_json.has(kAppBlindReceiptBlockNum)) {
+            val blind_accounts = AppCacheManager.sharedAppCacheManager().getAllBlindAccounts().keys().toJSONArray()
+            if (blind_accounts.length() <= 0) {
+                showToast(resources.getString(R.string.kVcStImportTipPleaseImportYourBlindAccountFirst))
+                return
+            }
+            val app_blind_receipt_block_num = receipt_json.getLong(kAppBlindReceiptBlockNum)
+            VcUtils.simpleRequest(this, ChainObjectManager.sharedChainObjectManager().queryBlock(app_blind_receipt_block_num)) {
+                val block_data = it as? JSONObject
+                val data_array = scanBlindReceiptFromBlockData(block_data, blind_accounts)
+                importStealthBalanceCore(data_array, result_promise)
+            }
+        } else {
+            val to = receipt_json.getString("to")
+            val to_pub = GraphenePublicKey.fromWifPublicKey(to)
+            if (to_pub == null) {
+                showToast(resources.getString(R.string.kVcStImportTipInvalidReceiptNoToPublic))
+                return
+            }
+            importStealthBalanceCore(jsonArrayfrom(JSONObject().apply {
+                put("real_to_key", to)
+                put("stealth_memo", receipt_json)
+            }), result_promise)
+        }
+    }
+
+    private fun importStealthBalanceCore(data_array: JSONArray, result_promise: Promise?) {
+        if (data_array.length() <= 0) {
+            showToast(resources.getString(R.string.kVcStImportTipReceiptIsEmpty))
+            return
+        }
+
+        val miss_key_array = JSONArray()
+        val decrypt_failed_array = JSONArray()
+        val blind_balance_array = JSONArray()
+        val asset_ids = JSONObject()
+
+        for (item in data_array.forin<JSONObject>()) {
+            val stealth_memo = item!!.getJSONObject("stealth_memo")
+            val real_to_key = item.getString("real_to_key")
+            //  错误1：缺少私钥
+            val to_pri = WalletManager.sharedWalletManager().getGraphenePrivateKeyByPublicKey(real_to_key)
+            if (to_pri == null) {
+                miss_key_array.put(item)
+                continue
+            }
+
+            //  错误2：无效收据（解密失败or校验失败）
+            val decrypted_memo = decryptStealthConfirmationMemo(stealth_memo, to_pri)
+            if (decrypted_memo == null) {
+                decrypt_failed_array.put(item)
+                continue
+            }
+
+            //  构造明文的隐私收据格式
+            val blind_balance = JSONObject().apply {
+                put("real_to_key", real_to_key)
+                put("one_time_key", stealth_memo.getString("one_time_key"))
+                put("to", stealth_memo.getString("to"))
+                put("decrypted_memo", JSONObject().apply {
+                    put("amount", decrypted_memo.get("amount"))
+                    put("blinding_factor", (decrypted_memo.get("blinding_factor") as ByteArray).hexEncode())
+                    put("commitment", (decrypted_memo.get("commitment") as ByteArray).hexEncode())
+                    put("check", decrypted_memo.get("check"))
+                })
+            }
+            blind_balance_array.put(blind_balance)
+            asset_ids.put(decrypted_memo.getJSONObject("amount").getString("asset_id"), true)
+        }
+
+        //  链上验证所有是否有效
+        val total_blind_balance_count = blind_balance_array.length()
+        if (total_blind_balance_count > 0) {
+            VcUtils.simpleRequest(this, ChainObjectManager.sharedChainObjectManager().queryAllGrapheneObjects(asset_ids.keys().toJSONArray())) {
+                //  循环验证所有收据
+                val verify_success = JSONArray()
+                val verify_failed = JSONArray()
+                verifyAllBlindReceiptOnchain(blind_balance_array, verify_success, verify_failed).then {
+                    val success_count = verify_success.length()
+                    if (success_count == total_blind_balance_count) {
+                        //  全部校验成功
+                        showToast(String.format(resources.getString(R.string.kVcStImportTipSuccessN), success_count.toString()))
+                        onImportSuccessful(verify_success, result_promise)
+                        return@then null
+                    }
+                    if (success_count > 0) {
+                        //  部分校验成功，部分校验失败。
+                        showToast(String.format(resources.getString(R.string.kVcStImportTipSuccessNandVerifyFailedN), success_count.toString(), verify_failed.length().toString()))
+                        onImportSuccessful(verify_success, result_promise)
+                    } else {
+                        //  全部验证失败
+                        showToast(resources.getString(R.string.kVcStImportTipInvalidReceiptOnchainVerifyFailed))
+                    }
+                    return@then null
+                }
+            }
+        } else {
+            if (miss_key_array.length() > 0) {
+                showToast(resources.getString(R.string.kVcStImportTipInvalidReceiptMissPriKey))
+            } else {
+                //  num of decrypt_failed_array > 0
+                showToast(resources.getString(R.string.kVcStImportTipInvalidReceiptSelfCheckingFailed))
+            }
+        }
+    }
+
+
+    /**
+     *  (private) 解密 stealth_confirmation 结构中的 encrypted_memo 数据。
+     */
+    private fun decryptStealthConfirmationMemo(stealth_memo: JSONObject, private_key: GraphenePrivateKey): JSONObject? {
+        val one_time_key = GraphenePublicKey.fromWifPublicKey(stealth_memo.getString("one_time_key"))!!
+        val secret = private_key.getSharedSecret(one_time_key)
+        if (secret == null) {
+            return null
+        }
+
+        //  解密
+        val encrypted_memo = stealth_memo.get("encrypted_memo")
+        val d_encrypted_memo = if (encrypted_memo is String) {
+            encrypted_memo.hexDecode()
+        } else {
+            encrypted_memo as ByteArray
+        }
+        val decrypted_memo = d_encrypted_memo.aes256cbc_decrypt(secret)
+        if (decrypted_memo == null) {
+            return null
+        }
+
+        //  TODO:6.0 test
+        val errtest = try {
+            T_blind_input.parse(decrypted_memo) as? JSONObject
+        } catch (e: Exception) {
+            //  Invalid receipt data.
+            null
+        }
+
+        //  这里可能存在异常数据，需要捕获。
+        val obj_decrypted_memo = try {
+            T_stealth_confirmation_memo_data.parse(decrypted_memo) as? JSONObject
+        } catch (e: Exception) {
+            //  Invalid receipt data.
+            null
+        }
+        if (obj_decrypted_memo == null) {
+            return null
+        }
+
+        //  校验checksuum
+        val io = ByteBuffer.wrap(secret)
+        //  REMARK：这里读取LittleEndian
+        io.order(ByteOrder.LITTLE_ENDIAN)
+        if (io.int != obj_decrypted_memo.getInt("check")) {
+            return null
+        }
+
+        return obj_decrypted_memo
+    }
+
+    private fun verifyAllBlindReceiptOnchain(blind_balance_array: JSONArray, verify_success: JSONArray, verify_failed: JSONArray): Promise {
+        if (blind_balance_array.length() <= 0) {
+            return Promise._resolve(true)
+        } else {
+            val blind_balance = blind_balance_array.getJSONObject(0)
+            blind_balance_array.remove(0)
+            //  TODO:6.0 临时跳过，后续处理。
+            verify_success.put(blind_balance)
+            return verifyAllBlindReceiptOnchain(blind_balance_array, verify_success, verify_failed)
+//            /            return [[[BitsharesClientManager sharedBitsharesClientManager] verifyBlindReceipt:blind_balance] then:^id(id result) {
+//                //                //  TODO:7.0 其他错误考虑提示？
+////                switch ([result integerValue]) {
+////                    case kBlindReceiptVerifyResultOK:
+////                    [verify_success addObject:blind_balance];
+////                    break;
+////                    default:
+////                    [verify_failed addObject:blind_balance];
+////                    break;
+////                }
+////                return [self verifyAllBlindReceiptOnchain:blind_balance_array verify_success:verify_success verify_failed:verify_failed];
+////            }];
+        }
+    }
+
+    /**
+     *  (private) 导入成功
+     */
+    private fun onImportSuccessful(blind_balance_array: JSONArray, result_promise: Promise?) {
+        //  持久化存储
+        if (blind_balance_array.length() > 0) {
+            val pAppCache = AppCacheManager.sharedAppCacheManager()
+            for (blind_balance in blind_balance_array.forin<JSONObject>()) {
+                pAppCache.appendBlindBalance(blind_balance!!)
+            }
+            pAppCache.saveWalletInfoToFile()
+        }
+        //  返回
+        result_promise?.resolve(true)
+        finish()
     }
 }

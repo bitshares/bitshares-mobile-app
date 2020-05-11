@@ -128,6 +128,87 @@ class AppCacheManager {
         OrgUtils.write_file_from_json(fullname, _custom_markets)
     }
 
+    private fun _getOrCreateSubFieldForWalletInfo(field_name: String): JSONObject {
+        var field_hash = _wallet_info.optJSONObject(field_name)
+        if (field_hash == null) {
+           field_hash = JSONObject()
+            _wallet_info.put(field_name, field_hash)
+        }
+        return field_hash
+    }
+
+    /**
+     *  (public) 管理所有隐私账号：获取、添加、删除
+     */
+    fun getAllBlindAccounts(): JSONObject {
+        return _getOrCreateSubFieldForWalletInfo("kBlindAccountHash")
+    }
+
+    fun appendBlindAccount(blind_account: JSONObject, auto_save: Boolean): AppCacheManager {
+        //    id blind_account = @{
+        //        @"public_key": @"",
+        //        @"alias_name": @"",
+        //        @"parent_key": @"",
+        //        @"child_key_index": @0
+        //    };
+        assert(blind_account.has("public_key"))
+        //  添加
+        getAllBlindAccounts().put(blind_account.getString("public_key"), blind_account)
+        //  保存
+        if (auto_save) {
+            saveWalletInfoToFile()
+        }
+        return this
+    }
+
+    fun removeBlindAccount(blind_account: JSONObject, auto_save: Boolean): AppCacheManager {
+        assert(blind_account.has("public_key"))
+        //  删除
+        getAllBlindAccounts().remove(blind_account.getString("public_key"))
+        //  保存
+        if (auto_save) {
+            saveWalletInfoToFile()
+        }
+        return this
+    }
+
+    fun queryBlindAccount(public_key: String): JSONObject? {
+        return getAllBlindAccounts().optJSONObject(public_key)
+    }
+
+    /**
+     *  (public) 管理所有隐私收据：获取、添加、删除。
+     */
+    fun getAllBlindBalance(): JSONObject {
+        return _getOrCreateSubFieldForWalletInfo("kBlindBalanceHash")
+    }
+
+    fun isHaveBlindBalance(blind_balance: JSONObject): Boolean {
+        val commitment = blind_balance.getJSONObject("decrypted_memo").getString("commitment")
+        return getAllBlindBalance().has(commitment)
+    }
+
+    fun appendBlindBalance(blind_balance: JSONObject): AppCacheManager {
+        //    @"real_to_key": @"TEST71jaNWV7ZfsBRUSJk6JfxSzEB7gvcS7nSftbnFVDeyk6m3xj53",  //  仅显示用
+        //    @"one_time_key": @"TEST71jaNWV7ZfsBRUSJk6JfxSzEB7gvcS7nSftbnFVDeyk6m3xj53", //  转账用
+        //    @"to": @"TEST71jaNWV7ZfsBRUSJk6JfxSzEB7gvcS7nSftbnFVDeyk6m3xj53",           //  没用到
+        //    @"decrypted_memo": @{
+        //        @"amount": @{@"asset_id": @"1.3.0", @"amount": @12300000},              //  转账用，显示用。
+        //        @"blinding_factor": @"",                                                //  转账用
+        //        @"commitment": @"",                                                     //  转账用
+        //        @"check": @331,                                                         //  导入check用，显示用。
+        //    }
+        val commitment = blind_balance.getJSONObject("decrypted_memo").getString("commitment")
+        getAllBlindBalance().put(commitment, blind_balance)
+        return this
+    }
+
+    fun removeBlindBalance(blind_balance: JSONObject): AppCacheManager {
+        val commitment = blind_balance.getJSONObject("decrypted_memo").getString("commitment")
+        getAllBlindBalance().remove(commitment)
+        return this
+    }
+
     /**
      * for native KV caches
      */

@@ -14,7 +14,8 @@
         android:padding="10dp"
         android:orientation="vertical">
 
-
+        <!-- TODO:6.0 icon s -->
+        <!-- 导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -46,7 +47,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="隐私交易"
+                android:text="@string/kVcTitleStealthTransferEntry"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
@@ -70,6 +71,7 @@
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:id="@+id/img_icon_blind_accounts"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -84,7 +86,7 @@
                         android:textSize="16dp"
                         android:layout_weight="9"
                         android:textColor="@color/theme01.textColorMain"
-                        android:text="账户管理"/>
+                        android:text="@string/kVcStEntryBlindAccounts"/>
 
                     <ImageView
                         android:id="@+id/iv_account_manage_right_arrow_from_stealth_transfer"
@@ -107,6 +109,7 @@
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:id="@+id/img_icon_blind_balances"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -121,7 +124,7 @@
                         android:textSize="16dp"
                         android:layout_weight="9"
                         android:textColor="@color/theme01.textColorMain"
-                        android:text="我的收据"/>
+                        android:text="@string/kVcStEntryBlindBalances"/>
 
                     <ImageView
                         android:id="@+id/iv_my_receipt_right_arrow_from_stealth_transfer"
@@ -144,6 +147,7 @@
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:id="@+id/img_icon_transfer_to_blind"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -158,7 +162,7 @@
                         android:textSize="16dp"
                         android:layout_weight="9"
                         android:textColor="@color/theme01.textColorMain"
-                        android:text="向隐私账户转账"/>
+                        android:text="@string/kVcStEntryTransferToBlind"/>
 
                     <ImageView
                         android:id="@+id/iv_transfer_to_blind_right_arrow_from_stealth_transfer"
@@ -181,6 +185,7 @@
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:id="@+id/img_icon_transfer_from_blind"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -195,7 +200,7 @@
                         android:textSize="16dp"
                         android:layout_weight="9"
                         android:textColor="@color/theme01.textColorMain"
-                        android:text="向隐私账户转账"/>
+                        android:text="@string/kVcStEntryTransferFromBlind"/>
 
                     <ImageView
                         android:id="@+id/iv_transfer_from_blind_right_arrow_from_stealth_transfer"
@@ -218,6 +223,7 @@
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:id="@+id/img_icon_blind_transfer"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -232,7 +238,7 @@
                         android:textSize="16dp"
                         android:layout_weight="9"
                         android:textColor="@color/theme01.textColorMain"
-                        android:text="向隐私账户转账"/>
+                        android:text="@string/kVcStEntryBlindTransfer"/>
 
                     <ImageView
                         android:id="@+id/iv_blind_transfer_right_arrow_from_stealth_transfer"

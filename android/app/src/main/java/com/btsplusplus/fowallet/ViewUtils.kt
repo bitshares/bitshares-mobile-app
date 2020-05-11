@@ -8,6 +8,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TableRow
 import android.widget.TextView
+import bitshares.AppCacheManager
 import bitshares.Utils
 import bitshares.dp
 import bitshares.xmlstring
@@ -310,5 +311,33 @@ class ViewUtils {
             }
         }
 
+        /**
+         *  (public) 根据隐私账户地址获取隐私账户显示名称。
+         */
+        fun genBlindAccountDisplayName(ctx: Context, blind_account_public_key: String): String? {
+            val pAppCache = AppCacheManager.sharedAppCacheManager()
+            val blind_account = pAppCache.queryBlindAccount(blind_account_public_key)
+            if (blind_account == null) {
+                //  获取账号失败
+                return null
+            }
+            val parent_key = blind_account.optString("parent_key")
+            if (parent_key.isNotEmpty()) {
+                //  子账号（获取父账号）
+                val parent_blind_account = pAppCache.queryBlindAccount(parent_key)!!
+                var alias_name = parent_blind_account.optString("alias_name")
+                val child_idx = blind_account.getInt("child_key_index") + 1
+                alias_name = when (child_idx) {
+                    1 -> String.format(R.string.kVcStCellSubAccount1st.xmlstring(ctx), alias_name)
+                    2 -> String.format(R.string.kVcStCellSubAccount2nd.xmlstring(ctx), alias_name, child_idx.toString())
+                    3 -> String.format(R.string.kVcStCellSubAccount3rd.xmlstring(ctx), alias_name, child_idx.toString())
+                    else -> String.format(R.string.kVcStCellSubAccountnth.xmlstring(ctx), alias_name, child_idx.toString())
+                }
+                return alias_name
+            } else {
+                //  主账号
+                return blind_account.optString("alias_name")
+            }
+        }
     }
 }

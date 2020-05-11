@@ -19,7 +19,7 @@ class ActivityOtcAddBankCard : BtsppActivity() {
         //  获取参数
         val args = btspp_args_as_JSONObject()
         val auth_info = args.getJSONObject("auth_info")
-        val result_promise = args.get("result_promise") as? Promise
+        val result_promise = args.opt("result_promise") as? Promise
 
         //  初始化值
         val name = auth_info.optString("realName")

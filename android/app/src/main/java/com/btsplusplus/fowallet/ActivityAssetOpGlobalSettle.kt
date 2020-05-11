@@ -32,7 +32,7 @@ class ActivityAssetOpGlobalSettle : BtsppActivity() {
         val args = btspp_args_as_JSONObject()
         _curr_selected_asset = args.getJSONObject("current_asset")
         _bitasset_data = args.getJSONObject("bitasset_data")
-        _result_promise = args.get("result_promise") as? Promise
+        _result_promise = args.opt("result_promise") as? Promise
 
         //  描绘UI
         _draw_ui_curr_asset()

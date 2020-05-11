@@ -7,25 +7,22 @@ import android.view.Gravity
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
-import bitshares.LLAYOUT_MATCH
-import bitshares.LLAYOUT_WARP
-import bitshares.dp
+import bitshares.*
+import com.fowallet.walletcore.bts.ChainObjectManager
 import org.json.JSONArray
 import org.json.JSONObject
 
 class ViewBlindReceiptCell : LinearLayout {
     private var _ctx: Context
-    var _data: JSONObject
-    var _can_check: Boolean = false
-    var _index: Int = 0
-    var _asset_symbol: String = ""
-    var _onChecked: ((index: Int, checked: Boolean) -> Unit)? = null
+    private var _blind_balance: JSONObject
+    private var _can_check: Boolean = false
+    private var _index: Int = 0
+    private var _onChecked: ((index: Int, checked: Boolean) -> Unit)? = null
 
-    constructor(ctx: Context, data: JSONObject, asset_symbol: String, index: Int, can_check: Boolean, onChecked: ((index: Int, checked: Boolean) -> Unit)? = null ) : super(ctx) {
+    constructor(ctx: Context, blind_balance: JSONObject, index: Int, can_check: Boolean, onChecked: ((index: Int, checked: Boolean) -> Unit)? = null ) : super(ctx) {
         _ctx = ctx
-        _data = data
+        _blind_balance = blind_balance
         _can_check = can_check
-        _asset_symbol = asset_symbol
         _index = index
         _onChecked = onChecked
 
@@ -38,11 +35,16 @@ class ViewBlindReceiptCell : LinearLayout {
     }
 
     private fun refreshUI(){
+        //  准备数据
+        val decrypted_memo = _blind_balance.getJSONObject("decrypted_memo")
+        val amount_item = decrypted_memo.getJSONObject("amount")
+        val check_sum = decrypted_memo.getLong("check")
+        val hex_check_num = BinSerializer().write_u32(check_sum).get_data().hexEncode().toUpperCase()
+        val asset = ChainObjectManager.sharedChainObjectManager().getChainObjectByID(amount_item.getString("asset_id"))
+        val n_amount = bigDecimalfromAmount(amount_item.getString("amount"), asset.getInt("precision"))
+        val real_to_key = _blind_balance.getString("real_to_key")
 
-        val asset_number = _data.getString("number")
-        val asset_id = _data.getString("id")
-        val asset_amount = _data.getString("amount")
-
+        //  描绘（选择框、可能不存在）
         var right_content_margin_value = 0.dp
         if (_can_check){
             val checkbox = CheckBox(_ctx)
@@ -67,40 +69,42 @@ class ViewBlindReceiptCell : LinearLayout {
                     _onChecked!!.invoke(_index,isChecked)
                 }
             }
-
-
             this.addView(checkbox)
-
             right_content_margin_value = 10.dp
         }
 
+        //  数据展示
         val layout_wrapper = LinearLayout(_ctx).apply {
             layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP).apply {
                 setMargins(right_content_margin_value, 0, 0, 0)
             }
             orientation = LinearLayout.VERTICAL
 
-
-            // 第一行 - 收据编号
+            //  第一行 - 收据编号
             val tv_receipt_number = TextView(_ctx).apply {
                 gravity = Gravity.CENTER_VERTICAL
                 layoutParams = LinearLayout.LayoutParams(LLAYOUT_WARP, LLAYOUT_WARP)
-                text = "${_index}.收据 #${asset_number}"
+                text = String.format(resources.getString(R.string.kVcStCellTitleReceiptName), (_index + 1).toString(), hex_check_num)
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16.0f)
                 setTextColor(resources.getColor(R.color.theme01_textColorMain))
             }
 
-            // 第二行 - 左: 地址, 右: 金额
+            //  第二行 - 左: 地址, 右: 金额
             val layout_header = LinearLayout(_ctx).apply {
                 layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP).apply {
                     setMargins(0, 8.dp, 0, 0)
                 }
                 orientation = LinearLayout.HORIZONTAL
 
-                // 地址(名称)
+                //  地址(名称)
+                val alias_name = ViewUtils.genBlindAccountDisplayName(_ctx, real_to_key)
                 val tv_address = TextView(_ctx).apply {
                     layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 3f)
-                    text = "地址"
+                    if (alias_name != null && alias_name.isNotEmpty()) {
+                        text = String.format(resources.getString(R.string.kVcStCellTitleReceiptAddrWithAliasName), alias_name)
+                    } else {
+                        text = resources.getString(R.string.kVcStCellTitleReceiptAddr)
+                    }
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.0f)
                     setTextColor(resources.getColor(R.color.theme01_textColorGray))
                 }
@@ -108,7 +112,7 @@ class ViewBlindReceiptCell : LinearLayout {
                 // 金额(名称)
                 val tv_amount = TextView(_ctx).apply {
                     layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 2f)
-                    text = "金额"
+                    text = resources.getString(R.string.kVcStCellTitleReceiptAmountValue)
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.0f)
                     setTextColor(resources.getColor(R.color.theme01_textColorGray))
                     gravity = Gravity.RIGHT
@@ -118,29 +122,28 @@ class ViewBlindReceiptCell : LinearLayout {
                 addView(tv_amount)
             }
 
-
-            // 第三行 - 左: 地址(值), 右: 金额(值)
+            //  第三行 - 左: 地址(值), 右: 金额(值)
             val layout_body = LinearLayout(_ctx).apply {
                 layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP).apply {
                     setMargins(0, 8.dp, 0, 0)
                 }
                 orientation = LinearLayout.HORIZONTAL
 
-                // 地址(value)
+                //  地址(value)
                 val tv_address_value = TextView(_ctx).apply {
                     layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 3f)
-                    text = "${asset_id}"
+                    text = real_to_key
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.0f)
                     setTextColor(resources.getColor(R.color.theme01_textColorNormal))
                     setSingleLine(true)
                     maxLines = 1
-                    ellipsize = TextUtils.TruncateAt.END
+                    ellipsize = TextUtils.TruncateAt.MIDDLE
                 }
 
-                // 金额(value)
+                //  金额(value)
                 val tv_amount_value = TextView(_ctx).apply {
                     layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 2f)
-                    text = "${asset_amount} ${_asset_symbol}"
+                    text = String.format("%s %s", n_amount.toPriceAmountString(), asset.getString("symbol"))
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.0f)
                     setTextColor(resources.getColor(R.color.theme01_textColorNormal))
                     gravity = Gravity.RIGHT

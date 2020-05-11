@@ -439,6 +439,30 @@ fun android.app.Activity.guardWalletExist(body: () -> Unit) {
 }
 
 /**
+ *  (public) 确保钱包存在，并且为钱包模式。（REMARK：新版本已经不存在密码模式登录。）
+ */
+fun android.app.Activity.guardWalletExistWithWalletMode(message: String, body: () -> Unit) {
+    guardWalletExist {
+        if (WalletManager.sharedWalletManager().isPasswordMode()) {
+            alerShowMessageConfirm(resources.getString(R.string.kWarmTips), message).then {
+                if (it != null && it as Boolean) {
+                    val result_promise = Promise()
+                    goTo(ActivityUpgradeToWalletMode::class.java, true, args = jsonObjectfromKVS("result_promise", result_promise))
+                    result_promise.then {
+                        if (it != null && it as Boolean) {
+                            body()
+                        }
+                    }
+                }
+                return@then null
+            }
+        } else {
+            body()
+        }
+    }
+}
+
+/**
  * 获取用户的 full_account_data 数据，并且获取余额里所有 asset 的资产详细信息。
  */
 fun android.app.Activity.get_full_account_data_and_asset_hash(account_name_or_id: String): Promise {

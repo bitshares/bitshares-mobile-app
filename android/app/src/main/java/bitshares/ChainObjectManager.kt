@@ -547,6 +547,64 @@ class ChainObjectManager {
     }
 
     /**
+     *  (public) 计算以核心资产为单位的网络手续费数量。
+     */
+    fun getNetworkCurrentFee(op: EBitsharesOperations, n_kbyte: BigDecimal?, n_day: BigDecimal?, n_output: BigDecimal?): BigDecimal? {
+        //  获取指定操作的默认手续费信息
+        val gp = getObjectGlobalProperties()
+        val current_fees = gp.getJSONObject("parameters").getJSONObject("current_fees")
+
+        var fee_args: JSONObject? = null
+        for (op_array in current_fees.getJSONArray("parameters").forin<JSONArray>()) {
+            val op_code = op_array!!.getInt(0)
+            if (op_code == op.value) {
+                fee_args = op_array.getJSONObject(1)
+                break
+            }
+        }
+        //  未知操作
+        if (fee_args == null) {
+            return null
+        }
+
+        val n_scale = BigDecimal(current_fees.getString("scale"))
+        val n_100_percent = BigDecimal(GRAPHENE_100_PERCENT.toString())
+
+        val precision = getChainObjectByID(this.grapheneCoreAssetID).getInt("precision")
+
+        var n_fee = bigDecimalfromAmount(fee_args.getString("fee"), precision)
+
+        if (n_kbyte != null) {
+            val t = if (fee_args.has("price_per_kbyte")) {
+                fee_args.getString("price_per_kbyte")
+            } else if (fee_args.has("fee_per_kb")) {
+                fee_args.getString("fee_per_kb")
+            } else {
+                null
+            }
+            if (t != null) {
+                n_fee = n_fee.add(bigDecimalfromAmount(t, precision).multiply(n_kbyte))
+            }
+        }
+
+        if (n_day != null && fee_args.has("fee_per_day")) {
+            val t = fee_args.getString("fee_per_day")
+            n_fee = n_fee.add(bigDecimalfromAmount(t, precision).multiply(n_day))
+        }
+
+        if (n_output != null && fee_args.has("price_per_output")) {
+            val t = fee_args.getString("price_per_output")
+            n_fee = n_fee.add(bigDecimalfromAmount(t, precision).multiply(n_output))
+        }
+
+        //  缩放
+        if (n_scale != n_100_percent) {
+            n_fee = n_fee.multiply(n_scale).divide(n_100_percent, precision, BigDecimal.ROUND_UP)
+        }
+        return n_fee
+    }
+
+    /**
      *  (public) 获取手续费对象
      *  extra_balance   - key: asset_type   value: balance amount
      */
@@ -1162,6 +1220,14 @@ class ChainObjectManager {
             //  返回结果
             return@then Promise._resolve(resultHash)
         }
+    }
+
+    /**
+     *  (public) 查询链上区块数据。
+     */
+    fun queryBlock(block_num: Long): Promise {
+        val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
+        return conn.async_exec_db("get_block", jsonArrayfrom(block_num))
     }
 
     /**

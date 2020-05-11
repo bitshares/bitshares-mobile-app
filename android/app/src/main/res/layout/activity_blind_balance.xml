@@ -15,6 +15,7 @@
         android:padding="10dp"
         android:orientation="vertical">
 
+        <!-- 导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -45,7 +46,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="隐私资产"
+                android:text="@string/kVcTitleBlindBalancesMgr"
                 style="@style/kNavigationBarTextStyle" />
 
             <Button

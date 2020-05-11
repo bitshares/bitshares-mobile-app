@@ -655,6 +655,17 @@ class WalletManager {
     }
 
     /**
+     *  (public) 获取石墨烯私钥对象。
+     */
+    fun getGraphenePrivateKeyByPublicKey(wif_public_key: String): GraphenePrivateKey? {
+        assert(!isLocked())
+        if (_private_keys_hash.has(wif_public_key)) {
+            return GraphenePrivateKey.fromWifPrivateKey(_private_keys_hash.getString(wif_public_key))
+        }
+        return null
+    }
+
+    /**
      * (public) 是否存在指定公钥的私钥对象。
      */
     fun havePrivateKey(pubkey: String): Boolean {

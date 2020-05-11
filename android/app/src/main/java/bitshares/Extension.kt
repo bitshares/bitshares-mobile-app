@@ -53,6 +53,19 @@ fun ByteArray.hexEncode() = this.map { String.format("%02x", (it.toInt() and 0xF
 fun String.hexDecode() = ByteArray(this.length / 2) { this.substring(it * 2, it * 2 + 2).toInt(16).toByte() }
 
 /**
+ * AES256-CBC 加密/解密
+ */
+fun ByteArray.aes256cbc_decrypt(secret: ByteArray) = NativeInterface.sharedNativeInterface().bts_aes256cbc_decrypt(secret, this)
+fun ByteArray.aes256cbc_encrypt(secret: ByteArray) = NativeInterface.sharedNativeInterface().bts_aes256cbc_encrypt(secret, this)
+
+/**
+ * BASE58 编码/解码
+ */
+fun ByteArray.base58_decode() = NativeInterface.sharedNativeInterface().bts_base58_decode(this)
+fun ByteArray.base58_encode() = NativeInterface.sharedNativeInterface().bts_base58_encode(this)!!.utf8String()
+fun String.base58_decode() = this.utf8String().base58_decode()
+
+/**
  * 获取UTF8的char*
  */
 fun String.utf8String() = this.toByteArray(Charsets.UTF_8)
@@ -363,6 +376,14 @@ inline fun String.fixComma(): String {
 /**
  * 转JSON Object对象。不支持 JSON ARRAY
  */
+fun ByteArray.to_json_object(): JSONObject? {
+    return try {
+        JSONObject(this.utf8String())
+    } catch (e: Exception) {
+        null
+    }
+}
+
 fun String.to_json_object(): JSONObject? {
     return try {
         JSONObject(this)

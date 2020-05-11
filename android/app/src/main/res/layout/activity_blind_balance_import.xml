@@ -14,6 +14,7 @@
         android:padding="10dp"
         android:orientation="vertical">
 
+        <!-- 导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -45,12 +46,10 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="导入收据"
+                android:text="@string/kVcTitleImportBlindReceipt"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
-
-
 
         <LinearLayout
             android:padding="10dp"
@@ -58,47 +57,64 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <!-- 收据 -->
             <TextView
                 android:textSize="12dp"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="收据"
+                android:text="@string/kVcStCellTitleReceipt"
                 android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-
+            <!-- 收据输入框 -->
             <EditText
-                android:id="@+id/et_blind_receipt_from_blind_balance_import"
-                android:layout_marginTop="20dp"
+                android:id="@+id/tf_blind_receipt_text_raw"
+                android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                style="@style/kTextFieldNormal"
-                android:hint="请输入隐私转账收据。"/>
+                android:layout_height="100dp"
+                android:gravity="start"
+                android:hint="@string/kVcStPlaceholderInputReceipt"
+                android:textSize="16dp"
+                android:background="@null"
+                android:cursorVisible="true"
+                android:textCursorDrawable="@drawable/tfcursor"
+                android:textColor="@color/theme01.textColorMain"
+                android:textColorHint="@color/theme01.textColorGray"/>
 
-            <View android:layout_height="1dp" android:layout_marginTop="5dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+            <View android:layout_height="1dp" android:layout_marginTop="10dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
+            <!-- 导入按钮 -->
             <LinearLayout
-                android:id="@+id/layout_submit_from_blind_balance_import"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:background="@color/colorPrimary"
-                android:layout_marginTop="80dp"
+                android:layout_marginTop="20dp"
                 android:orientation="horizontal">
 
                 <Button
+                    android:id="@+id/btn_import_submit"
                     android:layout_width="wrap_content"
                     style="@style/kMainButtonStyle"
                     android:gravity="center|center_vertical"
                     android:layout_weight="1"
                     android:padding="5dp"
-                    android:text="立即导入" />
+                    android:text="@string/kVcStBtnImportNow" />
             </LinearLayout>
 
+            <!-- 提示信息 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:singleLine="false"
+                android:textSize="12dp"
+                android:textColor="@color/theme01.textColorMain"
+                android:padding="5dp"
+                android:background="@color/theme01.textColorGray"
+                android:text="@string/kVcStTipUiImportReceipt"
+                />
+
         </LinearLayout>
-
-
-
 
     </LinearLayout>
 
