@@ -114,6 +114,7 @@ enum class EBitsharesObjectType(val value: Int) {
     ebot_vesting_balance(13),
     ebot_worker(14),
     ebot_balance(15),
+    ebot_htlc(16),
 }
 
 /**

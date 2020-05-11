@@ -51,9 +51,10 @@ class BinSerializer {
     /**
      * 写入对象ID类型（格式：x.x.x）
      */
-    fun write_object_id(value: String): BinSerializer {
+    fun write_object_id(value: String, object_type: EBitsharesObjectType): BinSerializer {
         //  TODO:格式验证 x.x.xxx
         val ary = value.split(".")
+        assert(ary[1].toInt() == object_type.value) { "Invalid object id." }
         val oid = ary[ary.size - 1]
         this.write_varint32(oid.toInt())
         return this
