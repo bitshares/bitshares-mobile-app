@@ -3,18 +3,15 @@ package com.btsplusplus.fowallet
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.LinearLayout
-import bitshares.dp
-import bitshares.forEach
+import bitshares.*
+import com.btsplusplus.fowallet.utils.VcUtils
+import com.fowallet.walletcore.bts.ChainObjectManager
 import kotlinx.android.synthetic.main.activity_blind_balance.*
 import kotlinx.android.synthetic.main.activity_blind_transfer.*
 import org.json.JSONArray
 import org.json.JSONObject
 
 class ActivityBlindBalance : BtsppActivity() {
-
-    lateinit var _layout_receipt_list: LinearLayout
-    lateinit var _data_receipt: JSONArray
-    lateinit var _current_symbol: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,52 +21,69 @@ class ActivityBlindBalance : BtsppActivity() {
         // 设置全屏(隐藏状态栏和虚拟导航栏)
         setFullScreen()
 
-        // 初始化成员
-        _layout_receipt_list = layout_receipt_list_from_blind_balance
+        //  导入收据按钮事件
+        button_add_from_blind_balance.setOnClickListener { onAddbuttonClicked() }
 
-        _data_receipt = JSONArray()
-
-        _current_symbol = "TEST"
-
-        getData()
-        refreshUI()
-
-        // 新增按钮事件
-        button_add_from_blind_balance.setOnClickListener {
-            onAddbuttonClicked()
-        }
-
-        // 返回事件
+        //  返回事件
         layout_back_from_blind_balance.setOnClickListener { finish() }
 
-        // 新增事件
-        button_add_from_blind_balance.setOnClickListener {  }
+        //  查询数据依赖
+        queryBlindBalanceAndDependence()
     }
 
-    private fun getData(){
-        val data = JSONObject().apply {
-            put("number","8FDF4397")
-            put("id","TEST7UPXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-            put("amount","14")
+    private fun onQueryBlindBalanceAndDependenceResponsed(data_array: JSONArray) {
+        refreshUI(data_array)
+    }
+
+    private fun queryBlindBalanceAndDependence() {
+        val data_array = AppCacheManager.sharedAppCacheManager().getAllBlindBalance().values()
+        val ids = JSONObject()
+        for (blind_balance in data_array.forin<JSONObject>()) {
+            ids.put(blind_balance!!.getJSONObject("decrypted_memo").getJSONObject("amount").getString("asset_id"), true)
         }
-        for(i in 0 until 10){
-            _data_receipt.put(data)
+        if (ids.length() > 0) {
+            VcUtils.simpleRequest(this, ChainObjectManager.sharedChainObjectManager().queryAllGrapheneObjects(ids.keys().toJSONArray())) {
+                onQueryBlindBalanceAndDependenceResponsed(data_array)
+            }
+        } else {
+            onQueryBlindBalanceAndDependenceResponsed(data_array)
         }
     }
 
-    private fun refreshUI(){
-        var index = 0
-        _data_receipt.forEach<JSONObject> {
-            val data = it!!
+    private fun refreshUI(data_array: JSONArray?) {
+        val list = data_array ?: AppCacheManager.sharedAppCacheManager().getAllBlindBalance().values()
 
-            _layout_receipt_list.addView(ViewBlindReceiptCell(this,data,_current_symbol,index,false))
-            _layout_receipt_list.addView(ViewLine(this, margin_top = 8.dp))
+        //  清空
+        val container = layout_receipt_list_from_blind_balance
+        container.removeAllViews()
 
-            index++
+        if (list.length() > 0) {
+            //  描绘
+            var index = 0
+            list.forEach<JSONObject> {
+                val blind_balance = it!!
+
+                container.addView(ViewBlindReceiptCell(this, blind_balance, index, can_check = false))
+                container.addView(ViewLine(this, margin_top = 8.dp))
+
+                index++
+            }
+        } else {
+            //  无数据
+            container.addView(ViewUtils.createEmptyCenterLabel(this, resources.getString(R.string.kVcStTipEmptyNoBlindCanImport)))
         }
     }
 
     private fun onAddbuttonClicked(){
-
+        val result_promise = Promise()
+        goTo(ActivityBlindBalanceImport::class.java, true, args = JSONObject().apply {
+            put("result_promise", result_promise)
+        })
+        result_promise.then { dirty ->
+            //  刷新UI
+            if (dirty != null && dirty as Boolean) {
+                refreshUI(null)
+            }
+        }
     }
 }

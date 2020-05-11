@@ -14,6 +14,7 @@
         android:padding="10dp"
         android:orientation="vertical">
 
+        <!-- 导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -109,6 +110,43 @@
                 android:layout_weight="9"
                 android:textColor="@color/theme01.textColorMain"
                 android:text="@string/kVcHtlcEntryFromHashcode"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_weight="1"
+
+                android:foregroundGravity="right"
+                android:src="@drawable/ic_btn_right_arrow" />
+
+        </LinearLayout>
+
+        <!-- 隐私交易 -->
+        <LinearLayout
+            android:id="@+id/layout_stealth_transfer"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:layout_marginTop="30dp"
+            android:orientation="horizontal">
+
+            <!-- TODO:6.0 icon -->
+            <ImageView
+                android:id="@+id/img_icon_blind_transfer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/icon_htlc_preimage"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:textSize="16dp"
+                android:layout_weight="9"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="@string/kVcStealthTransferEntryTitle"/>
 
             <ImageView
                 android:layout_width="0dp"

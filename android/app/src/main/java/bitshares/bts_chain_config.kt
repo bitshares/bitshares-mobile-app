@@ -83,6 +83,8 @@ enum class EHDBitsharesPermissionType(val value: Int) {
     ehdbpt_owner(0x0),                      //  所有者权限
     ehdbpt_active(0x1),                     //  资金权限
     ehdbpt_memo(0x2),                       //  备注权限
+    ehdbpt_stealth_mainkey(0x3),            //  隐私主地址（OP：39、40、41）
+    ehdbpt_stealth_childkey(0x4),           //  隐私主地址的派生子地址
 }
 
 /**

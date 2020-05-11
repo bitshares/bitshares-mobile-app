@@ -86,23 +86,8 @@ class ActivityIndexMy : BtsppActivity() {
 
         //  [钱包 & 多签]
         layout_my_wallet_and_muti_signature.setOnClickListener {
-            guardWalletExist {
-                if (WalletManager.sharedWalletManager().isPasswordMode()) {
-                    alerShowMessageConfirm(resources.getString(R.string.kWarmTips), R.string.kLblTipsPasswordModeNotSupportMultiSign.xmlstring(this)).then {
-                        if (it != null && it as Boolean) {
-                            val result_promise = Promise()
-                            goTo(ActivityUpgradeToWalletMode::class.java, true, args = jsonObjectfromKVS("result_promise", result_promise))
-                            result_promise.then {
-                                if (it != null && it as Boolean) {
-                                    goTo(ActivityWalletManager::class.java, true)
-                                }
-                            }
-                        }
-                        return@then null
-                    }
-                } else {
-                    goTo(ActivityWalletManager::class.java, true)
-                }
+            guardWalletExistWithWalletMode(resources.getString(R.string.kLblTipsPasswordModeNotSupportMultiSign)) {
+                goTo(ActivityWalletManager::class.java, true)
             }
         }
 

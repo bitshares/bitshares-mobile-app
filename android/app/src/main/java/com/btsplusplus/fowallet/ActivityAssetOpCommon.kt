@@ -38,7 +38,7 @@ class ActivityAssetOpCommon : BtsppActivity() {
         _op_extra_args = args.getJSONObject("op_extra_args")
         _curr_selected_asset = args.getJSONObject("current_asset")
         _full_account_data = args.optJSONObject("full_account_data")
-        _result_promise = args.get("result_promise") as? Promise
+        _result_promise = args.opt("result_promise") as? Promise
 
         _op_type = _op_extra_args.get("kOpType") as EBitsharesAssetOpKind
         _auxGenCurrBalanceAndBalanceAsset()

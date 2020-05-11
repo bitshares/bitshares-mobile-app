@@ -111,11 +111,23 @@ class HDWallet {
     }
 
     fun deriveBitshares(type: EHDBitsharesPermissionType): HDWallet {
+        //  REMARK：m / purpose' / network' / role' / account-index' / key-index'
         return when (type) {
             EHDBitsharesPermissionType.ehdbpt_owner -> derive("m/48'/1'/0'/0'/0'")
             EHDBitsharesPermissionType.ehdbpt_active -> derive("m/48'/1'/1'/0'/0'")
             EHDBitsharesPermissionType.ehdbpt_memo -> derive("m/48'/1'/3'/0'/0'")
+            //  REMARK：隐私交易 role 类型值定义为：7。
+            EHDBitsharesPermissionType.ehdbpt_stealth_mainkey -> derive("m/48'/1'/7'/0'/0'")
+            EHDBitsharesPermissionType.ehdbpt_stealth_childkey -> deriveBitsharesStealthChildKey(0)
         }
+    }
+
+    /**
+     *  (public) 派生隐私地址的子地址。根据主地址私钥作为seed。
+     */
+    fun deriveBitsharesStealthChildKey(child_key_index: Int): HDWallet {
+        //  REMARK：隐私地址子地址 role 类型值定义为：8。
+        return derive("m/48'/1'/8'/0'/$child_key_index'")
     }
 
     fun derive(path: String): HDWallet {
