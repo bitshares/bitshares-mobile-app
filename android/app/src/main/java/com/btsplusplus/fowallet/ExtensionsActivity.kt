@@ -58,7 +58,7 @@ fun AppCompatActivity.setBottomNavigationStyle(position: Int) {
             bottom_nav_image_view_my.setColorFilter(color)
         }
     }
-    //  TODO:6.0 每次点击都重新生成一个，后面考虑用 singleTop，结合 onNewIntent重用。
+    //  TODO:7.0 每次点击都重新生成一个，后面考虑用 singleTop，结合 onNewIntent重用。
     if (BuildConfig.kAppModuleEnableTabMarket) {
         bottom_nav_markets_frame.visibility = View.VISIBLE
         bottom_nav_markets_frame.setOnClickListener {

@@ -7,15 +7,24 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import bitshares.EBitsharesAccountPasswordLang
 import bitshares.LLAYOUT_WARP
+import com.btsplusplus.fowallet.utils.kAppBlindAccountBrainKeyCheckSumPrefix
 import com.fowallet.walletcore.bts.WalletManager
 import kotlinx.android.synthetic.main.activity_new_account_password.*
 import org.json.JSONObject
+
+/**
+ *  助记词使用场景定义
+ */
+const val kNewPasswordSceneRegAccount = 0               //  注册新账号（额外参数：账号名）
+const val kNewPasswordSceneChangePassowrd = 1           //  修改密码
+const val kNewPasswordSceneGenBlindAccountBrainKey = 2  //  生成隐私账号助记词
 
 class ActivityNewAccountPassword : BtsppActivity() {
 
     private var _currPasswordLang = EBitsharesAccountPasswordLang.ebap_lang_zh
     private var _currPasswordWords = mutableListOf<String>()
     private var _new_account_name: String? = null
+    private var _scene = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +37,8 @@ class ActivityNewAccountPassword : BtsppActivity() {
 
         //  获取参数
         val args = btspp_args_as_JSONObject()
-        _new_account_name = args.optString("new_account_name", null)
+        _scene = args.getInt("scene")
+        _new_account_name = args.optString("args", null)
         findViewById<TextView>(R.id.title).text = args.getString("title")
 
         //  初始化数据
@@ -60,10 +70,15 @@ class ActivityNewAccountPassword : BtsppActivity() {
      *  (private) 处理密码生成
      */
     private fun processGeneratePassword() {
+        var check_sum_prefix: String? = null
+        //  REMARK：设置隐私交易中隐私账户助记词校验码前缀。
+        if (_scene == kNewPasswordSceneGenBlindAccountBrainKey) {
+            check_sum_prefix = kAppBlindAccountBrainKeyCheckSumPrefix
+        }
         _currPasswordWords = if (_currPasswordLang == EBitsharesAccountPasswordLang.ebap_lang_zh) {
-            WalletManager.randomGenerateChineseWord_N16()
+            WalletManager.randomGenerateChineseWord_N16(check_sum_prefix)
         } else {
-            WalletManager.randomGenerateEnglishWord_N32()
+            WalletManager.randomGenerateEnglishWord_N32(check_sum_prefix)
         }
         _draw_ui_new_password(_currPasswordWords)
     }
@@ -150,14 +165,15 @@ class ActivityNewAccountPassword : BtsppActivity() {
      *  (private) 事件 - 点击下一步
      */
     private fun onNextButtonClick() {
-        if (_new_account_name != null) {
+        if (_scene == kNewPasswordSceneRegAccount || _scene == kNewPasswordSceneGenBlindAccountBrainKey) {
             val value = resources.getString(R.string.kEditPasswordNextStepAskForReg)
             UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kWarmTips), value).then {
                 if (it != null && it as Boolean) {
                     goTo(ActivityNewAccountPasswordConfirm::class.java, true, args = JSONObject().apply {
                         put("current_password", _currPasswordWords.joinToString(""))
                         put("pass_lang", _currPasswordLang)
-                        put("new_account_name", _new_account_name)
+                        put("args", _new_account_name)
+                        put("scene", _scene)
                     })
                 }
             }
@@ -165,6 +181,7 @@ class ActivityNewAccountPassword : BtsppActivity() {
             goTo(ActivityNewAccountPasswordConfirm::class.java, true, args = JSONObject().apply {
                 put("current_password", _currPasswordWords.joinToString(""))
                 put("pass_lang", _currPasswordLang)
+                put("scene", _scene)
             })
         }
     }

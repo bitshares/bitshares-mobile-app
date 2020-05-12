@@ -3,6 +3,7 @@ package com.btsplusplus.fowallet
 import android.os.Bundle
 import android.view.View
 import bitshares.*
+import com.btsplusplus.fowallet.utils.VcUtils
 import com.fowallet.walletcore.bts.BitsharesClientManager
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
@@ -21,6 +22,7 @@ class ActivityNewAccountPasswordConfirm : BtsppActivity() {
     private var _curr_password = ""
     private var _curr_pass_lang = EBitsharesAccountPasswordLang.ebap_lang_zh
     private var _new_account_name: String? = null   //  新账号名，注册时传递，修改密码则为nil。
+    private var _scene = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,35 +37,51 @@ class ActivityNewAccountPasswordConfirm : BtsppActivity() {
         val args = btspp_args_as_JSONObject()
         _curr_password = args.getString("current_password")
         _curr_pass_lang = args.get("pass_lang") as EBitsharesAccountPasswordLang
-        _new_account_name = args.optString("new_account_name", null)
+        _new_account_name = args.optString("args", null)
+        _scene = args.getInt("scene")
 
         //  初始化UI
-        if (isRegisterAccount()) {
-            //  注册账号
-            btn_terms_of_service.visibility = View.VISIBLE
-            layout_modify_range.visibility = View.GONE
-            //  UI - 新账号名
-            tv_your_account_name_title.text = resources.getString(R.string.kEditPasswordCellTItleYourNewAccountName)
-            tv_curr_account_name_value.text = _new_account_name!!
-            //  UI - 提交按钮名字
-            btn_submit.text = resources.getString(R.string.kLoginCellBtnAgreeAndReg)
-            //  事件 - 用户协议
-            btn_terms_of_service.setOnClickListener { onTermsOfServiceClicked() }
-        } else {
-            //  修改密码
-            btn_terms_of_service.visibility = View.INVISIBLE
-            layout_modify_range.visibility = View.VISIBLE
-            //  UI - 账号名
-            tv_your_account_name_title.text = resources.getString(R.string.kEditPasswordCellTitleCurrAccountName)
-            tv_curr_account_name_value.text = WalletManager.sharedWalletManager().getWalletAccountInfo()!!.getJSONObject("account").getString("name")
-            //  UI - 提交按钮名字
-            btn_submit.text = resources.getString(R.string.kEditPasswordBtnSubmmit)
-            //  UI - 修改范围
-            _draw_ui_modify_range()
-            //  事件 - 选择修改范围
-            layout_modify_range_cell.setOnClickListener { onModifyRangeClicked() }
-            //  UI - 箭头颜色
-            img_arrow_modify_range.setColorFilter(resources.getColor(R.color.theme01_textColorGray))
+        when (_scene) {
+            kNewPasswordSceneRegAccount -> {
+                //  注册账号
+                btn_terms_of_service.visibility = View.VISIBLE
+                layout_modify_range.visibility = View.GONE
+                //  UI - 新账号名
+                tv_your_account_name_title.text = resources.getString(R.string.kEditPasswordCellTItleYourNewAccountName)
+                tv_curr_account_name_value.text = _new_account_name!!
+                //  UI - 提交按钮名字
+                btn_submit.text = resources.getString(R.string.kLoginCellBtnAgreeAndReg)
+                //  事件 - 用户协议
+                btn_terms_of_service.setOnClickListener { onTermsOfServiceClicked() }
+            }
+            kNewPasswordSceneChangePassowrd -> {
+                //  修改密码
+                btn_terms_of_service.visibility = View.INVISIBLE
+                layout_modify_range.visibility = View.VISIBLE
+                //  UI - 账号名
+                tv_your_account_name_title.text = resources.getString(R.string.kEditPasswordCellTitleCurrAccountName)
+                tv_curr_account_name_value.text = WalletManager.sharedWalletManager().getWalletAccountInfo()!!.getJSONObject("account").getString("name")
+                //  UI - 提交按钮名字
+                btn_submit.text = resources.getString(R.string.kEditPasswordBtnSubmmit)
+                //  UI - 修改范围
+                _draw_ui_modify_range()
+                //  事件 - 选择修改范围
+                layout_modify_range_cell.setOnClickListener { onModifyRangeClicked() }
+                //  UI - 箭头颜色
+                img_arrow_modify_range.setColorFilter(resources.getColor(R.color.theme01_textColorGray))
+            }
+            kNewPasswordSceneGenBlindAccountBrainKey -> {
+                //  创建隐私账号
+                btn_terms_of_service.visibility = View.INVISIBLE
+                layout_modify_range.visibility = View.GONE
+                //  UI - 别名
+                tv_your_account_name_title.text = resources.getString(R.string.kVcStCellTitleAliasName)
+                //  TODO:6.0 需要别名输入框？？
+                tv_curr_account_name_value.text = ""
+                //  UI - 提交按钮名字
+                btn_submit.text = resources.getString(R.string.kEditPasswordBtnCreateBlindAccount)
+            }
+            else -> assert(false)
         }
 
         //  事件 - 提交事件
@@ -71,13 +89,6 @@ class ActivityNewAccountPasswordConfirm : BtsppActivity() {
 
         //  事件 - 返回
         layout_back_from_new_account_password_confirm.setOnClickListener { finish() }
-    }
-
-    /**
-     *  (private) 是否是注册账号
-     */
-    private fun isRegisterAccount(): Boolean {
-        return _new_account_name != null && _new_account_name!!.isNotEmpty()
     }
 
     /**
@@ -334,18 +345,33 @@ class ActivityNewAccountPasswordConfirm : BtsppActivity() {
             return
         }
 
-        if (isRegisterAccount()) {
-            //  注册：新账号
-            onRegisterAccountCore()
-        } else {
-            //  修改密码：先查询账号数据
-            queryNewestAccountData().then {
-                //  二次确认
-                _gotoAskUpdateAccount(it as JSONObject)
-                return@then null
-            }.catch {
-                showToast(resources.getString(R.string.tip_network_error))
+        when (_scene) {
+            kNewPasswordSceneRegAccount -> {
+                //  注册：新账号
+                onRegisterAccountCore()
             }
+            kNewPasswordSceneChangePassowrd -> {
+                //  修改密码：先查询账号数据
+                queryNewestAccountData().then {
+                    //  二次确认
+                    _gotoAskUpdateAccount(it as JSONObject)
+                    return@then null
+                }.catch {
+                    showToast(resources.getString(R.string.tip_network_error))
+                }
+            }
+            kNewPasswordSceneGenBlindAccountBrainKey -> {
+                //  TODO:6.0
+                val str_alias_name = "AA"//TODO:6.0 text field??
+                VcUtils.processImportBlindAccount(this, str_alias_name, _curr_password) { blind_account ->
+                    //  转到账号管理界面
+                    val self = this
+                    goTo(ActivityBlindAccounts::class.java, true, clear_navigation_stack = true, args = JSONObject().apply {
+                        put("title", self.resources.getString(R.string.kVcTitleBlindAccountsMgr))
+                    })
+                }
+            }
+            else -> assert(false)
         }
     }
 

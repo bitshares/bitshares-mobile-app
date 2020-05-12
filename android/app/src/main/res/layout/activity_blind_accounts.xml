@@ -14,6 +14,7 @@
         android:padding="10dp"
         android:orientation="vertical">
 
+        <!-- 导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -44,7 +45,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="选择隐私账户"
+                android:text=""
                 style="@style/kNavigationBarTextStyle" />
 
             <Button

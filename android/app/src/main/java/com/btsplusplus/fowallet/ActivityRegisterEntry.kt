@@ -54,8 +54,9 @@ class ActivityRegisterEntry : BtsppActivity() {
                 showToast(resources.getString(R.string.kLoginSubmitTipsAccountAlreadyExist))
             } else {
                 goTo(ActivityNewAccountPassword::class.java, true, args = JSONObject().apply {
-                    put("new_account_name", new_account_name)
+                    put("args", new_account_name)
                     put("title", self.resources.getString(R.string.kVcTitleBackupYourPassword))
+                    put("scene", kNewPasswordSceneRegAccount)
                 })
             }
             return@then null

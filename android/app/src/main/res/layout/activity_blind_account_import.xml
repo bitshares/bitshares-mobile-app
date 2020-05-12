@@ -14,7 +14,7 @@
         android:padding="10dp"
         android:orientation="vertical">
 
-
+        <!-- 导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -47,7 +47,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="导入隐私账户"
+                android:text="@string/kVcTitleImportBlindAccount"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
@@ -58,49 +58,48 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <!-- 别名 -->
             <TextView
                 android:textSize="12dp"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="别名"
+                android:text="@string/kVcStCellTitleAliasName"
                 android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-
             <EditText
-                android:id="@+id/et_alias_name_from_blind_account_import"
+                android:id="@+id/tv_alias_name"
                 android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 style="@style/kTextFieldNormal"
-                android:hint="为隐私账户设置一个别名"/>
+                android:hint="@string/kVcStPlaceholderInputAliasName"/>
 
             <View android:layout_height="1dp" android:layout_marginTop="5dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
+            <!-- 密码/助记词 -->
             <TextView
                 android:textSize="12dp"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="密码"
+                android:text="@string/kVcStCellTitleBlindAccountBrainKey"
                 android:layout_marginTop="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-
             <EditText
-                android:id="@+id/et_password_from_blind_account_import"
+                android:id="@+id/tv_brain_key"
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 style="@style/kTextFieldPassword"
-                android:hint="请输入隐私账户密码"/>
+                android:hint="@string/kVcStPlaceholderBlindAccountBrainKey"/>
 
             <View android:layout_height="1dp" android:layout_marginTop="5dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-
+            <!-- 按钮 -->
             <LinearLayout
-                android:id="@+id/layout_submit_from_blind_account_import"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:background="@color/colorPrimary"
@@ -108,12 +107,13 @@
                 android:orientation="horizontal">
 
                 <Button
+                    android:id="@+id/btn_import_submit"
                     android:layout_width="wrap_content"
                     style="@style/kMainButtonStyle"
                     android:gravity="center|center_vertical"
                     android:layout_weight="1"
                     android:padding="5dp"
-                    android:text="导入" />
+                    android:text="@string/kVcStBtnImportNow" />
             </LinearLayout>
 
         </LinearLayout>

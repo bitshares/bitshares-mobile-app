@@ -632,6 +632,7 @@ class FragmentPermissionList : BtsppFragment() {
         _view?.findViewById<Button>(R.id.btn_edit_password)?.setOnClickListener {
             activity?.goTo(ActivityNewAccountPassword::class.java, true, args = JSONObject().apply {
                 put("title", self.resources.getString(R.string.kVcTitleEditPassword))
+                put("scene", kNewPasswordSceneChangePassowrd)
             })
         }
         return _view
