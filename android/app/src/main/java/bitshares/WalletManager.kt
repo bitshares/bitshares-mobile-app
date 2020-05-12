@@ -235,7 +235,7 @@ class WalletManager {
         /**
          *  (public) 随机生成 32 个英文字符列表
          */
-        fun randomGenerateEnglishWord_N32(): MutableList<String> {
+        fun randomGenerateEnglishWord_N32(check_sum_prefix: String?): MutableList<String> {
             val word_list = englishPasswordCharacter()
             val n_word_list = word_list.length()
             val randomBuffer = secureRandomByte32()
@@ -252,13 +252,14 @@ class WalletManager {
                 assert(wordIndex < n_word_list)
                 brainkey.add(word_list.getString(wordIndex))
             }
+            //  TODO:6.0 check sum
             return brainkey
         }
 
         /**
          *  (public) 随机生成 16 个中文汉字列表
          */
-        fun randomGenerateChineseWord_N16(): MutableList<String> {
+        fun randomGenerateChineseWord_N16(check_sum_prefix: String?): MutableList<String> {
             val word_list = chineseWordList()
             val n_word_list = word_list.length()
             val randomBuffer = secureRandomByte32()
@@ -277,7 +278,36 @@ class WalletManager {
                 assert(wordIndex < n_word_list)
                 brainkey.add(word_list.getString(wordIndex))
             }
+            //  TODO:6.0 check sum
             return brainkey
+        }
+
+        /**
+         *  (public) 是否是有效的隐私交易（隐私账户）助记词。
+         */
+        fun isValidStealthTransferBrainKey(brain_key: String, check_sum_prefix: String): Boolean {
+            //  TODO:6.0
+//            if (!brain_key) {
+//                return NO;
+//            }
+//            NSData* d_brain_key = [brain_key dataUsingEncoding:NSUTF8StringEncoding];
+//            if (!d_brain_key) {
+//                return NO;
+//            }
+//            if (d_brain_key.length == 32 && brain_key.length == 32) {
+//                return [self _verifyBrainKeyCheckSum:brain_key
+//                        brain_key_char_per_byte:1
+//                word_list:[self englishPasswordCharacter]
+//                check_sum_prefix:check_sum_prefix];
+//            } else if (d_brain_key.length == 48 && brain_key.length == 16) {
+//                return [self _verifyBrainKeyCheckSum:brain_key
+//                        brain_key_char_per_byte:2
+//                word_list:[self chineseWordList]
+//                check_sum_prefix:check_sum_prefix];
+//            } else {
+//                return NO;
+//            }
+            return true
         }
 
         private var _words_english: JSONArray? = null

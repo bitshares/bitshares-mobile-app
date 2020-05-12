@@ -34,7 +34,7 @@ class StealthTransferUtils {
                 return null
             }
             val raw_data = base58string.base58_decode()
-            if (raw_data == null || raw_data.size <= 0) {
+            if (raw_data == null || raw_data.isEmpty()) {
                 return null
             }
 

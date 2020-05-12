@@ -127,5 +127,57 @@ class VcUtils {
             }
             return value
         }
+
+        /**
+         *  (public) 处理导入隐私账户。
+         */
+        fun processImportBlindAccount(ctx: Activity, str_alias_name: String, str_password: String, success_callback: ((blind_account: JSONObject) -> Unit)?) {
+            if (str_alias_name.isEmpty()) {
+                ctx.showToast(ctx.resources.getString(R.string.kVcStTipErrPleaseInputAliasName))
+                return
+            }
+
+            if (str_password.isEmpty() || !WalletManager.isValidStealthTransferBrainKey(str_password, kAppBlindAccountBrainKeyCheckSumPrefix)) {
+                ctx.showToast(ctx.resources.getString(R.string.kVcStTipErrPleaseInputBlindAccountBrainKey))
+                return
+            }
+
+            //  开始导入
+            val hdk = HDWallet.fromMnemonic(str_password)
+            val main_key = hdk.deriveBitshares(EHDBitsharesPermissionType.ehdbpt_stealth_mainkey)
+            val wif_main_pri_key = main_key.toWifPrivateKey()
+            val wif_main_pub_key = OrgUtils.genBtsAddressFromWifPrivateKey(wif_main_pri_key)!!
+
+            val blind_account = JSONObject().apply {
+                put("public_key", wif_main_pub_key)
+                put("alias_name", str_alias_name)
+                put("parent_key", "")
+            }
+
+            val walletMgr = WalletManager.sharedWalletManager()
+            assert(walletMgr.isWalletExist() && !walletMgr.isPasswordMode())
+
+            //  解锁钱包
+            ctx.guardWalletUnlocked(false) { unlocked ->
+                if (unlocked) {
+                    //  隐私交易主地址导入钱包
+                    val full_wallet_bin = walletMgr.walletBinImportAccount(null, jsonArrayfrom(wif_main_pri_key))!!
+                    AppCacheManager.sharedAppCacheManager().apply {
+                        appendBlindAccount(blind_account, auto_save = false)
+                        updateWalletBin(full_wallet_bin)
+                        autoBackupWalletToWebdir(false)
+                    }
+
+                    //  重新解锁（即刷新解锁后的账号信息）。
+                    val unlockInfos = walletMgr.reUnlock(ctx)
+                    assert(unlockInfos.getBoolean("unlockSuccess"))
+
+                    //  导入成功
+                    if (success_callback != null) {
+                        success_callback(blind_account)
+                    }
+                }
+            }
+        }
     }
 }

@@ -52,7 +52,7 @@
                 android:text="@string/kLoginPassword"
                 android:textSize="13dp"
                 android:textColor="@color/theme01.textColorMain"/>
-            <!-- TODO:6.0 因为有中文密码，默认不设置密码模式，允许输入中文。后期考虑是否按钮切换等？ -->
+            <!-- TODO:7.0 因为有中文密码，默认不设置密码模式，允许输入中文。后期考虑是否按钮切换等？ -->
             <EditText
                 android:layout_marginTop="10dp"
                 android:id="@+id/tf_password"

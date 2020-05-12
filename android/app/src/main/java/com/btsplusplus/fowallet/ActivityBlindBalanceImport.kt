@@ -303,14 +303,6 @@ class ActivityBlindBalanceImport : BtsppActivity() {
             return null
         }
 
-        //  TODO:6.0 test
-        val errtest = try {
-            T_blind_input.parse(decrypted_memo) as? JSONObject
-        } catch (e: Exception) {
-            //  Invalid receipt data.
-            null
-        }
-
         //  这里可能存在异常数据，需要捕获。
         val obj_decrypted_memo = try {
             T_stealth_confirmation_memo_data.parse(decrypted_memo) as? JSONObject
