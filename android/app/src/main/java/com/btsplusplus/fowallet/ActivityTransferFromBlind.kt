@@ -53,7 +53,7 @@ class ActivityTransferFromBlind : BtsppActivity() {
 
         // 获取隐私账号地址并刷新UI
         getData()
-        _view_blind_receipt = ViewBlindAccountsOrReceipt(this,"blind_receipt", _layout_blind_receipt,_data_blind_receipt)
+        _view_blind_receipt = ViewBlindAccountsOrReceipt(this, kBlindItemTypeInput, _layout_blind_receipt)
 
         // 设置默认账户
         _current_account = JSONObject().apply {

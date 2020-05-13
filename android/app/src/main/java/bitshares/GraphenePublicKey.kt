@@ -44,11 +44,10 @@ class GraphenePublicKey {
 
     fun child(child: ByteArray): GraphenePublicKey {
         //  计算 offset
-        val native_ptr = NativeInterface.sharedNativeInterface()
-        val offset = native_ptr.sha256(_key_data!! + child)
+        val offset = sha256(_key_data!! + child)
 
         //  计算 child 公钥
-        return GraphenePublicKey().initWithSecp256k1PublicKey(native_ptr.bts_pubkey_tweak_add(_key_data!!, offset)!!)
+        return GraphenePublicKey().initWithSecp256k1PublicKey(NativeInterface.sharedNativeInterface().bts_pubkey_tweak_add(_key_data!!, offset)!!)
     }
 
     /**
@@ -56,7 +55,7 @@ class GraphenePublicKey {
      */
     fun genToToTo(commitment: ByteArray): GraphenePublicKey {
         assert(commitment.size == 33)
-        val to_digest = NativeInterface.sharedNativeInterface().sha256(_key_data!! + commitment)
+        val to_digest = sha256(_key_data!! + commitment)
         return GraphenePrivateKey().initWithSecp256k1PrivateKey(to_digest).getPublicKey()
     }
 

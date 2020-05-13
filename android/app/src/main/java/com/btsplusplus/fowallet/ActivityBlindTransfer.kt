@@ -51,11 +51,11 @@ class ActivityBlindTransfer : BtsppActivity() {
 
         // 获取收据并刷新UI
         getBlindReceiptData()
-        _view_blind_receipt = ViewBlindAccountsOrReceipt(this,"blind_receipt", _layout_blind_receipt,_data_blind_receipt)
+        _view_blind_receipt = ViewBlindAccountsOrReceipt(this, kBlindItemTypeInput, _layout_blind_receipt)
 
         // 获取隐私地址并刷新UI
         getBlindAccountData()
-        _view_blind_account = ViewBlindAccountsOrReceipt(this,"blind_account", _layout_blind_account,_data_blind_accounts)
+        _view_blind_account = ViewBlindAccountsOrReceipt(this, kBlindItemTypeOutput, _layout_blind_account)
 
         // 提交事件
         layout_submit_button_from_blind_transfer.setOnClickListener {
