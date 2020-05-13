@@ -14,7 +14,6 @@
         android:padding="10dp"
         android:orientation="vertical">
 
-        <!-- TODO:6.0 icon s -->
         <!-- 导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
@@ -76,7 +75,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_gravity="center_vertical"
-                        android:src="@drawable/icon_transfer"/>
+                        android:src="@drawable/icon_otc_auth"/>
                     <TextView
                         android:layout_marginLeft="5dp"
                         android:layout_width="0dp"
@@ -114,7 +113,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_gravity="center_vertical"
-                        android:src="@drawable/icon_transfer"/>
+                        android:src="@drawable/proposal"/>
                     <TextView
                         android:layout_marginLeft="5dp"
                         android:layout_width="0dp"
@@ -152,7 +151,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_gravity="center_vertical"
-                        android:src="@drawable/icon_transfer"/>
+                        android:src="@drawable/icon_transfer_to_blind"/>
                     <TextView
                         android:layout_marginLeft="5dp"
                         android:layout_width="0dp"
@@ -190,7 +189,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_gravity="center_vertical"
-                        android:src="@drawable/icon_transfer"/>
+                        android:src="@drawable/icon_transfer_from_blind"/>
                     <TextView
                         android:layout_marginLeft="5dp"
                         android:layout_width="0dp"
@@ -228,7 +227,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_gravity="center_vertical"
-                        android:src="@drawable/icon_transfer"/>
+                        android:src="@drawable/icon_blind_transfer"/>
                     <TextView
                         android:layout_marginLeft="5dp"
                         android:layout_width="0dp"

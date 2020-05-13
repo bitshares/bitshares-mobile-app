@@ -14,7 +14,7 @@
         android:padding="10dp"
         android:orientation="vertical">
 
-
+        <!-- 导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -47,7 +47,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="新增隐私输出"
+                android:text="@string/kVcTitleAddBlindOutput"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
@@ -58,10 +58,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <!-- 隐私账户 -->
             <TextView
                 android:textSize="12dp"
                 android:textColor="@color/theme01.textColorMain"
-                android:text="隐私账户"
+                android:text="@string/kVcStCellTitleBlindAccount"
                 android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -73,20 +74,21 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/et_account_from_blind_output_add_one"
+                    android:id="@+id/tf_public_key"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     style="@style/kTextFieldNormal"
-                    android:hint="请输入您或他人的隐私账户"/>
+                    android:hint="@string/kVcStCellPlaceholderOutputAccountAddr"/>
 
                 <TextView
                     android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="12dp"
                     android:gravity="center_vertical"
-                    android:id="@+id/tv_my_account_from_blind_output_add_one"
-                    android:text="我的账户"
+                    android:id="@+id/btn_my_accounts"
+                    android:text="@string/kVcStCellTailerButtonMyAccounts"
                     android:textColor="@color/theme01.textColorHighlight"
                     android:textSize="12dp"
                     android:layout_width="wrap_content"
@@ -95,52 +97,89 @@
 
             <View android:layout_height="1dp" android:layout_marginTop="5dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-            <TextView
-                android:textSize="12dp"
-                android:textColor="@color/theme01.textColorMain"
-                android:text="数量"
+            <!-- 数量 -->
+            <LinearLayout
                 android:layout_marginTop="25dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
+                <TextView
+                    android:textSize="12dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="@string/kVcStCellTitleOutputAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tv_available_balance"
+                    android:textSize="12dp"
+                    android:textColor="@color/theme01.textColorMain"
+                    android:text="-- TEST"
+                    android:gravity="right"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
             <LinearLayout
-                android:layout_marginTop="15dp"
-                android:gravity="center_vertical"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <EditText
-
-                    android:id="@+id/et_quantity_from_blind_output_add_one"
+                    android:id="@+id/tf_amount"
                     android:maxLength="24"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    style="@style/kTextFieldDecimalPad"
-                    android:hint="请输入输出数量"/>
-
-                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
-                    android:id="@+id/tv_asset_symbol_from_blind_output_add_one"
-                    android:text="TEST"
-                    android:textColor="@color/theme01.textColorMain"
-                    android:textSize="12dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    style="@style/kTextFieldDecimalPad"
+                    android:hint="@string/kVcStCellPlaceholderOutputAmount"/>
 
+                <LinearLayout
+                    android:gravity="right|center_vertical"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <!-- 数量符号 -->
+                    <TextView
+                        android:id="@+id/tv_tailer_asset_symbol"
+                        android:layout_marginLeft="5dp"
+                        android:textStyle="bold"
+                        android:text="--"
+                        android:textColor="@color/theme01.textColorMain"
+                        android:textSize="11dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <!-- 分割符 + 全部按钮（可选的） -->
+                    <TextView
+                        android:id="@+id/tv_tailer_separator"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:text="|"
+                        android:textColor="@color/theme01.textColorGray"
+                        android:textSize="11dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/tv_tailer_btn_all"
+                        android:text="@string/kLabelSendAll"
+                        android:textColor="@color/theme01.textColorHighlight"
+                        android:textSize="11dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
 
             </LinearLayout>
+            <View android:layout_marginTop="10dp" android:layout_height="1dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
-
-            <View android:layout_height="1dp" android:layout_marginTop="5dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
-
-
+            <!-- 确定按钮 -->
             <LinearLayout
-                android:id="@+id/layout_submit_from_blind_output_add_one"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:background="@color/colorPrimary"
@@ -148,12 +187,13 @@
                 android:orientation="horizontal">
 
                 <Button
+                    android:id="@+id/btn_done"
                     android:layout_width="wrap_content"
                     style="@style/kMainButtonStyle"
                     android:gravity="center|center_vertical"
                     android:layout_weight="1"
                     android:padding="5dp"
-                    android:text="确定" />
+                    android:text="@string/kVcPermissionAddOneBtnDone" />
             </LinearLayout>
 
         </LinearLayout>

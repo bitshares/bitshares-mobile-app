@@ -182,7 +182,7 @@ class TransactionBuilder {
             //  1、过期时间戳设置
             val head_block_sec = Utils.parseBitsharesTimeString(data.getString("time"))
             val now_sec = Utils.now_ts()
-            var base_expiration_sec: Long
+            val base_expiration_sec: Long
             if (now_sec - head_block_sec >= 30) {
                 base_expiration_sec = head_block_sec
             } else {
@@ -197,10 +197,8 @@ class TransactionBuilder {
             //  3、更新 ref_block_prefix
             val byte_block_id = data.getString("head_block_id").hexDecode()
             //  TODO:待测试 Int可能为负数
-            var io = ByteBuffer.wrap(byte_block_id)
             //  REMARK：这里读取LittleEndian
-            io.order(ByteOrder.LITTLE_ENDIAN)
-            _ref_block_prefix = io.getInt(4).toLong()
+            _ref_block_prefix = ByteBuffer.wrap(byte_block_id).apply { order(ByteOrder.LITTLE_ENDIAN) }.getLong(4)
 
             //  4、TODO:如果operations的op有finalize方法，也需要调用进行处理。
 

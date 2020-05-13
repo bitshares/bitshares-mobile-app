@@ -314,11 +314,8 @@ class ActivityBlindBalanceImport : BtsppActivity() {
             return null
         }
 
-        //  校验checksuum
-        val io = ByteBuffer.wrap(secret)
-        //  REMARK：这里读取LittleEndian
-        io.order(ByteOrder.LITTLE_ENDIAN)
-        if (io.int != obj_decrypted_memo.getInt("check")) {
+        //  校验checksuum REMARK：这里读取LittleEndian
+        if (ByteBuffer.wrap(secret).apply { order(ByteOrder.LITTLE_ENDIAN) }.int != obj_decrypted_memo.getInt("check")) {
             return null
         }
 

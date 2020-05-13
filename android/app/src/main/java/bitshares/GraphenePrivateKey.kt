@@ -51,9 +51,8 @@ class GraphenePrivateKey {
     fun child(child: ByteArray): GraphenePrivateKey {
         val public_key = getPublicKey()
         val public_keydata = public_key.getKeyData()
-        val native_ptr = NativeInterface.sharedNativeInterface()
-        val offset = native_ptr.sha256(public_keydata + child)
-        return GraphenePrivateKey().initWithSecp256k1PrivateKey(native_ptr.bts_privkey_tweak_add(_key_data!!, offset)!!)
+        val offset = sha256(public_keydata + child)
+        return GraphenePrivateKey().initWithSecp256k1PrivateKey(NativeInterface.sharedNativeInterface().bts_privkey_tweak_add(_key_data!!, offset)!!)
     }
 
 }

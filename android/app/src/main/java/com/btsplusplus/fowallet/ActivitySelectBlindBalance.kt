@@ -76,7 +76,7 @@ class ActivitySelectBlindBalance : BtsppActivity() {
         _data_receipt.forEach<JSONObject> {
             val data = it!!
 
-            val cell = ViewBlindReceiptCell(this,data,_current_symbol,index,true){ index: Int, checked: Boolean ->
+            val cell = ViewBlindReceiptCell(this,data, index, can_check = true){ index: Int, checked: Boolean ->
                 onSelectReceipt(index, checked)
             }
 

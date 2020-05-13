@@ -32,6 +32,41 @@ class ModelUtils {
         }
 
         /**
+         *  (public) 资产 - 判断资产是否允许隐私转账
+         */
+        fun assetAllowConfidential(asset_object: JSONObject): Boolean {
+            val flags = asset_object.getJSONObject("options").getInt("flags")
+            if (flags.and(EBitsharesAssetFlags.ebat_disable_confidential.value) != 0) {
+                return false
+            }
+            return true
+        }
+
+        /**
+         *  (public) 资产 - 资产是否允许覆盖转账（强制转账）
+         */
+        fun assetCanOverride(asset_object: JSONObject): Boolean {
+            val flags = asset_object.getJSONObject("options").getInt("flags")
+            return flags.and(EBitsharesAssetFlags.ebat_override_authority.value) != 0
+        }
+
+        /**
+         *  (public) 资产 - 是否所有转账都需要发行人审核
+         */
+        fun assetIsTransferRestricted(asset_object: JSONObject): Boolean {
+            val flags = asset_object.getJSONObject("options").getInt("flags")
+            return flags.and(EBitsharesAssetFlags.ebat_transfer_restricted.value) != 0
+        }
+
+        /**
+         *  (public) 资产 - 资产是否需要持有人属于白名单判断。
+         */
+        fun assetNeedWhiteList(asset_object: JSONObject): Boolean {
+            val flags = asset_object.getJSONObject("options").getInt("flags")
+            return flags.and(EBitsharesAssetFlags.ebat_white_list.value) != 0
+        }
+
+        /**
          *  (public) 资产 - 是否已经全局清算判断
          */
         fun assetHasGlobalSettle(bitasset_object: JSONObject): Boolean {
@@ -63,6 +98,52 @@ class ModelUtils {
                 return true
             }
             return false
+        }
+
+        /**
+         *  (public) 根据汇率换算手续费。
+         */
+        fun multiplyAndRoundupNetworkFee(core_asset: JSONObject, asset: JSONObject, n_core_fee: BigDecimal, core_exchange_rate: JSONObject): BigDecimal? {
+            val core_asset_id = core_asset.getString("id")
+            val core_precision = core_asset.getInt("precision")
+
+            val asset_id = asset.getString("id")
+            val precision = asset.getInt("precision")
+
+            val n_zero = BigDecimal.ZERO
+
+            val base = core_exchange_rate.getJSONObject("base")
+            val quote = core_exchange_rate.getJSONObject("quote")
+            if (core_asset_id == base.getString("asset_id")) {
+                if (asset_id != quote.getString("asset_id")) {
+                    //  null price
+                    return null
+                }
+                //  quote / base * n_core_fee
+                val n_base = bigDecimalfromAmount(base.getString("amount"), core_precision)
+                if (n_base <= n_zero) {
+                    //  error price
+                    return null
+                }
+                val n_quote = bigDecimalfromAmount(quote.getString("amount"), precision)
+                return n_core_fee.multiply(n_quote).divide(n_base, precision, BigDecimal.ROUND_UP)
+            } else if (core_asset_id == quote.getString("asset_id")) {
+                if (asset_id != base.getString("asset_id")) {
+                    //  null price
+                    return null
+                }
+                //  base / quote * n_core_fee
+                val n_quote = bigDecimalfromAmount(quote.getString("amount"), core_precision)
+                if (n_quote <= n_zero) {
+                    //  error price
+                    return null
+                }
+                val n_base = bigDecimalfromAmount(base.getString("amount"), precision)
+                return n_core_fee.multiply(n_base).divide(n_quote, precision, BigDecimal.ROUND_UP)
+            } else {
+                assert(false) { "invalid core_exchange_rate" }
+            }
+            return null
         }
 
         /**
