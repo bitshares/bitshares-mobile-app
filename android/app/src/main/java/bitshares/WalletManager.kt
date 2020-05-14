@@ -789,18 +789,21 @@ class WalletManager {
     /**
      *  (public) 用一组私钥签名交易。成功返回签名数据的数组，失败返回 nil。
      */
-    fun signTransaction(sign_buffer: ByteArray, signKeys: JSONArray): JSONArray? {
+    fun signTransaction(sign_buffer: ByteArray, signKeys: JSONArray, extra_keys_hash: JSONObject? = null): JSONArray? {
         assert(signKeys.length() > 0)
-        //  未解锁 返回失败
-        if (isLocked()) {
-            return null
-        }
 
         //  循环签名
         val result = JSONArray()
         for (pubkey in signKeys.forin<String>()) {
             //  获取WIF私钥
-            val private_key_wif = _private_keys_hash.getString(pubkey!!)
+            var private_key_wif = _private_keys_hash.optString(pubkey!!)
+            if (private_key_wif.isEmpty() && extra_keys_hash != null) {
+                private_key_wif = extra_keys_hash.optString(pubkey)
+            }
+            //  未解锁或者私钥不存在 返回失败
+            if (private_key_wif.isEmpty()) {
+                return null
+            }
 
             //  生成KEY32私钥
             val private_key32 = NativeInterface.sharedNativeInterface().bts_gen_private_key_from_wif_privatekey(private_key_wif.utf8String())

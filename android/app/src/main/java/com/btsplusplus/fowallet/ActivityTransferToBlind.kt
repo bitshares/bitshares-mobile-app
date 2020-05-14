@@ -6,6 +6,7 @@ import android.widget.TextView
 import bitshares.*
 import com.btsplusplus.fowallet.utils.ModelUtils
 import com.btsplusplus.fowallet.utils.StealthTransferUtils
+import com.btsplusplus.fowallet.utils.kAppBlindReceiptBlockNum
 import com.fowallet.walletcore.bts.BitsharesClientManager
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
@@ -264,15 +265,13 @@ class ActivityTransferToBlind : BtsppActivity() {
                     core_asset.getString("symbol"))
         }
 
-        UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kVcHtlcMessageTipsTitle), value).then {
+        UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kWarmTips), value).then {
             if (it != null && it as Boolean) {
                 guardWalletUnlocked(false) { unlocked ->
                     if (unlocked) {
                         //  TODO:6.0 支持提案...!!! TODO:VIP
                         val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this).apply { show() }
                         BitsharesClientManager.sharedBitsharesClientManager().transferToBlind(op).then {
-                            mask.dismiss()
-
                             //  自动导入【我的】收据
                             val walletMgr = WalletManager.sharedWalletManager()
                             val pAppCahce = AppCacheManager.sharedAppCacheManager()
@@ -288,11 +287,23 @@ class ActivityTransferToBlind : BtsppActivity() {
 
                             //  [统计]
                             btsppLogCustom("txTransferToBlindFullOK", jsonObjectfromKVS("asset", _curr_asset.getString("symbol")))
-                            //  转到备份收据界面
-                            val tx_data = it as? JSONArray
-                            goTo(ActivityBlindBackupReceipt::class.java, true, clear_navigation_stack = true, args = JSONObject().apply {
-                                put("result", tx_data)
-                            })
+
+                            //  生成二维码 & 转到备份收据界面
+                            val tx_data = it as JSONArray
+                            assert(tx_data.length() > 0)
+
+                            //  生成隐私转账收据信息
+                            val block_num = tx_data.getJSONObject(0).getString("block_num")
+                            val blind_receipt_string = JSONObject().apply { put(kAppBlindReceiptBlockNum, block_num) }.toString().base58_encode()
+
+                            Utils.asyncCreateQRBitmap(blind_receipt_string, 150.dp).then { btm ->
+                                mask.dismiss()
+                                goTo(ActivityBlindBackupReceipt::class.java, true, clear_navigation_stack = true, args = JSONObject().apply {
+                                    put("result", tx_data)
+                                    put("qrbitmap", btm!!)
+                                    put("blind_receipt_string", blind_receipt_string)
+                                })
+                            }
                             return@then null
                         }.catch { err ->
                             mask.dismiss()

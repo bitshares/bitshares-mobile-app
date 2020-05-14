@@ -8,6 +8,7 @@ import com.fowallet.walletcore.bts.WalletManager
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
+import java.math.BigDecimal
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -22,6 +23,7 @@ class TransactionBuilder {
     private var _signatures = JSONArray()       //  签名
 
     private var _signPubKeys = JSONObject()     //  该交易需要参与签名的公钥列表。REMARK：大部分都是手续费支付账号的资金公钥。
+    private var _pubPriKeysHash = JSONObject()  //  特殊私钥列表，部分交易需要（隐私转账等）。KEY -> public key  VALUE -> WIF private key
 
     private var _tr_buffer: ByteArray? = null
     private var _signed: Boolean = false
@@ -36,45 +38,66 @@ class TransactionBuilder {
         }
     }
 
+    /**
+     *  (public) 添加签名用私钥，部分交易可能需要非钱包中的额外的私钥进行签名。
+     */
+    fun addSignPrivateKey(wifPrivateKey: String) {
+        val pubKey = OrgUtils.genBtsAddressFromWifPrivateKey(wifPrivateKey)
+        if (pubKey != null) {
+            _pubPriKeysHash.put(pubKey, wifPrivateKey)
+        }
+    }
+
     fun add_operation(opcode: EBitsharesOperations, opdata: JSONObject) {
         _operations.put(jsonArrayfrom(opcode.value, opdata))
     }
 
     fun set_required_fees(asset_id: String?): Promise {
-        var feeAssets = mutableListOf<String>()
+        val feeAssets = mutableListOf<String>()
 
         //  获取手续费的资产ID
         for (op_pair in _operations.forin<JSONArray>()) {
-            val opdata = op_pair!!.getJSONObject(1)
-            val fee_asset_id = opdata.getJSONObject("fee").getString("asset_id")
+            val fee = op_pair!!.getJSONObject(1).getJSONObject("fee")
+            //  EMARK：手动设置了fee则跳过了 不用查询了。
+            if (BigDecimal(fee.getString("amount")) != BigDecimal.ZERO) {
+                continue
+            }
+            val fee_asset_id = fee.getString("asset_id")
             if (!feeAssets.contains(fee_asset_id)) {
                 feeAssets.add(fee_asset_id)
             }
         }
+        if (feeAssets.size <= 0) {
+            //  直接跳过
+            return Promise._resolve(null)
+        }
 
         val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
-        var allfees_promises = JSONArray()
+        val allfees_promises = JSONArray()
         for (fee_asset_id in feeAssets) {
             allfees_promises.put(conn.async_exec_db("get_required_fees", jsonArrayfrom(operations_to_object(), fee_asset_id)))
         }
 
         return Promise.all(allfees_promises).then {
             val json_array = it as JSONArray
-            val allfees = json_array[0] as JSONArray
+
+            //  获取所有 promise 中第一个 asset id的手续费。（数组格式：包含所有operation的手续费。）
+            val first_asset_id_fees = json_array.getJSONArray(0)
 
             //  REMARK：如果OP为提案类型，这里会把提案的手续费以及提案中对应的所有实际OP的手续费全部返回。（因此需要判断。）
-            var op_fee = allfees.get(0)
-            if (op_fee is JSONArray) {
+            var first_opfee = first_asset_id_fees.get(0)
+            if (first_opfee is JSONArray) {
                 //  仅第一个手续费对象是提案本身的的手续。
-                op_fee = op_fee.get(0)
+                first_opfee = first_opfee.getJSONObject(0)
+            } else {
+                assert(first_opfee is JSONObject)
             }
-            assert(op_fee is JSONObject)
 
             _operations.forEach<JSONArray> { ops ->
-                ops!!.getJSONObject(1).put("fee", op_fee)
+                ops!!.getJSONObject(1).put("fee", first_opfee)
             }
 
-            return@then allfees
+            return@then first_asset_id_fees
         }
     }
 
@@ -102,17 +125,19 @@ class TransactionBuilder {
         assert(_tr_buffer != null)
 
         //  TODO:动态判断该交易需要哪些签名。比如修改账号权限，需要ownerkey
-
         val walletMgr = WalletManager.sharedWalletManager()
-        assert(!walletMgr.isLocked())
 
         val sign_buffer = ByteArrayOutputStream()
         sign_buffer.write(ChainObjectManager.sharedChainObjectManager().grapheneChainID.hexDecode())
         sign_buffer.write(_tr_buffer)
 
         //  签名
-        val sig_array = walletMgr.signTransaction(sign_buffer.toByteArray(), _signPubKeys.keys().toJSONArray())
-        assert(sig_array != null)
+        val sig_array = walletMgr.signTransaction(sign_buffer.toByteArray(), _signPubKeys.keys().toJSONArray(), extra_keys_hash = _pubPriKeysHash)
+        if (sig_array == null) {
+            //  TODO:fowallet 在提交请求的瞬间 钱包锁定了？？请求中，禁止锁定钱包功能添加。
+            assert(!walletMgr.isLocked())
+            //  TODO:throw
+        }
         _signatures.putAll(sig_array!!)
 
         //  设置标记

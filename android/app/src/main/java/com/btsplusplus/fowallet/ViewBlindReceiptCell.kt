@@ -19,6 +19,9 @@ class ViewBlindReceiptCell : LinearLayout {
     private var _index: Int = 0
     private var _onChecked: ((index: Int, checked: Boolean) -> Unit)? = null
 
+    private var _check_box: CheckBox? = null
+    private var _tv_receipt_number: TextView? = null
+
     constructor(ctx: Context, blind_balance: JSONObject, index: Int, can_check: Boolean, onChecked: ((index: Int, checked: Boolean) -> Unit)? = null ) : super(ctx) {
         _ctx = ctx
         _blind_balance = blind_balance
@@ -32,6 +35,21 @@ class ViewBlindReceiptCell : LinearLayout {
         this.orientation = LinearLayout.HORIZONTAL
 
         refreshUI()
+    }
+
+    /**
+     *  设置默认是否选中状态
+     */
+    fun setDefaultSelectedStatus(selected: Boolean) {
+        _check_box?.let {
+            it.isChecked = selected
+            if (selected) {
+                _tv_receipt_number?.setTextColor(resources.getColor(R.color.theme01_textColorMain))
+            } else {
+                _tv_receipt_number?.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
+            }
+            return@let
+        }
     }
 
     private fun refreshUI(){
@@ -63,14 +81,17 @@ class ViewBlindReceiptCell : LinearLayout {
             checkbox.gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
             val checkbox_drawable = resources.getDrawable(R.drawable.checkbox_drawable)
             checkbox.buttonDrawable = checkbox_drawable
-
             checkbox.setOnCheckedChangeListener { _, isChecked ->
-                if (_onChecked != null) {
-                    _onChecked!!.invoke(_index,isChecked)
+                if (isChecked) {
+                    _tv_receipt_number?.setTextColor(resources.getColor(R.color.theme01_textColorMain))
+                } else {
+                    _tv_receipt_number?.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
                 }
+                _onChecked?.invoke(_index, isChecked)
             }
             this.addView(checkbox)
             right_content_margin_value = 10.dp
+            _check_box = checkbox
         }
 
         //  数据展示
@@ -81,7 +102,7 @@ class ViewBlindReceiptCell : LinearLayout {
             orientation = LinearLayout.VERTICAL
 
             //  第一行 - 收据编号
-            val tv_receipt_number = TextView(_ctx).apply {
+            _tv_receipt_number = TextView(_ctx).apply {
                 gravity = Gravity.CENTER_VERTICAL
                 layoutParams = LinearLayout.LayoutParams(LLAYOUT_WARP, LLAYOUT_WARP)
                 text = String.format(resources.getString(R.string.kVcStCellTitleReceiptName), (_index + 1).toString(), hex_check_num)
@@ -153,7 +174,7 @@ class ViewBlindReceiptCell : LinearLayout {
                 addView(tv_amount_value)
             }
 
-            addView(tv_receipt_number)
+            addView(_tv_receipt_number)
             addView(layout_header)
             addView(layout_body)
         }

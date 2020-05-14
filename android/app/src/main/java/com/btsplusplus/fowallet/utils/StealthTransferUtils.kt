@@ -244,6 +244,27 @@ class StealthTransferUtils {
             return NativeInterface.sharedNativeInterface().bts_gen_pedersen_blind_sum(blinds_in.toArray(), blinding_factors_array.length().toLong())!!
         }
 
-        //  TODO:6.0 select
+        /**
+         *  (public) 选择收据（隐私交易的的 input 部分）
+         */
+        fun processSelectReceipts(ctx: Activity, curr_blind_balance_arary: JSONArray?, callback: (new_blind_balance_array: JSONArray) -> Unit) {
+            val default_selected = JSONObject()
+            if (curr_blind_balance_arary != null && curr_blind_balance_arary.length() > 0) {
+                for (blind_balance in curr_blind_balance_arary.forin<JSONObject>()) {
+                    val commitment = blind_balance!!.getJSONObject("decrypted_memo").getString("commitment")
+                    default_selected.put(commitment, true)
+                }
+            }
+            val result_promise = Promise()
+            ctx.goTo(ActivitySelectBlindBalance::class.java, true, args = JSONObject().apply {
+                put("result_promise", result_promise)
+                put("default_selected", default_selected)
+            })
+            result_promise.then {
+                callback(it as JSONArray)
+                return@then null
+            }
+        }
+
     }
 }

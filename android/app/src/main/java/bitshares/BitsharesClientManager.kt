@@ -36,8 +36,13 @@ class BitsharesClientManager {
         val tr = TransactionBuilder()
         tr.add_operation(op_code, op_data)
         return tr.set_required_fees(null).then {
-            val allfees = it as JSONArray
-            return@then allfees[0] as JSONObject
+            val first_asset_id_fees = it as? JSONArray
+            if (first_asset_id_fees == null || first_asset_id_fees.length() <= 0) {
+                return@then op_data.getJSONObject("fee")
+            } else {
+                //  参考 set_required_fees 的请求部分。
+                return@then first_asset_id_fees.getJSONObject(0)
+            }
         }
     }
 
@@ -481,23 +486,22 @@ class BitsharesClientManager {
      *  (private) 从隐私收据转出到公开账号or其他隐私账户。
      */
     private fun _transferFromBlindInput2PublicOrBlind(opdata: JSONObject, signPriKeyHash: JSONObject, opcode: EBitsharesOperations): Promise {
-        //  TODO:6.0
-//        TransactionBuilder* tr = [[TransactionBuilder alloc] init];
-//        [tr add_operation:opcode opdata:opdata];
-//
-//        assert([opdata objectForKey:@"inputs"]);
-//        for (id blind_input in [opdata objectForKey:@"inputs"]) {
-//            for (id item in [[blind_input objectForKey:@"owner"] objectForKey:@"key_auths"]) {
-//            [tr addSignKey:[item firstObject]];
-//        }
-//        }
-//
-//        for (id priKey in signPriKeyHash) {
-//            [tr addSignPrivateKey:priKey];
-//        }
-//
-//        return [self process_transaction:tr];
-        return Promise()
+
+        val tr = TransactionBuilder()
+        tr.add_operation(opcode, opdata)
+
+        assert(opdata.has("inputs"))
+        for (blind_input in opdata.getJSONArray("inputs").forin<JSONObject>()) {
+            for (item in blind_input!!.getJSONObject("owner").getJSONArray("key_auths").forin<JSONArray>()) {
+                tr.addSignKey(item!!.getString(0))
+            }
+        }
+
+        for (priKey in signPriKeyHash.keys()) {
+            tr.addSignPrivateKey(priKey)
+        }
+
+        return process_transaction(tr)
     }
 
     /**
