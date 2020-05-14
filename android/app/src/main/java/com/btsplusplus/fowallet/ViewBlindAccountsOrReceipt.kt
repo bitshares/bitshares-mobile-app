@@ -54,16 +54,6 @@ class ViewBlindAccountsOrReceipt : LinearLayout {
         return _view_type == kBlindItemTypeOutput
     }
 
-    //  TODO:6.0
-    private fun getTestData() : JSONObject {
-        val data = JSONObject().apply {
-            put("address",if (isTypeBlindAccount()) { "TEST7UPXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" } else { "收据 #1D5CBADEAAEDF" })
-            put("quantity","100")
-            put("operation","移除")
-        }
-        return data
-    }
-
     //  创建添加按钮
     private fun createAddButton() : LinearLayout {
         val layout = LinearLayout(_ctx)
@@ -92,7 +82,7 @@ class ViewBlindAccountsOrReceipt : LinearLayout {
             } else {
                 resources.getString(R.string.kVcStBtnSelectReceipt)
             }
-            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
+            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.0f)
             setTextColor(resources.getColor(R.color.theme01_textColorHighlight))
         }
 

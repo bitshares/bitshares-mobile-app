@@ -15,6 +15,7 @@
         android:padding="10dp"
         android:orientation="vertical">
 
+        <!-- 导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -45,11 +46,10 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="选择隐私收据"
+                android:text="@string/kVcTitleSelectBlindBalance"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
-
 
         <ScrollView
             android:fillViewport="true"
@@ -70,10 +70,10 @@
 
                 </LinearLayout>
 
-
                 <!-- 确定按钮 -->
                 <LinearLayout
-                    android:id="@+id/layout_submit_button_from_select_blind_balance"
+                    android:id="@+id/layout_submit_button"
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:background="@color/colorPrimary"
@@ -81,13 +81,13 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/btn_register"
+                        android:id="@+id/btn_done"
                         android:layout_width="wrap_content"
                         style="@style/kMainButtonStyle"
                         android:gravity="center|center_vertical"
                         android:layout_weight="1"
                         android:padding="5dp"
-                        android:text="确定" />
+                        android:text="@string/kVcStBtnSelectDone" />
 
                 </LinearLayout>
 

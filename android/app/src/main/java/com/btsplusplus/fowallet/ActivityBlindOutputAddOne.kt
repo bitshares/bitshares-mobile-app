@@ -14,6 +14,8 @@ import java.math.BigDecimal
 
 class ActivityBlindOutputAddOne : BtsppActivity() {
 
+    private var _tf_amount_watcher: UtilsDigitTextWatcher? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -45,6 +47,12 @@ class ActivityBlindOutputAddOne : BtsppActivity() {
         //  UI - 输出资产名称
         tv_tailer_asset_symbol.text = asset.getString("symbol")
 
+        //  事件 - 输入框文字变更精度控制
+        val tf = findViewById<EditText>(R.id.tf_amount)
+        _tf_amount_watcher = UtilsDigitTextWatcher().set_tf(tf).set_precision(asset.getInt("precision"))
+        tf.addTextChangedListener(_tf_amount_watcher!!)
+        _tf_amount_watcher!!.on_value_changed(::onAmountChanged)
+
         //  我的账户点击事件
         btn_my_accounts.setOnClickListener { onMyAccountClicked() }
 
@@ -55,11 +63,14 @@ class ActivityBlindOutputAddOne : BtsppActivity() {
         layout_back_from_blind_output_add_one.setOnClickListener { finish() }
     }
 
+    private fun onAmountChanged(str_amount: String) {
+        //  ...
+    }
+
     private fun onTailerAllButtonClicked(n_max_balance: BigDecimal) {
         val tf = findViewById<EditText>(R.id.tf_amount)
         tf.setText(n_max_balance.toPlainString())
         tf.setSelection(tf.text.toString().length)
-        //  onAmountChanged 会自动触发
     }
 
     private fun onMyAccountClicked(){

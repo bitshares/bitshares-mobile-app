@@ -14,14 +14,14 @@
         android:padding="10dp"
         android:orientation="vertical">
 
-
+        <!-- 导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:orientation="horizontal">
 
             <LinearLayout
-                android:id="@+id/layout_finish_from_blind_backup_receipt"
+                android:id="@+id/btn_navi_left_done"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:orientation="horizontal">
@@ -31,7 +31,7 @@
                     style="@style/kNavigationBarTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="完成"
+                    android:text="@string/kVcScanResultPaySuccessBtnDone"
                     android:gravity="center_vertical" />
             </LinearLayout>
 
@@ -41,7 +41,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="备份收据"
+                android:text="@string/kVcTitleBackupBlindReceipt"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
@@ -55,15 +55,17 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <!-- 转账成功 提示信息 -->
             <TextView
                 android:textSize="14dp"
                 android:textColor="@color/theme01.textColorHighlight"
-                android:text="隐私转账成功，请妥善保管以下收据信息！"
+                android:text="@string/kVcStLabelPleaseBackupYourReceiptText"
                 android:gravity="center"
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
+            <!-- 二维码 -->
             <LinearLayout
                 android:layout_marginTop="10dp"
                 android:id="@+id/layout_qrcode_from_blind_backup_receipt"
@@ -83,29 +85,31 @@
 
             <!-- receipt & copy -->
             <TextView
-                android:id="@+id/tv_receipt_address_from_blind_backup_receipt"
+                android:id="@+id/tv_blind_receipt_string"
                 android:layout_marginTop="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/theme01.textColorMain"
                 android:textSize="13dp"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:ellipsize = "middle"
                 android:layout_gravity="center"
-                android:text="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                android:text="--"
                 android:gravity="center"/>
 
             <TextView
-                android:id="@+id/btn_copy_from_blind_backup_receipt"
+                android:id="@+id/btn_copy_blind_receipt"
                 android:layout_marginTop="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="复制收据"
+                android:text="@string/kVcStCellButtonNameCopyReceipt"
                 android:textColor="@color/theme01.textColorHighlight"
                 android:textSize="16dp"
                 android:layout_gravity="center"
                 android:gravity="center"/>
 
             <LinearLayout
-                android:id="@+id/layout_register_button"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:background="@color/colorPrimary"
@@ -113,15 +117,16 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/btn_register"
+                    android:id="@+id/btn_done"
                     android:layout_width="wrap_content"
                     style="@style/kMainButtonStyle"
                     android:gravity="center|center_vertical"
                     android:layout_weight="1"
                     android:padding="5dp"
-                    android:text="完成" />
+                    android:text="@string/kVcScanResultPaySuccessBtnDone" />
             </LinearLayout>
 
+            <!-- 提示信息 -->
             <TextView
                 android:id="@+id/tip_from_recharge_page"
                 android:layout_marginTop="25dp"
@@ -134,7 +139,7 @@
                 android:textColor="@color/theme01.textColorMain"
                 android:background="@color/theme01.textColorGray"
                 android:textSize="13dp"
-                android:text="【温馨提示】\n xxxxxxxxxxxxxxxxx\nxxxxxxxxx"
+                android:text="@string/kVcStTipUiBackupYourReceipt"
                 android:gravity="left"/>
 
 

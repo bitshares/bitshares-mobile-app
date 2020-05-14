@@ -64,6 +64,7 @@ fun ByteArray.aes256cbc_encrypt(secret: ByteArray) = NativeInterface.sharedNativ
 fun ByteArray.base58_decode() = NativeInterface.sharedNativeInterface().bts_base58_decode(this)
 fun ByteArray.base58_encode() = NativeInterface.sharedNativeInterface().bts_base58_encode(this)!!.utf8String()
 fun String.base58_decode() = this.utf8String().base58_decode()
+fun String.base58_encode() = this.utf8String().base58_encode()
 
 /**
  * 获取UTF8的char*

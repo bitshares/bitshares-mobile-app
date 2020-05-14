@@ -11,43 +11,45 @@ import kotlinx.android.synthetic.main.activity_blind_backup_receipt.*
 
 class ActivityBlindBackupReceipt : BtsppActivity() {
 
-    lateinit var _tv_receipt_address: TextView
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 设置自动布局
+        //  设置自动布局
         setAutoLayoutContentView(R.layout.activity_blind_backup_receipt)
 
-        // 设置全屏(隐藏状态栏和虚拟导航栏)
+        //  设置全屏(隐藏状态栏和虚拟导航栏)
         setFullScreen()
 
-        val receipt_address = "22MZXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+        //  获取参数
+        val args = btspp_args_as_JSONObject()
+        val blind_receipt_string = args.getString("blind_receipt_string")
 
-        // qrcode
-        Utils.asyncCreateQRBitmap(receipt_address, 150.dp).then { bitmap ->
-            iv_qrcode_from_blind_backup_receipt.setImageBitmap(bitmap as Bitmap)
-        }
+        //  初始化UI - 二维码
+        iv_qrcode_from_blind_backup_receipt.setImageBitmap(args.get("qrbitmap") as Bitmap)
 
-        // 收据地址
-        _tv_receipt_address = tv_receipt_address_from_blind_backup_receipt
-        _tv_receipt_address.text = receipt_address
+        //  UI - 收据信息
+        tv_blind_receipt_string.text = blind_receipt_string
 
-        // 复制按钮点击
-        btn_copy_from_blind_backup_receipt.setOnClickListener {
-            onCopyAddressClicked()
-        }
+        //  复制按钮点击
+        btn_copy_blind_receipt.setOnClickListener { onCopyAddressClicked(blind_receipt_string) }
 
-        // 完成点击
-        layout_finish_from_blind_backup_receipt.setOnClickListener {
-
-        }
-
+        //  完成点击
+        btn_navi_left_done.setOnClickListener { onDoneClicked() }
+        btn_done.setOnClickListener { onDoneClicked() }
     }
 
-    private fun onCopyAddressClicked() {
-        if (Utils.copyToClipboard(this, _tv_receipt_address.text.toString())) {
-            showToast(R.string.kVcDWTipsCopyAddrOK.xmlstring(this))
+    private fun onDoneClicked() {
+        UtilsAlert.showMessageConfirm(this, resources.getString(R.string.kWarmTips),
+                resources.getString(R.string.kVcStTipAskConfrimForCloseBackupReceiptUI)).then {
+            if (it != null && it as Boolean) {
+                //  关闭
+                finish()
+            }
+        }
+    }
+    private fun onCopyAddressClicked(blind_receipt_string: String) {
+        if (Utils.copyToClipboard(this, blind_receipt_string)) {
+            showToast(resources.getString(R.string.kVcStTipReceiptBackupCopied))
         }
     }
 }
