@@ -373,12 +373,10 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
         if (!data_array || [data_array isKindOfClass:[NSNull class]]) {
             return [opdata objectForKey:@"fee"];
         } else {
-            //  参考 set_required_fees 的请求部分，两组 promise all。
-            id first_asset_id_fees = [data_array objectAtIndex:0];
-            id first_operation_fees = [first_asset_id_fees firstObject];
-            
-            assert([first_operation_fees count] == 1);
-            return [first_operation_fees objectAtIndex:0];
+            //  参考 set_required_fees 的请求部分。
+            id first_opfee = [data_array firstObject];
+            assert([first_opfee isKindOfClass:[NSDictionary class]]);
+            return first_opfee;
         }
     })];
 }
@@ -743,17 +741,17 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
     //  总的输入金额 = 总的输出金额 + 手续费金额
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     id n_fee = [chainMgr getNetworkCurrentFee:ebo_blind_transfer kbyte:nil day:nil output:[NSDecimalNumber one]];
-    if (![check_asset[@"id"] isEqualToString:chainMgr.grapheneCoreAssetID]) {
+    if (n_fee && ![check_asset[@"id"] isEqualToString:chainMgr.grapheneCoreAssetID]) {
         id core_exchange_rate = [[check_asset objectForKey:@"options"] objectForKey:@"core_exchange_rate"];
         n_fee = [ModelUtils multiplyAndRoundupNetworkFee:[chainMgr getChainObjectByID:chainMgr.grapheneCoreAssetID]
                                                    asset:check_asset
                                               n_core_fee:n_fee
                                       core_exchange_rate:core_exchange_rate];
-        if (!n_fee) {
-            //  汇率数据异常
-            resolve(@(kBlindReceiptVerifyResultCerError));
-            return;
-        }
+    }
+    if (!n_fee) {
+        //  汇率数据异常
+        resolve(@(kBlindReceiptVerifyResultCerError));
+        return;
     }
     id s_fee = [NSString stringWithFormat:@"%@", [n_fee decimalNumberByMultiplyingByPowerOf10:check_precision]];
     

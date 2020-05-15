@@ -797,8 +797,8 @@
 "kVcStCellTitleTotalOutputAmount" = "输出总金额";
 "kVcStCellTitleNetworkFee" = "广播手续费";
 "kVcStCellTitleActualAmount" = "实际到账";
-"kVcStTipUiImportReceipt" = "【温馨提示】\n导入收据同时支持APP生成的收据和CLI命令行钱包收据格式。\n如果隐私收据丢失，可尝试直接输入转账对应区块编号进行导入。";
-"kVcStTipUiTransferToBlind" = "【温馨提示】\n隐私转入：即从比特股公开账号向隐私账户转账。并且可同时向多个隐私账户转账。";
+"kVcStTipUiImportReceipt" = "【温馨提示】\n导入收据同时支持APP生成的收据和CLI命令行钱包收据格式。\n如果隐私收据丢失，可尝试直接输入转账对应区块编号进行导入。\n如果是通过提案进行隐私转账，则不会生成隐私收据，在提案生效后直接输入创建提案时对应区块编号进行导入即可。";
+"kVcStTipUiTransferToBlind" = "【温馨提示】\n隐私转入：即从比特股公开账号向隐私账户转账。并且可同时向多个隐私账户转账。\n\n如果是通过提案进行隐私转账，则不会生成隐私收据，在提案生效后直接输入创建提案时对应区块编号进行导入即可。";
 "kVcStTipUiBlindTransfer" = "【温馨提示】\n隐私转账：即在多个隐私账户之间进行转账操作。\n\n找零和赠与：收据总金额减去输出总金额的剩余金额，如果满足找零所需手续费，则会自动找零到我的隐私账户，否则会自动赠与给第一个隐私账户。";
 "kVcStTipUiTransferFromBlind" = "【温馨提示】\n隐私转出：即从隐私账户向比特股公开账号转账。";
 "kVcStTipErrForbidBlindTransfer" = "资产 %@ 已禁止隐私转账。";

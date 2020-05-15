@@ -110,7 +110,7 @@ enum
     _lbImport = [self createCellLableButton:NSLocalizedString(@"kVcStBtnImportNow", @"立即导入")];
     
     //  UI - 提示信息
-    _cell_tips = [[ViewTipsInfoCell alloc] initWithText:NSLocalizedString(@"kVcStTipUiImportReceipt", @"【温馨提示】\n导入收据同时支持APP生成的收据和CLI命令行钱包收据格式。\n如果隐私收据丢失，可尝试直接输入转账对应区块编号进行导入。")];
+    _cell_tips = [[ViewTipsInfoCell alloc] initWithText:NSLocalizedString(@"kVcStTipUiImportReceipt", @"【温馨提示】\n导入收据同时支持APP生成的收据和CLI命令行钱包收据格式。\n如果隐私收据丢失，可尝试直接输入转账对应区块编号进行导入。\n如果是通过提案进行隐私转账，则不会生成隐私收据，在提案生效后直接输入创建提案时对应区块编号进行导入即可。")];
     _cell_tips.hideBottomLine = YES;
     _cell_tips.hideTopLine = YES;
     _cell_tips.backgroundColor = [UIColor clearColor];
@@ -158,6 +158,61 @@ enum
     return nil;
 }
 
+/*
+ *  (private) 检测单个 operation。
+ */
+- (void)scanOneOperation:(id)op
+              data_array:(NSMutableArray*)data_array
+          blind_accounts:(NSArray*)blind_accounts
+    enable_scan_proposal:(BOOL)enable_scan_proposal
+{
+    assert(op && [op count] == 2);
+    assert(data_array);
+    assert(blind_accounts);
+    
+    NSInteger optype = [[op objectAtIndex:0] integerValue];
+    id opdata = [op objectAtIndex:1];
+    
+    //  创建提案：则考虑遍历提案的所有operation。
+    if (optype == ebo_proposal_create) {
+        if (enable_scan_proposal) {
+            id proposed_ops = [opdata objectForKey:@"proposed_ops"];
+            if (proposed_ops && [proposed_ops count] > 0) {
+                for (id proposed_op in proposed_ops) {
+                    [self scanOneOperation:[proposed_op objectForKey:@"op"]
+                                data_array:data_array
+                            blind_accounts:blind_accounts
+                      enable_scan_proposal:NO]; //  REMARK：如果提案里包含创建提案，不重复处理。
+                }
+            }
+        }
+        return;
+    } else if (optype == ebo_transfer_to_blind || optype == ebo_blind_transfer) {
+        //  转入隐私账户 以及 隐私账户之间转账都存在新的收据生成。
+        id outputs = [opdata objectForKey:@"outputs"];
+        assert(outputs && [outputs count] > 0);
+        if (!outputs || [outputs count] <= 0) {
+            return;
+        }
+        for (id blind_output in outputs) {
+            id stealth_memo = [blind_output objectForKey:@"stealth_memo"];
+            //  该字段可选，跳过不存在该字段的收据。REMARK：官方命令行客户端等该字段不存在，目前已知BTS++支持该字段。
+            if (!stealth_memo) {
+                continue;
+            }
+            id d_commitment = [[blind_output objectForKey:@"commitment"] hex_decode];
+            id real_to_key = [self guessRealToPublicKey:stealth_memo d_commitment:d_commitment blind_accounts:blind_accounts];
+            if (real_to_key) {
+                [data_array addObject:@{@"real_to_key": real_to_key, @"stealth_memo": stealth_memo}];
+            }
+        }
+    }
+    return;
+}
+
+/*
+ *  (private) 扫描区块中的原始【隐私收据】信息。即可：outputs
+ */
 - (NSArray*)scanBlindReceiptFromBlockData:(NSDictionary*)block_data blind_accounts:(NSArray*)blind_accounts
 {
     NSMutableArray* data_array = [NSMutableArray array];
@@ -180,30 +235,7 @@ enum
             continue;
         }
         for (id op in operations) {
-            assert([op count] == 2);
-            NSInteger optype = [[op objectAtIndex:0] integerValue];
-            //  转入隐私账户 以及 隐私账户之间转账都存在新的收据生成。
-            if (optype != ebo_transfer_to_blind && optype != ebo_blind_transfer) {
-                continue;
-            }
-            id opdata = [op objectAtIndex:1];
-            id outputs = [opdata objectForKey:@"outputs"];
-            assert(outputs && [outputs count] > 0);
-            if (!outputs || [outputs count] <= 0) {
-                continue;
-            }
-            for (id blind_output in outputs) {
-                id stealth_memo = [blind_output objectForKey:@"stealth_memo"];
-                //  该字段可选，跳过不存在该字段的收据。REMARK：官方命令行客户端等该字段不存在，目前已知BTS++支持该字段。
-                if (!stealth_memo) {
-                    continue;
-                }
-                id d_commitment = [[blind_output objectForKey:@"commitment"] hex_decode];
-                id real_to_key = [self guessRealToPublicKey:stealth_memo d_commitment:d_commitment blind_accounts:blind_accounts];
-                if (real_to_key) {
-                    [data_array addObject:@{@"real_to_key": real_to_key, @"stealth_memo": stealth_memo}];
-                }
-            }
+            [self scanOneOperation:op data_array:data_array blind_accounts:blind_accounts enable_scan_proposal:YES];
         }
     }
     
