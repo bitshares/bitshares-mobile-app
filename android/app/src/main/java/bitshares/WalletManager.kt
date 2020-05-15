@@ -234,6 +234,7 @@ class WalletManager {
 
         /**
          *  (public) 随机生成 32 个英文字符列表
+         *  check_sum_prefix - 可在助记词中添加4个字符的校验码（check_sum_prefix会参与校验码计算。用于区分不同用途的助记词，比如密码用，隐私账户用。）
          */
         fun randomGenerateEnglishWord_N32(check_sum_prefix: String?): MutableList<String> {
             val word_list = englishPasswordCharacter()
@@ -243,21 +244,29 @@ class WalletManager {
             val brainkey = mutableListOf<String>()
             val base = 256.0  //  base = pow(2, 16)
             for (i in 0 until 32) {
-                val num = randomBuffer[i].toUnsignedInt()
-                assert(num >= 0)
-                //  0...1
-                val rndMultiplier = num / base
-                assert(rndMultiplier < 1)
-                val wordIndex = (n_word_list * rndMultiplier).toInt()
-                assert(wordIndex < n_word_list)
-                brainkey.add(word_list.getString(wordIndex))
+                brainkey.add(_fetchBrainKeyWord(word_list, n_word_list, randomBuffer[i].toUnsignedInt(), base))
             }
-            //  TODO:6.0 check sum
+
+            //  REMARK：助记词中添加4字节校验码。（4个字符）
+            if (check_sum_prefix != null && check_sum_prefix.isNotEmpty()) {
+                val new_brainkey = brainkey.subList(0, brainkey.size - 4)
+                val real_brainkey = new_brainkey.joinToString("")
+                //  check_sum_prefix + real_brainkey
+                val check_sum_full_string = check_sum_prefix + real_brainkey
+                val checksum = sha256(check_sum_full_string.utf8String())
+                //  4字节checksum转换为助记词字符。
+                for (i in 0 until 4) {
+                    new_brainkey.add(_fetchBrainKeyWord(word_list, n_word_list, checksum[i].toUnsignedInt(), base))
+                }
+                return new_brainkey
+            }
+
             return brainkey
         }
 
         /**
          *  (public) 随机生成 16 个中文汉字列表
+         *  check_sum_prefix - 可在助记词中添加2个汉字的校验码（check_sum_prefix会参与校验码计算。用于区分不同用途的助记词，比如密码用，隐私账户用。）
          */
         fun randomGenerateChineseWord_N16(check_sum_prefix: String?): MutableList<String> {
             val word_list = chineseWordList()
@@ -271,43 +280,92 @@ class WalletManager {
             for (i in 0 until end step 2) {
                 val num: Int = randomBuffer[i].toUnsignedInt().shl(8) + randomBuffer[i + 1].toUnsignedInt()
                 assert(num >= 0)
-                //  0...1
-                val rndMultiplier = num / base
-                assert(rndMultiplier < 1)
-                val wordIndex = (n_word_list * rndMultiplier).toInt()
-                assert(wordIndex < n_word_list)
-                brainkey.add(word_list.getString(wordIndex))
+                brainkey.add(_fetchBrainKeyWord(word_list, n_word_list, num, base))
             }
-            //  TODO:6.0 check sum
+
+            //  REMARK：助记词中添加4字节校验码。（2个汉字）
+            if (check_sum_prefix != null && check_sum_prefix.isNotEmpty()) {
+                val new_brainkey = brainkey.subList(0, brainkey.size - 2)
+                val real_brainkey = new_brainkey.joinToString("")
+                //  check_sum_prefix + real_brainkey
+                val check_sum_full_string = check_sum_prefix + real_brainkey
+                val checksum = sha256(check_sum_full_string.utf8String())
+                //  4字节checksum转换为助记词字符。
+                for (i in 0 until 4 step 2) {
+                    val num: Int = checksum[i].toUnsignedInt().shl(8) + checksum[i + 1].toUnsignedInt()
+                    assert(num >= 0)
+                    new_brainkey.add(_fetchBrainKeyWord(word_list, n_word_list, num, base))
+                }
+                return new_brainkey
+            }
+
             return brainkey
         }
 
         /**
          *  (public) 是否是有效的隐私交易（隐私账户）助记词。
          */
-        fun isValidStealthTransferBrainKey(brain_key: String, check_sum_prefix: String): Boolean {
-            //  TODO:6.0
-//            if (!brain_key) {
-//                return NO;
-//            }
-//            NSData* d_brain_key = [brain_key dataUsingEncoding:NSUTF8StringEncoding];
-//            if (!d_brain_key) {
-//                return NO;
-//            }
-//            if (d_brain_key.length == 32 && brain_key.length == 32) {
-//                return [self _verifyBrainKeyCheckSum:brain_key
-//                        brain_key_char_per_byte:1
-//                word_list:[self englishPasswordCharacter]
-//                check_sum_prefix:check_sum_prefix];
-//            } else if (d_brain_key.length == 48 && brain_key.length == 16) {
-//                return [self _verifyBrainKeyCheckSum:brain_key
-//                        brain_key_char_per_byte:2
-//                word_list:[self chineseWordList]
-//                check_sum_prefix:check_sum_prefix];
-//            } else {
-//                return NO;
-//            }
-            return true
+        fun isValidStealthTransferBrainKey(brain_key: String?, check_sum_prefix: String): Boolean {
+            if (brain_key == null || brain_key.isEmpty()) {
+                return false
+            }
+            val d_brain_key = brain_key.utf8String()
+            return if (d_brain_key.size == 32 && brain_key.length == 32) {
+                _verifyBrainKeyCheckSum(brain_key, 1, englishPasswordCharacter(), check_sum_prefix)
+            } else if (d_brain_key.size == 48 && brain_key.length == 16) {
+                _verifyBrainKeyCheckSum(brain_key, 2, chineseWordList(), check_sum_prefix)
+            } else {
+                false
+            }
+        }
+
+        /**
+         *  (private) 验证助记词的checksum。
+         *  REMARK：助记词生成时的字符表不能修改，否则会验证失败。
+         */
+        private fun _verifyBrainKeyCheckSum(brain_key: String, char_per_byte: Int, word_list: JSONArray, check_sum_prefix: String): Boolean {
+            assert(char_per_byte == 1 || char_per_byte == 2)
+
+            //  验证码字节数 和 验证码字符数
+            val check_sum_bytes = 4
+            val check_sum_char_num = check_sum_bytes / char_per_byte
+            assert(check_sum_char_num * char_per_byte == check_sum_bytes)
+
+            //  计算checksum：check_sum_prefix + real_brainkey
+            val check_sum_index = brain_key.length - check_sum_char_num
+            val real_brainkey = brain_key.substring(0, check_sum_index)
+            val check_sum_full_string = check_sum_prefix + real_brainkey
+            val checksum = sha256(check_sum_full_string.utf8String())
+
+            //  checksum的前 4 字节转为助记词字符。
+            val base = Math.pow(2.0, char_per_byte * 8.0)
+            val check_sum_array = mutableListOf<String>()
+            val n_word_list = word_list.length()
+
+            for (i in 0 until check_sum_bytes step char_per_byte) {
+                val num = if (char_per_byte == 1) {
+                    checksum[i].toUnsignedInt()
+                } else {
+                    checksum[i].toUnsignedInt().shl(8) + checksum[i + 1].toUnsignedInt()
+                }
+                check_sum_array.add(_fetchBrainKeyWord(word_list, n_word_list, num, base))
+            }
+
+            //  验证助记词中的结尾校验码字符是否和计算的校验码字符相同。
+            val check_sum = brain_key.substring(check_sum_index)
+            return check_sum_array.joinToString("") == check_sum
+        }
+
+        /**
+         *  (private) 获取助记词单个字符。
+         */
+        private fun _fetchBrainKeyWord(word_list: JSONArray, n_word_list: Int, value: Int, base: Double): String {
+            //  0...1
+            val rndMultiplier = value / base
+            assert(rndMultiplier < 1)
+            val wordIndex = (n_word_list * rndMultiplier).toInt()
+            assert(wordIndex < n_word_list)
+            return word_list.getString(wordIndex)
         }
 
         private var _words_english: JSONArray? = null

@@ -141,7 +141,7 @@ class ActivityTransferFromBlind : BtsppActivity() {
 
     private fun _draw_ui_bottom_data() {
         //  收据总金额
-        val n_total_input =  calcBlindInputTotalAmount()
+        val n_total_input = calcBlindInputTotalAmount()
         if (_curr_blind_asset != null) {
             tv_total_input_value.text = String.format("%s %s", n_total_input.toPriceAmountString(), _curr_blind_asset!!.getString("symbol"))
         } else {
@@ -182,7 +182,7 @@ class ActivityTransferFromBlind : BtsppActivity() {
     /**
      *  提交
      */
-    private fun onSubmit(){
+    private fun onSubmit() {
         if (_data_array_blind_input.length() <= 0) {
             showToast(resources.getString(R.string.kVcStTipSubmitPleaseSelectReceipt))
             return

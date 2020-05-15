@@ -1,8 +1,6 @@
 package com.btsplusplus.fowallet
 
 import android.os.Bundle
-import android.widget.LinearLayout
-import android.widget.TextView
 import bitshares.*
 import com.btsplusplus.fowallet.utils.ModelUtils
 import com.btsplusplus.fowallet.utils.StealthTransferUtils
@@ -198,7 +196,7 @@ class ActivityTransferToBlind : BtsppActivity() {
     /**
      *  提交
      */
-    private fun onSubmit(){
+    private fun onSubmit() {
         val i_output_count = _data_array_blind_output.length()
         if (i_output_count <= 0) {
             showToast(resources.getString(R.string.kVcStTipSubmitPleaseAddBlindOutput))

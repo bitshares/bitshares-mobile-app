@@ -1,10 +1,8 @@
 package com.btsplusplus.fowallet
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.TypedValue
-import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -56,10 +54,10 @@ class ActivityBlindAccounts : BtsppActivity() {
         return _result_promise != null
     }
 
-    private fun onAddAccountClicked(){
+    private fun onAddAccountClicked() {
         ViewSelector.show(this, "", arrayOf(resources.getString(R.string.kVcStActionImportBlindAccount),
                 resources.getString(R.string.kVcStActionCreateBlindAccount))) { index: Int, _: String ->
-            if (index == 0){
+            if (index == 0) {
                 val result_promise = Promise()
                 goTo(ActivityBlindAccountImport::class.java, true, args = JSONObject().apply {
                     put("result_promise", result_promise)
@@ -81,7 +79,7 @@ class ActivityBlindAccounts : BtsppActivity() {
         }
     }
 
-    private fun createAccountCellCell(section_item: JSONObject, blind_account: JSONObject, is_main_account: Boolean) : LinearLayout {
+    private fun createAccountCellCell(section_item: JSONObject, blind_account: JSONObject, is_main_account: Boolean): LinearLayout {
         val layout = LinearLayout(this).apply {
             layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP).apply {
                 setMargins(0, 0, 0, 10.dp)
@@ -101,7 +99,7 @@ class ActivityBlindAccounts : BtsppActivity() {
         //  账号名称
         val tv_account_name = TextView(this).apply {
             layoutParams = LinearLayout.LayoutParams(LLAYOUT_WARP, LLAYOUT_WARP)
-            if (is_main_account){
+            if (is_main_account) {
                 text = blind_account.optString("alias_name")
                 setTextColor(resources.getColor(R.color.theme01_textColorMain))
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16.0f)
@@ -244,7 +242,7 @@ class ActivityBlindAccounts : BtsppActivity() {
         showToast(resources.getString(R.string.kVcStTipCreateChildBlindAccountSuccess))
     }
 
-    private fun createAccountView(section_item: JSONObject) : LinearLayout {
+    private fun createAccountView(section_item: JSONObject): LinearLayout {
         val layout = LinearLayout(this).apply {
             layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP).apply {
                 setMargins(0, 0, 0, 20.dp)
@@ -312,7 +310,7 @@ class ActivityBlindAccounts : BtsppActivity() {
         return dataArray
     }
 
-    private fun refreshUI(){
+    private fun refreshUI() {
         val container = layout_account_list_of_blind_accounts
         container.removeAllViews()
 

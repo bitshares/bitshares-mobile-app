@@ -131,7 +131,7 @@ class AppCacheManager {
     private fun _getOrCreateSubFieldForWalletInfo(field_name: String): JSONObject {
         var field_hash = _wallet_info.optJSONObject(field_name)
         if (field_hash == null) {
-           field_hash = JSONObject()
+            field_hash = JSONObject()
             _wallet_info.put(field_name, field_hash)
         }
         return field_hash

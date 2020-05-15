@@ -1,16 +1,13 @@
 package com.btsplusplus.fowallet
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.LinearLayout
 import bitshares.*
 import com.btsplusplus.fowallet.utils.VcUtils
 import com.fowallet.walletcore.bts.ChainObjectManager
 import kotlinx.android.synthetic.main.activity_select_blind_balance.*
 import org.json.JSONArray
 import org.json.JSONObject
-import com.orhanobut.logger.Logger
 
 class ActivitySelectBlindBalance : BtsppActivity() {
 
@@ -74,7 +71,7 @@ class ActivitySelectBlindBalance : BtsppActivity() {
     /**
      *  更新选中状态
      */
-    private fun onSelectReceipt(select_index: Int, checked: Boolean){
+    private fun onSelectReceipt(select_index: Int, checked: Boolean) {
         _data_array.getJSONObject(select_index).put("_kSelected", checked)
     }
 
@@ -112,7 +109,7 @@ class ActivitySelectBlindBalance : BtsppActivity() {
     /**
      *  提交
      */
-    private fun onSubmit(result_promise: Promise?){
+    private fun onSubmit(result_promise: Promise?) {
         val ids = JSONObject()
         val result = JSONArray()
         //  获取所有选中的隐私收据

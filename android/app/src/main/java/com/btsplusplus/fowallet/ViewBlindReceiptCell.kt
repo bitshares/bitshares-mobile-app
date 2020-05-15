@@ -9,7 +9,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import bitshares.*
 import com.fowallet.walletcore.bts.ChainObjectManager
-import org.json.JSONArray
 import org.json.JSONObject
 
 class ViewBlindReceiptCell : LinearLayout {
@@ -22,7 +21,7 @@ class ViewBlindReceiptCell : LinearLayout {
     private var _check_box: CheckBox? = null
     private var _tv_receipt_number: TextView? = null
 
-    constructor(ctx: Context, blind_balance: JSONObject, index: Int, can_check: Boolean, onChecked: ((index: Int, checked: Boolean) -> Unit)? = null ) : super(ctx) {
+    constructor(ctx: Context, blind_balance: JSONObject, index: Int, can_check: Boolean, onChecked: ((index: Int, checked: Boolean) -> Unit)? = null) : super(ctx) {
         _ctx = ctx
         _blind_balance = blind_balance
         _can_check = can_check
@@ -30,7 +29,7 @@ class ViewBlindReceiptCell : LinearLayout {
         _onChecked = onChecked
 
         this.layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP).apply {
-            setMargins(0, 15.dp,0,0)
+            setMargins(0, 15.dp, 0, 0)
         }
         this.orientation = LinearLayout.HORIZONTAL
 
@@ -52,7 +51,7 @@ class ViewBlindReceiptCell : LinearLayout {
         }
     }
 
-    private fun refreshUI(){
+    private fun refreshUI() {
         //  准备数据
         val decrypted_memo = _blind_balance.getJSONObject("decrypted_memo")
         val amount_item = decrypted_memo.getJSONObject("amount")
@@ -64,14 +63,14 @@ class ViewBlindReceiptCell : LinearLayout {
 
         //  描绘（选择框、可能不存在）
         var right_content_margin_value = 0.dp
-        if (_can_check){
+        if (_can_check) {
             val checkbox = CheckBox(_ctx)
             val checkbox_layout_params = LinearLayout.LayoutParams(LLAYOUT_WARP, LLAYOUT_MATCH).apply {
                 gravity = Gravity.LEFT
-                setMargins(0,0,0,0)
+                setMargins(0, 0, 0, 0)
             }
             checkbox_layout_params.gravity = LinearLayout.VERTICAL
-            checkbox.setPadding(0,0,0,0)
+            checkbox.setPadding(0, 0, 0, 0)
             checkbox.layoutParams = checkbox_layout_params
             checkbox.text = ""
             checkbox.isChecked = false

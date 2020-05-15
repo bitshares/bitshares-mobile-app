@@ -34,11 +34,11 @@ inline fun <reified T> JSONArray.forEach(action: (T?) -> Unit) {
 /**
  * 扩展JSONArray，提供 deleteIf 方法。
  */
-inline fun <reified T> JSONArray.deleteIf(action: (T?) -> Boolean) : JSONArray {
+inline fun <reified T> JSONArray.deleteIf(action: (T?) -> Boolean): JSONArray {
     val new_json = JSONArray()
     (0 until length()).forEach {
         val result: Boolean = action.invoke(get(it) as? T)
-        if (result == false){
+        if (result == false) {
             new_json.put(get(it))
         }
     }
@@ -56,12 +56,14 @@ fun String.hexDecode() = ByteArray(this.length / 2) { this.substring(it * 2, it 
  * AES256-CBC 加密/解密
  */
 fun ByteArray.aes256cbc_decrypt(secret: ByteArray) = NativeInterface.sharedNativeInterface().bts_aes256cbc_decrypt(secret, this)
+
 fun ByteArray.aes256cbc_encrypt(secret: ByteArray) = NativeInterface.sharedNativeInterface().bts_aes256cbc_encrypt(secret, this)
 
 /**
  * BASE58 编码/解码
  */
 fun ByteArray.base58_decode() = NativeInterface.sharedNativeInterface().bts_base58_decode(this)
+
 fun ByteArray.base58_encode() = NativeInterface.sharedNativeInterface().bts_base58_encode(this)!!.utf8String()
 fun String.base58_decode() = this.utf8String().base58_decode()
 fun String.base58_encode() = this.utf8String().base58_encode()

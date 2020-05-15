@@ -5,7 +5,6 @@ import bitshares.*
 import bitshares.serializer.T_stealth_confirmation
 import bitshares.serializer.T_stealth_confirmation_memo_data
 import com.btsplusplus.fowallet.*
-import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
 import org.json.JSONArray
 import org.json.JSONObject
@@ -120,7 +119,7 @@ class StealthTransferUtils {
             }
 
             //  REMARK：仅作为收据保存。
-            val blind_balance =  JSONObject().apply {
+            val blind_balance = JSONObject().apply {
                 put("real_to_key", to_public_key.toWifString())
                 put("one_time_key", blind_output.getJSONObject("stealth_memo").getString("one_time_key"))
                 put("to", blind_output.getJSONObject("stealth_memo").getString("to"))

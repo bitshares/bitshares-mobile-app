@@ -1,9 +1,6 @@
 package com.btsplusplus.fowallet
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.LinearLayout
-import android.widget.TextView
 import bitshares.*
 import com.btsplusplus.fowallet.utils.ModelUtils
 import com.btsplusplus.fowallet.utils.StealthTransferUtils
@@ -304,7 +301,7 @@ class ActivityBlindTransfer : BtsppActivity() {
     /**
      *  提交事件
      */
-    private fun onSubmit(){
+    private fun onSubmit() {
         //  检测输入参数有效性
         if (_data_array_blind_input.length() <= 0) {
             showToast(resources.getString(R.string.kVcStTipSubmitPleaseSelectReceipt))
@@ -478,7 +475,7 @@ class ActivityBlindTransfer : BtsppActivity() {
                 })
             }
             return@then null
-        }.catch {  err ->
+        }.catch { err ->
             mask.dismiss()
             showGrapheneError(err)
         }
