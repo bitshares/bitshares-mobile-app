@@ -63,7 +63,10 @@ class ActivityBlindBalance : BtsppActivity() {
             list.forEach<JSONObject> {
                 val blind_balance = it!!
 
-                container.addView(ViewBlindReceiptCell(this, blind_balance, index, can_check = false))
+                val cell = ViewBlindReceiptCell(this, blind_balance, index, can_check = false)
+                //  事件
+                cell.setOnClickListener { onCellClicked(blind_balance) }
+                container.addView(cell)
                 container.addView(ViewLine(this, margin_top = 8.dp))
 
                 index++
@@ -71,6 +74,21 @@ class ActivityBlindBalance : BtsppActivity() {
         } else {
             //  无数据
             container.addView(ViewUtils.createEmptyCenterLabel(this, resources.getString(R.string.kVcStTipEmptyNoBlindCanImport)))
+        }
+    }
+
+    private fun onCellClicked(blind_balance: JSONObject) {
+        ViewSelector.show(this, "", arrayOf(resources.getString(R.string.kVcStBlindBalanceActionTransferFromBlind),
+                resources.getString(R.string.kVcStBlindBalanceActionBlindTransfer))) { index: Int, _: String ->
+            if (index == 0) {
+                goTo(ActivityTransferFromBlind::class.java, true, args = JSONObject().apply {
+                    put("blind_balance", blind_balance)
+                })
+            } else {
+                goTo(ActivityBlindTransfer::class.java, true, args = JSONObject().apply {
+                    put("blind_balance", blind_balance)
+                })
+            }
         }
     }
 

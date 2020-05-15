@@ -284,7 +284,41 @@ fun android.app.Activity.showGrapheneError(error: Any?) {
                 }
                 if (lowermsg.indexOf("no method with") >= 0) {
                     showToast(resources.getString(R.string.kGPErrorApiNodeVersionTooLow))
+                    return
                 }
+                if (lowermsg.indexOf("fee pool balance") >= 0) {
+                    //  format = "core_fee_paid <= fee_asset_dyn_data->fee_pool: Fee pool balance of '${b}' is less than the ${r} required to convert ${c}";
+                    showToast(resources.getString(R.string.kGPErrorFeePoolInsufficient))
+                    return
+                }
+                //  REMARK：隐私转账链端没返回任何错误信息，只能采用该信息判断。
+                if (lowermsg.indexOf("itr != cidx.end()") >= 0) {
+                    //    context = {
+                    //        file = "confidential_evaluator.cpp";
+                    //        hostname = "";
+                    //        level = error;
+                    //        line = 89;
+                    //        method = "do_evaluate";
+                    //        "thread_name" = "th_a";
+                    //        timestamp = "2020-04-16T01:22:30";
+                    //    };
+                    //    data = {
+                    //    };
+                    //    format = "itr != cidx.end(): ";
+                    //  REMARK：上面的 message 判断不够精确，结合 context 附加判断。
+                    if (stack != null && stack.length() > 0) {
+                        val file = stack.optJSONObject(0)?.optJSONObject("context")?.optString("file", null)
+                        if (file != null && file.indexOf("confidential") >= 0) {
+                            showToast(resources.getString(R.string.kGPErrorBlindReceiptIsNotExisted))
+                            return
+                        }
+                    }
+                }
+                if (lowermsg.indexOf("fc::ecc::verify_sum") >= 0) {
+                    showToast(resources.getString(R.string.kGPErrorBlindVerifySumFailed))
+                    return
+                }
+                //  Transaction exceeds maximum transaction size. TODO:8.0 超过交易最大大小限制
                 //  TODO:fowallet 提案等手续费不足等情况显示
             }
         } catch (e: Exception) {
