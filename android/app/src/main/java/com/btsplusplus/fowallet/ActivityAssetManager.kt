@@ -109,7 +109,7 @@ class ActivityAssetManager : BtsppActivity() {
 
         val self = this
         val list = JSONArray().apply {
-            //  TODO:6.0 暂时去掉
+            //  TODO:7.0 暂时去掉
 //            put(JSONObject().apply {
 //                put("type", EBitsharesAssetOpKind.ebaok_view)
 //                put("title", self.resources.getString(R.string.kVcAssetMgrCellActionViewDetail))

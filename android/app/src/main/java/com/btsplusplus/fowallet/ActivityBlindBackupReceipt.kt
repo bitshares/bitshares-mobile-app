@@ -1,12 +1,8 @@
 package com.btsplusplus.fowallet
 
 import android.graphics.Bitmap
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.TextView
 import bitshares.Utils
-import bitshares.dp
-import bitshares.xmlstring
 import kotlinx.android.synthetic.main.activity_blind_backup_receipt.*
 
 class ActivityBlindBackupReceipt : BtsppActivity() {
@@ -47,6 +43,7 @@ class ActivityBlindBackupReceipt : BtsppActivity() {
             }
         }
     }
+
     private fun onCopyAddressClicked(blind_receipt_string: String) {
         if (Utils.copyToClipboard(this, blind_receipt_string)) {
             showToast(resources.getString(R.string.kVcStTipReceiptBackupCopied))

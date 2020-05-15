@@ -4,16 +4,13 @@ import android.content.Context
 import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import bitshares.*
 import com.fowallet.walletcore.bts.ChainObjectManager
-import kotlinx.android.synthetic.main.fragment_main_buy.view.*
 import org.json.JSONArray
 import org.json.JSONObject
-import org.w3c.dom.Text
 import java.math.BigDecimal
 
 /**
@@ -41,7 +38,7 @@ class ViewBlindAccountsOrReceipt : LinearLayout {
         _layout_parent.removeAllViews()
         _layout_parent.addView(createBlindAddressHeader(data_array))
         if (data_array != null) {
-            var index =  0
+            var index = 0
             data_array.forEach<JSONObject> {
                 _layout_parent.addView(createBlindAddressCell(it!!, index))
                 index++
@@ -50,16 +47,16 @@ class ViewBlindAccountsOrReceipt : LinearLayout {
         _layout_parent.addView(createAddButton())
     }
 
-    private fun isTypeBlindAccount() : Boolean {
+    private fun isTypeBlindAccount(): Boolean {
         return _view_type == kBlindItemTypeOutput
     }
 
     //  创建添加按钮
-    private fun createAddButton() : LinearLayout {
+    private fun createAddButton(): LinearLayout {
         val layout = LinearLayout(_ctx)
         layout.layoutParams = LinearLayout.LayoutParams(LLAYOUT_WARP, LLAYOUT_WARP).apply {
             gravity = Gravity.CENTER
-            setMargins(0,15.dp,0,0)
+            setMargins(0, 15.dp, 0, 0)
         }
         layout.orientation = LinearLayout.HORIZONTAL
         layout.gravity = Gravity.CENTER
@@ -74,10 +71,10 @@ class ViewBlindAccountsOrReceipt : LinearLayout {
 
         //  按钮名字
         val tv_name = TextView(_ctx).apply {
-            setPadding(5.dp,0,0,0)
+            setPadding(5.dp, 0, 0, 0)
             gravity = Gravity.CENTER_VERTICAL
-            layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP,6.0f)
-            text = if (isTypeBlindAccount()){
+            layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 6.0f)
+            text = if (isTypeBlindAccount()) {
                 resources.getString(R.string.kVcStBtnAddBlindOutput)
             } else {
                 resources.getString(R.string.kVcStBtnSelectReceipt)
@@ -96,20 +93,20 @@ class ViewBlindAccountsOrReceipt : LinearLayout {
     }
 
     //  创建头部字段
-    private fun createBlindAddressHeader(data_array: JSONArray?) : LinearLayout{
-        val data_size =  data_array?.length() ?: 0
+    private fun createBlindAddressHeader(data_array: JSONArray?): LinearLayout {
+        val data_size = data_array?.length() ?: 0
 
         //  父容器
         val layout = LinearLayout(_ctx)
         layout.layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP).apply {
-            setMargins(0, 8.dp,0,0)
+            setMargins(0, 8.dp, 0, 0)
         }
         layout.orientation = LinearLayout.HORIZONTAL
 
         //  TextView - blind adress or receipt
         val tv_blind_address = TextView(_ctx).apply {
-            layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP,5.0f)
-            text = if (isTypeBlindAccount()){
+            layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 5.0f)
+            text = if (isTypeBlindAccount()) {
                 String.format(resources.getString(R.string.kVcStCellTitleBlindAccountWithN), data_size.toString())
             } else {
                 String.format(resources.getString(R.string.kVcStCellTitleBlindReceiptWithN), data_size.toString())
@@ -120,7 +117,7 @@ class ViewBlindAccountsOrReceipt : LinearLayout {
 
         //  TextView - quantity
         val tv_quantity = TextView(_ctx).apply {
-            layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP,3.0f).apply {
+            layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 3.0f).apply {
                 setMargins(12.dp, 0, 0, 0)
             }
             text = resources.getString(R.string.kVcStCellTitleOutputAmount)
@@ -130,7 +127,7 @@ class ViewBlindAccountsOrReceipt : LinearLayout {
 
         //  TextView - quantity
         val tv_operation = TextView(_ctx).apply {
-            layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP,2.0f)
+            layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 2.0f)
             text = resources.getString(R.string.kVcStCellTitleOperation)
             gravity = Gravity.RIGHT
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.0f)
@@ -144,12 +141,12 @@ class ViewBlindAccountsOrReceipt : LinearLayout {
     }
 
     //  创建隐私列表 cell
-    private fun createBlindAddressCell(data: JSONObject, index: Int) : LinearLayout{
+    private fun createBlindAddressCell(data: JSONObject, index: Int): LinearLayout {
 
         // 父容器
         val layout = LinearLayout(_ctx)
         layout.layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP).apply {
-            setMargins(0,8.dp,0,0)
+            setMargins(0, 8.dp, 0, 0)
         }
         layout.orientation = LinearLayout.HORIZONTAL
 
@@ -158,7 +155,7 @@ class ViewBlindAccountsOrReceipt : LinearLayout {
 
         //  TextView - 地址or收据
         val tv_blind_address = TextView(_ctx).apply {
-            layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP,5.0f)
+            layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 5.0f)
             when (_view_type) {
                 kBlindItemTypeInput -> {
                     val decrypted_memo = data.getJSONObject("decrypted_memo")
@@ -180,7 +177,7 @@ class ViewBlindAccountsOrReceipt : LinearLayout {
 
         //  TextView - 数量
         val tv_quantity = TextView(_ctx).apply {
-            layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP,3.0f).apply {
+            layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 3.0f).apply {
                 setMargins(12.dp, 0, 0, 0)
             }
             when (_view_type) {
@@ -202,7 +199,7 @@ class ViewBlindAccountsOrReceipt : LinearLayout {
 
         //  TextView - 操作
         val tv_operation = TextView(_ctx).apply {
-            layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP,2.0f)
+            layoutParams = LinearLayout.LayoutParams(0, LLAYOUT_WARP, 2.0f)
             if (data.optBoolean("bAutoChange")) {
                 //  自动找零
                 text = resources.getString(R.string.kVcStCellOperationKindAutoChange)

@@ -20,7 +20,6 @@
             android:layout_height="40dp"
             android:orientation="horizontal">
 
-
             <LinearLayout
                 android:id="@+id/layout_back_from_blind_account_import"
                 android:layout_width="wrap_content"
@@ -39,7 +38,6 @@
                     android:gravity="center_vertical"
                     />
             </LinearLayout>
-
 
             <TextView
                 android:id="@+id/title"
@@ -76,7 +74,7 @@
                 style="@style/kTextFieldNormal"
                 android:hint="@string/kVcStPlaceholderInputAliasName"/>
 
-            <View android:layout_height="1dp" android:layout_marginTop="5dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+            <View android:layout_height="1dp" android:layout_marginTop="10dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
             <!-- 密码/助记词 -->
             <TextView
@@ -93,10 +91,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                style="@style/kTextFieldPassword"
+                style="@style/kTextFieldNormal"
                 android:hint="@string/kVcStPlaceholderBlindAccountBrainKey"/>
 
-            <View android:layout_height="1dp" android:layout_marginTop="5dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+            <View android:layout_height="1dp" android:layout_marginTop="10dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
             <!-- 按钮 -->
             <LinearLayout

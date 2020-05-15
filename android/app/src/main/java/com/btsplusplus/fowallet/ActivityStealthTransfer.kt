@@ -1,6 +1,5 @@
 package com.btsplusplus.fowallet
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import bitshares.Promise
 import bitshares.jsonArrayfrom
@@ -47,18 +46,18 @@ class ActivityStealthTransfer : BtsppActivity() {
         iv_blind_transfer_right_arrow_from_stealth_transfer.setColorFilter(resources.getColor(R.color.theme01_textColorGray))
     }
 
-    private fun OnAccountManageClicked(){
+    private fun OnAccountManageClicked() {
         val self = this
         goTo(ActivityBlindAccounts::class.java, true, args = JSONObject().apply {
             put("title", self.resources.getString(R.string.kVcTitleBlindAccountsMgr))
         })
     }
 
-    private fun onMyReceiptClicked(){
+    private fun onMyReceiptClicked() {
         goTo(ActivityBlindBalance::class.java, true)
     }
 
-    private fun onTransferToBlindClicked(){
+    private fun onTransferToBlindClicked() {
         //  REMARK：默认隐私转账资产为 CORE 资产。
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
         val core_asset_id = chainMgr.grapheneCoreAssetID
@@ -75,15 +74,13 @@ class ActivityStealthTransfer : BtsppActivity() {
         }
     }
 
-    private fun onTransferFromBlindClicked(){
+    private fun onTransferFromBlindClicked() {
         goTo(ActivityTransferFromBlind::class.java, true, args = JSONObject())
     }
 
-    private fun onBlindTransferClicked(){
+    private fun onBlindTransferClicked() {
         goTo(ActivityBlindTransfer::class.java, true, args = JSONObject())
     }
-
-
 
 
 }

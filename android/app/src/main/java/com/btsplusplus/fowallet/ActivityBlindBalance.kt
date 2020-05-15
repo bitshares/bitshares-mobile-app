@@ -1,13 +1,10 @@
 package com.btsplusplus.fowallet
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.LinearLayout
 import bitshares.*
 import com.btsplusplus.fowallet.utils.VcUtils
 import com.fowallet.walletcore.bts.ChainObjectManager
 import kotlinx.android.synthetic.main.activity_blind_balance.*
-import kotlinx.android.synthetic.main.activity_blind_transfer.*
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -51,7 +48,8 @@ class ActivityBlindBalance : BtsppActivity() {
     }
 
     private fun refreshUI(data_array: JSONArray?) {
-        val list = data_array ?: AppCacheManager.sharedAppCacheManager().getAllBlindBalance().values()
+        val list = data_array
+                ?: AppCacheManager.sharedAppCacheManager().getAllBlindBalance().values()
 
         //  清空
         val container = layout_receipt_list_from_blind_balance
@@ -92,7 +90,7 @@ class ActivityBlindBalance : BtsppActivity() {
         }
     }
 
-    private fun onAddbuttonClicked(){
+    private fun onAddbuttonClicked() {
         val result_promise = Promise()
         goTo(ActivityBlindBalanceImport::class.java, true, args = JSONObject().apply {
             put("result_promise", result_promise)

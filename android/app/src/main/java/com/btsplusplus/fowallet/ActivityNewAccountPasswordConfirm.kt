@@ -48,7 +48,8 @@ class ActivityNewAccountPasswordConfirm : BtsppActivity() {
                 layout_modify_range.visibility = View.GONE
                 //  UI - 新账号名
                 tv_your_account_name_title.text = resources.getString(R.string.kEditPasswordCellTItleYourNewAccountName)
-                tv_curr_account_name_value.text = _new_account_name!!
+                tv_curr_account_name_value.setText(_new_account_name!!)
+                tv_curr_account_name_value.isEnabled = false
                 //  UI - 提交按钮名字
                 btn_submit.text = resources.getString(R.string.kLoginCellBtnAgreeAndReg)
                 //  事件 - 用户协议
@@ -60,7 +61,8 @@ class ActivityNewAccountPasswordConfirm : BtsppActivity() {
                 layout_modify_range.visibility = View.VISIBLE
                 //  UI - 账号名
                 tv_your_account_name_title.text = resources.getString(R.string.kEditPasswordCellTitleCurrAccountName)
-                tv_curr_account_name_value.text = WalletManager.sharedWalletManager().getWalletAccountInfo()!!.getJSONObject("account").getString("name")
+                tv_curr_account_name_value.setText(WalletManager.sharedWalletManager().getWalletAccountInfo()!!.getJSONObject("account").getString("name"))
+                tv_curr_account_name_value.isEnabled = false
                 //  UI - 提交按钮名字
                 btn_submit.text = resources.getString(R.string.kEditPasswordBtnSubmmit)
                 //  UI - 修改范围
@@ -76,8 +78,8 @@ class ActivityNewAccountPasswordConfirm : BtsppActivity() {
                 layout_modify_range.visibility = View.GONE
                 //  UI - 别名
                 tv_your_account_name_title.text = resources.getString(R.string.kVcStCellTitleAliasName)
-                //  TODO:6.0 需要别名输入框？？
-                tv_curr_account_name_value.text = ""
+                tv_curr_account_name_value.hint = resources.getString(R.string.kVcStPlaceholderInputAliasName)
+                tv_curr_account_name_value.isEnabled = true
                 //  UI - 提交按钮名字
                 btn_submit.text = resources.getString(R.string.kEditPasswordBtnCreateBlindAccount)
             }
@@ -361,8 +363,7 @@ class ActivityNewAccountPasswordConfirm : BtsppActivity() {
                 }
             }
             kNewPasswordSceneGenBlindAccountBrainKey -> {
-                //  TODO:6.0
-                val str_alias_name = "AA"//TODO:6.0 text field??
+                val str_alias_name = tv_curr_account_name_value.text.toString().trim()
                 VcUtils.processImportBlindAccount(this, str_alias_name, _curr_password) { blind_account ->
                     //  转到账号管理界面
                     val self = this

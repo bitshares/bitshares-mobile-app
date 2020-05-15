@@ -242,6 +242,7 @@ class T_uint16 : T_Base() {
                 else -> assert(false)
             }
         }
+
         override fun from_byte_buffer(io: BinSerializer): Any? {
             return io.read_u16()
         }
@@ -264,6 +265,7 @@ class T_uint32 : T_Base() {
                 else -> assert(false)
             }
         }
+
         override fun from_byte_buffer(io: BinSerializer): Any? {
             return io.read_u32()
         }
@@ -280,6 +282,7 @@ class T_uint64 : T_Base() {
                 else -> assert(false)
             }
         }
+
         override fun from_byte_buffer(io: BinSerializer): Any? {
             return io.read_u64()
         }
@@ -295,6 +298,7 @@ class T_int64 : T_Base() {
                 else -> assert(false)
             }
         }
+
         override fun from_byte_buffer(io: BinSerializer): Any? {
             return io.read_s64()
         }
@@ -310,6 +314,7 @@ class T_varint32 : T_Base() {
                 else -> assert(false)
             }
         }
+
         override fun from_byte_buffer(io: BinSerializer): Any? {
             return io.read_varint32()
         }
@@ -322,6 +327,7 @@ class T_string : T_Base() {
             assert(opdata is String)
             io.write_string(opdata as String)
         }
+
         override fun from_byte_buffer(io: BinSerializer): Any? {
             return io.read_string()
         }
@@ -338,6 +344,7 @@ class T_bool : T_Base() {
                 io.write_u8(0)
             }
         }
+
         override fun from_byte_buffer(io: BinSerializer): Any? {
             return io.read_u8() != 0
         }
@@ -349,6 +356,7 @@ class T_void : T_Base() {
         override fun to_byte_buffer(io: BinSerializer, opdata: Any?) {
             assert(false) { "(void) undefined type" }
         }
+
         override fun from_byte_buffer(io: BinSerializer): Any? {
             assert(false) { "(void) undefined type" }
             return super.from_byte_buffer(io)
@@ -361,6 +369,7 @@ class T_future_extensions : T_Base() {
         override fun to_byte_buffer(io: BinSerializer, opdata: Any?) {
             assert(false) { "not supported" }
         }
+
         override fun from_byte_buffer(io: BinSerializer): Any? {
             assert(false) { "not supported" }
             return super.from_byte_buffer(io)
@@ -373,6 +382,7 @@ class T_object_id_type : T_Base() {
         override fun to_byte_buffer(io: BinSerializer, opdata: Any?) {
             assert(false) { "not supported" }
         }
+
         override fun from_byte_buffer(io: BinSerializer): Any? {
             assert(false) { "not supported" }
             return super.from_byte_buffer(io)
@@ -437,6 +447,7 @@ class T_address : T_Base() {
         override fun to_byte_buffer(io: BinSerializer, opdata: Any?) {
             assert(false) { "not supported" }
         }
+
         override fun from_byte_buffer(io: BinSerializer): Any? {
             assert(false) { "not supported" }
             return super.from_byte_buffer(io)
@@ -1396,7 +1407,7 @@ class T_operation : T_Base() {
                 EBitsharesOperations.ebo_asset_update_issuer.value -> T_asset_update_issuer
                 EBitsharesOperations.ebo_assert.value -> T_assert
                 EBitsharesOperations.ebo_transfer_to_blind.value -> T_transfer_to_blind
-                EBitsharesOperations.ebo_transfer_from_blind.value ->T_transfer_from_blind
+                EBitsharesOperations.ebo_transfer_from_blind.value -> T_transfer_from_blind
                 EBitsharesOperations.ebo_blind_transfer.value -> T_blind_transfer
                 EBitsharesOperations.ebo_htlc_create.value -> T_htlc_create
                 EBitsharesOperations.ebo_htlc_redeem.value -> T_htlc_redeem

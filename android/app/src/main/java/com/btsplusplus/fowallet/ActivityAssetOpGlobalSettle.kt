@@ -45,7 +45,7 @@ class ActivityAssetOpGlobalSettle : BtsppActivity() {
         //  提交按钮事件
         button_submit_from_global_settle.setOnClickListener { onSubmitBtnClicked() }
 
-        //  输入框 TODO:6.0 如果切换资产则需要切换精度
+        //  输入框 TODO:7.0 如果切换资产则需要切换精度
         val tf = findViewById<EditText>(R.id.tf_price)
         _tf_price_watcher = UtilsDigitTextWatcher().set_tf(tf).set_precision(8)
         tf.addTextChangedListener(_tf_price_watcher)

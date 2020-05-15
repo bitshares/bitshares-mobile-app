@@ -1,10 +1,7 @@
 package com.btsplusplus.fowallet
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.EditText
 import bitshares.*
-import bitshares.serializer.T_blind_input
 import bitshares.serializer.T_stealth_confirmation_memo_data
 import com.btsplusplus.fowallet.utils.StealthTransferUtils
 import com.btsplusplus.fowallet.utils.VcUtils
@@ -152,7 +149,7 @@ class ActivityBlindBalanceImport : BtsppActivity() {
         return true
     }
 
-    private fun onSubmit(result_promise: Promise?, receipt: String){
+    private fun onSubmit(result_promise: Promise?, receipt: String) {
         guardWalletExistWithWalletMode(resources.getString(R.string.kVcStealthTransferGuardWalletModeTips)) {
             var json = StealthTransferUtils.guessBlindReceiptString(receipt)
             if (json == null && isValidBlockNum(receipt)) {

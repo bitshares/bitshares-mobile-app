@@ -1,8 +1,6 @@
 package com.btsplusplus.fowallet
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.EditText
 import bitshares.Promise
 import com.btsplusplus.fowallet.utils.VcUtils
 import kotlinx.android.synthetic.main.activity_blind_account_import.*
@@ -29,7 +27,7 @@ class ActivityBlindAccountImport : BtsppActivity() {
         layout_back_from_blind_account_import.setOnClickListener { finish() }
     }
 
-    private fun onSubmit(result_promise: Promise?){
+    private fun onSubmit(result_promise: Promise?) {
         val alias_name = tv_alias_name.text.toString().trim()
         val brain_key = tv_brain_key.text.toString().trim()
 

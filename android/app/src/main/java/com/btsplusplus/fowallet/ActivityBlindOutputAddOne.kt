@@ -1,6 +1,5 @@
 package com.btsplusplus.fowallet
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
@@ -73,7 +72,7 @@ class ActivityBlindOutputAddOne : BtsppActivity() {
         tf.setSelection(tf.text.toString().length)
     }
 
-    private fun onMyAccountClicked(){
+    private fun onMyAccountClicked() {
         val self = this
         val result_promise = Promise()
         goTo(ActivityBlindAccounts::class.java, true, args = JSONObject().apply {
@@ -92,7 +91,7 @@ class ActivityBlindOutputAddOne : BtsppActivity() {
         }
     }
 
-    private fun onSubmit(result_promise: Promise?){
+    private fun onSubmit(result_promise: Promise?) {
         val str_authority = tf_public_key.text.toString().trim()
         if (str_authority.isEmpty() || !OrgUtils.isValidBitsharesPublicKey(str_authority)) {
             showToast(resources.getString(R.string.kVcStTipPleaseInputValidBlindAccountAddr))

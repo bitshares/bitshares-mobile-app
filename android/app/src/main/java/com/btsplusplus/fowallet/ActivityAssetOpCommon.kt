@@ -58,7 +58,7 @@ class ActivityAssetOpCommon : BtsppActivity() {
         //  事件 - 返回
         layout_back_from_assets_op_common.setOnClickListener { finish() }
 
-        //  输入框 TODO:6.0 如果切换资产则需要切换精度
+        //  输入框 TODO:7.0 如果切换资产则需要切换精度
         val tf = findViewById<EditText>(R.id.tf_amount)
         _tf_amount_watcher = UtilsDigitTextWatcher().set_tf(tf).set_precision(_curr_balance_asset.getInt("precision"))
         tf.addTextChangedListener(_tf_amount_watcher)
