@@ -14,6 +14,7 @@
         android:padding="10dp"
         android:orientation="vertical">
 
+        <!-- 导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -44,7 +45,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="从隐私账户转出"
+                android:text="@string/kVcTitleTransferFromBlind"
                 style="@style/kNavigationBarTextStyle" />
 
         </FrameLayout>
@@ -60,42 +61,39 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-
                 <!-- 隐私收据列表 -->
                 <LinearLayout
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="15dp"
                     android:id="@+id/layout_blind_receipt_list_from_transfer_from_blind"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-
                 </LinearLayout>
                 <View android:layout_height="1dp" android:layout_marginTop="10dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
-
 
                 <!-- 目标账户 -->
                 <TextView
                     android:layout_marginTop="20dp"
                     android:textColor="@color/theme01.textColorMain"
                     android:textSize="14dp"
-                    android:text="目标账户"
+                    android:text="@string/kVcAssetOpCellTitleIssueTargetAccount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
                 <!-- 选择目标账户 -->
                 <LinearLayout
-                    android:id="@+id/layout_select_goal_account_from_transfer_from_blind"
+                    android:id="@+id/layout_to_account"
                     android:layout_marginTop="20dp"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <TextView
-                        android:id="@+id/tv_account_name_from_transfer_from_blind"
+                        android:id="@+id/tv_to_account_name"
                         android:gravity="center_vertical"
-                        android:textColor="@color/theme01.buyColor"
+                        android:textColor="@color/theme01.textColorGray"
                         android:textSize="14dp"
-                        android:text="temp-account"
+                        android:text="@string/kVcAssetOpCellValueIssueTargetAccountDefault"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
@@ -106,24 +104,22 @@
                         android:layout_height="wrap_content">
 
                         <TextView
-                            android:id="@+id/tv_account_id_from_transfer_from_blind"
+                            android:id="@+id/tv_to_account_id"
                             android:textColor="@color/theme01.textColorMain"
                             android:textSize="14dp"
                             android:gravity="right"
-                            android:text="1.2.4"
+                            android:text=""
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
 
                         <ImageView
-                            android:id="@+id/iv_select_goal_account_from_transfer_from_blind"
+                            android:id="@+id/img_arrow_to_account"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:foregroundGravity="right"
                             android:src="@drawable/ic_btn_right_arrow" />
                     </LinearLayout>
-
                 </LinearLayout>
-
                 <View android:layout_height="1dp" android:layout_marginTop="10dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
 
                 <!-- 收据总金额 -->
@@ -135,15 +131,15 @@
                     <TextView
                         android:textSize="12dp"
                         android:textColor="@color/theme01.textColorGray"
-                        android:text="收据总金额"
+                        android:text="@string/kVcStCellTitleTotalInputReceiptAmount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
                     <TextView
-                        android:id="@+id/tv_total_amount_from_transfer_from_blind"
+                        android:id="@+id/tv_total_input_value"
                         android:textSize="12dp"
                         android:textColor="@color/theme01.textColorNormal"
-                        android:text="222312312 TEST"
+                        android:text="-- TEST"
                         android:gravity="right"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
@@ -158,15 +154,38 @@
                     <TextView
                         android:textSize="12dp"
                         android:textColor="@color/theme01.textColorGray"
-                        android:text="广播手续费"
+                        android:text="@string/kVcStCellTitleNetworkFee"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
                     <TextView
-                        android:id="@+id/tv_broadcast_fee_from_transfer_from_blind"
+                        android:id="@+id/tv_network_fee_value"
                         android:textSize="12dp"
                         android:textColor="@color/theme01.textColorNormal"
-                        android:text="222312312 TEST"
+                        android:text="-- TEST"
+                        android:gravity="right"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <!-- 实际到账 -->
+                <LinearLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.textColorGray"
+                        android:text="@string/kVcStCellTitleActualAmount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/tv_actual_amount"
+                        android:textSize="12dp"
+                        android:textColor="@color/theme01.buyColor"
+                        android:text="-- TEST"
                         android:gravity="right"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
@@ -174,7 +193,6 @@
 
                 <!-- 隐私转入按钮 -->
                 <LinearLayout
-                    android:id="@+id/layout_submit_button_from_transfer_from_blind"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:background="@color/colorPrimary"
@@ -182,13 +200,13 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/btn_register"
+                        android:id="@+id/btn_commit"
                         android:layout_width="wrap_content"
                         style="@style/kMainButtonStyle"
                         android:gravity="center|center_vertical"
                         android:layout_weight="1"
                         android:padding="5dp"
-                        android:text="隐私转入" />
+                        android:text="@string/kVcStBtnTransferFromBlind" />
                 </LinearLayout>
 
                 <!-- 提示 -->
@@ -201,7 +219,7 @@
                     android:textColor="@color/theme01.textColorMain"
                     android:padding="5dp"
                     android:background="@color/theme01.textColorGray"
-                    android:text="【温馨提示】\n\n隐私转账可同时转出多个隐私余额到指定公共账号" />
+                    android:text="@string/kVcStTipUiTransferFromBlind" />
 
 
             </LinearLayout>

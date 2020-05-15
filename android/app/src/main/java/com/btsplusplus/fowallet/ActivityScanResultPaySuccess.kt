@@ -19,12 +19,17 @@ class ActivityScanResultPaySuccess : BtsppActivity() {
         val to_account = args.getJSONObject("to_account")
         val trx_id = args.optJSONArray("result")?.optJSONObject(0)?.getString("id") ?: ""
         val to_account_id = to_account.optString("id", null)
+        val success_tip_string = args.optString("success_tip_string", null)
 
         val tv_pay_amount = tv_pay_amount_from_scan_result_pay_success
         val tv_receiver_account = tv_receiver_account_from_scan_result_pay_success
         val tv_tv_transaction_id = tv_transaction_id_from_scan_result_pay_success
 
+        //  UI - 支付成功图标
         img_pay_success.setColorFilter(resources.getColor(R.color.theme01_textColorHighlight))
+        //  UI - 支付成功提示文字
+        tv_pay_success_text.text = success_tip_string ?: resources.getString(R.string.kVcScanResultTipsPaySuccess)
+        //  UI - 支付金额、收款人、交易ID
         tv_pay_amount.text = args.optString("amount_string")
         tv_receiver_account.text = to_account.getString("name")
         tv_tv_transaction_id.text = trx_id
