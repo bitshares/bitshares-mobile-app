@@ -567,34 +567,33 @@ enum
      {
         if (buttonIndex == 1)
         {
-            [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
-                if (unlocked) {
-                    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-                    
-                    //  REMARK：该操作不涉及账号，不需要处理提案的情况。仅n个私钥签名即可。
-                    [[[[BitsharesClientManager sharedBitsharesClientManager] transferFromBlind:op
-                                                                                signPriKeyHash:sign_keys] then:^id(id tx_data) {
-                        [self hideBlockView];
-                        //  删除已提取的收据。
-                        AppCacheManager* pAppCahce = [AppCacheManager sharedAppCacheManager];
-                        for (id blind_balance in blind_balance_array) {
-                            [pAppCahce removeBlindBalance:blind_balance];
-                        }
-                        [pAppCahce saveWalletInfoToFile];
-                        
-                        //  转到结果界面。
-                        VCPaySuccess* vc = [[VCPaySuccess alloc] initWithResult:tx_data
-                                                                     to_account:_to_account
-                                                                  amount_string:amount_string
-                                                             success_tip_string:NSLocalizedString(@"kVcStTipLabelTransferFromBlindSuccess", @"从隐私转出成功")];
-                        [self clearPushViewController:vc vctitle:@"" backtitle:kVcDefaultBackTitleName];
-                        return nil;
-                    }] catch:^id(id error) {
-                        [self hideBlockView];
-                        [OrgUtils showGrapheneError:error];
-                        return nil;
-                    }];
+            [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+            
+            //  REMARK：该操作不涉及账号，不需要处理提案的情况。仅n个私钥签名即可。
+            [[[[BitsharesClientManager sharedBitsharesClientManager] transferFromBlind:op
+                                                                        signPriKeyHash:sign_keys] then:^id(id tx_data) {
+                [self hideBlockView];
+                //  删除已提取的收据。
+                AppCacheManager* pAppCahce = [AppCacheManager sharedAppCacheManager];
+                for (id blind_balance in blind_balance_array) {
+                    [pAppCahce removeBlindBalance:blind_balance];
                 }
+                [pAppCahce saveWalletInfoToFile];
+                
+                //  统计
+                [OrgUtils logEvents:@"txTransferFromBlindFullOK" params:@{@"asset":asset[@"symbol"]}];
+                
+                //  转到结果界面。
+                VCPaySuccess* vc = [[VCPaySuccess alloc] initWithResult:tx_data
+                                                             to_account:_to_account
+                                                          amount_string:amount_string
+                                                     success_tip_string:NSLocalizedString(@"kVcStTipLabelTransferFromBlindSuccess", @"从隐私转出成功")];
+                [self clearPushViewController:vc vctitle:@"" backtitle:kVcDefaultBackTitleName];
+                return nil;
+            }] catch:^id(id error) {
+                [self hideBlockView];
+                [OrgUtils showGrapheneError:error];
+                return nil;
             }];
         }
     }];

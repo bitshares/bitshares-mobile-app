@@ -107,7 +107,7 @@ enum
 
 - (NSString*)genTransferTipsMessage
 {
-    return NSLocalizedString(@"kVcStTipUiTransferToBlind", @"【温馨提示】\n隐私转入：即从比特股公开账号向隐私账户转账。并且可同时向多个隐私账户转账。");
+    return NSLocalizedString(@"kVcStTipUiTransferToBlind", @"【温馨提示】\n隐私转入：即从比特股公开账号向隐私账户转账。并且可同时向多个隐私账户转账。\n\n如果是通过提案进行隐私转账，则不会生成隐私收据，在提案生效后直接输入创建提案时对应区块编号进行导入即可。");
 }
 
 - (void)viewDidLoad
@@ -542,41 +542,47 @@ enum
         {
             [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
                 if (unlocked) {
-                    
-                    //  TODO:6.0 支持提案...!!! TODO:VIP
-                    
-                    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-                    [[[[BitsharesClientManager sharedBitsharesClientManager] transferToBlind:op] then:^id(id tx_data) {
-                        [self hideBlockView];
-                        
-                        //  自动导入【我的】收据
-                        WalletManager* walletMgr = [WalletManager sharedWalletManager];
-                        AppCacheManager* pAppCahce = [AppCacheManager sharedAppCacheManager];
-                        for (id item in receipt_array) {
-                            id blind_balance = [item objectForKey:@"blind_balance"];
-                            assert(blind_balance);
-                            //  REMARK：有隐私账号私钥的收据即为我自己的收据。
-                            id real_to_key = [blind_balance objectForKey:@"real_to_key"];
-                            if (real_to_key && [walletMgr havePrivateKey:real_to_key]) {
-                                [pAppCahce appendBlindBalance:blind_balance];
+                    //  确保有权限发起普通交易，否则作为提案交易处理。
+                    [self GuardProposalOrNormalTransaction:ebo_transfer_to_blind
+                                     using_owner_authority:NO invoke_proposal_callback:NO
+                                                    opdata:op
+                                                 opaccount:op_account
+                                                      body:^(BOOL isProposal, NSDictionary *proposal_create_args)
+                     {
+                        assert(!isProposal);
+                        [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+                        [[[[BitsharesClientManager sharedBitsharesClientManager] transferToBlind:op] then:^id(id tx_data) {
+                            [self hideBlockView];
+                            
+                            //  自动导入【我的】收据
+                            WalletManager* walletMgr = [WalletManager sharedWalletManager];
+                            AppCacheManager* pAppCahce = [AppCacheManager sharedAppCacheManager];
+                            for (id item in receipt_array) {
+                                id blind_balance = [item objectForKey:@"blind_balance"];
+                                assert(blind_balance);
+                                //  REMARK：有隐私账号私钥的收据即为我自己的收据。
+                                id real_to_key = [blind_balance objectForKey:@"real_to_key"];
+                                if (real_to_key && [walletMgr havePrivateKey:real_to_key]) {
+                                    [pAppCahce appendBlindBalance:blind_balance];
+                                }
                             }
-                        }
-                        [pAppCahce saveWalletInfoToFile];
-                        
-                        //  统计
-                        [OrgUtils logEvents:@"txTransferToBlindFullOK" params:@{@"asset":_curr_asset[@"symbol"]}];
-                        
-                        //  转到备份收据界面
-                        VCBlindBackupReceipt* vc = [[VCBlindBackupReceipt alloc] initWithTrxResult:tx_data];
-                        [self clearPushViewController:vc
-                                              vctitle:NSLocalizedString(@"kVcTitleBackupBlindReceipt", @"备份收据")
-                                            backtitle:kVcDefaultBackTitleName];
-                        return nil;
-                    }] catch:^id(id error) {
-                        [self hideBlockView];
-                        NSLog(@"%@", error);
-                        [OrgUtils showGrapheneError:error];
-                        return nil;
+                            [pAppCahce saveWalletInfoToFile];
+                            
+                            //  统计
+                            [OrgUtils logEvents:@"txTransferToBlindFullOK" params:@{@"asset":_curr_asset[@"symbol"]}];
+                            
+                            //  转到备份收据界面
+                            VCBlindBackupReceipt* vc = [[VCBlindBackupReceipt alloc] initWithTrxResult:tx_data];
+                            [self clearPushViewController:vc
+                                                  vctitle:NSLocalizedString(@"kVcTitleBackupBlindReceipt", @"备份收据")
+                                                backtitle:kVcDefaultBackTitleName];
+                            return nil;
+                        }] catch:^id(id error) {
+                            [self hideBlockView];
+                            NSLog(@"%@", error);
+                            [OrgUtils showGrapheneError:error];
+                            return nil;
+                        }];
                     }];
                 }
             }];
