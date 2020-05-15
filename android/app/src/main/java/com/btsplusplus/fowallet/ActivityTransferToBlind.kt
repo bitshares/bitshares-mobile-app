@@ -267,46 +267,54 @@ class ActivityTransferToBlind : BtsppActivity() {
             if (it != null && it as Boolean) {
                 guardWalletUnlocked(false) { unlocked ->
                     if (unlocked) {
-                        //  TODO:6.0 支持提案...!!! TODO:VIP
-                        val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this).apply { show() }
-                        BitsharesClientManager.sharedBitsharesClientManager().transferToBlind(op).then {
-                            //  自动导入【我的】收据
-                            val walletMgr = WalletManager.sharedWalletManager()
-                            val pAppCahce = AppCacheManager.sharedAppCacheManager()
-                            for (item in receipt_array.forin<JSONObject>()) {
-                                val blind_balance = item!!.getJSONObject("blind_balance")
-                                //  REMARK：有隐私账号私钥的收据即为我自己的收据。
-                                val real_to_key = blind_balance.optString("real_to_key")
-                                if (real_to_key.isNotEmpty() && walletMgr.havePrivateKey(real_to_key)) {
-                                    pAppCahce.appendBlindBalance(blind_balance)
+
+                        //  确保有权限发起普通交易，否则作为提案交易处理。
+                        GuardProposalOrNormalTransaction(EBitsharesOperations.ebo_transfer_to_blind, false, false,
+                                op, op_account) { isProposal, _ ->
+                            assert(!isProposal)
+
+                            val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this).apply { show() }
+                            BitsharesClientManager.sharedBitsharesClientManager().transferToBlind(op).then {
+                                //  自动导入【我的】收据
+                                val walletMgr = WalletManager.sharedWalletManager()
+                                val pAppCahce = AppCacheManager.sharedAppCacheManager()
+                                for (item in receipt_array.forin<JSONObject>()) {
+                                    val blind_balance = item!!.getJSONObject("blind_balance")
+                                    //  REMARK：有隐私账号私钥的收据即为我自己的收据。
+                                    val real_to_key = blind_balance.optString("real_to_key")
+                                    if (real_to_key.isNotEmpty() && walletMgr.havePrivateKey(real_to_key)) {
+                                        pAppCahce.appendBlindBalance(blind_balance)
+                                    }
                                 }
-                            }
-                            pAppCahce.saveWalletInfoToFile()
+                                pAppCahce.saveWalletInfoToFile()
 
-                            //  [统计]
-                            btsppLogCustom("txTransferToBlindFullOK", jsonObjectfromKVS("asset", _curr_asset.getString("symbol")))
+                                //  [统计]
+                                btsppLogCustom("txTransferToBlindFullOK", jsonObjectfromKVS("asset", _curr_asset.getString("symbol")))
 
-                            //  生成二维码 & 转到备份收据界面
-                            val tx_data = it as JSONArray
-                            assert(tx_data.length() > 0)
+                                //  生成二维码 & 转到备份收据界面
+                                val tx_data = it as JSONArray
+                                assert(tx_data.length() > 0)
 
-                            //  生成隐私转账收据信息
-                            val block_num = tx_data.getJSONObject(0).getString("block_num")
-                            val blind_receipt_string = JSONObject().apply { put(kAppBlindReceiptBlockNum, block_num) }.toString().base58_encode()
+                                //  生成隐私转账收据信息
+                                val block_num = tx_data.getJSONObject(0).getString("block_num")
+                                val blind_receipt_string = JSONObject().apply { put(kAppBlindReceiptBlockNum, block_num) }.toString().base58_encode()
 
-                            Utils.asyncCreateQRBitmap(blind_receipt_string, 150.dp).then { btm ->
+                                Utils.asyncCreateQRBitmap(blind_receipt_string, 150.dp).then { btm ->
+                                    mask.dismiss()
+                                    goTo(ActivityBlindBackupReceipt::class.java, true, clear_navigation_stack = true, args = JSONObject().apply {
+                                        put("result", tx_data)
+                                        put("qrbitmap", btm!!)
+                                        put("blind_receipt_string", blind_receipt_string)
+                                    })
+                                }
+                                return@then null
+                            }.catch { err ->
                                 mask.dismiss()
-                                goTo(ActivityBlindBackupReceipt::class.java, true, clear_navigation_stack = true, args = JSONObject().apply {
-                                    put("result", tx_data)
-                                    put("qrbitmap", btm!!)
-                                    put("blind_receipt_string", blind_receipt_string)
-                                })
+                                showGrapheneError(err)
                             }
-                            return@then null
-                        }.catch { err ->
-                            mask.dismiss()
-                            showGrapheneError(err)
+
                         }
+
                     }
                 }
             }
