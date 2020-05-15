@@ -76,6 +76,54 @@ class ActivityBlindBalanceImport : BtsppActivity() {
         return null
     }
 
+    /**
+     *  (private) 检测单个 operation。
+     */
+    private fun scanOneOperation(op: JSONArray, data_array: JSONArray, blind_accounts: JSONArray, enable_scan_proposal: Boolean) {
+        assert(op.length() == 2)
+        val optype = op.getInt(0)
+        val opdata = op.getJSONObject(1)
+
+        //  创建提案：则考虑遍历提案的所有operation。
+        if (optype == EBitsharesOperations.ebo_proposal_create.value) {
+            if (enable_scan_proposal) {
+                val proposed_ops = opdata.optJSONArray("proposed_ops")
+                if (proposed_ops != null && proposed_ops.length() > 0) {
+                    for (proposed_op in proposed_ops.forin<JSONObject>()) {
+                        //  REMARK：如果提案里包含创建提案，不重复处理。
+                        scanOneOperation(proposed_op!!.getJSONArray("op"), data_array, blind_accounts, enable_scan_proposal = false)
+                    }
+                }
+            }
+        } else if (optype == EBitsharesOperations.ebo_transfer_to_blind.value || optype == EBitsharesOperations.ebo_blind_transfer.value) {
+            //  转入隐私账户 以及 隐私账户之间转账都存在新的收据生成。
+            val outputs = opdata.getJSONArray("outputs")
+            assert(outputs.length() > 0)
+            if (outputs.length() <= 0) {
+                return
+            }
+            for (blind_output in outputs.forin<JSONObject>()) {
+                val stealth_memo = blind_output!!.optJSONObject("stealth_memo")
+                //  该字段可选，跳过不存在该字段的收据。REMARK：官方命令行客户端等该字段不存在，目前已知BTS++支持该字段。
+                if (stealth_memo == null) {
+                    continue
+                }
+                val d_commitment = blind_output.getString("commitment").hexDecode()
+                val real_to_key = guessRealToPublicKey(stealth_memo, d_commitment, blind_accounts)
+                if (real_to_key != null && real_to_key.isNotEmpty()) {
+                    data_array.put(JSONObject().apply {
+                        put("real_to_key", real_to_key)
+                        put("stealth_memo", stealth_memo)
+                    })
+                }
+            }
+        }
+        return
+    }
+
+    /**
+     *  (private) 扫描区块中的原始【隐私收据】信息。即可：outputs
+     */
     private fun scanBlindReceiptFromBlockData(block_data: JSONObject?, blind_accounts: JSONArray): JSONArray {
         val data_array = JSONArray()
         if (block_data == null) {
@@ -98,34 +146,7 @@ class ActivityBlindBalanceImport : BtsppActivity() {
             }
 
             for (op in operations.forin<JSONArray>()) {
-                assert(op!!.length() == 2)
-                val optype = op.getInt(0)
-                //  转入隐私账户 以及 隐私账户之间转账都存在新的收据生成。
-                if (optype != EBitsharesOperations.ebo_transfer_to_blind.value &&
-                        optype != EBitsharesOperations.ebo_blind_transfer.value) {
-                    continue
-                }
-                val opdata = op.getJSONObject(1)
-                val outputs = opdata.getJSONArray("outputs")
-                assert(outputs.length() > 0)
-                if (outputs.length() <= 0) {
-                    continue
-                }
-                for (blind_output in outputs.forin<JSONObject>()) {
-                    val stealth_memo = blind_output!!.optJSONObject("stealth_memo")
-                    //  该字段可选，跳过不存在该字段的收据。REMARK：官方命令行客户端等该字段不存在，目前已知BTS++支持该字段。
-                    if (stealth_memo == null) {
-                        continue
-                    }
-                    val d_commitment = blind_output.getString("commitment").hexDecode()
-                    val real_to_key = guessRealToPublicKey(stealth_memo, d_commitment, blind_accounts)
-                    if (real_to_key != null && real_to_key.isNotEmpty()) {
-                        data_array.put(JSONObject().apply {
-                            put("real_to_key", real_to_key)
-                            put("stealth_memo", stealth_memo)
-                        })
-                    }
-                }
+                scanOneOperation(op!!, data_array, blind_accounts, enable_scan_proposal = true)
             }
         }
 

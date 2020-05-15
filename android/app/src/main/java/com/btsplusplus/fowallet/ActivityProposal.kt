@@ -792,8 +792,8 @@ class ActivityProposal : BtsppActivity() {
 
         chainMgr.queryAllGrapheneObjectsSkipCache(jsonArrayfrom(BTS_GRAPHENE_ACCOUNT_BTSPP_TEAM)).then {
             mask.dismiss()
-            val account = chainMgr.getChainObjectByID(BTS_GRAPHENE_ACCOUNT_BTSPP_TEAM)
-            val blacklisted_accounts = account.optJSONArray("blacklisted_accounts")
+            val account = chainMgr.getChainObjectByIDSafe(BTS_GRAPHENE_ACCOUNT_BTSPP_TEAM)
+            val blacklisted_accounts = account?.optJSONArray("blacklisted_accounts")
             val proposer_uid = proposal.getString("proposer")
             val proposer_account = chainMgr.getChainObjectByID(proposer_uid)
             val proposer_registrar = proposer_account.getString("registrar")
