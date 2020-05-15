@@ -671,6 +671,8 @@ class OrgUtils {
          * 根据32字节原始私钥生成 WIF 格式私钥
          */
         fun genBtsWifPrivateKeyByPrivateKey32(private_key32: ByteArray): String {
+            //  TODO: 有效的私钥取值范围，32字节作为大整数时的范围。
+            //  HEX: from 1 to 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141.
             return NativeInterface.sharedNativeInterface().bts_private_key_to_wif(private_key32)!!
         }
 
@@ -1014,13 +1016,15 @@ class OrgUtils {
                     //  TODO:
                 }
                 EBitsharesOperations.ebo_transfer_to_blind.value -> {
-                    //  TODO:
+                    container.put(opdata.getString("from"), true)
+                    container.put(opdata.getJSONObject("amount").getString("asset_id"), true)
                 }
                 EBitsharesOperations.ebo_blind_transfer.value -> {
                     //  TODO:
                 }
                 EBitsharesOperations.ebo_transfer_from_blind.value -> {
-                    //  TODO:
+                    container.put(opdata.getString("to"), true)
+                    container.put(opdata.getJSONObject("amount").getString("asset_id"), true)
                 }
                 EBitsharesOperations.ebo_asset_settle_cancel.value -> {
                     //  TODO:
@@ -1333,8 +1337,9 @@ class OrgUtils {
                 }
                 EBitsharesOperations.ebo_transfer_to_blind.value -> {
                     name = R.string.kOpType_transfer_to_blind.xmlstring(ctx)
-                    desc = R.string.kOpDesc_transfer_to_blind.xmlstring(ctx)
-                    //  TODO:待细化
+                    val from = chainMgr.getChainObjectByID(opdata.getString("from")).getString("name")
+                    val str_amount = formatAssetAmountItem(opdata.getJSONObject("amount"))
+                    desc = String.format(R.string.kOpDesc_transfer_to_blind.xmlstring(ctx), from, str_amount)
                 }
                 EBitsharesOperations.ebo_blind_transfer.value -> {
                     name = R.string.kOpType_blind_transfer.xmlstring(ctx)
@@ -1343,8 +1348,9 @@ class OrgUtils {
                 }
                 EBitsharesOperations.ebo_transfer_from_blind.value -> {
                     name = R.string.kOpType_transfer_from_blind.xmlstring(ctx)
-                    desc = R.string.kOpDesc_transfer_from_blind.xmlstring(ctx)
-                    //  TODO:待细化
+                    val to = chainMgr.getChainObjectByID(opdata.getString("to")).getString("name")
+                    val str_amount = formatAssetAmountItem(opdata.getJSONObject("amount"))
+                    desc = String.format(R.string.kOpDesc_transfer_from_blind.xmlstring(ctx), to, str_amount)
                 }
                 EBitsharesOperations.ebo_asset_settle_cancel.value -> {
                     name = R.string.kOpType_asset_settle_cancel.xmlstring(ctx)

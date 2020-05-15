@@ -9,8 +9,10 @@ import bitshares.serializer.T_stealth_confirmation_memo_data
 import com.btsplusplus.fowallet.utils.StealthTransferUtils
 import com.btsplusplus.fowallet.utils.VcUtils
 import com.btsplusplus.fowallet.utils.kAppBlindReceiptBlockNum
+import com.fowallet.walletcore.bts.BitsharesClientManager
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.fowallet.walletcore.bts.WalletManager
+import com.fowallet.walletcore.bts.kBlindReceiptVerifyResultOK
 import kotlinx.android.synthetic.main.activity_blind_balance_import.*
 import org.json.JSONArray
 import org.json.JSONObject
@@ -328,21 +330,15 @@ class ActivityBlindBalanceImport : BtsppActivity() {
         } else {
             val blind_balance = blind_balance_array.getJSONObject(0)
             blind_balance_array.remove(0)
-            //  TODO:6.0 临时跳过，后续处理。
-            verify_success.put(blind_balance)
-            return verifyAllBlindReceiptOnchain(blind_balance_array, verify_success, verify_failed)
-//            /            return [[[BitsharesClientManager sharedBitsharesClientManager] verifyBlindReceipt:blind_balance] then:^id(id result) {
-//                //                //  TODO:7.0 其他错误考虑提示？
-////                switch ([result integerValue]) {
-////                    case kBlindReceiptVerifyResultOK:
-////                    [verify_success addObject:blind_balance];
-////                    break;
-////                    default:
-////                    [verify_failed addObject:blind_balance];
-////                    break;
-////                }
-////                return [self verifyAllBlindReceiptOnchain:blind_balance_array verify_success:verify_success verify_failed:verify_failed];
-////            }];
+            return BitsharesClientManager.sharedBitsharesClientManager().verifyBlindReceipt(this, blind_balance).then {
+                val result = it as Int
+                //  TODO:7.0 其他错误考虑提示？
+                when (result) {
+                    kBlindReceiptVerifyResultOK -> verify_success.put(blind_balance)
+                    else -> verify_failed.put(blind_balance)
+                }
+                return@then verifyAllBlindReceiptOnchain(blind_balance_array, verify_success, verify_failed)
+            }
         }
     }
 

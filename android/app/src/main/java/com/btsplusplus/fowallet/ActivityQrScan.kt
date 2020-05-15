@@ -10,6 +10,7 @@ import android.view.MotionEvent
 import android.view.SurfaceView
 import android.view.View
 import bitshares.*
+import com.btsplusplus.fowallet.utils.StealthTransferUtils
 import com.fowallet.walletcore.bts.ChainObjectManager
 import com.google.zxing.Result
 import com.google.zxing.client.android.AutoScannerView
@@ -285,13 +286,24 @@ class ActivityQrScan : BaseCaptureActivity() {
             return
         }
 
-        //  3、是不是鼓鼓收款码  bts://r/1/#{account_id}/#{asset_name}/#{asset_amount}/#{memo}
+        //  3、是不是隐私收据判断。
+        val blind_receipt_json = StealthTransferUtils.guessBlindReceiptString(result)
+        if (blind_receipt_json != null) {
+            mask.dismiss()
+            //  转到导入收据界面
+            goTo(ActivityBlindBalanceImport::class.java, true, clear_navigation_stack = true, args = JSONObject().apply {
+                put("receipt", result)
+            })
+            return
+        }
+
+        //  4、是不是鼓鼓收款码  bts://r/1/#{account_id}/#{asset_name}/#{asset_amount}/#{memo}
         val magic_prefix = "bts://r/1/"
         if (result.indexOf(magic_prefix, ignoreCase = true) == 0) {
             _processScanResultAsMagicWalletReceive(result, result.substring(magic_prefix.length), mask)
             return
         }
-        //  4、查询是不是比特股账号名or账号ID
+        //  5、查询是不是比特股账号名or账号ID
         ChainObjectManager.sharedChainObjectManager().queryAccountData(result).then {
             val accountData = it as? JSONObject
             if (_isValidAccountData(accountData)) {
