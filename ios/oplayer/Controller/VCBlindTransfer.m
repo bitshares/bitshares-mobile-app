@@ -682,19 +682,19 @@ enum
     NSString* value;
     NSString* symbol = [_curr_blind_asset objectForKey:@"symbol"];
     if (_auto_change_blind_output) {
-        value = [NSString stringWithFormat:NSLocalizedString(@"kVcStTipAskConfrimBlindTransferWithAutoChange", @"您确定往 %@ 个隐私账户转账 %@ %@ 吗?\n\n自动找零 %@ %@\n\n广播手续费：%@ %@"),
+        value = [NSString stringWithFormat:NSLocalizedString(@"kVcStTipAskConfrimBlindTransferWithAutoChange", @"您确定往 %1$@ 个隐私账户转账 %2$@ %3$@ 吗?\n\n自动找零 %4$@ %5$@\n\n广播手续费：%6$@ %6$@"),
                  @([_data_array_blind_output count]),
                  n_total_output, symbol,
                  [_auto_change_blind_output objectForKey:@"n_amount"], symbol,
                  n_fee, symbol];
     } else if (n_gift) {
-        value = [NSString stringWithFormat:NSLocalizedString(@"kVcStTipAskConfrimBlindTransferWithAutoGift", @"您确定往 %@ 个隐私账户转账 %@ %@ 吗?\n\n自动赠与 %@ %@\n\n广播手续费：%@ %@"),
+        value = [NSString stringWithFormat:NSLocalizedString(@"kVcStTipAskConfrimBlindTransferWithAutoGift", @"您确定往 %1$@ 个隐私账户转账 %2$@ %3$@ 吗?\n\n自动赠与 %4$@ %5$@\n\n广播手续费：%6$@ %6$@"),
                  @([_data_array_blind_output count]),
                  n_total_output, symbol,
                  n_gift, symbol,
                  n_fee, symbol];
     } else {
-        value = [NSString stringWithFormat:NSLocalizedString(@"kVcStTipAskConfrimBlindTransfer", @"您确定往 %@ 个隐私账户转账 %@ %@ 吗?\n\n广播手续费：%@ %@"),
+        value = [NSString stringWithFormat:NSLocalizedString(@"kVcStTipAskConfrimBlindTransfer", @"您确定往 %1$@ 个隐私账户转账 %2$@ %3$@ 吗?n\n广播手续费：%4$@ %5$@"),
                  @([_data_array_blind_output count]),
                  n_total_output, symbol,
                  n_fee, symbol];

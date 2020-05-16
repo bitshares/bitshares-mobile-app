@@ -523,7 +523,7 @@ enum
     
     NSString* value;
     if (i_output_count > 1) {
-        value = [NSString stringWithFormat:NSLocalizedString(@"kVcStTipAskConfrimTransferToBlindN", @"您确定往 %@ 个隐私账户合计转入 %@ %@ 吗？\n\n广播手续费：%@ %@"),
+        value = [NSString stringWithFormat:NSLocalizedString(@"kVcStTipAskConfrimTransferToBlindN", @"您确定往 %1$@ 个隐私账户合计转入 %2$@ %3$@ 吗？\n\n广播手续费：%4$@ %5$@"),
                  @(i_output_count),
                  n_total,
                  _curr_asset[@"symbol"],

@@ -797,7 +797,7 @@
 "kVcStCellTitleTotalOutputAmount" = "输出总金额";//TODO:
 "kVcStCellTitleNetworkFee" = "广播手续费";//TODO:
 "kVcStCellTitleActualAmount" = "实际到账";//TODO:
-"kVcStTipUiImportReceipt" = "【温馨提示】\n导入收据同时支持APP生成的收据和CLI命令行钱包收据格式。\n如果隐私收据丢失，可尝试直接输入转账对应区块编号进行导入。\n如果是通过提案进行隐私转账，则不会生成隐私收据，在提案生效后直接输入创建提案时对应区块编号进行导入即可。";//TODO:
+"kVcStTipUiImportReceipt" = "【温馨提示】\n导入收据同时支持APP生成的收据和CLI命令行钱包收据格式。\n如果隐私收据丢失，可尝试直接输入转账对应区块编号进行导入。\n\n如果是通过提案进行隐私转账，则不会生成隐私收据，在提案生效后直接输入创建提案时对应区块编号进行导入即可。";//TODO:
 "kVcStTipUiTransferToBlind" = "【温馨提示】\n隐私转入：即从比特股公开账号向隐私账户转账。并且可同时向多个隐私账户转账。\n\n如果是通过提案进行隐私转账，则不会生成隐私收据，在提案生效后直接输入创建提案时对应区块编号进行导入即可。";//TODO:
 "kVcStTipUiBlindTransfer" = "【温馨提示】\n隐私转账：即在多个隐私账户之间进行转账操作。\n\n找零和赠与：收据总金额减去输出总金额的剩余金额，如果满足找零所需手续费，则会自动找零到我的隐私账户，否则会自动赠与给第一个隐私账户。";//TODO:
 "kVcStTipUiTransferFromBlind" = "【温馨提示】\n隐私转出：即从隐私账户向比特股公开账号转账。";//TODO:
@@ -808,14 +808,14 @@
 "kVcStTipSubmitPleaseAddBlindOutput" = "请添加收款信息。";//TODO:
 "kVcStTipSubmitBalanceNotEnough" = "余额不足。";//TODO:
 "kVcStTipAskConfrimTransferToBlind1" = "您确定往隐私账户转入 %@ %@ 吗？\n\n广播手续费：%@ %@";//TODO:
-"kVcStTipAskConfrimTransferToBlindN" = "您确定往 %@ 个隐私账户合计转入 %@ %@ 吗？\n\n广播手续费：%@ %@";//TODO:
+"kVcStTipAskConfrimTransferToBlindN" = "您确定往 %1$@ 个隐私账户合计转入 %2$@ %3$@ 吗？\n\n广播手续费：%4$@ %5$@";//TODO:
 "kVcStTipErrPleaseSelectReceiptFirst" = "请先选择隐私收据。";//TODO:
 "kVcStTipSubmitPleaseSelectReceipt" = "请添加要转出的隐私收据信息。";//TODO:
 "kVcStTipErrCannotBlindTransferInvalidCER" = "资产 %@ 手续费汇率未正确设置，不可转账。";//TODO:
 "kVcStTipErrTotalInputReceiptNotEnough" = "收据总金额不足。";//TODO:
-"kVcStTipAskConfrimBlindTransferWithAutoChange" = "您确定往 %@ 个隐私账户转账 %@ %@ 吗?\n\n自动找零 %@ %@\n\n广播手续费：%@ %@";//TODO:
-"kVcStTipAskConfrimBlindTransferWithAutoGift" = "您确定往 %@ 个隐私账户转账 %@ %@ 吗?\n\n自动赠与 %@ %@\n\n广播手续费：%@ %@";//TODO:
-"kVcStTipAskConfrimBlindTransfer" = "您确定往 %@ 个隐私账户转账 %@ %@ 吗?\n\n广播手续费：%@ %@";//TODO:
+"kVcStTipAskConfrimBlindTransferWithAutoChange" = "您确定往 %1$@ 个隐私账户转账 %2$@ %3$@ 吗?\n\n自动找零：%4$@ %5$@\n\n广播手续费：%6$@ %7$@";//TODO:
+"kVcStTipAskConfrimBlindTransferWithAutoGift" = "您确定往 %1$@ 个隐私账户转账 %2$@ %3$@ 吗?\n\n自动赠与：%4$@ %5$@\n\n广播手续费：%6$@ %7$@";//TODO:
+"kVcStTipAskConfrimBlindTransfer" = "您确定往 %1$@ 个隐私账户转账 %2$@ %3$@ 吗?n\n广播手续费：%4$@ %5$@";//TODO:
 "kVcStTipUiBackupYourReceipt" = "【温馨提示】\n隐私收据是隐私转账收款凭证，请妥善备份好。\n如果是转入您自身的隐私账户，收据会自动导入我的收据界面。如果是转给他人隐私账户，您需要分享收据给目标用户，用户导入收据后方可提取。";//TODO:
 "kVcStLabelPleaseBackupYourReceiptText" = "隐私转账成功，请妥善保管以下收据信息！";//TODO:
 "kVcStCellButtonNameCopyReceipt" = "复制收据";//TODO:
