@@ -128,6 +128,7 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [T_asset_reserve performSelector:@selector(register_subfields)];
     [T_asset_issue performSelector:@selector(register_subfields)];
     [T_asset_claim_pool performSelector:@selector(register_subfields)];
+    [T_asset_claim_fees performSelector:@selector(register_subfields)];
     [T_asset_update_issuer performSelector:@selector(register_subfields)];
     
     [T_assert_predicate_account_name_eq_lit performSelector:@selector(register_subfields)];
@@ -1047,6 +1048,8 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
             return [T_asset_issue class];
         case ebo_asset_claim_pool:
             return [T_asset_claim_pool class];
+        case ebo_asset_claim_fees:
+            return [T_asset_claim_fees class];
         case ebo_asset_update_issuer:
             return [T_asset_update_issuer class];
         case ebo_assert:
@@ -1495,6 +1498,18 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"asset_id" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_asset]]; //  fee.asset_id must != asset_id
     [self add_field:@"amount_to_claim" class:[T_asset class]];                                      //  only core asset
+    [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
+}
+
+@end
+
+@implementation T_asset_claim_fees
+
++ (void)register_subfields
+{
+    [self add_field:@"fee" class:[T_asset class]];
+    [self add_field:@"issuer" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"amount_to_claim" class:[T_asset class]];  //  amount_to_claim.asset_id->issuer must == issuer
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
 

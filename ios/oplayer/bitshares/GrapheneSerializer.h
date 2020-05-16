@@ -238,6 +238,9 @@
 @interface T_asset_claim_pool : T_Base
 @end
 
+@interface T_asset_claim_fees : T_Base
+@end
+
 @interface T_asset_update_issuer : T_Base
 @end
 

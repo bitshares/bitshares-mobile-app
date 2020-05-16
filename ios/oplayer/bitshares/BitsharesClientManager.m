@@ -602,11 +602,19 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
 }
 
 /**
- *  OP -提取资产等手续费池资金
+ *  OP -提取资产的手续费池资金
  */
 - (WsPromise*)assetClaimPool:(NSDictionary*)opdata
 {
     return [self runSingleTransaction:opdata opcode:ebo_asset_claim_pool fee_paying_account:[opdata objectForKey:@"issuer"]];
+}
+
+/**
+ *  OP -提取资产的市场手续费资金
+ */
+- (WsPromise*)assetClaimFees:(NSDictionary*)opdata
+{
+    return [self runSingleTransaction:opdata opcode:ebo_asset_claim_fees fee_paying_account:[opdata objectForKey:@"issuer"]];
 }
 
 /**
