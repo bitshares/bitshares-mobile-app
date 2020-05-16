@@ -15,7 +15,7 @@
 #	1、克隆源代码 / clone source code
 SOURCE_DIR_IOS="secp256k1_ios"
 rm -rf $SOURCE_DIR_IOS
-git clone https://github.com/bitcoin-core/secp256k1.git $SOURCE_DIR_IOS && cd $SOURCE_DIR_IOS
+git clone https://github.com/bitshares/secp256k1-zkp.git $SOURCE_DIR_IOS && cd $SOURCE_DIR_IOS
 
 #	2、配置所有参数 / configure all parameters
 

@@ -20,6 +20,7 @@ module AndroidI18nGeneration
       puts "ERROR> load file error: #{base_filename}" 
       return nil
     end
+    exist_keys = {}
     list = []
     group = nil
     content.each_line do |line|
@@ -30,6 +31,11 @@ module AndroidI18nGeneration
         group ||= {:name=>'Default', :values=>[]}
         k = $1
         v = $2
+        if exist_keys.include?(k)
+          raise "duplicate langkey: #{k}"
+        else
+          exist_keys[k] = true
+        end
         # => process special characters
         # => 占位符格式化
         v.gsub!(/%(\d+)\$@/){ "%#{$1}$s" }
@@ -61,7 +67,12 @@ module AndroidI18nGeneration
     CFG[:files_mapping].each do |k, v|
       src = "#{CFG[:ios_base_dir]}/#{k}"
       dst = "#{CFG[:android_base_dir]}/#{v}"
-      list = load_file(src, k)
+      begin
+        list = load_file(src, k)
+      rescue
+        puts "!!! ERROR >>> #{$!.message} file: #{k}. Please fix it."
+        next
+      end
       next if list.nil?
       write_file(dst, v, list)
     end
