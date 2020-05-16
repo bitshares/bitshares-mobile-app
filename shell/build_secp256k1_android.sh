@@ -16,7 +16,7 @@
 SOURCE_DIR_ANDROID="secp256k1_android"
 
 rm -rf $SOURCE_DIR_ANDROID
-git clone https://github.com/bitcoin-core/secp256k1.git $SOURCE_DIR_ANDROID && cd $SOURCE_DIR_ANDROID
+git clone https://github.com/bitshares/secp256k1-zkp.git $SOURCE_DIR_ANDROID && cd $SOURCE_DIR_ANDROID
 
 # 2、配置所有参数 / configure all parameters
 
