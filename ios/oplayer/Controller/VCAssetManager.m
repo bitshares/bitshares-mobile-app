@@ -227,6 +227,8 @@
         if (![[asset objectForKey:@"id"] isEqualToString:chainMgr.grapheneCoreAssetID]) {
             [ary addObject:@{@"type":@(ebaok_claim_pool), @"title":NSLocalizedString(@"kVcAssetMgrCellActionClaimFeePool", @"提取手续费池")}];
         }
+        //  提取资产交易手续费 TODO:6.0 lang
+        [ary addObject:@{@"type":@(ebaok_claim_fees), @"title":@"提取市场手续费"}];
     }] copy];
     
     [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
@@ -373,6 +375,36 @@
                                                                           result_promise:result_promise];
                         [self pushViewController:vc
                                          vctitle:NSLocalizedString(@"kVcTitleAssetClaimFeePool", @"提取手续费池")
+                                       backtitle:kVcDefaultBackTitleName];
+                        [result_promise then:^id(id dirty) {
+                            //  刷新UI
+                            if (dirty && [dirty boolValue]) {
+                                [self queryMyIssuedAssets];
+                            }
+                            return nil;
+                        }];
+                    }];
+                }
+                    break;
+                case ebaok_claim_fees:
+                {
+                    //  TODO:6.0 lang
+                    [VcUtils guardGrapheneObjectDependence:self object_ids:[asset objectForKey:@"dynamic_asset_data_id"] body:^{
+                        id opArgs = @{
+                            @"kOpType":@(ebaok_claim_fees),
+                            @"kMsgTips":@"【温馨提示】\n提取资产的市场交易手续费所得收入。",
+                            @"kMsgAmountPlaceholder":@"请输入提取数量",
+                            @"kMsgBtnName":@"提取",
+                            @"kMsgSubmitInputValidAmount":@"请输入要提取的资产数量。",
+                            @"kMsgSubmitOK":@"提取成功。"
+                        };
+                        WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
+                        VCAssetOpCommon* vc = [[VCAssetOpCommon alloc] initWithCurrAsset:asset
+                                                                       full_account_data:nil
+                                                                           op_extra_args:opArgs
+                                                                          result_promise:result_promise];
+                        [self pushViewController:vc
+                                         vctitle:@"提取市场手续费"
                                        backtitle:kVcDefaultBackTitleName];
                         [result_promise then:^id(id dirty) {
                             //  刷新UI

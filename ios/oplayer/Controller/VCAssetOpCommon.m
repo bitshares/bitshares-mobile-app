@@ -100,6 +100,17 @@ enum
                                                             isNegative:NO];
         }
             break;
+        case ebaok_claim_fees:
+        {
+            //  REMARK：计算可领取的市场手续费余额。
+            ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+            _curr_balance_asset = _curr_selected_asset;
+            id dynamic_asset_data = [chainMgr getChainObjectByID:[_curr_selected_asset objectForKey:@"dynamic_asset_data_id"]];
+            _nCurrBalance = [NSDecimalNumber decimalNumberWithMantissa:[[dynamic_asset_data objectForKey:@"accumulated_fees"] unsignedLongLongValue]
+                                                              exponent:-[[_curr_balance_asset objectForKey:@"precision"] integerValue]
+                                                            isNegative:NO];
+        }
+            break;
         default:
         {
             //  其他操作，从账号获取余额。
@@ -269,11 +280,13 @@ enum
                 cell.textLabel.text = [_curr_selected_asset objectForKey:@"symbol"];
                 switch ([[_opExtraArgs objectForKey:@"kOpType"] integerValue]) {
                     case ebaok_claim_pool:
+                    case ebaok_claim_fees:
                     case ebaok_settle:
                     {
                         //  部分切换资产
                         //  1、提取手续费池 - 不可切换，需要查询手续费池。暂不支持 TODO:5.0
                         //  2、清算操作 - 不可切换，需要刷新各种标记，是否黑天鹅等。暂不支持 TODO:5.0
+                        //  3、提取市场手续费 - 不可切换，需要查询。暂不支持
                         cell.accessoryType = UITableViewCellAccessoryNone;
                         cell.selectionStyle = UITableViewCellSelectionStyleNone;
                         cell.textLabel.textColor = theme.textColorGray;
@@ -343,6 +356,8 @@ enum
             kSearchType = enstAssetUIA;
             break;
         case ebaok_claim_pool:      //  REMARK：提取手续费池不可切换资产。
+            return;
+        case ebaok_claim_fees:
             return;
         default:
             assert(false);
@@ -436,6 +451,15 @@ enum
             [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
                 if (unlocked) {
                     [self _execAssetClaimPoolCore:n_amount];
+                }
+            }];
+        }
+            break;
+        case ebaok_claim_fees:
+        {
+            [self GuardWalletUnlocked:NO body:^(BOOL unlocked) {
+                if (unlocked) {
+                    [self _execAssetClaimFeesCore:n_amount];
                 }
             }];
         }
@@ -586,6 +610,54 @@ enum
             [OrgUtils showGrapheneError:error];
             //  [统计]
             [OrgUtils logEvents:@"txAssetClaimPoolFailed" params:@{@"account":op_account[@"id"]}];
+            return nil;
+        })];
+    }];
+}
+
+/*
+ *  (private) 执行提取市场手续费操作
+ */
+- (void)_execAssetClaimFeesCore:(NSDecimalNumber*)n_amount
+{
+    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+    id op_account = [[[WalletManager sharedWalletManager] getWalletAccountInfo] objectForKey:@"account"];
+    assert(op_account);
+    
+    id n_amount_pow = [NSString stringWithFormat:@"%@", [n_amount decimalNumberByMultiplyingByPowerOf10:[_curr_balance_asset[@"precision"] integerValue]]];
+    
+    id op = @{
+        @"fee":@{@"amount":@0, @"asset_id":chainMgr.grapheneCoreAssetID},
+        @"issuer":op_account[@"id"],
+        @"amount_to_claim":@{@"amount":@([n_amount_pow unsignedLongLongValue]), @"asset_id":_curr_balance_asset[@"id"]}
+    };
+    
+    //  确保有权限发起普通交易，否则作为提案交易处理。
+    [self GuardProposalOrNormalTransaction:ebo_asset_claim_fees
+                     using_owner_authority:NO
+                  invoke_proposal_callback:NO
+                                    opdata:op
+                                 opaccount:op_account
+                                      body:^(BOOL isProposal, NSDictionary *proposal_create_args)
+     {
+        assert(!isProposal);
+        [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
+        [[[[BitsharesClientManager sharedBitsharesClientManager] assetClaimFees:op] then:(^id(id data) {
+            [self hideBlockView];
+            [OrgUtils makeToast:[_opExtraArgs objectForKey:@"kMsgSubmitOK"] ?: @""];
+            //  [统计]
+            [OrgUtils logEvents:@"txAssetClaimFeesFullOK" params:@{@"account":op_account[@"id"]}];
+            //  返回上一个界面并刷新
+            if (_result_promise) {
+                [_result_promise resolve:@YES];
+            }
+            [self closeOrPopViewController];
+            return nil;
+        })] catch:(^id(id error) {
+            [self hideBlockView];
+            [OrgUtils showGrapheneError:error];
+            //  [统计]
+            [OrgUtils logEvents:@"txAssetClaimFeesFailed" params:@{@"account":op_account[@"id"]}];
             return nil;
         })];
     }];

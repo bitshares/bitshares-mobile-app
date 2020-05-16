@@ -161,9 +161,14 @@ enum
 - (WsPromise*)assetIssue:(NSDictionary*)opdata;
 
 /**
- *  OP -提取资产等手续费池资金
+ *  OP -提取资产的手续费池资金
  */
 - (WsPromise*)assetClaimPool:(NSDictionary*)opdata;
+
+/**
+ *  OP -提取资产的市场手续费资金
+ */
+- (WsPromise*)assetClaimFees:(NSDictionary*)opdata;
 
 /**
  *  OP - 更新资产发行者
