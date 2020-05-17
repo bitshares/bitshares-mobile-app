@@ -1684,6 +1684,7 @@
 "kLblCellShareLink" = "分享专属链接";
 "kSettingEx" = "设置";
 "setting_theme" = "主题风格";
+"setting_hor_trade_ui" = "横版交易界面";
 "setting_apinode" = "接入点";
 "setting_version" = "版本";
 "kThemeNameBlue" = "静谧蓝";

@@ -1684,6 +1684,7 @@
 "kLblCellShareLink" = "Share link";
 "kSettingEx" = "Setting";
 "setting_theme" = "Theme";
+"setting_hor_trade_ui" = "Horizontal trading UI";
 "setting_apinode" = "API server";
 "setting_version" = "Version";
 "kThemeNameBlue" = "Quiet blue";

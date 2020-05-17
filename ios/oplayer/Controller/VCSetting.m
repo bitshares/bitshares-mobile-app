@@ -26,6 +26,7 @@ enum
     kSetting_language = 0,      //  多语言
     kSetting_estimate_unit,     //  记账单位
     kSetting_theme,             //  主题风格
+    kSetting_enableHorUI,       //  横版交易界面
     kSetting_apinode,           //  API节点
     kSetting_version,           //  版本
     kSetting_about,             //  关于
@@ -59,12 +60,13 @@ enum
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
     
     _dataArray = [[NSArray alloc] initWithObjects:
-                  @"setting_language",  //  语言
-                  @"setting_currency",  //  计价方式
-                  @"setting_theme",     //  主题风格
-                  @"setting_apinode",   //  API节点
-                  @"setting_version",   //  版本
-                  @"kLblCellAboutBtspp",//  关于
+                  @"setting_language",      //  语言
+                  @"setting_currency",      //  计价方式
+                  @"setting_theme",         //  主题风格
+                  @"setting_hor_trade_ui",  //  横版交易界面
+                  @"setting_apinode",       //  API节点
+                  @"setting_version",       //  版本
+                  @"kLblCellAboutBtspp",    //  关于
                   nil];
     
     _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutNavi] style:UITableViewStyleGrouped];
@@ -91,10 +93,15 @@ enum
 
 - (void)onSwitchAction:(UISwitch*)pSwitch
 {
-    //    //  REMARK：section信息保存在 tag 的低字节里。
-    //    NSInteger section = pSwitch.tag & 0xff;
-    //
-    //
+    switch (pSwitch.tag) {
+        case kSetting_enableHorUI:  //  启用横版交易界面
+        {
+            [[SettingManager sharedSettingManager] setUseConfig:kSettingKey_EnableHorTradeUI value:pSwitch.on];
+        }
+            break;
+        default:
+            break;
+    }
 }
 
 #pragma mark- TableView delegate method
@@ -180,6 +187,15 @@ enum
             cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
         }
             break;
+        case kSetting_enableHorUI:
+        {
+            UISwitch* pSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
+            pSwitch.tag = indexPath.section;
+            pSwitch.on = [[SettingManager sharedSettingManager] isEnableHorTradeUI];
+            [pSwitch addTarget:self action:@selector(onSwitchAction:) forControlEvents:UIControlEventValueChanged];
+            cell.accessoryView = pSwitch;
+        }
+            break;
         case kSetting_apinode:
         {
             cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
@@ -251,6 +267,8 @@ enum
                 vc.title = NSLocalizedString(@"kVcTitleTheme", @"主题风格");
                 [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
             }
+                break;
+            case kSetting_enableHorUI:
                 break;
             case kSetting_apinode:
             {

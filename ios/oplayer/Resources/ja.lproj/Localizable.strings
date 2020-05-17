@@ -1684,6 +1684,7 @@
 "kLblCellShareLink" = "リンクを共有";
 "kSettingEx" = "設定";
 "setting_theme" = "テーマの風格";
+"setting_hor_trade_ui" = "水平取引UI";
 "setting_apinode" = "APIサーバー";
 "setting_version" = "バージョン";
 "kThemeNameBlue" = "紺色";

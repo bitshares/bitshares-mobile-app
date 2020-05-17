@@ -174,6 +174,22 @@ static SettingManager *_sharedSettingManager = nil;
 }
 
 /*
+ *  (public) 是否启用横版交易界面。
+ */
+- (BOOL)isEnableHorTradeUI
+{
+    NSMutableDictionary* settings = [self loadSettingHash];
+    NSString* value = [settings objectForKey:kSettingKey_EnableHorTradeUI];
+    //  初始化默认值（NO）
+    if (!value || [value isEqualToString:@""]){
+        [settings setObject:@"0" forKey:kSettingKey_EnableHorTradeUI];
+        [self saveSettingHash:settings];
+        return NO;
+    }
+    return [value boolValue];
+}
+
+/*
  *  (public) 获取当前用户节点，为空则随机选择。
  */
 - (NSDictionary*)getApiNodeCurrentSelect
