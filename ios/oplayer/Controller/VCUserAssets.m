@@ -854,9 +854,12 @@
     TradingPair* tradingPair = [[TradingPair alloc] initWithBaseAsset:base quoteAsset:quote];
     
     [VcUtils simpleRequest:_owner request:[tradingPair queryBitassetMarketInfo] callback:^(id data) {
-        //  TODO:6.0 VCTradeHor横版改竖版界面。以后考虑设置界面设置。
-        VCTradeVertical* vc = [[VCTradeVertical alloc] initWithTradingPair:tradingPair selectBuy:YES];
-//        VCTradeHor* vc = [[VCTradeHor alloc] initWithTradingPair:tradingPair selectBuy:YES];
+        VCBase* vc;
+        if ([[SettingManager sharedSettingManager] isEnableHorTradeUI]) {
+            vc = [[VCTradeHor alloc] initWithTradingPair:tradingPair selectBuy:YES];
+        } else {
+            vc = [[VCTradeVertical alloc] initWithTradingPair:tradingPair selectBuy:YES];
+        }
         vc.title = [NSString stringWithFormat:@"%@/%@", quote_symbol, base_symbol];
         assert(_owner);
         [_owner pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];

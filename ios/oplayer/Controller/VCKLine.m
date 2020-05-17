@@ -133,8 +133,14 @@ enum
 - (void)onButtomButtonClicked:(UIButton*)sender
 {
     assert(sender.tag != kBottomButtonTagFav);
-    //  TODO:6.0 VCTradeHor横版改竖版界面。以后考虑设置界面设置。
-    VCTradeVertical* vc = [[VCTradeVertical alloc] initWithTradingPair:_tradingPair selectBuy:sender.tag == kBottomButtonTagBuy];
+    VCBase* vc;
+    if ([[SettingManager sharedSettingManager] isEnableHorTradeUI]) {
+        vc = [[VCTradeHor alloc] initWithTradingPair:_tradingPair
+                                           selectBuy:sender.tag == kBottomButtonTagBuy];
+    } else {
+        vc = [[VCTradeVertical alloc] initWithTradingPair:_tradingPair
+                                                selectBuy:sender.tag == kBottomButtonTagBuy];
+    }
     vc.title = [NSString stringWithFormat:@"%@/%@", [_tradingPair.quoteAsset objectForKey:@"symbol"], [_tradingPair.baseAsset objectForKey:@"symbol"]];
     [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
 }
