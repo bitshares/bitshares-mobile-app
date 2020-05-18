@@ -35,8 +35,6 @@
 //  【官方测试网络】参数
 #define kAppModuleEnableTabMarket   1
 #define kAppModuleEnableTabDebt     0
-#define kAppModuleEnableRank        0
-#define kAppModuleEnableFeedPrice   1
 #define kAppModuleEnableOTC         1
 #define kAppModuleEnableGateway     0
 #define kAppModuleEnableFaq         1
@@ -65,8 +63,6 @@
 //  iOS企业版参数
 #define kAppModuleEnableTabMarket   1
 #define kAppModuleEnableTabDebt     1
-#define kAppModuleEnableRank        1
-#define kAppModuleEnableFeedPrice   1
 #define kAppModuleEnableOTC         1
 #define kAppModuleEnableGateway     1
 #define kAppModuleEnableFaq         1
@@ -81,8 +77,6 @@
 //  AppStore版参数
 #define kAppModuleEnableTabMarket   1
 #define kAppModuleEnableTabDebt     1
-#define kAppModuleEnableRank        1
-#define kAppModuleEnableFeedPrice   1
 #define kAppModuleEnableOTC         1
 #define kAppModuleEnableGateway     1
 #define kAppModuleEnableFaq         0
@@ -97,8 +91,6 @@
 //  百城链参数
 #define kAppModuleEnableTabMarket   0
 #define kAppModuleEnableTabDebt     0
-#define kAppModuleEnableRank        0
-#define kAppModuleEnableFeedPrice   0
 #define kAppModuleEnableOTC         0
 #define kAppModuleEnableGateway     0
 #define kAppModuleEnableFaq         1

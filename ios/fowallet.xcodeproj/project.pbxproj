@@ -121,6 +121,9 @@
 		3F2E6E2C233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E2A233E0B3500BF4B78 /* ViewPermissionInfoCellB.m */; };
 		3F2E6E2D233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E2A233E0B3500BF4B78 /* ViewPermissionInfoCellB.m */; };
 		3F2E6E2E233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E6E2A233E0B3500BF4B78 /* ViewPermissionInfoCellB.m */; };
+		3F333B0A247223BF00E43B83 /* VCAssetInfos.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F333B09247223BF00E43B83 /* VCAssetInfos.m */; };
+		3F333B0B247223BF00E43B83 /* VCAssetInfos.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F333B09247223BF00E43B83 /* VCAssetInfos.m */; };
+		3F333B0C247223BF00E43B83 /* VCAssetInfos.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F333B09247223BF00E43B83 /* VCAssetInfos.m */; };
 		3F37C80C24231CED0028845A /* iconShare@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F37C80A24231CED0028845A /* iconShare@3x.png */; };
 		3F37C80D24231CED0028845A /* iconShare@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F37C80A24231CED0028845A /* iconShare@3x.png */; };
 		3F37C80E24231CED0028845A /* iconShare@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F37C80A24231CED0028845A /* iconShare@3x.png */; };
@@ -2170,6 +2173,8 @@
 		3F2E6E26233DF5A600BF4B78 /* VCPermissionEdit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCPermissionEdit.h; path = Controller/VCPermissionEdit.h; sourceTree = "<group>"; };
 		3F2E6E2A233E0B3500BF4B78 /* ViewPermissionInfoCellB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewPermissionInfoCellB.m; path = View/ViewPermissionInfoCellB.m; sourceTree = "<group>"; };
 		3F2E6E2B233E0B3500BF4B78 /* ViewPermissionInfoCellB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewPermissionInfoCellB.h; path = View/ViewPermissionInfoCellB.h; sourceTree = "<group>"; };
+		3F333B08247223BF00E43B83 /* VCAssetInfos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAssetInfos.h; path = Controller/VCAssetInfos.h; sourceTree = "<group>"; };
+		3F333B09247223BF00E43B83 /* VCAssetInfos.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAssetInfos.m; path = Controller/VCAssetInfos.m; sourceTree = "<group>"; };
 		3F37C80A24231CED0028845A /* iconShare@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconShare@3x.png"; path = "Images/iconShare@3x.png"; sourceTree = "<group>"; };
 		3F37C80B24231CED0028845A /* iconShare@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconShare@2x.png"; path = "Images/iconShare@2x.png"; sourceTree = "<group>"; };
 		3F3847302222686300B55914 /* VCMemberShip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCMemberShip.h; path = Controller/VCMemberShip.h; sourceTree = "<group>"; };
@@ -3281,6 +3286,8 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3F333B08247223BF00E43B83 /* VCAssetInfos.h */,
+				3F333B09247223BF00E43B83 /* VCAssetInfos.m */,
 				3F8C63F02453D18E000316D1 /* VCStealthTransfer.h */,
 				3F8C63EF2453D18E000316D1 /* VCStealthTransfer.m */,
 				3F8C63EB24528063000316D1 /* VCBlindAccountImport.h */,
@@ -6210,6 +6217,7 @@
 				3F009A03239FAA9A00A77E4A /* VCOtcMcAdList.m in Sources */,
 				3F2E6E2E233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */,
 				3F6768E2230E9EC100E98C14 /* StyledPageControl.m in Sources */,
+				3F333B0C247223BF00E43B83 /* VCAssetInfos.m in Sources */,
 				3F8C63E924504D48000316D1 /* ViewBlindAccountCell.m in Sources */,
 				3F6768E3230E9EC100E98C14 /* VCTest.m in Sources */,
 				3F6768E4230E9EC100E98C14 /* Ppmd7Enc.c in Sources */,
@@ -6580,6 +6588,7 @@
 				3F009A02239FAA9A00A77E4A /* VCOtcMcAdList.m in Sources */,
 				3F2E6E2D233E0B3600BF4B78 /* ViewPermissionInfoCellB.m in Sources */,
 				3FB8F96621CE66C200DA88E2 /* StyledPageControl.m in Sources */,
+				3F333B0B247223BF00E43B83 /* VCAssetInfos.m in Sources */,
 				3F8C63E824504D48000316D1 /* ViewBlindAccountCell.m in Sources */,
 				3FB8F96721CE66C200DA88E2 /* VCTest.m in Sources */,
 				3FB8F96821CE66C200DA88E2 /* Ppmd7Enc.c in Sources */,
@@ -6950,6 +6959,7 @@
 				3F009A01239FAA9A00A77E4A /* VCOtcMcAdList.m in Sources */,
 				ED96A096186C62AD002181D4 /* StyledPageControl.m in Sources */,
 				EDC7D39C1869D430009F40F1 /* VCTest.m in Sources */,
+				3F333B0A247223BF00E43B83 /* VCAssetInfos.m in Sources */,
 				3F8C63E724504D48000316D1 /* ViewBlindAccountCell.m in Sources */,
 				B7BDAA9A20B3C77500738F12 /* Ppmd7Enc.c in Sources */,
 				B764AEA320B5160000BDFC1B /* VCServices.m in Sources */,

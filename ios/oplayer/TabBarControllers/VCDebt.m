@@ -197,7 +197,7 @@ enum
 {
     NSMutableArray* asset_list = [NSMutableArray array];
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
-    for (id symbol in [chainMgr getDebtAssetList]) {
+    for (id symbol in [chainMgr getMainSmartAssetList]) {
         [asset_list addObject:[chainMgr getAssetBySymbol:symbol]];
     }
     [asset_list addObject:@{@"symbol":NSLocalizedString(@"kVcAssetMgrCellValueSmartBackingAssetCustom", @"自定义"), @"is_custom":@YES}];
@@ -298,7 +298,7 @@ enum
     
     //  初始化默认操作债仓
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
-    id debt_asset_list = [chainMgr getDebtAssetList];
+    id debt_asset_list = [chainMgr getMainSmartAssetList];
     assert(debt_asset_list && [debt_asset_list count] > 0);
     id currDebtAsset = [chainMgr getAssetBySymbol:[debt_asset_list firstObject]];
     //  TODO:fowallet 考虑动态获取背书资产，目前版本只支持 bts作为背书。
@@ -535,7 +535,7 @@ enum
         
         ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
         
-        //        id debt_asset_list = [chainMgr getDebtAssetList];
+        //        id debt_asset_list = [chainMgr getMainSmartAssetList];
         //        assert(debt_asset_list);
         
         //  REMARK：如果没执行 get_full_accounts 请求，则内存缓存不存在，则默认从登录时的帐号信息里获取。
