@@ -235,6 +235,9 @@
 @interface T_asset_issue : T_Base
 @end
 
+@interface T_asset_fund_fee_pool : T_Base
+@end
+
 @interface T_asset_claim_pool : T_Base
 @end
 

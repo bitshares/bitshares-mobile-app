@@ -613,6 +613,40 @@ java_jni_entry_bts_public_key_to_address(JNIEnv* env, jobject self,
 }
 
 /**
+ *  (public) 验证私钥是否有效，私钥有效范围。[1, secp256k1 curve order)。REMARK：大部分 lib 范围是 [1, secp256k1 curve order] 的闭区间，c库范围为开区间。
+ */
+JNIEXPORT jboolean
+java_jni_entry_bts_verify_private_key(JNIEnv* env, jobject self,
+    jbyteArray private_key)
+{
+    //  检查参数
+    if (!private_key){
+        return JNI_FALSE;
+    }
+
+    //  获取数据
+    jbyte* private_key_ptr = (*env)->GetByteArrayElements(env, private_key, 0);
+    jsize private_key_size = (*env)->GetArrayLength(env, private_key);
+
+    //  调用API
+    secp256k1_prikey pri_key_s = {0, };
+    assert(sizeof(pri_key_s.data) == private_key_size);
+    memcpy(pri_key_s.data, private_key_ptr, sizeof(pri_key_s.data));
+
+    bool result = __bts_verify_private_key(&pri_key_s);
+
+    //  释放参数数据
+    (*env)->ReleaseByteArrayElements(env, private_key, private_key_ptr, JNI_ABORT);
+
+    //  返回
+    if (result) {
+        return JNI_TRUE;
+    } else {
+        return JNI_FALSE;
+    }
+}
+
+/**
  *  根据私钥创建公钥。
  */
 JNIEXPORT jbyteArray
@@ -1267,6 +1301,10 @@ JNIEXPORT jbyteArray
 java_jni_entry_bts_public_key_to_address(JNIEnv* env, jobject self,
     jbyteArray public_key, jbyteArray address_prefix);
 
+JNIEXPORT jboolean
+java_jni_entry_bts_verify_private_key(JNIEnv* env, jobject self,
+    jbyteArray private_key);
+
 JNIEXPORT jbyteArray
 java_jni_entry_bts_gen_public_key(JNIEnv* env, jobject self,
     jbyteArray private_key);
@@ -1343,6 +1381,7 @@ static JNINativeMethod jni_methods_table[] =
     {"bts_gen_private_key_from_seed",           "([B)[B",                   (void*)java_jni_entry_bts_gen_private_key_from_seed},
     {"bts_private_key_to_wif",                  "([B)Ljava/lang/String;",   (void*)java_jni_entry_bts_private_key_to_wif},
     {"bts_public_key_to_address",               "([B[B)[B",                 (void*)java_jni_entry_bts_public_key_to_address},
+    {"bts_verify_private_key",                  "([B)Z",                    (void*)java_jni_entry_bts_verify_private_key},
     {"bts_gen_public_key",                      "([B)[B",                   (void*)java_jni_entry_bts_gen_public_key},
     {"bts_gen_address_from_private_key32",      "([B[B)[B",                 (void*)java_jni_entry_bts_gen_address_from_private_key32},
     {"bts_gen_private_key_from_wif_privatekey", "([B)[B",                   (void*)java_jni_entry_bts_gen_private_key_from_wif_privatekey},

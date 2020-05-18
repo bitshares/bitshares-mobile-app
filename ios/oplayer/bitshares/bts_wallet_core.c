@@ -126,7 +126,7 @@ void sha256(const unsigned char* buffer, const size_t size, unsigned char digest
     Sha256Update( &sha256Context, buffer, (uint32_t)size);
     Sha256Finalise( &sha256Context, &sha256Hash );
     
-    //  TODO:这个拷贝可以省略吗
+    //  拷贝
     memcpy((void*)digest32, sha256Hash.bytes, sizeof(sha256Hash.bytes));
 }
 
@@ -558,11 +558,25 @@ bool __bts_aes256_encrypt_with_checksum(const unsigned char private_key32[], con
 }
 
 /**
- *  (public) 根据种子字符串生成私钥信息
+ *  (public) 根据种子字符串生成私钥信息。会自动校验私钥有效性。
  */
 void __bts_gen_private_key_from_seed(const unsigned char* seed, const size_t seed_size, unsigned char private_key32[])
 {
+    assert(private_key32);
+    //  根据 seed 计算摘要生成 private key。
     sha256(seed, seed_size, private_key32);
+    //  如果是有效的私钥则直接返回
+    if (secp256k1_ec_seckey_verify(get_static_context(), private_key32)) {
+        return;
+    }
+    //  无效的私钥循环重新生成。
+    //  REMARK：私钥有效范围。[1, secp256k1 curve order)。REMARK：大部分 lib 范围是 [1, secp256k1 curve order] 的闭区间，c库范围为开区间。
+    while (true) {
+        sha256(private_key32, 32, private_key32);
+        if (secp256k1_ec_seckey_verify(get_static_context(), private_key32)) {
+            break;
+        }
+    }
 }
 
 /**
@@ -620,6 +634,18 @@ void __bts_public_key_to_address(const secp256k1_pubkey_compressed* public_key,
     
     //  REMARK: 这个 encode_buffer_size 的长度包含了 '\0'，需要移除。
     *address_output_size = encode_buffer_size - 1 + address_prefix_size;
+}
+
+/*
+ *  (public) 验证私钥是否有效，私钥有效范围。[1, secp256k1 curve order)。REMARK：大部分 lib 范围是 [1, secp256k1 curve order] 的闭区间，c库范围为开区间。
+ */
+bool __bts_verify_private_key(const secp256k1_prikey* prikey)
+{
+    assert(prikey);
+    if (!secp256k1_ec_seckey_verify(get_static_context(), prikey->data)) {
+        return false;
+    }
+    return true;
 }
 
 /*

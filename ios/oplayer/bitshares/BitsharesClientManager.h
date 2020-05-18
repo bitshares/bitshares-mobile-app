@@ -161,6 +161,11 @@ enum
 - (WsPromise*)assetIssue:(NSDictionary*)opdata;
 
 /**
+ *  OP -注资资产的手续费池资金
+ */
+- (WsPromise*)assetFundFeePool:(NSDictionary*)opdata;
+
+/**
  *  OP -提取资产的手续费池资金
  */
 - (WsPromise*)assetClaimPool:(NSDictionary*)opdata;

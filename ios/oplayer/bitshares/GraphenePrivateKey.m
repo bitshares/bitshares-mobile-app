@@ -39,21 +39,26 @@
     self = [super init];
     if (self)
     {
-        assert(private_key);
+        assert(__bts_verify_private_key(private_key));
         memcpy(_key.data, private_key->data, sizeof(_key.data));
+    }
+    return self;
+}
+
+- (id)initWithSeed:(NSData*)seed
+{
+    self = [super init];
+    if (self)
+    {
+        assert(seed);
+        __bts_gen_private_key_from_seed(seed.bytes, seed.length, _key.data);
     }
     return self;
 }
 
 - (id)initRandom
 {
-    self = [super init];
-    if (self)
-    {
-        NSData* seed = [WalletManager secureRandomByte32];
-        __bts_gen_private_key_from_seed(seed.bytes, seed.length, _key.data);
-    }
-    return self;
+    return [self initWithSeed:[WalletManager secureRandomByte32]];
 }
 
 - (secp256k1_prikey*)getKeyData

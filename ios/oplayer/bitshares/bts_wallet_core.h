@@ -150,6 +150,11 @@ extern "C"
                                             const char* address_prefix, const size_t address_prefix_size);
     
     /*
+     *  (public) 验证私钥是否有效，私钥有效范围。[1, secp256k1 curve order)。REMARK：大部分 lib 范围是 [1, secp256k1 curve order] 的闭区间，c库范围为开区间。
+     */
+    extern bool __bts_verify_private_key(const secp256k1_prikey* prikey);
+    
+    /*
      *  (public) 根据私钥创建公钥。
      */
     extern bool __bts_gen_public_key(const secp256k1_prikey* prikey, secp256k1_pubkey_compressed* output_pubkey);
