@@ -6,18 +6,13 @@
 //
 //
 
-#import <UIKit/UIKit.h>
-#import "VCSlideControllerBase.h"
+#import "VCBase.h"
 
 @interface VCFeedPriceDetailSubPage : VCBase<UITableViewDelegate, UITableViewDataSource>
 
 - (id)initWithOwner:(VCBase*)owner asset:(NSDictionary*)asset;
-- (void)onQueryFeedInfoResponsed:(id)data
-              activePublisherIds:(NSArray*)activeWitnessIds
-                  publisher_type:(EBitsharesFeedPublisherType)publisher_type;
+
+@property (nonatomic, strong) NSDictionary* current_asset;
 
 @end
 
-@interface VCFeedPriceDetail : VCSlideControllerBase
-
-@end

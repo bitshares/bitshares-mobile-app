@@ -66,6 +66,7 @@
 "kServicesCellLabelAccountSearch" = "账号查询";
 "kServicesCellLabelRank" = "抵押排行";
 "kServicesCellLabelVoting" = "投票";
+"kServicesCellLabelSmartCoin" = "智能币";
 "kServicesCellLabelFeedPrice" = "喂价详情";
 "kServicesCellLabelOtcUser" = "场外交易";
 "kServicesCellLabelOtcMerchant" = "商家信息";
@@ -103,6 +104,10 @@
 "kVcScanResultPaySuccessLabelTrxID" = "交易ID";
 "kVcScanResultPaySuccessBtnDone" = "完成";
 
+/* 智能币 */
+"kVcSmartPageTitleRank" = "抵押排行";
+"kVcSmartPageTitleFeed" = "喂价详情";
+
 /* 抵押排行 */
 "kVcRankCurrentFeedPrice" = "当前喂价";
 "kVcTipsNoCallOrder" = "还没有用户进行抵押";
@@ -110,8 +115,10 @@
 "kVcRankCallPrice" = "强平触发价";
 "kVcRankColl" = "抵押物";
 "kVcRankDebt" = "借款金额";
+"kVcRankFlagWillSettlement" = "将被清算";
 
 /* 喂价详情界面 */
+"kVcFeedNoFeedData" = "没有人发布喂价数据";
 "kVcFeedCurrentFeedPrice" = "当前喂价";
 "kVcFeedWitnessName" = "见证人";
 "kVcFeedPublisherCommitteeName" = "理事会";
@@ -477,6 +484,7 @@
 "kVcAssetMgrCellActionUpdateBitasset" = "更新智能币";
 "kVcAssetMgrCellActionIssueAsset" = "发行资产";
 "kVcAssetMgrCellActionClaimFeePool" = "提取手续费池";
+"kVcAssetMgrCellActionClaimMarketFees" = "提取市场手续费";
 "kVcAssetMgrCellActionGlobalSettle" = "全局清算";
 "kVcAssetMgrCellInfoCurSupply" = "当前供应量";
 "kVcAssetMgrCellInfoMaxSupply" = "最大供应量";
@@ -612,6 +620,12 @@
 "kVcAssetOpClaimFeePoolBtnName" = "提取";
 "kVcAssetOpClaimFeePoolSubmitTipsPleaseInputAmount" = "请输入要提取的资产数量。";
 "kVcAssetOpClaimFeePoolSubmitTipOK" = "提取成功。";
+
+"kVcAssetOpClaimMarketFeesUiTips" = "【温馨提示】\n提取资产的市场交易手续费所得收入。";
+"kVcAssetOpClaimMarketFeesCellPlaceholderAmount" = "请输入提取数量";
+"kVcAssetOpClaimMarketFeesBtnName" = "提取";
+"kVcAssetOpClaimMarketFeesSubmitTipsPleaseInputAmount" = "请输入要提取的资产数量。";
+"kVcAssetOpClaimMarketFeesSubmitTipOK" = "提取成功。";
 
 "kVcAssetOpGsUiTips" = "【温馨提示】\n全局清算会以指定价格强制关闭所有债仓，此操作不可逆，请谨慎操作。";
 "kVcAssetOpGsCellTitlePrice" = "价格";
@@ -1046,6 +1060,7 @@
 "kVcTitleAccountInfos" = "账号信息";
 "kVcTitleAccountSearch" = "账号查询";
 "kVcTitleRank" = "抵押排行";
+"kVcTitleSmartCoin" = "智能币";
 "kVcTitleFeedPrice" = "喂价详情";
 "kVcTitleCustomPairs" = "添加交易对";
 "kVcTitleSelectProxy" = "选择代理账号";
@@ -1115,6 +1130,7 @@
 "kVcTitleAssetOpIssue" = "发行资产";
 "kVcTitleAssetGlobalSettle" = "全局清算";
 "kVcTitleAssetClaimFeePool" = "提取手续费池";
+"kVcTitleAssetClaimMarketFees" = "提取市场手续费";
 "kVcTitleAssetOpViewDetail" = "%@ 详情";
 "kVcTitleAssetOpUpdateBasic" = "更新资产";
 "kVcTitleAssetOpUpdateBitasset" = "更新智能币";

@@ -66,6 +66,7 @@
 "kServicesCellLabelAccountSearch" = "Account search";
 "kServicesCellLabelRank" = "Rank";
 "kServicesCellLabelVoting" = "Voting";
+"kServicesCellLabelSmartCoin" = "Smartcoin";
 "kServicesCellLabelFeedPrice" = "Feed price details";
 "kServicesCellLabelOtcUser" = "OTC";
 "kServicesCellLabelOtcMerchant" = "Merchant";
@@ -103,6 +104,10 @@
 "kVcScanResultPaySuccessLabelTrxID" = "Trx ID";
 "kVcScanResultPaySuccessBtnDone" = "Done";
 
+/* 智能币 */
+"kVcSmartPageTitleRank" = "Rank";
+"kVcSmartPageTitleFeed" = "Feed price";
+
 /* 抵押排行 */
 "kVcRankCurrentFeedPrice" = "Feed price";
 "kVcTipsNoCallOrder" = "No data";
@@ -110,8 +115,10 @@
 "kVcRankCallPrice" = "Call price";
 "kVcRankColl" = "Collateral";
 "kVcRankDebt" = "Debt";
+"kVcRankFlagWillSettlement" = "settlement soon";
 
 /* 喂价详情界面 */
+"kVcFeedNoFeedData" = "No feed price data";
 "kVcFeedCurrentFeedPrice" = "Feed price";
 "kVcFeedWitnessName" = "Witness";
 "kVcFeedPublisherCommitteeName" = "Committee";
@@ -477,6 +484,7 @@
 "kVcAssetMgrCellActionUpdateBitasset" = "Update bitassets";
 "kVcAssetMgrCellActionIssueAsset" = "Issuing assets";
 "kVcAssetMgrCellActionClaimFeePool" = "Claim fee pool";
+"kVcAssetMgrCellActionClaimMarketFees" = "Claim market fees";
 "kVcAssetMgrCellActionGlobalSettle" = "Global settle";
 "kVcAssetMgrCellInfoCurSupply" = "Current supply";
 "kVcAssetMgrCellInfoMaxSupply" = "Maximum supply";
@@ -612,6 +620,12 @@
 "kVcAssetOpClaimFeePoolBtnName" = "Claim";
 "kVcAssetOpClaimFeePoolSubmitTipsPleaseInputAmount" = "Please enter the amount of assets to claim.";
 "kVcAssetOpClaimFeePoolSubmitTipOK" = "Claim successfully.";
+
+"kVcAssetOpClaimMarketFeesUiTips" = "[Reminder] \nClaim the income from the market trading fees of assets to account balance.";
+"kVcAssetOpClaimMarketFeesCellPlaceholderAmount" = "Please enter the amount";
+"kVcAssetOpClaimMarketFeesBtnName" = "Claim";
+"kVcAssetOpClaimMarketFeesSubmitTipsPleaseInputAmount" = "Please enter the amount of assets to claim.";
+"kVcAssetOpClaimMarketFeesSubmitTipOK" = "Claim successfully.";
 
 "kVcAssetOpGsUiTips" = "[Reminder] \nGlobal settlements will forcibly close all positions at the settle price. This operation is irreversible, please exercise caution.";
 "kVcAssetOpGsCellTitlePrice" = "Price";
@@ -1046,6 +1060,7 @@
 "kVcTitleAccountInfos" = "Account infos";
 "kVcTitleAccountSearch" = "Account search";
 "kVcTitleRank" = "Rank";
+"kVcTitleSmartCoin" = "Smartcoin";
 "kVcTitleFeedPrice" = "Feed price details";
 "kVcTitleCustomPairs" = "Custom pairs";
 "kVcTitleSelectProxy" = "Select proxy";
@@ -1115,6 +1130,7 @@
 "kVcTitleAssetOpIssue" = "Issue assets";
 "kVcTitleAssetGlobalSettle" = "Global settlemens assets";
 "kVcTitleAssetClaimFeePool" = "Claim fee pool";
+"kVcTitleAssetClaimMarketFees" = "Claim market fees";
 "kVcTitleAssetOpViewDetail" = "%@ details";
 "kVcTitleAssetOpUpdateBasic" = "Update assets";
 "kVcTitleAssetOpUpdateBitasset" = "Update bitassets";

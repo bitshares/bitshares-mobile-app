@@ -11,8 +11,7 @@
 #import "VCQrScan.h"
 #import "VCSearchNetwork.h"
 #import "VCAssetDetails.h"
-#import "VCCallOrderRanking.h"
-#import "VCFeedPriceDetail.h"
+#import "VCAssetInfos.h"
 #import "VCBtsaiWebView.h"
 #import "VCTransfer.h"
 #import "VCAdvancedFeatures.h"
@@ -32,8 +31,7 @@ enum
     
     kVcSubAccountQuery,     //  帐号查询
 //    kVcSubAssetQuery,       //  资产查询 TODO:5.0
-    kVcSubCallRanking,      //  抵押排行
-    kVcSubFeedPriceDetail,  //  喂价详情
+    kVcSubAssetInfos,       //  智能币详情（抵押排行、喂价数据等。）
     
     kVcOtcUser,             //  场外交易
     kVcOtcMerchant,         //  商家信息
@@ -84,13 +82,11 @@ enum
         
         NSArray* pSection3 = [[[NSMutableArray array] ruby_apply:(^(id obj) {
             [obj addObject:@[@(kVcSubAccountQuery),      @"kServicesCellLabelAccountSearch"]];      //  帐号查询
-//            [obj addObject:@[@(kVcSubAssetQuery),       @"TODO:4.0资产查询"]];//TODO:4.0 lang
-#if kAppModuleEnableRank
-            [obj addObject:@[@(kVcSubCallRanking),       @"kServicesCellLabelRank"]];               //  抵押排行
-#endif  //  kAppModuleEnableRank
-#if kAppModuleEnableFeedPrice
-            [obj addObject:@[@(kVcSubFeedPriceDetail),   @"kServicesCellLabelFeedPrice"]];          //  喂价详情
-#endif  //  kAppModuleEnableFeedPrice
+            //  TODO:7.0 通用资产查询（目前仅支持智能币查询）
+            //  [obj addObject:@[@(kVcSubAssetQuery),       @"TODO:4.0资产查询"]];//TODO:4.0 lang
+            if ([[[ChainObjectManager sharedChainObjectManager] getMainSmartAssetList] count] > 0) {
+                [obj addObject:@[@(kVcSubAssetInfos),    @"kServicesCellLabelSmartCoin"]];          //  智能币
+            }
         })] copy];
         if ([pSection3 count] > 0) {
             [ary addObject:pSection3];
@@ -242,11 +238,8 @@ enum
 //        case kVcSubAssetQuery:
             cell.imageView.image = [UIImage templateImageNamed:@"iconQuery"];
             break;
-        case kVcSubCallRanking:
-            cell.imageView.image = [UIImage templateImageNamed:@"iconDebtRank"];
-            break;
-        case kVcSubFeedPriceDetail:
-            cell.imageView.image = [UIImage templateImageNamed:@"iconFeedDetail"];
+        case kVcSubAssetInfos:
+            cell.imageView.image = [UIImage templateImageNamed:@"iconDebtRank"];//TODO:6.0 icon
             break;
             
         case kVcOtcUser:
@@ -377,24 +370,16 @@ enum
 //                vc.title = @"资产查询";//TODO:4.0 lang
 //            }
 //                break;
-            case kVcSubCallRanking:     //  抵押排行
+            case kVcSubAssetInfos:     //  智能币
             {
-                vc = [[VCCallOrderRanking alloc] init];
-                vc.title = NSLocalizedString(@"kVcTitleRank", @"抵押排行");
-                //  TODO:page:50
-                //  get_call_orders && get_full_accounts
+                vc = [[VCAssetInfos alloc] init];
+                vc.title = NSLocalizedString(@"kVcTitleSmartCoin", @"智能币");
                 // TODO:其他点击
                 //  vc = [[VCBtsaiWebView alloc] initWithUrl:@"http://bts.ai/a/cny"];
                 //  vc.title = @"资产查询";
-                break;
+//                break;
             }
-                
-            case kVcSubFeedPriceDetail: //  喂价详情
-            {
-                vc = [[VCFeedPriceDetail alloc] init];
-                vc.title = NSLocalizedString(@"kVcTitleFeedPrice", @"喂价详情");
                 break;
-            }
                 
             case kVcOtcUser:            //  场外交易（需要登录）
             {

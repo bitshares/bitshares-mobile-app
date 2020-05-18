@@ -66,6 +66,7 @@
 "kServicesCellLabelAccountSearch" = "アカウントを検索";
 "kServicesCellLabelRank" = "担保の順序";
 "kServicesCellLabelVoting" = "投票";
+"kServicesCellLabelSmartCoin" = "スマートコイン";
 "kServicesCellLabelFeedPrice" = "詳しいフィード価格";
 "kServicesCellLabelOtcUser" = "OTC";
 "kServicesCellLabelOtcMerchant" = "商人";
@@ -103,6 +104,10 @@
 "kVcScanResultPaySuccessLabelTrxID" = "取引番号";
 "kVcScanResultPaySuccessBtnDone" = "完了";
 
+/* 智能币 */
+"kVcSmartPageTitleRank" = "ランク";
+"kVcSmartPageTitleFeed" = "フィード価格";
+
 /* 抵押排行 */
 "kVcRankCurrentFeedPrice" = "現在のフィード価格";
 "kVcTipsNoCallOrder" = "まだユーザーが担保を入れていない";
@@ -110,8 +115,10 @@
 "kVcRankCallPrice" = "強制単価";
 "kVcRankColl" = "担保";
 "kVcRankDebt" = "借金";
+"kVcRankFlagWillSettlement" = "清算されます";
 
 /* 喂价详情界面 */
+"kVcFeedNoFeedData" = "フィード価格データなし";
 "kVcFeedCurrentFeedPrice" = "現在のフィード価格";
 "kVcFeedWitnessName" = "証人";
 "kVcFeedPublisherCommitteeName" = "委員";
@@ -476,7 +483,8 @@
 "kVcAssetMgrCellActionUpdateAsset" = "アセットを更新する";
 "kVcAssetMgrCellActionUpdateBitasset" = "スマートコインを更新する";
 "kVcAssetMgrCellActionIssueAsset" = "資産の発行";
-"kVcAssetMgrCellActionClaimFeePool" = "料金プールを撤回する";
+"kVcAssetMgrCellActionClaimFeePool" = "料金プールを提出する";
+"kVcAssetMgrCellActionClaimMarketFees" = "市場手数料を提出する";
 "kVcAssetMgrCellActionGlobalSettle" = "グローバルな決済";
 "kVcAssetMgrCellInfoCurSupply" = "供給";
 "kVcAssetMgrCellInfoMaxSupply" = "最大供給";
@@ -612,6 +620,12 @@
 "kVcAssetOpClaimFeePoolBtnName" = "提取";//TODO:
 "kVcAssetOpClaimFeePoolSubmitTipsPleaseInputAmount" = "请输入要提取的资产数量。";//TODO:
 "kVcAssetOpClaimFeePoolSubmitTipOK" = "提取成功。";//TODO:
+
+"kVcAssetOpClaimMarketFeesUiTips" = "【温馨提示】\n提取资产的市场交易手续费所得收入。";//TODO:
+"kVcAssetOpClaimMarketFeesCellPlaceholderAmount" = "请输入提取数量";//TODO:
+"kVcAssetOpClaimMarketFeesBtnName" = "提取";//TODO:
+"kVcAssetOpClaimMarketFeesSubmitTipsPleaseInputAmount" = "请输入要提取的资产数量。";//TODO:
+"kVcAssetOpClaimMarketFeesSubmitTipOK" = "提取成功。";//TODO:
 
 "kVcAssetOpGsUiTips" = "【温馨提示】\n全局清算会以指定价格强制关闭所有债仓，此操作不可逆，请谨慎操作。";//TODO:
 "kVcAssetOpGsCellTitlePrice" = "价格";//TODO:
@@ -1046,6 +1060,7 @@
 "kVcTitleAccountInfos" = "アカウント情報";
 "kVcTitleAccountSearch" = "アカウント検索";
 "kVcTitleRank" = "担保順序";
+"kVcTitleSmartCoin" = "スマートコイン";
 "kVcTitleFeedPrice" = "詳しいフィード価格";
 "kVcTitleCustomPairs" = "添加取引隊";
 "kVcTitleSelectProxy" = "代理アカウントを選択します";
@@ -1115,6 +1130,7 @@
 "kVcTitleAssetOpIssue" = "发行资产";//TODO:
 "kVcTitleAssetGlobalSettle" = "全局清算";//TODO:
 "kVcTitleAssetClaimFeePool" = "提取手续费池";//TODO:
+"kVcTitleAssetClaimMarketFees" = "提取市场手续费";//TODO:
 "kVcTitleAssetOpViewDetail" = "%@ 详情";//TODO:
 "kVcTitleAssetOpUpdateBasic" = "更新资产";//TODO:
 "kVcTitleAssetOpUpdateBitasset" = "更新智能币";//TODO:

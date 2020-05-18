@@ -16,63 +16,68 @@
 #import "VCBtsaiWebView.h"
 #import "ViewFeedPriceDataCell.h"
 
-@interface VCFeedPriceDetail ()
+@interface VCFeedPriceDetailSubPage ()
 {
-    NSArray*    _assetList;
+    __weak VCBase*              _owner;         //  REMARK：声明为 weak，否则会导致循环引用。
+    EBitsharesFeedPublisherType _publisher_type;    //  类型
+    
+    UITableViewBase*            _mainTableView;
+    UILabel*                    _lbEmpty;
+    
+    NSMutableArray*             _dataArray;
+    NSDecimalNumber*            _feedPriceInfo; //  当前喂价（可能为nil，没有达到有效的喂价人数。）
 }
 
 @end
 
-@implementation VCFeedPriceDetail
+@implementation VCFeedPriceDetailSubPage
 
 -(void)dealloc
 {
-    _assetList = nil;
+    if (_mainTableView){
+        [[IntervalManager sharedIntervalManager] releaseLock:_mainTableView];
+        _mainTableView.delegate = nil;
+        _mainTableView = nil;
+    }
+    _lbEmpty = nil;
+    _dataArray = nil;
+    _feedPriceInfo = nil;
+    _current_asset = nil;
+    _owner = nil;
 }
 
-- (NSArray*)getTitleStringArray
+- (id)initWithOwner:(VCBase*)owner asset:(NSDictionary*)asset
 {
-    //  TODO:fowallet 标题名字直接symbol还是需要加描述 比如 CNY排行。
-    return [_assetList ruby_map:(^id(id src) {
-        return [src objectForKey:@"symbol"];
-    })];
+    self = [super init];
+    if (self) {
+        // Custom initialization
+        _owner = owner;
+        _current_asset = asset;
+        _dataArray = [NSMutableArray array];
+        _feedPriceInfo = nil;
+    }
+    return self;
 }
 
-- (NSArray*)getSubPageVCArray
+/*
+ *  事件 - 页VC切换。
+ */
+- (void)onControllerPageChanged
 {
-    return [_assetList ruby_map:(^id(id asset) {
-        return [[VCFeedPriceDetailSubPage alloc] initWithOwner:self asset:asset];
-    })];
+    [self queryDetailFeedInfos];
 }
 
-- (void)viewDidLoad
+- (void)queryDetailFeedInfos
 {
-    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
-    _assetList = [[chainMgr getDetailFeedPriceSymbolList] ruby_map:(^id(id symbol) {
-        return [chainMgr getAssetBySymbol:symbol];
-    })];
+    [_owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     
-    [super viewDidLoad];
-	// Do any additional setup after loading the view.
-    self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
-    
-    //  REMARK：请求第一页数据
-    [self queryDetailFeedInfos:1];
-}
-
-- (void)queryDetailFeedInfos:(NSInteger)tag
-{
-    id asset = [_assetList objectAtIndex:tag-1];
-    
-    [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     
     GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
     
-    [[[chainMgr queryAssetData:asset[@"id"]] then:^id(id assetData) {
+    [[[chainMgr queryAssetData:_current_asset[@"id"]] then:^id(id assetData) {
         if (!assetData || [assetData isKindOfClass:[NSNull class]]) {
-            [self hideBlockView];
+            [_owner hideBlockView];
             [OrgUtils makeToast:NSLocalizedString(@"kNormalErrorInvalidArgs", @"无效参数。")];
             return nil;
         }
@@ -96,12 +101,11 @@
         }
         
         //  2、查询喂价信息
-        WsPromise* queryFeedDataPromise = [[api exec:@"get_objects" params:@[@[[assetData objectForKey:@"bitasset_data_id"]]]] then:(^id(id data) {
-            return [data objectAtIndex:0];
-        })];
+        NSString* bitasset_data_id = [assetData objectForKey:@"bitasset_data_id"];
+        WsPromise* queryFeedDataPromise = [chainMgr queryAllGrapheneObjects:@[bitasset_data_id]];
         
         return [[WsPromise all:@[queryPublisherInfo, queryFeedDataPromise]] then:^id(id data_array) {
-            id feed_infos = [data_array objectAtIndex:1];
+            id feed_infos = [chainMgr getChainObjectByID:bitasset_data_id];
             id feeds = [feed_infos objectForKey:@"feeds"];
             
             NSMutableDictionary* idHash = [NSMutableDictionary dictionary];
@@ -127,103 +131,20 @@
                 [idHash setObject:@YES forKey:account_id];
             }
             
-            //  查询依赖的账号信息
-            return [[chainMgr queryAllAccountsInfo:[idHash allKeys]] then:(^id(id accounts_hash) {
-                [self onQueryFeedInfoResponsed:feed_infos activePublisherIds:active_publisher_ids publisher_type:publisher_type tag:tag];
-                [self hideBlockView];
+            //  查询依赖信息
+            NSString* short_backing_asset = [[feed_infos objectForKey:@"options"] objectForKey:@"short_backing_asset"];
+            [idHash setObject:@YES forKey:short_backing_asset];
+            return [[chainMgr queryAllGrapheneObjects:[idHash allKeys]] then:(^id(id accounts_hash) {
+                [self onQueryFeedInfoResponsed:feed_infos activePublisherIds:active_publisher_ids publisher_type:publisher_type];
+                [_owner hideBlockView];
                 return nil;
             })];
         }];
     }] catch:^id(id error) {
-        [self hideBlockView];
+        [_owner hideBlockView];
         [OrgUtils makeToast:NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。")];
         return nil;
     }];
-}
-
-- (void)onPageChanged:(NSInteger)tag
-{
-    NSLog(@"onPageChanged: %@", @(tag));
-    
-    //  gurad
-    if ([[MBProgressHUDSingleton sharedMBProgressHUDSingleton] is_showing]){
-        return;
-    }
-    
-    [self queryDetailFeedInfos:tag];
-}
-
-- (void)onQueryFeedInfoResponsed:(id)data
-              activePublisherIds:(NSArray*)active_publisher_ids
-                  publisher_type:(EBitsharesFeedPublisherType)publisher_type tag:(NSInteger)tag
-{
-    if (_subvcArrays){
-        VCFeedPriceDetailSubPage* vc = [_subvcArrays objectAtIndex:tag-1];
-        [vc onQueryFeedInfoResponsed:data
-                  activePublisherIds:active_publisher_ids
-                      publisher_type:publisher_type];
-    }
-}
-
-@end
-
-@interface VCFeedPriceDetailSubPage ()
-{
-    __weak VCBase*              _owner;         //  REMARK：声明为 weak，否则会导致循环引用。
-    NSDictionary*               _asset;
-    EBitsharesFeedPublisherType _publisher_type;    //  类型
-    
-    UITableViewBase*            _mainTableView;
-    
-    NSMutableArray*             _dataCallOrders;
-    NSDecimalNumber*            _feedPriceInfo; //  当前喂价（可能为nil，没有达到有效的喂价人数。）
-}
-
-@end
-
-@implementation VCFeedPriceDetailSubPage
-
--(void)dealloc
-{
-    if (_mainTableView){
-        [[IntervalManager sharedIntervalManager] releaseLock:_mainTableView];
-        _mainTableView.delegate = nil;
-        _mainTableView = nil;
-    }
-    _dataCallOrders = nil;
-    _feedPriceInfo = nil;
-    _asset = nil;
-    _owner = nil;
-}
-
-- (id)initWithOwner:(VCBase*)owner asset:(NSDictionary*)asset
-{
-    self = [super init];
-    if (self) {
-        // Custom initialization
-        _owner = owner;
-        _asset = asset;
-        _dataCallOrders = [NSMutableArray array];
-        _feedPriceInfo = nil;
-    }
-    return self;
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    
-    self.view.backgroundColor = [UIColor clearColor];
-    
-    // Do any additional setup after loading the view.
-    CGRect rect = [self rectWithoutNaviAndPageBar];
-    
-    _mainTableView = [[UITableViewBase alloc] initWithFrame:rect style:UITableViewStylePlain];
-    _mainTableView.delegate = self;
-    _mainTableView.dataSource = self;
-    _mainTableView.backgroundColor = [UIColor clearColor];
-    _mainTableView.separatorStyle = UITableViewCellSeparatorStyleNone;  //  REMARK：不显示cell间的横线。
-    [self.view addSubview:_mainTableView];
 }
 
 - (void)onQueryFeedInfoResponsed:(id)bitAssetData
@@ -231,7 +152,7 @@
                   publisher_type:(EBitsharesFeedPublisherType)publisher_type
 {
     //  clear
-    [_dataCallOrders removeAllObjects];
+    [_dataArray removeAllObjects];
     
     //  type
     _publisher_type = publisher_type;
@@ -241,8 +162,8 @@
     
     id bitAssetDataOptions = [bitAssetData objectForKey:@"options"];
     id short_backing_asset_id = [bitAssetDataOptions objectForKey:@"short_backing_asset"];
-    id asset_id = [_asset objectForKey:@"id"];
-    NSInteger asset_precision = [[_asset objectForKey:@"precision"] integerValue];
+    id asset_id = [_current_asset objectForKey:@"id"];
+    NSInteger asset_precision = [[_current_asset objectForKey:@"precision"] integerValue];
     assert([[bitAssetData objectForKey:@"asset_id"] isEqualToString:asset_id]);
     id sba_asset = [chainMgr getChainObjectByID:short_backing_asset_id];
     NSInteger sba_asset_precision = [[sba_asset objectForKey:@"precision"] integerValue];
@@ -312,7 +233,7 @@
                 if (expired) {
                     [expired_list addObject:item];
                 } else {
-                    [_dataCallOrders addObject:item];
+                    [_dataArray addObject:item];
                 }
             } else {
                 //  REMARK：手动指定喂价者，但没发布信息。计算的价格为 nil。
@@ -321,25 +242,54 @@
         }
         
         //  有效的喂价：按照价格降序排列
-        [_dataCallOrders sortUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        [_dataArray sortUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
             return [[obj2 objectForKey:@"price"] compare:[obj1 objectForKey:@"price"]];
         })];
         
         //  添加过期的喂价（仅手动指定发布者的时候才存在）
-        [_dataCallOrders addObjectsFromArray:expired_list];
+        [_dataArray addObjectsFromArray:expired_list];
         
         //  添加未发布的喂价者信息
-        [_dataCallOrders addObjectsFromArray:missed_list];
+        [_dataArray addObjectsFromArray:missed_list];
     }
     for (id account_id in active_publisher_ids) {
         if (![[publishedAccountHash objectForKey:account_id] boolValue]){
             id name = [[chainMgr getChainObjectByID:account_id] objectForKey:@"name"];
-            [_dataCallOrders addObject:@{@"name":name, @"miss":@YES}];
+            [_dataArray addObject:@{@"name":name, @"miss":@YES}];
         }
     }
     
-    //  动态设置UI的可见性（没有抵押信息的情况几乎不存在）
-    [_mainTableView reloadData];
+    //  动态设置UI的可见性
+    if ([_dataArray count] > 0){
+        _mainTableView.hidden = NO;
+        _lbEmpty.hidden = YES;
+        [_mainTableView reloadData];
+    }else{
+        _mainTableView.hidden = YES;
+        _lbEmpty.hidden = NO;
+    }
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    self.view.backgroundColor = [UIColor clearColor];
+    
+    // Do any additional setup after loading the view.
+    CGRect rect = [self rectWithoutNaviAndPageBar];
+    
+    _mainTableView = [[UITableViewBase alloc] initWithFrame:rect style:UITableViewStylePlain];
+    _mainTableView.delegate = self;
+    _mainTableView.dataSource = self;
+    _mainTableView.backgroundColor = [UIColor clearColor];
+    _mainTableView.separatorStyle = UITableViewCellSeparatorStyleNone;  //  REMARK：不显示cell间的横线。
+    [self.view addSubview:_mainTableView];
+    
+    //  UI - 空
+    _lbEmpty = [self genCenterEmptyLabel:rect txt:NSLocalizedString(@"kVcFeedNoFeedData", @"没有人发布喂价数据")];
+    _lbEmpty.hidden = YES;
+    [self.view addSubview:_lbEmpty];
 }
 
 #pragma mark- TableView delegate method
@@ -350,7 +300,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSInteger n = [_dataCallOrders count];
+    NSInteger n = [_dataArray count];
     if (n > 0){
         //  rows + title
         return n + 1;
@@ -363,7 +313,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     //  没有数据的时候则没有 header view
-    if ([_dataCallOrders count] <= 0){
+    if ([_dataArray count] <= 0){
         return 0.01f;
     }
     return 44.0f;
@@ -383,7 +333,7 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    if ([_dataCallOrders count] <= 0){
+    if ([_dataArray count] <= 0){
         return [[UIView alloc] init];
     }else{
         CGFloat fWidth = self.view.bounds.size.width;
@@ -395,13 +345,17 @@
         titleLabel.backgroundColor = [UIColor clearColor];
         titleLabel.font = [UIFont boldSystemFontOfSize:16];
         
-        id asset = [[ChainObjectManager sharedChainObjectManager] getAssetBySymbol:[_asset objectForKey:@"symbol"]];
-        assert(asset);
-        if (_feedPriceInfo) {
-             titleLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kVcFeedCurrentFeedPrice", @"当前喂价"), [OrgUtils formatFloatValue:_feedPriceInfo]];
-        } else {
-            titleLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kVcFeedCurrentFeedPrice", @"当前喂价"), [NSLocalizedString(@"kVcFeedNoData", @"未发布") uppercaseString]];
-        }
+        //  当前喂价
+        ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+        id bitasset_data = [chainMgr getChainObjectByID:[_current_asset objectForKey:@"bitasset_data_id"]];
+        assert(bitasset_data);
+        id short_backing_asset = [chainMgr getChainObjectByID:[[bitasset_data objectForKey:@"options"] objectForKey:@"short_backing_asset"]];
+        assert(short_backing_asset);
+        
+        NSString* str_feed_price = _feedPriceInfo ? [OrgUtils formatFloatValue:_feedPriceInfo] : @"--";
+        titleLabel.text = [NSString stringWithFormat:@"%@ %@ %@/%@",
+                           NSLocalizedString(@"kVcFeedCurrentFeedPrice", @"当前喂价"),
+                           str_feed_price, _current_asset[@"symbol"], short_backing_asset[@"symbol"]];
         
         [myView addSubview:titleLabel];
         
@@ -451,7 +405,7 @@
         }
         [cell setItem:@{@"title":@YES, @"name":name}];
     }else{
-        [cell setItem:[_dataCallOrders objectAtIndex:indexPath.row - 1]];
+        [cell setItem:[_dataArray objectAtIndex:indexPath.row - 1]];
     }
     return cell;
 }

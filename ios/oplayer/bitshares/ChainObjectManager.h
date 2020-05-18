@@ -60,19 +60,9 @@
 - (NSString*)getFinalFaucetURL;
 
 /**
- *  (public) 获取抵押排行榜配置列表
+ *  (public) 主要智能币快捷选择列表。
  */
-- (NSArray*)getCallOrderRankingSymbolList;
-
-/**
- *  (public) 获取喂价详情配置列表
- */
-- (NSArray*)getDetailFeedPriceSymbolList;
-
-/**
- *  (public) 获取可借贷的资产配置列表
- */
-- (NSArray*)getDebtAssetList;
+- (NSArray*)getMainSmartAssetList;
 
 /**
  *  (public) 获取手续费列表（按照列表优先选择）

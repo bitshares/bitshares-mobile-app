@@ -326,30 +326,12 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
 }
 
 /**
- *  (public) 获取抵押排行榜配置列表
+ *  (public) 主要智能币快捷选择列表。
  */
-- (NSArray*)getCallOrderRankingSymbolList
+- (NSArray*)getMainSmartAssetList
 {
     assert(_defaultMarketInfos);
-    return [_defaultMarketInfos objectForKey:@"call_order_ranking_list"];
-}
-
-/**
- *  (public) 获取喂价详情配置列表
- */
-- (NSArray*)getDetailFeedPriceSymbolList
-{
-    assert(_defaultMarketInfos);
-    return [_defaultMarketInfos objectForKey:@"detail_feedprice_list"];
-}
-
-/**
- *  (public) 获取可借贷的资产配置列表
- */
-- (NSArray*)getDebtAssetList
-{
-    assert(_defaultMarketInfos);
-    return [_defaultMarketInfos objectForKey:@"debt_asset_list"];
+    return [_defaultMarketInfos objectForKey:@"main_smart_asset_list"];
 }
 
 /**

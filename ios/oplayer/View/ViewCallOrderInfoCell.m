@@ -17,12 +17,18 @@
     NSDictionary*   _item;
     
     UILabel*        _lbUsername;
+    UILabel*        _lbWillSettlementFlag;
+    
     UILabel*        _lbRate;
     
-    UILabel*        _lbTriggerPrice;
+    UILabel*        _lbAssetDebtTitle;
+    UILabel*        _lbAssetDebtValue;
     
-    UILabel*        _lbAssetCollateral;
-    UILabel*        _lbAssetDebt;
+    UILabel*        _lbAssetCollateralTitle;
+    UILabel*        _lbAssetCollateralValue;
+    
+    UILabel*        _lbTriggerPriceTitle;
+    UILabel*        _lbTriggerPriceValue;
 }
 
 @end
@@ -42,10 +48,17 @@
     _item = nil;
     
     _lbUsername = nil;
+    _lbWillSettlementFlag = nil;
     _lbRate = nil;
-    _lbTriggerPrice = nil;
-    _lbAssetCollateral = nil;
-    _lbAssetDebt = nil;
+    
+    _lbAssetDebtTitle = nil;
+    _lbAssetDebtValue = nil;
+    
+    _lbAssetCollateralTitle = nil;
+    _lbAssetCollateralValue = nil;
+    
+    _lbTriggerPriceTitle = nil;
+    _lbTriggerPriceValue = nil;
 }
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -69,6 +82,17 @@
         _lbUsername.font = [UIFont systemFontOfSize:16];
         [self addSubview:_lbUsername];
         
+        _lbWillSettlementFlag = [ViewUtils auxGenLabel:[UIFont boldSystemFontOfSize:12.0f] superview:self];
+        UIColor* backColor = [ThemeManager sharedThemeManager].sellColor;
+        _lbWillSettlementFlag.textAlignment = NSTextAlignmentCenter;
+        _lbWillSettlementFlag.textColor = [ThemeManager sharedThemeManager].textColorMain;
+        _lbWillSettlementFlag.layer.borderWidth = 1;
+        _lbWillSettlementFlag.layer.cornerRadius = 2;
+        _lbWillSettlementFlag.layer.masksToBounds = YES;
+        _lbWillSettlementFlag.layer.borderColor = backColor.CGColor;
+        _lbWillSettlementFlag.layer.backgroundColor = backColor.CGColor;
+        _lbWillSettlementFlag.hidden = YES;
+        
         _lbRate = [[UILabel alloc] initWithFrame:CGRectZero];
         _lbRate.lineBreakMode = NSLineBreakByTruncatingTail;
         _lbRate.textAlignment = NSTextAlignmentRight;
@@ -78,32 +102,20 @@
         _lbRate.font = [UIFont systemFontOfSize:13];
         [self addSubview:_lbRate];
         
-        _lbTriggerPrice = [[UILabel alloc] initWithFrame:CGRectZero];
-        _lbTriggerPrice.lineBreakMode = NSLineBreakByTruncatingTail;
-        _lbTriggerPrice.textAlignment = NSTextAlignmentLeft;
-        _lbTriggerPrice.numberOfLines = 1;
-        _lbTriggerPrice.backgroundColor = [UIColor clearColor];
-        _lbTriggerPrice.textColor = [ThemeManager sharedThemeManager].textColorNormal;
-        _lbTriggerPrice.font = [UIFont systemFontOfSize:13];
-        [self addSubview:_lbTriggerPrice];
+        _lbAssetDebtTitle = [ViewUtils auxGenLabel:[UIFont systemFontOfSize:13] superview:self];
+        _lbAssetDebtValue = [ViewUtils auxGenLabel:[UIFont systemFontOfSize:13] superview:self];
+        _lbAssetDebtTitle.textAlignment = NSTextAlignmentLeft;
+        _lbAssetDebtValue.textAlignment = NSTextAlignmentLeft;
         
-        _lbAssetCollateral = [[UILabel alloc] initWithFrame:CGRectZero];
-        _lbAssetCollateral.lineBreakMode = NSLineBreakByTruncatingTail;
-        _lbAssetCollateral.textAlignment = NSTextAlignmentLeft;
-        _lbAssetCollateral.numberOfLines = 1;
-        _lbAssetCollateral.backgroundColor = [UIColor clearColor];
-        _lbAssetCollateral.textColor = [ThemeManager sharedThemeManager].textColorMain;
-        _lbAssetCollateral.font = [UIFont systemFontOfSize:13];
-        [self addSubview:_lbAssetCollateral];
+        _lbAssetCollateralTitle = [ViewUtils auxGenLabel:[UIFont systemFontOfSize:13] superview:self];
+        _lbAssetCollateralValue = [ViewUtils auxGenLabel:[UIFont systemFontOfSize:13] superview:self];
+        _lbAssetCollateralTitle.textAlignment = NSTextAlignmentCenter;
+        _lbAssetCollateralValue.textAlignment = NSTextAlignmentCenter;
         
-        _lbAssetDebt = [[UILabel alloc] initWithFrame:CGRectZero];
-        _lbAssetDebt.lineBreakMode = NSLineBreakByTruncatingTail;
-        _lbAssetDebt.textAlignment = NSTextAlignmentRight;
-        _lbAssetDebt.numberOfLines = 1;
-        _lbAssetDebt.backgroundColor = [UIColor clearColor];
-        _lbAssetDebt.textColor = [ThemeManager sharedThemeManager].textColorMain;
-        _lbAssetDebt.font = [UIFont systemFontOfSize:13];
-        [self addSubview:_lbAssetDebt];
+        _lbTriggerPriceTitle = [ViewUtils auxGenLabel:[UIFont systemFontOfSize:13] superview:self];
+        _lbTriggerPriceValue = [ViewUtils auxGenLabel:[UIFont systemFontOfSize:13] superview:self];
+        _lbTriggerPriceTitle.textAlignment = NSTextAlignmentRight;
+        _lbTriggerPriceValue.textAlignment = NSTextAlignmentRight;
     }
     return self;
 }
@@ -144,20 +156,26 @@
     CGFloat fOffsetY = 0.0f;
     CGFloat fOffsetX = self.layoutMargins.left;
     CGFloat fOffsetX_2x = fOffsetX * 2;
+    CGFloat fLineHeight = 28.0f;
+    CGFloat fContentWidth = fWidth - fOffsetX_2x;
     
-    id call_price = [_item objectForKey:@"call_price"];
+    //  准备数据
+    id callorder = [_item objectForKey:@"callorder"];
+    assert(callorder);
+    BOOL will_be_settlement = [[_item objectForKey:@"will_be_settlement"] boolValue];
+    id n_collateral = [_item objectForKey:@"n_collateral"];
+    id n_debt = [_item objectForKey:@"n_debt"];
+    
+    id call_price = [callorder objectForKey:@"call_price"];
     assert(call_price);
     id coll_asset = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:[call_price objectForKey:@"base"][@"asset_id"]];
     id debt_asset = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:[call_price objectForKey:@"quote"][@"asset_id"]];
     assert(coll_asset);
     assert(debt_asset);
     
-    double f_collateral = [OrgUtils calcAssetRealPrice:[_item objectForKey:@"collateral"] precision:self.collateral_precision];
-    double f_debt = [OrgUtils calcAssetRealPrice:[_item objectForKey:@"debt"] precision:self.debt_precision];
-    
     //  第一行
     NSString* borrower_str = nil;
-    id borrower_id = [_item objectForKey:@"borrower"];
+    id borrower_id = [callorder objectForKey:@"borrower"];
     id borrower_account = [[ChainObjectManager sharedChainObjectManager] getChainObjectByID:borrower_id];
     if (borrower_account){
         borrower_str = [borrower_account objectForKey:@"name"];
@@ -165,58 +183,83 @@
         borrower_str = borrower_id;
     }
     _lbUsername.text = borrower_str;
-    _lbUsername.frame = CGRectMake(fOffsetX, fOffsetY, fWidth - fOffsetX_2x, 28);
+    _lbUsername.frame = CGRectMake(fOffsetX, fOffsetY, fWidth - fOffsetX_2x, fLineHeight);
     
-    //  TODO:fowallet 各种标签：强平中、即将清算、接近平仓、安全
+    //  标签：将被清算 TODO: 其他各种标签：强平中、接近平仓、安全
+    if (will_be_settlement) {
+        _lbWillSettlementFlag.text = NSLocalizedString(@"kVcRankFlagWillSettlement", @"将被清算");
+        _lbWillSettlementFlag.hidden = NO;
+    } else {
+        _lbWillSettlementFlag.hidden = YES;
+    }
+    if (!_lbWillSettlementFlag.hidden){
+        CGSize size1 = [self auxSizeWithText:_lbUsername.text font:_lbUsername.font maxsize:CGSizeMake(fWidth, 9999)];
+        CGSize size2 = [self auxSizeWithText:_lbWillSettlementFlag.text font:_lbWillSettlementFlag.font maxsize:CGSizeMake(fWidth, 9999)];
+        _lbWillSettlementFlag.frame = CGRectMake(fOffsetX + size1.width + 4, fOffsetY + (fLineHeight - size2.height - 2)/2, size2.width + 8, size2.height + 2);
+    }
     
-    fOffsetY += 28;
+    //  第一行 右边
+    NSString* rate_string;
+    if (self.feedPriceInfo) {
+        NSDecimalNumberHandler* handler = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundUp
+                                                                                                 scale:2
+                                                                                      raiseOnExactness:NO
+                                                                                       raiseOnOverflow:NO
+                                                                                      raiseOnUnderflow:NO
+                                                                                   raiseOnDivideByZero:NO];
+        id n_percent = [[[[NSDecimalNumber decimalNumberWithMantissa:100 exponent:0 isNegative:NO] decimalNumberByMultiplyingBy:self.feedPriceInfo] decimalNumberByMultiplyingBy:n_collateral] decimalNumberByDividingBy:n_debt withBehavior:handler];
+        
+        rate_string = [NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:n_percent usesGroupingSeparator:NO]];
+    } else {
+        rate_string = @"--%";
+    }
     
-    //  第二行
+    _lbRate.text = rate_string;
+    _lbRate.textColor = theme.tintColor;
+    _lbRate.frame = CGRectMake(fOffsetX, fOffsetY, fWidth - fOffsetX_2x, fLineHeight);
+    fOffsetY += fLineHeight;
     
-    //  强平触发价 高精度计算
-    NSDecimalNumber* n_settlement_trigger_price = [OrgUtils calcSettlementTriggerPrice:_item[@"debt"]
-                                                                            collateral:_item[@"collateral"]
+    //  第二行 标题
+    _lbAssetCollateralTitle.text = [NSString stringWithFormat:@"%@(%@) ",
+                                    NSLocalizedString(@"kVcRankColl", @"抵押物"), coll_asset[@"symbol"]];
+    _lbAssetDebtTitle.text = [NSString stringWithFormat:@"%@(%@) ",
+                              NSLocalizedString(@"kVcRankDebt", @"借款金额"), debt_asset[@"symbol"]];
+    _lbTriggerPriceTitle.text = NSLocalizedString(@"kVcRankCallPrice", @"强平触发价");
+    
+    _lbAssetCollateralTitle.textColor = theme.textColorGray;
+    _lbAssetDebtTitle.textColor = theme.textColorGray;
+    _lbTriggerPriceTitle.textColor = theme.textColorGray;
+    
+    _lbAssetCollateralTitle.frame = CGRectMake(fOffsetX, fOffsetY, fContentWidth, fLineHeight);
+    _lbAssetDebtTitle.frame = CGRectMake(fOffsetX, fOffsetY, fContentWidth, fLineHeight);
+    _lbTriggerPriceTitle.frame = CGRectMake(fOffsetX, fOffsetY, fContentWidth, fLineHeight);
+    fOffsetY += fLineHeight;
+    
+    //  第三行 值
+    _lbAssetCollateralValue.text = [OrgUtils formatFloatValue:n_collateral];
+    _lbAssetCollateralValue.textColor = theme.textColorNormal;
+    
+    _lbAssetDebtValue.text = [OrgUtils formatFloatValue:n_debt];
+    _lbAssetDebtValue.textColor = theme.textColorNormal;
+    
+    NSDecimalNumber* n_settlement_trigger_price = [OrgUtils calcSettlementTriggerPrice:callorder[@"debt"]
+                                                                            collateral:callorder[@"collateral"]
                                                                         debt_precision:self.debt_precision
                                                                   collateral_precision:self.collateral_precision
                                                                                  n_mcr:self.mcr
                                                                                reverse:NO
                                                                           ceil_handler:nil
                                                                   set_divide_precision:YES];
-  
-    _lbTriggerPrice.attributedText = [self genAndColorAttributedText:NSLocalizedString(@"kVcRankCallPrice", @"强平触发价 ")
-                                                                  value:[OrgUtils formatFloatValue:n_settlement_trigger_price]
-                                                             titleColor:theme.textColorNormal
-                                                             valueColor:theme.textColorMain];
-    _lbTriggerPrice.frame = CGRectMake(fOffsetX, fOffsetY, fWidth - fOffsetX_2x, 28);
     
-    NSString* rate_string;
-    if (self.feedPriceInfo) {
-        double rate_percent100 = 100 * [self.feedPriceInfo doubleValue] * f_collateral / f_debt;
-        rate_string = [NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:rate_percent100 precision:2]];
-    } else {
-        rate_string = @"--%";
-    }
+    _lbTriggerPriceValue.text = [OrgUtils formatFloatValue:n_settlement_trigger_price
+                                     usesGroupingSeparator:NO
+                                     minimumFractionDigits:self.debt_precision];
+    _lbTriggerPriceValue.textColor = theme.textColorNormal;
     
-    _lbRate.attributedText = [self genAndColorAttributedText:NSLocalizedString(@"kVcRankRatio", @"抵押率 ")
-                                                       value:rate_string
-                                                  titleColor:theme.textColorNormal
-                                                  valueColor:theme.tintColor];
-    _lbRate.frame = CGRectMake(fOffsetX, fOffsetY, fWidth - fOffsetX_2x, 28);
-    
-    fOffsetY += 28;
-    
-    _lbAssetCollateral.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@(%@) ", NSLocalizedString(@"kVcRankColl", @"抵押"), coll_asset[@"symbol"]]
-                                                                  value:[OrgUtils formatAssetString:_item[@"collateral"]
-                                                                                          precision:self.collateral_precision]
-                                                             titleColor:theme.textColorNormal
-                                                             valueColor:theme.textColorMain];
-    _lbAssetCollateral.frame = CGRectMake(fOffsetX, fOffsetY, fWidth - fOffsetX_2x, 28);
-    
-    _lbAssetDebt.attributedText = [self genAndColorAttributedText:[NSString stringWithFormat:@"%@(%@) ", NSLocalizedString(@"kVcRankDebt", @"借入"), debt_asset[@"symbol"]]
-                                                            value:[OrgUtils formatAssetString:_item[@"debt"] precision:self.debt_precision]
-                                                       titleColor:theme.textColorNormal
-                                                       valueColor:theme.textColorMain];
-    _lbAssetDebt.frame = CGRectMake(fOffsetX, fOffsetY, fWidth - fOffsetX_2x, 28);
+    _lbAssetCollateralValue.frame = CGRectMake(fOffsetX, fOffsetY, fContentWidth, fLineHeight);
+    _lbAssetDebtValue.frame = CGRectMake(fOffsetX, fOffsetY, fContentWidth, fLineHeight);
+    _lbTriggerPriceValue.frame = CGRectMake(fOffsetX, fOffsetY, fContentWidth, fLineHeight);
+    fOffsetY += fLineHeight;
 }
 
 @end
