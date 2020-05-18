@@ -127,6 +127,7 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [T_asset_update_feed_producers performSelector:@selector(register_subfields)];
     [T_asset_reserve performSelector:@selector(register_subfields)];
     [T_asset_issue performSelector:@selector(register_subfields)];
+    [T_asset_fund_fee_pool performSelector:@selector(register_subfields)];
     [T_asset_claim_pool performSelector:@selector(register_subfields)];
     [T_asset_claim_fees performSelector:@selector(register_subfields)];
     [T_asset_update_issuer performSelector:@selector(register_subfields)];
@@ -1046,6 +1047,8 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
             return [T_asset_reserve class];
         case ebo_asset_issue:
             return [T_asset_issue class];
+        case ebo_asset_fund_fee_pool:
+            return [T_asset_fund_fee_pool class];
         case ebo_asset_claim_pool:
             return [T_asset_claim_pool class];
         case ebo_asset_claim_fees:
@@ -1485,6 +1488,19 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [self add_field:@"asset_to_issue" class:[T_asset class]];
     [self add_field:@"issue_to_account" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"memo" class:[[Tm_optional alloc] initWithType:[T_memo_data class]]];
+    [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
+}
+
+@end
+
+@implementation T_asset_fund_fee_pool
+
++ (void)register_subfields
+{
+    [self add_field:@"fee" class:[T_asset class]];      //  only core asset
+    [self add_field:@"from_account" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"asset_id" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_asset]];
+    [self add_field:@"amount" class:[T_asset class]];   //  only core asset
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
 

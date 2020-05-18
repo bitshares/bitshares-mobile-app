@@ -602,6 +602,14 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
 }
 
 /**
+ *  OP -注资资产的手续费池资金
+ */
+- (WsPromise*)assetFundFeePool:(NSDictionary*)opdata
+{
+    return [self runSingleTransaction:opdata opcode:ebo_asset_fund_fee_pool fee_paying_account:[opdata objectForKey:@"from_account"]];
+}
+
+/**
  *  OP -提取资产的手续费池资金
  */
 - (WsPromise*)assetClaimPool:(NSDictionary*)opdata
