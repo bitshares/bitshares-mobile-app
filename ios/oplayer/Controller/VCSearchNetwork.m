@@ -64,41 +64,6 @@
     _array_data = nil;
 }
 
-/**
- *  (private) 初始化自定义交易对列表
- */
-- (void)reinitCustomMarketList
-{
-    if (_array_data){
-        [_array_data removeAllObjects];
-    }else{
-        _array_data = [NSMutableArray array];
-    }
-    id custom_markets = [[AppCacheManager sharedAppCacheManager] get_all_custom_markets];
-    if ([custom_markets count] <= 0){
-        return;
-    }
-    NSMutableDictionary* market_hash = [NSMutableDictionary dictionary];
-    for (id market in [[ChainObjectManager sharedChainObjectManager] getDefaultMarketInfos]) {
-        id base = market[@"base"];
-        market_hash[base[@"symbol"]] = base;
-    }
-    for (id custom_item in [custom_markets allValues]) {
-        id base_symbol = custom_item[@"base"];
-        id market_base = market_hash[base_symbol];
-        //  无效数据（用户添加之后，官方删除了部分市场可能存在该情况。TODO:fowallet 考虑从缓存移除。）
-        if (!market_base){
-            continue;
-        }
-        id quote = custom_item[@"quote"];
-        [_array_data addObject:@{@"base":market_base, @"quote":quote}];
-    }
-    //  排序
-    [_array_data sortUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-        return [obj1[@"quote"][@"symbol"] compare:obj2[@"quote"][@"symbol"]];
-    })];
-}
-
 - (id)initWithSearchType:(ENetworkSearchType)searchType callback:(SelectAccountCallback)callback
 {
     self = [super init];
@@ -123,14 +88,6 @@
                 _array_data = [[[[[AppCacheManager sharedAppCacheManager] get_all_fav_accounts] allValues] sortedArrayUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
                     return [[obj1 objectForKey:@"name"] compare:[obj2 objectForKey:@"name"]];
                 })] mutableCopy];
-            }
-                break;
-            case enstTradingPair:   //  搜索资产：添加所有市场交易对
-            {
-                _bEnableSelectRow = NO;
-                _bEnableSectionIndexTitle = NO;
-                _array_data = nil;
-                [self reinitCustomMarketList];
             }
                 break;
             case enstAssetAll:         //  搜索资产
@@ -196,7 +153,6 @@
         case enstAccount:
             _searchController.searchBar.placeholder = NSLocalizedString(@"kSearchPlaceholderAccount", @"请输入有效的 Bitshares 帐号名");
             break;
-        case enstTradingPair:
         case enstAssetAll:
         case enstAssetSmart:
         case enstAssetUIA:
@@ -333,9 +289,6 @@
         switch (_searchType) {
             case enstAccount:
                 titleLabel.text = [NSString stringWithFormat:NSLocalizedString(@"kSearchTipsMyFavAccount", @"我的关注(%@人)"), @([_array_data count])];
-                break;
-            case enstTradingPair:
-                titleLabel.text = [NSString stringWithFormat:NSLocalizedString(@"kSearchTipsMyCustomPairs", @"我的交易对(%@个)"), @([_array_data count])];
                 break;
             case enstAssetAll:
             case enstAssetSmart:
@@ -477,32 +430,6 @@
             }
         }
             break;
-        case enstTradingPair:     //  资产信息（交易对）
-        {
-            id base_markets = [[ChainObjectManager sharedChainObjectManager] getDefaultMarketInfos];
-            sortKey = @"symbol";
-            for (id d in data) {
-                if ([self isSearchMatched:[d objectForKey:sortKey] match:_currSearchText]){
-                    for (id market in base_markets) {
-                        id base = [market objectForKey:@"base"];
-                        //  REMARK：略过 base 和 quote 相同的交易对：CNY/CNY USD/USD BTS/BTS
-                        if ([[d objectForKey:@"symbol"] isEqualToString:[base objectForKey:@"symbol"]]){
-                            continue;
-                        }
-                        [_searchDataArray addObject:@{@"quote":d, @"base":base}];
-                    }
-                }
-            }
-            
-            //  按照帐号名字长度升序排列（即匹配度高的排在前面） 比如 搜索：freedom16，那么 freedom168就排在freedom1613前面。
-            if ([_searchDataArray count] > 0){
-                [_searchDataArray sortUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-                    return [[[obj1 objectForKey:@"quote"] objectForKey:sortKey] length] > [[[obj2 objectForKey:@"quote"] objectForKey:sortKey] length];
-                }];
-            }
-            
-        }
-            break;
         case enstAssetAll:         //  资产信息
         case enstAssetSmart:
         case enstAssetUIA:
@@ -561,7 +488,6 @@
             searchText = [searchText lowercaseString];  //  帐号搜索全小写字母
         }
             break;
-        case enstTradingPair:
         case enstAssetAll:
         case enstAssetSmart:
         case enstAssetUIA:
@@ -618,78 +544,6 @@
 }
 
 /**
- *  资产 - 添加/删除自定义市场开关
- */
-- (void)onSwitchAction:(UISwitch*)sender
-{
-    UITableView* tableView = nil;
-    UIView* it = sender;
-    while (it.superview)
-    {
-        if ([it.superview isKindOfClass:[UITableView class]])
-        {
-            tableView = (UITableView*)it.superview;
-            break;
-        }
-        it = it.superview;
-    }
-    //  没找到 UITableView（不应该出现）
-    if (!tableView){
-        return;
-    }
-    
-    BOOL needReloadMainTableview = NO;
-    id linedata;
-    if ([self _showSearchResultData])
-    {
-        //  REMARK：在搜索结果界面点击开关按钮，此时需要刷新非搜索状态下的 maintableview。
-        needReloadMainTableview = YES;
-        linedata = [_searchDataArray objectAtIndex:sender.tag];
-    }
-    else
-    {
-        linedata = [_array_data objectAtIndex:sender.tag];
-    }
-    
-    AppCacheManager* pAppCache = [AppCacheManager sharedAppCacheManager];
-    if (sender.on){
-        NSInteger max_custom_pair_num = [[[ChainObjectManager sharedChainObjectManager] getDefaultParameters][@"max_custom_pair_num"] integerValue];
-        if ([[pAppCache get_all_custom_markets] count] >= max_custom_pair_num){
-            //  关闭switch&刷新tableview（不然UISwitch样式不会更新）
-            sender.on = NO;
-            [tableView reloadData];
-            [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kSearchTipsMaxCustomParisNumber", @"最多只能自定义 %@ 个交易对。"), @(max_custom_pair_num)]];
-            return;
-        }
-        id quote = [linedata objectForKey:@"quote"];
-        id base = [linedata objectForKey:@"base"];
-        [[pAppCache set_custom_markets:quote
-                                  base:[base objectForKey:@"symbol"]] saveCustomMarketsToFile];
-        //  [统计]
-        [OrgUtils logEvents:@"event_custommarket_add"
-                     params:@{@"base":[base objectForKey:@"symbol"], @"quote":[quote objectForKey:@"symbol"]}];
-    }else{
-        id quote = [linedata objectForKey:@"quote"];
-        id base = [linedata objectForKey:@"base"];
-        [[pAppCache remove_custom_markets:[quote objectForKey:@"symbol"]
-                                     base:[base objectForKey:@"symbol"]] saveCustomMarketsToFile];
-        //  [统计]
-        [OrgUtils logEvents:@"event_custommarket_remove"
-                     params:@{@"base":[base objectForKey:@"symbol"], @"quote":[quote objectForKey:@"symbol"]}];
-    }
-    
-    //  刷新 mainTableView
-    if (needReloadMainTableview){
-        //  REMARK：简单重新初始化列表即可，不用单独考虑 移除 or 添加。
-        [self reinitCustomMarketList];
-        [_allDataTableView reloadData];
-    }
-    
-    //  标记：自定义交易对发生变化，市场列表需要更新。
-    [TempManager sharedTempManager].customMarketDirty = YES;
-}
-
-/**
  *  设置cell的显示内容
  */
 - (void)drawTableViewCell:(UITableViewCell*)cell data:(NSDictionary*)linedata section:(NSInteger)section row:(NSInteger)row
@@ -701,36 +555,6 @@
             cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
             cell.detailTextLabel.text = [NSString stringWithFormat:@"#%@", [[[linedata objectForKey:@"id"] componentsSeparatedByString:@"."] lastObject]];
             cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
-        }
-            break;
-        case enstTradingPair:
-        {
-            id quote = [linedata objectForKey:@"quote"];
-            id base = [linedata objectForKey:@"base"];
-            
-            cell.textLabel.text = [NSString stringWithFormat:@"%@/%@", [quote objectForKey:@"symbol"], [base objectForKey:@"name"]];
-            
-            if ([[ChainObjectManager sharedChainObjectManager] isDefaultPair:quote base:base]){
-                cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
-                cell.detailTextLabel.text = NSLocalizedString(@"kSearchTipsForbidden", @"不可更改");
-                cell.detailTextLabel.textColor = [ThemeManager sharedThemeManager].textColorNormal;
-                cell.accessoryView = nil;
-            }else{
-                cell.textLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
-                cell.detailTextLabel.text = @"";
-                
-                id quote_symbol = [quote objectForKey:@"symbol"];
-                id base_symbol = [base objectForKey:@"symbol"];
-                
-                UISwitch* pSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
-                pSwitch.tintColor = [ThemeManager sharedThemeManager].textColorGray;        //  边框颜色
-                pSwitch.thumbTintColor = [ThemeManager sharedThemeManager].textColorGray;   //  按钮颜色
-                pSwitch.onTintColor = [ThemeManager sharedThemeManager].textColorHighlight; //  开启时颜色
-                pSwitch.tag = row;
-                pSwitch.on = [[AppCacheManager sharedAppCacheManager] is_custom_market:quote_symbol base:base_symbol];
-                [pSwitch addTarget:self action:@selector(onSwitchAction:) forControlEvents:UIControlEventValueChanged];
-                cell.accessoryView = pSwitch;
-            }
         }
             break;
         case enstAssetAll:

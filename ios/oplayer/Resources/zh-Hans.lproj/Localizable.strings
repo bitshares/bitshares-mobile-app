@@ -22,6 +22,13 @@
 "kLabelGroupIntroduction" = "介绍 >";
 
 "kLabelNoFavMarket" = "没有任何自选";
+"kLabelBtnNameAddPair" = "添加";
+"kLabelTitleAssetQuote" = "交易资产";
+"kLabelTitleAssetBase" = "报价资产";
+"kVcMyPairSubmitTipMissQuoteAsset" = "请选择交易资产。";
+"kVcMyPairSubmitTipMissBaseAsset" = "请选择报价资产。";
+"kVcMyPairSubmitTipQuoteBaseIsSame" = "交易资产和报价资产不能相同。";
+"kVcMyPairSubmitTipPairIsAlreadyExist" = "该交易对已存在。";
 
 /* 抵押界面 */
 "kDebtLableReset" = "重置";
@@ -1135,6 +1142,9 @@
 "kVcTitleAssetOpUpdateBasic" = "更新资产";
 "kVcTitleAssetOpUpdateBitasset" = "更新智能币";
 "kVcTitleAssetOpCreate" = "创建资产";
+"kVcTitleMyPairsMgr" = "交易对管理";
+"kVcTitleSearchAssetQuote" = "搜索交易资产";
+"kVcTitleSearchAssetBase" = "搜索报价资产";
 
 /* 钱包管理 */
 "kWalletUnlockFailedUnknowMode" = "解锁失败，未知的账号模式：%@。";

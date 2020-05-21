@@ -124,6 +124,15 @@
 		3F333B0A247223BF00E43B83 /* VCAssetInfos.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F333B09247223BF00E43B83 /* VCAssetInfos.m */; };
 		3F333B0B247223BF00E43B83 /* VCAssetInfos.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F333B09247223BF00E43B83 /* VCAssetInfos.m */; };
 		3F333B0C247223BF00E43B83 /* VCAssetInfos.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F333B09247223BF00E43B83 /* VCAssetInfos.m */; };
+		3F333B0F2475071B00E43B83 /* VCTradingPairMgr.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F333B0E2475071B00E43B83 /* VCTradingPairMgr.m */; };
+		3F333B102475071B00E43B83 /* VCTradingPairMgr.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F333B0E2475071B00E43B83 /* VCTradingPairMgr.m */; };
+		3F333B112475071B00E43B83 /* VCTradingPairMgr.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F333B0E2475071B00E43B83 /* VCTradingPairMgr.m */; };
+		3F333B142475092100E43B83 /* ViewQuoteBasePairCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F333B132475092100E43B83 /* ViewQuoteBasePairCell.m */; };
+		3F333B152475092100E43B83 /* ViewQuoteBasePairCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F333B132475092100E43B83 /* ViewQuoteBasePairCell.m */; };
+		3F333B162475092100E43B83 /* ViewQuoteBasePairCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F333B132475092100E43B83 /* ViewQuoteBasePairCell.m */; };
+		3F333B1E2476283D00E43B83 /* ViewMyPairsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F333B1D2476283C00E43B83 /* ViewMyPairsCell.m */; };
+		3F333B1F2476283D00E43B83 /* ViewMyPairsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F333B1D2476283C00E43B83 /* ViewMyPairsCell.m */; };
+		3F333B202476283D00E43B83 /* ViewMyPairsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F333B1D2476283C00E43B83 /* ViewMyPairsCell.m */; };
 		3F37C80C24231CED0028845A /* iconShare@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F37C80A24231CED0028845A /* iconShare@3x.png */; };
 		3F37C80D24231CED0028845A /* iconShare@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F37C80A24231CED0028845A /* iconShare@3x.png */; };
 		3F37C80E24231CED0028845A /* iconShare@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F37C80A24231CED0028845A /* iconShare@3x.png */; };
@@ -2175,6 +2184,12 @@
 		3F2E6E2B233E0B3500BF4B78 /* ViewPermissionInfoCellB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewPermissionInfoCellB.h; path = View/ViewPermissionInfoCellB.h; sourceTree = "<group>"; };
 		3F333B08247223BF00E43B83 /* VCAssetInfos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAssetInfos.h; path = Controller/VCAssetInfos.h; sourceTree = "<group>"; };
 		3F333B09247223BF00E43B83 /* VCAssetInfos.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAssetInfos.m; path = Controller/VCAssetInfos.m; sourceTree = "<group>"; };
+		3F333B0D2475071B00E43B83 /* VCTradingPairMgr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCTradingPairMgr.h; path = Controller/VCTradingPairMgr.h; sourceTree = "<group>"; };
+		3F333B0E2475071B00E43B83 /* VCTradingPairMgr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCTradingPairMgr.m; path = Controller/VCTradingPairMgr.m; sourceTree = "<group>"; };
+		3F333B122475092100E43B83 /* ViewQuoteBasePairCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewQuoteBasePairCell.h; path = View/ViewQuoteBasePairCell.h; sourceTree = "<group>"; };
+		3F333B132475092100E43B83 /* ViewQuoteBasePairCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewQuoteBasePairCell.m; path = View/ViewQuoteBasePairCell.m; sourceTree = "<group>"; };
+		3F333B1C2476283C00E43B83 /* ViewMyPairsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewMyPairsCell.h; path = View/ViewMyPairsCell.h; sourceTree = "<group>"; };
+		3F333B1D2476283C00E43B83 /* ViewMyPairsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewMyPairsCell.m; path = View/ViewMyPairsCell.m; sourceTree = "<group>"; };
 		3F37C80A24231CED0028845A /* iconShare@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconShare@3x.png"; path = "Images/iconShare@3x.png"; sourceTree = "<group>"; };
 		3F37C80B24231CED0028845A /* iconShare@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconShare@2x.png"; path = "Images/iconShare@2x.png"; sourceTree = "<group>"; };
 		3F3847302222686300B55914 /* VCMemberShip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCMemberShip.h; path = Controller/VCMemberShip.h; sourceTree = "<group>"; };
@@ -3286,6 +3301,8 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3F333B0D2475071B00E43B83 /* VCTradingPairMgr.h */,
+				3F333B0E2475071B00E43B83 /* VCTradingPairMgr.m */,
 				3F333B08247223BF00E43B83 /* VCAssetInfos.h */,
 				3F333B09247223BF00E43B83 /* VCAssetInfos.m */,
 				3F8C63F02453D18E000316D1 /* VCStealthTransfer.h */,
@@ -3466,6 +3483,10 @@
 		18FF069017E00C5C0088405E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				3F333B1C2476283C00E43B83 /* ViewMyPairsCell.h */,
+				3F333B1D2476283C00E43B83 /* ViewMyPairsCell.m */,
+				3F333B122475092100E43B83 /* ViewQuoteBasePairCell.h */,
+				3F333B132475092100E43B83 /* ViewQuoteBasePairCell.m */,
 				3F8C63E624504D47000316D1 /* ViewBlindAccountCell.h */,
 				3F8C63E524504D47000316D1 /* ViewBlindAccountCell.m */,
 				3F8C63DC244FDE48000316D1 /* ViewBlindInputOutputItemCell.h */,
@@ -6008,6 +6029,7 @@
 				3F67683F230E9EC100E98C14 /* ViewActionsCell.m in Sources */,
 				3FAFCCBF244823FA004B7ECC /* VCTransferFromBlind.m in Sources */,
 				3F0099FD239FAA9A00A77E4A /* VCOtcMcAssetList.m in Sources */,
+				3F333B112475071B00E43B83 /* VCTradingPairMgr.m in Sources */,
 				3F0099F2239FA96D00A77E4A /* VCOtcReceiveMethods.m in Sources */,
 				3F676840230E9EC100E98C14 /* GCDWebServerFileResponse.m in Sources */,
 				3F676841230E9EC100E98C14 /* TempManager.m in Sources */,
@@ -6175,6 +6197,7 @@
 				3F6768C1230E9EC100E98C14 /* VCMemberShip.m in Sources */,
 				3F6768C2230E9EC100E98C14 /* FXBlurView.m in Sources */,
 				3F6768C3230E9EC100E98C14 /* ScheduleManager.m in Sources */,
+				3F333B202476283D00E43B83 /* ViewMyPairsCell.m in Sources */,
 				3F6768C4230E9EC100E98C14 /* NSURLRequest+SRWebSocket.m in Sources */,
 				3F12F446237D101B001FBAD8 /* ViewOtcOrderInfCell.m in Sources */,
 				3F6768C5230E9EC100E98C14 /* VCScanNormalString.m in Sources */,
@@ -6199,6 +6222,7 @@
 				3F6768D6230E9EC100E98C14 /* SCLTextView.m in Sources */,
 				3F009A1F23A212DF00A77E4A /* ViewUtils.m in Sources */,
 				3F6768D7230E9EC100E98C14 /* SRLog.m in Sources */,
+				3F333B162475092100E43B83 /* ViewQuoteBasePairCell.m in Sources */,
 				3F6768D8230E9EC100E98C14 /* MyTextView.m in Sources */,
 				3F6768D9230E9EC100E98C14 /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				3F6768DA230E9EC100E98C14 /* VCProposalConfirm.m in Sources */,
@@ -6379,6 +6403,7 @@
 				3F216572226FEF5500AB5A3D /* ViewActionsCell.m in Sources */,
 				3FAFCCBE244823FA004B7ECC /* VCTransferFromBlind.m in Sources */,
 				3F0099FC239FAA9A00A77E4A /* VCOtcMcAssetList.m in Sources */,
+				3F333B102475071B00E43B83 /* VCTradingPairMgr.m in Sources */,
 				3F0099F1239FA96D00A77E4A /* VCOtcReceiveMethods.m in Sources */,
 				3FB8F8D521CE66C200DA88E2 /* GCDWebServerFileResponse.m in Sources */,
 				3FB8F8D621CE66C200DA88E2 /* TempManager.m in Sources */,
@@ -6546,6 +6571,7 @@
 				3F3847332222686400B55914 /* VCMemberShip.m in Sources */,
 				3FB8F94921CE66C200DA88E2 /* FXBlurView.m in Sources */,
 				3FB8F94A21CE66C200DA88E2 /* ScheduleManager.m in Sources */,
+				3F333B1F2476283D00E43B83 /* ViewMyPairsCell.m in Sources */,
 				3FB8F94B21CE66C200DA88E2 /* NSURLRequest+SRWebSocket.m in Sources */,
 				3F12F445237D101B001FBAD8 /* ViewOtcOrderInfCell.m in Sources */,
 				3FB8F94C21CE66C200DA88E2 /* VCScanNormalString.m in Sources */,
@@ -6570,6 +6596,7 @@
 				3FB8F95B21CE66C200DA88E2 /* SCLTextView.m in Sources */,
 				3F009A1E23A212DF00A77E4A /* ViewUtils.m in Sources */,
 				3FB8F95C21CE66C200DA88E2 /* SRLog.m in Sources */,
+				3F333B152475092100E43B83 /* ViewQuoteBasePairCell.m in Sources */,
 				3FE4E94A22F698DC0056A44F /* MyTextView.m in Sources */,
 				3FB8F95D21CE66C200DA88E2 /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				3FB8F95E21CE66C200DA88E2 /* VCProposalConfirm.m in Sources */,
@@ -6750,6 +6777,7 @@
 				B72A848B20CCD18B00D92A25 /* GCDWebServerFileResponse.m in Sources */,
 				3FAFCCBD244823FA004B7ECC /* VCTransferFromBlind.m in Sources */,
 				3F0099FB239FAA9A00A77E4A /* VCOtcMcAssetList.m in Sources */,
+				3F333B0F2475071B00E43B83 /* VCTradingPairMgr.m in Sources */,
 				3F0099F0239FA96D00A77E4A /* VCOtcReceiveMethods.m in Sources */,
 				B741F0291C27A6A000F3803A /* TempManager.m in Sources */,
 				B7B1D9D21C154EB80059E71A /* AsyncTaskManager.m in Sources */,
@@ -6917,6 +6945,7 @@
 				F5BF57C91E30AE7700DEDE38 /* FXBlurView.m in Sources */,
 				B7C04123210C100100848CBC /* ScheduleManager.m in Sources */,
 				B714094B20A31CC300003311 /* NSURLRequest+SRWebSocket.m in Sources */,
+				3F333B1E2476283D00E43B83 /* ViewMyPairsCell.m in Sources */,
 				3F475CDF21945A12009DD5C1 /* VCScanNormalString.m in Sources */,
 				3F12F444237D101B001FBAD8 /* ViewOtcOrderInfCell.m in Sources */,
 				B737850920FF88EE001EEA8C /* ViewKLine.m in Sources */,
@@ -6941,6 +6970,7 @@
 				B714094520A31CC300003311 /* SRLog.m in Sources */,
 				3F009A1D23A212DF00A77E4A /* ViewUtils.m in Sources */,
 				3FE4E94922F698DC0056A44F /* MyTextView.m in Sources */,
+				3F333B142475092100E43B83 /* ViewQuoteBasePairCell.m in Sources */,
 				B72A848720CCD18B00D92A25 /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				3FCA2DC9219EC45900A5F4E9 /* VCProposalConfirm.m in Sources */,
 				B7BDAA9420B3C77500738F12 /* LzmaDec.c in Sources */,

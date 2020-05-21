@@ -87,29 +87,10 @@
 
 - (void)onRightButtonClicked
 {
-    AppCacheManager* pAppCache = [AppCacheManager sharedAppCacheManager];
-    
-    id quote_symbol = [_quote objectForKey:@"symbol"];
-    id base_symbol = [_base objectForKey:@"symbol"];
-    if ([pAppCache is_fav_market:quote_symbol base:base_symbol]){
-        //  取消自选、灰色五星、提示信息
-        [pAppCache remove_fav_markets:quote_symbol base:base_symbol];
-        [self showRightImageButton:@"iconFav" action:@selector(onRightButtonClicked) color:[ThemeManager sharedThemeManager].textColorGray];
-        [OrgUtils makeToast:NSLocalizedString(@"kTipsAddFavDelete", @"删除自选成功")];
-        //  [统计]
-        [OrgUtils logEvents:@"event_market_remove_fav" params:@{@"base":base_symbol, @"quote":quote_symbol}];
-    }else{
-        //  添加自选、高亮五星、提示信息
-        [pAppCache set_fav_markets:quote_symbol base:base_symbol];
-        [self showRightImageButton:@"iconFav" action:@selector(onRightButtonClicked) color:[ThemeManager sharedThemeManager].textColorHighlight];
-        [OrgUtils makeToast:NSLocalizedString(@"kTipsAddFavSuccess", @"添加自选成功")];
-        //  [统计]
-        [OrgUtils logEvents:@"event_market_add_fav" params:@{@"base":base_symbol, @"quote":quote_symbol}];
-    }
-    [pAppCache saveFavMarketsToFile];
-    
-    //  标记：自选列表需要更新
-    [TempManager sharedTempManager].favoritesMarketDirty = YES;
+    UIBarButtonItem* barItem = (UIBarButtonItem*)self.navigationItem.rightBarButtonItem;
+    [VcUtils processMyFavPairStateChanged:_quote
+                                     base:_base
+                          associated_view:(UIButton*)barItem.customView];
 }
 
 /**
@@ -172,7 +153,7 @@
     [super viewDidLoad];
     
     //  添加自选按钮
-    if ([[AppCacheManager sharedAppCacheManager] is_fav_market:[_quote objectForKey:@"symbol"] base:[_base objectForKey:@"symbol"]]){
+    if ([[AppCacheManager sharedAppCacheManager] is_fav_market:[_quote objectForKey:@"id"] base:[_base objectForKey:@"id"]]){
         [self showRightImageButton:@"iconFav" action:@selector(onRightButtonClicked) color:[ThemeManager sharedThemeManager].textColorHighlight];
     }else{
         [self showRightImageButton:@"iconFav" action:@selector(onRightButtonClicked) color:[ThemeManager sharedThemeManager].textColorGray];

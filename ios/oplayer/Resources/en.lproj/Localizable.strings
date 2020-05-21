@@ -22,6 +22,13 @@
 "kLabelGroupIntroduction" = "Introduction >";
 
 "kLabelNoFavMarket" = "You have not added any favorites market.";
+"kLabelBtnNameAddPair" = "Add";
+"kLabelTitleAssetQuote" = "Quote";
+"kLabelTitleAssetBase" = "Base";
+"kVcMyPairSubmitTipMissQuoteAsset" = "Please select the quote asset.";
+"kVcMyPairSubmitTipMissBaseAsset" = "Please select the base asset.";
+"kVcMyPairSubmitTipQuoteBaseIsSame" = "Quote asset and base asset cannot be the same.";
+"kVcMyPairSubmitTipPairIsAlreadyExist" = "The pair already exists.";
 
 /* 抵押界面 */
 "kDebtLableReset" = "Reset";
@@ -1135,6 +1142,9 @@
 "kVcTitleAssetOpUpdateBasic" = "Update assets";
 "kVcTitleAssetOpUpdateBitasset" = "Update bitassets";
 "kVcTitleAssetOpCreate" = "Create assets";
+"kVcTitleMyPairsMgr" = "My pairs";
+"kVcTitleSearchAssetQuote" = "Search quote asset";
+"kVcTitleSearchAssetBase" = "Search base asset";
 
 /* 钱包管理 */
 "kWalletUnlockFailedUnknowMode" = "Unlock failed, unknown account mode: %@.";

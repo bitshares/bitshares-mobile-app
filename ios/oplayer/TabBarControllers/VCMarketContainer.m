@@ -12,6 +12,7 @@
 #import "ScheduleManager.h"
 #import "GrapheneApi.h"
 
+#import "VCTradingPairMgr.h"
 #import "VCMarketInfo.h"
 
 #import <SocketRocket/SocketRocket.h>
@@ -168,9 +169,8 @@
  */
 - (void)onAddMarketInfos
 {
-    VCSearchNetwork* vc = [[VCSearchNetwork alloc] initWithSearchType:enstTradingPair callback:nil];
-    vc.title = NSLocalizedString(@"kVcTitleCustomPairs", @"添加交易对");
-    [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+    VCTradingPairMgr* vc = [[VCTradingPairMgr alloc] init];
+    [self pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleMyPairsMgr", @"交易对管理") backtitle:kVcDefaultBackTitleName];
 }
 
 - (NSInteger)getTitleDefaultSelectedIndex
@@ -242,8 +242,6 @@
     [super viewWillAppear:animated];
     //  自选市场可能发生变化，重新加载。
     [self onRefreshFavoritesMarket];
-    //  自定义交易对发生变化，重新加载。
-    [self onRefreshCustomMarket];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -264,35 +262,18 @@
 }
 
 /**
- *  (private) 事件 - 刷新自选(关注、收藏)市场
+ *  (private) 事件 - 刷新自选(关注、收藏、自定义交易对)市场
  */
 - (void)onRefreshFavoritesMarket
 {
     if ([TempManager sharedTempManager].favoritesMarketDirty){
+        //  重新构建各市场分组信息
+        [[ChainObjectManager sharedChainObjectManager] buildAllMarketsInfos];
         //  清除标记
         [TempManager sharedTempManager].favoritesMarketDirty = NO;
         //  刷新
         if (_subvcArrays){
             for (VCMarketInfo* vc in _subvcArrays) {
-                [vc onRefreshFavoritesMarket];
-            }
-        }
-    }
-}
-/**
- *  (private) 事件 - 刷新自定义交易对市场 同时刷新收藏列表（因为变更自定义交易对，可能导致收藏失效。）
- */
-- (void)onRefreshCustomMarket
-{
-    if ([TempManager sharedTempManager].customMarketDirty){
-        //  重新构建各市场分组信息
-        [[ChainObjectManager sharedChainObjectManager] buildAllMarketsInfos];
-        //  清除标记
-        [TempManager sharedTempManager].customMarketDirty = NO;
-        //  刷新
-        if (_subvcArrays){
-            for (VCMarketInfo* vc in _subvcArrays) {
-                [vc onRefreshCustomMarket];
                 [vc onRefreshFavoritesMarket];
             }
         }

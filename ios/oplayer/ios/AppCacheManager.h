@@ -31,7 +31,6 @@ typedef enum EWalletMode
 -(void)saveObjectCacheToFile;
 -(void)saveFavAccountsToFile;
 -(void)saveFavMarketsToFile;
--(void)saveCustomMarketsToFile;
 
 #pragma mark- for stealth receipt & account
 /*
@@ -62,17 +61,10 @@ typedef enum EWalletMode
 
 #pragma mark- fav markets
 - (NSDictionary*)get_all_fav_markets;
-- (BOOL)is_fav_market:(NSString*)quote_symbol base:(NSString*)base_symbol;
-- (AppCacheManager*)set_fav_markets:(NSString*)quote_symbol base:(NSString*)base_symbol;
-- (void)remove_fav_markets:(id)fav_item;
-- (void)remove_fav_markets:(NSString*)quote_symbol base:(NSString*)base_symbol;
-
-#pragma mark- for custom markets
-- (NSDictionary*)get_all_custom_markets;
-- (BOOL)is_custom_market:(NSString*)quote_symbol base:(NSString*)base_symbol;
-- (AppCacheManager*)set_custom_markets:(id)quote_asset base:(NSString*)base_symbol;
-- (AppCacheManager*)remove_custom_markets:(id)custom_item;
-- (AppCacheManager*)remove_custom_markets:(NSString*)quote_symbol base:(NSString*)base_symbol;
+- (NSArray*)get_fav_markets_asset_ids;
+- (BOOL)is_fav_market:(NSString*)quote_id base:(NSString*)base_id;
+- (AppCacheManager*)set_fav_markets:(NSString*)quote_id base:(NSString*)base_id;
+- (void)remove_fav_markets:(NSString*)quote_id base:(NSString*)base_id;
 
 #pragma mark- pref
 -(NSObject*)getPref:(NSString*)key;

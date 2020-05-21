@@ -539,4 +539,70 @@
     }];
 }
 
+/*
+ *  (public) 处理交易对状态变更，收藏 or 取消收藏。变更成功返回 YES，否则返回 NO。
+ */
++ (BOOL)processMyFavPairStateChanged:(id)quote base:(id)base associated_view:(UIButton*)associated_view
+{
+    assert(quote);
+    assert(base);
+    
+    AppCacheManager* pAppCache = [AppCacheManager sharedAppCacheManager];
+    
+    id quote_id = [quote objectForKey:@"id"];
+    id base_id = [base objectForKey:@"id"];
+    
+    if ([pAppCache is_fav_market:quote_id base:base_id]) {
+        //  删除的情况
+        [pAppCache remove_fav_markets:quote_id base:base_id];
+        if (associated_view) {
+            associated_view.tintColor = [ThemeManager sharedThemeManager].textColorGray;
+        }
+        [OrgUtils makeToast:NSLocalizedString(@"kTipsAddFavDelete", @"删除自选成功")];
+        //  [统计]
+        [OrgUtils logEvents:@"event_market_remove_fav" params:@{@"base":base_id, @"quote":quote_id}];
+    } else {
+        //  添加的情况，如果是自定义交易对，则需要判断是否达到上限，收藏交易对则不用额外处理。
+        ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+        
+        //  自定义交易对判断
+        if (![chainMgr isDefaultPair:quote base:base]) {
+            NSInteger max_custom_pair_num = [[chainMgr getDefaultParameters][@"max_custom_pair_num"] integerValue];
+            NSInteger n_custom = 0;
+            id favhash = [pAppCache get_all_fav_markets];
+            for (id key in favhash) {
+                id favitem = [favhash objectForKey:key];
+                assert(favitem);
+                id q = [chainMgr getChainObjectByID:favitem[@"quote"]];
+                id b = [chainMgr getChainObjectByID:favitem[@"base"]];
+                if (![chainMgr isDefaultPair:q base:b]) {
+                    n_custom += 1;
+                }
+            }
+            if (n_custom >= max_custom_pair_num) {
+                [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kSearchTipsMaxCustomParisNumber", @"最多只能自定义 %@ 个交易对。"),
+                                     @(max_custom_pair_num)]];
+                return NO;
+            }
+        }
+        
+        //  不限制：添加收藏。
+        [pAppCache set_fav_markets:quote_id base:base_id];
+        if (associated_view) {
+            associated_view.tintColor = [ThemeManager sharedThemeManager].textColorHighlight;
+        }
+        [OrgUtils makeToast:NSLocalizedString(@"kTipsAddFavSuccess", @"添加自选成功")];
+        //  [统计]
+        [OrgUtils logEvents:@"event_market_add_fav" params:@{@"base":base_id, @"quote":quote_id}];
+    }
+    
+    //  保存
+    [pAppCache saveFavMarketsToFile];
+    
+    //  标记：自选列表需要更新
+    [TempManager sharedTempManager].favoritesMarketDirty = YES;
+    
+    return YES;
+}
+
 @end

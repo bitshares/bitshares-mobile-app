@@ -22,7 +22,6 @@ static TempManager *_sharedTempManager = nil;
 @implementation TempManager
 
 @synthesize favoritesMarketDirty;
-@synthesize customMarketDirty;
 @synthesize tickerDataDirty;
 @synthesize userLimitOrderDirty;
 @synthesize importToWalletDirty;
@@ -53,7 +52,6 @@ static TempManager *_sharedTempManager = nil;
     if (self)
     {
         self.favoritesMarketDirty = NO;
-        self.customMarketDirty = NO;
         self.tickerDataDirty = NO;
         self.userLimitOrderDirty = NO;
         self.importToWalletDirty = NO;
@@ -72,7 +70,6 @@ static TempManager *_sharedTempManager = nil;
 - (void)dealloc
 {
     self.favoritesMarketDirty = NO;
-    self.customMarketDirty = NO;
     self.tickerDataDirty = NO;
     self.userLimitOrderDirty = NO;
     self.importToWalletDirty = NO;
@@ -93,7 +90,6 @@ static TempManager *_sharedTempManager = nil;
 - (void)reset
 {
     self.favoritesMarketDirty = NO;
-    self.customMarketDirty = NO;
     self.tickerDataDirty = NO;
     self.userLimitOrderDirty = NO;
     self.importToWalletDirty = NO;

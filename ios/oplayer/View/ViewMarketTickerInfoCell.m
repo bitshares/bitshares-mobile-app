@@ -18,6 +18,7 @@
     
     UILabel*        _lbName;
     UILabel*        _lbBaseName;
+    UILabel*        _lbCustomLabel;
     
     UILabel*        _lbVolume24;
     UILabel*        _lbCurrPrice;
@@ -55,6 +56,17 @@
         _lbBaseName.font = [UIFont systemFontOfSize:12];
         [self addSubview:_lbBaseName];
         
+        UIColor* customBackColor = [ThemeManager sharedThemeManager].textColorHighlight;
+        _lbCustomLabel = [ViewUtils auxGenLabel:[UIFont systemFontOfSize:12] superview:self];
+        _lbCustomLabel.backgroundColor = [UIColor clearColor];
+        _lbCustomLabel.textColor = [ThemeManager sharedThemeManager].textColorMain;
+        _lbCustomLabel.layer.borderWidth = 1;
+        _lbCustomLabel.layer.cornerRadius = 2;
+        _lbCustomLabel.layer.masksToBounds = YES;
+        _lbCustomLabel.layer.borderColor = customBackColor.CGColor;
+        _lbCustomLabel.layer.backgroundColor = customBackColor.CGColor;
+        _lbCustomLabel.text = NSLocalizedString(@"kSettingApiCellCustomFlag", @"自定义");
+        
         _lbVolume24 = [[UILabel alloc] initWithFrame:CGRectZero];
         _lbVolume24.lineBreakMode = NSLineBreakByTruncatingTail;
         _lbVolume24.numberOfLines = 1;
@@ -62,7 +74,7 @@
         _lbVolume24.textColor = [ThemeManager sharedThemeManager].textColorNormal;
         _lbVolume24.font = [UIFont systemFontOfSize:12];
         [self addSubview:_lbVolume24];
-
+        
         _lbCurrPrice = [[UILabel alloc] initWithFrame:CGRectZero];
         _lbCurrPrice.textAlignment = NSTextAlignmentRight;
         _lbCurrPrice.lineBreakMode = NSLineBreakByTruncatingTail;
@@ -128,6 +140,7 @@
         return;
     
     CGFloat fWidth = self.bounds.size.width;
+    CGFloat fOffsetX = 12.0f;
     
     //    item = @{@"base_asset":_base_asset, @"quote":[quote objectForKey:@"name"], @"ticker_data":ticker_data};
     //    //  ticker_data:
@@ -173,24 +186,27 @@
         base_name = [base_asset objectForKey:@"symbol"];
     }
     
-    if (_group_info){
-        //  普通市场（基本资产小写、不突出）
-        _lbName.text = quote_name;
-        _lbName.frame = CGRectMake(12, 0, fWidth - 24, 32);
-        CGSize size1 = CGSizeMake(fWidth, 9999);
-        
-        //  TODO:fowallet auxSizeWithText兼容性待测试
-        size1 = [self auxSizeWithText:quote_name font:_lbName.font maxsize:size1];
-//        size1 = [quote_name sizeWithFont:_lbName.font constrainedToSize:size1 lineBreakMode:NSLineBreakByWordWrapping];
-        
-        _lbBaseName.text = [NSString stringWithFormat:@" / %@", base_name];
-        _lbBaseName.frame = CGRectMake(12 + size1.width, 3, 120, 30);
-        _lbBaseName.hidden = NO;
-    }else{
-        //  自选市场（基本资产不用小写）
-        _lbName.text = [NSString stringWithFormat:@"%@/%@", quote_name, base_name];
-        _lbName.frame = CGRectMake(12, 0, fWidth - 24, 32);
-        _lbBaseName.hidden = YES;
+    //  UI - 交易资产名
+    _lbName.text = quote_name;
+    _lbName.frame = CGRectMake(fOffsetX, 0, fWidth - 24, 32);
+    
+    //  UI - 报价资产名称
+    CGSize size_quote_name = [ViewUtils auxSizeWithLabel:_lbName];
+    _lbBaseName.text = [NSString stringWithFormat:@" / %@", base_name];
+    _lbBaseName.frame = CGRectMake(fOffsetX + size_quote_name.width, 3, 120, 30);
+    _lbBaseName.hidden = NO;
+    
+    //  UI - 默认交易对中【非内置】交易对，添加【自定义】标签。【自选市场】不用显示。
+    if (_group_info && ![[ChainObjectManager sharedChainObjectManager] isDefaultPair:quote_asset base:base_asset]) {
+        _lbCustomLabel.hidden = NO;
+        CGSize size1 = [ViewUtils auxSizeWithLabel:_lbBaseName];
+        CGSize size2 = [ViewUtils auxSizeWithLabel:_lbCustomLabel];
+        _lbCustomLabel.frame = CGRectMake(_lbBaseName.frame.origin.x + size1.width + 4,
+                                          (32 - size2.height - 2)/2,
+                                          size2.width + 8,
+                                          size2.height + 2);
+    } else {
+        _lbCustomLabel.hidden = YES;
     }
     
     //  获取数据
@@ -223,11 +239,11 @@
     CGFloat price_label_width = 120.0f;
     
     _lbCurrPrice.text = latest;
-    _lbCurrPrice.frame = CGRectMake(fWidth - 12 - percent_label_width - price_label_width - 8, 9, price_label_width, 32);
+    _lbCurrPrice.frame = CGRectMake(fWidth - fOffsetX - percent_label_width - price_label_width - 8, 9, price_label_width, 32);
     
     //  第二行
     _lbVolume24.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"kLable24HVol", @"24h量"), quote_volume];
-    _lbVolume24.frame = CGRectMake(12, 20, fWidth - 24, 32);
+    _lbVolume24.frame = CGRectMake(fOffsetX, 20, fWidth - 24, 32);
     
     //  尾巴
     double percent = [percent_change doubleValue];
@@ -247,7 +263,7 @@
         _lbPercent.layer.backgroundColor = backColor.CGColor;
         _lbPercent.text = [NSString stringWithFormat:@"%@%%", [OrgUtils formatFloatValue:percent precision:2 usesGroupingSeparator:NO]];
     }
-    _lbPercent.frame = CGRectMake(fWidth - 12 - percent_label_width, 9, percent_label_width, 32);
+    _lbPercent.frame = CGRectMake(fWidth - fOffsetX - percent_label_width, 9, percent_label_width, 32);
 }
 
 @end
