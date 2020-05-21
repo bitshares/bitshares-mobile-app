@@ -104,7 +104,7 @@
 {
     [[[[self class] checkAppUpdate] then:(^id(id pVersionConfig) {
         [SettingManager sharedSettingManager].serverConfig = [NSDictionary dictionaryWithDictionary:pVersionConfig];
-        return [[self asyncInitBitshares] then:(^id(id data) {
+        return [[self asyncInitBitshares:first_init] then:(^id(id data) {
             [self _onLoadVersionJsonFinish:pVersionConfig];
             return nil;
         })];
@@ -218,14 +218,15 @@
 /**
  *  (private) 初始化APP核心逻辑
  */
-- (WsPromise*)asyncInitBitshares
+- (WsPromise*)asyncInitBitshares:(BOOL)first_init
 {
     return [WsPromise promise:(^(WsResolveHandler resolve, WsRejectHandler reject) {
         GrapheneConnectionManager* connMgr = [GrapheneConnectionManager sharedGrapheneConnectionManager];
         ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
         WalletManager* walletMgr = [WalletManager sharedWalletManager];
         AppCacheManager* pAppCache = [AppCacheManager sharedAppCacheManager];
-        [[[connMgr Start:NO] then:(^id(id success) {
+        BOOL force_use_random_node = first_init ? NO : YES;
+        [[[connMgr Start:force_use_random_node] then:(^id(id success) {
             //  初始化石墨烯网络状态
             [[[chainMgr grapheneNetworkInit] then:(^id(id data) {
                 //  初始化市场相关依赖数据（在 ticker 等初始化之前。）
