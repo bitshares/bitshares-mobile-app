@@ -108,13 +108,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
 /**
  *  (public) 启动初始化
  */
-- (void)initAll
-{
-    [self loadDefaultMarketInfos];
-    [self buildAllMarketsInfos];
-}
-
-- (void)loadDefaultMarketInfos
+- (void)initConfig
 {
     if (_defaultMarketInfos){
         return;
@@ -223,14 +217,27 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     //  获取内置默认市场信息
     id defaultMarkets = [self getDefaultMarketInfos];
     
-    //  获取自定义交易对信息 格式参考：#{basesymbol}_#{quotesymbol} => @{@"quote":quote_asset(object),@"base":base_symbol}
-    id custom_markets = [[AppCacheManager sharedAppCacheManager] get_all_custom_markets];
-    if ([custom_markets count] <= 0){
+    //  获取自定义交易对信息（所有收藏交易对中【非内置的】交易对则为【自定义】交易对。）
+    //  格式参考：#{base_id}_#{quote_id} => @{@"quote":quote_id, @"base":base_id}
+    NSMutableArray* all_custom_markets = [NSMutableArray array];
+    id all_fav_markets = [[AppCacheManager sharedAppCacheManager] get_all_fav_markets];
+    for (id key in all_fav_markets) {
+        id favitem = [all_fav_markets objectForKey:key];
+        assert(favitem);
+        id quote = [self getChainObjectByID:favitem[@"quote"]];
+        id base = [self getChainObjectByID:favitem[@"base"]];
+        if (![self isDefaultPair:quote base:base]) {
+            [all_custom_markets addObject:favitem];
+        }
+    }
+    
+    //  没有自定义交易对，添加默认市场后，直接返回。
+    if ([all_custom_markets count] <= 0) {
         [_mergedMarketInfoList addObjectsFromArray:defaultMarkets];
         return;
     }
     
-    //  开始合并
+    //  开始合并默认市场和自定义交易对。
     NSMutableDictionary* market_hash = [NSMutableDictionary dictionary];
     for (id market in defaultMarkets) {
         id base_symbol = market[@"base"][@"symbol"];
@@ -241,23 +248,24 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     }
     
     //  循环所有自定义交易对，分别添加到对应分组里。
-    for (id pair in custom_markets) {
-        id info = custom_markets[pair];
-        id base_symbol = info[@"base"];
+    for (id favitem in all_custom_markets) {
+        id base_asset = [self getChainObjectByID:favitem[@"base"]];
+        id quote_asset = [self getChainObjectByID:favitem[@"quote"]];
+        assert(base_asset);
+        assert(quote_asset);
+        
         //  base_symbol 决定分在哪个大的 market 里。
+        id base_symbol = [base_asset objectForKey:@"symbol"];
         id target_market = [market_hash objectForKey:base_symbol];
         if (!target_market){
-            continue;   //  REMARK：已经删除掉的市场。比如添加了 CNC，用户自定义之后又删除了 CNC 市场。
+            continue;   //  不在默认APP默认市场中，则略过，仅显示在【自选】界面。
         }
         //  quote 决定分在哪个 group 里。
-        id quote_asset = info[@"quote"];
         id quote_symbol = [quote_asset objectForKey:@"symbol"];
         if ([quote_symbol isEqualToString:base_symbol]){
+            assert(false);
             continue;   //  不应该出现
         }
-        
-        //  添加资产
-        [self appendAssetCore:quote_asset];
         
         //  计算 asset 所属分组
         id target_group_info = [self auxCalcGroupInfo:quote_asset];

@@ -85,9 +85,9 @@
     
     //  1、债仓
     id p1 = [api exec:@"get_call_orders" params:@[[_current_asset objectForKey:@"id"], @100]];
-    //  2、智能币信息
+    //  2、智能币信息（REMARK：不查询缓存）
     NSString* bitasset_data_id = [_current_asset objectForKey:@"bitasset_data_id"];
-    id p2 = [[chainMgr queryAllGrapheneObjects:@[bitasset_data_id]] then:^id(id resultHash) {
+    id p2 = [[chainMgr queryAllGrapheneObjectsSkipCache:@[bitasset_data_id]] then:^id(id resultHash) {
         return [resultHash objectForKey:bitasset_data_id];
     }];
     //  3、清算单
@@ -103,7 +103,6 @@
         //  背书资产依赖
         NSString* short_backing_asset = [[[data_array objectAtIndex:1] objectForKey:@"options"] objectForKey:@"short_backing_asset"];
         [idHash setObject:@YES forKey:short_backing_asset];
-        
         //  查询依赖
         return [[chainMgr queryAllGrapheneObjects:[idHash allKeys]] then:(^id(id resultHash) {
             [self onQueryCallOrderResponsed:data_array];

@@ -92,4 +92,9 @@ typedef void (^UITapGestureRecognizerBlockHandler)(id weak_self, UITapGestureRec
                          password:(NSString*)str_password
                  success_callback:(void (^)(id blind_account))success_callback;
 
+/*
+ *  (public) 处理交易对状态变更，收藏 or 取消收藏。变更成功返回 YES，否则返回 NO。
+ */
++ (BOOL)processMyFavPairStateChanged:(id)quote base:(id)base associated_view:(UIButton*)associated_view;
+
 @end

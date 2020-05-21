@@ -73,8 +73,6 @@
     
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     
-    GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
-    
     [[[chainMgr queryAssetData:_current_asset[@"id"]] then:^id(id assetData) {
         if (!assetData || [assetData isKindOfClass:[NSNull class]]) {
             [_owner hideBlockView];
@@ -100,9 +98,9 @@
             publisher_type = ebfpt_custom;
         }
         
-        //  2、查询喂价信息
+        //  2、查询喂价信息（REMARK：不查询缓存）
         NSString* bitasset_data_id = [assetData objectForKey:@"bitasset_data_id"];
-        WsPromise* queryFeedDataPromise = [chainMgr queryAllGrapheneObjects:@[bitasset_data_id]];
+        WsPromise* queryFeedDataPromise = [chainMgr queryAllGrapheneObjectsSkipCache:@[bitasset_data_id]];
         
         return [[WsPromise all:@[queryPublisherInfo, queryFeedDataPromise]] then:^id(id data_array) {
             id feed_infos = [chainMgr getChainObjectByID:bitasset_data_id];

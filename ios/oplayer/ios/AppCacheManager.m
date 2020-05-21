@@ -26,8 +26,7 @@ static AppCacheManager* _spInstanceAppCacheMgr = nil;
     NSMutableDictionary*    _objectinfo_caches;     //  帐号、资产等ID对应的信息缓存（比如 name、precision等）。
     
     NSMutableDictionary*    _favorite_accounts;     //  我收藏的帐号列表（关注的） name => @{@"name":@"name", @"id":@"1.2.xx"}
-    NSMutableDictionary*    _favorite_markets;      //  我收藏的市场交易对（关注的）  #{basesymbol}_#{quotesymbol} => @{@"quote":quote_symbol, @"base":base_symbol}
-    NSMutableDictionary*    _custom_markets;        //  自定义的市场列表            #{basesymbol}_#{quotesymbol} => @{@"quote":quote_asset(object),@"base":base_symbol}
+    NSMutableDictionary*    _favorite_markets;      //  我收藏的市场交易对（关注的）  #{base_id}_#{quote_id} => @{@"quote":quote_id, @"base":base_id}
 }
 
 @end
@@ -53,7 +52,6 @@ static AppCacheManager* _spInstanceAppCacheMgr = nil;
         _objectinfo_caches = [NSMutableDictionary dictionary];
         _favorite_accounts = [NSMutableDictionary dictionary];
         _favorite_markets = [NSMutableDictionary dictionary];
-        _custom_markets = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -65,7 +63,6 @@ static AppCacheManager* _spInstanceAppCacheMgr = nil;
     _objectinfo_caches = nil;
     _favorite_accounts = nil;
     _favorite_markets = nil;
-    _custom_markets = nil;
 }
 
 -(void)initload
@@ -104,12 +101,6 @@ static AppCacheManager* _spInstanceAppCacheMgr = nil;
     if (pTempObject){
         _favorite_markets = pTempObject;
     }
-    
-    pFullFileName = [OrgUtils makeFullPathByAppStorage:kAppCacheNameCustomMarketsByApp];
-    pTempObject = [MySecurityFileMgr loadDicSecFile:pFullFileName];
-    if (pTempObject){
-        _custom_markets = pTempObject;
-    }
 }
 
 -(void)saveToFile
@@ -119,7 +110,6 @@ static AppCacheManager* _spInstanceAppCacheMgr = nil;
     [self saveObjectCacheToFile];
     [self saveFavAccountsToFile];
     [self saveFavMarketsToFile];
-    [self saveCustomMarketsToFile];
 }
 
 -(void)saveCacheToFile
@@ -150,12 +140,6 @@ static AppCacheManager* _spInstanceAppCacheMgr = nil;
 {
     NSString* pFilename = [OrgUtils makeFullPathByAppStorage:kAppCacheNameFavMarketsByApp];
     [MySecurityFileMgr saveSecFile:_favorite_markets path:pFilename];
-}
-
--(void)saveCustomMarketsToFile
-{
-    NSString* pFilename = [OrgUtils makeFullPathByAppStorage:kAppCacheNameCustomMarketsByApp];
-    [MySecurityFileMgr saveSecFile:_custom_markets path:pFilename];
 }
 
 - (NSMutableDictionary*)_getOrCreateSubFieldForWalletInfo:(NSString*)field_name
@@ -336,10 +320,26 @@ static AppCacheManager* _spInstanceAppCacheMgr = nil;
 {
     return _favorite_markets;
 }
-- (BOOL)is_fav_market:(NSString*)quote_symbol base:(NSString*)base_symbol
+
+- (NSArray*)get_fav_markets_asset_ids
 {
-    if (quote_symbol && base_symbol){
-        id pair = [NSString stringWithFormat:@"%@_%@", base_symbol, quote_symbol];
+    if ([_favorite_markets count] <= 0) {
+        return @[];
+    }
+    NSMutableDictionary* ids = [NSMutableDictionary dictionary];
+    for (id pair_key in _favorite_markets) {
+        id fav_item = [_favorite_markets objectForKey:pair_key];
+        assert(fav_item);
+        [ids setObject:@YES forKey:[fav_item objectForKey:@"base"]];
+        [ids setObject:@YES forKey:[fav_item objectForKey:@"quote"]];
+    }
+    return [ids allKeys];
+}
+
+- (BOOL)is_fav_market:(NSString*)quote_id base:(NSString*)base_id
+{
+    if (quote_id && base_id){
+        id pair = [NSString stringWithFormat:@"%@_%@", base_id, quote_id];
         id fav_item = [_favorite_markets objectForKey:pair];
         if (fav_item){
             return YES;
@@ -347,69 +347,20 @@ static AppCacheManager* _spInstanceAppCacheMgr = nil;
     }
     return NO;
 }
-- (AppCacheManager*)set_fav_markets:(NSString*)quote_symbol base:(NSString*)base_symbol
+- (AppCacheManager*)set_fav_markets:(NSString*)quote_id base:(NSString*)base_id
 {
-    if (quote_symbol && base_symbol){
-        id pair = [NSString stringWithFormat:@"%@_%@", base_symbol, quote_symbol];
-        [_favorite_markets setObject:@{@"base":base_symbol, @"quote":quote_symbol} forKey:pair];
+    if (quote_id && base_id){
+        id pair = [NSString stringWithFormat:@"%@_%@", base_id, quote_id];
+        [_favorite_markets setObject:@{@"base":base_id, @"quote":quote_id} forKey:pair];
     }
     return self;
 }
-- (void)remove_fav_markets:(id)fav_item
+- (void)remove_fav_markets:(NSString*)quote_id base:(NSString*)base_id
 {
-    if (!fav_item){
-        return;
-    }
-    [self remove_fav_markets:[fav_item objectForKey:@"quote"] base:[fav_item objectForKey:@"base"]];
-}
-- (void)remove_fav_markets:(NSString*)quote_symbol base:(NSString*)base_symbol
-{
-    if (quote_symbol && base_symbol){
-        id pair = [NSString stringWithFormat:@"%@_%@", base_symbol, quote_symbol];
+    if (quote_id && base_id){
+        id pair = [NSString stringWithFormat:@"%@_%@", base_id, quote_id];
         [_favorite_markets removeObjectForKey:pair];
     }
-}
-
-#pragma mark- fav custom markets
-- (NSDictionary*)get_all_custom_markets
-{
-    return _custom_markets;
-}
-- (BOOL)is_custom_market:(NSString*)quote_symbol base:(NSString*)base_symbol
-{
-    if (quote_symbol && base_symbol){
-        id pair = [NSString stringWithFormat:@"%@_%@", base_symbol, quote_symbol];
-        id custom_item = [_custom_markets objectForKey:pair];
-        if (custom_item){
-            return YES;
-        }
-    }
-    return NO;
-}
-- (AppCacheManager*)set_custom_markets:(id)quote_asset base:(NSString*)base_symbol
-{
-    if (quote_asset && base_symbol){
-        id quote_symbol = [quote_asset objectForKey:@"symbol"];
-        id pair = [NSString stringWithFormat:@"%@_%@", base_symbol, quote_symbol];
-        [_custom_markets setObject:@{@"base":base_symbol, @"quote":quote_asset} forKey:pair];
-    }
-    return self;
-}
-- (AppCacheManager*)remove_custom_markets:(id)custom_item
-{
-    if (!custom_item){
-        return self;
-    }
-    return [self remove_custom_markets:[[custom_item objectForKey:@"quote"] objectForKey:@"symbol"]
-                                  base:[custom_item objectForKey:@"base"]];
-}
-- (AppCacheManager*)remove_custom_markets:(NSString*)quote_symbol base:(NSString*)base_symbol
-{
-    if (quote_symbol && base_symbol){
-        id pair = [NSString stringWithFormat:@"%@_%@", base_symbol, quote_symbol];
-        [_custom_markets removeObjectForKey:pair];
-    }
-    return self;
 }
 
 #pragma mark- native cache

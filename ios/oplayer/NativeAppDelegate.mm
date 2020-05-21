@@ -485,6 +485,9 @@ nav.navigationBar.titleTextAttributes = textAttributes;
         return;
     }
     
+    //  创建APP主窗口
+    [[self createMainWindow] makeKeyAndVisible];
+    
     //  淡出当前窗口
     UIWindow* w = self.launchWindow;
     [UIView animateWithDuration:0.8 animations:^{
@@ -550,8 +553,8 @@ nav.navigationBar.titleTextAttributes = textAttributes;
     [[LangManager sharedLangManager] initCurrentLanguage];
     [self initLanguageInfo];
     
-    //  初始化帐号、资产、市场等数据（放在cacheMgr之后，可能用到cacheMgr中用户收藏的信息。）
-    [[ChainObjectManager sharedChainObjectManager] initAll];
+    //  初始化配置数据
+    [[ChainObjectManager sharedChainObjectManager] initConfig];
     
     //  记录首次启动时间
     [[AppCacheManager sharedAppCacheManager] recordFirstRunTime:^{
@@ -590,9 +593,6 @@ nav.navigationBar.titleTextAttributes = textAttributes;
     self.networkreach = [Reachability reachabilityForInternetConnection];
     [_reach startNotifier];
     _currNetStatus = [_reach currentReachabilityStatus];
-    
-    //  初始化APP主窗口
-    [[self createMainWindow] makeKeyAndVisible];
     
     //  初始化启动界面窗口
     [[self createLaunchWindow] makeKeyAndVisible];

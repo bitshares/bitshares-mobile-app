@@ -67,8 +67,7 @@
 #define kAppCacheNameWalletInfoByApp        @"wallet_v1.json"
 #define kAppCacheNameObjectCacheByApp       @"object_v1.json"
 #define kAppCacheNameFavAccountsByApp       @"favaccounts_v1.json"
-#define kAppCacheNameFavMarketsByApp        @"favmarkets_v1.json"
-#define kAppCacheNameCustomMarketsByApp     @"custommarkets_v1.json"
+#define kAppCacheNameFavMarketsByApp        @"myfavmarkets_v1.json"
 #define kAppCacheNameUserSettingByApp       @"usersetting_v1.json"
 #define kAppCacheNameMemoryInfosByApp       @"memory_v1.json"
 

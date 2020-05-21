@@ -151,30 +151,7 @@ enum
 - (void)onButtomFavButtonClicked:(UIButton*)sender
 {
     assert(sender.tag == kBottomButtonTagFav);
-    
-    AppCacheManager* pAppCache = [AppCacheManager sharedAppCacheManager];
-    
-    id quote_symbol = [_tradingPair.quoteAsset objectForKey:@"symbol"];
-    id base_symbol = [_tradingPair.baseAsset objectForKey:@"symbol"];
-    if ([pAppCache is_fav_market:quote_symbol base:base_symbol]){
-        //  取消自选、灰色五星、提示信息
-        [pAppCache remove_fav_markets:quote_symbol base:base_symbol];
-        sender.tintColor = [ThemeManager sharedThemeManager].textColorGray;
-        [OrgUtils makeToast:NSLocalizedString(@"kTipsAddFavDelete", @"删除自选成功")];
-        //  [统计]
-        [OrgUtils logEvents:@"event_market_remove_fav" params:@{@"base":base_symbol, @"quote":quote_symbol}];
-    }else{
-        //  添加自选、高亮五星、提示信息
-        [pAppCache set_fav_markets:quote_symbol base:base_symbol];
-        sender.tintColor = [ThemeManager sharedThemeManager].textColorHighlight;
-        [OrgUtils makeToast:NSLocalizedString(@"kTipsAddFavSuccess", @"添加自选成功")];
-        //  [统计]
-        [OrgUtils logEvents:@"event_market_add_fav" params:@{@"base":base_symbol, @"quote":quote_symbol}];
-    }
-    [pAppCache saveFavMarketsToFile];
-    
-    //  标记：自选列表需要更新
-    [TempManager sharedTempManager].favoritesMarketDirty = YES;
+    [VcUtils processMyFavPairStateChanged:_tradingPair.quoteAsset base:_tradingPair.baseAsset associated_view:sender];
 }
 
 - (NSString*)getPeriodName:(EKlineDatePeriodType)ekdptType
@@ -250,6 +227,8 @@ enum
     NSString* title = [NSString stringWithFormat:@"%@/%@", _tradingPair.quoteAsset[@"symbol"], _tradingPair.baseAsset[@"symbol"]];
     UIButton* btn = (UIButton*)self.navigationItem.titleView;
     [btn updateTitleWithoutAnimation:title];
+    //  刷新收藏按钮状态
+    [self _refreshFavButtonStatus];
     //  更新关联数据
     _viewTickerHeader.tradingPair = _tradingPair;
     _viewKLine.tradingPair = _tradingPair;
@@ -455,8 +434,8 @@ enum
 - (void)_refreshFavButtonStatus
 {
     if (_btnFav){
-        if ([[AppCacheManager sharedAppCacheManager] is_fav_market:[_tradingPair.quoteAsset objectForKey:@"symbol"]
-                                                              base:[_tradingPair.baseAsset objectForKey:@"symbol"]]){
+        if ([[AppCacheManager sharedAppCacheManager] is_fav_market:[_tradingPair.quoteAsset objectForKey:@"id"]
+                                                              base:[_tradingPair.baseAsset objectForKey:@"id"]]){
             _btnFav.tintColor = [ThemeManager sharedThemeManager].textColorHighlight;
         }else{
             _btnFav.tintColor = [ThemeManager sharedThemeManager].textColorGray;

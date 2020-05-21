@@ -23,11 +23,6 @@
 - (void)onRefreshFavoritesMarket;
 
 /**
- *  (public) 刷新自定义交易对
- */
-- (void)onRefreshCustomMarket;
-
-/**
  *  (public) 刷新UI（ticker数据变更）
  */
 - (void)onRefreshTickerData;

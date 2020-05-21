@@ -13,7 +13,6 @@
 + (TempManager*)sharedTempManager;
 
 @property (nonatomic, assign) BOOL favoritesMarketDirty;                //  自选市场是否发生变化，需要重新加载。
-@property (nonatomic, assign) BOOL customMarketDirty;                   //  自定义交易对发生变化，需要重新加载。
 @property (nonatomic, assign) BOOL tickerDataDirty;                     //  交易对 ticker 数据有任意一对发生变化就会设置该标记。
 @property (nonatomic, assign) BOOL userLimitOrderDirty;                 //  用户限价单信息发生变化，需要重新加载。（交易界面->全部订单管理->取消订单->返回交易界面。）
 @property (nonatomic, assign) BOOL importToWalletDirty;                 //  导入账号到已有钱包完成，需要刷新界面。

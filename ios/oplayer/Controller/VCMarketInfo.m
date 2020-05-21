@@ -25,7 +25,7 @@
     __weak VCBase*          _owner;
     
     BOOL                    _favorites_market;      //  是否是自选市场
-    NSMutableArray*         _favorites_asset_list;  //  自选列表（非自选市场该变量为nil。）
+    NSArray*                _favorites_asset_list;  //  自选列表（非自选市场该变量为nil。）
     NSDictionary*           _marketInfos;           //  市场信息配置（基本资产、引用资产、分组信息等）
     
     UITableViewBase*        _mainTableView;
@@ -80,13 +80,14 @@
  */
 - (void)onRefreshFavoritesMarket
 {
+    [self refreshCustomMarket];
     [self loadAllFavoritesMarkets];
 }
 
 /**
- *  (public) 刷新自定义交易对
+ *  (private) 刷新自定义交易对
  */
-- (void)onRefreshCustomMarket
+- (void)refreshCustomMarket
 {
     //  自选列表不处理
     if (_favorites_market){
@@ -139,71 +140,15 @@
     }
     
     //  加载数据
-    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     AppCacheManager* pAppCache = [AppCacheManager sharedAppCacheManager];
-    id favlist = [[[pAppCache get_all_fav_markets] allValues] sortedArrayUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+    _favorites_asset_list = [[[pAppCache get_all_fav_markets] allValues] sortedArrayUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
         return [[obj1 objectForKey:@"base"] compare:[obj2 objectForKey:@"base"]];
     })];
-    _favorites_asset_list = [NSMutableArray array];
-    for (id fav_item in favlist) {
-        id base_symbol = [fav_item objectForKey:@"base"];
-        id quote_symbol = [fav_item objectForKey:@"quote"];
-        //  是自定义交易对，则有效。
-        if ([pAppCache is_custom_market:quote_symbol base:base_symbol]){
-            [_favorites_asset_list addObject:fav_item];
-            continue;
-        }
-        //  是默认交易对，则有效。
-        if ([chainMgr isDefaultPair:base_symbol quote_symbol:quote_symbol]){
-            [_favorites_asset_list addObject:fav_item];
-            continue;
-        }
-        //  既不是自定义交易对、也不是默认交易对，则收藏无效了，则从收藏列表删除。（用户添加了自定义、然后收藏了、然后删除了自定义交易对）
-        [pAppCache remove_fav_markets:quote_symbol base:base_symbol];
-    }
-    [pAppCache saveFavMarketsToFile];
     
     //  如果有UI界面则刷新。
     if (_lbEmptyOrder && _mainTableView){
         [self reloadUI:YES];
     }
-}
-
-/**
- *  重新排列交易对
- */
-- (void)reloadTradingPairs
-{
-    //  TODO:fowallet 自定义交易对 fav了，然后删除了，fav列表需要显示么...
-    
-//    if (_array_data){
-//        [_array_data removeAllObjects];
-//    }else{
-//        _array_data = [NSMutableArray array];
-//    }
-//    id custom_markets = [[AppCacheManager sharedAppCacheManager] get_all_custom_markets];
-//    if ([custom_markets count] <= 0){
-//        return;
-//    }
-//    NSMutableDictionary* market_hash = [NSMutableDictionary dictionary];
-//    for (id market in [[ChainObjectManager sharedChainObjectManager] getDefaultMarketInfos]) {
-//        id base = market[@"base"];
-//        market_hash[base[@"symbol"]] = base;
-//    }
-//    for (id custom_item in [custom_markets allValues]) {
-//        id base_symbol = custom_item[@"base"];
-//        id market_base = market_hash[base_symbol];
-//        //  无效数据（用户添加之后，官方删除了部分市场可能存在该情况。TODO:fowallet 考虑从缓存移除。）
-//        if (!market_base){
-//            continue;
-//        }
-//        id quote = custom_item[@"quote"];
-//        [_array_data addObject:@{@"base":market_base, @"quote":quote}];
-//    }
-//    //  排序
-//    [_array_data sortUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-//        return [obj1[@"quote"][@"symbol"] compare:obj2[@"quote"][@"symbol"]];
-//    })];
 }
 
 /**
@@ -367,30 +312,37 @@
     }
     
     id group_info = nil;
-    id base_symbol;
-    id quote_symbol;
     
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     
-    //  获取资产名
+    //  获取资产信息
+    NSDictionary* base = nil;
+    NSDictionary* quote = nil;
     if (_favorites_market){
         id fav_items = [_favorites_asset_list objectAtIndex:indexPath.row];
-        base_symbol = [fav_items objectForKey:@"base"];
-        quote_symbol = [fav_items objectForKey:@"quote"];
+        base = [chainMgr getChainObjectByID:[fav_items objectForKey:@"base"]];
+        quote = [chainMgr getChainObjectByID:[fav_items objectForKey:@"quote"]];
     }else{
         id group = [[_marketInfos objectForKey:@"group_list"] objectAtIndex:indexPath.section];
         group_info = [chainMgr getGroupInfoFromGroupKey:[group objectForKey:@"group_key"]];
-        base_symbol = [[_marketInfos objectForKey:@"base"] objectForKey:@"symbol"];
-        quote_symbol = [[group objectForKey:@"quote_list"] objectAtIndex:indexPath.row];
+        id base_symbol = [[_marketInfos objectForKey:@"base"] objectForKey:@"symbol"];
+        id quote_symbol = [[group objectForKey:@"quote_list"] objectAtIndex:indexPath.row];
+        base = [chainMgr getAssetBySymbol:base_symbol];
+        quote = [chainMgr getAssetBySymbol:quote_symbol];
     }
     
-    //  获取资产信息
-    id base = [chainMgr getAssetBySymbol:base_symbol];
-    id quote = [chainMgr getAssetBySymbol:quote_symbol];
-    
     //  market 信息
+    assert(base);
+    assert(quote);
+    id base_symbol = [base objectForKey:@"symbol"];
+    id quote_symbol = [quote objectForKey:@"symbol"];
     id base_market = [chainMgr getDefaultMarketInfoByBaseSymbol:base_symbol];
-    id base_market_name = [[base_market objectForKey:@"base"] objectForKey:@"name"];
+    id base_market_name = nil;
+    if (base_market) {
+        base_market_name = [[base_market objectForKey:@"base"] objectForKey:@"name"];
+    } else {
+        base_market_name = [base_symbol copy];
+    }
     
     //  获取行情数据
     id item;
@@ -413,20 +365,22 @@
     
     [[IntervalManager sharedIntervalManager] callBodyWithFixedInterval:tableView body:^{
         
-        id base_symbol;
-        id quote_symbol;
+        ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+        id base;
+        id quote;
         
         if (_favorites_market){
             id fav_items = [_favorites_asset_list objectAtIndex:indexPath.row];
-            base_symbol = [fav_items objectForKey:@"base"];
-            quote_symbol = [fav_items objectForKey:@"quote"];
+            base = [chainMgr getChainObjectByID:[fav_items objectForKey:@"base"]];
+            quote = [chainMgr getChainObjectByID:[fav_items objectForKey:@"quote"]];
         }else{
-            base_symbol = [[_marketInfos objectForKey:@"base"] objectForKey:@"symbol"];
-            quote_symbol = [[[[_marketInfos objectForKey:@"group_list"] objectAtIndex:indexPath.section] objectForKey:@"quote_list"] objectAtIndex:indexPath.row];
+            id base_symbol = [[_marketInfos objectForKey:@"base"] objectForKey:@"symbol"];
+            id quote_symbol = [[[[_marketInfos objectForKey:@"group_list"] objectAtIndex:indexPath.section] objectForKey:@"quote_list"] objectAtIndex:indexPath.row];
+            base = [chainMgr getAssetBySymbol:base_symbol];
+            quote = [chainMgr getAssetBySymbol:quote_symbol];
         }
-
-        id base = [[ChainObjectManager sharedChainObjectManager] getAssetBySymbol:base_symbol];
-        id quote = [[ChainObjectManager sharedChainObjectManager] getAssetBySymbol:quote_symbol];
+        assert(base);
+        assert(quote);
         
         VCKLine* vc = [[VCKLine alloc] initWithBaseAsset:base quoteAsset:quote];
         vc.title = [NSString stringWithFormat:@"%@/%@", [quote objectForKey:@"symbol"], [base objectForKey:@"symbol"]];

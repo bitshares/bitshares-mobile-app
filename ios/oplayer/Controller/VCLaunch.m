@@ -210,6 +210,7 @@
  */
 - (void)_enterToMain
 {
+    //  进入主界面
     [[NSNotificationCenter defaultCenter] postNotificationName:kBtsAppEventInitDone object:nil userInfo:nil];
     [[NativeAppDelegate sharedAppDelegate] closeLaunchWindow];
 }
@@ -223,37 +224,43 @@
         GrapheneConnectionManager* connMgr = [GrapheneConnectionManager sharedGrapheneConnectionManager];
         ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
         WalletManager* walletMgr = [WalletManager sharedWalletManager];
+        AppCacheManager* pAppCache = [AppCacheManager sharedAppCacheManager];
         [[[connMgr Start:NO] then:(^id(id success) {
             //  初始化石墨烯网络状态
             [[[chainMgr grapheneNetworkInit] then:(^id(id data) {
-                //  初始化数据
-                WsPromise* initTickerData = [chainMgr marketsInitAllTickerData];
-                WsPromise* initGlobalProperties = [[connMgr last_connection].api_db exec:@"get_global_properties" params:@[]];
-                WsPromise* initFeeAssetInfo = [chainMgr queryFeeAssetListDynamicInfo];   //  查询手续费兑换比例、手续费池等信息
-                //  每次启动都刷新当前账号信息
-                id initFullUserData = [NSNull null];
-                if ([walletMgr isWalletExist]){
-                    initFullUserData = [chainMgr queryFullAccountInfo:[[walletMgr getWalletInfo] objectForKey:@"kAccountName"]];
-                }
-                WsPromise* initOtc = [[OtcManager sharedOtcManager] queryConfig];
-                return [[WsPromise all:@[initTickerData, initGlobalProperties, initFeeAssetInfo, initFullUserData, initOtc]] then:(^id(id data_array) {
-                    [self hideBlockView];
-                    //  更新全局属性
-                    [chainMgr updateObjectGlobalProperties:[data_array objectAtIndex:1]];
-                    //  更新帐号完整数据
-                    id full_account_data = [data_array objectAtIndex:3];
-                    if (full_account_data && ![full_account_data isKindOfClass:[NSNull class]]){
-                        [[AppCacheManager sharedAppCacheManager] updateWalletAccountInfo:full_account_data];
+                //  初始化市场相关依赖数据（在 ticker 等初始化之前。）
+                return [[chainMgr queryAllAssetsInfo:[pAppCache get_fav_markets_asset_ids]] then:^id(id data) {
+                    //  生成市场数据结构
+                    [chainMgr buildAllMarketsInfos];
+                    //  初始化数据
+                    WsPromise* initTickerData = [chainMgr marketsInitAllTickerData];
+                    WsPromise* initGlobalProperties = [[connMgr last_connection].api_db exec:@"get_global_properties" params:@[]];
+                    WsPromise* initFeeAssetInfo = [chainMgr queryFeeAssetListDynamicInfo];   //  查询手续费兑换比例、手续费池等信息
+                    //  每次启动都刷新当前账号信息
+                    id initFullUserData = [NSNull null];
+                    if ([walletMgr isWalletExist]){
+                        initFullUserData = [chainMgr queryFullAccountInfo:[[walletMgr getWalletInfo] objectForKey:@"kAccountName"]];
                     }
-                    //  启动完毕备份钱包
-                    [[AppCacheManager sharedAppCacheManager] autoBackupWalletToWebdir:NO];
-                    //  添加ticker更新任务
-                    [[ScheduleManager sharedScheduleManager] autoRefreshTickerScheduleByMergedMarketInfos];
-                    //  初始化网络成功
-                    [OrgUtils logEvents:@"appInitNetworkDone" params:@{}];
-                    resolve(@YES);
-                    return nil;
-                })];
+                    WsPromise* initOtc = [[OtcManager sharedOtcManager] queryConfig];
+                    return [[WsPromise all:@[initTickerData, initGlobalProperties, initFeeAssetInfo, initFullUserData, initOtc]] then:(^id(id data_array) {
+                        [self hideBlockView];
+                        //  更新全局属性
+                        [chainMgr updateObjectGlobalProperties:[data_array objectAtIndex:1]];
+                        //  更新帐号完整数据
+                        id full_account_data = [data_array objectAtIndex:3];
+                        if (full_account_data && ![full_account_data isKindOfClass:[NSNull class]]){
+                            [pAppCache updateWalletAccountInfo:full_account_data];
+                        }
+                        //  启动完毕备份钱包
+                        [pAppCache autoBackupWalletToWebdir:NO];
+                        //  添加ticker更新任务
+                        [[ScheduleManager sharedScheduleManager] autoRefreshTickerScheduleByMergedMarketInfos];
+                        //  初始化网络成功
+                        [OrgUtils logEvents:@"appInitNetworkDone" params:@{}];
+                        resolve(@YES);
+                        return nil;
+                    })];
+                }];
             })] catch:(^id(id error) {
                 reject(NSLocalizedString(@"tip_network_error", @"网络异常，请稍后再试。"));
                 return nil;
