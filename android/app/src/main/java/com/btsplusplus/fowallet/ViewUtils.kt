@@ -57,13 +57,13 @@ class ViewUtils {
         /**
          * 创建垂直/水平居中的空描述Label。
          */
-        fun createEmptyCenterLabel(ctx: Context, message: String): TextView {
+        fun createEmptyCenterLabel(ctx: Context, message: String, text_color: Int = ctx.resources.getColor(R.color.theme01_textColorMain)): TextView {
             val _lbEmptyOrder = TextView(ctx)
             val _lbEmptyOrder_layout_params = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
             _lbEmptyOrder_layout_params.gravity = Gravity.CENTER_VERTICAL or Gravity.CENTER
             _lbEmptyOrder.text = message
             _lbEmptyOrder.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13f)
-            _lbEmptyOrder.setTextColor(ctx.resources.getColor(R.color.theme01_textColorMain))
+            _lbEmptyOrder.setTextColor(text_color)
             _lbEmptyOrder.gravity = Gravity.CENTER_VERTICAL or Gravity.CENTER
             _lbEmptyOrder.layoutParams = _lbEmptyOrder_layout_params
             return _lbEmptyOrder
