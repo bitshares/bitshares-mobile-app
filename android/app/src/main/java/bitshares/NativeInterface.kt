@@ -27,6 +27,8 @@ class NativeInterface {
 
     external fun bts_public_key_to_address(public_key: ByteArray, address_prefix: ByteArray): ByteArray?
 
+    external fun bts_verify_private_key(private_key: ByteArray): Boolean
+
     external fun bts_gen_public_key(private_key32: ByteArray): ByteArray?
 
     external fun bts_gen_address_from_private_key32(private_key32: ByteArray, address_prefix: ByteArray): ByteArray?

@@ -84,7 +84,9 @@ open class T_Base_companion {
         T_asset_update_feed_producers.register_subfields()
         T_asset_reserve.register_subfields()
         T_asset_issue.register_subfields()
+        T_asset_fund_fee_pool.register_subfields()
         T_asset_claim_pool.register_subfields()
+        T_asset_claim_fees.register_subfields()
         T_asset_update_issuer.register_subfields()
 
         T_assert_predicate_account_name_eq_lit.register_subfields()
@@ -1160,6 +1162,18 @@ class T_asset_issue : T_Base() {
     }
 }
 
+class T_asset_fund_fee_pool : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("fee", T_asset)                               //  only core asset
+            add_field("from_account", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
+            add_field("asset_id", Tm_protocol_id_type(EBitsharesObjectType.ebot_asset))
+            add_field("amount", T_asset)                            //  only core asset
+            add_field("extensions", Tm_set(T_future_extensions))
+        }
+    }
+}
+
 class T_asset_claim_pool : T_Base() {
     companion object : T_Base_companion() {
         override fun register_subfields() {
@@ -1167,6 +1181,17 @@ class T_asset_claim_pool : T_Base() {
             add_field("issuer", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
             add_field("asset_id", Tm_protocol_id_type(EBitsharesObjectType.ebot_asset))     //  fee.asset_id must != asset_id
             add_field("amount_to_claim", T_asset)                           //  only core asset
+            add_field("extensions", Tm_set(T_future_extensions))
+        }
+    }
+}
+
+class T_asset_claim_fees : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("fee", T_asset)
+            add_field("issuer", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
+            add_field("amount_to_claim", T_asset)                           //  amount_to_claim.asset_id->issuer must == issuer
             add_field("extensions", Tm_set(T_future_extensions))
         }
     }
@@ -1403,7 +1428,9 @@ class T_operation : T_Base() {
                 EBitsharesOperations.ebo_asset_update_feed_producers.value -> T_asset_update_feed_producers
                 EBitsharesOperations.ebo_asset_reserve.value -> T_asset_reserve
                 EBitsharesOperations.ebo_asset_issue.value -> T_asset_issue
+                EBitsharesOperations.ebo_asset_fund_fee_pool.value -> T_asset_fund_fee_pool
                 EBitsharesOperations.ebo_asset_claim_pool.value -> T_asset_claim_pool
+                EBitsharesOperations.ebo_asset_claim_fees.value -> T_asset_claim_fees
                 EBitsharesOperations.ebo_asset_update_issuer.value -> T_asset_update_issuer
                 EBitsharesOperations.ebo_assert.value -> T_assert
                 EBitsharesOperations.ebo_transfer_to_blind.value -> T_transfer_to_blind

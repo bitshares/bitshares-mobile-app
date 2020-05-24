@@ -78,6 +78,13 @@ class ActivityAssetOpCommon : BtsppActivity() {
                 val dynamic_asset_data = chainMgr.getChainObjectByID(_curr_selected_asset.getString("dynamic_asset_data_id"))
                 _nCurrBalance = bigDecimalfromAmount(dynamic_asset_data.getString("fee_pool"), _curr_balance_asset.getInt("precision"))
             }
+            EBitsharesAssetOpKind.ebaok_claim_fees -> {
+                //  REMARK：计算可领取的市场手续费余额。
+                val chainMgr = ChainObjectManager.sharedChainObjectManager()
+                _curr_balance_asset = _curr_selected_asset
+                val dynamic_asset_data = chainMgr.getChainObjectByID(_curr_selected_asset.getString("dynamic_asset_data_id"))
+                _nCurrBalance = bigDecimalfromAmount(dynamic_asset_data.getString("accumulated_fees"), _curr_balance_asset.getInt("precision"))
+            }
             else -> {
                 //  其他操作，从账号获取余额。
                 assert(_full_account_data != null)
@@ -93,6 +100,7 @@ class ActivityAssetOpCommon : BtsppActivity() {
             EBitsharesAssetOpKind.ebaok_settle -> resources.getString(R.string.kVcTitleAssetOpSettle)
             EBitsharesAssetOpKind.ebaok_reserve -> resources.getString(R.string.kVcTitleAssetOpReserve)
             EBitsharesAssetOpKind.ebaok_claim_pool -> resources.getString(R.string.kVcTitleAssetClaimFeePool)
+            EBitsharesAssetOpKind.ebaok_claim_fees -> resources.getString(R.string.kVcTitleAssetClaimMarketFees)
             else -> ""
         }
     }
@@ -110,8 +118,9 @@ class ActivityAssetOpCommon : BtsppActivity() {
         //  部分切换资产
         //  1、提取手续费池 - 不可切换，需要查询手续费池。暂不支持 TODO:5.0
         //  2、清算操作 - 不可切换，需要刷新各种标记，是否黑天鹅等。暂不支持 TODO:5.0
+        //  3、提取市场手续费 - 不可切换，需要查询。暂不支持
         return when (_op_type) {
-            EBitsharesAssetOpKind.ebaok_claim_pool, EBitsharesAssetOpKind.ebaok_settle -> false
+            EBitsharesAssetOpKind.ebaok_claim_pool, EBitsharesAssetOpKind.ebaok_claim_fees, EBitsharesAssetOpKind.ebaok_settle -> false
             else -> true
         }
     }
@@ -176,6 +185,8 @@ class ActivityAssetOpCommon : BtsppActivity() {
             EBitsharesAssetOpKind.ebaok_reserve -> ENetworkSearchType.enstAssetUIA
             //  REMARK：提取手续费池不可切换资产。
             EBitsharesAssetOpKind.ebaok_claim_pool -> return
+            //  REMARK：提取市场手续费不可切换资产
+            EBitsharesAssetOpKind.ebaok_claim_fees -> return
             else -> ENetworkSearchType.enstAssetAll
         }
 
@@ -252,6 +263,13 @@ class ActivityAssetOpCommon : BtsppActivity() {
                 guardWalletUnlocked(false) { unlocked ->
                     if (unlocked) {
                         _execAssetClaimPoolCore(n_amount)
+                    }
+                }
+            }
+            EBitsharesAssetOpKind.ebaok_claim_fees -> {
+                guardWalletUnlocked(false) { unlocked ->
+                    if (unlocked) {
+                        _execAssetClaimFeesCore(n_amount)
                     }
                 }
             }
@@ -396,4 +414,51 @@ class ActivityAssetOpCommon : BtsppActivity() {
             }
         }
     }
+
+    /**
+     *  (private) 执行提取市场手续费操作
+     */
+    private fun _execAssetClaimFeesCore(n_amount: BigDecimal) {
+        val chainMgr = ChainObjectManager.sharedChainObjectManager()
+        val op_account = WalletManager.sharedWalletManager().getWalletAccountInfo()!!.getJSONObject("account")
+
+        val n_amount_pow = n_amount.multiplyByPowerOf10(_curr_balance_asset.getInt("precision"))
+
+        val op = JSONObject().apply {
+            put("fee", JSONObject().apply {
+                put("amount", 0)
+                put("asset_id", chainMgr.grapheneCoreAssetID)
+            })
+            put("issuer", op_account.getString("id"))
+            put("amount_to_claim", JSONObject().apply {
+                put("amount", n_amount_pow.toPlainString())
+                put("asset_id", _curr_balance_asset.getString("id"))
+            })
+        }
+
+        //  确保有权限发起普通交易，否则作为提案交易处理。
+        GuardProposalOrNormalTransaction(EBitsharesOperations.ebo_asset_claim_fees, false, false,
+                op, op_account) { isProposal, _ ->
+            assert(!isProposal)
+            //  请求网络广播
+            val mask = ViewMask(resources.getString(R.string.kTipsBeRequesting), this).apply { show() }
+            BitsharesClientManager.sharedBitsharesClientManager().assetClaimFees(op).then {
+                mask.dismiss()
+                showToast(_op_extra_args.optString("kMsgSubmitOK"))
+                //  [统计]
+                btsppLogCustom("txAssetClaimFeesFullOK", jsonObjectfromKVS("account", op_account.getString("id")))
+                //  返回上一个界面并刷新
+                _result_promise?.resolve(true)
+                _result_promise = null
+                finish()
+                return@then null
+            }.catch { err ->
+                mask.dismiss()
+                showGrapheneError(err)
+                //  [统计]
+                btsppLogCustom("txAssetClaimFeesFailed", jsonObjectfromKVS("account", op_account.getString("id")))
+            }
+        }
+    }
+
 }

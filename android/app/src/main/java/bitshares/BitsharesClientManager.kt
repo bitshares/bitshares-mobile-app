@@ -465,7 +465,14 @@ class BitsharesClientManager {
     }
 
     /**
-     *  OP -提取资产等手续费池资金
+     *  OP -注资资产的手续费池资金
+     */
+    fun assetFundFeePool(opdata: JSONObject): Promise {
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_asset_fund_fee_pool, opdata.getString("from_account"))
+    }
+
+    /**
+     *  OP -提取资产的手续费池资金
      */
     fun assetClaimPool(opdata: JSONObject): Promise {
         return runSingleTransaction(opdata, EBitsharesOperations.ebo_asset_claim_pool, opdata.getString("issuer"))
@@ -477,6 +484,13 @@ class BitsharesClientManager {
     fun assetUpdateIssuer(opdata: JSONObject): Promise {
         //  TODO:7.0 待测试
         return runSingleTransaction(opdata, EBitsharesOperations.ebo_asset_update_issuer, opdata.getString("issuer"), require_owner_permission = true)
+    }
+
+    /**
+     *  OP -提取资产的市场手续费资金
+     */
+    fun assetClaimFees(opdata: JSONObject):  Promise {
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_asset_claim_fees, opdata.getString("issuer"))
     }
 
     /**

@@ -318,6 +318,16 @@ fun android.app.Activity.showGrapheneError(error: Any?) {
                     showToast(resources.getString(R.string.kGPErrorBlindVerifySumFailed))
                     return
                 }
+                //  TODO:6.0 receive asset error - create limit order
+                //  This market has not been whitelisted by the selling asset
+                //  This market has been blacklisted by the selling asset
+
+                //  The account is not allowed to transact the selling asset
+                //  The account is not allowed to transact the receiving asset
+
+                //  TODO:6.0 update asset
+                //  "flags & white_list" - when account black or white list is not empty.
+
                 //  Transaction exceeds maximum transaction size. TODO:8.0 超过交易最大大小限制
                 //  TODO:fowallet 提案等手续费不足等情况显示
             }
