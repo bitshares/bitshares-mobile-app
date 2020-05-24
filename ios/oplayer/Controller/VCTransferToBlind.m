@@ -107,7 +107,7 @@ enum
 
 - (NSString*)genTransferTipsMessage
 {
-    return NSLocalizedString(@"kVcStTipUiTransferToBlind", @"【温馨提示】\n隐私转入：即从比特股公开账号向隐私账户转账。并且可同时向多个隐私账户转账。\n\n如果是通过提案进行隐私转账，则不会生成隐私收据，在提案生效后直接输入创建提案时对应区块编号进行导入即可。");
+    return NSLocalizedString(@"kVcStTipUiTransferToBlind", @"【温馨提示】\n隐私转入：从比特股公开账号向隐私账户转账。并且可同时向多个隐私账户转账。\n\n如果是通过提案进行隐私转账，则不会生成隐私收据，在提案生效后直接输入创建提案时对应区块编号进行导入即可。");
 }
 
 - (void)viewDidLoad
@@ -316,7 +316,7 @@ enum
                 }
                     break;
                 case kVcSubOutputTotalAmount:
-                    cell.textLabel.text = NSLocalizedString(@"kVcStCellTitleTotalOutputAmount", @"输出总金额");
+                    cell.textLabel.text = NSLocalizedString(@"kVcStCellTitleTotalOutputAmount", @"转账总金额");
                     cell.detailTextLabel.textColor = theme.buyColor;
                     cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@", [OrgUtils formatFloatValue:[self calcBlindOutputTotalAmount] usesGroupingSeparator:NO], symbol];
                     break;

@@ -9,8 +9,10 @@
 #import "VCTransfer.h"
 #import "BitsharesClientManager.h"
 
+#import "VCStealthTransfer.h"
 #import "VCSearchNetwork.h"
 #import "VCTransactionConfirm.h"
+#import "VCPaySuccess.h"
 
 #import "MBProgressHUD.h"
 #import "OrgUtils.h"
@@ -226,6 +228,34 @@ enum
     [self onAmountChanged];
 }
 
+- (void)onRightButtonClicked:(UIButton*)sender
+{
+    //  TODO:8.0 以后考虑添加 限时转账？回收等？
+    [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
+                                                       message:nil
+                                                        cancel:NSLocalizedString(@"kBtnCancel", @"取消")
+                                                         items:@[NSLocalizedString(@"kVcStealthTransferEntryTitle", @"隐私交易")]
+                                                      callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
+     {
+        if (buttonIndex != cancelIndex){
+            switch (buttonIndex) {
+                case 0: //  隐私交易入口
+                {
+                    [self GuardWalletExistWithWalletMode:NSLocalizedString(@"kVcStealthTransferGuardWalletModeTips", @"隐私交易仅支持钱包模式，是否为当前的账号创建本地钱包文件？")
+                                                    body:^{
+                        [self pushViewController:[[VCStealthTransfer alloc] init]
+                                         vctitle:NSLocalizedString(@"kVcTitleStealthTransferEntry", @"隐私交易")
+                                       backtitle:kVcDefaultBackTitleName];
+                    }];
+                }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -233,6 +263,9 @@ enum
     
     //  背景颜色
     self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
+    
+    //  右边按钮
+    [self showRightButton:NSLocalizedString(@"kVcTransferAdvButtonName", @"高级") action:@selector(onRightButtonClicked:)];
     
     //  初始化UI
     NSString* placeHolderAmount = NSLocalizedString(@"kVcTransferTipInputSendAmount", @"请输入转账金额");
@@ -554,23 +587,16 @@ enum
     
     //  请求网络广播
     [self showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
-    [[[[BitsharesClientManager sharedBitsharesClientManager] transfer:op_data] then:(^id(id data) {
-        id account_id = [[_full_account_data objectForKey:@"account"] objectForKey:@"id"];
-        [[[[ChainObjectManager sharedChainObjectManager] queryFullAccountInfo:account_id] then:(^id(id full_data) {
-            NSLog(@"transfer & refresh: %@", full_data);
-            [self hideBlockView];
-            [self refreshUI:full_data];
-            [OrgUtils makeToast:NSLocalizedString(@"kVcTransferTipTxTransferFullOK", @"发送成功。")];
-            //  [统计]
-            [OrgUtils logEvents:@"txTransferFullOK" params:@{@"account":account_id, @"asset":asset[@"symbol"]}];
-            return nil;
-        })] catch:(^id(id error) {
-            [self hideBlockView];
-            [OrgUtils makeToast:NSLocalizedString(@"kVcTransferTipTxTransferOK", @"发送成功，但刷新界面数据失败，请稍后再试。")];
-            //  [统计]
-            [OrgUtils logEvents:@"txTransferOK" params:@{@"account":account_id, @"asset":asset[@"symbol"]}];
-            return nil;
-        })];
+    [[[[BitsharesClientManager sharedBitsharesClientManager] transfer:op_data] then:(^id(id tx_data) {
+        [self hideBlockView];
+        //  转到结果界面。
+        [OrgUtils logEvents:@"txPayTransferFullOK" params:@{@"asset":asset[@"symbol"]}];
+        id amount_string = [NSString stringWithFormat:@"%@ %@", [_transfer_args objectForKey:@"kAmount"], asset[@"symbol"]];
+        VCPaySuccess* vc = [[VCPaySuccess alloc] initWithResult:tx_data
+                                                     to_account:[_full_account_data objectForKey:@"account"]
+                                                  amount_string:amount_string
+                                             success_tip_string:NSLocalizedString(@"kVcTransferTipLabelTransferSuccess", @"转账成功")];
+        [self clearPushViewController:vc vctitle:@"" backtitle:kVcDefaultBackTitleName];
         return nil;
     })] catch:(^id(id error) {
         [self hideBlockView];

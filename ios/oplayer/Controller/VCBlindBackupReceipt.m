@@ -110,7 +110,7 @@ enum
     _qrImageView = [[UIImageView alloc] initWithImage:qrImage];
     _qrImageView.frame = CGRectMake((fWidth - _fQrSize) / 2, 0, _fQrSize, _fQrSize);
     
-    _cellTips = [[ViewTipsInfoCell alloc] initWithText:NSLocalizedString(@"kVcStTipUiBackupYourReceipt", @"【温馨提示】\n隐私收据是隐私转账收款凭证，请妥善备份好。\n如果是转入您自身的隐私账户，收据会自动导入我的收据界面。如果是转给他人隐私账户，您需要分享收据给目标用户，用户导入收据后方可提取。")];
+    _cellTips = [[ViewTipsInfoCell alloc] initWithText:NSLocalizedString(@"kVcStTipUiBackupYourReceipt", @"【温馨提示】\n1、隐私收据是隐私转账唯一收款凭证，请务必妥善保管。\n2、请复制收据信息或截图保存。\n3、隐私转账后，收款方需尽快导入收据信息以确认转账成功。\n4、如果您是给他人进行隐私账户，转账后请主动提交收据信息给目标用户。")];
     _cellTips.hideBottomLine = YES;
     _cellTips.hideTopLine = YES;
     _cellTips.backgroundColor = [UIColor clearColor];
@@ -209,7 +209,7 @@ enum
                     break;
                 case kVcSubReceipt:
                 {
-                    ViewAddrMemoInfoCell* cell = [[ViewAddrMemoInfoCell alloc] initWithTitleText:NSLocalizedString(@"kVcStCellButtonNameCopyReceipt", @"复制收据")
+                    ViewAddrMemoInfoCell* cell = [[ViewAddrMemoInfoCell alloc] initWithTitleText:NSLocalizedString(@"kVcStCellButtonNameCopyReceipt", @"复制收据(可截图)")
                                                                                        valueText:_blind_receipt_string];
                     cell.accessoryType = UITableViewCellAccessoryNone;
                     cell.selectionStyle = UITableViewCellSelectionStyleBlue;

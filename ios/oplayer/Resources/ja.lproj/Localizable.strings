@@ -775,6 +775,7 @@
 /* 转账界面 */
 "kLabelSendAll" = "全部";
 "kLabelSendBtn" = "発送します";
+"kVcTransferAdvButtonName" = "高级";//TODO
 "kVcTransferTipTxTransferFullOK" = "成功を送る。";
 "kVcTransferTipTxTransferOK" = "成功を送る，ネットワークが異常で、少しの後でまた試みてください。";
 "kVcTransferTipInputSendAmount" = "入力して振替の金額";
@@ -793,14 +794,15 @@
 "kVcTransferCellMemo" = "付注情報";
 "kVcTransferTipSelectToAccount" = "受取口座を選びください。";
 "kVcTransferTipSelectAsset" = "選んで帳簿の資産を回転してください";
+"kVcTransferTipLabelTransferSuccess" = "転送が完了しました";
 
 /* 隐私交易相关 */
 "kVcStealthTransferEntryTitle" = "隐私交易";//TODO:
 "kVcStealthTransferGuardWalletModeTips" = "隐私交易仅支持钱包模式，是否为当前的账号创建本地钱包文件？"; //TODO:
 "kVcStEntryBlindAccounts" = "账户管理";//TODO:
 "kVcStEntryBlindBalances" = "我的收据";//TODO:
-"kVcStEntryTransferToBlind" = "向隐私账户转账";//TODO:
-"kVcStEntryTransferFromBlind" = "从隐私账户转出";//TODO:
+"kVcStEntryTransferToBlind" = "转入隐私账户";//TODO:
+"kVcStEntryTransferFromBlind" = "隐私账户转出";//TODO:
 "kVcStEntryBlindTransfer" = "隐私转账";//TODO:
 "kVcStBtnSelectReceipt" = "选择隐私收据";//TODO:
 "kVcStBtnAddBlindOutput" = "添加收款信息";//TODO:
@@ -815,10 +817,10 @@
 "kVcStCellTitleReceipt" = "收据";//TODO:
 "kVcStCellTitleAvailableBalance" = "可用余额";//TODO:
 "kVcStCellTitleTotalInputReceiptAmount" = "收据总金额";//TODO:
-"kVcStCellTitleTotalOutputAmount" = "输出总金额";//TODO:
+"kVcStCellTitleTotalOutputAmount" = "转账总金额";//TODO:
 "kVcStCellTitleNetworkFee" = "广播手续费";//TODO:
 "kVcStCellTitleActualAmount" = "实际到账";//TODO:
-"kVcStTipUiImportReceipt" = "【温馨提示】\n导入收据同时支持APP生成的收据和CLI命令行钱包收据格式。\n如果隐私收据丢失，可尝试直接输入转账对应区块编号进行导入。\n\n如果是通过提案进行隐私转账，则不会生成隐私收据，在提案生效后直接输入创建提案时对应区块编号进行导入即可。";//TODO:
+"kVcStTipUiImportReceipt" = "【温馨提示】\n导入收据同时支持APP生成的收据和CLI命令行钱包收据格式。\n\n如果隐私收据丢失，可尝试直接输入转账对应区块编号进行导入。\n\n如果是通过提案进行隐私转账，则不会生成隐私收据，在提案生效后直接输入创建提案时对应区块编号进行导入即可。";//TODO:
 "kVcStTipUiTransferToBlind" = "【温馨提示】\n隐私转入：即从比特股公开账号向隐私账户转账。并且可同时向多个隐私账户转账。\n\n如果是通过提案进行隐私转账，则不会生成隐私收据，在提案生效后直接输入创建提案时对应区块编号进行导入即可。";//TODO:
 "kVcStTipUiBlindTransfer" = "【温馨提示】\n隐私转账：即在多个隐私账户之间进行转账操作。\n\n找零和赠与：收据总金额减去输出总金额的剩余金额，如果满足找零所需手续费，则会自动找零到我的隐私账户，否则会自动赠与给第一个隐私账户。";//TODO:
 "kVcStTipUiTransferFromBlind" = "【温馨提示】\n隐私转出：即从隐私账户向比特股公开账号转账。";//TODO:
@@ -839,7 +841,7 @@
 "kVcStTipAskConfrimBlindTransfer" = "您确定往 %1$@ 个隐私账户转账 %2$@ %3$@ 吗?n\n广播手续费：%4$@ %5$@";//TODO:
 "kVcStTipUiBackupYourReceipt" = "【温馨提示】\n隐私收据是隐私转账收款凭证，请妥善备份好。\n如果是转入您自身的隐私账户，收据会自动导入我的收据界面。如果是转给他人隐私账户，您需要分享收据给目标用户，用户导入收据后方可提取。";//TODO:
 "kVcStLabelPleaseBackupYourReceiptText" = "隐私转账成功，请妥善保管以下收据信息！";//TODO:
-"kVcStCellButtonNameCopyReceipt" = "复制收据";//TODO:
+"kVcStCellButtonNameCopyReceipt" = "复制收据(可截图)";//TODO:
 "kVcStTipReceiptBackupCopied" = "收据已复制。";//TODO:
 "kVcStTipAskConfrimForCloseBackupReceiptUI" = "提取隐私资产需要收据信息，请确认您已备份好以上收据，可截图保存。";//TODO:
 "kVcStTipErrPleaseSelectToPublicAccount" = "请选择要转出的目标账号。";//TODO:
@@ -854,8 +856,8 @@
 "kVcStTipLabelTransferFromBlindSuccess" = "从隐私转出成功";//TODO:
 "kVcStTipEmptyNoBlindBalance" = "没有任何隐私收据。";//TODO:
 "kVcStBtnSelectDone" = "确定";//TODO:
-"kVcStBlindBalanceActionTransferFromBlind" = "从隐私账户转出";//TODO:
-"kVcStBlindBalanceActionBlindTransfer" = "隐私转账";//TODO:
+"kVcStBlindBalanceActionTransferFromBlind" = "隐私账户转出";//TODO:
+"kVcStBlindBalanceActionBlindTransfer" = "隐私账户互转";//TODO:
 "kVcStTipEmptyNoBlindCanImport" = "没有任何隐私收据，可点击右上角导入收据。";//TODO:
 "kVcStCellTitleAliasName" = "别名";//TODO:
 "kVcStPlaceholderInputAliasName" = "为隐私账户设置一个别名";//TODO:
@@ -1280,7 +1282,7 @@
 "kOpDesc_override_transfer" = "資産を回収する。";
 "kOpDesc_transfer_to_blind" = "%@ 送金 %@ とプライベートアカウント。";
 "kOpDesc_blind_transfer" = "プライバシー振込。";
-"kOpDesc_transfer_from_blind" = "%@ はプライバシーアカウントから %@ を転送します。";
+"kOpDesc_transfer_from_blind" = "プライベートアカウント送金 %@ と %@。";
 "kOpDesc_asset_settle_cancel" = "キャンセルして清算します。";
 "kOpDesc_asset_claim_fees" = "%@ は %@ の資産手数料を取り出します。";
 "kOpDesc_fba_distribute" = "FBA分发。";//TODO:

@@ -775,6 +775,7 @@
 /* 转账界面 */
 "kLabelSendAll" = "全部";
 "kLabelSendBtn" = "发送";
+"kVcTransferAdvButtonName" = "高级";
 "kVcTransferTipTxTransferFullOK" = "发送成功。";
 "kVcTransferTipTxTransferOK" = "发送成功，但刷新界面数据失败，请稍后再试。";
 "kVcTransferTipInputSendAmount" = "请输入转账金额";
@@ -793,14 +794,15 @@
 "kVcTransferCellMemo" = "备注信息";
 "kVcTransferTipSelectToAccount" = "请选择收款账号";
 "kVcTransferTipSelectAsset" = "请选择要转账的资产";
+"kVcTransferTipLabelTransferSuccess" = "转账成功";
 
 /* 隐私交易相关 */
 "kVcStealthTransferEntryTitle" = "隐私交易";
 "kVcStealthTransferGuardWalletModeTips" = "隐私交易仅支持钱包模式，是否为当前的账号创建本地钱包文件？"; 
 "kVcStEntryBlindAccounts" = "账户管理";
 "kVcStEntryBlindBalances" = "我的收据";
-"kVcStEntryTransferToBlind" = "向隐私账户转账";
-"kVcStEntryTransferFromBlind" = "从隐私账户转出";
+"kVcStEntryTransferToBlind" = "转入隐私账户";
+"kVcStEntryTransferFromBlind" = "隐私账户转出";
 "kVcStEntryBlindTransfer" = "隐私转账";
 "kVcStBtnSelectReceipt" = "选择隐私收据";
 "kVcStBtnAddBlindOutput" = "添加收款信息";
@@ -815,13 +817,13 @@
 "kVcStCellTitleReceipt" = "收据";
 "kVcStCellTitleAvailableBalance" = "可用余额";
 "kVcStCellTitleTotalInputReceiptAmount" = "收据总金额";
-"kVcStCellTitleTotalOutputAmount" = "输出总金额";
+"kVcStCellTitleTotalOutputAmount" = "转账总金额";
 "kVcStCellTitleNetworkFee" = "广播手续费";
 "kVcStCellTitleActualAmount" = "实际到账";
-"kVcStTipUiImportReceipt" = "【温馨提示】\n导入收据同时支持APP生成的收据和CLI命令行钱包收据格式。\n如果隐私收据丢失，可尝试直接输入转账对应区块编号进行导入。\n\n如果是通过提案进行隐私转账，则不会生成隐私收据，在提案生效后直接输入创建提案时对应区块编号进行导入即可。";
-"kVcStTipUiTransferToBlind" = "【温馨提示】\n隐私转入：即从比特股公开账号向隐私账户转账。并且可同时向多个隐私账户转账。\n\n如果是通过提案进行隐私转账，则不会生成隐私收据，在提案生效后直接输入创建提案时对应区块编号进行导入即可。";
-"kVcStTipUiBlindTransfer" = "【温馨提示】\n隐私转账：即在多个隐私账户之间进行转账操作。\n\n找零和赠与：收据总金额减去输出总金额的剩余金额，如果满足找零所需手续费，则会自动找零到我的隐私账户，否则会自动赠与给第一个隐私账户。";
-"kVcStTipUiTransferFromBlind" = "【温馨提示】\n隐私转出：即从隐私账户向比特股公开账号转账。";
+"kVcStTipUiImportReceipt" = "【温馨提示】\n导入收据同时支持APP生成的收据和CLI命令行钱包收据格式。\n\n如果隐私收据丢失，可尝试直接输入转账对应区块编号进行导入。\n\n如果是通过提案进行隐私转账，则不会生成隐私收据，在提案生效后直接输入创建提案时对应区块编号进行导入即可。";
+"kVcStTipUiTransferToBlind" = "【温馨提示】\n隐私转入：从比特股公开账号向隐私账户转账。并且可同时向多个隐私账户转账。\n\n如果是通过提案进行隐私转账，则不会生成隐私收据，在提案生效后直接输入创建提案时对应区块编号进行导入即可。";
+"kVcStTipUiBlindTransfer" = "【温馨提示】\n隐私转账：在多个隐私账户之间进行转账操作。\n\n找零和赠与：收据总金额减去输出总金额的剩余金额，如果满足找零所需手续费，则会自动找零到我的隐私账户，否则会自动赠与给第一个隐私账户。";
+"kVcStTipUiTransferFromBlind" = "【温馨提示】\n隐私转出：从隐私账户向比特股公开账号转账。";
 "kVcStTipErrForbidBlindTransfer" = "资产 %@ 已禁止隐私转账。";
 "kVcStTipErrForbidNormalTransfer" = "资产 %@ 禁止转账。";
 "kVcStTipErrNeedWhiteList" = "资产 %@ 已开启白名单，禁止隐私转账。";
@@ -837,9 +839,9 @@
 "kVcStTipAskConfrimBlindTransferWithAutoChange" = "您确定往 %1$@ 个隐私账户转账 %2$@ %3$@ 吗?\n\n自动找零：%4$@ %5$@\n\n广播手续费：%6$@ %7$@";
 "kVcStTipAskConfrimBlindTransferWithAutoGift" = "您确定往 %1$@ 个隐私账户转账 %2$@ %3$@ 吗?\n\n自动赠与：%4$@ %5$@\n\n广播手续费：%6$@ %7$@";
 "kVcStTipAskConfrimBlindTransfer" = "您确定往 %1$@ 个隐私账户转账 %2$@ %3$@ 吗?n\n广播手续费：%4$@ %5$@";
-"kVcStTipUiBackupYourReceipt" = "【温馨提示】\n隐私收据是隐私转账收款凭证，请妥善备份好。\n如果是转入您自身的隐私账户，收据会自动导入我的收据界面。如果是转给他人隐私账户，您需要分享收据给目标用户，用户导入收据后方可提取。";
+"kVcStTipUiBackupYourReceipt" = "【温馨提示】\n1、隐私收据是隐私转账唯一收款凭证，请务必妥善保管。\n2、请复制收据信息或截图保存。\n3、隐私转账后，收款方需尽快导入收据信息以确认转账成功。\n4、如果您是给他人进行隐私账户，转账后请主动提交收据信息给目标用户。";
 "kVcStLabelPleaseBackupYourReceiptText" = "隐私转账成功，请妥善保管以下收据信息！";
-"kVcStCellButtonNameCopyReceipt" = "复制收据";
+"kVcStCellButtonNameCopyReceipt" = "复制收据(可截图)";
 "kVcStTipReceiptBackupCopied" = "收据已复制。";
 "kVcStTipAskConfrimForCloseBackupReceiptUI" = "提取隐私资产需要收据信息，请确认您已备份好以上收据，可截图保存。";
 "kVcStTipErrPleaseSelectToPublicAccount" = "请选择要转出的目标账号。";
@@ -854,7 +856,7 @@
 "kVcStTipLabelTransferFromBlindSuccess" = "从隐私转出成功";
 "kVcStTipEmptyNoBlindBalance" = "没有任何隐私收据。";
 "kVcStBtnSelectDone" = "确定";
-"kVcStBlindBalanceActionTransferFromBlind" = "从隐私账户转出";
+"kVcStBlindBalanceActionTransferFromBlind" = "隐私账户转出";
 "kVcStBlindBalanceActionBlindTransfer" = "隐私转账";
 "kVcStTipEmptyNoBlindCanImport" = "没有任何隐私收据，可点击右上角导入收据。";
 "kVcStCellTitleAliasName" = "别名";
@@ -1104,8 +1106,8 @@
 "kVcTitleCreateHTLC" = "创建HTLC合约";
 "kVcTitleCreateSubHTLC" = "部署副合约";
 "kVcTitleStealthTransferEntry" = "隐私交易";
-"kVcTitleTransferToBlind" = "向隐私账户转账";
-"kVcTitleTransferFromBlind" = "从隐私账户转出";
+"kVcTitleTransferToBlind" = "转入隐私账户";
+"kVcTitleTransferFromBlind" = "隐私账户转出";
 "kVcTitleBlindTransfer" = "隐私转账";
 "kVcTitleBlindAccountsMgr" = "账户管理";
 "kVcTitleBlindBalancesMgr" = "我的收据";
@@ -1214,9 +1216,9 @@
 "kOpType_assert" = "断言";
 "kOpType_balance_claim" = "提取余额";
 "kOpType_override_transfer" = "回收资产";
-"kOpType_transfer_to_blind" = "向隐私账户转账";
+"kOpType_transfer_to_blind" = "转入隐私账户";
 "kOpType_blind_transfer" = "隐私转账";
-"kOpType_transfer_from_blind" = "从隐私账户转出";
+"kOpType_transfer_from_blind" = "隐私账户转出";
 "kOpType_asset_settle_cancel" = "取消清算";
 "kOpType_asset_claim_fees" = "提取资产手续费";
 "kOpType_fba_distribute" = "FBA分发";
@@ -1280,7 +1282,7 @@
 "kOpDesc_override_transfer" = "回收资产。";
 "kOpDesc_transfer_to_blind" = "%@ 转账 %@ 到隐私账户。";
 "kOpDesc_blind_transfer" = "隐私转账。";
-"kOpDesc_transfer_from_blind" = "%@ 从隐私账户转出 %@。";
+"kOpDesc_transfer_from_blind" = "隐私账户转账 %@ 到 %@。";
 "kOpDesc_asset_settle_cancel" = "取消清算。";
 "kOpDesc_asset_claim_fees" = "%@ 提取 %@ 资产手续费。";
 "kOpDesc_fba_distribute" = "FBA分发。";

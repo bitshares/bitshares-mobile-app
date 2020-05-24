@@ -188,7 +188,7 @@
         [[MyPopviewManager sharedMyPopviewManager] showActionSheet:self
                                                            message:nil
                                                             cancel:NSLocalizedString(@"kBtnCancel", @"取消")
-                                                             items:@[NSLocalizedString(@"kVcStBlindBalanceActionTransferFromBlind", @"从隐私账户转出"),
+                                                             items:@[NSLocalizedString(@"kVcStBlindBalanceActionTransferFromBlind", @"隐私账户转出"),
                                                                      NSLocalizedString(@"kVcStBlindBalanceActionBlindTransfer", @"隐私转账")]
                                                           callback:^(NSInteger buttonIndex, NSInteger cancelIndex)
          {
@@ -198,7 +198,7 @@
                     id blind_balance = [_dataArray objectAtIndex:indexPath.row];
                     VCTransferFromBlind* vc = [[VCTransferFromBlind alloc] initWithBlindBalance:blind_balance];
                     [self pushViewController:vc
-                                     vctitle:NSLocalizedString(@"kVcTitleTransferFromBlind", @"从隐私账户转出")
+                                     vctitle:NSLocalizedString(@"kVcTitleTransferFromBlind", @"隐私账户转出")
                                    backtitle:kVcDefaultBackTitleName];
                 } else {
                     id blind_balance = [_dataArray objectAtIndex:indexPath.row];
