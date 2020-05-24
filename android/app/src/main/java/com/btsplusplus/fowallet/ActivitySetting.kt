@@ -52,6 +52,11 @@ class ActivitySetting : BtsppActivity() {
         //  事件 - 计价单位
         layout_currency_from_setting.setOnClickListener { goTo(ActivitySettingCurrency::class.java, true) }
 
+        //  事件 - 横板交易界面
+        btn_enable_hor_ui.setOnCheckedChangeListener { _, isChecked ->
+            SettingManager.sharedSettingManager().setUseConfigBoolean(kSettingKey_EnableHorTradeUI, isChecked)
+        }
+
         //  事件 - API节点
         layout_apinode.setOnClickListener { goTo(ActivitySelectApiNode::class.java, true) }
 
@@ -82,6 +87,7 @@ class ActivitySetting : BtsppActivity() {
     private fun _refreshUI() {
         _refresh_language()
         _refresh_currency()
+        btn_enable_hor_ui.isChecked = SettingManager.sharedSettingManager().isEnableHorTradeUI()
         _refresh_apinode()
         _refresh_version()
     }

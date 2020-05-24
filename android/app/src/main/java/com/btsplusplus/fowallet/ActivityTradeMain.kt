@@ -20,7 +20,6 @@ class ActivityTradeMain : BtsppActivity() {
     private var _defaultSelectBuy: Boolean = true
     private var _haveAccountOnInit: Boolean = true
     private var _notify_handler: Handler? = null
-    private var _enableVerticalTradeUI = true           //  TODO:5.0 可修改，启用竖版交易界面
 
     override fun onResume() {
         super.onResume()
@@ -86,7 +85,7 @@ class ActivityTradeMain : BtsppActivity() {
             tab.addTab(tab.newTab().apply {
                 text = resources.getString(R.string.kLabelTitleSell)
             })
-            if (_enableVerticalTradeUI) {
+            if (!SettingManager.sharedSettingManager().isEnableHorTradeUI()) {
                 //  当前委托 - 竖版界面才存在
                 tab.addTab(tab.newTab().apply {
                     text = resources.getString(R.string.kLabelOpenOrders)
@@ -139,7 +138,7 @@ class ActivityTradeMain : BtsppActivity() {
             promise_map.put("kTickerData", conn.async_exec_db("get_ticker", jsonArrayfrom(_tradingPair._baseId, _tradingPair._quoteId)))
             promise_map.put("kFee", chainMgr.queryFeeAssetListDynamicInfo())    //  查询手续费兑换比例、手续费池等信息
             promise_map.put("kSettlementData", chainMgr.queryCallOrders(_tradingPair, n_callorder))
-            if (_enableVerticalTradeUI) {
+            if (!SettingManager.sharedSettingManager().isEnableHorTradeUI()) {
                 promise_map.put("kFillOrders", chainMgr.queryFillOrderHistory(_tradingPair, n_fillorder))
             }
 
@@ -326,19 +325,15 @@ class ActivityTradeMain : BtsppActivity() {
     }
 
     private fun setFragments() {
-        if (_enableVerticalTradeUI) {
+        if (!SettingManager.sharedSettingManager().isEnableHorTradeUI()) {
             //  竖版 买卖界面 + 委托界面
             fragmens.add(FragmentTradeBuyOrSell().initialize(jsonArrayfrom(true, _tradingPair)))
             fragmens.add(FragmentTradeBuyOrSell().initialize(jsonArrayfrom(false, _tradingPair)))
-
             fragmens.add(FragmentOrderCurrent().initialize(JSONObject().apply {
                 put("full_account_data", null)
                 put("tradingPair", _tradingPair)
                 put("filter", true)
             }))
-
-            //  TODO:5.0 采用当前订单界面 不用单独的
-//            fragmens.add(FragmentTradeDelegate())
         } else {
             //  横板 买卖界面
             fragmens.add(FragmentTradeMainPage().initialize(jsonArrayfrom(true, _tradingPair)))
