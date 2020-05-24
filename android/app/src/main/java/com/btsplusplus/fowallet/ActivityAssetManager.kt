@@ -143,6 +143,11 @@ class ActivityAssetManager : BtsppActivity() {
                     put("title", self.resources.getString(R.string.kVcAssetMgrCellActionClaimFeePool))
                 })
             }
+            //  提取资产交易手续费
+            put(JSONObject().apply {
+                put("type", EBitsharesAssetOpKind.ebaok_claim_fees)
+                put("title", self.resources.getString(R.string.kVcAssetMgrCellActionClaimMarketFees))
+            })
         }
 
         ViewSelector.show(this, "", list, key = "title") { index: Int, _: String ->
@@ -253,6 +258,30 @@ class ActivityAssetManager : BtsppActivity() {
                                 put("kMsgBtnName", self.resources.getString(R.string.kVcAssetOpClaimFeePoolBtnName))
                                 put("kMsgSubmitInputValidAmount", self.resources.getString(R.string.kVcAssetOpClaimFeePoolSubmitTipsPleaseInputAmount))
                                 put("kMsgSubmitOK", self.resources.getString(R.string.kVcAssetOpClaimFeePoolSubmitTipOK))
+                            })
+                            put("result_promise", result_promise)
+                        })
+                        result_promise.then { dirty ->
+                            //  刷新UI
+                            if (dirty != null && dirty as Boolean) {
+                                queryMyIssuedAssets()
+                            }
+                        }
+                    }
+                }
+                EBitsharesAssetOpKind.ebaok_claim_fees -> {
+                    VcUtils.guardGrapheneObjectDependence(this, asset.getString("dynamic_asset_data_id")) {
+                        val result_promise = Promise()
+                        goTo(ActivityAssetOpCommon::class.java, true, args = JSONObject().apply {
+                            put("current_asset", asset)
+                            put("full_account_data", null)
+                            put("op_extra_args", JSONObject().apply {
+                                put("kOpType", EBitsharesAssetOpKind.ebaok_claim_fees)
+                                put("kMsgTips", self.resources.getString(R.string.kVcAssetOpClaimMarketFeesUiTips))
+                                put("kMsgAmountPlaceholder", self.resources.getString(R.string.kVcAssetOpClaimMarketFeesCellPlaceholderAmount))
+                                put("kMsgBtnName", self.resources.getString(R.string.kVcAssetOpClaimMarketFeesBtnName))
+                                put("kMsgSubmitInputValidAmount", self.resources.getString(R.string.kVcAssetOpClaimMarketFeesSubmitTipsPleaseInputAmount))
+                                put("kMsgSubmitOK", self.resources.getString(R.string.kVcAssetOpClaimMarketFeesSubmitTipOK))
                             })
                             put("result_promise", result_promise)
                         })

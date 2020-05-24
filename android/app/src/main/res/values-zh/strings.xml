@@ -16,6 +16,13 @@
     <string name="kLabelGroupNameOther">其他</string>
     <string name="kLabelGroupIntroduction">介绍 &gt;</string>
     <string name="kLabelNoFavMarket">没有任何自选</string>
+    <string name="kLabelBtnNameAddPair">添加</string>
+    <string name="kLabelTitleAssetQuote">交易资产</string>
+    <string name="kLabelTitleAssetBase">报价资产</string>
+    <string name="kVcMyPairSubmitTipMissQuoteAsset">请选择交易资产。</string>
+    <string name="kVcMyPairSubmitTipMissBaseAsset">请选择报价资产。</string>
+    <string name="kVcMyPairSubmitTipQuoteBaseIsSame">交易资产和报价资产不能相同。</string>
+    <string name="kVcMyPairSubmitTipPairIsAlreadyExist">该交易对已存在。</string>
     <!-- 抵押界面 -->
     <string name="kDebtLableReset">重置</string>
     <string name="kDebtLableSelectAsset">选择资产</string>
@@ -58,6 +65,7 @@
     <string name="kServicesCellLabelAccountSearch">账号查询</string>
     <string name="kServicesCellLabelRank">抵押排行</string>
     <string name="kServicesCellLabelVoting">投票</string>
+    <string name="kServicesCellLabelSmartCoin">智能币</string>
     <string name="kServicesCellLabelFeedPrice">喂价详情</string>
     <string name="kServicesCellLabelOtcUser">场外交易</string>
     <string name="kServicesCellLabelOtcMerchant">商家信息</string>
@@ -93,6 +101,9 @@
     <string name="kVcScanResultPaySuccessLabelTo">收款方</string>
     <string name="kVcScanResultPaySuccessLabelTrxID">交易ID</string>
     <string name="kVcScanResultPaySuccessBtnDone">完成</string>
+    <!-- 智能币 -->
+    <string name="kVcSmartPageTitleRank">抵押排行</string>
+    <string name="kVcSmartPageTitleFeed">喂价详情</string>
     <!-- 抵押排行 -->
     <string name="kVcRankCurrentFeedPrice">当前喂价</string>
     <string name="kVcTipsNoCallOrder">还没有用户进行抵押</string>
@@ -100,7 +111,9 @@
     <string name="kVcRankCallPrice">强平触发价</string>
     <string name="kVcRankColl">抵押物</string>
     <string name="kVcRankDebt">借款金额</string>
+    <string name="kVcRankFlagWillSettlement">将被清算</string>
     <!-- 喂价详情界面 -->
+    <string name="kVcFeedNoFeedData">没有人发布喂价数据</string>
     <string name="kVcFeedCurrentFeedPrice">当前喂价</string>
     <string name="kVcFeedWitnessName">见证人</string>
     <string name="kVcFeedPublisherCommitteeName">理事会</string>
@@ -456,6 +469,7 @@
     <string name="kVcAssetMgrCellActionUpdateBitasset">更新智能币</string>
     <string name="kVcAssetMgrCellActionIssueAsset">发行资产</string>
     <string name="kVcAssetMgrCellActionClaimFeePool">提取手续费池</string>
+    <string name="kVcAssetMgrCellActionClaimMarketFees">提取市场手续费</string>
     <string name="kVcAssetMgrCellActionGlobalSettle">全局清算</string>
     <string name="kVcAssetMgrCellInfoCurSupply">当前供应量</string>
     <string name="kVcAssetMgrCellInfoMaxSupply">最大供应量</string>
@@ -582,6 +596,11 @@
     <string name="kVcAssetOpClaimFeePoolBtnName">提取</string>
     <string name="kVcAssetOpClaimFeePoolSubmitTipsPleaseInputAmount">请输入要提取的资产数量。</string>
     <string name="kVcAssetOpClaimFeePoolSubmitTipOK">提取成功。</string>
+    <string name="kVcAssetOpClaimMarketFeesUiTips">【温馨提示】\n提取资产的市场交易手续费所得收入。</string>
+    <string name="kVcAssetOpClaimMarketFeesCellPlaceholderAmount">请输入提取数量</string>
+    <string name="kVcAssetOpClaimMarketFeesBtnName">提取</string>
+    <string name="kVcAssetOpClaimMarketFeesSubmitTipsPleaseInputAmount">请输入要提取的资产数量。</string>
+    <string name="kVcAssetOpClaimMarketFeesSubmitTipOK">提取成功。</string>
     <string name="kVcAssetOpGsUiTips">【温馨提示】\n全局清算会以指定价格强制关闭所有债仓，此操作不可逆，请谨慎操作。</string>
     <string name="kVcAssetOpGsCellTitlePrice">价格</string>
     <string name="kVcAssetOpGsCellPlaceholderPrice">请输入全局清算价格</string>
@@ -718,6 +737,7 @@
     <!-- 转账界面 -->
     <string name="kLabelSendAll">全部</string>
     <string name="kLabelSendBtn">发送</string>
+    <string name="kVcTransferAdvButtonName">高级</string>
     <string name="kVcTransferTipTxTransferFullOK">发送成功。</string>
     <string name="kVcTransferTipTxTransferOK">发送成功，但刷新界面数据失败，请稍后再试。</string>
     <string name="kVcTransferTipInputSendAmount">请输入转账金额</string>
@@ -736,13 +756,14 @@
     <string name="kVcTransferCellMemo">备注信息</string>
     <string name="kVcTransferTipSelectToAccount">请选择收款账号</string>
     <string name="kVcTransferTipSelectAsset">请选择要转账的资产</string>
+    <string name="kVcTransferTipLabelTransferSuccess">转账成功</string>
     <!-- 隐私交易相关 -->
     <string name="kVcStealthTransferEntryTitle">隐私交易</string>
     <string name="kVcStealthTransferGuardWalletModeTips">隐私交易仅支持钱包模式，是否为当前的账号创建本地钱包文件？</string>
     <string name="kVcStEntryBlindAccounts">账户管理</string>
     <string name="kVcStEntryBlindBalances">我的收据</string>
-    <string name="kVcStEntryTransferToBlind">向隐私账户转账</string>
-    <string name="kVcStEntryTransferFromBlind">从隐私账户转出</string>
+    <string name="kVcStEntryTransferToBlind">转入隐私账户</string>
+    <string name="kVcStEntryTransferFromBlind">隐私账户转出</string>
     <string name="kVcStEntryBlindTransfer">隐私转账</string>
     <string name="kVcStBtnSelectReceipt">选择隐私收据</string>
     <string name="kVcStBtnAddBlindOutput">添加收款信息</string>
@@ -757,13 +778,13 @@
     <string name="kVcStCellTitleReceipt">收据</string>
     <string name="kVcStCellTitleAvailableBalance">可用余额</string>
     <string name="kVcStCellTitleTotalInputReceiptAmount">收据总金额</string>
-    <string name="kVcStCellTitleTotalOutputAmount">输出总金额</string>
+    <string name="kVcStCellTitleTotalOutputAmount">转账总金额</string>
     <string name="kVcStCellTitleNetworkFee">广播手续费</string>
     <string name="kVcStCellTitleActualAmount">实际到账</string>
-    <string name="kVcStTipUiImportReceipt">【温馨提示】\n导入收据同时支持APP生成的收据和CLI命令行钱包收据格式。\n如果隐私收据丢失，可尝试直接输入转账对应区块编号进行导入。\n如果是通过提案进行隐私转账，则不会生成隐私收据，在提案生效后直接输入创建提案时对应区块编号进行导入即可。</string>
-    <string name="kVcStTipUiTransferToBlind">【温馨提示】\n隐私转入：即从比特股公开账号向隐私账户转账。并且可同时向多个隐私账户转账。\n\n如果是通过提案进行隐私转账，则不会生成隐私收据，在提案生效后直接输入创建提案时对应区块编号进行导入即可。</string>
-    <string name="kVcStTipUiBlindTransfer">【温馨提示】\n隐私转账：即在多个隐私账户之间进行转账操作。\n\n找零和赠与：收据总金额减去输出总金额的剩余金额，如果满足找零所需手续费，则会自动找零到我的隐私账户，否则会自动赠与给第一个隐私账户。</string>
-    <string name="kVcStTipUiTransferFromBlind">【温馨提示】\n隐私转出：即从隐私账户向比特股公开账号转账。</string>
+    <string name="kVcStTipUiImportReceipt">【温馨提示】\n导入收据同时支持APP生成的收据和CLI命令行钱包收据格式。\n\n如果隐私收据丢失，可尝试直接输入转账对应区块编号进行导入。\n\n如果是通过提案进行隐私转账，则不会生成隐私收据，在提案生效后直接输入创建提案时对应区块编号进行导入即可。</string>
+    <string name="kVcStTipUiTransferToBlind">【温馨提示】\n隐私转入：从比特股公开账号向隐私账户转账。并且可同时向多个隐私账户转账。\n\n如果是通过提案进行隐私转账，则不会生成隐私收据，在提案生效后直接输入创建提案时对应区块编号进行导入即可。</string>
+    <string name="kVcStTipUiBlindTransfer">【温馨提示】\n隐私转账：在多个隐私账户之间进行转账操作。\n\n找零和赠与：收据总金额减去输出总金额的剩余金额，如果满足找零所需手续费，则会自动找零到我的隐私账户，否则会自动赠与给第一个隐私账户。</string>
+    <string name="kVcStTipUiTransferFromBlind">【温馨提示】\n隐私转出：从隐私账户向比特股公开账号转账。</string>
     <string name="kVcStTipErrForbidBlindTransfer">资产 %s 已禁止隐私转账。</string>
     <string name="kVcStTipErrForbidNormalTransfer">资产 %s 禁止转账。</string>
     <string name="kVcStTipErrNeedWhiteList">资产 %s 已开启白名单，禁止隐私转账。</string>
@@ -771,17 +792,17 @@
     <string name="kVcStTipSubmitPleaseAddBlindOutput">请添加收款信息。</string>
     <string name="kVcStTipSubmitBalanceNotEnough">余额不足。</string>
     <string name="kVcStTipAskConfrimTransferToBlind1">您确定往隐私账户转入 %s %s 吗？\n\n广播手续费：%s %s</string>
-    <string name="kVcStTipAskConfrimTransferToBlindN">您确定往 %s 个隐私账户合计转入 %s %s 吗？\n\n广播手续费：%s %s</string>
+    <string name="kVcStTipAskConfrimTransferToBlindN">您确定往 %1$s 个隐私账户合计转入 %2$s %3$s 吗？\n\n广播手续费：%4$s %5$s</string>
     <string name="kVcStTipErrPleaseSelectReceiptFirst">请先选择隐私收据。</string>
     <string name="kVcStTipSubmitPleaseSelectReceipt">请添加要转出的隐私收据信息。</string>
     <string name="kVcStTipErrCannotBlindTransferInvalidCER">资产 %s 手续费汇率未正确设置，不可转账。</string>
     <string name="kVcStTipErrTotalInputReceiptNotEnough">收据总金额不足。</string>
-    <string name="kVcStTipAskConfrimBlindTransferWithAutoChange">您确定往 %s 个隐私账户转账 %s %s 吗?\n\n自动找零 %s %s\n\n广播手续费：%s %s</string>
-    <string name="kVcStTipAskConfrimBlindTransferWithAutoGift">您确定往 %s 个隐私账户转账 %s %s 吗?\n\n自动赠与 %s %s\n\n广播手续费：%s %s</string>
-    <string name="kVcStTipAskConfrimBlindTransfer">您确定往 %s 个隐私账户转账 %s %s 吗?\n\n广播手续费：%s %s</string>
-    <string name="kVcStTipUiBackupYourReceipt">【温馨提示】\n隐私收据是隐私转账收款凭证，请妥善备份好。\n如果是转入您自身的隐私账户，收据会自动导入我的收据界面。如果是转给他人隐私账户，您需要分享收据给目标用户，用户导入收据后方可提取。</string>
+    <string name="kVcStTipAskConfrimBlindTransferWithAutoChange">您确定往 %1$s 个隐私账户转账 %2$s %3$s 吗?\n\n自动找零：%4$s %5$s\n\n广播手续费：%6$s %7$s</string>
+    <string name="kVcStTipAskConfrimBlindTransferWithAutoGift">您确定往 %1$s 个隐私账户转账 %2$s %3$s 吗?\n\n自动赠与：%4$s %5$s\n\n广播手续费：%6$s %7$s</string>
+    <string name="kVcStTipAskConfrimBlindTransfer">您确定往 %1$s 个隐私账户转账 %2$s %3$s 吗?n\n广播手续费：%4$s %5$s</string>
+    <string name="kVcStTipUiBackupYourReceipt">【温馨提示】\n1、隐私收据是隐私转账唯一收款凭证，请务必妥善保管。\n2、请复制收据信息或截图保存。\n3、隐私转账后，收款方需尽快导入收据信息以确认转账成功。\n4、如果您是给他人进行隐私账户，转账后请主动提交收据信息给目标用户。</string>
     <string name="kVcStLabelPleaseBackupYourReceiptText">隐私转账成功，请妥善保管以下收据信息！</string>
-    <string name="kVcStCellButtonNameCopyReceipt">复制收据</string>
+    <string name="kVcStCellButtonNameCopyReceipt">复制收据(可截图)</string>
     <string name="kVcStTipReceiptBackupCopied">收据已复制。</string>
     <string name="kVcStTipAskConfrimForCloseBackupReceiptUI">提取隐私资产需要收据信息，请确认您已备份好以上收据，可截图保存。</string>
     <string name="kVcStTipErrPleaseSelectToPublicAccount">请选择要转出的目标账号。</string>
@@ -796,7 +817,7 @@
     <string name="kVcStTipLabelTransferFromBlindSuccess">从隐私转出成功</string>
     <string name="kVcStTipEmptyNoBlindBalance">没有任何隐私收据。</string>
     <string name="kVcStBtnSelectDone">确定</string>
-    <string name="kVcStBlindBalanceActionTransferFromBlind">从隐私账户转出</string>
+    <string name="kVcStBlindBalanceActionTransferFromBlind">隐私账户转出</string>
     <string name="kVcStBlindBalanceActionBlindTransfer">隐私转账</string>
     <string name="kVcStTipEmptyNoBlindCanImport">没有任何隐私收据，可点击右上角导入收据。</string>
     <string name="kVcStCellTitleAliasName">别名</string>
@@ -1004,6 +1025,7 @@
     <string name="kVcTitleAccountInfos">账号信息</string>
     <string name="kVcTitleAccountSearch">账号查询</string>
     <string name="kVcTitleRank">抵押排行</string>
+    <string name="kVcTitleSmartCoin">智能币</string>
     <string name="kVcTitleFeedPrice">喂价详情</string>
     <string name="kVcTitleCustomPairs">添加交易对</string>
     <string name="kVcTitleSelectProxy">选择代理账号</string>
@@ -1040,8 +1062,8 @@
     <string name="kVcTitleCreateHTLC">创建HTLC合约</string>
     <string name="kVcTitleCreateSubHTLC">部署副合约</string>
     <string name="kVcTitleStealthTransferEntry">隐私交易</string>
-    <string name="kVcTitleTransferToBlind">向隐私账户转账</string>
-    <string name="kVcTitleTransferFromBlind">从隐私账户转出</string>
+    <string name="kVcTitleTransferToBlind">转入隐私账户</string>
+    <string name="kVcTitleTransferFromBlind">隐私账户转出</string>
     <string name="kVcTitleBlindTransfer">隐私转账</string>
     <string name="kVcTitleBlindAccountsMgr">账户管理</string>
     <string name="kVcTitleBlindBalancesMgr">我的收据</string>
@@ -1073,10 +1095,14 @@
     <string name="kVcTitleAssetOpIssue">发行资产</string>
     <string name="kVcTitleAssetGlobalSettle">全局清算</string>
     <string name="kVcTitleAssetClaimFeePool">提取手续费池</string>
+    <string name="kVcTitleAssetClaimMarketFees">提取市场手续费</string>
     <string name="kVcTitleAssetOpViewDetail">%s 详情</string>
     <string name="kVcTitleAssetOpUpdateBasic">更新资产</string>
     <string name="kVcTitleAssetOpUpdateBitasset">更新智能币</string>
     <string name="kVcTitleAssetOpCreate">创建资产</string>
+    <string name="kVcTitleMyPairsMgr">交易对管理</string>
+    <string name="kVcTitleSearchAssetQuote">搜索交易资产</string>
+    <string name="kVcTitleSearchAssetBase">搜索报价资产</string>
     <!-- 钱包管理 -->
     <string name="kWalletUnlockFailedUnknowMode">解锁失败，未知的账号模式：%s。</string>
     <string name="kWalletInvalidWalletPassword">钱包密码无效。</string>
@@ -1144,9 +1170,9 @@
     <string name="kOpType_assert">断言</string>
     <string name="kOpType_balance_claim">提取余额</string>
     <string name="kOpType_override_transfer">回收资产</string>
-    <string name="kOpType_transfer_to_blind">向隐私账户转账</string>
+    <string name="kOpType_transfer_to_blind">转入隐私账户</string>
     <string name="kOpType_blind_transfer">隐私转账</string>
-    <string name="kOpType_transfer_from_blind">从隐私账户转出</string>
+    <string name="kOpType_transfer_from_blind">隐私账户转出</string>
     <string name="kOpType_asset_settle_cancel">取消清算</string>
     <string name="kOpType_asset_claim_fees">提取资产手续费</string>
     <string name="kOpType_fba_distribute">FBA分发</string>
@@ -1209,7 +1235,7 @@
     <string name="kOpDesc_override_transfer">回收资产。</string>
     <string name="kOpDesc_transfer_to_blind">%s 转账 %s 到隐私账户。</string>
     <string name="kOpDesc_blind_transfer">隐私转账。</string>
-    <string name="kOpDesc_transfer_from_blind">%s 从隐私账户转出 %s。</string>
+    <string name="kOpDesc_transfer_from_blind">隐私账户转账 %s 到 %s。</string>
     <string name="kOpDesc_asset_settle_cancel">取消清算。</string>
     <string name="kOpDesc_asset_claim_fees">%s 提取 %s 资产手续费。</string>
     <string name="kOpDesc_fba_distribute">FBA分发。</string>
@@ -1635,6 +1661,7 @@
     <string name="kLblCellShareLink">分享专属链接</string>
     <string name="kSettingEx">设置</string>
     <string name="setting_theme">主题风格</string>
+    <string name="setting_hor_trade_ui">横版交易界面</string>
     <string name="setting_apinode">接入点</string>
     <string name="setting_version">版本</string>
     <string name="kThemeNameBlue">静谧蓝</string>
