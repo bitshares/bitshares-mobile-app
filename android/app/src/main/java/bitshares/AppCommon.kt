@@ -52,6 +52,7 @@ const val kAppCacheNameUserSettingByApp = "usersetting_v1.json"
 //  设置界面存储数据的 KEY 值
 const val kSettingKey_EstimateAssetSymbol = "kEstimateAssetSymbol"  //  计价单位符号 CNY、USD等
 const val kSettingKey_KLineIndexInfo = "kKLineIndexInfo_v2"         //  K线指标参数信息    REMARK：如果新增指标需要更新下参数版本
+const val kSettingKey_EnableHorTradeUI = "kEnableHorTradeUI_v1"     //  启用横版交易界面
 const val kSettingKey_ApiNode = "kApiNode_v1"                       //  API节点设置信息
 const val kSettingKey_ApiNode_Current = "current_node"              //  API节点设置信息 - 子KEY（当前选择节点，为空则随机选择）
 const val kSettingKey_ApiNode_CustomList = "custom_list"            //  API节点设置信息 - 子KEY（自定义列表）

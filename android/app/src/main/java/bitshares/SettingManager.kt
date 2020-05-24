@@ -90,6 +90,21 @@ class SettingManager {
     }
 
     /**
+     *  (public) 是否启用横版交易界面。
+     */
+    fun isEnableHorTradeUI(): Boolean {
+        val settings = _load_setting_hash()
+        val value = settings.optString(kSettingKey_EnableHorTradeUI)
+        //  初始化默认值（NO）
+        if (value.isEmpty()) {
+            settings.put(kSettingKey_EnableHorTradeUI, "0")
+            _save_setting_hash(settings)
+            return false
+        }
+        return (value.toLongOrNull() ?: 0) != 0L
+    }
+
+    /**
      *  (public) 获取当前用户节点，为空则随机选择。
      */
     fun getApiNodeCurrentSelect(): JSONObject? {
@@ -102,6 +117,10 @@ class SettingManager {
         val settings = _load_setting_hash()
         settings.put(key, value)
         _save_setting_hash(settings)
+    }
+
+    fun setUseConfigBoolean(key: String, value: Boolean) {
+        setUseConfig(key, if (value) "1" else "0")
     }
 
     fun getUseConfig(key: String): Any? {

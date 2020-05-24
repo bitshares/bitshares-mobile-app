@@ -178,6 +178,37 @@
 
         </LinearLayout>
 
+        <!-- 横版交易界面 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:textSize="16dp"
+                android:layout_weight="9"
+                android:textColor="@color/theme01.textColorMain"
+                android:text="@string/setting_hor_trade_ui"/>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:gravity="right"
+                android:layout_weight="5"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+
+                <Switch
+                    android:id="@+id/btn_enable_hor_ui"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+        </LinearLayout>
+        
         <!-- API节点 -->
         <LinearLayout
             android:id="@+id/layout_apinode"
