@@ -1350,7 +1350,7 @@ class OrgUtils {
                     name = R.string.kOpType_transfer_from_blind.xmlstring(ctx)
                     val to = chainMgr.getChainObjectByID(opdata.getString("to")).getString("name")
                     val str_amount = formatAssetAmountItem(opdata.getJSONObject("amount"))
-                    desc = String.format(R.string.kOpDesc_transfer_from_blind.xmlstring(ctx), to, str_amount)
+                    desc = String.format(R.string.kOpDesc_transfer_from_blind.xmlstring(ctx), str_amount, to)
                 }
                 EBitsharesOperations.ebo_asset_settle_cancel.value -> {
                     name = R.string.kOpType_asset_settle_cancel.xmlstring(ctx)
