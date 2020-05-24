@@ -131,7 +131,7 @@ enum
 
 - (NSString*)genTransferTipsMessage
 {
-    return NSLocalizedString(@"kVcStTipUiBlindTransfer", @"【温馨提示】\n隐私转账：即在多个隐私账户之间进行转账操作。\n\n找零和赠与：收据总金额减去输出总金额的剩余金额，如果满足找零所需手续费，则会自动找零到我的隐私账户，否则会自动赠与给第一个隐私账户。");
+    return NSLocalizedString(@"kVcStTipUiBlindTransfer", @"【温馨提示】\n隐私转账：在多个隐私账户之间进行转账操作。\n\n找零和赠与：收据总金额减去输出总金额的剩余金额，如果满足找零所需手续费，则会自动找零到我的隐私账户，否则会自动赠与给第一个隐私账户。");
 }
 
 - (void)viewDidLoad
@@ -350,7 +350,7 @@ enum
                     break;
                 case kVcSubOutputTotalAmount:
                 {
-                    cell.textLabel.text = NSLocalizedString(@"kVcStCellTitleTotalOutputAmount", @"输出总金额");
+                    cell.textLabel.text = NSLocalizedString(@"kVcStCellTitleTotalOutputAmount", @"转账总金额");
                     cell.detailTextLabel.textColor = theme.buyColor;
                     if (_curr_blind_asset) {
                         id str_amount = [OrgUtils formatFloatValue:[self calcBlindOutputTotalAmount] usesGroupingSeparator:NO];

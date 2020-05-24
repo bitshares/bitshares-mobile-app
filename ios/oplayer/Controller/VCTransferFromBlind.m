@@ -129,7 +129,7 @@ enum
 
 - (NSString*)genTransferTipsMessage
 {
-    return NSLocalizedString(@"kVcStTipUiTransferFromBlind", @"【温馨提示】\n隐私转出：即从隐私账户向比特股公开账号转账。");
+    return NSLocalizedString(@"kVcStTipUiTransferFromBlind", @"【温馨提示】\n隐私转出：从隐私账户向比特股公开账号转账。");
 }
 
 - (void)viewDidLoad

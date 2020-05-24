@@ -63,8 +63,8 @@ enum
     ];
     
     NSArray* pSection2 = @[
-        @[@(kVcSubTransferToBlind), NSLocalizedString(@"kVcStEntryTransferToBlind", @"向隐私账户转账")],
-        @[@(kVcSubTransferFromBlind), NSLocalizedString(@"kVcStEntryTransferFromBlind", @"从隐私账户转出")],
+        @[@(kVcSubTransferToBlind), NSLocalizedString(@"kVcStEntryTransferToBlind", @"转入隐私账户")],
+        @[@(kVcSubTransferFromBlind), NSLocalizedString(@"kVcStEntryTransferFromBlind", @"隐私账户转出")],
         @[@(kVcSubBlindTransfer), NSLocalizedString(@"kVcStEntryBlindTransfer", @"隐私转账")]
     ];
     
@@ -185,7 +185,7 @@ enum
                     id core = [chainMgr getChainObjectByID:core_asset_id];
                     VCTransferToBlind* vc = [[VCTransferToBlind alloc] initWithCurrAsset:core full_account_data:full_userdata];
                     [self pushViewController:vc
-                                     vctitle:NSLocalizedString(@"kVcTitleTransferToBlind", @"向隐私账户转账")
+                                     vctitle:NSLocalizedString(@"kVcTitleTransferToBlind", @"转入隐私账户")
                                    backtitle:kVcDefaultBackTitleName];
                 }];
             }
@@ -194,7 +194,7 @@ enum
             {
                 VCTransferFromBlind* vc = [[VCTransferFromBlind alloc] initWithBlindBalance:nil];
                 [self pushViewController:vc
-                                 vctitle:NSLocalizedString(@"kVcTitleTransferFromBlind", @"从隐私账户转出")
+                                 vctitle:NSLocalizedString(@"kVcTitleTransferFromBlind", @"隐私账户转出")
                                backtitle:kVcDefaultBackTitleName];
             }
                 break;

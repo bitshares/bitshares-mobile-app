@@ -1496,7 +1496,7 @@
             break;
         case ebo_transfer_to_blind:
         {
-            name = NSLocalizedString(@"kOpType_transfer_to_blind", @"转到隐私账户");
+            name = NSLocalizedString(@"kOpType_transfer_to_blind", @"转入隐私账户");
             id from = GRAPHENE_NAME(@"from");
             id str_amount = GRAPHENE_ASSET_N(@"amount");
             desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_transfer_to_blind", @"%@ 转账 %@ 到隐私账户。"), from, str_amount];
@@ -1511,10 +1511,10 @@
             break;
         case ebo_transfer_from_blind:
         {
-            name = NSLocalizedString(@"kOpType_transfer_from_blind", @"从隐私账户转出");
+            name = NSLocalizedString(@"kOpType_transfer_from_blind", @"隐私账户转出");
             id to = GRAPHENE_NAME(@"to");
             id str_amount = GRAPHENE_ASSET_N(@"amount");
-            desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_transfer_from_blind", @"%@ 从隐私账户转出 %@。"), to, str_amount];
+            desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_transfer_from_blind", @"隐私账户转账 %@ 到 %@。"), str_amount, to];
         }
             break;
         case ebo_asset_settle_cancel:
