@@ -81,7 +81,7 @@ class ActivityLaunch : BtsppActivity() {
         ActivityLaunch.checkAppUpdate().then {
             val pVersionConfig = it as? JSONObject
             SettingManager.sharedSettingManager().serverConfig = pVersionConfig
-            return@then Promise.all(waitPromise, asyncInitBitshares()).then {
+            return@then Promise.all(waitPromise, asyncInitBitshares(first_init)).then {
                 _onLoadVersionJsonFinish(pVersionConfig)
                 return@then null
             }
@@ -136,14 +136,14 @@ class ActivityLaunch : BtsppActivity() {
     /**
      * 初始化BTS网络，APP启动时候执行一次。
      */
-    private fun asyncInitBitshares(): Promise {
+    private fun asyncInitBitshares(first_init: Boolean): Promise {
         val p = Promise()
 
         val connMgr = GrapheneConnectionManager.sharedGrapheneConnectionManager()
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
 
         //  初始化链接
-        connMgr.Start(resources.getString(R.string.serverWssLangKey), force_use_random_node = false).then { success ->
+        connMgr.Start(resources.getString(R.string.serverWssLangKey), force_use_random_node = !first_init).then { success ->
             //  初始化网络相关数据
             chainMgr.grapheneNetworkInit().then { data ->
                 //  初始化逻辑相关数据
