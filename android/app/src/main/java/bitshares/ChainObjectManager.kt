@@ -302,27 +302,11 @@ class ChainObjectManager {
     }
 
     /**
-     *  (public) 获取抵押排行榜配置列表
+     *  (public) 主要智能币快捷选择列表。
      */
-    fun getCallOrderRankingSymbolList(): JSONArray {
+    fun getMainSmartAssetList(): JSONArray {
         assert(_defaultMarketInfos != null)
-        return _defaultMarketInfos!!.getJSONArray("call_order_ranking_list")
-    }
-
-    /**
-     *  (public) 获取喂价详情的配置列表
-     */
-    fun getDetailFeedPriceSymbolList(): JSONArray {
-        assert(_defaultMarketInfos != null)
-        return _defaultMarketInfos!!.getJSONArray("detail_feedprice_list")
-    }
-
-    /**
-     *  (public) 获取可借贷的资产配置列表
-     */
-    fun getDebtAssetList(): JSONArray {
-        assert(_defaultMarketInfos != null)
-        return _defaultMarketInfos!!.getJSONArray("debt_asset_list")
+        return _defaultMarketInfos!!.getJSONArray("main_smart_asset_list")
     }
 
     /**

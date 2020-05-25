@@ -38,10 +38,109 @@ class FragmentFeedPrice : BtsppFragment() {
     private var _currentView: View? = null
     private var _waiting_draw_infos: JSONObject? = null
 
+    private lateinit var _curr_asset: JSONObject
+
+    override fun onInitParams(args: Any?) {
+        val json = args as JSONObject
+        _curr_asset = json.getJSONObject("curr_asset")
+    }
+
+    fun setCurrentAsset(newAsset: JSONObject) {
+        _curr_asset = newAsset
+    }
+
+    override fun onControllerPageChanged() {
+        waitingOnCreateView().then {
+            queryDetailFeedInfos(it as Context)
+        }
+    }
+
+    private fun queryDetailFeedInfos(ctx: Context) {
+        val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(ctx), ctx)
+        mask.show()
+        val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
+        val chainMgr = ChainObjectManager.sharedChainObjectManager()
+
+        chainMgr.queryAssetData(_curr_asset.getString("id")).then {
+            val assetData = it as? JSONObject
+            if (assetData == null) {
+                mask.dismiss()
+                showToast(resources.getString(R.string.kNormalErrorInvalidArgs))
+                return@then null
+            }
+
+            val promise_map = JSONObject()
+
+            //  1、查询喂价者信息
+            val publisher_type: EBitsharesFeedPublisherType
+            val flags = assetData.getJSONObject("options").getInt("flags")
+            if (flags.and(EBitsharesAssetFlags.ebat_witness_fed_asset.value) != 0) {
+                //  由见证人提供喂价
+                promise_map.put("kQueryWitness", chainMgr.queryActiveWitnessDataList())
+                publisher_type = EBitsharesFeedPublisherType.ebfpt_witness
+            } else if (flags.and(EBitsharesAssetFlags.ebat_committee_fed_asset.value) != 0) {
+                //  由理事会成员提供喂价
+                promise_map.put("kQueryCommittee", chainMgr.queryActiveCommitteeDataList())
+                publisher_type = EBitsharesFeedPublisherType.ebfpt_committee
+            } else {
+                //  由指定账号提供喂价
+                publisher_type = EBitsharesFeedPublisherType.ebfpt_custom
+            }
+
+            //  2、查询喂价信息（REMARK：不查询缓存）
+            val bitasset_data_id = assetData.getString("bitasset_data_id")
+            promise_map.put("kQueryFeedData", chainMgr.queryAllGrapheneObjectsSkipCache(jsonArrayfrom(bitasset_data_id)))
+
+            return@then Promise.map(promise_map).then {
+                val datamap = it as JSONObject
+
+                val feed_infos = chainMgr.getChainObjectByID(bitasset_data_id)
+                val feeds = feed_infos.getJSONArray("feeds")
+
+                val idHash = JSONObject()
+                val active_publisher_ids = JSONArray()
+
+                if (publisher_type == EBitsharesFeedPublisherType.ebfpt_witness) {
+                    datamap.getJSONArray("kQueryWitness").forEach<JSONObject> {
+                        val account_id = it!!.getString("witness_account")
+                        active_publisher_ids.put(account_id)
+                        idHash.put(account_id, true)
+                    }
+                } else if (publisher_type == EBitsharesFeedPublisherType.ebfpt_committee) {
+                    datamap.getJSONArray("kQueryCommittee").forEach<JSONObject> {
+                        val account_id = it!!.getString("committee_member_account")
+                        active_publisher_ids.put(account_id)
+                        idHash.put(account_id, true)
+                    }
+                }
+                feeds.forEach<JSONArray> {
+                    val ary = it!!
+                    val account_id = ary.getString(0)
+                    if (publisher_type == EBitsharesFeedPublisherType.ebfpt_custom) {
+                        active_publisher_ids.put(account_id)
+                    }
+                    idHash.put(account_id, true)
+                }
+
+                //  查询依赖信息
+                val short_backing_asset = feed_infos.getJSONObject("options").getString("short_backing_asset")
+                idHash.put(short_backing_asset, true)
+                return@then chainMgr.queryAllGrapheneObjects(idHash.keys().toJSONArray()).then {
+                    onQueryFeedInfoResponsed(assetData, feed_infos, feeds, active_publisher_ids, publisher_type)
+                    mask.dismiss()
+                    return@then null
+                }
+            }
+        }.catch {
+            mask.dismiss()
+            showToast(resources.getString(R.string.tip_network_error))
+        }
+    }
+
     /**
      * 刷新喂价信息
      */
-    fun onQueryFeedInfoResponsed(asset: JSONObject, feed_infos: JSONObject, feeds: JSONArray, active_publisher_ids: JSONArray, publisher_type: EBitsharesFeedPublisherType) {
+    private fun onQueryFeedInfoResponsed(asset: JSONObject, feed_infos: JSONObject, feeds: JSONArray, active_publisher_ids: JSONArray, publisher_type: EBitsharesFeedPublisherType) {
         //  REMARK：数据返回的时候界面尚未创建完毕先保存
         if (_currentView == null || this.activity == null) {
             _waiting_draw_infos = jsonObjectfromKVS("asset", asset, "infos", feed_infos, "data_array", feeds, "active_publisher_ids", active_publisher_ids, "publisher_type", publisher_type)
@@ -53,7 +152,6 @@ class FragmentFeedPrice : BtsppFragment() {
         val bitAssetDataOptions = feed_infos.getJSONObject("options")
         val short_backing_asset_id = bitAssetDataOptions.getString("short_backing_asset")
 
-//        val asset_id = asset.getString("id")
         val asset_precision = asset.getInt("precision")
 
         val sba_asset = chainMgr.getChainObjectByID(short_backing_asset_id)
@@ -63,13 +161,10 @@ class FragmentFeedPrice : BtsppFragment() {
         val curr_feed_price_item = feed_infos.getJSONObject("current_feed").getJSONObject("settlement_price")
         val n_curr_feed_price = OrgUtils.calcPriceFromPriceObject(curr_feed_price_item, short_backing_asset_id, sba_asset_precision, asset_precision)
 
-        //  刷新UI
-        //  当前喂价
-        if (n_curr_feed_price != null) {
-            _currentView!!.findViewById<TextView>(R.id.label_txt_curr_feed).text = "${_ctx!!.resources.getString(R.string.kVcFeedCurrentFeedPrice)} ${n_curr_feed_price.toPriceAmountString()}"
-        } else {
-            _currentView!!.findViewById<TextView>(R.id.label_txt_curr_feed).text = "${_ctx!!.resources.getString(R.string.kVcFeedCurrentFeedPrice)} ${resources.getString(R.string.kVcFeedNoData)}"
-        }
+        //  刷新UI - 当前喂价
+        val str_feed_price = if (n_curr_feed_price != null) n_curr_feed_price.toPriceAmountString() else "--"
+        _currentView!!.findViewById<TextView>(R.id.label_txt_curr_feed).text = String.format("%s %s %s/%s",
+                resources.getString(R.string.kVcFeedCurrentFeedPrice), str_feed_price, asset.getString("symbol"), sba_asset.getString("symbol"))
 
         //  列表
         val publishedAccountHash = JSONObject()
@@ -146,24 +241,29 @@ class FragmentFeedPrice : BtsppFragment() {
         val line_height = 28.0f
         val lay = _currentView!!.findViewById<LinearLayout>(R.id.layout_fragment_detail_feedprice)
         lay.removeAllViews()
-        //  标题
-        val name = when (publisher_type) {
-            EBitsharesFeedPublisherType.ebfpt_witness -> resources.getString(R.string.kVcFeedWitnessName)
-            EBitsharesFeedPublisherType.ebfpt_committee -> resources.getString(R.string.kVcFeedPublisherCommitteeName)
-            else -> resources.getString(R.string.kVcFeedPublisherCustom)
-        }
-        lay.addView(createRow(_ctx!!, line_height, title = true, name = name))
-        //  喂价数据
-        list.forEach {
-            val miss = it.optBoolean("miss")
-            val expired = it.optBoolean("expired")
-            lay.addView(
-                    if (miss) {
-                        createRow(_ctx!!, line_height, name = it.getString("name"), miss = true)
-                    } else {
-                        createRow(_ctx!!, line_height, it.getString("name"), it.get("price") as BigDecimal, it.get("diff") as BigDecimal, it.getString("date"), expired = expired)
-                    }
-            )
+
+        if (list.size > 0) {
+            //  标题
+            val name = when (publisher_type) {
+                EBitsharesFeedPublisherType.ebfpt_witness -> resources.getString(R.string.kVcFeedWitnessName)
+                EBitsharesFeedPublisherType.ebfpt_committee -> resources.getString(R.string.kVcFeedPublisherCommitteeName)
+                else -> resources.getString(R.string.kVcFeedPublisherCustom)
+            }
+            lay.addView(createRow(_ctx!!, line_height, title = true, name = name))
+            //  喂价数据
+            list.forEach {
+                val miss = it.optBoolean("miss")
+                val expired = it.optBoolean("expired")
+                lay.addView(
+                        if (miss) {
+                            createRow(_ctx!!, line_height, name = it.getString("name"), miss = true)
+                        } else {
+                            createRow(_ctx!!, line_height, it.getString("name"), it.get("price") as BigDecimal, it.get("diff") as BigDecimal, it.getString("date"), expired = expired)
+                        }
+                )
+            }
+        } else {
+            lay.addView(ViewUtils.createEmptyCenterLabel(_ctx!!, R.string.kVcFeedNoFeedData.xmlstring(_ctx!!)))
         }
     }
 
@@ -197,7 +297,7 @@ class FragmentFeedPrice : BtsppFragment() {
         tv2.maxLines = 1
         tv2.ellipsize = TextUtils.TruncateAt.END
         val tv2_params = TableRow.LayoutParams(0, row_height)
-        tv2_params.weight = 2f
+        tv2_params.weight = 3f
         tv2_params.gravity = Gravity.CENTER_VERTICAL
         tv2.gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL
         tv2.layoutParams = tv2_params
@@ -260,6 +360,7 @@ class FragmentFeedPrice : BtsppFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
         _ctx = inflater.context
         val v: View = inflater.inflate(R.layout.fragment_feed_price, container, false)
         v.findViewById<ImageView>(R.id.tip_link_feedprice).setOnClickListener {

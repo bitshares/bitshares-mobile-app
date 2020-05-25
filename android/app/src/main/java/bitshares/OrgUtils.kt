@@ -671,8 +671,6 @@ class OrgUtils {
          * 根据32字节原始私钥生成 WIF 格式私钥
          */
         fun genBtsWifPrivateKeyByPrivateKey32(private_key32: ByteArray): String {
-            //  TODO: 有效的私钥取值范围，32字节作为大整数时的范围。
-            //  HEX: from 1 to 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141.
             return NativeInterface.sharedNativeInterface().bts_private_key_to_wif(private_key32)!!
         }
 

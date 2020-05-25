@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ActivityMarginRanking"
+    tools:context=".ActivityAssetInfos"
     android:background="@color/theme01.appBackColor">
 
 
@@ -16,7 +16,7 @@
         android:padding="10dp"
         android:orientation="vertical">
 
-
+        <!-- 导航栏 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -52,8 +52,18 @@
                 android:text="@string/kVcTitleRank"
                 style="@style/kNavigationBarTextStyle" />
 
-        </FrameLayout>
+            <Button
+                android:id="@+id/btn_select_assets"
+                android:layout_width="96dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:background="#00000000"
+                style="@style/kNavigationBarTextStyle"
+                android:text="@string/kDebtLableSelectAsset"
+                android:textAllCaps="false"
+                android:layout_marginRight="10dp" />
 
+        </FrameLayout>
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tablayout_of_diya_ranking"
@@ -63,17 +73,6 @@
             app:tabIndicatorColor="#ff0000"
             app:tabRippleColor="#aaaaaa"
             app:tabTextColor="#ffffff">
-
-            <!-- <android.support.design.widget.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CNY" />
-
-            <android.support.design.widget.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="USD" /> -->
-
 
         </android.support.design.widget.TabLayout>
 

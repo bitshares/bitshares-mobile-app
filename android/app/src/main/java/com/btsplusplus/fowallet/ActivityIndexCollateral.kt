@@ -62,7 +62,7 @@ class ActivityIndexCollateral : BtsppActivity() {
         _nMaintenanceCollateralRatio = BigDecimal.valueOf(parameters.getDouble("mcr_default"))
         _nCurrMortgageRate = BigDecimal.valueOf(parameters.getDouble("collateral_ratio_default"))
         //  初始化默认操作债仓
-        val debt_asset_list = chainMgr.getDebtAssetList()
+        val debt_asset_list = chainMgr.getMainSmartAssetList()
         assert(debt_asset_list.length() > 0)
         val currDebtAsset = chainMgr.getAssetBySymbol(debt_asset_list.getString(0))
         val collateralAsset = chainMgr.getChainObjectByID(BTS_NETWORK_CORE_ASSET_ID)
@@ -528,7 +528,7 @@ class ActivityIndexCollateral : BtsppActivity() {
         //  获取配置的默认列表
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
         val asset_list = JSONArray()
-        chainMgr.getDebtAssetList().forEach<String> { symbol ->
+        chainMgr.getMainSmartAssetList().forEach<String> { symbol ->
             asset_list.put(chainMgr.getAssetBySymbol(symbol!!))
         }
 
