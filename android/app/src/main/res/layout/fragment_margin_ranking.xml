@@ -21,9 +21,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:text="--"
+                android:text=""
                 android:textSize="14dp"
-                android:textColor="@color/theme01.color03"/>
+                android:textColor="@color/theme01.textColorHighlight"/>
 
 
             <LinearLayout

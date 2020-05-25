@@ -39,6 +39,13 @@ abstract class BtsppFragment : Fragment() {
     }
 
     /**
+     *  Fragment切换事件
+     */
+    open fun onControllerPageChanged() {
+        //  ...
+    }
+
+    /**
      * 等待onCreateView完成，并返回Promise#context。
      */
     fun waitingOnCreateView(): Promise {

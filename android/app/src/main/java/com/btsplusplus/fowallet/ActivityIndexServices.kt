@@ -30,21 +30,18 @@ class ActivityIndexServices : BtsppActivity() {
         setBottomNavigationStyle(2)
 
         //  设置模块可见性
-        if (BuildConfig.kAppModuleEnableRank) {
-            layout_diya_ranking_from_services.visibility = View.VISIBLE
+        if (ChainObjectManager.sharedChainObjectManager().getMainSmartAssetList().length() > 0) {
+            layout_smart_coin.visibility = View.VISIBLE
         } else {
-            layout_diya_ranking_from_services.visibility = View.GONE
+            layout_smart_coin.visibility = View.GONE
         }
-        if (BuildConfig.kAppModuleEnableFeedPrice) {
-            layout_feed_price.visibility = View.VISIBLE
-        } else {
-            layout_feed_price.visibility = View.GONE
-        }
+
         if (BuildConfig.kAppModuleEnableGateway) {
             layout_recharge_and_withdraw_of_service.visibility = View.VISIBLE
         } else {
             layout_recharge_and_withdraw_of_service.visibility = View.GONE
         }
+
         //  入口可见性判断
         //  1 - 编译时宏判断
         //  2 - 根据语言判断
@@ -73,9 +70,8 @@ class ActivityIndexServices : BtsppActivity() {
         img_icon_transfer.setColorFilter(iconcolor)
         img_icon_qrscan.setColorFilter(iconcolor)
         img_icon_account_search.setColorFilter(iconcolor)
-        img_icon_rank.setColorFilter(iconcolor)
+        img_icon_smart_coin.setColorFilter(iconcolor)
         img_icon_voting.setColorFilter(iconcolor)
-        img_icon_feedprice.setColorFilter(iconcolor)
         img_icon_deposit_withdraw.setColorFilter(iconcolor)
         img_icon_otc_user.setColorFilter(iconcolor)
         img_icon_otc_merchant.setColorFilter(iconcolor)
@@ -91,9 +87,9 @@ class ActivityIndexServices : BtsppActivity() {
             goTo(ActivityAccountQueryBase::class.java, true)
         }
 
-        if (BuildConfig.kAppModuleEnableRank) {
-            layout_diya_ranking_from_services.setOnClickListener {
-                goTo(ActivityMarginRanking::class.java, true)
+        if (ChainObjectManager.sharedChainObjectManager().getMainSmartAssetList().length() > 0) {
+            layout_smart_coin.setOnClickListener {
+                goTo(ActivityAssetInfos::class.java, true)
             }
         }
 
@@ -134,12 +130,6 @@ class ActivityIndexServices : BtsppActivity() {
                     }
                 }
                 return@then null
-            }
-        }
-
-        if (BuildConfig.kAppModuleEnableFeedPrice) {
-            layout_feed_price.setOnClickListener {
-                goTo(ActivityFeedPrice::class.java, true)
             }
         }
 

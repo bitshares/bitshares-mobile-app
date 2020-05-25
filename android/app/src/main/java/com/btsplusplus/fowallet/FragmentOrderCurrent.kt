@@ -49,7 +49,7 @@ class FragmentOrderCurrent : BtsppFragment() {
     /**
      *  (public) 事件 - 页面切换
      */
-    fun onControllerPageChanged() {
+    override fun onControllerPageChanged() {
         if (!_filterWithTradingPair) {
             return
         }

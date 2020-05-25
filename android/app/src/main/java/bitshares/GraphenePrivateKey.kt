@@ -23,13 +23,17 @@ class GraphenePrivateKey {
     private var _key_data: ByteArray? = null
 
     fun initWithSecp256k1PrivateKey(private_keydata: ByteArray): GraphenePrivateKey {
+        assert(NativeInterface.sharedNativeInterface().bts_verify_private_key(private_keydata))
         _key_data = private_keydata
         return this
     }
 
+    fun initWithSeed(seed: ByteArray): GraphenePrivateKey {
+        return initWithSecp256k1PrivateKey(private_keydata = NativeInterface.sharedNativeInterface().bts_gen_private_key_from_seed(seed)!!)
+    }
+
     fun initRandom(): GraphenePrivateKey {
-        val seed = WalletManager.secureRandomByte32()
-        return initWithSecp256k1PrivateKey(NativeInterface.sharedNativeInterface().bts_gen_private_key_from_seed(seed)!!)
+        return initWithSeed(seed = WalletManager.secureRandomByte32())
     }
 
     fun getKeyData(): ByteArray {
