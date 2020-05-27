@@ -1576,14 +1576,28 @@ static OtcManager *_sharedOtcManager = nil;
     //  TODO:2.9 merchantProgress 暂时不调用
     [owner showBlockViewWithTitle:NSLocalizedString(@"kTipsBeRequesting", @"请求中...")];
     //  直接调用商家详情，非商家返回空数据。
-    WsPromise* p1 = [self merchantDetail:[self getCurrentBtsAccount] skip_cache:YES];
+    NSString* current_bts_account = [self getCurrentBtsAccount];
+    WsPromise* p1 = [self merchantDetail:current_bts_account skip_cache:YES];
     WsPromise* p2 = [self queryFiatAssetCNY];
     [[[WsPromise all:@[p1, p2]] then:^id(id data_array) {
         [owner hideBlockView];
+        //  获取数据
         id merchant_detail = [data_array objectAtIndex:0];
         if (merchant_detail && ![merchant_detail isKindOfClass:[NSDictionary class]]) {
             merchant_detail = nil;
         }
+        
+        //  备用账号判断
+        if (merchant_detail) {
+            //id btsAccount = [merchant_detail objectForKey:@"btsAccount"];
+            id bakAccount = [merchant_detail objectForKey:@"bakAccount"];
+            if (bakAccount && [current_bts_account isEqualToString:bakAccount]) {
+                [OrgUtils makeToast:[NSString stringWithFormat:NSLocalizedString(@"kOtcMgrBakAccountCannotLogin", @"账号 %@ 为商家备用账号，不可进入后台。"),
+                                     bakAccount]];
+                return nil;
+            }
+        }
+        
         if (merchant_detail) {
             VCBase* vc = [[VCOtcMcHome alloc] initWithProgressInfo:nil merchantDetail:merchant_detail];
             [owner pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleOtcMcHome", @"商家信息") backtitle:kVcDefaultBackTitleName];
