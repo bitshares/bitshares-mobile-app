@@ -10,4 +10,6 @@
 
 @interface VCQrScan : VCBase
 
+- (id)initWithResultPromise:(WsPromiseObject*)result_promise;
+
 @end

@@ -148,7 +148,7 @@
         }else if ([[_item objectForKey:@"expired"] boolValue]){
             _lbWitnessName.textColor = theme.textColorNormal;
             
-            _lbFeedPrice.text = [OrgUtils formatFloatValue:[_item objectForKey:@"price"] usesGroupingSeparator:NO];
+            _lbFeedPrice.text = [_item objectForKey:@"s_price"] ?: [OrgUtils formatFloatValue:[_item objectForKey:@"price"] usesGroupingSeparator:NO];;
             _lbFeedPrice.textColor = theme.textColorNormal;
             
             id diff = [_item objectForKey:@"diff"];
@@ -167,7 +167,7 @@
         } else {
             _lbWitnessName.textColor = theme.textColorMain;
             
-            _lbFeedPrice.text = [OrgUtils formatFloatValue:[_item objectForKey:@"price"] usesGroupingSeparator:NO];
+            _lbFeedPrice.text = [_item objectForKey:@"s_price"] ?: [OrgUtils formatFloatValue:[_item objectForKey:@"price"] usesGroupingSeparator:NO];;
             _lbFeedPrice.textColor = theme.textColorMain;
             
             id diff = [_item objectForKey:@"diff"];
@@ -188,8 +188,8 @@
         }
     }
     
-    _lbWitnessName.frame = CGRectMake(xOffset, 0, fWidth * 0.4, fCellHeight);
-    _lbFeedPrice.frame = CGRectMake(xOffset + fWidth * 0.4, 0, fWidth * 0.2, fCellHeight);
+    _lbWitnessName.frame = CGRectMake(xOffset, 0, fWidth * 0.35, fCellHeight);
+    _lbFeedPrice.frame = CGRectMake(xOffset + fWidth * 0.35, 0, fWidth * 0.25, fCellHeight);
     _lbDiff.frame = CGRectMake(xOffset + fWidth * 0.6, 0, fWidth * 0.2, fCellHeight);
     _lbDate.frame = CGRectMake(xOffset + fWidth * 0.8, 0, fWidth * 0.2, fCellHeight);
 }
