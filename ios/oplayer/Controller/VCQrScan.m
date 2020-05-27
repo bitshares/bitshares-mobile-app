@@ -19,7 +19,8 @@
 #import "ChainObjectManager.h"
 
 @interface VCQrScan () {
-    SGQRCodeObtain *obtain;
+    SGQRCodeObtain* obtain;
+    WsPromiseObject* _result_promise;
 }
 @property (nonatomic, strong) SGQRCodeScanView *scanView;
 @property (nonatomic, strong) UIButton *flashlightBtn;
@@ -50,7 +51,17 @@
 }
 
 - (void)dealloc {
+    _result_promise = nil;
     [self removeScanningView];
+}
+
+- (id)initWithResultPromise:(WsPromiseObject*)result_promise
+{
+    self = [super init];
+    if (self) {
+        _result_promise = result_promise;
+    }
+    return self;
 }
 
 - (void)viewDidLoad {
@@ -234,6 +245,14 @@
 {
     assert(result);
     result = [NSString trim:result];
+    
+    //  直接返回扫描结果
+    if (_result_promise) {
+        [_result_promise resolve:result];
+        [self closeOrPopViewController];
+        return;
+    }
+    
     //  空字符串
     if (!result || result.length <= 0) {
         [self _gotoNormalResult:result];

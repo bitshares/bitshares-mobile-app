@@ -35,10 +35,9 @@ enum
     
     kVcOtcUser,             //  场外交易
     kVcOtcMerchant,         //  商家信息
+    
     kVcSubDepositWithdraw,  //  充币&提币
-    
     kVcSubAdvanced,         //  更多高级功能(HTLC等）
-    
     kVcSubBtsExplorer,      //  BTS区块浏览器
 };
 
@@ -64,74 +63,53 @@ enum
 
 - (void)_genDataArray
 {
-    _dataArray = [[[NSMutableArray array] ruby_apply:(^(id ary) {
-        NSArray* pSection1 = [NSArray arrayWithObjects:
-                              @[@(kVcSubTransfer),          @"kServicesCellLabelTransfer"],         //  转账
-                              @[@(kVcSubVote),              @"kServicesCellLabelVoting"],           //  投票
-                              nil];
-        if ([pSection1 count] > 0) {
-            [ary addObject:pSection1];
+    NSArray* pSection1 = @[
+        @[@(kVcSubTransfer),    @"kServicesCellLabelTransfer"],                                 //  转账
+        @[@(kVcSubVote),        @"kServicesCellLabelVoting"],                                   //  投票
+    ];
+    
+    NSArray* pSection2 = @[
+        @[@(kVcSubQrScan),      @"kServicesCellLabelQrScan"]                                    //  扫一扫
+    ];
+    
+    NSArray* pSection3 = [[[NSMutableArray array] ruby_apply:(^(id obj) {
+        [obj addObject:@[@(kVcSubAccountQuery),     @"kServicesCellLabelAccountSearch"]];       //  帐号查询
+        //  TODO:7.0 通用资产查询（目前仅支持智能币查询）
+        //  [obj addObject:@[@(kVcSubAssetQuery),       @"TODO:4.0资产查询"]];//TODO:4.0 lang
+        if ([[[ChainObjectManager sharedChainObjectManager] getMainSmartAssetList] count] > 0) {
+            [obj addObject:@[@(kVcSubAssetInfos),   @"kServicesCellLabelSmartCoin"]];           //  智能币
         }
-        
-        NSArray* pSection2 = @[
-            @[@(kVcSubQrScan), @"kServicesCellLabelQrScan"]                      //  扫一扫
-        ];
-        if ([pSection2 count] > 0) {
-            [ary addObject:pSection2];
-        }
-        
-        NSArray* pSection3 = [[[NSMutableArray array] ruby_apply:(^(id obj) {
-            [obj addObject:@[@(kVcSubAccountQuery),      @"kServicesCellLabelAccountSearch"]];      //  帐号查询
-            //  TODO:7.0 通用资产查询（目前仅支持智能币查询）
-            //  [obj addObject:@[@(kVcSubAssetQuery),       @"TODO:4.0资产查询"]];//TODO:4.0 lang
-            if ([[[ChainObjectManager sharedChainObjectManager] getMainSmartAssetList] count] > 0) {
-                [obj addObject:@[@(kVcSubAssetInfos),    @"kServicesCellLabelSmartCoin"]];          //  智能币
-            }
-        })] copy];
-        if ([pSection3 count] > 0) {
-            [ary addObject:pSection3];
-        }
-        
-        NSArray* pSection4 = [[[NSMutableArray array] ruby_apply:(^(id obj) {
-            //  入口可见性判断
-            //  1 - 编译时宏判断
-            //  2 - 根据语言判断
-            //  3 - 根据服务器配置判断
-#if kAppModuleEnableOTC
-            if ([NSLocalizedString(@"enableOtcEntry", @"enableOtcEntry") boolValue]) {
-                id cfg = [OtcManager sharedOtcManager].server_config;
-                if (cfg && [[[[cfg objectForKey:@"user"] objectForKey:@"entry"] objectForKey:@"type"] integerValue] != eoet_gone) {
-                    [obj addObject:@[@(kVcOtcUser), @"kServicesCellLabelOtcUser"]];                 //  场外交易
-                }
-                if (cfg && [[[[cfg objectForKey:@"merchant"] objectForKey:@"entry"] objectForKey:@"type"] integerValue] != eoet_gone) {
-                    [obj addObject:@[@(kVcOtcMerchant), @"kServicesCellLabelOtcMerchant"]];         //  商家信息
-                }
-            }
-#endif  //  kAppModuleEnableOTC
-            
-#if kAppModuleEnableGateway
-            [obj addObject:@[@(kVcSubDepositWithdraw),   @"kServicesCellLabelDepositWithdraw"]];    //  充币提币
-#endif  //  kAppModuleEnableGateway
-        })] copy];
-        if ([pSection4 count] > 0) {
-            [ary addObject:pSection4];
-        }
-        
-        NSArray* pSection5 = @[
-            @[@(kVcSubAdvanced),         @"kServicesCellLabelAdvFunction"]       //  高级功能
-        ];
-        if ([pSection5 count] > 0) {
-            [ary addObject:pSection5];
-        }
-        
-        NSArray* pSection6 = @[
-            @[@(kVcSubBtsExplorer),      @"kServicesCellLabelBtsExplorer"]       //  BTS区块浏览器
-        ];
-        if ([pSection6 count] > 0) {
-            [ary addObject:pSection6];
-        }
-        
     })] copy];
+    
+    NSArray* pSection4 = [[[NSMutableArray array] ruby_apply:(^(id obj) {
+        //  入口可见性判断
+        //  1 - 编译时宏判断
+        //  2 - 根据语言判断
+        //  3 - 根据服务器配置判断
+#if kAppModuleEnableOTC
+        if ([NSLocalizedString(@"enableOtcEntry", @"enableOtcEntry") boolValue]) {
+            id cfg = [OtcManager sharedOtcManager].server_config;
+            if (cfg && [[[[cfg objectForKey:@"user"] objectForKey:@"entry"] objectForKey:@"type"] integerValue] != eoet_gone) {
+                [obj addObject:@[@(kVcOtcUser),     @"kServicesCellLabelOtcUser"]];             //  场外交易
+            }
+            if (cfg && [[[[cfg objectForKey:@"merchant"] objectForKey:@"entry"] objectForKey:@"type"] integerValue] != eoet_gone) {
+                [obj addObject:@[@(kVcOtcMerchant), @"kServicesCellLabelOtcMerchant"]];         //  商家信息
+            }
+        }
+#endif  //  kAppModuleEnableOTC
+    })] copy];
+    
+    NSArray* pSection5 = @[
+#if kAppModuleEnableGateway
+        @[@(kVcSubDepositWithdraw),     @"kServicesCellLabelDepositWithdraw"],                  //  充币提币
+#endif  //  kAppModuleEnableGateway
+        @[@(kVcSubAdvanced),            @"kServicesCellLabelAdvFunction"],                      //  高级功能
+        @[@(kVcSubBtsExplorer),         @"kServicesCellLabelBtsExplorer"],                      //  BTS区块浏览器
+    ];
+    
+    _dataArray = [@[pSection1, pSection2, pSection3, pSection4, pSection5] ruby_select:^BOOL(id section) {
+        return [section count] > 0;
+    }];
 }
 
 - (void)viewDidLoad
@@ -300,7 +278,7 @@ enum
             case kVcSubQrScan:      //  扫一扫
             {
                 [[[OrgUtils authorizationForCamera] then:(^id(id data) {
-                    VCQrScan* vc = [[VCQrScan alloc] init];
+                    VCQrScan* vc = [[VCQrScan alloc] initWithResultPromise:nil];
                     vc.title = NSLocalizedString(@"kVcTitleQrScan", @"扫一扫");
                     [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
                     return nil;

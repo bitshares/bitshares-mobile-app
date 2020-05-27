@@ -215,6 +215,7 @@
                                              base_precision:sba_asset_precision
                                             quote_precision:asset_precision
                                                      invert:NO roundingMode:NSRoundDown set_divide_precision:YES];
+            id s_price = [OrgUtils formatFloatValue:n_price usesGroupingSeparator:NO minimumFractionDigits:asset_precision];
             
             NSDecimalNumber* change;
             if (_feedPriceInfo && n_price) {
@@ -227,7 +228,7 @@
             }
             
             if (n_price) {
-                id item = @{@"name":name, @"price":n_price, @"diff":change, @"date":publish_date, @"expired":@(expired)};
+                id item = @{@"name":name, @"price":n_price, @"s_price":s_price, @"diff":change, @"date":publish_date, @"expired":@(expired)};
                 if (expired) {
                     [expired_list addObject:item];
                 } else {

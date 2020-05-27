@@ -10,6 +10,7 @@
 #import "ViewTipsInfoCell.h"
 
 #import "VCStealthTransferHelper.h"
+#import "VCQrScan.h"
 
 #import "GrapheneSerializer.h"
 #import "GraphenePublicKey.h"
@@ -75,6 +76,29 @@ enum
     return self;
 }
 
+/*
+ *  (private) 扫一扫按钮点击
+ */
+- (void)onScanQrCodeButtonClicked
+{
+    [[[OrgUtils authorizationForCamera] then:(^id(id data) {
+        WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
+        VCQrScan* vc = [[VCQrScan alloc] initWithResultPromise:result_promise];
+        vc.title = NSLocalizedString(@"kVcTitleQrScan", @"扫一扫");
+        [self pushViewController:vc vctitle:nil backtitle:kVcDefaultBackTitleName];
+        [result_promise then:^id(id result) {
+            if (result && [result isKindOfClass:[NSString class]]) {
+                _tv_receipt.text = [result copy];
+            }
+            return nil;
+        }];
+        return nil;
+    })] catch:(^id(id error) {
+        [OrgUtils showMessage:[error reason]];
+        return nil;
+    })];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -83,6 +107,9 @@ enum
     ThemeManager* theme = [ThemeManager sharedThemeManager];
     
     self.view.backgroundColor = theme.appBackColor;
+    
+    //  扫一扫
+    [self showRightImageButton:@"iconScan" action:@selector(onScanQrCodeButtonClicked) color:theme.textColorMain];
     
     //  UI - 隐私收据输入框
     CGRect screenRect = [[UIScreen mainScreen] bounds];
