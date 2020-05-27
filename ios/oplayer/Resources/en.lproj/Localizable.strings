@@ -1328,6 +1328,7 @@
 "kOtcMgrMcActiveFailedTipMessage" = "激活失败，请往商家账号转入足够的保证金。";//TODO:
 "kOtcMgrMcActiveAskBtnActiveNow" = "立即激活";//TODO:
 "kOtcMgrMcActiveTipsOK" = "激活成功。";//TODO:
+"kOtcMgrBakAccountCannotLogin" = "账号 %@ 为商家备用账号，不可进入后台。";//TODO:
 "kOtcMgrNotSupportMultiSignAccount" = "多签账号不支持场外交易。";//TODO:
 "kOtcMgrNoOpenAnyDigiAssets" = "场外交易暂不支持任何数字资产，请稍后再试。";//TODO:
 "kOtcMgrNotSupportAsset" = "场外交易暂时不支持 %@ 资产，请稍后再试。";//TODO:
