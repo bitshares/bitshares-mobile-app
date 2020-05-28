@@ -45,8 +45,7 @@ const val kAppCacheNameMemoryInfosByApp = "memory_v1.json"
 const val kAppCacheNameWalletInfoByApp = "wallet_v1.json"
 const val kAppCacheNameObjectCacheByApp = "object_v1.json"
 const val kAppCacheNameFavAccountsByApp = "favaccounts_v1.json"
-const val kAppCacheNameFavMarketsByApp = "favmarkets_v1.json"
-const val kAppCacheNameCustomMarketsByApp = "custommarkets_v1.json"
+const val kAppCacheNameFavMarketsByApp = "myfavmarkets_v1.json"
 const val kAppCacheNameUserSettingByApp = "usersetting_v1.json"
 
 //  设置界面存储数据的 KEY 值

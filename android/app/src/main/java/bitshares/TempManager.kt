@@ -27,7 +27,6 @@ class TempManager {
     }
 
     var favoritesMarketDirty: Boolean = false       //  自选市场是否发生变化，需要重新加载。
-    var customMarketDirty: Boolean = false          //  自定义交易对发生变化，需要重新加载。
     var tickerDataDirty: Boolean = false            //  交易对 ticker 数据有任意一对发生变化就会设置该标记。
     var userLimitOrderDirty: Boolean = false        //  用户限价单信息发生变化，需要重新加载。（交易界面->全部订单管理->取消订单->返回交易界面。）
 }

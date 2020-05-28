@@ -85,12 +85,7 @@ class ChainObjectManager {
     /**
      *  (public) 启动初始化
      */
-    fun initAll(ctx: Context) {
-        loadDefaultMarketInfos(ctx)
-        buildAllMarketsInfos()
-    }
-
-    private fun loadDefaultMarketInfos(ctx: Context) {
+    fun initConfig(ctx: Context) {
         if (_defaultMarketInfos != null) {
             return
         }
@@ -199,16 +194,28 @@ class ChainObjectManager {
         //  获取内置默认市场信息
         val defaultMarkets = getDefaultMarketInfos()
 
-        //  获取自定义交易对信息 格式参考：#{basesymbol}_#{quotesymbol} => @{@"quote":quote_asset(object),@"base":base_symbol}
-        val custom_markets = AppCacheManager.sharedAppCacheManager().get_all_custom_markets()
-        if (custom_markets.length() <= 0) {
+        //  获取自定义交易对信息（所有收藏交易对中【非内置的】交易对则为【自定义】交易对。）
+        //  格式参考：#{base_id}_#{quote_id} => @{@"quote":quote_id, @"base":base_id}
+        val all_custom_markets = JSONArray()
+        val all_fav_markets = AppCacheManager.sharedAppCacheManager().get_all_fav_markets()
+        for (key in all_fav_markets.keys()) {
+            val favitem = all_fav_markets.getJSONObject(key)
+            val quote = getChainObjectByID(favitem.getString("quote"))
+            val base = getChainObjectByID(favitem.getString("base"))
+            if (!isDefaultPair(quote, base)) {
+                all_custom_markets.put(favitem)
+            }
+        }
+
+        //  没有自定义交易对，添加默认市场后，直接返回。
+        if (all_custom_markets.length() <= 0) {
             for (i: Int in 0 until defaultMarkets.length()) {
                 _mergedMarketInfoList.add(defaultMarkets.getJSONObject(i))
             }
             return
         }
 
-        //  开始合并
+        //  开始合并默认市场和自定义交易对。
         val market_hash = JSONObject()
         for (i in 0 until defaultMarkets.length()) {
             val market = defaultMarkets.getJSONObject(i)
@@ -220,24 +227,24 @@ class ChainObjectManager {
         }
 
         //  循环所有自定义交易对，分别添加到对应分组里。
-        for (pair in custom_markets.keys()) {
-            val info = custom_markets.getJSONObject(pair)
-            val base_symbol = info.getString("base")
+        for (favitem in all_custom_markets.forin<JSONObject>()) {
+            val base_asset = getChainObjectByID(favitem!!.getString("base"))
+            val quote_asset = getChainObjectByID(favitem.getString("quote"))
+
             //  base_symbol 决定分在哪个大的 market 里。
+            val base_symbol = base_asset.getString("symbol")
             val target_market = market_hash.optJSONObject(base_symbol)
             if (target_market == null) {
-                //  REMARK：已经删除掉的市场。比如添加了 CNC，用户自定义之后又删除了 CNC 市场。
+                //  不在默认APP默认市场中，则略过，仅显示在【自选】界面。
                 continue
             }
             //  quote 决定分在哪个 group 里。
-            val quote_asset = info.getJSONObject("quote")
             val quote_symbol = quote_asset.getString("symbol")
             //  不应该出现
             if (quote_symbol == base_symbol) {
+                assert(false)
                 continue
             }
-            //  添加资产
-            appendAssetCore(quote_asset)
             //  计算 asset 所属分组
             val target_group_info = auxCalcGroupInfo(quote_asset)
             //  从当前市场获取该分组信息
@@ -379,8 +386,8 @@ class ChainObjectManager {
     /**
      *  (public) 根据 base_symbol 获取 market 信息。
      */
-    fun getDefaultMarketInfoByBaseSymbol(base_symbol: String): JSONObject {
-        return _defaultMarketBaseHash[base_symbol]!!
+    fun getDefaultMarketInfoByBaseSymbol(base_symbol: String): JSONObject? {
+        return _defaultMarketBaseHash[base_symbol]
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.btsplusplus.fowallet.utils
 
 import android.app.Activity
+import android.widget.ImageView
 import bitshares.*
 import com.btsplusplus.fowallet.*
 import com.fowallet.walletcore.bts.ChainObjectManager
@@ -178,6 +179,61 @@ class VcUtils {
                     }
                 }
             }
+        }
+
+        /**
+         *  (public) 处理交易对状态变更，收藏 or 取消收藏。变更成功返回 YES，否则返回 NO。
+         */
+        fun processMyFavPairStateChanged(ctx: Activity, quote: JSONObject, base: JSONObject, associated_view: ImageView?): Boolean {
+            val pAppCache = AppCacheManager.sharedAppCacheManager()
+
+            val quote_id = quote.getString("id")
+            val base_id = base.getString("id")
+
+            if (pAppCache.is_fav_market(quote_id, base_id)) {
+                //  删除的情况
+                pAppCache.remove_fav_markets(quote_id, base_id)
+                associated_view?.setColorFilter(ctx.resources.getColor(R.color.theme01_textColorGray))
+                ctx.showToast(ctx.resources.getString(R.string.kTipsAddFavDelete))
+                //  [统计]
+                btsppLogCustom("event_market_remove_fav", jsonObjectfromKVS("base", base_id, "quote", quote_id))
+            } else {
+                //  添加的情况，如果是自定义交易对，则需要判断是否达到上限，收藏交易对则不用额外处理。
+                val chainMgr = ChainObjectManager.sharedChainObjectManager()
+
+                //  自定义交易对判断
+                if (!chainMgr.isDefaultPair(quote, base)) {
+                    val max_custom_pair_num = chainMgr.getDefaultParameters().getInt("max_custom_pair_num")
+                    var n_custom = 0
+                    val favhash = pAppCache.get_all_fav_markets()
+                    for (key in favhash.keys()) {
+                        val favitem = favhash.getJSONObject(key)
+                        val q = chainMgr.getChainObjectByID(favitem.getString("quote"))
+                        val b = chainMgr.getChainObjectByID(favitem.getString("base"))
+                        if (!chainMgr.isDefaultPair(q, b)) {
+                            n_custom += 1
+                        }
+                    }
+                    if (n_custom >= max_custom_pair_num) {
+                        ctx.showToast(String.format(ctx.resources.getString(R.string.kSearchTipsMaxCustomParisNumber), max_custom_pair_num.toString()))
+                        return false
+                    }
+                }
+
+                //  不限制：添加收藏。
+                pAppCache.set_fav_markets(quote_id, base_id)
+                associated_view?.setColorFilter(ctx.resources.getColor(R.color.theme01_textColorHighlight))
+                ctx.showToast(ctx.resources.getString(R.string.kTipsAddFavSuccess))
+                //  [统计]
+                btsppLogCustom("event_market_add_fav", jsonObjectfromKVS("base", base_id, "quote", quote_id))
+            }
+
+            //  保存
+            pAppCache.saveFavMarketsToFile()
+
+            //  标记：自选列表需要更新
+            TempManager.sharedTempManager().favoritesMarketDirty = true
+            return true
         }
     }
 }

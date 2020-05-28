@@ -71,10 +71,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ActivityAddAssetPairsBase"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".ActivityLogin"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -124,10 +120,6 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ActivityTransfer"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ActivityAddAssetPairsResult"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

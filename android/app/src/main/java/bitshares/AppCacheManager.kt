@@ -33,8 +33,7 @@ class AppCacheManager {
     var _objectinfo_caches: JSONObject     //  帐号、资产等ID对应的信息缓存（比如 name、precision等）。
 
     var _favorite_accounts: JSONObject     //  我收藏的帐号列表（关注的） name => @{@"name":@"name", @"id":@"1.2.xx"}
-    var _favorite_markets: JSONObject      //  我收藏的市场交易对（关注的）  #{basesymbol}_#{quotesymbol} => @{@"quote":quote_symbol, @"base":base_symbol}
-    var _custom_markets: JSONObject        //  自定义的市场列表            #{basesymbol}_#{quotesymbol} => @{@"quote":quote_asset(object),@"base":base_symbol}
+    var _favorite_markets: JSONObject      //  #{base_id}_#{quote_id} => @{@"quote":quote_id, @"base":base_id}
 
     constructor() {
         _native_caches = JSONObject()
@@ -42,7 +41,6 @@ class AppCacheManager {
         _objectinfo_caches = JSONObject()
         _favorite_accounts = JSONObject()
         _favorite_markets = JSONObject()
-        _custom_markets = JSONObject()
     }
 
     /**
@@ -78,12 +76,6 @@ class AppCacheManager {
         if (json != null) {
             _favorite_markets = json
         }
-
-        fullname = OrgUtils.makeFullPathByAppStorage(kAppCacheNameCustomMarketsByApp)
-        json = OrgUtils.load_file_as_json(fullname)
-        if (json != null) {
-            _custom_markets = json
-        }
     }
 
     /**
@@ -95,7 +87,6 @@ class AppCacheManager {
         saveObjectCacheToFile()
         saveFavAccountsToFile()
         saveFavMarketsToFile()
-        saveCustomMarketsToFile()
     }
 
     fun saveCacheToFile() {
@@ -121,11 +112,6 @@ class AppCacheManager {
     fun saveFavMarketsToFile() {
         val fullname = OrgUtils.makeFullPathByAppStorage(kAppCacheNameFavMarketsByApp)
         OrgUtils.write_file_from_json(fullname, _favorite_markets)
-    }
-
-    fun saveCustomMarketsToFile() {
-        val fullname = OrgUtils.makeFullPathByAppStorage(kAppCacheNameCustomMarketsByApp)
-        OrgUtils.write_file_from_json(fullname, _custom_markets)
     }
 
     private fun _getOrCreateSubFieldForWalletInfo(field_name: String): JSONObject {
@@ -303,9 +289,22 @@ class AppCacheManager {
         return _favorite_markets
     }
 
-    fun is_fav_market(quote_symbol: String?, base_symbol: String?): Boolean {
-        if (quote_symbol != null && base_symbol != null) {
-            val pair = "${base_symbol}_${quote_symbol}"
+    fun get_fav_markets_asset_ids(): JSONArray {
+        if (_favorite_markets.length() <= 0) {
+            return JSONArray()
+        }
+        val ids = JSONObject()
+        for (pair_key in _favorite_markets.keys()) {
+            val fav_item = _favorite_markets.getJSONObject(pair_key)
+            ids.put(fav_item.getString("base"), true)
+            ids.put(fav_item.getString("quote"), true)
+        }
+        return ids.keys().toJSONArray()
+    }
+
+    fun is_fav_market(quote_id: String?, base_id: String?): Boolean {
+        if (quote_id != null && base_id != null) {
+            val pair = "${base_id}_$quote_id"
             val fav_item = _favorite_markets.optJSONObject(pair)
             if (fav_item != null) {
                 return true
@@ -314,69 +313,19 @@ class AppCacheManager {
         return false
     }
 
-    fun set_fav_markets(quote_symbol: String?, base_symbol: String?): AppCacheManager {
-        if (quote_symbol != null && base_symbol != null) {
-            val pair = "${base_symbol}_${quote_symbol}"
-            _favorite_markets.put(pair, jsonObjectfromKVS("base", base_symbol, "quote", quote_symbol))
+    fun set_fav_markets(quote_id: String?, base_id: String?): AppCacheManager {
+        if (quote_id != null && base_id != null) {
+            val pair = "${base_id}_$quote_id"
+            _favorite_markets.put(pair, jsonObjectfromKVS("base", base_id, "quote", quote_id))
         }
         return this
     }
 
-    fun remove_fav_markets(fav_item: JSONObject?) {
-        if (fav_item == null) {
-            return
-        }
-        remove_fav_markets(fav_item.getString("quote"), fav_item.getString("base"))
-    }
-
-    fun remove_fav_markets(quote_symbol: String?, base_symbol: String?) {
-        if (quote_symbol != null && base_symbol != null) {
-            val pair = "${base_symbol}_${quote_symbol}"
+    fun remove_fav_markets(quote_id: String?, base_id: String?) {
+        if (quote_id != null && base_id != null) {
+            val pair = "${base_id}_$quote_id"
             _favorite_markets.remove(pair)
         }
-    }
-
-    /**
-     * 自定义交易对相关数据
-     */
-    fun get_all_custom_markets(): JSONObject {
-        return _custom_markets
-    }
-
-    fun is_custom_market(quote_symbol: String?, base_symbol: String?): Boolean {
-        if (quote_symbol != null && base_symbol != null) {
-            val pair = "${base_symbol}_${quote_symbol}"
-            val custom_item = _custom_markets.optJSONObject(pair)
-            if (custom_item != null) {
-                return true
-            }
-        }
-        return false
-    }
-
-    fun set_custom_markets(quote_asset: JSONObject?, base_symbol: String?): AppCacheManager {
-        if (quote_asset != null && base_symbol != null) {
-            val quote_symbol = quote_asset.getString("symbol")
-            val pair = "${base_symbol}_${quote_symbol}"
-            _custom_markets.put(pair, jsonObjectfromKVS("base", base_symbol, "quote", quote_asset))
-        }
-        return this
-    }
-
-    fun remove_custom_markets(custom_item: JSONObject?): AppCacheManager {
-        if (custom_item == null) {
-            return this
-        }
-        remove_custom_markets(custom_item.getJSONObject("quote").getString("symbol"), custom_item.getString("base"))
-        return this
-    }
-
-    fun remove_custom_markets(quote_symbol: String?, base_symbol: String?): AppCacheManager {
-        if (quote_symbol != null && base_symbol != null) {
-            val pair = "${base_symbol}_${quote_symbol}"
-            _custom_markets.remove(pair)
-        }
-        return this
     }
 
     /**

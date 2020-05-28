@@ -187,7 +187,7 @@
 
                 </LinearLayout>
 
-                <!-- 智能币 TODO:6.0 icon -->
+                <!-- 智能币 -->
                 <LinearLayout
                     android:id="@+id/layout_smart_coin"
                     android:layout_width="match_parent"
@@ -201,7 +201,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_gravity="center_vertical"
-                        android:src="@drawable/icon_debt_rank"/>
+                        android:src="@drawable/icon_asset_info"/>
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"

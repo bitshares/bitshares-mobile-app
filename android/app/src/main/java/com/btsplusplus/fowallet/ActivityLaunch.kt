@@ -141,39 +141,45 @@ class ActivityLaunch : BtsppActivity() {
 
         val connMgr = GrapheneConnectionManager.sharedGrapheneConnectionManager()
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
+        val pAppCache = AppCacheManager.sharedAppCacheManager()
 
         //  初始化链接
         connMgr.Start(resources.getString(R.string.serverWssLangKey), force_use_random_node = !first_init).then { success ->
             //  初始化网络相关数据
             chainMgr.grapheneNetworkInit().then { data ->
-                //  初始化逻辑相关数据
-                val walletMgr = WalletManager.sharedWalletManager()
-                val promise_map = JSONObject().apply {
-                    put("kInitTickerData", chainMgr.marketsInitAllTickerData())
-                    put("kInitGlobalProperties", connMgr.last_connection().async_exec_db("get_global_properties"))
-                    put("kInitFeeAssetInfo", chainMgr.queryFeeAssetListDynamicInfo())     //  查询手续费兑换比例、手续费池等信息
-                    //  每次启动都刷新当前账号信息
-                    if (walletMgr.isWalletExist()) {
-                        put("kInitFullUserData", chainMgr.queryFullAccountInfo(walletMgr.getWalletInfo().getString("kAccountName")))
+                //  初始化市场相关依赖数据（在 ticker 等初始化之前。）
+                return@then chainMgr.queryAllAssetsInfo(pAppCache.get_fav_markets_asset_ids()).then {
+                    //  生成市场数据结构
+                    chainMgr.buildAllMarketsInfos()
+                    //  初始化逻辑相关数据
+                    val walletMgr = WalletManager.sharedWalletManager()
+                    val promise_map = JSONObject().apply {
+                        put("kInitTickerData", chainMgr.marketsInitAllTickerData())
+                        put("kInitGlobalProperties", connMgr.last_connection().async_exec_db("get_global_properties"))
+                        put("kInitFeeAssetInfo", chainMgr.queryFeeAssetListDynamicInfo())     //  查询手续费兑换比例、手续费池等信息
+                        //  每次启动都刷新当前账号信息
+                        if (walletMgr.isWalletExist()) {
+                            put("kInitFullUserData", chainMgr.queryFullAccountInfo(walletMgr.getWalletInfo().getString("kAccountName")))
+                        }
+                        //  初始化OTC数据
+                        put("kQueryConfig", OtcManager.sharedOtcManager().queryConfig())
                     }
-                    //  初始化OTC数据
-                    put("kQueryConfig", OtcManager.sharedOtcManager().queryConfig())
-                }
-                return@then Promise.map(promise_map).then {
-                    //  更新全局属性
-                    val data_hash = it as JSONObject
-                    chainMgr.updateObjectGlobalProperties(data_hash.getJSONObject("kInitGlobalProperties"))
-                    //  更新帐号完整数据
-                    val full_account_data = data_hash.optJSONObject("kInitFullUserData")
-                    if (full_account_data != null) {
-                        AppCacheManager.sharedAppCacheManager().updateWalletAccountInfo(full_account_data)
+                    return@then Promise.map(promise_map).then {
+                        //  更新全局属性
+                        val data_hash = it as JSONObject
+                        chainMgr.updateObjectGlobalProperties(data_hash.getJSONObject("kInitGlobalProperties"))
+                        //  更新帐号完整数据
+                        val full_account_data = data_hash.optJSONObject("kInitFullUserData")
+                        if (full_account_data != null) {
+                            AppCacheManager.sharedAppCacheManager().updateWalletAccountInfo(full_account_data)
+                        }
+                        //  初始化完成之后：启动计划调度任务
+                        ScheduleManager.sharedScheduleManager().startTimer()
+                        ScheduleManager.sharedScheduleManager().autoRefreshTickerScheduleByMergedMarketInfos()
+                        //  初始化完成
+                        p.resolve(true)
+                        return@then null
                     }
-                    //  初始化完成之后：启动计划调度任务
-                    ScheduleManager.sharedScheduleManager().startTimer()
-                    ScheduleManager.sharedScheduleManager().autoRefreshTickerScheduleByMergedMarketInfos()
-                    //  初始化完成
-                    p.resolve(true)
-                    return@then null
                 }
             }.catch {
                 p.reject(resources.getString(R.string.tip_network_error))
@@ -197,6 +203,6 @@ class ActivityLaunch : BtsppActivity() {
      */
     private fun initCustomConfig() {
         // 初始化缓存
-        ChainObjectManager.sharedChainObjectManager().initAll(this)
+        ChainObjectManager.sharedChainObjectManager().initConfig(this)
     }
 }

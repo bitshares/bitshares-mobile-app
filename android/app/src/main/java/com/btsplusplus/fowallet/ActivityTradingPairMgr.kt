@@ -1,27 +1,21 @@
 package com.btsplusplus.fowallet
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.Gravity
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.Switch
 import android.widget.TextView
 import bitshares.*
+import com.btsplusplus.fowallet.utils.VcUtils
 import com.fowallet.walletcore.bts.ChainObjectManager
 import kotlinx.android.synthetic.main.activity_trading_pair_mgr.*
 import org.json.JSONObject
-import org.w3c.dom.Text
 
 class ActivityTradingPairMgr : BtsppActivity() {
 
-    lateinit var tv_trade_asset: TextView
-    lateinit var tv_quote_asset: TextView
-    lateinit var layout_trading_pairs: LinearLayout
-    lateinit var tv_my_tradeing_pair_n: TextView
-
-    private val _array_data = mutableListOf<JSONObject>()
+    private val _data_array_pairs = mutableListOf<JSONObject>()
+    private val _args_pair_info = JSONObject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,140 +26,224 @@ class ActivityTradingPairMgr : BtsppActivity() {
         // 设置全屏(隐藏状态栏和虚拟导航栏)
         setFullScreen()
 
-        // 初始化对象
-        tv_trade_asset = tv_trade_asset_from_trading_pair_mgr
-        tv_quote_asset = tv_quote_asset_from_trading_pair_mgr
-        layout_trading_pairs = layout_trading_pairs_from_trading_pair_mgr
-        tv_my_tradeing_pair_n = tv_my_custom_n_trading_pair_mgr
-
-        // 切换图片改变颜色
-        iv_switch_from_trading_pair_mgr.setColorFilter(resources.getColor(R.color.theme01_textColorMain))
-
-        tv_trade_asset.text = "BTS"
-        tv_quote_asset.text = "USD"
-
-        // 添加按钮事件
-        btn_add_from_trading_pair_mgr.setOnClickListener {
-
+        //  初始化数据 - 获取所有收藏或自定义交易对列表。
+        val all_fav_markets = AppCacheManager.sharedAppCacheManager().get_all_fav_markets()
+        for (key in all_fav_markets.keys()) {
+            _data_array_pairs.add(all_fav_markets.getJSONObject(key))
         }
+        _data_array_pairs.sortBy { it.getString("base") }
 
-        // 交易资产点击事件
-        layout_trade_asset_from_trading_pair_mgr.setOnClickListener {
+        //  初始化UI -  切换图片改变颜色
+        icon_switch_button.setColorFilter(resources.getColor(R.color.theme01_textColorMain))
+        _draw_ui_all()
 
-        }
+        //  添加按钮事件
+        btn_add_from_trading_pair_mgr.setOnClickListener { onAddButtonClicked() }
 
-        // 中间切换按钮点击事件
-        layout_switch_from_trading_pair_mgr.setOnClickListener {
+        //  交易资产点击事件
+        layout_quote_asset.setOnClickListener { onQuoteAssetClicked() }
 
-        }
+        //  中间切换按钮点击事件
+        layout_switch_button.setOnClickListener { onSwitchButtonClicked() }
 
-        // 报价资产点击事件
-        layout_quote_asset_from_trading_pair_mgr.setOnClickListener {
+        //  报价资产点击事件
+        layout_base_asset.setOnClickListener { onBaseAssetClicked() }
 
-        }
-
-        // 返回按钮事件
+        //  返回按钮事件
         layout_back_from_trading_pair_mgr.setOnClickListener { finish() }
-
-        reloadAndRefresh()
     }
 
-    /**
-     * 重新加载数据&刷新列表。
-     */
-    private fun reloadAndRefresh() {
-        reinitCustomMarketList()
-        tv_my_tradeing_pair_n.text = "我的交易对(${_array_data.count()})个"
-        _refreshUI()
-    }
+    private fun onAddPairCore(quote: JSONObject, base: JSONObject) {
+        val pAppCache = AppCacheManager.sharedAppCacheManager()
 
-    /**
-     * (private) 初始化自定义交易对列表
-     */
-    private fun reinitCustomMarketList() {
-        _array_data.clear()
+        val quote_id = quote.getString("id")
+        val base_id = base.getString("id")
 
-        val custom_markets = AppCacheManager.sharedAppCacheManager().get_all_custom_markets()
-        if (custom_markets.length() <= 0) {
+        if (pAppCache.is_fav_market(quote_id, base_id)) {
+            showToast(resources.getString(R.string.kVcMyPairSubmitTipPairIsAlreadyExist))
             return
         }
 
-        val market_hash = JSONObject()
-        ChainObjectManager.sharedChainObjectManager().getDefaultMarketInfos().forEach<JSONObject> {
-            val market = it!!
-            val base = market.getJSONObject("base")
-            market_hash.put(base.getString("symbol"), base)
-        }
-        for (obj in custom_markets.values()) {
-            val custom_item = obj!!
-            val base_symbol = custom_item.getString("base")
-            val market_base = market_hash.optJSONObject(base_symbol)
-            //  无效数据（用户添加之后，官方删除了部分市场可能存在该情况。）
-            if (market_base == null) {
-                continue
+        if (VcUtils.processMyFavPairStateChanged(this, quote, base, associated_view = null)) {
+            //  添加到列表
+            var exist = false
+            for (fav_item in _data_array_pairs) {
+                if (quote_id == fav_item.getString("quote") && base_id == fav_item.getString("base")) {
+                    exist = true
+                    break
+                }
             }
-            val quote = custom_item.getJSONObject("quote")
-            _array_data.add(jsonObjectfromKVS("base", market_base, "quote", quote))
+            if (!exist) {
+                _data_array_pairs.add(JSONObject().apply {
+                    put("base", base_id)
+                    put("quote", quote_id)
+                })
+                _data_array_pairs.sortBy { it.getString("base") }
+            }
+            //  刷新
+            _draw_ui_all()
         }
-
-        //  排序
-        _array_data.sortBy { it.getJSONObject("quote").getString("symbol") }
     }
 
-    private fun _refreshUI() {
-        addDefaultResult()
-    }
+    private fun onAddButtonClicked() {
+        val quote = _args_pair_info.optJSONObject("quote")
+        val base = _args_pair_info.optJSONObject("base")
 
-    private fun addDefaultResult() {
-        //  添加到列表
-        layout_trading_pairs.removeAllViews()
-
-        if (_array_data.count() === 0){
-            layout_trading_pairs.addView(ViewUtils.createEmptyCenterLabel(this, "没有任何自选", text_color = resources.getColor(R.color.theme01_textColorGray)))
+        if (quote == null) {
+            showToast(resources.getString(R.string.kVcMyPairSubmitTipMissQuoteAsset))
             return
         }
 
-        for (data in _array_data) {
-            createCell(data)
+        if (base == null) {
+            showToast(resources.getString(R.string.kVcMyPairSubmitTipMissBaseAsset))
+            return
+        }
+
+        if (quote.getString("id") == base.getString("id")) {
+            showToast(resources.getString(R.string.kVcMyPairSubmitTipQuoteBaseIsSame))
+            return
+        }
+
+        //  添加
+        onAddPairCore(quote, base)
+    }
+
+    private fun onQuoteAssetClicked() {
+        TempManager.sharedTempManager().set_query_account_callback { last_activity, asset_info ->
+            last_activity.goTo(ActivityTradingPairMgr::class.java, true, back = true)
+            //  处理选择搜索结果
+            ChainObjectManager.sharedChainObjectManager().appendAssetCore(asset_info)
+            _args_pair_info.put("quote", asset_info)
+            _draw_ui_current_pair_assets()
+        }
+        val self = this
+        goTo(ActivityAccountQueryBase::class.java, true, args = JSONObject().apply {
+            put("kSearchType", ENetworkSearchType.enstAssetAll)
+            put("kTitle", self.resources.getString(R.string.kVcTitleSearchAssetQuote))
+        })
+    }
+
+    private fun onBaseAssetClicked() {
+        TempManager.sharedTempManager().set_query_account_callback { last_activity, asset_info ->
+            last_activity.goTo(ActivityTradingPairMgr::class.java, true, back = true)
+            //  处理选择搜索结果
+            ChainObjectManager.sharedChainObjectManager().appendAssetCore(asset_info)
+            _args_pair_info.put("base", asset_info)
+            _draw_ui_current_pair_assets()
+        }
+        val self = this
+        goTo(ActivityAccountQueryBase::class.java, true, args = JSONObject().apply {
+            put("kSearchType", ENetworkSearchType.enstAssetAll)
+            put("kTitle", self.resources.getString(R.string.kVcTitleSearchAssetBase))
+        })
+    }
+
+    private fun onSwitchButtonClicked() {
+        val quote = _args_pair_info.optJSONObject("quote")
+        val base = _args_pair_info.optJSONObject("base")
+        if (quote != null) {
+            _args_pair_info.put("base", quote)
+        } else {
+            _args_pair_info.remove("base")
+        }
+        if (base != null) {
+            _args_pair_info.put("quote", base)
+        } else {
+            _args_pair_info.remove("quote")
+        }
+        //  刷新
+        _draw_ui_current_pair_assets()
+    }
+
+    private fun onFavButtonClicked(quote: JSONObject, base: JSONObject, imageView: ImageView) {
+        if (VcUtils.processMyFavPairStateChanged(this, quote, base, associated_view = imageView)) {
+            //  界面刷新
+            _draw_ui_my_pairs_title()
+            _draw_ui_pairs_list()
         }
     }
 
-    private fun createCell(data: JSONObject) {
+    private fun _draw_ui_current_pair_assets() {
+        val quote = _args_pair_info.optJSONObject("quote")
+        if (quote != null) {
+            tv_quote_asset.text = quote.getString("symbol")
+            tv_quote_asset.setTextColor(resources.getColor(R.color.theme01_textColorMain))
+        } else {
+            tv_quote_asset.text = "--"
+            tv_quote_asset.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
+        }
+
+        val base = _args_pair_info.optJSONObject("base")
+        if (base != null) {
+            tv_base_asset.text = base.getString("symbol")
+            tv_base_asset.setTextColor(resources.getColor(R.color.theme01_textColorMain))
+        } else {
+            tv_base_asset.text = "--"
+            tv_base_asset.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
+        }
+    }
+
+    private fun _draw_ui_my_pairs_title() {
+        tv_my_pairs_title.text = String.format(resources.getString(R.string.kSearchTipsMyCustomPairs), _data_array_pairs.size.toString())
+    }
+
+    private fun _draw_ui_all() {
+        _draw_ui_current_pair_assets()
+        _draw_ui_my_pairs_title()
+        _draw_ui_pairs_list()
+    }
+
+    private fun _draw_ui_pairs_list() {
+        val container = layout_trading_pairs_from_trading_pair_mgr
+        container.removeAllViews()
+
+        if (_data_array_pairs.isEmpty()) {
+            container.addView(ViewUtils.createEmptyCenterLabel(this, resources.getString(R.string.kLabelNoFavMarket), text_color = resources.getColor(R.color.theme01_textColorGray)))
+        } else {
+            for (data in _data_array_pairs) {
+                createCell(container, data)
+            }
+        }
+    }
+
+    private fun createCell(container: LinearLayout, data: JSONObject) {
         val _ctx = this
-        val view = LinearLayout(this)
-        val layout_params = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP)
-        layout_params.gravity = Gravity.CENTER_VERTICAL
+        val cell = LinearLayout(this).apply {
+            layoutParams = LinearLayout.LayoutParams(LLAYOUT_MATCH, LLAYOUT_WARP).apply {
+                gravity = Gravity.CENTER_VERTICAL
+            }
+            orientation = LinearLayout.HORIZONTAL
+        }
 
-        view.orientation = LinearLayout.HORIZONTAL
-        view.layoutParams = layout_params
-
-        val base = data.getJSONObject("base")
-        val quote = data.getJSONObject("quote")
+        val pAppCache = AppCacheManager.sharedAppCacheManager()
+        val chainMgr = ChainObjectManager.sharedChainObjectManager()
+        val base = chainMgr.getChainObjectByID(data.getString("base"))
+        val quote = chainMgr.getChainObjectByID(data.getString("quote"))
         val quote_symbol = quote.getString("symbol")
-        val base_name = base.getString("name")
+        val base_symbol = base.getString("symbol")
 
-        // 左 (交易对 自定义)
+        //  左 (交易对 自定义)
         val tv_trading_pair = TextView(this).apply {
-            text = "${quote_symbol}/${base_name}"
+            text = "$quote_symbol / $base_symbol"
             gravity = Gravity.CENTER_VERTICAL
             setTextColor(resources!!.getColor(R.color.theme01_textColorMain))
         }
-        view.addView(tv_trading_pair)
+        cell.addView(tv_trading_pair)
 
-        // 自定义标签
-        if (true){
+        //  自定义标签
+        if (!chainMgr.isDefaultPair(quote, base)) {
             val tv_custom = TextView(this).apply {
                 layoutParams = LinearLayout.LayoutParams(LLAYOUT_WARP, LLAYOUT_WARP).apply {
-                    setMargins(4.dp,0,0,0)
+                    setMargins(4.dp, 0, 0, 0)
                 }
-                text = "自定义"
+                text = resources.getString(R.string.kSettingApiCellCustomFlag)
                 gravity = Gravity.CENTER_VERTICAL
                 setPadding(4.dp, 1.dp, 4.dp, 1.dp)
                 setTextColor(resources.getColor(R.color.theme01_textColorMain))
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10.0f)
                 background = resources.getDrawable(R.drawable.border_text_view)
             }
-            view.addView(tv_custom)
+            cell.addView(tv_custom)
         }
 
         //  右 (收藏star图标)
@@ -176,37 +254,21 @@ class ActivityTradingPairMgr : BtsppActivity() {
             gravity = Gravity.RIGHT
             val iv = ImageView(_ctx).apply {
                 setImageResource(R.drawable.ic_btn_star)
-
-                // 点击取消收藏交易对
-                setOnClickListener {
-
-                }
+                setColorFilter(if (pAppCache.is_fav_market(quote.getString("id"), base.getString("id"))) {
+                    resources.getColor(R.color.theme01_textColorHighlight)
+                } else {
+                    resources.getColor(R.color.theme01_textColorGray)
+                })
             }
+            //  事件 - 点击取消收藏交易对
+            iv.setOnClickListener { onFavButtonClicked(quote, base, iv) }
             addView(iv)
         }
-        view.addView(layout_iv)
+        cell.addView(layout_iv)
 
-        layout_trading_pairs.addView(view)
-        layout_trading_pairs.addView(ViewLine(this, margin_top = 12.dp, margin_bottom = 12.dp))
-    }
-
-    private fun onSwitchAction(data: JSONObject, selected: Boolean, switch: Switch) {
-        val pAppCache = AppCacheManager.sharedAppCacheManager()
-        if (selected) {
-            val base = data.getJSONObject("base")
-            val quote = data.getJSONObject("quote")
-            pAppCache.set_custom_markets(quote, base.getString("symbol")).saveCustomMarketsToFile()
-            //  [统计]
-            btsppLogCustom("event_custommarket_add", jsonObjectfromKVS("base", base.getString("symbol"), "quote", quote.getString("symbol")))
-        } else {
-            val base = data.getJSONObject("base")
-            val quote = data.getJSONObject("quote")
-            pAppCache.remove_custom_markets(quote.getString("symbol"), base.getString("symbol")).saveCustomMarketsToFile()
-            //  [统计]
-            btsppLogCustom("event_custommarket_remove", jsonObjectfromKVS("base", base.getString("symbol"), "quote", quote.getString("symbol")))
-        }
-        //  标记：自定义交易对发生变化，市场列表需要更新。
-        TempManager.sharedTempManager().customMarketDirty = true
+        //  添加到容器
+        container.addView(cell)
+        container.addView(ViewLine(this, margin_top = 12.dp, margin_bottom = 12.dp))
     }
 
 }
