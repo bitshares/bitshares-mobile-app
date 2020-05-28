@@ -12,7 +12,6 @@
 
 @interface VCSettlementOrders ()
 {
-    TradingPair*            _tradingPair;
     NSDictionary*           _fullAccountInfo;
     
     __weak VCBase*          _owner;         //  REMARK：声明为 weak，否则会导致循环引用。

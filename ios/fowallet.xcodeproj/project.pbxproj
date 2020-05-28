@@ -827,6 +827,12 @@
 		3F9C43E424567CF1000B2683 /* VCBlindBackupReceipt.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9C43E224567CF0000B2683 /* VCBlindBackupReceipt.m */; };
 		3F9C43E524567CF1000B2683 /* VCBlindBackupReceipt.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9C43E224567CF0000B2683 /* VCBlindBackupReceipt.m */; };
 		3F9C43E624567CF1000B2683 /* VCBlindBackupReceipt.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9C43E224567CF0000B2683 /* VCBlindBackupReceipt.m */; };
+		3F9EA694247F5262007F3036 /* iconAssetInfo@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F9EA692247F5261007F3036 /* iconAssetInfo@3x.png */; };
+		3F9EA695247F5262007F3036 /* iconAssetInfo@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F9EA692247F5261007F3036 /* iconAssetInfo@3x.png */; };
+		3F9EA696247F5262007F3036 /* iconAssetInfo@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F9EA692247F5261007F3036 /* iconAssetInfo@3x.png */; };
+		3F9EA697247F5262007F3036 /* iconAssetInfo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F9EA693247F5261007F3036 /* iconAssetInfo@2x.png */; };
+		3F9EA698247F5262007F3036 /* iconAssetInfo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F9EA693247F5261007F3036 /* iconAssetInfo@2x.png */; };
+		3F9EA699247F5262007F3036 /* iconAssetInfo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F9EA693247F5261007F3036 /* iconAssetInfo@2x.png */; };
 		3F9F2C3E2229051700D49165 /* MKlineIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9F2C3D2229051600D49165 /* MKlineIndex.m */; };
 		3F9F2C3F2229051700D49165 /* MKlineIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9F2C3D2229051600D49165 /* MKlineIndex.m */; };
 		3FA70FA423FCFAC7007ABD15 /* ViewBidAskCellVer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FA70FA323FCFAC7007ABD15 /* ViewBidAskCellVer.m */; };
@@ -2302,6 +2308,8 @@
 		3F9A731321E729FE00DAF7A2 /* VCGatewayDeposit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCGatewayDeposit.h; path = Controller/VCGatewayDeposit.h; sourceTree = "<group>"; };
 		3F9C43E224567CF0000B2683 /* VCBlindBackupReceipt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCBlindBackupReceipt.m; path = Controller/VCBlindBackupReceipt.m; sourceTree = "<group>"; };
 		3F9C43E324567CF1000B2683 /* VCBlindBackupReceipt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCBlindBackupReceipt.h; path = Controller/VCBlindBackupReceipt.h; sourceTree = "<group>"; };
+		3F9EA692247F5261007F3036 /* iconAssetInfo@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconAssetInfo@3x.png"; path = "Images/iconAssetInfo@3x.png"; sourceTree = "<group>"; };
+		3F9EA693247F5261007F3036 /* iconAssetInfo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iconAssetInfo@2x.png"; path = "Images/iconAssetInfo@2x.png"; sourceTree = "<group>"; };
 		3F9F2C3C2229051600D49165 /* MKlineIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKlineIndex.h; sourceTree = "<group>"; };
 		3F9F2C3D2229051600D49165 /* MKlineIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKlineIndex.m; sourceTree = "<group>"; };
 		3FA70FA223FCFAC7007ABD15 /* ViewBidAskCellVer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewBidAskCellVer.h; path = View/ViewBidAskCellVer.h; sourceTree = "<group>"; };
@@ -3635,6 +3643,8 @@
 		18FF069417E00D870088405E /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				3F9EA693247F5261007F3036 /* iconAssetInfo@2x.png */,
+				3F9EA692247F5261007F3036 /* iconAssetInfo@3x.png */,
 				3F94DC3224613A47000D170F /* iconBlindFrom@2x.png */,
 				3F94DC3124613A47000D170F /* iconBlindFrom@3x.png */,
 				3F94DC2E24613A46000D170F /* iconBlindTo@2x.png */,
@@ -5032,12 +5042,14 @@
 				3F67697A230E9EC100E98C14 /* iconWallet@2x.png in Resources */,
 				3F67697B230E9EC100E98C14 /* Edit@2x.png in Resources */,
 				3F67697C230E9EC100E98C14 /* iconAdvFunction@3x.png in Resources */,
+				3F9EA699247F5262007F3036 /* iconAssetInfo@2x.png in Resources */,
 				3F67697D230E9EC100E98C14 /* Localizable.strings in Resources */,
 				3FB038052398A73F00FC859C /* iconOtc@3x.png in Resources */,
 				3F67697E230E9EC100E98C14 /* Assets.xcassets in Resources */,
 				3F67697F230E9EC100E98C14 /* iconDepositWithdraw@2x.png in Resources */,
 				3F676980230E9EC100E98C14 /* pass@2x.png in Resources */,
 				3F676981230E9EC100E98C14 /* Questions@2x.png in Resources */,
+				3F9EA696247F5262007F3036 /* iconAssetInfo@3x.png in Resources */,
 				3F676982230E9EC100E98C14 /* tabService@2x.png in Resources */,
 				3F676983230E9EC100E98C14 /* Hearts-50@2x.png in Resources */,
 				3F676984230E9EC100E98C14 /* iconWallet@3x.png in Resources */,
@@ -5321,12 +5333,14 @@
 				3FB8F9F321CE66C200DA88E2 /* iconWallet@2x.png in Resources */,
 				3FB8F9F421CE66C200DA88E2 /* Edit@2x.png in Resources */,
 				3F7ED8DB227691BA00082680 /* iconAdvFunction@3x.png in Resources */,
+				3F9EA698247F5262007F3036 /* iconAssetInfo@2x.png in Resources */,
 				3F767B12224B7B310012822D /* Localizable.strings in Resources */,
 				3FB038042398A73F00FC859C /* iconOtc@3x.png in Resources */,
 				3FB8F9F521CE66C200DA88E2 /* Assets.xcassets in Resources */,
 				3F6C35B621EE0AB1008E2903 /* iconDepositWithdraw@2x.png in Resources */,
 				3FB8F9F621CE66C200DA88E2 /* pass@2x.png in Resources */,
 				3FB8F9F721CE66C200DA88E2 /* Questions@2x.png in Resources */,
+				3F9EA695247F5262007F3036 /* iconAssetInfo@3x.png in Resources */,
 				3FB8F9F821CE66C200DA88E2 /* tabService@2x.png in Resources */,
 				3FB8F9F921CE66C200DA88E2 /* Hearts-50@2x.png in Resources */,
 				3FB8F9FA21CE66C200DA88E2 /* iconWallet@3x.png in Resources */,
@@ -5603,6 +5617,7 @@
 				F5BF57BB1E307A0B00DEDE38 /* sns_praised_highlight@2x.png in Resources */,
 				B7973C5020E4E43E0052A5F5 /* iconFaq@3x.png in Resources */,
 				F5BF57C01E30959B00DEDE38 /* girl@2x.png in Resources */,
+				3F9EA694247F5262007F3036 /* iconAssetInfo@3x.png in Resources */,
 				3F0AE33E2192C97800E4144C /* iconWallet@2x.png in Resources */,
 				F55325AB1C075D3200EC3F95 /* Edit@2x.png in Resources */,
 				F51D14131C5C96C300FBB748 /* Assets.xcassets in Resources */,
@@ -5741,6 +5756,7 @@
 				B7973C4F20E4E43E0052A5F5 /* iconAbout@3x.png in Resources */,
 				3FB0381B2398A93400FC859C /* iconCopy@3x.png in Resources */,
 				F553259E1C075D3200EC3F95 /* Cancel@2x.png in Resources */,
+				3F9EA697247F5262007F3036 /* iconAssetInfo@2x.png in Resources */,
 				3F7ED8DA227691BA00082680 /* iconAdvFunction@3x.png in Resources */,
 				B78FFC0C1C03220D00AB7F1F /* tapicon@2x.png in Resources */,
 				3FCC8B7F237A7C1F00F5664D /* iconPmAlipay@2x.png in Resources */,
