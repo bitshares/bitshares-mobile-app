@@ -14,4 +14,6 @@
 
 - (void)querySettlementOrders;
 
+@property (nonatomic, strong) TradingPair* tradingPair;
+
 @end

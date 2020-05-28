@@ -10,6 +10,7 @@
 
 #import "VCCallOrderRanking.h"
 #import "VCFeedPriceDetail.h"
+#import "VCSettlementOrders.h"
 
 #import "VCSearchNetwork.h"
 
@@ -42,16 +43,31 @@
 
 - (NSArray*)getTitleStringArray
 {
-    return @[NSLocalizedString(@"kVcSmartPageTitleRank", @"抵押排行"),
-             NSLocalizedString(@"kVcSmartPageTitleFeed", @"喂价详情")];
+    return @[
+        NSLocalizedString(@"kVcSmartPageTitleRank", @"抵押排行"),
+        NSLocalizedString(@"kVcSmartPageTitleFeed", @"喂价详情"),
+        NSLocalizedString(@"kVcOrderPageSettleOrders", @"清算单")
+    ];
 }
 
 - (NSArray*)getSubPageVCArray
 {
     return @[
         [[VCRankingList alloc] initWithOwner:self asset:_currAsset],
-        [[VCFeedPriceDetailSubPage alloc] initWithOwner:self asset:_currAsset]
+        [[VCFeedPriceDetailSubPage alloc] initWithOwner:self asset:_currAsset],
+        [[VCSettlementOrders alloc] initWithOwner:self tradingPair:[self genSettlementOrderTradingPair:_currAsset] fullAccountInfo:nil]
     ];
+}
+
+- (TradingPair*)genSettlementOrderTradingPair:(id)curr_asset
+{
+    //  REMARK：构造清算单界面所需 *TradingPair* 参数。
+    //  注：这里构造的并非完整的 TradingPair 对象，清算单界面目前只需要 baseAsset 和 smartAssetId 两个数据，这里只确保这两个参数正确。
+    TradingPair* tradingPair = [[TradingPair alloc] initWithBaseAsset:curr_asset quoteAsset:curr_asset];
+    tradingPair.smartAssetId = [curr_asset objectForKey:@"id"];
+    tradingPair.sbaAssetId = [curr_asset objectForKey:@"id"];
+    tradingPair.isCoreMarket = YES;
+    return tradingPair;
 }
 
 - (void)onRightButtonClicked
@@ -95,6 +111,8 @@
     for (VCBase* vc in _subvcArrays) {
         if ([vc respondsToSelector:@selector(setCurrent_asset:)]) {
             [vc performSelector:@selector(setCurrent_asset:) withObject:_currAsset];
+        } else if ([vc respondsToSelector:@selector(setTradingPair:)]) {
+            [vc performSelector:@selector(setTradingPair:) withObject:[self genSettlementOrderTradingPair:_currAsset]];
         }
     }
     

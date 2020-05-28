@@ -217,7 +217,7 @@ enum
             cell.imageView.image = [UIImage templateImageNamed:@"iconQuery"];
             break;
         case kVcSubAssetInfos:
-            cell.imageView.image = [UIImage templateImageNamed:@"iconDebtRank"];//TODO:6.0 icon
+            cell.imageView.image = [UIImage templateImageNamed:@"iconAssetInfo"];
             break;
             
         case kVcOtcUser:
