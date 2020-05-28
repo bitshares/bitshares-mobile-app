@@ -16,12 +16,11 @@
         android:padding="10dp"
         android:orientation="vertical">
 
-
+        <!-- 交易对管理 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:orientation="horizontal">
-
 
             <LinearLayout
                 android:id="@+id/layout_back_from_trading_pair_mgr"
@@ -42,142 +41,144 @@
                     />
             </LinearLayout>
 
-
             <TextView
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:text="交易对管理"
+                android:text="@string/kVcTitleMyPairsMgr"
                 style="@style/kNavigationBarTextStyle" />
-
 
         </FrameLayout>
 
+        <LinearLayout
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
+            <!-- 交易资产 交换按钮 报价资产 视图 -->
             <LinearLayout
-                android:padding="10dp"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="wrap_content">
 
-
+                <!-- 交易资产 -->
                 <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
+                    android:id="@+id/layout_quote_asset"
+                    android:orientation="vertical"
+                    android:layout_gravity="left"
+                    android:gravity="left"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content">
 
-                    <LinearLayout
-                        android:id="@+id/layout_trade_asset_from_trading_pair_mgr"
-                        android:orientation="vertical"
-                        android:layout_gravity="left"
-                        android:gravity="left"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content">
+                    <TextView
+                        android:textSize="13dp"
+                        android:textColor="@color/theme01.textColorGray"
+                        android:text="@string/kLabelTitleAssetQuote"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
 
-                        <TextView
-                            android:textSize="13dp"
-                            android:textColor="@color/theme01.textColorGray"
-                            android:text="交易资产"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                    <TextView
+                        android:id="@+id/tv_quote_asset"
+                        android:layout_marginTop="3dp"
+                        android:textSize="16dp"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="--"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
 
-                        <TextView
-                            android:id="@+id/tv_trade_asset_from_trading_pair_mgr"
-                            android:layout_marginTop="3dp"
-                            android:textSize="16dp"
-                            android:textColor="@color/theme01.textColorMain"
-                            android:text="USD"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/layout_switch_from_trading_pair_mgr"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:id="@+id/iv_switch_from_trading_pair_mgr"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_gravity="center_vertical"
-                            android:gravity="center"
-                            android:src="@drawable/icon_switch" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/layout_quote_asset_from_trading_pair_mgr"
-                        android:orientation="vertical"
-                        android:layout_gravity="right"
-                        android:gravity="right"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:textSize="13dp"
-                            android:textColor="@color/theme01.textColorGray"
-                            android:text="报价资产"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                        <TextView
-                            android:id="@+id/tv_quote_asset_from_trading_pair_mgr"
-                            android:layout_marginTop="3dp"
-                            android:textSize="16dp"
-                            android:textColor="@color/theme01.textColorMain"
-                            android:text="BTS"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                    </LinearLayout>
                 </LinearLayout>
 
-                <View android:layout_height="1dp" android:layout_marginTop="12dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+                <!-- 交换按钮 -->
+                <LinearLayout
+                    android:id="@+id/layout_switch_button"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content">
 
-                <Button
-                    android:layout_marginTop="20dp"
-                    android:id="@+id/btn_add_from_trading_pair_mgr"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:gravity="center|center_vertical"
-                    android:padding="5dp"
-                    android:textAllCaps="false"
-                    android:text="添加"
-                    style="@style/kMainButtonStyle" />
+                    <ImageView
+                        android:id="@+id/icon_switch_button"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center"
+                        android:src="@drawable/icon_switch" />
+                </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tv_my_custom_n_trading_pair_mgr"
+                <!-- 报价资产 -->
+                <LinearLayout
+                    android:id="@+id/layout_base_asset"
+                    android:orientation="vertical"
+                    android:layout_gravity="right"
+                    android:gravity="right"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textSize="13dp"
+                        android:textColor="@color/theme01.textColorGray"
+                        android:text="@string/kLabelTitleAssetBase"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/tv_base_asset"
+                        android:layout_marginTop="3dp"
+                        android:textSize="16dp"
+                        android:textColor="@color/theme01.textColorNormal"
+                        android:text="--"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <View android:layout_height="1dp" android:layout_marginTop="12dp" android:background="@color/theme01.bottomLineColor" android:layout_width="fill_parent"></View>
+
+            <!-- 添加按钮 -->
+            <Button
+                android:layout_marginTop="20dp"
+                android:id="@+id/btn_add_from_trading_pair_mgr"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center|center_vertical"
+                android:padding="5dp"
+                android:textAllCaps="false"
+                android:text="@string/kLabelBtnNameAddPair"
+                style="@style/kMainButtonStyle" />
+
+            <!-- 我的交易对 -->
+            <TextView
+                android:id="@+id/tv_my_pairs_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/theme01.textColorMain"
+                android:textStyle="bold"
+                android:layout_marginTop="30dp"
+                android:text=""
+                />
+
+            <ScrollView
+                android:layout_marginTop="20dp"
+                android:fillViewport="true"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/layout_trading_pairs_from_trading_pair_mgr"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/theme01.textColorMain"
-                    android:textStyle="bold"
-                    android:layout_marginTop="30dp"
-                    android:text="我的交易对(0)个"
-                    />
+                    android:orientation="vertical" />
 
-                <ScrollView
-                    android:layout_marginTop="20dp"
-                    android:fillViewport="true"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <LinearLayout
-                        android:id="@+id/layout_trading_pairs_from_trading_pair_mgr"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical" />
-
-                </ScrollView>
+            </ScrollView>
 
 
-            </LinearLayout>
+        </LinearLayout>
 
 
     </LinearLayout>

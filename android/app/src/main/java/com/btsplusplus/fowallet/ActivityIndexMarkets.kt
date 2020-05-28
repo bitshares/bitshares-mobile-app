@@ -39,8 +39,6 @@ class ActivityIndexMarkets : BtsppActivity() {
         GrapheneConnectionManager.sharedGrapheneConnectionManager().reconnect_all()
         //  自选市场可能发生变化，重新加载。
         onRefreshFavoritesMarket()
-        //  自定义交易对发生变化，重新加载。
-        onRefreshCustomMarket()
         //  添加Ticker刷新定时器
         startTickerRefreshTimer()
     }
@@ -119,29 +117,13 @@ class ActivityIndexMarkets : BtsppActivity() {
      */
     private fun onRefreshFavoritesMarket() {
         if (TempManager.sharedTempManager().favoritesMarketDirty) {
+            //  重新构建各市场分组信息
+            ChainObjectManager.sharedChainObjectManager().buildAllMarketsInfos()
             //  清除标记
             TempManager.sharedTempManager().favoritesMarketDirty = false
             //  刷新
             for (fragment in fragmens) {
                 val fr = fragment as FragmentMarketInfo
-                fr.onRefreshFavoritesMarket()
-            }
-        }
-    }
-
-    /**
-     *  (private) 事件 - 刷新自定义交易对市场 同时刷新收藏列表（因为变更自定义交易对，可能导致收藏失效。）
-     */
-    private fun onRefreshCustomMarket() {
-        if (TempManager.sharedTempManager().customMarketDirty) {
-            //  重新构建各市场分组信息
-            ChainObjectManager.sharedChainObjectManager().buildAllMarketsInfos()
-            //  清除标记
-            TempManager.sharedTempManager().customMarketDirty = false
-            //  刷新
-            for (fragment in fragmens) {
-                val fr = fragment as FragmentMarketInfo
-                fr.onRefreshCustomMarket()
                 fr.onRefreshFavoritesMarket()
             }
             //  自定义交易对发生变化，重新刷新ticker更新任务。
@@ -163,9 +145,7 @@ class ActivityIndexMarkets : BtsppActivity() {
 //    }
 
     private fun setAddBtnListener() {
-        button_add.setOnClickListener {
-            goTo(ActivityAddAssetPairsBase::class.java, true)
-        }
+        button_add.setOnClickListener { goTo(ActivityTradingPairMgr::class.java, true) }
     }
 
     private fun setFragments() {

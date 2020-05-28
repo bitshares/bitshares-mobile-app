@@ -12,6 +12,7 @@ import android.widget.TextView
 import bitshares.*
 import com.btsplusplus.fowallet.kline.MKlineItemData
 import com.btsplusplus.fowallet.kline.TradingPair
+import com.btsplusplus.fowallet.utils.VcUtils
 import com.fowallet.walletcore.bts.ChainObjectManager
 import kotlinx.android.synthetic.main.activity_kline.*
 import org.json.JSONArray
@@ -170,6 +171,8 @@ class ActivityKLine : BtsppActivity() {
         //  交换交易对
         _tradingPair = TradingPair().initWithBaseAsset(_tradingPair._quoteAsset, _tradingPair._baseAsset)
         layout_kline_title.text = String.format("%s/%s", _tradingPair._quoteAsset.getString("symbol"), _tradingPair._baseAsset.getString("symbol"))
+        //  刷新收藏按钮状态
+        _refreshFavButtonStatus()
         //  更新关联数据
         _viewKLine._tradingPair = _tradingPair
         _viewCrss._tradingPair = _tradingPair
@@ -521,7 +524,7 @@ class ActivityKLine : BtsppActivity() {
      * 刷新收藏按钮状态，如果在交易界面收藏了，则回到K线界面需要刷新，反之依然。
      */
     private fun _refreshFavButtonStatus() {
-        if (AppCacheManager.sharedAppCacheManager().is_fav_market(_tradingPair._quoteAsset.getString("symbol"), _tradingPair._baseAsset.getString("symbol"))) {
+        if (AppCacheManager.sharedAppCacheManager().is_fav_market(_tradingPair._quoteAsset.getString("id"), _tradingPair._baseAsset.getString("id"))) {
             img_btn_fav_of_kline.setColorFilter(resources.getColor(R.color.theme01_textColorHighlight))
         } else {
             img_btn_fav_of_kline.setColorFilter(resources.getColor(R.color.theme01_textColorGray))
@@ -531,33 +534,10 @@ class ActivityKLine : BtsppActivity() {
     /**
      *  (private) 事件 - 收藏按钮点击（参考交易界面右上角按钮对应逻辑）
      */
-    private fun onButtomFavButtonClicked(v: View) {
-        val v = v as ImageButton
+    private fun onButtomFavButtonClicked(sender: View) {
+        val v = sender as ImageButton
         assert(v.tag == KBottomButtonTag.kBottomButtonTagFav.value)
-
-        val pAppCache = AppCacheManager.sharedAppCacheManager()
-
-        val quote_symbol = _tradingPair._quoteAsset.getString("symbol")
-        val base_symbol = _tradingPair._baseAsset.getString("symbol")
-        if (pAppCache.is_fav_market(quote_symbol, base_symbol)) {
-            //  取消自选、灰色五星、提示信息
-            pAppCache.remove_fav_markets(quote_symbol, base_symbol)
-            v.setColorFilter(resources.getColor(R.color.theme01_textColorNormal))
-            showToast(resources.getString(R.string.kTipsAddFavDelete))
-            //  [统计]
-            btsppLogCustom("event_market_remove_fav", jsonObjectfromKVS("base", base_symbol, "quote", quote_symbol))
-        } else {
-            //  添加自选、高亮五星、提示信息
-            pAppCache.set_fav_markets(quote_symbol, base_symbol)
-            v.setColorFilter(resources.getColor(R.color.theme01_textColorHighlight))
-            showToast(resources.getString(R.string.kTipsAddFavSuccess))
-            //  [统计]
-            btsppLogCustom("event_market_add_fav", jsonObjectfromKVS("base", base_symbol, "quote", quote_symbol))
-        }
-        pAppCache.saveFavMarketsToFile()
-
-        //  REMARK：自选列表需要更新
-        TempManager.sharedTempManager().favoritesMarketDirty = true
+        VcUtils.processMyFavPairStateChanged(this, _tradingPair._quoteAsset, _tradingPair._baseAsset, associated_view = v)
     }
 
     private fun px2dip(pxValue: Float): Int {

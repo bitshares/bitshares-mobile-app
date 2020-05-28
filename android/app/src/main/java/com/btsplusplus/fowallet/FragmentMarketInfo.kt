@@ -1,7 +1,6 @@
 package com.btsplusplus.fowallet
 
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -47,6 +46,7 @@ class FragmentMarketInfo : BtsppFragment() {
             _favorites_market = false
             _favorites_asset_list = null
             _marketInfos = market_config_info
+            refreshCustomMarket()
         } else {
             _favorites_market = true
             _marketInfos = null
@@ -83,9 +83,7 @@ class FragmentMarketInfo : BtsppFragment() {
      *  (public) 刷新自选市场
      */
     fun onRefreshFavoritesMarket() {
-        if (!_inited) {
-            return
-        }
+        refreshCustomMarket()
         loadAllFavoritesMarkets()
     }
 
@@ -97,27 +95,9 @@ class FragmentMarketInfo : BtsppFragment() {
         if (!_favorites_market) {
             return
         }
+
         //  加载数据
-        val chainMgr = ChainObjectManager.sharedChainObjectManager()
-        val pAppCache = AppCacheManager.sharedAppCacheManager()
-        _favorites_asset_list = JSONArray()
-        for (fav_item in pAppCache.get_all_fav_markets().values().toList<JSONObject>().sortedBy { it.getString("base") }) {
-            val base_symbol = fav_item.getString("base")
-            val quote_symbol = fav_item.getString("quote")
-            //  是自定义交易对，则有效。
-            if (pAppCache.is_custom_market(quote_symbol, base_symbol)) {
-                _favorites_asset_list!!.put(fav_item)
-                continue
-            }
-            //  是默认交易对，则有效。
-            if (chainMgr.isDefaultPair(base_symbol, quote_symbol)) {
-                _favorites_asset_list!!.put(fav_item)
-                continue
-            }
-            //  既不是自定义交易对、也不是默认交易对，则收藏无效了，则从收藏列表删除。（用户添加了自定义、然后收藏了、然后删除了自定义交易对）
-            pAppCache.remove_fav_markets(quote_symbol, base_symbol)
-        }
-        pAppCache.saveFavMarketsToFile()
+        _favorites_asset_list = AppCacheManager.sharedAppCacheManager().get_all_fav_markets().values().toList<JSONObject>().sortedBy { it.getString("base") }.toJsonArray()
 
         //  如果有UI界面则刷新。
         if (_view != null) {
@@ -126,15 +106,15 @@ class FragmentMarketInfo : BtsppFragment() {
     }
 
     /**
-     *  (public) 刷新自定义交易对
+     *  (private) 刷新自定义交易对
      */
-    fun onRefreshCustomMarket() {
-        if (!_inited) {
+    private fun refreshCustomMarket() {
+        //  自选列表不处理
+        if (_favorites_market) {
             return
         }
 
-        //  自选列表不处理
-        if (_favorites_market) {
+        if (_marketInfos == null) {
             return
         }
 
@@ -164,6 +144,8 @@ class FragmentMarketInfo : BtsppFragment() {
         val container = _view!!.findViewById<LinearLayout>(R.id.markets_info_sv)
         container.removeAllViews()
 
+        val chainMgr = ChainObjectManager.sharedChainObjectManager()
+
         //  先清空
         _label_arrays.clear()
 
@@ -171,9 +153,11 @@ class FragmentMarketInfo : BtsppFragment() {
             //  - 自定义市场
             if (_favorites_asset_list != null && _favorites_asset_list!!.length() > 0) {
                 //  描绘所有自选交易对
-                for (fav_item in _favorites_asset_list!!) {
+                for (fav_item in _favorites_asset_list!!.forin<JSONObject>()) {
                     fav_item!!.tap {
-                        _refreshDrawOnCell(null, _context!!, container, it.getString("quote"), it.getString("base"))
+                        _refreshDrawOnCell(null, _context!!, container,
+                                chainMgr.getChainObjectByID(it.getString("quote")),
+                                chainMgr.getChainObjectByID(it.getString("base")))
                     }
                 }
             } else {
@@ -189,43 +173,50 @@ class FragmentMarketInfo : BtsppFragment() {
                 val group = group_list.getJSONObject(i)
 
                 //  分组名称
-                val flmain = FrameLayout(_context)
-                val flmain_layout_params: FrameLayout.LayoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, toDp(32f))
-                val tvmain = TextView(_context)
-                val tvmain_layout_params = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
-                tvmain_layout_params.setMargins(toDp(10f), 0, 0, 0)
-                tvmain_layout_params.gravity = Gravity.CENTER_VERTICAL
+                val flmain = FrameLayout(_context).apply {
+                    layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, toDp(32f))
+                }
+                val tvmain = TextView(_context).apply {
+                    layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT).apply {
+                        setMargins(toDp(10f), 0, 0, 0)
+                        gravity = Gravity.CENTER_VERTICAL
+                    }
+                }
                 tvmain.gravity = Gravity.CENTER_VERTICAL
                 tvmain.setTextColor(resources.getColor(R.color.theme01_textColorHighlight))
                 tvmain.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13f)
                 val group_key = group.getString("group_key")
                 val group_info = ChainObjectManager.sharedChainObjectManager().getGroupInfoFromGroupKey(group_key)
                 tvmain.text = resources.getString(resources.getIdentifier(group_info.getString("name_key"), "string", context!!.packageName))
-                flmain.addView(tvmain, tvmain_layout_params)
+                flmain.addView(tvmain)
 
                 //  介绍按钮
                 if (group_info.optBoolean("intro", false)) {
-                    val inmain: TextView = TextView(_context)
-                    val inmain_layout_params = FrameLayout.LayoutParams(toDp(100f), FrameLayout.LayoutParams.MATCH_PARENT)
-                    inmain_layout_params.setMargins(0, 0, toDp(10f), 0)
-                    inmain_layout_params.gravity = Gravity.RIGHT
-                    inmain.gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
-                    inmain.text = resources.getString(R.string.kLabelGroupIntroduction)
-                    inmain.setTextColor(resources.getColor(R.color.theme01_textColorGray))
-                    inmain.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12f)
-                    inmain.setOnClickListener {
-                        VcUtils.gotoQaView(activity!!, "qa_gateway", resources.getString(R.string.kVcTitleWhatIsGateway))
+                    val inmain = TextView(_context).apply {
+                        layoutParams = FrameLayout.LayoutParams(toDp(100f), FrameLayout.LayoutParams.MATCH_PARENT).apply {
+                            setMargins(0, 0, toDp(10f), 0)
+                            gravity = Gravity.RIGHT
+                        }
+                        gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
+                        text = resources.getString(R.string.kLabelGroupIntroduction)
+                        setTextColor(resources.getColor(R.color.theme01_textColorGray))
+                        setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12f)
+                        setOnClickListener {
+                            VcUtils.gotoQaView(activity!!, "qa_gateway", resources.getString(R.string.kVcTitleWhatIsGateway))
+                        }
                     }
-                    flmain.addView(inmain, inmain_layout_params)
+                    flmain.addView(inmain)
                 }
-                container.addView(flmain, flmain_layout_params)
+                container.addView(flmain)
 
                 //  描绘单个分组下的所有交易对
                 val quote_list = group.getJSONArray("quote_list")
                 for (j in 0 until quote_list.length()) {
                     val base_symbol = _marketInfos!!.getJSONObject("base").getString("symbol")
                     val quote_symbol = quote_list.getString(j)
-                    _refreshDrawOnCell(group_info, _context!!, container, quote_symbol, base_symbol)
+                    _refreshDrawOnCell(group_info, _context!!, container,
+                            chainMgr.getAssetBySymbol(quote_symbol),
+                            chainMgr.getAssetBySymbol(base_symbol))
                 }
             }
         }
@@ -265,28 +256,42 @@ class FragmentMarketInfo : BtsppFragment() {
         val percent = percent_change.toDouble()
         if (percent > 0.0f) {
             percent_color = R.color.theme01_buyColor
-            percent_str = "+${percent_change}%"
+            percent_str = "+$percent_change%"
         } else if (percent < 0) {
             percent_color = R.color.theme01_sellColor
-            percent_str = "${percent_change}%"
+            percent_str = "$percent_change%"
         } else {
             percent_color = R.color.theme01_zeroColor
-            percent_str = "${percent_change}%"
+            percent_str = "$percent_change%"
         }
 
-        return jsonObjectfromKVS("price_str", latest, "volume_str", "${_context!!.resources.getString(R.string.kLabelHeader24HVol)} ${quote_volume}", "percent_str", percent_str, "percent_color", percent_color)
+        val self = this
+        return JSONObject().apply {
+            put("price_str", latest)
+            put("volume_str", "${self.resources.getString(R.string.kLabelHeader24HVol)} $quote_volume")
+            put("percent_str", percent_str)
+            put("percent_color", percent_color)
+        }
     }
 
-    private fun _refreshDrawOnCell(group_info: JSONObject?, ctx: Context, ly: LinearLayout, quote_symbol: String, base_symbol: String) {
+    private fun _refreshDrawOnCell(group_info: JSONObject?, ctx: Context, container: LinearLayout, quote_asset: JSONObject, base_asset: JSONObject) {
+        //  -- 准备数据
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
 
         //  获取资产信息
-        val base = chainMgr.getAssetBySymbol(base_symbol)
-        val quote = chainMgr.getAssetBySymbol(quote_symbol)
+        val base_symbol = base_asset.getString("symbol")
+        val quote_symbol = quote_asset.getString("symbol")
 
+        //  获取 base market 名
+        val base_market = chainMgr.getDefaultMarketInfoByBaseSymbol(base_symbol)
+        val base_market_name = if (base_market != null) {
+            base_market.getJSONObject("base").getString("name")
+        } else {
+            base_symbol
+        }
+
+        //  获取交易资产（quote资产）显示名  REMARK：如果是网关资产、则移除网关前缀。自选市场没有分组信息，网关资产也显示全称。
         var quote_name = quote_symbol
-
-        //  REMARK：如果是网关资产、则移除网关前缀。自选市场没有分组信息，网关资产也显示全称。
         if (group_info != null && group_info.optBoolean("gateway")) {
             val group_prefix = group_info.optString("prefix")
             if (quote_name.indexOf(group_prefix) == 0) {
@@ -297,86 +302,104 @@ class FragmentMarketInfo : BtsppFragment() {
             }
         }
 
-        val fl = FrameLayout(ctx)
-        val frame_layout_params: FrameLayout.LayoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, toDp(48f))
-
-        //  QUOTE 名
-        val tv1 = TextView(ctx)
-        val tv1_layout_params = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
-
-        tv1_layout_params.setMargins(toDp(10f), toDp(3f), 0, 0)
-        tv1.setTextColor(resources.getColor(R.color.theme01_textColorMain))
-        tv1.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15f)
-        tv1.id = R.id.view1_of_markets
-
-        //  BASE 名
-        val tv2 = TextView(ctx)
-        val tv2_layout_params = FrameLayout.LayoutParams(toDp(70f), FrameLayout.LayoutParams.MATCH_PARENT)
-
-        tv2.setTextColor(resources.getColor(R.color.theme01_textColorGray))
-        tv2.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10f)
-
-        tv1.text = quote_name
-        tv2.text = "  / ${chainMgr.getDefaultMarketInfoByBaseSymbol(base_symbol).getJSONObject("base").getString("name")}"
-
-        val tv1_paint = tv1.paint
-        val tv1_width = tv1_paint.measureText(quote_name)
-        tv2_layout_params.setMargins(tv1_width.toInt() + 20, toDp(9f), 0, 0)
-
-        val tv3_id = View.generateViewId()
-        val tv4_id = View.generateViewId()
-        val tv5_id = View.generateViewId()
+        //  获取报价资产显示名称
+        var base_name = base_market_name
+        //  REMARK：如果 base 的别名刚好和交易资产名字相同，则显示 base 的原始资产名字。
+        if (base_name == quote_name) {
+            base_name = base_symbol
+        }
 
         val ticker_show_data = _getTickerData(base_symbol, quote_symbol)
 
+        //  -- 初始化UI
+        val cell = FrameLayout(ctx).apply {
+            layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, toDp(48f))
+        }
+
+        val layout_quote_base_flag = LinearLayout(ctx).apply {
+            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.MATCH_PARENT).apply {
+                gravity = Gravity.CENTER_VERTICAL
+                setMargins(10.dp, 3.dp, 0, 0)
+            }
+            orientation = LinearLayout.HORIZONTAL
+
+            //  QUOTE 名
+            val tv1 = TextView(ctx).apply {
+                setTextColor(resources.getColor(R.color.theme01_textColorMain))
+                setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15f)
+                text = quote_name
+            }
+            addView(tv1)
+
+            //  BASE 名
+            val tv2 = TextView(ctx).apply {
+                setTextColor(resources.getColor(R.color.theme01_textColorGray))
+                setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10f)
+                text = String.format("/ %s", base_name)
+                setPadding(4.dp, 0, 4.dp, 0)
+            }
+            addView(tv2)
+
+            //  UI - 默认交易对中【非内置】交易对，添加【自定义】标签。【自选市场】不用显示。
+            if (group_info != null && !chainMgr.isDefaultPair(quote_asset, base_asset)) {
+                addView(TextView(ctx).apply {
+                    text = resources.getString(R.string.kSettingApiCellCustomFlag)
+                    setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10.0f)
+                    setTextColor(resources.getColor(R.color.theme01_textColorMain))
+                    background = resources.getDrawable(R.drawable.border_text_view)
+                    gravity = Gravity.CENTER.or(Gravity.CENTER_VERTICAL)
+                    setPadding(4.dp, 1.dp, 4.dp, 1.dp)
+                })
+            }
+        }
+
         //  24H量
-        val tv3 = TextView(ctx)
-        val tv3_layout_params = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.MATCH_PARENT)
-        tv3_layout_params.setMargins(toDp(10f), toDp(23f), 0, 0)
-        tv3.text = ticker_show_data.getString("volume_str")
-        tv3.setTextColor(resources.getColor(R.color.theme01_textColorNormal))
-        tv3.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10f)
-        tv3.id = tv3_id
+        val tv_volume = TextView(ctx).apply {
+            layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.MATCH_PARENT).apply {
+                setMargins(toDp(10f), toDp(23f), 0, 0)
+            }
+            text = ticker_show_data.getString("volume_str")
+            setTextColor(resources.getColor(R.color.theme01_textColorNormal))
+            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10f)
+        }
 
         //  价格
-        val tv4 = TextView(ctx)
-        val tv4_layout_params = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.MATCH_PARENT, Gravity.RIGHT or Gravity.CENTER_VERTICAL)
-        tv4_layout_params.setMargins(0, 0, toDp(85f), 0)
-        tv4.text = ticker_show_data.getString("price_str")
-        tv4.gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
-        tv4.setTextColor(resources.getColor(R.color.theme01_textColorMain))
-        tv4.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.5f)
-        tv4.id = tv4_id
+        val tv_price = TextView(ctx).apply {
+            layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.MATCH_PARENT, Gravity.RIGHT or Gravity.CENTER_VERTICAL).apply {
+                setMargins(0, 0, toDp(85f), 0)
+            }
+            text = ticker_show_data.getString("price_str")
+            gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
+            setTextColor(resources.getColor(R.color.theme01_textColorMain))
+            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.5f)
+        }
 
         //  百分比
-        val tv5 = TextView(ctx)
-        val tv5_layout_params = FrameLayout.LayoutParams(toDp(70f), toDp(25f), Gravity.RIGHT or Gravity.CENTER_VERTICAL)
-        tv5_layout_params.setMargins(0, 0, toDp(10f), 0)
-        tv5.id = tv5_id
-        tv5.gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL
-        tv5.setTextColor(resources.getColor(R.color.theme01_textColorPercent))
-        tv5.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.5f)
-        tv5.text = ticker_show_data.getString("percent_str")
-        tv5.setBackgroundColor(resources.getColor(ticker_show_data.getInt("percent_color")))
+        val tv_percent = TextView(ctx).apply {
+            layoutParams = FrameLayout.LayoutParams(toDp(70f), toDp(25f), Gravity.RIGHT or Gravity.CENTER_VERTICAL).apply {
+                setMargins(0, 0, toDp(10f), 0)
+            }
+            gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL
+            setTextColor(resources.getColor(R.color.theme01_textColorPercent))
+            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.5f)
+            text = ticker_show_data.getString("percent_str")
+            setBackgroundColor(resources.getColor(ticker_show_data.getInt("percent_color")))
+        }
 
         //  渲染每一行
-        fl.addView(tv1, tv1_layout_params)
-        fl.addView(tv2, tv2_layout_params)
-        fl.addView(tv3, tv3_layout_params)
-        fl.addView(tv4, tv4_layout_params)
-        fl.addView(tv5, tv5_layout_params)
+        cell.addView(layout_quote_base_flag)
+        cell.addView(tv_volume)
+        cell.addView(tv_price)
+        cell.addView(tv_percent)
 
-        ly.addView(fl, frame_layout_params)
+        container.addView(cell)
 
         //  添加到缓存
-        _label_arrays.add(jsonArrayfrom(base_symbol, quote_symbol, tv4, tv5, tv3))
+        _label_arrays.add(jsonArrayfrom(base_symbol, quote_symbol, tv_price, tv_percent, tv_volume))
 
         //  点击cell进入K线界面
-        fl.setOnClickListener {
-            val intent = Intent()
-            intent.setClass(ctx, ActivityKLine::class.java)
-            intent.putExtra(BTSPP_START_ACTIVITY_PARAM_ID, ParametersManager.sharedParametersManager().genParams(jsonArrayfrom(base, quote)))
-            startActivity(intent)
+        cell.setOnClickListener {
+            activity?.goTo(ActivityKLine::class.java, true, args = jsonArrayfrom(base_asset, quote_asset))
         }
     }
 

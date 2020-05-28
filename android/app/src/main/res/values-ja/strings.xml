@@ -1279,6 +1279,7 @@
     <string name="kOtcMgrMcActiveFailedTipMessage">激活失败，请往商家账号转入足够的保证金。</string>
     <string name="kOtcMgrMcActiveAskBtnActiveNow">立即激活</string>
     <string name="kOtcMgrMcActiveTipsOK">激活成功。</string>
+    <string name="kOtcMgrBakAccountCannotLogin">账号 %s 为商家备用账号，不可进入后台。</string>
     <string name="kOtcMgrNotSupportMultiSignAccount">多签账号不支持场外交易。</string>
     <string name="kOtcMgrNoOpenAnyDigiAssets">场外交易暂不支持任何数字资产，请稍后再试。</string>
     <string name="kOtcMgrNotSupportAsset">场外交易暂时不支持 %s 资产，请稍后再试。</string>
