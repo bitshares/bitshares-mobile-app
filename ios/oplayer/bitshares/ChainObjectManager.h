@@ -49,6 +49,11 @@
  */
 - (NSDictionary*)getDefaultParameters;
 
+/*
+ *  (public) 获取APP配置文件中出现的所有资产符号。初始化时需要查询所有依赖的资产信息。
+ */
+- (NSArray*)getConfigDependenceAssetSymbols;
+
 /**
  *  (public) 获取水龙头部分配置参数
  */
@@ -127,6 +132,12 @@
 - (id)getAssetBySymbol:(NSString*)symbol;
 - (id)getChainObjectByID:(NSString*)oid;
 - (id)getChainObjectByID:(NSString*)oid searchFileCache:(BOOL)searchFileCache;
+
+/*
+ *  (public) 从文件缓冲中根据资产符号名查询资产ID信息。
+ */
+- (NSDictionary*)getAssetIdFromFileCache:(NSArray*)asset_symbols;
+
 - (id)getVoteInfoByVoteID:(NSString*)vote_id;
 - (id)getAccountByName:(NSString*)name;
 - (id)getBlockHeaderInfoByBlockNumber:(id)block_number;
@@ -202,6 +213,11 @@
  *  (public) 查询手续费资产的详细信息（包括动态信息）
  */
 - (WsPromise*)queryFeeAssetListDynamicInfo;
+
+/**
+ *  (public) 根据资产名查询资产信息。
+ */
+- (WsPromise*)queryAssetsBySymbols:(NSArray*)symbols ids:(NSArray*)asset_ids;
 
 /**
  *  (public) 查询所有投票ID信息

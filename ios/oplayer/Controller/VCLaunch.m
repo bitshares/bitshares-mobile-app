@@ -229,8 +229,19 @@
         [[[connMgr Start:force_use_random_node] then:(^id(id success) {
             //  初始化石墨烯网络状态
             [[[chainMgr grapheneNetworkInit] then:(^id(id data) {
-                //  初始化市场相关依赖数据（在 ticker 等初始化之前。）
-                return [[chainMgr queryAllAssetsInfo:[pAppCache get_fav_markets_asset_ids]] then:^id(id data) {
+                //  初始化依赖资产（内置资产 + 自定义交易对等）
+                id dependence_syms = [chainMgr getConfigDependenceAssetSymbols];
+                id custom_asset_ids = [pAppCache get_fav_markets_asset_ids];
+                return [[chainMgr queryAssetsBySymbols:dependence_syms ids:custom_asset_ids] then:^id(id data) {
+#ifdef DEBUG
+                    //  确保查询成功。
+                    for (id sym in dependence_syms) {
+                        assert([chainMgr getAssetBySymbol:sym]);
+                    }
+                    for (id oid in custom_asset_ids) {
+                        assert([chainMgr getChainObjectByID:oid]);
+                    }
+#endif  //  DEBUG
                     //  生成市场数据结构
                     [chainMgr buildAllMarketsInfos];
                     //  初始化数据

@@ -247,6 +247,12 @@ static AppCacheManager* _spInstanceAppCacheMgr = nil;
 }
 
 #pragma mark- garphene object cache
+- (NSDictionary*)get_all_object_caches
+{
+    assert(_objectinfo_caches);
+    return _objectinfo_caches;
+}
+
 - (AppCacheManager*)update_object_cache:(NSString*)object_id object:(NSDictionary*)object
 {
     if (!object_id){

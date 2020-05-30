@@ -143,9 +143,6 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
         _defaultMarketBaseHash[base_symbol] = market;
     }
     
-    //  内部资产也添加到资产列表
-    [self appendAssets:[_defaultMarketInfos objectForKey:@"internal_assets"]];
-    
     //  初始化内部分组信息（并排序）
     _defaultGroupList = [[[self getDefaultGroupInfos] allValues] sortedArrayUsingComparator:(^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
         return [[obj1 objectForKey:@"id"] compare:[obj2 objectForKey:@"id"]];
@@ -171,6 +168,7 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     assert(quote_asset);
     
     id quote_issuer = [quote_asset objectForKey:@"issuer"];
+    assert(quote_issuer);
     
     for (id group_info in _defaultGroupList) {
         //  自定义资产都不归纳到主区
@@ -304,6 +302,39 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
 {
     assert(_defaultMarketInfos);
     return [_defaultMarketInfos objectForKey:@"parameters"];
+}
+
+/*
+ *  (public) 获取APP配置文件中出现的所有资产符号。初始化时需要查询所有依赖的资产信息。
+ */
+- (NSArray*)getConfigDependenceAssetSymbols
+{
+    //  REMARK：如果 app 的 json 配置文件添加了其他 资产符号依赖，这里需要调整。
+    
+    assert(_defaultMarketInfos);
+    NSMutableDictionary* symbols = [NSMutableDictionary dictionary];
+    
+    //  智能资产
+    for (id sym in [self getMainSmartAssetList]) {
+        [symbols setObject:@YES forKey:sym];
+    }
+    
+    //  手续费资产
+    for (id sym in [self getFeeAssetSymbolList]) {
+        [symbols setObject:@YES forKey:sym];
+    }
+    
+    //  市场 base 和 quote 资产
+    for (id market in [self getDefaultMarketInfos]) {
+        [symbols setObject:@YES forKey:[[market objectForKey:@"base"] objectForKey:@"symbol"]];
+        for (id group_info in [market objectForKey:@"group_list"]) {
+            for (id quote_symbol in [group_info objectForKey:@"quote_list"]) {
+                [symbols setObject:@YES forKey:quote_symbol];
+            }
+        }
+    }
+    
+    return [symbols allKeys];
 }
 
 /**
@@ -513,6 +544,43 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
         }
     }
     return obj;
+}
+
+/*
+ *  (public) 从文件缓冲中根据资产符号名查询资产ID信息。
+ */
+- (NSDictionary*)getAssetIdFromFileCache:(NSArray*)asset_symbols
+{
+    assert(asset_symbols);
+    
+    NSMutableDictionary* result = [NSMutableDictionary dictionary];
+    
+    if ([asset_symbols count] <= 0) {
+        return [result copy];
+    };
+    
+    NSMutableDictionary* symbols_hash = [NSMutableDictionary dictionary];
+    for (id sym in asset_symbols) {
+        [symbols_hash setObject:@YES forKey:sym];
+    }
+    
+    NSPredicate* regular = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", @"^1.3.[0-9]+$"];
+    
+    //  REMARK：格式   object_id => {:expire_ts, :cache_object}
+    NSDictionary* all_objects_cache = [[AppCacheManager sharedAppCacheManager] get_all_object_caches];
+    for (NSString* oid in all_objects_cache) {
+        //  oid =~ 1.3.x
+        if ([regular evaluateWithObject:oid]){
+            id cache_object = [[all_objects_cache objectForKey:oid] objectForKey:@"cache_object"];
+            assert(cache_object);
+            NSString* sym = [cache_object objectForKey:@"symbol"];
+            if ([[symbols_hash objectForKey:sym] boolValue]) {
+                [result setObject:oid forKey:sym];
+            }
+        }
+    }
+    
+    return [result copy];
 }
 
 - (id)getVoteInfoByVoteID:(NSString*)vote_id
@@ -1071,6 +1139,85 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
                 [_cacheVoteIdInfoHash setObject:obj forKey:vote_against];   //  add to memory cache: id hash
                 [resultHash setObject:obj forKey:vote_against];
             }
+        }
+        //  保存缓存
+        [pAppCache saveObjectCacheToFile];
+        //  返回结果
+        return resultHash;
+    })];
+}
+
+/**
+ *  (public) 根据资产名查询资产信息。
+ */
+- (WsPromise*)queryAssetsBySymbols:(NSArray*)symbols ids:(NSArray*)asset_ids
+{
+    NSMutableDictionary* resultHash = [NSMutableDictionary dictionary];
+    
+    //  网络查询的参数数组
+    NSMutableArray* queryArray = [NSMutableArray array];
+    
+    //  根据资产符号获取ID信息，存在则加入ID列表，不存在则直接加入待查询列表。
+    NSMutableDictionary* queryIds = [NSMutableDictionary dictionary];
+    if (symbols && [symbols count] > 0) {
+        id symbol_id_hash = [self getAssetIdFromFileCache:symbols];
+        for (id sym in symbols) {
+            id oid = [symbol_id_hash objectForKey:sym];
+            if (oid) {
+                //  符号存在，则加入ID列表二次检测。
+                [queryIds setObject:@YES forKey:oid];
+            } else {
+                //  符号不存在，直接加入查询列表。
+                [queryArray addObject:sym];
+            }
+        }
+    }
+    
+    if (asset_ids && [asset_ids count] > 0) {
+        for (id oid in asset_ids) {
+            [queryIds setObject:@YES forKey:oid];
+        }
+    }
+    
+    //  所有ID列表考虑从缓存加载
+    AppCacheManager* pAppCache = [AppCacheManager sharedAppCacheManager];
+    NSTimeInterval now_ts = [[NSDate date] timeIntervalSince1970];
+    for (NSString* object_id in [queryIds allKeys]) {
+        id obj = [pAppCache get_object_cache:object_id now_ts:now_ts];
+        if (obj){
+            //  缓存存在
+            id symbol = [obj objectForKey:@"symbol"];
+            assert(symbol);
+            [_cacheObjectID2ObjectHash setObject:obj forKey:object_id];     //  add to memory cache: id hash
+            [_cacheAssetSymbol2ObjectHash setObject:obj forKey:symbol];     //  add to memory cache: key hash
+            [resultHash setObject:obj forKey:object_id];
+        }else{
+            //  加入查询列表
+            [queryArray addObject:object_id];
+        }
+    }
+    
+    //  从缓存获取完毕，直接返回。
+    if ([queryArray count] == 0){
+        return [WsPromise resolve:resultHash];
+    }
+    
+    //  查询
+    GrapheneApi* api = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection].api_db;
+    return [[api exec:@"lookup_asset_symbols" params:@[queryArray]] then:(^id(id data_array) {
+        //  更新缓存 和 结果
+        for (id obj in data_array) {
+            if ([obj isKindOfClass:[NSNull class]]){
+                continue;
+            }
+            id oid = [obj objectForKey:@"id"];
+            id symbol = [obj objectForKey:@"symbol"];
+            assert(oid);
+            assert(symbol);
+            [pAppCache update_object_cache:oid object:obj];
+            [_cacheObjectID2ObjectHash setObject:obj forKey:oid];           //  add to memory cache: id hash
+            [_cacheAssetSymbol2ObjectHash setObject:obj forKey:symbol];     //  add to memory cache: key hash
+            [resultHash setObject:obj forKey:oid];
         }
         //  保存缓存
         [pAppCache saveObjectCacheToFile];
