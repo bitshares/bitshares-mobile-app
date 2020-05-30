@@ -50,6 +50,7 @@ typedef enum EWalletMode
 -(AppCacheManager*)removeBlindBalance:(id)blind_balance;
 
 #pragma mark- garphene object cache
+- (NSDictionary*)get_all_object_caches;
 - (AppCacheManager*)update_object_cache:(NSString*)object_id object:(NSDictionary*)object;
 - (NSDictionary*)get_object_cache:(NSString*)object_id now_ts:(NSTimeInterval)now_ts;
 - (NSDictionary*)get_object_cache:(NSString*)object_id;
