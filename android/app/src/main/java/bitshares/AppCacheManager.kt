@@ -217,6 +217,13 @@ class AppCacheManager {
     }
 
     /**
+     *  获取所有缓存的object
+     */
+    fun get_all_object_caches(): JSONObject {
+        return _objectinfo_caches
+    }
+
+    /**
      * 对象存储和获取
      */
     fun update_object_cache(oid: String?, obj: JSONObject): AppCacheManager {

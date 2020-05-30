@@ -116,9 +116,6 @@ class ChainObjectManager {
             _defaultMarketBaseHash[base_symbol] = market
         }
 
-        //  内部资产也添加到资产列表
-        appendAssets(_defaultMarketInfos!!.getJSONObject("internal_assets"))
-
         //  初始化内部分组信息（并排序）
         _defaultGroupList = getDefaultGroupInfos().values().toList<JSONObject>().sortedBy { it.getInt("id") }.toJsonArray()
 
@@ -281,6 +278,37 @@ class ChainObjectManager {
     fun getDefaultParameters(): JSONObject {
         assert(_defaultMarketInfos != null)
         return _defaultMarketInfos!!.getJSONObject("parameters")
+    }
+
+    /**
+     *  (public) 获取APP配置文件中出现的所有资产符号。初始化时需要查询所有依赖的资产信息。
+     */
+    fun getConfigDependenceAssetSymbols(): JSONArray {
+        //  REMARK：如果 app 的 json 配置文件添加了其他 资产符号依赖，这里需要调整。
+        assert(_defaultMarketInfos != null)
+        val symbols = JSONObject()
+
+        //  智能资产
+        for (sym in getMainSmartAssetList().forin<String>()) {
+            symbols.put(sym!!, true)
+        }
+
+        //  手续费资产
+        for (sym in getFeeAssetSymbolList().forin<String>()) {
+            symbols.put(sym!!, true)
+        }
+
+        //  市场 base 和 quote 资产
+        for (market in getDefaultMarketInfos().forin<JSONObject>()) {
+            symbols.put(market!!.getJSONObject("base").getString("symbol"), true)
+            for (group_info in market.getJSONArray("group_list").forin<JSONObject>()) {
+                for (quote_symbol in group_info!!.getJSONArray("quote_list").forin<String>()) {
+                    symbols.put(quote_symbol!!, true)
+                }
+            }
+        }
+
+        return symbols.keys().toJSONArray()
     }
 
     /**
@@ -473,6 +501,40 @@ class ChainObjectManager {
 
     fun getChainObjectByIDSafe(oid: String): JSONObject? {
         return _cacheObjectID2ObjectHash[oid]
+    }
+
+    /**
+     *  (private) 从文件缓冲中根据资产符号名查询资产ID信息。
+     */
+    private fun getAssetIdFromFileCache(asset_symbols: JSONArray): JSONObject {
+        val result = JSONObject()
+
+        if (asset_symbols.length() <= 0) {
+            return result
+        }
+
+        val symbols_hash = JSONObject()
+        for (sym in asset_symbols.forin<String>()) {
+            symbols_hash.put(sym!!, true)
+        }
+
+        //  0-9 组成
+        val regular = "^1.3.[0-9]+$"
+
+        //  REMARK：格式   object_id => {:expire_ts, :cache_object}
+        val all_objects_cache = AppCacheManager.sharedAppCacheManager().get_all_object_caches()
+        for (oid in all_objects_cache.keys()) {
+            //  oid =~ 1.3.x
+            if (Utils.isRegularMatch(oid, regular)) {
+                val cache_object = all_objects_cache.getJSONObject(oid).getJSONObject("cache_object")
+                val sym = cache_object.optString("symbol", null)
+                if (sym != null && symbols_hash.has(sym)) {
+                    result.put(sym, oid)
+                }
+            }
+        }
+
+        return result
     }
 
     fun getVoteInfoByVoteID(vote_id: String): JSONObject? {
@@ -1057,14 +1119,93 @@ class ChainObjectManager {
     }
 
     /**
+     *  (public) 根据资产名查询资产信息。
+     */
+    fun queryAssetsBySymbols(symbols: JSONArray?, asset_ids: JSONArray?): Promise {
+        val resultHash = JSONObject()
+
+        //  网络查询的参数数组
+        val queryArray = JSONArray()
+
+        //  根据资产符号获取ID信息，存在则加入ID列表，不存在则直接加入待查询列表。
+        val queryIds = JSONObject()
+
+        if (symbols != null && symbols.length() > 0) {
+            val symbol_id_hash = getAssetIdFromFileCache(symbols)
+            for (sym in symbols.forin<String>()) {
+                val oid = symbol_id_hash.optString(sym!!, null)
+                if (oid != null) {
+                    //  符号存在，则加入ID列表二次检测。
+                    queryIds.put(oid, true)
+                } else {
+                    //  符号不存在，直接加入查询列表。
+                    queryArray.put(sym)
+                }
+            }
+        }
+
+        if (asset_ids != null && asset_ids.length() > 0) {
+            for (oid in asset_ids.forin<String>()) {
+                queryIds.put(oid!!, true)
+            }
+        }
+
+        //  所有ID列表考虑从缓存加载
+        val pAppCache = AppCacheManager.sharedAppCacheManager()
+        val now_ts = Utils.now_ts()
+        for (object_id in queryIds.keys()) {
+            val obj = pAppCache.get_object_cache_ts(object_id, now_ts)
+            if (obj != null) {
+                //  缓存存在
+                val symbol = obj.getString("symbol")
+                _cacheObjectID2ObjectHash[object_id] = obj  //  add to memory cache: id hash
+                _cacheAssetSymbol2ObjectHash[symbol] = obj  //  add to memory cache: key hash
+                resultHash.put(object_id, obj)
+            } else {
+                //  加入查询列表
+                queryArray.put(object_id)
+            }
+        }
+
+        //  从缓存获取完毕，直接返回。
+        if (queryArray.length() == 0) {
+            return Promise._resolve(resultHash)
+        }
+
+        //  查询
+        val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
+        return conn.async_exec_db("lookup_asset_symbols", jsonArrayfrom(queryArray)).then {
+            val data_array = it as JSONArray
+
+            //  更新缓存 和 结果
+            for (obj in data_array.forin<JSONObject>()) {
+                if (obj == null) {
+                    continue
+                }
+                val oid = obj.getString("id")
+                val symbol = obj.getString("symbol")
+                pAppCache.update_object_cache(oid, obj)
+                _cacheObjectID2ObjectHash[oid] = obj        //  add to memory cache: id hash
+                _cacheAssetSymbol2ObjectHash[symbol] = obj  //  add to memory cache: key hash
+                resultHash.put(oid, obj)
+            }
+
+            //  保存缓存
+            pAppCache.saveObjectCacheToFile()
+
+            //  返回结果
+            return@then Promise._resolve(resultHash)
+        }
+    }
+
+    /**
      *  (private) 查询指定对象ID列表的所有对象信息，返回 Hash。 格式：{对象ID=>对象信息, ...}
      *
      *  skipQueryCache - 控制是否查询缓存
      *
      *  REMARK：不处理异常，在外层 VC 逻辑中处理。外部需要 catch 该 promise。
      */
-    fun queryAllObjectsInfo(object_id_array: JSONArray, cache: MutableMap<String, JSONObject>?, key: String?, skipQueryCache: Boolean, skipCacheIdHash: JSONObject?): Promise {
-
+    private fun queryAllObjectsInfo(object_id_array: JSONArray, cache: MutableMap<String, JSONObject>?, key: String?, skipQueryCache: Boolean, skipCacheIdHash: JSONObject?): Promise {
         val resultHash = JSONObject()
 
         //  要查询的数据为空，则返回空的 Hash。
