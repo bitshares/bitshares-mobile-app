@@ -64,6 +64,12 @@ class FragmentOrderHistory : BtsppFragment() {
      *  (public) 查询清算单
      */
     fun querySettlementOrders(tradingPair: TradingPair? = null, full_account_data: JSONObject? = null) {
+        waitingOnCreateView().then {
+            _querySettlementOrdersCore(tradingPair, full_account_data)
+        }
+    }
+
+    private fun _querySettlementOrdersCore(tradingPair: TradingPair?, full_account_data: JSONObject?) {
         if (!_isSettlementsOrder) {
             return
         }
@@ -344,7 +350,7 @@ class FragmentOrderHistory : BtsppFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-
+        super.onCreateView(inflater, container, savedInstanceState)
         _ctx = inflater.context
         _view = inflater.inflate(R.layout.fragment_order_history, container, false)
         //  刷新界面

@@ -9,6 +9,7 @@ import bitshares.TempManager
 import bitshares.first
 import bitshares.forEach
 import bitshares.isTrue
+import com.btsplusplus.fowallet.kline.TradingPair
 import com.fowallet.walletcore.bts.ChainObjectManager
 import kotlinx.android.synthetic.main.activity_asset_infos.*
 import org.json.JSONArray
@@ -44,6 +45,9 @@ class ActivityAssetInfos : BtsppActivity() {
             })
             tab.addTab(tab.newTab().apply {
                 text = self.resources.getString(R.string.kVcSmartPageTitleFeed)
+            })
+            tab.addTab(tab.newTab().apply {
+                text = self.resources.getString(R.string.kVcOrderPageSettleOrders)
             })
         }
 
@@ -133,9 +137,21 @@ class ActivityAssetInfos : BtsppActivity() {
         queryCurrentPage()
     }
 
+    private fun genSettlementOrderTradingPair(curr_asset: JSONObject): TradingPair {
+        //  REMARK：构造清算单界面所需 *TradingPair* 参数。
+        //  注：这里构造的并非完整的 TradingPair 对象，清算单界面目前只需要 baseAsset 和 smartAssetId 两个数据，这里只确保这两个参数正确。
+        val tradingPair = TradingPair().initWithBaseAsset(curr_asset, curr_asset)
+        tradingPair._smartAssetId =  curr_asset.getString("id")
+        tradingPair._sbaAssetId = curr_asset.getString("id")
+        tradingPair._isCoreMarket = true
+        return tradingPair
+    }
+
     private fun queryCurrentPage() {
         fragmens[_curr_select_index].let {
-            if (it is BtsppFragment) {
+            if (it is FragmentOrderHistory) {
+                it.querySettlementOrders(tradingPair = genSettlementOrderTradingPair(_curr_asset))
+            } else if (it is BtsppFragment) {
                 it.onControllerPageChanged()
             }
         }
@@ -169,6 +185,9 @@ class ActivityAssetInfos : BtsppActivity() {
         }))
         fragmens.add(FragmentFeedPrice().initialize(JSONObject().apply {
             put("curr_asset", _curr_asset)
+        }))
+        fragmens.add(FragmentOrderHistory().initialize(JSONObject().apply {
+            put("isSettlementsOrder", true)
         }))
     }
 
