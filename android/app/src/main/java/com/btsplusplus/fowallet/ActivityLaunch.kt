@@ -147,8 +147,19 @@ class ActivityLaunch : BtsppActivity() {
         connMgr.Start(resources.getString(R.string.serverWssLangKey), force_use_random_node = !first_init).then { success ->
             //  初始化网络相关数据
             chainMgr.grapheneNetworkInit().then { data ->
-                //  初始化市场相关依赖数据（在 ticker 等初始化之前。）
-                return@then chainMgr.queryAllAssetsInfo(pAppCache.get_fav_markets_asset_ids()).then {
+                //  初始化依赖资产（内置资产 + 自定义交易对等）
+                val dependence_syms = chainMgr.getConfigDependenceAssetSymbols()
+                val custom_asset_ids = pAppCache.get_fav_markets_asset_ids()
+                return@then chainMgr.queryAssetsBySymbols(symbols = dependence_syms, asset_ids = custom_asset_ids).then {
+                    if (BuildConfig.DEBUG) {
+                        //  确保查询成功
+                        for (sym in dependence_syms.forin<String>()) {
+                            chainMgr.getAssetBySymbol(sym!!)
+                        }
+                        for (oid in custom_asset_ids.forin<String>()) {
+                            chainMgr.getChainObjectByID(oid!!)
+                        }
+                    }
                     //  生成市场数据结构
                     chainMgr.buildAllMarketsInfos()
                     //  初始化逻辑相关数据

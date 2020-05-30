@@ -489,7 +489,7 @@ class BitsharesClientManager {
     /**
      *  OP -提取资产的市场手续费资金
      */
-    fun assetClaimFees(opdata: JSONObject):  Promise {
+    fun assetClaimFees(opdata: JSONObject): Promise {
         return runSingleTransaction(opdata, EBitsharesOperations.ebo_asset_claim_fees, opdata.getString("issuer"))
     }
 
