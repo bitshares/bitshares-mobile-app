@@ -1653,12 +1653,24 @@ class OtcManager {
         mask.show()
 
         //  直接调用商家详情，非商家返回空数据。
-        val p1 = merchantDetail(getCurrentBtsAccount(), skip_cache = true)
+        val current_bts_account = getCurrentBtsAccount()
+        val p1 = merchantDetail(current_bts_account, skip_cache = true)
         val p2 = queryFiatAssetCNY()
         Promise.all(p1, p2).then {
             mask.dismiss()
             val data_array = it as? JSONArray
             val merchant_detail = data_array?.optJSONObject(0)
+
+            //  备用账号判断
+            if (merchant_detail != null) {
+                //  val btsAccount = merchant_detail.optString("btsAccount", null)
+                val bakAccount = merchant_detail.optString("bakAccount", null)
+                if (bakAccount != null && current_bts_account == bakAccount) {
+                    ctx.showToast(String.format(R.string.kOtcMgrBakAccountCannotLogin.xmlstring(ctx), bakAccount))
+                    return@then null
+                }
+            }
+            
             if (merchant_detail != null) {
                 // `status` tinyint(2) NOT NULL DEFAULT '0' COMMENT '状态:0=默认,0=未激活,1=已激活,2=取消激活,3=冻结',
                 //  TODO:2.9 args progressInfo:nil
