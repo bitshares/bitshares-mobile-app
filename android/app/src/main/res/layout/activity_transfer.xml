@@ -51,7 +51,16 @@
                 android:text="@string/kVcTitleTransfer"
                 style="@style/kNavigationBarTextStyle" />
 
-
+            <Button
+                android:id="@+id/btn_more_actions"
+                android:layout_width="48dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:background="#00000000"
+                style="@style/kNavigationBarTextStyle"
+                android:text="@string/kVcTransferAdvButtonName"
+                android:textAllCaps="false"
+                android:layout_marginRight="10dp" />
         </FrameLayout>
         
         <LinearLayout
