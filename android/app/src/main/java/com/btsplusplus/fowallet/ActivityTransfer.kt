@@ -85,6 +85,9 @@ class ActivityTransfer : BtsppActivity() {
             onSendButtonClicked()
         }
 
+        //  事件 - 高级
+        btn_more_actions.setOnClickListener { onMoreActionClicked() }
+
         //  初始化相关参数
         genTransferDefaultArgs(null)
         refreshUI()
@@ -93,6 +96,20 @@ class ActivityTransfer : BtsppActivity() {
         _tf_amount_watcher = UtilsDigitTextWatcher().set_tf(findViewById<EditText>(R.id.tf_amount)).set_precision(_transfer_args!!.getJSONObject("asset").getInt("precision"))
         tf_amount.addTextChangedListener(_tf_amount_watcher!!)
         _tf_amount_watcher!!.on_value_changed(::onAmountChanged)
+    }
+
+    /**
+     *  (private) 事件 - 高级功能
+     */
+    private fun onMoreActionClicked() {
+        ViewSelector.show(this, "", arrayOf(resources.getString(R.string.kVcStealthTransferEntryTitle))) { index: Int, _: String ->
+            //  隐私交易入口
+            if (index == 0) {
+                guardWalletExistWithWalletMode(resources.getString(R.string.kVcStealthTransferGuardWalletModeTips)) {
+                    goTo(ActivityStealthTransfer::class.java, true)
+                }
+            }
+        }
     }
 
     /**
@@ -189,20 +206,21 @@ class ActivityTransfer : BtsppActivity() {
         val mask = ViewMask(R.string.kTipsBeRequesting.xmlstring(this), this)
         mask.show()
         BitsharesClientManager.sharedBitsharesClientManager().transfer(op_data).then {
-            val account_id = _full_account_data!!.getJSONObject("account").getString("id")
-            ChainObjectManager.sharedChainObjectManager().queryFullAccountInfo(account_id).then {
-                mask.dismiss()
-                _refreshUI_onSendDone(it as JSONObject)
-                showToast(resources.getString(R.string.kVcTransferTipTxTransferFullOK))
-                //  [统计]
-                btsppLogCustom("txTransferFullOK", jsonObjectfromKVS("account", account_id, "asset", asset.getString("symbol")))
-                return@then null
-            }.catch {
-                mask.dismiss()
-                showToast(resources.getString(R.string.kVcTransferTipTxTransferOK))
-                //  [统计]
-                btsppLogCustom("txTransferOK", jsonObjectfromKVS("account", account_id, "asset", asset.getString("symbol")))
-            }
+            mask.dismiss()
+            val tx_data = it as? JSONArray
+            //  [统计]
+            btsppLogCustom("txTransferFullOK", jsonObjectfromKVS("asset", asset.getString("symbol")))
+
+            //  转到结果界面。
+            val amount_string = String.format("%s %s", OrgUtils.formatFloatValue(_transfer_args!!.getDouble("kAmount"), asset.getInt("precision")),
+                    asset.getString("symbol"))
+            val self = this
+            goTo(ActivityScanResultPaySuccess::class.java, true, clear_navigation_stack = true, args = JSONObject().apply {
+                put("result", tx_data)
+                put("to_account", _full_account_data!!.getJSONObject("account"))
+                put("amount_string", amount_string)
+                put("success_tip_string", self.resources.getString(R.string.kVcTransferTipLabelTransferSuccess))
+            })
             return@then null
         }.catch { err ->
             mask.dismiss()
