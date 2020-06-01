@@ -120,7 +120,7 @@ class ActivityIndexServices : BtsppActivity() {
             this.guardPermissions(Manifest.permission.CAMERA).then {
                 when (it as Int) {
                     EBtsppPermissionResult.GRANTED.value -> {
-                        goTo(ActivityQrScan::class.java, true, request_code = 101)
+                        goTo(ActivityQrScan::class.java, true, args = JSONObject())
                     }
                     EBtsppPermissionResult.SHOW_RATIONALE.value -> {
                         showToast(resources.getString(R.string.kVcScanPermissionUserRejected))
