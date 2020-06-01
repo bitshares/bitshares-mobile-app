@@ -399,6 +399,7 @@ class FragmentMarketInfo : BtsppFragment() {
 
         //  点击cell进入K线界面
         cell.setOnClickListener {
+            btsppLogTrack("goto kline base: $base_symbol quote: $quote_symbol")
             activity?.goTo(ActivityKLine::class.java, true, args = jsonArrayfrom(base_asset, quote_asset))
         }
     }

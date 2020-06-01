@@ -324,6 +324,16 @@ fun btsppLogCustom(event_name: String, args: JSONObject? = null) {
     }
 }
 
+/**
+ *  记录部分关键信息，会和崩溃日志绑定。
+ */
+fun btsppLogTrack(str: String) {
+    try {
+        FlurryAgent.logBreadcrumb(str)
+    } catch (e: Exception) {
+        //  ...
+    }
+}
 
 /**
  * DP 和 PX 转换
