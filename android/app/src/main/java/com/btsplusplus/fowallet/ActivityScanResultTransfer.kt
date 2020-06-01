@@ -283,7 +283,7 @@ class ActivityScanResultTransfer : BtsppActivity() {
                 //  非提案交易：转转账确认界面
                 val result_promise = Promise()
                 transfer_args.put("result_promise", result_promise)
-                goTo(ActivityTransferConfirm::class.java, true, args = transfer_args, request_code = kRequestCodeTransferConfirm)
+                goTo(ActivityTransferConfirm::class.java, true, args = transfer_args)
                 result_promise.then {
                     if (it != null && it as Boolean) {
                         //  确认支付

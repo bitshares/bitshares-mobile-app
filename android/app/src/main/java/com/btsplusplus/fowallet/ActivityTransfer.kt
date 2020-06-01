@@ -177,28 +177,6 @@ class ActivityTransfer : BtsppActivity() {
         }
     }
 
-    /**
-     * 获取结果
-     */
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == kRequestCodeTransferConfirm) {
-            //  1：确认
-            if (resultCode == 1) {
-                _processTransferCoreReal()
-            }
-        }
-    }
-
-    /**
-     * 转账完毕，刷新界面。
-     */
-    private fun _refreshUI_onSendDone(new_full_account_data: JSONObject) {
-        _tf_amount_watcher?.clear()
-        findViewById<EditText>(R.id.tf_memo).text.clear()
-        genTransferDefaultArgs(new_full_account_data)
-        refreshUI()
-    }
-
     private fun _processTransferCoreReal() {
         val asset = _transfer_args!!.getJSONObject("asset")
         val op_data = _transfer_args!!.getJSONObject("kOpData")
@@ -287,7 +265,15 @@ class ActivityTransfer : BtsppActivity() {
                         op_data, _full_account_data!!.getJSONObject("account")) { isProposal, _ ->
                     assert(!isProposal)
                     //  非提案交易：转转账确认界面
-                    goTo(ActivityTransferConfirm::class.java, true, args = _transfer_args, request_code = kRequestCodeTransferConfirm)
+                    val result_promise = Promise()
+                    _transfer_args!!.put("result_promise", result_promise)
+                    goTo(ActivityTransferConfirm::class.java, true, args = _transfer_args)
+                    result_promise.then {
+                        if (it != null && it as Boolean) {
+                            //  确认转账
+                            _processTransferCoreReal()
+                        }
+                    }
                 }
                 return@then null
             }.catch {

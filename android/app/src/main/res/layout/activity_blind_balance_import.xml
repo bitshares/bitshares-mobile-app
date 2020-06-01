@@ -49,6 +49,17 @@
                 android:text="@string/kVcTitleImportBlindReceipt"
                 style="@style/kNavigationBarTextStyle" />
 
+            <ImageButton
+                android:id="@+id/btn_scan_qrcode"
+                android:tint="@color/theme01.textColorMain"
+                android:paddingRight="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="right"
+                android:layout_weight="1.5"
+                android:background="@null"
+                app:srcCompat="@drawable/icon_scan" />
+
         </FrameLayout>
 
         <LinearLayout

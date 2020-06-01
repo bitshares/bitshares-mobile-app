@@ -56,9 +56,6 @@ const val kSettingKey_ApiNode = "kApiNode_v1"                       //  API节�
 const val kSettingKey_ApiNode_Current = "current_node"              //  API节点设置信息 - 子KEY（当前选择节点，为空则随机选择）
 const val kSettingKey_ApiNode_CustomList = "custom_list"            //  API节点设置信息 - 子KEY（自定义列表）
 
-//  Actity结果传递请求码
-const val kRequestCodeTransferConfirm = 0x101     //  确认转账交易
-
 /**
  * 网络类型
  */

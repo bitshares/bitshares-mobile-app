@@ -30,6 +30,8 @@ class ActivityQrScan : BaseCaptureActivity() {
     private var autoScannerView: AutoScannerView? = null
     private val kRequestCodeFromAlbum = 1001
 
+    private var _result_promise: Promise? = null
+
     private fun _auto_identify_qrcode(data: Intent?): Promise {
         val p = Promise()
         Thread(Runnable {
@@ -67,6 +69,10 @@ class ActivityQrScan : BaseCaptureActivity() {
         super.onCreate(savedInstanceState)
         setAutoLayoutContentView(R.layout.activity_qr_scan)
         setFullScreen()
+
+        //  获取参数
+        val args = btspp_args_as_JSONObject()
+        _result_promise = args.opt("result_promise") as? Promise
 
         surfaceView = findViewById<View>(R.id.preview_view) as SurfaceView
         autoScannerView = findViewById<View>(R.id.autoscanner_view) as AutoScannerView
@@ -320,10 +326,17 @@ class ActivityQrScan : BaseCaptureActivity() {
 
     private fun processScanResult(result: String) {
         result.trim().let { s ->
-            if (s.isNotEmpty()) {
-                delay_main { processScanResultCore(s) }
+            if (_result_promise != null) {
+                //  直接返回扫描结果
+                _result_promise?.resolve(s)
+                finish()
             } else {
-                _gotoNormalResult(s)
+                //  处理扫描结果
+                if (s.isNotEmpty()) {
+                    delay_main { processScanResultCore(s) }
+                } else {
+                    _gotoNormalResult(s)
+                }
             }
         }
     }

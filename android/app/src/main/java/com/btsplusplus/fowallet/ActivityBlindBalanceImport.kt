@@ -1,5 +1,6 @@
 package com.btsplusplus.fowallet
 
+import android.Manifest
 import android.os.Bundle
 import bitshares.*
 import bitshares.serializer.T_stealth_confirmation_memo_data
@@ -39,11 +40,42 @@ class ActivityBlindBalanceImport : BtsppActivity() {
             tf.setText(receipt)
         }
 
+        //  事件 - 扫描
+        btn_scan_qrcode.setOnClickListener { onScanQrCodeButtonClicked() }
+
         //  提交事件
         btn_import_submit.setOnClickListener { onSubmit(result_promise, tf.text.toString().trim()) }
 
         //  返回事件
         layout_back_from_blind_balance_import.setOnClickListener { finish() }
+    }
+
+    /**
+     *  (private) 扫一扫按钮点击
+     */
+    private fun onScanQrCodeButtonClicked() {
+        this.guardPermissions(Manifest.permission.CAMERA).then {
+            when (it as Int) {
+                EBtsppPermissionResult.GRANTED.value -> {
+                    val result_promise = Promise()
+                    goTo(ActivityQrScan::class.java, true, args = JSONObject().apply {
+                        put("result_promise", result_promise)
+                    })
+                    result_promise.then {
+                        (it as? String)?.let { result ->
+                            tf_blind_receipt_text_raw.setText(result)
+                        }
+                    }
+                }
+                EBtsppPermissionResult.SHOW_RATIONALE.value -> {
+                    showToast(resources.getString(R.string.kVcScanPermissionUserRejected))
+                }
+                EBtsppPermissionResult.DONT_ASK_AGAIN.value -> {
+                    showToast(resources.getString(R.string.kVcScanPermissionGotoSetting))
+                }
+            }
+            return@then null
+        }
     }
 
     /**
