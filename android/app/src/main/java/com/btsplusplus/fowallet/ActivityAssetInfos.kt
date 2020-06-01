@@ -5,10 +5,7 @@ import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
 import android.view.animation.OvershootInterpolator
-import bitshares.TempManager
-import bitshares.first
-import bitshares.forEach
-import bitshares.isTrue
+import bitshares.*
 import com.btsplusplus.fowallet.kline.TradingPair
 import com.fowallet.walletcore.bts.ChainObjectManager
 import kotlinx.android.synthetic.main.activity_asset_infos.*
@@ -148,6 +145,7 @@ class ActivityAssetInfos : BtsppActivity() {
     }
 
     private fun queryCurrentPage() {
+        btsppLogTrack("asset info query: index: $_curr_select_index, curr asset: ${_curr_asset.getString("id")}")
         fragmens[_curr_select_index].let {
             if (it is FragmentOrderHistory) {
                 it.querySettlementOrders(tradingPair = genSettlementOrderTradingPair(_curr_asset))

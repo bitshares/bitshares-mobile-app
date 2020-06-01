@@ -1,9 +1,6 @@
 package com.btsplusplus.fowallet.kline
 
-import bitshares.Promise
-import bitshares.bigDecimalfromAmount
-import bitshares.fixComma
-import bitshares.toJSONArray
+import bitshares.*
 import com.btsplusplus.fowallet.utils.ModelUtils
 import com.fowallet.walletcore.bts.ChainObjectManager
 import org.json.JSONArray
@@ -235,7 +232,11 @@ class TradingPair {
             n_base = bigDecimalfromAmount(amount01_amount, _basePrecision)
             n_quote = bigDecimalfromAmount(amount02_amount, _quotePrecision)
         }
-        return n_base.divide(n_quote, _basePrecision, BigDecimal.ROUND_DOWN)
+        val feed_price = n_base.divide(n_quote, _basePrecision, BigDecimal.ROUND_DOWN)
+        if (feed_price.compareTo(BigDecimal.ZERO) == 0) {
+            btsppLogTrack("zero feed price, asset a: ${_baseAsset.getString("symbol")} asset b: ${_quoteAsset.getString("symbol")}")
+        }
+        return feed_price
     }
 
     /**
