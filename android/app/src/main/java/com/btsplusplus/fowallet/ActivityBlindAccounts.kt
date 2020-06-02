@@ -321,7 +321,11 @@ class ActivityBlindAccounts : BtsppActivity() {
             }
         } else {
             //  无数据
-            container.addView(ViewUtils.createEmptyCenterLabel(this, resources.getString(R.string.kVcStTipEmptyNoBlindAccount)))
+            if (isSelectMode()) {
+                container.addView(ViewUtils.createEmptyCenterLabel(this, resources.getString(R.string.kVcStTipEmptyNoBlindAccount)))
+            } else {
+                container.addView(ViewUtils.createEmptyCenterLabel(this, resources.getString(R.string.kVcStTipEmptyNoBlindAccountCanImport)))
+            }
         }
     }
 }
