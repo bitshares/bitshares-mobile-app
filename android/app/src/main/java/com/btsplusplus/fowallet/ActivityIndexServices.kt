@@ -36,33 +36,40 @@ class ActivityIndexServices : BtsppActivity() {
             layout_smart_coin.visibility = View.GONE
         }
 
-        if (BuildConfig.kAppModuleEnableGateway) {
-            layout_recharge_and_withdraw_of_service.visibility = View.VISIBLE
-        } else {
-            layout_recharge_and_withdraw_of_service.visibility = View.GONE
-        }
-
         //  入口可见性判断
         //  1 - 编译时宏判断
         //  2 - 根据语言判断
         //  3 - 根据服务器配置判断
         if (BuildConfig.kAppModuleEnableOTC && resources.getString(R.string.enableOtcEntry).toInt() != 0) {
+            var hidden_layout = 0
             val cfg = OtcManager.sharedOtcManager().server_config
             if (cfg != null && cfg.getJSONObject("user").getJSONObject("entry").getInt("type") != OtcManager.EOtcEntryType.eoet_gone.value) {
                 layout_otc_user.visibility = View.VISIBLE
                 layout_otc_user.setOnClickListener { onOtcUsrEntryClicked() }
             } else {
                 layout_otc_user.visibility = View.GONE
+                hidden_layout += 1
             }
             if (cfg != null && cfg.getJSONObject("merchant").getJSONObject("entry").getInt("type") != OtcManager.EOtcEntryType.eoet_gone.value) {
                 layout_otc_merchant.visibility = View.VISIBLE
                 layout_otc_merchant.setOnClickListener { onOtcMerchantEntryClicked() }
             } else {
                 layout_otc_merchant.visibility = View.GONE
+                hidden_layout += 1
+            }
+            //  直接整个OTC组不可见
+            if (hidden_layout >= 2) {
+                layout_group_otc.visibility = View.GONE
             }
         } else {
-            layout_otc_user.visibility = View.GONE
-            layout_otc_merchant.visibility = View.GONE
+            //  直接整个OTC组不可见
+            layout_group_otc.visibility = View.GONE
+        }
+
+        if (BuildConfig.kAppModuleEnableGateway) {
+            layout_recharge_and_withdraw_of_service.visibility = View.VISIBLE
+        } else {
+            layout_recharge_and_withdraw_of_service.visibility = View.GONE
         }
 
         //  设置图标颜色
