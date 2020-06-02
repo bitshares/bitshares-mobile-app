@@ -164,6 +164,11 @@ class ActivityTradeMain : BtsppActivity() {
         if (userinfo == null) {
             return
         }
+        //  过滤其他的交易对
+        val kCurrentPair = userinfo.optString("kCurrentPair", null)
+        if (kCurrentPair != null && kCurrentPair != _tradingPair._pair) {
+            return
+        }
         //  更新限价单
         val settlement_data = userinfo.optJSONObject("kSettlementData")
         onQueryOrderBookResponse(userinfo.optJSONObject("kLimitOrders"), settlement_data)

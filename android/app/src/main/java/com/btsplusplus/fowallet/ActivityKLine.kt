@@ -377,6 +377,11 @@ class ActivityKLine : BtsppActivity() {
         if (userinfo == null) {
             return
         }
+        //  过滤其他的交易对
+        val kCurrentPair = userinfo.optString("kCurrentPair", null)
+        if (kCurrentPair != null && kCurrentPair != _tradingPair._pair) {
+            return
+        }
         val settlement_data = userinfo.optJSONObject("kSettlementData")
         //  更新喂价信息
         onQueryFeedPriceInfoResponsed(settlement_data)
