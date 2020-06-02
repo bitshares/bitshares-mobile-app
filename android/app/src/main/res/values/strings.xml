@@ -828,7 +828,8 @@
     <string name="kVcStTipErrPleaseInputBlindAccountBrainKey">Please enter a valid blind account password.</string>
     <string name="kVcStActionImportBlindAccount">Import blind account</string>
     <string name="kVcStActionCreateBlindAccount">Create blind account</string>
-    <string name="kVcStTipEmptyNoBlindAccount">No blind account, you can click on the upper right corner to create or restore a blind account.</string>
+    <string name="kVcStTipEmptyNoBlindAccount">There is no blind account.</string>
+    <string name="kVcStTipEmptyNoBlindAccountCanImport">No blind account, you can click on the upper right corner to create or restore a blind account.</string>
     <string name="kVcStActionCreateSubBlindAccount">Create sub-account</string>
     <string name="kVcStActionCopyBlindAccountAddress">Copy blind account</string>
     <string name="kVcStTipAllowMaximumChildAccount">You can only create up to %s sub-accounts.。</string>

@@ -2,6 +2,8 @@ package com.btsplusplus.fowallet
 
 import android.os.Bundle
 import android.view.View
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import bitshares.*
 import com.btsplusplus.fowallet.utils.VcUtils
 import com.fowallet.walletcore.bts.ChainObjectManager
@@ -81,6 +83,11 @@ class ActivitySelectBlindBalance : BtsppActivity() {
         container.removeAllViews()
 
         if (data_array.length() > 0) {
+            //  动态修改布局
+            val oldLayoutParams = container.layoutParams
+            oldLayoutParams.height = LinearLayout.LayoutParams.WRAP_CONTENT
+            container.layoutParams = oldLayoutParams
+
             //  确定按钮可见性
             layout_submit_button.visibility = View.VISIBLE
             //  描绘
@@ -99,6 +106,11 @@ class ActivitySelectBlindBalance : BtsppActivity() {
                 index++
             }
         } else {
+            //  动态修改布局（空标签才能够居中）
+            val oldLayoutParams = container.layoutParams
+            oldLayoutParams.height = LinearLayout.LayoutParams.MATCH_PARENT
+            container.layoutParams = oldLayoutParams
+
             //  确定按钮可见性
             layout_submit_button.visibility = View.GONE
             //  无数据

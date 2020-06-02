@@ -62,10 +62,12 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
+                <!-- REMARK：layout_height 属性需要动态调整 -->
+                <!-- 空标签居中需要 match_parent，显示确定按钮需要 wrap_content。 -->
                 <LinearLayout
                     android:id="@+id/layout_receipt_list_from_select_blind_balance"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:orientation="vertical">
 
                 </LinearLayout>

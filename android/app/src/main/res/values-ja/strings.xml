@@ -828,7 +828,8 @@
     <string name="kVcStTipErrPleaseInputBlindAccountBrainKey">请输入有效的隐私账户密码。</string>
     <string name="kVcStActionImportBlindAccount">导入隐私账户</string>
     <string name="kVcStActionCreateBlindAccount">创建隐私账户</string>
-    <string name="kVcStTipEmptyNoBlindAccount">没有隐私账户，可点击右上角创建或恢复隐私账户。</string>
+    <string name="kVcStTipEmptyNoBlindAccount">没有任何隐私账户。</string>
+    <string name="kVcStTipEmptyNoBlindAccountCanImport">没有隐私账户，可点击右上角创建或恢复隐私账户。</string>
     <string name="kVcStActionCreateSubBlindAccount">创建子账户</string>
     <string name="kVcStActionCopyBlindAccountAddress">复制地址</string>
     <string name="kVcStTipAllowMaximumChildAccount">最多只能创建 %s 个子账户。</string>
