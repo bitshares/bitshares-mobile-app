@@ -472,6 +472,11 @@ enum
     if (!userinfo){
         return;
     }
+    //  过滤其他的交易对
+    NSString* kCurrentPair = [userinfo objectForKey:@"kCurrentPair"];
+    if (kCurrentPair && _tradingPair && ![kCurrentPair isEqualToString:_tradingPair.pair]) {
+        return;
+    }
     id settlement_data = [userinfo objectForKey:@"kSettlementData"];
     //  更新喂价信息
     [self onQueryFeedPriceInfoResponsed:settlement_data];

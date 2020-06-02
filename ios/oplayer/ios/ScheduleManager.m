@@ -353,9 +353,6 @@ static ScheduleManager *_sharedScheduleManager = nil;
     if (!s){
         return;
     }
-    if (!s.subscribed || !s.callback){
-        return;
-    }
     
     //  降低引用计数
     s.refCount -= 1;
@@ -365,6 +362,13 @@ static ScheduleManager *_sharedScheduleManager = nil;
     
     //  引用计数为 0 则移除订阅对象
     [_sub_market_infos removeObjectForKey:tradingPair.pair];
+
+    //  交易对服务器订阅已断开则直接返回
+    if (!s.subscribed || !s.callback){
+        return;
+    }
+    
+    //  --- 从服务器取消订阅 ---
     
     //  连接已断开
     GrapheneConnection* conn = [[GrapheneConnectionManager sharedGrapheneConnectionManager] any_connection];
@@ -372,7 +376,6 @@ static ScheduleManager *_sharedScheduleManager = nil;
         return;
     }
     
-    //  取消订阅
     [[[conn.api_db exec:@"unsubscribe_from_market" params:@[s.callback, tradingPair.baseId, tradingPair.quoteId]] then:(^id(id data) {
         NSLog(@"[Unsubscribe] %@/%@ successful.", tradingPair.quoteAsset[@"symbol"], tradingPair.baseAsset[@"symbol"]);
         return nil;
@@ -476,6 +479,7 @@ static ScheduleManager *_sharedScheduleManager = nil;
         //  TODO:fowallet !!! 在重连之后需要重新 subscribe_to_market 。！！！重要
         s.querying = NO;
         s.subscribed = NO;
+        s.callback = nil;
         //  [统计]
         [OrgUtils logEvents:@"event_subscribe_to_market_disconnect"
                        params:@{@"base":s.tradingPair.baseAsset[@"symbol"], @"quote":s.tradingPair.quoteAsset[@"symbol"]}];
@@ -496,14 +500,12 @@ static ScheduleManager *_sharedScheduleManager = nil;
     }
     
     //  设置 callback
-    if (!s.callback){
-        id pair = [s.tradingPair.pair copy];
-        s.callback = ^(BOOL success, id data){
-            [self _on_process_sub_market_notify:pair success:success data:data];
-            //  不删除 callback
-            return NO;
-        };
-    }
+    id pair = [s.tradingPair.pair copy];
+    s.callback = ^(BOOL success, id data){
+        [self _on_process_sub_market_notify:pair success:success data:data];
+        //  不删除 callback
+        return NO;
+    };
     
     //  订阅
     TradingPair* tradingPair = s.tradingPair;
@@ -513,6 +515,7 @@ static ScheduleManager *_sharedScheduleManager = nil;
         return nil;
     })] catch:(^id(id error) {
         s.subscribed = NO;
+        s.callback = nil;
         NSLog(@"[Subscribe] %@/%@ failed.", tradingPair.quoteAsset[@"symbol"], tradingPair.baseAsset[@"symbol"]);
         return nil;
     })];
@@ -601,6 +604,7 @@ static ScheduleManager *_sharedScheduleManager = nil;
                 s.accumulated_milliseconds = 0;
                 //  通知
                 if ([result count] > 0){
+                    [result setObject:[s.tradingPair.pair copy] forKey:@"kCurrentPair"];
                     [[NSNotificationCenter defaultCenter] postNotificationName:kBtsSubMarketNotifyNewData object:nil userInfo:result];
                 }
                 return nil;

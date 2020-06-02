@@ -867,7 +867,8 @@
 "kVcStTipErrPleaseInputBlindAccountBrainKey" = "Please enter a valid blind account password.";
 "kVcStActionImportBlindAccount" = "Import blind account";
 "kVcStActionCreateBlindAccount" = "Create blind account";
-"kVcStTipEmptyNoBlindAccount" = "No blind account, you can click on the upper right corner to create or restore a blind account.";
+"kVcStTipEmptyNoBlindAccount" = "There is no blind account.";
+"kVcStTipEmptyNoBlindAccountCanImport" = "No blind account, you can click on the upper right corner to create or restore a blind account.";
 "kVcStActionCreateSubBlindAccount" = "Create sub-account";
 "kVcStActionCopyBlindAccountAddress" = "Copy blind account";
 "kVcStTipAllowMaximumChildAccount" = "You can only create up to %@ sub-accounts.。";

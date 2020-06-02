@@ -259,6 +259,11 @@
     if (!userinfo){
         return;
     }
+    //  过滤其他的交易对
+    NSString* kCurrentPair = [userinfo objectForKey:@"kCurrentPair"];
+    if (kCurrentPair && _tradingPair && ![kCurrentPair isEqualToString:_tradingPair.pair]) {
+        return;
+    }
     //  更新限价单
     id settlement_data = [userinfo objectForKey:@"kSettlementData"];
     [self onQueryOrderBookResponse:[userinfo objectForKey:@"kLimitOrders"] settlement_data:settlement_data];
