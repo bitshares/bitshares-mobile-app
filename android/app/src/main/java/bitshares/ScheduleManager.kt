@@ -365,9 +365,6 @@ class ScheduleManager {
     fun unsub_market_notify(tradingPair: TradingPair) {
         //  没在订阅中
         val s = _sub_market_infos[tradingPair._pair] ?: return
-        if (!s.subscribed || s.callback == null) {
-            return
-        }
 
         //  降低引用计数
         s.refCount -= 1
@@ -378,13 +375,19 @@ class ScheduleManager {
         //  引用计数为 0 则移除订阅对象
         _sub_market_infos.remove(tradingPair._pair)
 
+        //  交易对服务器订阅已断开则直接返回
+        if (!s.subscribed || s.callback == null) {
+            return
+        }
+
+        //  --- 从服务器取消订阅 ---
+
         //  连接已断开
         val conn = GrapheneConnectionManager.sharedGrapheneConnectionManager().any_connection()
         if (!conn.is_connect()) {
             return
         }
 
-        // 取消订阅
         conn.async_exec_db("unsubscribe_from_market", jsonArrayfrom(s.callback!!, tradingPair._baseId, tradingPair._quoteId)).then { data ->
             Logger.d("[Unsubscribe] %s/%s successful.", tradingPair._quoteAsset.getString("symbol"), tradingPair._baseAsset.getString("symbol"))
             return@then null
@@ -474,6 +477,7 @@ class ScheduleManager {
             //  TODO:fowallet !!! 在重连之后需要重新 subscribe_to_market 。！！！重要
             s.querying = false
             s.subscribed = false
+            s.callback = null
             //  [统计]
             btsppLogCustom("event_subscribe_to_market_disconnect",
                     jsonObjectfromKVS("base", s.tradingPair!!._baseAsset.getString("symbol"),
@@ -494,13 +498,11 @@ class ScheduleManager {
         }
 
         //  设置 callback
-        if (s.callback == null) {
-            val pair = s.tradingPair!!._pair
-            s.callback = label@{ success, data ->
-                _on_process_sub_market_notify(pair, success, data)
-                //  不删除 callback
-                return@label false
-            }
+        val pair = s.tradingPair!!._pair
+        s.callback = label@{ success, data ->
+            _on_process_sub_market_notify(pair, success, data)
+            //  不删除 callback
+            return@label false
         }
 
         //  订阅
@@ -511,6 +513,7 @@ class ScheduleManager {
             return@then null
         }.catch {
             s.subscribed = false
+            s.callback = null
             Logger.d(String.format("[Subscribe] %s/%s failed..", tradingPair._quoteAsset.getString("symbol"), tradingPair._baseAsset.getString("symbol")))
         }
     }
@@ -609,6 +612,7 @@ class ScheduleManager {
                     s.accumulated_milliseconds = 0
                     //  通知
                     if (result.length() > 0) {
+                        result.put("kCurrentPair", s.tradingPair!!._pair)
                         NotificationCenter.sharedNotificationCenter().postNotificationName(kBtsSubMarketNotifyNewData, result)
                     }
                     return@then null
