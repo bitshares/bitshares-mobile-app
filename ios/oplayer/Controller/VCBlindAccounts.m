@@ -180,7 +180,13 @@
     [self.view addSubview:_mainTableView];
     
     //  UI - 空
-    _lbEmpty = [self genCenterEmptyLabel:rect txt:NSLocalizedString(@"kVcStTipEmptyNoBlindAccount", @"没有隐私账户，可点击右上角创建或恢复隐私账户。")];
+    if ([self isSelectMode]) {
+        _lbEmpty = [self genCenterEmptyLabel:rect
+                                         txt:NSLocalizedString(@"kVcStTipEmptyNoBlindAccount", @"没有任何隐私账户。")];
+    } else {
+        _lbEmpty = [self genCenterEmptyLabel:rect
+                                         txt:NSLocalizedString(@"kVcStTipEmptyNoBlindAccountCanImport", @"没有隐私账户，可点击右上角创建或恢复隐私账户。")];
+    }
     _lbEmpty.hidden = YES;
     [self.view addSubview:_lbEmpty];
     
