@@ -10,8 +10,8 @@ android {
         applicationId "org.bitshares.app"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 202003311
-        versionName "5.0"
+        versionCode 202006091
+        versionName "6.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -23,8 +23,6 @@ android {
         //  默认值
         buildConfigField "boolean", "kAppModuleEnableTabMarket", "true"
         buildConfigField "boolean", "kAppModuleEnableTabDebt", "true"
-        buildConfigField "boolean", "kAppModuleEnableRank", "true"
-        buildConfigField "boolean", "kAppModuleEnableFeedPrice", "true"
         buildConfigField "boolean", "kAppModuleEnableOTC", "true"
         buildConfigField "boolean", "kAppModuleEnableGateway", "true"
         buildConfigField "boolean", "kAppCheckUpdate", "true"
@@ -41,6 +39,8 @@ android {
             buildConfigField "int", "kAppChannelID", "10"
             buildConfigField "boolean", "kUseCommunityFaucet", "false"
             buildConfigField "String", "kAppConfigFile", "\"fowallet_config_btspp.json\""
+            //  TODO: test net
+//            buildConfigField "String", "kAppConfigFile", "\"fowallet_config_testnet.json\""
             //  TODO:2.9 test otc
 //            buildConfigField "String", "kAppConfigFile", "\"fowallet_config_otctest.json\""
 //            buildConfigField "boolean", "kAppModuleEnableTabDebt", "false"
@@ -59,8 +59,6 @@ android {
 
             buildConfigField "boolean", "kAppModuleEnableTabMarket", "false"
             buildConfigField "boolean", "kAppModuleEnableTabDebt", "false"
-            buildConfigField "boolean", "kAppModuleEnableRank", "false"
-            buildConfigField "boolean", "kAppModuleEnableFeedPrice", "false"
             buildConfigField "boolean", "kAppModuleEnableGateway", "false"
             buildConfigField "boolean", "kAppCheckUpdate", "false"
 
