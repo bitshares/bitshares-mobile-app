@@ -191,7 +191,9 @@ class FragmentVoting : BtsppFragment() {
         }
 
         //  刷新界面
-        refreshUI()
+        waitingOnCreateView().then {
+            refreshUI()
+        }
     }
 
     private fun createHeaderView(ctx: Context, text: String, hasTip: Boolean, auxArgs: JSONObject): LinearLayout {
@@ -715,7 +717,7 @@ class FragmentVoting : BtsppFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-
+        super.onCreateView(inflater, container, savedInstanceState)
         _ctx = inflater.context
         _view = inflater.inflate(R.layout.fragment_voting, container, false)
         return _view
