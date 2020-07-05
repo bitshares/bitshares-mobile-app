@@ -303,7 +303,7 @@ class TradingPair {
                         var temp: String?
                         var precision = 0
                         for (i in 0 until part2.length) {
-                            temp = part2.substring(i, 1)
+                            temp = part2.substring(i, i + 1)    //  substring one char
                             //  非0
                             if (temp != "0") {
                                 _displayPrecision += precision
