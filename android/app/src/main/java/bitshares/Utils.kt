@@ -311,11 +311,15 @@ class Utils {
          *  是否是BTS终身会员判断
          */
         fun isBitsharesVIP(membership_expiration_date_string: String?): Boolean {
-            return if (membership_expiration_date_string != null && membership_expiration_date_string != "") {
-                //  会员过期日期为 -1 则为终身会员。
-                parseBitsharesTimeString(membership_expiration_date_string) < 0
+            if (membership_expiration_date_string != null && membership_expiration_date_string != "") {
+                //  The time at which this account's membership expires.
+                //  If set to any time in the past, the account is a basic account.
+                //  If set to time_point_sec::maximum(), the account is a lifetime member.
+                //  If set to any time not in the past less than time_point_sec::maximum(), the account is an annual member.
+                val expire_ts = parseBitsharesTimeString(membership_expiration_date_string)
+                return expire_ts < 0 || expire_ts >= 0xffffffff
             } else {
-                false
+                return false
             }
         }
 
