@@ -62,7 +62,7 @@ class FragmentAssets : BtsppFragment() {
         //  合并资产信息并排序
         var call_orders_hash: JSONObject? = null     //  key:debt_asset_id value:call_orders
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
-        val limitValuesHash = _detailInfos!!.getJSONObject("limitValuesHash")
+        val limitValuesHash = _detailInfos!!.getJSONObject("onorderValuesHash")
         val callValuesHash = _detailInfos!!.getJSONObject("callValuesHash")
         val debtValuesHash = _detailInfos!!.getJSONObject("debtValuesHash")
         val validBalancesHash = _detailInfos!!.getJSONObject("validBalancesHash")
