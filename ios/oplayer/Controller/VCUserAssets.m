@@ -218,7 +218,7 @@
     //  合并资产信息并排序
     ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
     NSMutableDictionary* call_orders_hash = nil;    //  key:debt_asset_id value:call_orders
-    id limit_orders_values = [_userAssetDetailInfos objectForKey:@"limitValuesHash"];
+    id limit_orders_values = [_userAssetDetailInfos objectForKey:@"onorderValuesHash"];
     id call_orders_values = [_userAssetDetailInfos objectForKey:@"callValuesHash"];
     id debt_values = [_userAssetDetailInfos objectForKey:@"debtValuesHash"];
     for (id asset in [[_userAssetDetailInfos objectForKey:@"validBalancesHash"] allValues]) {
