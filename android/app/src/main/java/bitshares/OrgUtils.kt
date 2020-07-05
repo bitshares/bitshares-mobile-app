@@ -113,8 +113,8 @@ class OrgUtils {
          */
         fun calcUserAssetDetailInfos(full_account_data: JSONObject): JSONObject {
             //  --- 整理资产 ---
-            //  a.计算所有资产的总挂单量信息
-            val limit_orders_values = JSONObject()
+            //  a.计算所有资产的总挂单量信息（限价单 + 清算单）
+            val on_orders_values = JSONObject()
             val limit_orders = full_account_data.optJSONArray("limit_orders")
             if (limit_orders != null) {
                 for (order in limit_orders) {
@@ -122,11 +122,26 @@ class OrgUtils {
                     val sell_asset_id = order!!.getJSONObject("sell_price").getJSONObject("base").getString("asset_id")
                     val sell_amount = BigInteger(order.getString("for_sale"))
                     //  所有挂单累加
-                    var value = limit_orders_values.opt(sell_asset_id) as? BigInteger
+                    var value = on_orders_values.opt(sell_asset_id) as? BigInteger
                     value = value?.add(sell_amount) ?: sell_amount
-                    limit_orders_values.put(sell_asset_id, value)
+                    on_orders_values.put(sell_asset_id, value)
                 }
             }
+
+            val settle_orders = full_account_data.optJSONArray("settle_orders")
+            if (settle_orders != null) {
+                for (order in settle_orders) {
+                    val balance = order!!.getJSONObject("balance")
+                    val asset_id = balance.getString("asset_id")
+                    val amount = BigInteger(balance.getString("amount"))
+
+                    //  所有挂单累加
+                    var value = on_orders_values.opt(asset_id) as? BigInteger
+                    value = value?.add(amount) ?: amount
+                    on_orders_values.put(asset_id, value)
+                }
+            }
+
             //  b.计算所有资产的总抵押量信息（目前抵押资产仅有BTS）和总债务信息（CNY、USD等）
             val call_orders_values = JSONObject()
             val debt_values = JSONObject()
@@ -163,7 +178,7 @@ class OrgUtils {
             if (core_asset == null) {
                 validBalancesHash.put(BTS_NETWORK_CORE_ASSET_ID, jsonObjectfromKVS("asset_type", BTS_NETWORK_CORE_ASSET_ID, "balance", 0))
             }
-            for (asset_id in limit_orders_values.keys()) {
+            for (asset_id in on_orders_values.keys()) {
                 val asset = validBalancesHash.optJSONObject(asset_id)
                 //  没余额，初始化默认值。
                 if (asset == null) {
@@ -185,7 +200,7 @@ class OrgUtils {
                 }
             }
             //  返回
-            return jsonObjectfromKVS("validBalancesHash", validBalancesHash, "limitValuesHash", limit_orders_values, "callValuesHash", call_orders_values, "debtValuesHash", debt_values)
+            return jsonObjectfromKVS("validBalancesHash", validBalancesHash, "onorderValuesHash", on_orders_values, "callValuesHash", call_orders_values, "debtValuesHash", debt_values)
         }
 
         /**
