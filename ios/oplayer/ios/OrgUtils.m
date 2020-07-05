@@ -2110,18 +2110,31 @@
 + (NSDictionary*)calcUserAssetDetailInfos:(NSDictionary*)full_user_data
 {
     //  --- 整理资产 ---
-    //  a.计算所有资产的总挂单量信息
-    NSMutableDictionary* limit_orders_values = [NSMutableDictionary dictionary];
+    //  a.计算所有资产的总挂单量信息（限价单 + 清算单）
+    NSMutableDictionary* on_orders_values = [NSMutableDictionary dictionary];
     NSArray* limit_orders = [full_user_data objectForKey:@"limit_orders"];
-    if (limit_orders){
+    if (limit_orders) {
         for (id order in limit_orders) {
             //  限价单卖 base 资产，卖的数量为 for_sale 字段。sell_price 只是价格信息。
             id sell_asset_id = order[@"sell_price"][@"base"][@"asset_id"];
             id sell_amount = [order objectForKey:@"for_sale"];
             //  所有挂单累加
-            unsigned long long value = [limit_orders_values[sell_asset_id] unsignedLongLongValue];
+            unsigned long long value = [on_orders_values[sell_asset_id] unsignedLongLongValue];
             value += [sell_amount unsignedLongLongValue];
-            [limit_orders_values setObject:@(value) forKey:sell_asset_id];
+            [on_orders_values setObject:@(value) forKey:sell_asset_id];
+        }
+    }
+    
+    NSArray* settle_orders = [full_user_data objectForKey:@"settle_orders"];
+    if (settle_orders) {
+        for (id order in settle_orders) {
+            id balance = [order objectForKey:@"balance"];
+            id asset_id = [balance objectForKey:@"asset_id"];
+            id amount = [balance objectForKey:@"amount"];
+            //  所有挂单累加
+            unsigned long long value = [on_orders_values[asset_id] unsignedLongLongValue];
+            value += [amount unsignedLongLongValue];
+            [on_orders_values setObject:@(value) forKey:asset_id];
         }
     }
     
@@ -2166,7 +2179,7 @@
     if (!core_asset){
         [validBalancesHash setObject:@{@"asset_type":default_asset_id, @"balance":@0} forKey:default_asset_id];
     }
-    for (id asset_id in [limit_orders_values allKeys]) {
+    for (id asset_id in [on_orders_values allKeys]) {
         id asset = [validBalancesHash objectForKey:asset_id];
         //  没余额，初始化默认值。
         if (!asset){
@@ -2190,7 +2203,7 @@
     
     //  返回
     return @{@"validBalancesHash":validBalancesHash,
-             @"limitValuesHash":limit_orders_values,
+             @"onorderValuesHash":on_orders_values,
              @"callValuesHash":call_orders_values,
              @"debtValuesHash":debt_values};
 }
