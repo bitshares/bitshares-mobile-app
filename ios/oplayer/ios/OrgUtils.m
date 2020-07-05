@@ -359,9 +359,13 @@
     if (!membership_expiration_date_string){
         return NO;
     }
-    //  会员过期日期为 -1 则为终身会员。
+    
+    //  The time at which this account's membership expires.
+    //  If set to any time in the past, the account is a basic account.
+    //  If set to time_point_sec::maximum(), the account is a lifetime member.
+    //  If set to any time not in the past less than time_point_sec::maximum(), the account is an annual member.
     NSTimeInterval expire_ts = [self parseBitsharesTimeString:membership_expiration_date_string];
-    return expire_ts < 0;
+    return expire_ts < 0 || expire_ts >= 0xffffffff;
 }
 
 /**
