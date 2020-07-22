@@ -113,7 +113,46 @@ static BtsppJssdkManager *_sharedBtsppJssdkManager = nil;
 
 - (WsPromise*)tx_transfer:(id)args
 {
+    //  TODO:2.9 获取网页相关信息，资产是否允许，数量是否允许等等。
+    id to_account = [args objectForKey:@"to"];
+    
+    //  REMARK：先锁定，确保网页中的每次支付都必须手动输入密码解锁。
+    [[WalletManager sharedWalletManager] Lock];
+    
+//    id from_account = [_fullAccountData objectForKey:@"account"];
+//    id n_amount_pow = [NSString stringWithFormat:@"%@", [n_amount decimalNumberByMultiplyingByPowerOf10:_precision_amount]];
+//    id op = @{
+
+//              @"from":from_account[@"id"],
+//              @"to":to_account[@"id"],
+
+//              @"memo":memo_object
+//              };
+    
+    id opdata = @{
+        @"fee":@{
+                @"amount":@0,
+                @"asset_id":[ChainObjectManager sharedChainObjectManager].grapheneCoreAssetID,
+                },
+//        @"to":to_account[@"id"],
+//        @"amount":@{
+//                @"amount":@([n_amount_pow unsignedLongLongValue]),
+//                @"asset_id":_asset[@"id"],
+//                },
+    };
     //  TODO:
+    [[[[BitsharesClientManager sharedBitsharesClientManager] transfer:opdata] then:^id(id data) {
+        //  TODO:ok
+        return nil;
+    }] catch:^id(id error) {
+        //  TODO:2.9
+        return nil;
+    }];
+    
+//    [OrgUtils logEvents:@"txPayTransferFullOK" params:@{@"asset":asset[@"symbol"]}];
+//    id amount_string = [NSString stringWithFormat:@"%@ %@", [transfer_args objectForKey:@"kAmount"], asset[@"symbol"]];
+//    VCPaySuccess* vc = [[VCPaySuccess alloc] initWithResult:tx_data to_account:_to_account amount_string:amount_string];
+//    [self clearPushViewController:vc vctitle:@"" backtitle:kVcDefaultBackTitleName];
     
     return nil;
 }
