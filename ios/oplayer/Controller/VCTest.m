@@ -9,6 +9,7 @@
 #import "VCTest.h"
 
 #import "NativeAppDelegate.h"
+#import "VCBtsppSdkWebView.h"
 
 @interface VCTest ()
 {
@@ -22,11 +23,16 @@
 
 - (void)dealloc
 {
+    if (_mainTableView){
+        [[IntervalManager sharedIntervalManager] releaseLock:_mainTableView];
+        _mainTableView.delegate = nil;
+        _mainTableView = nil;
+    }
 }
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (id)init
 {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    self = [super init];
     if (self) {
         // Custom initialization
         _textArray = [[NSArray alloc] initWithObjects:@"test", nil];
@@ -38,6 +44,15 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
+    self.view.backgroundColor = [ThemeManager sharedThemeManager].appBackColor;
+    
+    _mainTableView = [[UITableView alloc] initWithFrame:[self rectWithoutTabbar] style:UITableViewStyleGrouped];
+    _mainTableView.delegate = self;
+    _mainTableView.dataSource = self;
+    _mainTableView.backgroundColor = [UIColor clearColor];
+    _mainTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    [self.view addSubview:_mainTableView];
 }
 
 - (void)didReceiveMemoryWarning
@@ -69,6 +84,7 @@
         cell.selectionStyle = UITableViewCellSelectionStyleBlue;
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
+    cell.backgroundColor = [UIColor clearColor];
     cell.textLabel.text = [_textArray objectAtIndex:indexPath.row];
     return cell;
 }
@@ -76,6 +92,16 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    switch (indexPath.row) {
+        case 0:
+        {
+            VCBtsppSdkWebView* vc = [[VCBtsppSdkWebView alloc] initWithUrl:@"http://btspp.io/test/test01.html"];
+            [self pushViewController:vc vctitle:@"测试webview" backtitle:kVcDefaultBackTitleName];
+        }
+            break;
+        default:
+            break;
+    }
 }
 
 @end

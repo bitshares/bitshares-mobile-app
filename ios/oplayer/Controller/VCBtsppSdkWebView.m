@@ -154,8 +154,20 @@
     //  REMARK：进度条使用mainbutton的颜色
     _progressView.progressBarView.backgroundColor = [ThemeManager sharedThemeManager].mainButtonBackColor;
     
+    //  加载jssdk代码
+    NSString* jscode_fullpath = [[NSBundle mainBundle] pathForResource:@"app" ofType:@"js" inDirectory:@"Static"];
+    NSString* jscode = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:jscode_fullpath]
+                                             encoding:NSUTF8StringEncoding];
+    
+    //  初始化 WebView 配置文件（加载用户脚本）
+    WKUserScript* jscode_user_script = [[WKUserScript alloc] initWithSource:jscode
+                                                              injectionTime:WKUserScriptInjectionTimeAtDocumentStart
+                                                           forMainFrameOnly:NO];    //  for all frames
+    WKWebViewConfiguration* webview_config = [[WKWebViewConfiguration alloc] init];
+    [webview_config.userContentController addUserScript:jscode_user_script];
+    
     //  UI - WebView主体
-    _webview = [[WKWebView alloc] initWithFrame:[self rectWithoutNavi]];
+    _webview = [[WKWebView alloc] initWithFrame:[self rectWithoutNavi] configuration:webview_config];
     _webview.navigationDelegate = self;
     _webview.UIDelegate = self;
     _webview.allowsBackForwardNavigationGestures = YES;
@@ -165,15 +177,7 @@
     [_webview addObserver:self forKeyPath:@"canGoBack" options:NSKeyValueObservingOptionNew context:nil];
     
     //  开始加载 TODO:2.9 临时加载本地
-//    [self _loadRequest:_url];
-    
-    //  TODO:2.9 加载本地html
-    NSBundle* bundle = [NSBundle mainBundle];
-    NSString* pNativeJsapiFullPath = [bundle pathForResource:@"jsbindex" ofType:@"html" inDirectory:@"Static"];
-    NSString* html_code = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:pNativeJsapiFullPath]
-                                                encoding:NSUTF8StringEncoding];
-    assert(html_code);
-    [_webview loadHTMLString:html_code baseURL:nil];
+    [self _loadRequest:_url];
 }
 
 - (void)viewWillAppear:(BOOL)animated

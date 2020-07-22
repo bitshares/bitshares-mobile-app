@@ -780,6 +780,12 @@
 		3F87B76D242701B000A0DF3A /* VCAssetOpGlobalSettle.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F87B76A242701B000A0DF3A /* VCAssetOpGlobalSettle.m */; };
 		3F89DE4022B20CF800B052CB /* OpenLedger.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F89DE3F22B20CF800B052CB /* OpenLedger.m */; };
 		3F89DE4122B20CF800B052CB /* OpenLedger.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F89DE3F22B20CF800B052CB /* OpenLedger.m */; };
+		3F8B929524C83B23005929D0 /* BtsppJssdkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8B929424C83B23005929D0 /* BtsppJssdkManager.m */; };
+		3F8B929624C83B23005929D0 /* BtsppJssdkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8B929424C83B23005929D0 /* BtsppJssdkManager.m */; };
+		3F8B929724C83B23005929D0 /* BtsppJssdkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8B929424C83B23005929D0 /* BtsppJssdkManager.m */; };
+		3F8B929A24C83BE3005929D0 /* VCBtsppSdkWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8B929824C83BE2005929D0 /* VCBtsppSdkWebView.m */; };
+		3F8B929B24C83BE3005929D0 /* VCBtsppSdkWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8B929824C83BE2005929D0 /* VCBtsppSdkWebView.m */; };
+		3F8B929C24C83BE3005929D0 /* VCBtsppSdkWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8B929824C83BE2005929D0 /* VCBtsppSdkWebView.m */; };
 		3F8C63DD244FDE48000316D1 /* ViewBlindInputOutputItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8C63DB244FDE48000316D1 /* ViewBlindInputOutputItemCell.m */; };
 		3F8C63DE244FDE48000316D1 /* ViewBlindInputOutputItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8C63DB244FDE48000316D1 /* ViewBlindInputOutputItemCell.m */; };
 		3F8C63DF244FDE48000316D1 /* ViewBlindInputOutputItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F8C63DB244FDE48000316D1 /* ViewBlindInputOutputItemCell.m */; };
@@ -2283,6 +2289,10 @@
 		3F87B76A242701B000A0DF3A /* VCAssetOpGlobalSettle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAssetOpGlobalSettle.m; path = Controller/VCAssetOpGlobalSettle.m; sourceTree = "<group>"; };
 		3F89DE3E22B20CF700B052CB /* OpenLedger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenLedger.h; path = Controller/Gateway/OpenLedger.h; sourceTree = "<group>"; };
 		3F89DE3F22B20CF800B052CB /* OpenLedger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OpenLedger.m; path = Controller/Gateway/OpenLedger.m; sourceTree = "<group>"; };
+		3F8B929324C83B23005929D0 /* BtsppJssdkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BtsppJssdkManager.h; path = ios/BtsppJssdkManager.h; sourceTree = "<group>"; };
+		3F8B929424C83B23005929D0 /* BtsppJssdkManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BtsppJssdkManager.m; path = ios/BtsppJssdkManager.m; sourceTree = "<group>"; };
+		3F8B929824C83BE2005929D0 /* VCBtsppSdkWebView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCBtsppSdkWebView.m; path = Controller/VCBtsppSdkWebView.m; sourceTree = "<group>"; };
+		3F8B929924C83BE2005929D0 /* VCBtsppSdkWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCBtsppSdkWebView.h; path = Controller/VCBtsppSdkWebView.h; sourceTree = "<group>"; };
 		3F8C63DB244FDE48000316D1 /* ViewBlindInputOutputItemCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewBlindInputOutputItemCell.m; path = View/ViewBlindInputOutputItemCell.m; sourceTree = "<group>"; };
 		3F8C63DC244FDE48000316D1 /* ViewBlindInputOutputItemCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewBlindInputOutputItemCell.h; path = View/ViewBlindInputOutputItemCell.h; sourceTree = "<group>"; };
 		3F8C63E024504B1F000316D1 /* VCBlindAccounts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCBlindAccounts.m; path = Controller/VCBlindAccounts.m; sourceTree = "<group>"; };
@@ -3314,6 +3324,8 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3F8B929924C83BE2005929D0 /* VCBtsppSdkWebView.h */,
+				3F8B929824C83BE2005929D0 /* VCBtsppSdkWebView.m */,
 				3FCCFB1B24B1C2F400CAF17E /* VCMyContact.h */,
 				3FCCFB1C24B1C2F500CAF17E /* VCMyContact.m */,
 				3F333B0D2475071B00E43B83 /* VCTradingPairMgr.h */,
@@ -3929,6 +3941,8 @@
 		18FF06C217E039240088405E /* Object */ = {
 			isa = PBXGroup;
 			children = (
+				3F8B929324C83B23005929D0 /* BtsppJssdkManager.h */,
+				3F8B929424C83B23005929D0 /* BtsppJssdkManager.m */,
 				3FCC8B6B237A562D00F5664D /* OtcManager.h */,
 				3FCC8B6C237A562D00F5664D /* OtcManager.m */,
 				3FF3550521FECDF4008EF213 /* LangManager.h */,
@@ -6010,6 +6024,7 @@
 				3F676820230E9EC100E98C14 /* VCCallOrderRanking.m in Sources */,
 				3F676821230E9EC100E98C14 /* rmd160.c in Sources */,
 				3F009A2423A2176100A77E4A /* ViewOtcMcAssetSwitchCell.m in Sources */,
+				3F8B929724C83B23005929D0 /* BtsppJssdkManager.m in Sources */,
 				3F676822230E9EC100E98C14 /* WjCryptLib_AesCtr.c in Sources */,
 				3F676823230E9EC100E98C14 /* AWActionSheet.m in Sources */,
 				3FF2E98C23D0691C006F98D0 /* VCAssetOpIssue.m in Sources */,
@@ -6170,6 +6185,7 @@
 				3F67689B230E9EC100E98C14 /* ChainObjectManager.m in Sources */,
 				3F67689C230E9EC100E98C14 /* SRSecurityPolicy.m in Sources */,
 				3F67689D230E9EC100E98C14 /* VCUserAssets.m in Sources */,
+				3F8B929C24C83BE3005929D0 /* VCBtsppSdkWebView.m in Sources */,
 				3F4F2937237180C9007674E5 /* VCOtcAddBankCard.m in Sources */,
 				3F67689E230E9EC100E98C14 /* ViewUserActivityInfoCell.m in Sources */,
 				3F67689F230E9EC100E98C14 /* ViewProposalOpInfoCell.m in Sources */,
@@ -6385,6 +6401,7 @@
 				3FB8F8B821CE66C200DA88E2 /* VCCallOrderRanking.m in Sources */,
 				3FB8F8B921CE66C200DA88E2 /* rmd160.c in Sources */,
 				3F009A2323A2176100A77E4A /* ViewOtcMcAssetSwitchCell.m in Sources */,
+				3F8B929624C83B23005929D0 /* BtsppJssdkManager.m in Sources */,
 				3FB8F8BA21CE66C200DA88E2 /* WjCryptLib_AesCtr.c in Sources */,
 				3FB8F8BB21CE66C200DA88E2 /* AWActionSheet.m in Sources */,
 				3FF2E98B23D0691C006F98D0 /* VCAssetOpIssue.m in Sources */,
@@ -6545,6 +6562,7 @@
 				3FB8F92821CE66C200DA88E2 /* ChainObjectManager.m in Sources */,
 				3FB8F92921CE66C200DA88E2 /* SRSecurityPolicy.m in Sources */,
 				3FB8F92A21CE66C200DA88E2 /* VCUserAssets.m in Sources */,
+				3F8B929B24C83BE3005929D0 /* VCBtsppSdkWebView.m in Sources */,
 				3F4F2936237180C9007674E5 /* VCOtcAddBankCard.m in Sources */,
 				3FB8F92B21CE66C200DA88E2 /* ViewUserActivityInfoCell.m in Sources */,
 				3FDD800721D763C100DA61FC /* ViewProposalOpInfoCell.m in Sources */,
@@ -6760,6 +6778,7 @@
 				B741A75120D9DCEB000FBC00 /* VCCallOrderRanking.m in Sources */,
 				B7B8810C20C3D9BE00DBCD45 /* rmd160.c in Sources */,
 				3F009A2223A2176100A77E4A /* ViewOtcMcAssetSwitchCell.m in Sources */,
+				3F8B929524C83B23005929D0 /* BtsppJssdkManager.m in Sources */,
 				B7BDA9A420B3A3D100738F12 /* WjCryptLib_AesCtr.c in Sources */,
 				F51D13FA1C59C45800FBB748 /* AWActionSheet.m in Sources */,
 				3FF2E98A23D0691C006F98D0 /* VCAssetOpIssue.m in Sources */,
@@ -6920,6 +6939,7 @@
 				B714094D20A31CC300003311 /* SRSecurityPolicy.m in Sources */,
 				B72A849820CD33F700D92A25 /* VCUserAssets.m in Sources */,
 				B737A72A20FC9DF100818BBA /* ViewUserActivityInfoCell.m in Sources */,
+				3F8B929A24C83BE3005929D0 /* VCBtsppSdkWebView.m in Sources */,
 				3F4F2935237180C9007674E5 /* VCOtcAddBankCard.m in Sources */,
 				3FDD800621D763C100DA61FC /* ViewProposalOpInfoCell.m in Sources */,
 				B7BDAA7C20B3C77400738F12 /* 7zBuf.c in Sources */,

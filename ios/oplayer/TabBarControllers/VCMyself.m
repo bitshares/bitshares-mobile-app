@@ -32,6 +32,10 @@
 #import "VCNotice.h"
 #import "VCWebView.h"
 
+#ifdef DEBUG
+#import "VCTest.h"
+#endif  //  DEBUG
+
 enum
 {
     kVcBanner = 0,              //  账号管理登录部分banner
@@ -58,6 +62,9 @@ enum
 {
     kVcSubShareLink = 0,        //  分享专属链接
     kVcSubSettingsEx,           //  设置
+#ifdef DEBUG
+    kVcSubTestPage,             //  测试
+#endif  //  DEBUG
 };
 
 @interface VCMyself ()
@@ -119,6 +126,9 @@ enum
         NSArray* pSection4 = [NSArray arrayWithObjects:
                               @"kLblCellShareLink",             //  分享专属链接
                               @"kSettingEx",                    //  设置,
+#ifdef DEBUG
+                              @"测试页面",
+#endif  //  DEBUG
                               nil];
         [obj addObject:@{@"type":@(kVcSetting), @"rows":pSection4}];
     }] copy];
@@ -423,6 +433,14 @@ enum
                         [OrgUtils makeToast:NSLocalizedString(@"kShareLinkCopied", @"分享链接已复制。")];
                     }
                         break;
+#ifdef DEBUG
+                    case kVcSubTestPage:
+                    {
+                        vc = [[VCTest alloc] init];
+                        vc.title = @"测试页面";
+                    }
+                        break;
+#endif  //  DEBUG
                     default:
                         break;
                 }
