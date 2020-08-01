@@ -760,6 +760,19 @@ class BitsharesClientManager {
         return runSingleTransaction(opdata, EBitsharesOperations.ebo_htlc_extend, opdata.getString("update_issuer"))
     }
 
+    /**
+     *  OP - 创建锁仓（投票）
+     */
+    fun ticketCreate(opdata: JSONObject): Promise {
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_ticket_create, opdata.getString("account"))
+    }
+
+    /**
+     *  OP - 更新锁仓（投票）
+     */
+    fun ticketUpdate(opdata: JSONObject): Promise {
+        return runSingleTransaction(opdata, EBitsharesOperations.ebo_ticket_update, opdata.getString("account"))
+    }
 }
 
 

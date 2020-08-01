@@ -2,6 +2,7 @@ package bitshares
 
 import android.content.Context
 import android.os.Looper
+import com.btsplusplus.fowallet.ActivityAssetOpStakeVote
 import com.btsplusplus.fowallet.BuildConfig
 import com.btsplusplus.fowallet.NativeInterface
 import com.btsplusplus.fowallet.R
@@ -1070,6 +1071,13 @@ class OrgUtils {
                 EBitsharesOperations.ebo_htlc_refund.value -> {
                     container.put(opdata.getString("to"), true)
                 }
+                EBitsharesOperations.ebo_ticket_create.value -> {
+                    container.put(opdata.getString("account"), true)
+                    container.put(opdata.getJSONObject("amount").getString("asset_id"), true)
+                }
+                EBitsharesOperations.ebo_ticket_update.value -> {
+                    container.put(opdata.getString("account"), true)
+                }
                 else -> {
                 }
             }
@@ -1438,6 +1446,18 @@ class OrgUtils {
                     name = R.string.kOpType_htlc_refund.xmlstring(ctx)
                     val to = chainMgr.getChainObjectByID(opdata.getString("to")).getString("name")
                     desc = String.format(R.string.kOpDesc_htlc_refund.xmlstring(ctx), to, opdata.getString("htlc_id"))
+                }
+                EBitsharesOperations.ebo_ticket_create.value -> {
+                    name = R.string.kOpType_ticket_create.xmlstring(ctx)
+                    val account = chainMgr.getChainObjectByID(opdata.getString("account")).getString("name")
+                    val str_amount = formatAssetAmountItem(opdata.getJSONObject("amount"))
+                    desc = String.format(R.string.kOpDesc_ticket_create.xmlstring(ctx),
+                            account, str_amount, ActivityAssetOpStakeVote.getTicketTypeDesc(opdata.getInt("target_type"), ctx))
+                }
+                EBitsharesOperations.ebo_ticket_update.value -> {
+                    name = R.string.kOpType_ticket_update.xmlstring(ctx)
+                    val account = chainMgr.getChainObjectByID(opdata.getString("account")).getString("name")
+                    desc = String.format(R.string.kOpDesc_ticket_update.xmlstring(ctx), account, opdata.getString("ticket"))
                 }
                 else -> {
                 }

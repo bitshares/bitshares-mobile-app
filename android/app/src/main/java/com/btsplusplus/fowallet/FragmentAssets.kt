@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -416,6 +417,9 @@ class FragmentAssets : BtsppFragment() {
             } else {
                 actions.put(EBitsharesAssetOpKind.ebaok_reserve)
             }
+            if (isCore) {
+                actions.put(EBitsharesAssetOpKind.ebaok_stake_vote)
+            }
 
             ly3 = LinearLayout(ctx)
             ly3.orientation = LinearLayout.HORIZONTAL
@@ -427,8 +431,8 @@ class FragmentAssets : BtsppFragment() {
 
                 val layout_tv7 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
                 layout_tv7.weight = action_weight
-                layout_tv7.gravity = Gravity.LEFT
-                layout_tv7.setMargins(0, 0, toDp(60.0f), 0)
+                layout_tv7.gravity = Gravity.LEFT or Gravity.CENTER
+                layout_tv7.setMargins(0, 0, 0, 0)
 
                 val tv7 = TextView(ctx)
                 when (action!!) {
@@ -436,13 +440,19 @@ class FragmentAssets : BtsppFragment() {
                     EBitsharesAssetOpKind.ebaok_trade -> tv7.text = R.string.kVcAssetBtnTrade.xmlstring(ctx)
                     EBitsharesAssetOpKind.ebaok_settle -> tv7.text = R.string.kVcAssetBtnSettle.xmlstring(ctx)
                     EBitsharesAssetOpKind.ebaok_reserve -> tv7.text = R.string.kVcAssetBtnReserve.xmlstring(ctx)
+                    EBitsharesAssetOpKind.ebaok_stake_vote -> tv7.text = R.string.kVcAssetBtnStakeVote.xmlstring(ctx)
+                    EBitsharesAssetOpKind.ebaok_more -> tv7.text = R.string.kVcAssetBtnMore.xmlstring(ctx)
                     else -> assert(false)
                 }
                 tv7.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f)
                 tv7.setTextColor(resources.getColor(R.color.theme01_color03))
-                tv7.gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
+                tv7.gravity = Gravity.CENTER_VERTICAL or Gravity.CENTER
                 tv7.layoutParams = layout_tv7
                 tv7.tag = action
+                //  单行 尾部截断
+                tv7.setSingleLine(true)
+                tv7.maxLines = 1
+                tv7.ellipsize = TextUtils.TruncateAt.END
 
                 ly3.addView(tv7)
 
@@ -482,6 +492,7 @@ class FragmentAssets : BtsppFragment() {
                     }
                 }
             }
+            EBitsharesAssetOpKind.ebaok_stake_vote -> _onAssetStakeVoteClicked(tag, clicked_asset_id)
             else -> assert(false)
         }
     }
@@ -596,6 +607,31 @@ class FragmentAssets : BtsppFragment() {
                         put("kMsgSubmitInputValidAmount", resources.getString(R.string.kVcAssetOpReserveSubmitTipsPleaseInputAmount))
                         put("kMsgSubmitOK", resources.getString(R.string.kVcAssetOpReserveSubmitTipOK))
                     })
+                    put("result_promise", result_promise)
+                })
+                result_promise.then { dirty ->
+                    //  刷新UI
+                    if (dirty != null && dirty as Boolean) {
+                        //  TODO:5.0 考虑刷新界面
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     *  事件 - 资产锁仓投票
+     */
+    private fun _onAssetStakeVoteClicked(tag: EBitsharesAssetOpKind, clicked_asset_id: String) {
+        val chainMgr = ChainObjectManager.sharedChainObjectManager()
+        val clicked_asset = chainMgr.getChainObjectByID(clicked_asset_id)
+        activity!!.let { ctx ->
+            VcUtils.simpleRequest(ctx, chainMgr.queryFullAccountInfo(_full_account_data.getJSONObject("account").getString("id"))) {
+                val full_account_data = it as JSONObject
+                val result_promise = Promise()
+                ctx.goTo(ActivityAssetOpStakeVote::class.java, true, args = JSONObject().apply {
+                    put("current_asset", clicked_asset)
+                    put("full_account_data", full_account_data)
                     put("result_promise", result_promise)
                 })
                 result_promise.then { dirty ->

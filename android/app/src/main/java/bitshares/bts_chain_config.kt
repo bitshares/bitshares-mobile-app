@@ -41,6 +41,8 @@ enum class EBitsharesAssetOpKind(val value: Int) {
     ebaok_reserve(102),                 //  资产销毁（仅UIA资产）
     ebaok_settle(103),                  //  资产清算（仅Smart资产）
     ebaok_call_order_update(104),       //  调整债仓（仅Smart资产）
+    ebaok_stake_vote(105),              //  锁仓投票（仅BTS）
+    ebaok_more(106),                    //  虚拟按钮：更多
 }
 
 /**
@@ -117,6 +119,8 @@ enum class EBitsharesObjectType(val value: Int) {
     ebot_worker(14),
     ebot_balance(15),
     ebot_htlc(16),
+    ebot_custom_authority(17),          //  17
+    ebot_ticket(18),                    //  18
 }
 
 /**
@@ -177,6 +181,11 @@ enum class EBitsharesOperations(val value: Int) {
     ebo_htlc_redeemed(51),         // VIRTUAL
     ebo_htlc_extend(52),
     ebo_htlc_refund(53),           // VIRTUAL
+    ebo_custom_authority_create(54),
+    ebo_custom_authority_update(55),
+    ebo_custom_authority_delete(56),
+    ebo_ticket_create(57),
+    ebo_ticket_update(58),
 }
 
 /**
