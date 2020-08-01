@@ -311,6 +311,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".ActivityAssetOpStakeVote"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".ActivityAssetCreateOrEdit"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />

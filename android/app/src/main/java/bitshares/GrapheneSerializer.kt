@@ -108,6 +108,8 @@ open class T_Base_companion {
         T_htlc_create.register_subfields()
         T_htlc_redeem.register_subfields()
         T_htlc_extend.register_subfields()
+        T_ticket_create.register_subfields()
+        T_ticket_update.register_subfields()
     }
 
     open fun register_subfields() {
@@ -1370,6 +1372,31 @@ class T_htlc_extend : T_Base() {
     }
 }
 
+class T_ticket_create : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("fee", T_asset)
+            add_field("account", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
+            add_field("target_type", T_varint32)    //  see struct unsigned_int
+            add_field("amount", T_asset)
+            add_field("extensions", Tm_set(T_future_extensions))
+        }
+    }
+}
+
+class T_ticket_update : T_Base() {
+    companion object : T_Base_companion() {
+        override fun register_subfields() {
+            add_field("fee", T_asset)
+            add_field("ticket", Tm_protocol_id_type(EBitsharesObjectType.ebot_ticket))
+            add_field("account", Tm_protocol_id_type(EBitsharesObjectType.ebot_account))
+            add_field("target_type", T_varint32)    //  see struct unsigned_int
+            add_field("amount_for_new_target", Tm_optional(T_asset))
+            add_field("extensions", Tm_set(T_future_extensions))
+        }
+    }
+}
+
 class T_operation : T_Base() {
     companion object : T_Base_companion() {
         override fun to_byte_buffer(io: BinSerializer, opdata: Any?) {
@@ -1439,6 +1466,8 @@ class T_operation : T_Base() {
                 EBitsharesOperations.ebo_htlc_create.value -> T_htlc_create
                 EBitsharesOperations.ebo_htlc_redeem.value -> T_htlc_redeem
                 EBitsharesOperations.ebo_htlc_extend.value -> T_htlc_extend
+                EBitsharesOperations.ebo_ticket_create.value -> T_ticket_create
+                EBitsharesOperations.ebo_ticket_update.value -> T_ticket_update
                 else -> {
                     assert(false)
                     return T_transfer

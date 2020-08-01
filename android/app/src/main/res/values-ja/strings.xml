@@ -429,6 +429,8 @@
     <string name="kVcAssetBtnTrade">取引</string>
     <string name="kVcAssetBtnSettle">決済</string>
     <string name="kVcAssetBtnReserve">消却</string>
+    <string name="kVcAssetBtnStakeVote">锁仓</string>
+    <string name="kVcAssetBtnMore">もっと</string>
     <string name="kVcAssetTipsEstimating">推定の中...</string>
     <string name="kVcAssetAvailable">可利用</string>
     <string name="kVcAssetOnOrder">注文</string>
@@ -575,6 +577,23 @@
     <string name="kVcAssetOpReserveBtnName">立即销毁</string>
     <string name="kVcAssetOpReserveSubmitTipsPleaseInputAmount">请输入要销毁的资产数量。</string>
     <string name="kVcAssetOpReserveSubmitTipOK">销毁成功。</string>
+    <string name="kVcAssetOpStakeVoteUiTips">【温馨提示】\n锁仓可增加投票权重。此操作会导致资产临时或永久锁定，请谨慎操作。\n1、锁仓180天，2倍投票权重，15天后激活。\n2、锁仓360天，4倍投票权重，30天后激活。\n3、锁仓720天，8倍投票权重，45天后激活。\n4、永久锁仓，8倍投票权重，60天后激活。激活后每180天衰减25%，激活2年后投票权重归0。</string>
+    <string name="kVcAssetOpStakeVoteTicketTypeList180">锁仓180天</string>
+    <string name="kVcAssetOpStakeVoteTicketTypeList360">锁仓360天</string>
+    <string name="kVcAssetOpStakeVoteTicketTypeList720">锁仓720天</string>
+    <string name="kVcAssetOpStakeVoteTicketTypeListForever">永久锁仓</string>
+    <string name="kVcAssetOpStakeVoteTicketTypeDesc180">180天</string>
+    <string name="kVcAssetOpStakeVoteTicketTypeDesc360">360天</string>
+    <string name="kVcAssetOpStakeVoteTicketTypeDesc720">720天</string>
+    <string name="kVcAssetOpStakeVoteTicketTypeDescForever">永久</string>
+    <string name="kVcAssetOpStakeVoteCellPlaceholderAmount">请输入锁仓数量</string>
+    <string name="kVcAssetOpStakeVoteBtnName">创建锁仓</string>
+    <string name="kVcAssetOpStakeVoteCellTitleTicketType">类型</string>
+    <string name="kVcAssetOpStakeVoteCellValueLiquid">请选择锁仓类型</string>
+    <string name="kVcAssetOpStakeVoteSubmitTipsPleaseInputAmount">请输入锁仓数量。</string>
+    <string name="kVcAssetOpStakeVoteSubmitTipsPleaseSelectTicketType">请选择锁仓类型。</string>
+    <string name="kVcAssetOpStakeVoteSubmitAskForCreateTicket">您确认锁仓 %s %s 吗？\n\n锁仓时间：%s\n\n※ 此操作会导致资产临时或永久锁定，请谨慎操作。</string>
+    <string name="kVcAssetOpStakeVoteSubmitTipOK">创建锁仓成功。</string>
     <string name="kVcAssetOpCellTitleIssueAmount">发行数量</string>
     <string name="kVcAssetOpCellPlaceholderIssueAmount">请输入发行数量</string>
     <string name="kVcAssetOpCellTitleIssueTargetAccount">目标账户</string>
@@ -1093,6 +1112,8 @@
     <string name="kVcTitleSearchBackAsset">搜索抵押物</string>
     <string name="kVcTitleAssetOpSettle">发起清算</string>
     <string name="kVcTitleAssetOpReserve">销毁资产</string>
+    <string name="kVcTitleAssetOpStakeVoteCreateTicket">创建锁仓</string>
+    <string name="kVcTitleAssetOpStakeVoteUpdateTicket">更新锁仓</string>
     <string name="kVcTitleAssetOpIssue">发行资产</string>
     <string name="kVcTitleAssetGlobalSettle">全局清算</string>
     <string name="kVcTitleAssetClaimFeePool">提取手续费池</string>
@@ -1186,6 +1207,8 @@
     <string name="kOpType_htlc_redeemed">htlc_redeemed</string>
     <string name="kOpType_htlc_extend">htlc_extend</string>
     <string name="kOpType_htlc_refund">htlc_refund</string>
+    <string name="kOpType_ticket_create">create ticket</string>
+    <string name="kOpType_ticket_update">update ticker</string>
     <string name="kOpType_unknown_op">不明な操作</string>
     <!-- 交易OP详细描述 -->
     <string name="kOpDesc_transfer">%s 送金 %s と %s。</string>
@@ -1250,6 +1273,8 @@
     <string name="kOpDesc_htlc_redeemed">%s 赎回HTLC成功，%s 转入账号 %s。#%s</string>
     <string name="kOpDesc_htlc_extend">%s 延长HTLC有效期 %s 秒。#%s</string>
     <string name="kOpDesc_htlc_refund">HTLC过期，资产自动退回到账号 %s。#%s</string>
+    <string name="kOpDesc_ticket_create">%s 锁仓 %s，类型：%s。</string>
+    <string name="kOpDesc_ticket_update">%s 更新锁仓 #%s。</string>
     <string name="kOpDesc_unknown_op">不明な操作 #%s。</string>
     <!-- 交易OP细化 -->
     <string name="kOpDetailFlagDangerous">危険な操作</string>

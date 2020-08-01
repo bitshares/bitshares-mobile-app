@@ -429,6 +429,8 @@
     <string name="kVcAssetBtnTrade">Trade</string>
     <string name="kVcAssetBtnSettle">Settle</string>
     <string name="kVcAssetBtnReserve">Reserve</string>
+    <string name="kVcAssetBtnStakeVote">Stake</string>
+    <string name="kVcAssetBtnMore">More</string>
     <string name="kVcAssetTipsEstimating">Estimating...</string>
     <string name="kVcAssetAvailable">Available</string>
     <string name="kVcAssetOnOrder">Orders</string>
@@ -575,6 +577,23 @@
     <string name="kVcAssetOpReserveBtnName">Reserve asset</string>
     <string name="kVcAssetOpReserveSubmitTipsPleaseInputAmount">Please enter the amount of assets to be reserved.</string>
     <string name="kVcAssetOpReserveSubmitTipOK">Reserved successfully.</string>
+    <string name="kVcAssetOpStakeVoteUiTips">[Reminder]\nLock position can increase voting power. This operation will cause the asset to be temporarily or permanently locked, please exercise caution.\n1. 180 days, 2x voting power, activate after 15 days.\n2. 360 days, 4x voting power, activate after 30 days.\n3. 720 days, 8x voting power, activate after 45 days.\n4. forever, 8x voting power, activate after 60 days. after activation, it decays by 25% every 180 days, and the voting power returns to 0 after 2 years of activation.</string>
+    <string name="kVcAssetOpStakeVoteTicketTypeList180">Locked for 180 days</string>
+    <string name="kVcAssetOpStakeVoteTicketTypeList360">Locked for 360 days</string>
+    <string name="kVcAssetOpStakeVoteTicketTypeList720">Locked for 720 days</string>
+    <string name="kVcAssetOpStakeVoteTicketTypeListForever">Lock forever</string>
+    <string name="kVcAssetOpStakeVoteTicketTypeDesc180">180 days</string>
+    <string name="kVcAssetOpStakeVoteTicketTypeDesc360">360 days</string>
+    <string name="kVcAssetOpStakeVoteTicketTypeDesc720">720 days</string>
+    <string name="kVcAssetOpStakeVoteTicketTypeDescForever">Forever</string>
+    <string name="kVcAssetOpStakeVoteCellPlaceholderAmount">Please enter the locked amount</string>
+    <string name="kVcAssetOpStakeVoteBtnName">Create</string>
+    <string name="kVcAssetOpStakeVoteCellTitleTicketType">Type</string>
+    <string name="kVcAssetOpStakeVoteCellValueLiquid">Please select the type</string>
+    <string name="kVcAssetOpStakeVoteSubmitTipsPleaseInputAmount">Please enter the locked amount.</string>
+    <string name="kVcAssetOpStakeVoteSubmitTipsPleaseSelectTicketType">Please select the type.</string>
+    <string name="kVcAssetOpStakeVoteSubmitAskForCreateTicket">Are you sure to lock %s %s? \n\nType: %s\n\n※ This operation will cause the assets to be temporarily or permanently locked, please be careful.</string>
+    <string name="kVcAssetOpStakeVoteSubmitTipOK">Create successfully.</string>
     <string name="kVcAssetOpCellTitleIssueAmount">Issue amount</string>
     <string name="kVcAssetOpCellPlaceholderIssueAmount">Please enter the amount</string>
     <string name="kVcAssetOpCellTitleIssueTargetAccount">To</string>
@@ -1093,6 +1112,8 @@
     <string name="kVcTitleSearchBackAsset">Search for backing assets</string>
     <string name="kVcTitleAssetOpSettle">Initiate settlement</string>
     <string name="kVcTitleAssetOpReserve">Reserve assets</string>
+    <string name="kVcTitleAssetOpStakeVoteCreateTicket">Create stake vote</string>
+    <string name="kVcTitleAssetOpStakeVoteUpdateTicket">Update stake vote</string>
     <string name="kVcTitleAssetOpIssue">Issue assets</string>
     <string name="kVcTitleAssetGlobalSettle">Global settlemens assets</string>
     <string name="kVcTitleAssetClaimFeePool">Claim fee pool</string>
@@ -1186,6 +1207,8 @@
     <string name="kOpType_htlc_redeemed">HTLC Redeemed</string>
     <string name="kOpType_htlc_extend">HTLC Extend</string>
     <string name="kOpType_htlc_refund">HTLC Refund</string>
+    <string name="kOpType_ticket_create">Create Ticket</string>
+    <string name="kOpType_ticket_update">Update Ticket</string>
     <string name="kOpType_unknown_op">Unknown</string>
     <!-- 交易OP详细描述 -->
     <string name="kOpDesc_transfer">%s transfer %s to %s.</string>
@@ -1250,6 +1273,8 @@
     <string name="kOpDesc_htlc_redeemed">%s redeem HTLC successfully. %s transferred to %s. #%s</string>
     <string name="kOpDesc_htlc_extend">%s extended HTLC expiration time %s seconds. #%s</string>
     <string name="kOpDesc_htlc_refund">HTLC expires. assets are automatically returned to %s. #%s</string>
+    <string name="kOpDesc_ticket_create">%s lock asset %s, type: %s.</string>
+    <string name="kOpDesc_ticket_update">%s update ticket #%s.</string>
     <string name="kOpDesc_unknown_op">unknown operation #%s.</string>
     <!-- 交易OP细化 -->
     <string name="kOpDetailFlagDangerous">DANGEROUS</string>
