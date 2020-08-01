@@ -20,6 +20,7 @@
 #import "VCTradeVertical.h"
 #import "VCUserActivity.h"
 #import "VCAssetOpCommon.h"
+#import "VCAssetOpStakeVote.h"
 
 #import "MBProgressHUD.h"
 #import "OrgUtils.h"
@@ -631,6 +632,11 @@
             }];
         }
             break;
+        case ebaok_stake_vote:
+        {
+            [self onButtonClicked_AssetStakeVote:button row:[row integerValue]];
+        }
+            break;
         default:
             assert(false);
             break;
@@ -772,6 +778,37 @@
                                                            op_extra_args:opArgs
                                                           result_promise:result_promise];
         [_owner pushViewController:vc vctitle:NSLocalizedString(@"kVcTitleAssetOpReserve", @"销毁资产") backtitle:kVcDefaultBackTitleName];
+        [result_promise then:^id(id dirty) {
+            //  刷新UI
+            if (dirty && [dirty boolValue]) {
+                //  TODO:5.0 考虑刷新界面
+            }
+            return nil;
+        }];
+    }];
+}
+
+/*
+ *  操作 - 资产锁仓投票
+ */
+- (void)onButtonClicked_AssetStakeVote:(UIButton*)button row:(NSInteger)row
+{
+    id clicked_asset = [_assetDataArray objectAtIndex:row];
+    assert(clicked_asset);
+    
+    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+    
+    [VcUtils simpleRequest:_owner
+                   request:[chainMgr queryFullAccountInfo:[[_accountInfo objectForKey:@"account"] objectForKey:@"id"]]
+                  callback:^(id full_account) {
+        WsPromiseObject* result_promise = [[WsPromiseObject alloc] init];
+        VCAssetOpStakeVote* vc = [[VCAssetOpStakeVote alloc] initWithCurrAsset:[chainMgr getChainObjectByID:clicked_asset[@"id"]]
+                                                             full_account_data:full_account
+                                                                result_promise:result_promise];
+        
+        [_owner pushViewController:vc
+                           vctitle:NSLocalizedString(@"kVcTitleAssetOpStakeVoteCreateTicket", @"创建锁仓")
+                         backtitle:kVcDefaultBackTitleName];
         [result_promise then:^id(id dirty) {
             //  刷新UI
             if (dirty && [dirty boolValue]) {

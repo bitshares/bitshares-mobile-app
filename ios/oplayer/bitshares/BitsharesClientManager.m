@@ -940,4 +940,19 @@ static BitsharesClientManager *_sharedBitsharesClientManager = nil;
     return [self runSingleTransaction:opdata opcode:ebo_htlc_extend fee_paying_account:[opdata objectForKey:@"update_issuer"]];
 }
 
+/**
+ *  OP - 创建锁仓（投票）
+ */
+- (WsPromise*)ticketCreate:(NSDictionary*)opdata
+{
+    return [self runSingleTransaction:opdata opcode:ebo_ticket_create fee_paying_account:[opdata objectForKey:@"account"]];
+}
+
+/**
+ *  OP - 更新锁仓（投票）
+ */
+- (WsPromise*)ticketUpdate:(NSDictionary*)opdata
+{
+    return [self runSingleTransaction:opdata opcode:ebo_ticket_update fee_paying_account:[opdata objectForKey:@"account"]];
+}
 @end

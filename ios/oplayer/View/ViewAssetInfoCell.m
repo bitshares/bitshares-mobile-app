@@ -140,7 +140,7 @@
         if (vc)
         {
             _btnArray = [NSMutableArray array];
-            for (NSInteger i = 0; i < 3; ++i) {
+            for (NSInteger i = 0; i < 4; ++i) {
                 UIButton* btn = [UIButton buttonWithType:UIButtonTypeSystem];
                 btn.backgroundColor = [UIColor clearColor];
                 [btn setTitle:@"placeholder" forState:UIControlStateNormal];
@@ -303,18 +303,34 @@
     //  第四行 action
     if (_btnArray) {
         //  TODO:4.0 后续可扩展【更多】按钮
-        NSMutableArray* actions = [NSMutableArray arrayWithObjects:@(ebaok_transfer), @(ebaok_trade), nil];
+        NSMutableArray* all_actions = [NSMutableArray arrayWithObjects:@(ebaok_transfer), @(ebaok_trade), nil];
         if (bIsSmart || bIsPredictionMarket) {
-            [actions addObject:@(ebaok_settle)];
+            [all_actions addObject:@(ebaok_settle)];
         } else {
-            [actions addObject:@(ebaok_reserve)];
+            [all_actions addObject:@(ebaok_reserve)];
         }
+        //  锁仓投票（仅针对BTS）
+        if (bIsCore) {
+            [all_actions addObject:@(ebaok_stake_vote)];
+        }
+        NSArray* final_actions;
+//        //  按钮太多，添加【更多】按钮。
+//        if ([all_actions count] > [_btnArray count]) {
+//            //  TODO:6.2 暂时不支持更多按钮，目前最多4个。
+//            NSMutableArray* tmp = [NSMutableArray array];
+//            [tmp addObjectsFromArray:[all_actions subarrayWithRange:NSMakeRange(0, [_btnArray count] - 1)]];
+//            [tmp addObject:@(ebaok_more)];
+//            final_actions = [tmp copy];
+//        } else {
+            final_actions = [all_actions copy];
+//        }
+        //  默认全部不可见
         for (UIButton* btn in _btnArray) {
             btn.hidden = YES;
         }
-        NSInteger nTotal = [actions count];
+        NSInteger nTotal = [final_actions count];
         CGFloat fButtonWidth = fCellWidth / nTotal;
-        [actions ruby_each_with_index:^(id src, NSInteger idx) {
+        [final_actions ruby_each_with_index:^(id src, NSInteger idx) {
             NSInteger kActionType = [src integerValue];
             UIButton* btn = [_btnArray objectAtIndex:idx];
             switch (kActionType) {
@@ -329,6 +345,12 @@
                     break;
                 case ebaok_reserve:
                     [btn updateTitleWithoutAnimation:NSLocalizedString(@"kVcAssetBtnReserve", @"销毁")];
+                    break;
+                case ebaok_stake_vote:
+                    [btn updateTitleWithoutAnimation:NSLocalizedString(@"kVcAssetBtnStakeVote", @"锁仓")];
+                    break;
+                case ebaok_more:
+                    [btn updateTitleWithoutAnimation:NSLocalizedString(@"kVcAssetBtnMore", @"更多")];
                     break;
                 default:
                     assert(false);
