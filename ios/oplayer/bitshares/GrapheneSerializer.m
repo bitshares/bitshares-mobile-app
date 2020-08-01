@@ -152,6 +152,8 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [T_htlc_create performSelector:@selector(register_subfields)];
     [T_htlc_redeem performSelector:@selector(register_subfields)];
     [T_htlc_extend performSelector:@selector(register_subfields)];
+    [T_ticket_create performSelector:@selector(register_subfields)];
+    [T_ticket_update performSelector:@selector(register_subfields)];
     
     [T_transaction performSelector:@selector(register_subfields)];
     [T_signed_transaction performSelector:@selector(register_subfields)];
@@ -1075,6 +1077,10 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
             return [T_htlc_redeem class];
         case ebo_htlc_extend:
             return [T_htlc_extend class];
+        case ebo_ticket_create:
+            return [T_ticket_create class];
+        case ebo_ticket_update:
+            return [T_ticket_update class];
         default:
             break;
     }
@@ -1754,6 +1760,33 @@ static const char* __bitshares_type_fields__ = "__bitshares_type_fields__";
     [self add_field:@"htlc_id" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_htlc]];
     [self add_field:@"update_issuer" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
     [self add_field:@"seconds_to_add" class:[T_uint32 class]];
+    [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
+}
+
+@end
+
+@implementation T_ticket_create
+
++ (void)register_subfields
+{
+    [self add_field:@"fee" class:[T_asset class]];
+    [self add_field:@"account" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"target_type" class:[T_varint32 class]];   //  see struct unsigned_int
+    [self add_field:@"amount" class:[T_asset class]];
+    [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
+}
+
+@end
+
+@implementation T_ticket_update
+
++ (void)register_subfields
+{
+    [self add_field:@"fee" class:[T_asset class]];
+    [self add_field:@"ticket" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_ticket]];
+    [self add_field:@"account" class:[[Tm_protocol_id_type alloc] initWithObjectType:ebot_account]];
+    [self add_field:@"target_type" class:[T_varint32 class]];   //  see struct unsigned_int
+    [self add_field:@"amount_for_new_target" class:[[Tm_optional alloc] initWithType:[T_asset class]]];
     [self add_field:@"extensions" class:[[Tm_set alloc] initWithType:[T_future_extensions class]]];
 }
 

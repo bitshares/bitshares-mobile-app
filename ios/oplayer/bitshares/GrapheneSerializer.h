@@ -313,6 +313,12 @@
 @interface T_htlc_extend : T_Base
 @end
 
+@interface T_ticket_create : T_Base
+@end
+
+@interface T_ticket_update : T_Base
+@end
+
 /**
  *  特殊OP - 操作类型和操作对象。
  */

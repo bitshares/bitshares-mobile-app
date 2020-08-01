@@ -225,4 +225,14 @@ enum
  */
 - (WsPromise*)htlcExtend:(NSDictionary*)opdata;
 
+/**
+ *  OP - 创建锁仓（投票）
+ */
+- (WsPromise*)ticketCreate:(NSDictionary*)opdata;
+
+/**
+ *  OP - 更新锁仓（投票）
+ */
+- (WsPromise*)ticketUpdate:(NSDictionary*)opdata;
+
 @end

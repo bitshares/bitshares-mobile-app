@@ -17,6 +17,8 @@
 #import "SettingManager.h"
 #import "VCBase.h"
 
+#import "VCAssetOpStakeVote.h"
+
 #import "Crashlytics/Crashlytics.h"
 #import "unzip.h"
 #include "zlib.h"
@@ -1115,6 +1117,17 @@
             [container setObject:@YES forKey:[opdata objectForKey:@"to"]];
         }
             break;
+        case ebo_ticket_create:
+        {
+            [container setObject:@YES forKey:[opdata objectForKey:@"account"]];
+            [container setObject:@YES forKey:[[opdata objectForKey:@"amount"] objectForKey:@"asset_id"]];
+        }
+            break;
+        case ebo_ticket_update:
+        {
+            [container setObject:@YES forKey:[opdata objectForKey:@"account"]];
+        }
+            break;
         default:
             break;
     }
@@ -1633,6 +1646,22 @@
             name = NSLocalizedString(@"kOpType_htlc_refund", @"合约转账退款");
             id to = GRAPHENE_NAME(@"to");
             desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_htlc_refund", @"HTLC过期，资产自动退回到账号 %@。#%@"), to, opdata[@"htlc_id"]];
+        }
+            break;
+        case ebo_ticket_create:
+        {
+            name = NSLocalizedString(@"kOpType_ticket_create", @"创建锁仓");
+            id account = GRAPHENE_NAME(@"account");
+            id str_amount = GRAPHENE_ASSET_N(@"amount");
+            desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_ticket_create", @"%@ 锁仓 %@，锁仓类型：%@。"),
+                    account, str_amount, [VCAssetOpStakeVote getTicketTypeDesc:[[opdata objectForKey:@"target_type"] integerValue]]];
+        }
+            break;
+        case ebo_ticket_update:
+        {
+            name = NSLocalizedString(@"kOpType_ticket_update", @"更新锁仓");
+            id account = GRAPHENE_NAME(@"account");
+            desc = [NSString stringWithFormat:NSLocalizedString(@"kOpDesc_ticket_update", @"%@ 更新锁仓 #%@。"), account, opdata[@"ticket"]];
         }
             break;
         default:

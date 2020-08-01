@@ -62,6 +62,8 @@ typedef enum EBitsharesAssetOpKind
     ebaok_reserve,              //  资产销毁（仅UIA资产）
     ebaok_settle,               //  资产清算（仅Smart资产）
     ebaok_call_order_update,    //  调整债仓（仅Smart资产）
+    ebaok_stake_vote,           //  锁仓投票（仅BTS）
+    ebaok_more,                 //  虚拟按钮：更多
 } EBitsharesAssetOpKind;
 
 /**
@@ -182,6 +184,8 @@ typedef enum EBitsharesObjectType
     ebot_worker,
     ebot_balance,
     ebot_htlc,                      //  16
+    ebot_custom_authority,          //  17
+    ebot_ticket,                    //  18
     
     ebot_max                        //  max_value
 } EBitsharesObjectType;
@@ -245,6 +249,11 @@ typedef enum EBitsharesOperations
     ebo_htlc_redeemed = 51,         // VIRTUAL
     ebo_htlc_extend = 52,
     ebo_htlc_refund = 53,           // VIRTUAL
+    ebo_custom_authority_create = 54,
+    ebo_custom_authority_update = 55,
+    ebo_custom_authority_delete = 56,
+    ebo_ticket_create = 57,
+    ebo_ticket_update = 58,
 } EBitsharesOperations;
 
 //  BTS公钥地址前缀

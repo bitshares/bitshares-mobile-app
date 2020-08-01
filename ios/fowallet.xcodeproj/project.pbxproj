@@ -165,6 +165,9 @@
 		3F4F293D23727A83007674E5 /* VCOtcAddAlipay.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4F293B23727A83007674E5 /* VCOtcAddAlipay.m */; };
 		3F4F293E23727A83007674E5 /* VCOtcAddAlipay.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4F293B23727A83007674E5 /* VCOtcAddAlipay.m */; };
 		3F4F293F23727A83007674E5 /* VCOtcAddAlipay.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F4F293B23727A83007674E5 /* VCOtcAddAlipay.m */; };
+		3F627A0B24D4F9D300673A36 /* VCAssetOpStakeVote.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F627A0A24D4F9D300673A36 /* VCAssetOpStakeVote.m */; };
+		3F627A0C24D4F9D300673A36 /* VCAssetOpStakeVote.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F627A0A24D4F9D300673A36 /* VCAssetOpStakeVote.m */; };
+		3F627A0D24D4F9D300673A36 /* VCAssetOpStakeVote.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F627A0A24D4F9D300673A36 /* VCAssetOpStakeVote.m */; };
 		3F6471C423A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6471C223A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m */; };
 		3F6471C523A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6471C223A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m */; };
 		3F6471C623A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6471C223A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m */; };
@@ -2232,6 +2235,8 @@
 		3F4F2932237180C9007674E5 /* VCOtcAddBankCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcAddBankCard.h; path = Controller/VCOtcAddBankCard.h; sourceTree = "<group>"; };
 		3F4F293B23727A83007674E5 /* VCOtcAddAlipay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcAddAlipay.m; path = Controller/VCOtcAddAlipay.m; sourceTree = "<group>"; };
 		3F4F293C23727A83007674E5 /* VCOtcAddAlipay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcAddAlipay.h; path = Controller/VCOtcAddAlipay.h; sourceTree = "<group>"; };
+		3F627A0924D4F9D200673A36 /* VCAssetOpStakeVote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCAssetOpStakeVote.h; path = Controller/VCAssetOpStakeVote.h; sourceTree = "<group>"; };
+		3F627A0A24D4F9D300673A36 /* VCAssetOpStakeVote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCAssetOpStakeVote.m; path = Controller/VCAssetOpStakeVote.m; sourceTree = "<group>"; };
 		3F6471C223A5DC8F005F8AB8 /* VCOtcMcMerchantApply.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VCOtcMcMerchantApply.m; path = Controller/VCOtcMcMerchantApply.m; sourceTree = "<group>"; };
 		3F6471C323A5DC8F005F8AB8 /* VCOtcMcMerchantApply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VCOtcMcMerchantApply.h; path = Controller/VCOtcMcMerchantApply.h; sourceTree = "<group>"; };
 		3F65324E2442A6CE001A0260 /* GraphenePrivateKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GraphenePrivateKey.h; path = bitshares/GraphenePrivateKey.h; sourceTree = "<group>"; };
@@ -3324,6 +3329,8 @@
 		18FF068617E00B110088405E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3F627A0924D4F9D200673A36 /* VCAssetOpStakeVote.h */,
+				3F627A0A24D4F9D300673A36 /* VCAssetOpStakeVote.m */,
 				3F8B929924C83BE2005929D0 /* VCBtsppSdkWebView.h */,
 				3F8B929824C83BE2005929D0 /* VCBtsppSdkWebView.m */,
 				3FCCFB1B24B1C2F400CAF17E /* VCMyContact.h */,
@@ -6224,6 +6231,7 @@
 				3F6768B9230E9EC100E98C14 /* ViewTickerHeader.m in Sources */,
 				3F2B7A5E23D301D3006B1359 /* ModelUtils.m in Sources */,
 				3F6768BA230E9EC100E98C14 /* GRCustomUITabBarItem.m in Sources */,
+				3F627A0D24D4F9D300673A36 /* VCAssetOpStakeVote.m in Sources */,
 				3FE4E8E524067CBF002518BD /* ViewFormatConditons.m in Sources */,
 				3F6768BB230E9EC100E98C14 /* VCSearchNetwork.m in Sources */,
 				3FD3DD302316A579009760A0 /* VCScanAccountName.m in Sources */,
@@ -6601,6 +6609,7 @@
 				3FB8F94221CE66C200DA88E2 /* ViewTickerHeader.m in Sources */,
 				3F2B7A5D23D301D3006B1359 /* ModelUtils.m in Sources */,
 				3FB8F94321CE66C200DA88E2 /* GRCustomUITabBarItem.m in Sources */,
+				3F627A0C24D4F9D300673A36 /* VCAssetOpStakeVote.m in Sources */,
 				3FE4E8E424067CBF002518BD /* ViewFormatConditons.m in Sources */,
 				3FB8F94421CE66C200DA88E2 /* VCSearchNetwork.m in Sources */,
 				3FD3DD2F2316A579009760A0 /* VCScanAccountName.m in Sources */,
@@ -6978,6 +6987,7 @@
 				ED96A08F186C62AD002181D4 /* GRCustomUITabBarItem.m in Sources */,
 				3F2B7A5C23D301D3006B1359 /* ModelUtils.m in Sources */,
 				B72A845020CA776900D92A25 /* VCSearchNetwork.m in Sources */,
+				3F627A0B24D4F9D300673A36 /* VCAssetOpStakeVote.m in Sources */,
 				3FE4E8E324067CBF002518BD /* ViewFormatConditons.m in Sources */,
 				3FD3DD2E2316A579009760A0 /* VCScanAccountName.m in Sources */,
 				3F6C35AD21EC83AB008E2903 /* GatewayBase.m in Sources */,

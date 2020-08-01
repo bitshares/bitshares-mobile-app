@@ -450,6 +450,8 @@
 "kVcAssetBtnTrade" = "交易";
 "kVcAssetBtnSettle" = "清算";
 "kVcAssetBtnReserve" = "销毁";
+"kVcAssetBtnStakeVote" = "锁仓";
+"kVcAssetBtnMore" = "更多";
 "kVcAssetTipsEstimating" = "估算中...";
 "kVcAssetAvailable" = "可用";
 "kVcAssetOnOrder" = "挂单";
@@ -604,6 +606,24 @@
 "kVcAssetOpReserveBtnName" = "立即销毁";
 "kVcAssetOpReserveSubmitTipsPleaseInputAmount" = "请输入要销毁的资产数量。";
 "kVcAssetOpReserveSubmitTipOK" = "销毁成功。";
+
+"kVcAssetOpStakeVoteUiTips" = "【温馨提示】\n锁仓可增加投票权重。此操作会导致资产临时或永久锁定，请谨慎操作。\n1、锁仓180天，2倍投票权重，15天后激活。\n2、锁仓360天，4倍投票权重，30天后激活。\n3、锁仓720天，8倍投票权重，45天后激活。\n4、永久锁仓，8倍投票权重，60天后激活。激活后每180天衰减25%，激活2年后投票权重归0。";
+"kVcAssetOpStakeVoteTicketTypeList180" = "锁仓180天";
+"kVcAssetOpStakeVoteTicketTypeList360" = "锁仓360天";
+"kVcAssetOpStakeVoteTicketTypeList720" = "锁仓720天";
+"kVcAssetOpStakeVoteTicketTypeListForever" = "永久锁仓";
+"kVcAssetOpStakeVoteTicketTypeDesc180" = "180天";
+"kVcAssetOpStakeVoteTicketTypeDesc360" = "360天";
+"kVcAssetOpStakeVoteTicketTypeDesc720" = "720天";
+"kVcAssetOpStakeVoteTicketTypeDescForever" = "永久";
+"kVcAssetOpStakeVoteCellPlaceholderAmount" = "请输入锁仓数量";
+"kVcAssetOpStakeVoteBtnName" = "创建锁仓";
+"kVcAssetOpStakeVoteCellTitleTicketType" = "类型";
+"kVcAssetOpStakeVoteCellValueLiquid" = "请选择锁仓类型";
+"kVcAssetOpStakeVoteSubmitTipsPleaseInputAmount" = "请输入锁仓数量。";
+"kVcAssetOpStakeVoteSubmitTipsPleaseSelectTicketType" = "请选择锁仓类型。";
+"kVcAssetOpStakeVoteSubmitAskForCreateTicket" = "您确认锁仓 %@ %@ 吗？\n\n锁仓时间：%@\n\n※ 此操作会导致资产临时或永久锁定，请谨慎操作。";
+"kVcAssetOpStakeVoteSubmitTipOK" = "创建锁仓成功。";
 
 "kVcAssetOpCellTitleIssueAmount" = "发行数量";
 "kVcAssetOpCellPlaceholderIssueAmount" = "请输入发行数量";
@@ -1137,6 +1157,8 @@
 "kVcTitleSearchBackAsset" = "搜索抵押物";
 "kVcTitleAssetOpSettle" = "发起清算";
 "kVcTitleAssetOpReserve" = "销毁资产";
+"kVcTitleAssetOpStakeVoteCreateTicket" = "创建锁仓";
+"kVcTitleAssetOpStakeVoteUpdateTicket" = "更新锁仓";
 "kVcTitleAssetOpIssue" = "发行资产";
 "kVcTitleAssetGlobalSettle" = "全局清算";
 "kVcTitleAssetClaimFeePool" = "提取手续费池";
@@ -1232,6 +1254,8 @@
 "kOpType_htlc_redeemed" = "赎回HTLC成功";
 "kOpType_htlc_extend" = "更新HTLC";
 "kOpType_htlc_refund" = "HTLC退款";
+"kOpType_ticket_create" = "创建锁仓";
+"kOpType_ticket_update" = "更新锁仓";
 "kOpType_unknown_op" = "未知操作";
 
 /* 交易OP详细描述 */
@@ -1297,6 +1321,8 @@
 "kOpDesc_htlc_redeemed" = "%@ 赎回HTLC成功，%@ 转入账号 %@。#%@";
 "kOpDesc_htlc_extend" = "%@ 延长HTLC有效期 %@ 秒。#%@";
 "kOpDesc_htlc_refund" = "HTLC过期，资产自动退回到账号 %@。#%@";
+"kOpDesc_ticket_create" = "%@ 锁仓 %@，类型：%@。";
+"kOpDesc_ticket_update" = "%@ 更新锁仓 #%@。";
 "kOpDesc_unknown_op" = "未知的操作 #%@。";
 
 /* 交易OP细化 */

@@ -450,6 +450,8 @@
 "kVcAssetBtnTrade" = "Trade";
 "kVcAssetBtnSettle" = "Settle";
 "kVcAssetBtnReserve" = "Reserve";
+"kVcAssetBtnStakeVote" = "Stake";
+"kVcAssetBtnMore" = "More";
 "kVcAssetTipsEstimating" = "Estimating...";
 "kVcAssetAvailable" = "Available";
 "kVcAssetOnOrder" = "Orders";
@@ -604,6 +606,24 @@
 "kVcAssetOpReserveBtnName" = "Reserve asset";
 "kVcAssetOpReserveSubmitTipsPleaseInputAmount" = "Please enter the amount of assets to be reserved.";
 "kVcAssetOpReserveSubmitTipOK" = "Reserved successfully.";
+
+"kVcAssetOpStakeVoteUiTips" = "[Reminder]\nLock position can increase voting power. This operation will cause the asset to be temporarily or permanently locked, please exercise caution.\n1. 180 days, 2x voting power, activate after 15 days.\n2. 360 days, 4x voting power, activate after 30 days.\n3. 720 days, 8x voting power, activate after 45 days.\n4. forever, 8x voting power, activate after 60 days. after activation, it decays by 25% every 180 days, and the voting power returns to 0 after 2 years of activation.";
+"kVcAssetOpStakeVoteTicketTypeList180" = "Locked for 180 days";
+"kVcAssetOpStakeVoteTicketTypeList360" = "Locked for 360 days";
+"kVcAssetOpStakeVoteTicketTypeList720" = "Locked for 720 days";
+"kVcAssetOpStakeVoteTicketTypeListForever" = "Lock forever";
+"kVcAssetOpStakeVoteTicketTypeDesc180" = "180 days";
+"kVcAssetOpStakeVoteTicketTypeDesc360" = "360 days";
+"kVcAssetOpStakeVoteTicketTypeDesc720" = "720 days";
+"kVcAssetOpStakeVoteTicketTypeDescForever" = "Forever";
+"kVcAssetOpStakeVoteCellPlaceholderAmount" = "Please enter the locked amount";
+"kVcAssetOpStakeVoteBtnName" = "Create";
+"kVcAssetOpStakeVoteCellTitleTicketType" = "Type";
+"kVcAssetOpStakeVoteCellValueLiquid" = "Please select the type";
+"kVcAssetOpStakeVoteSubmitTipsPleaseInputAmount" = "Please enter the locked amount.";
+"kVcAssetOpStakeVoteSubmitTipsPleaseSelectTicketType" = "Please select the type.";
+"kVcAssetOpStakeVoteSubmitAskForCreateTicket" = "Are you sure to lock %@ %@? \n\nType: %@\n\n※ This operation will cause the assets to be temporarily or permanently locked, please be careful.";
+"kVcAssetOpStakeVoteSubmitTipOK" = "Create successfully.";
 
 "kVcAssetOpCellTitleIssueAmount" = "Issue amount";
 "kVcAssetOpCellPlaceholderIssueAmount" = "Please enter the amount";
@@ -1137,6 +1157,8 @@
 "kVcTitleSearchBackAsset" = "Search for backing assets";
 "kVcTitleAssetOpSettle" = "Initiate settlement";
 "kVcTitleAssetOpReserve" = "Reserve assets";
+"kVcTitleAssetOpStakeVoteCreateTicket" = "Create stake vote";
+"kVcTitleAssetOpStakeVoteUpdateTicket" = "Update stake vote";
 "kVcTitleAssetOpIssue" = "Issue assets";
 "kVcTitleAssetGlobalSettle" = "Global settlemens assets";
 "kVcTitleAssetClaimFeePool" = "Claim fee pool";
@@ -1232,6 +1254,8 @@
 "kOpType_htlc_redeemed" = "HTLC Redeemed";
 "kOpType_htlc_extend" = "HTLC Extend";
 "kOpType_htlc_refund" = "HTLC Refund";
+"kOpType_ticket_create" = "Create Ticket";
+"kOpType_ticket_update" = "Update Ticket";
 "kOpType_unknown_op" = "Unknown";
 
 /* 交易OP详细描述 */
@@ -1297,6 +1321,8 @@
 "kOpDesc_htlc_redeemed" = "%@ redeem HTLC successfully. %@ transferred to %@. #%@";
 "kOpDesc_htlc_extend" = "%@ extended HTLC expiration time %@ seconds. #%@";
 "kOpDesc_htlc_refund" = "HTLC expires. assets are automatically returned to %@. #%@";
+"kOpDesc_ticket_create" = "%@ lock asset %@, type: %@.";
+"kOpDesc_ticket_update" = "%@ update ticket #%@.";
 "kOpDesc_unknown_op" = "unknown operation #%@.";
 
 /* 交易OP细化 */
