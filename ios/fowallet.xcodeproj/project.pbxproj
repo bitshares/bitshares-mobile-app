@@ -7303,7 +7303,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 6.1.0.0706;
+				CURRENT_PROJECT_VERSION = 6.2.0.0801;
 				DEPLOYMENT_POSTPROCESSING = NO;
 				DEVELOPMENT_TEAM = 8R3442PYU5;
 				ENABLE_BITCODE = NO;
@@ -7333,7 +7333,7 @@
 					"$(PROJECT_DIR)/oplayer/libs/secp256k1",
 					"$(PROJECT_DIR)/oplayer/libs/Flurry",
 				);
-				MARKETING_VERSION = 6.1;
+				MARKETING_VERSION = 6.2;
 				OTHER_LDFLAGS = (
 					"-lxml2",
 					"-lz",
@@ -7361,7 +7361,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 6.1.0.0706;
+				CURRENT_PROJECT_VERSION = 6.2.0.0801;
 				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = 8R3442PYU5;
 				ENABLE_BITCODE = NO;
@@ -7390,7 +7390,7 @@
 					"$(PROJECT_DIR)/oplayer/libs/secp256k1",
 					"$(PROJECT_DIR)/oplayer/libs/Flurry",
 				);
-				MARKETING_VERSION = 6.1;
+				MARKETING_VERSION = 6.2;
 				OTHER_LDFLAGS = (
 					"-lxml2",
 					"-lz",
@@ -7475,7 +7475,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 3.0.0.1231;
+				CURRENT_PROJECT_VERSION = 6.2.0.0801;
 				DEPLOYMENT_POSTPROCESSING = NO;
 				DEVELOPMENT_TEAM = B4D4NP92X3;
 				ENABLE_BITCODE = NO;
@@ -7505,7 +7505,7 @@
 					"$(PROJECT_DIR)/oplayer/libs/secp256k1",
 					"$(PROJECT_DIR)/oplayer/libs/Flurry",
 				);
-				MARKETING_VERSION = 3.0;
+				MARKETING_VERSION = 6.2;
 				OTHER_LDFLAGS = (
 					"-lxml2",
 					"-lz",
@@ -7533,7 +7533,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 3.0.0.1231;
+				CURRENT_PROJECT_VERSION = 6.2.0.0801;
 				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = B4D4NP92X3;
 				ENABLE_BITCODE = NO;
@@ -7562,7 +7562,7 @@
 					"$(PROJECT_DIR)/oplayer/libs/secp256k1",
 					"$(PROJECT_DIR)/oplayer/libs/Flurry",
 				);
-				MARKETING_VERSION = 3.0;
+				MARKETING_VERSION = 6.2;
 				OTHER_LDFLAGS = (
 					"-lxml2",
 					"-lz",
