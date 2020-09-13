@@ -1540,8 +1540,22 @@ class ChainObjectManager {
                 n_mssr = bigDecimalfromAmount(current_feed.getString("maximum_short_squeeze_ratio"), 3)
                 n_mcr = bigDecimalfromAmount(current_feed.getString("maintenance_collateral_ratio"), 3)
 
-                //  1、计算爆仓成交价   feed / mssr
-                call_price = feed_price.divide(n_mssr, kBigDecimalDefaultMaxPrecision, kBigDecimalDefaultRoundingMode)
+                //  爆仓费率 core 4.0
+                val mcfr = bitasset.getJSONObject("options").optJSONObject("extensions")?.optString("margin_call_fee_ratio", null)
+
+                //  1、计算爆仓成交价
+                //  core 4.0之前：feed / mssr
+                //  core 4.0之后：feed / (mssr - mcfr)
+                if (mcfr != null) {
+                    val n_mcfr = bigDecimalfromAmount(mcfr, 3)
+                    var n_numerator = n_mssr.subtract(n_mcfr)
+                    if (n_numerator < BigDecimal.ONE) {
+                        n_numerator = BigDecimal.ONE
+                    }
+                    call_price = feed_price.divide(n_numerator, kBigDecimalDefaultMaxPrecision, kBigDecimalDefaultRoundingMode)
+                } else {
+                    call_price = feed_price.divide(n_mssr, kBigDecimalDefaultMaxPrecision, kBigDecimalDefaultRoundingMode)
+                }
                 call_price_market = call_price
                 if (invert) {
                     call_price_market = BigDecimal.ONE.divide(call_price, kBigDecimalDefaultMaxPrecision, kBigDecimalDefaultRoundingMode)
