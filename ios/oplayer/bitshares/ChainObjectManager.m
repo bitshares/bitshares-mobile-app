@@ -1635,11 +1635,26 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
             id mssr = [current_feed objectForKey:@"maximum_short_squeeze_ratio"];
             id mcr = [current_feed objectForKey:@"maintenance_collateral_ratio"];
             
+            //  爆仓费率 core 4.0
+            id mcfr = [[[bitasset objectForKey:@"options"] objectForKey:@"extensions"] objectForKey:@"margin_call_fee_ratio"];
+            
             n_mcr = [NSDecimalNumber decimalNumberWithMantissa:[mcr unsignedLongLongValue] exponent:-3 isNegative:NO];
             n_mssr = [NSDecimalNumber decimalNumberWithMantissa:[mssr unsignedLongLongValue] exponent:-3 isNegative:NO];
             
-            //  1、计算爆仓成交价   feed / mssr
-            call_price_market = call_price = [feed_price decimalNumberByDividingBy:n_mssr];
+            //  1、计算爆仓成交价
+            //  core 4.0之前：feed / mssr
+            //  core 4.0之后：feed / (mssr - mcfr)。
+            if (mcfr) {
+                id n_mcfr = [NSDecimalNumber decimalNumberWithMantissa:[mcfr unsignedLongLongValue] exponent:-3 isNegative:NO];
+                id n_numerator = [n_mssr decimalNumberBySubtracting:n_mcfr];
+                if ([n_numerator compare:[NSDecimalNumber one]] < 0) {
+                    n_numerator = [NSDecimalNumber one];
+                }
+                call_price_market = call_price = [feed_price decimalNumberByDividingBy:n_numerator];
+            } else {
+                call_price_market = call_price = [feed_price decimalNumberByDividingBy:n_mssr];
+            }
+            
             if (invert){
                 call_price_market = [[NSDecimalNumber one] decimalNumberByDividingBy:call_price];
             }
