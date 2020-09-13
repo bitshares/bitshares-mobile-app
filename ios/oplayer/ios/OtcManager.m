@@ -53,7 +53,8 @@ static OtcManager *_sharedOtcManager = nil;
     if (self)
     {
         //  TODO:2.9
-        _base_api = @"http://otc-api.gdex.vip";
+//        _base_api = @"http://otc-api.gdex.vip";
+        _base_api = @"http://api.ofree.vip";
         _fiat_cny_info  = nil;
         _asset_list_digital = nil;
         _cache_merchant_detail = nil;

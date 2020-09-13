@@ -7303,7 +7303,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 6.2.0.0801;
+				CURRENT_PROJECT_VERSION = 6.3.0.0913;
 				DEPLOYMENT_POSTPROCESSING = NO;
 				DEVELOPMENT_TEAM = 8R3442PYU5;
 				ENABLE_BITCODE = NO;
@@ -7333,7 +7333,7 @@
 					"$(PROJECT_DIR)/oplayer/libs/secp256k1",
 					"$(PROJECT_DIR)/oplayer/libs/Flurry",
 				);
-				MARKETING_VERSION = 6.2;
+				MARKETING_VERSION = 6.3;
 				OTHER_LDFLAGS = (
 					"-lxml2",
 					"-lz",
@@ -7361,7 +7361,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 6.2.0.0801;
+				CURRENT_PROJECT_VERSION = 6.3.0.0913;
 				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = 8R3442PYU5;
 				ENABLE_BITCODE = NO;
@@ -7390,7 +7390,7 @@
 					"$(PROJECT_DIR)/oplayer/libs/secp256k1",
 					"$(PROJECT_DIR)/oplayer/libs/Flurry",
 				);
-				MARKETING_VERSION = 6.2;
+				MARKETING_VERSION = 6.3;
 				OTHER_LDFLAGS = (
 					"-lxml2",
 					"-lz",
