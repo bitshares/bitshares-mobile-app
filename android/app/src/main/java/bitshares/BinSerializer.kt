@@ -137,11 +137,7 @@ class BinSerializer {
      * 写入字符串（变长，包含长度信息）
      */
     fun write_string(value: String): BinSerializer {
-        val len = value.length
-        this.write_varint32(len)
-        if (len > 0) {
-            _io.write(value.utf8String())
-        }
+        write_bytes(value.utf8String(), with_size = true)
         return this
     }
 
