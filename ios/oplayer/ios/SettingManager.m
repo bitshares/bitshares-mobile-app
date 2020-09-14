@@ -126,17 +126,19 @@ static SettingManager *_sharedSettingManager = nil;
     
     //  初始化默认值（CNY）
     if (!value || [value isEqualToString:@""]){
-        [settings setObject:@"CNY" forKey:kSettingKey_EstimateAssetSymbol];
+        id default_value = [[ChainObjectManager sharedChainObjectManager] getDefaultEstimateUnitSymbol];
+        [settings setObject:default_value forKey:kSettingKey_EstimateAssetSymbol];
         [self saveSettingHash:settings];
-        return @"CNY";
+        return default_value;
     }
     
     //  REMARK：如果设置界面保存的计价货币 symbol 在配置的计价列表移除了，则恢复默认值。
     id currency = [[ChainObjectManager sharedChainObjectManager] getEstimateUnitBySymbol:value];
     if (!currency){
-        [settings setObject:@"CNY" forKey:kSettingKey_EstimateAssetSymbol];
+        id default_value = [[ChainObjectManager sharedChainObjectManager] getDefaultEstimateUnitSymbol];
+        [settings setObject:default_value forKey:kSettingKey_EstimateAssetSymbol];
         [self saveSettingHash:settings];
-        return @"CNY";
+        return default_value;
     }
     
     //  返回

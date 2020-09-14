@@ -196,8 +196,10 @@
     _lbBaseName.frame = CGRectMake(fOffsetX + size_quote_name.width, 3, 120, 30);
     _lbBaseName.hidden = NO;
     
+    ChainObjectManager* chainMgr = [ChainObjectManager sharedChainObjectManager];
+    
     //  UI - 默认交易对中【非内置】交易对，添加【自定义】标签。【自选市场】不用显示。
-    if (_group_info && ![[ChainObjectManager sharedChainObjectManager] isDefaultPair:quote_asset base:base_asset]) {
+    if (_group_info && ![chainMgr isDefaultPair:quote_asset base:base_asset]) {
         _lbCustomLabel.hidden = NO;
         CGSize size1 = [ViewUtils auxSizeWithLabel:_lbBaseName];
         CGSize size2 = [ViewUtils auxSizeWithLabel:_lbCustomLabel];
@@ -215,14 +217,8 @@
     NSString* quote_volume;
     NSString* percent_change;
     if (ticker_data){
-        //  TODO:货币符号(还分半角全角) ¥＄€£ ￥
-        NSString* sym = @"";
         id base_asset_symbol = [base_asset objectForKey:@"symbol"];
-        if ([base_asset_symbol isEqualToString:@"CNY"]){
-            sym = @"¥"; //  REMARK：半角形式，如果需要全角用这个￥。
-        }else if ([base_asset_symbol isEqualToString:@"USD"]){
-            sym = @"$"; //  REMARK：半角形式，如果需要全角用这个＄。
-        }
+        NSString* sym = [[[chainMgr getDefaultParameters] objectForKey:@"alias_symbol"] objectForKey:base_asset_symbol] ?: @"";
         latest = [NSString stringWithFormat:@"%@%@", sym, [OrgUtils formatFloatValue:[[ticker_data objectForKey:@"latest"] doubleValue]
                                                                            precision:base_precision]];
         quote_volume = [OrgUtils formatFloatValue:[[ticker_data objectForKey:@"quote_volume"] doubleValue]

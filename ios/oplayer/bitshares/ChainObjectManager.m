@@ -304,6 +304,16 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
     return [_defaultMarketInfos objectForKey:@"parameters"];
 }
 
+/**
+ *  (public) 获取APP中各种URL配置
+ */
+- (NSString*)getAppEmbeddedUrl:(NSString*)url_key lang_key:(NSString*)lang_key
+{
+    assert(url_key);
+    assert(lang_key);
+    return [[[[self getDefaultParameters] objectForKey:@"app_urls"] objectForKey:url_key] objectForKey:lang_key];
+}
+
 /*
  *  (public) 获取APP配置文件中出现的所有资产符号。初始化时需要查询所有依赖的资产信息。
  */
@@ -389,6 +399,14 @@ static ChainObjectManager *_sharedChainObjectManager = nil;
 {
     assert(_defaultMarketInfos);
     return [_defaultMarketInfos objectForKey:@"estimate_unit"];
+}
+
+/**
+ *  (public) 获取默认的记账单位，列表的第一个。
+ */
+- (NSString*)getDefaultEstimateUnitSymbol
+{
+    return [[[self getEstimateUnitList] objectAtIndex:0] objectForKey:@"symbol"];
 }
 
 /**

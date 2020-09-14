@@ -380,9 +380,12 @@
     
     //  请求（最新价格、执行估算）
     
+    //  默认记账单位
+    NSString* defaultEstimateAsset = [chainMgr getDefaultEstimateUnitSymbol];
+    
     //  这个是显示计价单位
     _displayEstimateAsset = [[SettingManager sharedSettingManager] getEstimateAssetSymbol];
-    _needSecondExchange = ![_displayEstimateAsset isEqualToString:kAppUserAssetCoreEstimateAsset];
+    _needSecondExchange = ![_displayEstimateAsset isEqualToString:defaultEstimateAsset];
     
     //  REMARK：
     //  1、所有资产对CNY进行估价，因为如果其他资产直接对USD等计价可能导致没有匹配的交易对，估值误差较大。比如 SEED/CNY 有估值，SEED/JPY 等直接计较则没估值。
@@ -391,14 +394,14 @@
     for (id asset in _assetDataArray) {
         id quote = [asset objectForKey:@"name"];
         //  记账单位资产，本身不查询。即：CNY/CNY 不查询。
-        if ([quote isEqualToString:kAppUserAssetCoreEstimateAsset]){
+        if ([quote isEqualToString:defaultEstimateAsset]){
             continue;
         }
-        [pairs_list addObject:@{@"base":kAppUserAssetCoreEstimateAsset, @"quote":quote}];
+        [pairs_list addObject:@{@"base":defaultEstimateAsset, @"quote":quote}];
     }
     //  添加 二次兑换系数 查询 CNY到USD 的兑换系数 注意：这里以 _displayEstimateAsset 为 base 获取 ticker 数据。
     if (_needSecondExchange){
-        [pairs_list addObject:@{@"base":_displayEstimateAsset, @"quote":kAppUserAssetCoreEstimateAsset}];
+        [pairs_list addObject:@{@"base":_displayEstimateAsset, @"quote":defaultEstimateAsset}];
     }
     
     //  这里面引用的变量必须是 weak 的，不然该 vc 没法释放。
@@ -422,13 +425,16 @@
     
     double total_estimate_value = 0;
     
+    //  默认记账单位
+    NSString* defaultEstimateAsset = [chainMgr getDefaultEstimateUnitSymbol];
+    
     //  显示精度（以记账单位的精度为准）
     NSInteger display_precision = [[[chainMgr getAssetBySymbol:_displayEstimateAsset] objectForKey:@"precision"] integerValue];
     
     //  计算2次兑换比例，如果核心兑换和显示兑换资产不同，则需要2次兑换。
     double fSecondExchangeRate = 1.0f;
     if (_needSecondExchange){
-        id ticker = [chainMgr getTickerData:_displayEstimateAsset quote:kAppUserAssetCoreEstimateAsset];
+        id ticker = [chainMgr getTickerData:_displayEstimateAsset quote:defaultEstimateAsset];
         assert(ticker);
         fSecondExchangeRate = [[ticker objectForKey:@"latest"] doubleValue];
     }
@@ -437,7 +443,7 @@
     for (id asset in _assetDataArray) {
         id quote = [asset objectForKey:@"name"];
         //  如果当前资产为基准资产则特殊计算
-        if ([quote isEqualToString:kAppUserAssetCoreEstimateAsset]){
+        if ([quote isEqualToString:defaultEstimateAsset]){
             //  基准资产的估算就是资产自身
             //  REMARK：评估资产总和 = 可用 + 抵押 + 冻结 - 负债。
             long long sum_balance = [[asset objectForKey:@"balance"] longLongValue] + [[asset objectForKey:@"call_order_value"] longLongValue] + [[asset objectForKey:@"limit_order_value"] longLongValue] - [[asset objectForKey:@"debt_value"] longLongValue];
@@ -462,7 +468,7 @@
             //  precision = 5;
             //}
             //  REMARK：评估资产总和 = 可用 + 抵押 + 冻结 - 负债。
-            id ticker = [chainMgr getTickerData:kAppUserAssetCoreEstimateAsset quote:quote];
+            id ticker = [chainMgr getTickerData:defaultEstimateAsset quote:quote];
             assert(ticker);
             long long sum_balance = [[asset objectForKey:@"balance"] longLongValue] + [[asset objectForKey:@"call_order_value"] longLongValue] + [[asset objectForKey:@"limit_order_value"] longLongValue] - [[asset objectForKey:@"debt_value"] longLongValue];
             double fPrecision = pow(10, [[asset objectForKey:@"precision"] integerValue]);
@@ -877,13 +883,14 @@
     id quote_symbol = [quote objectForKey:@"symbol"];
     if ([base_symbol isEqualToString:quote_symbol]){
         //  特殊处理
-        if ([quote_symbol isEqualToString:@"BTS"]){
+        if ([quote_symbol isEqualToString:chainMgr.grapheneCoreAssetSymbol]){
             //  修改 base
-            base_symbol = @"CNY";
+            base_symbol = [[chainMgr getDefaultParameters] objectForKey:@"core_default_exchange_asset"];
+            assert(base_symbol);
             base = [chainMgr getAssetBySymbol:base_symbol];
         }else{
             //  修改 quote
-            quote_symbol = @"BTS";
+            quote_symbol = chainMgr.grapheneCoreAssetSymbol;
             quote = [chainMgr getAssetBySymbol:quote_symbol];
         }
     }

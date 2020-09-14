@@ -49,6 +49,11 @@
  */
 - (NSDictionary*)getDefaultParameters;
 
+/**
+ *  (public) 获取APP中各种URL配置
+ */
+- (NSString*)getAppEmbeddedUrl:(NSString*)url_key lang_key:(NSString*)lang_key;
+
 /*
  *  (public) 获取APP配置文件中出现的所有资产符号。初始化时需要查询所有依赖的资产信息。
  */
@@ -78,6 +83,11 @@
  *  (public) 获取支持的记账单位列表
  */
 - (NSArray*)getEstimateUnitList;
+
+/**
+ *  (public) 获取默认的记账单位，列表的第一个。
+ */
+- (NSString*)getDefaultEstimateUnitSymbol;
 
 /**
  *  (public) 根据计价货币symbol获取计价单位配置信息

@@ -26,9 +26,6 @@
 //  UI - 用户资产 默认显示数量（多余的资产不显示）
 #define kAppUserAssetDefaultShowNum         10
 
-//  UI - 用户资产 默认估值基础计价资产
-#define kAppUserAssetCoreEstimateAsset      @"CNY"
-
 //  [App内部目录] App自带的Static目录（里面包含version、jsapi等）
 #define kAppStaticDir                       @"Static"
 
