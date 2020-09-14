@@ -20,9 +20,6 @@ const val uDownloadManagerThreadNumber = 8
 //  UI - 用户资产 默认显示数量（多余的资产不显示）
 const val kAppUserAssetDefaultShowNum = 10
 
-//  UI - 用户资产 默认估值基础计价资产
-const val kAppUserAssetCoreEstimateAsset = "CNY"
-
 //  [by app] 导入的钱包bin文件缓存目录 /AppCache/app/wbin/#{binfilename}
 const val kAppWalletBinFileDir = "wbin"
 

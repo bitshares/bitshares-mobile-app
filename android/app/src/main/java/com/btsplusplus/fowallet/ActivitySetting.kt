@@ -104,7 +104,7 @@ class ActivitySetting : BtsppActivity() {
      */
     private fun _refresh_currency() {
         val assetSymbol = SettingManager.sharedSettingManager().getEstimateAssetSymbol()
-        val currency = ChainObjectManager.sharedChainObjectManager().getEstimateUnitBySymbol(assetSymbol)
+        val currency = ChainObjectManager.sharedChainObjectManager().getEstimateUnitBySymbol(assetSymbol)!!
         label_txt_currency.text = resources.getString(resources.getIdentifier(currency.getString("namekey"), "string", this.packageName))
     }
 

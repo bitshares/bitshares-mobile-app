@@ -48,17 +48,19 @@ class SettingManager {
         val value = settings.optString(kSettingKey_EstimateAssetSymbol)
         //  初始化默认值（CNY）
         if (value == null || value == "") {
-            settings.put(kSettingKey_EstimateAssetSymbol, "CNY")
+            val default_value = ChainObjectManager.sharedChainObjectManager().getDefaultEstimateUnitSymbol()
+            settings.put(kSettingKey_EstimateAssetSymbol, default_value)
             _save_setting_hash(settings)
-            return "CNY"
+            return default_value
         }
 
         //  REMARK：如果设置界面保存的计价货币 symbol 在配置的计价列表移除了，则恢复默认值。
         val currency = ChainObjectManager.sharedChainObjectManager().getEstimateUnitBySymbol(value)
         if (currency == null) {
-            settings.put(kSettingKey_EstimateAssetSymbol, "CNY")
+            val default_value = ChainObjectManager.sharedChainObjectManager().getDefaultEstimateUnitSymbol()
+            settings.put(kSettingKey_EstimateAssetSymbol, default_value)
             _save_setting_hash(settings)
-            return "CNY"
+            return default_value
         }
         assert(currency.getString("symbol") == value)
         return value

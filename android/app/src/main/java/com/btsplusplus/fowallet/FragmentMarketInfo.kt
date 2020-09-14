@@ -235,12 +235,7 @@ class FragmentMarketInfo : BtsppFragment() {
         val quote_volume: String
         val percent_change: String
         if (ticker_data != null) {
-            var sym = ""
-            if (base_symbol == "CNY") {
-                sym = "¥"   //  REMARK：半角形式，如果需要全角用这个￥。
-            } else if (base_symbol == "USD") {
-                sym = "$"   //  REMARK：半角形式，如果需要全角用这个＄。
-            }
+            val sym = chainMgr.getDefaultParameters().getJSONObject("alias_symbol").optString(base_symbol, "")
             latest = String.format("%s%s", sym, OrgUtils.formatFloatValue(ticker_data.getString("latest").toDouble(), base_asset.getInt("precision")))
             quote_volume = ticker_data.getString("quote_volume")
             percent_change = ticker_data.getString("percent_change")

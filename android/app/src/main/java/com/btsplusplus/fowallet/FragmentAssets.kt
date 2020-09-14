@@ -169,9 +169,12 @@ class FragmentAssets : BtsppFragment() {
         //  继续初始化
         _showAllAssets = _assetDataArray.size <= kAppUserAssetDefaultShowNum
 
+        //  默认记账单位
+        val defaultEstimateAsset = chainMgr.getDefaultEstimateUnitSymbol()
+
         //  这个是显示计价单位
         _displayEstimateAsset = SettingManager.sharedSettingManager().getEstimateAssetSymbol()
-        _needSecondExchange = _displayEstimateAsset != kAppUserAssetCoreEstimateAsset
+        _needSecondExchange = _displayEstimateAsset != defaultEstimateAsset
         //  REMARK：
         //  1、所有资产对CNY进行估价，因为如果其他资产直接对USD等计价可能导致没有匹配的交易对，估值误差较大。比如 SEED/CNY 有估值，SEED/JPY 等直接计较则没估值。
         //  2、如果记账单位为USD等、则把CNY计价再转换为USD计价。
@@ -179,14 +182,14 @@ class FragmentAssets : BtsppFragment() {
         for (asset in _assetDataArray) {
             val quote = asset.getString("name")
             //  记账单位资产，本身不查询。即：CNY/CNY 不查询。
-            if (quote == kAppUserAssetCoreEstimateAsset) {
+            if (quote == defaultEstimateAsset) {
                 continue
             }
-            pairs_list.put(jsonObjectfromKVS("base", kAppUserAssetCoreEstimateAsset, "quote", quote))
+            pairs_list.put(jsonObjectfromKVS("base", defaultEstimateAsset, "quote", quote))
         }
         //  添加 二次兑换系数 查询 CNY到USD 的兑换系数 注意：这里以 _displayEstimateAsset 为 base 获取 ticker 数据。
         if (_needSecondExchange) {
-            pairs_list.put(jsonObjectfromKVS("base", _displayEstimateAsset, "quote", kAppUserAssetCoreEstimateAsset))
+            pairs_list.put(jsonObjectfromKVS("base", _displayEstimateAsset, "quote", defaultEstimateAsset))
         }
         ChainObjectManager.sharedChainObjectManager().queryTickerDataByBaseQuoteSymbolArray(pairs_list).then {
             onEstimateDataReached()
@@ -200,13 +203,16 @@ class FragmentAssets : BtsppFragment() {
         val chainMgr = ChainObjectManager.sharedChainObjectManager()
         var total_estimate_value: Double = 0.0
 
+        //  默认记账单位
+        val defaultEstimateAsset = chainMgr.getDefaultEstimateUnitSymbol()
+
         //  显示精度（以记账单位的精度为准）
         val display_precision = chainMgr.getAssetBySymbol(_displayEstimateAsset).getInt("precision")
 
         //  计算2次兑换比例，如果核心兑换和显示兑换资产不同，则需要2次兑换。
         var fSecondExchangeRate: Double = 1.0
         if (_needSecondExchange) {
-            val ticker = chainMgr.getTickerData(_displayEstimateAsset, kAppUserAssetCoreEstimateAsset)!!
+            val ticker = chainMgr.getTickerData(_displayEstimateAsset, defaultEstimateAsset)!!
             fSecondExchangeRate = ticker.getString("latest").toDouble()
         }
 
@@ -214,7 +220,7 @@ class FragmentAssets : BtsppFragment() {
         for (asset in _assetDataArray) {
             val quote = asset.getString("name")
             //  如果当前资产为基准资产则特殊计算
-            if (quote == kAppUserAssetCoreEstimateAsset) {
+            if (quote == defaultEstimateAsset) {
                 //  基准资产的估算就是资产自身
                 //  REMARK：评估资产总和 = 可用 + 抵押 + 冻结 - 负债。
                 val v1 = asset.getString("balance").toDouble()
@@ -234,7 +240,7 @@ class FragmentAssets : BtsppFragment() {
             } else {
                 //  计算资产相对于基准资产（CNY）的价值
                 //  REMARK：评估资产总和 = 可用 + 抵押 + 冻结 - 负债。
-                val ticker = chainMgr.getTickerData(kAppUserAssetCoreEstimateAsset, quote)!!
+                val ticker = chainMgr.getTickerData(defaultEstimateAsset, quote)!!
                 val v1 = asset.getString("balance").toDouble()
                 val v2 = asset.optString("call_order_value", "0").toDouble()
                 val v3 = asset.optString("limit_order_value", "0").toDouble()
@@ -685,13 +691,13 @@ class FragmentAssets : BtsppFragment() {
         var quote_symbol = quote.getString("symbol")
         if (base_symbol == quote_symbol) {
             //  特殊处理
-            if (quote_symbol == "BTS") {
+            if (quote_symbol == chainMgr.grapheneAssetSymbol) {
                 //  修改 base
-                base_symbol = "CNY"
+                base_symbol = chainMgr.getDefaultParameters().getString("core_default_exchange_asset")
                 base = chainMgr.getAssetBySymbol(base_symbol)
             } else {
                 //  修改 quote
-                quote_symbol = "BTS"
+                quote_symbol = chainMgr.grapheneAssetSymbol
                 quote = chainMgr.getAssetBySymbol(quote_symbol)
             }
         }
