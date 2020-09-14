@@ -777,7 +777,8 @@ class OtcManager {
     }
 
     var server_config: JSONObject? = null                   //  服务器配置
-    private var _base_api = "http://otc-api.gdex.vip"       //  TODO:2.9 test url
+    //private var _base_api = "http://otc-api.gdex.vip"       //  TODO:2.9 test url
+    private var _base_api = "http://api.ofree.vip"       //  TODO:2.9 test url
     private var _fiat_cny_info: JSONObject? = null          //  法币信息 TODO:2.9 默认只支持一种
     private var _asset_list_digital: JSONArray? = null      //  支持的数字资产列表
     private var _cache_merchant_detail: JSONObject? = null  //  商家信息（如果进入场外交易使用缓存，进入商家每次都刷新。）
