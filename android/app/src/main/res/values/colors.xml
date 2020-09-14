@@ -12,6 +12,19 @@
 
     <color name="black_overlay">#66000000</color>
 
+    <!-- for zxing -->
+    <color name="contents_text">#ff000000</color>
+    <color name="encode_view">#ffffffff</color>
+    <color name="possible_result_points">#c0ffbd21</color> <!-- Android standard ICS color -->
+    <color name="result_minor_text">#ffc0c0c0</color>
+    <color name="result_points">#c099cc00</color> <!-- Android standard ICS color -->
+    <color name="result_text">#ffffffff</color>
+    <color name="result_view">#b0000000</color>
+    <color name="status_text">#ffffffff</color>
+    <color name="transparent">#00000000</color>
+    <color name="viewfinder_laser">#ffcc0000</color> <!-- Android standard ICS color -->
+    <color name="viewfinder_mask">#60000000</color>
+
 
     <!--静谧蓝-->
     <color name="theme01.color01">#131f2f</color>
@@ -47,6 +60,7 @@
     <color name="theme01.sellColor2">#282732</color>
 
     <color name="theme01.tabBarColor">#172941</color>
+    <color name="theme01.tabBarColor2">#cc172941</color>
 
     <color name="theme01.mainButtonBackColor">#e76d42</color>
     <color name="theme01.mainButtonTextColor">#ffffff</color>

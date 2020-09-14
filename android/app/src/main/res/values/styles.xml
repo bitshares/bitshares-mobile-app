@@ -37,15 +37,21 @@
         <item name="colorControlNormal">@color/theme01.color01</item>
         <item name="colorControlActivated">@color/theme01.color01</item>
     </style>
-    
+
+
+    <style name="CommonTabTextStyle">
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColor">@color/theme01.textColorNormal</item>
+    </style>
+
     <style name="KLineTabTextStyle">
-        <item name="android:textSize">9dp</item>
+        <item name="android:textSize">11dp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/theme01.textColorNormal</item>
     </style>
 
     <style name="KPageTabTextStyle">
-        <item name="android:textSize">14dp</item>
+        <item name="android:textSize">12dp</item>
     </style>
 
     <style name="kNavigationBarTextStyle">
@@ -72,6 +78,72 @@
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowBackground">@mipmap/launch</item>
+    </style>
+
+    <style name="SlideFromBottom" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/dialog_enter</item>
+        <item name="android:windowExitAnimation">@anim/dialog_exit</item>
+    </style>
+
+    <!-- 输入框：默认 -->
+    <style name="kTextFieldNormal">
+        <!-- 单行 -->
+        <item name="android:singleLine">true</item>
+        <item name="android:maxLines">1</item>
+        <!-- 颜色 -->
+        <item name="android:textColor">@color/theme01.textColorMain</item>
+        <item name="android:textColorHint">@color/theme01.textColorGray</item>
+        <item name="android:background">@null</item>
+        <item name="android:textSize">16dp</item>
+        <!-- 光标 -->
+        <item name="android:cursorVisible">true</item>
+        <item name="android:textCursorDrawable">@drawable/tfcursor</item>
+    </style>
+
+    <!-- 输入框：密码 -->
+    <style name="kTextFieldPassword" parent="kTextFieldNormal">
+        <item name="android:inputType">textPassword</item>
+    </style>
+    
+    <!-- 输入框：整数 -->
+    <style name="kTextFieldNumberPad" parent="kTextFieldNormal">
+        <item name="android:digits">1234567890</item>
+        <item name="android:inputType">number</item>
+    </style>
+
+    <!-- 输入框：小数 -->
+    <style name="kTextFieldDecimalPad" parent="kTextFieldNormal">
+        <item name="android:digits">.1234567890</item>
+        <item name="android:inputType">numberDecimal</item>
+    </style>
+
+    <!-- 输入框：电话号码 -->
+    <style name="kTextFieldPhonePad" parent="kTextFieldNormal">
+        <item name="android:digits">1234567890</item>
+        <item name="android:inputType">phone</item>
+    </style>
+
+    <!--  以下是 LoadingView用 -->
+    <style name="AVLoadingIndicatorView">
+        <item name="minWidth">76dp</item>
+        <item name="maxWidth">76dp</item>
+        <item name="minHeight">76dp</item>
+        <item name="maxHeight">76dp</item>
+        <item name="indicatorName">BallSpinFadeLoaderIndicator</item>
+    </style>
+    <style name="AVLoadingIndicatorView.Large">
+        <item name="minWidth">76dp</item>
+        <item name="maxWidth">76dp</item>
+        <item name="minHeight">76dp</item>
+        <item name="maxHeight">76dp</item>
+        <item name="indicatorName">BallSpinFadeLoaderIndicator</item>
+    </style>
+    <style name="AVLoadingIndicatorView.Small">
+        <item name="minWidth">24dp</item>
+        <item name="maxWidth">24dp</item>
+        <item name="minHeight">24dp</item>
+        <item name="maxHeight">24dp</item>
+        <item name="indicatorName">BallSpinFadeLoaderIndicator</item>
     </style>
 
 </resources>
