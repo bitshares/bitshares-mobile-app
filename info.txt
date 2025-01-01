@@ -1,0 +1,4 @@
+The latest version is v7.18 for both Android and iOS, released on November 14, 2023.
+Android binaries can be downloaded from the release page.
+iOS binaries are not available due to technical issues.
+Source code is not available on Github.
