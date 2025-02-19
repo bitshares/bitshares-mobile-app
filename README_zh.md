@@ -1,6 +1,6 @@
 # Bitshares - 移动端应用
 
-该源代码是 [Bitshares](https://how.bitshares.works/en/master/technology/what_bitshares.html) 区块链的移动端应用程序。
+该源代码是 [BitShares](https://docs.bitshares.eu/en/master/technology/what_bitshares.html) 区块链的移动端应用程序。
 
 ## 关于
 Bitshares Mobile App 是 [Bitshares区块链](https://github.com/bitshares/bitshares-core) 的移动端钱包。
