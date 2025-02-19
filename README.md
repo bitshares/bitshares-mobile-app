@@ -1,6 +1,6 @@
 # bitshares-mobile-app
 
-The mobile app for [bitshares](https://how.bitshares.works/en/master/technology/what_bitshares.html) blockchain. 
+The mobile app for [bitshares](https://docs.bitshares.eu/en/master/technology/what_bitshares.html) blockchain. 
 
 [中文](README_zh.md)
 
